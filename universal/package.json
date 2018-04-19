@@ -1,0 +1,70 @@
+{
+  "name": "universal-app",
+  "version": "0.1.0",
+  "main": "src/App/App.js",
+  "scripts": {
+    "start": "npm run ios",
+    "ios": "cd mobile/App && yarn && yarn ios",
+    "android": "cd mobile/App && yarn && yarn android",
+    "test": "npm run lint && npm run jest",
+    "codecov": "codecov",
+    "jest": "jest",
+    "test-update-snapshot": "jest --updateSnapshot",
+    "lint": "eslint .",
+    "format": "eslint --fix .",
+    "web-start": "razzle start",
+    "web-build": "razzle build",
+    "web-test": "razzle test --env=jsdom",
+    "web-prod": "NODE_ENV=production node build/server.js"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "dependencies": {
+    "create-react-context": "^0.2.2",
+    "hoist-non-react-statics": "^2.5.0",
+    "prop-types": "^15.5.10",
+    "react-art": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-lifecycles-compat": "^3.0.2",
+    "react-native-web": "^0.6.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.25.0",
+    "babel-jest": "^22.4.1",
+    "babel-preset-react-native": "^2.1.0",
+    "codecov": "^2.2.0",
+    "husky": "^0.14.3",
+    "jest": "^22.1.3",
+    "jest-expo": "^25.1.0",
+    "lint-staged": "^4.2.1",
+    "prettier": "^1.5.3",
+    "react": "16.2.0",
+    "react-native": "^0.52.0",
+    "react-native-vector-icons": "^4.2.0",
+    "react-test-renderer": "^16.0.0",
+    "rn-razzle": "2.0.0-alpha.8"
+  },
+  "jest": {
+    "notify": true,
+    "preset": "react-native",
+    "testRegex": "./src/.*\\-test\\.js$",
+    "setupFiles": [
+      "<rootDir>/jest-setup.js"
+    ],
+    "modulePathIgnorePatterns": [
+      "examples"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|react-navigation-deprecated-tab-navigator)"
+    ]
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  }
+}
