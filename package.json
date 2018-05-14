@@ -10,12 +10,14 @@
         "test-update-snapshot": "cd universal && jest --updateSnapshot",
         "lint": "cd universal && eslint .",
         "format": "cd universal && eslint --fix .",
-        "web-start": "cd universal && yarn && ./node_modules/rn-razzle/bin/razzle.js start",
+        "web": "cd universal && yarn && ./node_modules/rn-razzle/bin/razzle.js start",
         "web-build": "cd universal && yarn && ./node_modules/rn-razzle/bin/razzle.js build",
         "web-test": "cd universal && yarn && ./node_modules/rn-razzle/bin/razzle.js test --env=jsdom",
-        "web-prod": "cd universal && yarn && NODE_ENV=production node build/server.js"
+        "web-prod": "cd universal && yarn && NODE_ENV=production node build/server.js",
+        "reset": "rm -rf node_modules && rm -rf universal/node_modules && rm -rf universal/mobile/node_modules"
     },
     "dependencies": {
-        "react-lifecycles-compat": "^3.0.2"
+        "react-lifecycles-compat": "^3.0.2",
+        "react-navigation-deprecated-tab-navigator": "^1.2.0"
     }
 }

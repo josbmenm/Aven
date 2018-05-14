@@ -1,4 +1,4 @@
-import App from './App/App';
+import App from './App';
 
 import express from 'express';
 import ReactDOMServer from 'react-dom/server';
@@ -14,9 +14,26 @@ server
   .disable('x-powered-by')
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
   .get('/*', (req, res) => {
-    const { element, getStyleElement } = AppRegistry.getApplication('App', {});
-    const html = ReactDOMServer.renderToString(element);
-    const css = ReactDOMServer.renderToStaticMarkup(getStyleElement());
+    console.log(req.url);
+    // const navigationAction = App.router.getActionForPathAndParams('/b', {});
+    // console.log('nav Action', navigationAction);
+    // const tempAction = {};
+    // const navigationState = App.router.getStateForAction(tempAction);
+    const html = 'wat';
+    const css = '';
+    console.log('Aaaap', Object.keys(App));
+
+    // const { element, getStyleElement } = AppRegistry.getApplication('App', {
+    //   navigation: {
+    //     state: navigationState,
+    //     addListener: () => {},
+    //     dispatch: () => {},
+    //     isFocused: () => true,
+    //   },
+    // });
+
+    // const html = ReactDOMServer.renderToString(element);
+    // const css = ReactDOMServer.renderToStaticMarkup(getStyleElement());
 
     res.send(
       `<!doctype html>
@@ -44,7 +61,7 @@ server
     <body>
         <div id="root">${html}</div>
     </body>
-</html>`
+</html>`,
     );
   });
 

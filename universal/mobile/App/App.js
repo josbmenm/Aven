@@ -1,2 +1,2 @@
-import App from 'universal-app';
-export default App;
+import NativeApp from 'universal-app';
+export default NativeApp;

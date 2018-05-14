@@ -20,3 +20,10 @@ yarn-error.log
 coverage
 
 build
+
+src/react-navigation-core
+src/react-navigation-native-container
+src/react-navigation-stack
+src/react-navigation-drawer
+src/react-navigation-tabs
+src/react-navigation-area-view

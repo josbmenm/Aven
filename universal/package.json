@@ -1,7 +1,7 @@
 {
   "name": "universal-app",
   "version": "0.1.0",
-  "main": "src/App/App.js",
+  "react-native": "src/NativeApp/index",
   "scripts": {
     "start": "npm run ios",
     "ios": "cd mobile/App && yarn && yarn ios",
@@ -12,23 +12,34 @@
     "test-update-snapshot": "jest --updateSnapshot",
     "lint": "eslint .",
     "format": "eslint --fix .",
-    "web-start": "razzle start",
+    "web": "razzle start",
     "web-build": "razzle build",
     "web-test": "razzle test --env=jsdom",
-    "web-prod": "NODE_ENV=production node build/server.js"
+    "web-prod": "NODE_ENV=production node build/server.js",
+    "postinstall": "node vendorDist.js"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
   },
   "dependencies": {
+    "@expo/vector-icons": "^6.3.1",
+    "@react-navigation/react-navigation-experimental": "^0.1.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-types": "^6.26.0",
+    "clamp": "^1.0.1",
     "create-react-context": "^0.2.2",
     "hoist-non-react-statics": "^2.5.0",
     "prop-types": "^15.5.10",
     "react-art": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-lifecycles-compat": "^3.0.2",
-    "react-native-web": "^0.6.0"
+    "react-native-drawer-layout-polyfill": "^2.0.0",
+    "react-native-safe-area-view": "^0.7.0",
+    "react-native-web": "^0.6.0",
+    "react-navigation": "https://github.com/react-navigation/react-navigation.git#@ericvicenti/nested-config",
+    "react-navigation-tabs": "https://github.com/react-navigation/react-navigation-tabs.git#@ericvicenti/isolate-container"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
