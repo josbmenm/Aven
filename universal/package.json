@@ -24,22 +24,27 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
+    "@react-navigation/react-navigation-experiment-core": "^0.0.0-alpha.6",
     "@react-navigation/react-navigation-experimental": "^0.1.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-react": "^6.24.1",
     "babel-types": "^6.26.0",
     "clamp": "^1.0.1",
     "create-react-context": "^0.2.2",
+    "history": "^4.7.2",
     "hoist-non-react-statics": "^2.5.0",
     "prop-types": "^15.5.10",
+    "query-string": "^6.1.0",
     "react-art": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-lifecycles-compat": "^3.0.2",
     "react-native-drawer-layout-polyfill": "^2.0.0",
     "react-native-safe-area-view": "^0.7.0",
     "react-native-web": "^0.6.0",
+    "react-native-web-vector-icons": "^4.4.3",
     "react-navigation": "https://github.com/react-navigation/react-navigation.git#@ericvicenti/nested-config",
-    "react-navigation-tabs": "https://github.com/react-navigation/react-navigation-tabs.git#@ericvicenti/isolate-container"
+    "react-navigation-tabs": "https://github.com/react-navigation/react-navigation-tabs.git#@ericvicenti/isolate-container",
+    "react-syntax-highlighter": "^7.0.4"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -54,7 +59,6 @@
     "prettier": "^1.5.3",
     "react": "16.2.0",
     "react-native": "^0.52.0",
-    "react-native-vector-icons": "^4.2.0",
     "react-test-renderer": "^16.0.0",
     "rn-razzle": "2.0.0-alpha.8"
   },

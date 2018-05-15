@@ -2,9 +2,9 @@ import React from 'react';
 import { AppRegistry } from 'react-native';
 
 import AppNavigator from './App';
-import { createNavigationContainer } from './react-navigation-native-container';
+import { createBrowserApp } from './react-navigation-web';
 
-const AppContainer = createNavigationContainer(AppNavigator);
+const AppContainer = createBrowserApp(AppNavigator);
 
 const App = () => <AppContainer />;
 

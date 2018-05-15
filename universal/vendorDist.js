@@ -611,6 +611,42 @@ const transforms = [
   //     moduleName: 'NavigationContainer',
   //   },
   // ]),
+
+  { makeDirectory: 'src/react-navigation-native-icons' },
+  {
+    toFile: 'src/react-navigation-native-icons/subpackage.json',
+    fromRawJSON: {
+      name: '@react-navigation/native-icons',
+      subDependencies: [
+        'react',
+        'react-native',
+        'expo', // ??
+      ],
+    },
+  },
+  makeIndex('src/react-navigation-native-icons/index.js', ['Ionicons']),
+  {
+    fromFile: 'node_modules/@expo/vector-icons/Ionicons.js',
+    toFile: 'src/react-navigation-native-icons/Ionicons.js',
+    importMap: {},
+    nonDefaultImportMap: {},
+  },
+
+  {
+    copyDirectory: 'node_modules/@expo/vector-icons/fonts',
+    toDirectory: 'src/react-navigation-native-icons/fonts',
+  },
+
+  {
+    copyDirectory: 'node_modules/@expo/vector-icons/vendor',
+    toDirectory: 'src/react-navigation-native-icons/vendor',
+  },
+  {
+    fromFile: 'node_modules/@expo/vector-icons/createIconSet.js',
+    toFile: 'src/react-navigation-native-icons/createIconSet.js',
+    importMap: {},
+    nonDefaultImportMap: {},
+  },
 ];
 
 transforms.forEach(t => {
