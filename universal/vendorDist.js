@@ -404,6 +404,7 @@ const transforms = [
       '../Header/Header': './Header',
     },
     nonDefaultImportMap: {
+      './withOrientation': '../react-navigation-area-view',
       '../withOrientation': '../react-navigation-area-view',
       '../../NavigationActions': '../react-navigation-core',
       '../NavigationContext': '../react-navigation-core',
