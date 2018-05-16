@@ -283,14 +283,13 @@ const transforms = [
     toFile: 'src/react-navigation-native-container/PlatformHelpers.js',
     importMap: {},
   },
+  { makeDirectory: 'src/react-navigation-stack' },
   {
     // for now, copy PlatformHelpers to stack and native container
     fromFile: 'node_modules/react-navigation/src/PlatformHelpers.native.js',
     toFile: 'src/react-navigation-stack/PlatformHelpers.js',
     importMap: {},
   },
-
-  { makeDirectory: 'src/react-navigation-stack' },
   {
     toFile: 'src/react-navigation-stack/subpackage.json',
     fromRawJSON: {

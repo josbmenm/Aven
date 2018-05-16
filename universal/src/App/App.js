@@ -52,8 +52,6 @@ export const StacksInTabs = createBottomTabNavigator(
   },
 );
 
-StacksInTabs.path = '';
-
 export const App = createSwitchNavigator({
   // LoginRoute: createLogin({}),
   Login,
