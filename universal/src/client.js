@@ -1,12 +1,11 @@
 import React from 'react';
 import { AppRegistry } from 'react-native';
 
-import AppNavigator from './App';
 import { createBrowserApp } from './react-navigation-web';
 
-const AppContainer = createBrowserApp(AppNavigator);
+import AppWeb from './AppWeb';
 
-const App = () => <AppContainer />;
+const App = createBrowserApp(AppWeb);
 
 AppRegistry.registerComponent('App', () => App);
 

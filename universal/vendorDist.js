@@ -6,6 +6,8 @@ const {
   identifier,
   importSpecifier,
   importDefaultSpecifier,
+  expressionStatement,
+  nullLiteral,
 } = require('babel-types');
 
 const makeIndex = (fileName, defaultExports, normalExports) => {
@@ -305,6 +307,7 @@ const transforms = [
     'createStackNavigator',
     'StackView',
     'Header',
+    'Transitioner',
   ]),
   {
     fromFile:
@@ -647,6 +650,116 @@ const transforms = [
     importMap: {},
     nonDefaultImportMap: {},
   },
+
+  { makeDirectory: 'src/react-navigation-fluid' },
+  {
+    toFile: 'src/react-navigation-fluid/subpackage.json',
+    fromRawJSON: {
+      name: '@react-navigation/fluid',
+      subDependencies: ['react', 'react-native', 'clamp', 'prop-types'],
+    },
+  },
+  makeIndex('src/react-navigation-fluid/index.js', [
+    'createFluidNavigator',
+    'TransitionView',
+  ]),
+  {
+    fromFile:
+      'node_modules/react-navigation-fluid-transitions/src/FluidNavigator.js',
+    toFile: 'src/react-navigation-fluid/createFluidNavigator.js',
+    importMap: {
+      'react-navigation': '../react-navigation-core',
+    },
+    nonDefaultImportMap: {},
+  },
+  {
+    fromFile:
+      'node_modules/react-navigation-fluid-transitions/src/FluidTransitioner.js',
+    toFile: 'src/react-navigation-fluid/FluidTransitioner.js',
+    importMap: {
+      'react-navigation': '../react-navigation-stack',
+    },
+    nonDefaultImportMap: {},
+  },
+  {
+    fromFile:
+      'node_modules/react-navigation-fluid-transitions/src/NavigationActions.js',
+    toFile: 'src/react-navigation-fluid/NavigationActions.js',
+    importMap: {
+      'react-navigation': '../react-navigation-core',
+    },
+    nonDefaultImportMap: {},
+  },
+  {
+    fromFile:
+      'node_modules/react-navigation-fluid-transitions/src/TransitionView.js',
+    toFile: 'src/react-navigation-fluid/TransitionView.js',
+    importMap: {},
+    nonDefaultImportMap: {},
+  },
+  {
+    fromFile:
+      'node_modules/react-navigation-fluid-transitions/src/TransitionItemsView.js',
+    toFile: 'src/react-navigation-fluid/TransitionItemsView.js',
+    importMap: {},
+    nonDefaultImportMap: {},
+  },
+  {
+    fromFile:
+      'node_modules/react-navigation-fluid-transitions/src/TransitionRouteView.js',
+    toFile: 'src/react-navigation-fluid/TransitionRouteView.js',
+    importMap: {},
+    nonDefaultImportMap: {},
+  },
+
+  {
+    fromFile:
+      'node_modules/react-navigation-fluid-transitions/src/TransitionOverlayView.js',
+    toFile: 'src/react-navigation-fluid/TransitionOverlayView.js',
+    importMap: {},
+    nonDefaultImportMap: {},
+  },
+  {
+    fromFile:
+      'node_modules/react-navigation-fluid-transitions/src/TransitionItems.js',
+    toFile: 'src/react-navigation-fluid/TransitionItems.js',
+    importMap: {},
+    nonDefaultImportMap: {},
+  },
+  {
+    fromFile:
+      'node_modules/react-navigation-fluid-transitions/src/TransitionItem.js',
+    toFile: 'src/react-navigation-fluid/TransitionItem.js',
+    importMap: {},
+    nonDefaultImportMap: {},
+  },
+  {
+    copyDirectory: 'node_modules/react-navigation-fluid-transitions/src/Types',
+    toDirectory: 'src/react-navigation-fluid/Types',
+  },
+  {
+    copyDirectory:
+      'node_modules/react-navigation-fluid-transitions/src/Interpolators',
+    toDirectory: 'src/react-navigation-fluid/Interpolators',
+  },
+
+  {
+    copyDirectory:
+      'node_modules/react-navigation-fluid-transitions/src/Transitions',
+    toDirectory: 'src/react-navigation-fluid/Transitions',
+  },
+
+  {
+    copyDirectory: 'node_modules/react-navigation-fluid-transitions/src/Utils',
+    toDirectory: 'src/react-navigation-fluid/Utils',
+  },
+  {
+    fromFile:
+      'node_modules/react-navigation-fluid-transitions/src/TransitionConstants.js',
+    toFile: 'src/react-navigation-fluid/TransitionConstants.js',
+    importMap: {},
+    nonDefaultImportMap: {},
+  },
 ];
 
 transforms.forEach(t => {
@@ -703,6 +816,10 @@ transforms.forEach(t => {
               const sourceName = path.node.source.value;
               const importMap = t.importMap || {};
               const nonDefaultImportMap = t.nonDefaultImportMap || {};
+              if (importMap[sourceName] === false) {
+                path.remove();
+              }
+
               if (importMap[sourceName] || nonDefaultImportMap[sourceName]) {
                 if (
                   nonDefaultImportMap[sourceName] &&

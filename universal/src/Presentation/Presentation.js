@@ -1,43 +1,52 @@
 import React from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
+import { Home, Overview, Lesson, Login } from '../App/TestScreens';
 import {
   FullApp,
-  Home,
-  Overview,
-  Search,
-  Lesson,
-  Login,
   BasicSwitch,
   BasicStack,
   StackWithPushBug,
-  SwitchInStack,
-} from './DemoApp';
+  StackWithPushBug2,
+  StackInSwitch,
+  StacksInTabs,
+} from '../App/DemoNavigators';
 
 import {
   createSwitchNavigator,
   NavigationActions,
 } from '../react-navigation-core';
 import { createStaticContainer } from '../react-navigation-static-container';
-// import {
-//   createNavigationContainer,
-//   createStackNavigator,
-// } from 'react-navigation';
+
 import SyntaxHighlighter from 'react-syntax-highlighter/prism';
 import { coy } from 'react-syntax-highlighter/styles/prism';
+const queryString = require('query-string');
+
+const SlideContainer = ({ children }) => (
+  <View
+    style={{
+      width: 1280,
+      height: 720,
+      borderColor: '#eee',
+      borderWidth: 20,
+      justifyContent: 'center',
+    }}
+    children={children}
+  />
+);
 
 const createTitleSlide = title => {
   class TitleSlide extends React.Component {
     render() {
       return (
-        <View
-          style={{
-            padding: 30,
-            justifyContent: 'center',
-            flex: 1,
-            borderWidth: 30,
-          }}>
-          <Text style={{ fontSize: 80, textAlign: 'center' }}>{title}</Text>
-        </View>
+        <SlideContainer>
+          <View
+            style={{
+              padding: 30,
+              justifyContent: 'center',
+            }}>
+            <Text style={{ fontSize: 80, textAlign: 'center' }}>{title}</Text>
+          </View>
+        </SlideContainer>
       );
     }
   }
@@ -48,14 +57,21 @@ const createMultiTitleSlide = titles => {
   class TitleSlide extends React.Component {
     render() {
       return (
-        <View style={{ padding: 30, justifyContent: 'center' }}>
-          {titles.map(title => (
-            <Text
-              style={{ fontSize: 80, marginVertical: 40, textAlign: 'center' }}>
-              {title}
-            </Text>
-          ))}
-        </View>
+        <SlideContainer>
+          <View style={{ padding: 30, justifyContent: 'center' }}>
+            {titles.map((title, i) => (
+              <Text
+                key={i}
+                style={{
+                  fontSize: 80,
+                  marginVertical: 40,
+                  textAlign: 'center',
+                }}>
+                {title}
+              </Text>
+            ))}
+          </View>
+        </SlideContainer>
       );
     }
   }
@@ -72,31 +88,146 @@ const CodeSlideCompanion = ({ Component, navigation, standalone }) =>
   );
 
 const createCodeSlide = (codeString, opts) => {
-  class TitleSlide extends React.Component {
+  class CodeSlide extends React.Component {
     static router = opts && opts.Component && opts.Component.router;
     render() {
       return (
-        <View
-          style={{
-            flex: 1,
-            padding: 30,
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <SyntaxHighlighter
-            customStyle={{ fontSize: 36 }}
-            language="javascript"
-            style={coy}
-            highlighter={'prism' || 'hljs'}>
-            {codeString}
-          </SyntaxHighlighter>
-          {opts && <CodeSlideCompanion {...this.props} {...opts} />}
-        </View>
+        <SlideContainer>
+          <View
+            style={{
+              padding: 30,
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <SyntaxHighlighter
+              customStyle={{ fontSize: 28 }}
+              language="javascript"
+              style={coy}
+              highlighter={'prism' || 'hljs'}>
+              {codeString}
+            </SyntaxHighlighter>
+            {opts && <CodeSlideCompanion {...this.props} {...opts} />}
+          </View>
+        </SlideContainer>
       );
     }
   }
-  return TitleSlide;
+  return CodeSlide;
+};
+
+const RouteView = ({ route, isActive, isBold }) => {
+  const routes = route.routes && (
+    <View style={{ padding: 10, flexDirection: 'row', flexWrap: 'wrap' }}>
+      {route.routes.map((child, childIndex) => (
+        <RouteView
+          key={childIndex}
+          route={child}
+          isActive={childIndex === route.index && isActive}
+          isBold={childIndex === route.index}
+        />
+      ))}
+    </View>
+  );
+
+  return (
+    <View
+      style={{
+        backgroundColor: isActive ? '#1156' : '#1115',
+        margin: 10,
+        maxWidth: 820,
+      }}>
+      {route.routeName && (
+        <Text
+          style={{
+            color: 'white',
+            fontSize: 32,
+            margin: 20,
+            fontWeight: isBold ? '400' : '300',
+          }}>
+          {route.routeName}
+          {route.params ? `?${queryString.stringify(route.params)}` : ''}
+        </Text>
+      )}
+      {routes}
+    </View>
+  );
+};
+
+const NavStateView = ({ state }) => {
+  return <RouteView route={{ ...state, routeName: null }} isActive={true} />;
+};
+
+const createStateSlide = opts => {
+  const WrappedComponent = opts.Component;
+
+  class StateSlide extends React.Component {
+    static router = WrappedComponent.router;
+    render() {
+      return (
+        <SlideContainer>
+          <View
+            style={{
+              padding: 30,
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <NavStateView state={this.props.navigation.state} />
+            {opts && <CodeSlideCompanion {...this.props} {...opts} />}
+          </View>
+        </SlideContainer>
+      );
+    }
+  }
+  return StateSlide;
+};
+
+const createStateUrlSlide = (router, urls, initAction) => {
+  initAction = initAction = NavigationActions.init();
+  const urlActions = urls.map(({ path, params }) => {
+    return router.getActionForPathAndParams(path, params);
+  });
+
+  class StateSlide extends React.Component {
+    static router = {
+      getStateForAction(action, lastState) {
+        if (!lastState) {
+          return {
+            ...router.getStateForAction(initAction),
+            actionIndex: 0,
+          };
+        }
+        if (action.type === 'NextSlide') {
+          if (lastState.actionIndex < urlActions.length) {
+            const urlAction = urlActions[lastState.actionIndex];
+            return {
+              ...router.getStateForAction(urlAction, lastState),
+              actionIndex: lastState.actionIndex + 1,
+            };
+          }
+        }
+        return lastState;
+      },
+      getActionForPathAndParams: () => {},
+    };
+    render() {
+      return (
+        <SlideContainer>
+          <View
+            style={{
+              padding: 30,
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <NavStateView state={this.props.navigation.state} />
+          </View>
+        </SlideContainer>
+      );
+    }
+  }
+  return StateSlide;
 };
 
 const createMainTitleSlide = createTitleSlide;
@@ -118,11 +249,11 @@ const DemoScreen = ({ color, title }) => (
 
 const createSoloDemoSlide = App => {
   const DemoSlide = ({ navigation }) => (
-    <PhonesSet>
+    <PhonesDemoSlide>
       <PhoneView>
         <App navigation={navigation} />
       </PhoneView>
-    </PhonesSet>
+    </PhonesDemoSlide>
   );
   DemoSlide.router = App.router;
   return DemoSlide;
@@ -131,13 +262,13 @@ const createSoloDemoSlide = App => {
 const createStaticDemoSlide = DemoApps => {
   const StaticDemos = DemoApps.map(DemoApp => createStaticContainer(DemoApp));
   const DemoSlide = () => (
-    <PhonesSet>
+    <PhonesDemoSlide>
       {StaticDemos.map(StaticDemo => (
         <PhoneView>
           <StaticDemo />
         </PhoneView>
       ))}
-    </PhonesSet>
+    </PhonesDemoSlide>
   );
   return DemoSlide;
 };
@@ -145,7 +276,6 @@ const createStaticDemoSlide = DemoApps => {
 const PhoneView = ({ children }) => (
   <View
     style={{
-      overflow: 'hidden',
       backgroundColor: 'black',
       paddingVertical: 50,
       borderRadius: 40,
@@ -153,18 +283,27 @@ const PhoneView = ({ children }) => (
       height: 640,
       width: 320,
     }}>
-    <View style={{ flex: 1, backgroundColor: 'white' }} children={children} />
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: 'white',
+        overflow: 'hidden',
+      }}
+      children={children}
+    />
   </View>
 );
-const PhonesSet = ({ children }) => (
-  <View
-    style={{
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      alignItems: 'center',
-    }}>
-    {children}
-  </View>
+const PhonesDemoSlide = ({ children }) => (
+  <SlideContainer>
+    <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+      }}>
+      {children}
+    </View>
+  </SlideContainer>
 );
 
 const preso = [];
@@ -214,7 +353,9 @@ preso.push(createTitleSlide('Switch Navigator'));
 preso.push(
   createCodeSlide(
     `
-import { createSwitchNavigator } from 'react-navigation';
+import {
+  createSwitchNavigator
+} from 'react-navigation';
 
 const App = createSwitchNavigator({
   LoginRoute: LoginScreen,
@@ -228,7 +369,9 @@ const App = createSwitchNavigator({
 preso.push(
   createCodeSlide(
     `
-import { createSwitchNavigator } from 'react-navigation';
+import {
+  createSwitchNavigator
+} from 'react-navigation';
 
 const App = createSwitchNavigator({
   LoginRoute: LoginScreen,
@@ -271,6 +414,8 @@ const App = createSwitchNavigator({
   ),
 );
 
+preso.push(createStateSlide({ Component: BasicSwitch }));
+
 // BasicSwitch
 
 preso.push(createTitleSlide('Switch Navigator'));
@@ -280,7 +425,9 @@ preso.push(createTitleSlide('Stack Navigator'));
 preso.push(
   createCodeSlide(
     `
-import { createStackNavigator } from 'react-navigation';
+import {
+  createStackNavigator
+} from 'react-navigation';
 
 const App = createStackNavigator({
   HomeRoute: HomeScreen,
@@ -299,7 +446,10 @@ preso.push(
 class HomeScreen extends React.Component {
 
   onOpenLessonA() {
-    this.props.navigation.navigate('LessonRoute', { id: 'A' });
+    this.props.navigation.navigate(
+      'LessonRoute',
+      { id: 'A' }
+    );
   }
 
   ...
@@ -315,42 +465,9 @@ preso.push(
 class LessonScreen extends React.Component {
 
   render() {
-    const lessonID = this.props.navigation.getParam('id');
+    const lessonID =
+      this.props.navigation.getParam('id');
     ...
-`,
-    { Component: BasicStack },
-  ),
-);
-
-preso.push(createTitleSlide('Push to stack'));
-
-preso.push(
-  createCodeSlide(
-    `
-class LessonScreen extends React.Component {
-
-  onOpenLessonA() {
-    this.props.navigation.navigate('LessonRoute', { id: 'A' });
-  }
-
-  ...
-}
-`,
-    { Component: StackWithPushBug },
-  ),
-);
-
-preso.push(
-  createCodeSlide(
-    `
-class LessonScreen extends React.Component {
-
-  onOpenLessonA() {
-    this.props.navigation.push('LessonRoute', { id: 'A' });
-  }
-
-  ...
-}
 `,
     { Component: BasicStack },
   ),
@@ -396,7 +513,8 @@ preso.push(
 class LessonScreen extends React.Component {
 
   static navigationOptions = ({ navigation }) => ({
-    headerTitle: \`Lesson \${navigation.getParam('id')}\`
+    headerTitle:
+      \`Lesson \${navigation.getParam('id')}\`
   });
 
   ...
@@ -405,6 +523,72 @@ class LessonScreen extends React.Component {
     { Component: BasicStack },
   ),
 );
+
+preso.push(createTitleSlide('Push to stack'));
+
+preso.push(
+  createCodeSlide(
+    `
+class LessonScreen extends React.Component {
+
+  onOpenLessonA() {
+    this.props.navigation.navigate(
+      'LessonRoute',
+      { id: 'A' }
+    );
+  }
+
+  ...
+}
+`,
+    { Component: StackWithPushBug },
+  ),
+);
+
+preso.push(createStateSlide({ Component: StackWithPushBug }));
+
+preso.push(
+  createCodeSlide(
+    `
+class LessonScreen extends React.Component {
+
+  onOpenLessonA() {
+    this.props.navigation.push(
+      'LessonRoute',
+      { id: 'A' }
+    );
+  }
+
+  ...
+}
+`,
+    { Component: StackWithPushBug2 },
+  ),
+);
+
+preso.push(createStateSlide({ Component: StackWithPushBug2 }));
+
+preso.push(
+  createCodeSlide(
+    `
+class LessonScreen extends React.Component {
+
+  onOpenLessonA() {
+    this.props.navigation.navigate({
+      routeName: 'LessonRoute',
+      params: { id: 'A' },
+      key: 'LessonA',
+    });
+  }
+
+  ...
+}
+`,
+    { Component: BasicStack },
+  ),
+);
+
+preso.push(createStateSlide({ Component: BasicStack }));
 
 preso.push(createTitleSlide('Composing Navigators'));
 
@@ -427,55 +611,35 @@ const App = createSwitchNavigator({
   }),
 });
 `,
-    { Component: SwitchInStack },
+    { Component: StackInSwitch },
   ),
 );
 
-preso.push(
-  createCodeSlide(`
-this.props.navigation.navigate('HomeRoute');
-`),
-);
-
-preso.push(
-  createCodeSlide(`
-this.props.navigation.navigate('LessonRoute', { id: 'A' });
-`),
-);
+preso.push(createStateSlide({ Component: StackInSwitch }));
 
 preso.push(createTitleSlide('Composing Navigators'));
 
 preso.push(createTitleSlide('Tab Navigator'));
 
 preso.push(
-  createCodeSlide(`
-const HomeStackNavigator = createStackNavigator({
-  HomeRoute: HomeScreen,
-  LessonRoute: LessonScreen,
-});
-`),
-);
-
-preso.push(
-  createCodeSlide(`
-const OverviewStackNavigator = createStackNavigator({
-  OverviewRoute: OverviewScreen,
-  LessonRoute: LessonScreen,
-});
-`),
-);
-
-preso.push(
-  createCodeSlide(`
-const App = createSwitchNavigator({
-  LoginRoute: LoginScreen,
-  MainRoute: createTabNavigator({
-    HomeTab: HomeStackNavigator,
-    OverviewTab: OverviewStackNavigator,
+  createCodeSlide(
+    `
+const App = createBottomTabNavigator({
+  HomeTab: createStackNavigator({
+    HomeRoute: HomeScreen,
+    LessonRoute: LessonScreen,
   }),
+  OverviewTab: createStackNavigator({
+    OverviewRoute: OverviewScreen,
+    LessonRoute: LessonScreen,
+  }),
+  SettingsTab: ...
 });
-`),
+`,
+    { Component: StacksInTabs },
+  ),
 );
+preso.push(createStateSlide({ Component: StacksInTabs }));
 
 preso.push(createTitleSlide('Custom Navigators'));
 
@@ -522,6 +686,18 @@ class CustomNavigator extends React.Component {
 `),
 );
 
+preso.push(
+  createCodeSlide(`
+class CustomNavigator extends React.Component {
+
+  render() {
+    const {navigation} = this.props;
+    return <MainNavigator navigation={navigation} />;
+  }
+}
+`),
+);
+
 preso.push(createTitleSlide('Controlling Navigators'));
 
 preso.push(
@@ -550,75 +726,79 @@ const App = createNavigationContainer(MyNavigator);
 `),
 );
 
-preso.push(createTitleSlide('Navigation State'));
+preso.push(createTitleSlide('Composition Demo'));
 
-preso.push(createTitleSlide('<State: App.MainTab.HomeRoute>'));
+// at this time, show login sub-app installation
 
-preso.push(createTitleSlide('Navigation Actions'));
+// wait, nothing here is RN specific, it could run on web?
 
-preso.push(
-  createCodeSlide(`
-NavigationActions.navigate({
-  routeName: 'OverviewTab'
-});
-`),
-);
+// navigation behavior feels like mobile app still..
 
-preso.push(
-  createCodeSlide(`
-this.props.navigation.dispatch(
-  NavigationActions.navigate({
-    routeName: 'OverviewTab'
-  })
-);
-`),
-);
+// preso.push(createTitleSlide('Navigation Actions'));
 
-preso.push(
-  createCodeSlide(`
-this.props.navigation.navigate('OverviewTab');
-`),
-);
+// preso.push(
+//   createCodeSlide(`
+// NavigationActions.navigate({
+//   routeName: 'OverviewTab'
+// });
+// `),
+// );
 
-preso.push(createTitleSlide('How Routers work'));
+// preso.push(
+//   createCodeSlide(`
+// this.props.navigation.dispatch(
+//   NavigationActions.navigate({
+//     routeName: 'OverviewTab'
+//   })
+// );
+// `),
+// );
 
-preso.push(
-  createCodeSlide(`
-const action = NavigationActions.navigate({
-  routeName: 'OverviewTab'
-});
-`),
-);
+// preso.push(
+//   createCodeSlide(`
+// this.props.navigation.navigate('OverviewTab');
+// `),
+// );
 
-preso.push(
-  createCodeSlide(`
-const App = createSwitchNavigator({
-  LoginRoute: LoginScreen,
-  MainRoute: createTabNavigator({
-    HomeTab: HomeStackNavigator,
-    OverviewTab: OverviewStackNavigator,
-  }),
-});
-`),
-);
+// preso.push(createTitleSlide('How Routers work'));
 
-preso.push(
-  createCodeSlide(`
-App.router
-`),
-);
-preso.push(
-  createCodeSlide(`
-App.router.getStateForAction(action, lastState);
-`),
-);
-preso.push(
-  createCodeSlide(`
-state = App.router.getStateForAction(action, lastState);
-`),
-);
+// preso.push(
+//   createCodeSlide(`
+// const action = NavigationActions.navigate({
+//   routeName: 'OverviewTab'
+// });
+// `),
+// );
 
-preso.push(createTitleSlide('URL Handling'));
+// preso.push(
+//   createCodeSlide(`
+// const App = createSwitchNavigator({
+//   LoginRoute: LoginScreen,
+//   MainRoute: createTabNavigator({
+//     HomeTab: HomeStackNavigator,
+//     OverviewTab: OverviewStackNavigator,
+//   }),
+// });
+// `),
+// );
+
+// preso.push(
+//   createCodeSlide(`
+// App.router
+// `),
+// );
+// preso.push(
+//   createCodeSlide(`
+// App.router.getStateForAction(action, lastState);
+// `),
+// );
+// preso.push(
+//   createCodeSlide(`
+// state = App.router.getStateForAction(action, lastState);
+// `),
+// );
+
+preso.push(createTitleSlide('Mobile URL Handling'));
 
 preso.push(
   createCodeSlide(`
@@ -662,11 +842,34 @@ my-app://MainRoute/OverviewTab/LessonRoute?id=B
 `),
 );
 
+preso.push(
+  createStateUrlSlide(StacksInTabs.router, [
+    { path: 'OverviewTab/LessonRoute', params: { id: 'B' } },
+  ]),
+);
+
 preso.push(createTitleSlide('<State: App.MainRoute.OverviewTab.LessonRoute>'));
 
-preso.push(createTitleSlide('URLs change the state, they dont define it'));
+preso.push(createMultiTitleSlide(['URLs change the state']));
+preso.push(
+  createMultiTitleSlide(['URLs change the state,', "they don't define it"]),
+);
 
 preso.push(createTitleSlide('URLs are actions!'));
+preso.push(createMultiTitleSlide(['URLs']));
+preso.push(createMultiTitleSlide(['URLs', 'are']));
+preso.push(createMultiTitleSlide(['URLs', 'are', 'actions!']));
+preso.push(createTitleSlide('URLs'));
+preso.push(createTitleSlide('are'));
+preso.push(createTitleSlide('actions!'));
+preso.push(createTitleSlide('(not state)'));
+preso.push(createMultiTitleSlide(['URLs are navigation actions!']));
+preso.push(
+  createMultiTitleSlide([
+    'URLs are navigation actions!',
+    ',NOT navigation state',
+  ]),
+);
 
 preso.push(createTitleSlide('Routers convert URLs to Actions'));
 
@@ -729,6 +932,7 @@ preso.push(
     'Github+Twitter: @reactnavigation',
   ]),
 );
+
 preso.push(createMultiTitleSlide(['aven.io', 'Github+Twitter: @ericvicenti']));
 
 preso.push(createTitleSlide('Go forth, navigate on every platform,'));
@@ -751,6 +955,14 @@ const PresoSwitch = createSwitchNavigator(slideRouteConfigs);
 const PresoRouter = {
   ...PresoSwitch.router,
   getStateForAction(action, lastState) {
+    const switchedState = PresoSwitch.router.getStateForAction(
+      action,
+      lastState,
+    );
+    if (switchedState !== lastState) {
+      return switchedState;
+    }
+
     if (action.type === 'NextSlide') {
       const nextAction = NavigationActions.navigate({
         routeName: `Slide${lastState.index + 1}`,
@@ -776,13 +988,16 @@ const PresoRouter = {
       // todo
     }
 
-    return PresoSwitch.router.getStateForAction(action, lastState);
+    return lastState;
   },
   getScreenOptions(childNavigation) {
     return {
       ...PresoSwitch.router.getScreenOptions(childNavigation),
       title: `Navigation ${childNavigation.state.routeName}`,
     };
+  },
+  getPathAndParamsForState() {
+    return { path: '', params: {} };
   },
 };
 
@@ -824,8 +1039,10 @@ class Presentation extends React.Component {
       const { dispatch } = this.props.navigation;
       switch (e.code) {
         case 'ArrowLeft':
+        case 'PageUp':
           return dispatch({ type: 'PrevSlide' });
         case 'ArrowRight':
+        case 'PageDown':
           return dispatch({ type: 'NextSlide' });
       }
     };

@@ -1,4 +1,13 @@
-export function handleServerRequest(Router, pathWithLeadingSlash, query) {
+import {
+  NavigationActions,
+  createChildNavigationGetter,
+} from '../react-navigation-core';
+
+export default function handleServerRequest(
+  Router,
+  pathWithLeadingSlash,
+  query,
+) {
   const path = pathWithLeadingSlash.slice(1);
 
   // Get initial action from the URL
@@ -7,7 +16,6 @@ export function handleServerRequest(Router, pathWithLeadingSlash, query) {
 
   // Get state from reducer
   const navigationState = Router.getStateForAction(navigationAction);
-
   // Prepare top-level navigation prop
   const navigation = {
     state: navigationState,

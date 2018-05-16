@@ -91,8 +91,13 @@ export default function createBrowserApp(App) {
       const newState = App.router.getStateForAction(action, this.state.nav);
       if (newState && newState !== this.state.nav) {
         this.setState({ nav: newState });
-        const pathAndParams = App.router.getPathAndParamsForState(newState);
-        if (!matchPathAndParams(pathAndParams, currentPathAndParams)) {
+        const pathAndParams =
+          App.router.getPathAndParamsForState &&
+          App.router.getPathAndParamsForState(newState);
+        if (
+          pathAndParams &&
+          !matchPathAndParams(pathAndParams, currentPathAndParams)
+        ) {
           currentPathAndParams = pathAndParams;
           history.push(
             `/${pathAndParams.path}?${queryString.stringify(

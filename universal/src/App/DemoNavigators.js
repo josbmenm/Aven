@@ -5,14 +5,15 @@ import {
   Home,
   Overview,
   Lesson,
+  LessonWithPushBug2,
+  LessonWithPushBug,
   Settings,
   AccountSettings,
   PrivacySettings,
   NotifSettings,
-} from '../App/RealScreens';
-import { createLogin } from '../sassy-login';
+} from '../App/TestScreens';
+
 import { createSwitchNavigator } from '../react-navigation-core';
-import { createFluidNavigator } from '../react-navigation-fluid';
 import { createStackNavigator } from '../react-navigation-stack';
 import { createBottomTabNavigator } from '../react-navigation-tabs';
 
@@ -22,13 +23,11 @@ const HomeTab = createStackNavigator({
   HomeRoute: Home,
   LessonRoute: Lesson,
 });
-HomeTab.path = '';
 
 const OverviewTab = createStackNavigator({
   OverviewRoute: Overview,
   LessonRoute: Lesson,
 });
-OverviewTab.path = 'overview';
 
 const SettingsTab = createStackNavigator({
   Settings,
@@ -36,7 +35,6 @@ const SettingsTab = createStackNavigator({
   PrivacySettings,
   NotifSettings,
 });
-SettingsTab.path = 'settings';
 
 export const StacksInTabs = createBottomTabNavigator(
   {
@@ -52,9 +50,35 @@ export const StacksInTabs = createBottomTabNavigator(
   },
 );
 
-export const App = createSwitchNavigator({
-  LoginRoute: createLogin({}),
-  MainRoute: StacksInTabs,
+export const BasicSwitch = createSwitchNavigator({
+  Login,
+  Home,
 });
 
-export default App;
+export const BasicStack = createStackNavigator({
+  Home,
+  Lesson,
+});
+
+export const StackWithPushBug = createStackNavigator({
+  Home,
+  Lesson: LessonWithPushBug,
+});
+
+export const StackWithPushBug2 = createStackNavigator({
+  Home,
+  Lesson: LessonWithPushBug2,
+});
+
+export const StackInSwitch = createSwitchNavigator({
+  Login,
+  Main: createStackNavigator({
+    Home,
+    Lesson,
+  }),
+});
+
+export const FullApp = createSwitchNavigator({
+  Login,
+  Main: StacksInTabs,
+});

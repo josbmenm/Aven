@@ -1,7 +1,7 @@
 {
   "name": "universal-app",
   "version": "0.1.0",
-  "react-native": "src/NativeApp/index",
+  "react-native": "src/AppNative/index",
   "scripts": {
     "start": "npm run ios",
     "ios": "cd mobile/App && yarn && yarn ios",
@@ -33,7 +33,8 @@
     "create-react-context": "^0.2.2",
     "history": "^4.7.2",
     "hoist-non-react-statics": "^2.5.0",
-    "prop-types": "^15.5.10",
+    "lodash.sortby": "^4.7.0",
+    "prop-types": "^15.6.1",
     "query-string": "^6.1.0",
     "react-art": "^16.3.2",
     "react-dom": "^16.3.2",
@@ -43,6 +44,8 @@
     "react-native-web": "^0.6.0",
     "react-native-web-vector-icons": "^4.4.3",
     "react-navigation": "https://github.com/react-navigation/react-navigation.git#@ericvicenti/nested-config",
+    "react-navigation-fluid-transition": "https://github.com/ericvicenti/FluidTransitions.git#container-independent",
+    "react-navigation-fluid-transitions": "https://github.com/ericvicenti/FluidTransitions.git#container-independent",
     "react-navigation-tabs": "https://github.com/react-navigation/react-navigation-tabs.git#@ericvicenti/isolate-container",
     "react-syntax-highlighter": "^7.0.4"
   },

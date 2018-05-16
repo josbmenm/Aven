@@ -54,14 +54,14 @@ const createGenericScreen = (name, color, opts) => {
           style={{
             backgroundColor: 'white',
             flex: 1,
-            borderWidth: 10,
+            borderWidth: 25,
             borderColor: color,
           }}
           contentContainerStyle={{
             justifyContent: 'center',
             minHeight: '100%',
           }}>
-          <Text style={{ color, fontSize: 32, textAlign: 'center' }}>
+          <Text style={{ color, fontSize: 42, textAlign: 'center' }}>
             {opts.titleForParams
               ? opts.titleForParams(this.props.navigation.state.params)
               : name}
@@ -72,7 +72,21 @@ const createGenericScreen = (name, color, opts) => {
                 <Button
                   title={linkName}
                   onPress={() => {
-                    this.props.navigation.navigate(opts.links[linkName]);
+                    const link = opts.links[linkName];
+                    const { navigation } = this.props;
+                    if (typeof link === 'string') {
+                      navigation.navigate(link);
+                      return;
+                    }
+                    if (link.type === 'push') {
+                      navigation.push(link.routeName, link.params);
+                      return;
+                    }
+                    navigation.navigate({
+                      routeName: link.routeName,
+                      params: link.params,
+                      key: link.key,
+                    });
                   }}
                 />
               </View>
@@ -84,14 +98,14 @@ const createGenericScreen = (name, color, opts) => {
   return GenericScreen;
 };
 
-export const Login = createGenericScreen('Login', '#3c3', {
+export const Login = createGenericScreen('Login', '#3a3', {
   path: 'login',
   links: {
     Login: { routeName: 'Home' },
   },
 });
 
-export const Home = createGenericScreen('Welcome', '#cc3', {
+export const Home = createGenericScreen('Welcome', '#aa3', {
   path: '',
   links: {
     'Lesson A': { routeName: 'Lesson', key: 'LessonA', params: { id: 'A' } },
@@ -115,6 +129,16 @@ export const Lesson = createGenericScreen('Lesson', '#33c', {
     'Lesson A': { routeName: 'Lesson', key: 'LessonA', params: { id: 'A' } },
     'Lesson B': { routeName: 'Lesson', key: 'LessonB', params: { id: 'B' } },
     'Lesson C': { routeName: 'Lesson', key: 'LessonC', params: { id: 'C' } },
+  },
+});
+Lesson.path = 'lesson';
+
+const LessonWithPushBug2 = createGenericScreen('Lesson', '#33c', {
+  titleForParams: ({ id }) => `Lesson ${id}`,
+  links: {
+    'Lesson A': { routeName: 'Lesson', params: { id: 'A' }, type: 'push' },
+    'Lesson B': { routeName: 'Lesson', params: { id: 'B' }, type: 'push' },
+    'Lesson C': { routeName: 'Lesson', params: { id: 'C' }, type: 'push' },
   },
 });
 Lesson.path = 'lesson';
@@ -179,11 +203,11 @@ SettingsTab.path = 'settings';
 
 // const App = createStackNavigator({
 // const App = createSwitchNavigator({
-export const FullApp = createBottomTabNavigator(
+export const StacksInTabs = createBottomTabNavigator(
   {
     HomeTab,
     OverviewTab,
-    SearchTab,
+    // SearchTab,
     SettingsTab,
   },
   {
@@ -209,10 +233,28 @@ export const StackWithPushBug = createStackNavigator({
   Lesson: LessonWithPushBug,
 });
 
-export const SwitchInStack = createSwitchNavigator({
+export const StackWithPushBug2 = createStackNavigator({
+  Home,
+  Lesson: LessonWithPushBug2,
+});
+
+export const StackInSwitch = createSwitchNavigator({
   Login,
   Main: createStackNavigator({
     Home,
     Lesson,
   }),
+});
+
+// export const StacksInTabs = createTabNavigator({
+//   LoginRoute: LoginScreen,
+//   MainRoute: createTabNavigator({
+//     HomeTab: HomeStackNavigator,
+//     OverviewTab: OverviewStackNavigator,
+//   }),
+// });
+
+export const FullApp = createSwitchNavigator({
+  Login,
+  Main: StacksInTabs,
 });

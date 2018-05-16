@@ -1,14 +1,11 @@
-import App from './App';
-
 import express from 'express';
 import ReactDOMServer from 'react-dom/server';
 import React from 'react';
 import { AppRegistry } from 'react-native';
-import {
-  NavigationActions,
-  createChildNavigationGetter,
-} from './react-navigation-core';
+
 import { handleServerRequest } from './react-navigation-web';
+
+import App from './AppWeb';
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
