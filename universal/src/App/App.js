@@ -38,7 +38,7 @@ const SettingsTab = createStackNavigator({
 });
 SettingsTab.path = 'settings';
 
-export const StacksInTabs = createBottomTabNavigator(
+export const App = createBottomTabNavigator(
   {
     HomeTab,
     OverviewTab,
@@ -51,11 +51,5 @@ export const StacksInTabs = createBottomTabNavigator(
     }),
   },
 );
-
-export const App = createSwitchNavigator({
-  // LoginRoute: createLogin({}),
-  Login,
-  Main: StacksInTabs,
-});
 
 export default App;

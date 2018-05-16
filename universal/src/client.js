@@ -3,9 +3,9 @@ import { AppRegistry } from 'react-native';
 
 import { createBrowserApp } from './react-navigation-web';
 
-import AppWeb from './AppWeb';
+import AppNavigator from './AppWeb';
 
-const App = createBrowserApp(AppWeb);
+const App = createBrowserApp(AppNavigator);
 
 AppRegistry.registerComponent('App', () => App);
 

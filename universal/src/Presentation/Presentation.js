@@ -375,8 +375,8 @@ import {
 } from 'react-navigation';
 
 const App = createSwitchNavigator({
-  Login,
-  Home,
+  LoginRoute: LoginScreen,
+  HomeRoute: HomeScreen,
 });
 `,
     { Component: Login },
@@ -417,8 +417,6 @@ const App = createSwitchNavigator({
   ),
 );
 
-preso.push(createStaticDemoSlide([Login]));
-
 preso.push(
   createCodeSlide(
     `
@@ -435,23 +433,9 @@ class LoginScreen {
   ),
 );
 
-preso.push(
-  createCodeSlide(
-    `
-const App = createSwitchNavigator({
-  Login,
-  Home,
-});
-`,
-    { Component: BasicSwitch },
-  ),
-);
-
 preso.push(createStateSlide({ Component: BasicSwitch }));
 
 // BasicSwitch
-
-preso.push(createTitleSlide('Switch Navigator'));
 
 preso.push(createTitleSlide('Stack Navigator'));
 
@@ -480,7 +464,7 @@ class HomeScreen extends React.Component {
 
   onOpenLessonA() {
     this.props.navigation.navigate(
-      'LessonRoute',
+      'Lesson',
       { id: 'A' }
     );
   }
@@ -608,7 +592,7 @@ class LessonScreen extends React.Component {
 
   onOpenLessonA() {
     this.props.navigation.navigate({
-      routeName: 'LessonRoute',
+      routeName: 'Lesson',
       params: { id: 'A' },
       key: 'LessonA',
     });
@@ -649,8 +633,6 @@ const App = createSwitchNavigator({
 );
 
 preso.push(createStateSlide({ Component: StackInSwitch }));
-
-preso.push(createTitleSlide('Composing Navigators'));
 
 preso.push(createTitleSlide('Tab Navigator'));
 
@@ -709,8 +691,6 @@ preso.push(
   createCodeSlide(`
 class CustomNavigator extends React.Component {
 
-  static router = MainNavigator.router;
-
   render() {
     const {navigation} = this.props;
     return <MainNavigator navigation={navigation} />;
@@ -722,6 +702,8 @@ class CustomNavigator extends React.Component {
 preso.push(
   createCodeSlide(`
 class CustomNavigator extends React.Component {
+
+  static router = MainNavigator.router;
 
   render() {
     const {navigation} = this.props;
@@ -953,42 +935,30 @@ preso.push(createTitleSlide('Routers manage navigation state'));
 
 preso.push(createTitleSlide('Routers have navigation state reducers!'));
 
-preso.push(createTitleSlide('Routers have navigation state reducers!'));
-
 preso.push(createCodeSlide(`router.getStateForAction(action, lastState)`));
 
-preso.push(createTitleSlide('Routers define behavior for containers'));
+preso.push(createTitleSlide('Routers define navigation state behavior'));
 
-preso.push(createTitleSlide('Demo Containers'));
-preso.push(createTitleSlide('Demo Web Layout'));
+preso.push(createTitleSlide('Routers also define URL behavior'));
+
 preso.push(createTitleSlide('Demo Sassy Login'));
+preso.push(createTitleSlide('Demo Web Layout'));
 
-preso.push(createTitleSlide('Community Navigators'));
-
+preso.push(createTitleSlide('Community Navigators & Routers'));
 preso.push(
-  createMultiTitleSlide([
-    'https://github.com/react-navigation/react-navigation-tabs',
-    'https://github.com/fram-x/FluidTransitions',
-  ]),
+  createTitleSlide('https://github.com/react-navigation/react-navigation-tabs'),
 );
 
 preso.push(
-  createMultiTitleSlide([
-    'reactnavigation.org',
-    'Github+Twitter: @reactnavigation',
-  ]),
+  createMultiTitleSlide(['https://github.com/fram-x/FluidTransitions']),
 );
 
-preso.push(createMultiTitleSlide(['aven.io', 'Github+Twitter: @ericvicenti']));
+preso.push(createMultiTitleSlide(['github.com/ericvicenti/universe']));
+preso.push(createMultiTitleSlide(['reactnavigation.org', '@reactnavigation']));
+
+preso.push(createMultiTitleSlide(['@ericvicenti']));
 
 preso.push(createTitleSlide('Go forth, navigate on every platform,'));
-
-preso.push(
-  createMultiTitleSlide([
-    'Go forth, navigate on every platform,',
-    'and share your work with the world!',
-  ]),
-);
 
 const slideRouteConfigs = {};
 preso.forEach((slide, slideIndex) => {
