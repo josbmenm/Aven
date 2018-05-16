@@ -442,10 +442,10 @@ const transforms = [
     fromFile: 'node_modules/react-navigation/src/views/Header/Header.js',
     toFile: 'src/react-navigation-stack/Header.js',
     importMap: {
-      '../withOrientation': './withOrientation',
       '../../PlatformHelpers': './PlatformHelpers',
     },
     nonDefaultImportMap: {
+      '../withOrientation': '../react-navigation-area-view',
       'react-native-safe-area-view': '../react-navigation-area-view',
     },
     requireMap: {
