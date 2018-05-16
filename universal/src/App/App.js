@@ -9,8 +9,8 @@ import {
   AccountSettings,
   PrivacySettings,
   NotifSettings,
-} from '../App/RealScreens';
-import { createLogin } from '../sassy-login';
+} from '../App/TestScreens';
+
 import { createSwitchNavigator } from '../react-navigation-core';
 import { createFluidNavigator } from '../react-navigation-fluid';
 import { createStackNavigator } from '../react-navigation-stack';
@@ -19,14 +19,14 @@ import { createBottomTabNavigator } from '../react-navigation-tabs';
 import { getTabBarLabel, getTabBarIcon } from '../App/tabBarConfig';
 
 const HomeTab = createStackNavigator({
-  HomeRoute: Home,
-  LessonRoute: Lesson,
+  Home,
+  Lesson,
 });
 HomeTab.path = '';
 
 const OverviewTab = createStackNavigator({
-  OverviewRoute: Overview,
-  LessonRoute: Lesson,
+  Overview,
+  Lesson,
 });
 OverviewTab.path = 'overview';
 
@@ -52,9 +52,12 @@ export const StacksInTabs = createBottomTabNavigator(
   },
 );
 
+StacksInTabs.path = '';
+
 export const App = createSwitchNavigator({
-  LoginRoute: createLogin({}),
-  MainRoute: StacksInTabs,
+  // LoginRoute: createLogin({}),
+  Login,
+  Main: StacksInTabs,
 });
 
 export default App;

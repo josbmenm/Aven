@@ -135,7 +135,6 @@ const RouteView = ({ route, isActive, isBold }) => {
       style={{
         backgroundColor: isActive ? '#1156' : '#1115',
         margin: 10,
-        maxWidth: 820,
       }}>
       {route.routeName && (
         <Text
@@ -173,7 +172,12 @@ const createStateSlide = opts => {
               flexDirection: 'row',
               alignItems: 'center',
             }}>
-            <NavStateView state={this.props.navigation.state} />
+            <View
+              style={{
+                maxWidth: 820,
+              }}>
+              <NavStateView state={this.props.navigation.state} />
+            </View>
             {opts && <CodeSlideCompanion {...this.props} {...opts} />}
           </View>
         </SlideContainer>
@@ -184,17 +188,18 @@ const createStateSlide = opts => {
 };
 
 const createStateUrlSlide = (router, urls, initAction) => {
-  initAction = initAction = NavigationActions.init();
+  initAction = initAction || NavigationActions.init();
   const urlActions = urls.map(({ path, params }) => {
-    return router.getActionForPathAndParams(path, params);
+    return router.getActionForPathAndParams(path, params || {});
   });
 
-  class StateSlide extends React.Component {
+  class URLStateSlide extends React.Component {
     static router = {
       getStateForAction(action, lastState) {
         if (!lastState) {
+          const routerState = router.getStateForAction(initAction);
           return {
-            ...router.getStateForAction(initAction),
+            ...routerState,
             actionIndex: 0,
           };
         }
@@ -209,25 +214,37 @@ const createStateUrlSlide = (router, urls, initAction) => {
         }
         return lastState;
       },
-      getActionForPathAndParams: () => {},
+      getPathAndParamsForState() {
+        return { path: '', params: {} };
+      },
+      getActionForPathAndParams: () => null,
     };
     render() {
+      const { actionIndex } = this.props.navigation.state;
+      const url = urls[0];
       return (
         <SlideContainer>
           <View
             style={{
               padding: 30,
               justifyContent: 'space-between',
-              flexDirection: 'row',
               alignItems: 'center',
             }}>
+            <View style={{ margin: 20 }}>
+              {url && (
+                <Text style={{ fontSize: 48 }}>
+                  my-app://{url.path}
+                  {url.params ? `?${queryString.stringify(url.params)}` : ''}
+                </Text>
+              )}
+            </View>
             <NavStateView state={this.props.navigation.state} />
           </View>
         </SlideContainer>
       );
     }
   }
-  return StateSlide;
+  return URLStateSlide;
 };
 
 const createMainTitleSlide = createTitleSlide;
@@ -263,8 +280,8 @@ const createStaticDemoSlide = DemoApps => {
   const StaticDemos = DemoApps.map(DemoApp => createStaticContainer(DemoApp));
   const DemoSlide = () => (
     <PhonesDemoSlide>
-      {StaticDemos.map(StaticDemo => (
-        <PhoneView>
+      {StaticDemos.map((StaticDemo, i) => (
+        <PhoneView key={i}>
           <StaticDemo />
         </PhoneView>
       ))}
@@ -333,7 +350,7 @@ preso.push(
 `),
 );
 
-preso.push(createStaticDemoSlide([Login, Home, Overview]));
+preso.push(createStaticDemoSlide([Login, Home, Lesson]));
 
 preso.push(createTitleSlide('Before navigation..'));
 
@@ -358,8 +375,8 @@ import {
 } from 'react-navigation';
 
 const App = createSwitchNavigator({
-  LoginRoute: LoginScreen,
-  HomeRoute: HomeScreen,
+  Login,
+  Home,
 });
 `,
     { Component: Login },
@@ -374,10 +391,26 @@ import {
 } from 'react-navigation';
 
 const App = createSwitchNavigator({
-  LoginRoute: LoginScreen,
-  HomeRoute: HomeScreen,
+  Login,
+  Home,
+});
+`,
+    { Component: Login },
+  ),
+);
+
+preso.push(
+  createCodeSlide(
+    `
+import {
+  createSwitchNavigator
+} from 'react-navigation';
+
+const App = createSwitchNavigator({
+  Login,
+  Home,
 }, {
-  initialRouteName: 'LoginRoute'
+  initialRouteName: 'Login'
 });
 `,
     { Component: Login },
@@ -392,7 +425,7 @@ preso.push(
 class LoginScreen {
 
   handleLoginSuccess() {
-    this.props.navigation.navigate('HomeRoute');
+    this.props.navigation.navigate('Home');
   }
 
   ...
@@ -406,8 +439,8 @@ preso.push(
   createCodeSlide(
     `
 const App = createSwitchNavigator({
-  LoginRoute: LoginScreen,
-  HomeRoute: HomeScreen,
+  Login,
+  Home,
 });
 `,
     { Component: BasicSwitch },
@@ -430,8 +463,8 @@ import {
 } from 'react-navigation';
 
 const App = createStackNavigator({
-  HomeRoute: HomeScreen,
-  LessonRoute: LessonScreen,
+  Home,
+  Lesson,
 });
 `,
     { Component: BasicStack },
@@ -533,7 +566,7 @@ class LessonScreen extends React.Component {
 
   onOpenLessonA() {
     this.props.navigation.navigate(
-      'LessonRoute',
+      'Lesson',
       { id: 'A' }
     );
   }
@@ -554,7 +587,7 @@ class LessonScreen extends React.Component {
 
   onOpenLessonA() {
     this.props.navigation.push(
-      'LessonRoute',
+      'Lesson',
       { id: 'A' }
     );
   }
@@ -604,10 +637,10 @@ preso.push(
   createCodeSlide(
     `
 const App = createSwitchNavigator({
-  LoginRoute: LoginScreen,
-  MainRoute: createStackNavigator({
-    HomeRoute: HomeScreen,
-    LessonRoute: LessonScreen,
+  Login,
+  Main: createStackNavigator({
+    Home,
+    Lesson,
   }),
 });
 `,
@@ -626,12 +659,12 @@ preso.push(
     `
 const App = createBottomTabNavigator({
   HomeTab: createStackNavigator({
-    HomeRoute: HomeScreen,
-    LessonRoute: LessonScreen,
+    Home,
+    Lesson,
   }),
   OverviewTab: createStackNavigator({
-    OverviewRoute: OverviewScreen,
-    LessonRoute: LessonScreen,
+    Overview,
+    Lesson,
   }),
   SettingsTab: ...
 });
@@ -646,16 +679,16 @@ preso.push(createTitleSlide('Custom Navigators'));
 preso.push(
   createCodeSlide(`
   const App = createSwitchNavigator({
-    LoginRoute: LoginScreen,
-    MainRoute: MainNavigator,
+    Login,
+    Main,
   });
   `),
 );
 preso.push(
   createCodeSlide(`
   const App = createSwitchNavigator({
-    LoginRoute: LoginScreen,
-    MainRoute: CustomNavigator,
+    Login,
+    Main: CustomNavigator,
   });
   `),
 );
@@ -808,47 +841,45 @@ my-app://
 
 preso.push(
   createCodeSlide(`
-my-app://LoginRoute
+my-app://Login
 `),
 );
 
 preso.push(
   createCodeSlide(`
-my-app://MainRoute/HomeTab/LessonRoute
+my-app://HomeTab/Lesson
 `),
 );
 
 preso.push(
   createCodeSlide(`
-my-app://MainRoute/HomeTab/LessonRoute?id=A
+my-app://HomeTab/Lesson?id=A
 `),
 );
 
 preso.push(createTitleSlide('URLs open on cold start'));
 
 preso.push(
-  createCodeSlide(`
-my-app://MainRoute/HomeTab/LessonRoute?id=A
-`),
+  createStateUrlSlide(StacksInTabs.router, [
+    { path: 'HomeTab/Lesson', params: { id: 'B' } },
+  ]),
 );
-
-preso.push(createTitleSlide('<State: App.MainRoute.HomeTab.LessonRoute>'));
 
 preso.push(createTitleSlide('URLs change state when app is open'));
 
 preso.push(
-  createCodeSlide(`
-my-app://MainRoute/OverviewTab/LessonRoute?id=B
-`),
+  createStateUrlSlide(
+    StacksInTabs.router,
+    [{ path: 'OverviewTab/Lesson', params: { id: 'A' } }],
+    NavigationActions.navigate({
+      routeName: 'HomeTab',
+      action: NavigationActions.navigate({
+        routeName: 'Lesson',
+        params: { id: 'B' },
+      }),
+    }),
+  ),
 );
-
-preso.push(
-  createStateUrlSlide(StacksInTabs.router, [
-    { path: 'OverviewTab/LessonRoute', params: { id: 'B' } },
-  ]),
-);
-
-preso.push(createTitleSlide('<State: App.MainRoute.OverviewTab.LessonRoute>'));
 
 preso.push(createMultiTitleSlide(['URLs change the state']));
 preso.push(
@@ -859,10 +890,6 @@ preso.push(createTitleSlide('URLs are actions!'));
 preso.push(createMultiTitleSlide(['URLs']));
 preso.push(createMultiTitleSlide(['URLs', 'are']));
 preso.push(createMultiTitleSlide(['URLs', 'are', 'actions!']));
-preso.push(createTitleSlide('URLs'));
-preso.push(createTitleSlide('are'));
-preso.push(createTitleSlide('actions!'));
-preso.push(createTitleSlide('(not state)'));
 preso.push(createMultiTitleSlide(['URLs are navigation actions!']));
 preso.push(
   createMultiTitleSlide([
@@ -871,51 +898,70 @@ preso.push(
   ]),
 );
 
-preso.push(createTitleSlide('Routers convert URLs to Actions'));
-
-preso.push(createTitleSlide('Can this work on the web?'));
-
-preso.push(createTitleSlide('Routers output URLs for active state'));
-
-preso.push(createTitleSlide('react-native-web'));
-
-preso.push(createTitleSlide('react-navigation-web'));
+preso.push(createTitleSlide('Navigation Actions'));
 
 preso.push(
   createCodeSlide(`
-import {
-  createNavigationContainer
-} from 'react-navigation-web';
-
-const App = createNavigationContainer(MyNavigator);
-`),
-);
-
-preso.push(createTitleSlide('Demo time'));
-preso.push(createTitleSlide('Demo time - Start with nested mobile nav'));
-preso.push(createTitleSlide('Demo time - Run on web'));
-preso.push(createTitleSlide('Demo time - create web container'));
-preso.push(createTitleSlide('Demo time - Custom Flow Navigator'));
-
-preso.push(createTitleSlide('Extensibility'));
-
-preso.push(
-  createCodeSlide(`
-const App = createSwitchNavigator({
-  LoginRoute: LoginScreen,
-  HomeRoute: HomeScreen,
+NavigationActions.navigate({
+  routeName: 'Lesson',
+  params: {id: 'B'},
 });
 `),
 );
 
 preso.push(
   createCodeSlide(`
-const App = createSwitchNavigator({
-  LoginRoute: createAuthNavigator({...}),
-  HomeRoute: HomeScreen,
-});
+{
+  type: 'Navigation/Navigate',
+  routeName: 'Lesson',
+  params: {id: 'B'},
+}
 `),
 );
+
+preso.push(
+  createCodeSlide(`
+this.props.navigation.dispatch(
+  NavigationActions.navigate({
+    routeName: 'Lesson'
+    params: {id: 'B'},
+  })
+);
+`),
+);
+
+preso.push(
+  createCodeSlide(`
+this.props.navigation.navigate(
+  'Lesson',
+  {id: 'B'}
+);
+`),
+);
+
+preso.push(
+  createCodeSlide(`
+this.props.navigation.dispatch(
+  NavigationActions.navigate({
+    routeName: 'OverviewTab'
+  })
+);
+`),
+);
+
+preso.push(createTitleSlide('Routers manage navigation state'));
+
+preso.push(createTitleSlide('Routers have navigation state reducers!'));
+
+preso.push(createTitleSlide('Routers have navigation state reducers!'));
+
+preso.push(createCodeSlide(`router.getStateForAction(action, lastState)`));
+
+preso.push(createTitleSlide('Routers define behavior for containers'));
+
+preso.push(createTitleSlide('Demo Containers'));
+preso.push(createTitleSlide('Demo Web Layout'));
+preso.push(createTitleSlide('Demo Sassy Login'));
 
 preso.push(createTitleSlide('Community Navigators'));
 
@@ -955,12 +1001,22 @@ const PresoSwitch = createSwitchNavigator(slideRouteConfigs);
 const PresoRouter = {
   ...PresoSwitch.router,
   getStateForAction(action, lastState) {
-    const switchedState = PresoSwitch.router.getStateForAction(
-      action,
-      lastState,
-    );
-    if (switchedState !== lastState) {
-      return switchedState;
+    if (lastState) {
+      const activeRoute = lastState.routes[lastState.index];
+      const childComponent =
+        activeRoute.routeName &&
+        PresoSwitch.router.getComponentForRouteName(activeRoute.routeName);
+      const childRouter = childComponent && childComponent.router;
+      const newRoute =
+        childRouter && childRouter.getStateForAction(action, activeRoute);
+      if (newRoute && newRoute !== activeRoute) {
+        const routes = [...lastState.routes];
+        routes[lastState.index] = newRoute;
+        return {
+          ...lastState,
+          routes,
+        };
+      }
     }
 
     if (action.type === 'NextSlide') {
@@ -988,16 +1044,13 @@ const PresoRouter = {
       // todo
     }
 
-    return lastState;
+    return PresoSwitch.router.getStateForAction(action, lastState);
   },
   getScreenOptions(childNavigation) {
     return {
       ...PresoSwitch.router.getScreenOptions(childNavigation),
       title: `Navigation ${childNavigation.state.routeName}`,
     };
-  },
-  getPathAndParamsForState() {
-    return { path: '', params: {} };
   },
 };
 

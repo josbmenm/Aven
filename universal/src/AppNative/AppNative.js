@@ -1,8 +1,8 @@
 import React from 'react';
 import { createNavigationContainer } from '../react-navigation-native-container';
 
-import App from '../App/App';
+import AppNavigator from '../App/App';
 
-const AppNative = createNavigationContainer(App);
+const App = createNavigationContainer(AppNavigator);
 
-export default AppNative;
+export default App;

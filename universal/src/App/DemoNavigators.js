@@ -20,13 +20,13 @@ import { createBottomTabNavigator } from '../react-navigation-tabs';
 import { getTabBarLabel, getTabBarIcon } from '../App/tabBarConfig';
 
 const HomeTab = createStackNavigator({
-  HomeRoute: Home,
-  LessonRoute: Lesson,
+  Home: Home,
+  Lesson: Lesson,
 });
 
 const OverviewTab = createStackNavigator({
-  OverviewRoute: Overview,
-  LessonRoute: Lesson,
+  Overview: Overview,
+  Lesson: Lesson,
 });
 
 const SettingsTab = createStackNavigator({

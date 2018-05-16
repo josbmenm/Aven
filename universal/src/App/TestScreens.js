@@ -62,7 +62,7 @@ const createGenericScreen = (name, color, opts) => {
 export const Login = createGenericScreen('Login', '#3a3', {
   path: 'login',
   links: {
-    Login: { routeName: 'HomeRoute' },
+    'To Home': 'Home',
   },
 });
 
@@ -70,17 +70,17 @@ export const Home = createGenericScreen('Welcome', '#aa3', {
   path: '',
   links: {
     'Lesson A': {
-      routeName: 'LessonRoute',
+      routeName: 'Lesson',
       key: 'LessonA',
       params: { id: 'A' },
     },
     'Lesson B': {
-      routeName: 'LessonRoute',
+      routeName: 'Lesson',
       key: 'LessonB',
       params: { id: 'B' },
     },
     'Lesson C': {
-      routeName: 'LessonRoute',
+      routeName: 'Lesson',
       key: 'LessonC',
       params: { id: 'C' },
     },
@@ -91,17 +91,17 @@ export const Overview = createGenericScreen('Overview', '#c33', {
   path: 'overview',
   links: {
     'Lesson A': {
-      routeName: 'LessonRoute',
+      routeName: 'Lesson',
       key: 'LessonA',
       params: { id: 'A' },
     },
     'Lesson B': {
-      routeName: 'LessonRoute',
+      routeName: 'Lesson',
       key: 'LessonB',
       params: { id: 'B' },
     },
     'Lesson C': {
-      routeName: 'LessonRoute',
+      routeName: 'Lesson',
       key: 'LessonC',
       params: { id: 'C' },
     },
@@ -109,20 +109,20 @@ export const Overview = createGenericScreen('Overview', '#c33', {
 });
 
 export const Lesson = createGenericScreen('Lesson', '#33c', {
-  titleForParams: ({ id }) => `Lesson ${id}`,
+  titleForParams: ({ id }) => `Lesson ${id ? id : ''}`,
   links: {
     'Lesson A': {
-      routeName: 'LessonRoute',
+      routeName: 'Lesson',
       key: 'LessonA',
       params: { id: 'A' },
     },
     'Lesson B': {
-      routeName: 'LessonRoute',
+      routeName: 'Lesson',
       key: 'LessonB',
       params: { id: 'B' },
     },
     'Lesson C': {
-      routeName: 'LessonRoute',
+      routeName: 'Lesson',
       key: 'LessonC',
       params: { id: 'C' },
     },
@@ -132,18 +132,18 @@ export const Lesson = createGenericScreen('Lesson', '#33c', {
 export const LessonWithPushBug2 = createGenericScreen('Lesson', '#33c', {
   titleForParams: ({ id }) => `Lesson ${id}`,
   links: {
-    'Lesson A': { routeName: 'LessonRoute', params: { id: 'A' }, type: 'push' },
-    'Lesson B': { routeName: 'LessonRoute', params: { id: 'B' }, type: 'push' },
-    'Lesson C': { routeName: 'LessonRoute', params: { id: 'C' }, type: 'push' },
+    'Lesson A': { routeName: 'Lesson', params: { id: 'A' }, type: 'push' },
+    'Lesson B': { routeName: 'Lesson', params: { id: 'B' }, type: 'push' },
+    'Lesson C': { routeName: 'Lesson', params: { id: 'C' }, type: 'push' },
   },
 });
 
 export const LessonWithPushBug = createGenericScreen('Lesson', '#33c', {
   titleForParams: ({ id }) => `Lesson ${id}`,
   links: {
-    'Lesson A': { routeName: 'LessonRoute', params: { id: 'A' } },
-    'Lesson B': { routeName: 'LessonRoute', params: { id: 'B' } },
-    'Lesson C': { routeName: 'LessonRoute', params: { id: 'C' } },
+    'Lesson A': { routeName: 'Lesson', params: { id: 'A' } },
+    'Lesson B': { routeName: 'Lesson', params: { id: 'B' } },
+    'Lesson C': { routeName: 'Lesson', params: { id: 'C' } },
   },
 });
 
