@@ -4,11 +4,13 @@ import {
   StyleSheet,
   View,
   Text,
+  Image,
   Button,
   ImageBackground,
-  TouchableWithoutFeedback,
+  TouchableOpacity,
   TouchableHighlight,
 } from 'react-native';
+// import { TransitionView } from '../react-navigation-fluid';
 
 const ScrollContainer = ({ children, style }) => (
   <ScrollView
@@ -25,78 +27,36 @@ const ScrollContainer = ({ children, style }) => (
   />
 );
 
-const createGenericScreen = (name, color, opts) => {
-  class GenericScreen extends React.Component {
-    static path = opts.path;
-    static navigationOptions = ({ navigation }) => ({
-      headerTitle: opts.titleForParams
-        ? opts.titleForParams(navigation.state.params)
-        : name,
-    });
-    render() {
-      return (
-        <ScrollContainer
-          style={{
-            borderWidth: 25,
-            borderColor: color,
-          }}>
-          <Text style={{ color, fontSize: 42, textAlign: 'center' }}>
-            {opts.titleForParams
-              ? opts.titleForParams(this.props.navigation.state.params)
-              : name}
-          </Text>
-          {opts.links &&
-            Object.keys(opts.links).map(linkName => (
-              <View key={linkName} style={{ padding: 20 }}>
-                <Button
-                  title={linkName}
-                  onPress={() => {
-                    const link = opts.links[linkName];
-                    const { navigation } = this.props;
-                    if (typeof link === 'string') {
-                      navigation.navigate(link);
-                      return;
-                    }
-                    if (link.type === 'push') {
-                      navigation.push(link.routeName, link.params);
-                      return;
-                    }
-                    navigation.navigate({
-                      routeName: link.routeName,
-                      params: link.params,
-                      key: link.key,
-                    });
-                  }}
-                />
-              </View>
-            ))}
-        </ScrollContainer>
-      );
-    }
-  }
-  return GenericScreen;
-};
+const BackButtonHeader = ({ navigation }) => (
+  <View style={{ marginTop: 20 }}>
+    <TouchableOpacity
+      onPress={() => {
+        navigation.goBack();
+      }}>
+      <Text style={{ color: 'blue', fontSize: 24 }}>Back</Text>
+    </TouchableOpacity>
+  </View>
+);
 
-export const Login = createGenericScreen('Login', '#3a3', {
-  path: 'login',
-  links: {
-    Login: { routeName: 'HomeRoute' },
-  },
-});
+const LessonTitle = ({ children }) => (
+  <Text style={{ fontSize: 34, color: '#222', paddingBottom: 20 }}>
+    {children}
+  </Text>
+);
 
 const RealLessons = [
   {
-    id: 'AppArchitecture',
+    id: 'A',
     coverImage: require('./assets/AppArchitecture.png'),
     name: 'Intro to App Development',
   },
   {
-    id: 'FullStackData',
+    id: 'B',
     coverImage: require('./assets/FullStackData.png'),
     name: 'Full stack Data Management',
   },
   {
-    id: 'MobileOptimization',
+    id: 'C',
     coverImage: require('./assets/MobileOptimization.png'),
     name: 'Mobile App Optimization',
   },
@@ -110,29 +70,36 @@ export class Home extends React.Component {
     return (
       <ScrollContainer>
         {RealLessons.map(lesson => (
-          <View style={{ marginBottom: 20 }}>
-            <TouchableWithoutFeedback
+          <View style={{ marginBottom: 20 }} key={lesson.id}>
+            <TouchableOpacity
               onPress={() => {
                 this.props.navigation.navigate({
-                  routeName: 'LessonRoute',
+                  routeName: 'Lesson',
                   params: { id: lesson.id },
                   key: `Lesson-${lesson.id}`,
                 });
               }}>
-              <ImageBackground
-                source={lesson.coverImage}
+              <View
                 style={{
-                  aspectRatio: 1.5,
-                  marginBottom: 0,
-                  justifyContent: 'flex-end',
+                  width: 375,
+                  height: 375,
                 }}>
-                <View style={{ padding: 15, backgroundColor: '#0007' }}>
+                <LessonCoverImage lesson={lesson} />
+                <View
+                  style={{
+                    padding: 15,
+                    backgroundColor: '#0007',
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                  }}>
                   <Text style={{ color: 'white', fontSize: 32 }}>
                     {lesson.name}
                   </Text>
                 </View>
-              </ImageBackground>
-            </TouchableWithoutFeedback>
+              </View>
+            </TouchableOpacity>
           </View>
         ))}
       </ScrollContainer>
@@ -140,65 +107,59 @@ export class Home extends React.Component {
   }
 }
 
-export const Overview = createGenericScreen('Overview', '#c33', {
-  path: 'overview',
-  links: {
-    'Lesson A': { routeName: 'Lesson', key: 'LessonA', params: { id: 'A' } },
-    'Lesson B': { routeName: 'Lesson', key: 'LessonB', params: { id: 'B' } },
-    'Lesson C': { routeName: 'Lesson', key: 'LessonC', params: { id: 'C' } },
+const LessonCoverImage = ({ lesson }) => (
+  // <TransitionView shared={lesson.id}>
+  <Image source={lesson.coverImage} style={styles.lessonImage} />
+  // </TransitionView>
+);
+
+export const Lesson = ({ navigation }) => {
+  const lesson = RealLessons.find(l => l.id === navigation.getParam('id'));
+  return (
+    <ScrollContainer>
+      {/* <BackButtonHeader navigation={navigation} /> */}
+      <LessonTitle>{lesson.name}</LessonTitle>
+      <LessonCoverImage lesson={lesson} />
+      <Text>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+        mollit anim id est laborum.
+      </Text>
+      <Text>
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+        accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
+        illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+        explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut
+        odit aut fugit, sed quia consequuntur magni dolores eos qui ratione
+        voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum
+        quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam
+        eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat
+        voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam
+        corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?
+        Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse
+        quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo
+        voluptas nulla pariatur?
+      </Text>
+      <Text>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+        mollit anim id est laborum.
+      </Text>
+    </ScrollContainer>
+  );
+};
+
+const styles = StyleSheet.create({
+  lessonImage: {
+    width: 375,
+    height: 375,
   },
 });
-
-export const Lesson = createGenericScreen('Lesson', '#33c', {
-  titleForParams: ({ id }) => `Lesson ${id}`,
-  links: {
-    'Lesson A': { routeName: 'Lesson', key: 'LessonA', params: { id: 'A' } },
-    'Lesson B': { routeName: 'Lesson', key: 'LessonB', params: { id: 'B' } },
-    'Lesson C': { routeName: 'Lesson', key: 'LessonC', params: { id: 'C' } },
-  },
-});
-
-// export const Settings = createGenericScreen('Settings', '#333', {
-//   links: {
-//     'Account Settings': 'AccountSettings',
-//     'Privacy Settings': 'PrivacySettings',
-//     'Notification Settings': 'NotifSettings',
-//   },
-// });
-
-const SettingsScreens = ['AccountSettings', 'PrivacySettings', 'NotifSettings'];
-
-const SettingsListItem = ({ item, navigation }) => (
-  <TouchableHighlight
-    onPress={() => {
-      navigation.navigate(item);
-    }}>
-    <View>
-      <Text>{item}</Text>
-    </View>
-  </TouchableHighlight>
-);
-
-export class Settings extends React.Component {
-  render() {
-    return (
-      <ScrollContainer>
-        <Text>Settings</Text>
-        {SettingsScreens.map(setting => (
-          <SettingsListItem item={setting} navigation={this.props.navigation} />
-        ))}
-      </ScrollContainer>
-    );
-  }
-}
-export const AccountSettings = createGenericScreen(
-  'Account Settings',
-  '#3c3',
-  {},
-);
-export const PrivacySettings = createGenericScreen(
-  'Privacy Settings',
-  '#c33',
-  {},
-);
-export const NotifSettings = createGenericScreen('Notif Settings', '#33c', {});

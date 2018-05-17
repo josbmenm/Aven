@@ -7,8 +7,6 @@ import { handleServerRequest } from './react-navigation-web';
 
 import App from './AppWeb';
 
-import iconFont from './react-navigation-icons/fonts/Ionicons.ttf';
-
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 const server = express();
@@ -32,23 +30,6 @@ server
     const html = ReactDOMServer.renderToString(element);
     const css = ReactDOMServer.renderToStaticMarkup(getStyleElement());
 
-    const iconFontStyles = `@font-face {
-  src: url(${iconFont});
-  font-family: Ionicons;
-}`;
-
-    // // Create stylesheet
-    // const style = document.createElement('style');
-    // style.type = 'text/css';
-    // if (style.styleSheet) {
-    //   style.styleSheet.cssText = iconFontStyles;
-    // } else {
-    //   style.appendChild(document.createTextNode(iconFontStyles));
-    // }
-
-    // // Inject stylesheet
-    // document.head.appendChild(style);
-
     res.send(
       `<!doctype html>
     <html lang="">
@@ -64,7 +45,19 @@ server
           display: flex;
           flex-direction: column;
         }
-        ${iconFontStyles}
+        @font-face {
+          src: url('/fonts/Ionicons.ttf');
+          font-family: Ionicons;
+        }
+        @font-face {
+          src: url('/fonts/FontAwesome.ttf');
+          font-family: FontAwesome;
+        }
+
+        @font-face {
+          src: url('/PTSansRegular.ttf');
+          font-family: PTSans;
+        }
         </style>
         ${css}
         ${

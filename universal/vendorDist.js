@@ -81,6 +81,7 @@ const transforms = [
       'SceneView',
       'SwitchView',
       'createSwitchNavigator',
+      'withNavigation',
     ],
     ['invariant'],
   ),
@@ -321,6 +322,14 @@ const transforms = [
     },
   },
   {
+    fromFile: 'node_modules/react-navigation/src/views/withNavigation.js',
+    toFile: 'src/react-navigation-core/withNavigation.js',
+    importMap: {
+      '../utils/invariant': './invariant',
+    },
+    nonDefaultImportMap: {},
+  },
+  {
     fromFile:
       'node_modules/react-navigation/src/navigators/createKeyboardAwareNavigator.js',
     toFile: 'src/react-navigation-stack/createKeyboardAwareNavigator.js',
@@ -404,6 +413,7 @@ const transforms = [
       '../Header/Header': './Header',
     },
     nonDefaultImportMap: {
+      './withNavigation': '../react-navigation-core',
       './withOrientation': '../react-navigation-area-view',
       '../withOrientation': '../react-navigation-area-view',
       '../../NavigationActions': '../react-navigation-core',
@@ -636,10 +646,13 @@ const transforms = [
   },
 
   {
-    copyDirectory: 'node_modules/@expo/vector-icons/fonts',
-    toDirectory: 'src/react-navigation-native-icons/fonts',
+    copyDirectory: 'node_modules/react-native-vector-icons/fonts',
+    toDirectory: 'public/fonts',
   },
-
+  {
+    copyDirectory: 'node_modules/react-native-vector-icons/dist/glyphmaps',
+    toDirectory: 'src/react-navigation-icons/glyphmaps',
+  },
   {
     copyDirectory: 'node_modules/@expo/vector-icons/vendor',
     toDirectory: 'src/react-navigation-native-icons/vendor',
@@ -648,6 +661,33 @@ const transforms = [
     fromFile: 'node_modules/@expo/vector-icons/createIconSet.js',
     toFile: 'src/react-navigation-native-icons/createIconSet.js',
     importMap: {},
+    nonDefaultImportMap: {},
+  },
+
+  {
+    fromFile: 'node_modules/react-native-vector-icons/lib/tab-bar-item-ios.js',
+    toFile: 'src/react-navigation-icons/tab-bar-item-ios.js',
+    importMap: {
+      './react-native': 'react-native',
+    },
+    nonDefaultImportMap: {},
+  },
+
+  {
+    fromFile: 'node_modules/react-native-vector-icons/lib/icon-button.js',
+    toFile: 'src/react-navigation-icons/icon-button.js',
+    importMap: {
+      './react-native': 'react-native',
+    },
+    nonDefaultImportMap: {},
+  },
+
+  {
+    fromFile: 'node_modules/react-native-vector-icons/lib/toolbar-android.js',
+    toFile: 'src/react-navigation-icons/toolbar-android.js',
+    importMap: {
+      './react-native': 'react-native',
+    },
     nonDefaultImportMap: {},
   },
 

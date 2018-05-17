@@ -2,23 +2,23 @@ import React from 'react';
 
 import {
   Login,
-  Home,
   Overview,
-  Lesson,
   Settings,
   AccountSettings,
   PrivacySettings,
   NotifSettings,
 } from '../App/TestScreens';
+import { Home, Lesson } from '../App/RealScreens';
 
 import { createSwitchNavigator } from '../react-navigation-core';
 import { createFluidNavigator } from '../react-navigation-fluid';
 import { createStackNavigator } from '../react-navigation-stack';
 import { createBottomTabNavigator } from '../react-navigation-tabs';
-
+import { createLogin } from '../sassy-login';
 import { getTabBarLabel, getTabBarIcon } from '../App/tabBarConfig';
 
-const HomeTab = createStackNavigator({
+const HomeTab = createFluidNavigator({
+  // const HomeTab = createStackNavigator({
   Home,
   Lesson,
 });
@@ -28,7 +28,6 @@ const OverviewTab = createStackNavigator({
   Overview,
   Lesson,
 });
-OverviewTab.path = 'overview';
 
 const SettingsTab = createStackNavigator({
   Settings,
@@ -36,9 +35,8 @@ const SettingsTab = createStackNavigator({
   PrivacySettings,
   NotifSettings,
 });
-SettingsTab.path = 'settings';
 
-export const App = createBottomTabNavigator(
+export const Main = createBottomTabNavigator(
   {
     HomeTab,
     OverviewTab,
@@ -51,5 +49,10 @@ export const App = createBottomTabNavigator(
     }),
   },
 );
+
+const App = createSwitchNavigator({
+  Login: createLogin({}),
+  Main,
+});
 
 export default App;

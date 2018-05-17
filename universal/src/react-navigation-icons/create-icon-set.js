@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { NativeModules, Platform, PixelRatio, processColor, Text } from './react-native';
+import { NativeModules, Platform, PixelRatio, processColor, Text } from 'react-native';
 
 import createIconButtonComponent from './icon-button';
 import createTabBarItemIOSComponent from './tab-bar-item-ios';

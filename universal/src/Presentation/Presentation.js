@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import { StyleSheet, View, Text, Button, Image } from 'react-native';
 import { Home, Overview, Lesson, Login } from '../App/TestScreens';
 import {
   FullApp,
@@ -10,10 +10,16 @@ import {
   StackInSwitch,
   StacksInTabs,
 } from '../App/DemoNavigators';
+import { Ionicons, FontAwesome } from '../react-navigation-icons';
+import {
+  createFluidNavigator,
+  TransitionView,
+} from '../react-navigation-fluid';
 
 import {
   createSwitchNavigator,
   NavigationActions,
+  SwitchRouter,
 } from '../react-navigation-core';
 import { createStaticContainer } from '../react-navigation-static-container';
 
@@ -21,17 +27,78 @@ import SyntaxHighlighter from 'react-syntax-highlighter/prism';
 import { coy } from 'react-syntax-highlighter/styles/prism';
 const queryString = require('query-string');
 
-const SlideContainer = ({ children }) => (
+const styles = StyleSheet.create({
+  hContain: {
+    padding: 30,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+});
+
+const SlideContainer = ({ children, color }) => (
   <View
     style={{
       width: 1280,
       height: 720,
       borderColor: '#eee',
-      borderWidth: 20,
+      borderWidth: 1,
       justifyContent: 'center',
+      backgroundColor: color || 'white',
     }}
     children={children}
   />
+);
+
+const StyledText = props => (
+  <Text
+    {...props}
+    style={[{ color: '#222' }, props.style, { fontFamily: 'PTSans' }]}
+  />
+);
+
+const createLogoSlide = (IconsClass, icon, color, name) => ({ navigation }) => (
+  <SlideContainer>
+    <View
+      style={{
+        padding: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <IconsClass size={200} name={icon} color={color} />
+      <StyledText style={{ fontSize: 80, textAlign: 'center', color }}>
+        {name}
+      </StyledText>
+    </View>
+  </SlideContainer>
+);
+
+const createGithubSlide = name =>
+  createLogoSlide(Ionicons, 'logo-github', '#24292e', name);
+const createTwitterSlide = name =>
+  createLogoSlide(Ionicons, 'logo-twitter', '#006dbf', name);
+const createURLSlide = name =>
+  createLogoSlide(FontAwesome, 'anchor', '#704d7f', name);
+
+const NAV_COLOR = '#6b52ae';
+
+const createReactNavSlide = title => ({ navigation }) => (
+  <SlideContainer color={NAV_COLOR}>
+    <View
+      style={{
+        padding: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <Image
+        source={require('./navLogo.svg')}
+        resizeMode="contain"
+        style={{ height: 400, width: 400, marginBottom: 40 }}
+      />
+      <StyledText style={{ fontSize: 80, textAlign: 'center', color: 'white' }}>
+        {title}
+      </StyledText>
+    </View>
+  </SlideContainer>
 );
 
 const createTitleSlide = title => {
@@ -44,7 +111,9 @@ const createTitleSlide = title => {
               padding: 30,
               justifyContent: 'center',
             }}>
-            <Text style={{ fontSize: 80, textAlign: 'center' }}>{title}</Text>
+            <StyledText style={{ fontSize: 80, textAlign: 'center' }}>
+              {title}
+            </StyledText>
           </View>
         </SlideContainer>
       );
@@ -60,7 +129,7 @@ const createMultiTitleSlide = titles => {
         <SlideContainer>
           <View style={{ padding: 30, justifyContent: 'center' }}>
             {titles.map((title, i) => (
-              <Text
+              <StyledText
                 key={i}
                 style={{
                   fontSize: 80,
@@ -68,7 +137,7 @@ const createMultiTitleSlide = titles => {
                   textAlign: 'center',
                 }}>
                 {title}
-              </Text>
+              </StyledText>
             ))}
           </View>
         </SlideContainer>
@@ -78,14 +147,11 @@ const createMultiTitleSlide = titles => {
   return TitleSlide;
 };
 
-const CodeSlideCompanion = ({ Component, navigation, standalone }) =>
-  standalone ? (
+const CodeSlideCompanion = ({ Component, navigation }) => (
+  <PhoneView>
     <Component navigation={navigation} />
-  ) : (
-    <PhoneView>
-      <Component navigation={navigation} />
-    </PhoneView>
-  );
+  </PhoneView>
+);
 
 const createCodeSlide = (codeString, opts) => {
   class CodeSlide extends React.Component {
@@ -116,14 +182,14 @@ const createCodeSlide = (codeString, opts) => {
   return CodeSlide;
 };
 
-const RouteView = ({ route, isActive, isBold }) => {
+const RouteView = ({ route, isActive, isRoot, isBold }) => {
   const routes = route.routes && (
     <View style={{ padding: 10, flexDirection: 'row', flexWrap: 'wrap' }}>
       {route.routes.map((child, childIndex) => (
         <RouteView
           key={childIndex}
           route={child}
-          isActive={childIndex === route.index && isActive}
+          isActive={childIndex === route.index && (isActive || isRoot)}
           isBold={childIndex === route.index}
         />
       ))}
@@ -133,11 +199,11 @@ const RouteView = ({ route, isActive, isBold }) => {
   return (
     <View
       style={{
-        backgroundColor: isActive ? '#1156' : '#1115',
+        backgroundColor: isActive ? '#0089' : '#1116',
         margin: 10,
       }}>
       {route.routeName && (
-        <Text
+        <StyledText
           style={{
             color: 'white',
             fontSize: 32,
@@ -146,7 +212,7 @@ const RouteView = ({ route, isActive, isBold }) => {
           }}>
           {route.routeName}
           {route.params ? `?${queryString.stringify(route.params)}` : ''}
-        </Text>
+        </StyledText>
       )}
       {routes}
     </View>
@@ -154,7 +220,7 @@ const RouteView = ({ route, isActive, isBold }) => {
 };
 
 const NavStateView = ({ state }) => {
-  return <RouteView route={{ ...state, routeName: null }} isActive={true} />;
+  return <RouteView route={{ ...state, routeName: null }} isRoot={true} />;
 };
 
 const createStateSlide = opts => {
@@ -187,58 +253,68 @@ const createStateSlide = opts => {
   return StateSlide;
 };
 
-const createStateUrlSlide = (router, urls, initAction) => {
-  initAction = initAction || NavigationActions.init();
-  const urlActions = urls.map(({ path, params }) => {
-    return router.getActionForPathAndParams(path, params || {});
-  });
+const URLView = ({ url }) => (
+  <View style={{ margin: 20 }}>
+    {url && (
+      <Text style={{ fontSize: 48 }}>
+        my-app://{url.path}
+        {url.params ? `?${queryString.stringify(url.params)}` : ''}
+      </Text>
+    )}
+  </View>
+);
+
+// const SlideNavigator = createStateUrlSlide(App.router, {
+//   path: 'Lesson',
+//   params: { id: 'B' },
+// });
+
+const createStateUrlSlide = (exampleRouter, url, initAction) => {
+  const urlAction = exampleRouter.getActionForPathAndParams(
+    url.path,
+    url.params || {},
+  );
 
   class URLStateSlide extends React.Component {
     static router = {
-      getStateForAction(action, lastState) {
+      getStateForAction: (action, lastState) => {
         if (!lastState) {
-          const routerState = router.getStateForAction(initAction);
+          const exampleState = exampleRouter.getStateForAction(
+            initAction || NavigationActions.init(),
+          );
           return {
-            ...routerState,
-            actionIndex: 0,
+            ...exampleState,
+            hasHandledURL: false,
           };
         }
-        if (action.type === 'NextSlide') {
-          if (lastState.actionIndex < urlActions.length) {
-            const urlAction = urlActions[lastState.actionIndex];
-            return {
-              ...router.getStateForAction(urlAction, lastState),
-              actionIndex: lastState.actionIndex + 1,
-            };
-          }
+        if (
+          action.type === 'NextSlide' &&
+          !lastState.hasHandledURL &&
+          urlAction
+        ) {
+          const exampleState = exampleRouter.getStateForAction(
+            urlAction,
+            lastState,
+          );
+          return {
+            ...exampleState,
+            hasHandledURL: true,
+          };
         }
         return lastState;
       },
-      getPathAndParamsForState() {
-        return { path: '', params: {} };
-      },
-      getActionForPathAndParams: () => null,
+
+      getPathAndParamsForState: state => ({ path: '', params: {} }),
+
+      getActionForPathAndParams: (path, params) => null,
     };
     render() {
-      const { actionIndex } = this.props.navigation.state;
-      const url = urls[0];
+      const { state } = this.props.navigation;
       return (
         <SlideContainer>
-          <View
-            style={{
-              padding: 30,
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <View style={{ margin: 20 }}>
-              {url && (
-                <Text style={{ fontSize: 48 }}>
-                  my-app://{url.path}
-                  {url.params ? `?${queryString.stringify(url.params)}` : ''}
-                </Text>
-              )}
-            </View>
-            <NavStateView state={this.props.navigation.state} />
+          <View style={styles.hContain}>
+            <URLView url={url} />
+            <NavStateView state={state} />
           </View>
         </SlideContainer>
       );
@@ -258,9 +334,9 @@ const DemoScreen = ({ color, title }) => (
       flex: 1,
       justifyContent: 'center',
     }}>
-    <Text style={{ fontSize: 42, color: color, textAlign: 'center' }}>
+    <StyledText style={{ fontSize: 42, color: color, textAlign: 'center' }}>
       {title}
-    </Text>
+    </StyledText>
   </View>
 );
 
@@ -325,14 +401,13 @@ const PhonesDemoSlide = ({ children }) => (
 
 const preso = [];
 
-preso.push(createMainTitleSlide('Full Stack Navigation'));
+preso.push(createMainTitleSlide('Full Stack React Navigation'));
 
-preso.push(createTitleSlide('who is @ericvicenti'));
+preso.push(createReactNavSlide('React Navigation'));
+preso.push(createReactNavSlide('v2'));
+preso.push(createReactNavSlide('React Navigation'));
 
-preso.push(createTitleSlide('React Navigation'));
-preso.push(createTitleSlide('v2'));
-
-preso.push(createTitleSlide('Lets build an education app!'));
+preso.push(createTitleSlide('Lets build an app!'));
 
 preso.push(
   createCodeSlide(`
@@ -607,279 +682,6 @@ class LessonScreen extends React.Component {
 
 preso.push(createStateSlide({ Component: BasicStack }));
 
-preso.push(createTitleSlide('Composing Navigators'));
-
-preso.push(
-  createCodeSlide(`
-import {
-  createStackNavigator,
-  createSwitchNavigator,
-} from 'react-navigation';
-`),
-);
-preso.push(
-  createCodeSlide(
-    `
-const App = createSwitchNavigator({
-  Login,
-  Main: createStackNavigator({
-    Home,
-    Lesson,
-  }),
-});
-`,
-    { Component: StackInSwitch },
-  ),
-);
-
-preso.push(createStateSlide({ Component: StackInSwitch }));
-
-preso.push(createTitleSlide('Tab Navigator'));
-
-preso.push(
-  createCodeSlide(
-    `
-const App = createBottomTabNavigator({
-  HomeTab: createStackNavigator({
-    Home,
-    Lesson,
-  }),
-  OverviewTab: createStackNavigator({
-    Overview,
-    Lesson,
-  }),
-  SettingsTab: ...
-});
-`,
-    { Component: StacksInTabs },
-  ),
-);
-preso.push(createStateSlide({ Component: StacksInTabs }));
-
-preso.push(createTitleSlide('Custom Navigators'));
-
-preso.push(
-  createCodeSlide(`
-  const App = createSwitchNavigator({
-    Login,
-    Main,
-  });
-  `),
-);
-preso.push(
-  createCodeSlide(`
-  const App = createSwitchNavigator({
-    Login,
-    Main: CustomNavigator,
-  });
-  `),
-);
-
-preso.push(
-  createCodeSlide(`
-class CustomNavigator extends React.Component {
-  
-  render() {
-    return <MainNavigator />;
-  }
-
-}
-`),
-);
-
-preso.push(
-  createCodeSlide(`
-class CustomNavigator extends React.Component {
-
-  render() {
-    const {navigation} = this.props;
-    return <MainNavigator navigation={navigation} />;
-  }
-}
-`),
-);
-
-preso.push(
-  createCodeSlide(`
-class CustomNavigator extends React.Component {
-
-  static router = MainNavigator.router;
-
-  render() {
-    const {navigation} = this.props;
-    return <MainNavigator navigation={navigation} />;
-  }
-}
-`),
-);
-
-preso.push(createTitleSlide('Controlling Navigators'));
-
-preso.push(
-  createCodeSlide(`
-class MyNavigator extends React.Component {
-
-  static router = MainNavigator.router;
-  
-  render() {
-    const {navigation} = this.props;
-    return <MainNavigator navigation={navigation} />;
-  }
-}
-`),
-);
-
-preso.push(createTitleSlide('Navigation Containers'));
-
-preso.push(
-  createCodeSlide(`
-import {
-  createNavigationContainer
-} from 'react-navigation';
-
-const App = createNavigationContainer(MyNavigator);
-`),
-);
-
-preso.push(createTitleSlide('Composition Demo'));
-
-// at this time, show login sub-app installation
-
-// wait, nothing here is RN specific, it could run on web?
-
-// navigation behavior feels like mobile app still..
-
-// preso.push(createTitleSlide('Navigation Actions'));
-
-// preso.push(
-//   createCodeSlide(`
-// NavigationActions.navigate({
-//   routeName: 'OverviewTab'
-// });
-// `),
-// );
-
-// preso.push(
-//   createCodeSlide(`
-// this.props.navigation.dispatch(
-//   NavigationActions.navigate({
-//     routeName: 'OverviewTab'
-//   })
-// );
-// `),
-// );
-
-// preso.push(
-//   createCodeSlide(`
-// this.props.navigation.navigate('OverviewTab');
-// `),
-// );
-
-// preso.push(createTitleSlide('How Routers work'));
-
-// preso.push(
-//   createCodeSlide(`
-// const action = NavigationActions.navigate({
-//   routeName: 'OverviewTab'
-// });
-// `),
-// );
-
-// preso.push(
-//   createCodeSlide(`
-// const App = createSwitchNavigator({
-//   LoginRoute: LoginScreen,
-//   MainRoute: createTabNavigator({
-//     HomeTab: HomeStackNavigator,
-//     OverviewTab: OverviewStackNavigator,
-//   }),
-// });
-// `),
-// );
-
-// preso.push(
-//   createCodeSlide(`
-// App.router
-// `),
-// );
-// preso.push(
-//   createCodeSlide(`
-// App.router.getStateForAction(action, lastState);
-// `),
-// );
-// preso.push(
-//   createCodeSlide(`
-// state = App.router.getStateForAction(action, lastState);
-// `),
-// );
-
-preso.push(createTitleSlide('Mobile URL Handling'));
-
-preso.push(
-  createCodeSlide(`
-my-app://
-`),
-);
-
-preso.push(
-  createCodeSlide(`
-my-app://Login
-`),
-);
-
-preso.push(
-  createCodeSlide(`
-my-app://HomeTab/Lesson
-`),
-);
-
-preso.push(
-  createCodeSlide(`
-my-app://HomeTab/Lesson?id=A
-`),
-);
-
-preso.push(createTitleSlide('URLs open on cold start'));
-
-preso.push(
-  createStateUrlSlide(StacksInTabs.router, [
-    { path: 'HomeTab/Lesson', params: { id: 'B' } },
-  ]),
-);
-
-preso.push(createTitleSlide('URLs change state when app is open'));
-
-preso.push(
-  createStateUrlSlide(
-    StacksInTabs.router,
-    [{ path: 'OverviewTab/Lesson', params: { id: 'A' } }],
-    NavigationActions.navigate({
-      routeName: 'HomeTab',
-      action: NavigationActions.navigate({
-        routeName: 'Lesson',
-        params: { id: 'B' },
-      }),
-    }),
-  ),
-);
-
-preso.push(createMultiTitleSlide(['URLs change the state']));
-preso.push(
-  createMultiTitleSlide(['URLs change the state,', "they don't define it"]),
-);
-
-preso.push(createTitleSlide('URLs are actions!'));
-preso.push(createMultiTitleSlide(['URLs']));
-preso.push(createMultiTitleSlide(['URLs', 'are']));
-preso.push(createMultiTitleSlide(['URLs', 'are', 'actions!']));
-preso.push(createMultiTitleSlide(['URLs are navigation actions!']));
-preso.push(
-  createMultiTitleSlide([
-    'URLs are navigation actions!',
-    ',NOT navigation state',
-  ]),
-);
-
 preso.push(createTitleSlide('Navigation Actions'));
 
 preso.push(
@@ -931,6 +733,131 @@ this.props.navigation.dispatch(
 `),
 );
 
+preso.push(createTitleSlide('Composing Navigators'));
+
+preso.push(
+  createCodeSlide(`
+import {
+  createStackNavigator,
+  createSwitchNavigator,
+} from 'react-navigation';
+`),
+);
+preso.push(
+  createCodeSlide(
+    `
+const App = createSwitchNavigator({
+  Login,
+  Main: createStackNavigator({
+    Home,
+    Lesson,
+  }),
+});
+`,
+    { Component: StackInSwitch },
+  ),
+);
+
+preso.push(createStateSlide({ Component: StackInSwitch }));
+
+preso.push(createTitleSlide('Tab Navigator'));
+
+preso.push(
+  createCodeSlide(
+    `
+const App = createBottomTabNavigator({
+  HomeTab: createStackNavigator({
+    Home,
+    Lesson,
+  }),
+  OverviewTab: createStackNavigator({
+    Overview,
+    Lesson,
+  }),
+  SettingsTab: ...
+});
+`,
+    { Component: StacksInTabs },
+  ),
+);
+preso.push(createStateSlide({ Component: StacksInTabs }));
+
+preso.push(createTitleSlide('Demo'));
+
+// App.js - Show implementation
+// App.js - Wrap with switch and login
+// realize not web-specific, show on web client
+// server rendering
+// investigate behavior on web
+
+preso.push(createTitleSlide('Mobile URL Handling'));
+
+preso.push(
+  createCodeSlide(`
+my-app://
+`),
+);
+
+preso.push(
+  createCodeSlide(`
+my-app://Login
+`),
+);
+
+preso.push(
+  createCodeSlide(`
+my-app://HomeTab/Lesson
+`),
+);
+
+preso.push(
+  createCodeSlide(`
+my-app://HomeTab/Lesson?id=A
+`),
+);
+
+preso.push(createTitleSlide('URLs open on fresh start'));
+
+preso.push(
+  createStateUrlSlide(StacksInTabs.router, {
+    path: 'HomeTab/Lesson',
+    params: { id: 'B' },
+  }),
+);
+
+preso.push(createTitleSlide('URLs change state when app is open'));
+
+preso.push(
+  createStateUrlSlide(
+    StacksInTabs.router,
+    { path: 'OverviewTab/Lesson', params: { id: 'A' } },
+    NavigationActions.navigate({
+      routeName: 'HomeTab',
+      action: NavigationActions.navigate({
+        routeName: 'Lesson',
+        params: { id: 'B' },
+      }),
+    }),
+  ),
+);
+
+preso.push(createMultiTitleSlide(['URLs change the state']));
+preso.push(
+  createMultiTitleSlide(['URLs change the state,', "they don't define it"]),
+);
+
+preso.push(createTitleSlide('URLs are actions!'));
+preso.push(createMultiTitleSlide(['URLs']));
+preso.push(createMultiTitleSlide(['URLs', 'are']));
+preso.push(createMultiTitleSlide(['URLs', 'are', 'actions!']));
+preso.push(createMultiTitleSlide(['URLs are navigation actions!']));
+preso.push(
+  createMultiTitleSlide([
+    'URLs are navigation actions!',
+    ',NOT navigation state',
+  ]),
+);
+
 preso.push(createTitleSlide('Routers manage navigation state'));
 
 preso.push(createTitleSlide('Routers have navigation state reducers!'));
@@ -941,24 +868,153 @@ preso.push(createTitleSlide('Routers define navigation state behavior'));
 
 preso.push(createTitleSlide('Routers also define URL behavior'));
 
-preso.push(createTitleSlide('Demo Sassy Login'));
-preso.push(createTitleSlide('Demo Web Layout'));
+preso.push(createTitleSlide('Custom Navigators'));
 
-preso.push(createTitleSlide('Community Navigators & Routers'));
 preso.push(
-  createTitleSlide('https://github.com/react-navigation/react-navigation-tabs'),
+  createCodeSlide(`
+  const App = createSwitchNavigator({
+    Login,
+    Main,
+  });
+  `),
+);
+preso.push(
+  createCodeSlide(`
+  const App = createSwitchNavigator({
+    Login,
+    Main: CustomNavigator,
+  });
+  `),
 );
 
 preso.push(
-  createMultiTitleSlide(['https://github.com/fram-x/FluidTransitions']),
+  createCodeSlide(`
+class CustomNavigator extends React.Component {
+  
+  render() {
+    const { state } = this.props.navigation;
+    return <Something state={state} />;
+  }
+
+}
+`),
 );
 
-preso.push(createMultiTitleSlide(['github.com/ericvicenti/universe']));
-preso.push(createMultiTitleSlide(['reactnavigation.org', '@reactnavigation']));
+preso.push(
+  createCodeSlide(`
+class CustomNavigator extends React.Component {
 
-preso.push(createMultiTitleSlide(['@ericvicenti']));
+  static router = {...};
 
-preso.push(createTitleSlide('Go forth, navigate on every platform,'));
+  render() {
+    const { state } = this.props.navigation;
+    return <Something state={state} />;
+  }
+}
+`),
+);
+
+preso.push(
+  createCodeSlide(`
+const router = {
+  getStateForAction(action, lastState) {
+    if (action.type === 'MyAction') {
+      // custom navigation logic here
+    }
+    return lastState || INIT_STATE;
+  }
+}
+`),
+);
+
+preso.push(
+  createCodeSlide(`
+class CustomNavigator extends React.Component {
+
+  static router = MainNavigator.router;
+
+  render() {
+    const {navigation} = this.props;
+    return <MainNavigator navigation={navigation} />;
+  }
+}
+`),
+);
+
+preso.push(
+  createCodeSlide(`
+const router = {
+  ...MyNavigator.router,
+  getStateForAction(action, lastState) {
+    if (action.type === 'MyAction') {
+      // custom navigation logic here
+    }
+    return MyNavigator.router.getStateForAction(action, lastState);
+  }
+}
+`),
+);
+
+preso.push(createTitleSlide('Controlling Navigators'));
+
+preso.push(
+  createCodeSlide(`
+class MyNavigator extends React.Component {
+
+  static router = MainNavigator.router;
+  
+  render() {
+    const {navigation} = this.props;
+    return <MainNavigator navigation={navigation} />;
+  }
+}
+`),
+);
+
+preso.push(createTitleSlide('Navigation Containers'));
+
+preso.push(
+  createCodeSlide(`
+import {
+  createNavigationContainer
+} from 'react-navigation';
+
+const App = createNavigationContainer(MyNavigator);
+`),
+);
+
+preso.push(createTitleSlide('Demo'));
+preso.push(createTitleSlide('This is it!'));
+
+preso.push(
+  createStateUrlSlide(StacksInTabs.router, {
+    path: 'Lesson',
+    params: { id: 'B' },
+  }),
+);
+
+preso.push(createGithubSlide('react-navigation'));
+
+preso.push(createTwitterSlide('@reactnavigation'));
+
+preso.push(createURLSlide('reactnavigation.org'));
+
+preso.push(createTitleSlide('Community Navigators'));
+
+preso.push(createGithubSlide('fram-x/FluidTransitions')); // christian falch
+
+preso.push(createTitleSlide('Demo'));
+
+preso.push(createTitleSlide('Community Navigators'));
+
+preso.push(createTitleSlide('Demo'));
+
+preso.push(createGithubSlide('ericvicenti/universe'));
+preso.push(createTwitterSlide('@ericvicenti'));
+preso.push(createURLSlide('aven.io'));
+
+preso.push(createReactNavSlide(''));
+preso.push(createReactNavSlide('Thank you!'));
 
 const slideRouteConfigs = {};
 preso.forEach((slide, slideIndex) => {
@@ -966,16 +1022,16 @@ preso.forEach((slide, slideIndex) => {
   slideRouteConfigs[`Slide${slideIndex}`] = slide;
 });
 
-const PresoSwitch = createSwitchNavigator(slideRouteConfigs);
+const PresoNavigator = createSwitchNavigator(slideRouteConfigs);
 
 const PresoRouter = {
-  ...PresoSwitch.router,
+  ...PresoNavigator.router,
   getStateForAction(action, lastState) {
     if (lastState) {
       const activeRoute = lastState.routes[lastState.index];
       const childComponent =
         activeRoute.routeName &&
-        PresoSwitch.router.getComponentForRouteName(activeRoute.routeName);
+        PresoNavigator.router.getComponentForRouteName(activeRoute.routeName);
       const childRouter = childComponent && childComponent.router;
       const newRoute =
         childRouter && childRouter.getStateForAction(action, activeRoute);
@@ -994,17 +1050,17 @@ const PresoRouter = {
         routeName: `Slide${lastState.index + 1}`,
       });
       console.log(nextAction);
-      return PresoSwitch.router.getStateForAction(nextAction, lastState);
+      return PresoNavigator.router.getStateForAction(nextAction, lastState);
     }
     if (action.type === 'PrevSlide') {
       const prevAction = NavigationActions.navigate({
         routeName: `Slide${lastState.index - 1}`,
       });
       console.log(prevAction);
-      return PresoSwitch.router.getStateForAction(prevAction, lastState);
+      return PresoNavigator.router.getStateForAction(prevAction, lastState);
     }
     if (action.type === 'ResetSlide') {
-      return PresoSwitch.router.getStateForAction(
+      return PresoNavigator.router.getStateForAction(
         NavigationActions.navigate({ routeName: 'Slide0' }),
         lastState,
       );
@@ -1014,11 +1070,11 @@ const PresoRouter = {
       // todo
     }
 
-    return PresoSwitch.router.getStateForAction(action, lastState);
+    return PresoNavigator.router.getStateForAction(action, lastState);
   },
   getScreenOptions(childNavigation) {
     return {
-      ...PresoSwitch.router.getScreenOptions(childNavigation),
+      ...PresoNavigator.router.getScreenOptions(childNavigation),
       title: `Navigation ${childNavigation.state.routeName}`,
     };
   },
@@ -1071,7 +1127,7 @@ class Presentation extends React.Component {
     };
   }
   render() {
-    return <PresoSwitch navigation={this.props.navigation} />;
+    return <PresoNavigator navigation={this.props.navigation} />;
   }
 }
 
