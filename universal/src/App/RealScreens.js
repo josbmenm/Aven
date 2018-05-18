@@ -109,14 +109,16 @@ export class Home extends React.Component {
 }
 
 const LessonCoverImage = ({ lesson }) => (
-  <Image source={lesson.coverImage} style={styles.lessonImage} />
+  <TransitionView shared={lesson.id}>
+    <Image source={lesson.coverImage} style={styles.lessonImage} />
+  </TransitionView>
 );
 
 export const Lesson = ({ navigation }) => {
   const lesson = RealLessons.find(l => l.id === navigation.getParam('id'));
   return (
     <ScrollContainer>
-      {/* <BackButtonHeader navigation={navigation} /> */}
+      <BackButtonHeader navigation={navigation} />
       <LessonTitle>{lesson.name}</LessonTitle>
       <LessonCoverImage lesson={lesson} />
       <Text>

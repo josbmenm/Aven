@@ -13,9 +13,9 @@ import {
   PrivacySettings,
   NotifSettings,
 } from '../App/TestScreens';
-import { Home, Lesson } from '../App/TestScreens';
+import { Home, Lesson } from '../App/RealScreens';
 
-const HomeTab = createStackNavigator({
+const HomeTab = createFluidNavigator({
   Home,
   Lesson,
 });
@@ -33,7 +33,7 @@ const SettingsTab = createStackNavigator({
   NotifSettings,
 });
 
-const App = createBottomTabNavigator(
+export const Main = createBottomTabNavigator(
   {
     HomeTab,
     OverviewTab,
@@ -46,5 +46,10 @@ const App = createBottomTabNavigator(
     }),
   },
 );
+
+const App = createSwitchNavigator({
+  Login: createLogin({}),
+  Main,
+});
 
 export default App;
