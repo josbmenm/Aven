@@ -9,8 +9,9 @@ import {
   ImageBackground,
   TouchableOpacity,
   TouchableHighlight,
+  TouchableWithoutFeedback,
 } from 'react-native';
-// import { TransitionView } from '../react-navigation-fluid';
+import { TransitionView } from '../react-navigation-fluid';
 
 const ScrollContainer = ({ children, style }) => (
   <ScrollView
@@ -71,7 +72,7 @@ export class Home extends React.Component {
       <ScrollContainer>
         {RealLessons.map(lesson => (
           <View style={{ marginBottom: 20 }} key={lesson.id}>
-            <TouchableOpacity
+            <TouchableWithoutFeedback
               onPress={() => {
                 this.props.navigation.navigate({
                   routeName: 'Lesson',
@@ -99,7 +100,7 @@ export class Home extends React.Component {
                   </Text>
                 </View>
               </View>
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
           </View>
         ))}
       </ScrollContainer>
@@ -108,9 +109,7 @@ export class Home extends React.Component {
 }
 
 const LessonCoverImage = ({ lesson }) => (
-  // <TransitionView shared={lesson.id}>
   <Image source={lesson.coverImage} style={styles.lessonImage} />
-  // </TransitionView>
 );
 
 export const Lesson = ({ navigation }) => {

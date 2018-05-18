@@ -1,5 +1,10 @@
 import React from 'react';
-
+import { createSwitchNavigator } from '../react-navigation-core';
+import { createFluidNavigator } from '../react-navigation-fluid';
+import { createStackNavigator } from '../react-navigation-stack';
+import { createBottomTabNavigator } from '../react-navigation-tabs';
+import { createLogin } from '../sassy-login';
+import { getTabBarLabel, getTabBarIcon } from '../App/tabBarConfig';
 import {
   Login,
   Overview,
@@ -8,17 +13,9 @@ import {
   PrivacySettings,
   NotifSettings,
 } from '../App/TestScreens';
-import { Home, Lesson } from '../App/RealScreens';
+import { Home, Lesson } from '../App/TestScreens';
 
-import { createSwitchNavigator } from '../react-navigation-core';
-import { createFluidNavigator } from '../react-navigation-fluid';
-import { createStackNavigator } from '../react-navigation-stack';
-import { createBottomTabNavigator } from '../react-navigation-tabs';
-import { createLogin } from '../sassy-login';
-import { getTabBarLabel, getTabBarIcon } from '../App/tabBarConfig';
-
-const HomeTab = createFluidNavigator({
-  // const HomeTab = createStackNavigator({
+const HomeTab = createStackNavigator({
   Home,
   Lesson,
 });
@@ -36,7 +33,7 @@ const SettingsTab = createStackNavigator({
   NotifSettings,
 });
 
-export const Main = createBottomTabNavigator(
+const App = createBottomTabNavigator(
   {
     HomeTab,
     OverviewTab,
@@ -49,10 +46,5 @@ export const Main = createBottomTabNavigator(
     }),
   },
 );
-
-const App = createSwitchNavigator({
-  Login: createLogin({}),
-  Main,
-});
 
 export default App;

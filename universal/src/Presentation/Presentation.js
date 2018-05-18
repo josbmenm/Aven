@@ -40,8 +40,6 @@ const SlideContainer = ({ children, color }) => (
     style={{
       width: 1280,
       height: 720,
-      borderColor: '#eee',
-      borderWidth: 1,
       justifyContent: 'center',
       backgroundColor: color || 'white',
     }}
@@ -800,18 +798,6 @@ my-app://
 
 preso.push(
   createCodeSlide(`
-my-app://Login
-`),
-);
-
-preso.push(
-  createCodeSlide(`
-my-app://HomeTab/Lesson
-`),
-);
-
-preso.push(
-  createCodeSlide(`
 my-app://HomeTab/Lesson?id=A
 `),
 );
@@ -858,13 +844,11 @@ preso.push(
   ]),
 );
 
-preso.push(createTitleSlide('Routers manage navigation state'));
+preso.push(createTitleSlide('Navigation Routers'));
 
 preso.push(createTitleSlide('Routers have navigation state reducers!'));
 
 preso.push(createCodeSlide(`router.getStateForAction(action, lastState)`));
-
-preso.push(createTitleSlide('Routers define navigation state behavior'));
 
 preso.push(createTitleSlide('Routers also define URL behavior'));
 
