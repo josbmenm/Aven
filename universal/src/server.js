@@ -1,6 +1,5 @@
 import express from 'express';
 import ReactDOMServer from 'react-dom/server';
-import React from 'react';
 import { AppRegistry } from 'react-native';
 
 import { handleServerRequest } from './react-navigation-web';

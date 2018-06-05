@@ -54,7 +54,6 @@ const transforms = [
   {
     fromRawJSON: {
       name: '@react-navigation/core',
-      subdependencies: ['react', 'path-to-regexp', 'create-react-context'],
     },
     toFile: 'src/react-navigation-core/subpackage.json',
   },
@@ -250,7 +249,6 @@ const transforms = [
     toFile: 'src/react-navigation-native-container/subpackage.json',
     fromRawJSON: {
       name: '@react-navigation/native-container',
-      subDependencies: ['react', 'react-native', 'react-lifecycles-compat'],
     },
   },
   makeIndex('src/react-navigation-native-container/index.js', [
@@ -286,7 +284,7 @@ const transforms = [
   },
   { makeDirectory: 'src/react-navigation-stack' },
   {
-    // for now, copy PlatformHelpers to stack and native container
+    // for now, copy PlatformHelpers to both stack and native container
     fromFile: 'node_modules/react-navigation/src/PlatformHelpers.native.js',
     toFile: 'src/react-navigation-stack/PlatformHelpers.js',
     importMap: {},
@@ -295,12 +293,6 @@ const transforms = [
     toFile: 'src/react-navigation-stack/subpackage.json',
     fromRawJSON: {
       name: '@react-navigation/stack',
-      subDependencies: [
-        'react',
-        'react-native',
-        'hoist-non-react-statics',
-        'clamp', // header needs this
-      ],
     },
   },
   makeIndex('src/react-navigation-stack/index.js', [
@@ -520,7 +512,6 @@ const transforms = [
     toFile: 'src/react-navigation-area-view/subpackage.json',
     fromRawJSON: {
       name: '@react-navigation/area-view',
-      subDependencies: ['react', 'react-native', 'hoist-non-react-statics'],
     },
   },
   makeIndex('src/react-navigation-area-view/index.js', [
@@ -543,7 +534,6 @@ const transforms = [
     toFile: 'src/react-navigation-tabs/subpackage.json',
     fromRawJSON: {
       name: '@react-navigation/tabs',
-      subDependencies: ['react', 'react-native', 'hoist-non-react-statics'],
     },
   },
   makeIndex('src/react-navigation-tabs/index.js', ['createBottomTabNavigator']),
@@ -602,7 +592,6 @@ const transforms = [
   //   toFile: 'src/react-navigation-native/subpackage.json',
   //   fromRawJSON: {
   //     name: '@react-navigation/native',
-  //     subDependencies: [],
   //   },
   // },
   // makeIndex('src/react-navigation-native/index.js', [
@@ -630,11 +619,6 @@ const transforms = [
     toFile: 'src/react-navigation-native-icons/subpackage.json',
     fromRawJSON: {
       name: '@react-navigation/native-icons',
-      subDependencies: [
-        'react',
-        'react-native',
-        'expo', // ??
-      ],
     },
   },
   makeIndex('src/react-navigation-native-icons/index.js', ['Ionicons']),
@@ -696,7 +680,6 @@ const transforms = [
     toFile: 'src/react-navigation-fluid/subpackage.json',
     fromRawJSON: {
       name: '@react-navigation/fluid',
-      subDependencies: ['react', 'react-native', 'clamp', 'prop-types'],
     },
   },
   makeIndex('src/react-navigation-fluid/index.js', [
