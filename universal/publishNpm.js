@@ -37,7 +37,6 @@ function publishModule(moduleName) {
         const relativeRef = relative(subModulePath, join(filePath, lastImport));
         const isRepoDep = !relativeRef.match(/\//);
         const newImport = isRepoDep ? REPO_DEP_NAMES[relativeRef] : lastImport;
-        console.log('heyo', { lastImport, relativeRef, newImport, isRepoDep });
         isRepoDep && repoDeps.add(relativeRef);
         return newImport;
       }
