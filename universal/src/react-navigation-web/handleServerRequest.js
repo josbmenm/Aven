@@ -1,7 +1,4 @@
-import {
-  NavigationActions,
-  createChildNavigationGetter,
-} from '../react-navigation-core';
+import { NavigationActions, getNavigation } from '../react-navigation-core';
 
 export default function handleServerRequest(
   Router,
@@ -17,17 +14,15 @@ export default function handleServerRequest(
   // Get state from reducer
   const navigationState = Router.getStateForAction(navigationAction);
   // Prepare top-level navigation prop
-  const navigation = {
-    state: navigationState,
-    addListener: () => {},
-    dispatch: () => {},
-    isFocused: () => true,
-    router: Router,
-    getScreenProps: () => {},
-    getChildNavigation: childKey =>
-      createChildNavigationGetter(navigation, childKey),
-  };
-
+  const actionSubscribers = new Set();
+  const navigation = getNavigation(
+    Router,
+    navigationState,
+    () => {},
+    actionSubscribers,
+    () => ({}),
+    () => navigation,
+  );
   // Get title from active screen options
   const activeKey = navigationState.routes[navigationState.index].key;
   const activeChildNavigation = navigation.getChildNavigation(activeKey);

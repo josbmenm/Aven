@@ -64,18 +64,16 @@ const transforms = [
 
       'NavigationActions',
       'StackActions',
-      'DrawerActions',
 
       'StackRouter',
       'SwitchRouter',
       'TabRouter',
-      // 'DrawerRouter',
 
       'NavigationContext',
       'NavigationProvider',
       'NavigationConsumer',
       'getNavigationActionCreators',
-      'createChildNavigationGetter',
+      'getNavigation',
 
       'SceneView',
       'SwitchView',
@@ -87,7 +85,9 @@ const transforms = [
   {
     fromFile: 'node_modules/react-navigation/src/navigators/createNavigator.js',
     toFile: 'src/react-navigation-core/createNavigator.js',
-    importMap: {},
+    importMap: {
+      '../getChildEventSubscriber': './getChildEventSubscriber',
+    },
   },
   {
     fromFile: 'node_modules/react-navigation/src/routers/createConfigGetter.js',
@@ -204,11 +204,6 @@ const transforms = [
     importMap: {},
   },
   {
-    fromFile: 'node_modules/react-navigation/src/routers/DrawerActions.js',
-    toFile: 'src/react-navigation-core/DrawerActions.js',
-    importMap: {},
-  },
-  {
     fromFile:
       'node_modules/react-navigation/src/routers/getNavigationActionCreators.js',
     toFile: 'src/react-navigation-core/getNavigationActionCreators.js',
@@ -232,9 +227,20 @@ const transforms = [
     importMap: { '../utils/invariant': './invariant' },
   },
   {
-    fromFile:
-      'node_modules/react-navigation/src/createChildNavigationGetter.js',
-    toFile: 'src/react-navigation-core/createChildNavigationGetter.js',
+    fromFile: 'node_modules/react-navigation/src/getNavigation.js',
+    toFile: 'src/react-navigation-core/getNavigation.js',
+    importMap: {
+      './routers/getNavigationActionCreators': './getNavigationActionCreators',
+    },
+  },
+  {
+    fromFile: 'node_modules/react-navigation/src/getChildNavigation.js',
+    toFile: 'src/react-navigation-core/getChildNavigation.js',
+    importMap: { './utils/invariant': './invariant' },
+  },
+  {
+    fromFile: 'node_modules/react-navigation/src/getChildRouter.js',
+    toFile: 'src/react-navigation-core/getChildRouter.js',
   },
   {
     fromFile: 'node_modules/react-navigation/src/utils/invariant.js',
@@ -270,6 +276,7 @@ const transforms = [
       './utils/docsUrl': './docsUrl',
     },
     nonDefaultImportMap: {
+      './getNavigation': '../react-navigation-core',
       './createChildNavigationGetter': '../react-navigation-core',
       './utils/invariant': '../react-navigation-core',
       './routers/getNavigationActionCreators': '../react-navigation-core',

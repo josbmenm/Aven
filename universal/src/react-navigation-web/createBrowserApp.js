@@ -1,10 +1,6 @@
 import { createBrowserHistory } from 'history';
 import React from 'react';
-import {
-  NavigationActions,
-  createChildNavigationGetter,
-  getNavigationActionCreators,
-} from '../react-navigation-core';
+import { NavigationActions, getNavigation } from '../react-navigation-core';
 const queryString = require('query-string');
 
 const history = createBrowserHistory();
@@ -52,45 +48,46 @@ export default function createBrowserApp(App) {
   class WebApp extends React.Component {
     state = { nav: App.router.getStateForAction(initAction) };
     _title = document.title;
+    _actionEventSubscribers = new Set();
     componentDidMount() {
       setHistoryListener(this._dispatch);
+      this._actionEventSubscribers.forEach(subscriber =>
+        subscriber({
+          type: 'action',
+          action: initAction,
+          state: this.state.nav,
+          lastState: null,
+        }),
+      );
     }
     componentDidUpdate() {
       document.title = this._title;
     }
     render() {
-      const state = this.state.nav;
-      this._navigation = {
-        state,
-        dispatch: this._dispatch,
-        addListener: () => {},
-        router: App.router,
-        getScreenProps: () => this.props.screenProps,
-        getChildNavigation: childKey =>
-          createChildNavigationGetter(this._navigation, childKey),
-      };
-      const activeKey = state.routes[state.index].key;
-      const activeChildNavigation = this._navigation.getChildNavigation(
-        activeKey,
+      this._navigation = getNavigation(
+        App.router,
+        this.state.nav,
+        this._dispatch,
+        this._actionEventSubscribers,
+        () => this.props.screenProps,
+        () => this._navigation,
       );
-      const options = App.router.getScreenOptions(activeChildNavigation);
-      this._title = options.title || options.headerTitle;
-
-      const actionCreators = getNavigationActionCreators(
-        this._navigation.state,
-      );
-
-      Object.keys(actionCreators).forEach(actionName => {
-        this._navigation[actionName] = (...args) =>
-          this._navigation.dispatch(actionCreators[actionName](...args));
-      });
-
       return <App navigation={this._navigation} />;
     }
     _dispatch = action => {
-      const newState = App.router.getStateForAction(action, this.state.nav);
-      if (newState && newState !== this.state.nav) {
-        this.setState({ nav: newState });
+      const lastState = this.state.nav;
+      const newState = App.router.getStateForAction(action, lastState);
+      const dispatchEvents = () =>
+        this._actionEventSubscribers.forEach(subscriber =>
+          subscriber({
+            type: 'action',
+            action,
+            state: newState,
+            lastState,
+          }),
+        );
+      if (newState && newState !== lastState) {
+        this.setState({ nav: newState }, dispatchEvents);
         const pathAndParams =
           App.router.getPathAndParamsForState &&
           App.router.getPathAndParamsForState(newState);
@@ -105,6 +102,8 @@ export default function createBrowserApp(App) {
             )}`,
           );
         }
+      } else {
+        dispatchEvents();
       }
     };
   }
