@@ -61,6 +61,11 @@ export default function createBrowserApp(App) {
       );
     }
     componentDidUpdate() {
+      const { state, getChildNavigation } = this._navigation;
+      const childKey = state.routes[state.index].key;
+      const activeNav = this._navigation.getChildNavigation(childKey);
+      const opts = App.router.getScreenOptions(activeNav);
+      this._title = opts.title || opts.headerTitle;
       document.title = this._title;
     }
     render() {
