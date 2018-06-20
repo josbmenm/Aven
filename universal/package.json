@@ -1,6 +1,6 @@
 {
   "name": "universal-app",
-  "version": "0.0.0-alpha.7",
+  "version": "0.0.0-alpha.8",
   "react-native": "src/AppNative/index",
   "scripts": {
     "start": "npm run ios",
@@ -48,14 +48,10 @@
     "react-native-vector-icons": "^4.6.0",
     "react-native-web": "^0.6.0",
     "react-native-web-vector-icons": "^4.4.3",
-    "react-navigation":
-      "https://github.com/react-navigation/react-navigation.git#@ericvicenti/universe",
-    "react-navigation-fluid-transition":
-      "https://github.com/ericvicenti/FluidTransitions.git#container-independent",
-    "react-navigation-fluid-transitions":
-      "https://github.com/ericvicenti/FluidTransitions.git#container-independent",
-    "react-navigation-tabs":
-      "https://github.com/react-navigation/react-navigation-tabs.git#@ericvicenti/isolate-container",
+    "react-navigation": "https://github.com/react-navigation/react-navigation.git#@ericvicenti/universe",
+    "react-navigation-fluid-transition": "https://github.com/ericvicenti/FluidTransitions.git#container-independent",
+    "react-navigation-fluid-transitions": "https://github.com/ericvicenti/FluidTransitions.git#container-independent",
+    "react-navigation-tabs": "https://github.com/react-navigation/react-navigation-tabs.git#@ericvicenti/isolate-container",
     "react-syntax-highlighter": "^7.0.4"
   },
   "devDependencies": {
@@ -78,13 +74,20 @@
     "notify": true,
     "preset": "react-native",
     "testRegex": "./src/.*\\-test\\.js$",
-    "setupFiles": ["<rootDir>/jest-setup.js"],
-    "modulePathIgnorePatterns": ["examples"],
+    "setupFiles": [
+      "<rootDir>/jest-setup.js"
+    ],
+    "modulePathIgnorePatterns": [
+      "examples"
+    ],
     "transformIgnorePatterns": [
       "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|react-navigation-deprecated-tab-navigator)"
     ]
   },
   "lint-staged": {
-    "*.js": ["eslint --fix", "git add"]
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
