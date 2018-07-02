@@ -6,7 +6,7 @@ const queryString = require('query-string');
 const history = createBrowserHistory();
 
 const getPathAndParamsFromLocation = location => {
-  const path = location.pathname.substr(1);
+  const path = encodeURI(location.pathname.substr(1));
   const params = queryString.parse(location.search);
   return { path, params };
 };

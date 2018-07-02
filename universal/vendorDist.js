@@ -97,6 +97,13 @@ const transforms = [
     },
   },
   {
+    fromFile: 'node_modules/react-navigation/src/routers/pathUtils.js',
+    toFile: 'src/react-navigation-core/pathUtils.js',
+    importMap: {
+      '../NavigationActions': './NavigationActions',
+    },
+  },
+  {
     fromFile: 'node_modules/react-navigation/src/utils/withDefaultValue.js',
     toFile: 'src/react-navigation-core/withDefaultValue.js',
   },
@@ -236,7 +243,10 @@ const transforms = [
   {
     fromFile: 'node_modules/react-navigation/src/getChildNavigation.js',
     toFile: 'src/react-navigation-core/getChildNavigation.js',
-    importMap: { './utils/invariant': './invariant' },
+    importMap: {
+      './utils/invariant': './invariant',
+      './routers/getNavigationActionCreators': './getNavigationActionCreators',
+    },
   },
   {
     fromFile: 'node_modules/react-navigation/src/getChildRouter.js',
@@ -269,11 +279,19 @@ const transforms = [
   },
 
   {
+    fromFile: 'node_modules/react-navigation/src/routers/pathUtils.js',
+    toFile: 'src/react-navigation-native-container/pathUtils.js',
+    importMap: {
+      '../NavigationActions': '../react-navigation-core',
+    },
+  },
+  {
     fromFile: 'node_modules/react-navigation/src/createNavigationContainer.js',
     toFile:
       'src/react-navigation-native-container/createNavigationContainer.js',
     importMap: {
       './utils/docsUrl': './docsUrl',
+      './routers/pathUtils': './pathUtils',
     },
     nonDefaultImportMap: {
       './getNavigation': '../react-navigation-core',
@@ -284,18 +302,8 @@ const transforms = [
     },
   },
 
-  {
-    fromFile: 'node_modules/react-navigation/src/PlatformHelpers.native.js',
-    toFile: 'src/react-navigation-native-container/PlatformHelpers.js',
-    importMap: {},
-  },
   { makeDirectory: 'src/react-navigation-stack' },
-  {
-    // for now, copy PlatformHelpers to both stack and native container
-    fromFile: 'node_modules/react-navigation/src/PlatformHelpers.native.js',
-    toFile: 'src/react-navigation-stack/PlatformHelpers.js',
-    importMap: {},
-  },
+
   {
     toFile: 'src/react-navigation-stack/subpackage.json',
     fromRawJSON: {
@@ -450,9 +458,7 @@ const transforms = [
   {
     fromFile: 'node_modules/react-navigation/src/views/Header/Header.js',
     toFile: 'src/react-navigation-stack/Header.js',
-    importMap: {
-      '../../PlatformHelpers': './PlatformHelpers',
-    },
+    importMap: {},
     nonDefaultImportMap: {
       '../withOrientation': '../react-navigation-area-view',
       'react-native-safe-area-view': '../react-navigation-area-view',

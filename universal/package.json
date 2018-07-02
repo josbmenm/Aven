@@ -1,6 +1,6 @@
 {
   "name": "universal-app",
-  "version": "0.0.0-alpha.8",
+  "version": "0.0.0-alpha.12",
   "react-native": "src/AppNative/index",
   "scripts": {
     "start": "npm run ios",
@@ -26,9 +26,11 @@
     "@expo/vector-icons": "^6.3.1",
     "@react-navigation/react-navigation-experiment-core": "^0.0.0-alpha.6",
     "@react-navigation/react-navigation-experimental": "^0.1.0",
+    "babel-plugin-react-native-web": "^0.8.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "babel-preset-razzle": "^2.0.0",
     "babel-preset-react": "^6.24.1",
     "babel-types": "^6.26.0",
     "clamp": "^1.0.1",
@@ -38,6 +40,7 @@
     "klaw-sync": "^4.0.0",
     "lodash": "^4.17.10",
     "lodash.sortby": "^4.7.0",
+    "path-to-regexp": "^1.7.0",
     "prop-types": "^15.6.1",
     "query-string": "^6.1.0",
     "react-art": "^16.3.2",
@@ -46,9 +49,9 @@
     "react-native-drawer-layout-polyfill": "^2.0.0",
     "react-native-safe-area-view": "^0.7.0",
     "react-native-vector-icons": "^4.6.0",
-    "react-native-web": "^0.6.0",
+    "react-native-web": "^0.8.4",
     "react-native-web-vector-icons": "^4.4.3",
-    "react-navigation": "https://github.com/react-navigation/react-navigation.git#@ericvicenti/universe",
+    "react-navigation": "https://github.com/react-navigation/react-navigation.git#@ericvicenti/deeplink",
     "react-navigation-fluid-transition": "https://github.com/ericvicenti/FluidTransitions.git#container-independent",
     "react-navigation-fluid-transitions": "https://github.com/ericvicenti/FluidTransitions.git#container-independent",
     "react-navigation-tabs": "https://github.com/react-navigation/react-navigation-tabs.git#@ericvicenti/isolate-container",
@@ -65,10 +68,10 @@
     "jest-expo": "^25.1.0",
     "lint-staged": "^4.2.1",
     "prettier": "^1.5.3",
-    "react": "16.2.0",
+    "razzle-rn": "2.3.0-alpha.1",
+    "react": "^16.4.1",
     "react-native": "^0.52.0",
-    "react-test-renderer": "^16.0.0",
-    "rn-razzle": "2.0.0-alpha.8"
+    "react-test-renderer": "^16.0.0"
   },
   "jest": {
     "notify": true,
