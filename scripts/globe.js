@@ -29,15 +29,24 @@ async function start(args) {
     await spawn('yarn', [], { stdio: 'inherit', cwd: globeDir });
     await spawn('yarn', ['build-vendor'], { stdio: 'inherit', cwd: globeDir });
   }
-  await spawn(
-    'rsync',
-    [
-      '-a',
-      pathJoin(process.cwd(), appName) + '/',
-      pathJoin(globeDir, 'src', appName),
-    ],
-    { stdio: 'inherit' },
-  );
+  const syncSrcToGlobe = async () =>
+    await spawn(
+      'rsync',
+      [
+        '-a',
+        pathJoin(process.cwd(), appName) + '/',
+        pathJoin(globeDir, 'src', appName),
+      ],
+      { stdio: 'inherit' },
+    );
+
+  const syncLoop = async () => {
+    await syncSrcToGlobe();
+    setTimeout(syncLoop, 500);
+  };
+
+  syncLoop();
+
   await spawn('yarn', ['configure-launch', appName], {
     stdio: 'inherit',
     cwd: globeDir,
