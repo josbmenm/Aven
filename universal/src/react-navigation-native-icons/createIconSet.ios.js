@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { Font } from 'expo';
-import createIconSet from './vendor/react-native-vector-icons/lib/create-icon-set';
-import createIconButtonComponent from './vendor/react-native-vector-icons/lib/icon-button';
+import createIconSet from './vector-icons-lib/create-icon-set';
+import createIconButtonComponent from './vector-icons-lib/icon-button';
 
 export default function(glyphMap, fontName, expoAssetId) {
   const font = { [fontName]: expoAssetId };

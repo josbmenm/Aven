@@ -21,7 +21,8 @@ const createGenericScreen = (name, color, opts) => {
           contentContainerStyle={{
             justifyContent: 'center',
             minHeight: '100%',
-          }}>
+          }}
+        >
           <Text style={{ color, fontSize: 42, textAlign: 'center' }}>
             {opts.titleForParams
               ? opts.titleForParams(this.props.navigation.state.params)

@@ -33,7 +33,8 @@ const BackButtonHeader = ({ navigation }) => (
     <TouchableOpacity
       onPress={() => {
         navigation.goBack();
-      }}>
+      }}
+    >
       <Text style={{ color: 'blue', fontSize: 24 }}>Back</Text>
     </TouchableOpacity>
   </View>
@@ -79,12 +80,14 @@ export class Home extends React.Component {
                   params: { id: lesson.id },
                   key: `Lesson-${lesson.id}`,
                 });
-              }}>
+              }}
+            >
               <View
                 style={{
                   width: 375,
                   height: 375,
-                }}>
+                }}
+              >
                 <LessonCoverImage lesson={lesson} />
                 <View
                   style={{
@@ -94,7 +97,8 @@ export class Home extends React.Component {
                     left: 0,
                     right: 0,
                     top: 0,
-                  }}>
+                  }}
+                >
                   <Text style={{ color: 'white', fontSize: 32 }}>
                     {lesson.name}
                   </Text>

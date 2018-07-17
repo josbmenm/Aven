@@ -14,6 +14,12 @@ module.exports = {
       /universal\/node_modules\/react\/(.*)/,
       /universal\/node_modules\/react-native-paper\/(.*)/,
       /universal\/node_modules\/@expo\/vector-icons\/(.*)/,
+
+      // /\/npm-dist\/(.*)/,
+      // /\/(?!App)\/node_modules\/react-native\/(.*)/,
+      // /\/(?!App)\/node_modules\/react\/(.*)/,
+      // /\/(?!App)\/node_modules\/react-native-paper\/(.*)/,
+      // /\/(?!App)\/node_modules\/@expo\/vector-icons\/(.*)/,
     ]);
   },
   extraNodeModules: getNodeModulesForDirectory(path.resolve('.')),
@@ -33,7 +39,7 @@ function getNodeModulesForDirectory(rootPath) {
           ] = maybeResolveSymlink(path.join(folderPath, scopedFolderName));
           return scopedModules;
         },
-        {}
+        {},
       );
       return Object.assign({}, modules, scopedModules);
     }
@@ -46,7 +52,7 @@ function maybeResolveSymlink(maybeSymlinkPath) {
   if (fs.lstatSync(maybeSymlinkPath).isSymbolicLink()) {
     const resolved = path.resolve(
       path.dirname(maybeSymlinkPath),
-      fs.readlinkSync(maybeSymlinkPath)
+      fs.readlinkSync(maybeSymlinkPath),
     );
     return resolved;
   }

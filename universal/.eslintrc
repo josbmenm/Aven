@@ -1,0 +1,15 @@
+{
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    }
+  },
+  "parser": "babel-eslint",
+  "plugins": ["flowtype"],
+  "extends": ["plugin:prettier/recommended"],
+  "globals": {
+    "__DEV__": false
+  }
+}

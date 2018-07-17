@@ -3,7 +3,7 @@ import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { ToolbarAndroid } from 'react-native';
+import { ToolbarAndroid } from './react-native';
 
 export default function createToolbarAndroidComponent(
   IconNamePropType,

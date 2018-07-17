@@ -16,10 +16,12 @@ import {
 import { Home, Lesson } from '../App/RealScreens';
 
 const HomeTab = createFluidNavigator({
-  Home,
+  Home: {
+    screen: Home,
+    path: '',
+  },
   Lesson,
 });
-HomeTab.path = '';
 
 const OverviewTab = createStackNavigator({
   Overview,
@@ -35,7 +37,10 @@ const SettingsTab = createStackNavigator({
 
 export const Main = createBottomTabNavigator(
   {
-    HomeTab,
+    HomeTab: {
+      screen: HomeTab,
+      path: '',
+    },
     OverviewTab,
     SettingsTab,
   },

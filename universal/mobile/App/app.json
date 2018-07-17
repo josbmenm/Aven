@@ -14,10 +14,7 @@
     "sdkVersion": "26.0.0",
     "entryPoint": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
     "packagerOpts": {
-      "assetExts": [
-        "ttf",
-        "mp4"
-      ]
+      "assetExts": ["ttf", "mp4"]
     },
     "ios": {
       "supportsTablet": true

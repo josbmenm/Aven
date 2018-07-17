@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const babel = require('babel-core');
 const presetReact = require('babel-preset-react');
 const restSpread = require('babel-plugin-transform-object-rest-spread');
+const pathJoin = require('path').join;
 const {
   identifier,
   importSpecifier,
@@ -101,6 +102,7 @@ const transforms = [
     toFile: 'src/react-navigation-core/pathUtils.js',
     importMap: {
       '../NavigationActions': './NavigationActions',
+      '../utils/invariant': './invariant',
     },
   },
   {
@@ -283,6 +285,9 @@ const transforms = [
     toFile: 'src/react-navigation-native-container/pathUtils.js',
     importMap: {
       '../NavigationActions': '../react-navigation-core',
+    },
+    nonDefaultImportMap: {
+      '../utils/invariant': '../react-navigation-core',
     },
   },
   {
@@ -651,8 +656,14 @@ const transforms = [
     toDirectory: 'src/react-navigation-icons/glyphmaps',
   },
   {
-    copyDirectory: 'node_modules/@expo/vector-icons/vendor',
-    toDirectory: 'src/react-navigation-native-icons/vendor',
+    copyDirectory:
+      'node_modules/@expo/vector-icons/vendor/react-native-vector-icons/glyphmaps',
+    toDirectory: 'src/react-navigation-native-icons/glyphmaps',
+  },
+  {
+    copyDirectory:
+      'node_modules/@expo/vector-icons/vendor/react-native-vector-icons/lib',
+    toDirectory: 'src/react-navigation-native-icons/vector-icons-lib',
   },
   {
     fromFile: 'node_modules/@expo/vector-icons/createIconSet.js',
@@ -803,6 +814,11 @@ transforms.forEach(t => {
 
   if (t.copyDirectory) {
     fs.copySync(t.copyDirectory, t.toDirectory);
+    if (t.exclude) {
+      t.exclude.forEach(excludePath => {
+        fs.removeSync(pathJoin(t.toDirectory, excludePath));
+      });
+    }
     return;
   }
 

@@ -16,7 +16,7 @@
     "react": "16.3.0-alpha.1",
     "react-native": "^0.54.0",
     "react-native-iphone-x-helper": "^1.0.2",
-    "universal-app": "link:../.."
+    "globe-rn-export": "link:../.."
   },
   "devDependencies": {
     "babel-jest": "^22.4.1",
@@ -29,11 +29,19 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "moduleFileExtensions": ["web.js", "js", "json", "jsx", "node"],
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "json",
+      "jsx",
+      "node"
+    ],
     "modulePathIgnorePatterns": [
       "/node_modules/.*/react-native/",
       "/node_modules/.*/react/"
     ],
-    "transformIgnorePatterns": ["/node_modules/(?!react-native|universal)/"]
+    "transformIgnorePatterns": [
+      "/node_modules/(?!react-native|universal)/"
+    ]
   }
 }

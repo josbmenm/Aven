@@ -61,7 +61,8 @@ const createLogoSlide = (IconsClass, icon, color, name) => ({ navigation }) => (
         padding: 30,
         justifyContent: 'center',
         alignItems: 'center',
-      }}>
+      }}
+    >
       <IconsClass size={200} name={icon} color={color} />
       <StyledText style={{ fontSize: 80, textAlign: 'center', color }}>
         {name}
@@ -86,7 +87,8 @@ const createReactNavSlide = title => ({ navigation }) => (
         padding: 30,
         justifyContent: 'center',
         alignItems: 'center',
-      }}>
+      }}
+    >
       <Image
         source={require('./navLogo.svg')}
         resizeMode="contain"
@@ -108,7 +110,8 @@ const createTitleSlide = title => {
             style={{
               padding: 30,
               justifyContent: 'center',
-            }}>
+            }}
+          >
             <StyledText style={{ fontSize: 80, textAlign: 'center' }}>
               {title}
             </StyledText>
@@ -133,7 +136,8 @@ const createMultiTitleSlide = titles => {
                   fontSize: 80,
                   marginVertical: 40,
                   textAlign: 'center',
-                }}>
+                }}
+              >
                 {title}
               </StyledText>
             ))}
@@ -163,12 +167,14 @@ const createCodeSlide = (codeString, opts) => {
               justifyContent: 'space-between',
               flexDirection: 'row',
               alignItems: 'center',
-            }}>
+            }}
+          >
             <SyntaxHighlighter
               customStyle={{ fontSize: 28 }}
               language="javascript"
               style={coy}
-              highlighter={'prism' || 'hljs'}>
+              highlighter={'prism' || 'hljs'}
+            >
               {codeString}
             </SyntaxHighlighter>
             {opts && <CodeSlideCompanion {...this.props} {...opts} />}
@@ -199,7 +205,8 @@ const RouteView = ({ route, isActive, isRoot, isBold }) => {
       style={{
         backgroundColor: isActive ? '#0089' : '#1116',
         margin: 10,
-      }}>
+      }}
+    >
       {route.routeName && (
         <StyledText
           style={{
@@ -207,7 +214,8 @@ const RouteView = ({ route, isActive, isRoot, isBold }) => {
             fontSize: 32,
             margin: 20,
             fontWeight: isBold ? '400' : '300',
-          }}>
+          }}
+        >
           {route.routeName}
           {route.params ? `?${queryString.stringify(route.params)}` : ''}
         </StyledText>
@@ -235,11 +243,13 @@ const createStateSlide = opts => {
               justifyContent: 'space-between',
               flexDirection: 'row',
               alignItems: 'center',
-            }}>
+            }}
+          >
             <View
               style={{
                 maxWidth: 820,
-              }}>
+              }}
+            >
               <NavStateView state={this.props.navigation.state} />
             </View>
             {opts && <CodeSlideCompanion {...this.props} {...opts} />}
@@ -331,7 +341,8 @@ const DemoScreen = ({ color, title }) => (
       backgroundColor: 'white',
       flex: 1,
       justifyContent: 'center',
-    }}>
+    }}
+  >
     <StyledText style={{ fontSize: 42, color: color, textAlign: 'center' }}>
       {title}
     </StyledText>
@@ -373,7 +384,8 @@ const PhoneView = ({ children }) => (
       paddingHorizontal: 10,
       height: 640,
       width: 320,
-    }}>
+    }}
+  >
     <View
       style={{
         flex: 1,
@@ -391,7 +403,8 @@ const PhonesDemoSlide = ({ children }) => (
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-      }}>
+      }}
+    >
       {children}
     </View>
   </SlideContainer>

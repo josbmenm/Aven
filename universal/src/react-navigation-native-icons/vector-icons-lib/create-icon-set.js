@@ -159,10 +159,6 @@ export default function createIconSet(glyphMap, fontFamily, fontFile) {
     return Promise.resolve();
   }
 
-  function hasIcon(name) {
-    return Object.prototype.hasOwnProperty.call(glyphMap, name);
-  }
-
   Icon.Button = createIconButtonComponent(Icon);
   Icon.TabBarItem = createTabBarItemIOSComponent(
     IconNamePropType,
@@ -175,7 +171,6 @@ export default function createIconSet(glyphMap, fontFamily, fontFile) {
   );
   Icon.getImageSource = getImageSource;
   Icon.loadFont = loadFont;
-  Icon.hasIcon = hasIcon;
 
   return Icon;
 }

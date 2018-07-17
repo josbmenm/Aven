@@ -35,6 +35,9 @@ export default function createBrowserApp(App) {
         pathAndParams.path,
         pathAndParams.params,
       );
+      if (!action) {
+        debugger;
+      }
       dispatch(action);
     });
   };

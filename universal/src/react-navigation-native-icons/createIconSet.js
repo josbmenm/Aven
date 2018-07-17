@@ -1,10 +1,10 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { Font } from 'expo';
-import createIconSet from './vendor/react-native-vector-icons/lib/create-icon-set';
-import createIconButtonComponent from './vendor/react-native-vector-icons/lib/icon-button';
+import createIconSet from './vector-icons-lib/create-icon-set';
+import createIconButtonComponent from './vector-icons-lib/icon-button';
 
-export default function (glyphMap, fontName, expoAssetId) {
+export default function(glyphMap, fontName, expoAssetId) {
   const font = { [fontName]: expoAssetId };
   const RNVIconComponent = createIconSet(glyphMap, fontName);
 
@@ -13,7 +13,7 @@ export default function (glyphMap, fontName, expoAssetId) {
     static defaultProps = RNVIconComponent.defaultProps;
 
     state = {
-      fontIsLoaded: Font.isLoaded(fontName)
+      fontIsLoaded: Font.isLoaded(fontName),
     };
 
     async componentWillMount() {
@@ -39,9 +39,14 @@ export default function (glyphMap, fontName, expoAssetId) {
         return <Text />;
       }
 
-      return <RNVIconComponent ref={view => {
-        this._icon = view;
-      }} {...this.props} />;
+      return (
+        <RNVIconComponent
+          ref={view => {
+            this._icon = view;
+          }}
+          {...this.props}
+        />
+      );
     }
   }
 

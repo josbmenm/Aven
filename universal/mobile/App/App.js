@@ -1,2 +1,2 @@
-import AppNative from 'universal-app';
+import AppNative from 'globe-rn-export';
 export default AppNative;

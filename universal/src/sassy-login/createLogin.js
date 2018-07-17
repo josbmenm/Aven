@@ -44,14 +44,16 @@ const Button = withNavigation(({ navigation, children, onPress }) => (
         height: 40,
         backgroundColor: '#fffa',
         margin: 20,
-      }}>
+      }}
+    >
       <Text
         style={{
           fontSize: 24,
           paddingTop: 6,
           textAlign: 'center',
           color: '#333',
-        }}>
+        }}
+      >
         {children}
       </Text>
     </View>
@@ -67,7 +69,8 @@ const LinkText = withNavigation(({ navigation, children, onPress }) => (
           fontSize: 24,
           textAlign: 'right',
           textDecorationLine: 'underline',
-        }}>
+        }}
+      >
         {children}
       </Text>
     </View>
@@ -88,20 +91,23 @@ export default function createLogin(options) {
           <LinkText
             onPress={() => {
               this.props.navigation.navigate('Register');
-            }}>
+            }}
+          >
             Yo I'm new here
           </LinkText>
           <Input name="password" />
           <LinkText
             onPress={() => {
               this.props.navigation.navigate('LostPassword');
-            }}>
+            }}
+          >
             Dude, I don't remember
           </LinkText>
           <Button
             onPress={() => {
               this.props.navigation.navigate('Main');
-            }}>
+            }}
+          >
             Let me in!
           </Button>
         </SassScreen>
@@ -120,7 +126,8 @@ export default function createLogin(options) {
           <Button
             onPress={() => {
               this.props.navigation.navigate('Main');
-            }}>
+            }}
+          >
             Register
           </Button>
         </SassScreen>
@@ -137,7 +144,8 @@ export default function createLogin(options) {
           <Button
             onPress={() => {
               this.props.navigation.navigate('Verify');
-            }}>
+            }}
+          >
             Verify, yo
           </Button>
         </SassScreen>
@@ -154,7 +162,8 @@ export default function createLogin(options) {
           <Button
             onPress={() => {
               this.props.navigation.navigate('Main');
-            }}>
+            }}
+          >
             Ok there
           </Button>
         </SassScreen>
