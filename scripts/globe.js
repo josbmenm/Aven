@@ -33,7 +33,7 @@ async function start(args) {
     'rsync',
     [
       '-a',
-      pathJoin(process.cwd(), appName),
+      pathJoin(process.cwd(), appName) + '/',
       pathJoin(globeDir, 'src', appName),
     ],
     { stdio: 'inherit' },
