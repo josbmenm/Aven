@@ -1,26 +1,36 @@
-import app from './server';
-import http from 'http';
+import { startServer } from './server';
 
-const server = http.createServer(app);
+let currentApp = null;
 
-let currentApp = app;
+startServer()
+  .then(app => {
+    currentApp = app;
+    console.log('🚀 Server Started');
+  })
+  .catch(e => {
+    console.error(e);
+    throw e;
+  });
 
-server.listen(process.env.PORT || 3000, error => {
-  if (error) {
-    console.log(error);
+async function reload() {
+  if (currentApp) {
+    await currentApp.close();
   }
-
-  console.log('🚀 started');
-});
+  const startNewServer = require('./server').startServer;
+  currentApp = await startNewServer();
+}
 
 if (module.hot) {
-  console.log('✅  Server-side HMR Enabled!');
+  console.log('✅  Server-side Hot Reloading Enabled!');
 
   module.hot.accept('./server', () => {
-    console.log('🔁  HMR Reloading `./server`...');
-    server.removeListener('request', currentApp);
-    const newApp = require('./server').default;
-    server.on('request', newApp);
-    currentApp = newApp;
+    reload()
+      .then(() => {
+        '🔁  Hot Reload Complete 🚀';
+      })
+      .catch(e => {
+        console.error('Error During Hot Reload');
+        console.error(e);
+      });
   });
 }

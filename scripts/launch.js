@@ -32,9 +32,10 @@ const androidPlatform = async () => {
 const webPlatform = async () => {
   const serverFilePath = pathJoin(__dirname, '../src/server.js');
   const clientFilePath = pathJoin(__dirname, '../src/client.js');
-  const importStatement = `\nimport App from './${appName}';\n`;
-  await writeFileReplacements(serverFilePath, importStatement);
-  await writeFileReplacements(clientFilePath, importStatement);
+  const serverImportStatement = `\export { startServer } from './${appName}/MainServer';\n`;
+  const clientImportStatement = `\nimport Client from './${appName}/MainClient';\n`;
+  await writeFileReplacements(serverFilePath, serverImportStatement);
+  await writeFileReplacements(clientFilePath, clientImportStatement);
   await spawn('yarn', ['web'], { stdio: 'inherit' });
 };
 const platformFunctions = {
