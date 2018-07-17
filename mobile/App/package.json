@@ -16,7 +16,7 @@
     "react": "16.3.0-alpha.1",
     "react-native": "^0.54.0",
     "react-native-iphone-x-helper": "^1.0.2",
-    "globe-rn-export": "link:../.."
+    "globe": "link:../.."
   },
   "devDependencies": {
     "babel-jest": "^22.4.1",

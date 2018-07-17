@@ -1,2 +1,7 @@
-import AppNative from 'globe/src/AppNative';
-export default AppNative;
+//ReplaceStart
+
+import App from 'globe/src/AppNative';
+
+//ReplaceEnd
+
+export default App;

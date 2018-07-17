@@ -16,8 +16,19 @@ const writeFileReplacements = async (file, newval) => {
   );
   await fs.writeFile(file, fileValue);
 };
-const iosPlatform = async () => {};
-const androidPlatform = async () => {};
+const writeMobileConfig = async () => {
+  const appFilePath = pathJoin(__dirname, '../mobile/App/App.js');
+  const importStatement = `\nimport App from 'globe/src/${appName}';\n`;
+  await writeFileReplacements(appFilePath, importStatement);
+};
+const iosPlatform = async () => {
+  await writeMobileConfig();
+  await spawn('yarn', ['ios'], { stdio: 'inherit' });
+};
+const androidPlatform = async () => {
+  await writeMobileConfig();
+  await spawn('yarn', ['android'], { stdio: 'inherit' });
+};
 const webPlatform = async () => {
   const serverFilePath = pathJoin(__dirname, '../src/server.js');
   const clientFilePath = pathJoin(__dirname, '../src/client.js');
