@@ -643,7 +643,10 @@ const transforms = [
   {
     fromFile: 'node_modules/@expo/vector-icons/Ionicons.js',
     toFile: 'src/react-navigation-native-icons/Ionicons.js',
-    importMap: {},
+    importMap: {
+      './vendor/react-native-vector-icons/glyphmaps/Ionicons.json':
+        './glyphmaps/Ionicons.json',
+    },
     nonDefaultImportMap: {},
   },
 
@@ -668,7 +671,12 @@ const transforms = [
   {
     fromFile: 'node_modules/@expo/vector-icons/createIconSet.js',
     toFile: 'src/react-navigation-native-icons/createIconSet.js',
-    importMap: {},
+    importMap: {
+      './vendor/react-native-vector-icons/lib/create-icon-set':
+        './vector-icons-lib/create-icon-set',
+      './vendor/react-native-vector-icons/lib/icon-button':
+        './vector-icons-lib/icon-button',
+    },
     nonDefaultImportMap: {},
   },
 

@@ -1006,7 +1006,7 @@ preso.push(createTitleSlide('Community Navigators'));
 
 preso.push(createTitleSlide('Demo'));
 
-preso.push(createGithubSlide('ericvicenti/universe'));
+preso.push(createGithubSlide('AvenCloud/globe'));
 preso.push(createTwitterSlide('@ericvicenti'));
 preso.push(createURLSlide('aven.io'));
 

@@ -8171,7 +8171,7 @@ react-navigation-tabs@0.5.1:
 
 "react-navigation@https://github.com/react-navigation/react-navigation.git#@ericvicenti/deeplink":
   version "2.6.2"
-  resolved "https://github.com/react-navigation/react-navigation.git#ebaa836d797831f59fce6feb42a3d946509542f8"
+  resolved "https://github.com/react-navigation/react-navigation.git#b2d4213eaea582ad155c3db1fc123218a115250e"
   dependencies:
     clamp "^1.0.1"
     create-react-context "^0.2.1"

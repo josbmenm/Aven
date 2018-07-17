@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "universal-mobile",
+    "name": "globe-mobile",
     "description": "",
     "version": "1.0.0",
-    "slug": "universal-mobile",
+    "slug": "globe-mobile",
     "privacy": "public",
     "orientation": "portrait",
     "primaryColor": "#cccccc",

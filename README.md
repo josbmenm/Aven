@@ -1,11 +1,11 @@
-# navigation-universe
+# Aven Globe
 
-This repo is an attempt at full-stack development, with web and mobile packagers running side-by-side, and packages that will eventually be exportable to npm.
+A full-stack React.js environment.
 
 ### Launch Web Packager 
 
 ```
-yarn web-start
+yarn web
 ```
 
 ### Mobile
@@ -25,5 +25,5 @@ yarn web-build
 
 ## Exporting Packages
 
-Packages are currently located in `/universal/src/`, and they should eventually have their own `package.json` files. Help is needed to build automation for releasing these packages to npm.
+Packages are currently located in `/globe/src/`, and they should eventually have their own `package.json` files. Help is needed to build automation for releasing these packages to npm.
 

@@ -1,5 +1,5 @@
 {
-  "name": "universal-mobile",
+  "name": "globe-mobile",
   "version": "0.1.0",
   "private": true,
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
@@ -41,7 +41,7 @@
       "/node_modules/.*/react/"
     ],
     "transformIgnorePatterns": [
-      "/node_modules/(?!react-native|universal)/"
+      "/node_modules/(?!react-native|globe)/"
     ]
   }
 }
