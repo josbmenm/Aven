@@ -22,7 +22,7 @@ async function start(args) {
         '--exclude',
         'node_modules',
         pathJoin(__dirname, '..') + '/',
-        pathJoin(globeDir),
+        globeDir,
       ],
       { stdio: 'inherit' },
     );
