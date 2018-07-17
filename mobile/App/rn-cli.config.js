@@ -9,7 +9,8 @@ const blacklist = require('metro/src/blacklist');
 module.exports = {
   getBlacklistRE() {
     return blacklist([
-      // /\/mobile\/(?!App).*/,
+      // this would ensure that nothing oth
+      /\/mobile\/(?!App).*/,
 
       // this folder is for publishing to NPM. the RN packager should not look at it
       /\/npm-dist\//,
@@ -20,14 +21,14 @@ module.exports = {
       /globe\/node_modules\/react\/(.*)/,
       /globe\/node_modules\/react-native-paper\/(.*)/,
       /globe\/node_modules\/@expo\/vector-icons\/(.*)/,
+      // for the above I've attempted to make it work for any repo name with /(?!App)\/node_modules\/react-native\/(.*)/, etc
+      // unfortunately this causes the packager to time out on launch, apparently a super expensive regex
     ]);
   },
   extraNodeModules: getNodeModulesForDirectory(path.resolve('.')),
 };
 
 function getNodeModulesForDirectory(rootPath) {
-  const moduleBlacklist = new Set([]);
-
   const nodeModulePath = path.join(rootPath, 'node_modules');
   const folders = fs.readdirSync(nodeModulePath);
   return folders.reduce((modules, folderName) => {
@@ -37,20 +38,16 @@ function getNodeModulesForDirectory(rootPath) {
       const scopedModules = scopedModuleFolders.reduce(
         (scopedModules, scopedFolderName) => {
           const moduleName = `${folderName}/${scopedFolderName}`;
-          if (!moduleBlacklist.has(moduleName)) {
-            scopedModules[moduleName] = maybeResolveSymlink(
-              path.join(folderPath, scopedFolderName),
-            );
-          }
+          scopedModules[moduleName] = maybeResolveSymlink(
+            path.join(folderPath, scopedFolderName),
+          );
           return scopedModules;
         },
         {},
       );
       return Object.assign({}, modules, scopedModules);
     }
-    if (!moduleBlacklist.has(folderName)) {
-      modules[folderName] = maybeResolveSymlink(folderPath);
-    }
+    modules[folderName] = maybeResolveSymlink(folderPath);
     return modules;
   }, {});
 }

@@ -1,7 +1,9 @@
 {
-  "name": "globe-rn-export",
+  "name": "globe",
   "version": "0.0.0-alpha.12",
-  "react-native": "src/AppNative/index",
+  "bin": {
+    "globe": "./scripts/globe.js"
+  },
   "scripts": {
     "start": "npm run ios",
     "ios": "cd mobile/App && yarn && yarn ios",
@@ -16,7 +18,7 @@
     "web-build": "razzle build",
     "web-test": "razzle test --env=jsdom",
     "web-prod": "NODE_ENV=production node build/server.js",
-    "postinstall": "node vendorDist.js && yarn format"
+    "postinstall": "node scripts/vendorDist.js && yarn format"
   },
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
@@ -81,7 +83,7 @@
       "^react-native$": "react-native-web"
     },
     "modulePathIgnorePatterns": [
-      "examples"
+      "mobile"
     ],
     "transformIgnorePatterns": [
       "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|react-navigation-deprecated-tab-navigator)"

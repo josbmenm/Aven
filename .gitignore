@@ -2,9 +2,6 @@
 .vscode/
 jsconfig.json
 
-# IntelliJ/Webstorm
-.idea
-
 # NodeJS
 npm-debug.log
 node_modules
@@ -12,9 +9,6 @@ yarn-error.log
 
 # OS X
 .DS_Store
-
-# Exponent
-.exponent
 
 # Jest
 coverage
