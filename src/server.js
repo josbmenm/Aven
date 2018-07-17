@@ -4,7 +4,12 @@ import { AppRegistry } from 'react-native';
 
 import { handleServerRequest } from './react-navigation-web';
 
-import App from './AppWeb';
+//ReplaceStart
+
+import App from './WebsiteExample';
+
+//ReplaceEnd
+
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 

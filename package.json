@@ -19,7 +19,8 @@
     "web-build": "razzle build",
     "web-test": "razzle test --env=jsdom",
     "web-prod": "NODE_ENV=production node build/server.js",
-    "build-vendor": "node scripts/vendorDist.js && yarn format"
+    "build-vendor": "node scripts/vendorDist.js && yarn format",
+    "configure-launch": "node scripts/launch.js"
   },
   "dependencies": {
     "@expo/spawn-async": "^1.3.0",

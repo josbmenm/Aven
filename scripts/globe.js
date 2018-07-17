@@ -38,8 +38,10 @@ async function start(args) {
     ],
     { stdio: 'inherit' },
   );
-
-  console.log('do the syncing. first copy the local code to the globe_dir');
+  await spawn('yarn', ['configure-launch', appName], {
+    stdio: 'inherit',
+    cwd: globeDir,
+  });
 }
 
 const command = process.argv[2];
