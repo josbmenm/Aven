@@ -1,2 +1,32 @@
-*.DS_Store
+# VSCode
+.vscode/
+jsconfig.json
+
+# IntelliJ/Webstorm
+.idea
+
+# NodeJS
+npm-debug.log
 node_modules
+yarn-error.log
+
+# OS X
+.DS_Store
+
+# Exponent
+.exponent
+
+# Jest
+coverage
+
+build
+
+src/react-navigation-core
+src/react-navigation-native-container
+src/react-navigation-stack
+src/react-navigation-drawer
+src/react-navigation-tabs
+src/react-navigation-area-view
+src/react-navigation-fluid
+
+npm-dist
