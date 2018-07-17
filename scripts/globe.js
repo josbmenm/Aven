@@ -31,7 +31,11 @@ async function start(args) {
   }
   await spawn(
     'rsync',
-    ['-a', pathJoin(process.cwd, appName), pathJoin(globeDir, 'src', appName)],
+    [
+      '-a',
+      pathJoin(process.cwd(), appName),
+      pathJoin(globeDir, 'src', appName),
+    ],
     { stdio: 'inherit' },
   );
 
