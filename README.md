@@ -2,6 +2,8 @@
 
 A full-stack React.js environment.
 
+Dependencies: node 8+, yarn. More dependencies for iOS and Android development, see Expo docs for setup steps.
+
 ### Launch Web Packager 
 
 ```

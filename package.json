@@ -5,10 +5,10 @@
     "globe": "./scripts/globe.js"
   },
   "scripts": {
-    "start": "npm run ios",
+    "start": "yarn ios",
     "ios": "cd mobile/App && yarn && yarn ios",
     "android": "cd mobile/App && yarn && yarn android",
-    "test": "npm run lint && npm run jest",
+    "test": "yarn lint && yarn jest",
     "codecov": "codecov",
     "jest": "jest",
     "test-update-snapshot": "jest --updateSnapshot",
@@ -18,7 +18,7 @@
     "web-build": "razzle build",
     "web-test": "razzle test --env=jsdom",
     "web-prod": "NODE_ENV=production node build/server.js",
-    "postinstall": "node scripts/vendorDist.js && yarn format"
+    "build-vendor": "node scripts/vendorDist.js && yarn format"
   },
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
@@ -50,7 +50,9 @@
     "react-navigation": "https://github.com/react-navigation/react-navigation.git#@ericvicenti/deeplink",
     "react-navigation-fluid-transitions": "https://github.com/ericvicenti/FluidTransitions.git#container-independent",
     "react-navigation-tabs": "https://github.com/react-navigation/react-navigation-tabs.git#@ericvicenti/isolate-container",
-    "react-syntax-highlighter": "^7.0.4",
+    "react-syntax-highlighter": "^7.0.4"
+  },
+  "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",
     "babel-eslint": "^8.2.6",
