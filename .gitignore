@@ -24,3 +24,5 @@ src/react-navigation-area-view
 src/react-navigation-fluid
 
 npm-dist
+
+.env

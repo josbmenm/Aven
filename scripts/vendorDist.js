@@ -651,7 +651,7 @@ const transforms = [
   },
 
   {
-    copyDirectory: 'node_modules/react-native-vector-icons/fonts',
+    copyDirectory: 'node_modules/react-native-vector-icons/Fonts',
     toDirectory: 'public/fonts',
   },
   {
