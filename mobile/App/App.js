@@ -1,6 +1,6 @@
 //ReplaceStart
 
-import App from 'globe/src/AppNative';
+import App from 'globe/src/TodoApp';
 
 //ReplaceEnd
 

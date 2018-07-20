@@ -1,5 +1,5 @@
 import AvenClient from '../aven-web/Client';
-import App from './Website';
+import App from './AppWeb';
 
 AvenClient(App);
 

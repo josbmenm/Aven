@@ -47,15 +47,31 @@ async function start(args) {
 
   syncLoop();
 
-  await spawn('yarn', ['configure-launch', appName], {
+  await spawn('yarn', ['launch', appName], {
     stdio: 'inherit',
     cwd: globeDir,
   });
 }
 
+async function build(args) {
+  const appName = args[0];
+}
+
+async function runProd() {
+  await spawn(
+    'rsync',
+    [
+      '-a',
+      pathJoin(process.cwd(), appName) + '/',
+      pathJoin(globeDir, 'src', appName),
+    ],
+    { stdio: 'inherit' },
+  );
+}
+
 const command = process.argv[2];
 const args = process.argv.slice(3);
-const commandFunctions = { start };
+const commandFunctions = { start, build, 'run-prod': runProd };
 const mainFn = commandFunctions[command];
 
 if (!mainFn) {
