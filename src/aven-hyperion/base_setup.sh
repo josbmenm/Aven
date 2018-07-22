@@ -8,6 +8,7 @@ apt remove -y cmdtest # comes with debian and also provides a yarn command
 apt remove -y nodejs
 
 apt update
+apt install -y git
 apt install -y curl
 apt install -y rsync
 apt install -y apt-transport-https

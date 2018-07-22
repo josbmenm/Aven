@@ -6,8 +6,8 @@ After=network.target
 Type=simple
 Restart=always
 RestartSec=3
-ExecStart=/usr/bin/node /cloud/build/server.js
-WorkingDirectory=/cloud
+ExecStart=/usr/bin/node /globe/build/server.js
+WorkingDirectory=/globe
 
 [Install]
 WantedBy=multi-user.target

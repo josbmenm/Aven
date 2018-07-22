@@ -18,6 +18,9 @@ const provisionerConnection = {
   user: 'root',
   timeout: '2m',
 };
+
+const hyperionKeyPath = '/globe/src/aven-hyperion/hyperion.key';
+
 const applyArtemisClusterConfig = (lastConfig, clusterName, cluster) => ({
   ...lastConfig,
   resource: {
@@ -139,10 +142,74 @@ const applyArtemisClusterConfig = (lastConfig, clusterName, cluster) => ({
   },
 });
 
+const applyHeraClusterConfig = (lastConfig, clusterName, cluster) => ({
+  ...lastConfig,
+  resource: {
+    ...lastConfig.resource,
+    digitalocean_droplet: {
+      ...lastConfig.resource.digitalocean_droplet,
+
+      [`${clusterName}_hera`]: {
+        ssh_keys: ['${digitalocean_ssh_key.ssh.id}'],
+        image: '${data.digitalocean_image.hera.image}',
+        region: cluster.region,
+        size: cluster.size,
+        private_networking: true,
+        name: `${clusterName}-hera`,
+
+        provisioner: [
+          {
+            file: {
+              // we cannot pass env variables to the remote-exec setup script, so this is how we copy all the setup info to the node machine for setup
+              content: JSON.stringify(cluster),
+              destination: '/SETUP_CLUSTER.json',
+              connection: provisionerConnection,
+            },
+          },
+          {
+            file: {
+              content: clusterName,
+              destination: '/SETUP_CLUSTER_NAME.txt',
+              connection: provisionerConnection,
+            },
+          },
+          {
+            file: {
+              source: resolvePath('config'),
+              destination: '/SETUP_CONFIG_FILES',
+              connection: provisionerConnection,
+            },
+          },
+          {
+            'remote-exec': {
+              script: 'hera_deploy.sh',
+              connection: provisionerConnection,
+            },
+          },
+        ],
+      },
+    },
+
+    cloudflare_record: {
+      ...lastConfig.resource.cloudflare_record,
+      [`${clusterName}_record`]: {
+        domain: 'aven.cloud',
+        name: clusterName,
+        value: `\${digitalocean_droplet.${clusterName}_hera.ipv4_address}`,
+        type: 'A',
+        ttl: 3600,
+      },
+    },
+  },
+});
+
 const computeTfConfig = clusters => {
   let tfConfig = {
     data: {
       digitalocean_image: {
+        hera: {
+          name: 'proto-hera',
+        },
         artemis_node: {
           name: 'proto-artemis-node',
         },
@@ -173,15 +240,21 @@ const computeTfConfig = clusters => {
   Object.keys(clusters).forEach(clusterName => {
     const { type } = clusters[clusterName];
 
-    if (type !== 'artemis') {
-      throw new Error('only one cluster type is supported now');
+    if (type === 'artemis') {
+      tfConfig = applyArtemisClusterConfig(
+        tfConfig,
+        clusterName,
+        clusters[clusterName],
+      );
+    } else if (type === 'hera') {
+      tfConfig = applyHeraClusterConfig(
+        tfConfig,
+        clusterName,
+        clusters[clusterName],
+      );
+    } else {
+      throw new Error(`Cluster type "${type}" is not supported`);
     }
-
-    tfConfig = applyArtemisClusterConfig(
-      tfConfig,
-      clusterName,
-      clusters[clusterName],
-    );
   });
 
   return tfConfig;
@@ -212,6 +285,11 @@ async function goTerra() {
 
   const tfStateData = readFile('/hyperion.tfstate');
 
+  const isNodeNode = (node) => { //lol
+    return node.type === 'node'|| node.type === 'hera';
+
+  }
+
   const clusterData = {};
   const tfState = JSON.parse(tfStateData);
   const stateResourceNames = Object.keys(tfState.modules[0].resources);
@@ -223,6 +301,13 @@ async function goTerra() {
         )
       ) {
         return 'node';
+      }
+      if (
+        resourceName.match(
+          new RegExp('^digitalocean_droplet.' + clusterName + '_hera'),
+        )
+      ) {
+        return 'hera';
       }
       if (
         resourceName.match(
@@ -280,7 +365,7 @@ async function goTerra() {
       '-o',
       'StrictHostKeyChecking=no',
       '-i',
-      '/cloud/hyperion/hyperion.key',
+      hyperionKeyPath,
       `root@${ip}`,
       '-t',
       cmd,
@@ -291,7 +376,8 @@ async function goTerra() {
     const results = await Promise.all(
       Object.keys(nodes).map(async nodeName => {
         const node = nodes[nodeName];
-        if (node.type !== 'node') return null;
+        if (!isNodeNode(node)) return null;
+        
         return {
           node,
           nodeName,
@@ -308,7 +394,7 @@ async function goTerra() {
       [
         '-rvzL',
         '-e',
-        'ssh -o StrictHostKeyChecking=no -i /cloud/hyperion/hyperion.key',
+        `ssh -o StrictHostKeyChecking=no -i ${hyperionKeyPath}`,
         source,
         `root@${ip}:${dest}`,
       ],
@@ -319,11 +405,14 @@ async function goTerra() {
     console.log('copied ', source, ip, dest);
   };
   const rsyncToCluster = async (source, clusterName, dest) => {
+    console.log('rsyncToCluster', source, clusterName, dest, clusterData[clusterName])
     const { nodes } = clusterData[clusterName];
     const results = await Promise.all(
       Object.keys(nodes).map(async nodeName => {
         const node = nodes[nodeName];
-        if (node.type !== 'node') return null;
+        console.log('lolwut', node, nodeName)
+        if (!isNodeNode(node)) return null;
+        console.log('rsyncing', source, node.ipv4_address, dest)
         await rsync(source, node.ipv4_address, dest);
         return {
           node,
@@ -354,7 +443,7 @@ async function goTerra() {
       await Promise.all(
         Object.keys(cluster.nodes).map(async nodeName => {
           const node = cluster.nodes[nodeName];
-          if (node.type !== 'node') return;
+          if (!isNodeNode(node)) return;
           await remoteExec(node.ipv4_address, `mkdir -p ${keyDir}`);
           await rsync(keyDir, node.ipv4_address, keyDir);
         }),

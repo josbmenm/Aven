@@ -4,19 +4,16 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const crypto = require('crypto');
 
-const spawn = require('@expo/spawn-async');
+const spawn = require('child_process').execFileSync;
 
 const app = express();
 
 const goDeploy = async () => {
-  console.log('git pull');
-  await spawn('git', ['pull'], { cwd: '/globe', stdio: 'inherit' });
-  console.log('yarn');
-  await spawn('yarn', { cwd: '/globe', stdio: 'inherit' });
-  console.log('yarn build-vendor');
-  await spawn('yarn', ['build-vendor'], { cwd: '/globe', stdio: 'inherit' });
-  console.log('yarn build-web');
-  await spawn('yarn', ['build-web'], { cwd: '/globe', stdio: 'inherit' });
+  console.log('./src/aven-globe-updater/runUpdate.sh');
+  await spawn('./src/aven-globe-updater/runUpdate.sh', [], {
+    cwd: '/globe',
+    stdio: 'inherit',
+  });
   console.log('systemctl restart aven-hyperion.service');
   await spawn('systemctl', ['restart', 'aven-hyperion.service'], {
     cwd: '/globe',

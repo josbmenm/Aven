@@ -17,15 +17,8 @@ apt install -y yarn
 apt install -y unzip
 apt upgrade -y
 
-cd /cloud
-yarn
-yarn build
-
-cp /cloud/hyperion/config/avencloud.service /etc/systemd/system/avencloud.service
+cp /globe/src/aven-hyperion/config/avencloud.service /etc/systemd/system/avencloud.service
 
 systemctl daemon-reload
 systemctl enable avencloud
-systemctl start avencloud
-
-
 systemctl enable nginx
