@@ -1,5 +1,5 @@
 //ReplaceStart
 
-import Client from './WebsiteExample/MainClient';
+import Client from './aven-cloud/MainClient';
 
 //ReplaceEnd
