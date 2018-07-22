@@ -29,5 +29,10 @@ export default function handleServerRequest(
   const options = Router.getScreenOptions(activeChildNavigation);
   const title = options.title || options.headerTitle;
 
-  return { navigation, title };
+  return {
+    navigation,
+    backgroundColor: options.backgroundColor,
+    options,
+    title,
+  };
 }

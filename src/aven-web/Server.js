@@ -16,7 +16,11 @@ export default async function AvenServer(App) {
   server.get('/*', (req, res) => {
     const { path, query } = req;
 
-    const { navigation, title } = handleServerRequest(App.router, path, query);
+    const { navigation, title, backgroundColor, options } = handleServerRequest(
+      App.router,
+      path,
+      query,
+    );
 
     const { element, getStyleElement } = AppRegistry.getApplication('App', {
       initialProps: {
@@ -37,24 +41,13 @@ export default async function AvenServer(App) {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style id="root-stylesheet">
         html, body, #root {
+          background-color: ${backgroundColor};
           width: 100%;
           height: 100%;
           display: flex;
           flex-direction: column;
         }
-        @font-face {
-          src: url('/fonts/Ionicons.ttf');
-          font-family: Ionicons;
-        }
-        @font-face {
-          src: url('/fonts/FontAwesome.ttf');
-          font-family: FontAwesome;
-        }
-
-        @font-face {
-          src: url('/PTSansRegular.ttf');
-          font-family: PTSans;
-        }
+        ${options.customCSS}
         </style>
         ${css}
         ${

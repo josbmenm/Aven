@@ -52,9 +52,27 @@ export const Main = createBottomTabNavigator(
   },
 );
 
-const App = createSwitchNavigator({
-  Login: createLogin({}),
-  Main,
-});
+const fontsCSS = `
+@font-face {
+  src: url('/fonts/Ionicons.ttf');
+  font-family: Ionicons;
+}
+@font-face {
+  src: url('/fonts/FontAwesome.ttf');
+  font-family: FontAwesome;
+}
+`;
+
+const App = createSwitchNavigator(
+  {
+    Login: createLogin({}),
+    Main,
+  },
+  {
+    navigationOptions: {
+      customCSS: fontsCSS,
+    },
+  },
+);
 
 export default App;
