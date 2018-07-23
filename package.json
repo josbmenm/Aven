@@ -18,10 +18,11 @@
     "web-build": "razzle build",
     "web-test": "razzle test --env=jsdom",
     "web-prod": "NODE_ENV=production node build/server.js",
-    "build-vendor": "node scripts/vendorDist.js && yarn format",
+    "pre:build": "node scripts/vendorDist.js && yarn format",
     "launch": "node scripts/launch.js",
     "configure": "node scripts/configure.js",
-    "build": "node scripts/build.js",
+    "go:build": "node scripts/build.js",
+    "build": "yarn pre:build && yarn go:build",
     "jest": "jest"
   },
   "dependencies": {
