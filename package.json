@@ -1,0 +1,11 @@
+{
+  "name": "onofoodco",
+  "scripts": {
+    "web": "globe start ono-website",
+    "web-build": "globe build ono-website",
+    "build": "globe build"
+  },
+  "dependencies": {
+    "globe": "https://github.com/AvenCloud/globe.git#master"
+  }
+}
