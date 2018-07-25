@@ -14,7 +14,6 @@ const colors = {
   bg: '#FFF3EB',
   link: '#4987F9',
   title: '#4E6F9D',
-  highlight: '#FECF0A33',
 };
 
 const LogoText = () => (
@@ -55,19 +54,9 @@ const Main = () => (
   >
     <View
       style={{
-        position: 'absolute',
-        bottom: '50%',
-        left: 0,
-        right: 0,
-        top: 0,
-        backgroundColor: colors.highlight,
-      }}
-    />
-    <View
-      style={{
         ...StyleSheet.absoluteFillObject,
-        left: 100,
-        right: -50,
+        left: 0,
+        right: -375,
         top: -50,
         bottom: -50,
       }}
@@ -82,9 +71,8 @@ const Main = () => (
         <Image
           style={{
             flex: 1,
-            maxWidth: 2000,
+            resizeMode: 'cover',
             minWidth: 1000,
-            resizeMode: 'contain',
             minHeight: 950,
           }}
           source={require('./ono-shapes.svg')}
@@ -93,9 +81,9 @@ const Main = () => (
     </View>
     <View
       style={{
-        maxWidth: 600,
+        maxWidth: 500,
         flex: 1,
-        paddingTop: 100,
+        paddingTop: 50,
         paddingBottom: 200,
         paddingHorizontal: 30,
         justifyContent: 'center',
@@ -136,11 +124,11 @@ const Main = () => (
 
 const fontsCSS = `
 @font-face {
-  src: url('/fonts/Shrikhand-Regular.otf.otf');
+  src: url('/fonts/Shrikhand.otf');
   font-family: Shrikhand;
 }
 @font-face {
-  src: url('/fonts/ArbutusSlab-Regular.ttf');
+  src: url('/fonts/ArbutusSlab.ttf');
   font-family: ArbutusSlab;
 }
 `;

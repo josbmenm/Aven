@@ -4,6 +4,8 @@ import { AppRegistry } from 'react-native';
 
 import { handleServerRequest } from '../react-navigation-web';
 
+require('dotenv').config();
+
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 export default async function AvenServer(App) {
@@ -65,6 +67,7 @@ export default async function AvenServer(App) {
 
   let serverInstance = null;
   await new Promise((resolve, reject) => {
+    console.log(`Listening to port ${process.env.PORT}`);
     serverInstance = server.listen(process.env.PORT, err => {
       if (err) reject(err);
       else resolve();
