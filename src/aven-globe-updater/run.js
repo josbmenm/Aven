@@ -19,11 +19,7 @@ const goDeploy = async () => {
     cwd: '/globe',
     stdio: 'inherit',
   });
-  console.log('systemctl status aven-hyperion.service');
-  await spawn('systemctl', ['status', 'aven-hyperion.service'], {
-    cwd: '/globe',
-    stdio: 'inherit',
-  });
+  console.log('deploy done!')
 };
 
 app.get('/', (req, res) => {
@@ -32,7 +28,7 @@ app.get('/', (req, res) => {
 
 app.get('/kick', async (req, res) => {
   if (req.query.secret !== process.env.GLOBE_UPDATER_SECRET) {
-    res.setStatus(400).send('Incorrect secret');
+    res.status(400).send('Incorrect secret');
     return;
   }
   await goDeploy();

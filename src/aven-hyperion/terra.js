@@ -3,6 +3,14 @@ const nginxConfig = require('./config/nginx.conf.js');
 const spawn = require('@expo/spawn-async');
 const { promisify } = require('util');
 const { join } = require('path');
+const {
+  getClusterData,
+  rsyncToCluster,
+  isNodeNode,
+  rsync,
+  remoteExec,
+} = require('./utils');
+
 const randomBytes = promisify(require('crypto').randomBytes);
 require('dotenv').config();
 
@@ -18,8 +26,6 @@ const provisionerConnection = {
   user: 'root',
   timeout: '2m',
 };
-
-const hyperionKeyPath = '/globe/src/aven-hyperion/hyperion.key';
 
 const applyArtemisClusterConfig = (lastConfig, clusterName, cluster) => ({
   ...lastConfig,
@@ -283,101 +289,17 @@ async function goTerra() {
 
   console.log('SSL setup time');
 
-  const tfStateData = readFile('/hyperion.tfstate');
-
-  const isNodeNode = (node) => { //lol
-    return node.type === 'node'|| node.type === 'hera';
-
-  }
-
-  const clusterData = {};
-  const tfState = JSON.parse(tfStateData);
-  const stateResourceNames = Object.keys(tfState.modules[0].resources);
-  const getClusterData = clusterName => {
-    const getTypeFromResourceName = resourceName => {
-      if (
-        resourceName.match(
-          new RegExp('^digitalocean_droplet.' + clusterName + '_node'),
-        )
-      ) {
-        return 'node';
-      }
-      if (
-        resourceName.match(
-          new RegExp('^digitalocean_droplet.' + clusterName + '_hera'),
-        )
-      ) {
-        return 'hera';
-      }
-      if (
-        resourceName.match(
-          new RegExp('^digitalocean_droplet.' + clusterName + '_pg'),
-        )
-      ) {
-        return 'pg';
-      }
-      if (
-        resourceName.match(
-          new RegExp('^digitalocean_loadbalancer.' + clusterName + '_load'),
-        )
-      ) {
-        return 'load';
-      }
-      return 'unknown';
-    };
-    const nodes = {};
-    stateResourceNames.forEach(resourceName => {
-      const type = getTypeFromResourceName(resourceName);
-      if (type === 'unknown') {
-        return;
-      }
-      const r = tfState.modules[0].resources[resourceName];
-      const {
-        ipv4_address,
-        price_hourly,
-        price_monthly,
-        region,
-        ip, // load balancer provides ip instead of ipv4_address
-      } = r.primary.attributes;
-      nodes[resourceName] = {
-        price_hourly,
-        ipv4_address: ipv4_address || ip,
-        price_monthly,
-        region,
-        type,
-      };
-    });
-    return {
-      nodes,
-    };
-  };
-  const clusterNames = Object.keys(clusters);
-  clusterNames.forEach(clusterName => {
-    clusterData[clusterName] = {
-      ...clusters[clusterName],
-      ...getClusterData(clusterName),
-    };
-  });
+  const clusterData = await getClusterData();
 
   const keyDirOfDomain = domain => `/etc/letsencrypt/live/${domain}/`;
-  const remoteExec = async (ip, cmd) => {
-    await spawn('ssh', [
-      '-o',
-      'StrictHostKeyChecking=no',
-      '-i',
-      hyperionKeyPath,
-      `root@${ip}`,
-      '-t',
-      cmd,
-    ]);
-  };
+
   const remoteExecNodesOnCluster = async (clusterName, cmd) => {
     const { nodes } = clusterData[clusterName];
     const results = await Promise.all(
       Object.keys(nodes).map(async nodeName => {
         const node = nodes[nodeName];
         if (!isNodeNode(node)) return null;
-        
+
         return {
           node,
           nodeName,
@@ -388,40 +310,7 @@ async function goTerra() {
     );
     return results.filter(r => !!r);
   };
-  const rsync = async (source, ip, dest) => {
-    await spawn(
-      'rsync',
-      [
-        '-rvzL',
-        '-e',
-        `ssh -o StrictHostKeyChecking=no -i ${hyperionKeyPath}`,
-        source,
-        `root@${ip}:${dest}`,
-      ],
-      {
-        stdio: 'inherit',
-      },
-    );
-    console.log('copied ', source, ip, dest);
-  };
-  const rsyncToCluster = async (source, clusterName, dest) => {
-    console.log('rsyncToCluster', source, clusterName, dest, clusterData[clusterName])
-    const { nodes } = clusterData[clusterName];
-    const results = await Promise.all(
-      Object.keys(nodes).map(async nodeName => {
-        const node = nodes[nodeName];
-        console.log('lolwut', node, nodeName)
-        if (!isNodeNode(node)) return null;
-        console.log('rsyncing', source, node.ipv4_address, dest)
-        await rsync(source, node.ipv4_address, dest);
-        return {
-          node,
-          nodeName,
-        };
-      }),
-    );
-    return results.filter(r => !!r);
-  };
+
   const refreshDomainKeysForCluster = async (clusterName, domain) => {
     const cluster = clusterData[clusterName];
     console.log(`SSL for ${domain} on ${clusterName}`);
@@ -454,7 +343,7 @@ async function goTerra() {
       hasCert,
     };
   };
-
+  const clusterNames = Object.keys(clusters);
   for (let i = 0; i < clusterNames.length; i++) {
     const clusterName = clusterNames[i];
     const cluster = clusters[clusterName];
@@ -487,7 +376,7 @@ async function goTerra() {
     });
     const localNginxCopy = `/node_configs/${clusterName}.nginx.conf`;
     await fs.writeFile(localNginxCopy, config);
-    await rsyncToCluster(localNginxCopy, clusterName, '/etc/nginx/nginx.conf');
+    await rsyncToCluster(localNginxCopy, cluster, '/etc/nginx/nginx.conf');
     const reloadResults = await remoteExecNodesOnCluster(
       clusterName,
       'nginx -s reload',

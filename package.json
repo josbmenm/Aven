@@ -15,7 +15,7 @@
     "lint": "eslint src",
     "format": "eslint --fix src",
     "web": "razzle start",
-    "web-build": "razzle build",
+    "web-build": "node node_modules/razzle-rn/bin/razzle.js build",
     "web-test": "razzle test --env=jsdom",
     "web-prod": "NODE_ENV=production node build/server.js",
     "pre:build": "node scripts/vendorDist.js && yarn format",
