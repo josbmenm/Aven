@@ -27,7 +27,6 @@ async function start(args) {
       { stdio: 'inherit' },
     );
     await spawn('yarn', [], { stdio: 'inherit', cwd: globeDir });
-    await spawn('yarn', ['build-vendor'], { stdio: 'inherit', cwd: globeDir });
   }
 
   const syncSrcToGlobe = async () =>
