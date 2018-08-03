@@ -1358,7 +1358,7 @@ globby@^5.0.0:
 
 "globe@https://github.com/AvenCloud/globe.git#master":
   version "0.0.0-alpha.12"
-  resolved "https://github.com/AvenCloud/globe.git#57aaf66b421a8f3e415bf4cf2afd138ccfa0f37d"
+  resolved "https://github.com/AvenCloud/globe.git#2d0fd11892c69ee2ae8ab6c340e96d2e9eed9fcc"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     "@expo/vector-icons" "^6.3.1"

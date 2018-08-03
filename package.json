@@ -1,9 +1,9 @@
 {
   "name": "onofoodco",
   "scripts": {
-    "web": "globe start ono-website",
-    "web-build": "globe build ono-website",
-    "start-prod": "GLOBE_APP=ono-website NODE_ENV=production node build/server.js"
+    "start": "globe start ono-website",
+    "build": "globe build ono-website",
+    "prod": "GLOBE_APP=ono-website NODE_ENV=production node build/server.js"
   },
   "dependencies": {
     "globe": "https://github.com/AvenCloud/globe.git#master",
