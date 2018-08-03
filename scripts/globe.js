@@ -87,6 +87,15 @@ async function build(args) {
     ],
     { stdio: 'inherit' },
   );
+  await spawn(
+    'rsync',
+    [
+      '-a',
+      pathJoin(process.cwd(), appName) + '/public/',
+      pathJoin(globeDir, 'public'),
+    ],
+    { stdio: 'inherit' },
+  );
   await spawn('yarn', [], { stdio: 'inherit', cwd: globeDir });
 
   await spawn('yarn', ['build', appName], {
