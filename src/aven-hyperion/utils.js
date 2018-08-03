@@ -5,8 +5,8 @@ const readFile = path => fs.readFile(path, { encoding: 'utf8' });
 const hyperionKeyPath = '/globe/src/aven-hyperion/hyperion.key';
 
 const getClusterData = async () => {
-  const rawClusters = JSON.parse(await readFile('/hyperion.clusters.json'));
-  const tfStateData = await readFile('/hyperion.tfstate');
+  const rawClusters = JSON.parse(await readFile('/globe/hyperion.clusters.json'));
+  const tfStateData = await readFile('/globe/hyperion.tfstate');
   const clusterData = {};
   const tfState = JSON.parse(tfStateData);
   const stateResourceNames = Object.keys(tfState.modules[0].resources);
@@ -83,9 +83,7 @@ const rsyncToCluster = async (source, cluster, dest) => {
   const results = await Promise.all(
     Object.keys(nodes).map(async nodeName => {
       const node = nodes[nodeName];
-      console.log('lolwut', node, nodeName);
       if (!isNodeNode(node)) return null;
-      console.log('rsyncing', source, node.ipv4_address, dest);
       await rsync(source, node.ipv4_address, dest);
       return {
         node,
@@ -115,7 +113,6 @@ const rsync = async (source, ip, dest) => {
       stdio: 'inherit',
     },
   );
-  console.log('copied ', source, ip, dest);
 };
 
 const remoteExec = async (ip, cmd) => {

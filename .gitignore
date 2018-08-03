@@ -26,3 +26,8 @@ src/react-navigation-fluid
 npm-dist
 
 .env
+
+hyperion.clusters.json
+hyperion.clusters.json.bak
+hyperion.tfstate
+hyperion.tfstate.backup

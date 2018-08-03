@@ -267,7 +267,7 @@ const computeTfConfig = clusters => {
 };
 
 async function goTerra() {
-  const clusters = JSON.parse(readFile('/hyperion.clusters.json'));
+  const clusters = JSON.parse(readFile('/globe/hyperion.clusters.json'));
 
   const tfConfig = computeTfConfig(clusters);
 
@@ -278,7 +278,7 @@ async function goTerra() {
 
   await spawn(
     'terraform',
-    ['apply', '-auto-approve', '-state', '/hyperion.tfstate'],
+    ['apply', '-auto-approve', '-state', '/globe/hyperion.tfstate'],
     {
       stdio: 'inherit',
       cwd: resolvePath('.'),
@@ -346,7 +346,7 @@ async function goTerra() {
   const clusterNames = Object.keys(clusters);
   for (let i = 0; i < clusterNames.length; i++) {
     const clusterName = clusterNames[i];
-    const cluster = clusters[clusterName];
+    const cluster = clusterData[clusterName];
     const clusterHost = `${clusterName}.aven.cloud`;
 
     const hosts = {};

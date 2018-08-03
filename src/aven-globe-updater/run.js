@@ -19,7 +19,7 @@ const goDeploy = async () => {
     cwd: '/globe',
     stdio: 'inherit',
   });
-  console.log('deploy done!')
+  console.log('deploy done!');
 };
 
 app.get('/', (req, res) => {

@@ -23,32 +23,35 @@ const goDeploy = async clusterName => {
   const buildNodeExec = cmd => remoteExec(buildNode.ipv4_address, cmd);
 
   const deployId = `deploy-${Date.now()}`;
+  const localTmpDir = `${os.tmpdir()}/${deployId}`
+  await fs.mkdirp(localTmpDir)
 
   // build phase:
   console.log(
     'write key file:',
     await buildNodeExec(
-      `echo "${cluster.gitKey}" > /deploykey && chmod go-wrx /deploykey`,
+      `echo "${cluster.gitKey}" > /deploykey ; chmod go-wrx /deploykey`,
     ),
   );
   console.log('make builds dir:', await buildNodeExec('mkdir -p /builds'));
   console.log('make dist dir:', await buildNodeExec('mkdir -p /dist'));
-  const gitCmd = `cd /builds && GIT_SSH_COMMAND="ssh -i /deploykey -o StrictHostKeyChecking=no" git clone -b ${
+  const gitCmd = `GIT_SSH_COMMAND="ssh -i /deploykey -o StrictHostKeyChecking=no" git clone -b ${
     cluster.gitBranch
-  } --single-branch ${cluster.gitUrl} ${deployId}`;
+  } --single-branch ${cluster.gitUrl} /builds/${deployId}`;
   console.log(gitCmd);
   console.log('git clone:', gitCmd, await buildNodeExec(gitCmd));
   const buildPath = `/builds/${deployId}`;
   const buildPackagePath = `/dist/${deployId}.tar.gz`;
-  console.log('yarn:', await buildNodeExec(`cd ${buildPath} && yarn`));
+  console.log('yarn:', await buildNodeExec(`cd ${buildPath} ; yarn`));
+
   console.log(
     'yarn build appName:',
     cluster.appName,
-    await buildNodeExec(`cd ${buildPath} && yarn build ${cluster.appName}`),
+    await buildNodeExec(`cd ${buildPath} ; yarn build ${cluster.appName}`),
   );
   console.log(
     'tar build dir:',
-    await buildNodeExec(`cd ${buildPath} && tar -czf ${buildPackagePath} .`),
+    await buildNodeExec(`cd ${buildPath} ; tar -czf ${buildPackagePath} .`),
   );
   console.log('rm -rf build dir:', await buildNodeExec(`rm -rf ${buildPath}`));
 
@@ -59,18 +62,10 @@ const goDeploy = async clusterName => {
   console.log(
     'tar build dir:',
     await buildNodeExec(
-      `mkdir /globe && cd /globe && tar -xzf ${buildPackagePath}`,
+      `mkdir /globe ; cd /globe ; tar -xzf ${buildPackagePath}`,
     ),
   );
-  const env = {
-    ...cluster.env,
-    NODE_ENV: 'production',
-    PORT: 8080,
-    // PG_IP, PG_PASS, etc should be set here
-  };
-  const dotenvfile = `${os.tmpdir()}/${deployId}-dotenv`;
-  await fs.writeFile(dotenvfile, envifyObject(env));
-  await rsyncToCluster(dotenvfile, cluster, '/globe/.env');
+
   console.log(
     'restart service:',
     await buildNodeExec(`systemctl restart avencloud`),
