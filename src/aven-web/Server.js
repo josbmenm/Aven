@@ -4,6 +4,18 @@ import { AppRegistry } from 'react-native';
 
 import { handleServerRequest } from '../react-navigation-web';
 
+const fs = require('fs-extra');
+
+const pathJoin = require('path').join;
+
+const activeApp = process.env.GLOBE_APP;
+
+if (!activeApp) {
+  throw 'GLOBE_APP env var is missing';
+}
+
+const isProd = process.env.NODE_ENV === 'production';
+
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 export default async function AvenServer(App) {
@@ -11,12 +23,18 @@ export default async function AvenServer(App) {
 
   AppRegistry.registerComponent('App', () => App);
 
+  const publicDir = isProd ? 'build/public' : `src/${activeApp}/public`;
+
   server.disable('x-powered-by');
-  server.use(express.static(process.env.RAZZLE_PUBLIC_DIR));
+  server.use(express.static(publicDir));
   server.get('/*', (req, res) => {
     const { path, query } = req;
 
-    const { navigation, title } = handleServerRequest(App.router, path, query);
+    const { navigation, title, options } = handleServerRequest(
+      App.router,
+      path,
+      query,
+    );
 
     const { element, getStyleElement } = AppRegistry.getApplication('App', {
       initialProps: {
@@ -42,23 +60,11 @@ export default async function AvenServer(App) {
           display: flex;
           flex-direction: column;
         }
-        @font-face {
-          src: url('/fonts/Ionicons.ttf');
-          font-family: Ionicons;
-        }
-        @font-face {
-          src: url('/fonts/FontAwesome.ttf');
-          font-family: FontAwesome;
-        }
-
-        @font-face {
-          src: url('/PTSansRegular.ttf');
-          font-family: PTSans;
-        }
+        ${options.customCSS}
         </style>
         ${css}
         ${
-          process.env.NODE_ENV === 'production'
+          isProd
             ? `<script src="${assets.client.js}" defer></script>`
             : `<script src="${assets.client.js}" defer crossorigin></script>`
         }

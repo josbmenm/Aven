@@ -29,6 +29,7 @@ async function start(args) {
     await spawn('yarn', [], { stdio: 'inherit', cwd: globeDir });
     await spawn('yarn', ['build-vendor'], { stdio: 'inherit', cwd: globeDir });
   }
+
   const syncSrcToGlobe = async () =>
     await spawn(
       'rsync',
@@ -45,11 +46,15 @@ async function start(args) {
     setTimeout(syncLoop, 500);
   };
 
-  syncLoop();
+  syncLoop(); // no await here because it goes indefinitely, and we want to spawn launch:
 
   await spawn('yarn', ['launch', appName], {
     stdio: 'inherit',
     cwd: globeDir,
+    env: {
+      ...process.env,
+      GLOBE_APP: appName,
+    },
   });
 }
 
@@ -87,6 +92,10 @@ async function build(args) {
   await spawn('yarn', ['build', appName], {
     stdio: 'inherit',
     cwd: globeDir,
+    env: {
+      ...process.env,
+      GLOBE_APP: appName,
+    },
   });
 
   await spawn(
