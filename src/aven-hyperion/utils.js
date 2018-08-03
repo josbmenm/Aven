@@ -5,7 +5,9 @@ const readFile = path => fs.readFile(path, { encoding: 'utf8' });
 const hyperionKeyPath = '/globe/src/aven-hyperion/hyperion.key';
 
 const getClusterData = async () => {
-  const rawClusters = JSON.parse(await readFile('/globe/hyperion.clusters.json'));
+  const rawClusters = JSON.parse(
+    await readFile('/globe/hyperion.clusters.json'),
+  );
   const tfStateData = await readFile('/globe/hyperion.tfstate');
   const clusterData = {};
   const tfState = JSON.parse(tfStateData);

@@ -23,8 +23,8 @@ const goDeploy = async clusterName => {
   const buildNodeExec = cmd => remoteExec(buildNode.ipv4_address, cmd);
 
   const deployId = `deploy-${Date.now()}`;
-  const localTmpDir = `${os.tmpdir()}/${deployId}`
-  await fs.mkdirp(localTmpDir)
+  const localTmpDir = `${os.tmpdir()}/${deployId}`;
+  await fs.mkdirp(localTmpDir);
 
   // build phase:
   console.log(
