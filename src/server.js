@@ -1,4 +1,4 @@
 //ReplaceStart
-export { startServer } from './aven-cloud/MainServer';
+export { startServer } from './ono-website/MainServer';
 
 //ReplaceEnd
