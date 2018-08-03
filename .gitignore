@@ -31,3 +31,5 @@ hyperion.clusters.json
 hyperion.clusters.json.bak
 hyperion.tfstate
 hyperion.tfstate.backup
+
+public
