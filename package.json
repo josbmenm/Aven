@@ -3,9 +3,10 @@
   "scripts": {
     "web": "globe start ono-website",
     "web-build": "globe build ono-website",
-    "build": "globe build"
+    "start-prod": "GLOBE_APP=ono-website NODE_ENV=production node build/server.js"
   },
   "dependencies": {
-    "globe": "https://github.com/AvenCloud/globe.git#master"
+    "globe": "https://github.com/AvenCloud/globe.git#master",
+    "react": "^16.4.2"
   }
 }
