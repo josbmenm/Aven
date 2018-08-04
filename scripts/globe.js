@@ -4,6 +4,8 @@ const pathJoin = require('path').join;
 const fs = require('fs-extra');
 const spawn = require('@expo/spawn-async');
 
+const localGlobeDir = pathJoin(__dirname, '..');
+
 async function start(args) {
   const appName = args[0];
   console.log('Starting app ' + appName);
@@ -21,7 +23,7 @@ async function start(args) {
         '-a',
         '--exclude',
         'node_modules',
-        pathJoin(__dirname, '..') + '/',
+        localGlobeDir + '/',
         globeDir,
       ],
       { stdio: 'inherit' },
@@ -45,9 +47,9 @@ async function start(args) {
     setTimeout(syncLoop, 500);
   };
 
-  syncLoop(); // no await here because it goes indefinitely, and we want to spawn launch:
+  syncLoop(); // no await here because it goes indefinitely, and we want to spawn start:
 
-  await spawn('yarn', ['launch', appName], {
+  await spawn('yarn', ['start', appName], {
     stdio: 'inherit',
     cwd: globeDir,
     env: {
@@ -57,7 +59,6 @@ async function start(args) {
   });
 }
 
-const localGlobeDir = pathJoin(__dirname, '..');
 
 async function build(args) {
   const appName = args[0];
@@ -76,6 +77,7 @@ async function build(args) {
       ['-a', '--exclude', 'node_modules', localGlobeDir + '/', globeDir],
       { stdio: 'inherit' },
     );
+    await spawn('yarn', [], { stdio: 'inherit', cwd: globeDir });
   }
   await spawn(
     'rsync',
