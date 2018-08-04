@@ -78,7 +78,7 @@ export default async function AvenServer(App) {
 
   let serverInstance = null;
   await new Promise((resolve, reject) => {
-    serverInstance = server.listen(process.env.PORT, err => {
+    serverInstance = server.listen(process.env.APP_PORT || 8888, err => {
       if (err) reject(err);
       else resolve();
     });
