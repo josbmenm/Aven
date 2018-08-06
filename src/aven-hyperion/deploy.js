@@ -72,10 +72,4 @@ const goDeploy = async clusterName => {
   );
 };
 
-const clusterName = process.argv[2];
-
-goDeploy(clusterName)
-  .then(output => {
-    console.log('Done!', JSON.stringify(output, null, 2));
-  })
-  .catch(console.error);
+module.exports = goDeploy;
