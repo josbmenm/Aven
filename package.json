@@ -58,8 +58,7 @@
     "react-navigation": "https://github.com/react-navigation/react-navigation.git#@ericvicenti/deeplink",
     "react-navigation-fluid-transitions": "https://github.com/ericvicenti/FluidTransitions.git#container-independent",
     "react-navigation-tabs": "https://github.com/react-navigation/react-navigation-tabs.git#@ericvicenti/isolate-container",
-    "react-syntax-highlighter": "^7.0.4",
-    "server-starter": "^1.2.3"
+    "react-syntax-highlighter": "^7.0.4"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

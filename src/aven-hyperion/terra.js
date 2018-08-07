@@ -266,8 +266,8 @@ const computeTfConfig = clusters => {
   return tfConfig;
 };
 
-async function goTerra() {
-  const clusters = JSON.parse(readFile('/globe/hyperion.clusters.json'));
+async function goTerra(props, state) {
+  const { clusters } = props;
 
   const tfConfig = computeTfConfig(clusters);
 
@@ -289,7 +289,7 @@ async function goTerra() {
 
   console.log('SSL setup time');
 
-  const clusterData = await getClusterData();
+  const clusterData = await getClusterData(props, state);
 
   const keyDirOfDomain = domain => `/etc/letsencrypt/live/${domain}/`;
 
@@ -343,9 +343,8 @@ async function goTerra() {
       hasCert,
     };
   };
-  const clusterNames = Object.keys(clusters);
-  for (let i = 0; i < clusterNames.length; i++) {
-    const clusterName = clusterNames[i];
+
+  for (let clusterName in clusters) {
     const cluster = clusterData[clusterName];
     const clusterHost = `${clusterName}.aven.cloud`;
 
@@ -356,40 +355,35 @@ async function goTerra() {
       clusterHost,
     );
 
-    await Promise.all(
-      cluster.publicHosts.map(async publicHost => {
-        hosts[publicHost] = await refreshDomainKeysForCluster(
-          clusterName,
-          publicHost,
-        );
-      }),
-    );
-
-    const allClusterHosts = Object.keys(hosts);
-    const activeClusterHosts = allClusterHosts.filter(
-      hostName => hosts[hostName].hasCert,
-    );
-
-    const config = nginxConfig({
-      sslHostnames: activeClusterHosts,
-      clusterName,
-    });
-    const localNginxCopy = `/node_configs/${clusterName}.nginx.conf`;
-    await fs.writeFile(localNginxCopy, config);
-    await rsyncToCluster(localNginxCopy, cluster, '/etc/nginx/nginx.conf');
-    const reloadResults = await remoteExecNodesOnCluster(
-      clusterName,
-      'nginx -s reload',
-    );
+    for (let serviceName in cluster.services) {
+      const service = cluster.services[serviceName];
+      for (let publicHostIndex in service.publicHosts) {
+        const publicHost = service.publicHosts[publicHostIndex];
+        await refreshDomainKeysForCluster(clusterName, publicHost);
+      }
+    }
   }
 
-  console.log('Time to update the code for all nodes!');
+  //   const allClusterHosts = Object.keys(hosts);
+  //   const activeClusterHosts = allClusterHosts.filter(
+  //     hostName => hosts[hostName].hasCert,
+  //   );
+  //   const config = nginxConfig({
+  //     sslHostnames: activeClusterHosts,
+  //     clusterName,
+  //   });
+  //   const localNginxCopy = `/node_configs/${clusterName}.nginx.conf`;
+  //   await fs.writeFile(localNginxCopy, config);
+  //   await rsyncToCluster(localNginxCopy, cluster, '/etc/nginx/nginx.conf');
+  //   const reloadResults = await remoteExecNodesOnCluster(
+  //     clusterName,
+  //     'nginx -s reload',
+  //   );
+  // }
+
+  console.log('Time to do the deploy...');
 
   return clusterData;
 }
 
-goTerra()
-  .then(clusterData => {
-    console.log('Done!', JSON.stringify(clusterData, null, 2));
-  })
-  .catch(console.error);
+module.exports = goTerra;

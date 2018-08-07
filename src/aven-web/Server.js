@@ -6,7 +6,7 @@ import { handleServerRequest } from '../react-navigation-web';
 
 const fs = require('fs-extra');
 const http = require('http');
-const ServerStarter = require('server-starter');
+const startServer = require('./startServer');
 
 const pathJoin = require('path').join;
 

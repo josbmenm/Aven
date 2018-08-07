@@ -1,13 +1,11 @@
 const fs = require('fs-extra');
 const spawn = require('@expo/spawn-async');
+const uuid = require('uuid/v1');
 
 const readFile = path => fs.readFile(path, { encoding: 'utf8' });
 const hyperionKeyPath = '/globe/src/aven-hyperion/hyperion.key';
 
-const getClusterData = async () => {
-  const rawClusters = JSON.parse(
-    await readFile('/globe/hyperion.clusters.json'),
-  );
+const getClusterData = async (props, state) => {
   const tfStateData = await readFile('/globe/hyperion.tfstate');
   const clusterData = {};
   const tfState = JSON.parse(tfStateData);
@@ -70,10 +68,10 @@ const getClusterData = async () => {
       nodes,
     };
   };
-  const clusterNames = Object.keys(rawClusters);
+  const clusterNames = Object.keys(props.clusters);
   clusterNames.forEach(clusterName => {
     clusterData[clusterName] = {
-      ...rawClusters[clusterName],
+      ...props.clusters[clusterName],
       ...getSingleClusterData(clusterName),
     };
   });
@@ -117,17 +115,23 @@ const rsync = async (source, ip, dest) => {
   );
 };
 
-const remoteExec = async (ip, cmd) => {
-  return await spawn('ssh', [
-    '-o',
-    'StrictHostKeyChecking=no',
-    '-i',
-    hyperionKeyPath,
-    `root@${ip}`,
-    '-t',
-    cmd,
-  ]);
+const remoteExec = async (ip, cmd, opts) => {
+  return await spawn(
+    'ssh',
+    [
+      '-o',
+      'StrictHostKeyChecking=no',
+      '-i',
+      hyperionKeyPath,
+      `root@${ip}`,
+      '-t',
+      cmd,
+    ],
+    opts,
+  );
 };
+
+const writeRemote = async (ip, dest, content) => {};
 
 module.exports = {
   getClusterData,
@@ -135,4 +139,5 @@ module.exports = {
   isNodeNode,
   rsync,
   remoteExec,
+  writeRemote,
 };
