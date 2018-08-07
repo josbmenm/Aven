@@ -5,6 +5,8 @@ import { AppRegistry } from 'react-native';
 import { handleServerRequest } from '../react-navigation-web';
 
 const fs = require('fs-extra');
+const http = require('http');
+const ServerStarter = require('server-starter');
 
 const pathJoin = require('path').join;
 
@@ -19,15 +21,15 @@ const isProd = process.env.NODE_ENV === 'production';
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 export default async function AvenServer(App) {
-  const server = express();
+  const expressApp = express();
 
   AppRegistry.registerComponent('App', () => App);
 
   const publicDir = isProd ? 'build/public' : `src/${activeApp}/public`;
 
-  server.disable('x-powered-by');
-  server.use(express.static(publicDir));
-  server.get('/*', (req, res) => {
+  expressApp.disable('x-powered-by');
+  expressApp.use(express.static(publicDir));
+  expressApp.get('/*', (req, res) => {
     const { path, query } = req;
 
     const { navigation, title, options } = handleServerRequest(
@@ -77,11 +79,20 @@ export default async function AvenServer(App) {
   });
 
   let serverInstance = null;
+  const serverListenLocation = process.env.GLOBE_LISTEN_SOCKET || 8888;
   await new Promise((resolve, reject) => {
-    serverInstance = server.listen(process.env.APP_PORT || 8888, err => {
-      if (err) reject(err);
-      else resolve();
-    });
+    serverInstance = http.createServer(expressApp);
+    ServerStarter(
+      serverInstance,
+      {
+        listen: serverListenLocation,
+      },
+      (err, info) => {
+        console.log('Listening on ' + serverListenLocation);
+        if (err) reject(err);
+        else resolve(info);
+      },
+    );
   });
 
   return {
