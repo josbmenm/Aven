@@ -1,7 +1,4 @@
-const SSLConfig = ({ clusterName, sslHostnames }) =>
-  sslHostnames
-    .map(
-      hostName => `
+const serviceHostConfig = ({ hostName, serviceDir }) => `
 
 server {
 
@@ -14,7 +11,7 @@ server {
 
 	location / {
 		proxy_http_version 1.1;
-		proxy_pass http://127.0.0.1:8080;
+		proxy_pass http://unix:${serviceDir}:;
 		proxy_set_header X-Forwarded-Proto https;
 		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-Ssl on;
@@ -26,14 +23,46 @@ server {
 
 }
 
-`,
-    )
-    .join('\n');
+`;
 
-module.exports = ({ clusterName, sslHostnames }) => `
+const clustersConfig = ({ props, state, clusterName }) => {
+  const clusters = props.clusters;
+  const cluster = clusters[clusterName];
 
+  let hosts = [
+    {
+      hostName: `${clusterName}.aven.cloud`,
+      serviceDir: cluster.mainService,
+    },
+  ];
 
-user www-data;
+  for (let serviceName in cluster.services) {
+    const service = cluster.services[serviceName];
+		const serviceState = state.clusters[clusterName].services[serviceName];
+		const allDeployIds = Object.keys(serviceState.deploys);
+    const deployId = allDeployIds[allDeployIds.length - 1]; // fix. this is always the last deploy
+    const deploy = serviceState.deploys[deployId];
+    hosts = [
+      ...hosts,
+      ...service.publicHosts.map(publicHost => ({
+        hostName: publicHost,
+        serviceDir: deploy.socketDir,
+      })),
+    ];
+	}
+	
+  const hostsWithSSL = hosts.filter(h => {
+    return state.ssl[clusterName][h.hostName].hasCert;
+  });
+
+  return hostsWithSSL
+    .map(serviceHostConfig)
+    .join('');
+};
+
+module.exports = ({ props, state, clusterName }) => `
+
+user root;
 worker_processes auto;
 pid /run/nginx.pid;
 
@@ -106,7 +135,7 @@ http {
 		}
 	}
 	
-	${SSLConfig({ clusterName, sslHostnames })}
+	${clustersConfig({ props, state, clusterName })}
 }
 
 `;

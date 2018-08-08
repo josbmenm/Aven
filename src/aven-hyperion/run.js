@@ -29,15 +29,16 @@ const kick = async (repoId, validateKickRequest) => {
       state = {};
     }
   }
+  console.log('typeof init state is ', typeof state)
 
-  const setState = async newState => {
-    const s = { ...state, ...newState };
+  const setState = async stateTransactor => {
+    const s = { ...state, ...stateTransactor(state) };
     await fs.writeFile(
       '/globe/hyperion.state.json',
       JSON.stringify(s, null, 2),
     );
-    console.log('State set!', s);
     state = s;
+    console.log('typeof state is ', typeof state)
   };
   const dayInMS = 1000 * 60 * 60 * 24;
   const thisTime = Date.now();
@@ -47,11 +48,11 @@ const kick = async (repoId, validateKickRequest) => {
     clustersChecksum !== state.lastTerraClustersChecksum
   ) {
     console.log('Go Terra');
-    await terra(props, state);
-    await setState({
+    await terra(props, () => state, setState);
+    await setState(() => ({
       lastTerraTime: thisTime,
       lastTerraClustersChecksum: clustersChecksum,
-    });
+    }));
   }
 
   const buildJobs = [];
@@ -74,7 +75,7 @@ const kick = async (repoId, validateKickRequest) => {
   for (let buildIndex in buildJobs) {
     const { clusterName, serviceName } = buildJobs[buildIndex];
     console.log(`Now deploying ${clusterName} ${serviceName}`);
-    await goDeploy(clusterName, serviceName, props, state, setState);
+    await goDeploy(clusterName, serviceName, props, () => state, setState);
   }
 };
 

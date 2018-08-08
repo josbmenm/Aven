@@ -3,9 +3,10 @@ const fs = require('fs-extra');
 const spawn = require('@expo/spawn-async');
 const os = require('os');
 const serviceConfig = require('./serviceConfig');
+const nginxConfig = require('./nginxConfig')
 
 const readFile = path => fs.readFile(path, { encoding: 'utf8' });
-const { getClusterData, rsyncToCluster, remoteExec } = require('./utils');
+const { getClusterData, rsyncToCluster, remoteExec, rsync } = require('./utils');
 const candidatePortNumber = () =>
   String(Math.floor(Math.random() * 1000) + 8000);
 
@@ -14,19 +15,37 @@ const envifyObject = env =>
     .map(envKey => `${envKey}=${env[envKey]}`)
     .join('\n');
 
-const goDeploy = async (clusterName, serviceName, props, state, setState) => {
-  const clusters = await getClusterData(props, state);
+const goDeploy = async (
+  clusterName,
+  serviceName,
+  props,
+  getState,
+  setState,
+) => {
+
+  const clusters = await getClusterData(props, getState());
   const cluster = clusters[clusterName];
   const buildNodeName = Object.keys(cluster.nodes)[0];
   const buildNode = cluster.nodes[buildNodeName];
   const service = cluster.services[serviceName];
 
-  const deployId = `${clusterName}-${serviceName}-${Date.now()}`;
+  const deployStartTime = Date.now();
+  const deployId = `${clusterName}-${serviceName}-${deployStartTime}`;
+  const deployInfo = {
+    id: deployId,
+    clusterName,
+    serviceName,
+    socketDir: `/socket/${deployId}`,
+    appName: service.appName,
+    startTime: deployStartTime,
+  };
 
   console.log('Building ', deployId);
 
   const buildNodeExec = cmd =>
     remoteExec(buildNode.ipv4_address, cmd, { stdio: 'inherit' });
+  const cpToBuildNode = (srcPath, destPath) =>
+    rsync(srcPath, buildNode.ipv4_address, destPath)
   const buildNodeMkdir = dir => buildNodeExec(`mkdir -p ${dir}`);
   // const cleanup = [];
   // const cleanupAfterBuild = path => cleanup.push(() => fs.remove(path))
@@ -74,10 +93,8 @@ const goDeploy = async (clusterName, serviceName, props, state, setState) => {
     `mkdir ${serviceDir}; cd ${serviceDir}; tar -xzf ${buildPackagePath}`,
   );
 
-  const socketDir = `/socket/${deployId}`;
-
   const serviceFile = serviceConfig(service, deployId, serviceDir, {
-    GLOBE_LISTEN_SOCKET: socketDir,
+    GLOBE_LISTEN_SOCKET: deployInfo.socketDir,
   });
   const systemServiceName = `globe-${deployId}`;
 
@@ -93,53 +110,72 @@ const goDeploy = async (clusterName, serviceName, props, state, setState) => {
 
   await buildNodeExec(`systemctl status ${systemServiceName}`);
 
-  const serviceState =
-    (state &&
-      state.clusters &&
-      state.clusters[clusterName] &&
-      state.clusters[clusterName].services &&
-      state.clusters[clusterName].services[serviceName]) ||
-    {};
+  // TODO: Hit the server at its socket to do a health-check, BEFORE reconfiguring nginx..
 
-  const setServiceState = newState =>
-    setState({
-      clusters: {
-        ...state.clusters,
-        [clusterName]: {
-          services: {
-            ...state.clusters[clusterName].services,
-            [serviceName]: {
-              ...serviceState,
-              ...newState,
+  const getServiceState = () => {
+    const state = getState();
+    const clusters = state.clusters || {};
+    const cluster = clusters[clusterName] || {};
+    const services = cluster.services || {};
+    const service = services[serviceName] || {};
+    return service;
+  };
+
+  const setServiceState = async serviceTransactor => {
+    await setState(lastState => {
+      const clusters = lastState.clusters || {};
+      const cluster = clusters[clusterName] || {};
+      const services = cluster.services || {};
+      const service = services[serviceName] || {};
+      return {
+        clusters: {
+          ...clusters,
+          [clusterName]: {
+            ...cluster,
+            services: {
+              ...services,
+              [serviceName]: {
+                ...service,
+                ...serviceTransactor(service),
+              },
             },
           },
         },
-      },
+      };
     });
+  };
 
-  console.log('woah dude..', serviceState);
-  // const config = nginxConfig({
-  //   cluster
-  //   cluster,
-  //   clusterName,
-  // });
+  console.log('============ PREV STATE')
+  console.log(JSON.stringify(getState()));
 
-  // const reloadResults = await buildNodeExec(
-  //   'nginx -s reload',
-  // );
+  console.log('============ DEPLOY INFO')
+  console.log(deployInfo);
 
-  // const services = [cluster.mainApp, ...Object.keys(cluster.services)]
 
-  // console.log('Now its my job to update services:', services)
-  // console.log(
-  //   'restart service:',
-  //   await buildNodeExec(`systemctl restart avencloud`),
-  // );
+  await setServiceState(lastService => ({
+    deploys: { ...(lastService.deploys || {}), [deployInfo.id]: deployInfo },
+  }));
 
-  // console.log(
-  //   'restart service:',
-  //   await buildNodeExec(`systemctl restart avencloud`),
-  // );
+
+  console.log('============ NEXT STATE')
+  console.log(JSON.stringify(getState()));
+
+  
+  // let lastDeployId = getServiceState()
+
+  const config = nginxConfig({
+    props,
+    state: getState(),
+    serviceName,
+    clusterName,
+  });
+
+  await fs.writeFile('/tmp/nginx.conf', config);
+  await cpToBuildNode('/tmp/nginx.conf', '/etc/nginx/nginx.conf');
+
+  await buildNodeExec(
+    'nginx -s reload',
+  );
 };
 
 module.exports = goDeploy;

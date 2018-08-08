@@ -1,5 +1,4 @@
 const fs = require('fs-extra');
-const nginxConfig = require('./config/nginx.conf.js');
 const spawn = require('@expo/spawn-async');
 const { promisify } = require('util');
 const { join } = require('path');
@@ -266,7 +265,7 @@ const computeTfConfig = clusters => {
   return tfConfig;
 };
 
-async function goTerra(props, state) {
+async function goTerra(props, getState, setState) {
   const { clusters } = props;
 
   const tfConfig = computeTfConfig(clusters);
@@ -289,7 +288,7 @@ async function goTerra(props, state) {
 
   console.log('SSL setup time');
 
-  const clusterData = await getClusterData(props, state);
+  const clusterData = await getClusterData(props, getState());
 
   const keyDirOfDomain = domain => `/etc/letsencrypt/live/${domain}/`;
 
@@ -344,13 +343,15 @@ async function goTerra(props, state) {
     };
   };
 
+  const sslState = {};
+
   for (let clusterName in clusters) {
     const cluster = clusterData[clusterName];
     const clusterHost = `${clusterName}.aven.cloud`;
 
-    const hosts = {};
+    sslState[clusterName] = {};
 
-    hosts[clusterHost] = await refreshDomainKeysForCluster(
+    sslState[clusterName][clusterHost] = await refreshDomainKeysForCluster(
       clusterName,
       clusterHost,
     );
@@ -359,27 +360,12 @@ async function goTerra(props, state) {
       const service = cluster.services[serviceName];
       for (let publicHostIndex in service.publicHosts) {
         const publicHost = service.publicHosts[publicHostIndex];
-        await refreshDomainKeysForCluster(clusterName, publicHost);
+        sslState[clusterName][publicHost] = await refreshDomainKeysForCluster(clusterName, publicHost);
       }
     }
   }
 
-  //   const allClusterHosts = Object.keys(hosts);
-  //   const activeClusterHosts = allClusterHosts.filter(
-  //     hostName => hosts[hostName].hasCert,
-  //   );
-  //   const config = nginxConfig({
-  //     sslHostnames: activeClusterHosts,
-  //     clusterName,
-  //   });
-  //   const localNginxCopy = `/node_configs/${clusterName}.nginx.conf`;
-  //   await fs.writeFile(localNginxCopy, config);
-  //   await rsyncToCluster(localNginxCopy, cluster, '/etc/nginx/nginx.conf');
-  //   const reloadResults = await remoteExecNodesOnCluster(
-  //     clusterName,
-  //     'nginx -s reload',
-  //   );
-  // }
+  await setState(lastState => ({ ssl: sslState }))
 
   console.log('Time to do the deploy...');
 
