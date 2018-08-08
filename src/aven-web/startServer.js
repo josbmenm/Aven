@@ -22,9 +22,21 @@ async function isSocketInUse(socketPath) {
   });
 }
 
+async function listen(server, listenLocation) {
+  return new Promise((resolve, reject) => {
+    server.listen(listenLocation, err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
 export default async function startServer(server, listenLocation) {
   try {
-    await promisify(server.start)(listenLocation);
+    await listen(server, listenLocation);
   } catch (e) {
     if (e.code !== 'EADDRINUSE') {
       throw e;
@@ -33,6 +45,6 @@ export default async function startServer(server, listenLocation) {
       throw e;
     }
     await fs.unlink(listenLocation);
-    await promisify(server.start)(listenLocation);
+    await listen(server, listenLocation);
   }
 }

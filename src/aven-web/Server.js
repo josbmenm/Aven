@@ -1,12 +1,12 @@
 import express from 'express';
 import ReactDOMServer from 'react-dom/server';
 import { AppRegistry } from 'react-native';
+import startServer from './startServer';
 
 import { handleServerRequest } from '../react-navigation-web';
 
 const fs = require('fs-extra');
 const http = require('http');
-const startServer = require('./startServer');
 
 const pathJoin = require('path').join;
 
@@ -78,26 +78,14 @@ export default async function AvenServer(App) {
     );
   });
 
-  let serverInstance = null;
   const serverListenLocation = process.env.GLOBE_LISTEN_SOCKET || 8888;
-  await new Promise((resolve, reject) => {
-    serverInstance = http.createServer(expressApp);
-    startServer(
-      serverInstance,
-      {
-        listen: serverListenLocation,
-      },
-      (err, info) => {
-        console.log('Listening on ' + serverListenLocation);
-        if (err) reject(err);
-        else resolve(info);
-      },
-    );
-  });
+  const serverInstance = http.createServer(expressApp);
+  await startServer(serverInstance, serverListenLocation);
+  console.log('Listening on ' + serverListenLocation);
 
   return {
     close: async () => {
-      serverInstance && serverInstance.close();
+      serverInstance.close();
     },
   };
 }
