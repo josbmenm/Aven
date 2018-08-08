@@ -66,7 +66,7 @@ const goDeploy = async (clusterName, serviceName, props, state, setState) => {
 
   console.log('Deploying');
 
-  const serviceDir = `${servicesDir}/${serviceName}`;
+  const serviceDir = `${servicesDir}/${deployId}`;
 
   await buildNodeExec(`rm -rf ${serviceDir}`);
 
@@ -76,7 +76,7 @@ const goDeploy = async (clusterName, serviceName, props, state, setState) => {
 
   const socketDir = `/socket/${deployId}`;
 
-  const serviceFile = serviceConfig(service, serviceName, {
+  const serviceFile = serviceConfig(service, deployId, serviceDir, {
     GLOBE_LISTEN_SOCKET: socketDir,
   });
   const systemServiceName = `globe-${deployId}`;

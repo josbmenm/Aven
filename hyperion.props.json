@@ -1,0 +1,38 @@
+{
+	"clusters": {
+    "ono-dev": {
+	    "type":"hera",
+		"pgPass": "secretfoodisasmoothie8",
+	    "region": "sfo2",
+	    "size": "s-1vcpu-1gb",
+		"services": {
+			"web": {
+				"publicHosts": ["dev.onofood.co"],
+				"env": {
+					"SUPER_SECRET": "yaas"
+				},
+				"gitUrl": "git@github.com:onofoodco/ono.git",
+				"gitKey": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA3IM0Wnn3WwMlfj143Mi+dBX7Z50JzOMjLDbgIjwt6VCl7v0j\n2MFdVrvZ0lKRzR8AhaCimuzWgYOJFoccRP/yWX3LONBUCdUd3tS4HHfE66GsRMLl\nGThu5Y5bVtyT2qJSiRk3jl94nDALAPzfwjH1i2pTVYl7pZV07Z/mNp33eR18JWpW\nSCeGbJTSo3vVuDhL7K3MRZoLEcuuNez+YFykXpJC8kAB6tVRWH/ZTM8i1Qpi64TK\nWg/IhPQxXYLmcThn0pMy96f9A0sbcXjvp1TjhRvYvmsd4iOC7ECmVoP1SQCBV0Zk\nITdYCQUQ4D76qjgWIXcw4flJSelU/vR4wjFnnwIDAQABAoIBAA7ZMuRIxDQ3sQWg\nJAxR5Cky9bvTYj6OqOaoR01m2fyU9qdyGkDVPHDDs3YrIzA5vzJAT9K40fTko42F\nyYyH44zNIKsRtCb5V8qSbldUZUksmMoEiaK6HxWMEXB25+nX9lDPBuOqYBe8UHFf\nlb2g2ZTqsvPWjyHmP3pkwv64glqAVrcgvhSyUAmadjCHjpGbmT3hYadRQZVWu3UB\nI7DKiB+OLMKOwAc3DjOm7H5S19DqeCkqPk0PkCjPhOXEpAMpK8GykaDH1dScQuF/\nnnaKIYmGbRrWxyYlXUJ4Phf2+KD9XrUjYjegv7jTyL6sl9PA99oPzl+Pq+tC2H+n\n5hRC25kCgYEA+/p15KO8xIkHetL8Yj9bKY8A0U4Z5NiwVBk3NO5VZYpNMWYysCJv\nqoVm1Aw5kwhsdTzNjxpcIeNyKWP1pSOt7RM85ygfSU3VLgU2G9Qw7I+IvP06hUFn\nmGmhDWo+EnjTnpsXCGRxurFPFf21ho9iTI7Pm8pfwTH4iA7Hp4m3a+0CgYEA4Agu\nGBtQyL0to0lZKJI0ZAGE3TmUZpSDUYq4pagyd9ku8sJR+EZVNeUwkHaDr7gQjXbi\n4uGd4lwlZ8qXElNyhqWtd4e/i12gpxH3w6Fy+G3yygCo9/GDRjv+4DSqjsIjCp3l\n9Fy1aM9MirljT8UqY7RvwEnkZSzWiSclWWt4qDsCgYB/VTwKRGv57T0oZkI/68BH\nqgpBuvP+3zmL5got51qkK1WC5yAqPdysESm7ckoN8S3NuOIvtKRmQ6fHHspdn0Af\nE5+tOGtHAdv+m4eSXJI0mPwCdP0Dpd+R9575Rn0DnKdj+P+UsB2AuGU8ua7nxsFn\n6qsjEQt+d6AeMUnXchKMqQKBgQDbLmWaZC8XFi6uUDaQgOoM5YeNwKW17prDjkq0\nl+g4ZR2PmBoGIxl+zypCTBDuO9DF9ohnnICRU8Gs2AIRhd7IaRNbnE4EFaf1jJiw\npyYKc9dTVm35linu7wefZydu3/TUkELIXmOFlTq3hkTpaGbegUvL/v8bFVEXglsC\nLykuvQKBgAg+KCQP77gYOFEkTNtokjGtcI1gKO5GEJa4Q6nh0L29Ak8AcoXWv7e/\nPx9WXNUgNnbuLgloIOUIn1v+x/pYW8b8W/BkbqR85+VbGRmGZEKxtl4BZbaZbIl4\nus34uXKxdd7rnc0NPtiWvXRO6c8hRLlWJDy8nJr2gnL14ngUdWvB\n-----END RSA PRIVATE KEY-----",
+				"gitBranch": "master",
+				"deployHookId": "github/onofoodco/ono",
+				"deployHookSecret": "suchasecretsmoothie8",
+				"appName": "ono-website"
+			},
+			"kiosk": {
+				"publicHosts": ["k.onofood.co"],
+				"env": {},
+				"gitUrl": "git@github.com:onofoodco/ono.git",
+				"gitKey": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA3IM0Wnn3WwMlfj143Mi+dBX7Z50JzOMjLDbgIjwt6VCl7v0j\n2MFdVrvZ0lKRzR8AhaCimuzWgYOJFoccRP/yWX3LONBUCdUd3tS4HHfE66GsRMLl\nGThu5Y5bVtyT2qJSiRk3jl94nDALAPzfwjH1i2pTVYl7pZV07Z/mNp33eR18JWpW\nSCeGbJTSo3vVuDhL7K3MRZoLEcuuNez+YFykXpJC8kAB6tVRWH/ZTM8i1Qpi64TK\nWg/IhPQxXYLmcThn0pMy96f9A0sbcXjvp1TjhRvYvmsd4iOC7ECmVoP1SQCBV0Zk\nITdYCQUQ4D76qjgWIXcw4flJSelU/vR4wjFnnwIDAQABAoIBAA7ZMuRIxDQ3sQWg\nJAxR5Cky9bvTYj6OqOaoR01m2fyU9qdyGkDVPHDDs3YrIzA5vzJAT9K40fTko42F\nyYyH44zNIKsRtCb5V8qSbldUZUksmMoEiaK6HxWMEXB25+nX9lDPBuOqYBe8UHFf\nlb2g2ZTqsvPWjyHmP3pkwv64glqAVrcgvhSyUAmadjCHjpGbmT3hYadRQZVWu3UB\nI7DKiB+OLMKOwAc3DjOm7H5S19DqeCkqPk0PkCjPhOXEpAMpK8GykaDH1dScQuF/\nnnaKIYmGbRrWxyYlXUJ4Phf2+KD9XrUjYjegv7jTyL6sl9PA99oPzl+Pq+tC2H+n\n5hRC25kCgYEA+/p15KO8xIkHetL8Yj9bKY8A0U4Z5NiwVBk3NO5VZYpNMWYysCJv\nqoVm1Aw5kwhsdTzNjxpcIeNyKWP1pSOt7RM85ygfSU3VLgU2G9Qw7I+IvP06hUFn\nmGmhDWo+EnjTnpsXCGRxurFPFf21ho9iTI7Pm8pfwTH4iA7Hp4m3a+0CgYEA4Agu\nGBtQyL0to0lZKJI0ZAGE3TmUZpSDUYq4pagyd9ku8sJR+EZVNeUwkHaDr7gQjXbi\n4uGd4lwlZ8qXElNyhqWtd4e/i12gpxH3w6Fy+G3yygCo9/GDRjv+4DSqjsIjCp3l\n9Fy1aM9MirljT8UqY7RvwEnkZSzWiSclWWt4qDsCgYB/VTwKRGv57T0oZkI/68BH\nqgpBuvP+3zmL5got51qkK1WC5yAqPdysESm7ckoN8S3NuOIvtKRmQ6fHHspdn0Af\nE5+tOGtHAdv+m4eSXJI0mPwCdP0Dpd+R9575Rn0DnKdj+P+UsB2AuGU8ua7nxsFn\n6qsjEQt+d6AeMUnXchKMqQKBgQDbLmWaZC8XFi6uUDaQgOoM5YeNwKW17prDjkq0\nl+g4ZR2PmBoGIxl+zypCTBDuO9DF9ohnnICRU8Gs2AIRhd7IaRNbnE4EFaf1jJiw\npyYKc9dTVm35linu7wefZydu3/TUkELIXmOFlTq3hkTpaGbegUvL/v8bFVEXglsC\nLykuvQKBgAg+KCQP77gYOFEkTNtokjGtcI1gKO5GEJa4Q6nh0L29Ak8AcoXWv7e/\nPx9WXNUgNnbuLgloIOUIn1v+x/pYW8b8W/BkbqR85+VbGRmGZEKxtl4BZbaZbIl4\nus34uXKxdd7rnc0NPtiWvXRO6c8hRLlWJDy8nJr2gnL14ngUdWvB\n-----END RSA PRIVATE KEY-----",
+				"gitBranch": "master",
+				"deployHookId": "github/onofoodco/ono",
+				"deployHookSecret": "suchasecretsmoothie8",
+				"appName": "ono-kiosk"
+			}
+		},
+		"mainService": "web"
+	}
+}
+}
+
+
+
