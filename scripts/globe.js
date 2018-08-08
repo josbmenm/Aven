@@ -19,13 +19,7 @@ async function start(args) {
     await fs.mkdirp(globeDir);
     await spawn(
       'rsync',
-      [
-        '-a',
-        '--exclude',
-        'node_modules',
-        localGlobeDir + '/',
-        globeDir,
-      ],
+      ['-a', '--exclude', 'node_modules', localGlobeDir + '/', globeDir],
       { stdio: 'inherit' },
     );
     await spawn('yarn', [], { stdio: 'inherit', cwd: globeDir });
@@ -59,14 +53,15 @@ async function start(args) {
   });
 }
 
-
 async function build(args) {
   const appName = args[0];
 
   console.log('Building app ' + appName);
   let globeDir = process.env.GLOBE_DIR;
+  let tmpGlobeDir = null;
   if (!globeDir) {
     globeDir = pathJoin(process.env.HOME, `.globe/g-${Date.now()}-globe`);
+    tmpGlobeDir = globeDir;
     console.log(
       'No GLOBE_DIR found in the environment. Creating a new globe working directory: ' +
         globeDir,
@@ -113,6 +108,10 @@ async function build(args) {
     ['-a', pathJoin(globeDir, 'build') + '/', pathJoin(process.cwd(), 'build')],
     { stdio: 'inherit' },
   );
+
+  if (tmpGlobeDir) {
+    await fs.remove(tmpGlobeDir);
+  }
 }
 
 const command = process.argv[2];
