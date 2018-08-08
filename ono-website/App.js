@@ -113,7 +113,7 @@ const Main = () => (
             fontFamily: 'ArbutusSlab',
           }}
         >
-          coming 2025
+          coming 2019
         </Text>
       </View>
       <EmailLink to="aloha@onofood.co">say aloha →</EmailLink>
