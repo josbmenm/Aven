@@ -22,7 +22,7 @@ async function isSocketInUse(socketPath) {
   });
 }
 
-async function startServer(server, listenLocation) {
+export default async function startServer(server, listenLocation) {
   try {
     await promisify(server.start)(listenLocation);
   } catch (e) {
@@ -36,5 +36,3 @@ async function startServer(server, listenLocation) {
     await promisify(server.start)(listenLocation);
   }
 }
-
-module.exports = startServer;
