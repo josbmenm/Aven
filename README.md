@@ -4,28 +4,15 @@ A full-stack React.js environment.
 
 Dependencies: node 8+, yarn. More dependencies for iOS and Android development, see Expo docs for setup steps.
 
-### Launch Web Packager 
+## Subsystem Overview
 
-```
-yarn web
-```
-
-### Mobile
-
-```
-yarn ios
-#or
-yarn android
-```
+- src/aven-hyperion - manages all of the clusters and coordinates builds and deploys
+- src/aven-globe-updater - updates hyperion server
+- src/aven-web - web server and client code for a production app
 
 
-## Building the app
+## Building
 
-```
-yarn web-build
-```
+## Deploying
 
-## Exporting Packages
-
-Packages are currently located in `/globe/src/`, and they should eventually have their own `package.json` files. Help is needed to build automation for releasing these packages to npm.
-
+## Infrastructure Setup
