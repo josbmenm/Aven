@@ -82,7 +82,7 @@ export default async function AvenServer(App) {
   const serverListenLocation = process.env.GLOBE_LISTEN_SOCKET || 8888;
   await new Promise((resolve, reject) => {
     serverInstance = http.createServer(expressApp);
-    ServerStarter(
+    startServer(
       serverInstance,
       {
         listen: serverListenLocation,
