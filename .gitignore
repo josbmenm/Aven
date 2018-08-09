@@ -28,8 +28,7 @@ npm-dist
 .env
 
 hyperion.state.json
-hyperion.clusters.json
-hyperion.clusters.json.bak
+hyperion.props.json
 hyperion.tfstate
 hyperion.tfstate.backup
 
