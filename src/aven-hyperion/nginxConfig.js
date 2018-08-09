@@ -38,8 +38,8 @@ const clustersConfig = ({ props, state, clusterName }) => {
 
   for (let serviceName in cluster.services) {
     const service = cluster.services[serviceName];
-		const serviceState = state.clusters[clusterName].services[serviceName];
-		const allDeployIds = Object.keys(serviceState.deploys);
+    const serviceState = state.clusters[clusterName].services[serviceName];
+    const allDeployIds = Object.keys(serviceState.deploys);
     const deployId = allDeployIds[allDeployIds.length - 1]; // fix. this is always the last deploy
     const deploy = serviceState.deploys[deployId];
     hosts = [
@@ -49,15 +49,13 @@ const clustersConfig = ({ props, state, clusterName }) => {
         serviceDir: deploy.socketDir,
       })),
     ];
-	}
-	
+  }
+
   const hostsWithSSL = hosts.filter(h => {
     return state.ssl[clusterName][h.hostName].hasCert;
   });
 
-  return hostsWithSSL
-    .map(serviceHostConfig)
-    .join('');
+  return hostsWithSSL.map(serviceHostConfig).join('');
 };
 
 module.exports = ({ props, state, clusterName }) => `

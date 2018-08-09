@@ -360,12 +360,15 @@ async function goTerra(props, getState, setState) {
       const service = cluster.services[serviceName];
       for (let publicHostIndex in service.publicHosts) {
         const publicHost = service.publicHosts[publicHostIndex];
-        sslState[clusterName][publicHost] = await refreshDomainKeysForCluster(clusterName, publicHost);
+        sslState[clusterName][publicHost] = await refreshDomainKeysForCluster(
+          clusterName,
+          publicHost,
+        );
       }
     }
   }
 
-  await setState(lastState => ({ ssl: sslState }))
+  await setState(lastState => ({ ssl: sslState }));
 
   console.log('Time to do the deploy...');
 

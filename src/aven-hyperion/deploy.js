@@ -3,10 +3,15 @@ const fs = require('fs-extra');
 const spawn = require('@expo/spawn-async');
 const os = require('os');
 const serviceConfig = require('./serviceConfig');
-const nginxConfig = require('./nginxConfig')
+const nginxConfig = require('./nginxConfig');
 
 const readFile = path => fs.readFile(path, { encoding: 'utf8' });
-const { getClusterData, rsyncToCluster, remoteExec, rsync } = require('./utils');
+const {
+  getClusterData,
+  rsyncToCluster,
+  remoteExec,
+  rsync,
+} = require('./utils');
 const candidatePortNumber = () =>
   String(Math.floor(Math.random() * 1000) + 8000);
 
@@ -22,7 +27,6 @@ const goDeploy = async (
   getState,
   setState,
 ) => {
-
   const clusters = await getClusterData(props, getState());
   const cluster = clusters[clusterName];
   const buildNodeName = Object.keys(cluster.nodes)[0];
@@ -45,7 +49,7 @@ const goDeploy = async (
   const buildNodeExec = cmd =>
     remoteExec(buildNode.ipv4_address, cmd, { stdio: 'inherit' });
   const cpToBuildNode = (srcPath, destPath) =>
-    rsync(srcPath, buildNode.ipv4_address, destPath)
+    rsync(srcPath, buildNode.ipv4_address, destPath);
   const buildNodeMkdir = dir => buildNodeExec(`mkdir -p ${dir}`);
   // const cleanup = [];
   // const cleanupAfterBuild = path => cleanup.push(() => fs.remove(path))
@@ -145,22 +149,19 @@ const goDeploy = async (
     });
   };
 
-  console.log('============ PREV STATE')
+  console.log('============ PREV STATE');
   console.log(JSON.stringify(getState()));
 
-  console.log('============ DEPLOY INFO')
+  console.log('============ DEPLOY INFO');
   console.log(deployInfo);
-
 
   await setServiceState(lastService => ({
     deploys: { ...(lastService.deploys || {}), [deployInfo.id]: deployInfo },
   }));
 
-
-  console.log('============ NEXT STATE')
+  console.log('============ NEXT STATE');
   console.log(JSON.stringify(getState()));
 
-  
   // let lastDeployId = getServiceState()
 
   const config = nginxConfig({
@@ -173,9 +174,7 @@ const goDeploy = async (
   await fs.writeFile('/tmp/nginx.conf', config);
   await cpToBuildNode('/tmp/nginx.conf', '/etc/nginx/nginx.conf');
 
-  await buildNodeExec(
-    'nginx -s reload',
-  );
+  await buildNodeExec('nginx -s reload');
 };
 
 module.exports = goDeploy;
