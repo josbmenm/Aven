@@ -68,9 +68,7 @@ const getLauncher = platform => {
   const launchFn = launchFnForPlatform[platform];
 
   if (!launchFn) {
-    throw new Error(
-      `Cannot find launcher for platform "${subpackage.platform}"`,
-    );
+    throw new Error(`Cannot find launcher for platform "${platform}"`);
   }
   return launchFn;
 };
