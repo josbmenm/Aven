@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-# Things that should move to the image (hera_setup.sh)
-mkdir /service
+# can remove this when new images are created (hera_setup.sh)
+mkdir /socket
 
 
 # Actual setup:

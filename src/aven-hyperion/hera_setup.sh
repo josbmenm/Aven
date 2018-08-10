@@ -25,6 +25,8 @@ apt install -y yarn
 apt install -y unzip
 apt upgrade -y
 
+mkdir /socket
+
 systemctl daemon-reload
 systemctl enable nginx
 
