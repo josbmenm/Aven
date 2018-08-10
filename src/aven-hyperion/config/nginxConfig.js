@@ -26,15 +26,18 @@ server {
 `;
 
 const clustersConfig = ({ props, state, clusterName }) => {
-  const clusters = props.clusters;
-  const cluster = clusters[clusterName];
+  const sslInfo = (state && state.ssl) || {};
+  const clusters = (props && props.clusters) || {};
+  const cluster = clusters[clusterName] || {};
 
-  let hosts = [
-    {
+  let hosts = [];
+
+  if (cluster.mainService) {
+    hosts.push({
       hostName: `${clusterName}.aven.cloud`,
       serviceDir: cluster.mainService,
-    },
-  ];
+    });
+  }
 
   for (let serviceName in cluster.services) {
     const service = cluster.services[serviceName];
@@ -52,7 +55,7 @@ const clustersConfig = ({ props, state, clusterName }) => {
   }
 
   const hostsWithSSL = hosts.filter(h => {
-    return state.ssl[clusterName][h.hostName].hasCert;
+    return sslInfo[clusterName][h.hostName].hasCert;
   });
 
   return hostsWithSSL.map(serviceHostConfig).join('');

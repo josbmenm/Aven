@@ -1,5 +1,5 @@
 //ReplaceStart
 
-import Client from './aven-cloud/MainClient';
+import Client from './playground-web/MainClient';
 
 //ReplaceEnd

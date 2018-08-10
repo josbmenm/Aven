@@ -13,6 +13,5 @@ fs.writeFileSync(
   '/etc/nginx/nginx.conf',
   nginxConf({
     clusterName,
-    sslHostnames: [], // no ssl hosts for the initial deploy
   }),
 );

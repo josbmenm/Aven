@@ -6,60 +6,13 @@ const spawn = require('@expo/spawn-async');
 
 const localGlobeDir = pathJoin(__dirname, '..');
 
-async function start(args) {
-  const appName = args[0];
-  console.log('Starting app ' + appName);
+const currentDir = process.cwd();
+
+const isRunningInThisGlobe = localGlobeDir === currentDir;
+
+async function prepareGlobe() {
   let globeDir = process.env.GLOBE_DIR;
-  if (!globeDir) {
-    globeDir = pathJoin(process.env.HOME, `.globe/g-${Date.now()}-globe`);
-    console.log(
-      'No GLOBE_DIR found in the environment. Creating a new globe working directory: ' +
-        globeDir,
-    );
-    await fs.mkdirp(globeDir);
-    await spawn(
-      'rsync',
-      ['-a', '--exclude', 'node_modules', localGlobeDir + '/', globeDir],
-      { stdio: 'inherit' },
-    );
-    await spawn('yarn', [], { stdio: 'inherit', cwd: globeDir });
-  }
-
-  const syncSrcToGlobe = async () =>
-    await spawn(
-      'rsync',
-      [
-        '-a',
-        pathJoin(process.cwd(), appName) + '/',
-        pathJoin(globeDir, 'src', appName),
-      ],
-      { stdio: 'inherit' },
-    );
-
-  const syncLoop = async () => {
-    await syncSrcToGlobe();
-    setTimeout(syncLoop, 500);
-  };
-
-  syncLoop(); // no await here because it goes indefinitely, and we want to spawn start:
-
-  await spawn('yarn', ['start', appName], {
-    stdio: 'inherit',
-    cwd: globeDir,
-    env: {
-      ...process.env,
-      GLOBE_APP: appName,
-    },
-  });
-}
-
-async function build(args) {
-  const appName = args[0];
-
-  console.log('Building app ' + appName);
-  let globeDir = process.env.GLOBE_DIR;
-  let tmpGlobeDir = null;
-  if (!globeDir) {
+  if (!globeDir && !isRunningInThisGlobe) {
     globeDir = pathJoin(process.env.HOME, `.globe/g-${Date.now()}-globe`);
     tmpGlobeDir = globeDir;
     console.log(
@@ -74,15 +27,28 @@ async function build(args) {
     );
     await spawn('yarn', [], { stdio: 'inherit', cwd: globeDir });
   }
+  return globeDir;
+}
+
+const syncSrcToGlobe = async (appName, globeDir) => {
+  if (isRunningInThisGlobe) {
+    return;
+  }
   await spawn(
     'rsync',
     [
       '-a',
-      pathJoin(process.cwd(), appName) + '/',
+      pathJoin(currentDir, appName) + '/',
       pathJoin(globeDir, 'src', appName),
     ],
     { stdio: 'inherit' },
   );
+};
+
+const syncPublicToGlobe = async (appName, globeDir) => {
+  if (isRunningInThisGlobe) {
+    return;
+  }
   await spawn(
     'rsync',
     [
@@ -92,9 +58,55 @@ async function build(args) {
     ],
     { stdio: 'inherit' },
   );
+};
+
+async function start(args) {
+  const appName = args[0];
+  if (!appName) {
+    throw new Error(
+      'App name must be provided! Start with `yarn start my-app`',
+    );
+  }
+  console.log('Starting app ' + appName);
+
+  const globeDir = await prepareGlobe();
+
+  const syncLoop = async () => {
+    await syncSrcToGlobe(appName, globeDir);
+    await syncPublicToGlobe(appName, globeDir);
+    setTimeout(syncLoop, 500);
+  };
+
+  syncLoop(); // no await here because it goes indefinitely, and we want to spawn start:
+
+  await spawn('yarn', ['globe:start', appName], {
+    stdio: 'inherit',
+    cwd: globeDir,
+    env: {
+      ...process.env,
+      GLOBE_APP: appName,
+    },
+  });
+}
+
+async function build(args) {
+  const appName = args[0];
+  if (!appName) {
+    throw new Error(
+      'App name must be provided! Build with `yarn build my-app`',
+    );
+  }
+  console.log('Building app ' + appName);
+  const globeDir = await prepareGlobe();
+  console.log('A', appName, globeDir);
+  await syncSrcToGlobe(appName, globeDir);
+  console.log('B');
+  await syncPublicToGlobe(appName, globeDir);
+  console.log('C');
+
   await spawn('yarn', [], { stdio: 'inherit', cwd: globeDir });
 
-  await spawn('yarn', ['build', appName], {
+  await spawn('yarn', ['globe:build', appName], {
     stdio: 'inherit',
     cwd: globeDir,
     env: {
@@ -103,13 +115,13 @@ async function build(args) {
     },
   });
 
-  await spawn(
-    'rsync',
-    ['-a', pathJoin(globeDir, 'build') + '/', pathJoin(process.cwd(), 'build')],
-    { stdio: 'inherit' },
-  );
+  // await spawn(
+  //   'rsync',
+  //   ['-a', pathJoin(globeDir, 'build') + '/', pathJoin(process.cwd(), 'build')],
+  //   { stdio: 'inherit' },
+  // );
 
-  if (tmpGlobeDir) {
+  if (!isRunningInThisGlobe && !process.env.GLOBE_DIR) {
     await fs.remove(tmpGlobeDir);
   }
 }

@@ -16,12 +16,14 @@
     "web": "razzle start",
     "web-build": "node node_modules/razzle-rn/bin/razzle.js build",
     "web-test": "razzle test --env=jsdom",
-    "start-prod": "NODE_ENV=production && node build/server.js",
     "pre:build": "node scripts/vendorDist.js && yarn format",
-    "start": "node scripts/start.js",
     "configure": "node scripts/configure.js",
     "go:build": "node scripts/build.js",
-    "build": "yarn pre:build && yarn go:build",
+    "globe:start": "node scripts/start.js",
+    "globe:build": "yarn pre:build && yarn go:build",
+    "start": "./scripts/globe.js start",
+    "build": "./scripts/globe.js build",
+    "prod": "NODE_ENV=production && node build/server.js",
     "jest": "jest"
   },
   "dependencies": {
@@ -79,6 +81,10 @@
     "react": "^16.4.2",
     "react-test-renderer": "^16.0.0",
     "webpack": "^4.16.0"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
   },
   "jest": {
     "notify": true,

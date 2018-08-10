@@ -4,9 +4,13 @@ import { createSwitchNavigator } from '../react-navigation-core';
 
 const Main = () => (
   <View>
-    <Text>Hello, web!</Text>
+    <Text>Hello iOS!</Text>
   </View>
 );
+
+Main.navigationOptions = {
+  title: 'Globe Playground',
+};
 
 const App = createSwitchNavigator({
   Main,

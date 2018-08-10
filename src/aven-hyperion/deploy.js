@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const spawn = require('@expo/spawn-async');
 const os = require('os');
 const serviceConfig = require('./serviceConfig');
-const nginxConfig = require('./nginxConfig');
+const nginxConfig = require('./config/nginxConfig');
 
 const readFile = path => fs.readFile(path, { encoding: 'utf8' });
 const {
@@ -149,20 +149,9 @@ const goDeploy = async (
     });
   };
 
-  console.log('============ PREV STATE');
-  console.log(JSON.stringify(getState()));
-
-  console.log('============ DEPLOY INFO');
-  console.log(deployInfo);
-
   await setServiceState(lastService => ({
     deploys: { ...(lastService.deploys || {}), [deployInfo.id]: deployInfo },
   }));
-
-  console.log('============ NEXT STATE');
-  console.log(JSON.stringify(getState()));
-
-  // let lastDeployId = getServiceState()
 
   const config = nginxConfig({
     props,

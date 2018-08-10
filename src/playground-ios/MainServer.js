@@ -1,6 +1,6 @@
 import AvenServer from '../aven-web/Server';
 
-import App from './Website';
+import App from './Playground';
 
 export async function startServer() {
   const server = await AvenServer(App);

@@ -29,7 +29,6 @@ const kick = async (repoId, validateKickRequest) => {
       state = {};
     }
   }
-  console.log('typeof init state is ', typeof state);
 
   const setState = async stateTransactor => {
     const s = { ...state, ...stateTransactor(state) };
@@ -38,7 +37,6 @@ const kick = async (repoId, validateKickRequest) => {
       JSON.stringify(s, null, 2),
     );
     state = s;
-    console.log('typeof state is ', typeof state);
   };
   const dayInMS = 1000 * 60 * 60 * 24;
   const thisTime = Date.now();

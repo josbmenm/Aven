@@ -12,11 +12,11 @@ const pathJoin = require('path').join;
 
 const activeApp = process.env.GLOBE_APP;
 
-if (!activeApp) {
+const isProd = process.env.NODE_ENV === 'production';
+
+if (!activeApp && !isProd) {
   throw 'GLOBE_APP env var is missing';
 }
-
-const isProd = process.env.NODE_ENV === 'production';
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
