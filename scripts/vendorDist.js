@@ -815,6 +815,16 @@ const transforms = [
     importMap: {},
     nonDefaultImportMap: {},
   },
+  { makeDirectory: 'src/react-navigation-transitioner' },
+  makeIndex('src/react-navigation-transitioner/index.js', ['Transitioner']),
+  {
+    fromFile: 'node_modules/react-navigation-transitioner/Transitioner.js',
+    toFile: 'src/react-navigation-transitioner/Transitioner.js',
+    importMap: {
+      '@react-navigation/core': '../react-navigation-core',
+    },
+    nonDefaultImportMap: {},
+  },
 ];
 
 transforms.forEach(t => {

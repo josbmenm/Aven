@@ -60,6 +60,7 @@
     "react-navigation": "https://github.com/react-navigation/react-navigation.git#@ericvicenti/deeplink",
     "react-navigation-fluid-transitions": "https://github.com/ericvicenti/FluidTransitions.git#container-independent",
     "react-navigation-tabs": "https://github.com/react-navigation/react-navigation-tabs.git#@ericvicenti/isolate-container",
+    "react-navigation-transitioner": "https://github.com/react-navigation/react-navigation-transitioner#master",
     "react-syntax-highlighter": "^7.0.4"
   },
   "devDependencies": {

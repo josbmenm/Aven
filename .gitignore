@@ -22,6 +22,7 @@ src/react-navigation-drawer
 src/react-navigation-tabs
 src/react-navigation-area-view
 src/react-navigation-fluid
+src/react-navigation-transitioner
 
 npm-dist
 
