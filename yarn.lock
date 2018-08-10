@@ -8915,7 +8915,7 @@ react-navigation-tabs@0.5.1:
 
 "react-navigation-transitioner@https://github.com/react-navigation/react-navigation-transitioner#master":
   version "0.0.0"
-  resolved "https://github.com/react-navigation/react-navigation-transitioner#fc947e3acf5a007689f36dffc20e1dd856fd7124"
+  resolved "https://github.com/react-navigation/react-navigation-transitioner#d115905dd1990b8018e19251ffc9c010e1f5f368"
   dependencies:
     "@react-navigation/core" "^0.0.0-alpha.12"
     expo "^29.0.0"
