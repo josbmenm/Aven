@@ -25,7 +25,7 @@ const LogoText = () => (
       marginVertical: 25,
     }}
   >
-    ono
+    ono kiosk
   </Text>
 );
 
