@@ -98,11 +98,8 @@ async function build(args) {
   }
   console.log('Building app ' + appName);
   const globeDir = await prepareGlobe();
-  console.log('A', appName, globeDir);
   await syncSrcToGlobe(appName, globeDir);
-  console.log('B');
   await syncPublicToGlobe(appName, globeDir);
-  console.log('C');
 
   await spawn('yarn', [], { stdio: 'inherit', cwd: globeDir });
 
@@ -115,11 +112,17 @@ async function build(args) {
     },
   });
 
-  // await spawn(
-  //   'rsync',
-  //   ['-a', pathJoin(globeDir, 'build') + '/', pathJoin(process.cwd(), 'build')],
-  //   { stdio: 'inherit' },
-  // );
+  if (!isRunningInThisGlobe) {
+    await spawn(
+      'rsync',
+      [
+        '-a',
+        pathJoin(globeDir, 'build') + '/',
+        pathJoin(process.cwd(), 'build'),
+      ],
+      { stdio: 'inherit' },
+    );
+  }
 
   if (!isRunningInThisGlobe && !process.env.GLOBE_DIR) {
     await fs.remove(tmpGlobeDir);
