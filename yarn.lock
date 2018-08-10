@@ -775,8 +775,8 @@ camelcase@^4.1.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-4.1.0.tgz#d545635be1e33c542649c69173e5de6acfae34dd"
 
 caniuse-db@^1.0.30000639:
-  version "1.0.30000875"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000875.tgz#6f904fc89120de4029a9ca0f21d7ac3db89a0dce"
+  version "1.0.30000876"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000876.tgz#0cbd78ad84900196982e5145c26170f6d6a93fd7"
 
 caniuse-lite@^1.0.30000844:
   version "1.0.30000874"
@@ -1018,8 +1018,8 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
 electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.47:
-  version "1.3.55"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.55.tgz#f150e10b20b77d9d41afcca312efe0c3b1a7fdce"
+  version "1.3.57"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.57.tgz#61b2446f16af26fb8873210007a7637ad644c82d"
 
 encodeurl@~1.0.2:
   version "1.0.2"
@@ -1358,7 +1358,7 @@ globby@^5.0.0:
 
 "globe@https://github.com/AvenCloud/globe.git#master":
   version "0.0.0-alpha.12"
-  resolved "https://github.com/AvenCloud/globe.git#44b7f80abc86c965298c7bc832392361607f5620"
+  resolved "https://github.com/AvenCloud/globe.git#fb732665f6c690434072a9f8d3e570b06e0e272f"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     "@expo/vector-icons" "^6.3.1"
@@ -1497,8 +1497,8 @@ iconv-lite@^0.4.17, iconv-lite@~0.4.13:
     safer-buffer ">= 2.1.2 < 3"
 
 ignore@^4.0.2:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.3.tgz#e2d58c9654d75b542529fa28d80ac95b29e4f467"
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.5.tgz#333535a20325ba4852c4ddb135d47392aa035e6d"
 
 imurmurhash@^0.1.4:
   version "0.1.4"

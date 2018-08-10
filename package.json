@@ -1,6 +1,7 @@
 {
   "name": "onofoodco",
   "scripts": {
+    "start": "globe start",
     "web": "globe start ono-website",
     "kiosk": "globe start ono-kiosk"
   },
