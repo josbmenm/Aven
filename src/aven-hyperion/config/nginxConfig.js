@@ -41,9 +41,15 @@ const clustersConfig = ({ props, state, clusterName }) => {
 
   for (let serviceName in cluster.services) {
     const service = cluster.services[serviceName];
-    const serviceState = state.clusters[clusterName].services[serviceName];
+		const serviceState = state.clusters[clusterName].services[serviceName];
+		if (!serviceState) {
+			continue;
+		}
     const allDeployIds = Object.keys(serviceState.deploys);
-    const deployId = allDeployIds[allDeployIds.length - 1]; // fix. this is always the last deploy
+		const deployId = allDeployIds[allDeployIds.length - 1]; // fix. this is always the last deploy
+		if (!deployId) {
+			continue;
+		}
     const deploy = serviceState.deploys[deployId];
     hosts = [
       ...hosts,
