@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Text, Button } from 'react-native';
-import { createSwitchNavigator } from '../react-navigation-core';
+import { Transitioner } from '../react-navigation-transitioner';
 
 const Main = () => (
   <View>
@@ -12,7 +12,7 @@ Main.navigationOptions = {
   title: 'Globe Playground',
 };
 
-const App = createSwitchNavigator({
+const App = Transitioner({
   Main,
 });
 

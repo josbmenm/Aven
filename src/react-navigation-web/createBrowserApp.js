@@ -24,6 +24,12 @@ const matchPathAndParams = (a, b) => {
 let currentPathAndParams = getPathAndParamsFromLocation(history.location);
 
 export default function createBrowserApp(App) {
+  const initAction =
+    App.router.getActionForPathAndParams(
+      currentPathAndParams.path,
+      currentPathAndParams.params,
+    ) || NavigationActions.init();
+
   const setHistoryListener = dispatch => {
     history.listen(location => {
       const pathAndParams = getPathAndParamsFromLocation(location);
@@ -35,18 +41,13 @@ export default function createBrowserApp(App) {
         pathAndParams.path,
         pathAndParams.params,
       );
-      if (!action) {
-        debugger;
+      if (action) {
+        dispatch(action);
+      } else {
+        dispatch(initAction);
       }
-      dispatch(action);
     });
   };
-
-  const initAction =
-    App.router.getActionForPathAndParams(
-      currentPathAndParams.path,
-      currentPathAndParams.params,
-    ) || NavigationActions.init();
 
   class WebApp extends React.Component {
     state = { nav: App.router.getStateForAction(initAction) };

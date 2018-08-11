@@ -36,17 +36,6 @@ const configureFnForPlatform = {
   web: configureWebPlatform,
 };
 
-const getConfigurer = platform => {
-  const configFn = configureFnForPlatform[platform];
-
-  if (!configFn) {
-    throw new Error(
-      `Cannot find configurer for platform "${subpackage.platform}"`,
-    );
-  }
-  return configFn;
-};
-
 const launchIOSPlatform = async (appName, appPath, subPackage) => {
   await configureIOSPlatform(appName, appPath, subPackage);
   await spawn('yarn', ['ios'], { stdio: 'inherit' });
@@ -55,14 +44,19 @@ const launchAndroidPlatform = async (appName, appPath, subPackage) => {
   await configureAndroidPlatform(appName, appPath, subPackage);
   await spawn('yarn', ['android'], { stdio: 'inherit' });
 };
+const launchDOMPlatform = async (appName, appPath, subPackage) => {
+  await configureAndroidPlatform(appName, appPath, subPackage);
+  await spawn('yarn', ['android'], { stdio: 'inherit' });
+};
 const launchWebPlatform = async (appName, appPath, subPackage) => {
   await configureWebPlatform(appName, appPath, subPackage);
-  await spawn('yarn', ['web'], { stdio: 'inherit' });
+  await spawn('npx', ['razzle', 'start'], { stdio: 'inherit' });
 };
 const launchFnForPlatform = {
   ios: launchIOSPlatform,
   android: launchAndroidPlatform,
   web: launchWebPlatform,
+  dom: launchDOMPlatform,
 };
 const getLauncher = platform => {
   const launchFn = launchFnForPlatform[platform];
@@ -87,7 +81,9 @@ const buildAndroidPlatform = async (appName, appPath, subPackage) => {
 };
 const buildWebPlatform = async (appName, appPath, subPackage) => {
   await configureWebPlatform(appName, appPath, subPackage);
-  await spawn('yarn', ['web-build'], { stdio: 'inherit' });
+  await spawn('node', ['node_modules/razzle-rn/bin/razzle.js', 'build'], {
+    stdio: 'inherit',
+  });
 };
 const buildFnForPlatform = {
   ios: buildIOSPlatform,
@@ -107,6 +103,5 @@ const getBuilder = platform => {
 
 module.exports = {
   getLauncher,
-  getConfigurer,
   getBuilder,
 };
