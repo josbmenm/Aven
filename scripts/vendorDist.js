@@ -825,6 +825,13 @@ const transforms = [
     },
     nonDefaultImportMap: {},
   },
+  {
+    fromFile: 'node_modules/react-navigation-transitioner/Animators.js',
+    toFile: 'src/react-navigation-transitioner/Animators.js',
+    importMap: {
+    },
+    nonDefaultImportMap: {},
+  },
 ];
 
 transforms.forEach(t => {

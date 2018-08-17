@@ -36,7 +36,8 @@ export default class Teaser extends React.Component {
             flex: 1,
             marginVertical: 100,
             position: 'relative',
-          }}>
+          }}
+        >
           <Image
             source={require('./images/cloudGlamour.png')}
             style={{
@@ -49,7 +50,8 @@ export default class Teaser extends React.Component {
               ...StyleSheet.absoluteFillObject,
               alignItems: 'center',
               justifyContent: 'center',
-            }}>
+            }}
+          >
             <Image
               source={require('./images/AvenLogoPlain.png')}
               style={{

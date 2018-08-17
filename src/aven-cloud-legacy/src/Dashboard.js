@@ -80,7 +80,8 @@ const FilesPage = () => (
         <HeaderButton title="New file" />
         <HeaderButton title="Info" />
       </React.Fragment>
-    }>
+    }
+  >
     <Title>Files</Title>
   </DashboardPage>
 );
@@ -94,7 +95,8 @@ const AccountPageNav = ({ navigation }) => (
         <HeaderButton title="Reset Password" />
         <HeaderButton title="Delete Account" />
       </React.Fragment>
-    }>
+    }
+  >
     <Title>Account</Title>
   </DashboardPage>
 );
@@ -109,14 +111,16 @@ const AccountListItemNav = ({ account, navigation }) => {
       }}
       style={{
         alignSelf: 'stretch',
-      }}>
+      }}
+    >
       <View
         style={{
           padding: 10,
           alignSelf: 'stretch',
           flexDirection: 'row',
           backgroundColor: Colors.page,
-        }}>
+        }}
+      >
         <Avatar className="">HY</Avatar>
         <Text style={{ fontSize: 26, marginHorizontal: 15, marginVertical: 3 }}>
           {account.name}
@@ -152,7 +156,8 @@ const AccountsPage = ({ navigation }) => (
           onPress={() => navigation.navigate('account-create')}
         />
       </React.Fragment>
-    }>
+    }
+  >
     <AccountList />
   </DashboardPage>
 );

@@ -53,7 +53,8 @@ const LinkViewWithNav = ({
     <T
       onPress={() => {
         navigation.navigate(to);
-      }}>
+      }}
+    >
       <View style={s}>
         {typeof children === 'function' ? children(isActive) : children}
       </View>
@@ -72,12 +73,14 @@ export const SidebarLink = ({ navigation, title, to, icon }) => {
         paddingVertical: 14,
         backgroundColor: '#eee',
       }}
-      activeStyle={{ backgroundColor: activeBg }}>
+      activeStyle={{ backgroundColor: activeBg }}
+    >
       {isActive => (
         <Text
           style={{
             color: isActive ? 'white' : textColor,
-          }}>
+          }}
+        >
           {icon}
           {title}
         </Text>
@@ -91,14 +94,16 @@ export const Sidebar = ({ children }) => (
     style={{
       borderRightWidth: 1,
       borderRightColor: '#ccc',
-    }}>
+    }}
+  >
     <ScrollView
       style={{
         maxWidth: 300,
         backgroundColor: '#fafafa',
         height: '100%',
       }}
-      contentContainerStyle={{ minHeight: '100%', paddingVertical: 10 }}>
+      contentContainerStyle={{ minHeight: '100%', paddingVertical: 10 }}
+    >
       {children}
     </ScrollView>
   </View>
@@ -108,13 +113,15 @@ const HeaderLinkWithNav = ({ title, navigation, to }) => (
   <TouchableHighlight
     onPress={() => {
       navigation.navigate(to);
-    }}>
+    }}
+  >
     <View
       style={{
         backgroundColor: pageColor,
         paddingVertical: 15,
         paddingHorizontal: 15,
-      }}>
+      }}
+    >
       <Text
         style={{
           color:
@@ -122,7 +129,8 @@ const HeaderLinkWithNav = ({ title, navigation, to }) => (
               ? headerLinkActiveColor
               : headerLinkColor,
           fontSize: 20,
-        }}>
+        }}
+      >
         {title}
       </Text>
     </View>
@@ -139,19 +147,22 @@ const PageA = ({ children, aven }) => (
           flex: 1,
           flexDirection: 'row',
           justifyContent: 'center',
-        }}>
+        }}
+      >
         <View
           style={{
             flex: 1,
             alignSelf: 'stretch',
             maxWidth: pageWidth,
             flexDirection: 'row',
-          }}>
+          }}
+        >
           <LinkView
             to="home"
             style={{
               marginHorizontal: pagePadding + 20,
-            }}>
+            }}
+          >
             <Image
               source={require('./images/AvenLogoPlain.png')}
               style={{
@@ -184,13 +195,15 @@ const PageA = ({ children, aven }) => (
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'center',
-      }}>
+      }}
+    >
       <View
         style={{
           flex: 1,
           alignSelf: 'stretch',
           maxWidth: pageWidth,
-        }}>
+        }}
+      >
         <View
           style={{
             marginHorizontal: pagePadding,
@@ -201,7 +214,8 @@ const PageA = ({ children, aven }) => (
             shadowColor: '#336',
             shadowOffset: { height: 0, width: 0 },
             overflow: 'hidden',
-          }}>
+          }}
+        >
           {children}
         </View>
       </View>
@@ -266,7 +280,8 @@ export class Form extends React.Component {
           minWidth: 300,
           marginVertical: 20,
           alignSelf: 'center',
-        }}>
+        }}
+      >
         {this.props.title && (
           <Text style={{ color: '#333', fontSize: 32, marginVertical: 30 }}>
             {this.props.title}
