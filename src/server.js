@@ -1,4 +1,4 @@
 //ReplaceStart
-export { startServer } from './aven-io/MainServer';
+export { startServer } from './playground-web/MainServer';
 
 //ReplaceEnd
