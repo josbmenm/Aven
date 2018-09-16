@@ -1,4 +1,4 @@
-import AvenServer from '../aven-web/Server';
+import AvenServer from '@aven-cloud/web/Server';
 
 import App from './App';
 

@@ -4,11 +4,9 @@ const { getLauncher } = require('./utils');
 
 const appName = process.argv[2];
 const appPath = pathJoin(__dirname, '../src', appName);
-const subpackage = JSON.parse(
-  fs.readFileSync(pathJoin(appPath, 'subpackage.json')),
-);
+const pkgJson = JSON.parse(fs.readFileSync(pathJoin(appPath, 'package.json')));
 
-getLauncher(subpackage.platform)(appName, appPath, subpackage)
+getLauncher(pkgJson.globe.platform)(appName, appPath, pkgJson)
   .then()
   .catch(e => {
     console.error(e);

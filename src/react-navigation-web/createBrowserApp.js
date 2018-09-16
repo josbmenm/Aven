@@ -1,6 +1,6 @@
 import { createBrowserHistory } from 'history';
 import React from 'react';
-import { NavigationActions, getNavigation } from '../react-navigation-core';
+import { NavigationActions, getNavigation } from '@react-navigation/core';
 const queryString = require('query-string');
 
 const history = createBrowserHistory();

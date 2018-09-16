@@ -50,13 +50,19 @@ get ${anExport}() {
   };
 };
 
+const extractVersion = fileName => {
+  const pkg = JSON.parse(fs.readFileSync(fileName));
+  return pkg.version;
+};
+
 const transforms = [
   { makeDirectory: 'src/react-navigation-core' },
   {
     fromRawJSON: {
       name: '@react-navigation/core',
+      version: extractVersion('node_modules/react-navigation/package.json'),
     },
-    toFile: 'src/react-navigation-core/subpackage.json',
+    toFile: 'src/react-navigation-core/package.json',
   },
   makeIndex(
     'src/react-navigation-core/index.js',
@@ -264,9 +270,10 @@ const transforms = [
   },
   { makeDirectory: 'src/react-navigation-native-container' },
   {
-    toFile: 'src/react-navigation-native-container/subpackage.json',
+    toFile: 'src/react-navigation-native-container/package.json',
     fromRawJSON: {
       name: '@react-navigation/native-container',
+      version: extractVersion('node_modules/react-navigation/package.json'),
     },
   },
   makeIndex('src/react-navigation-native-container/index.js', [
@@ -284,10 +291,10 @@ const transforms = [
     fromFile: 'node_modules/react-navigation/src/routers/pathUtils.js',
     toFile: 'src/react-navigation-native-container/pathUtils.js',
     importMap: {
-      '../NavigationActions': '../react-navigation-core',
+      '../NavigationActions': '@react-navigation/core',
     },
     nonDefaultImportMap: {
-      '../utils/invariant': '../react-navigation-core',
+      '../utils/invariant': '@react-navigation/core',
     },
   },
   {
@@ -299,20 +306,23 @@ const transforms = [
       './routers/pathUtils': './pathUtils',
     },
     nonDefaultImportMap: {
-      './getNavigation': '../react-navigation-core',
-      './createChildNavigationGetter': '../react-navigation-core',
-      './utils/invariant': '../react-navigation-core',
-      './routers/getNavigationActionCreators': '../react-navigation-core',
-      './NavigationActions': '../react-navigation-core',
+      './getNavigation': '@react-navigation/core',
+      './createChildNavigationGetter': '@react-navigation/core',
+      './utils/invariant': '@react-navigation/core',
+      './routers/getNavigationActionCreators': '@react-navigation/core',
+      './NavigationActions': '@react-navigation/core',
     },
   },
 
   { makeDirectory: 'src/react-navigation-stack' },
 
   {
-    toFile: 'src/react-navigation-stack/subpackage.json',
+    toFile: 'src/react-navigation-stack/package.json',
     fromRawJSON: {
       name: '@react-navigation/stack',
+      version: extractVersion(
+        'node_modules/react-navigation-stack/package.json',
+      ),
     },
   },
   makeIndex('src/react-navigation-stack/index.js', [
@@ -323,14 +333,14 @@ const transforms = [
   ]),
   {
     fromFile:
-      'node_modules/react-navigation/src/navigators/createStackNavigator.js',
+      'node_modules/react-navigation-stack/src/navigators/createStackNavigator.js',
     toFile: 'src/react-navigation-stack/createStackNavigator.js',
     importMap: {
       '../views/StackView/StackView': './StackView',
     },
     nonDefaultImportMap: {
-      './createNavigator': '../react-navigation-core',
-      '../routers/StackRouter': '../react-navigation-core',
+      './createNavigator': '@react-navigation/core',
+      '../routers/StackRouter': '@react-navigation/core',
     },
   },
   {
@@ -349,20 +359,21 @@ const transforms = [
     nonDefaultImportMap: {},
   },
   {
-    fromFile: 'node_modules/react-navigation/src/views/StackView/StackView.js',
+    fromFile:
+      'node_modules/react-navigation-stack/src/views/StackView/StackView.js',
     toFile: 'src/react-navigation-stack/StackView.js',
     importMap: {
       '../Transitioner': './Transitioner',
     },
     nonDefaultImportMap: {
-      '../../NavigationActions': '../react-navigation-core',
-      '../../routers/StackActions': '../react-navigation-core',
+      '../../NavigationActions': '@react-navigation/core',
+      '../../routers/StackActions': '@react-navigation/core',
     },
   },
 
   {
     fromFile:
-      'node_modules/react-navigation/src/views/StackView/StackViewTransitionConfigs.js',
+      'node_modules/react-navigation-stack/src/views/StackView/StackViewTransitionConfigs.js',
     toFile: 'src/react-navigation-stack/StackViewTransitionConfigs.js',
     importMap: {
       '../../utils/ReactNativeFeatures': './ReactNativeFeatures',
@@ -371,7 +382,7 @@ const transforms = [
   },
   {
     fromFile:
-      'node_modules/react-navigation/src/views/StackView/StackViewStyleInterpolator.js',
+      'node_modules/react-navigation-stack/src/views/StackView/StackViewStyleInterpolator.js',
     toFile: 'src/react-navigation-stack/StackViewStyleInterpolator.js',
     importMap: {
       '../../utils/getSceneIndicesForInterpolationInputRange':
@@ -381,7 +392,7 @@ const transforms = [
   },
   {
     fromFile:
-      'node_modules/react-navigation/src/utils/getSceneIndicesForInterpolationInputRange.js',
+      'node_modules/react-navigation-stack/src/utils/getSceneIndicesForInterpolationInputRange.js',
     toFile:
       'src/react-navigation-stack/getSceneIndicesForInterpolationInputRange.js',
     importMap: {},
@@ -394,93 +405,85 @@ const transforms = [
     nonDefaultImportMap: {},
   },
   {
-    fromFile: 'node_modules/react-navigation/src/views/Transitioner.js',
+    fromFile: 'node_modules/react-navigation-stack/src/views/Transitioner.js',
     toFile: 'src/react-navigation-stack/Transitioner.js',
     importMap: {},
     nonDefaultImportMap: {
-      '../utils/invariant': '../react-navigation-core',
+      '../utils/invariant': '@react-navigation/core',
     },
   },
   {
-    fromFile: 'node_modules/react-navigation/src/views/ScenesReducer.js',
+    fromFile: 'node_modules/react-navigation-stack/src/views/ScenesReducer.js',
     toFile: 'src/react-navigation-stack/ScenesReducer.js',
     importMap: {
       '../utils/shallowEqual': './shallowEqual',
     },
     nonDefaultImportMap: {
-      '../utils/invariant': '../react-navigation-core',
+      '../utils/invariant': '@react-navigation/core',
     },
   },
   {
-    fromFile: 'node_modules/react-navigation/src/utils/shallowEqual.js',
+    fromFile: 'node_modules/react-navigation-stack/src/utils/shallowEqual.js',
     toFile: 'src/react-navigation-stack/shallowEqual.js',
     importMap: {},
     nonDefaultImportMap: {},
   },
   {
     fromFile:
-      'node_modules/react-navigation/src/views/StackView/StackViewLayout.js',
+      'node_modules/react-navigation-stack/src/views/StackView/StackViewLayout.js',
     toFile: 'src/react-navigation-stack/StackViewLayout.js',
     importMap: {
       '../Header/Header': './Header',
     },
     nonDefaultImportMap: {
-      './withNavigation': '../react-navigation-core',
-      './withOrientation': '../react-navigation-area-view',
-      '../withOrientation': '../react-navigation-area-view',
-      '../../NavigationActions': '../react-navigation-core',
-      '../NavigationContext': '../react-navigation-core',
-      '../SceneView': '../react-navigation-core',
-      '../../routers/StackActions': '../react-navigation-core',
+      './withNavigation': '@react-navigation/core',
+      './withOrientation': '@react-navigation/area-view',
+      '../withOrientation': '@react-navigation/area-view',
+      '../../NavigationActions': '@react-navigation/core',
+      '../NavigationContext': '@react-navigation/core',
+      '../SceneView': '@react-navigation/core',
+      '../../routers/StackActions': '@react-navigation/core',
       '../../utils/ReactNativeFeatures': './ReactNativeFeatures',
     },
   },
   {
     fromFile:
-      'node_modules/react-navigation/src/views/StackView/StackViewCard.js',
+      'node_modules/react-navigation-stack/src/views/StackView/StackViewCard.js',
     toFile: 'src/react-navigation-stack/StackViewCard.js',
     importMap: {},
     nonDefaultImportMap: {},
   },
   {
     fromFile:
-      'node_modules/react-navigation/src/views/StackView/createPointerEventsContainer.js',
+      'node_modules/react-navigation-stack/src/views/StackView/createPointerEventsContainer.js',
     toFile: 'src/react-navigation-stack/createPointerEventsContainer.js',
-    importMap: {
-      '../AnimatedValueSubscription': './AnimatedValueSubscription',
-    },
-    nonDefaultImportMap: {
-      '../../utils/invariant': '../react-navigation-core',
-    },
-  },
-  {
-    fromFile:
-      'node_modules/react-navigation/src/views/AnimatedValueSubscription.js',
-    toFile: 'src/react-navigation-stack/AnimatedValueSubscription.js',
     importMap: {},
-    nonDefaultImportMap: {},
+    nonDefaultImportMap: {
+      '../../utils/invariant': '@react-navigation/core',
+    },
   },
   {
-    fromFile: 'node_modules/react-navigation/src/views/Header/Header.js',
+    fromFile: 'node_modules/react-navigation-stack/src/views/Header/Header.js',
     toFile: 'src/react-navigation-stack/Header.js',
     importMap: {},
     nonDefaultImportMap: {
-      '../withOrientation': '../react-navigation-area-view',
-      'react-native-safe-area-view': '../react-navigation-area-view',
+      '../withOrientation': '@react-navigation/area-view',
+      'react-native-safe-area-view': '@react-navigation/area-view',
     },
     requireMap: {
       '../assets/back-icon-mask.png': './assets/back-icon-mask.png',
     },
   },
   {
-    fromFile: 'node_modules/react-navigation/src/views/Header/HeaderTitle.js',
+    fromFile:
+      'node_modules/react-navigation-stack/src/views/Header/HeaderTitle.js',
     toFile: 'src/react-navigation-stack/HeaderTitle.js',
     importMap: {},
     nonDefaultImportMap: {},
   },
   {
     fromFile:
-      'node_modules/react-navigation/src/views/Header/HeaderBackButton.js',
+      'node_modules/react-navigation-stack/src/views/Header/HeaderBackButton.js',
     toFile: 'src/react-navigation-stack/HeaderBackButton.js',
     importMap: {
       '../TouchableItem': './TouchableItem',
@@ -492,7 +495,7 @@ const transforms = [
   },
 
   {
-    fromFile: 'node_modules/react-navigation/src/views/TouchableItem.js',
+    fromFile: 'node_modules/react-navigation-stack/src/views/TouchableItem.js',
     toFile: 'src/react-navigation-stack/TouchableItem.js',
     importMap: {},
     nonDefaultImportMap: {},
@@ -500,7 +503,7 @@ const transforms = [
 
   {
     fromFile:
-      'node_modules/react-navigation/src/views/Header/ModularHeaderBackButton.js',
+      'node_modules/react-navigation-stack/src/views/Header/ModularHeaderBackButton.js',
     toFile: 'src/react-navigation-stack/ModularHeaderBackButton.js',
     importMap: {
       '../TouchableItem': './TouchableItem',
@@ -511,12 +514,12 @@ const transforms = [
     nonDefaultImportMap: {},
   },
   {
-    copyDirectory: 'node_modules/react-navigation/src/views/assets',
+    copyDirectory: 'node_modules/react-navigation-stack/src/views/assets',
     toDirectory: 'src/react-navigation-stack/assets',
   },
   {
     fromFile:
-      'node_modules/react-navigation/src/views/Header/HeaderStyleInterpolator.js',
+      'node_modules/react-navigation-stack/src/views/Header/HeaderStyleInterpolator.js',
     toFile: 'src/react-navigation-stack/HeaderStyleInterpolator.js',
     importMap: {
       '../../utils/getSceneIndicesForInterpolationInputRange':
@@ -527,9 +530,12 @@ const transforms = [
 
   { makeDirectory: 'src/react-navigation-area-view' },
   {
-    toFile: 'src/react-navigation-area-view/subpackage.json',
+    toFile: 'src/react-navigation-area-view/package.json',
     fromRawJSON: {
       name: '@react-navigation/area-view',
+      version: extractVersion(
+        'node_modules/react-native-safe-area-view/package.json',
+      ),
     },
   },
   makeIndex('src/react-navigation-area-view/index.js', [
@@ -547,96 +553,77 @@ const transforms = [
     toFile: 'src/react-navigation-area-view/withOrientation.js',
   },
 
-  { makeDirectory: 'src/react-navigation-tabs' },
-  {
-    toFile: 'src/react-navigation-tabs/subpackage.json',
-    fromRawJSON: {
-      name: '@react-navigation/tabs',
-    },
-  },
-  makeIndex('src/react-navigation-tabs/index.js', ['createBottomTabNavigator']),
-  {
-    fromFile:
-      'node_modules/react-navigation-tabs/src/navigators/createBottomTabNavigator.js',
-    toFile: 'src/react-navigation-tabs/createBottomTabNavigator.js',
-    importMap: {
-      '../utils/createTabNavigator': './createTabNavigator',
-      '../views/BottomTabBar': './BottomTabBar',
-      '../views/ResourceSavingScene': './ResourceSavingScene',
-    },
-    nonDefaultImportMap: {},
-  },
-  {
-    fromFile:
-      'node_modules/react-navigation-tabs/src/utils/createTabNavigator.js',
-    toFile: 'src/react-navigation-tabs/createTabNavigator.js',
-    importMap: {
-      'react-navigation': '../react-navigation-core',
-    },
-    nonDefaultImportMap: {},
-  },
-  {
-    fromFile: 'node_modules/react-navigation-tabs/src/utils/withDimensions.js',
-    toFile: 'src/react-navigation-tabs/withDimensions.js',
-    importMap: {},
-    nonDefaultImportMap: {},
-  },
-  {
-    fromFile: 'node_modules/react-navigation-tabs/src/views/BottomTabBar.js',
-    toFile: 'src/react-navigation-tabs/BottomTabBar.js',
-    importMap: {
-      '../utils/withDimensions': './withDimensions',
-    },
-    nonDefaultImportMap: {
-      'react-native-safe-area-view': '../react-navigation-area-view',
-    },
-  },
-  {
-    fromFile:
-      'node_modules/react-navigation-tabs/src/views/ResourceSavingScene.js',
-    toFile: 'src/react-navigation-tabs/ResourceSavingScene.js',
-    importMap: {},
-    nonDefaultImportMap: {},
-  },
-  {
-    fromFile: 'node_modules/react-navigation-tabs/src/views/CrossFadeIcon.js',
-    toFile: 'src/react-navigation-tabs/CrossFadeIcon.js',
-    importMap: {},
-    nonDefaultImportMap: {},
-  },
+  // Tabs use flow which causes linting error.. disabling for now.
 
-  // { makeDirectory: 'src/react-navigation-native' },
+  // { makeDirectory: 'src/react-navigation-tabs' },
   // {
-  //   toFile: 'src/react-navigation-native/subpackage.json',
+  //   toFile: 'src/react-navigation-tabs/package.json',
   //   fromRawJSON: {
-  //     name: '@react-navigation/native',
+  //     name: '@react-navigation/tabs',
+  //     version: extractVersion(
+  //       'node_modules/react-navigation-tabs/package.json',
+  //     ),
   //   },
   // },
-  // makeIndex('src/react-navigation-native/index.js', [
-  //   {
-  //     exports: [
-  //       'TabRouter',
-  //       'StackActions',
-  //       'SceneView',
-  //       'createNavigator',
-  //       'createNavigationContainer',
-  //       'NavigationActions',
-  //     ],
-  //     moduleAlias: '../react-navigation-core',
-  //     moduleName: 'ReactNavigation',
+  // makeIndex('src/react-navigation-tabs/index.js', ['createBottomTabNavigator']),
+  // {
+  //   fromFile:
+  //     'node_modules/react-navigation-tabs/src/navigators/createBottomTabNavigator.js',
+  //   toFile: 'src/react-navigation-tabs/createBottomTabNavigator.js',
+  //   importMap: {
+  //     '../utils/createTabNavigator': './createTabNavigator',
+  //     '../views/BottomTabBar': './BottomTabBar',
+  //     '../views/ResourceSavingScene': './ResourceSavingScene',
   //   },
-  //   {
-  //     exports: ['createNavigationContainer'],
-  //     moduleAlias: '../react-navigation-native-container',
-  //     moduleName: 'NavigationContainer',
+  //   nonDefaultImportMap: {},
+  // },
+  // {
+  //   fromFile:
+  //     'node_modules/react-navigation-tabs/src/utils/createTabNavigator.js',
+  //   toFile: 'src/react-navigation-tabs/createTabNavigator.js',
+  //   importMap: {
+  //     'react-navigation': '@react-navigation/core',
   //   },
-  // ]),
+  //   nonDefaultImportMap: {},
+  // },
+  // {
+  //   fromFile: 'node_modules/react-navigation-tabs/src/utils/withDimensions.js',
+  //   toFile: 'src/react-navigation-tabs/withDimensions.js',
+  //   importMap: {},
+  //   nonDefaultImportMap: {},
+  // },
+  // {
+  //   fromFile: 'node_modules/react-navigation-tabs/src/views/BottomTabBar.js',
+  //   toFile: 'src/react-navigation-tabs/BottomTabBar.js',
+  //   importMap: {
+  //     '../utils/withDimensions': './withDimensions',
+  //   },
+  //   nonDefaultImportMap: {
+  //     'react-native-safe-area-view': '@react-navigation/area-view',
+  //   },
+  // },
+  // {
+  //   fromFile:
+  //     'node_modules/react-navigation-tabs/src/views/ResourceSavingScene.js',
+  //   toFile: 'src/react-navigation-tabs/ResourceSavingScene.js',
+  //   importMap: {},
+  //   nonDefaultImportMap: {},
+  // },
+  // {
+  //   fromFile: 'node_modules/react-navigation-tabs/src/views/CrossFadeIcon.js',
+  //   toFile: 'src/react-navigation-tabs/CrossFadeIcon.js',
+  //   importMap: {},
+  //   nonDefaultImportMap: {},
+  // },
 
   { makeDirectory: 'src/react-navigation-native-icons' },
   {
-    toFile: 'src/react-navigation-native-icons/subpackage.json',
+    toFile: 'src/react-navigation-native-icons/package.json',
     fromRawJSON: {
       name: '@react-navigation/native-icons',
+      version: extractVersion(
+        'node_modules/react-native-vector-icons/package.json',
+      ),
     },
   },
   makeIndex('src/react-navigation-native-icons/index.js', ['Ionicons']),
@@ -707,129 +694,20 @@ const transforms = [
     nonDefaultImportMap: {},
   },
 
-  { makeDirectory: 'src/react-navigation-fluid' },
-  {
-    toFile: 'src/react-navigation-fluid/subpackage.json',
-    fromRawJSON: {
-      name: '@react-navigation/fluid',
-    },
-  },
-  makeIndex('src/react-navigation-fluid/index.js', [
-    'createFluidNavigator',
-    'TransitionView',
-  ]),
-  {
-    fromFile:
-      'node_modules/react-navigation-fluid-transitions/src/FluidNavigator.js',
-    toFile: 'src/react-navigation-fluid/createFluidNavigator.js',
-    importMap: {
-      'react-navigation': '../react-navigation-core',
-    },
-    nonDefaultImportMap: {},
-  },
-  {
-    fromFile:
-      'node_modules/react-navigation-fluid-transitions/src/FluidTransitioner.js',
-    toFile: 'src/react-navigation-fluid/FluidTransitioner.js',
-    importMap: {
-      'react-navigation': '../react-navigation-stack',
-    },
-    nonDefaultImportMap: {},
-  },
-  {
-    fromFile:
-      'node_modules/react-navigation-fluid-transitions/src/NavigationActions.js',
-    toFile: 'src/react-navigation-fluid/NavigationActions.js',
-    importMap: {
-      'react-navigation': '../react-navigation-core',
-    },
-    nonDefaultImportMap: {},
-  },
-  {
-    fromFile:
-      'node_modules/react-navigation-fluid-transitions/src/TransitionView.js',
-    toFile: 'src/react-navigation-fluid/TransitionView.js',
-    importMap: {},
-    nonDefaultImportMap: {},
-  },
-  {
-    fromFile:
-      'node_modules/react-navigation-fluid-transitions/src/TransitionItemsView.js',
-    toFile: 'src/react-navigation-fluid/TransitionItemsView.js',
-    importMap: {},
-    nonDefaultImportMap: {},
-  },
-  {
-    fromFile:
-      'node_modules/react-navigation-fluid-transitions/src/TransitionRouteView.js',
-    toFile: 'src/react-navigation-fluid/TransitionRouteView.js',
-    importMap: {},
-    nonDefaultImportMap: {},
-  },
-
-  {
-    fromFile:
-      'node_modules/react-navigation-fluid-transitions/src/TransitionOverlayView.js',
-    toFile: 'src/react-navigation-fluid/TransitionOverlayView.js',
-    importMap: {},
-    nonDefaultImportMap: {},
-  },
-  {
-    fromFile:
-      'node_modules/react-navigation-fluid-transitions/src/TransitionItems.js',
-    toFile: 'src/react-navigation-fluid/TransitionItems.js',
-    importMap: {},
-    nonDefaultImportMap: {},
-  },
-  {
-    fromFile:
-      'node_modules/react-navigation-fluid-transitions/src/TransitionItem.js',
-    toFile: 'src/react-navigation-fluid/TransitionItem.js',
-    importMap: {},
-    nonDefaultImportMap: {},
-  },
-  {
-    copyDirectory: 'node_modules/react-navigation-fluid-transitions/src/Types',
-    toDirectory: 'src/react-navigation-fluid/Types',
-  },
-  {
-    copyDirectory:
-      'node_modules/react-navigation-fluid-transitions/src/Interpolators',
-    toDirectory: 'src/react-navigation-fluid/Interpolators',
-  },
-
-  {
-    copyDirectory:
-      'node_modules/react-navigation-fluid-transitions/src/Transitions',
-    toDirectory: 'src/react-navigation-fluid/Transitions',
-  },
-
-  {
-    copyDirectory: 'node_modules/react-navigation-fluid-transitions/src/Utils',
-    toDirectory: 'src/react-navigation-fluid/Utils',
-  },
-  {
-    fromFile:
-      'node_modules/react-navigation-fluid-transitions/src/TransitionConstants.js',
-    toFile: 'src/react-navigation-fluid/TransitionConstants.js',
-    importMap: {},
-    nonDefaultImportMap: {},
-  },
   { makeDirectory: 'src/react-navigation-transitioner' },
   makeIndex('src/react-navigation-transitioner/index.js', ['Transitioner']),
   {
     fromFile: 'node_modules/react-navigation-transitioner/Transitioner.js',
     toFile: 'src/react-navigation-transitioner/Transitioner.js',
     importMap: {
-      '@react-navigation/core': '../react-navigation-core',
+      '@react-navigation/core': '@react-navigation/core',
     },
     nonDefaultImportMap: {},
   },
   {
     fromFile: 'node_modules/react-navigation-transitioner/Animators.js',
     toFile: 'src/react-navigation-transitioner/Animators.js',
-    importMap: {
-    },
+    importMap: {},
     nonDefaultImportMap: {},
   },
 ];

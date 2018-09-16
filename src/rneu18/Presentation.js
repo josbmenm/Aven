@@ -7,7 +7,7 @@ import {
   Button,
   Image,
 } from 'react-native';
-import { createSwitchNavigator } from '../react-navigation-core';
+import { createSwitchNavigator } from '@react-navigation/core';
 
 const navigateToSlide = (navigation, index) => {
   navigation.navigate({

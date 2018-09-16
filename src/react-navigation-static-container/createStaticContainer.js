@@ -4,7 +4,7 @@ import {
   NavigationActions,
   getNavigationActionCreators,
   createChildNavigationGetter,
-} from '../react-navigation-core';
+} from '@react-navigation/core';
 
 export default function createStaticContainer(Component) {
   class StaticNavigationContainer extends React.Component {

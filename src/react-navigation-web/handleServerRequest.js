@@ -1,4 +1,4 @@
-import { NavigationActions, getNavigation } from '../react-navigation-core';
+import { NavigationActions, getNavigation } from '@react-navigation/core';
 
 export default function handleServerRequest(
   Router,

@@ -19,7 +19,6 @@ src/react-navigation-core
 src/react-navigation-native-container
 src/react-navigation-stack
 src/react-navigation-drawer
-src/react-navigation-tabs
 src/react-navigation-area-view
 src/react-navigation-fluid
 src/react-navigation-transitioner

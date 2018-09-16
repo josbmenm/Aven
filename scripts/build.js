@@ -5,7 +5,7 @@ const { getBuilder } = require('./utils');
 const appName = process.argv[2];
 const appPath = pathJoin(__dirname, '../src', appName);
 const subpackage = JSON.parse(
-  fs.readFileSync(pathJoin(appPath, 'subpackage.json')),
+  fs.readFileSync(pathJoin(appPath, 'package.json')),
 );
 
 getBuilder(subpackage.platform)(appName, appPath, subpackage)
