@@ -52,7 +52,7 @@ const genericFont = {
 };
 
 const placeholderPadding = 30;
-const productPhotoAspectRatio = 4/3;
+const productPhotoAspectRatio = 4 / 3;
 
 const Products = [
   {
@@ -147,7 +147,8 @@ const PlaceholderTitle = ({ children, secondary }) => (
       textAlign: 'center',
       padding: 100,
       color: secondary ? '#666' : '#111',
-    }}>
+    }}
+  >
     {children}
   </Text>
 );
@@ -165,15 +166,19 @@ const PageHeader = ({ navigation, title }) => (
       backgroundColor: '#ccc',
       alignSelf: 'stretch',
       flexDirection: 'column',
-    }}>
-    <View style={{...StyleSheet.absoluteFillObject, justifyContent: 'center'}}>
+    }}
+  >
+    <View
+      style={{ ...StyleSheet.absoluteFillObject, justifyContent: 'center' }}
+    >
       <Text
         style={{
           color: '#111',
           fontSize: placeholderTitleSize,
           textAlign: 'center',
           padding: 60,
-        }}>
+        }}
+      >
         {title}
       </Text>
     </View>
@@ -183,14 +188,16 @@ const PageHeader = ({ navigation, title }) => (
         paddingVertical: 20,
         aspectRatio: 1,
         height: 260,
-      }}>
+      }}
+    >
       <Text
         style={{
           marginVertical: 20,
           marginHorizontal: 20 + placeholderPadding,
           fontSize: 120,
           color: '#111',
-        }}>
+        }}
+      >
         ←
       </Text>
     </TouchableOpacity>
@@ -202,7 +209,8 @@ const ProductLinkWithNav = ({ product, navigation }) => {
     <TouchableOpacity
       onPress={() => {
         navigation.navigate('Product', { id: product.id });
-      }}>
+      }}
+    >
       <View
         style={{
           borderWidth: 1,
@@ -210,7 +218,8 @@ const ProductLinkWithNav = ({ product, navigation }) => {
           marginHorizontal: 80,
           flexDirection: 'row',
           marginVertical: 30,
-        }}>
+        }}
+      >
         <PlaceholderImage
           color={product.color}
           style={{ width: 200, aspectRatio: productPhotoAspectRatio }}
@@ -245,16 +254,21 @@ class Button extends Component {
   render() {
     const { onPress, label } = this.props;
     return (
-      <TouchableOpacity onPress={onPress} style={{ margin: placeholderPadding }}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={{ margin: placeholderPadding }}
+      >
         <View
-          style={{ padding: 40, backgroundColor: '#222', borderRadius: 30 }}>
+          style={{ padding: 40, backgroundColor: '#222', borderRadius: 30 }}
+        >
           <Text
             style={{
               fontSize: 40,
               textAlign: 'center',
               ...genericFont,
               color: 'white',
-            }}>
+            }}
+          >
             {label}
           </Text>
         </View>
@@ -263,17 +277,12 @@ class Button extends Component {
   }
 }
 
-// access+hmo plans, 2nd one
-// platnium local access 0/25
-
-// ultimate dental ppo for small bus 50/2000
-
-// first vision plan
-
 const Features = ({ product }) => (
   <View style={{ flexDirection: 'row', marginBottom: 60 }}>
     {product.features.map(feature => (
-      <Text style={{...genericFont, marginRight: 60, fontSize: 42}}>{feature.name}</Text>
+      <Text style={{ ...genericFont, marginRight: 60, fontSize: 42 }}>
+        {feature.name}
+      </Text>
     ))}
   </View>
 );
@@ -281,9 +290,16 @@ const Features = ({ product }) => (
 const Ingredients = ({ product }) => (
   <View style={{ flexDirection: 'row', padding: 0 }}>
     {product.ingredients.map(i => (
-      <View style={{marginRight: 40, marginBottom: 40}}>
-      <PlaceholderImage style={{width: 140, aspectRatio: 1 }} color="#22cc22" />
-      <Text style={{...genericFont, fontSize: 26, maxWidth: 140, marginTop: 8}}>{i.name}</Text>
+      <View style={{ marginRight: 40, marginBottom: 40 }}>
+        <PlaceholderImage
+          style={{ width: 140, aspectRatio: 1 }}
+          color="#22cc22"
+        />
+        <Text
+          style={{ ...genericFont, fontSize: 26, maxWidth: 140, marginTop: 8 }}
+        >
+          {i.name}
+        </Text>
       </View>
     ))}
   </View>
@@ -301,12 +317,17 @@ class Product extends Component {
           style={{ aspectRatio: productPhotoAspectRatio, alignSelf: 'stretch' }}
         />
         <ScreenContent>
-        <View style={{padding: placeholderPadding}}>
-          <Features product={product} />
-          <Text style={{ ...genericFont, fontSize: 42, marginBottom: 30 }}>{product.description}</Text>
-          <Text style={{...genericFont, fontSize: 52}}><Text style={{fontSize: 64 }}>ingredients | </Text>{product.size} - {product.nutrition}</Text>
-          <Ingredients product={product} />
-        </View>
+          <View style={{ padding: placeholderPadding }}>
+            <Features product={product} />
+            <Text style={{ ...genericFont, fontSize: 42, marginBottom: 30 }}>
+              {product.description}
+            </Text>
+            <Text style={{ ...genericFont, fontSize: 52 }}>
+              <Text style={{ fontSize: 64 }}>ingredients | </Text>
+              {product.size} - {product.nutrition}
+            </Text>
+            <Ingredients product={product} />
+          </View>
         </ScreenContent>
 
         <Button

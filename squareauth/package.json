@@ -1,0 +1,9 @@
+{
+  "name": "squareauth",
+  "version": "1.0.0",
+  "main": "squareauth.js",
+  "dependencies": {
+    "node-fetch": "^2.2.0",
+    "square-connect": "^2.20180712.2"
+  }
+}
