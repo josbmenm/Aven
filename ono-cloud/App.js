@@ -10,7 +10,7 @@ const getPublicConfig = valueName => {
   return process.env[valueName];
 };
 const _privConfig =
-  process.env.PUBLIC_CONFIG_JSON && JSON.parse(process.env.PUBLIC_CONFIG_JSON);
+  process.env.SECRET_CONFIG_JSON && JSON.parse(process.env.SECRET_CONFIG_JSON);
 const getPrivateConfig = valueName => {
   if (_privConfig && _privConfig[valueName] !== undefined) {
     return _privConfig[valueName];
@@ -21,7 +21,7 @@ const getPrivateConfig = valueName => {
 const App = () => {
   return (
     <View style={{ flex: 1, backgroundColor: 'green' }}>
-      <Text>Hello globe!</Text>
+      <Text>Hello globe! {process.env.NODE_ENV}</Text>
       <Text>My pub config is {getPublicConfig('FOO')}</Text>
       <Text>My priv config is {getPrivateConfig('AIRTABLE_API_KEY')}</Text>
     </View>

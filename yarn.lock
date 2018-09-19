@@ -4,7 +4,7 @@
 
 "@aven-cloud/globe-tools@https://github.com/AvenCloud/globe-tools.git#master":
   version "0.1.0"
-  resolved "https://github.com/AvenCloud/globe-tools.git#f9a2cdad5a63247794df4d490adb046a76ba8eed"
+  resolved "https://github.com/AvenCloud/globe-tools.git#9e1aeca06eebc62bb804dfe6a5e6c48c99e3b3cb"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     fs-extra "^7.0.0"
