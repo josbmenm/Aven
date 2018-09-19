@@ -1,13 +1,13 @@
 {
   "name": "onofoodco",
   "scripts": {
-    "start": "globe start",
+    "start": "node build/server.js",
     "build": "globe build",
-    "web": "globe start ono-website",
+    "cloud": "globe start ono-cloud",
+    "deploy-cloud": "globe deploy ono-cloud",
     "kiosk": "globe start ono-kiosk"
   },
-  "dependencies": {
-    "globe": "https://github.com/AvenCloud/globe.git#master",
-    "react": "^16.4.2"
+  "devDependencies": {
+    "globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
   }
 }
