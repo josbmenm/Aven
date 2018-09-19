@@ -2,10 +2,10 @@
   "name": "onofoodco",
   "scripts": {
     "start": "node build/server.js",
-    "build": "globe build",
-    "cloud": "globe start ono-cloud",
-    "deploy-cloud": "globe deploy ono-cloud",
-    "kiosk": "globe start ono-kiosk"
+    "build": "./node_modules/globe-tools/cli.js build",
+    "cloud": "./node_modules/globe-tools/cli.js start ono-cloud",
+    "deploy-cloud": "./node_modules/globe-tools/cli.js deploy ono-cloud",
+    "kiosk": "./node_modules/globe-tools/cli.js start ono-kiosk"
   },
   "devDependencies": {
     "globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
