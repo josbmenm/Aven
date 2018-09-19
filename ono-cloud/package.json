@@ -3,7 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "airtable": "^0.5.6"
+    "airtable": "^0.5.6",
+    "body-parser": "^1.18.3",
+    "json-stable-stringify": "^1.0.1",
+    "pg": "^7.4.3",
+    "uuid": "^3.3.2",
+    "wget-improved": "^3.0.1"
   },
   "globe": {
     "env": "web",
@@ -11,9 +16,16 @@
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js"
     },
-    "publicBuildConfigVars": [],
+    "publicBuildConfigVars": [
+      "BUILD_ENV"
+    ],
     "secretBuildConfigVars": [
-      "AIRTABLE_API_KEY"
+      "AIRTABLE_API_KEY",
+      "AIRTABLE_BASE_ID",
+      "PG_HOST",
+      "PG_DB",
+      "PG_USER",
+      "PG_PASS"
     ]
   }
 }

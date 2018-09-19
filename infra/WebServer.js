@@ -7,6 +7,7 @@ import startServer from './startServer';
 
 const fs = require('fs-extra');
 const http = require('http');
+const bodyParser = require('body-parser');
 
 const pathJoin = require('path').join;
 
@@ -14,9 +15,10 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
-export default async function WebServer(App) {
+export default async function WebServer(App, dispatch) {
   const expressApp = express();
-
+  const jsonParser = bodyParser.json();
+  expressApp.use(jsonParser);
   AppRegistry.registerComponent('App', () => App);
 
   // const publicDir = isProd ? 'build/public' : `src/${activeApp}/public`;
@@ -24,6 +26,18 @@ export default async function WebServer(App) {
 
   expressApp.disable('x-powered-by');
   expressApp.use(express.static(publicDir));
+  expressApp.post('/dispatch', (req, res) => {
+    if (dispatch) {
+      dispatch(req.body)
+        .then(result => {
+          res.send(result);
+        })
+        .catch(err => {
+          console.error(err);
+          res.status(500).send(String(err));
+        });
+    }
+  });
   expressApp.get('/*', (req, res) => {
     const { path, query } = req;
 
