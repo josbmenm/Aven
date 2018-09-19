@@ -14,7 +14,8 @@
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js"
     },
-    "buildEnvVars": [
+    "publicBuildConfigVars": [],
+    "secretBuildConfigVars": [
       "AIRTABLE_API_KEY"
     ]
   }

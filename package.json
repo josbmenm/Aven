@@ -9,5 +9,8 @@
   },
   "devDependencies": {
     "globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
+  },
+  "dependencies": {
+    "@aven-cloud/globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
   }
 }
