@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
 const { Client } = require('pg');
 
-const activeDomains = new Set([process.env.CLOUD_PRIMARY_HOST]);
+const activeDomains = new Set(['onofood.co']);
 
 export const startService = async ({
   user,
@@ -25,7 +25,7 @@ export const startService = async ({
   };
 
   if (getSecretConfig('SQL_INSTANCE_CONNECTION_NAME') && !IS_DEV) {
-    config.host = `/cloudsql/${getSecretConfig(
+    config.socketPath = `/cloudsql/${getSecretConfig(
       'SQL_INSTANCE_CONNECTION_NAME',
     )}`;
   } else if (getSecretConfig('SQL_HOST')) {
@@ -359,7 +359,6 @@ WHERE constraint_type = 'FOREIGN KEY'
   }
 
   async function putRefObject({ domain, ref, object, owner, defaultOwner }) {
-    console.log(domain, ref, object, owner, defaultOwner);
     await pg.query('BEGIN');
     try {
       await ensureDomain(domain);
@@ -375,11 +374,18 @@ WHERE constraint_type = 'FOREIGN KEY'
     }
   }
 
+  async function putRef({ domain, ref, objectId, owner }) {
+    await ensureDomain(domain);
+    await ensureRef(domain, ref, owner);
+    await setRefActiveObject({ domain, ref, id: objectId });
+  }
+
   async function status() {
     return { connected, migrated };
   }
 
   const actions = {
+    putRef,
     putRefObject,
     putBinaryObject,
     putObject,

@@ -12,7 +12,7 @@ const download = async (url, fileDest) => {
       reject(err);
     });
     dl.on('start', fileSize => {
-      console.log('dl started', fileSize);
+      // fileSize
     });
     dl.on('end', () => {
       resolve();
@@ -26,7 +26,6 @@ const hash = input =>
     .digest('hex');
 
 export const scrapeAirTable = async (apiKey, baseId, tableNames, destPath) => {
-  console.log('erm', apiKey, baseId, destPath);
   const airtableBase = new Airtable({ apiKey }).base(baseId);
 
   const scrapeTable = tableName =>

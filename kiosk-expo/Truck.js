@@ -7,7 +7,7 @@ class Truck extends Container {
   constructor() {
     super();
     this._ws = new ReconnectingWebSocket('ws://smoothiepi:8080', [], {
-      debug: true,
+      // debug: true,
     });
 
     this._wsClientId = null;

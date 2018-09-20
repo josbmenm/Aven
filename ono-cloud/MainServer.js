@@ -11,21 +11,51 @@ const AirtableBaseID = getSecretConfig('AIRTABLE_BASE_ID');
 
 const scrapeLocation = pathJoin(process.cwd(), 'scrape-data');
 
+const uploadFile = async (filePath, refName, dbService) => {
+  const fileData = await fs.readFile(filePath);
+  const objectId = await dbService.actions.putObject({
+    object: {
+      data: fileData.toString('hex'),
+    },
+  });
+  return objectId;
+};
+
 const uploadFolder = async (folderPath, refName, dbService) => {
   const filesInDir = await fs.readdir(folderPath);
-  console.log('upload folder', { filesInDir });
-  // await dbService.actions.putRefObject({ domain, ref: refName, object, owner, d });
+  const fileList = await Promise.all(
+    filesInDir.map(async fileName => {
+      const filePath = pathJoin(folderPath, fileName);
+      const stat = await fs.stat(filePath);
+      if (stat.isDirectory()) {
+        return await uploadFolder(filePath, refName, dbService);
+      } else {
+        return await uploadFile(filePath, refName, dbService);
+      }
+    }),
+  );
+  const files = {};
+  filesInDir.forEach((fileName, index) => {
+    files[fileName] = fileList[index];
+  });
+  const objectId = await dbService.actions.putObject({ object: { files } });
+  return objectId;
+};
+
+const putFolder = async ({ domain, folderPath, refName, dbService }) => {
+  const folder = await uploadFolder(folderPath, refName, dbService);
+  await dbService.actions.putRef({
+    owner: null,
+    domain,
+    objectId: folder.id,
+    ref: refName,
+  });
+  return folder;
 };
 
 const runServer = async () => {
-  const dbService = await startDBService({
-    // user: getSecretConfig('PG_USER'),
-    // host: getSecretConfig('PG_HOST'),
-    // password: getSecretConfig('PG_PASS'),
-    // database: getSecretConfig('PG_DB'),
-    // // port,
-    // ssl: true,
-  });
+  const domain = 'onofood.co';
+  const dbService = await startDBService({});
 
   const scrapeUpstream = async action => {
     await fs.remove(scrapeLocation);
@@ -35,19 +65,31 @@ const runServer = async () => {
       ['Kiosk Menu', 'Recipes', 'Recipe Ingredients', 'Ingredients'],
       scrapeLocation,
     );
-    await uploadFolder(scrapeLocation, 'airtable', dbService);
-    console.log('scraped to', scrapeLocation);
-    return { great: 'news' };
+    const folder = await putFolder({
+      folderPath: scrapeLocation,
+      refName: 'airtable',
+      dbService,
+      domain: 'onofood.co',
+    });
+    return folder;
+  };
+
+  const getObject = async action => {
+    return await dbService.actions.getObject({ id: action.id });
+  };
+
+  const getRef = async action => {
+    return await dbService.actions.getRef({ ref: action.ref, domain });
   };
 
   const dispatch = async action => {
-    if (dbService.actions[action.type]) {
-      return await dbService.actions[action.type](action);
-    }
-
     switch (action.type) {
       case 'scrapeUpstream':
         return scrapeUpstream(action);
+      case 'getObject':
+        return getObject(action);
+      case 'getRef':
+        return getRef(action);
       default:
         throw `Unknown action type "${action.type}"`;
     }
