@@ -1,8 +1,8 @@
+import { getSecretConfig, IS_DEV } from '../ono-cloud/config';
 const uuid = require('uuid/v1');
 const { schema, getSqlType } = require('./schema');
 const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
-
 const { Client } = require('pg');
 
 const activeDomains = new Set([process.env.CLOUD_PRIMARY_HOST]);
@@ -19,19 +19,15 @@ export const startService = async ({
   name = name || `db-${uuid()}`;
 
   const config = {
-    user: process.env.SQL_USER,
-    password: process.env.SQL_PASSWORD,
-    database: process.env.SQL_DATABASE,
+    user: getSecretConfig('SQL_USER'),
+    password: getSecretConfig('SQL_PASSWORD'),
+    database: getSecretConfig('SQL_DATABASE'),
   };
 
-  if (
-    process.env.INSTANCE_CONNECTION_NAME &&
-    process.env.NODE_ENV === 'production'
-  ) {
-    config.host = `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`;
-  }
-  if (!config.host && process.env.SQL_HOST) {
-    config.host = process.env.SQL_HOST;
+  if (getSecretConfig('INSTANCE_CONNECTION_NAME') && !IS_DEV) {
+    config.host = `/cloudsql/${getSecretConfig('INSTANCE_CONNECTION_NAME')}`;
+  } else if (getSecretConfig('SQL_HOST')) {
+    config.host = getSecretConfig('SQL_HOST');
   }
 
   const pg = new Client(config);
@@ -191,7 +187,6 @@ WHERE constraint_type = 'FOREIGN KEY'
       const tableSchema = schema.tables[tableName];
       await migrateTable(tableName, tableSchema);
     }
-    console.log('migration complete!');
     migrated = true;
   }
 

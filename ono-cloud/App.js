@@ -3,7 +3,7 @@ import React from 'react';
 
 const App = () => {
   return (
-    <View style={{ backgroundColor: 'red', flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <Text>Ono API Server</Text>
     </View>
   );

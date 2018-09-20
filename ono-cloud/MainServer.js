@@ -23,12 +23,12 @@ const scrapeUpstream = async action => {
 
 const runServer = async () => {
   const dbService = await startDBService({
-    user: getSecretConfig('PG_USER'),
-    host: getSecretConfig('PG_HOST'),
-    password: getSecretConfig('PG_PASS'),
-    database: getSecretConfig('PG_DB'),
-    // port,
-    ssl: true,
+    // user: getSecretConfig('PG_USER'),
+    // host: getSecretConfig('PG_HOST'),
+    // password: getSecretConfig('PG_PASS'),
+    // database: getSecretConfig('PG_DB'),
+    // // port,
+    // ssl: true,
   });
 
   const dispatch = action => {
@@ -40,7 +40,7 @@ const runServer = async () => {
     }
   };
 
-  const webService = WebServer(App, dispatch);
+  const webService = await WebServer(App, dispatch);
 
   return {
     close: async () => {

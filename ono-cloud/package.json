@@ -22,10 +22,11 @@
     "secretBuildConfigVars": [
       "AIRTABLE_API_KEY",
       "AIRTABLE_BASE_ID",
-      "PG_HOST",
-      "PG_DB",
-      "PG_USER",
-      "PG_PASS"
+      "SQL_INSTANCE_CONNECTION_NAME",
+      "SQL_HOST",
+      "SQL_DATABASE",
+      "SQL_USER",
+      "SQL_PASSWORD"
     ]
   }
 }
