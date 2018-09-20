@@ -11,7 +11,7 @@ const AirtableBaseID = getSecretConfig('AIRTABLE_BASE_ID');
 const scrapeLocation = pathJoin(process.cwd(), 'scrape-data');
 
 const uploadFolderData = async (folderPath, refName, dbService) => {
-  await dbService.actions.putRefObject({ domain, ref, object, owner, d });
+  // await dbService.actions.putRefObject({ domain, ref, object, owner, d });
 };
 
 const scrapeUpstream = async action => {
