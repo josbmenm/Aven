@@ -55,8 +55,9 @@ const putFolder = async ({ domain, folderPath, refName, dbService }) => {
 
 const runServer = async () => {
   const domain = 'onofood.co';
+  console.log('☁️ Starting Cloud 💨');
   const dbService = await startDBService({});
-
+  console.log('☁️ Database Ready 💼');
   const scrapeUpstream = async action => {
     await fs.remove(scrapeLocation);
     await scrapeAirTable(
@@ -96,6 +97,7 @@ const runServer = async () => {
   };
 
   const webService = await WebServer(App, dispatch);
+  console.log('☁️️ Web Ready 🕸');
 
   return {
     close: async () => {
