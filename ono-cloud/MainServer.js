@@ -56,7 +56,20 @@ const putFolder = async ({ domain, folderPath, refName, dbService }) => {
 const runServer = async () => {
   const domain = 'onofood.co';
   console.log('☁️ Starting Cloud 💨');
-  const dbService = await startDBService({});
+  const pgConfig = {
+    user: getSecretConfig('SQL_USER'),
+    password: getSecretConfig('SQL_PASSWORD'),
+    database: getSecretConfig('SQL_DATABASE'),
+  };
+
+  if (getSecretConfig('SQL_INSTANCE_CONNECTION_NAME') && !IS_DEV) {
+    pgConfig.host = `/cloudsql/${getSecretConfig(
+      'SQL_INSTANCE_CONNECTION_NAME',
+    )}`;
+  } else if (getSecretConfig('SQL_HOST')) {
+    pgConfig.host = getSecretConfig('SQL_HOST');
+  }
+  const dbService = await startDBService({ pgConfig });
   console.log('☁️ Database Ready 💼');
   const scrapeUpstream = async action => {
     await fs.remove(scrapeLocation);

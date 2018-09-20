@@ -1,4 +1,3 @@
-import { getSecretConfig, IS_DEV } from '../ono-cloud/config';
 const uuid = require('uuid/v1');
 const { schema, getSqlType } = require('./schema');
 const crypto = require('crypto');
@@ -7,32 +6,10 @@ const { Client } = require('pg');
 
 const activeDomains = new Set(['onofood.co']);
 
-export const startService = async ({
-  user,
-  host,
-  database,
-  password,
-  port,
-  ssl,
-  name,
-}) => {
+export const startService = async ({ pgConfig, name }) => {
   name = name || `db-${uuid()}`;
 
-  const config = {
-    user: getSecretConfig('SQL_USER'),
-    password: getSecretConfig('SQL_PASSWORD'),
-    database: getSecretConfig('SQL_DATABASE'),
-  };
-
-  if (getSecretConfig('SQL_INSTANCE_CONNECTION_NAME') && !IS_DEV) {
-    config.host = `/cloudsql/${getSecretConfig(
-      'SQL_INSTANCE_CONNECTION_NAME',
-    )}`;
-  } else if (getSecretConfig('SQL_HOST')) {
-    config.host = getSecretConfig('SQL_HOST');
-  }
-  console.log('connecting to pg with config: ', config);
-  const pg = new Client(config);
+  const pg = new Client(pgConfig);
 
   let connected = false;
   let migrated = false;

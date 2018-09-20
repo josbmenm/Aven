@@ -4,8 +4,8 @@ import { AppRegistry } from 'react-native';
 import startServer from './startServer';
 
 // import { handleServerRequest } from '../react-navigation-web';
-
-const fs = require('fs-extra');
+const yes = require('yes-https');
+const helmet = require('helmet');
 const http = require('http');
 const bodyParser = require('body-parser');
 
@@ -19,6 +19,8 @@ export default async function WebServer(App, dispatch) {
   const expressApp = express();
   const jsonParser = bodyParser.json();
   expressApp.use(jsonParser);
+  expressApp.use(yes());
+  expressApp.use(helmet());
   AppRegistry.registerComponent('App', () => App);
 
   // const publicDir = isProd ? 'build/public' : `src/${activeApp}/public`;
