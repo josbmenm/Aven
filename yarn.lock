@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@aven-cloud/globe-tools@https://github.com/AvenCloud/globe-tools.git#master", "globe-tools@https://github.com/AvenCloud/globe-tools.git#master":
+"@aven-cloud/globe-tools@https://github.com/AvenCloud/globe-tools.git#master":
   version "0.1.0"
   resolved "https://github.com/AvenCloud/globe-tools.git#77c09f5dc89d03f6054320b1fb3e1d991e05df6b"
   dependencies:
