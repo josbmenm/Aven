@@ -29,7 +29,7 @@ export const startService = async ({
   } else if (getSecretConfig('SQL_HOST')) {
     config.host = getSecretConfig('SQL_HOST');
   }
-
+  console.log('connecting to pg with config: ', config);
   const pg = new Client(config);
 
   let connected = false;
