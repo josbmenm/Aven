@@ -10,6 +10,10 @@ const AirtableBaseID = getSecretConfig('AIRTABLE_BASE_ID');
 
 const scrapeLocation = pathJoin(process.cwd(), 'scrape-data');
 
+const uploadFolderData = async (folderPath, refName, dbService) => {
+  await dbService.actions.putRefObject({ domain, ref, object, owner, d });
+};
+
 const scrapeUpstream = async action => {
   await scrapeAirTable(
     AirtableAPIKey,
@@ -31,9 +35,13 @@ const runServer = async () => {
     // ssl: true,
   });
 
-  const dispatch = action => {
+  const dispatch = async action => {
+    if (dbService.actions[action.type]) {
+      return await dbService.actions[action.type](action);
+    }
+
     switch (action.type) {
-      case 'ScrapeUpstream':
+      case 'scrapeUpstream':
         return scrapeUpstream(action);
       default:
         throw `Unknown action type "${action.type}"`;

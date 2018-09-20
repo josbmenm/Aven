@@ -24,8 +24,10 @@ export const startService = async ({
     database: getSecretConfig('SQL_DATABASE'),
   };
 
-  if (getSecretConfig('INSTANCE_CONNECTION_NAME') && !IS_DEV) {
-    config.host = `/cloudsql/${getSecretConfig('INSTANCE_CONNECTION_NAME')}`;
+  if (getSecretConfig('SQL_INSTANCE_CONNECTION_NAME') && !IS_DEV) {
+    config.host = `/cloudsql/${getSecretConfig(
+      'SQL_INSTANCE_CONNECTION_NAME',
+    )}`;
   } else if (getSecretConfig('SQL_HOST')) {
     config.host = getSecretConfig('SQL_HOST');
   }
