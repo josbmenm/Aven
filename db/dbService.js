@@ -25,7 +25,7 @@ export const startService = async ({
   };
 
   if (getSecretConfig('SQL_INSTANCE_CONNECTION_NAME') && !IS_DEV) {
-    config.socketPath = `/cloudsql/${getSecretConfig(
+    config.host = `/cloudsql/${getSecretConfig(
       'SQL_INSTANCE_CONNECTION_NAME',
     )}`;
   } else if (getSecretConfig('SQL_HOST')) {
