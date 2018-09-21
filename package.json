@@ -5,7 +5,8 @@
     "build": "./node_modules/globe-tools/cli.js build",
     "cloud": "./node_modules/globe-tools/cli.js start ono-cloud",
     "deploy-cloud": "./node_modules/globe-tools/cli.js deploy ono-cloud",
-    "kiosk": "./node_modules/globe-tools/cli.js start kiosk-expo"
+    "kiosk": "./node_modules/globe-tools/cli.js start kiosk-expo",
+    "clean": "./node_modules/globe-tools/cli.js clean"
   },
   "devDependencies": {
     "globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
