@@ -1,6 +1,6 @@
 import App from './App';
 import WebServer from '../infra/WebServer';
-import { getSecretConfig } from './config';
+import { getSecretConfig, IS_DEV } from './config';
 import { scrapeAirTable } from './scrapeAirTable';
 import { startService as startDBService } from '../db/dbService';
 const fs = require('fs-extra');
@@ -76,7 +76,13 @@ const runServer = async () => {
     await scrapeAirTable(
       AirtableAPIKey,
       AirtableBaseID,
-      ['Kiosk Menu', 'Recipes', 'Recipe Ingredients', 'Ingredients'],
+      [
+        'Kiosk Menu',
+        'Recipes',
+        'Recipe Ingredients',
+        'Ingredients',
+        'Functions',
+      ],
       scrapeLocation,
     );
     const folder = await putFolder({
