@@ -136,19 +136,19 @@ DC.createClientRefObject = (client, domain, ref, objectId) => {
   return obj;
 };
 
-const rewatch = (ref, mapFn, updateWatchedValue) => {
+const rewatch = (ref, mapFn, runWatchedUpdate) => {
   let value = null;
   const rewatched = { getValue: () => value };
   rewatched.watch = handler => {
     (async () => {
-      await updateWatchedValue();
+      await runWatchedUpdate();
       value = mapFn();
     })()
       .then(() => {})
       .catch(console.error);
     return ref.watch(() => {
       (async () => {
-        await updateWatchedValue();
+        await runWatchedUpdate();
         value = mapFn();
         await handler();
       })()

@@ -9,6 +9,7 @@
     "helmet": "^3.13.0",
     "json-stable-stringify": "^1.0.1",
     "pg": "^7.4.3",
+    "square-connect": "^2.20180918.0",
     "uuid": "^3.3.2",
     "wget-improved": "^3.0.1",
     "yes-https": "^0.0.4"

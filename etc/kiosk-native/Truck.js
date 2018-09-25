@@ -17,12 +17,11 @@ class Truck extends Container {
     });
 
     setInterval(() => {
-      // wow, the shame! please don't be inspired by this..
+      // wow, the shame of an interval! please don't be inspired by this..
       if (this._ws.readyState === ReconnectingWebSocket.CLOSED) {
         this._ws.reconnect(47, 'you hung up on me!');
       }
       const isConnected = this._ws.readyState === ReconnectingWebSocket.OPEN;
-      console.log('dude', isConnected);
       if (this.state.isConnected !== isConnected) {
         this.setState(last => ({ ...last, isConnected }));
       }

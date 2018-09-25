@@ -372,6 +372,17 @@ class DebugHome extends Component {
               handleAsyncFailure(truck.sendDebugCommand('o'));
             }}
           />
+
+          <DashButton
+            title="1+2. Queue and Start Blend!"
+            onPress={() => {
+              handleAsyncFailure(setCustomerQueued());
+              setTimeout(() => {
+                handleAsyncFailure(truck.sendDebugCommand('o'));
+              }, 8000);
+            }}
+          />
+
           <DashButton
             title="3. Set blend ready"
             onPress={() => {

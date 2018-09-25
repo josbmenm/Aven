@@ -144,9 +144,7 @@ const rewatch = (ref, mapFn, runWatchedUpdate) => {
       await runWatchedUpdate();
       value = mapFn();
     })()
-      .then(() => {
-        console.log('Rewatched!');
-      })
+      .then(() => {})
       .catch(console.error);
     return ref.watch(() => {
       (async () => {
@@ -178,8 +176,6 @@ DC.createClientRef = (client, domain, refName) => {
   const ref = refWatch.watchable;
   ref._name = refName;
 
-  console.log('CREATED NEW REF', ref.getValue());
-
   const updateServerValue = tryAsync(async () => {
     const result = await client.dispatch({
       type: 'getRef',
@@ -205,19 +201,16 @@ DC.createClientRef = (client, domain, refName) => {
       ...ref.getValue(),
       isListening: true,
     });
-    console.log('waaaohy!', ref.getValue().name);
     updateServerValue();
     pollingInterval = setInterval(() => {
       updateServerValue();
     }, 1000);
   };
   const stopListening = () => {
-    console.log('ref stop listening', ref.getValue());
     refWatch.update({
       ...ref.getValue(),
       isListening: false,
     });
-    console.log('ref stopped listening', ref.getValue());
     clearInterval(pollingInterval);
   };
 
@@ -263,7 +256,6 @@ DC.createClientRef = (client, domain, refName) => {
   ref.putObjectId = async id => {
     const lastId = ref.getValue().id;
     try {
-      console.log('refwatch update7', ref.getValue());
       refWatch.update({
         ...ref.getValue(),
         id,
@@ -279,9 +271,7 @@ DC.createClientRef = (client, domain, refName) => {
         ...ref.getValue(),
         isPutting: false,
       });
-      console.log('refwatch update4', ref.getValue());
     } catch (e) {
-      console.log('refwatch update ACK', ref.getValue());
       refWatch.update({
         ...ref.getValue(),
         id: lastId,
@@ -317,7 +307,6 @@ DC.createClientRef = (client, domain, refName) => {
     return rewatch(
       ref,
       () => {
-        console.log('REWATCH mapping', ref.getValue());
         return ref.getObjectValue();
       },
       async () => {
@@ -396,11 +385,10 @@ export const writeRef = async (refName, transactionFn) => {
   const ref = OnoClient.getRef(refName);
   await ref.fetchObject();
   const prevObject = ref.getObjectValue();
-  console.log({ prevObject, nextVal });
   const nextVal = transactionFn(prevObject.value);
   const putResult = await OnoClient.putObject(nextVal);
   const nextId = putResult.id;
   await ref.putObjectId(nextId);
   await ref.fetchObject();
-  console.log('done!', ref.getObjectValue());
+  console.log('writeRef done!', ref.getObjectValue());
 };
