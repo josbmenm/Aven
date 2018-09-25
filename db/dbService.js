@@ -205,13 +205,11 @@ WHERE constraint_type = 'FOREIGN KEY'
   }
 
   async function getObject({ id }) {
-    console.log('get object');
     const res = await pg.query('SELECT * FROM objects WHERE id = $1', [id]);
     if (res.rowCount < 1) {
       return null;
     }
     const object = res.rows[0].json;
-    console.log('get object', id, object);
     return { id, object };
   }
 

@@ -102,6 +102,20 @@ const runServer = async () => {
     return await dbService.actions.getRef({ ref: action.ref, domain });
   };
 
+  const putObject = async action => {
+    return await dbService.actions.putObject({ object: action.value });
+  };
+
+  const putRef = async action => {
+    await dbService.actions.putRef({
+      owner: null,
+      domain: action.domain,
+      objectId: action.objectId,
+      ref: action.ref,
+    });
+    return {};
+  };
+
   const dispatch = async action => {
     switch (action.type) {
       case 'scrapeUpstream':
@@ -110,6 +124,10 @@ const runServer = async () => {
         return getObject(action);
       case 'getRef':
         return getRef(action);
+      case 'putObject':
+        return putObject(action);
+      case 'putRef':
+        return putRef(action);
       default:
         throw `Unknown action type "${action.type}"`;
     }

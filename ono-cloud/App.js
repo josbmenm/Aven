@@ -1,10 +1,17 @@
 import { View, Text } from 'react-native';
 import React from 'react';
 
-const App = () => {
+const App = ({ env }) => {
   return (
     <View style={{ flex: 1 }}>
-      <Text>Ono API Server</Text>
+      <Text
+        onPress={() => {
+          console.log('DUUDE');
+          alert('hello');
+        }}
+      >
+        Ono API Server {env}
+      </Text>
     </View>
   );
 };

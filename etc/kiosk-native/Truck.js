@@ -7,8 +7,26 @@ class Truck extends Container {
   constructor() {
     super();
     this._ws = new ReconnectingWebSocket('ws://smoothiepi:8080', [], {
-      // debug: true,
+      debug: true,
+      maxReconnectionDelay: 10000,
+      minReconnectionDelay: 1000,
+      minUptime: 5000,
+      reconnectionDelayGrowFactor: 1.3,
+      connectionTimeout: 4000,
+      maxRetries: Infinity,
     });
+
+    setInterval(() => {
+      // wow, the shame! please don't be inspired by this..
+      if (this._ws.readyState === ReconnectingWebSocket.CLOSED) {
+        this._ws.reconnect(47, 'you hung up on me!');
+      }
+      const isConnected = this._ws.readyState === ReconnectingWebSocket.OPEN;
+      console.log('dude', isConnected);
+      if (this.state.isConnected !== isConnected) {
+        this.setState(last => ({ ...last, isConnected }));
+      }
+    }, 500);
 
     this._wsClientId = null;
     this._ws.onopen = () => {
@@ -42,6 +60,7 @@ class Truck extends Container {
   };
   state = {
     orders: {},
+    isConnected: false,
   };
   async sendFeedback(orderId, rating, comments, email) {
     this.remoteAction({

@@ -21,6 +21,14 @@ export default async function WebServer(App, dispatch) {
   expressApp.use(jsonParser);
   expressApp.use(yes());
   expressApp.use(helmet());
+  expressApp.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept',
+    );
+    next();
+  });
   AppRegistry.registerComponent('App', () => App);
 
   // const publicDir = isProd ? 'build/public' : `src/${activeApp}/public`;
@@ -56,6 +64,7 @@ export default async function WebServer(App, dispatch) {
     const { element, getStyleElement } = AppRegistry.getApplication('App', {
       initialProps: {
         navigation,
+        env: 'server',
       },
     });
 
