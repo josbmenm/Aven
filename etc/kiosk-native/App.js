@@ -189,27 +189,27 @@ const ProductListD = ({ airtable }) => {
 const ProductList = connectComponent(ProductListD);
 
 const DashButton = ({ title, onPress, isSelected }) => (
-  <View style={{ paddingHorizontal: 30, paddingVertical: 15 }}>
-    <TouchableOpacity
+  <TouchableHighlight style={{}} onPress={onPress}>
+    <View
       style={{
-        borderWidth: 1,
-        borderRadius: 30,
+        backgroundColor: '#efefef',
+        paddingHorizontal: 40,
+        paddingVertical: 20,
+        borderTopWidth: StyleSheet.hairlineWidth,
+        borderTopColor: '#ccc',
       }}
-      onPress={onPress}
     >
       <Text
         style={{
           ...genericFont,
-          textAlign: 'center',
-          margin: 40,
-          fontSize: 60,
+          fontSize: 40,
           color: '#111',
         }}
       >
         {title}
       </Text>
-    </TouchableOpacity>
-  </View>
+    </View>
+  </TouchableHighlight>
 );
 
 const handleAsyncFailure = promise => {
@@ -228,34 +228,105 @@ const setCustomerName = async name =>
     customerName: name,
   }));
 
+const resetStatus = async () =>
+  await writeRef('truckState', lastState => ({
+    ...lastState,
+    customerQueued: false,
+    blendReady: false,
+  }));
+
+const setBlendReady = async () =>
+  await writeRef('truckState', lastState => ({
+    ...lastState,
+    customerQueued: true,
+    blendReady: true,
+  }));
+
 const setCustomerQueued = async () =>
   await writeRef('truckState', lastState => ({
     ...lastState,
+    blendReady: false,
     customerQueued:
       lastState.customerQueued == null ? true : !lastState.customerQueued,
   }));
 
+let JSONView;
+JSONView = ({ data }) => {
+  let type = typeof data;
+  if (Array.isArray(data)) {
+    type = 'array';
+  } else if (data === null || data === undefined) {
+    type = 'null';
+  }
+  switch (type) {
+    case 'null':
+      return <Text>Empty</Text>;
+    case 'number':
+    case 'string':
+    case 'boolean':
+      return <Text>{JSON.stringify(data)}</Text>;
+    case 'array':
+      return (
+        <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#ccf' }}>
+          {data.map(item => (
+            <JSONView data={item} />
+          ))}
+        </View>
+      );
+    case 'object':
+      return (
+        <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#ccc' }}>
+          {Object.keys(data)
+            .sort()
+            .map(itemName => (
+              <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+                <View style={{ width: 200, padding: 10 }}>
+                  <Text style={{ textAlign: 'right', fontWeight: 'bold' }}>
+                    {itemName}
+                  </Text>
+                </View>
+                <View
+                  style={{ padding: 10, backgroundColor: '#fff9', flex: 1 }}
+                >
+                  <JSONView data={data[itemName]} />
+                </View>
+              </View>
+            ))}
+        </View>
+      );
+  }
+};
+
 const DebugDataD = ({ input }) => {
   const val = input.getValue();
-  return <Text>{JSON.stringify(val && val.value)}</Text>;
+  return (
+    <View style={{ padding: 40 }}>
+      <JSONView data={val && val.value} />
+    </View>
+  );
 };
 const DebugData = connectComponent(DebugDataD);
 
 const RobotStatusD = ({ robot }) => {
   const statusColor = robot.isConnected ? '#090' : '#900';
   return (
-    <View style={{ flexDirection: 'row' }}>
-      <Text>Connection Status</Text>
+    <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        paddingHorizontal: 40,
+      }}
+    >
       <View
         style={{
           backgroundColor: statusColor,
           padding: 8,
-          height: 30,
-          borderRadius: 15,
+          paddingHorizontal: 18,
+          borderRadius: 25,
         }}
       >
-        <Text style={{ color: 'white' }}>
-          {robot.isConnected ? 'Connected' : 'Disconnected'}
+        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 26 }}>
+          {robot.isConnected ? 'Robot Connected' : 'Robot Disconnected'}
         </Text>
       </View>
     </View>
@@ -296,13 +367,26 @@ class DebugHome extends Component {
             }}
           />
           <DashButton
-            title="1. Start Blend!"
+            title="2. Start Blend!"
             onPress={() => {
               handleAsyncFailure(truck.sendDebugCommand('o'));
             }}
           />
           <DashButton
-            title="Robot Debug Signals"
+            title="3. Set blend ready"
+            onPress={() => {
+              handleAsyncFailure(setBlendReady());
+            }}
+          />
+
+          <DashButton
+            title="4. Reset"
+            onPress={() => {
+              handleAsyncFailure(resetStatus());
+            }}
+          />
+          <DashButton
+            title="🤖 Robot Debug Signals"
             onPress={() => {
               this.props.navigation.navigate('Debug');
             }}
