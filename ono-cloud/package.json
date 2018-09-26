@@ -24,6 +24,8 @@
       "BUILD_ENV"
     ],
     "secretBuildConfigVars": [
+      "SQUARE_TOKEN",
+      "SQUARE_LOCATION_ID",
       "AIRTABLE_API_KEY",
       "AIRTABLE_BASE_ID",
       "SQL_INSTANCE_CONNECTION_NAME",
