@@ -1,0 +1,7 @@
+{
+  "name": "ono-kitchen-status",
+  "main": "App",
+  "globe": {
+    "env": "dom"
+  }
+}

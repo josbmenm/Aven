@@ -2,7 +2,7 @@ import App from './App';
 import WebServer from '../infra/WebServer';
 import { getSecretConfig, IS_DEV } from './config';
 import { scrapeAirTable } from './scrapeAirTable';
-import { startService as startDBService } from '../db/dbService';
+import { startService as startDBService } from '../save-server/dbService';
 import { getMobileAuthToken } from './Square';
 const fs = require('fs-extra');
 const pathJoin = require('path').join;

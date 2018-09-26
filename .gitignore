@@ -12,3 +12,5 @@ yarn-error.log
 hyperion.props.json
 
 .globe.state.json
+
+./**/node_modules/
