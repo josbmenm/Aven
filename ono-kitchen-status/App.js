@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, LayoutAnimation } from 'react-native';
-import { connectComponent, OnoClient } from './DataClient';
+import { connectComponent, OnoClient } from '../save-client/DataClient';
 
 const sectionText = {
   color: '#222',

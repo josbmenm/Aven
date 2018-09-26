@@ -16,13 +16,13 @@ import { Page, InputPage, ButtonRow, TitleView } from './Components';
 import { Provider, Subscribe } from 'unstated';
 import Debug from './Debug';
 import truck from './Truck';
-import { PaymentsDebugScreen } from './Payments';
 import {
   AirtableData,
   connectComponent,
   writeRef,
   OnoClient,
 } from '../save-client/DataClient';
+import { openSettings, paymentContainer } from './Payments';
 
 StatusBar.setHidden(true, 'none');
 
@@ -408,9 +408,15 @@ class DebugHome extends Component {
           />
 
           <DashButton
+            title="💰 Payment Screen"
+            onPress={() => {
+              this.props.navigation.navigate('PaymentScreen');
+            }}
+          />
+          <DashButton
             title="💰 Payment Debugging"
             onPress={() => {
-              this.props.navigation.navigate('PaymentDebug');
+              openSettings();
             }}
           />
         </ScrollView>
@@ -644,6 +650,40 @@ class InProgress extends Component {
   }
 }
 
+const PaymentScreen = paymentContainer(
+  ({ paymentRequest, paymentError, isPaymentReady, isPaymentComplete }) => {
+    if (isPaymentComplete) {
+      return (
+        <View style={{ flex: 1 }}>
+          <Text>Thank You!</Text>
+        </View>
+      );
+    }
+    if (paymentError) {
+      return (
+        <View style={{ flex: 1 }}>
+          <Text>Error: {paymentError}</Text>
+        </View>
+      );
+    }
+    if (isPaymentReady) {
+      return (
+        <View style={{ flex: 1 }}>
+          <TouchableHighlight
+            onPress={() => {
+              paymentRequest(100, 'Hello ono!');
+            }}
+          >
+            <Text style={{ fontSize: 32 }}>Take Money</Text>
+          </TouchableHighlight>
+        </View>
+      );
+    }
+
+    return <View style={{ flex: 1 }} />;
+  },
+);
+
 const App = createStackNavigator(
   {
     Home,
@@ -651,9 +691,9 @@ const App = createStackNavigator(
     Payment,
     InProgress,
     Debug,
-    PaymentDebug: PaymentsDebugScreen,
     CollectName,
     CollectEmail,
+    PaymentScreen,
   },
   {
     navigationOptions: {

@@ -6,6 +6,7 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 class Truck extends Container {
   constructor() {
     super();
+
     this._ws = new ReconnectingWebSocket('ws://smoothiepi:8080', [], {
       // debug: true,
       maxReconnectionDelay: 10000,

@@ -337,12 +337,11 @@ DC.createDataClient = opts => {
       body: JSON.stringify(action),
     });
 
-    if (res.status === 500) {
-      console.log(await res.text());
+    if (res.status >= 400) {
+      throw new Error(await res.text());
     }
-    console.log(res.status, res);
     const result = await res.json();
-    console.log('Successful Network Dispatch:', action, result);
+    // console.log('Successful Network Dispatch:', action, result);
     return result;
   };
   const client = {

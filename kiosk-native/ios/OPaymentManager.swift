@@ -20,26 +20,9 @@ class OPaymentManager: NSObject {
   private static var eventEmitter: ReactNativeEventEmitter!
 
   
-  @objc(setup:)
-  func setup(authCode: String) -> Void {
+  @objc(setup:callback:)
+  func setup(authCode: String, callback: @escaping RCTResponseSenderBlock) -> Void {
     DispatchQueue.main.async {
-
-      // get square authorization
-      if (!SQRDReaderSDK.shared.isAuthorized) {
-        SQRDReaderSDK.shared.deauthorize(completionHandler: { (err) in
-          if let deauthError = err as? SQRDDeauthorizationError {
-            self.handleDeauthError(deauthError)
-            return
-          }
-          SQRDReaderSDK.shared.authorize(withCode: authCode) { location, error in
-            if let authError = error as? SQRDAuthorizationError {
-              self.handleError(authError)
-            } else if let location = location {
-              print("Authorized %s", location)
-            }
-          }
-        })
-      }
 
       // get audio permission
       switch AVAudioSession.sharedInstance().recordPermission() {
@@ -54,7 +37,7 @@ class OPaymentManager: NSObject {
       default:
         print("other permission case!")
       }
-
+      
       // get location permission
       switch CLLocationManager.authorizationStatus() {
       case .denied, .restricted:
@@ -64,28 +47,55 @@ class OPaymentManager: NSObject {
       case .authorizedAlways, .authorizedWhenInUse:
         print("permission for location granted!")
       }
+      
+      // get square authorization
+      if (SQRDReaderSDK.shared.isAuthorized) {
+        SQRDReaderSDK.shared.deauthorize(completionHandler: { (err) in
+          if let deauthError = err as? SQRDDeauthorizationError {
+            guard let debugCode = deauthError.userInfo[SQRDErrorDebugCodeKey] as? String,
+              let debugMessage = deauthError.userInfo[SQRDErrorDebugMessageKey] as? String else { return }
+            callback([[
+              "errorSource": "deauthorization",
+              "debugCode": debugCode,
+              "debugMessage": debugMessage
+            ]])
+            return
+          }
+          self.authorize(authCode: authCode, callback: callback);
+        })
+      } else {
+        self.authorize(authCode: authCode, callback: callback);
+      }
+
     }
   }
 
-  func handleDeauthError(_ error: SQRDDeauthorizationError) {
-    guard let debugCode = error.userInfo[SQRDErrorDebugCodeKey] as? String,
-      let debugMessage = error.userInfo[SQRDErrorDebugMessageKey] as? String else { return }
-    print("De-Authorization Error")
-    print(debugCode)
-    print(debugMessage)
+  func authorize(authCode: String, callback: @escaping RCTResponseSenderBlock) {
+    SQRDReaderSDK.shared.authorize(withCode: authCode) { location, error in
+      if let authError = error as? SQRDAuthorizationError {
+        guard let debugCode = authError.userInfo[SQRDErrorDebugCodeKey] as? String,
+          let debugMessage = authError.userInfo[SQRDErrorDebugMessageKey] as? String else { return }
+        callback([[
+          "errorSource": "authorization",
+          "debugCode": debugCode,
+          "debugMessage": debugMessage
+        ]])
+      } else if let location = location {
+        callback([
+          NSNull(),
+          [
+            "locationBusinessName": location.businessName,
+            "locationId": location.locationID,
+            "locationCurrency": location.currencyCode.isoCurrencyCode,
+            "locationName": location.name
+          ]
+        ])
+      }
+    }
   }
   
-  func handleError(_ error: SQRDAuthorizationError) {
-    guard let debugCode = error.userInfo[SQRDErrorDebugCodeKey] as? String,
-      let debugMessage = error.userInfo[SQRDErrorDebugMessageKey] as? String else { return }
-    print("Authorization Error")
-    print(debugCode)
-    print(debugMessage)
-  }
-  
-  @objc(getPermissions:)
-  func getPermissions(callback: @escaping RCTResponseSenderBlock) -> Void {
-
+  @objc(openSettings:)
+  func openSettings(callback: @escaping RCTResponseSenderBlock) -> Void {
     DispatchQueue.main.async {
 
       let readerSettingsController = SQRDReaderSettingsController(delegate: self)
@@ -95,8 +105,7 @@ class OPaymentManager: NSObject {
         readerSettingsController.present(from: rootView!)
       }
       
-//      callback([["foo": 42]])
-      
+      callback([NSNull()])
     }
   }
   

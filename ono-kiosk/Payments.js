@@ -17,58 +17,110 @@ const AppEmitter = new NativeEventEmitter(
   NativeModules.ReactNativeEventEmitter,
 );
 
-AppEmitter.addListener('OPaymentCancelled', response =>
-  alert('ono payment cancelled! ' + JSON.stringify(response)),
-);
-AppEmitter.addListener('OPaymentComplete', response =>
-  alert('YAY, ono payment complete! ' + JSON.stringify(response)),
-);
-AppEmitter.addListener('OPaymentError', response =>
-  alert('ono payment error! ' + JSON.stringify(response)),
-);
+const setupPayment = authCode =>
+  new Promise((resolve, reject) => {
+    OPaymentManager.setup(authCode, (err, resp) => {
+      console.log(err, resp);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(resp);
+      }
+    });
+  });
 
-// subscription.remove();
+const getPayment = async (price, description) =>
+  OPaymentManager.getPayment(price, description);
 
-export class PaymentsDebugScreen extends Component {
-  async componentDidMount() {
-    let res = null;
-    console.log('============================');
-    try {
-      res = await OnoClient.dispatch({
-        type: 'getSquareMobileAuthToken',
-      });
-    } catch (e) {
-      console.log('wut', e);
+export const configurePayment = async () => {
+  const res = await OnoClient.dispatch({
+    type: 'getSquareMobileAuthToken',
+  });
+  const authCode = res.result.authorization_code;
+  await setupPayment(authCode);
+};
+
+export const openSettings = async () => {
+  await configurePayment();
+  await new Promise(resolve => {
+    OPaymentManager.openSettings((err, resp) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(resp);
+      }
+    });
+  });
+};
+
+// AppEmitter.addListener('OPaymentCancelled', response =>
+//   alert('ono payment cancelled! ' + JSON.stringify(response)),
+// );
+// AppEmitter.addListener('OPaymentComplete', response =>
+//   alert('YAY, ono payment complete! ' + JSON.stringify(response)),
+// );
+// AppEmitter.addListener('OPaymentError', response =>
+//   alert('ono payment error! ' + JSON.stringify(response)),
+// );
+
+export const paymentContainer = PaymentComponent => {
+  class PaymentsContainer extends Component {
+    state = { isReady: false, error: null, isComplete: false };
+    _handlePaymentComplete = response => {
+      this.setState({ isComplete: true });
+    };
+    _handlePaymentError = response => {
+      this.setState({ error: 'Payment Collection Error' });
+    };
+    _handlePaymentCancel = response => {
+      // alert('ono payment cancelled! ' + JSON.stringify(response));
+    };
+
+    async componentDidMount() {
+      AppEmitter.addListener('OPaymentComplete', this._handlePaymentComplete);
+      AppEmitter.addListener('OPaymentError', this._handlePaymentError);
+      AppEmitter.addListener('OPaymentCancelled', this._handlePaymentCancel);
+
+      try {
+        await configurePayment();
+        this.setState({ isReady: true });
+      } catch (e) {
+        console.error(e);
+        this.setState({ isReady: false, error: 'Payment Authorization Error' });
+      }
     }
-    console.log('!============================');
-    console.log(res);
-    // OPaymentManager.setup({});
+    componentWillUnmount() {
+      AppEmitter.removeListener(
+        'OPaymentComplete',
+        this._handlePaymentComplete,
+      );
+      AppEmitter.removeListener('OPaymentError', this._handlePaymentError);
+      AppEmitter.removeListener('OPaymentCancelled', this._handlePaymentCancel);
+    }
+    _requestPayment = (amount, description) => {
+      getPayment(amount, description)
+        .then(() => {
+          this.setState({ isReady: true });
+        })
+        .catch(e => {
+          console.error(e);
+          this.setState({
+            isReady: false,
+            error: 'Payment Authorization Error',
+          });
+        });
+    };
+    render() {
+      const { isComplete, isReady, error } = this.state;
+      return (
+        <PaymentComponent
+          isPaymentReady={isReady}
+          isPaymentComplete={isComplete}
+          paymentRequest={this._requestPayment}
+          paymentError={error}
+        />
+      );
+    }
   }
-  render() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center' }}>
-        <Text style={{}}>{JSON.stringify(OPaymentManager)}</Text>
-        <Text
-          style={{ fontSize: 42 }}
-          onPress={async () => {
-            const result = await new Promise(resolve => {
-              OPaymentManager.getPermissions(resolve);
-            });
-
-            alert(JSON.stringify(result));
-          }}
-        >
-          Get permissions
-        </Text>
-        <Text
-          style={{ fontSize: 42 }}
-          onPress={() => {
-            OPaymentManager.getPayment(100, 'yes react native');
-          }}
-        >
-          Pay me!
-        </Text>
-      </View>
-    );
-  }
-}
+  return PaymentsContainer;
+};
