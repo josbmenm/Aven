@@ -15,9 +15,9 @@
         ],
         "version": "1.0.0",
         "orientation": "portrait",
-        "icon": "./kiosk-expo/assets/icon.png",
+        "icon": "./src-sync/kiosk-expo/assets/icon.png",
         "splash": {
-          "image": "./kiosk-expo/assets/splash.png",
+          "image": "./src-sync/kiosk-expo/assets/splash.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         },

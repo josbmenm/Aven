@@ -2,6 +2,10 @@
   "name": "ono-kitchen-status",
   "main": "App",
   "globe": {
-    "env": "dom"
+    "env": "dom",
+    "globeDependencies": [
+      "ono-save-client",
+      "save-client"
+    ]
   }
 }
