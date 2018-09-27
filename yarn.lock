@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@aven-cloud/globe-tools@https://github.com/AvenCloud/globe-tools.git#master":
+"@aven-cloud/globe-tools@https://github.com/AvenCloud/globe-tools.git#master", "globe-tools@https://github.com/AvenCloud/globe-tools.git#master":
   version "0.1.0"
-  resolved "https://github.com/AvenCloud/globe-tools.git#03d9c37b24c4d0b098acb132abb29df31739bd91"
+  resolved "https://github.com/AvenCloud/globe-tools.git#bcc499046f88dc55f8d0688741422b340c7133cf"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     fs-extra "^7.0.0"

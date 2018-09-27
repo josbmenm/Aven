@@ -1,11 +1,12 @@
 {
   "name": "onofoodco",
   "scripts": {
-    "start": "node build/server.js",
+    "start": "./node_modules/globe-tools/cli.js start",
     "build": "./node_modules/globe-tools/cli.js build",
-    "cloud": "./node_modules/globe-tools/cli.js start ono-cloud",
+    "start-cloud": "./node_modules/globe-tools/cli.js start ono-cloud",
     "deploy-cloud": "./node_modules/globe-tools/cli.js deploy ono-cloud",
-    "kiosk": "./node_modules/globe-tools/cli.js start kiosk-expo",
+    "start-kitchen": "./node_modules/globe-tools/cli.js start ono-kitchen",
+    "start-mobile": "./node_modules/globe-tools/cli.js start ono-mobile",
     "clean": "./node_modules/globe-tools/cli.js clean"
   },
   "devDependencies": {
