@@ -1,15 +1,7 @@
 import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  Modal,
-  View,
-  NativeModules,
-  NativeEventEmitter,
-} from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 
-import { OnoClient } from '../save-client/DataClient';
+import { OnoClient } from '../save-client/SaveClient';
 
 const OPaymentManager = NativeModules.OPaymentManager;
 
@@ -29,7 +21,7 @@ const setupPayment = authCode =>
     });
   });
 
-const getPayment = async (price, description) =>
+const getPayment = (price, description) =>
   OPaymentManager.getPayment(price, description);
 
 export const configurePayment = async () => {
@@ -65,59 +57,69 @@ export const openSettings = async () => {
 
 export const paymentContainer = PaymentComponent => {
   class PaymentsContainer extends Component {
-    state = { isReady: false, error: null, isComplete: false };
-    _handlePaymentComplete = response => {
-      this.setState({ isComplete: true });
+    state = { isReady: false, error: null, isComplete: false, activityLog: [] };
+    _handleActivity = (event, stateFlags) => {
+      this.setState(lastState => ({
+        ...lastState,
+        ...stateFlags,
+        activityLog: [...lastState.activityLog, event],
+      }));
     };
-    _handlePaymentError = response => {
-      this.setState({ error: 'Payment Collection Error' });
+    _handlePayComplete = response => {
+      this._handleActivity(
+        { type: 'PaymentComplete', ...response },
+        { isComplete: true },
+      );
     };
-    _handlePaymentCancel = response => {
-      // alert('ono payment cancelled! ' + JSON.stringify(response));
+    _handlePayError = response => {
+      console.error('Payment Error', response);
+      this._handleActivity(
+        { type: 'PaymentError', ...response },
+        { error: 'Payment Collection Error' },
+      );
+    };
+    _handlePayCancel = response => {
+      this._handleActivity({ type: 'PaymentCancelled', ...response });
     };
 
     async componentDidMount() {
-      AppEmitter.addListener('OPaymentComplete', this._handlePaymentComplete);
-      AppEmitter.addListener('OPaymentError', this._handlePaymentError);
-      AppEmitter.addListener('OPaymentCancelled', this._handlePaymentCancel);
+      AppEmitter.addListener('OPaymentComplete', this._handlePayComplete);
+      AppEmitter.addListener('OPaymentError', this._handlePayError);
+      AppEmitter.addListener('OPaymentCancelled', this._handlePayCancel);
 
       try {
-        await configurePayment();
-        this.setState({ isReady: true });
-      } catch (e) {
-        console.error(e);
-        this.setState({ isReady: false, error: 'Payment Authorization Error' });
+        this._handleActivity({ type: 'PaymentConfigRequested' });
+        const config = await configurePayment();
+        this._handleActivity(
+          { type: 'PaymentConfigured', ...config },
+          { isReady: true },
+        );
+      } catch (error) {
+        console.error(error);
+        this._handleActivity(
+          { type: 'PaymentError', error },
+          { error: 'Payment Authorization Error' },
+        );
       }
     }
     componentWillUnmount() {
-      AppEmitter.removeListener(
-        'OPaymentComplete',
-        this._handlePaymentComplete,
-      );
+      AppEmitter.removeListener('OPaymentComplete', this._handlePayComplete);
       AppEmitter.removeListener('OPaymentError', this._handlePaymentError);
-      AppEmitter.removeListener('OPaymentCancelled', this._handlePaymentCancel);
+      AppEmitter.removeListener('OPaymentCancelled', this._handlePayCancel);
     }
-    _requestPayment = (amount, description) => {
-      getPayment(amount, description)
-        .then(() => {
-          this.setState({ isReady: true });
-        })
-        .catch(e => {
-          console.error(e);
-          this.setState({
-            isReady: false,
-            error: 'Payment Authorization Error',
-          });
-        });
+    _getPayment = (amount, description) => {
+      getPayment(amount, description);
+      this._handleActivity({ type: 'PaymentRequested', amount, description });
     };
     render() {
-      const { isComplete, isReady, error } = this.state;
+      const { isComplete, isReady, error, activityLog } = this.state;
       return (
         <PaymentComponent
           isPaymentReady={isReady}
           isPaymentComplete={isComplete}
-          paymentRequest={this._requestPayment}
+          paymentRequest={this._getPayment}
           paymentError={error}
+          paymentActivityLog={activityLog}
         />
       );
     }

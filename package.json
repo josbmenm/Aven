@@ -12,6 +12,10 @@
     "globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
   },
   "dependencies": {
-    "@aven-cloud/globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
+    "@aven-cloud/globe-tools": "https://github.com/AvenCloud/globe-tools.git#master",
+    "body-parser": "^1.18.3",
+    "ethernet-ip": "^1.2.2",
+    "helmet": "^3.13.0",
+    "yes-https": "^0.0.4"
   }
 }

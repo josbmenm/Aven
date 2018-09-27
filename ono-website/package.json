@@ -1,0 +1,10 @@
+{
+  "name": "ono-website",
+  "globe": {
+    "env": "web",
+    "envOptions": {
+      "mainServer": "MainServer.js",
+      "mainClient": "MainClient.js"
+    }
+  }
+}

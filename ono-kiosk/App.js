@@ -16,12 +16,9 @@ import { Page, InputPage, ButtonRow, TitleView } from './Components';
 import { Provider, Subscribe } from 'unstated';
 import Debug from './Debug';
 import truck from './Truck';
-import {
-  AirtableData,
-  connectComponent,
-  writeRef,
-  OnoClient,
-} from '../save-client/DataClient';
+import JSONView from '../debug-views/JSONView';
+import { connectComponent } from '../save-client/Watchable';
+import { Client, AirtableData } from '../ono-save-client/OnoSaveClient';
 import { openSettings, paymentContainer } from './Payments';
 
 StatusBar.setHidden(true, 'none');
@@ -224,82 +221,32 @@ const handleAsyncFailure = promise => {
 };
 
 const setCustomerName = async name =>
-  await writeRef('truckState', lastState => ({
+  await Client.writeRef('truckState', lastState => ({
     ...lastState,
     customerName: name,
   }));
 
 const resetStatus = async () =>
-  await writeRef('truckState', lastState => ({
+  await Client.writeRef('truckState', lastState => ({
     ...lastState,
     customerQueued: false,
     blendReady: false,
   }));
 
 const setBlendReady = async () =>
-  await writeRef('truckState', lastState => ({
+  await Client.writeRef('truckState', lastState => ({
     ...lastState,
     customerQueued: true,
     blendReady: true,
   }));
 
 const setCustomerQueued = async () =>
-  await writeRef('truckState', lastState => ({
+  await Client.writeRef('truckState', lastState => ({
     ...lastState,
     blendReady: false,
     customerQueued:
       lastState.customerQueued == null ? true : !lastState.customerQueued,
   }));
-
-let JSONView;
-JSONView = ({ data }) => {
-  let type = typeof data;
-  if (Array.isArray(data)) {
-    type = 'array';
-  } else if (data === null || data === undefined) {
-    type = 'null';
-  }
-  switch (type) {
-    case 'null':
-      return <Text>Empty</Text>;
-    case 'number':
-    case 'string':
-    case 'boolean':
-      return <Text>{JSON.stringify(data)}</Text>;
-    case 'array':
-      return (
-        <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#ccf' }}>
-          {data.map((item, index) => (
-            <JSONView data={item} key={index} />
-          ))}
-        </View>
-      );
-    case 'object':
-      return (
-        <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#ccc' }}>
-          {Object.keys(data)
-            .sort()
-            .map(itemName => (
-              <View
-                style={{ flexDirection: 'row', marginVertical: 5 }}
-                key={itemName}
-              >
-                <View style={{ width: 200, padding: 10 }}>
-                  <Text style={{ textAlign: 'right', fontWeight: 'bold' }}>
-                    {itemName}
-                  </Text>
-                </View>
-                <View
-                  style={{ padding: 10, backgroundColor: '#fff9', flex: 1 }}
-                >
-                  <JSONView data={data[itemName]} />
-                </View>
-              </View>
-            ))}
-        </View>
-      );
-  }
-};
 
 const DebugDataD = ({ input }) => {
   const val = input.getValue();
@@ -355,7 +302,7 @@ class DebugHome extends Component {
           <TitleView>Ono Dashboard</TitleView>
           <RobotStatus />
           <ProductList airtable={AirtableData} />
-          <DebugData input={OnoClient.getRef('truckState').watchObject()} />
+          <DebugData input={Client.getRef('truckState').watchObject()} />
           <DashButton
             title="0. Customer Name"
             onPress={() => {
@@ -651,11 +598,18 @@ class InProgress extends Component {
 }
 
 const PaymentScreen = paymentContainer(
-  ({ paymentRequest, paymentError, isPaymentReady, isPaymentComplete }) => {
+  ({
+    paymentRequest,
+    paymentError,
+    isPaymentReady,
+    isPaymentComplete,
+    paymentActivityLog,
+  }) => {
     if (isPaymentComplete) {
       return (
         <View style={{ flex: 1 }}>
           <Text>Thank You!</Text>
+          <JSONView data={paymentActivityLog} />
         </View>
       );
     }
@@ -663,6 +617,7 @@ const PaymentScreen = paymentContainer(
       return (
         <View style={{ flex: 1 }}>
           <Text>Error: {paymentError}</Text>
+          <JSONView data={paymentActivityLog} />
         </View>
       );
     }
@@ -676,11 +631,16 @@ const PaymentScreen = paymentContainer(
           >
             <Text style={{ fontSize: 32 }}>Take Money</Text>
           </TouchableHighlight>
+          <JSONView data={paymentActivityLog} />
         </View>
       );
     }
 
-    return <View style={{ flex: 1 }} />;
+    return (
+      <View style={{ flex: 1 }}>
+        <JSONView data={paymentActivityLog} />
+      </View>
+    );
   },
 );
 

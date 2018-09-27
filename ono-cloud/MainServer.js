@@ -1,6 +1,6 @@
 import App from './App';
-import WebServer from '../infra/WebServer';
-import { getSecretConfig, IS_DEV } from './config';
+import WebServer from '../aven-web/WebServer';
+import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import { scrapeAirTable } from './scrapeAirTable';
 import { startService as startDBService } from '../save-server/dbService';
 import { getMobileAuthToken } from './Square';

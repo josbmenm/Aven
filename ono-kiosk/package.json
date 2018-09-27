@@ -1,0 +1,8 @@
+{
+  "globe": {
+    "globeDependencies": [
+      "ono-save-client",
+      "save-client"
+    ]
+  }
+}

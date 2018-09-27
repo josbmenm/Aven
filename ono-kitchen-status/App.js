@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, LayoutAnimation } from 'react-native';
-import { connectComponent, OnoClient } from '../save-client/DataClient';
+import { Client } from '../ono-save-client/OnoSaveClient';
+import { connectComponent } from '../save-client/Watchable';
 
 const sectionText = {
   color: '#222',
@@ -16,9 +17,7 @@ const nameText = {
 const withTruckState = Component => {
   const ComponentWithData = connectComponent(Component);
   return () => (
-    <ComponentWithData
-      truckState={OnoClient.getRef('truckState').watchObject()}
-    />
+    <ComponentWithData truckState={Client.getRef('truckState').watchObject()} />
   );
 };
 

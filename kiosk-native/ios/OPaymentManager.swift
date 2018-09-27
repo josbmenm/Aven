@@ -109,6 +109,7 @@ class OPaymentManager: NSObject {
     }
   }
   
+  private var checkoutController: SQRDCheckoutController?
   
 
   @objc(getPayment:description:)
@@ -120,15 +121,26 @@ class OPaymentManager: NSObject {
       checkoutParameters.alwaysRequireSignature = false
       checkoutParameters.skipReceipt = true
       
-      let checkoutController = SQRDCheckoutController(parameters: checkoutParameters, delegate: self as SQRDCheckoutControllerDelegate)
 
       let rootView = UIApplication.shared.keyWindow?.rootViewController;
       
       if (rootView != nil) {
-        checkoutController.present(from: rootView!)
+        self.checkoutController = SQRDCheckoutController(parameters: checkoutParameters, delegate: self as SQRDCheckoutControllerDelegate)
+
+        self.checkoutController?.present(from: rootView!)
       }
       
       print(description, amount)
+    }
+  }
+  
+  @objc(dismissPayment:)
+  func dismissPayment(callback: @escaping RCTResponseSenderBlock) -> Void {
+    DispatchQueue.main.async {
+      let rootView = UIApplication.shared.keyWindow?.rootViewController;
+      rootView?.dismiss(animated: true, completion: {
+        print("woa")
+      })
     }
   }
   

@@ -8,9 +8,6 @@ yarn-error.log
 # OS X
 .DS_Store
 
-
-hyperion.props.json
-
 .globe.state.json
 
 ./**/node_modules/
