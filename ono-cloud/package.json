@@ -20,6 +20,10 @@
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js"
     },
+    "globeDependencies": [
+      "aven-web",
+      "save-server"
+    ],
     "publicBuildConfigVars": [
       "BUILD_ENV"
     ],

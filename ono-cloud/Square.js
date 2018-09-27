@@ -1,4 +1,4 @@
-import { getSecretConfig } from './config';
+import { getSecretConfig } from '../aven-web/config';
 const {
   MobileAuthorizationApi,
   CreateMobileAuthorizationCodeRequest,
