@@ -2,6 +2,7 @@
   "main": "App.js",
   "globe": {
     "env": "expo",
+    "globeDependencies": [],
     "envOptions": {
       "app": {
         "name": "kiosk",

@@ -6,6 +6,7 @@
     "start-cloud": "./node_modules/globe-tools/cli.js start ono-cloud",
     "deploy-cloud": "./node_modules/globe-tools/cli.js deploy ono-cloud",
     "start-kitchen": "./node_modules/globe-tools/cli.js start ono-kitchen",
+    "start-kiosk": "./node_modules/globe-tools/cli.js start ono-kiosk",
     "start-mobile": "./node_modules/globe-tools/cli.js start ono-mobile",
     "clean": "./node_modules/globe-tools/cli.js clean"
   },
@@ -14,9 +15,13 @@
   },
   "dependencies": {
     "@aven-cloud/globe-tools": "https://github.com/AvenCloud/globe-tools.git#master",
+    "@nozbe/with-observables": "^1.0.1",
     "body-parser": "^1.18.3",
     "ethernet-ip": "^1.2.2",
     "helmet": "^3.13.0",
+    "reconnecting-websocket": "^4.0.0-rc5",
+    "rxjs-compat": "^6.3.3",
+    "ws": "^6.0.0",
     "yes-https": "^0.0.4"
   }
 }

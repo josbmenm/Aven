@@ -1,6 +1,9 @@
 {
+  "main": "App",
   "globe": {
+    "env": "ios-pos-env",
     "globeDependencies": [
+      "debug-views",
       "ono-save-client",
       "save-client"
     ]

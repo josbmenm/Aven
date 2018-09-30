@@ -3,12 +3,13 @@ import ReactDOMServer from 'react-dom/server';
 import { AppRegistry } from 'react-native';
 import startServer from './startServer';
 import { IS_DEV } from './config';
-
+import { startSocketServer } from './SocketServer';
 // import { handleServerRequest } from '../react-navigation-web';
 const yes = require('yes-https');
 const helmet = require('helmet');
 const http = require('http');
 const bodyParser = require('body-parser');
+const WebSocket = require('ws');
 
 const pathJoin = require('path').join;
 
@@ -105,14 +106,21 @@ export default async function WebServer(App, dispatch) {
 
   const serverListenLocation =
     process.env.APP_SERVER_PORT || process.env.PORT || 8899;
-  const serverInstance = http.createServer(expressApp);
-  await startServer(serverInstance, serverListenLocation);
+  const httpServer = http.createServer(expressApp);
+
+  const wss = new WebSocket.Server({ server: httpServer });
+
+  await startServer(httpServer, serverListenLocation);
+
+  const wsServer = await startSocketServer(wss);
+
   console.log('Listening on ' + serverListenLocation);
   IS_DEV && console.log(`http://localhost:${serverListenLocation}`);
 
   return {
     close: async () => {
-      serverInstance.close();
+      httpServer.close();
+      wsServer.close();
     },
   };
 }

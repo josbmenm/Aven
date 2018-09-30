@@ -57,3 +57,5 @@ buck-out/
 
 # Globe copies sibling dependencies into here, so we should avoid tracking them:
 src-sync/
+package.json
+yarn.lock
