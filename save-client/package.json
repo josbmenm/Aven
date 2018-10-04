@@ -1,1 +1,10 @@
-{}
+{
+  "globe": {
+    "moduleDependencies": [
+      "rxjs-compat",
+      "json-stable-stringify",
+      "crypto-js",
+      "@nozbe/with-observables"
+    ]
+  }
+}

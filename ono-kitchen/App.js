@@ -45,62 +45,6 @@ const ShowsData = withObservables(['data'], props => ({ data: props.data }))(
     );
   },
 );
-console.log('ohk====');
-
-class Ref {
-  constructor(client, host, name) {
-    this._client = client;
-    this._host = host;
-    this._name = name;
-  }
-
-  observe = Observable.create(observer => {
-    return () => {
-      console.log('Ref done observing!');
-    };
-  });
-}
-
-class Host {
-  constructor(client, hostConfig) {
-    this._client = client;
-    this._config = hostConfig;
-  }
-  getHostName() {
-    if (typeof this._config === 'string') {
-      return this._config;
-    }
-    if (this._config.host) {
-      return this._config.host;
-    }
-  }
-  getUseSSL() {
-    if (this._config.useSSL != null) {
-      return this._config.useSSL;
-    }
-    return true;
-  }
-  getRef(refName) {
-    return new Ref(this._client, this, refName);
-  }
-}
-
-class SaveClient {
-  constructor(opts) {
-    this._dispatch = opts.dispatch;
-    this._connection = opts.connection;
-  }
-  getHost(hostConfig) {
-    return new Host(hostConfig);
-  }
-  getRef(hostConfig, refName) {
-    const host = this.getHost(hostConfig);
-    return host.getRef(refName);
-  }
-  getOwnRef(refName) {
-    return new Ref(this, null, refName);
-  }
-}
 
 export default class App extends React.Component {
   save = new SaveClient({

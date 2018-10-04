@@ -17,8 +17,8 @@ import { Provider, Subscribe } from 'unstated';
 import Debug from './Debug';
 import truck from './Truck';
 import JSONView from '../debug-views/JSONView';
-import { connectComponent } from '../save-client/Watchable';
-import { Client, AirtableData } from '../ono-save-client/OnoSaveClient';
+import { Client } from '../ono-save-client/OnoSaveClient';
+import { withObservables } from '../save-client/SaveClient';
 import { openSettings, paymentContainer } from './Payments';
 
 StatusBar.setHidden(true, 'none');
@@ -184,7 +184,8 @@ const ProductListD = ({ airtable }) => {
   //   </Text>
   // );
 };
-const ProductList = connectComponent(ProductListD);
+// const ProductList = connectComponent(ProductListD);
+// <ProductList airtable={AirtableData} />
 
 const DashButton = ({ title, onPress, isSelected }) => (
   <TouchableHighlight style={{}} onPress={onPress}>
@@ -220,28 +221,30 @@ const handleAsyncFailure = promise => {
   );
 };
 
+const truckStateRef = Client.getRef('truckState');
+
 const setCustomerName = async name =>
-  await Client.writeRef('truckState', lastState => ({
+  await truckStateRef.write(lastState => ({
     ...lastState,
     customerName: name,
   }));
 
 const resetStatus = async () =>
-  await Client.writeRef('truckState', lastState => ({
+  await truckStateRef.write(lastState => ({
     ...lastState,
     customerQueued: false,
     blendReady: false,
   }));
 
 const setBlendReady = async () =>
-  await Client.writeRef('truckState', lastState => ({
+  await truckStateRef.write(lastState => ({
     ...lastState,
     customerQueued: true,
     blendReady: true,
   }));
 
 const setCustomerQueued = async () =>
-  await Client.writeRef('truckState', lastState => ({
+  await truckStateRef.write(lastState => ({
     ...lastState,
     blendReady: false,
     customerQueued:
@@ -249,14 +252,15 @@ const setCustomerQueued = async () =>
   }));
 
 const DebugDataD = ({ input }) => {
-  const val = input.getValue();
   return (
     <View style={{ padding: 40 }}>
-      <JSONView data={val && val.value} />
+      <JSONView data={input} />
     </View>
   );
 };
-const DebugData = connectComponent(DebugDataD);
+const DebugData = withObservables(['input'], props => ({
+  input: props.input,
+}))(DebugDataD);
 
 const RobotStatusD = ({ robot }) => {
   const statusColor = robot.isConnected ? '#090' : '#900';
@@ -301,8 +305,8 @@ class DebugHome extends Component {
         >
           <TitleView>Ono Dashboard</TitleView>
           <RobotStatus />
-          <ProductList airtable={AirtableData} />
-          <DebugData input={Client.getRef('truckState').watchObject()} />
+          <DebugData input={Client.getRef('truckState').observeObject} />
+          <DebugData input={Client.getRef('truckState').observeObject} />
           <DashButton
             title="0. Customer Name"
             onPress={() => {
@@ -379,7 +383,6 @@ class Home extends Component {
       <ScreenContent>
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
           <TitleView>Select a blend</TitleView>
-          <ProductList airtable={AirtableData} />
           {Products.map(product => (
             <ProductLink product={product} key={product.id} />
           ))}

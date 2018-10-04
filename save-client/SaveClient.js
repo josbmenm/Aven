@@ -1,247 +1,283 @@
-import { getWatchable } from './Watchable';
+import { Observable, Subject } from 'rxjs-compat';
+import { default as withObs } from '@nozbe/with-observables';
+import SHA1 from 'crypto-js/sha1';
+const JSONStringify = require('json-stable-stringify');
 
-const tryAsync = promise => (...args) => {
-  promise(...args)
-    .then(() => {})
-    .catch(err => {
-      console.error(err);
-    });
-};
+export const withObservables = withObs;
 
-const SaveClient = {};
+class SaveObject {
+  constructor({ client, objectId }) {
+    this._client = client;
+    this._objectId = objectId;
+    const value = client.getCachedObjectValue(objectId);
+    this._state = {
+      _objectId: this._objectId,
 
-SaveClient.createClientRefObject = (client, domain, ref, objectId) => {
-  if (client.objects[objectId]) {
-    return client.objects[objectId];
+      // sync state:
+      hasFetched: false,
+      lastFetchedTime: null,
+
+      // obj data:
+      value,
+    };
   }
-  const defaultValue = {
-    hasFetched: false,
-    id: objectId,
-    value: null,
-    _name: `object-${objectId}`,
-    _type: 'object',
-  };
-  const objWatchable = getWatchable(defaultValue);
-  const obj = objWatchable.watchable;
-  client.objects[objectId] = obj;
-  obj.fetch = async () => {
-    if (obj.getValue().value !== null) {
-      // Objects are immutable. Once set, we believe it to be accurate and never change.
+
+  getObjectId() {
+    return this._objectId;
+  }
+
+  fetch = async () => {
+    if (this._state.hasFetched) {
       return;
     }
-    try {
-      const result = await client.dispatch({
-        type: 'getObject',
-        domain,
-        id: objectId,
-      });
-      objWatchable.update({
-        ...obj.getValue(),
-        value: result.object,
-        id: result.id,
-        hasFetched: true,
-      });
-    } catch (e) {
-      console.error('Could not fetch object ' + objectId, e);
-    }
-    return;
-  };
-  return obj;
-};
-
-const rewatch = (ref, mapFn, runWatchedUpdate) => {
-  let value = null;
-  const rewatched = { getValue: () => value };
-  rewatched.watch = handler => {
-    (async () => {
-      await runWatchedUpdate();
-      value = mapFn();
-    })()
-      .then(() => {})
-      .catch(console.error);
-    return ref.watch(() => {
-      (async () => {
-        await runWatchedUpdate();
-        value = mapFn();
-        await handler();
-      })()
-        .then(() => {})
-        .catch(console.error);
+    const result = await this._client.dispatch({
+      type: 'getObject',
+      domain: this._client.getDomain(),
+      id: this._objectId,
     });
+    if (!result || result.object == null) {
+      throw new Error(`Error fetching object "${this._objectId}" from remote!`);
+    }
+    this._state.value = result.object;
+    this._client.setCachedObjectValue(this._objectId, result.object);
+    this._state.hasFetched = true;
+    this._state.lastFetchedTime = Date.now();
   };
-  return rewatched;
-};
 
-SaveClient.createClientRef = (client, domain, refName) => {
-  if (client.refs[refName]) {
-    return client.refs[refName];
+  put = async () => {
+    if (this._state.value == null) {
+      throw new Error(
+        `Cannot put empty value from object "${this._objectId}"!`,
+      );
+    }
+    const res = await this._client.dispatch({
+      type: 'putObject',
+      domain: this._client.getDomain(),
+      value: this._state.value,
+    });
+    if (res.id !== this._objectId) {
+      // if we get here, we are truly screwed!
+      throw new Error(
+        `Server and client objectIds do not match! Server: ${res.id}, Client: ${
+          this._objectId
+        }`,
+      );
+    }
+    return res;
+  };
+
+  getValue() {
+    return this._state.value;
   }
-  const defaultValue = {
-    name: refName,
-    lastFetchTime: null,
-    id: null,
-    hasFetched: false,
-    isPutting: false,
-    _type: 'ref',
-    isListening: false, // can become true once we do websockets
-  };
-  const refWatch = getWatchable(defaultValue);
-  const ref = refWatch.watchable;
-  ref._name = refName;
+}
 
-  const updateServerValue = tryAsync(async () => {
-    const result = await client.dispatch({
+class SaveRef {
+  constructor({ client, name }) {
+    this._client = client;
+    this._name = name;
+
+    this._isWatching = false;
+    this._state = {
+      _name: this._name,
+
+      // sync state:
+      hasFetched: false,
+      lastFetchedTime: null,
+      puttingFromObjectId: null,
+
+      // obj data:
+      objectId: null,
+    };
+  }
+
+  getName() {
+    return this._name;
+  }
+
+  fetch = async () => {
+    const result = await this._client.dispatch({
       type: 'getRef',
-      domain,
-      ref: refName,
+      domain: this._client.getDomain(),
+      ref: this._name,
     });
-    if (!ref.getValue() || ref.getValue().id !== result.id) {
-      refWatch.update({
-        ...ref.getValue(),
-        lastFetchTime: Date.now(),
-        hasFetched: true,
-        id: result.id,
-      });
-    }
-  });
+    this._state.objectId = result.id;
+    this._state.hasFetched = true;
+    this._state.lastFetchedTime = Date.now();
+  };
 
-  let pollingInterval = null;
-  const startListening = () => {
-    if (ref.getValue().isListening) {
+  fetchObject = async () => {
+    // todo, avoid fetch if this._isWatching and client is connected
+    await this.fetch();
+    const obj = this.getObject();
+    if (!obj) {
       return;
     }
-    refWatch.update({
-      ...ref.getValue(),
-      isListening: true,
-    });
-    updateServerValue();
-    pollingInterval = setInterval(() => {
-      updateServerValue();
-    }, 20000);
-  };
-  const stopListening = () => {
-    refWatch.update({
-      ...ref.getValue(),
-      isListening: false,
-    });
-    clearInterval(pollingInterval);
+    await obj.fetch();
   };
 
-  client.refs[refName] = ref;
-  const watchUpstream = ref.watch;
+  _updateObserved = null;
 
-  ref.fetch = async () => {
-    if (ref.getValue().isListening && ref.getValue().lastFetchTime) {
-      return ref;
+  putObjectId = async objectId => {
+    if (this._state.puttingFromObjectId) {
+      throw new Error(
+        `Cannot putObjectId of "${
+          this._name
+        }" while another put is in progress!`,
+      );
     }
-    startListening();
-    return await new Promise((resolve, reject) => {
-      let timeout = setTimeout(() => {
-        reject(new Error('Ref fetch timeout!'));
-      }, 3000);
-      const subscription = ref.watch(() => {
-        if (ref.getValue().lastFetchTime) {
-          subscription.close();
-          clearTimeout(timeout);
-          resolve(ref);
-        }
+    const fromObjectId = this._state.objectId;
+    try {
+      this._state.puttingFromObjectId = fromObjectId;
+      this._state.objectId = objectId;
+      this._updateObserved && this._updateObserved();
+      await this._client.dispatch({
+        type: 'putRef',
+        domain: this._client.getDomain(),
+        objectId,
+        ref: this._name,
       });
-    });
+      this._state.puttingFromObjectId = null;
+      this._updateObserved && this._updateObserved();
+    } catch (e) {
+      this._state.puttingFromObjectId = null;
+      this._state.objectId = fromObjectId;
+      this._updateObserved && this._updateObserved();
+      console.error(e);
+      throw new Error(`Failed to putObjectId of "${this._name}"!`);
+    }
   };
 
-  ref.getObject = () => {
-    const refValue = ref.getValue();
-    const id = refValue && refValue.id;
-    if (!id) {
+  putObject = async obj => {
+    const objectId = obj.getObjectId();
+    if (this._state.puttingFromObjectId) {
+      throw new Error(
+        `Cannot putObjectId of "${
+          this._name
+        }" while another put is in progress!`,
+      );
+    }
+    const fromObjectId = this._state.objectId;
+    try {
+      this._state.puttingFromObjectId = fromObjectId;
+      this._state.objectId = objectId;
+      this._updateObserved();
+      await obj.put();
+      await this._client.dispatch({
+        type: 'putRef',
+        domain: this._client.getDomain(),
+        objectId,
+        ref: this._name,
+      });
+      this._state.puttingFromObjectId = null;
+      this._updateObserved();
+    } catch (e) {
+      this._state.puttingFromObjectId = null;
+      this._state.objectId = fromObjectId;
+      this._updateObserved();
+      console.error(e);
+      throw new Error(`Failed to putObjectId of "${this._name}"!`);
+    }
+  };
+
+  observe = Observable.create(observer => {
+    observer.next(this._state);
+    this.fetch()
+      .then(() => {
+        observer.next(this._state);
+      })
+      .catch(e => {
+        observer.next(this._state);
+        console.error('Could not fetch ref ' + this._name);
+        console.error(e);
+      });
+    if (this._updateObserved) {
+      throw new Error(
+        `Cannot observe "${
+          this._name
+        }" because it already is being observed internally, and the observable should be shared!`,
+      );
+    }
+    this._updateObserved = () => {
+      observer.next(this._state);
+    };
+    this._isWatching = true;
+    console.log(`👓 Watching "${this._name}"`);
+    const detach = () => {
+      console.log(`✋ Done watching "${this._name}"`);
+      this._isWatching = false;
+      this._updateObserved = null;
+    };
+    return detach;
+  }).share();
+
+  write = async transactionFn => {
+    await this.fetchObject();
+    const prevObjectVal = this.getObjectValue();
+    console.log('prevObjectVal ', prevObjectVal);
+    const nextVal = transactionFn(prevObjectVal);
+    const nextObj = this._client.createObject(nextVal);
+    await this.putObject(nextObj);
+  };
+
+  getObject = () => {
+    if (!this._state.objectId) {
       return null;
     }
-    return SaveClient.createClientRefObject(client, domain, refName, id);
+    return this._client.getObject(this._state.objectId);
   };
 
-  ref.getObjectValue = () => {
-    const obj = ref.getObject();
+  getObjectValue = () => {
+    const obj = this.getObject();
     if (!obj) {
       return null;
     }
     return obj.getValue();
   };
 
-  ref.putObjectId = async id => {
-    const lastId = ref.getValue().id;
-    try {
-      refWatch.update({
-        ...ref.getValue(),
-        id,
-        isPutting: true,
-      });
-      await client.dispatch({
-        type: 'putRef',
-        domain,
-        objectId: id,
-        ref: refName,
-      });
-      refWatch.update({
-        ...ref.getValue(),
-        isPutting: false,
-      });
-    } catch (e) {
-      refWatch.update({
-        ...ref.getValue(),
-        id: lastId,
-        isPutting: false,
-      });
-      console.error(e);
-    }
-  };
-
-  ref.fetchObject = async () => {
-    await ref.fetch();
-    if (!ref.getValue().id) {
-      return;
-    }
-    const obj = await ref.getObject();
-    await obj.fetch();
-  };
-  ref.watch = handler => {
-    const upstreamHandler = data => {
-      handler(data);
-    };
-    const upstreamSubscription = watchUpstream(upstreamHandler);
-    startListening();
-    const close = async () => {
-      await upstreamSubscription.close();
-      if (refWatch.getSubscriberCount() === 0) {
-        stopListening();
-      }
-    };
-    return { close };
-  };
-  ref.watchObject = () => {
-    return rewatch(
-      ref,
-      () => {
-        return ref.getObjectValue();
+  observeObject = Observable.create(observer => {
+    observer.next(this.getObjectValue());
+    const sub = this.observe.subscribe({
+      next: () => {
+        const newObj = this.getObject();
+        if (!newObj) {
+          observer.next(null);
+          return;
+        }
+        newObj
+          .fetch()
+          .then(() => {
+            observer.next(this.getObjectValue());
+          })
+          .catch(e => {
+            console.error(e);
+            console.error(
+              `Cannot fetch object "${newObj.id}" while updating ref "${
+                this._name
+              }"!`,
+            );
+            observer.error(e);
+          });
       },
-      async () => {
-        await ref.fetchObject();
-      },
-    );
-  };
-  return ref;
-};
+      error: e => observer.error(e),
+      complete: () => observer.complete(),
+    });
 
-SaveClient.putObject = async (client, domain, objVal) => {
-  const res = await client.dispatch({
-    type: 'putObject',
-    value: objVal,
-  });
-  return res;
-};
+    const detach = () => {
+      sub.unsubscribe();
+    };
+    return detach;
+  }).share();
+}
 
-SaveClient.createDataClient = opts => {
-  const endpoint = `${opts.host}/dispatch`;
-  const dispatch = async action => {
-    const res = await fetch(endpoint, {
+class SaveClient {
+  constructor(opts) {
+    this._host = opts.host;
+    this._domain = opts.domain;
+    this._endpoint = `${opts.host}/dispatch`;
+  }
+
+  dispatch = async action => {
+    const res = await fetch(this._endpoint, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -254,41 +290,51 @@ SaveClient.createDataClient = opts => {
       throw new Error(await res.text());
     }
     const result = await res.json();
-    // console.log('Successful Network Dispatch:', action, result);
+    console.log('📣', action);
+    console.log('💨', result);
+
     return result;
   };
-  const client = {
-    refs: {},
-    objects: {},
-    dispatch,
+
+  _refs = {};
+  _objects = {};
+  _objectValues = {};
+
+  getDomain = () => this._domain;
+
+  getCachedObjectValue = objectId => {
+    return this._objectValues[objectId];
+  };
+  setCachedObjectValue = (objectId, objValue) => {
+    if (this._objectValues[objectId] == null) {
+      this._objectValues[objectId] = objValue;
+    }
   };
 
-  const getRef = ref => SaveClient.createClientRef(client, opts.domain, ref);
-
-  const getRefObject = (ref, objectId) =>
-    SaveClient.createClientRefObject(client, opts.domain, ref, objectId);
-
-  const putObject = objVal => SaveClient.putObject(client, opts.domain, objVal);
-
-  const writeRef = async (refName, transactionFn) => {
-    const ref = getRef(refName);
-    await ref.fetchObject();
-    const prevObject = ref.getObjectValue();
-    const nextVal = transactionFn(prevObject.value);
-    const putResult = await putObject(nextVal);
-    const nextId = putResult.id;
-    await ref.putObjectId(nextId);
-    await ref.fetchObject();
-    console.log('writeRef done:', ref.getObjectValue());
+  getObject = objectId => {
+    if (this._objects[objectId]) {
+      return this._objects[objectId];
+    }
+    return (this._objects[objectId] = new SaveObject({
+      client: this,
+      objectId,
+    }));
   };
 
-  return {
-    dispatch,
-    getRef,
-    getRefObject,
-    putObject,
-    writeRef,
+  createObject = value => {
+    const valueString = JSONStringify(value);
+    const id = SHA1(valueString).toString();
+    this.setCachedObjectValue(id, value);
+    console.log(JSONStringify(value), id);
+    return this.getObject(id);
   };
-};
+
+  getRef = name => {
+    if (this._refs[name]) {
+      return this._refs[name];
+    }
+    return (this._refs[name] = new SaveRef({ client: this, name }));
+  };
+}
 
 export default SaveClient;

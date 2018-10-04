@@ -24,6 +24,8 @@ JSONView = ({ data }) => {
           ))}
         </View>
       );
+    case 'function':
+      return <Text>Function.. warning: this isn't JSON!</Text>;
     case 'object':
       return (
         <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#ccc' }}>
@@ -48,6 +50,10 @@ JSONView = ({ data }) => {
             ))}
         </View>
       );
+    default: {
+      debugger; // uhh..
+      return null;
+    }
   }
 };
 
