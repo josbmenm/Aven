@@ -295,6 +295,12 @@ const RobotStatus = () => (
   </Provider>
 );
 
+const ConnectionStatus = withObservables([], () => ({
+  isConnected: Client.isConnected,
+}))(({ isConnected }) => (
+  <TitleView>{isConnected ? 'Connected' : 'Not Connected'}</TitleView>
+));
+
 class DebugHome extends Component {
   render() {
     return (
@@ -303,6 +309,7 @@ class DebugHome extends Component {
           style={{ flex: 1, borderWidth: 1 }}
           showsVerticalScrollIndicator={false}
         >
+          <ConnectionStatus />
           <TitleView>Ono Dashboard</TitleView>
           <RobotStatus />
           <DebugData input={Client.getRef('truckState').observeObject} />

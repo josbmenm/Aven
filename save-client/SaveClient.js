@@ -1,4 +1,4 @@
-import { Observable, Subject } from 'rxjs-compat';
+import { Observable, BehaviorSubject } from 'rxjs-compat';
 import { default as withObs } from '@nozbe/with-observables';
 import SHA1 from 'crypto-js/sha1';
 const JSONStringify = require('json-stable-stringify');
@@ -116,6 +116,9 @@ class SaveRef {
   };
 
   _updateObserved = null;
+  _notifyObserved = () => {
+    this._updateObserved && this._updateObserved();
+  };
 
   putObjectId = async objectId => {
     if (this._state.puttingFromObjectId) {
@@ -129,7 +132,6 @@ class SaveRef {
     try {
       this._state.puttingFromObjectId = fromObjectId;
       this._state.objectId = objectId;
-      this._updateObserved && this._updateObserved();
       await this._client.dispatch({
         type: 'putRef',
         domain: this._client.getDomain(),
@@ -137,11 +139,11 @@ class SaveRef {
         ref: this._name,
       });
       this._state.puttingFromObjectId = null;
-      this._updateObserved && this._updateObserved();
+      this._notifyObserved();
     } catch (e) {
       this._state.puttingFromObjectId = null;
       this._state.objectId = fromObjectId;
-      this._updateObserved && this._updateObserved();
+      this._notifyObserved();
       console.error(e);
       throw new Error(`Failed to putObjectId of "${this._name}"!`);
     }
@@ -160,7 +162,7 @@ class SaveRef {
     try {
       this._state.puttingFromObjectId = fromObjectId;
       this._state.objectId = objectId;
-      this._updateObserved();
+      this._notifyObserved();
       await obj.put();
       await this._client.dispatch({
         type: 'putRef',
@@ -169,11 +171,11 @@ class SaveRef {
         ref: this._name,
       });
       this._state.puttingFromObjectId = null;
-      this._updateObserved();
+      this._notifyObserved();
     } catch (e) {
       this._state.puttingFromObjectId = null;
       this._state.objectId = fromObjectId;
-      this._updateObserved();
+      this._notifyObserved();
       console.error(e);
       throw new Error(`Failed to putObjectId of "${this._name}"!`);
     }
@@ -270,14 +272,77 @@ class SaveRef {
 }
 
 class SaveClient {
-  constructor(opts) {
-    this._host = opts.host;
-    this._domain = opts.domain;
-    this._endpoint = `${opts.host}/dispatch`;
+  constructor({ host, domain }) {
+    this._host = host;
+    this._domain = domain;
+    this._httpEndpoint = `${host.useSSL === false ? 'http' : 'https'}://${
+      host.authority
+    }/dispatch`;
+    this._wsEndpoint = `${host.useSSL === false ? 'ws' : 'wss'}://${
+      host.authority
+    }`;
+    this._isConnected = new BehaviorSubject(false);
+    this.isConnected = this._isConnected.share();
+
+    this._connectWS();
+    setTimeout(() => {
+      this._isConnected.next(true);
+    }, 2000);
+    setTimeout(() => {
+      this._isConnected.next(false);
+    }, 3000);
   }
 
+  _connectWS = () => {
+    // this._ws = new ReconnectingWebSocket('ws://smoothiepi:8080', [], {
+    //   // debug: true,
+    //   maxReconnectionDelay: 10000,
+    //   minReconnectionDelay: 1000,
+    //   minUptime: 5000,
+    //   reconnectionDelayGrowFactor: 1.3,
+    //   connectionTimeout: 4000,
+    //   maxRetries: Infinity,
+    // });
+    // setInterval(() => {
+    //   // wow, the shame of an interval! please don't be inspired by this..
+    //   if (this._ws.readyState === ReconnectingWebSocket.CLOSED) {
+    //     this._ws.reconnect(47, 'you hung up on me!');
+    //   }
+    //   const isConnected = this._ws.readyState === ReconnectingWebSocket.OPEN;
+    //   if (this.state.isConnected !== isConnected) {
+    //     this.setState(last => ({ ...last, isConnected }));
+    //   }
+    // }, 500);
+    // this._wsClientId = null;
+    // this._ws.onopen = () => {
+    //   console.log('Connected to Truck!');
+    // };
+    // this._ws.onmessage = msg => {
+    //   const evt = JSON.parse(msg.data);
+    //   switch (evt.type) {
+    //     case 'ClientId': {
+    //       this._wsClientId = evt.clientId;
+    //       console.log('ClientId', this._wsClientId);
+    //       return;
+    //     }
+    //     case 'OrderStatus': {
+    //       this.setState(state => ({
+    //         orders: {
+    //           ...state.orders,
+    //           [evt.orderId]: evt.order,
+    //         },
+    //       }));
+    //     }
+    //     default: {
+    //       console.log(evt);
+    //       return;
+    //     }
+    //   }
+    // };
+  };
+
   dispatch = async action => {
-    const res = await fetch(this._endpoint, {
+    const res = await fetch(this._httpEndpoint, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -289,7 +354,12 @@ class SaveClient {
     if (res.status >= 400) {
       throw new Error(await res.text());
     }
-    const result = await res.json();
+    let result = await res.text();
+    try {
+      result = JSON.parse(result);
+    } catch (e) {
+      console.warn('Expecting JSON but could not parse: ' + result);
+    }
     console.log('📣', action);
     console.log('💨', result);
 
