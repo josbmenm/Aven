@@ -312,8 +312,8 @@ class DebugHome extends Component {
           <ConnectionStatus />
           <TitleView>Ono Dashboard</TitleView>
           <RobotStatus />
-          <DebugData input={Client.getRef('truckState').observeObject} />
-          <DebugData input={Client.getRef('truckState').observeObject} />
+          <DebugData input={Client.getRef('airtable').observeObjectValue} />
+          <DebugData input={Client.getRef('truckState').observeObjectValue} />
           <DashButton
             title="0. Customer Name"
             onPress={() => {

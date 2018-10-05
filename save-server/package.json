@@ -1,1 +1,9 @@
-{}
+{
+  "globe": {
+    "moduleDependencies": [
+      "pg-format",
+      "rxjs",
+      "rxjs-compat"
+    ]
+  }
+}

@@ -1,33 +1,63 @@
-import { Observable, BehaviorSubject } from 'rxjs-compat';
+import { Observable, BehaviorSubject, Subject } from 'rxjs-compat';
 import { default as withObs } from '@nozbe/with-observables';
 import SHA1 from 'crypto-js/sha1';
+import ReconnectingWebSocket from 'reconnecting-websocket';
 const JSONStringify = require('json-stable-stringify');
 
 export const withObservables = withObs;
+
+const observeNull = Observable.create(observer => {});
 
 class SaveObject {
   constructor({ client, objectId }) {
     this._client = client;
     this._objectId = objectId;
-    const value = client.getCachedObjectValue(objectId);
+
     this._state = {
-      _objectId: this._objectId,
+      objectId: this.objectId,
 
       // sync state:
-      hasFetched: false,
       lastFetchedTime: null,
+      lastPutTime: null,
 
       // obj data:
-      value,
+      value: null,
     };
+    this.observe = new BehaviorSubject(this._state);
   }
+
+  provideValue = value => {
+    if (this._state.value !== null) {
+      return;
+    }
+    this._setState({
+      value,
+    });
+  };
+
+  _setState = newVals => {
+    this._state = {
+      ...this._state,
+      ...newVals,
+    };
+    this.observe.next(this._state);
+  };
 
   getObjectId() {
     return this._objectId;
   }
 
+  observeValue = Observable.create(observer => {
+    this.fetch()
+      .then(() => {
+        observer.next(this._state.value);
+        observer.complete();
+      })
+      .catch(e => observer.error(e));
+  });
+
   fetch = async () => {
-    if (this._state.hasFetched) {
+    if (this._state.value !== null) {
       return;
     }
     const result = await this._client.dispatch({
@@ -38,10 +68,10 @@ class SaveObject {
     if (!result || result.object == null) {
       throw new Error(`Error fetching object "${this._objectId}" from remote!`);
     }
-    this._state.value = result.object;
-    this._client.setCachedObjectValue(this._objectId, result.object);
-    this._state.hasFetched = true;
-    this._state.lastFetchedTime = Date.now();
+    this._setState({
+      value: result.object,
+      lastFetchedTime: Date.now(),
+    });
   };
 
   put = async () => {
@@ -78,10 +108,9 @@ class SaveRef {
 
     this._isWatching = false;
     this._state = {
-      _name: this._name,
+      name: this._name,
 
       // sync state:
-      hasFetched: false,
       lastFetchedTime: null,
       puttingFromObjectId: null,
 
@@ -181,6 +210,22 @@ class SaveRef {
     }
   };
 
+  $handleRefEvent = evt => {
+    if (evt.objectId === this._state.objectId) {
+      return;
+    }
+    if (this._state.puttingFromObjectId) {
+      console.error('remote event while putting!', {
+        remoteId: env.objectId,
+        localNewId: this._state.objectId,
+        localLastId: this._state.puttingFromObjectId,
+      });
+      // this probably means a conflict is happening
+    }
+    this._state.objectId = evt.objectId;
+    this._notifyObserved();
+  };
+
   observe = Observable.create(observer => {
     observer.next(this._state);
     this.fetch()
@@ -196,12 +241,13 @@ class SaveRef {
       throw new Error(
         `Cannot observe "${
           this._name
-        }" because it already is being observed internally, and the observable should be shared!`,
+        }" because it already is being observed internally, and the observable should be .share()'d!`,
       );
     }
     this._updateObserved = () => {
       observer.next(this._state);
     };
+    this._client.subscribeUpstreamRef(this);
     this._isWatching = true;
     console.log(`👓 Watching "${this._name}"`);
     const detach = () => {
@@ -215,7 +261,6 @@ class SaveRef {
   write = async transactionFn => {
     await this.fetchObject();
     const prevObjectVal = this.getObjectValue();
-    console.log('prevObjectVal ', prevObjectVal);
     const nextVal = transactionFn(prevObjectVal);
     const nextObj = this._client.createObject(nextVal);
     await this.putObject(nextObj);
@@ -236,39 +281,15 @@ class SaveRef {
     return obj.getValue();
   };
 
-  observeObject = Observable.create(observer => {
-    observer.next(this.getObjectValue());
-    const sub = this.observe.subscribe({
-      next: () => {
-        const newObj = this.getObject();
-        if (!newObj) {
-          observer.next(null);
-          return;
-        }
-        newObj
-          .fetch()
-          .then(() => {
-            observer.next(this.getObjectValue());
-          })
-          .catch(e => {
-            console.error(e);
-            console.error(
-              `Cannot fetch object "${newObj.id}" while updating ref "${
-                this._name
-              }"!`,
-            );
-            observer.error(e);
-          });
-      },
-      error: e => observer.error(e),
-      complete: () => observer.complete(),
-    });
-
-    const detach = () => {
-      sub.unsubscribe();
-    };
-    return detach;
-  }).share();
+  observeObjectValue = this.observe
+    .map(r => {
+      if (!r.objectId) {
+        return observeNull;
+      }
+      const obj = this._client.getObject(r.objectId);
+      return obj.observeValue;
+    })
+    .switch();
 }
 
 class SaveClient {
@@ -283,63 +304,10 @@ class SaveClient {
     }`;
     this._isConnected = new BehaviorSubject(false);
     this.isConnected = this._isConnected.share();
-
+    this._wsMessages = new Subject();
+    this.socketMessages = this._wsMessages.share();
     this._connectWS();
-    setTimeout(() => {
-      this._isConnected.next(true);
-    }, 2000);
-    setTimeout(() => {
-      this._isConnected.next(false);
-    }, 3000);
   }
-
-  _connectWS = () => {
-    // this._ws = new ReconnectingWebSocket('ws://smoothiepi:8080', [], {
-    //   // debug: true,
-    //   maxReconnectionDelay: 10000,
-    //   minReconnectionDelay: 1000,
-    //   minUptime: 5000,
-    //   reconnectionDelayGrowFactor: 1.3,
-    //   connectionTimeout: 4000,
-    //   maxRetries: Infinity,
-    // });
-    // setInterval(() => {
-    //   // wow, the shame of an interval! please don't be inspired by this..
-    //   if (this._ws.readyState === ReconnectingWebSocket.CLOSED) {
-    //     this._ws.reconnect(47, 'you hung up on me!');
-    //   }
-    //   const isConnected = this._ws.readyState === ReconnectingWebSocket.OPEN;
-    //   if (this.state.isConnected !== isConnected) {
-    //     this.setState(last => ({ ...last, isConnected }));
-    //   }
-    // }, 500);
-    // this._wsClientId = null;
-    // this._ws.onopen = () => {
-    //   console.log('Connected to Truck!');
-    // };
-    // this._ws.onmessage = msg => {
-    //   const evt = JSON.parse(msg.data);
-    //   switch (evt.type) {
-    //     case 'ClientId': {
-    //       this._wsClientId = evt.clientId;
-    //       console.log('ClientId', this._wsClientId);
-    //       return;
-    //     }
-    //     case 'OrderStatus': {
-    //       this.setState(state => ({
-    //         orders: {
-    //           ...state.orders,
-    //           [evt.orderId]: evt.order,
-    //         },
-    //       }));
-    //     }
-    //     default: {
-    //       console.log(evt);
-    //       return;
-    //     }
-    //   }
-    // };
-  };
 
   dispatch = async action => {
     const res = await fetch(this._httpEndpoint, {
@@ -368,18 +336,8 @@ class SaveClient {
 
   _refs = {};
   _objects = {};
-  _objectValues = {};
 
   getDomain = () => this._domain;
-
-  getCachedObjectValue = objectId => {
-    return this._objectValues[objectId];
-  };
-  setCachedObjectValue = (objectId, objValue) => {
-    if (this._objectValues[objectId] == null) {
-      this._objectValues[objectId] = objValue;
-    }
-  };
 
   getObject = objectId => {
     if (this._objects[objectId]) {
@@ -393,10 +351,10 @@ class SaveClient {
 
   createObject = value => {
     const valueString = JSONStringify(value);
-    const id = SHA1(valueString).toString();
-    this.setCachedObjectValue(id, value);
-    console.log(JSONStringify(value), id);
-    return this.getObject(id);
+    const objectId = SHA1(valueString).toString();
+    const obj = this.getObject(objectId);
+    obj.provideValue(value);
+    return obj;
   };
 
   getRef = name => {
@@ -404,6 +362,86 @@ class SaveClient {
       return this._refs[name];
     }
     return (this._refs[name] = new SaveRef({ client: this, name }));
+  };
+
+  _ws = null;
+
+  _socketSendIfConnected = payload => {
+    if (this._ws && this._ws.readyState === ReconnectingWebSocket.OPEN) {
+      this._ws.send(JSON.stringify({ ...payload, clientId: this._wsClientId }));
+    }
+  };
+
+  _connectWS = () => {
+    if (this._ws) {
+      throw new Error('ws already here!');
+    }
+    this._ws = new ReconnectingWebSocket(this._wsEndpoint, [], {
+      // debug: true,
+      maxReconnectionDelay: 10000,
+      minReconnectionDelay: 1000,
+      minUptime: 5000,
+      reconnectionDelayGrowFactor: 1.3,
+      connectionTimeout: 4000,
+      maxRetries: Infinity,
+    });
+
+    this._wsClientId = null;
+    this._ws.onopen = () => {
+      // actually we're going to wait for the server to say hello with ClientId
+    };
+    this._ws.onclose = () => {
+      this._isConnected.next(false);
+      this._ws = null;
+    };
+    this._ws.onerror = () => {
+      this._isConnected.next(false);
+      this._ws = null;
+    };
+    this._ws.onmessage = msg => {
+      const evt = JSON.parse(msg.data);
+      switch (evt.type) {
+        case 'ClientId': {
+          this._wsClientId = evt.clientId;
+          this._isConnected.next(true);
+          const subdRefs = Array.from(this._upstreamSubscribedRefs).map(ref =>
+            ref.getName(),
+          );
+          this._socketSendIfConnected({
+            type: 'SubscribeRefs',
+            refs: subdRefs,
+          });
+          console.log('Socket connected with client id: ', this._wsClientId);
+          return;
+        }
+        case 'RefUpdate': {
+          const ref = this._refs[evt.name];
+          ref.$handleRefEvent(evt);
+        }
+        default: {
+          this._wsMessages.next(evt);
+          console.log('Unknown ws event:', evt);
+          return;
+        }
+      }
+    };
+  };
+
+  _upstreamSubscribedRefs = new Set();
+
+  subscribeUpstreamRef = ref => {
+    this._socketSendIfConnected({
+      type: 'SubscribeRefs',
+      refs: [ref.getName()],
+    });
+    this._upstreamSubscribedRefs.add(ref);
+  };
+  unsubscribeUpstreamRef = ref => {
+    this._socketSendIfConnected({
+      type: 'UnubscribeRefs',
+      refs: [ref.getName()],
+    });
+    this._upstreamSubscribedRefs.delete(ref);
   };
 }
 

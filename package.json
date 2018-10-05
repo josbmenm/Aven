@@ -22,7 +22,9 @@
     "globe": "https://github.com/AvenCloud/globe",
     "helmet": "^3.13.0",
     "json-stable-stringify": "^1.0.1",
+    "pg-format": "^1.0.4",
     "reconnecting-websocket": "^4.0.0-rc5",
+    "rxjs": "^6.3.3",
     "rxjs-compat": "^6.3.3",
     "ws": "^6.0.0",
     "yes-https": "^0.0.4"

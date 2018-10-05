@@ -3,7 +3,6 @@ import ReactDOMServer from 'react-dom/server';
 import { AppRegistry } from 'react-native';
 import startServer from './startServer';
 import { IS_DEV } from './config';
-import { startSocketServer } from './SocketServer';
 // import { handleServerRequest } from '../react-navigation-web';
 const yes = require('yes-https');
 const helmet = require('helmet');
@@ -17,7 +16,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
-export default async function WebServer(App, dispatch) {
+export default async function WebServer(App, dispatch, startSocketServer) {
   const expressApp = express();
   const jsonParser = bodyParser.json();
   expressApp.use(jsonParser);

@@ -1,14 +1,24 @@
+import { Observable, BehaviorSubject, Subject } from 'rxjs-compat';
+
 const uuid = require('uuid/v1');
 const { schema, getSqlType } = require('./schema');
 const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
+const pgFormat = require('pg-format');
 const { Client } = require('pg');
 
 const activeDomains = new Set(['onofood.co']);
 
-export const startService = async ({ pgConfig, name }) => {
-  name = name || `db-${uuid()}`;
+const md5 = input => {
+  const sha = crypto.createHash('sha1');
+  sha.update(input);
+  const hash = sha.digest('hex');
+  return hash;
+};
 
+const channelOfRef = refName => `ref_${md5(refName)}`;
+
+const startDBService = async ({ pgConfig }) => {
   const pg = new Client(pgConfig);
 
   let connected = false;
@@ -264,6 +274,11 @@ WHERE constraint_type = 'FOREIGN KEY'
       'UPDATE refs SET active_object = $3 WHERE id = $1 AND domain = $2 ',
       [ref, domain, id],
     );
+    await pg.query(
+      `NOTIFY ${channelOfRef(ref)}, ${pgFormat.literal(
+        JSON.stringify({ objectId: id }),
+      )}`,
+    );
   }
   async function destroyRefObjects({ domain, ref }) {
     await pg.query('DELETE FROM object_refs WHERE domain = $1 AND ref = $2 ', [
@@ -383,11 +398,66 @@ WHERE constraint_type = 'FOREIGN KEY'
 
   await init();
 
+  const close = async () => {
+    await pg.end();
+  };
+
+  const listenRef = async ref => {
+    const channel = channelOfRef(ref);
+    await pg.query(`LISTEN ${channel}`);
+    return channel;
+  };
+  const unlistenRef = async ref => {
+    const channel = channelOfRef(ref);
+    await pg.query(`UNLISTEN ${channelOfRef(ref)}`);
+    return channel;
+  };
+
+  const _notifyRefObservables = {};
+  const _refObservables = {};
+
+  const observeRef = refName => {
+    if (_refObservables[refName]) {
+      return _refObservables[refName];
+    }
+    const refObs = Observable.create(observer => {
+      listenRef(refName)
+        .then(channelName => {
+          _notifyRefObservables[channelName] = payload => {
+            observer.next(payload);
+          };
+        })
+        .catch(e => {
+          observer.error(e);
+        });
+
+      return () => {
+        unlistenRef(refName)
+          .then(() => {})
+          .catch(e => {
+            observer.error(e);
+          });
+        _notifyRefObservables[channelOfRef(refName)] = null;
+      };
+    })
+      .multicast(() => new BehaviorSubject(null))
+      .refCount();
+    _refObservables[refName] = refObs;
+    return refObs;
+  };
+
+  pg.on('notification', message => {
+    if (_notifyRefObservables[message.channel]) {
+      const payload = JSON.parse(message.payload);
+      _notifyRefObservables[message.channel](payload);
+    }
+  });
+
   return {
     actions,
-    close: async () => {
-      await pg.end();
-    },
-    name,
+    close,
+    observeRef,
   };
 };
+
+export default startDBService;

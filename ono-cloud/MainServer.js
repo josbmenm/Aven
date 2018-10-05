@@ -2,7 +2,7 @@ import App from './App';
 import WebServer from '../aven-web/WebServer';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import { scrapeAirTable } from './scrapeAirTable';
-import { startService as startDBService } from '../save-server/dbService';
+import startDataService from '../save-server/startDataService';
 import { getMobileAuthToken } from './Square';
 const fs = require('fs-extra');
 const pathJoin = require('path').join;
@@ -11,48 +11,6 @@ const AirtableAPIKey = getSecretConfig('AIRTABLE_API_KEY');
 const AirtableBaseID = getSecretConfig('AIRTABLE_BASE_ID');
 
 const scrapeLocation = pathJoin(process.cwd(), 'scrape-data');
-
-const uploadFile = async (filePath, refName, dbService) => {
-  const fileData = await fs.readFile(filePath);
-  const objectId = await dbService.actions.putObject({
-    object: {
-      data: fileData.toString('hex'),
-    },
-  });
-  return objectId;
-};
-
-const uploadFolder = async (folderPath, refName, dbService) => {
-  const filesInDir = await fs.readdir(folderPath);
-  const fileList = await Promise.all(
-    filesInDir.map(async fileName => {
-      const filePath = pathJoin(folderPath, fileName);
-      const stat = await fs.stat(filePath);
-      if (stat.isDirectory()) {
-        return await uploadFolder(filePath, refName, dbService);
-      } else {
-        return await uploadFile(filePath, refName, dbService);
-      }
-    }),
-  );
-  const files = {};
-  filesInDir.forEach((fileName, index) => {
-    files[fileName] = fileList[index];
-  });
-  const objectId = await dbService.actions.putObject({ object: { files } });
-  return objectId;
-};
-
-const putFolder = async ({ domain, folderPath, refName, dbService }) => {
-  const folder = await uploadFolder(folderPath, refName, dbService);
-  await dbService.actions.putRef({
-    owner: null,
-    domain,
-    objectId: folder.id,
-    ref: refName,
-  });
-  return folder;
-};
 
 const runServer = async () => {
   const domain = 'onofood.co';
@@ -70,8 +28,10 @@ const runServer = async () => {
   } else if (getSecretConfig('SQL_HOST')) {
     pgConfig.host = getSecretConfig('SQL_HOST');
   }
-  const dbService = await startDBService({ pgConfig });
-  console.log('☁️ Database Ready 💼');
+  const saveService = await startDataService({ pgConfig, rootDomain: domain });
+
+  console.log('☁️ Data Server Ready 💼');
+
   const scrapeUpstream = async action => {
     await fs.remove(scrapeLocation);
     await scrapeAirTable(
@@ -86,35 +46,12 @@ const runServer = async () => {
       ],
       scrapeLocation,
     );
-    const folder = await putFolder({
+    const folder = await saveService.putFolder({
       folderPath: scrapeLocation,
       refName: 'airtable',
-      dbService,
       domain: 'onofood.co',
     });
     return folder;
-  };
-
-  const getObject = async action => {
-    return await dbService.actions.getObject({ id: action.id });
-  };
-
-  const getRef = async action => {
-    return await dbService.actions.getRef({ ref: action.ref, domain });
-  };
-
-  const putObject = async action => {
-    return await dbService.actions.putObject({ object: action.value });
-  };
-
-  const putRef = async action => {
-    await dbService.actions.putRef({
-      owner: null,
-      domain: action.domain,
-      objectId: action.objectId,
-      ref: action.ref,
-    });
-    return {};
   };
 
   const dispatch = async action => {
@@ -123,26 +60,21 @@ const runServer = async () => {
         return getMobileAuthToken(action);
       case 'scrapeUpstream':
         return scrapeUpstream(action);
-      case 'getObject':
-        return getObject(action);
-      case 'getRef':
-        return getRef(action);
-      case 'putObject':
-        return putObject(action);
-      case 'putRef':
-        return putRef(action);
       default:
-        throw `Unknown action type "${action.type}"`;
+        return await saveService.dispatch(action);
     }
   };
-
-  const webService = await WebServer(App, dispatch);
+  const webService = await WebServer(
+    App,
+    dispatch,
+    saveService.startSocketServer,
+  );
   console.log('☁️️ Web Ready 🕸');
 
   return {
     close: async () => {
       await webService.close();
-      await dbService.close();
+      await saveService.close();
     },
   };
 };
