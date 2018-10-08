@@ -1,6 +1,4 @@
-# VSCode
-.vscode/
-jsconfig.json
+build
 
 # NodeJS
 npm-debug.log
@@ -10,26 +8,6 @@ yarn-error.log
 # OS X
 .DS_Store
 
-# Jest
-coverage
+.globe.state.json
 
-build
-
-src/react-navigation-core
-src/react-navigation-native-container
-src/react-navigation-stack
-src/react-navigation-drawer
-src/react-navigation-area-view
-src/react-navigation-fluid
-src/react-navigation-transitioner
-
-npm-dist
-
-.env
-
-hyperion.state.json
-hyperion.props.json
-hyperion.tfstate
-hyperion.tfstate.backup
-
-public
+./**/node_modules/

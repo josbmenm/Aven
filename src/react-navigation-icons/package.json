@@ -1,8 +1,0 @@
-{
-  "name": "@react-navigation/icons",
-  "subDependencies": [
-    "react",
-    "react-native",
-    "expo"
-  ]
-}

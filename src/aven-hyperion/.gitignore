@@ -1,4 +1,0 @@
-hyperion.key*
-tfvars
-terraform.tfstate*
-terra-out.tf.json
