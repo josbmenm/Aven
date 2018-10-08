@@ -1,0 +1,27 @@
+{
+  "name": "aven-globe",
+  "scripts": {
+    "start": "./node_modules/globe-tools/cli.js start",
+    "build": "./node_modules/globe-tools/cli.js build",
+    "start-web-playground": "./node_modules/globe-tools/cli.js start web-playground",
+    "start-expo-playground": "./node_modules/globe-tools/cli.js start expo-playground",
+    "clean": "./node_modules/globe-tools/cli.js clean"
+  },
+  "devDependencies": {
+    "globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
+  },
+  "dependencies": {
+    "@aven-cloud/globe-tools": "https://github.com/AvenCloud/globe-tools.git#master",
+    "@nozbe/with-observables": "^1.0.1",
+    "body-parser": "^1.18.3",
+    "crypto-js": "^3.1.9-1",
+    "helmet": "^3.13.0",
+    "json-stable-stringify": "^1.0.1",
+    "pg-format": "^1.0.4",
+    "reconnecting-websocket": "^4.0.0-rc5",
+    "rxjs": "^6.3.3",
+    "rxjs-compat": "^6.3.3",
+    "ws": "^6.0.0",
+    "yes-https": "^0.0.4"
+  }
+}

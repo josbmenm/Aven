@@ -1,0 +1,11 @@
+{
+  "globe": {
+    "moduleDependencies": [
+      "rxjs-compat",
+      "json-stable-stringify",
+      "crypto-js",
+      "reconnecting-websocket",
+      "@nozbe/with-observables"
+    ]
+  }
+}
