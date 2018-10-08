@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, LayoutAnimation } from 'react-native';
 import { Client } from '../ono-save-client/OnoSaveClient';
-import { connectComponent } from '../save-client/Watchable';
+import { withObservables } from '../save-client/SaveClient';
 
 const sectionText = {
   color: '#222',
@@ -15,10 +15,9 @@ const nameText = {
 };
 
 const withTruckState = Component => {
-  const ComponentWithData = connectComponent(Component);
-  return () => (
-    <ComponentWithData truckState={Client.getRef('truckState').watchObject()} />
-  );
+  return withObservables([], () => ({
+    truckState: Client.getRef('truckState').observeObjectValue,
+  }))(Component);
 };
 
 const ACTIVE_COLOR = '#FFC0B3';
@@ -73,38 +72,6 @@ const Pickup = ({ state }) => (
     <PickupBay pickupReadyName={state.pickupB} />
   </View>
 );
-
-// const BlendingNow = withTruckState(({ truckState }) => {
-//   const state = truckState.getValue();
-//   if (!state || !state.value) {
-//     return null;
-//   }
-//   return (
-//     <View
-//       style={{
-//         backgroundColor: '#E9C6A0',
-//         justifyContent: 'center',
-//       }}
-//     >
-//       <Text
-//         style={{
-//           ...sectionText,
-//           margin: 40,
-//         }}
-//       >
-//         Blending Now:
-//         <Text
-//           style={{
-//             ...nameText,
-//             textAlign: 'right',
-//           }}
-//         >
-//           {state.value.customerName}
-//         </Text>
-//       </Text>
-//     </View>
-//   );
-// });
 
 const DECOR_COLOR = '#444';
 
@@ -211,19 +178,10 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 class BlendScreenD extends React.Component {
   state = {
     step: 0,
-    truckState: null,
-  };
-  static getDerivedStateFromProps = props => {
-    let truckState = null;
-    const ts = props.truckState.getValue();
-    if (ts && ts.value) {
-      truckState = ts.value;
-    }
-    return { truckState };
   };
   async componentDidUpdate(lastProps, lastState) {
-    const { truckState } = this.state;
-    const lastTruckState = lastState.truckState;
+    const { truckState } = this.props;
+    const lastTruckState = lastProps.truckState;
 
     if (!truckState || !lastTruckState) {
       return;
@@ -247,7 +205,8 @@ class BlendScreenD extends React.Component {
     }
   }
   render() {
-    const { truckState, step } = this.state;
+    const { step } = this.state;
+    const { truckState } = this.props;
     if (!truckState) {
       return null;
     }

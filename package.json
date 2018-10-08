@@ -14,12 +14,11 @@
     "globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
   },
   "dependencies": {
-    "@aven-cloud/globe-tools": "https://github.com/AvenCloud/globe-tools.git#master",
+    "globe": "https://github.com/AvenCloud/globe.git#master",
     "@nozbe/with-observables": "^1.0.1",
     "body-parser": "^1.18.3",
     "crypto-js": "^3.1.9-1",
     "ethernet-ip": "^1.2.2",
-    "globe": "https://github.com/AvenCloud/globe",
     "helmet": "^3.13.0",
     "json-stable-stringify": "^1.0.1",
     "pg-format": "^1.0.4",
