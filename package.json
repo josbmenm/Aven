@@ -1,5 +1,6 @@
 {
   "name": "aven-globe",
+  "version": "0.0.0",
   "scripts": {
     "start": "./node_modules/globe-tools/cli.js start",
     "build": "./node_modules/globe-tools/cli.js build",
