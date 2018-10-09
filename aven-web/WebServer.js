@@ -1,18 +1,18 @@
-import express from 'express';
-import ReactDOMServer from 'react-dom/server';
-import { AppRegistry } from 'react-native';
-import startServer from './startServer';
-import { IS_DEV } from './config';
+import express from "express";
+import ReactDOMServer from "react-dom/server";
+import { AppRegistry } from "react-native";
+import startServer from "./startServer";
+import { IS_DEV } from "./config";
 // import { handleServerRequest } from '../react-navigation-web';
-const yes = require('yes-https');
-const helmet = require('helmet');
-const http = require('http');
-const bodyParser = require('body-parser');
-const WebSocket = require('ws');
+const yes = require("yes-https");
+const helmet = require("helmet");
+const http = require("http");
+const bodyParser = require("body-parser");
+const WebSocket = require("ws");
 
-const pathJoin = require('path').join;
+const pathJoin = require("path").join;
 
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV === "production";
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
@@ -23,21 +23,21 @@ export default async function WebServer(App, dispatch, startSocketServer) {
   expressApp.use(yes());
   expressApp.use(helmet());
   expressApp.use(function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header("Access-Control-Allow-Origin", "*");
     res.header(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept',
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
     );
     next();
   });
-  AppRegistry.registerComponent('App', () => App);
+  AppRegistry.registerComponent("App", () => App);
 
   // const publicDir = isProd ? 'build/public' : `src/${activeApp}/public`;
-  const publicDir = isProd ? 'build/public' : `public`;
+  const publicDir = isProd ? "build/public" : `public`;
 
-  expressApp.disable('x-powered-by');
+  expressApp.disable("x-powered-by");
   expressApp.use(express.static(publicDir));
-  expressApp.post('/dispatch', (req, res) => {
+  expressApp.post("/dispatch", (req, res) => {
     if (dispatch) {
       dispatch(req.body)
         .then(result => {
@@ -49,7 +49,7 @@ export default async function WebServer(App, dispatch, startSocketServer) {
         });
     }
   });
-  expressApp.get('/*', (req, res) => {
+  expressApp.get("/*", (req, res) => {
     const { path, query } = req;
 
     // const { navigation, title, options } = handleServerRequest(
@@ -59,14 +59,14 @@ export default async function WebServer(App, dispatch, startSocketServer) {
     // );
 
     const navigation = {};
-    const title = 'Coming Soon';
+    const title = "Coming Soon";
     const options = {};
 
-    const { element, getStyleElement } = AppRegistry.getApplication('App', {
+    const { element, getStyleElement } = AppRegistry.getApplication("App", {
       initialProps: {
         navigation,
-        env: 'server',
-      },
+        env: "server"
+      }
     });
 
     const html = ReactDOMServer.renderToString(element);
@@ -99,7 +99,7 @@ export default async function WebServer(App, dispatch, startSocketServer) {
     <body>
         <div id="root">${html}</div>
     </body>
-</html>`,
+</html>`
     );
   });
 
@@ -111,15 +111,15 @@ export default async function WebServer(App, dispatch, startSocketServer) {
 
   await startServer(httpServer, serverListenLocation);
 
-  const wsServer = await startSocketServer(wss);
+  const wsServer = startSocketServer && (await startSocketServer(wss));
 
-  console.log('Listening on ' + serverListenLocation);
+  console.log("Listening on " + serverListenLocation);
   IS_DEV && console.log(`http://localhost:${serverListenLocation}`);
 
   return {
     close: async () => {
       httpServer.close();
-      wsServer.close();
-    },
+      wsServer && wsServer.close();
+    }
   };
 }

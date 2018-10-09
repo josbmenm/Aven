@@ -22,7 +22,7 @@
     },
     "globeDependencies": [
       "aven-web",
-      "save-server"
+      "aven-data-server"
     ],
     "publicBuildConfigVars": [
       "BUILD_ENV"

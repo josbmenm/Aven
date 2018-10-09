@@ -1,7 +1,7 @@
-import prepareSocketServer from './prepareSocketServer';
-import startDBService from '../save-server/startDBService';
-const fs = require('fs-extra');
-const pathJoin = require('path').join;
+import prepareSocketServer from "./prepareSocketServer";
+import startDBService from "../aven-data-server/startDBService";
+const fs = require("fs-extra");
+const pathJoin = require("path").join;
 
 const startDataService = async ({ pgConfig, rootDomain }) => {
   const dbService = await startDBService({ pgConfig });
@@ -10,8 +10,8 @@ const startDataService = async ({ pgConfig, rootDomain }) => {
     const fileData = await fs.readFile(filePath);
     const objectId = await dbService.actions.putObject({
       object: {
-        data: fileData.toString('hex'),
-      },
+        data: fileData.toString("hex")
+      }
     });
     return objectId;
   };
@@ -27,7 +27,7 @@ const startDataService = async ({ pgConfig, rootDomain }) => {
         } else {
           return await uploadFile(filePath, dbService);
         }
-      }),
+      })
     );
     const files = {};
     filesInDir.forEach((fileName, index) => {
@@ -43,7 +43,7 @@ const startDataService = async ({ pgConfig, rootDomain }) => {
       owner: null,
       domain,
       objectId: folder.id,
-      ref: refName,
+      ref: refName
     });
     return folder;
   };
@@ -54,7 +54,7 @@ const startDataService = async ({ pgConfig, rootDomain }) => {
   const getRef = async action => {
     return await dbService.actions.getRef({
       ref: action.ref,
-      domain: rootDomain,
+      domain: rootDomain
     });
   };
 
@@ -67,20 +67,20 @@ const startDataService = async ({ pgConfig, rootDomain }) => {
       owner: null,
       domain: action.domain,
       objectId: action.objectId,
-      ref: action.ref,
+      ref: action.ref
     });
     return {};
   };
 
   const dispatch = async action => {
     switch (action.type) {
-      case 'getObject':
+      case "getObject":
         return getObject(action);
-      case 'getRef':
+      case "getRef":
         return getRef(action);
-      case 'putObject':
+      case "putObject":
         return putObject(action);
-      case 'putRef':
+      case "putRef":
         return putRef(action);
       default:
         throw `Unknown action type "${action.type}"`;

@@ -1,8 +1,8 @@
-import { Observable, BehaviorSubject, Subject } from 'rxjs-compat';
-import { default as withObs } from '@nozbe/with-observables';
-import SHA1 from 'crypto-js/sha1';
-import ReconnectingWebSocket from 'reconnecting-websocket';
-const JSONStringify = require('json-stable-stringify');
+import { Observable, BehaviorSubject, Subject } from "rxjs-compat";
+import { default as withObs } from "@nozbe/with-observables";
+import SHA1 from "crypto-js/sha1";
+import ReconnectingWebSocket from "reconnecting-websocket";
+const JSONStringify = require("json-stable-stringify");
 
 export const withObservables = withObs;
 
@@ -21,7 +21,7 @@ class SaveObject {
       lastPutTime: null,
 
       // obj data:
-      value: null,
+      value: null
     };
     this.observe = new BehaviorSubject(this._state);
   }
@@ -31,14 +31,14 @@ class SaveObject {
       return;
     }
     this._setState({
-      value,
+      value
     });
   };
 
   _setState = newVals => {
     this._state = {
       ...this._state,
-      ...newVals,
+      ...newVals
     };
     this.observe.next(this._state);
   };
@@ -61,36 +61,36 @@ class SaveObject {
       return;
     }
     const result = await this._client.dispatch({
-      type: 'getObject',
+      type: "getObject",
       domain: this._client.getDomain(),
-      id: this._objectId,
+      id: this._objectId
     });
     if (!result || result.object == null) {
       throw new Error(`Error fetching object "${this._objectId}" from remote!`);
     }
     this._setState({
       value: result.object,
-      lastFetchedTime: Date.now(),
+      lastFetchedTime: Date.now()
     });
   };
 
   put = async () => {
     if (this._state.value == null) {
       throw new Error(
-        `Cannot put empty value from object "${this._objectId}"!`,
+        `Cannot put empty value from object "${this._objectId}"!`
       );
     }
     const res = await this._client.dispatch({
-      type: 'putObject',
+      type: "putObject",
       domain: this._client.getDomain(),
-      value: this._state.value,
+      value: this._state.value
     });
     if (res.id !== this._objectId) {
       // if we get here, we are truly screwed!
       throw new Error(
         `Server and client objectIds do not match! Server: ${res.id}, Client: ${
           this._objectId
-        }`,
+        }`
       );
     }
     return res;
@@ -115,7 +115,7 @@ class SaveRef {
       puttingFromObjectId: null,
 
       // obj data:
-      objectId: null,
+      objectId: null
     };
   }
 
@@ -125,9 +125,9 @@ class SaveRef {
 
   fetch = async () => {
     const result = await this._client.dispatch({
-      type: 'getRef',
+      type: "getRef",
       domain: this._client.getDomain(),
-      ref: this._name,
+      ref: this._name
     });
     this._state.objectId = result.id;
     this._state.hasFetched = true;
@@ -154,7 +154,7 @@ class SaveRef {
       throw new Error(
         `Cannot putObjectId of "${
           this._name
-        }" while another put is in progress!`,
+        }" while another put is in progress!`
       );
     }
     const fromObjectId = this._state.objectId;
@@ -162,10 +162,10 @@ class SaveRef {
       this._state.puttingFromObjectId = fromObjectId;
       this._state.objectId = objectId;
       await this._client.dispatch({
-        type: 'putRef',
+        type: "putRef",
         domain: this._client.getDomain(),
         objectId,
-        ref: this._name,
+        ref: this._name
       });
       this._state.puttingFromObjectId = null;
       this._notifyObserved();
@@ -184,7 +184,7 @@ class SaveRef {
       throw new Error(
         `Cannot putObjectId of "${
           this._name
-        }" while another put is in progress!`,
+        }" while another put is in progress!`
       );
     }
     const fromObjectId = this._state.objectId;
@@ -194,10 +194,10 @@ class SaveRef {
       this._notifyObserved();
       await obj.put();
       await this._client.dispatch({
-        type: 'putRef',
+        type: "putRef",
         domain: this._client.getDomain(),
         objectId,
-        ref: this._name,
+        ref: this._name
       });
       this._state.puttingFromObjectId = null;
       this._notifyObserved();
@@ -215,10 +215,10 @@ class SaveRef {
       return;
     }
     if (this._state.puttingFromObjectId) {
-      console.error('remote event while putting!', {
+      console.error("remote event while putting!", {
         remoteId: env.objectId,
         localNewId: this._state.objectId,
-        localLastId: this._state.puttingFromObjectId,
+        localLastId: this._state.puttingFromObjectId
       });
       // this probably means a conflict is happening
     }
@@ -234,14 +234,14 @@ class SaveRef {
       })
       .catch(e => {
         observer.next(this._state);
-        console.error('Could not fetch ref ' + this._name);
+        console.error("Could not fetch ref " + this._name);
         console.error(e);
       });
     if (this._updateObserved) {
       throw new Error(
         `Cannot observe "${
           this._name
-        }" because it already is being observed internally, and the observable should be .share()'d!`,
+        }" because it already is being observed internally, and the observable should be .share()'d!`
       );
     }
     this._updateObserved = () => {
@@ -292,14 +292,14 @@ class SaveRef {
     .switch();
 }
 
-class SaveClient {
+class DataClient {
   constructor({ host, domain }) {
     this._host = host;
     this._domain = domain;
-    this._httpEndpoint = `${host.useSSL === false ? 'http' : 'https'}://${
+    this._httpEndpoint = `${host.useSSL === false ? "http" : "https"}://${
       host.authority
     }/dispatch`;
-    this._wsEndpoint = `${host.useSSL === false ? 'ws' : 'wss'}://${
+    this._wsEndpoint = `${host.useSSL === false ? "ws" : "wss"}://${
       host.authority
     }`;
     this._isConnected = new BehaviorSubject(false);
@@ -311,12 +311,12 @@ class SaveClient {
 
   dispatch = async action => {
     const res = await fetch(this._httpEndpoint, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify(action),
+      body: JSON.stringify(action)
     });
 
     if (res.status >= 400) {
@@ -326,10 +326,10 @@ class SaveClient {
     try {
       result = JSON.parse(result);
     } catch (e) {
-      console.warn('Expecting JSON but could not parse: ' + result);
+      console.warn("Expecting JSON but could not parse: " + result);
     }
-    console.log('📣', action);
-    console.log('💨', result);
+    console.log("📣", action);
+    console.log("💨", result);
 
     return result;
   };
@@ -345,7 +345,7 @@ class SaveClient {
     }
     return (this._objects[objectId] = new SaveObject({
       client: this,
-      objectId,
+      objectId
     }));
   };
 
@@ -374,7 +374,7 @@ class SaveClient {
 
   _connectWS = () => {
     if (this._ws) {
-      throw new Error('ws already here!');
+      throw new Error("ws already here!");
     }
     this._ws = new ReconnectingWebSocket(this._wsEndpoint, [], {
       // debug: true,
@@ -383,7 +383,7 @@ class SaveClient {
       minUptime: 5000,
       reconnectionDelayGrowFactor: 1.3,
       connectionTimeout: 4000,
-      maxRetries: Infinity,
+      maxRetries: Infinity
     });
 
     this._wsClientId = null;
@@ -401,26 +401,26 @@ class SaveClient {
     this._ws.onmessage = msg => {
       const evt = JSON.parse(msg.data);
       switch (evt.type) {
-        case 'ClientId': {
+        case "ClientId": {
           this._wsClientId = evt.clientId;
           this._isConnected.next(true);
           const subdRefs = Array.from(this._upstreamSubscribedRefs).map(ref =>
-            ref.getName(),
+            ref.getName()
           );
           this._socketSendIfConnected({
-            type: 'SubscribeRefs',
-            refs: subdRefs,
+            type: "SubscribeRefs",
+            refs: subdRefs
           });
-          console.log('Socket connected with client id: ', this._wsClientId);
+          console.log("Socket connected with client id: ", this._wsClientId);
           return;
         }
-        case 'RefUpdate': {
+        case "RefUpdate": {
           const ref = this._refs[evt.name];
           ref.$handleRefEvent(evt);
         }
         default: {
           this._wsMessages.next(evt);
-          console.log('Unknown ws event:', evt);
+          console.log("Unknown ws event:", evt);
           return;
         }
       }
@@ -431,18 +431,18 @@ class SaveClient {
 
   subscribeUpstreamRef = ref => {
     this._socketSendIfConnected({
-      type: 'SubscribeRefs',
-      refs: [ref.getName()],
+      type: "SubscribeRefs",
+      refs: [ref.getName()]
     });
     this._upstreamSubscribedRefs.add(ref);
   };
   unsubscribeUpstreamRef = ref => {
     this._socketSendIfConnected({
-      type: 'UnubscribeRefs',
-      refs: [ref.getName()],
+      type: "UnubscribeRefs",
+      refs: [ref.getName()]
     });
     this._upstreamSubscribedRefs.delete(ref);
   };
 }
 
-export default SaveClient;
+export default DataClient;
