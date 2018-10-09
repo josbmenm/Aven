@@ -1,0 +1,37 @@
+{
+  "main": "App.js",
+  "globe": {
+    "env": "expo",
+    "globeDependencies": [],
+    "envOptions": {
+      "app": {
+        "name": "playground",
+        "description": "This project is really great.",
+        "slug": "playground",
+        "privacy": "unlisted",
+        "sdkVersion": "30.0.0",
+        "platforms": [
+          "ios",
+          "android"
+        ],
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./src-sync/expo-playground/assets/icon.png",
+        "splash": {
+          "image": "./src-sync/expo-playground/assets/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        },
+        "updates": {
+          "fallbackToCacheTimeout": 0
+        },
+        "assetBundlePatterns": [
+          "**/*"
+        ],
+        "ios": {
+          "supportsTablet": true
+        }
+      }
+    }
+  }
+}

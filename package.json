@@ -2,11 +2,11 @@
   "name": "aven-globe",
   "version": "0.0.0",
   "scripts": {
-    "start": "./node_modules/globe-tools/cli.js start",
-    "build": "./node_modules/globe-tools/cli.js build",
-    "start-web-playground": "./node_modules/globe-tools/cli.js start web-playground",
-    "start-expo-playground": "./node_modules/globe-tools/cli.js start expo-playground",
-    "clean": "./node_modules/globe-tools/cli.js clean"
+    "start": "./node_modules/@aven-cloud/globe-tools/cli.js start",
+    "build": "./node_modules/@aven-cloud/globe-tools/cli.js build",
+    "start-web-playground": "./node_modules/@aven-cloud/globe-tools/cli.js start web-playground",
+    "start-expo-playground": "./node_modules/@aven-cloud/globe-tools/cli.js start expo-playground",
+    "clean": "./node_modules/@aven-cloud/globe-tools/cli.js clean"
   },
   "devDependencies": {
     "globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
