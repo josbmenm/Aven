@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { NativeModules, NativeEventEmitter } from 'react-native';
 
-import { OnoClient } from '../save-client/SaveClient';
+import { OnoClient } from '../aven-data-client/DataClient';
 
 const OPaymentManager = NativeModules.OPaymentManager;
 

@@ -2,7 +2,8 @@ import App from './App';
 import WebServer from '../aven-web/WebServer';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import { scrapeAirTable } from './scrapeAirTable';
-import startDataService from '../save-server/startDataService';
+import PostgresDataSource from '../aven-data-source-postgres/PostgresDataSource';
+import startDataService from '../aven-data-server/startDataService';
 import { getMobileAuthToken } from './Square';
 const fs = require('fs-extra');
 const pathJoin = require('path').join;
@@ -28,6 +29,7 @@ const runServer = async () => {
   } else if (getSecretConfig('SQL_HOST')) {
     pgConfig.host = getSecretConfig('SQL_HOST');
   }
+  const dataSource = new PostgresDataSource(pgConfig);
   const saveService = await startDataService({ pgConfig, rootDomain: domain });
 
   console.log('☁️ Data Server Ready 💼');

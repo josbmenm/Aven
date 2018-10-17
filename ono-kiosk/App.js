@@ -12,124 +12,30 @@ import {
   Image,
 } from 'react-native';
 import { createStackNavigator, withNavigation } from 'react-navigation';
-import { Page, InputPage, ButtonRow, TitleView } from './Components';
-import { Provider, Subscribe } from 'unstated';
-import Debug from './Debug';
-import truck from './Truck';
+import { TitleView } from './Components';
+import InputPage from './components/InputPage';
+import GenericPage from './components/GenericPage';
+import CallToActionButton from '../ono-components/CallToActionButton';
+
+import HomeScreen from './screens/HomeScreen';
+import HostHomeScreen from './screens/HostHomeScreen';
+import KitchenEngScreen from './screens/KitchenEngScreen';
+import KioskSettingsScreen from './screens/KioskSettingsScreen';
+import KioskHomeScreen from './screens/KioskHomeScreen';
+// import ProductScreen from './screens/ProductScreen';
+// import OrderConfirmScreen from './screens/OrderConfirmScreen';
+// import OrderCompleteScreen from './screens/OrderCompleteScreen';
+// import CollectNameScreen from './screens/CollectNameScreen';
+// import CollectEmailScreen from './screens/CollectEmailScreen';
+// import CollectPaymentScreen from './screens/CollectPaymentScreen';
+
 import JSONView from '../debug-views/JSONView';
-import { Client } from '../ono-save-client/OnoSaveClient';
-import { withObservables } from '../save-client/SaveClient';
-import { openSettings, paymentContainer } from './Payments';
+import { Client } from '../ono-data-client/OnoDataClient';
+import { withObservables } from '../aven-data-client/DataClient';
 
 StatusBar.setHidden(true, 'none');
 
-console.ignoredYellowBox = ['Warning:'];
-
-const ProductIngredients = {
-  peanutButter: {
-    name: 'Peanut Butter',
-    color: '#87672C',
-  },
-  blueberries: {
-    name: 'Blueberries',
-    color: '#2C3A87',
-  },
-  proteinPowder: {
-    name: 'Protein Powder',
-    color: '#656A86',
-  },
-};
-
-const ProductFeatures = {
-  brain: { name: 'brain' },
-  stress: { name: 'stress' },
-  energy: { name: 'energy' },
-};
-
-const genericFont = {
-  fontFamily: 'Courier New',
-  color: '#111',
-};
-
-const productPhotoAspectRatio = 1;
-
-const Products = [
-  {
-    id: 'focus',
-    name: 'Focus Function',
-    description: 'this blend will boost your mental sharpness for the day.',
-    color: '#6666aa',
-    size: '20oz',
-    price: '$5.00',
-    nutrition: '595 cal',
-    ingredients: [
-      ProductIngredients.peanutButter,
-      ProductIngredients.blueberries,
-    ],
-    features: [
-      ProductFeatures.brain,
-      ProductFeatures.stress,
-      ProductFeatures.energy,
-    ],
-  },
-  {
-    id: 'fitness',
-    name: 'Fitness Function',
-    color: '#aa6666',
-    size: '20oz',
-    price: '$5.00',
-    nutrition: '595 cal',
-    description: 'this blend will help you recover after an intense workout.',
-    ingredients: [
-      ProductIngredients.peanutButter,
-      ProductIngredients.blueberries,
-    ],
-    features: [
-      ProductFeatures.brain,
-      ProductFeatures.stress,
-      ProductFeatures.energy,
-    ],
-  },
-  {
-    id: 'digest',
-    name: 'Digestive Function',
-    color: '#66aa66',
-    size: '20oz',
-    price: '$5.00',
-    nutrition: '595 cal',
-    description: 'this blend supports digestion and boosts your immunity.',
-    ingredients: [
-      ProductIngredients.peanutButter,
-      ProductIngredients.blueberries,
-    ],
-    features: [
-      ProductFeatures.brain,
-      ProductFeatures.stress,
-      ProductFeatures.energy,
-    ],
-  },
-  {
-    id: 'detox',
-    name: 'Detox Function',
-    color: '#666666',
-    size: '20oz',
-    price: '$5.00',
-    nutrition: '595 cal',
-    description: 'this blend helps you recover after a long weekend.',
-    ingredients: [
-      ProductIngredients.peanutButter,
-      ProductIngredients.blueberries,
-    ],
-    features: [
-      ProductFeatures.brain,
-      ProductFeatures.stress,
-      ProductFeatures.energy,
-    ],
-  },
-];
-
-const placeholderBorderWidth = 5;
-const ingredientFontSize = 26;
+// console.ignoredYellowBox = ['Warning:'];
 
 const PlaceholderImage = ({ style, color }) => (
   <Image
@@ -139,531 +45,66 @@ const PlaceholderImage = ({ style, color }) => (
   />
 );
 
-const makeHitSlop = slop => ({
-  top: slop,
-  right: slop,
-  bottom: slop,
-  left: slop,
-});
+// const DebugDataD = ({ input }) => {
+//   return (
+//     <View style={{ padding: 40 }}>
+//       <JSONView data={input} />
+//     </View>
+//   );
+// };
+// const DebugData = withObservables(['input'], props => ({
+//   input: props.input,
+// }))(DebugDataD);
 
-const ProductLinkWithNav = ({ product, navigation }) => {
-  return (
-    <TouchableOpacity
-      onPress={() => {
-        navigation.navigate('Product', { id: product.id });
-      }}
-    >
-      <View
-        style={{
-          borderWidth: 1,
-          padding: 40,
-          marginHorizontal: 80,
-          flexDirection: 'row',
-          marginVertical: 30,
-        }}
-      >
-        <PlaceholderImage
-          color={product.color}
-          style={{ width: 200, aspectRatio: 1 }}
-        />
-        <View style={{ flex: 1, marginLeft: 40, justifyContent: 'center' }}>
-          <Text style={{ fontSize: 42, ...genericFont }}>{product.name}</Text>
-          <Text style={{ ...genericFont }}>{product.description}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-};
-const ProductLink = withNavigation(ProductLinkWithNav);
+// const StatusTag = ({ isGoodNews, goodNews, badNews }) => {
+//   const statusColor = isGoodNews ? '#090' : '#900';
+//   return (
+//     <View
+//       style={{
+//         flexDirection: 'row',
+//         justifyContent: 'flex-end',
+//         paddingHorizontal: 40,
+//       }}
+//     >
+//       <View
+//         style={{
+//           backgroundColor: statusColor,
+//           padding: 8,
+//           paddingHorizontal: 18,
+//           borderRadius: 25,
+//         }}
+//       >
+//         <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 26 }}>
+//           {isGoodNews ? goodNews : badNews}
+//         </Text>
+//       </View>
+//     </View>
+//   );
+// };
 
-const ProductListD = ({ airtable }) => {
-  return null;
-  // return (
-  //   <Text>
-  //     {airtable.getValue() ? Object.keys(airtable.getValue()) : 'nope'}
-  //   </Text>
-  // );
-};
-// const ProductList = connectComponent(ProductListD);
-// <ProductList airtable={AirtableData} />
-
-const DashButton = ({ title, onPress, isSelected }) => (
-  <TouchableHighlight style={{}} onPress={onPress}>
-    <View
-      style={{
-        backgroundColor: '#efefef',
-        paddingHorizontal: 40,
-        paddingVertical: 20,
-        borderTopWidth: StyleSheet.hairlineWidth,
-        borderTopColor: '#ccc',
-      }}
-    >
-      <Text
-        style={{
-          ...genericFont,
-          fontSize: 40,
-          color: '#111',
-        }}
-      >
-        {title}
-      </Text>
-    </View>
-  </TouchableHighlight>
-);
-
-const handleAsyncFailure = promise => {
-  promise.then(
-    () => {},
-    e => {
-      alert('An error occurred');
-      console.error(e);
-    },
-  );
-};
-
-const truckStateRef = Client.getRef('truckState');
-
-const setCustomerName = async name =>
-  await truckStateRef.write(lastState => ({
-    ...lastState,
-    customerName: name,
-  }));
-
-const resetStatus = async () =>
-  await truckStateRef.write(lastState => ({
-    ...lastState,
-    customerQueued: false,
-    blendReady: false,
-  }));
-
-const setBlendReady = async () =>
-  await truckStateRef.write(lastState => ({
-    ...lastState,
-    customerQueued: true,
-    blendReady: true,
-  }));
-
-const setCustomerQueued = async () =>
-  await truckStateRef.write(lastState => ({
-    ...lastState,
-    blendReady: false,
-    customerQueued:
-      lastState.customerQueued == null ? true : !lastState.customerQueued,
-  }));
-
-const DebugDataD = ({ input }) => {
-  return (
-    <View style={{ padding: 40 }}>
-      <JSONView data={input} />
-    </View>
-  );
-};
-const DebugData = withObservables(['input'], props => ({
-  input: props.input,
-}))(DebugDataD);
-
-const RobotStatusD = ({ robot }) => {
-  const statusColor = robot.isConnected ? '#090' : '#900';
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        paddingHorizontal: 40,
-      }}
-    >
-      <View
-        style={{
-          backgroundColor: statusColor,
-          padding: 8,
-          paddingHorizontal: 18,
-          borderRadius: 25,
-        }}
-      >
-        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 26 }}>
-          {robot.isConnected ? 'Robot Connected' : 'Robot Disconnected'}
-        </Text>
-      </View>
-    </View>
-  );
-};
-const RobotStatus = () => (
-  <Provider>
-    <Subscribe to={[truck]}>
-      {robot => <RobotStatusD robot={robot.state} />}
-    </Subscribe>
-  </Provider>
-);
-
-const ConnectionStatus = withObservables([], () => ({
-  isConnected: Client.isConnected,
-}))(({ isConnected }) => (
-  <TitleView>{isConnected ? 'Connected' : 'Not Connected'}</TitleView>
-));
-
-class DebugHome extends Component {
-  render() {
-    return (
-      <ScreenContent>
-        <ScrollView
-          style={{ flex: 1, borderWidth: 1 }}
-          showsVerticalScrollIndicator={false}
-        >
-          <ConnectionStatus />
-          <TitleView>Ono Dashboard</TitleView>
-          <RobotStatus />
-          <DebugData input={Client.getRef('airtable').observeObjectValue} />
-          <DebugData input={Client.getRef('truckState').observeObjectValue} />
-          <DashButton
-            title="0. Customer Name"
-            onPress={() => {
-              AlertIOS.prompt('Customer Name:', null, val => {
-                handleAsyncFailure(setCustomerName(val));
-              });
-            }}
-          />
-          <DashButton
-            title="1. Set customer queued"
-            onPress={() => {
-              handleAsyncFailure(setCustomerQueued());
-            }}
-          />
-          <DashButton
-            title="2. Start Blend!"
-            onPress={() => {
-              handleAsyncFailure(truck.sendDebugCommand('o'));
-            }}
-          />
-
-          <DashButton
-            title="1+2. Queue and Start Blend!"
-            onPress={() => {
-              handleAsyncFailure(setCustomerQueued());
-              setTimeout(() => {
-                handleAsyncFailure(truck.sendDebugCommand('o'));
-              }, 8000);
-            }}
-          />
-
-          <DashButton
-            title="3. Set blend ready"
-            onPress={() => {
-              handleAsyncFailure(setBlendReady());
-            }}
-          />
-
-          <DashButton
-            title="4. Reset"
-            onPress={() => {
-              handleAsyncFailure(resetStatus());
-            }}
-          />
-          <DashButton
-            title="🤖 Robot Debug Signals"
-            onPress={() => {
-              this.props.navigation.navigate('Debug');
-            }}
-          />
-
-          <DashButton
-            title="💰 Payment Screen"
-            onPress={() => {
-              this.props.navigation.navigate('PaymentScreen');
-            }}
-          />
-          <DashButton
-            title="💰 Payment Debugging"
-            onPress={() => {
-              openSettings();
-            }}
-          />
-        </ScrollView>
-      </ScreenContent>
-    );
-  }
-}
-
-class Home extends Component {
-  render() {
-    return <DebugHome {...this.props} />;
-    return (
-      <ScreenContent>
-        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-          <TitleView>Select a blend</TitleView>
-          {Products.map(product => (
-            <ProductLink product={product} key={product.id} />
-          ))}
-          <TouchableOpacity
-            onPress={() => {
-              this.props.navigation.navigate('Debug');
-            }}
-          >
-            <Text
-              style={{
-                ...genericFont,
-                textAlign: 'center',
-                margin: 40,
-                color: '#444',
-              }}
-            >
-              Robot Debugging
-            </Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </ScreenContent>
-    );
-  }
-}
-
-class Button extends Component {
-  render() {
-    const { onPress, label } = this.props;
-    return (
-      <TouchableOpacity onPress={onPress} style={{ margin: 30 }}>
-        <View
-          style={{ padding: 40, backgroundColor: '#222', borderRadius: 30 }}
-        >
-          <Text
-            style={{
-              fontSize: 40,
-              textAlign: 'center',
-              ...genericFont,
-              color: 'white',
-            }}
-          >
-            {label}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-}
-
-const Features = ({ product }) => (
-  <View style={{ flexDirection: 'row', marginBottom: 60 }}>
-    {product.features.map(feature => (
-      <View
-        style={{ alignItems: 'center', marginTop: 20, marginRight: 20 }}
-        key={feature.name}
-      >
-        <PlaceholderImage
-          style={{ width: 100, height: 100, marginBottom: 30 }}
-          color="#22cc22"
-        />
-        <Text
-          style={{
-            flex: 1,
-            ...genericFont,
-            marginRight: 60,
-            marginTop: 8,
-            textAlign: 'center',
-            alignSelf: 'center',
-            fontSize: ingredientFontSize,
-          }}
-        >
-          {feature.name}
-        </Text>
-      </View>
-    ))}
-  </View>
-);
-
-const Ingredients = ({ product }) => (
-  <View style={{ flexDirection: 'row', padding: 0 }}>
-    {product.ingredients.map(i => (
-      <View
-        style={{ alignItems: 'center', marginTop: 20, marginRight: 20 }}
-        key={i.name}
-      >
-        <PlaceholderImage
-          style={{ width: 100, height: 100, marginBottom: 30 }}
-          color="#22cc22"
-        />
-        <Text
-          style={{
-            ...genericFont,
-            fontSize: ingredientFontSize,
-            marginTop: 8,
-            textAlign: 'center',
-            minWidth: 190,
-          }}
-        >
-          {i.name}
-        </Text>
-      </View>
-    ))}
-  </View>
-);
-
-class Product extends Component {
-  render() {
-    const id = this.props.navigation.getParam('id');
-    const product = Products.find(p => p.id === id);
-    return (
-      <Page {...this.props} title={product.name} disableScroll>
-        <PlaceholderImage
-          color={product.color}
-          style={{
-            aspectRatio: 3,
-            alignSelf: 'stretch',
-          }}
-        />
-        <ScreenContent>
-          <View style={{ padding: 30 }}>
-            <Features product={product} />
-            <Text style={{ ...genericFont, fontSize: 42, marginBottom: 30 }}>
-              {product.description}
-            </Text>
-            <Text style={{ ...genericFont, fontSize: 52 }}>
-              <Text style={{ fontSize: 54 }}>ingredients | </Text>
-              {product.size} - {product.nutrition}
-            </Text>
-            <Ingredients product={product} />
-          </View>
-        </ScreenContent>
-        <Button
-          label="Checkout"
-          onPress={() => {
-            this.props.navigation.navigate('Payment', { id });
-          }}
-        />
-      </Page>
-    );
-  }
-}
-
-class Payment extends Component {
-  render() {
-    const id = this.props.navigation.getParam('id');
-    const product = Products.find(p => p.id === id);
-    return (
-      <Page {...this.props} title={product.name}>
-        <TitleView>Dip Card Now</TitleView>
-        <TitleView secondary>Total is {product.price}</TitleView>
-        <Button
-          label="Done"
-          onPress={() => {
-            this.props.navigation.navigate('CollectName');
-            // this.props.navigation.navigate('InProgress');
-          }}
-        />
-      </Page>
-    );
-  }
-}
-
-class CollectName extends Component {
-  render() {
-    return (
-      <InputPage
-        {...this.props}
-        title={'Enter first name'}
-        onSubmit={name => {
-          this.props.navigation.navigate('CollectEmail', { name });
-        }}
-      />
-    );
-  }
-}
-
-class CollectEmail extends Component {
-  render() {
-    const { getParam } = this.props.navigation;
-    return (
-      <InputPage
-        {...this.props}
-        title={'Enter email'}
-        type="email-address"
-        onSubmit={email => {
-          truck.makeOrder({
-            name: getParam('name'),
-            email,
-            product: 'Fitness',
-          });
-
-          this.props.navigation.navigate('InProgress');
-        }}
-      />
-    );
-  }
-}
-
-const ScreenContent = ({ children }) => (
-  <View style={{ flex: 1, justifyContent: 'center' }}>{children}</View>
-);
-
-class InProgress extends Component {
-  componentDidMount() {
-    setTimeout(() => {
-      this.props.navigation.navigate('Home');
-    }, 2000);
-  }
-  render() {
-    return (
-      <ScreenContent>
-        <TitleView>Preparing your blend now..</TitleView>
-      </ScreenContent>
-    );
-  }
-}
-
-const PaymentScreen = paymentContainer(
-  ({
-    paymentRequest,
-    paymentError,
-    isPaymentReady,
-    isPaymentComplete,
-    paymentActivityLog,
-  }) => {
-    if (isPaymentComplete) {
-      return (
-        <View style={{ flex: 1 }}>
-          <Text>Thank You!</Text>
-          <JSONView data={paymentActivityLog} />
-        </View>
-      );
-    }
-    if (paymentError) {
-      return (
-        <View style={{ flex: 1 }}>
-          <Text>Error: {paymentError}</Text>
-          <JSONView data={paymentActivityLog} />
-        </View>
-      );
-    }
-    if (isPaymentReady) {
-      return (
-        <View style={{ flex: 1 }}>
-          <TouchableHighlight
-            onPress={() => {
-              paymentRequest(100, 'Hello ono!');
-            }}
-          >
-            <Text style={{ fontSize: 32 }}>Take Money</Text>
-          </TouchableHighlight>
-          <JSONView data={paymentActivityLog} />
-        </View>
-      );
-    }
-
-    return (
-      <View style={{ flex: 1 }}>
-        <JSONView data={paymentActivityLog} />
-      </View>
-    );
-  },
-);
+// const ConnectionStatus = withObservables([], () => ({
+//   isConnected: Client.isConnected,
+// }))(({ isConnected }) => (
+//   <StatusTag
+//     isGoodNews={isConnected}
+//     goodNews="Connected to Kitchen Manager"
+//     badNews="Not connected to kitchen!"
+//   />
+// ));
 
 const App = createStackNavigator(
   {
-    Home,
-    Product,
-    Payment,
-    InProgress,
-    Debug,
-    CollectName,
-    CollectEmail,
-    PaymentScreen,
+    Home: HomeScreen,
+    HostHome: HostHomeScreen,
+    KitchenEng: KitchenEngScreen,
+    KioskSettings: KioskSettingsScreen,
+    KioskHome: KioskHomeScreen,
+    // Product: ProductScreen,
+    // OrderConfirm: OrderConfirmScreen,
+    // OrderComplete: OrderCompleteScreen,
+    // CollectName: CollectNameScreen,
+    // CollectEmail: CollectEmailScreen,
+    // CollectPayment: CollectPaymentScreen,
   },
   {
     navigationOptions: {

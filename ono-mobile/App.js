@@ -6,7 +6,6 @@ const App = ({}) => {
     <View style={{ flex: 1, justifyContent: 'center' }}>
       <Text
         onPress={() => {
-          console.log('DUUDE');
           alert('hello');
         }}
       >

@@ -4,8 +4,14 @@
     "env": "ios-pos-env",
     "globeDependencies": [
       "debug-views",
-      "ono-save-client",
-      "save-client"
+      "ono-data-client",
+      "aven-data-client",
+      "ono-components"
+    ],
+    "moduleDependencies": [
+      "@react-navigation/core",
+      "@react-navigation/native",
+      "react-navigation-transitioner"
     ]
   }
 }

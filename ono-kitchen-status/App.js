@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, LayoutAnimation } from 'react-native';
-import { Client } from '../ono-save-client/OnoSaveClient';
-import { withObservables } from '../save-client/SaveClient';
+import { Client } from '../ono-data-client/OnoDataClient';
+import { withObservables } from '../aven-data-client/DataClient';
 
 const sectionText = {
   color: '#222',

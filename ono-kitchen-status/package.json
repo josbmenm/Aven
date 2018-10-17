@@ -4,8 +4,8 @@
   "globe": {
     "env": "dom",
     "globeDependencies": [
-      "ono-save-client",
-      "save-client"
+      "ono-data-client",
+      "aven-data-client"
     ]
   }
 }

@@ -22,7 +22,8 @@
     },
     "globeDependencies": [
       "aven-web",
-      "save-server"
+      "aven-data-server",
+      "aven-data-source-postgres"
     ],
     "publicBuildConfigVars": [
       "BUILD_ENV"

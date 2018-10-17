@@ -17,7 +17,7 @@ const schema = createSchema({
 });
 
 const runServer = async () => {
-  console.log('☁️ Starting Cloud 💨');
+  console.log('☁️ Starting Restaurant Server 💨');
 
   const dispatch = async action => {
     switch (action.type) {
