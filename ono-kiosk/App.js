@@ -27,7 +27,7 @@ import KioskHomeScreen from './screens/KioskHomeScreen';
 // import OrderCompleteScreen from './screens/OrderCompleteScreen';
 // import CollectNameScreen from './screens/CollectNameScreen';
 // import CollectEmailScreen from './screens/CollectEmailScreen';
-// import CollectPaymentScreen from './screens/CollectPaymentScreen';
+import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
 import JSONView from '../debug-views/JSONView';
 import { Client } from '../ono-data-client/OnoDataClient';
@@ -104,7 +104,7 @@ const App = createStackNavigator(
     // OrderComplete: OrderCompleteScreen,
     // CollectName: CollectNameScreen,
     // CollectEmail: CollectEmailScreen,
-    // CollectPayment: CollectPaymentScreen,
+    PaymentDebug: PaymentDebugScreen,
   },
   {
     navigationOptions: {

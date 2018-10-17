@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableHighlight } from 'react-native';
 import JSONView from '../../debug-views/JSONView';
-import { openSettings, paymentContainer } from './Payments';
+import { paymentContainer } from '../Payments';
+import GenericPage from '../components/GenericPage';
 
 const CollectPaymentScreen = paymentContainer(
   ({
@@ -13,23 +14,23 @@ const CollectPaymentScreen = paymentContainer(
   }) => {
     if (isPaymentComplete) {
       return (
-        <View style={{ flex: 1 }}>
+        <GenericPage>
           <Text>Thank You!</Text>
           <JSONView data={paymentActivityLog} />
-        </View>
+        </GenericPage>
       );
     }
     if (paymentError) {
       return (
-        <View style={{ flex: 1 }}>
+        <GenericPage>
           <Text>Error: {paymentError}</Text>
           <JSONView data={paymentActivityLog} />
-        </View>
+        </GenericPage>
       );
     }
     if (isPaymentReady) {
       return (
-        <View style={{ flex: 1 }}>
+        <GenericPage>
           <TouchableHighlight
             onPress={() => {
               paymentRequest(100, 'Hello ono!');
@@ -38,14 +39,14 @@ const CollectPaymentScreen = paymentContainer(
             <Text style={{ fontSize: 32 }}>Take Money</Text>
           </TouchableHighlight>
           <JSONView data={paymentActivityLog} />
-        </View>
+        </GenericPage>
       );
     }
 
     return (
-      <View style={{ flex: 1 }}>
+      <GenericPage>
         <JSONView data={paymentActivityLog} />
-      </View>
+      </GenericPage>
     );
   },
 );

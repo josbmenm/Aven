@@ -5,32 +5,36 @@ import Title from '../../ono-components/Title';
 import GenericPage from '../components/GenericPage';
 import RowSection from '../../ono-components/RowSection';
 import LinkRow from '../../ono-components/LinkRow';
+import { openSettings } from '../Payments';
 
 export default class KioskSettingsScreen extends Component {
   render() {
-    // <DebugData input={Client.getRef('airtable').observeObjectValue} />
-    // <DebugData input={Client.getRef('truckState').observeObjectValue} />
-    // <ConnectionStatus />
     const { navigation } = this.props;
     return (
       <GenericPage>
-        <Text style={{ fontSize: 100, textAlign: 'center' }} />
+        <Text style={{ fontSize: 100, textAlign: 'center' }}>⚙️</Text>
         <Title>Kiosk Settings</Title>
         <RowSection>
-          <LinkRow onPress={() => {}} icon="🛠" title="Payment Settings" />
           <LinkRow
             onPress={() => {
-              navigation.navigate({ routeName: 'CollectPayment' });
+              openSettings().catch(console.error);
             }}
             icon="🛠"
-            title="Payment Collect"
+            title="Square Reader Settings"
           />
           <LinkRow
             onPress={() => {
-              throw new Error('User-forced crash!');
+              navigation.navigate({ routeName: 'PaymentDebug' });
+            }}
+            icon="💸"
+            title="Test Payment"
+          />
+          <LinkRow
+            onPress={() => {
+              throw new Error('User-forced error!');
             }}
             icon="⚠️"
-            title="Test App Crash"
+            title="Test App Error"
           />
         </RowSection>
       </GenericPage>

@@ -18,3 +18,5 @@ export const Client = new DataClient({
   host: HOST,
   domain: 'onofood.co',
 });
+
+export const dispatch = Client.dispatch;

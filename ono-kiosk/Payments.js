@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { NativeModules, NativeEventEmitter } from 'react-native';
 
-import { OnoClient } from '../aven-data-client/DataClient';
+import { dispatch } from '../ono-data-client/OnoDataClient';
 
 const OPaymentManager = NativeModules.OPaymentManager;
 
@@ -25,7 +25,7 @@ const getPayment = (price, description) =>
   OPaymentManager.getPayment(price, description);
 
 export const configurePayment = async () => {
-  const res = await OnoClient.dispatch({
+  const res = await dispatch({
     type: 'getSquareMobileAuthToken',
   });
   const authCode = res.result.authorization_code;
