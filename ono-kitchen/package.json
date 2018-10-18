@@ -15,6 +15,7 @@
       "aven-data-client"
     ],
     "moduleDependencies": [
+      "fbjs",
       "ws",
       "reconnecting-websocket",
       "rxjs-compat",

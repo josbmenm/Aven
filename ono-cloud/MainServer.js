@@ -2,7 +2,7 @@ import App from './App';
 import WebServer from '../aven-web/WebServer';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import { scrapeAirTable } from './scrapeAirTable';
-import PostgresDataSource from '../aven-data-source-postgres/PostgresDataSource';
+import startPostgresDataSource from '../aven-data-source-postgres/startPostgresDataSource';
 import startDataService from '../aven-data-server/startDataService';
 import { getMobileAuthToken } from './Square';
 const fs = require('fs-extra');
@@ -29,8 +29,14 @@ const runServer = async () => {
   } else if (getSecretConfig('SQL_HOST')) {
     pgConfig.host = getSecretConfig('SQL_HOST');
   }
-  const dataSource = new PostgresDataSource(pgConfig);
-  const saveService = await startDataService({ pgConfig, rootDomain: domain });
+  const dataSource = await startPostgresDataSource({
+    pgConfig,
+    rootDomain: domain,
+  });
+  const dataService = await startDataService({
+    dataSource,
+    rootDomain: domain,
+  });
 
   console.log('☁️ Data Server Ready 💼');
 
@@ -48,7 +54,7 @@ const runServer = async () => {
       ],
       scrapeLocation,
     );
-    const folder = await saveService.putFolder({
+    const folder = await dataService.putFolder({
       folderPath: scrapeLocation,
       refName: 'airtable',
       domain: 'onofood.co',
@@ -63,20 +69,21 @@ const runServer = async () => {
       case 'scrapeUpstream':
         return scrapeUpstream(action);
       default:
-        return await saveService.dispatch(action);
+        return await dataService.dispatch(action);
     }
   };
   const webService = await WebServer(
     App,
     dispatch,
-    saveService.startSocketServer,
+    dataService.startSocketServer,
   );
   console.log('☁️️ Web Ready 🕸');
 
   return {
     close: async () => {
+      await dataSource.close();
+      await dataService.close();
       await webService.close();
-      await saveService.close();
     },
   };
 };

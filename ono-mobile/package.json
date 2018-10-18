@@ -34,9 +34,5 @@
       }
     }
   },
-  "dependencies": {
-    "reconnecting-websocket": "^4.0.0-rc5",
-    "unstated": "^2.1.1",
-    "react-navigation": "^2.16.0"
-  }
+  "dependencies": {}
 }

@@ -1,32 +1,14 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
-import { writeTags, readTags, createSchema } from './Robot';
-
-const schema = createSchema({
-  inputCard0: {
-    program: undefined, // undefined means controller tag
-    tag: 'Local:2:I.Data.0',
-    type: 'boolean',
-  },
-  myOutput: {
-    program: undefined, // undefined means controller tag
-    tag: 'output1',
-    type: 'boolean',
-    enableOutput: true,
-  },
-});
+import { kitchenDispatch } from './Robot';
 
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨');
 
   const dispatch = async action => {
     switch (action.type) {
-      case 'writeTags':
-        return await writeTags(schema, action);
-      case 'readTags':
-        return await readTags(schema, action);
       default:
-        throw `Unknown action type "${action.type}"`;
+        return await kitchenDispatch(action);
     }
   };
 
