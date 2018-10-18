@@ -1,14 +1,11 @@
 import prepareSocketServer from "./prepareSocketServer";
-import startDBService from "../aven-data-server/startDBService";
 const fs = require("fs-extra");
 const pathJoin = require("path").join;
 
-const startDataService = async ({ pgConfig, rootDomain }) => {
-  const dbService = await startDBService({ pgConfig });
-
+const startDataService = async ({ dataSource, rootDomain }) => {
   const uploadFile = async filePath => {
     const fileData = await fs.readFile(filePath);
-    const objectId = await dbService.actions.putObject({
+    const objectId = await dataSource.actions.putObject({
       object: {
         data: fileData.toString("hex")
       }
@@ -23,9 +20,9 @@ const startDataService = async ({ pgConfig, rootDomain }) => {
         const filePath = pathJoin(folderPath, fileName);
         const stat = await fs.stat(filePath);
         if (stat.isDirectory()) {
-          return await uploadFolder(filePath, dbService);
+          return await uploadFolder(filePath, dataSource);
         } else {
-          return await uploadFile(filePath, dbService);
+          return await uploadFile(filePath, dataSource);
         }
       })
     );
@@ -33,7 +30,7 @@ const startDataService = async ({ pgConfig, rootDomain }) => {
     filesInDir.forEach((fileName, index) => {
       files[fileName] = fileList[index];
     });
-    const objectId = await dbService.actions.putObject({ object: { files } });
+    const objectId = await dataSource.actions.putObject({ object: { files } });
     return objectId;
   };
 
@@ -48,22 +45,22 @@ const startDataService = async ({ pgConfig, rootDomain }) => {
     return folder;
   };
   const getObject = async action => {
-    return await dbService.actions.getObject({ id: action.id });
+    return await dataSource.actions.getObject({ id: action.id });
   };
 
   const getRef = async action => {
-    return await dbService.actions.getRef({
+    return await dataSource.actions.getRef({
       ref: action.ref,
       domain: rootDomain
     });
   };
 
   const putObject = async action => {
-    return await dbService.actions.putObject({ object: action.value });
+    return await dataSource.actions.putObject({ object: action.value });
   };
 
   const putRef = async action => {
-    await dbService.actions.putRef({
+    await dataSource.actions.putRef({
       owner: null,
       domain: action.domain,
       objectId: action.objectId,
@@ -82,16 +79,16 @@ const startDataService = async ({ pgConfig, rootDomain }) => {
         return putObject(action);
       case "putRef":
         return putRef(action);
+      case "debug":
+        return await dataSource.actions.getStatus();
       default:
         throw `Unknown action type "${action.type}"`;
     }
   };
 
-  const close = () => {
-    dbService.close();
-  };
+  const close = () => {};
 
-  const startSocketServer = prepareSocketServer(dbService);
+  const startSocketServer = prepareSocketServer(dataSource);
 
   return { dispatch, startSocketServer, putFolder, close };
 };

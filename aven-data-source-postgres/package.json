@@ -1,1 +1,12 @@
-{}
+{
+  "globe": {
+    "globeDependencies": [
+      "aven-data-server"
+    ],
+    "moduleDependencies": [
+      "pg-format",
+      "pg",
+      "json-stable-stringify"
+    ]
+  }
+}

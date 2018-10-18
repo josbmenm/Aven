@@ -1,9 +1,9 @@
-import { Observable, BehaviorSubject, Subject } from "rxjs-compat";
+import { Observable, BehaviorSubject } from "rxjs-compat";
 
-const uuid = require("uuid/v1");
-const { schema, getSqlType } = require("./schema");
+const { schema, getSqlType } = require("../aven-data-server/schema");
 const crypto = require("crypto");
 const stringify = require("json-stable-stringify");
+
 const pgFormat = require("pg-format");
 const { Client } = require("pg");
 
@@ -16,7 +16,7 @@ const md5 = input => {
 
 const channelOfRef = refName => `ref_${md5(refName)}`;
 
-const startDBService = async ({ pgConfig, rootDomain }) => {
+const startPostgresDataSource = async ({ pgConfig, rootDomain }) => {
   const pg = new Client(pgConfig);
 
   let connected = false;
@@ -193,10 +193,10 @@ WHERE constraint_type = 'FOREIGN KEY'
     );
     return { id };
   }
-  async function putBinaryObject(buffer) {
-    throw new Error("Coming soon");
-    return { id: "coming soon" };
-  }
+  // async function putBinaryObject(buffer) {
+  //   throw new Error("Coming soon");
+  //   return { id: "coming soon" };
+  // }
 
   async function getRef({ domain, ref }) {
     const res = await pg.query(
@@ -221,27 +221,27 @@ WHERE constraint_type = 'FOREIGN KEY'
     return { id, object };
   }
 
-  async function getObjectViaRef({ id, ref, domain }) {
-    const res = await pg.query(
-      "SELECT objects.json, objects.binary FROM objects, object_refs WHERE object_refs.object = objects.id AND object_refs.object = $1 AND object_refs.ref = $2 AND object_refs.domain = $3",
-      [id, ref, domain]
-    );
-    if (res.rowCount < 1) {
-      return null;
-    }
-    const object = res.rows[0].json;
-    return { id, ref, object };
-  }
+  // async function getObjectViaRef({ id, ref, domain }) {
+  //   const res = await pg.query(
+  //     "SELECT objects.json, objects.binary FROM objects, object_refs WHERE object_refs.object = objects.id AND object_refs.object = $1 AND object_refs.ref = $2 AND object_refs.domain = $3",
+  //     [id, ref, domain]
+  //   );
+  //   if (res.rowCount < 1) {
+  //     return null;
+  //   }
+  //   const object = res.rows[0].json;
+  //   return { id, ref, object };
+  // }
 
-  async function getRefObject({ domain, ref }) {
-    const refData = await getRef({ domain, ref }); // todo, use a join in postgres for this
-    if (!refData) {
-      return null;
-    }
-    const { id, owner } = refData;
-    const object = await getObject({ id });
-    return { domain, ref, id, owner, object: object && object.object };
-  }
+  // async function getRefObject({ domain, ref }) {
+  //   const refData = await getRef({ domain, ref }); // todo, use a join in postgres for this
+  //   if (!refData) {
+  //     return null;
+  //   }
+  //   const { id, owner } = refData;
+  //   const object = await getObject({ id });
+  //   return { domain, ref, id, owner, object: object && object.object };
+  // }
 
   async function ensureDomain(domain) {
     if (!!rootDomain && domain !== rootDomain) {
@@ -260,12 +260,12 @@ WHERE constraint_type = 'FOREIGN KEY'
     );
   }
 
-  async function ensureObjectRef(domain, ref, objectId) {
-    await pg.query(
-      "INSERT INTO object_refs (ref, domain, object) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
-      [ref, domain, objectId]
-    );
-  }
+  // async function ensureObjectRef(domain, ref, objectId) {
+  //   await pg.query(
+  //     "INSERT INTO object_refs (ref, domain, object) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
+  //     [ref, domain, objectId]
+  //   );
+  // }
 
   async function setRefActiveObject({ domain, ref, id }) {
     await pg.query(
@@ -278,91 +278,91 @@ WHERE constraint_type = 'FOREIGN KEY'
       )}`
     );
   }
-  async function destroyRefObjects({ domain, ref }) {
-    await pg.query("DELETE FROM object_refs WHERE domain = $1 AND ref = $2 ", [
-      domain,
-      ref
-    ]);
-  }
+  // async function destroyRefObjects({ domain, ref }) {
+  //   await pg.query("DELETE FROM object_refs WHERE domain = $1 AND ref = $2 ", [
+  //     domain,
+  //     ref
+  //   ]);
+  // }
 
-  async function destroyRef({ domain, ref }) {
-    await pg.query("DELETE FROM refs WHERE domain = $1 AND ref = $2 ", [
-      ref,
-      domain
-    ]);
-  }
+  // async function destroyRef({ domain, ref }) {
+  //   await pg.query("DELETE FROM refs WHERE domain = $1 AND ref = $2 ", [
+  //     ref,
+  //     domain
+  //   ]);
+  // }
 
-  async function setRefOwner(domain, ref, owner) {
-    await pg.query(
-      "UPDATE refs SET owner = $3 WHERE id = $1 AND domain = $2 ",
-      [ref, domain, owner]
-    );
-  }
+  // async function setRefOwner(domain, ref, owner) {
+  //   await pg.query(
+  //     "UPDATE refs SET owner = $3 WHERE id = $1 AND domain = $2 ",
+  //     [ref, domain, owner]
+  //   );
+  // }
 
-  async function setRefIsPublic({ domain, ref, isPublic }) {
-    await pg.query(
-      "UPDATE refs SET is_public = $1 WHERE id = $2 AND domain = $3",
-      [isPublic, ref, domain]
-    );
-  }
+  // async function setRefIsPublic({ domain, ref, isPublic }) {
+  //   await pg.query(
+  //     "UPDATE refs SET is_public = $1 WHERE id = $2 AND domain = $3",
+  //     [isPublic, ref, domain]
+  //   );
+  // }
 
-  async function listRefObjects({ domain, ref }) {
-    const result = await pg.query(
-      "SELECT objects.id, objects.size FROM objects, object_refs WHERE object_refs.object = objects.id AND object_refs.domain = $1 AND object_refs.ref = $2",
-      [domain, ref]
-    );
-    return result.rows;
-  }
+  // async function listRefObjects({ domain, ref }) {
+  //   const result = await pg.query(
+  //     "SELECT objects.id, objects.size FROM objects, object_refs WHERE object_refs.object = objects.id AND object_refs.domain = $1 AND object_refs.ref = $2",
+  //     [domain, ref]
+  //   );
+  //   return result.rows;
+  // }
 
-  async function listRefs({ domain }) {
-    const result = await pg.query("SELECT id FROM refs WHERE domain = $1", [
-      domain
-    ]);
-    return result.rows;
-  }
+  // async function listRefs({ domain }) {
+  //   const result = await pg.query("SELECT id FROM refs WHERE domain = $1", [
+  //     domain
+  //   ]);
+  //   return result.rows;
+  // }
 
-  async function putRefPermission({ domain, ref, owner, permission }) {
-    await pg.query("BEGIN");
-    try {
-      await pg.query(
-        "DELETE FROM permissions WHERE ref = $1 AND domain = $2 AND owner = $3",
-        [domain, ref, owner]
-      );
-      await pg.query(
-        "INSERT INTO permissions (ref, domain, owner, permission) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
-        [ref, domain, owner, permission]
-      );
-      await pg.query("COMMIT");
-    } catch (e) {
-      console.error(e);
-      await pg.query("ROLLBACK");
-      throw e;
-    }
-  }
+  // async function putRefPermission({ domain, ref, owner, permission }) {
+  //   await pg.query("BEGIN");
+  //   try {
+  //     await pg.query(
+  //       "DELETE FROM permissions WHERE ref = $1 AND domain = $2 AND owner = $3",
+  //       [domain, ref, owner]
+  //     );
+  //     await pg.query(
+  //       "INSERT INTO permissions (ref, domain, owner, permission) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
+  //       [ref, domain, owner, permission]
+  //     );
+  //     await pg.query("COMMIT");
+  //   } catch (e) {
+  //     console.error(e);
+  //     await pg.query("ROLLBACK");
+  //     throw e;
+  //   }
+  // }
 
-  async function getRefPermissions({ domain, ref }) {
-    const result = await pg.query(
-      "SELECT permission, owner FROM permissions WHERE domain = $1 AND ref = $2",
-      [domain, ref]
-    );
-    return result.rows;
-  }
+  // async function getRefPermissions({ domain, ref }) {
+  //   const result = await pg.query(
+  //     "SELECT permission, owner FROM permissions WHERE domain = $1 AND ref = $2",
+  //     [domain, ref]
+  //   );
+  //   return result.rows;
+  // }
 
-  async function putRefObject({ domain, ref, object, owner, defaultOwner }) {
-    await pg.query("BEGIN");
-    try {
-      await ensureDomain(domain);
-      await ensureRef(domain, ref, defaultOwner);
-      const { id } = await putObject({ object });
-      await ensureObjectRef(domain, ref, id);
-      await setRefActiveObject({ domain, ref, id });
-      owner && (await setRefOwner(domain, ref, owner));
-      await pg.query("COMMIT");
-    } catch (e) {
-      console.error(e);
-      await pg.query("ROLLBACK");
-    }
-  }
+  // async function putRefObject({ domain, ref, object, owner, defaultOwner }) {
+  //   await pg.query("BEGIN");
+  //   try {
+  //     await ensureDomain(domain);
+  //     await ensureRef(domain, ref, defaultOwner);
+  //     const { id } = await putObject({ object });
+  //     await ensureObjectRef(domain, ref, id);
+  //     await setRefActiveObject({ domain, ref, id });
+  //     owner && (await setRefOwner(domain, ref, owner));
+  //     await pg.query("COMMIT");
+  //   } catch (e) {
+  //     console.error(e);
+  //     await pg.query("ROLLBACK");
+  //   }
+  // }
 
   async function putRef({ domain, ref, objectId, owner }) {
     await ensureDomain(domain);
@@ -370,28 +370,28 @@ WHERE constraint_type = 'FOREIGN KEY'
     await setRefActiveObject({ domain, ref, id: objectId });
   }
 
-  async function status() {
-    return { connected, migrated };
+  async function getStatus() {
+    return { connected, migrated, ready: connected && migrated };
   }
 
   const actions = {
     putRef,
-    putRefObject,
-    putBinaryObject,
+    // putRefObject,
+    // putBinaryObject,
     putObject,
     getObject,
-    getObjectViaRef,
+    // getObjectViaRef,
     getRef,
-    listRefs,
-    listRefObjects,
-    getRefPermissions,
-    setRefIsPublic,
-    setRefActiveObject,
-    destroyRefObjects,
-    destroyRef,
-    putRefPermission,
-    getRefObject,
-    status
+    // listRefs,
+    // listRefObjects,
+    // getRefPermissions,
+    // setRefIsPublic,
+    // setRefActiveObject,
+    // destroyRefObjects,
+    // destroyRef,
+    // putRefPermission,
+    // getRefObject,
+    getStatus
   };
 
   await init();
@@ -458,4 +458,4 @@ WHERE constraint_type = 'FOREIGN KEY'
   };
 };
 
-export default startDBService;
+export default startPostgresDataSource;
