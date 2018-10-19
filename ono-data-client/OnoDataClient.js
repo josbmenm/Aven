@@ -11,7 +11,8 @@ const PROD_HOST = {
   authority: 'api.onofood.co',
 };
 
-const HOST = PROD_HOST;
+const HOST = DEV_HOST;
+// const HOST = PROD_HOST;
 // const HOST = IS_DEV ? DEV_HOST : PROD_HOST;
 
 export const Client = new DataClient({

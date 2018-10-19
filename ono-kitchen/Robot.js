@@ -1,6 +1,9 @@
 const { Controller, Tag, EthernetIP, TagGroup } = require('ethernet-ip');
 const { INT, BOOL } = EthernetIP.CIP.DataTypes.Types;
 
+const shallowEqual = require('fbjs/lib/shallowEqual');
+const mapObject = require('fbjs/lib/mapObject');
+
 const mainPLC = new Controller();
 
 let readyPLC = null;
@@ -327,68 +330,43 @@ export const writeTags = async (schema, values) => {
   await PLC.writeTagGroup(outputGroup);
 };
 
-const shallowEqual = require('fbjs/lib/shallowEqual');
-const mapObject = require('fbjs/lib/mapObject');
-
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const pulseOutput = async tagName => {
-  await writeTags(mainRobotSchema, { [tagName]: true });
+export const connectKitchenDataSource = dataSource => {
+  // dataSource.actions.putObject();
+  // let currentState;
+  // const getTagValues = tags => mapObject(tags, tag => tag.value);
+  // const updateTags = async () => {
+  //   const lastState = currentState;
+  //   currentState = getTagValues(await readTags(mainRobotSchema, {}));
+  //   if (shallowEqual(lastState, currentState)) {
+  //     await delay(500);
+  //     return;
+  //   }
+  //   console.log('state has changed!', currentState);
+  //   await delay(200);
+  // };
+  // const updateTagsForever = () => {
+  //   updateTags()
+  //     .then(async () => {
+  //       updateTagsForever();
+  //     })
+  //     .catch(console.error);
+  // };
+  // updateTagsForever();
+};
+
+export const writeKitchenTags = async values =>
+  await writeTags(mainRobotSchema, values);
+
+export const kitchenDispatchCommand = async action => {
+  const subsystem = subsystems[action.subsystem];
+  const { immediateOutput, clearPulseOutput } = subsystem.extractActionValues({
+    pulse: action.pulse,
+    values: action.values,
+  });
+  await writeTags(mainRobotSchema, immediateOutput);
   await delay(500);
-  await writeTags(mainRobotSchema, { [tagName]: false });
-};
-let currentState;
-
-const getTagValues = tags => mapObject(tags, tag => tag.value);
-
-const updateTags = async () => {
-  const lastState = currentState;
-  currentState = getTagValues(await readTags(mainRobotSchema, {}));
-  if (shallowEqual(lastState, currentState)) {
-    await delay(500);
-    return;
-  }
-  console.log('state has changed!', currentState);
-  await delay(200);
-};
-const updateTagsForever = () => {
-  updateTags()
-    .then(async () => {
-      updateTagsForever();
-    })
-    .catch(console.error);
-};
-
-updateTagsForever();
-
-export const kitchenDispatch = async action => {
-  switch (action.type) {
-    case 'writeTags':
-      return await writeTags(mainRobotSchema, action.values);
-    // case 'readTags':
-    //   return await readTags(mainRobotSchema, action);
-    case 'kitchenReset': {
-      await pulseOutput('systemResetPls');
-      return {};
-    }
-    case 'kitchenAction': {
-      const subsystem = subsystems[action.subsystem];
-      const {
-        immediateOutput,
-        clearPulseOutput,
-      } = subsystem.extractActionValues({
-        pulse: action.pulse,
-        values: action.values,
-      });
-      console.log('woah', immediateOutput, clearPulseOutput);
-      await writeTags(mainRobotSchema, immediateOutput);
-      await delay(500);
-      await writeTags(mainRobotSchema, clearPulseOutput);
-      return { ...immediateOutput, ...clearPulseOutput };
-    }
-    case 'getState':
-      return currentState;
-    default:
-      throw `Unknown action type "${action.type}"`;
-  }
+  await writeTags(mainRobotSchema, clearPulseOutput);
+  return { ...immediateOutput, ...clearPulseOutput };
 };

@@ -17,6 +17,7 @@
   "globe": {
     "env": "web",
     "envOptions": {
+      "deployEnv": "GoogleAppEngine",
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js"
     },

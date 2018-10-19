@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import { createSwitchNavigator } from '../react-navigation-core';
+import { createSwitchNavigator } from '@react-navigation/core';
 
 const colors = {
   bg: '#FFF3EB',
@@ -133,10 +133,23 @@ const fontsCSS = `
 }
 `;
 
+const GoogleAnalyticsTag = `
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-127774566-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-127774566-1');
+</script>
+`;
+
 Main.navigationOptions = {
   backgroundColor: colors.bg,
   title: 'ono food co',
   customCSS: fontsCSS,
+  customHTML: GoogleAnalyticsTag,
 };
 
 const App = createSwitchNavigator({

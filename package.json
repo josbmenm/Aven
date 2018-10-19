@@ -16,7 +16,7 @@
   "dependencies": {
     "@aven-cloud/globe-tools": "https://github.com/AvenCloud/globe-tools.git#master",
     "@nozbe/with-observables": "^1.0.1",
-    "@react-navigation/core": "^3.0.0-alpha.7",
+    "@react-navigation/core": "^3.0.0-alpha.10",
     "@react-navigation/native": "^3.0.0-alpha.5",
     "body-parser": "^1.18.3",
     "crypto-js": "^3.1.9-1",
@@ -25,7 +25,6 @@
     "globe": "https://github.com/AvenCloud/globe.git#v2",
     "helmet": "^3.13.0",
     "json-stable-stringify": "^1.0.1",
-    "pg": "^7.5.0",
     "pg-format": "^1.0.4",
     "react-navigation-transitioner": "^1.0.0-alpha.3",
     "reconnecting-websocket": "^4.0.0-rc5",

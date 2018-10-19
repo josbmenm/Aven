@@ -2,9 +2,17 @@
   "name": "ono-website",
   "globe": {
     "env": "web",
+    "publicAssetDir": "public",
     "envOptions": {
+      "deployEnv": "Heroku",
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js"
-    }
+    },
+    "globeDependencies": [
+      "aven-web"
+    ],
+    "moduleDependencies": [
+      "@react-navigation/core"
+    ]
   }
 }

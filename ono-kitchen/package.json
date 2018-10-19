@@ -1,5 +1,5 @@
 {
-  "name": "status-server",
+  "name": "ono-kitchen",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -12,6 +12,8 @@
     },
     "globeDependencies": [
       "aven-web",
+      "aven-data-server",
+      "aven-data-source-postgres",
       "aven-data-client"
     ],
     "moduleDependencies": [
