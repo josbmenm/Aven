@@ -294,7 +294,6 @@ class SaveRef {
 
 class DataClient {
   constructor({ host, domain }) {
-    this._host = host;
     this._domain = domain;
     this._httpEndpoint = `${host.useSSL === false ? "http" : "https"}://${
       host.authority
@@ -302,6 +301,7 @@ class DataClient {
     this._wsEndpoint = `${host.useSSL === false ? "ws" : "wss"}://${
       host.authority
     }`;
+    console.log("yo!", this._wsEndpoint);
     this._isConnected = new BehaviorSubject(false);
     this.isConnected = this._isConnected.share();
     this._wsMessages = new Subject();

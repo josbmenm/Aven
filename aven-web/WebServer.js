@@ -3,14 +3,12 @@ import ReactDOMServer from "react-dom/server";
 import { AppRegistry } from "react-native";
 import startServer from "./startServer";
 import { IS_DEV } from "./config";
-// import { handleServerRequest } from '../react-navigation-web';
+import { handleServerRequest } from "@react-navigation/web";
 const yes = require("yes-https");
 const helmet = require("helmet");
 const http = require("http");
 const bodyParser = require("body-parser");
 const WebSocket = require("ws");
-
-const pathJoin = require("path").join;
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -52,15 +50,11 @@ export default async function WebServer(App, dispatch, startSocketServer) {
   expressApp.get("/*", (req, res) => {
     const { path, query } = req;
 
-    // const { navigation, title, options } = handleServerRequest(
-    //   App.router,
-    //   path,
-    //   query,
-    // );
-
-    const navigation = {};
-    const title = "Coming Soon";
-    const options = {};
+    const { navigation, title, options } = handleServerRequest(
+      App.router,
+      path,
+      query
+    );
 
     const { element, getStyleElement } = AppRegistry.getApplication("App", {
       initialProps: {

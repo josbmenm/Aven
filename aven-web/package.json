@@ -3,7 +3,9 @@
     "fs-extra": "^7.0.0"
   },
   "globe": {
+    "publicAssetDir": "publicAssets",
     "moduleDependencies": [
+      "@react-navigation/web",
       "yes-https",
       "helmet",
       "body-parser"
