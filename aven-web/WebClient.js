@@ -6,7 +6,7 @@ import { AppRegistry } from "react-native";
 import { createBrowserApp } from "@react-navigation/web";
 
 export default function startWebClient(App) {
-  const AppWithNavigation = createBrowserApp(App);
+  const AppWithNavigation = App.router ? createBrowserApp(App) : App;
 
   AppRegistry.registerComponent("App", () => AppWithNavigation);
 

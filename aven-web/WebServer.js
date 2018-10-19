@@ -15,10 +15,11 @@ const isProd = process.env.NODE_ENV === "production";
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 export default async function WebServer(App, dispatch, startSocketServer) {
+  console.log("yooo!!", { App: !!App, Router: App && !!App.router });
   const expressApp = express();
   const jsonParser = bodyParser.json();
   expressApp.use(jsonParser);
-  expressApp.use(yes());
+  // expressApp.use(yes());
   expressApp.use(helmet());
   expressApp.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -50,11 +51,15 @@ export default async function WebServer(App, dispatch, startSocketServer) {
   expressApp.get("/*", (req, res) => {
     const { path, query } = req;
 
-    const { navigation, title, options } = handleServerRequest(
-      App.router,
-      path,
-      query
-    );
+    let navigation = {};
+    let title = "";
+    let options = {};
+    if (App.router) {
+      const response = handleServerRequest(App.router, path, query);
+      navigation = response.navigation;
+      title = response.title;
+      options = response.options;
+    }
 
     const { element, getStyleElement } = AppRegistry.getApplication("App", {
       initialProps: {
@@ -92,13 +97,14 @@ export default async function WebServer(App, dispatch, startSocketServer) {
     </head>
     <body>
         <div id="root">${html}</div>
+        ${options.customHTML}
     </body>
 </html>`
     );
   });
-
+  const getEnv = c => process.env[c];
   const serverListenLocation =
-    process.env.APP_SERVER_PORT || process.env.PORT || 8899;
+    process.env.APP_SERVER_PORT || getEnv("PORT") || 8899;
   const httpServer = http.createServer(expressApp);
 
   const wss = new WebSocket.Server({ server: httpServer });

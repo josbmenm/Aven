@@ -6,6 +6,7 @@
     "publicAssetDir": "publicAssets",
     "moduleDependencies": [
       "@react-navigation/web",
+      "@react-navigation/core",
       "yes-https",
       "helmet",
       "body-parser"
