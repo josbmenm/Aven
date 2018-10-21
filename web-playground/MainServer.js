@@ -29,11 +29,11 @@ const runServer = async () => {
         return await saveService.dispatch(action);
     }
   };
-  const webService = await WebServer(
+  const webService = await WebServer({
     App,
     dispatch,
-    saveService.startSocketServer
-  );
+    startSocketServer: saveService.startSocketServer
+  });
   console.log("☁️️ Web Ready 🕸");
 
   return {

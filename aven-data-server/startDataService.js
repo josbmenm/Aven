@@ -5,10 +5,16 @@ const pathJoin = require("path").join;
 const startDataService = async ({ dataSource, rootDomain }) => {
   const uploadFile = async filePath => {
     const fileData = await fs.readFile(filePath);
-    const objectId = await dataSource.actions.putObject({
-      object: {
+    let object;
+    try {
+      object = JSON.parse(fileData);
+    } catch (e) {
+      object = {
         data: fileData.toString("hex")
-      }
+      };
+    }
+    const objectId = await dataSource.actions.putObject({
+      object
     });
     return objectId;
   };

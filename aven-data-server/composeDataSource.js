@@ -1,3 +1,3 @@
 const composeDataSource = (foo, bar) => foo;
 
-export const composeDataSource;
+export default composeDataSource;

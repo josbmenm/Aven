@@ -1,12 +1,14 @@
-import uuid from 'uuid/v1';
+import uuid from "uuid/v1";
 
 const prepareSocketServer = dbService => wss => {
   const socketClosers = {};
-  wss.on('connection', ws => {
+  console.log("setting up web socket!");
+  wss.on("connection", ws => {
     const sendMessage = message => ws.send(JSON.stringify(message));
 
     const clientId = uuid();
-    sendMessage({ type: 'ClientId', clientId });
+    console.log("ws connection!", clientId);
+    sendMessage({ type: "ClientId", clientId });
 
     const _refSubscriptions = {};
 
@@ -21,19 +23,19 @@ const prepareSocketServer = dbService => wss => {
       socketClosers[clientId] = null;
     };
     socketClosers[clientId] = closeSocket;
-    ws.on('close', () => {
+    ws.on("close", () => {
       closeSocket();
     });
-    ws.on('error', err => {
-      console.error('Websocket Error of Client ' + clientId);
+    ws.on("error", err => {
+      console.error("Websocket Error of Client " + clientId);
       console.error(err);
       closeSocket();
     });
-    ws.on('message', async message => {
+    ws.on("message", async message => {
       const action = { ...JSON.parse(message), clientId };
 
       switch (action.type) {
-        case 'SubscribeRefs': {
+        case "SubscribeRefs": {
           action.refs.forEach(refName => {
             _refSubscriptions[refName] = dbService
               .observeRef(refName)
@@ -41,18 +43,18 @@ const prepareSocketServer = dbService => wss => {
               .subscribe({
                 next: v => {
                   sendMessage({
-                    type: 'RefUpdate',
+                    type: "RefUpdate",
                     name: refName,
-                    ...v,
+                    ...v
                   });
                 },
                 error: () => {},
-                complete: () => {},
+                complete: () => {}
               });
           });
           return;
         }
-        case 'UnsubscribeRefs': {
+        case "UnsubscribeRefs": {
           action.refs.forEach(refName => {
             closeSubscription(refName);
           });
@@ -69,9 +71,9 @@ const prepareSocketServer = dbService => wss => {
   return {
     close: () => {
       Object.keys(socketClosers).forEach(
-        clientId => socketClosers[clientId] && socketClosers[clientId](),
+        clientId => socketClosers[clientId] && socketClosers[clientId]()
       );
-    },
+    }
   };
 };
 

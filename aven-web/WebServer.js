@@ -9,17 +9,95 @@ const helmet = require("helmet");
 const http = require("http");
 const bodyParser = require("body-parser");
 const WebSocket = require("ws");
+const path = require("path");
+const mime = require("mime");
 
 const isProd = process.env.NODE_ENV === "production";
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
-export default async function WebServer(App, dispatch, startSocketServer) {
-  console.log("yooo!!", { App: !!App, Router: App && !!App.router });
+const sendNotFound = res => {
+  res.status(404);
+  res.send("Not found");
+};
+
+async function objectResponse({
+  domain,
+  refName,
+  dispatch,
+  refPath,
+  objId,
+  objName
+}) {
+  const obj = await dispatch({
+    type: "getObject",
+    id: objId
+  });
+  if (!obj) {
+    return sendNotFound;
+  }
+  if (refPath === "/" || refPath === "") {
+    if (!obj.object.data) {
+      // should be checking for some type here, rather than looking at "data"..
+      return res => {
+        res.send(obj.object);
+      };
+    }
+    const mimeType = mime.getType(path.extname(objName));
+    return res => {
+      res.header("Content-Type", mimeType);
+      res.send(Buffer.from(obj.object.data, "hex"));
+    };
+  }
+  if (!obj.object || !obj.object.files) {
+    return sendNotFound;
+  }
+  const pathParts = refPath.split("/");
+  const pathTermName = pathParts[1];
+  if (obj.object.files[pathTermName]) {
+    const childRefPath = `/${pathParts.slice(2).join("/")}`;
+    const childId = obj.object.files[pathTermName].id;
+    return await objectResponse({
+      domain,
+      refName,
+      dispatch,
+      objName: pathTermName,
+      objId: childId,
+      refPath: childRefPath
+    });
+  }
+  return sendNotFound;
+}
+
+async function webDataInterface({ domain, refName, dispatch, refPath }) {
+  const ref = await dispatch({
+    ref: refName,
+    type: "getRef"
+    // domain,
+  });
+  if (!ref || !ref.id) {
+    return sendNotFound;
+  }
+  return await objectResponse({
+    domain,
+    refName,
+    dispatch,
+    objName: refName,
+    objId: ref.id,
+    refPath
+  });
+}
+
+export default async function WebServer({
+  App,
+  dispatch,
+  startSocketServer,
+  mainDomain
+}) {
   const expressApp = express();
   const jsonParser = bodyParser.json();
   expressApp.use(jsonParser);
-  // expressApp.use(yes());
+  expressApp.use(yes());
   expressApp.use(helmet());
   expressApp.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -48,6 +126,23 @@ export default async function WebServer(App, dispatch, startSocketServer) {
         });
     }
   });
+
+  expressApp.get("/_/:ref*", (req, res) => {
+    const domain = mainDomain;
+    const refName = req.params.ref;
+    const refPath = req.params["0"];
+
+    webDataInterface({ domain, refName, refPath, dispatch })
+      .then(responder => {
+        responder(res);
+      })
+      .catch(e => {
+        res.status(500);
+        console.error(e);
+        res.send(e);
+      });
+  });
+
   expressApp.get("/*", (req, res) => {
     const { path, query } = req;
 

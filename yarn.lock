@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@aven-cloud/globe-tools@https://github.com/AvenCloud/globe-tools.git#master", "globe-tools@https://github.com/AvenCloud/globe-tools.git#master":
+"@aven-cloud/globe-tools@https://github.com/AvenCloud/globe-tools.git#master":
   version "0.1.0"
-  resolved "https://github.com/AvenCloud/globe-tools.git#e53295ebc52fe05f574b405775c6376d712db515"
+  resolved "https://github.com/AvenCloud/globe-tools.git#3cad9dab21a153243bb234789f104dd638130b1e"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     fs-extra "^7.0.0"
@@ -46,21 +46,10 @@
     query-string "^6.2.0"
     react-lifecycles-compat "^3.0.4"
 
-"@react-navigation/core@^3.0.0-alpha.10":
+"@react-navigation/core@^3.0.0-alpha.10", "@react-navigation/core@^3.0.0-alpha.4":
   version "3.0.0-alpha.10"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.0-alpha.10.tgz#c5d1dc3bb1bb4954b6c43ef225fb4e1159d98d8f"
   integrity sha512-Yew0tOGDGkNyzVr2kG1BjR4zHr8B4EHicyvtAWqQy/cFrp5mO+HG5Ev/fva4FxSpEe5Bh6zvoReHXtC8mXerlA==
-  dependencies:
-    create-react-context "^0.2.3"
-    hoist-non-react-statics "^3.0.1"
-    path-to-regexp "^1.7.0"
-    query-string "^6.2.0"
-    react-lifecycles-compat "^3.0.4"
-
-"@react-navigation/core@^3.0.0-alpha.4":
-  version "3.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.0-alpha.9.tgz#2a8dafa0dc636d71e208c581873a0152da96ca2d"
-  integrity sha512-WdblNhAIgHytctDdyDvbHTWZt2vFZd/457sK3DiCbCnjd0IM4RPN64Pt2vlw/e4Z7g5okPIo28VPlRbODR97Vg==
   dependencies:
     create-react-context "^0.2.3"
     hoist-non-react-statics "^3.0.1"
@@ -1509,17 +1498,22 @@ micromatch@^3.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.2"
 
-mime-db@~1.36.0:
-  version "1.36.0"
-  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.36.0.tgz#5020478db3c7fe93aad7bbcc4dcf869c43363397"
-  integrity sha512-L+xvyD9MkoYMXb1jAmzI/lWYAxAMCPvIBSWur0PZ5nOf5euahRLVqH//FKW9mWp2lkqUgYiXPgkzfMUFi4zVDw==
+mime-db@~1.37.0:
+  version "1.37.0"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.37.0.tgz#0b6a0ce6fdbe9576e25f1f2d2fde8830dc0ad0d8"
+  integrity sha512-R3C4db6bgQhlIhPU48fUtdVmKnflq+hRdad7IyKhtFj06VPNVdk2RhiYL3UjQIlso8L+YxAtFkobT0VK+S/ybg==
 
 mime-types@~2.1.18:
-  version "2.1.20"
-  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.20.tgz#930cb719d571e903738520f8470911548ca2cc19"
-  integrity sha512-HrkrPaP9vGuWbLK1B1FfgAkbqNjIuy4eHlIYnFi7kamZyLLrGlo2mpcx0bBmNpKqBtYtAfGbodDddIgddSJC2A==
+  version "2.1.21"
+  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.21.tgz#28995aa1ecb770742fe6ae7e58f9181c744b3f96"
+  integrity sha512-3iL6DbwpyLzjR3xHSFNFeb9Nz/M8WDkX33t1GFQnFOllWk8pOrh/LSrB5OXlnlW5P9LH73X6loW/eogc+F5lJg==
   dependencies:
-    mime-db "~1.36.0"
+    mime-db "~1.37.0"
+
+mime@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/mime/-/mime-2.3.1.tgz#b1621c54d63b97c47d3cfe7f7215f7d64517c369"
+  integrity sha512-OEUllcVoydBHGN1z84yfQDimn58pZNNNXgZlHXSboxMlFvgI6MXSWpWKpFRra7H1HxpVhHTkrghfRW49k6yjeg==
 
 mimic-fn@^1.0.0:
   version "1.2.0"
@@ -2082,7 +2076,7 @@ react-navigation-tabs@1.0.0-alpha.3:
 
 "react-navigation@https://github.com/react-navigation/react-navigation":
   version "3.0.0-alpha.7"
-  resolved "https://github.com/react-navigation/react-navigation#0c9014e52feacd8ac4d2e3b3fc82e9ef54f5113a"
+  resolved "https://github.com/react-navigation/react-navigation#0c4845f2ffd425a6194a06996241c037f65870fc"
   dependencies:
     "@react-navigation/core" "3.0.0-alpha.6"
     "@react-navigation/native" "^3.0.0-alpha.5"
@@ -2121,9 +2115,9 @@ readable-stream@^2.0.6:
     util-deprecate "~1.0.1"
 
 reconnecting-websocket@^4.0.0-rc5:
-  version "4.1.9"
-  resolved "https://registry.yarnpkg.com/reconnecting-websocket/-/reconnecting-websocket-4.1.9.tgz#85f7c602af93ce22707cb49d84c81355f24a468b"
-  integrity sha512-UVJ8FGO9FKyEhMmSc0LJ38+W0UxYH5+AGpOzOsPVu61u/RO1/KgqyMzOiqkYEj4YuKmdSoz+Y2+DWSZhjqEJSg==
+  version "4.1.10"
+  resolved "https://registry.yarnpkg.com/reconnecting-websocket/-/reconnecting-websocket-4.1.10.tgz#15485b5c5266ab6dd99187e23e8da207d24c4270"
+  integrity sha512-x6vgqa8q9KRuJyFkOvBKH1TfyTmN5OWQUf1MIsblfOSY29VE+iI9cKqmIuPvg9TO/hUBxdmUIVutDkcdbqFwZg==
 
 referrer-policy@1.1.0:
   version "1.1.0"

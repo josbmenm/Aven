@@ -9,6 +9,7 @@
       "@react-navigation/core",
       "yes-https",
       "helmet",
+      "mime",
       "body-parser"
     ]
   }

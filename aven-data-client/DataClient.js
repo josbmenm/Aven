@@ -8,7 +8,7 @@ export const withObservables = withObs;
 
 const observeNull = Observable.create(observer => {});
 
-class SaveObject {
+class DataObject {
   constructor({ client, objectId }) {
     this._client = client;
     this._objectId = objectId;
@@ -56,6 +56,18 @@ class SaveObject {
       .catch(e => observer.error(e));
   });
 
+  observeConnectedValue = lookup =>
+    this.observeValue
+      .map(value => {
+        let refVal = value;
+        lookup.forEach(v => {
+          refVal = refVal[v];
+        });
+        const connected = this._client.getObject(refVal.id);
+        return connected.observeValue;
+      })
+      .switch();
+
   fetch = async () => {
     if (this._state.value !== null) {
       return;
@@ -101,7 +113,7 @@ class SaveObject {
   }
 }
 
-class SaveRef {
+class DataRef {
   constructor({ client, name }) {
     this._client = client;
     this._name = name;
@@ -290,6 +302,18 @@ class SaveRef {
       return obj.observeValue;
     })
     .switch();
+
+  observeConnectedObjectValue = lookup => {
+    return this.observe
+      .map(r => {
+        if (!r.objectId) {
+          return observeNull;
+        }
+        const obj = this._client.getObject(r.objectId);
+        return obj.observeConnectedValue(lookup);
+      })
+      .switch();
+  };
 }
 
 class DataClient {
@@ -301,7 +325,6 @@ class DataClient {
     this._wsEndpoint = `${host.useSSL === false ? "ws" : "wss"}://${
       host.authority
     }`;
-    console.log("yo!", this._wsEndpoint);
     this._isConnected = new BehaviorSubject(false);
     this.isConnected = this._isConnected.share();
     this._wsMessages = new Subject();
@@ -326,7 +349,7 @@ class DataClient {
     try {
       result = JSON.parse(result);
     } catch (e) {
-      console.warn("Expecting JSON but could not parse: " + result);
+      throw new Error("Expecting JSON but could not parse: " + result);
     }
     console.log("📣", action);
     console.log("💨", result);
@@ -343,7 +366,7 @@ class DataClient {
     if (this._objects[objectId]) {
       return this._objects[objectId];
     }
-    return (this._objects[objectId] = new SaveObject({
+    return (this._objects[objectId] = new DataObject({
       client: this,
       objectId
     }));
@@ -361,7 +384,7 @@ class DataClient {
     if (this._refs[name]) {
       return this._refs[name];
     }
-    return (this._refs[name] = new SaveRef({ client: this, name }));
+    return (this._refs[name] = new DataRef({ client: this, name }));
   };
 
   _ws = null;
