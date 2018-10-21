@@ -251,9 +251,7 @@ const generateSubsystemTags = subsystems => {
         enableOutput: false,
       };
     });
-    console.log('dude!!', subsystem.pulseCommands);
     Object.keys(subsystem.pulseCommands || {}).forEach(pulseCommandName => {
-      console.log('CONFIG', pulseCommandName);
       const internalTagName = `${subsystemName}_${pulseCommandName}_PULSE`;
       const pulseCommandSpec = subsystem.pulseCommands[pulseCommandName];
       schemaConfig[internalTagName] = {
@@ -281,7 +279,7 @@ const generateSubsystemTags = subsystems => {
 
   return schemaConfig;
 };
-console.log('ok', generateSubsystemTags(subsystems));
+
 const mainRobotSchema = createSchema({
   ...generateSubsystemTags(subsystems),
 

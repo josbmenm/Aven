@@ -14,6 +14,7 @@ const runServer = async () => {
   const domain = 'maui.onofood.co';
 
   const pgConfig = {
+    ssl: true,
     user: getSecretConfig('SQL_USER'),
     password: getSecretConfig('SQL_PASSWORD'),
     database: getSecretConfig('SQL_DATABASE'),
@@ -41,16 +42,18 @@ const runServer = async () => {
     }
   };
 
-  const webService = await WebServer(
+  const webService = await WebServer({
+    mainDomain: domain,
     App,
     dispatch,
-    dataService.startSocketServer,
-  );
+    startSocketServer: dataService.startSocketServer,
+  });
   console.log('☁️️ Web Ready 🕸');
 
   return {
     close: async () => {
-      await dataSource.close();
+      await pgDataSource.close();
+      await memoryDataSource.close();
       await dataService.close();
       await webService.close();
     },

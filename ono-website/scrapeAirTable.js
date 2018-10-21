@@ -1,6 +1,8 @@
+import { getSecretConfig } from '../aven-web/config';
 const Airtable = require('airtable');
 const fs = require('fs-extra');
 const pathJoin = require('path').join;
+const path = require('path');
 const crypto = require('crypto');
 
 const wget = require('wget-improved');
@@ -19,18 +21,25 @@ const download = async (url, fileDest) => {
     });
   });
 };
+
+const destPath = pathJoin(process.cwd(), 'scrape-data');
+
 const hash = input =>
   crypto
     .createHash('md5')
     .update(input)
     .digest('hex');
 
-export const scrapeAirTable = async (apiKey, baseId, tableNames, destPath) => {
+export const scrapeAirTable = async dataService => {
+  const apiKey = getSecretConfig('AIRTABLE_API_KEY');
+  const baseId = getSecretConfig('AIRTABLE_BASE_ID');
+
   const airtableBase = new Airtable({ apiKey }).base(baseId);
 
   const scrapeTable = tableName =>
     new Promise((resolve, reject) => {
       const allRecords = {};
+      let index = 0;
       airtableBase(tableName)
         .select({
           // view: 'Grid view',
@@ -38,7 +47,11 @@ export const scrapeAirTable = async (apiKey, baseId, tableNames, destPath) => {
         .eachPage(
           (records, fetchNextPage) => {
             records.forEach(record => {
-              allRecords[record.id] = { id: record.id, ...record.fields };
+              allRecords[record.id] = {
+                id: record.id,
+                ...record.fields,
+                _index: index++,
+              };
             });
             fetchNextPage();
           },
@@ -73,6 +86,13 @@ export const scrapeAirTable = async (apiKey, baseId, tableNames, destPath) => {
     return fileURLs;
   };
 
+  const tableNames = [
+    'Kiosk Menu',
+    'Recipes',
+    'Recipe Ingredients',
+    'Ingredients',
+    'Functions',
+  ];
   const baseTables = {};
   await Promise.all(
     tableNames.map(async tableName => {
@@ -83,10 +103,12 @@ export const scrapeAirTable = async (apiKey, baseId, tableNames, destPath) => {
   const baseFiles = {};
   baseFilesURLs.forEach(fileUrl => {
     const fileId = hash(fileUrl);
-    baseFiles[fileUrl] = fileId;
+    const ext = path.extname(fileUrl);
+    baseFiles[fileUrl] = `${fileId}${ext}`;
   });
   const base = { baseTables, baseFiles };
   const filesPath = pathJoin(destPath, 'files');
+  console.log(destPath);
   await fs.mkdirp(destPath);
   await fs.mkdirp(filesPath);
   await fs.writeFile(
@@ -103,5 +125,12 @@ export const scrapeAirTable = async (apiKey, baseId, tableNames, destPath) => {
       }
     }),
   );
-  return { success: 42 };
+
+  const folder = await dataService.putFolder({
+    folderPath: destPath,
+    refName: 'airtable',
+    domain: 'onofood.co',
+  });
+  await fs.remove(destPath);
+  return folder;
 };

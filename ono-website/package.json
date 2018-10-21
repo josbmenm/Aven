@@ -5,14 +5,21 @@
     "publicAssetDir": "public",
     "envOptions": {
       "deployEnv": "Heroku",
+      "herokuAppName": "ono-website",
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js"
     },
     "globeDependencies": [
-      "aven-web"
+      "aven-web",
+      "aven-data-server",
+      "aven-data-source-postgres"
     ],
     "moduleDependencies": [
-      "@react-navigation/core"
+      "@react-navigation/core",
+      "airtable",
+      "wget-improved",
+      "square-connect",
+      "fs-extra"
     ]
   }
 }

@@ -1,4 +1,13 @@
+import React, { Component } from 'react';
+import { View, StatusBar, Image } from 'react-native';
+import { createStackNavigator } from 'react-navigation-stack';
+import { createAppContainer } from '@react-navigation/native';
+import { genericText } from '../../ono-components/Styles';
+import GenericPage from '../components/GenericPage';
+
 const Products = [];
+
+const PlaceholderImage = () => <View />;
 
 const Features = ({ product }) => (
   <View style={{ flexDirection: 'row', marginBottom: 60 }}>
@@ -14,7 +23,7 @@ const Features = ({ product }) => (
         <Text
           style={{
             flex: 1,
-            ...genericFont,
+            ...genericText,
             marginRight: 60,
             marginTop: 8,
             textAlign: 'center',
@@ -42,7 +51,7 @@ const Ingredients = ({ product }) => (
         />
         <Text
           style={{
-            ...genericFont,
+            ...genericText,
             fontSize: ingredientFontSize,
             marginTop: 8,
             textAlign: 'center',
@@ -56,9 +65,10 @@ const Ingredients = ({ product }) => (
   </View>
 );
 
-class Product extends Component {
+export default class MenuItemScreen extends Component {
   render() {
     const id = this.props.navigation.getParam('id');
+    debugger;
     const product = Products.find(p => p.id === id);
     return (
       <GenericPage {...this.props} title={product.name} disableScroll>
@@ -72,10 +82,10 @@ class Product extends Component {
         <ScreenContent>
           <View style={{ padding: 30 }}>
             <Features product={product} />
-            <Text style={{ ...genericFont, fontSize: 42, marginBottom: 30 }}>
+            <Text style={{ ...genericText, fontSize: 42, marginBottom: 30 }}>
               {product.description}
             </Text>
-            <Text style={{ ...genericFont, fontSize: 52 }}>
+            <Text style={{ ...genericText, fontSize: 52 }}>
               <Text style={{ fontSize: 54 }}>ingredients | </Text>
               {product.size} - {product.nutrition}
             </Text>

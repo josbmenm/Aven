@@ -1,28 +1,14 @@
 import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  StatusBar,
-  TouchableHighlight,
-  AlertIOS,
-  Image,
-} from 'react-native';
-import { createStackNavigator, withNavigation } from 'react-navigation';
-import { TitleView } from './Components';
-import InputPage from './components/InputPage';
-import GenericPage from './components/GenericPage';
-import CallToActionButton from '../ono-components/CallToActionButton';
+import { View, StatusBar, Image } from 'react-native';
+import { createStackNavigator } from 'react-navigation-stack';
+import { createAppContainer } from '@react-navigation/native';
 
 import HomeScreen from './screens/HomeScreen';
 import HostHomeScreen from './screens/HostHomeScreen';
 import KitchenEngScreen from './screens/KitchenEngScreen';
 import KioskSettingsScreen from './screens/KioskSettingsScreen';
 import KioskHomeScreen from './screens/KioskHomeScreen';
-// import ProductScreen from './screens/ProductScreen';
+import MenuItemScreen from './screens/MenuItemScreen';
 // import OrderConfirmScreen from './screens/OrderConfirmScreen';
 // import OrderCompleteScreen from './screens/OrderCompleteScreen';
 // import CollectNameScreen from './screens/CollectNameScreen';
@@ -99,7 +85,7 @@ const App = createStackNavigator(
     KitchenEng: KitchenEngScreen,
     KioskSettings: KioskSettingsScreen,
     KioskHome: KioskHomeScreen,
-    // Product: ProductScreen,
+    MenuItem: MenuItemScreen,
     // OrderConfirm: OrderConfirmScreen,
     // OrderComplete: OrderCompleteScreen,
     // CollectName: CollectNameScreen,
@@ -113,11 +99,7 @@ const App = createStackNavigator(
   },
 );
 
-const AppContainer = () => (
-  <View style={{ flex: 1 }}>
-    <App />
-  </View>
-);
+const AppContainer = createAppContainer(App);
 
 export default AppContainer;
 

@@ -12,11 +12,7 @@
   "dependencies": {
     "buffer": "^5.2.1",
     "react": "16.4.1",
-    "react-native": "0.56.0",
-    "react-navigation": "^2.16.0",
-    "reconnecting-websocket": "^4.0.0-rc5",
-    "rxjs": "^6.3.2",
-    "unstated": "^2.1.1"
+    "react-native": "0.56.0"
   },
   "devDependencies": {
     "babel-jest": "23.4.2",

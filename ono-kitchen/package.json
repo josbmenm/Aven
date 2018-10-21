@@ -19,7 +19,6 @@
     "moduleDependencies": [
       "fbjs",
       "ws",
-      "reconnecting-websocket",
       "rxjs-compat",
       "ethernet-ip",
       "@nozbe/with-observables"

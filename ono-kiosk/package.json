@@ -11,6 +11,7 @@
     "moduleDependencies": [
       "@react-navigation/core",
       "@react-navigation/native",
+      "react-navigation-stack",
       "react-navigation-transitioner"
     ]
   }

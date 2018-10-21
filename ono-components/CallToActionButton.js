@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
+import { genericText } from './Styles';
 
 export default class CallToActionButton extends Component {
   render() {
@@ -13,7 +14,7 @@ export default class CallToActionButton extends Component {
             style={{
               fontSize: 40,
               textAlign: 'center',
-              ...genericFont,
+              ...genericText,
               color: 'white',
             }}
           >

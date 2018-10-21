@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export const genericFont = {
+export const genericText = {
   color: '#111',
 };
 export const titleFontSize = 60;
@@ -64,5 +64,8 @@ export const buttonStyle = {
   borderRadius: 42,
   padding: 20,
 };
+
+export const menuItemNameText = { ...genericText };
+export const menuItemDescriptionText = { ...genericText };
 
 export const keyboardAppearance = 'dark';
