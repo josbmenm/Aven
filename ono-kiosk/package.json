@@ -9,6 +9,7 @@
       "ono-components"
     ],
     "moduleDependencies": [
+      "@nozbe/with-observables",
       "@react-navigation/core",
       "@react-navigation/native",
       "react-navigation-stack",

@@ -27,6 +27,12 @@ const ConnectionStatusRow = withObservables([], () => ({
   isConnected: Client.isConnected,
 }))(({ isConnected }) => <StatusRow title="Connected" value={isConnected} />);
 
+const FaultStatusRow = withObservables([], () => ({
+  isFaulted: Client.getRef('KitchenState').observeObjectValue,
+}))(({ isFaulted }) => (
+  <StatusRow title={JSON.stringify(isFaulted)} value={true} />
+));
+
 export default class KitchenEngScreen extends Component {
   render() {
     const { navigation } = this.props;
@@ -34,6 +40,7 @@ export default class KitchenEngScreen extends Component {
       <GenericPage>
         <Title>Kitchen Engineering</Title>
         <ConnectionStatusRow />
+        <FaultStatusRow />
         <RowSection />
       </GenericPage>
     );

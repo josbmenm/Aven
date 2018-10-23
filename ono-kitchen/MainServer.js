@@ -3,7 +3,8 @@ import WebServer from '../aven-web/WebServer';
 import startPostgresDataSource from '../aven-data-source-postgres/startPostgresDataSource';
 import startDataService from '../aven-data-server/startDataService';
 import startMemoryDataSource from '../aven-data-server/startMemoryDataSource';
-import composeDataSource from '../aven-data-server/composeDataSource';
+import startNetworkDataSource from '../aven-data-server/startNetworkDataSource';
+import composeDataSources from '../aven-data-server/composeDataSources';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 
 import { kitchenDispatchCommand, connectKitchenDataSource } from './Robot';
@@ -25,9 +26,19 @@ const runServer = async () => {
     pgConfig,
     rootDomain: domain,
   });
-  const memoryDataSource = await startMemoryDataSource();
+  const memoryDataSource = await startMemoryDataSource({
+    rootDomain: domain,
+  });
+  const networkDataSource = await startNetworkDataSource({
+    domain: 'onofood.co',
+    host: {
+      authority: 'www.onofood.co',
+    },
+  });
   const dataService = await startDataService({
-    dataSource: composeDataSource(pgDataSource, memoryDataSource),
+    // dataSource: composeDataSources([pgDataSource, memoryDataSource]),
+    // dataSource: memoryDataSource,
+    dataSource: networkDataSource,
     rootDomain: domain,
   });
 
@@ -35,7 +46,8 @@ const runServer = async () => {
 
   const dispatch = async action => {
     switch (action.type) {
-      case 'kitchenCommand': // pulse, values
+      case 'kitchenCommand':
+        // subsystem (eg 'IOSystem'), pulse (eg ['home']), values (eg: foo: 123)
         return await kitchenDispatchCommand(action);
       default:
         return await dataService.dispatch(action);

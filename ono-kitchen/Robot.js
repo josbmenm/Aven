@@ -69,25 +69,69 @@ const getTagOfSchema = tagSchema => {
   );
 };
 
-export const createSchema = controllerSchema => {
+export const createSchema = subsystems => {
+  const robotTags = {};
+  Object.keys(subsystems).forEach(subsystemName => {
+    const subsystem = subsystems[subsystemName];
+    Object.keys(subsystem.readTags).forEach(readTagName => {
+      const internalTagName = `${subsystemName}_${readTagName}_READ`;
+      const readTagSpec = subsystem.readTags[readTagName];
+      robotTags[internalTagName] = {
+        subSystem: subsystemName,
+        name: internalTagName,
+        type: readTagSpec.type,
+        tag: getExternalTagName(subsystem.systemPrefix, readTagSpec.subTag),
+        enableOutput: false,
+      };
+    });
+    Object.keys(subsystem.pulseCommands || {}).forEach(pulseCommandName => {
+      const internalTagName = `${subsystemName}_${pulseCommandName}_PULSE`;
+      const pulseCommandSpec = subsystem.pulseCommands[pulseCommandName];
+      robotTags[internalTagName] = {
+        subSystem: subsystemName,
+        name: pulseCommandName,
+        type: 'boolean',
+        tag: getExternalTagName(
+          subsystem.systemPrefix,
+          pulseCommandSpec.subTag,
+        ),
+        enableOutput: true,
+      };
+    });
+    Object.keys(subsystem.valueCommands || {}).forEach(valueCommandName => {
+      const internalTagName = `${subsystemName}_${valueCommandName}_VALUE`;
+      const valueCommandSpec = subsystem.valueCommands[valueCommandName];
+      robotTags[internalTagName] = {
+        subSystem: subsystemName,
+        name: valueCommandName,
+        type: valueCommandSpec.type,
+        tag: getExternalTagName(
+          subsystem.systemPrefix,
+          valueCommandSpec.subTag,
+        ),
+        enableOutput: true,
+      };
+    });
+  });
+
   const tags = {};
   const allTagsGroup = new TagGroup();
-  Object.keys(controllerSchema).forEach(tagAlias => {
-    tags[tagAlias] = getTagOfSchema(controllerSchema[tagAlias]);
+  Object.keys(robotTags).forEach(tagAlias => {
+    tags[tagAlias] = getTagOfSchema(robotTags[tagAlias]);
     allTagsGroup.add(tags[tagAlias]);
   });
-  return { config: controllerSchema, tags, allTagsGroup };
+  return { config: { subsystems, tags: robotTags }, tags, allTagsGroup };
 };
 
 const getExternalTagName = (systemPrefix, subTagName) =>
   systemPrefix == null ? subTagName : `${systemPrefix}.${subTagName}`;
 
 const subsystems = {};
-const createSubSystem = (systemName, systemPrefix, systemConfig) => {
-  const { readTags, icon, pulseCommands, valueCommands } = systemConfig;
+const createSubSystem = (systemName, systemPrefix, subSystemConfig) => {
+  const { readTags, icon } = subSystemConfig;
+  const pulseCommands = subSystemConfig.pulseCommands || {};
+  const valueCommands = subSystemConfig.valueCommands || {};
   const extractActionValues = ({ pulse, values }) => {
-    const pulseCommands = systemConfig.pulseCommands || {};
-    const valueCommands = systemConfig.valueCommands || {};
     const immediateOutput = {};
     const clearPulseOutput = {};
     pulse.forEach(pulseName => {
@@ -179,6 +223,7 @@ createSubSystem('IOSystem', null, {
     ),
   },
 });
+
 createSubSystem('System', '_System', {
   icon: '🤖',
   readTags: {
@@ -193,10 +238,44 @@ createSubSystem('System', '_System', {
     },
   },
 });
+
 createSubSystem('Granule0', '_Granule0', {
   icon: '🍚',
-  readTags: { ...genericSystemReadTags },
+  readTags: {
+    ...genericSystemReadTags,
+    OutputSolenoidExtend: {
+      subTag: 'OutputSolenoidExtend',
+      type: 'boolean',
+    },
+    OutputSolenoidRetract: {
+      subTag: 'OutputSolenoidRetract',
+      type: 'boolean',
+    },
+    DispenseCountGoal: {
+      subTag: 'DispenseCountGoal',
+      type: 'integer',
+    },
+    DispenseCountSoFar: {
+      subTag: 'DispenseCountSoFar',
+      type: 'integer',
+    },
+  },
+  pulseCommands: {
+    DispenseOnce: {
+      subTag: 'Cmd.DispenseOnce.HmiPb',
+    },
+    DispenseAmount: {
+      subTag: 'Cmd.DispenseAmount.HmiPb',
+    },
+  },
+  valueCommands: {
+    Dest: {
+      type: 'integer',
+      subTag: 'Cmd.AmountToDispense',
+    },
+  },
 });
+
 createSubSystem('FillPositioner', '_FillPositioner', {
   icon: '↔️',
   readTags: {
@@ -238,57 +317,7 @@ createSubSystem('FillPositioner', '_FillPositioner', {
   },
 });
 
-const generateSubsystemTags = subsystems => {
-  const schemaConfig = {};
-  Object.keys(subsystems).forEach(subsystemName => {
-    const subsystem = subsystems[subsystemName];
-    Object.keys(subsystem.readTags).forEach(readTagName => {
-      const internalTagName = `${subsystemName}_${readTagName}_READ`;
-      const readTagSpec = subsystem.readTags[readTagName];
-      schemaConfig[internalTagName] = {
-        type: readTagSpec.type,
-        tag: getExternalTagName(subsystem.systemPrefix, readTagSpec.subTag),
-        enableOutput: false,
-      };
-    });
-    Object.keys(subsystem.pulseCommands || {}).forEach(pulseCommandName => {
-      const internalTagName = `${subsystemName}_${pulseCommandName}_PULSE`;
-      const pulseCommandSpec = subsystem.pulseCommands[pulseCommandName];
-      schemaConfig[internalTagName] = {
-        type: 'boolean',
-        tag: getExternalTagName(
-          subsystem.systemPrefix,
-          pulseCommandSpec.subTag,
-        ),
-        enableOutput: true,
-      };
-    });
-    Object.keys(subsystem.valueCommands || {}).forEach(valueCommandName => {
-      const internalTagName = `${subsystemName}_${valueCommandName}_VALUE`;
-      const valueCommandSpec = subsystem.valueCommands[valueCommandName];
-      schemaConfig[internalTagName] = {
-        type: valueCommandSpec.type,
-        tag: getExternalTagName(
-          subsystem.systemPrefix,
-          valueCommandSpec.subTag,
-        ),
-        enableOutput: true,
-      };
-    });
-  });
-
-  return schemaConfig;
-};
-
-const mainRobotSchema = createSchema({
-  ...generateSubsystemTags(subsystems),
-
-  systemResetPls: {
-    tag: '_System.SystemResetPls',
-    type: 'boolean',
-    enableOutput: true,
-  },
-});
+const mainRobotSchema = createSchema(subsystems);
 
 export const readTags = async (schema, action) => {
   const PLC = await getReadyPLC();
@@ -300,9 +329,9 @@ export const readTags = async (schema, action) => {
 
   const readings = {};
 
-  Object.keys(schema.config).forEach(tagAlias => {
+  Object.keys(schema.config.tags).forEach(tagAlias => {
     readings[tagAlias] = {
-      ...schema.config[tagAlias],
+      ...schema.config.tags[tagAlias],
       value: schema.tags[tagAlias].value,
     };
   });
@@ -311,12 +340,9 @@ export const readTags = async (schema, action) => {
 
 export const writeTags = async (schema, values) => {
   const outputGroup = new TagGroup();
-  const controllerSchema = schema.config;
+  const robotTags = schema.config.tags;
   Object.keys(values).forEach(tagAlias => {
-    if (
-      !controllerSchema[tagAlias] ||
-      !controllerSchema[tagAlias].enableOutput
-    ) {
+    if (!robotTags[tagAlias] || !robotTags[tagAlias].enableOutput) {
       throw new Error(`Output is not configured for "${tagAlias}"`);
     }
     const tag = schema.tags[tagAlias];
@@ -330,28 +356,43 @@ export const writeTags = async (schema, values) => {
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-export const connectKitchenDataSource = dataSource => {
-  // dataSource.actions.putObject();
-  // let currentState;
-  // const getTagValues = tags => mapObject(tags, tag => tag.value);
-  // const updateTags = async () => {
-  //   const lastState = currentState;
-  //   currentState = getTagValues(await readTags(mainRobotSchema, {}));
-  //   if (shallowEqual(lastState, currentState)) {
-  //     await delay(500);
-  //     return;
-  //   }
-  //   console.log('state has changed!', currentState);
-  //   await delay(200);
-  // };
-  // const updateTagsForever = () => {
-  //   updateTags()
-  //     .then(async () => {
-  //       updateTagsForever();
-  //     })
-  //     .catch(console.error);
-  // };
-  // updateTagsForever();
+export const connectKitchenDataSource = async dataSource => {
+  const obj = await dataSource.actions.putObject({
+    object: mainRobotSchema.config,
+  });
+  await dataSource.actions.putRef({
+    ref: 'KitchenConfig',
+    domain: 'maui.onofood.co',
+    objectId: obj.id,
+  });
+
+  let currentState;
+  const getTagValues = tags => mapObject(tags, tag => tag.value);
+  const updateTags = async () => {
+    const lastState = currentState;
+    currentState = getTagValues(await readTags(mainRobotSchema, {}));
+    if (shallowEqual(lastState, currentState)) {
+      await delay(500);
+      return;
+    }
+    const stateObj = await dataSource.actions.putObject({
+      object: currentState,
+    });
+    await dataSource.actions.putRef({
+      ref: 'KitchenState',
+      domain: 'maui.onofood.co',
+      objectId: stateObj.id,
+    });
+    await delay(200);
+  };
+  const updateTagsForever = () => {
+    updateTags()
+      .then(async () => {
+        updateTagsForever();
+      })
+      .catch(console.error);
+  };
+  updateTagsForever();
 };
 
 export const writeKitchenTags = async values =>

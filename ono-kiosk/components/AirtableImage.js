@@ -1,12 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Image from './Image';
+const md5 = require('crypto-js/md5');
 
 const AirtableImage = ({ image, style }) => {
-  console.log(image);
+  const origUrl = image[0].url;
   return (
     <Image
       style={style}
-      imageURI={`https://www.onofood.co/_/airtable/files/11fff5f4ab94b9ed90538106055d3b38.jpg`}
+      imageURI={`https://www.onofood.co/_/airtable/files/${md5(
+        origUrl,
+      ).toString()}.jpg`}
     />
   );
 };

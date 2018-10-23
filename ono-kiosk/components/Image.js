@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Image, View, TouchableOpacity } from 'react-native';
 
-const Image = ({ imageURI, style }) => {
+const OnoImage = ({ imageURI, style }) => {
   return (
     <Image
       style={style}
@@ -12,4 +12,4 @@ const Image = ({ imageURI, style }) => {
   );
 };
 
-export default Image;
+export default OnoImage;

@@ -24,10 +24,12 @@ const MenuItemWithNav = ({ item, navigation }) => {
         }}
       >
         <View style={{ flex: 1, marginLeft: 40, justifyContent: 'center' }}>
-          <AirtableImage
-            image={item.Recipe['Recipe Image']}
-            style={{ width: 100, height: 100 }}
-          />
+          {item.Recipe && (
+            <AirtableImage
+              image={item.Recipe['Recipe Image']}
+              style={{ width: 100, height: 100 }}
+            />
+          )}
           <Text style={{ fontSize: 42, ...menuItemNameText }}>
             {item['Display Name']}
           </Text>
