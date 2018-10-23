@@ -4,7 +4,10 @@ const prepareSocketServer = dbService => wss => {
   const socketClosers = {};
   console.log("setting up web socket!");
   wss.on("connection", ws => {
-    const sendMessage = message => ws.send(JSON.stringify(message));
+    const sendMessage = message => {
+      console.log(ws);
+      ws.send(JSON.stringify(message));
+    };
 
     const clientId = uuid();
     console.log("ws connection!", clientId);
@@ -12,9 +15,10 @@ const prepareSocketServer = dbService => wss => {
 
     const _refSubscriptions = {};
 
-    const closeSubscription = refName => {
-      _refSubscriptions[refName] && _refSubscriptions[refName].unsubscribe();
-      delete _refSubscriptions[refName];
+    const closeSubscription = localRefId => {
+      _refSubscriptions[localRefId] &&
+        _refSubscriptions[localRefId].unsubscribe();
+      delete _refSubscriptions[localRefId];
     };
     const closeSocket = () => {
       Object.keys(_refSubscriptions).forEach(refName => {
@@ -37,14 +41,17 @@ const prepareSocketServer = dbService => wss => {
       switch (action.type) {
         case "SubscribeRefs": {
           action.refs.forEach(refName => {
-            _refSubscriptions[refName] = dbService
-              .observeRef(refName)
+            _refSubscriptions[`${action.domain}_${refName}`] = dbService
+              .observeRef(refName, action.domain)
               .filter(z => !!z)
               .subscribe({
                 next: v => {
+                  console.log("WOAAH", refName, action.domain);
+                  console.log("woah", v);
                   sendMessage({
                     type: "RefUpdate",
                     name: refName,
+                    domain: action.domain,
                     ...v
                   });
                 },
@@ -56,7 +63,7 @@ const prepareSocketServer = dbService => wss => {
         }
         case "UnsubscribeRefs": {
           action.refs.forEach(refName => {
-            closeSubscription(refName);
+            closeSubscription(`${action.domain}_${refName}`);
           });
           return;
         }

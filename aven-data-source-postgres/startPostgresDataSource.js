@@ -14,7 +14,8 @@ const md5 = input => {
   return hash;
 };
 
-const channelOfRef = refName => `ref_${md5(refName)}`;
+const channelOfRefAndDomain = (refName, domain) =>
+  `ref_${domain.split(".").join("_")}_${md5(refName)}`;
 
 const startPostgresDataSource = async ({ pgConfig, rootDomain }) => {
   const pg = new Client(pgConfig);
@@ -273,7 +274,7 @@ WHERE constraint_type = 'FOREIGN KEY'
       [ref, domain, id]
     );
     await pg.query(
-      `NOTIFY ${channelOfRef(ref)}, ${pgFormat.literal(
+      `NOTIFY ${channelOfRefAndDomain(ref, domain)}, ${pgFormat.literal(
         JSON.stringify({ objectId: id })
       )}`
     );
@@ -400,21 +401,21 @@ WHERE constraint_type = 'FOREIGN KEY'
     await pg.end();
   };
 
-  const listenRef = async ref => {
-    const channel = channelOfRef(ref);
+  const listenRef = async (ref, domain) => {
+    const channel = channelOfRefAndDomain(ref, domain);
     await pg.query(`LISTEN ${channel}`);
     return channel;
   };
-  const unlistenRef = async ref => {
-    const channel = channelOfRef(ref);
-    await pg.query(`UNLISTEN ${channelOfRef(ref)}`);
+  const unlistenRef = async (ref, domain) => {
+    const channel = channelOfRefAndDomain(ref, domain);
+    await pg.query(`UNLISTEN ${channel}`);
     return channel;
   };
 
   const _notifyRefObservables = {};
   const _refObservables = {};
 
-  const observeRef = refName => {
+  const observeRef = (refName, domain) => {
     if (_refObservables[refName]) {
       return _refObservables[refName];
     }
@@ -430,12 +431,12 @@ WHERE constraint_type = 'FOREIGN KEY'
         });
 
       return () => {
-        unlistenRef(refName)
+        unlistenRef(refName, domain)
           .then(() => {})
           .catch(e => {
             observer.error(e);
           });
-        _notifyRefObservables[channelOfRef(refName)] = null;
+        _notifyRefObservables[channelOfRefAndDomain(refName, domain)] = null;
       };
     })
       .multicast(() => new BehaviorSubject(null))

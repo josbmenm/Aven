@@ -12,9 +12,8 @@ class DataObject {
   constructor({ client, objectId }) {
     this._client = client;
     this._objectId = objectId;
-
     this._state = {
-      objectId: this.objectId,
+      objectId: this._objectId,
 
       // sync state:
       lastFetchedTime: null,
@@ -24,49 +23,48 @@ class DataObject {
       value: null
     };
     this.observe = new BehaviorSubject(this._state);
-  }
 
-  provideValue = value => {
-    if (this._state.value !== null) {
-      return;
-    }
-    this._setState({
-      value
-    });
-  };
-
-  _setState = newVals => {
-    this._state = {
-      ...this._state,
-      ...newVals
+    this.provideValue = value => {
+      if (this._state.value !== null) {
+        return;
+      }
+      this._setState({
+        value
+      });
     };
-    this.observe.next(this._state);
-  };
 
-  getObjectId() {
-    return this._objectId;
-  }
+    this._setState = newVals => {
+      this._state = {
+        ...this._state,
+        ...newVals
+      };
+      this.observe.next(this._state);
+    };
 
-  observeValue = Observable.create(observer => {
+    this.getObjectId = () => this._objectId;
+
+    this.observeValue = this.observe
+      .map(state => state.value)
+      .filter(val => val != null);
+
+    this.observeConnectedValue = lookup =>
+      this.observeValue
+        .map(value => {
+          let refVal = value;
+          lookup.forEach(v => {
+            refVal = refVal[v];
+          });
+          const connected = this._client.getObject(refVal.id);
+          return connected.observeValue;
+        })
+        .switch();
+
     this.fetch()
       .then(() => {
-        observer.next(this._state.value);
-        observer.complete();
+        console.log("fetch complete for " + objectId);
       })
-      .catch(e => observer.error(e));
-  });
-
-  observeConnectedValue = lookup =>
-    this.observeValue
-      .map(value => {
-        let refVal = value;
-        lookup.forEach(v => {
-          refVal = refVal[v];
-        });
-        const connected = this._client.getObject(refVal.id);
-        return connected.observeValue;
-      })
-      .switch();
+      .catch(console.error);
+  }
 
   fetch = async () => {
     if (this._state.value !== null) {
@@ -432,7 +430,8 @@ class DataClient {
           );
           this._socketSendIfConnected({
             type: "SubscribeRefs",
-            refs: subdRefs
+            refs: subdRefs,
+            domain: this._domain
           });
           console.log("Socket connected with client id: ", this._wsClientId);
           return;
@@ -455,14 +454,16 @@ class DataClient {
   subscribeUpstreamRef = ref => {
     this._socketSendIfConnected({
       type: "SubscribeRefs",
-      refs: [ref.getName()]
+      refs: [ref.getName()],
+      domain: this._domain
     });
     this._upstreamSubscribedRefs.add(ref);
   };
   unsubscribeUpstreamRef = ref => {
     this._socketSendIfConnected({
-      type: "UnubscribeRefs",
-      refs: [ref.getName()]
+      type: "UnsubscribeRefs",
+      refs: [ref.getName()],
+      domain: this._domain
     });
     this._upstreamSubscribedRefs.delete(ref);
   };

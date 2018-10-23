@@ -1,24 +1,40 @@
-import { Observable } from "rxjs-compat";
+import { Observable, BehaviorSubject } from "rxjs-compat";
 const crypto = require("crypto");
 const stringify = require("json-stable-stringify");
 
-const startMemoryDataSource = () => {
+const _getRef = ({ objectId, isPublic, owner }) => {
+  // this strips out hidden features of the ref and snapshots the references
+  return {
+    objectId,
+    isPublic,
+    owner
+  };
+};
+
+const startMemoryDataSource = opts => {
+  const dataSourceDomain = opts.domain;
   const _objects = {};
   const _objectsSize = {};
-  const _domains = {};
-  async function _getDomain(domainName) {
-    if (_domains[domainName]) {
-      return _domains[domainName];
-    }
-    return (_domains[domainName] = { refs: {} });
-  }
+  const _refs = {};
 
   async function putRef({ domain, ref, objectId, owner }) {
-    const d = _getDomain(domain);
-    const r = d.refs[ref] || (d.refs[ref] = {});
-    r.id = objectId;
+    if (domain === undefined || ref === undefined) {
+      throw new Error("Invalid use. ", { domain, ref, objectId });
+    }
+    if (domain !== dataSourceDomain) {
+      throw new Error(
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
+      );
+    }
+    const r = _refs[ref] || (_refs[ref] = {});
+    r.objectId = objectId;
     r.owner = owner;
     r.isPublic = true;
+    if (r.behavior) {
+      r.behavior.next(_getRef(r));
+    } else {
+      r.behavior = new BehaviorSubject(_getRef(r));
+    }
   }
 
   async function getObject({ id }) {
@@ -30,7 +46,12 @@ const startMemoryDataSource = () => {
     }
     return null;
   }
-  async function putObject({ object }) {
+  async function putObject({ object, ref, domain }) {
+    if (domain !== dataSourceDomain) {
+      throw new Error(
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
+      );
+    }
     const objData = stringify(object);
     const size = objData.length;
     const sha = crypto.createHash("sha1");
@@ -41,10 +62,18 @@ const startMemoryDataSource = () => {
     return { id };
   }
   async function getRef({ domain, ref }) {
-    const d = _getDomain(domain);
-    const r = d.refs[ref];
+    if (domain !== dataSourceDomain) {
+      return null;
+    }
+    const r = _refs[ref];
     if (r) {
-      return { id: r.id, ref, domain, owner: r.owner, isPublic: r.isPublic };
+      return {
+        id: r.objectId,
+        ref: ref,
+        domain,
+        owner: r.owner,
+        isPublic: r.isPublic
+      };
     }
     return null;
   }
@@ -62,8 +91,19 @@ const startMemoryDataSource = () => {
     getStatus
   };
   const close = () => {};
-  const observeRef = refName => {
-    return Observable.create(observer => {});
+  const observeRef = (refName, domain) => {
+    if (domain !== dataSourceDomain) {
+      throw new Error(
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
+      );
+    }
+    const r = _refs[refName];
+    if (r && r.behavior) {
+      return r.behavior;
+    }
+    throw new Error(
+      `cannot observe ref "${refName}" because it cannot be found`
+    );
   };
   return {
     close,

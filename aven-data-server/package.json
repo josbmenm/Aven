@@ -2,7 +2,9 @@
   "globe": {
     "moduleDependencies": [
       "rxjs",
-      "rxjs-compat"
+      "rxjs-compat",
+      "reconnecting-websocket",
+      "websocket"
     ]
   }
 }

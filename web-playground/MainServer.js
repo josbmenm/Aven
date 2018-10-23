@@ -29,10 +29,13 @@ const runServer = async () => {
         return await saveService.dispatch(action);
     }
   };
+  const getEnv = c => process.env[c];
+  const serverListenLocation = getEnv("PORT");
   const webService = await WebServer({
     App,
     dispatch,
-    startSocketServer: saveService.startSocketServer
+    startSocketServer: saveService.startSocketServer,
+    serverListenLocation
   });
   console.log("☁️️ Web Ready 🕸");
 

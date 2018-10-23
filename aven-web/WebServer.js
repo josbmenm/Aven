@@ -31,7 +31,9 @@ async function objectResponse({
 }) {
   const obj = await dispatch({
     type: "getObject",
-    id: objId
+    id: objId,
+    domain,
+    refName
   });
   if (!obj) {
     return sendNotFound;
@@ -72,8 +74,8 @@ async function objectResponse({
 async function webDataInterface({ domain, refName, dispatch, refPath }) {
   const ref = await dispatch({
     ref: refName,
-    type: "getRef"
-    // domain,
+    type: "getRef",
+    domain
   });
   if (!ref || !ref.id) {
     return sendNotFound;
@@ -92,7 +94,7 @@ export default async function WebServer({
   App,
   dispatch,
   startSocketServer,
-  mainDomain
+  serverListenLocation
 }) {
   const expressApp = express();
   const jsonParser = bodyParser.json();
@@ -127,9 +129,9 @@ export default async function WebServer({
     }
   });
 
-  expressApp.get("/_/:ref*", (req, res) => {
-    const domain = mainDomain;
+  expressApp.get("/_/:domain/:ref*", (req, res) => {
     const refName = req.params.ref;
+    const domain = req.params.domain;
     const refPath = req.params["0"];
 
     webDataInterface({ domain, refName, refPath, dispatch })
@@ -197,9 +199,7 @@ export default async function WebServer({
 </html>`
     );
   });
-  const getEnv = c => process.env[c];
-  const serverListenLocation =
-    process.env.APP_SERVER_PORT || getEnv("PORT") || 8899;
+
   const httpServer = http.createServer(expressApp);
 
   const wss = new WebSocket.Server({ server: httpServer });

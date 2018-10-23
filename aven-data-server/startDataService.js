@@ -2,7 +2,7 @@ import prepareSocketServer from "./prepareSocketServer";
 const fs = require("fs-extra");
 const pathJoin = require("path").join;
 
-const startDataService = async ({ dataSource, rootDomain }) => {
+const startDataService = async ({ dataSource }) => {
   const uploadFile = async filePath => {
     const fileData = await fs.readFile(filePath);
     let object;
@@ -57,7 +57,7 @@ const startDataService = async ({ dataSource, rootDomain }) => {
   const getRef = async action => {
     return await dataSource.actions.getRef({
       ref: action.ref,
-      domain: rootDomain
+      domain: action.domain
     });
   };
 
