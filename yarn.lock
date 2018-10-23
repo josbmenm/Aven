@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@aven-cloud/globe-tools@https://github.com/AvenCloud/globe-tools.git#master", "globe-tools@https://github.com/AvenCloud/globe-tools.git#master":
+"@aven-cloud/globe-tools@https://github.com/AvenCloud/globe-tools.git#master":
   version "0.1.0"
   resolved "https://github.com/AvenCloud/globe-tools.git#3cad9dab21a153243bb234789f104dd638130b1e"
   dependencies:
@@ -35,17 +35,6 @@
   dependencies:
     rxjs "^6.2.2"
 
-"@react-navigation/core@3.0.0-alpha.6":
-  version "3.0.0-alpha.6"
-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.0-alpha.6.tgz#9224bad5519d895936f97cd22363fe887e47d73e"
-  integrity sha512-TrdSsJTOD9CvuohhNe3TMH8xVwCcFINyX+dp8ZVUOP9sl+vJMdx7gIJwGc6k4OeNiX4gDJ69yCvFiwz/kGsp0Q==
-  dependencies:
-    create-react-context "^0.2.3"
-    hoist-non-react-statics "^3.0.1"
-    path-to-regexp "^1.7.0"
-    query-string "^6.2.0"
-    react-lifecycles-compat "^3.0.4"
-
 "@react-navigation/core@^3.0.0-alpha.10", "@react-navigation/core@^3.0.0-alpha.4":
   version "3.0.0-alpha.10"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.0-alpha.10.tgz#c5d1dc3bb1bb4954b6c43ef225fb4e1159d98d8f"
@@ -55,6 +44,18 @@
     hoist-non-react-statics "^3.0.1"
     path-to-regexp "^1.7.0"
     query-string "^6.2.0"
+    react-lifecycles-compat "^3.0.4"
+
+"@react-navigation/core@^3.0.0-alpha.12":
+  version "3.0.0-alpha.12"
+  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.0-alpha.12.tgz#273f7be2bfe564f9ab28afd0955d21b72de9fadf"
+  integrity sha512-tUg57TuEtGpVmcyqTGbMYtHfE2VXgo6hB2XT/T/hYXXydQbgkPwu9VeavEzGTTc1QThxerYwJNAsog/EI0Za6Q==
+  dependencies:
+    create-react-context "^0.2.3"
+    hoist-non-react-statics "^3.0.1"
+    path-to-regexp "^1.7.0"
+    query-string "^6.2.0"
+    react-is "^16.5.2"
     react-lifecycles-compat "^3.0.4"
 
 "@react-navigation/native@^3.0.0-alpha.5":
@@ -68,6 +69,14 @@
     react-native-gesture-handler "^1.0.8"
     react-native-safe-area-view "^0.11.0"
     react-native-screens "^1.0.0-alpha.14"
+
+"@react-navigation/native@^3.0.0-alpha.8":
+  version "3.0.0-alpha.8"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-3.0.0-alpha.8.tgz#19dc5f0d38b1c1a0e465d9907fb964f682b30c30"
+  integrity sha512-m/azkNgbt5KA4sOtXNdZDd3xdWKfJT2nzPxNsbnvji81/yUKB2MgXUpuPH4d2CApusr3LqIu/1NDMY6+3gQj2w==
+  dependencies:
+    hoist-non-react-statics "^3.0.1"
+    react-native-safe-area-view "^0.11.0"
 
 "@react-navigation/web@^1.0.0-alpha.4":
   version "1.0.0-alpha.4"
@@ -1175,7 +1184,7 @@ globals@^9.18.0:
 
 "globe@https://github.com/AvenCloud/globe.git#v2":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/globe.git#15658acdddc9055a37c087acd203c4ae6a9ae664"
+  resolved "https://github.com/AvenCloud/globe.git#43dd6abf1c8e41b9616c569ee42f059078e3f072"
   dependencies:
     "@aven-cloud/globe-tools" "https://github.com/AvenCloud/globe-tools.git#master"
     "@expo/vector-icons" "^8.0.0"
@@ -1198,6 +1207,7 @@ globals@^9.18.0:
     reconnecting-websocket "^4.0.0-rc5"
     rxjs "^6.3.3"
     rxjs-compat "^6.3.3"
+    websocket "^1.0.28"
     ws "^6.0.0"
     yes-https "^0.0.4"
 
@@ -1551,7 +1561,7 @@ is-stream@^1.0.1, is-stream@^1.1.0:
   resolved "https://registry.yarnpkg.com/is-stream/-/is-stream-1.1.0.tgz#12d4a3dd4e68e0b79ceb8dbc84173ae80d91ca44"
   integrity sha1-EtSj3U5o4Lec6428hBc66A2RykQ=
 
-is-typedarray@~1.0.0:
+is-typedarray@^1.0.0, is-typedarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-typedarray/-/is-typedarray-1.0.0.tgz#e479c80858df0c1b11ddda6940f96011fcda4a9a"
   integrity sha1-5HnICFjfDBsR3dppQPlgEfzaSpo=
@@ -1864,9 +1874,9 @@ minimist@1.2.0, minimist@^1.1.1, minimist@^1.2.0:
   integrity sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=
 
 minipass@^2.2.1, minipass@^2.3.3:
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/minipass/-/minipass-2.3.4.tgz#4768d7605ed6194d6d576169b9e12ef71e9d9957"
-  integrity sha512-mlouk1OHlaUE8Odt1drMtG1bAJA4ZA6B/ehysgV0LUIrDHdKgo1KorZq3pK0b/7Z7LJIQ12MNM6aC+Tn6lUZ5w==
+  version "2.3.5"
+  resolved "https://registry.yarnpkg.com/minipass/-/minipass-2.3.5.tgz#cacebe492022497f656b0f0f51e2682a9ed2d848"
+  integrity sha512-Gi1W4k059gyRbyVUZQ4mEqLm0YIUiGYfvxhF6SIlk3ui1WVxMTGfGdQ2SInh3PDrRTVvPKgULkpJtT4RH10+VA==
   dependencies:
     safe-buffer "^5.1.2"
     yallist "^3.0.0"
@@ -1898,7 +1908,7 @@ ms@2.0.0:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
   integrity sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=
 
-nan@^2.9.2:
+nan@^2.11.0, nan@^2.9.2:
   version "2.11.1"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.11.1.tgz#90e22bccb8ca57ea4cd37cc83d3819b52eea6766"
   integrity sha512-iji6k87OSXa0CcrLl9z+ZiYSuR2o+c0bGuNmXdrhTQTakxytAFsC56SArGYoiHlJlFoHSnvmhpceZJaXkVuOtA==
@@ -2353,10 +2363,10 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-is@^16.3.2:
-  version "16.5.2"
-  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.5.2.tgz#e2a7b7c3f5d48062eb769fcb123505eb928722e3"
-  integrity sha512-hSl7E6l25GTjNEZATqZIuWOgSnpXb3kD0DVCujmg46K5zLxsbiKaaT6VO9slkSBDPZfYs30lwfJwbOFOnoEnKQ==
+react-is@^16.3.2, react-is@^16.5.2:
+  version "16.6.0"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.6.0.tgz#456645144581a6e99f6816ae2bd24ee94bdd0c01"
+  integrity sha512-q8U7k0Fi7oxF1HvQgyBjPwDXeMplEsArnKt2iYhuIF86+GBbgLHdAmokL3XUFjTd7Q363OSNG55FOGUdONVn1g==
 
 react-lifecycles-compat@^3.0.4:
   version "3.0.4"
@@ -2410,14 +2420,24 @@ react-navigation-drawer@1.0.0-alpha.5:
   resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-1.0.0-alpha.5.tgz#1ef75b5e9c7ae9c3011427a493bcc2714ea2c072"
   integrity sha512-AD1AyqGpUb4coUw3KpJ7i/2RfTiE5RJfTDHVeBkpqc2wsXJ4PaWYGoxfvfWP910hJy8txYTnWWUinWmiD7aBgA==
 
-react-navigation-stack@1.0.0-alpha.22, "react-navigation-stack@https://github.com/react-navigation/react-navigation-stack":
+react-navigation-stack@1.0.0-alpha.22:
   version "1.0.0-alpha.22"
-  resolved "https://github.com/react-navigation/react-navigation-stack#bf4b25e54b4bdb2e0244ed72396999dc79a7e4ac"
+  resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-1.0.0-alpha.22.tgz#f40d50855c7532c1633ec7e88a5dfefefe65d9f9"
+  integrity sha512-Bqc4LVr+kX8bYPms2Fhwgr6KUQSXesWzR7JdX/bemZKeXsDLRI+/ZBv+HEYhyzcnJktx4KgZHadfz4jy6Q6B1Q==
 
-react-navigation-tabs@1.0.0-alpha.3:
-  version "1.0.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-1.0.0-alpha.3.tgz#dae59e0a448cfa8e194fe3776b1659e117f3a39b"
-  integrity sha512-V1iMy4QFhiWuBaaUMgWOuuBe0xl+/LXwiSwl4ejRDGRiPP7JLiqxFfgIo77X0Ce9YN2FOqq4A8GB7d4ssJtQIw==
+react-navigation-stack@1.0.0-alpha.23:
+  version "1.0.0-alpha.23"
+  resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-1.0.0-alpha.23.tgz#515e940b5e1f864a73a80be43cafae767f9ed3f5"
+  integrity sha512-EhM9SIlWYeCC1f1Ju53AUVfTyY6HLJwuGMVcb/VeVT513fPgOijD4HlmOcAngkKNVMNOfhPuFgvngg9TM4vYOA==
+
+"react-navigation-stack@https://github.com/react-navigation/react-navigation-stack":
+  version "1.0.0-alpha.22"
+  resolved "https://github.com/react-navigation/react-navigation-stack#b79aaefcfc0a54ed06f0195880302d5956b8ac4e"
+
+react-navigation-tabs@1.0.0-alpha.4:
+  version "1.0.0-alpha.4"
+  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-1.0.0-alpha.4.tgz#321c8cc19d14268d343a830689c741bb94c6ba80"
+  integrity sha512-ng8sCJmcQj1ciWaj0eJudQvYng/oL24konNPNudSrMyVKAfKr4+HcRPLY/rol+efLJ8UGjXGv2qdRNkBNeaLew==
   dependencies:
     hoist-non-react-statics "^2.5.0"
     prop-types "^15.6.1"
@@ -2441,14 +2461,14 @@ react-navigation-transitioner@^1.0.0-alpha.3:
     react-native-reanimated "^1.0.0-alpha.10"
 
 "react-navigation@https://github.com/react-navigation/react-navigation":
-  version "3.0.0-alpha.7"
-  resolved "https://github.com/react-navigation/react-navigation#0c4845f2ffd425a6194a06996241c037f65870fc"
+  version "3.0.0-alpha.11"
+  resolved "https://github.com/react-navigation/react-navigation#f34095e71acef4ebc3dbef5ba2f37e47a1d7def7"
   dependencies:
-    "@react-navigation/core" "3.0.0-alpha.6"
-    "@react-navigation/native" "^3.0.0-alpha.5"
+    "@react-navigation/core" "^3.0.0-alpha.12"
+    "@react-navigation/native" "^3.0.0-alpha.8"
     react-navigation-drawer "1.0.0-alpha.5"
-    react-navigation-stack "1.0.0-alpha.22"
-    react-navigation-tabs "1.0.0-alpha.3"
+    react-navigation-stack "1.0.0-alpha.23"
+    react-navigation-tabs "1.0.0-alpha.4"
 
 read-pkg-up@^2.0.0:
   version "2.0.0"
@@ -3029,6 +3049,13 @@ type-is@~1.6.16:
     media-typer "0.3.0"
     mime-types "~2.1.18"
 
+typedarray-to-buffer@^3.1.5:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/typedarray-to-buffer/-/typedarray-to-buffer-3.1.5.tgz#a97ee7a9ff42691b9f783ff1bc5112fe3fca9080"
+  integrity sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==
+  dependencies:
+    is-typedarray "^1.0.0"
+
 ua-parser-js@^0.7.18:
   version "0.7.18"
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.18.tgz#a7bfd92f56edfb117083b69e31d2aa8882d4b1ed"
@@ -3126,6 +3153,16 @@ watch@~0.18.0:
     exec-sh "^0.2.0"
     minimist "^1.2.0"
 
+websocket@^1.0.28:
+  version "1.0.28"
+  resolved "https://registry.yarnpkg.com/websocket/-/websocket-1.0.28.tgz#9e5f6fdc8a3fe01d4422647ef93abdd8d45a78d3"
+  integrity sha512-00y/20/80P7H4bCYkzuuvvfDvh+dgtXi5kzDf3UcZwN6boTYaKvsrtZ5lIYm1Gsg48siMErd9M4zjSYfYFHTrA==
+  dependencies:
+    debug "^2.2.0"
+    nan "^2.11.0"
+    typedarray-to-buffer "^3.1.5"
+    yaeti "^0.0.6"
+
 wget-improved@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/wget-improved/-/wget-improved-3.0.1.tgz#e07fa1d004d5532ce2f1608c9209270b5a26c2a6"
@@ -3202,6 +3239,11 @@ y18n@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/y18n/-/y18n-3.2.1.tgz#6d15fba884c08679c0d77e88e7759e811e07fa41"
   integrity sha1-bRX7qITAhnnA136I53WegR4H+kE=
+
+yaeti@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/yaeti/-/yaeti-0.0.6.tgz#f26f484d72684cf42bedfb76970aa1608fbf9577"
+  integrity sha1-8m9ITXJoTPQr7ft2lwqhYI+/lXc=
 
 yallist@^2.1.2:
   version "2.1.2"
