@@ -20,10 +20,10 @@ const runServer = async () => {
     host: getSecretConfig('SQL_HOST'),
   };
 
-  const pgDataSource = await startPostgresDataSource({
-    pgConfig,
-    rootDomain: 'maui.onofood.co',
-  });
+  // const pgDataSource = await startPostgresDataSource({
+  //   pgConfig,
+  //   rootDomain: 'maui.onofood.co',
+  // });
   const memoryDataSource = await startMemoryDataSource({
     domain: 'kitchen.maui.onofood.co',
   });
@@ -64,7 +64,7 @@ const runServer = async () => {
 
   return {
     close: async () => {
-      await pgDataSource.close();
+      // await pgDataSource.close();
       await memoryDataSource.close();
       await networkDataSource.close();
       await dataService.close();
