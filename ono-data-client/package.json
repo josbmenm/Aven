@@ -2,6 +2,10 @@
   "globe": {
     "globeDependencies": [
       "aven-data-client"
+    ],
+    "moduleDependencies": [
+      "@nozbe/with-observables",
+      "fbjs"
     ]
   }
 }

@@ -176,6 +176,15 @@ const genericSystemReadTags = {
     type: 'integer',
     subTag: 'PrgStep',
   },
+  Fault0: {
+    type: 'integer',
+    subTag: 'Fault[0]',
+  },
+};
+const genericPulseCommands = {
+  Reset: {
+    subTag: 'ResetPls',
+  },
 };
 
 const objFromCount = (size, keyMapper, valMapper) => {
@@ -276,6 +285,24 @@ createSubSystem('Granule0', '_Granule0', {
   },
 });
 
+createSubSystem('FillSystem', '_FillSystem', {
+  icon: '🥙',
+  readTags: {
+    ...genericSystemReadTags,
+    Homed: {
+      subTag: 'Homed',
+      type: 'boolean',
+    },
+  },
+  pulseCommands: {
+    ...genericPulseCommands,
+    Home: {
+      subTag: 'Cmd.Home.HmiPb',
+    },
+  },
+  valueCommands: {},
+});
+
 createSubSystem('FillPositioner', '_FillPositioner', {
   icon: '↔️',
   readTags: {
@@ -302,6 +329,7 @@ createSubSystem('FillPositioner', '_FillPositioner', {
     },
   },
   pulseCommands: {
+    ...genericPulseCommands,
     Home: {
       subTag: 'Cmd.Home.HmiPb',
     },
@@ -356,13 +384,15 @@ export const writeTags = async (schema, values) => {
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-export const connectKitchenDataSource = async dataSource => {
+export const connectKitchenDataSource = async (dataSource, kitchenDomain) => {
   const obj = await dataSource.actions.putObject({
+    ref: 'KitchenConfig',
+    domain: kitchenDomain,
     object: mainRobotSchema.config,
   });
   await dataSource.actions.putRef({
     ref: 'KitchenConfig',
-    domain: 'maui.onofood.co',
+    domain: kitchenDomain,
     objectId: obj.id,
   });
 
@@ -376,11 +406,13 @@ export const connectKitchenDataSource = async dataSource => {
       return;
     }
     const stateObj = await dataSource.actions.putObject({
+      ref: 'KitchenState',
+      domain: kitchenDomain,
       object: currentState,
     });
     await dataSource.actions.putRef({
       ref: 'KitchenState',
-      domain: 'maui.onofood.co',
+      domain: kitchenDomain,
       objectId: stateObj.id,
     });
     await delay(200);

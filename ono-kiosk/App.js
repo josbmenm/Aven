@@ -6,6 +6,7 @@ import { createAppContainer } from '@react-navigation/native';
 import HomeScreen from './screens/HomeScreen';
 import HostHomeScreen from './screens/HostHomeScreen';
 import KitchenEngScreen from './screens/KitchenEngScreen';
+import KitchenEngSubScreen from './screens/KitchenEngSubScreen';
 import KioskSettingsScreen from './screens/KioskSettingsScreen';
 import KioskHomeScreen from './screens/KioskHomeScreen';
 import MenuItemScreen from './screens/MenuItemScreen';
@@ -83,6 +84,7 @@ const App = createStackNavigator(
     Home: HomeScreen,
     HostHome: HostHomeScreen,
     KitchenEng: KitchenEngScreen,
+    KitchenEngSub: KitchenEngSubScreen,
     KioskSettings: KioskSettingsScreen,
     KioskHome: KioskHomeScreen,
     MenuItem: MenuItemScreen,
@@ -93,8 +95,9 @@ const App = createStackNavigator(
     PaymentDebug: PaymentDebugScreen,
   },
   {
-    navigationOptions: {
+    defaultNavigationOptions: {
       header: <View style={{ height: 0 }} />,
+      headerMode: 'none',
     },
   },
 );

@@ -3,9 +3,9 @@
   "scripts": {
     "start": "./node_modules/globe-tools/cli.js start",
     "build": "./node_modules/globe-tools/cli.js build",
-    "start-cloud": "./node_modules/globe-tools/cli.js start ono-cloud",
-    "deploy-cloud": "./node_modules/globe-tools/cli.js deploy ono-cloud",
-    "start-kitchen": "./node_modules/globe-tools/cli.js start ono-kitchen",
+    "start-web": "PORT=8840 ./node_modules/globe-tools/cli.js start ono-website",
+    "deploy-web": "./node_modules/globe-tools/cli.js deploy ono-website",
+    "start-kitchen": " PORT=8830 ./node_modules/globe-tools/cli.js start ono-kitchen",
     "start-kiosk": "./node_modules/globe-tools/cli.js start ono-kiosk",
     "start-mobile": "./node_modules/globe-tools/cli.js start ono-mobile",
     "clean": "./node_modules/globe-tools/cli.js clean"

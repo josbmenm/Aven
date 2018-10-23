@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
-import Title from '../../ono-components/Title';
+import Hero from '../../ono-components/Hero';
 
 import GenericPage from '../components/GenericPage';
 import RowSection from '../../ono-components/RowSection';
@@ -12,8 +12,7 @@ export default class KioskSettingsScreen extends Component {
     const { navigation } = this.props;
     return (
       <GenericPage>
-        <Text style={{ fontSize: 100, textAlign: 'center' }}>⚙️</Text>
-        <Title>Kiosk Settings</Title>
+        <Hero icon="⚙️" title="Kiosk Settings" />
         <RowSection>
           <LinkRow
             onPress={() => {

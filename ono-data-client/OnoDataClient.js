@@ -5,7 +5,7 @@ const IS_DEV = process.env.NODE_ENV !== 'production';
 
 const DEV_HOST = {
   useSSL: false,
-  authority: 'localhost:3000',
+  authority: 'localhost:8840',
 };
 const PROD_HOST = {
   authority: 'www.onofood.co',
@@ -17,7 +17,7 @@ const HOST = DEV_HOST;
 
 export const Client = new DataClient({
   host: HOST,
-  domain: 'maui.onofood.co',
+  domain: 'onofood.co',
 });
 
 export const airtableData = Client.getRef(

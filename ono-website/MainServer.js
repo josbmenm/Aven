@@ -44,12 +44,14 @@ const runServer = async () => {
         return await dataService.dispatch(action);
     }
   };
-
+  const getEnv = c => process.env[c];
+  const serverListenLocation = getEnv('PORT');
   const webService = await WebServer({
     mainDomain: domain,
     App,
     dispatch,
     startSocketServer: dataService.startSocketServer,
+    serverListenLocation,
   });
   console.log('☁️️ Web Ready 🕸');
 

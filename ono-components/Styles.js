@@ -14,7 +14,7 @@ export const titleFontStyle = {
   color: '#111',
 };
 
-export const pageBackgroundColor = '#f2f2ff';
+export const pageBackgroundColor = '#fef2f2';
 export const highlightBackgroundColor = '#fff';
 export const hairlineColor = '#bbb';
 export const rowBorderWidth = StyleSheet.hairlineWidth;
@@ -24,7 +24,16 @@ export const rowStyle = {
   borderColor: hairlineColor,
   padding: 20,
 };
+export const rowTitleStyle = {
+  fontSize: 26,
+  fontWeight: 'bold',
+  color: '#444',
+  marginBottom: 15,
+};
 export const linkRowStyle = {
+  ...rowStyle,
+};
+export const bitRowStyle = {
   ...rowStyle,
 };
 
@@ -36,6 +45,7 @@ export const inputPageStyle = {
 };
 
 export const rowSectionStyle = {
+  marginBottom: 15,
   paddingHorizontal: 20,
 };
 
@@ -60,12 +70,17 @@ export const buttonTitleStyle = {
 };
 
 export const buttonStyle = {
-  backgroundColor: '#963',
-  borderRadius: 42,
-  padding: 20,
+  backgroundColor: '#333',
+  borderRadius: 10,
+  padding: 10,
+  paddingHorizontal: 20,
+  marginHorizontal: 10,
 };
 
 export const menuItemNameText = { ...genericText };
 export const menuItemDescriptionText = { ...genericText };
 
 export const keyboardAppearance = 'dark';
+
+export const heroViewStyle = { padding: 20, paddingVertical: 60 };
+export const heroIconStyle = { fontSize: 100, textAlign: 'center' };

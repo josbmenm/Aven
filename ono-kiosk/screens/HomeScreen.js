@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native';
-import Title from '../../ono-components/Title';
-
 import GenericPage from '../components/GenericPage';
 import RowSection from '../../ono-components/RowSection';
+import Hero from '../../ono-components/Hero';
 import LinkRow from '../../ono-components/LinkRow';
 
 export default class HomeScreen extends Component {
@@ -14,8 +12,7 @@ export default class HomeScreen extends Component {
     const { navigation } = this.props;
     return (
       <GenericPage>
-        <Text style={{ fontSize: 100, textAlign: 'center' }}>🍹</Text>
-        <Title>Maui Development</Title>
+        <Hero title="Maui Development" icon="🍹" />
         <RowSection>
           <LinkRow
             onPress={() => {
@@ -23,6 +20,68 @@ export default class HomeScreen extends Component {
             }}
             icon="🛠"
             title="Kitchen Engineering"
+          />
+
+          <LinkRow
+            onPress={() => {
+              navigation.navigate({
+                routeName: 'KitchenEngSub',
+                params: {
+                  system: 'System',
+                },
+              });
+            }}
+            icon="🤖"
+            title="System"
+          />
+          <LinkRow
+            onPress={() => {
+              navigation.navigate({
+                routeName: 'KitchenEngSub',
+                params: {
+                  system: 'IOSystem',
+                },
+              });
+            }}
+            icon="🔌"
+            title="IO"
+          />
+
+          <LinkRow
+            onPress={() => {
+              navigation.navigate({
+                routeName: 'KitchenEngSub',
+                params: {
+                  system: 'FillPositioner',
+                },
+              });
+            }}
+            icon="↔️"
+            title="Fill Positioner"
+          />
+          <LinkRow
+            onPress={() => {
+              navigation.navigate({
+                routeName: 'KitchenEngSub',
+                params: {
+                  system: 'FillSystem',
+                },
+              });
+            }}
+            icon="🥙"
+            title="Fill System"
+          />
+          <LinkRow
+            onPress={() => {
+              navigation.navigate({
+                routeName: 'KitchenEngSub',
+                params: {
+                  system: 'Granule0',
+                },
+              });
+            }}
+            icon="🍚"
+            title="Granule 0"
           />
           <LinkRow
             onPress={() => {

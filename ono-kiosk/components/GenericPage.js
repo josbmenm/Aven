@@ -12,14 +12,41 @@ import {
   TextInput,
 } from 'react-native';
 import { genericPageStyle } from '../../ono-components/Styles';
+import { withNavigation } from '@react-navigation/core';
 
-export default class GenericPage extends React.Component {
+class GenericPage extends React.Component {
   render() {
-    const { children } = this.props;
+    const { children, navigation } = this.props;
+    const canGoBack = navigation.dangerouslyGetParent().state.index > 0;
     return (
       <View style={{ flex: 1, ...genericPageStyle }}>
         <ScrollView style={{ flex: 1 }}>{children}</ScrollView>
+        {canGoBack && (
+          <TouchableOpacity
+            style={{
+              width: 200,
+              height: 200,
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              paddingTop: 50,
+            }}
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <Text
+              style={{ fontSize: 100, color: '#0009', textAlign: 'center' }}
+            >
+              ⬅︎
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   }
 }
+
+const GenericPageWithNavigation = withNavigation(GenericPage);
+
+export default GenericPageWithNavigation;

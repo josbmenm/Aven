@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native';
-import Title from '../../ono-components/Title';
+import Hero from '../../ono-components/Hero';
 
 import GenericPage from '../components/GenericPage';
 import RowSection from '../../ono-components/RowSection';
@@ -9,14 +8,9 @@ import Button from '../../ono-components/Button';
 
 export default class HomeScreen extends Component {
   render() {
-    // <DebugData input={Client.getRef('airtable').observeObjectValue} />
-    // <DebugData input={Client.getRef('truckState').observeObjectValue} />
-    // <ConnectionStatus />
-    const { navigation } = this.props;
     return (
       <GenericPage>
-        <Text style={{ fontSize: 100, textAlign: 'center' }}>🖥</Text>
-        <Title>Maui Host</Title>
+        <Hero icon="🖥" title="Maui Host" />
         <RowSection>
           <Row>
             <Button title="Make Free Blend" onPress={() => {}} />
