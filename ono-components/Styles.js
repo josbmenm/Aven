@@ -36,6 +36,9 @@ export const linkRowStyle = {
 export const bitRowStyle = {
   ...rowStyle,
 };
+export const intRowStyle = {
+  ...rowStyle,
+};
 
 export const genericPageStyle = {
   backgroundColor: pageBackgroundColor,
@@ -75,6 +78,7 @@ export const buttonStyle = {
   padding: 10,
   paddingHorizontal: 20,
   marginHorizontal: 10,
+  marginVertical: 10,
 };
 
 export const menuItemNameText = { ...genericText };
@@ -84,3 +88,4 @@ export const keyboardAppearance = 'dark';
 
 export const heroViewStyle = { padding: 20, paddingVertical: 60 };
 export const heroIconStyle = { fontSize: 100, textAlign: 'center' };
+export const heroSubtitleStyle = { fontSize: 50 };

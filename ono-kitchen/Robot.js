@@ -176,6 +176,10 @@ const genericSystemReadTags = {
     type: 'integer',
     subTag: 'PrgStep',
   },
+  WatchDogFrozeAt: {
+    type: 'integer',
+    subTag: 'WatchDogFrozeAt',
+  },
   Fault0: {
     type: 'integer',
     subTag: 'Fault[0]',
@@ -199,7 +203,7 @@ createSubSystem('IOSystem', null, {
   icon: '🔌',
   readTags: {
     ...objFromCount(
-      8,
+      32,
       i => `PLC_1_Output${i}`,
       i => ({
         type: 'boolean',
@@ -207,7 +211,7 @@ createSubSystem('IOSystem', null, {
       }),
     ),
     ...objFromCount(
-      8,
+      32,
       i => `PLC_2_Input${i}`,
       i => ({
         type: 'boolean',
@@ -299,8 +303,20 @@ createSubSystem('FillSystem', '_FillSystem', {
     Home: {
       subTag: 'Cmd.Home.HmiPb',
     },
+    PositionAndDispenseAmount: {
+      subTag: 'Cmd.PositionAndDispenseAmount.HmiPb',
+    },
   },
-  valueCommands: {},
+  valueCommands: {
+    AmountToDispense: {
+      type: 'integer',
+      subTag: 'Cmd.AmountToDispense',
+    },
+    SlotToDispense: {
+      type: 'integer',
+      subTag: 'Cmd.SlotToDispense',
+    },
+  },
 });
 
 createSubSystem('FillPositioner', '_FillPositioner', {
@@ -326,6 +342,14 @@ createSubSystem('FillPositioner', '_FillPositioner', {
     OutputMotorDirection: {
       subTag: 'OutputMotorDirection',
       type: 'boolean',
+    },
+    PositionCurrent: {
+      subTag: 'PositionCurrent',
+      type: 'integer',
+    },
+    PositionDest: {
+      subTag: 'PositionDest',
+      type: 'integer',
     },
   },
   pulseCommands: {

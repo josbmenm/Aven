@@ -35,21 +35,10 @@
   dependencies:
     rxjs "^6.2.2"
 
-"@react-navigation/core@^3.0.0-alpha.10", "@react-navigation/core@^3.0.0-alpha.4":
-  version "3.0.0-alpha.10"
-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.0-alpha.10.tgz#c5d1dc3bb1bb4954b6c43ef225fb4e1159d98d8f"
-  integrity sha512-Yew0tOGDGkNyzVr2kG1BjR4zHr8B4EHicyvtAWqQy/cFrp5mO+HG5Ev/fva4FxSpEe5Bh6zvoReHXtC8mXerlA==
-  dependencies:
-    create-react-context "^0.2.3"
-    hoist-non-react-statics "^3.0.1"
-    path-to-regexp "^1.7.0"
-    query-string "^6.2.0"
-    react-lifecycles-compat "^3.0.4"
-
-"@react-navigation/core@^3.0.0-alpha.12":
-  version "3.0.0-alpha.12"
-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.0-alpha.12.tgz#273f7be2bfe564f9ab28afd0955d21b72de9fadf"
-  integrity sha512-tUg57TuEtGpVmcyqTGbMYtHfE2VXgo6hB2XT/T/hYXXydQbgkPwu9VeavEzGTTc1QThxerYwJNAsog/EI0Za6Q==
+"@react-navigation/core@^3.0.0-alpha.10", "@react-navigation/core@^3.0.0-alpha.13", "@react-navigation/core@^3.0.0-alpha.4":
+  version "3.0.0-alpha.13"
+  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.0-alpha.13.tgz#7c0458e1054ebd24b3e4925b127e825503483d9d"
+  integrity sha512-3GDiItUJXHJUst60iW1t2J7BVtF+ZTCgwWvpqBHNT0OG0Dm8B1nLUjRLdofv/BvyXIvuGX//A3qpN8jRhSbnhQ==
   dependencies:
     create-react-context "^0.2.3"
     hoist-non-react-statics "^3.0.1"
@@ -1184,7 +1173,7 @@ globals@^9.18.0:
 
 "globe@https://github.com/AvenCloud/globe.git#v2":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/globe.git#43dd6abf1c8e41b9616c569ee42f059078e3f072"
+  resolved "https://github.com/AvenCloud/globe.git#27d901ba78ffc92c1e9b6a0848f3b125eab4c63b"
   dependencies:
     "@aven-cloud/globe-tools" "https://github.com/AvenCloud/globe-tools.git#master"
     "@expo/vector-icons" "^8.0.0"
@@ -2461,10 +2450,10 @@ react-navigation-transitioner@^1.0.0-alpha.3:
     react-native-reanimated "^1.0.0-alpha.10"
 
 "react-navigation@https://github.com/react-navigation/react-navigation":
-  version "3.0.0-alpha.11"
-  resolved "https://github.com/react-navigation/react-navigation#f34095e71acef4ebc3dbef5ba2f37e47a1d7def7"
+  version "3.0.0-alpha.12"
+  resolved "https://github.com/react-navigation/react-navigation#352e703ea97d9b9b59f8e86d1d2fbd5096f144f9"
   dependencies:
-    "@react-navigation/core" "^3.0.0-alpha.12"
+    "@react-navigation/core" "^3.0.0-alpha.13"
     "@react-navigation/native" "^3.0.0-alpha.8"
     react-navigation-drawer "1.0.0-alpha.5"
     react-navigation-stack "1.0.0-alpha.23"

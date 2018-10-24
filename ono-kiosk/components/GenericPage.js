@@ -24,8 +24,8 @@ class GenericPage extends React.Component {
         {canGoBack && (
           <TouchableOpacity
             style={{
-              width: 200,
-              height: 200,
+              width: 140,
+              height: 140,
               position: 'absolute',
               left: 0,
               top: 0,

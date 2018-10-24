@@ -6,7 +6,14 @@ const Row = ({ children, title }) => {
   return (
     <View style={{ ...rowStyle }}>
       {title && <Text style={rowTitleStyle}>{title}</Text>}
-      <View style={{ flexDirection: 'row' }}>{children}</View>
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+        }}
+      >
+        {children}
+      </View>
     </View>
   );
 };

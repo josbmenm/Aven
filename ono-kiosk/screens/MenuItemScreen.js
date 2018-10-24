@@ -102,7 +102,7 @@ class MenuItemScreen extends Component {
   render() {
     const menuItem = this.props.menuItem;
     console.log(menuItem);
-    return null;
+    return <GenericPage />;
   }
 }
 

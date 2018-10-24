@@ -7,16 +7,16 @@ const IS_DEV = process.env.NODE_ENV !== 'production';
 
 const DEV_HOST = {
   useSSL: false,
-  authority: 'localhost:8830',
+  authority: '192.168.1.9:8830',
 };
 const PROD_HOST = {
   useSSL: false,
-  authority: 'ono-maui-restaurant',
+  authority: '192.168.1.200:8830',
 };
 
-const HOST = DEV_HOST;
+// const HOST = DEV_HOST;
 // const HOST = PROD_HOST;
-// const HOST = IS_DEV ? DEV_HOST : PROD_HOST;
+const HOST = IS_DEV ? DEV_HOST : PROD_HOST;
 
 export const Client = new DataClient({
   host: HOST,
@@ -50,13 +50,18 @@ export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {
     const internalTagName = `${subsystemName}_${tagName}_READ`;
     const value = kitchenState[internalTagName];
     const read = { ...tag, value, name: tagName };
-    console.log(read);
     return read;
+  });
+  const valueCommands = mapObject(ss.valueCommands, (command, tagName) => {
+    const internalTagName = `${subsystemName}_${tagName}_VALUE`;
+    const value = kitchenState[internalTagName];
+    const outCmd = { ...command, value, name: tagName };
+    return outCmd;
   });
   const noFaults = reads.NoFaults ? reads.NoFaults.value : null;
   return {
     icon: ss.icon,
-    valueCommands: ss.valueCommands,
+    valueCommands,
     pulseCommands: ss.pulseCommands,
     name: subsystemName,
     noFaults,

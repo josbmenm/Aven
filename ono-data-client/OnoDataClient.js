@@ -11,8 +11,8 @@ const PROD_HOST = {
   authority: 'www.onofood.co',
 };
 
-const HOST = DEV_HOST;
-// const HOST = PROD_HOST;
+// const HOST = DEV_HOST;
+const HOST = PROD_HOST;
 // const HOST = IS_DEV ? DEV_HOST : PROD_HOST;
 
 export const Client = new DataClient({
@@ -28,9 +28,7 @@ export const testData = Client.getRef('airtable').observeConnectedObjectValue([
   'files',
 ]);
 
-export const airtableTables = airtableData.map(d => d.baseTables).do(v => {
-  console.log('woah airTables', v);
-});
+export const airtableTables = airtableData.map(d => d.baseTables);
 
 export const recipes = airtableTables.map(t => t['Recipes']);
 
