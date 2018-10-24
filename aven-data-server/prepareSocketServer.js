@@ -1,12 +1,15 @@
 import uuid from "uuid/v1";
 
+const WebSocket = require("ws");
+
 const prepareSocketServer = dbService => wss => {
   const socketClosers = {};
   console.log("setting up web socket!");
   wss.on("connection", ws => {
     const sendMessage = message => {
-      console.log(ws);
-      ws.send(JSON.stringify(message));
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(message));
+      }
     };
 
     const clientId = uuid();
@@ -46,8 +49,6 @@ const prepareSocketServer = dbService => wss => {
               .filter(z => !!z)
               .subscribe({
                 next: v => {
-                  console.log("WOAAH", refName, action.domain);
-                  console.log("woah", v);
                   sendMessage({
                     type: "RefUpdate",
                     name: refName,

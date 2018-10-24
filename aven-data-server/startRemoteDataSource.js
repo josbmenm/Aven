@@ -25,7 +25,6 @@ const startRemoteDataSource = ({ host, domain }) => {
     const d = _domains[domain] || (_domains[domain] = {});
     const r = d[refName] || (d[refName] = {});
     r.objectId = ref.id;
-    console.log("woah setRef!", ref, r);
     if (r.observe) {
       r.observe.next(_getRef(r));
     } else {
