@@ -1,6 +1,7 @@
 import { Observable, BehaviorSubject } from "rxjs-compat";
 const fetch = require("node-fetch");
 const WebSocketClient = require("websocket").w3cwebsocket;
+const md5 = require("crypto-js/md5");
 
 const _getRef = ({ objectId, isPublic, owner }) => {
   // this strips out hidden features of the ref and snapshots the references
@@ -10,6 +11,8 @@ const _getRef = ({ objectId, isPublic, owner }) => {
     owner
   };
 };
+const channelOfRefAndDomain = (refName, domain) =>
+  `ref_${domain.split(".").join("_")}_${md5(refName)}`;
 
 const startRemoteDataSource = ({ host, domain }) => {
   const _httpEndpoint = `${host.useSSL === false ? "http" : "https"}://${
@@ -39,6 +42,8 @@ const startRemoteDataSource = ({ host, domain }) => {
     }
     return r;
   };
+  const _refObservables = {};
+  const _notifyRefObservables = {};
 
   const dispatch = async action => {
     const res = await fetch(_httpEndpoint, {
@@ -190,7 +195,7 @@ const startRemoteDataSource = ({ host, domain }) => {
     _socketSendIfConnected({
       type: "SubscribeRefs",
       refs: [refName],
-      doamin
+      domain
     });
   };
 

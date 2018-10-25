@@ -1,3 +1,5 @@
+import { Observable } from "rxjs-compat";
+
 const composeDataSources = sources => {
   async function putRef({ domain, ref, objectId, owner }) {}
 
@@ -11,6 +13,7 @@ const composeDataSources = sources => {
     return null;
   }
   async function putObject({ object }) {
+    const id = null;
     return { id };
   }
   async function getRef({ domain, ref }) {
