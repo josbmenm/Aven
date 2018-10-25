@@ -46,7 +46,6 @@ export default class HomeScreen extends Component {
             icon="🔌"
             title="IO"
           />
-
           <LinkRow
             onPress={() => {
               navigation.navigate({
@@ -82,6 +81,18 @@ export default class HomeScreen extends Component {
             }}
             icon="🍚"
             title="Granule 0"
+          />
+          <LinkRow
+            onPress={() => {
+              navigation.navigate({
+                routeName: 'KitchenEngSub',
+                params: {
+                  system: 'Piston0',
+                },
+              });
+            }}
+            icon="💩"
+            title="Piston 0"
           />
           <LinkRow
             onPress={() => {

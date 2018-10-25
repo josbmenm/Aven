@@ -288,6 +288,48 @@ createSubSystem('Granule0', '_Granule0', {
   },
 });
 
+createSubSystem('Piston0', '_Piston0', {
+  icon: '💩',
+  readTags: {
+    ...genericSystemReadTags,
+    OutputSolenoidA: {
+      subTag: 'OutputSolenoidA',
+      type: 'boolean',
+    },
+    OutputSolenoidB: {
+      subTag: 'OutputSolenoidB',
+      type: 'boolean',
+    },
+    OutputSolenoidC: {
+      subTag: 'OutputSolenoidC',
+      type: 'boolean',
+    },
+    DispenseCountGoal: {
+      subTag: 'DispenseCountGoal',
+      type: 'integer',
+    },
+    DispenseCountSoFar: {
+      subTag: 'DispenseCountSoFar',
+      type: 'integer',
+    },
+  },
+  pulseCommands: {
+    ...genericSystemPulseCommands,
+    DispenseOnce: {
+      subTag: 'Cmd.DispenseOnce.HmiPb',
+    },
+    DispenseAmount: {
+      subTag: 'Cmd.DispenseAmount.HmiPb',
+    },
+  },
+  valueCommands: {
+    AmountToDispense: {
+      type: 'integer',
+      subTag: 'Cmd.AmountToDispense',
+    },
+  },
+});
+
 createSubSystem('FillSystem', '_FillSystem', {
   icon: '🥙',
   readTags: {
