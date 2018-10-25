@@ -292,10 +292,10 @@ createSubSystem('FillSystem', '_FillSystem', {
   icon: '🥙',
   readTags: {
     ...genericSystemReadTags,
-    // Homed: {
-    //   subTag: 'Homed',
-    //   type: 'boolean',
-    // },
+    Homed: {
+      subTag: 'Homed',
+      type: 'boolean',
+    },
   },
   pulseCommands: {
     ...genericSystemPulseCommands,
