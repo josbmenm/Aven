@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@aven-cloud/globe-tools@https://github.com/AvenCloud/globe-tools.git#master":
+"@aven-cloud/globe-tools@https://github.com/AvenCloud/globe-tools.git#master", "globe-tools@https://github.com/AvenCloud/globe-tools.git#master":
   version "0.1.0"
-  resolved "https://github.com/AvenCloud/globe-tools.git#3cad9dab21a153243bb234789f104dd638130b1e"
+  resolved "https://github.com/AvenCloud/globe-tools.git#67e9b5cdddaae76809ae9532eb4d96e335b8c248"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     fs-extra "^7.0.0"
@@ -35,7 +35,7 @@
   dependencies:
     rxjs "^6.2.2"
 
-"@react-navigation/core@^3.0.0-alpha.10", "@react-navigation/core@^3.0.0-alpha.13", "@react-navigation/core@^3.0.0-alpha.4":
+"@react-navigation/core@^3.0.0-alpha.10", "@react-navigation/core@^3.0.0-alpha.13":
   version "3.0.0-alpha.13"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.0-alpha.13.tgz#7c0458e1054ebd24b3e4925b127e825503483d9d"
   integrity sha512-3GDiItUJXHJUst60iW1t2J7BVtF+ZTCgwWvpqBHNT0OG0Dm8B1nLUjRLdofv/BvyXIvuGX//A3qpN8jRhSbnhQ==
@@ -47,30 +47,18 @@
     react-is "^16.5.2"
     react-lifecycles-compat "^3.0.4"
 
-"@react-navigation/native@^3.0.0-alpha.5":
-  version "3.0.0-alpha.5"
-  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-3.0.0-alpha.5.tgz#479e8ab87a6305182a77c877eda30065a785eb21"
-  integrity sha512-UwQ2k63wZocCGVd+GqmzKhzvG4FpP8Riu5L+PdIsZOz2E0q4tqj0X/GulWkV0W5chB/oWsyXBi4+JmL92PFloQ==
-  dependencies:
-    "@react-navigation/core" "^3.0.0-alpha.4"
-    hoist-non-react-statics "^3.0.1"
-    react-lifecycles-compat "^3.0.4"
-    react-native-gesture-handler "^1.0.8"
-    react-native-safe-area-view "^0.11.0"
-    react-native-screens "^1.0.0-alpha.14"
-
-"@react-navigation/native@^3.0.0-alpha.8":
-  version "3.0.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-3.0.0-alpha.8.tgz#19dc5f0d38b1c1a0e465d9907fb964f682b30c30"
-  integrity sha512-m/azkNgbt5KA4sOtXNdZDd3xdWKfJT2nzPxNsbnvji81/yUKB2MgXUpuPH4d2CApusr3LqIu/1NDMY6+3gQj2w==
+"@react-navigation/native@^3.0.0-alpha.5", "@react-navigation/native@^3.0.0-alpha.8":
+  version "3.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-3.0.0-alpha.9.tgz#2e34be133ba9a8b40eb1795e0f1841dc261e2a85"
+  integrity sha512-GPvoOydf9z6QHUU6A68pRU7g3J0wOkmsb/xWOLrJXBpZ+9GvnsSJk0L/9jaoYlX1pBrU22CTa9fGAIbtAKSV1w==
   dependencies:
     hoist-non-react-statics "^3.0.1"
     react-native-safe-area-view "^0.11.0"
 
 "@react-navigation/web@^1.0.0-alpha.4":
-  version "1.0.0-alpha.4"
-  resolved "https://registry.yarnpkg.com/@react-navigation/web/-/web-1.0.0-alpha.4.tgz#977c5907e911280483a14be511922ccd2353d9e2"
-  integrity sha512-DyTLaPbPYG9N4ocSXGWaXWyrNqTd3VUbPdbAmeThUWQW0U9h+M0yhCq1uqaG52JxWeZgwxcQOYrb1s/QUEF8+g==
+  version "1.0.0-alpha.7"
+  resolved "https://registry.yarnpkg.com/@react-navigation/web/-/web-1.0.0-alpha.7.tgz#262545e38c2f83f58022098a00f72b0447bc6fb2"
+  integrity sha512-EZxF7pXeR1PWCfLLmu6COtTrBHxHPRW/IsXOaPGUXebAqqlKMw8xr5Rwwk3UQqPOMjHTxQLsNHhk8L13zupwMA==
   dependencies:
     history "^4.7.2"
     query-string "^6.2.0"
@@ -647,7 +635,7 @@ convert-source-map@^1.5.1:
   dependencies:
     safe-buffer "~5.1.1"
 
-cookiejar@^2.0.6:
+cookiejar@^2.1.0:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/cookiejar/-/cookiejar-2.1.2.tgz#dd8a235530752f988f9a0844f3fc589e3111125c"
   integrity sha512-Mw+adcfzPxcPeI+0WlvRrr/3lGVO0bD75SxX6811cxSh1Wbxx7xZBGK1eVtDf6si8rg2lhnUjsVLMFMfbRIuwA==
@@ -728,6 +716,13 @@ debug@2.6.9, debug@^2.1.2, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.
   integrity sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==
   dependencies:
     ms "2.0.0"
+
+debug@^3.1.0:
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
+  integrity sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==
+  dependencies:
+    ms "^2.1.1"
 
 decamelize@^1.1.1:
   version "1.2.0"
@@ -1048,7 +1043,7 @@ forever-agent@~0.6.1:
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
   integrity sha1-+8cfDEGt6zf5bFd60e1C2P2sypE=
 
-form-data@^2.1.1, form-data@~2.3.2:
+form-data@^2.3.1, form-data@~2.3.2:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-2.3.3.tgz#dcce52c05f644f298c6a7ab936bd724ceffbf3a6"
   integrity sha512-1lLKB2Mu3aGP1Q/2eCOx0fNbRMe7XdwktwOruhfqqd0rIJWwN4Dh+E3hrPSlDCXnSR7UtZ1N38rVXm+6+MEhJQ==
@@ -1057,7 +1052,7 @@ form-data@^2.1.1, form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-formidable@^1.1.1:
+formidable@^1.2.0:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/formidable/-/formidable-1.2.1.tgz#70fb7ca0290ee6ff961090415f4b3df3d2082659"
   integrity sha512-Fs9VRguL0gqGHkXS5GQiMCr1VhZBxz0JnJs4JmMp/2jL18Fmbzvv7vOFRU+U8TBkHEE/CX1qDXzJplVULgsLeg==
@@ -1173,7 +1168,7 @@ globals@^9.18.0:
 
 "globe@https://github.com/AvenCloud/globe.git#v2":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/globe.git#27d901ba78ffc92c1e9b6a0848f3b125eab4c63b"
+  resolved "https://github.com/AvenCloud/globe.git#ad76814e05613fb38abe1890fcfdd10db2872fe8"
   dependencies:
     "@aven-cloud/globe-tools" "https://github.com/AvenCloud/globe-tools.git#master"
     "@expo/vector-icons" "^8.0.0"
@@ -1823,7 +1818,7 @@ mime-types@^2.1.12, mime-types@~2.1.18, mime-types@~2.1.19:
   dependencies:
     mime-db "~1.37.0"
 
-mime@^1.3.4:
+mime@^1.4.1:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.6.0.tgz#32cd9e5c64553bd58d19a568af452acff04981b1"
   integrity sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==
@@ -1896,6 +1891,11 @@ ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
   integrity sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=
+
+ms@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.1.tgz#30a5864eb3ebb0a66f2ebe6d727af06a09d86e0a"
+  integrity sha512-tgp+dl5cGk28utYktBsrFqA7HKgrhgPsg6Z/EfhWI4gl1Hwq8B/GmY/0oXZ6nF8hDVesS/FpnYaD/kOWhYQvyg==
 
 nan@^2.11.0, nan@^2.9.2:
   version "2.11.1"
@@ -2288,7 +2288,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.6.1, prop-types@^15.6.2:
+prop-types@^15.6.1, prop-types@^15.6.2:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   integrity sha512-3pboPvLiWD7dkI3qf3KbUe6hKFKa52w+AE0VCqECtf+QHAKgOL37tTaNCnuX1nAAQ4ZhyP+kYVKf8rLmJ/feDQ==
@@ -2319,7 +2319,7 @@ punycode@^1.4.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
   integrity sha1-wNWmOycYgArY4esPpSachN1BhF4=
 
-qs@6.5.2, qs@^6.1.0, qs@~6.5.2:
+qs@6.5.2, qs@^6.5.1, qs@~6.5.2:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
@@ -2362,15 +2362,6 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-native-gesture-handler@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.8.tgz#c2799741bf6443bb542892b0a36201a6d9ded209"
-  integrity sha512-Lc6PV5nKXgZdDeky96yi6gAM1UJHaYwzZbZyph0YuSv/L6vTtN+KPGsKyIENoOyxLJ/i43MSNn7fR+Xbv0w/xA==
-  dependencies:
-    hoist-non-react-statics "^2.3.1"
-    invariant "^2.2.2"
-    prop-types "^15.5.10"
-
 react-native-reanimated@^1.0.0-alpha.10:
   version "1.0.0-alpha.10"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-1.0.0-alpha.10.tgz#e9e6fb35a2cf52fdc912b9fbc76f34f80698e530"
@@ -2382,11 +2373,6 @@ react-native-safe-area-view@^0.11.0:
   integrity sha512-N3nElaahu1Me2ltnfc9acpgt1znm6pi8DSadKy79kvdzKwvVIzw0IXueA/Hjr51eCW1BsfNw7D1SgBT9U6qEkA==
   dependencies:
     hoist-non-react-statics "^2.3.1"
-
-react-native-screens@^1.0.0-alpha.14:
-  version "1.0.0-alpha.15"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-1.0.0-alpha.15.tgz#5b5a0041310b46f12048fda1908d52e7290ec18f"
-  integrity sha512-S2OM/ieD+Krk+0/Z2Vz2rTUWYud5hJgCRZqXRtqEfMgEcGI4FBopXp7mwXCGbA2PFLjZwZSwLlsZ6RX30WnjRw==
 
 react-native-tab-view@^1.0.0:
   version "1.2.0"
@@ -2409,19 +2395,14 @@ react-navigation-drawer@1.0.0-alpha.5:
   resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-1.0.0-alpha.5.tgz#1ef75b5e9c7ae9c3011427a493bcc2714ea2c072"
   integrity sha512-AD1AyqGpUb4coUw3KpJ7i/2RfTiE5RJfTDHVeBkpqc2wsXJ4PaWYGoxfvfWP910hJy8txYTnWWUinWmiD7aBgA==
 
-react-navigation-stack@1.0.0-alpha.22:
+react-navigation-stack@1.0.0-alpha.22, "react-navigation-stack@https://github.com/react-navigation/react-navigation-stack":
   version "1.0.0-alpha.22"
-  resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-1.0.0-alpha.22.tgz#f40d50855c7532c1633ec7e88a5dfefefe65d9f9"
-  integrity sha512-Bqc4LVr+kX8bYPms2Fhwgr6KUQSXesWzR7JdX/bemZKeXsDLRI+/ZBv+HEYhyzcnJktx4KgZHadfz4jy6Q6B1Q==
+  resolved "https://github.com/react-navigation/react-navigation-stack#b79aaefcfc0a54ed06f0195880302d5956b8ac4e"
 
 react-navigation-stack@1.0.0-alpha.23:
   version "1.0.0-alpha.23"
   resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-1.0.0-alpha.23.tgz#515e940b5e1f864a73a80be43cafae767f9ed3f5"
   integrity sha512-EhM9SIlWYeCC1f1Ju53AUVfTyY6HLJwuGMVcb/VeVT513fPgOijD4HlmOcAngkKNVMNOfhPuFgvngg9TM4vYOA==
-
-"react-navigation-stack@https://github.com/react-navigation/react-navigation-stack":
-  version "1.0.0-alpha.22"
-  resolved "https://github.com/react-navigation/react-navigation-stack#b79aaefcfc0a54ed06f0195880302d5956b8ac4e"
 
 react-navigation-tabs@1.0.0-alpha.4:
   version "1.0.0-alpha.4"
@@ -2451,7 +2432,7 @@ react-navigation-transitioner@^1.0.0-alpha.3:
 
 "react-navigation@https://github.com/react-navigation/react-navigation":
   version "3.0.0-alpha.12"
-  resolved "https://github.com/react-navigation/react-navigation#352e703ea97d9b9b59f8e86d1d2fbd5096f144f9"
+  resolved "https://github.com/react-navigation/react-navigation#adcb2e5b4adde14c37ffe1b543d1db024697a261"
   dependencies:
     "@react-navigation/core" "^3.0.0-alpha.13"
     "@react-navigation/native" "^3.0.0-alpha.8"
@@ -2476,7 +2457,7 @@ read-pkg@^2.0.0:
     normalize-package-data "^2.3.2"
     path-type "^2.0.0"
 
-readable-stream@^2.0.5, readable-stream@^2.0.6:
+readable-stream@^2.0.6, readable-stream@^2.3.5:
   version "2.3.6"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.6.tgz#b11c27d88b8ff1fbe070643cf94b0c79ae1b0aaf"
   integrity sha512-tQtKA9WIAhBF3+VLAseyMqZeBjW0AHJoxOtYqSUZNJxauErmLbVm2FW1y+J/YA9dUrAC39ITejlZWhVIwawkKw==
@@ -2819,11 +2800,11 @@ sprintf-js@~1.0.2:
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
 
 square-connect@^2.20180918.0:
-  version "2.20180918.0"
-  resolved "https://registry.yarnpkg.com/square-connect/-/square-connect-2.20180918.0.tgz#1aece9bbf739668c8ea683886777a8db83b61273"
-  integrity sha512-WxNvj3tfj38gb7vW6VUT3Tt78CXVJWdnlNx1XjH+e9jSkoJqdOiumggTqhHWxOt5+g+tr3ev/jOkcBL1fNUlHQ==
+  version "2.20180918.1"
+  resolved "https://registry.yarnpkg.com/square-connect/-/square-connect-2.20180918.1.tgz#215e42a534bca9db09f39ac4c377fa0aadd59e91"
+  integrity sha512-bh55MDd31ckXhk3rdx0tc5IUiWLK5HstDpWcR/QdBVXengtHwYLVpvHw40R+4pVxO3jPOEKZ9qLiXlLKrq58Yw==
   dependencies:
-    superagent "3.5.2"
+    superagent "3.8.3"
 
 sshpk@^1.7.0:
   version "1.15.1"
@@ -2911,21 +2892,21 @@ strip-json-comments@~2.0.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
-superagent@3.5.2:
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/superagent/-/superagent-3.5.2.tgz#3361a3971567504c351063abeaae0faa23dbf3f8"
-  integrity sha1-M2GjlxVnUEw1EGOr6q4PqiPb8/g=
+superagent@3.8.3:
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/superagent/-/superagent-3.8.3.tgz#460ea0dbdb7d5b11bc4f78deba565f86a178e128"
+  integrity sha512-GLQtLMCoEIK4eDv6OGtkOoSMt3D+oq0y3dsxMuYuDvaNUvuT8eFBuLmfR0iYYzHC1e8hpzC6ZsxbuP6DIalMFA==
   dependencies:
     component-emitter "^1.2.0"
-    cookiejar "^2.0.6"
-    debug "^2.2.0"
+    cookiejar "^2.1.0"
+    debug "^3.1.0"
     extend "^3.0.0"
-    form-data "^2.1.1"
-    formidable "^1.1.1"
+    form-data "^2.3.1"
+    formidable "^1.2.0"
     methods "^1.1.1"
-    mime "^1.3.4"
-    qs "^6.1.0"
-    readable-stream "^2.0.5"
+    mime "^1.4.1"
+    qs "^6.5.1"
+    readable-stream "^2.3.5"
 
 supports-color@^2.0.0:
   version "2.0.0"
@@ -3046,9 +3027,9 @@ typedarray-to-buffer@^3.1.5:
     is-typedarray "^1.0.0"
 
 ua-parser-js@^0.7.18:
-  version "0.7.18"
-  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.18.tgz#a7bfd92f56edfb117083b69e31d2aa8882d4b1ed"
-  integrity sha512-LtzwHlVHwFGTptfNSgezHp7WUlwiqb0gA9AALRbKaERfxwJoiX0A73QbTToxteIAuIaFshhgIZfqK8s7clqgnA==
+  version "0.7.19"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.19.tgz#94151be4c0a7fb1d001af7022fdaca4642659e4b"
+  integrity sha512-T3PVJ6uz8i0HzPxOF9SWzWAlfN/DavlpQqepn22xgve/5QecC+XMCAtmUNnY7C9StehaV6exjUCI801lOI7QlQ==
 
 union-value@^1.0.0:
   version "1.0.0"

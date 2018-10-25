@@ -185,11 +185,6 @@ const genericSystemReadTags = {
     subTag: 'Fault[0]',
   },
 };
-const genericPulseCommands = {
-  Reset: {
-    subTag: 'ResetPls',
-  },
-};
 
 const objFromCount = (size, keyMapper, valMapper) => {
   const o = {};
@@ -237,6 +232,15 @@ createSubSystem('IOSystem', null, {
   },
 });
 
+const genericSystemPulseCommands = {
+  Reset: {
+    subTag: 'Cmd.Reset.HmiPb',
+  },
+  Home: {
+    subTag: 'Cmd.Home.HmiPb',
+  },
+};
+
 createSubSystem('System', '_System', {
   icon: '🤖',
   readTags: {
@@ -246,9 +250,7 @@ createSubSystem('System', '_System', {
     },
   },
   pulseCommands: {
-    Reset: {
-      subTag: 'systemResetPls',
-    },
+    ...genericSystemPulseCommands,
   },
 });
 
@@ -274,6 +276,7 @@ createSubSystem('Granule0', '_Granule0', {
     },
   },
   pulseCommands: {
+    ...genericSystemPulseCommands,
     DispenseOnce: {
       subTag: 'Cmd.DispenseOnce.HmiPb',
     },
@@ -299,10 +302,7 @@ createSubSystem('FillSystem', '_FillSystem', {
     },
   },
   pulseCommands: {
-    ...genericPulseCommands,
-    Home: {
-      subTag: 'Cmd.Home.HmiPb',
-    },
+    ...genericSystemPulseCommands,
     PositionAndDispenseAmount: {
       subTag: 'Cmd.PositionAndDispenseAmount.HmiPb',
     },
@@ -353,10 +353,7 @@ createSubSystem('FillPositioner', '_FillPositioner', {
     },
   },
   pulseCommands: {
-    ...genericPulseCommands,
-    Home: {
-      subTag: 'Cmd.Home.HmiPb',
-    },
+    ...genericSystemPulseCommands,
     GoToPosition: {
       subTag: 'Cmd.GoToPosition.HmiPb',
     },
