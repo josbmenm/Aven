@@ -258,12 +258,8 @@ createSubSystem('Granule0', '_Granule0', {
   icon: '🍚',
   readTags: {
     ...genericSystemReadTags,
-    OutputSolenoidExtend: {
-      subTag: 'OutputSolenoidExtend',
-      type: 'boolean',
-    },
-    OutputSolenoidRetract: {
-      subTag: 'OutputSolenoidRetract',
+    OutputSolenoid: {
+      subTag: 'OutputSolenoid',
       type: 'boolean',
     },
     DispenseCountGoal: {
@@ -285,7 +281,7 @@ createSubSystem('Granule0', '_Granule0', {
     },
   },
   valueCommands: {
-    Dest: {
+    AmountToDispense: {
       type: 'integer',
       subTag: 'Cmd.AmountToDispense',
     },
@@ -296,10 +292,10 @@ createSubSystem('FillSystem', '_FillSystem', {
   icon: '🥙',
   readTags: {
     ...genericSystemReadTags,
-    Homed: {
-      subTag: 'Homed',
-      type: 'boolean',
-    },
+    // Homed: {
+    //   subTag: 'Homed',
+    //   type: 'boolean',
+    // },
   },
   pulseCommands: {
     ...genericSystemPulseCommands,
