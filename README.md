@@ -23,9 +23,9 @@ A component toolkit for React Native and React Native Web. The UI building block
 
 The database layer helps you manage several sources of data, handles real-time data syncronization, and supports user authentication and permissions (coming soon).
 
-### React Navigation
+### Aven Navigation
 
-Aven apps use React Navigation to share navigation logic and views between the web and react native.
+Aven apps use React Navigation to share navigation logic and views between the web and react native. Aven Navigation is a set of navigators that are designed to be idiomatic on every platform, yet still customizable for most occasions.
 
 ### Aven Tools
 
