@@ -13,16 +13,20 @@ A full-stack app framework built with Javascript and React Native, supporting we
 
 ## Framework
 
-The framework consists of a few loosly-coupled components which are meant to work well and support each-other.
+The framework consists of a few loosly-coupled components which are meant to work well together.
+
+### Aven Views
+
+A component toolkit for React Native and React Native Web. The UI building blocks of an Aven app.
 
 ### Aven Cloud
 
-The database layer handles realtime data syncronization, user permissions (coming soon), and helps you manage several sources of data.
-
-### Aven Tools
-
-A CLI and modular tooling environment to launch React Native apps on any platform, using a variety of bundlers and deployment mechanisms under the hood.
+The database layer helps you manage several sources of data, handles real-time data syncronization, and supports user authentication and permissions (coming soon).
 
 ### React Navigation
 
 Aven apps use React Navigation to share navigation logic and views between the web and react native.
+
+### Aven Tools
+
+A CLI and modular tooling environment to launch React Native apps on any platform, using a variety of bundlers and deployment mechanisms under the hood.
