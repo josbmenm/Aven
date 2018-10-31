@@ -9,10 +9,10 @@
     "clean": "./node_modules/@aven-cloud/globe-tools/cli.js clean"
   },
   "devDependencies": {
-    "globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
+    "@aven-cloud/aven-tools": "https://github.com/AvenCloud/AvenTools.git#master"
   },
   "dependencies": {
-    "@aven-cloud/globe-tools": "https://github.com/AvenCloud/globe-tools.git#master",
+    "@aven-cloud/aven-tools": "https://github.com/AvenCloud/AvenTools.git#master",
     "@expo/vector-icons": "^8.0.0",
     "@nozbe/with-observables": "^1.0.1",
     "@react-navigation/core": "^3.0.0-alpha.10",
