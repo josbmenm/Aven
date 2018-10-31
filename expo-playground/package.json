@@ -1,8 +1,8 @@
 {
   "main": "App.js",
-  "globe": {
+  "aven": {
     "env": "expo",
-    "globeDependencies": [],
+    "srcDependencies": [],
     "envOptions": {
       "app": {
         "name": "playground",

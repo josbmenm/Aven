@@ -1,5 +1,5 @@
 {
-  "globe": {
+  "aven": {
     "moduleDependencies": [
       "rxjs-compat",
       "json-stable-stringify",

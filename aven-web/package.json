@@ -2,7 +2,7 @@
   "dependencies": {
     "fs-extra": "^7.0.0"
   },
-  "globe": {
+  "aven": {
     "publicAssetDir": "publicAssets",
     "moduleDependencies": [
       "@react-navigation/web",

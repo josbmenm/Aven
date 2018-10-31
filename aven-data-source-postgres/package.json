@@ -1,6 +1,6 @@
 {
-  "globe": {
-    "globeDependencies": [
+  "aven": {
+    "srcDependencies": [
       "aven-data-server"
     ],
     "moduleDependencies": [
