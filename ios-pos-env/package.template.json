@@ -5,9 +5,9 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
-    "globe:build": "echo Build.",
-    "globe:deploy": "echo Deploy.",
-    "globe:start": "node node_modules/react-native/local-cli/cli.js start"
+    "aven:build": "echo Build.",
+    "aven:deploy": "echo Deploy.",
+    "aven:start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
     "buffer": "^5.2.1",

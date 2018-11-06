@@ -1,4 +1,4 @@
-import DataClient from '../aven-data-client/DataClient';
+import DataClient from '../aven-cloud-client/DataClient';
 
 import withObservables from '@nozbe/with-observables';
 import mapObject from 'fbjs/lib/mapObject';
@@ -34,7 +34,7 @@ export const withKitchen = withObservables([], () => ({
 
 export const dispatchKitchenCommand = async (subsystemName, pulse, values) => {
   await Client.dispatch({
-    type: 'kitchenCommand',
+    type: 'KitchenCommand',
     subsystem: subsystemName,
     pulse,
     values,

@@ -273,9 +273,6 @@ createSubSystem('Granule0', '_Granule0', {
   },
   pulseCommands: {
     ...genericSystemPulseCommands,
-    DispenseOnce: {
-      subTag: 'Cmd.DispenseOnce.HmiPb',
-    },
     DispenseAmount: {
       subTag: 'Cmd.DispenseAmount.HmiPb',
     },
@@ -315,9 +312,6 @@ createSubSystem('Piston0', '_Piston0', {
   },
   pulseCommands: {
     ...genericSystemPulseCommands,
-    DispenseOnce: {
-      subTag: 'Cmd.DispenseOnce.HmiPb',
-    },
     DispenseAmount: {
       subTag: 'Cmd.DispenseAmount.HmiPb',
     },
@@ -443,17 +437,10 @@ export const writeTags = async (schema, values) => {
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-export const connectKitchenDataSource = async (dataSource, kitchenDomain) => {
-  const obj = await dataSource.actions.putObject({
-    ref: 'KitchenConfig',
-    domain: kitchenDomain,
-    object: mainRobotSchema.config,
-  });
-  await dataSource.actions.putRef({
-    ref: 'KitchenConfig',
-    domain: kitchenDomain,
-    objectId: obj.id,
-  });
+export const connectKitchenClient = async client => {
+  const configRef = client.getRef('KitchenConfig');
+  const stateRef = client.getRef('KitchenState');
+  await configRef.put(mainRobotSchema.config);
 
   let currentState;
   const getTagValues = tags => mapObject(tags, tag => tag.value);
@@ -464,16 +451,7 @@ export const connectKitchenDataSource = async (dataSource, kitchenDomain) => {
       await delay(500);
       return;
     }
-    const stateObj = await dataSource.actions.putObject({
-      ref: 'KitchenState',
-      domain: kitchenDomain,
-      object: currentState,
-    });
-    await dataSource.actions.putRef({
-      ref: 'KitchenState',
-      domain: kitchenDomain,
-      objectId: stateObj.id,
-    });
+    await stateRef.put(currentState);
     await delay(200);
   };
   const updateTagsForever = () => {

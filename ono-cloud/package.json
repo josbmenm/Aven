@@ -1,7 +1,7 @@
 {
-  "globe": {
-    "globeDependencies": [
-      "aven-data-client"
+  "aven": {
+    "srcDependencies": [
+      "aven-cloud"
     ],
     "moduleDependencies": [
       "@nozbe/with-observables",

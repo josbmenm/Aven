@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, StatusBar, Image } from 'react-native';
-import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from '@react-navigation/native';
 
 import HomeScreen from './screens/HomeScreen';
@@ -17,8 +16,9 @@ import MenuItemScreen from './screens/MenuItemScreen';
 import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
 import JSONView from '../debug-views/JSONView';
-import { Client } from '../ono-data-client/OnoDataClient';
-import { withObservables } from '../aven-data-client/DataClient';
+import { Client } from '../ono-cloud/OnoCloud';
+import { withObservables } from '../aven-cloud-client/DataClient';
+import createFadeNavigator from '../aven-navigation-fade-navigator/createFadeNavigator';
 
 StatusBar.setHidden(true, 'none');
 
@@ -79,28 +79,20 @@ const PlaceholderImage = ({ style, color }) => (
 //   />
 // ));
 
-const App = createStackNavigator(
-  {
-    Home: HomeScreen,
-    HostHome: HostHomeScreen,
-    KitchenEng: KitchenEngScreen,
-    KitchenEngSub: KitchenEngSubScreen,
-    KioskSettings: KioskSettingsScreen,
-    KioskHome: KioskHomeScreen,
-    MenuItem: MenuItemScreen,
-    // OrderConfirm: OrderConfirmScreen,
-    // OrderComplete: OrderCompleteScreen,
-    // CollectName: CollectNameScreen,
-    // CollectEmail: CollectEmailScreen,
-    PaymentDebug: PaymentDebugScreen,
-  },
-  {
-    defaultNavigationOptions: {
-      header: <View style={{ height: 0 }} />,
-      headerMode: 'none',
-    },
-  },
-);
+const App = createFadeNavigator({
+  Home: HomeScreen,
+  HostHome: HostHomeScreen,
+  KitchenEng: KitchenEngScreen,
+  KitchenEngSub: KitchenEngSubScreen,
+  KioskSettings: KioskSettingsScreen,
+  KioskHome: KioskHomeScreen,
+  MenuItem: MenuItemScreen,
+  // OrderConfirm: OrderConfirmScreen,
+  // OrderComplete: OrderCompleteScreen,
+  // CollectName: CollectNameScreen,
+  // CollectEmail: CollectEmailScreen,
+  PaymentDebug: PaymentDebugScreen,
+});
 
 const AppContainer = createAppContainer(App);
 

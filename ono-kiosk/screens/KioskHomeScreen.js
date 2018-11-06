@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import MenuItem from '../components/MenuItem';
 import GenericPage from '../components/GenericPage';
 import Hero from '../../ono-components/Hero';
-import { mainMenu, testData } from '../../ono-data-client/OnoDataClient';
+import { mainMenu, testData } from '../../ono-cloud/OnoCloud';
 import withObservables from '@nozbe/with-observables';
 
 const WithBlend = ({ menu, test }) => {

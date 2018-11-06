@@ -1,11 +1,11 @@
 {
   "name": "ono-kitchen-status",
   "main": "App",
-  "globe": {
+  "aven": {
     "env": "dom",
-    "globeDependencies": [
-      "ono-data-client",
-      "aven-data-client"
+    "srcDependencies": [
+      "ono-cloud",
+      "aven-cloud-client"
     ]
   }
 }

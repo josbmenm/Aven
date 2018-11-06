@@ -1,6 +1,6 @@
 {
   "name": "ono-website",
-  "globe": {
+  "aven": {
     "env": "web",
     "publicAssetDir": "public",
     "envOptions": {
@@ -9,10 +9,10 @@
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js"
     },
-    "globeDependencies": [
+    "srcDependencies": [
       "aven-web",
-      "aven-data-server",
-      "aven-data-source-postgres"
+      "aven-cloud-server",
+      "aven-cloud-postgres"
     ],
     "moduleDependencies": [
       "@react-navigation/core",

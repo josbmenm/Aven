@@ -1,8 +1,8 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
-import startPostgresDataSource from '../aven-data-source-postgres/startPostgresDataSource';
-import startDataService from '../aven-data-server/startDataService';
+import startPostgresDataSource from '../aven-cloud-postgres/startPostgresDataSource';
+import startDataService from '../aven-cloud-server/startDataService';
 import { scrapeAirTable } from './scrapeAirTable';
 import { getMobileAuthToken } from './Square';
 

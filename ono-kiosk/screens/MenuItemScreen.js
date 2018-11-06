@@ -4,7 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from '@react-navigation/native';
 import { genericText } from '../../ono-components/Styles';
 import GenericPage from '../components/GenericPage';
-import { topMenuItem } from '../../ono-data-client/OnoDataClient';
+import { topMenuItem } from '../../ono-cloud/OnoCloud';
 import withObservables from '@nozbe/with-observables';
 
 const Products = [];

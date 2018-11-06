@@ -8,6 +8,6 @@ yarn-error.log
 # OS X
 .DS_Store
 
-.globe.state.json
+.aven-env-state.json
 
 ./**/node_modules/

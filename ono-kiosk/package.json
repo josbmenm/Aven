@@ -1,12 +1,13 @@
 {
   "main": "App",
-  "globe": {
+  "aven": {
     "env": "ios-pos-env",
-    "globeDependencies": [
+    "srcDependencies": [
       "debug-views",
-      "ono-data-client",
-      "aven-data-client",
-      "ono-components"
+      "ono-cloud",
+      "aven-cloud-client",
+      "ono-components",
+      "aven-navigation-fade-navigator"
     ],
     "moduleDependencies": [
       "@nozbe/with-observables",

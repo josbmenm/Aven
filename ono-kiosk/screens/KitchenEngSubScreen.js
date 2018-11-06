@@ -12,7 +12,7 @@ import {
   withKitchen,
   getSubsystem,
   dispatchKitchenCommand,
-} from '../../ono-data-client/OnoKitchenClient';
+} from '../../ono-cloud/OnoKitchen';
 
 class SubsystemWithKitchen extends React.Component {
   state = { overwrittenValues: {} };

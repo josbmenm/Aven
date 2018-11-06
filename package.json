@@ -1,20 +1,21 @@
 {
   "name": "onofoodco",
   "scripts": {
-    "start": "./node_modules/globe-tools/cli.js start",
-    "build": "./node_modules/globe-tools/cli.js build",
-    "start-web": "PORT=8840 ./node_modules/globe-tools/cli.js start ono-website",
-    "deploy-web": "./node_modules/globe-tools/cli.js deploy ono-website",
-    "start-kitchen": " PORT=8830 ./node_modules/globe-tools/cli.js start ono-kitchen",
-    "start-kiosk": "./node_modules/globe-tools/cli.js start ono-kiosk",
-    "start-mobile": "./node_modules/globe-tools/cli.js start ono-mobile",
-    "clean": "./node_modules/globe-tools/cli.js clean"
+    "start": "./node_modules/@aven-cloud/aven-tools/cli.js start",
+    "build": "./node_modules/@aven-cloud/aven-tools/cli.js build",
+    "start-web": "PORT=8840 ./node_modules/@aven-cloud/aven-tools/cli.js start ono-website",
+    "deploy-web": "./node_modules/@aven-cloud/aven-tools/cli.js deploy ono-website",
+    "start-kitchen": " PORT=8830 ./node_modules/@aven-cloud/aven-tools/cli.js start ono-kitchen",
+    "start-kiosk": "./node_modules/@aven-cloud/aven-tools/cli.js start ono-kiosk",
+    "start-mobile": "./node_modules/@aven-cloud/aven-tools/cli.js start ono-mobile",
+    "clean": "./node_modules/@aven-cloud/aven-tools/cli.js clean"
   },
   "devDependencies": {
-    "globe-tools": "https://github.com/AvenCloud/globe-tools.git#master"
+    "@aven-cloud/aven-tools": "https://github.com/AvenCloud/AvenTools.git#master"
   },
   "dependencies": {
-    "@aven-cloud/globe-tools": "https://github.com/AvenCloud/globe-tools.git#master",
+    "@aven-cloud/aven": "https://github.com/AvenCloud/Aven.git#master",
+    "@aven-cloud/aven-tools": "https://github.com/AvenCloud/AvenTools.git#master",
     "@nozbe/with-observables": "^1.0.1",
     "@react-navigation/core": "^3.0.0-alpha.10",
     "@react-navigation/native": "^3.0.0-alpha.5",
@@ -24,7 +25,6 @@
     "ethernet-ip": "^1.2.2",
     "fbjs": "^1.0.0",
     "fs-extra": "^7.0.0",
-    "globe": "https://github.com/AvenCloud/globe.git#v2",
     "helmet": "^3.13.0",
     "json-stable-stringify": "^1.0.1",
     "pg-format": "^1.0.4",
@@ -37,7 +37,7 @@
     "ws": "^6.0.0",
     "yes-https": "^0.0.4"
   },
-  "globe": {
-    "extendsGlobeModule": "globe"
+  "aven": {
+    "extendsSrcModule": "@aven-cloud/aven"
   }
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { NativeModules, NativeEventEmitter } from 'react-native';
 
-import { dispatch } from '../ono-data-client/OnoDataClient';
+import { dispatch } from '../ono-cloud/OnoCloud';
 
 const OPaymentManager = NativeModules.OPaymentManager;
 

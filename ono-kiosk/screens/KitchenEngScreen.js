@@ -10,8 +10,8 @@ import {
   withKitchen,
   Client as KitchenClient,
   getSubsystemOverview,
-} from '../../ono-data-client/OnoKitchenClient';
-import { Client as DataClient } from '../../ono-data-client/OnoDataClient';
+} from '../../ono-cloud/OnoKitchen';
+import { Client as DataClient } from '../../ono-cloud/createOnoCloudClient';
 
 import withObservables from '@nozbe/with-observables';
 
