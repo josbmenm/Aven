@@ -49,7 +49,7 @@ export default function createBrowserNetworkSource(opts) {
       refs,
       domain
     });
-    upstreamSubscribedRefs.add(ref);
+    refs.forEach(ref => upstreamSubscribedRefs.add(ref));
   }
   // function unsubscribeUpstream(domain, ref) {
   //   socketSendIfConnected({
@@ -129,15 +129,18 @@ export default function createBrowserNetworkSource(opts) {
   function createDomainRefObserver(domain, name) {
     const subject = new BehaviorSubject({ id: null });
     return Observable.create(observer => {
-      observer.next();
-      return () => {};
+      console.log("subscribing to upstream data!");
+      // observer.next();
+      return () => {
+        console.log("unsubuscribing from upstream data!");
+      };
     });
     subscribeUpstream({
       domain,
       refs: [name]
     });
   }
-  function observeRef(domain, name) {
+  async function observeRef(domain, name) {
     const d = refObservables[domain] || (refObservables[domain] = {});
     const r = d[name] || (d[name] = createDomainRefObserver(domain, name));
     return r;
