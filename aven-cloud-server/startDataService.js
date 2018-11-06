@@ -1,4 +1,4 @@
-import prepareSocketServer from "./prepareSocketServer";
+import prepareSocketServer from "../aven-web/prepareSocketServer";
 const fs = require("fs-extra");
 const pathJoin = require("path").join;
 

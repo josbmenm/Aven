@@ -2,32 +2,43 @@ import { Observable, BehaviorSubject } from "rxjs-compat";
 const crypto = require("crypto");
 const stringify = require("json-stable-stringify");
 
-const _getRef = ({ objectId, isPublic, owner }) => {
+const _getRef = ({ id, isPublic, owner }) => {
   // this strips out hidden features of the ref and snapshots the references
   return {
-    objectId,
-    isPublic,
-    owner
+    id: id || null,
+    isPublic: isPublic || true,
+    owner: owner || null
   };
 };
 
-const startMemoryDataSource = opts => {
-  const dataSourceDomain = opts.domain;
-  const _objects = {};
-  const _objectsSize = {};
-  const _refs = {};
+const createDispatcher = actions => action => {
+  if (actions[action.type]) {
+    return actions[action.type](action);
+  }
+  throw new Error(`Cannot find action "${action.type}"`);
+};
 
-  async function putRef({ domain, ref, objectId, owner }) {
-    if (domain === undefined || ref === undefined) {
-      throw new Error("Invalid use. ", { domain, ref, objectId });
+const startMemoryDataSource = (opts = {}) => {
+  const dataSourceDomain = opts.domain;
+  let _objects = {};
+  let _objectsSize = {};
+  let _refs = {};
+
+  if (dataSourceDomain == null) {
+    throw new Error(`Empty domapin passed to startMemoryDataSource`);
+  }
+
+  async function PutRef({ domain, name, id, owner }) {
+    if (domain === undefined || name === undefined) {
+      throw new Error("Invalid use. ", { domain, name, id });
     }
     if (domain !== dataSourceDomain) {
       throw new Error(
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
-    const r = _refs[ref] || (_refs[ref] = {});
-    r.objectId = objectId;
+    const r = _refs[name] || (_refs[name] = {});
+    r.id = id;
     r.owner = owner;
     r.isPublic = true;
     if (r.behavior) {
@@ -37,39 +48,44 @@ const startMemoryDataSource = opts => {
     }
   }
 
-  async function getObject({ id }) {
-    if (_objects[id]) {
+  async function GetObject({ id }) {
+    if (_objects[id] !== undefined) {
       return {
         id,
         object: _objects[id]
       };
     }
-    return null;
+    return {
+      id,
+      object: undefined
+    };
   }
-  async function putObject({ object, ref, domain }) {
+
+  async function PutObject({ value, ref, domain }) {
     if (domain !== dataSourceDomain) {
       throw new Error(
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
-    const objData = stringify(object);
+    const objData = stringify(value);
     const size = objData.length;
     const sha = crypto.createHash("sha1");
     sha.update(objData);
     const id = sha.digest("hex");
-    _objects[id] = object;
+    _objects[id] = value;
     _objectsSize[id] = size;
     return { id };
   }
-  async function getRef({ domain, ref }) {
+
+  async function GetRef({ domain, name }) {
     if (domain !== dataSourceDomain) {
       return null;
     }
-    const r = _refs[ref];
+    const r = _refs[name];
     if (r) {
       return {
-        id: r.objectId,
-        ref: ref,
+        id: r.id,
+        name,
         domain,
         owner: r.owner,
         isPublic: r.isPublic
@@ -78,37 +94,43 @@ const startMemoryDataSource = opts => {
     return null;
   }
 
-  const getStatus = () => ({
+  const GetStatus = () => ({
     ready: true,
     connected: true,
     migrated: true
   });
+
   const actions = {
-    putRef,
-    putObject,
-    getObject,
-    getRef,
-    getStatus
+    PutRef,
+    PutObject,
+    GetObject,
+    GetRef,
+    GetStatus
   };
-  const close = () => {};
-  const observeRef = (refName, domain) => {
+
+  const close = () => {
+    _objects = null;
+    _objectsSize = null;
+    _refs = null;
+  };
+  const observeRef = async (domain, refName) => {
     if (domain !== dataSourceDomain) {
       throw new Error(
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
-    const r = _refs[refName];
-    if (r && r.behavior) {
+    let r = _refs[refName];
+    if (r) {
       return r.behavior;
     }
-    throw new Error(
-      `cannot observe ref "${refName}" because it cannot be found`
-    );
+    r = _refs[refName] = {};
+    r.behavior = new BehaviorSubject(_getRef(r));
+    return r.behavior;
   };
   return {
     close,
     observeRef,
-    actions
+    dispatch: createDispatcher(actions)
   };
 };
 

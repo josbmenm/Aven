@@ -22,7 +22,7 @@
     },
     "srcDependencies": [
       "aven-web",
-      "aven-data-server"
+      "aven-cloud-server"
     ],
     "publicBuildConfigVars": [
       "BUILD_ENV"

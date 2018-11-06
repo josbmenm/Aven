@@ -1,7 +1,7 @@
 import App from "./App";
 import WebServer from "../aven-web/WebServer";
 import { getSecretConfig, IS_DEV } from "../aven-web/config";
-import startDataService from "../aven-data-server/startDataService";
+import startDataService from "../aven-cloud-server/startDataService";
 
 const runServer = async () => {
   const domain = "example.aven.cloud";

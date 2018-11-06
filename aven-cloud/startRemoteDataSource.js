@@ -14,7 +14,7 @@ const _getRef = ({ objectId, isPublic, owner }) => {
 const channelOfRefAndDomain = (refName, domain) =>
   `ref_${domain.split(".").join("_")}_${md5(refName)}`;
 
-const startRemoteDataSource = ({ host, domain }) => {
+export default function startRemoteDataSource({ host, domain }) {
   const _httpEndpoint = `${host.useSSL === false ? "http" : "https"}://${
     host.authority
   }/dispatch`;
@@ -235,6 +235,4 @@ const startRemoteDataSource = ({ host, domain }) => {
     observeRef,
     actions
   };
-};
-
-export default startRemoteDataSource;
+}

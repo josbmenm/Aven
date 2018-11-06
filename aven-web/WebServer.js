@@ -1,6 +1,7 @@
 import express from "express";
 import ReactDOMServer from "react-dom/server";
 import { AppRegistry } from "react-native";
+import React from "react";
 import startServer from "./startServer";
 import { IS_DEV } from "./config";
 import { handleServerRequest } from "@react-navigation/web";
@@ -30,10 +31,10 @@ async function objectResponse({
   objName
 }) {
   const obj = await dispatch({
-    type: "getObject",
-    id: objId,
+    type: "GetObject",
     domain,
-    refName
+    name: refName,
+    id: objId
   });
   if (!obj) {
     return sendNotFound;
@@ -73,9 +74,9 @@ async function objectResponse({
 
 async function webDataInterface({ domain, refName, dispatch, refPath }) {
   const ref = await dispatch({
-    ref: refName,
-    type: "getRef",
-    domain
+    type: "GetRef",
+    domain,
+    name: refName
   });
   if (!ref || !ref.id) {
     return sendNotFound;
@@ -92,8 +93,8 @@ async function webDataInterface({ domain, refName, dispatch, refPath }) {
 
 export default async function WebServer({
   App,
-  dispatch,
-  startSocketServer,
+  dataSource,
+  context,
   serverListenLocation
 }) {
   const expressApp = express();
@@ -109,7 +110,18 @@ export default async function WebServer({
     );
     next();
   });
-  AppRegistry.registerComponent("App", () => App);
+
+  AppRegistry.registerComponent("App", () => {
+    function AppWithContext(props) {
+      let el = <App {...props} />;
+      context.forEach((value, C) => {
+        el = <C.Provider value={value}>{el}</C.Provider>;
+      });
+      return el;
+    }
+
+    return AppWithContext;
+  });
 
   // const publicDir = isProd ? 'build/public' : `src/${activeApp}/public`;
   const publicDir = isProd ? "build/public" : `public`;
@@ -117,16 +129,15 @@ export default async function WebServer({
   expressApp.disable("x-powered-by");
   expressApp.use(express.static(publicDir));
   expressApp.post("/dispatch", (req, res) => {
-    if (dispatch) {
-      dispatch(req.body)
-        .then(result => {
-          res.send(result);
-        })
-        .catch(err => {
-          console.error(err);
-          res.status(500).send(String(err));
-        });
-    }
+    dataSource
+      .dispatch(req.body)
+      .then(result => {
+        res.send(result);
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).send(String(err));
+      });
   });
 
   expressApp.get("/_/:domain/:ref*", (req, res) => {
@@ -134,7 +145,12 @@ export default async function WebServer({
     const domain = req.params.domain;
     const refPath = req.params["0"];
 
-    webDataInterface({ domain, refName, refPath, dispatch })
+    webDataInterface({
+      domain,
+      refName,
+      refPath,
+      dispatch: dataSource.dispatch
+    })
       .then(responder => {
         responder(res);
       })
@@ -194,7 +210,7 @@ export default async function WebServer({
     </head>
     <body>
         <div id="root">${html}</div>
-        ${options.customHTML}
+        ${options.customHTML || ""}
     </body>
 </html>`
     );
@@ -206,7 +222,8 @@ export default async function WebServer({
 
   await startServer(httpServer, serverListenLocation);
 
-  const wsServer = startSocketServer && (await startSocketServer(wss));
+  // const wsServer = startSocketServer && (await startSocketServer(wss));
+  const wsServer = null;
 
   console.log("Listening on " + serverListenLocation);
   IS_DEV && console.log(`http://localhost:${serverListenLocation}`);
