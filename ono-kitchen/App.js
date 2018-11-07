@@ -1,9 +1,10 @@
 import { View, Text } from 'react-native';
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 
-import { useState, useEffect } from 'react';
+import { useKitchen } from '../ono-cloud/OnoKitchenHooks';
 
 import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
+import { withKitchen } from '../ono-cloud/OnoKitchen';
 
 // import { mainMenu } from '../ono-cloud/OnoCloud';
 // import { withObservables } from '../aven-cloud/DataClient';
@@ -19,42 +20,45 @@ import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
 //     ),
 // );
 
-function useObservableBehavior(behavior) {
-  const [value, setValue] = useState(behavior.value);
+// function Foo() {
+//   const { kitchenState, kitchenConfig } = useKitchen();
+//   return (
+//     <Text>
+//       {JSON.stringify(kitchenState)} {JSON.stringify(kitchenConfig)}
+//     </Text>
+//   );
+// }
 
-  useEffect(
-    () => {
-      const subscription = behavior.subscribe(setValue);
-      return () => subscription.unsubscribe();
-    },
-    [behavior],
+function FooWithKitchen({ kitchenState, kitchenConfig }) {
+  return (
+    <Text>
+      {JSON.stringify(kitchenState)} {JSON.stringify(kitchenConfig)}
+    </Text>
   );
+}
+const Foo = withKitchen(FooWithKitchen);
 
-  return value;
+function Zone({ name }) {
+  const [isShowingFoo, setShowingFoo] = useState(false);
+  return (
+    <View style={{ flex: 1 }}>
+      <Text
+        onPress={() => {
+          setShowingFoo(!isShowingFoo);
+        }}
+      >
+        Toggle data {name} : {isShowingFoo ? 'showing' : 'not showing'}
+      </Text>
+      {isShowingFoo && <Foo />}
+    </View>
+  );
 }
 
-function Foo() {
-  const restaurant = useContext(OnoRestaurantContext);
-  const kitchen = useObservableBehavior(
-    restaurant.getRef('KitchenState').observeValue,
+export default function App({ env }) {
+  return (
+    <View style={{ flex: 1 }}>
+      <Zone name="A" />
+      <Zone name="B" />
+    </View>
   );
-  return <Text>{JSON.stringify(kitchen)}</Text>;
-}
-
-export default class App extends React.Component {
-  render() {
-    const { env } = this.props;
-    return (
-      <View style={{ flex: 1 }}>
-        <Text
-          onPress={() => {
-            alert('hello');
-          }}
-        >
-          Ono Kitchen
-        </Text>
-        <Foo />
-      </View>
-    );
-  }
 }

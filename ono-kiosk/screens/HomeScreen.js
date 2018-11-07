@@ -75,24 +75,24 @@ export default class HomeScreen extends Component {
               navigation.navigate({
                 routeName: 'KitchenEngSub',
                 params: {
-                  system: 'Granule0',
+                  system: 'Granule',
                 },
               });
             }}
             icon="🍚"
-            title="Granule 0"
+            title="Granule"
           />
           <LinkRow
             onPress={() => {
               navigation.navigate({
                 routeName: 'KitchenEngSub',
                 params: {
-                  system: 'Piston0',
+                  system: 'Piston',
                 },
               });
             }}
             icon="💩"
-            title="Piston 0"
+            title="Piston"
           />
           <LinkRow
             onPress={() => {

@@ -254,13 +254,13 @@ createSubSystem('System', '_System', {
   },
 });
 
-createSubSystem('Granule0', '_Granule0', {
+createSubSystem('Granule', '_Granule', {
   icon: '🍚',
   readTags: {
     ...genericSystemReadTags,
-    OutputSolenoid: {
-      subTag: 'OutputSolenoid',
-      type: 'boolean',
+    SlotToDispense: {
+      subTag: 'SlotToDispense',
+      type: 'integer',
     },
     DispenseCountGoal: {
       subTag: 'DispenseCountGoal',
@@ -285,22 +285,10 @@ createSubSystem('Granule0', '_Granule0', {
   },
 });
 
-createSubSystem('Piston0', '_Piston0', {
+createSubSystem('Piston', '_Piston', {
   icon: '💩',
   readTags: {
     ...genericSystemReadTags,
-    OutputSolenoidA: {
-      subTag: 'OutputSolenoidA',
-      type: 'boolean',
-    },
-    OutputSolenoidB: {
-      subTag: 'OutputSolenoidB',
-      type: 'boolean',
-    },
-    OutputSolenoidC: {
-      subTag: 'OutputSolenoidC',
-      type: 'boolean',
-    },
     DispenseCountGoal: {
       subTag: 'DispenseCountGoal',
       type: 'integer',
@@ -370,14 +358,6 @@ createSubSystem('FillPositioner', '_FillPositioner', {
     OutputMotorEnabled: {
       subTag: 'OutputMotorEnabled',
       type: 'boolean',
-    },
-    OutputMotorDirection: {
-      subTag: 'OutputMotorDirection',
-      type: 'boolean',
-    },
-    PositionCurrent: {
-      subTag: 'PositionCurrent',
-      type: 'integer',
     },
     PositionDest: {
       subTag: 'PositionDest',

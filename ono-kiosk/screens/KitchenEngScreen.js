@@ -6,11 +6,7 @@ import { withNavigation } from '@react-navigation/core';
 import GenericPage from '../components/GenericPage';
 import RowSection from '../../ono-components/RowSection';
 import LinkRow from '../../ono-components/LinkRow';
-import {
-  withKitchen,
-  Client as KitchenClient,
-  getSubsystemOverview,
-} from '../../ono-cloud/OnoKitchen';
+import { getSubsystemOverview, useKitchen } from '../../ono-cloud/OnoKitchen';
 import { Client as DataClient } from '../../ono-cloud/createOnoCloudClient';
 
 import withObservables from '@nozbe/with-observables';
@@ -25,30 +21,31 @@ const KitchenConnectionStatusRow = withObservables([], () => ({
   <BitRow title="Kitchen Server Connected" value={isConnected} />
 ));
 
-const Subsystems = withNavigation(
-  withKitchen(({ kitchenState, kitchenConfig, navigation }) => {
-    const subsystems = getSubsystemOverview(kitchenConfig, kitchenState);
-    return (
-      <RowSection>
-        {subsystems.map(system => (
-          <LinkRow
-            key={system.name}
-            onPress={() => {
-              navigation.navigate({
-                routeName: 'KitchenEngSub',
-                params: { system: system.name },
-              });
-            }}
-            icon={system.icon}
-            title={`${system.name} ${
-              system.noFaults === null ? '' : system.noFaults ? '👍' : '🚨'
-            }`}
-          />
-        ))}
-      </RowSection>
-    );
-  }),
-);
+// const Subsystems = withNavigation(
+//   withHooks(({ navigation }) => {
+//     const { kitchenState, kitchenConfig } = useKitchen();
+//     const subsystems = getSubsystemOverview(kitchenConfig, kitchenState);
+//     return (
+//       <RowSection>
+//         {subsystems.map(system => (
+//           <LinkRow
+//             key={system.name}
+//             onPress={() => {
+//               navigation.navigate({
+//                 routeName: 'KitchenEngSub',
+//                 params: { system: system.name },
+//               });
+//             }}
+//             icon={system.icon}
+//             title={`${system.name} ${
+//               system.noFaults === null ? '' : system.noFaults ? '👍' : '🚨'
+//             }`}
+//           />
+//         ))}
+//       </RowSection>
+//     );
+//   }),
+// );
 
 export default class KitchenEngScreen extends Component {
   render() {
@@ -60,8 +57,8 @@ export default class KitchenEngScreen extends Component {
           <KitchenConnectionStatusRow />
           <BitRow title="PLC Connected" value={true} />
         </RowSection>
-        <Subsystems />
       </GenericPage>
     );
   }
+  // <Subsystems />
 }

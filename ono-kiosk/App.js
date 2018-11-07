@@ -6,18 +6,20 @@ import HomeScreen from './screens/HomeScreen';
 import HostHomeScreen from './screens/HostHomeScreen';
 import KitchenEngScreen from './screens/KitchenEngScreen';
 import KitchenEngSubScreen from './screens/KitchenEngSubScreen';
-import KioskSettingsScreen from './screens/KioskSettingsScreen';
-import KioskHomeScreen from './screens/KioskHomeScreen';
-import MenuItemScreen from './screens/MenuItemScreen';
+// import KioskSettingsScreen from './screens/KioskSettingsScreen';
+// import KioskHomeScreen from './screens/KioskHomeScreen';
+// import MenuItemScreen from './screens/MenuItemScreen';
+// import PaymentDebugScreen from './screens/PaymentDebugScreen';
+
 // import OrderConfirmScreen from './screens/OrderConfirmScreen';
 // import OrderCompleteScreen from './screens/OrderCompleteScreen';
 // import CollectNameScreen from './screens/CollectNameScreen';
 // import CollectEmailScreen from './screens/CollectEmailScreen';
-import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
 import JSONView from '../debug-views/JSONView';
-import { Client } from '../ono-cloud/OnoCloud';
-import { withObservables } from '../aven-cloud-client/DataClient';
+import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
+import createCloudClient from '../aven-cloud/createCloudClient';
+import createNativeNetworkSource from '../aven-cloud-native/createNativeNetworkSource';
 import createFadeNavigator from '../aven-navigation-fade-navigator/createFadeNavigator';
 
 StatusBar.setHidden(true, 'none');
@@ -79,24 +81,47 @@ const PlaceholderImage = ({ style, color }) => (
 //   />
 // ));
 
-const App = createFadeNavigator({
-  Home: HomeScreen,
-  HostHome: HostHomeScreen,
-  KitchenEng: KitchenEngScreen,
-  KitchenEngSub: KitchenEngSubScreen,
-  KioskSettings: KioskSettingsScreen,
-  KioskHome: KioskHomeScreen,
-  MenuItem: MenuItemScreen,
-  // OrderConfirm: OrderConfirmScreen,
-  // OrderComplete: OrderCompleteScreen,
-  // CollectName: CollectNameScreen,
-  // CollectEmail: CollectEmailScreen,
-  PaymentDebug: PaymentDebugScreen,
-});
+const App = createFadeNavigator(
+  {
+    Home: HomeScreen,
+    HostHome: HostHomeScreen,
+    KitchenEng: KitchenEngScreen,
+    KitchenEngSub: KitchenEngSubScreen,
+    // KioskSettings: KioskSettingsScreen,
+
+    // KioskHome: KioskHomeScreen,
+    // MenuItem: MenuItemScreen,
+
+    // OrderConfirm: OrderConfirmScreen,
+    // OrderComplete: OrderCompleteScreen,
+    // CollectName: CollectNameScreen,
+    // CollectEmail: CollectEmailScreen,
+    // PaymentDebug: PaymentDebugScreen,
+  },
+  {
+    headerMode: 'none',
+  },
+);
 
 const AppContainer = createAppContainer(App);
 
-export default AppContainer;
+const dataSource = createNativeNetworkSource({
+  useSSL: false,
+  authority: 'localhost:8830',
+});
+
+const restaurant = createCloudClient({
+  dataSource,
+  domain: 'kitchen.maui.onofood.co',
+});
+
+const FullApp = () => (
+  <OnoRestaurantContext.Provider value={restaurant}>
+    <AppContainer />
+  </OnoRestaurantContext.Provider>
+);
+
+export default FullApp;
 
 // class ReadyOrders extends React.Component {
 //   state = {clearedIds: []}

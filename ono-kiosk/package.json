@@ -5,7 +5,7 @@
     "srcDependencies": [
       "debug-views",
       "ono-cloud",
-      "aven-cloud-client",
+      "aven-cloud-native",
       "ono-components",
       "aven-navigation-fade-navigator"
     ],
