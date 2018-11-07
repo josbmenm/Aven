@@ -2,7 +2,7 @@ import uuid from "uuid/v1";
 
 const WebSocket = require("ws");
 
-const prepareSocketServer = dbService => wss => {
+const prepareSocketServer = (wss, dataSource) => {
   const socketClosers = {};
   console.log("setting up web socket!");
   wss.on("connection", ws => {
@@ -43,22 +43,24 @@ const prepareSocketServer = dbService => wss => {
 
       switch (action.type) {
         case "SubscribeRefs": {
-          action.refs.forEach(refName => {
-            _refSubscriptions[`${action.domain}_${refName}`] = dbService
-              .observeRef(refName, action.domain)
-              .filter(z => !!z)
-              .subscribe({
-                next: v => {
-                  sendMessage({
-                    type: "RefUpdate",
-                    name: refName,
-                    domain: action.domain,
-                    ...v
-                  });
-                },
-                error: () => {},
-                complete: () => {}
-              });
+          const { domain, refs } = action;
+          refs.forEach(name => {
+            dataSource.observeRef(domain, name).then(refObservable => {
+              _refSubscriptions[`${domain}_${name}`] = refObservable
+                .filter(z => !!z)
+                .subscribe({
+                  next: v => {
+                    sendMessage({
+                      type: "RefUpdate",
+                      name,
+                      domain: domain,
+                      ...v
+                    });
+                  },
+                  error: () => {},
+                  complete: () => {}
+                });
+            });
           });
           return;
         }

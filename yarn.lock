@@ -3765,6 +3765,11 @@ react-native-vector-icons@6.0.0:
     prop-types "^15.6.2"
     yargs "^8.0.2"
 
+react-navigation-stack@^1.0.0-alpha.33:
+  version "1.0.0-alpha.33"
+  resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-1.0.0-alpha.33.tgz#118cd2a8d1d869f24bae44ed5c09e5a55a1b2d60"
+  integrity sha512-kX9qL64CtK3yBGRABlZXFAD3+aVGBTiqfw/QYA1i0UJURRb9lZ0do9I3gUJ5cjFOPVqqztCbk38GOxarIygJsw==
+
 react-proxy@^1.1.7:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/react-proxy/-/react-proxy-1.1.8.tgz#9dbfd9d927528c3aa9f444e4558c37830ab8c26a"

@@ -38,6 +38,10 @@ const startMemoryDataSource = (opts = {}) => {
       );
     }
     const r = _refs[name] || (_refs[name] = {});
+    if (r.id === id) {
+      return; // avoid calling behavior.next if the ID hasn't changed
+      // todo, respect owner and permissions here
+    }
     r.id = id;
     r.owner = owner;
     r.isPublic = true;

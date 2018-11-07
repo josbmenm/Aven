@@ -3,6 +3,7 @@ import ReactDOMServer from "react-dom/server";
 import { AppRegistry } from "react-native";
 import React from "react";
 import startServer from "./startServer";
+import startSocketServer from "./startSocketServer";
 import { IS_DEV } from "./config";
 import { handleServerRequest } from "@react-navigation/web";
 const yes = require("yes-https");
@@ -222,8 +223,7 @@ export default async function WebServer({
 
   await startServer(httpServer, serverListenLocation);
 
-  // const wsServer = startSocketServer && (await startSocketServer(wss));
-  const wsServer = null;
+  const wsServer = await startSocketServer(wss, dataSource);
 
   console.log("Listening on " + serverListenLocation);
   IS_DEV && console.log(`http://localhost:${serverListenLocation}`);

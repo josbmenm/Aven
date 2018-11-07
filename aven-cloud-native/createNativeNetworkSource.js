@@ -1,19 +1,21 @@
 import { Observable, BehaviorSubject, Subject } from "rxjs-compat";
 import ReconnectingWebSocket from "reconnecting-websocket";
 
-export default function createBrowserNetworkSource(opts) {
+export default function createNativeNetworkSource(opts) {
   const httpEndpoint = `${opts.useSSL === false ? "http" : "https"}://${
     opts.authority
   }/dispatch`;
   const wsEndpoint = `${opts.useSSL === false ? "ws" : "wss"}://${
     opts.authority
   }`;
+  console.log("yo111", httpEndpoint, wsEndpoint);
   const isConnected = new BehaviorSubject(false);
   const wsMessages = new Subject();
 
   let wsClientId = null;
 
   async function dispatch(action) {
+    console.log("hellooooooo", action);
     const res = await fetch(httpEndpoint, {
       method: "POST",
       headers: {
@@ -49,6 +51,7 @@ export default function createBrowserNetworkSource(opts) {
   const refObservables = {};
 
   function createDomainRefObserver(domain, name) {
+    console.log("duuude>!", domain, name);
     const domainRefObserver = {
       domain,
       name
@@ -156,6 +159,7 @@ export default function createBrowserNetworkSource(opts) {
   connectWS();
 
   async function observeRef(domain, name) {
+    console.log("omgwyhhyy");
     return getDomainRefObserver(domain, name).observable;
   }
 

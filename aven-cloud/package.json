@@ -1,7 +1,6 @@
 {
   "aven": {
     "moduleDependencies": [
-      "react",
       "rxjs-compat",
       "json-stable-stringify",
       "crypto-js",
