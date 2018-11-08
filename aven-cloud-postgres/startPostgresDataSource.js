@@ -1,6 +1,6 @@
 import { Observable, BehaviorSubject } from "rxjs-compat";
 
-const { schema, getSqlType } = require("../aven-cloud-server/schema");
+const { schema, getSqlType } = require("./schema");
 const crypto = require("crypto");
 const stringify = require("json-stable-stringify");
 
