@@ -8,14 +8,12 @@ export default function createNativeNetworkSource(opts) {
   const wsEndpoint = `${opts.useSSL === false ? "ws" : "wss"}://${
     opts.authority
   }`;
-  console.log("yo111", httpEndpoint, wsEndpoint);
   const isConnected = new BehaviorSubject(false);
   const wsMessages = new Subject();
 
   let wsClientId = null;
 
   async function dispatch(action) {
-    console.log("hellooooooo", action);
     const res = await fetch(httpEndpoint, {
       method: "POST",
       headers: {
@@ -51,7 +49,6 @@ export default function createNativeNetworkSource(opts) {
   const refObservables = {};
 
   function createDomainRefObserver(domain, name) {
-    console.log("duuude>!", domain, name);
     const domainRefObserver = {
       domain,
       name
@@ -63,28 +60,18 @@ export default function createNativeNetworkSource(opts) {
         );
       }
       domainRefObserver.onNext = val => observer.next(val);
-      console.log("subscribing to upstream data!");
       socketSendIfConnected({
         type: "SubscribeRefs",
         refs: [name],
         domain
       });
 
-      // observer.next({ name, domain, id: "init" });
-      // let i = 0;
-      // let tt = setInterval(() => {
-      //   observer.next({ name, domain, id: `num-${i++}` });
-      // }, 2000);
       return () => {
-        // domainRefObserver.onNext = null;
         socketSendIfConnected({
           type: "UnsubscribeRefs",
           refs: [name],
           domain
         });
-
-        console.log("unsubuscribing from upstream data!");
-        // clearInterval(tt);
         delete refObservables[domain][name];
       };
     });
@@ -146,6 +133,7 @@ export default function createNativeNetworkSource(opts) {
           if (o && o.onNext) {
             o.onNext(evt);
           }
+          return;
         }
         default: {
           wsMessages.next(evt);
@@ -159,7 +147,6 @@ export default function createNativeNetworkSource(opts) {
   connectWS();
 
   async function observeRef(domain, name) {
-    console.log("omgwyhhyy");
     return getDomainRefObserver(domain, name).observable;
   }
 

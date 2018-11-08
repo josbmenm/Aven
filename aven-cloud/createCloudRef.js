@@ -114,11 +114,26 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     await putObject(obj);
   }
 
+  async function putId(objId) {
+    await dataSource.dispatch({
+      type: "PutRef",
+      domain,
+      name,
+      id: objId
+    });
+  }
+
+  async function write(value) {
+    const obj = _getObjectWithValue(value);
+    await obj.put();
+    return { id: obj.id };
+  }
+
   async function putObject(obj) {
     const state = getState();
     if (state.puttingFromObjectId) {
       throw new Error(
-        `Cannot putObject of "$_name}" while another put is in progress!`
+        `Cannot putObject of "${name}" while another put is in progress!`
       );
     }
     const lastId = state.id;
@@ -126,15 +141,10 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
       id: obj.id,
       puttingFromId: state.id
     });
-
     try {
       await obj.put();
-      await dataSource.dispatch({
-        type: "PutRef",
-        domain,
-        name,
-        id: obj.id
-      });
+      await putId(obj.id);
+
       setState({
         puttingFromId: null,
         lastPutTime: Date.now()
@@ -145,7 +155,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
         id: lastId
       });
       console.error(e);
-      throw new Error(`Failed to putObjectId of "${name}"!`);
+      throw new Error(`Failed to putObjectId "${obj.id}" to "${name}"!`);
     }
   }
 
@@ -306,17 +316,24 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     })
     .switch();
 
-  // function observeConnectedObjectValue(lookup) {
-  //   return this.observe
-  //     .map(r => {
-  //       if (!r.objectId) {
-  //         return observeNull;
-  //       }
-  //       const obj = this._client.getObject(r.objectId);
-  //       return obj.observeConnectedValue(lookup);
-  //     })
-  //     .switch();
-  // }
+  function observeConnectedValue(lookup) {
+    return observeValue
+      .map(value => {
+        if (!value) {
+          return observeNull;
+        }
+        let refVal = value;
+        lookup.forEach(v => {
+          refVal = refVal && refVal[v];
+        });
+        if (!refVal) {
+          return observeNull;
+        }
+        const connected = _getObjectWithId(refVal);
+        return connected.observeValue;
+      })
+      .switch();
+  }
 
   // return {
   //   domain,
@@ -338,10 +355,13 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     domain,
     fetch,
     put,
+    putId,
     putObject,
     fetchValue,
     getObject,
     observeValue,
-    observe
+    observe,
+    write,
+    observeConnectedValue
   };
 }

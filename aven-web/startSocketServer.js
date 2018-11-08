@@ -4,7 +4,6 @@ const WebSocket = require("ws");
 
 const prepareSocketServer = (wss, dataSource) => {
   const socketClosers = {};
-  console.log("setting up web socket!");
   wss.on("connection", ws => {
     const sendMessage = message => {
       if (ws.readyState === WebSocket.OPEN) {

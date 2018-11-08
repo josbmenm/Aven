@@ -81,18 +81,6 @@ export default function createCloudObject({ dataSource, id, domain, value }) {
     .map(state => state.value)
     .filter(val => val !== undefined);
 
-  // const observeConnectedValue = lookup =>
-  //   this.observeValue
-  //     .map(value => {
-  //       let refVal = value;
-  //       lookup.forEach(v => {
-  //         refVal = refVal[v];
-  //       });
-  //       const connected = this._client.getObject(refVal.id);
-  //       return connected.observeValue;
-  //     })
-  //     .switch();
-
   async function fetch() {
     if (getState().value !== undefined) {
       return;

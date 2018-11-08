@@ -47,6 +47,43 @@ describe("basic ref DataSource interaction", () => {
     await r.fetch();
     expect(r.getObject().id).toEqual(id);
   });
+
+  test("writes objects", async () => {
+    const dataSource = startMemoryDataSource({ domain: "test" });
+    const r = createCloudRef({ dataSource, domain: "test", name: "myref" });
+    const { id } = await r.write({
+      foo: "zoom"
+    });
+    const result = await dataSource.dispatch({
+      type: "GetObject",
+      domain: "test",
+      name: "myref",
+      id
+    });
+    expect(result.object.foo).toEqual("zoom");
+  });
+
+  test("writes ref with putId", async () => {
+    const dataSource = startMemoryDataSource({ domain: "test" });
+    const r = createCloudRef({ dataSource, domain: "test", name: "myref" });
+    const { id } = await r.write({
+      foo: 42
+    });
+    await r.putId(id);
+    const refResult = await dataSource.dispatch({
+      type: "GetRef",
+      domain: "test",
+      name: "myref"
+    });
+    const result = await dataSource.dispatch({
+      type: "GetObject",
+      domain: "test",
+      name: "myref",
+      id: refResult.id
+    });
+    expect(result.object.foo).toEqual(42);
+  });
+
   test("puts objects", async () => {
     const dataSource = startMemoryDataSource({ domain: "test" });
     const r = createCloudRef({ dataSource, domain: "test", name: "myref" });

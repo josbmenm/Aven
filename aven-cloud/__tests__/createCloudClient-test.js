@@ -5,6 +5,7 @@ describe("create client generic behavior", () => {
   test("passes arbitrary actions to dispatch", () => {
     let lastDispatched = null;
     const c = createCloudClient({
+      domain: "test",
       dataSource: {
         dispatch: a => {
           lastDispatched = a;

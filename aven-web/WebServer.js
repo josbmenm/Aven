@@ -41,7 +41,7 @@ async function objectResponse({
     return sendNotFound;
   }
   if (refPath === "/" || refPath === "") {
-    if (!obj.object.data) {
+    if (!obj.object || !obj.object.data) {
       // should be checking for some type here, rather than looking at "data"..
       return res => {
         res.send(obj.object);
