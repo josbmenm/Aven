@@ -2,6 +2,7 @@ import OnoRestaurantContext from './OnoRestaurantContext';
 import mapObject from 'fbjs/lib/mapObject';
 import React from 'react';
 import withObservables from '@nozbe/with-observables';
+import { last } from 'rxjs/operators';
 
 export function withKitchen(Component) {
   const ComponentWithObservedState = withObservables(
@@ -39,6 +40,9 @@ const sortByField = (obj, fieldName) => {
 };
 
 function atDataToMenu(atData) {
+  if (!atData) {
+    return [];
+  }
   const Recipes = atData.baseTables['Recipes'];
   const MenuItemsUnordered = atData.baseTables['Kiosk Menu'];
   const RecipeIngredients = atData.baseTables['Recipe Ingredients'];
@@ -118,6 +122,47 @@ export function withMenu(Component) {
   );
 }
 
+export function withDispatch(Component) {
+  return props => (
+    <OnoRestaurantContext.Consumer>
+      {restaurant => <Component dispatch={restaurant.dispatch} {...props} />}
+    </OnoRestaurantContext.Consumer>
+  );
+}
+
+export function withRestaurant(Component) {
+  const ComponentWithObservedState = withObservables(
+    ['restaurant'],
+    ({ restaurant }) => {
+      return { restaurant };
+    },
+  )(Component);
+
+  return props => (
+    <OnoRestaurantContext.Consumer>
+      {restaurant => (
+        <ComponentWithObservedState
+          restaurant={restaurant.getRef('Restaurant').observeValue}
+          placeOrder={order => {
+            restaurant.getRef('Restaurant').transact(lastState => ({
+              ...lastState,
+              orders: [
+                ...((lastState && lastState.orders) || []),
+                {
+                  ...order,
+                  orderTime: Date.now(),
+                },
+              ],
+            }));
+          }}
+          dispatch={restaurant.dispatch}
+          {...props}
+        />
+      )}
+    </OnoRestaurantContext.Consumer>
+  );
+}
+
 export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {
   const ss = kitchenConfig.subsystems[subsystemName];
   if (!ss) {
@@ -147,6 +192,9 @@ export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {
 };
 
 export const getSubsystemOverview = (kitchenConfig, kitchenState) => {
+  if (!kitchenConfig || !kitchenState) {
+    return [];
+  }
   return Object.keys(kitchenConfig.subsystems).map(subsystemName => {
     return getSubsystem(subsystemName, kitchenConfig, kitchenState);
   });

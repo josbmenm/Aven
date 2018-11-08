@@ -482,7 +482,7 @@ export default function startKitchen({ client, plcIP }) {
       .observeConnectedValue(['files', 'db.json', 'id'])
       .subscribe({
         next: atData => {
-          if (atData === fff) {
+          if (atData === fff || atData == null) {
             // console.log('DUPE AT UPDATE!'); // todo, fix dupe events from observeConnectedValue
             return;
           }

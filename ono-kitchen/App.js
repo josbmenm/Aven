@@ -1,9 +1,9 @@
 import { View, Text } from 'react-native';
 import React, { useState } from 'react';
 
-import { useKitchen } from '../ono-cloud/OnoKitchenHooks';
+// import { useKitchen } from '../ono-cloud/OnoKitchenHooks';
 
-import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
+// import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
 import { withKitchen } from '../ono-cloud/OnoKitchen';
 
 // import { mainMenu } from '../ono-cloud/OnoCloud';

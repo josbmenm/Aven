@@ -5,7 +5,7 @@ import { createAppContainer } from '@react-navigation/native';
 import { genericText } from '../../ono-components/Styles';
 import GenericPage from '../components/GenericPage';
 import Button from '../../ono-components/Button';
-import { withMenuItem } from '../../ono-cloud/OnoKitchen';
+import { withMenuItem, withRestaurant } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 
 // const PlaceholderImage = () => <View />;
@@ -88,8 +88,7 @@ const Ingredients = ({ menuItem }) => (
 //   </GenericPage>
 // );
 
-function MenuItemScreenWithItem({ menuItem }) {
-  console.log(menuItem);
+function MenuItemScreenWithItem({ menuItem, placeOrder, navigation }) {
   return (
     <GenericPage title={menuItem.name} disableScroll>
       <View style={{ padding: 30 }}>
@@ -101,18 +100,31 @@ function MenuItemScreenWithItem({ menuItem }) {
           {menuItem.Price} - {menuItem.Calories} cal
         </Text>
         <Ingredients menuItem={menuItem} />
-        <Button onPress={() => {}} title="Order Blend" />
+        <Button
+          onPress={() => {
+            placeOrder({
+              menuItemId: menuItem.id,
+            });
+            navigation.navigate('DebugState');
+          }}
+          title="Order Blend"
+        />
       </View>
     </GenericPage>
   );
 }
 
-const MenuItemScreenWithId = withMenuItem(MenuItemScreenWithItem);
+const MenuItemScreenWithId = withRestaurant(
+  withMenuItem(MenuItemScreenWithItem),
+);
 
 export default class MenuItemScreen extends Component {
   render() {
     return (
-      <MenuItemScreenWithId menuItemId={this.props.navigation.getParam('id')} />
+      <MenuItemScreenWithId
+        menuItemId={this.props.navigation.getParam('id')}
+        {...this.props}
+      />
     );
   }
 }

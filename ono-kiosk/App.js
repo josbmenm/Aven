@@ -10,6 +10,7 @@ import KioskSettingsScreen from './screens/KioskSettingsScreen';
 import { setHostConfig } from './components/AirtableImage';
 import KioskHomeScreen from './screens/KioskHomeScreen';
 import MenuItemScreen from './screens/MenuItemScreen';
+import DebugStateScreen from './screens/DebugStateScreen';
 // import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
 // import OrderConfirmScreen from './screens/OrderConfirmScreen';
@@ -91,6 +92,7 @@ const App = createFadeNavigator(
     KioskSettings: KioskSettingsScreen,
     KioskHome: KioskHomeScreen,
     MenuItem: MenuItemScreen,
+    DebugState: DebugStateScreen,
 
     // OrderConfirm: OrderConfirmScreen,
     // OrderComplete: OrderCompleteScreen,

@@ -1,11 +1,9 @@
 import App from './App';
 
 import startWebClient from '../aven-web/WebClient';
-import OnoCloudContext from '../ono-cloud/OnoCloudContext';
 import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createBrowserNetworkSource from '../aven-cloud-browser/createBrowserNetworkSource';
-import createOnoCloudClient from '../ono-cloud/createOnoCloudClient';
 
 const IS_DEV = process.env.NODE_ENV !== 'production';
 

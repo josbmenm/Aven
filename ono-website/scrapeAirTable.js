@@ -95,6 +95,7 @@ export default async function scrapeAirTable(fsClient) {
     'KitchenSystems',
     'KitchenSystemTags',
     'KitchenSystemFaults',
+    'KitchenIngredients',
   ];
   const baseTables = {};
   await Promise.all(

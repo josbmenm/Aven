@@ -11,7 +11,7 @@ export function setHostConfig(config) {
 }
 
 const AirtableImage = ({ image, style }) => {
-  const origUrl = image[0].url;
+  const origUrl = image && image[0] && image[0].url;
   const imageURI = `${
     useSSL ? 'https' : 'http'
   }://${authority}/_/kitchen.maui.onofood.co/Airtable/files/${md5(
