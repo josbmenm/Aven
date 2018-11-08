@@ -109,10 +109,8 @@ export default async function scrapeAirTable(fsClient) {
     const ext = path.extname(fileUrl);
     baseFiles[fileUrl] = `${fileId}${ext}`;
   });
-  console.log({ baseFiles, baseFilesURLs });
   const base = { baseTables, baseFiles };
   const filesPath = pathJoin(destPath, 'files');
-  console.log(destPath);
   await fs.mkdirp(destPath);
   await fs.mkdirp(filesPath);
   await fs.writeFile(

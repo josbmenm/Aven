@@ -67,6 +67,12 @@ const runServer = async () => {
     }
   };
 
+  scrapeAirTable(fsClient)
+    .then(() => {
+      console.log('Airtable Updated');
+    })
+    .catch(console.error);
+
   const getEnv = c => process.env[c];
   const serverListenLocation = getEnv('PORT');
 

@@ -12,8 +12,8 @@ import { withKitchen, getSubsystem } from '../../ono-cloud/OnoKitchen';
 
 function Subsystem({ systemId, kitchenState, kitchenConfig, kitchenCommand }) {
   const system = getSubsystem(systemId, kitchenConfig, kitchenState);
-  const pulseCommands = Object.keys(system.pulseCommands);
-  const valueCommands = Object.keys(system.valueCommands);
+  const pulseCommands = Object.keys(system.pulseCommands || {});
+  const valueCommands = Object.keys(system.valueCommands || {});
   return (
     <React.Fragment>
       <Hero title={`${system.icon} ${system.name}`} />

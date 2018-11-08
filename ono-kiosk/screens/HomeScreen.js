@@ -48,54 +48,6 @@ export default class HomeScreen extends Component {
           />
           <LinkRow
             onPress={() => {
-              navigation.navigate({
-                routeName: 'KitchenEngSub',
-                params: {
-                  system: 'FillPositioner',
-                },
-              });
-            }}
-            icon="↔️"
-            title="Fill Positioner"
-          />
-          <LinkRow
-            onPress={() => {
-              navigation.navigate({
-                routeName: 'KitchenEngSub',
-                params: {
-                  system: 'FillSystem',
-                },
-              });
-            }}
-            icon="🥙"
-            title="Fill System"
-          />
-          <LinkRow
-            onPress={() => {
-              navigation.navigate({
-                routeName: 'KitchenEngSub',
-                params: {
-                  system: 'Granule',
-                },
-              });
-            }}
-            icon="🍚"
-            title="Granule"
-          />
-          <LinkRow
-            onPress={() => {
-              navigation.navigate({
-                routeName: 'KitchenEngSub',
-                params: {
-                  system: 'Piston',
-                },
-              });
-            }}
-            icon="💩"
-            title="Piston"
-          />
-          <LinkRow
-            onPress={() => {
               navigation.navigate({ routeName: 'HostHome' });
             }}
             icon="🚛"
