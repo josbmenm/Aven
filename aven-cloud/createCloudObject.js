@@ -1,4 +1,4 @@
-import { Observable, BehaviorSubject, Subject } from "rxjs-compat";
+import { Observable, BehaviorSubject } from "rxjs-compat";
 import SHA1 from "crypto-js/sha1";
 
 const JSONStringify = require("json-stable-stringify");

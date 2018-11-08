@@ -143,6 +143,7 @@ export default function createBrowserNetworkSource(opts) {
           if (o && o.onNext) {
             o.onNext(evt);
           }
+          return;
         }
         default: {
           wsMessages.next(evt);

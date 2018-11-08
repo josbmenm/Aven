@@ -1,12 +1,7 @@
-import { Observable, BehaviorSubject, Subject } from "rxjs-compat";
 import { default as withObs } from "@nozbe/with-observables";
-import SHA1 from "crypto-js/sha1";
-import ReconnectingWebSocket from "reconnecting-websocket";
 
 import createCloudRef from "./createCloudRef";
 import createCloudObject from "./createCloudObject";
-
-const JSONStringify = require("json-stable-stringify");
 
 export const withObservables = withObs;
 

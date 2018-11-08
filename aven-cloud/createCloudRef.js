@@ -1,8 +1,9 @@
-import { Observable, BehaviorSubject, Subject } from "rxjs-compat";
-import { tap } from "rxjs";
+import { Observable, BehaviorSubject } from "rxjs-compat";
 import createCloudObject from "./createCloudObject";
 
-const observeNull = Observable.create(observer => {});
+const observeNull = Observable.create(observer => {
+  observer.next(undefined);
+});
 
 export default function createCloudRef({ dataSource, name, domain, ...opts }) {
   const objectCache = opts.objectCache || {};
@@ -333,7 +334,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     }
     if (typeof refVal !== "string") {
       throw new Error(
-        `Cannot look up object ID in ${name} on ${location.join()}`
+        `Cannot look up object ID in ${name} on ${lookup.join()}`
       );
     }
     const connectedObj = _getObjectWithId(refVal);
@@ -367,6 +368,12 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     }
   }
 
+  async function transact(transactionFn) {
+    await fetchValue();
+    const newValue = transactionFn(getValue());
+    await put(newValue);
+  }
+
   // return {
   //   domain,
   //   name,
@@ -396,6 +403,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     observeValue,
     observe,
     write,
-    observeConnectedValue
+    observeConnectedValue,
+    transact
   };
 }

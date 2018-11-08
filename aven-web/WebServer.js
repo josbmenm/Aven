@@ -133,6 +133,9 @@ export default async function WebServer({
     dataSource
       .dispatch(req.body)
       .then(result => {
+        if (result === undefined) {
+          return res.send({});
+        }
         res.send(result);
       })
       .catch(err => {
