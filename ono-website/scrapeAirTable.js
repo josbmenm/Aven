@@ -30,7 +30,7 @@ const hash = input =>
     .update(input)
     .digest('hex');
 
-export const scrapeAirTable = async dataService => {
+export default async function scrapeAirTable(fsClient) {
   const apiKey = getSecretConfig('AIRTABLE_API_KEY');
   const baseId = getSecretConfig('AIRTABLE_BASE_ID');
 
@@ -92,6 +92,9 @@ export const scrapeAirTable = async dataService => {
     'Recipe Ingredients',
     'Ingredients',
     'Functions',
+    'KitchenSystems',
+    'KitchenSystemTags',
+    'KitchenSystemFaults',
   ];
   const baseTables = {};
   await Promise.all(
@@ -106,6 +109,7 @@ export const scrapeAirTable = async dataService => {
     const ext = path.extname(fileUrl);
     baseFiles[fileUrl] = `${fileId}${ext}`;
   });
+  console.log({ baseFiles, baseFilesURLs });
   const base = { baseTables, baseFiles };
   const filesPath = pathJoin(destPath, 'files');
   console.log(destPath);
@@ -126,11 +130,11 @@ export const scrapeAirTable = async dataService => {
     }),
   );
 
-  const folder = await dataService.putFolder({
+  const folder = await fsClient.putFolder({
     folderPath: destPath,
-    refName: 'airtable',
+    name: 'Airtable',
     domain: 'onofood.co',
   });
-  await fs.remove(destPath);
+  // await fs.remove(destPath);
   return folder;
-};
+}

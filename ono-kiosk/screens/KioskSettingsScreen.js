@@ -6,6 +6,28 @@ import GenericPage from '../components/GenericPage';
 import RowSection from '../../ono-components/RowSection';
 import LinkRow from '../../ono-components/LinkRow';
 import { openSettings } from '../Payments';
+import { withRestaurant } from '../../ono-cloud/OnoRestaurantContext';
+
+function UpdateAirtableRowWithRestaurant({ restaurant }) {
+  return (
+    <LinkRow
+      onPress={() => {
+        restaurant
+          .dispatch({ type: 'UpdateAirtable' })
+          .then(() => {
+            alert('Airtable Updated!');
+          })
+          .catch(e => {
+            console.error(e);
+            alert('Error updating Airtable!');
+          });
+      }}
+      icon="♻️"
+      title="Update Airtable"
+    />
+  );
+}
+const UpdateAirtableRow = withRestaurant(UpdateAirtableRowWithRestaurant);
 
 export default class KioskSettingsScreen extends Component {
   render() {
@@ -35,6 +57,7 @@ export default class KioskSettingsScreen extends Component {
             icon="⚠️"
             title="Test App Error"
           />
+          <UpdateAirtableRow />
         </RowSection>
       </GenericPage>
     );

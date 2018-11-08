@@ -2,14 +2,16 @@ import App from './App';
 import WebServer from '../aven-web/WebServer';
 import startPostgresDataSource from '../aven-cloud-postgres/startPostgresDataSource';
 import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
-import startRemoteDataSource from '../aven-cloud/startRemoteDataSource';
+import createNodeNetworkSource from '../aven-cloud-server/createNodeNetworkSource';
 import createCloudClient from '../aven-cloud/createCloudClient';
+import createFSClient from '../aven-cloud-server/createFSClient';
 import createOnoCloudClient from '../ono-cloud/createOnoCloudClient';
 import OnoCloudContext from '../ono-cloud/OnoCloudContext';
 import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
+import scrapeAirTable from '../ono-website/scrapeAirTable';
 
-import { kitchenDispatchCommand, connectKitchenClient } from './Robot';
+import startKitchen from './startKitchen';
 
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨');
@@ -29,24 +31,37 @@ const runServer = async () => {
   const memoryDataSource = await startMemoryDataSource({
     domain: 'kitchen.maui.onofood.co',
   });
-  // const networkDataSource = await startRemoteDataSource({
+
+  // const networkDataSource = await createNodeNetworkSource({
   //   domain: 'onofood.co',
   //   host: {
   //     authority: 'www.onofood.co',
   //   },
   // });
+  // const mainDataSource = fallbackDataSource(
+  //   memoryDataSource,
+  //   networkDataSource
+  // )
+
   const kitchenClient = createCloudClient({
     dataSource: memoryDataSource,
     domain: 'kitchen.maui.onofood.co',
   });
 
-  connectKitchenClient(kitchenClient, 'kitchen.maui.onofood.co');
+  const fsClient = createFSClient({ client: kitchenClient });
+
+  const kitchen = startKitchen({
+    client: kitchenClient,
+    plcIP: '192.168.1.122',
+  });
 
   const dispatch = async action => {
     switch (action.type) {
       case 'KitchenCommand':
         // subsystem (eg 'IOSystem'), pulse (eg ['home']), values (eg: foo: 123)
-        return await kitchenDispatchCommand(action);
+        return await kitchen.dispatchCommand(action);
+      case 'UpdateAirtable':
+        return await scrapeAirTable(fsClient);
       default:
         return await memoryDataSource.dispatch(action);
     }
@@ -80,6 +95,7 @@ const runServer = async () => {
       await memoryDataSource.close();
       // await networkDataSource.close();
       await webService.close();
+      await kitchen.close();
     },
   };
 };

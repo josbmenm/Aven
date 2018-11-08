@@ -29,6 +29,94 @@ export function withKitchen(Component) {
     </OnoRestaurantContext.Consumer>
   );
 }
+const sortByField = (obj, fieldName) => {
+  var sortable = [];
+  for (var row in obj) {
+    sortable.push([row, obj[row]]);
+  }
+  sortable.sort((a, b) => a[1][fieldName] - b[1][fieldName]);
+  return sortable.map(kVal => kVal[1]);
+};
+
+function atDataToMenu(atData) {
+  const Recipes = atData.baseTables['Recipes'];
+  const MenuItemsUnordered = atData.baseTables['Kiosk Menu'];
+  const RecipeIngredients = atData.baseTables['Recipe Ingredients'];
+  const Ingredients = atData.baseTables['Ingredients'];
+
+  const MenuItems = sortByField(MenuItemsUnordered, '_index');
+  const ActiveMenuItems = MenuItems.filter(i => i['Active in Kiosk']);
+  const ActiveItemsWithRecipe = ActiveMenuItems.map(item => {
+    const Recipe = Recipes && item.Recipe && Recipes[item.Recipe[0]];
+
+    return {
+      ...item,
+      Recipe: {
+        ...Recipe,
+        Ingredients: Recipe.Ingredients.map(RecipeIngredientId => {
+          const ri = RecipeIngredients[RecipeIngredientId];
+          if (!ri || !ri.Ingredient) {
+            return null;
+          }
+          return {
+            ...ri,
+            Ingredient: Ingredients[ri.Ingredient[0]],
+          };
+        }).filter(v => !!v),
+      },
+    };
+  });
+  return ActiveItemsWithRecipe;
+}
+
+function atDataToMenuItemMapper(menuItemId) {
+  return atData => {
+    const menu = atDataToMenu(atData);
+    return menu.find(item => item.id === menuItemId);
+  };
+}
+
+export function withMenuItem(Component) {
+  const ComponentWithObservedState = withObservables(
+    ['atData', 'menuItemId'],
+    ({ atData, menuItemId }) => ({
+      menuItem: atData.map(atDataToMenuItemMapper(menuItemId)),
+    }),
+  )(Component);
+
+  return props => (
+    <OnoRestaurantContext.Consumer>
+      {restaurant => (
+        <ComponentWithObservedState
+          atData={restaurant
+            .getRef('Airtable')
+            .observeConnectedValue(['files', 'db.json', 'id'])}
+          {...props}
+        />
+      )}
+    </OnoRestaurantContext.Consumer>
+  );
+}
+
+export function withMenu(Component) {
+  const ComponentWithObservedState = withObservables(
+    ['atData'],
+    ({ atData }) => ({ menu: atData.map(atDataToMenu) }),
+  )(Component);
+
+  return props => (
+    <OnoRestaurantContext.Consumer>
+      {restaurant => (
+        <ComponentWithObservedState
+          atData={restaurant
+            .getRef('Airtable')
+            .observeConnectedValue(['files', 'db.json', 'id'])}
+          {...props}
+        />
+      )}
+    </OnoRestaurantContext.Consumer>
+  );
+}
 
 export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {
   const ss = kitchenConfig.subsystems[subsystemName];

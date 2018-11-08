@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import { View, StatusBar, Image } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer } from '@react-navigation/native';
 import { genericText } from '../../ono-components/Styles';
 import GenericPage from '../components/GenericPage';
-import { topMenuItem } from '../../ono-cloud/OnoCloud';
-import withObservables from '@nozbe/with-observables';
-
-const Products = [];
+import Button from '../../ono-components/Button';
+import { withMenuItem } from '../../ono-cloud/OnoKitchen';
+import AirtableImage from '../components/AirtableImage';
 
 // const PlaceholderImage = () => <View />;
 
@@ -40,42 +39,33 @@ const Products = [];
 //   </View>
 // );
 
-// const Ingredients = ({ product }) => (
-//   <View style={{ flexDirection: 'row', padding: 0 }}>
-//     {product.ingredients.map(i => (
-//       <View
-//         style={{ alignItems: 'center', marginTop: 20, marginRight: 20 }}
-//         key={i.name}
-//       >
-//         <PlaceholderImage
-//           style={{ width: 100, height: 100, marginBottom: 30 }}
-//           color="#22cc22"
-//         />
-//         <Text
-//           style={{
-//             ...genericText,
-//             fontSize: ingredientFontSize,
-//             marginTop: 8,
-//             textAlign: 'center',
-//             minWidth: 190,
-//           }}
-//         >
-//           {i.name}
-//         </Text>
-//       </View>
-//     ))}
-//   </View>
-// );
+const Ingredients = ({ menuItem }) => (
+  <View style={{ flexDirection: 'row', padding: 0 }}>
+    {menuItem.Recipe.Ingredients.map(i => (
+      <View
+        style={{ alignItems: 'center', marginTop: 20, marginRight: 20 }}
+        key={i.id}
+      >
+        <AirtableImage
+          image={i.Ingredient['Ingredient Image']}
+          style={{ width: 100, height: 100 }}
+        />
+        <Text
+          style={{
+            marginTop: 8,
+            textAlign: 'center',
+            minWidth: 190,
+          }}
+        >
+          {i.Ingredient && i.Ingredient.Name}
+        </Text>
+      </View>
+    ))}
+  </View>
+);
 
 // return (
 //   <GenericPage {...this.props} title={product.name} disableScroll>
-//     <PlaceholderImage
-//       color={product.color}
-//       style={{
-//         aspectRatio: 3,
-//         alignSelf: 'stretch',
-//       }}
-//     />
 //     <ScreenContent>
 //       <View style={{ padding: 30 }}>
 //         <Features product={product} />
@@ -98,30 +88,31 @@ const Products = [];
 //   </GenericPage>
 // );
 
-class MenuItemScreen extends Component {
-  render() {
-    const menuItem = this.props.menuItem;
-    console.log(menuItem);
-    return <GenericPage />;
-  }
+function MenuItemScreenWithItem({ menuItem }) {
+  console.log(menuItem);
+  return (
+    <GenericPage title={menuItem.name} disableScroll>
+      <View style={{ padding: 30 }}>
+        <Text style={{ fontSize: 42, marginBottom: 30 }}>
+          {menuItem['Display Description']}
+        </Text>
+        <Text style={{ fontSize: 52 }}>
+          <Text style={{ fontSize: 54 }}>ingredients | </Text>
+          {menuItem.Price} - {menuItem.Calories} cal
+        </Text>
+        <Ingredients menuItem={menuItem} />
+        <Button onPress={() => {}} title="Order Blend" />
+      </View>
+    </GenericPage>
+  );
 }
 
-const MenuItemScreenWithData = withObservables(
-  ['menuItemId'],
-  ({ menuItemId }) => {
-    console.log('yo', menuItemId);
-    return {
-      menuItem: topMenuItem,
-    };
-  },
-)(MenuItemScreen);
+const MenuItemScreenWithId = withMenuItem(MenuItemScreenWithItem);
 
-export default class Foobar extends Component {
+export default class MenuItemScreen extends Component {
   render() {
     return (
-      <MenuItemScreenWithData
-        menuItemId={this.props.navigation.getParam('id')}
-      />
+      <MenuItemScreenWithId menuItemId={this.props.navigation.getParam('id')} />
     );
   }
 }

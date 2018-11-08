@@ -15,7 +15,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#7bce28f7f12fbc9263b9afbd2d9b6bbe63805395"
+  resolved "https://github.com/AvenCloud/Aven.git#d7cd08b16b2d90ad254ad2bbdb73f870d250633f"
   dependencies:
     "@aven-cloud/aven-tools" "https://github.com/AvenCloud/AvenTools.git#master"
     "@expo/vector-icons" "^8.0.0"
@@ -27,6 +27,7 @@
     babel-preset-react "^6.24.1"
     body-parser "^1.18.3"
     crypto-js "^3.1.9-1"
+    fs-extra "^7.0.1"
     helmet "^3.13.0"
     json-stable-stringify "^1.0.1"
     mime "^2.3.1"
@@ -1094,7 +1095,7 @@ frameguard@3.0.0:
   resolved "https://registry.yarnpkg.com/frameguard/-/frameguard-3.0.0.tgz#7bcad469ee7b96e91d12ceb3959c78235a9272e9"
   integrity sha1-e8rUae57lukdEs6zlZx4I1qScuk=
 
-fs-extra@^7.0.0:
+fs-extra@^7.0.0, fs-extra@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-7.0.1.tgz#4f189c44aa123b895f722804f55ea23eadc348e9"
   integrity sha512-YJDaCJZEnBmcbw13fvdAM9AwNOJwOzrE4pqMqBq5nFiEqXUqHwlK4B+3pUw6JNvfSPtX05xFHtYy/1ni01eGCw==
@@ -2405,9 +2406,9 @@ react-navigation-stack@1.0.0-alpha.22:
   integrity sha512-Bqc4LVr+kX8bYPms2Fhwgr6KUQSXesWzR7JdX/bemZKeXsDLRI+/ZBv+HEYhyzcnJktx4KgZHadfz4jy6Q6B1Q==
 
 react-navigation-stack@^1.0.0-alpha.33:
-  version "1.0.0-alpha.33"
-  resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-1.0.0-alpha.33.tgz#118cd2a8d1d869f24bae44ed5c09e5a55a1b2d60"
-  integrity sha512-kX9qL64CtK3yBGRABlZXFAD3+aVGBTiqfw/QYA1i0UJURRb9lZ0do9I3gUJ5cjFOPVqqztCbk38GOxarIygJsw==
+  version "1.0.0-alpha.34"
+  resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-1.0.0-alpha.34.tgz#f071a3edd8259e37f4dedba436e905a932b4d99e"
+  integrity sha512-wC1cMhIo2Y8J3rAS+Ps6bfm6zyinaOrQy7P8H232TrHLNiw3xUnXXU081lHimC2Hs7Fn4LJ2jP4xMcspQK1nqA==
 
 react-navigation-transitioner@^1.0.0-alpha.3:
   version "1.0.0-alpha.3"

@@ -6,9 +6,10 @@ import HomeScreen from './screens/HomeScreen';
 import HostHomeScreen from './screens/HostHomeScreen';
 import KitchenEngScreen from './screens/KitchenEngScreen';
 import KitchenEngSubScreen from './screens/KitchenEngSubScreen';
-// import KioskSettingsScreen from './screens/KioskSettingsScreen';
-// import KioskHomeScreen from './screens/KioskHomeScreen';
-// import MenuItemScreen from './screens/MenuItemScreen';
+import KioskSettingsScreen from './screens/KioskSettingsScreen';
+import { setHostConfig } from './components/AirtableImage';
+import KioskHomeScreen from './screens/KioskHomeScreen';
+import MenuItemScreen from './screens/MenuItemScreen';
 // import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
 // import OrderConfirmScreen from './screens/OrderConfirmScreen';
@@ -87,10 +88,9 @@ const App = createFadeNavigator(
     HostHome: HostHomeScreen,
     KitchenEng: KitchenEngScreen,
     KitchenEngSub: KitchenEngSubScreen,
-    // KioskSettings: KioskSettingsScreen,
-
-    // KioskHome: KioskHomeScreen,
-    // MenuItem: MenuItemScreen,
+    KioskSettings: KioskSettingsScreen,
+    KioskHome: KioskHomeScreen,
+    MenuItem: MenuItemScreen,
 
     // OrderConfirm: OrderConfirmScreen,
     // OrderComplete: OrderCompleteScreen,
@@ -105,10 +105,25 @@ const App = createFadeNavigator(
 
 const AppContainer = createAppContainer(App);
 
-const dataSource = createNativeNetworkSource({
+const IS_DEV = process.env.NODE_ENV !== 'production';
+
+const RESTAURANT_DEV = {
   useSSL: false,
   authority: 'localhost:8830',
-});
+};
+const RESTAURANT_PROD = {
+  useSSL: false,
+  authority: '192.168.1.200:8830',
+};
+
+const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
+
+setHostConfig(HOST_CONFIG);
+
+const dataSource = createNativeNetworkSource(
+  HOST_CONFIG,
+  // RESTAURANT_PROD,
+);
 
 const restaurant = createCloudClient({
   dataSource,

@@ -3,10 +3,9 @@ import { View } from 'react-native';
 import MenuItem from '../components/MenuItem';
 import GenericPage from '../components/GenericPage';
 import Hero from '../../ono-components/Hero';
-import { mainMenu, testData } from '../../ono-cloud/OnoCloud';
-import withObservables from '@nozbe/with-observables';
+import { withMenu } from '../../ono-cloud/OnoKitchen';
 
-const WithBlend = ({ menu, test }) => {
+const MenuWithMenu = ({ menu }) => {
   return (
     <View>
       {menu.map(item => (
@@ -15,17 +14,14 @@ const WithBlend = ({ menu, test }) => {
     </View>
   );
 };
-const BlendsList = withObservables([], () => ({
-  menu: mainMenu,
-  test: testData,
-}))(WithBlend);
+const Menu = withMenu(MenuWithMenu);
 
 export default class KioskHomeScreen extends Component {
   render() {
     return (
       <GenericPage>
         <Hero title="Welcome to ONOblends" subtitle="Select a blend" />
-        <BlendsList />
+        <Menu />
       </GenericPage>
     );
   }

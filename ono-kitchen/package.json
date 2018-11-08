@@ -12,11 +12,12 @@
     },
     "srcDependencies": [
       "aven-web",
+      "aven-cloud",
       "aven-cloud-server",
       "aven-cloud-browser",
       "aven-cloud-postgres",
-      "aven-cloud",
-      "ono-cloud"
+      "ono-cloud",
+      "ono-website"
     ],
     "moduleDependencies": [
       "fbjs",

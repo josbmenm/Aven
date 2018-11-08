@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { NativeModules, NativeEventEmitter } from 'react-native';
 
-import { dispatch } from '../ono-cloud/OnoCloud';
-
 const OPaymentManager = NativeModules.OPaymentManager;
 
 const AppEmitter = new NativeEventEmitter(
@@ -25,9 +23,10 @@ const getPayment = (price, description) =>
   OPaymentManager.getPayment(price, description);
 
 export const configurePayment = async () => {
-  const res = await dispatch({
-    type: 'getSquareMobileAuthToken',
-  });
+  throw new Error('need network access, yo!');
+  // const res = await dispatch({
+  //   type: 'getSquareMobileAuthToken',
+  // });
   const authCode = res.result.authorization_code;
   await setupPayment(authCode);
 };
