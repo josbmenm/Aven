@@ -60,7 +60,6 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
       await obj.fetch();
     }
   }
-
   const observe = Observable.create(observer => {
     let upstreamSubscription = () => {};
     dataSource.observeRef(domain, name).then(upstreamObs => {
@@ -104,9 +103,17 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
   function getObject() {
     const { id } = refState.value;
     if (!id) {
-      return null;
+      return undefined;
     }
     return _getObjectWithId(id);
+  }
+
+  function getValue() {
+    const obj = getObject();
+    if (!obj) {
+      return undefined;
+    }
+    return obj.getValue();
   }
 
   async function put(value) {
@@ -316,23 +323,48 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     })
     .switch();
 
+  function lookupRefObject(inputVal, lookup) {
+    let refVal = inputVal;
+    lookup.forEach(v => {
+      refVal = refVal && refVal[v];
+    });
+    if (refVal == null) {
+      return observeNull;
+    }
+    if (typeof refVal !== "string") {
+      throw new Error(
+        `Cannot look up object ID in ${name} on ${location.join()}`
+      );
+    }
+    const connectedObj = _getObjectWithId(refVal);
+    return connectedObj;
+  }
   function observeConnectedValue(lookup) {
     return observeValue
       .map(value => {
         if (!value) {
           return observeNull;
         }
-        let refVal = value;
-        lookup.forEach(v => {
-          refVal = refVal && refVal[v];
-        });
-        if (!refVal) {
-          return observeNull;
-        }
-        const connected = _getObjectWithId(refVal);
+        const connected = lookupRefObject(value, lookup);
         return connected.observeValue;
       })
       .switch();
+  }
+
+  async function fetchConnectedValue(lookup) {
+    await fetchValue();
+    const connected = lookupRefObject(getValue(), lookup);
+    if (connected) {
+      await connected.fetch();
+    }
+  }
+
+  async function getConnectedValue(lookup) {
+    const obj = getObject();
+    const connected = lookupRefObject(obj.value, lookup);
+    if (connected) {
+      return connected.getValue();
+    }
   }
 
   // return {
@@ -358,6 +390,8 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     putId,
     putObject,
     fetchValue,
+    fetchConnectedValue,
+    getConnectedValue,
     getObject,
     observeValue,
     observe,
