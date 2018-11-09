@@ -118,14 +118,11 @@ const RESTAURANT_PROD = {
   authority: '192.168.1.200:8830',
 };
 
-const HOST_CONFIG = false ? RESTAURANT_DEV : RESTAURANT_PROD;
+const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
 
 setHostConfig(HOST_CONFIG);
 
-const dataSource = createNativeNetworkSource(
-  HOST_CONFIG,
-  // RESTAURANT_PROD,
-);
+const dataSource = createNativeNetworkSource(HOST_CONFIG);
 
 const restaurant = createCloudClient({
   dataSource,
