@@ -15,7 +15,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#5bbf80d4624b7e216f385829e481ecc73471447c"
+  resolved "https://github.com/AvenCloud/Aven.git#31a0568b858e2e98cfd92f408b3622ccea4b8c3b"
   dependencies:
     "@aven-cloud/aven-tools" "https://github.com/AvenCloud/AvenTools.git#master"
     "@expo/vector-icons" "^8.0.0"
