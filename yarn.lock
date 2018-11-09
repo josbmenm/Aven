@@ -4,7 +4,7 @@
 
 "@aven-cloud/aven-tools@https://github.com/AvenCloud/AvenTools.git#master":
   version "0.1.0"
-  resolved "https://github.com/AvenCloud/AvenTools.git#6419ff143ecf5b7b5571fcf71fc7561d424e2217"
+  resolved "https://github.com/AvenCloud/AvenTools.git#6b1dec21d436abe780d6edb4f01ad999946206b5"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     fs-extra "^7.0.0"
@@ -15,7 +15,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#31a0568b858e2e98cfd92f408b3622ccea4b8c3b"
+  resolved "https://github.com/AvenCloud/Aven.git#c8474611e031a44a28f7d9308f7e72e4d4b74e4c"
   dependencies:
     "@aven-cloud/aven-tools" "https://github.com/AvenCloud/AvenTools.git#master"
     "@expo/vector-icons" "^8.0.0"

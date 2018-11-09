@@ -27,12 +27,12 @@ export default class HomeScreen extends Component {
               navigation.navigate({
                 routeName: 'KitchenEngSub',
                 params: {
-                  system: 'System',
+                  system: 'BlendSystem',
                 },
               });
             }}
             icon="🤖"
-            title="System"
+            title="Blend System"
           />
           <LinkRow
             onPress={() => {

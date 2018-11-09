@@ -130,6 +130,26 @@ export function withDispatch(Component) {
   );
 }
 
+export function withKitchenLog(Component) {
+  const ComponentWithObservedState = withObservables(
+    ['kitchenLog'],
+    ({ kitchenLog }) => {
+      return { kitchenLog };
+    },
+  )(Component);
+
+  return props => (
+    <OnoRestaurantContext.Consumer>
+      {restaurant => (
+        <ComponentWithObservedState
+          kitchenLog={restaurant.getRef('KitchenLog').observeValue}
+          {...props}
+        />
+      )}
+    </OnoRestaurantContext.Consumer>
+  );
+}
+
 export function withRestaurant(Component) {
   const ComponentWithObservedState = withObservables(
     ['restaurant'],
@@ -146,8 +166,8 @@ export function withRestaurant(Component) {
           placeOrder={order => {
             restaurant.getRef('Restaurant').transact(lastState => ({
               ...lastState,
-              orders: [
-                ...((lastState && lastState.orders) || []),
+              queuedOrders: [
+                ...((lastState && lastState.queuedOrders) || []),
                 {
                   ...order,
                   orderTime: Date.now(),

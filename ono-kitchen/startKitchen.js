@@ -502,40 +502,40 @@ export default function startKitchen({ client, plcIP }) {
             });
 
             const readTags = {
-              // ...genericSystemReadTags,
+              ...genericSystemReadTags,
             };
             const pulseCommands = {
-              // ...genericSystemPulseCommands,
+              ...genericSystemPulseCommands,
             };
             const valueCommands = {};
             tags.forEach(tag => {
-              // if (tag.Type === 'Command DINT') {
-              //   valueCommands[tag['Internal Name']] = {
-              //     type: 'integer',
-              //     subTag: tag['PLC Sub-Tag'],
-              //   };
-              // } else if (tag.Type === 'Command BOOL') {
-              //   valueCommands[tag['Internal Name']] = {
-              //     type: 'boolean',
-              //     subTag: tag['PLC Sub-Tag'],
-              //   };
-              // } else if (tag.Type === 'Read DINT') {
-              //   readTags[tag['Internal Name']] = {
-              //     type: 'integer',
-              //     subTag: tag['PLC Sub-Tag'],
-              //   };
-              // } else if (tag.Type === 'Read BOOL') {
-              //   readTags[tag['Internal Name']] = {
-              //     type: 'boolean',
-              //     subTag: tag['PLC Sub-Tag'],
-              //   };
-              // } else if (tag.Type === 'Command Pulse BOOL') {
-              //   pulseCommands[tag['Internal Name']] = {
-              //     subTag: tag['PLC Sub-Tag'],
-              //   };
-              // } else {
-              //   throw new Error(`Unexpected tag type "${tag.Type}"`);
-              // }
+              if (tag.Type === 'Command DINT') {
+                valueCommands[tag['Internal Name']] = {
+                  type: 'integer',
+                  subTag: tag['PLC Sub-Tag'],
+                };
+              } else if (tag.Type === 'Command BOOL') {
+                valueCommands[tag['Internal Name']] = {
+                  type: 'boolean',
+                  subTag: tag['PLC Sub-Tag'],
+                };
+              } else if (tag.Type === 'Read DINT') {
+                readTags[tag['Internal Name']] = {
+                  type: 'integer',
+                  subTag: tag['PLC Sub-Tag'],
+                };
+              } else if (tag.Type === 'Read BOOL') {
+                readTags[tag['Internal Name']] = {
+                  type: 'boolean',
+                  subTag: tag['PLC Sub-Tag'],
+                };
+              } else if (tag.Type === 'Command Pulse BOOL') {
+                pulseCommands[tag['Internal Name']] = {
+                  subTag: tag['PLC Sub-Tag'],
+                };
+              } else {
+                throw new Error(`Unexpected tag type "${tag.Type}"`);
+              }
             });
             subsystems[kitchenSystem.Name] = {
               tagPrefix: kitchenSystem['PLC System Name'],
@@ -586,6 +586,7 @@ export default function startKitchen({ client, plcIP }) {
   }
 
   async function dispatchCommand(action) {
+    await client.getRef('KitchenLog').transact(log => [...(log || []), action]);
     const subsystem = subsystems[action.subsystem];
     const { immediateOutput, clearPulseOutput } = extractActionValues({
       subSystemConfig: subsystem,

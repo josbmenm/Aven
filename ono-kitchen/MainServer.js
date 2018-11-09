@@ -12,6 +12,7 @@ import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import scrapeAirTable from '../ono-website/scrapeAirTable';
 
 import startKitchen from './startKitchen';
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨');
@@ -53,6 +54,148 @@ const runServer = async () => {
   const kitchen = startKitchen({
     client: kitchenClient,
     plcIP: '192.168.1.122',
+  });
+
+  let restaurantState = null;
+  let kitchenState = null;
+  let hasKitchenStateChanged = false;
+
+  function evaluateKitchenState(kitchenState) {
+    const isFillSystemReady =
+      kitchenState.FillSystem_PrgStep_READ === 0 &&
+      kitchenState.FillSystem_NoFaults_READ &&
+      kitchenState.FillSystem_Homed_READ;
+    const isReadyToStartOrder = isFillSystemReady;
+    return {
+      isFillSystemReady,
+      isReadyToStartOrder,
+      isReadyToFill: isReadyToStartOrder,
+    };
+  }
+  const restaurant = kitchenClient.getRef('Restaurant');
+
+  async function runFill({ amount, system, slot }) {
+    await kitchen.dispatchCommand({
+      subsystem: 'FillSystem',
+      pulse: ['PositionAndDispenseAmount'],
+      values: {
+        DispenseAmount: amount,
+        DispenseSystem: system,
+        SlotToDispense: slot,
+      },
+    });
+    await delay(500);
+  }
+  async function startOrder() {
+    await kitchen.dispatchCommand({
+      subsystem: 'FillPositioner',
+      pulse: ['GoToPosition'],
+      values: {
+        PositionDest: 0,
+      },
+    });
+    await delay(500);
+  }
+  async function applySideEffects(restaurantState, kitchenState) {
+    if (!restaurantState || !kitchenState) {
+      return;
+    }
+    const { isReadyToFill, isReadyToStartOrder } = evaluateKitchenState(
+      kitchenState,
+    );
+    console.log('applySideEffects', { isReadyToFill, isReadyToStartOrder });
+    const queue = restaurantState.queuedOrders || [];
+
+    if (
+      isReadyToStartOrder &&
+      queue.length &&
+      restaurantState.fillingOrder == null
+    ) {
+      const order = queue[0];
+      const nextState = {
+        ...restaurantState,
+        queuedOrders: queue.slice(1),
+        fills: [
+          {
+            amount: 2,
+            system: 1,
+            slot: 0,
+          },
+          {
+            amount: 2,
+            system: 0,
+            slot: 0,
+          },
+        ],
+        fillingOrder: order,
+      };
+      await restaurant.put(nextState);
+      await startOrder();
+    }
+
+    if (restaurantState.fillingOrder && isReadyToFill) {
+      if (restaurantState.fills.length) {
+        const fillToRun = restaurantState.fills[0];
+        await restaurant.put({
+          ...restaurantState,
+          fills: restaurantState.fills.slice(1),
+        });
+        await runFill(fillToRun);
+      } else {
+        // fills are complete, move on. right now that means we are done
+        await restaurant.put({
+          ...restaurantState,
+          fills: [],
+          fillingOrder: null,
+          completeOrders: [
+            ...(restaurantState.completeOrders || []),
+            restaurantState.fillingOrder,
+          ],
+        });
+      }
+    }
+  }
+
+  let effectedRestaurantState = undefined;
+  let effectedKitchenState = undefined;
+  let effectInProgress = null;
+
+  function runSideEffects() {
+    if (effectInProgress) {
+      return;
+    }
+    const newRestaurantState = restaurantState;
+    const newKitchenState = kitchenState;
+    if (
+      newRestaurantState !== effectedRestaurantState ||
+      newKitchenState !== effectedKitchenState
+    ) {
+      effectInProgress = true;
+      applySideEffects(newRestaurantState, newKitchenState)
+        .then(() => {})
+        .catch(e => {
+          console.error(e);
+        })
+        .finally(() => {
+          effectedRestaurantState = newRestaurantState;
+          effectedKitchenState = newKitchenState;
+          effectInProgress = false;
+          runSideEffects();
+        });
+    }
+  }
+
+  kitchenClient.getRef('KitchenState').observeValue.subscribe({
+    next: v => {
+      kitchenState = v;
+      runSideEffects();
+    },
+  });
+  kitchenClient.getRef('Restaurant').observeValue.subscribe({
+    next: v => {
+      restaurantState = v;
+      runSideEffects();
+    },
   });
 
   const dispatch = async action => {
