@@ -6,7 +6,31 @@ import { withNavigation } from '@react-navigation/core';
 import GenericPage from '../components/GenericPage';
 import RowSection from '../../ono-components/RowSection';
 import LinkRow from '../../ono-components/LinkRow';
-import { getSubsystemOverview, withKitchen } from '../../ono-cloud/OnoKitchen';
+import {
+  getSubsystemOverview,
+  withKitchen,
+  withRestaurant,
+} from '../../ono-cloud/OnoKitchen';
+import withObservables from '@nozbe/with-observables';
+
+const IsConnectedWithState = ({ isConnected }) => (
+  <BitRow title="Server Connected" value={isConnected} />
+);
+
+const IsConnected = withObservables(['isConnected'], ({ isConnected }) => ({
+  isConnected,
+}))(IsConnectedWithState);
+
+const IsConnectedRow = withRestaurant(({ restaurantClient }) => (
+  <IsConnected isConnected={restaurantClient.isConnected} />
+));
+
+const PLCConnectedRow = withKitchen(({ kitchenState }) => (
+  <BitRow
+    title="PLC Connected"
+    value={kitchenState && kitchenState.isPLCConnected}
+  />
+));
 
 const Subsystems = withNavigation(
   withKitchen(({ navigation, kitchenState, kitchenConfig }) => {
@@ -39,7 +63,8 @@ export default class KitchenEngScreen extends Component {
       <GenericPage>
         <Hero title="Kitchen Engineering" />
         <RowSection>
-          <BitRow title="PLC Connected" value={true} />
+          <PLCConnectedRow />
+          <IsConnectedRow />
         </RowSection>
         <Subsystems />
       </GenericPage>

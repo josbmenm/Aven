@@ -114,8 +114,6 @@ const extractActionValues = ({
 };
 
 export default function startKitchen({ client, plcIP }) {
-  const mainPLC = new Controller();
-
   let readyPLC = null;
   let readyHandlers = new Set();
 
@@ -127,36 +125,45 @@ export default function startKitchen({ client, plcIP }) {
     }
     return new Promise((resolve, reject) => {
       readyHandlers.add(resolve),
-        setTimeout(
-          () => reject(new Error('Timeout while connecting to PLC')),
-          5000,
-        );
+        setTimeout(() => {
+          reject(new Error('Timeout while connecting to PLC'));
+        }, 1000);
     });
   };
-
-  mainPLC
-    .connect(
+  let connectingPLC = null;
+  function connectPLC() {
+    if (readyPLC || connectingPLC || hasClosed) {
+      return;
+    }
+    const mainPLC = new Controller();
+    connectingPLC = mainPLC.connect(
       plcIP,
       0,
-    )
-    .then(async () => {
-      if (hasClosed) {
-        mainPLC.destroy();
-        return;
-      }
-      console.log(
-        'PLC Connected. (' + mainPLC.properties.name + ' at ' + plcIP + ')',
-      );
-      readyPLC = mainPLC;
-      Array.from(readyHandlers).forEach(h => h());
-    })
-    .catch(err => {
-      console.error('PLC Connection error!');
-      console.error(err);
-      throw err;
-    });
+    );
+    connectingPLC
+      .then(async () => {
+        if (hasClosed) {
+          mainPLC.destroy();
+          return;
+        }
+        console.log(
+          'PLC Connected. (' + mainPLC.properties.name + ' at ' + plcIP + ')',
+        );
+        readyPLC = mainPLC;
+        Array.from(readyHandlers).forEach(h => h());
+      })
+      .catch(err => {
+        readyPLC = null;
+        console.error('PLC Connection error!');
+        console.error(err);
+      })
+      .finally(() => {
+        connectingPLC = null;
+      });
+  }
 
   const getReadyPLC = async () => {
+    connectPLC();
     await waitForConnection();
     if (!readyPLC) {
       throw new Error('PLC not ready!');
@@ -380,12 +387,7 @@ export default function startKitchen({ client, plcIP }) {
 
   const readTags = async schema => {
     const PLC = await getReadyPLC();
-    try {
-      await PLC.readTagGroup(schema.allTagsGroup);
-    } catch (e) {
-      console.log('Error Reading Tags!', e);
-      process.exit(1);
-    }
+    await PLC.readTagGroup(schema.allTagsGroup);
 
     const readings = {};
 
@@ -420,6 +422,7 @@ export default function startKitchen({ client, plcIP }) {
     IOSystem: {
       tagPrefix: null,
       icon: '🔌',
+      faults: {},
       readTags: {
         ...objFromCount(
           32,
@@ -458,6 +461,7 @@ export default function startKitchen({ client, plcIP }) {
     System: {
       tagPrefix: '_System',
       icon: '🤖',
+      faults: {},
       readTags: {
         PlcBooting: {
           type: 'boolean',
@@ -500,7 +504,14 @@ export default function startKitchen({ client, plcIP }) {
             const tags = Object.values(KitchenSystemTags).filter(tag => {
               return tag.System[0] === kitchenSystemId;
             });
-
+            const systemFaults = Object.values(KitchenSystemFaults).filter(
+              f => f.System[0] === kitchenSystemId,
+            );
+            const faults = systemFaults.map(faultRow => ({
+              description: faultRow.Name,
+              bitIndex: faultRow['Fault Bit'],
+              intIndex: faultRow['Fault Integer'],
+            }));
             const readTags = {
               ...genericSystemReadTags,
             };
@@ -543,6 +554,7 @@ export default function startKitchen({ client, plcIP }) {
               readTags,
               valueCommands,
               pulseCommands,
+              faults,
             };
           });
 
@@ -559,6 +571,10 @@ export default function startKitchen({ client, plcIP }) {
 
     const stateRef = client.getRef('KitchenState');
 
+    await stateRef.put({
+      isPLCConnected: false,
+    });
+
     let currentState;
     const getTagValues = tags => mapObject(tags, tag => tag.value);
     const updateTags = async () => {
@@ -569,7 +585,10 @@ export default function startKitchen({ client, plcIP }) {
         await delay(500);
         return;
       }
-      await stateRef.put(currentState);
+      await stateRef.put({
+        ...currentState,
+        isPLCConnected: true,
+      });
       await delay(200);
     };
     const updateTagsForever = () => {
@@ -577,10 +596,16 @@ export default function startKitchen({ client, plcIP }) {
         return;
       }
       updateTags()
-        .then(async () => {
-          updateTagsForever();
+        .then(() => {})
+        .catch(async e => {
+          console.error(e);
+          await stateRef.put({
+            isPLCConnected: false,
+          });
         })
-        .catch(console.error);
+        .finally(() => {
+          updateTagsForever();
+        });
     };
     updateTagsForever();
   }

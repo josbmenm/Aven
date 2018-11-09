@@ -24,6 +24,7 @@ export function withKitchen(Component) {
               values,
             });
           }}
+          restaurant={restaurant}
           {...props}
         />
       )}
@@ -162,6 +163,7 @@ export function withRestaurant(Component) {
     <OnoRestaurantContext.Consumer>
       {restaurant => (
         <ComponentWithObservedState
+          restaurantClient={restaurant}
           restaurant={restaurant.getRef('Restaurant').observeValue}
           placeOrder={order => {
             restaurant.getRef('Restaurant').transact(lastState => ({
@@ -211,6 +213,7 @@ export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {
     name: subsystemName,
     noFaults,
     reads,
+    faults: ss.faults,
   };
 };
 

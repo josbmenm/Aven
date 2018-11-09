@@ -6,7 +6,7 @@ import Row from '../../ono-components/Row';
 import Button from '../../ono-components/Button';
 import GenericPage from '../components/GenericPage';
 import RowSection from '../../ono-components/RowSection';
-import { AlertIOS } from 'react-native';
+import { AlertIOS, Text } from 'react-native';
 
 import { withKitchen, getSubsystem } from '../../ono-cloud/OnoKitchen';
 
@@ -17,9 +17,50 @@ function Subsystem({ systemId, kitchenState, kitchenConfig, kitchenCommand }) {
   }
   const pulseCommands = Object.keys(system.pulseCommands || {});
   const valueCommands = Object.keys(system.valueCommands || {});
+
+  let faults = null;
+  if (system.reads.NoFaults) {
+    // system has faulting behavior
+    faults = [];
+    if (system.reads.Fault0 && system.reads.Fault0.value) {
+      const faulted = system.reads.Fault0.value
+        .toString(2)
+        .split('')
+        .reverse()
+        .map(v => v === '1');
+      if (faulted[0]) {
+        faults.push(
+          'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
+        );
+      }
+      system.faults &&
+        system.faults.forEach(f => {
+          if (f.intIndex !== 0) {
+            throw new Error('only expecting faults on int 0 right now');
+          }
+          const isFaulted = faulted[f.bitIndex];
+          if (isFaulted) {
+            faults.push(f.description);
+          }
+        });
+    }
+    if (!faults.length && !system.reads.NoFaults.value) {
+      faults.push('Unknown Fault');
+    }
+  }
+
   return (
     <React.Fragment>
       <Hero title={`${system.icon} ${system.name}`} />
+      {faults && (
+        <RowSection>
+          {faults.length ? (
+            faults.map(fault => <Row key={fault} title={fault} />)
+          ) : (
+            <Row title="No Faults" />
+          )}
+        </RowSection>
+      )}
       <RowSection>
         {pulseCommands.length > 0 && (
           <Row title="Pulses">

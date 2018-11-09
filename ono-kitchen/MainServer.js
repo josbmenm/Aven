@@ -58,18 +58,23 @@ const runServer = async () => {
 
   let restaurantState = null;
   let kitchenState = null;
-  let hasKitchenStateChanged = false;
 
   function evaluateKitchenState(kitchenState) {
     const isFillSystemReady =
       kitchenState.FillSystem_PrgStep_READ === 0 &&
       kitchenState.FillSystem_NoFaults_READ &&
       kitchenState.FillSystem_Homed_READ;
-    const isReadyToStartOrder = isFillSystemReady;
+    const isReadyToGoToPosition =
+      kitchenState.FillPositioner_GoToPositionReady_READ;
+    const isReadyToFill =
+      isReadyToGoToPosition &&
+      kitchenState.FillSystem_PositionAndDispenseAmountReady_READ;
     return {
       isFillSystemReady,
-      isReadyToStartOrder,
-      isReadyToFill: isReadyToStartOrder,
+      isReadyToGoToPosition,
+      isReadyToFill,
+      isReadyToStartOrder: isReadyToFill,
+      isReadyToDeliver: isReadyToFill,
     };
   }
   const restaurant = kitchenClient.getRef('Restaurant');
@@ -84,37 +89,49 @@ const runServer = async () => {
         SlotToDispense: slot,
       },
     });
-    await delay(500);
+    await delay(250);
   }
   async function startOrder() {
     await kitchen.dispatchCommand({
       subsystem: 'FillPositioner',
       pulse: ['GoToPosition'],
       values: {
-        PositionDest: 0,
+        PositionDest: 1,
       },
     });
-    await delay(500);
+    await delay(2550);
+  }
+  async function runDeliver() {
+    await kitchen.dispatchCommand({
+      subsystem: 'FillPositioner',
+      pulse: ['GoToPosition'],
+      values: {
+        PositionDest: 45500,
+      },
+    });
+    await delay(550);
   }
   async function applySideEffects(restaurantState, kitchenState) {
     if (!restaurantState || !kitchenState) {
       return;
     }
-    const { isReadyToFill, isReadyToStartOrder } = evaluateKitchenState(
-      kitchenState,
-    );
-    console.log('applySideEffects', { isReadyToFill, isReadyToStartOrder });
-    const queue = restaurantState.queuedOrders || [];
+    const {
+      isReadyToFill,
+      isReadyToStartOrder,
+      isReadyToDeliver,
+    } = evaluateKitchenState(kitchenState);
+
+    const queuedOrders = restaurantState.queuedOrders || [];
 
     if (
       isReadyToStartOrder &&
-      queue.length &&
+      queuedOrders.length &&
       restaurantState.fillingOrder == null
     ) {
-      const order = queue[0];
+      const order = queuedOrders[0];
       const nextState = {
         ...restaurantState,
-        queuedOrders: queue.slice(1),
+        queuedOrders: queuedOrders.slice(1),
         fills: [
           {
             amount: 2,
@@ -130,29 +147,56 @@ const runServer = async () => {
         fillingOrder: order,
       };
       await restaurant.put(nextState);
+      console.log('starting order!');
       await startOrder();
+      return;
     }
 
-    if (restaurantState.fillingOrder && isReadyToFill) {
-      if (restaurantState.fills.length) {
-        const fillToRun = restaurantState.fills[0];
-        await restaurant.put({
-          ...restaurantState,
-          fills: restaurantState.fills.slice(1),
-        });
-        await runFill(fillToRun);
-      } else {
-        // fills are complete, move on. right now that means we are done
-        await restaurant.put({
-          ...restaurantState,
-          fills: [],
-          fillingOrder: null,
-          completeOrders: [
-            ...(restaurantState.completeOrders || []),
-            restaurantState.fillingOrder,
-          ],
-        });
-      }
+    if (
+      restaurantState.fillingOrder &&
+      isReadyToFill &&
+      restaurantState.fills.length
+    ) {
+      const fillToRun = restaurantState.fills[0];
+      await restaurant.put({
+        ...restaurantState,
+        fills: restaurantState.fills.slice(1),
+      });
+      console.log('filling ' + fillToRun.system);
+      await runFill(fillToRun);
+      return;
+    }
+
+    if (
+      restaurantState.fillingOrder &&
+      !restaurantState.fills.length &&
+      restaurantState.deliveringOrder == null &&
+      isReadyToDeliver
+    ) {
+      await restaurant.put({
+        ...restaurantState,
+        fills: [],
+        fillingOrder: null,
+        deliveringOrder: restaurantState.fillingOrder,
+      });
+      console.log('delivering ');
+      await runDeliver();
+      return;
+    }
+
+    if (restaurantState.deliveringOrder && isReadyToDeliver) {
+      // fills are complete, move on. right now that means we are done
+      console.log('order complete!');
+      await restaurant.put({
+        ...restaurantState,
+        fills: [],
+        deliveringOrder: null,
+        completeOrders: [
+          ...(restaurantState.completeOrders || []),
+          restaurantState.deliveringOrder,
+        ],
+      });
+      return;
     }
   }
 
