@@ -101,7 +101,7 @@ export default async function WebServer({
   const expressApp = express();
   const jsonParser = bodyParser.json();
   expressApp.use(jsonParser);
-  expressApp.use(yes());
+  process.env.ENFORCE_HTTPS && expressApp.use(yes());
   expressApp.use(helmet());
   expressApp.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
