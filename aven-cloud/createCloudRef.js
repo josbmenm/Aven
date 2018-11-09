@@ -47,11 +47,13 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
       domain,
       name
     });
-    refState.next({
-      ...refState.value,
-      id: result.id,
-      lastSyncTime: Date.now()
-    });
+    if (result) {
+      refState.next({
+        ...refState.value,
+        id: result.id,
+        lastSyncTime: Date.now()
+      });
+    }
   }
 
   async function fetchValue() {
