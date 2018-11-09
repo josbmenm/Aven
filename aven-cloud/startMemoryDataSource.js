@@ -24,6 +24,8 @@ const startMemoryDataSource = (opts = {}) => {
   let _objectsSize = {};
   let _refs = {};
 
+  const isConnected = new BehaviorSubject(true);
+
   if (dataSourceDomain == null) {
     throw new Error(`Empty domapin passed to startMemoryDataSource`);
   }
@@ -132,6 +134,7 @@ const startMemoryDataSource = (opts = {}) => {
     return r.behavior;
   };
   return {
+    isConnected,
     close,
     observeRef,
     dispatch: createDispatcher(actions)

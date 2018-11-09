@@ -11,6 +11,7 @@ export default function createNativeNetworkSource(opts) {
   const isConnected = new BehaviorSubject(false);
   const wsMessages = new Subject();
 
+  let ws = null;
   let wsClientId = null;
 
   async function dispatch(action) {
@@ -38,11 +39,10 @@ export default function createNativeNetworkSource(opts) {
     return result;
   }
 
-  let ws = null;
-
   function socketSendIfConnected(payload) {
     if (ws && ws.readyState === ReconnectingWebSocket.OPEN) {
-      ws.send(JSON.stringify({ ...payload, clientId: wsClientId }));
+      const msg = JSON.stringify({ ...payload, clientId: wsClientId });
+      ws.send(msg);
     }
   }
 
@@ -104,11 +104,9 @@ export default function createNativeNetworkSource(opts) {
     };
     ws.onclose = () => {
       isConnected.next(false);
-      ws = null;
     };
-    ws.onerror = () => {
+    ws.onerror = e => {
       isConnected.next(false);
-      ws = null;
     };
     ws.onmessage = msg => {
       const evt = JSON.parse(msg.data);
@@ -117,15 +115,13 @@ export default function createNativeNetworkSource(opts) {
           wsClientId = evt.clientId;
           isConnected.next(true);
           Object.keys(refObservables).forEach(domain => {
-            const refs = refObservables[domain];
+            const refs = Object.keys(refObservables[domain]);
             socketSendIfConnected({
               type: "SubscribeRefs",
               domain,
-              refs: Object.keys(refObservables[domain])
+              refs
             });
-            Object.keys(refs);
           });
-          console.log("Socket connected with client id: ", wsClientId);
           return;
         }
         case "RefUpdate": {
