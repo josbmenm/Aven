@@ -164,6 +164,9 @@ export function withRestaurant(Component) {
 }
 
 export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {
+  if (!kitchenConfig || !kitchenState) {
+    return null;
+  }
   const ss = kitchenConfig.subsystems[subsystemName];
   if (!ss) {
     return null;
