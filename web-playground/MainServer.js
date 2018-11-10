@@ -1,40 +1,27 @@
 import App from "./App";
 import WebServer from "../aven-web/WebServer";
-import { getSecretConfig, IS_DEV } from "../aven-web/config";
-import startDataService from "../aven-cloud-server/startDataService";
+import startMemoryDataSource from "../aven-cloud/startMemoryDataSource";
+import createCloudClient from "../aven-cloud/createCloudClient";
+import CloudContext from "../aven-cloud/CloudContext";
 
 const runServer = async () => {
-  const domain = "example.aven.cloud";
   console.log("☁️ Starting Cloud 💨");
-  const pgConfig = {
-    user: getSecretConfig("SQL_USER"),
-    password: getSecretConfig("SQL_PASSWORD"),
-    database: getSecretConfig("SQL_DATABASE")
-  };
 
-  if (getSecretConfig("SQL_INSTANCE_CONNECTION_NAME") && !IS_DEV) {
-    pgConfig.host = `/cloudsql/${getSecretConfig(
-      "SQL_INSTANCE_CONNECTION_NAME"
-    )}`;
-  } else if (getSecretConfig("SQL_HOST")) {
-    pgConfig.host = getSecretConfig("SQL_HOST");
-  }
-  const saveService = await startDataService({ pgConfig, rootDomain: domain });
-
-  console.log("☁️ Data Server Ready 💼");
-
-  const dispatch = async action => {
-    switch (action.type) {
-      default:
-        return await saveService.dispatch(action);
-    }
-  };
+  const dataSource = await startMemoryDataSource({
+    domain: "example.aven.cloud"
+  });
+  const client = createCloudClient({
+    dataSource,
+    domain: "example.aven.cloud"
+  });
   const getEnv = c => process.env[c];
   const serverListenLocation = getEnv("PORT");
+  const context = new Map();
+  context.set(CloudContext, client);
   const webService = await WebServer({
     App,
-    dispatch,
-    startSocketServer: saveService.startSocketServer,
+    context,
+    dataSource,
     serverListenLocation
   });
   console.log("☁️️ Web Ready 🕸");
@@ -42,7 +29,7 @@ const runServer = async () => {
   return {
     close: async () => {
       await webService.close();
-      await saveService.close();
+      await dataSource.close();
     }
   };
 };
