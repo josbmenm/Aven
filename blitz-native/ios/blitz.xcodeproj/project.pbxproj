@@ -42,6 +42,11 @@
 		874614646B8442FF9E31D722 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 877472BB20D24FF39CD7312B /* libz.tbd */; };
 		A9A437F5219A24250023BB51 /* SquareReaderSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A437F4219A24250023BB51 /* SquareReaderSDK.framework */; };
 		A9A437F6219A24250023BB51 /* SquareReaderSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A9A437F4219A24250023BB51 /* SquareReaderSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A9E55107219A3A5F0023801A /* ReactNativeEventEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = A9E55101219A3A5F0023801A /* ReactNativeEventEmitter.m */; };
+		A9E55108219A3A5F0023801A /* OPaymentManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = A9E55102219A3A5F0023801A /* OPaymentManagerBridge.m */; };
+		A9E55109219A3A5F0023801A /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E55103219A3A5F0023801A /* EventEmitter.swift */; };
+		A9E5510A219A3A5F0023801A /* OPaymentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E55104219A3A5F0023801A /* OPaymentManager.swift */; };
+		A9E5510B219A3A5F0023801A /* ReactNativeEventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E55106219A3A5F0023801A /* ReactNativeEventEmitter.swift */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		B20ED8520AF14F61BDB14818 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AEDC7B1A08644219750BD84 /* libCodePush.a */; };
 		C537CFFFA4664460BDF4B348 /* libRNScreens.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDA62549951F427FA7C5288B /* libRNScreens.a */; };
@@ -405,6 +410,12 @@
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		877472BB20D24FF39CD7312B /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		A9A437F4219A24250023BB51 /* SquareReaderSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SquareReaderSDK.framework; sourceTree = "<group>"; };
+		A9E550D6219A3A5E0023801A /* blitz-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "blitz-Bridging-Header.h"; sourceTree = "<group>"; };
+		A9E55101219A3A5F0023801A /* ReactNativeEventEmitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeEventEmitter.m; sourceTree = "<group>"; };
+		A9E55102219A3A5F0023801A /* OPaymentManagerBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OPaymentManagerBridge.m; sourceTree = "<group>"; };
+		A9E55103219A3A5F0023801A /* EventEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventEmitter.swift; sourceTree = "<group>"; };
+		A9E55104219A3A5F0023801A /* OPaymentManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OPaymentManager.swift; sourceTree = "<group>"; };
+		A9E55106219A3A5F0023801A /* ReactNativeEventEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactNativeEventEmitter.swift; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		CDA62549951F427FA7C5288B /* libRNScreens.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNScreens.a; sourceTree = "<group>"; };
 		D28FE18D6F8E44B1A650630C /* libRNReanimated.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNReanimated.a; sourceTree = "<group>"; };
@@ -553,6 +564,11 @@
 		13B07FAE1A68108700A75B9A /* blitz */ = {
 			isa = PBXGroup;
 			children = (
+				A9E55103219A3A5F0023801A /* EventEmitter.swift */,
+				A9E55104219A3A5F0023801A /* OPaymentManager.swift */,
+				A9E55102219A3A5F0023801A /* OPaymentManagerBridge.m */,
+				A9E55101219A3A5F0023801A /* ReactNativeEventEmitter.m */,
+				A9E55106219A3A5F0023801A /* ReactNativeEventEmitter.swift */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -560,6 +576,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				A9E550D6219A3A5E0023801A /* blitz-Bridging-Header.h */,
 			);
 			name = blitz;
 			sourceTree = "<group>";
@@ -820,6 +837,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 6U9HDNK4HD;
+						LastSwiftMigration = 1010;
 						ProvisioningStyle = Manual;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -1312,8 +1330,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9E5510A219A3A5F0023801A /* OPaymentManager.swift in Sources */,
+				A9E5510B219A3A5F0023801A /* ReactNativeEventEmitter.swift in Sources */,
+				A9E55107219A3A5F0023801A /* ReactNativeEventEmitter.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				A9E55109219A3A5F0023801A /* EventEmitter.swift in Sources */,
+				A9E55108219A3A5F0023801A /* OPaymentManagerBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1365,6 +1388,7 @@
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
@@ -1404,6 +1428,7 @@
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
@@ -1441,6 +1466,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1465,6 +1491,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = blitz;
 				PROVISIONING_PROFILE_SPECIFIER = "ipad pro dev env";
+				SWIFT_OBJC_BRIDGING_HEADER = "blitz-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1474,6 +1503,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1497,6 +1527,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = blitz;
 				PROVISIONING_PROFILE_SPECIFIER = "in-house blitz";
+				SWIFT_OBJC_BRIDGING_HEADER = "blitz-Bridging-Header.h";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

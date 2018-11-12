@@ -10,13 +10,14 @@
     "aven:start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
-    "buffer": "^5.2.1",
     "react": "16.6.0-alpha.8af6728",
     "react-native": "0.57.4",
     "react-native-code-push": "^5.4.2",
     "react-native-gesture-handler": "^1.0.9",
     "react-native-reanimated": "^1.0.0-alpha.10",
-    "react-native-screens": "^1.0.0-alpha.16"
+    "react-native-screens": "^1.0.0-alpha.16",
+    "rxjs": "^6.3.3",
+    "rxjs-compat": "^6.3.3"
   },
   "devDependencies": {
     "appcenter-cli": "^1.1.7",

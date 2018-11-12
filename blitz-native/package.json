@@ -10,23 +10,23 @@
     "aven:start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
-    "buffer": "^5.2.1",
     "react": "16.6.0-alpha.8af6728",
     "react-native": "0.57.4",
     "react-native-code-push": "^5.4.2",
     "react-native-gesture-handler": "^1.0.9",
     "react-native-reanimated": "^1.0.0-alpha.10",
     "react-native-screens": "^1.0.0-alpha.16",
+    "rxjs": "^6.3.3",
+    "rxjs-compat": "^6.3.3",
     "@nozbe/with-observables": "^1.0.2",
-    "fbjs": "^1.0.0",
     "@react-navigation/core": "^3.0.0-alpha.10",
     "@react-navigation/native": "^3.0.0-alpha.5",
     "react-navigation-stack": "^1.0.0-alpha.33",
     "react-navigation-transitioner": "^1.0.0-alpha.3",
-    "rxjs-compat": "^6.3.3",
+    "fbjs": "^1.0.0",
+    "reconnecting-websocket": "^4.0.0-rc5",
     "json-stable-stringify": "^1.0.1",
-    "crypto-js": "^3.1.9-1",
-    "reconnecting-websocket": "^4.0.0-rc5"
+    "crypto-js": "^3.1.9-1"
   },
   "devDependencies": {
     "appcenter-cli": "^1.1.7",

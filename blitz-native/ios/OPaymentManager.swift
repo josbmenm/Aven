@@ -25,7 +25,7 @@ class OPaymentManager: NSObject {
     DispatchQueue.main.async {
 
       // get audio permission
-      switch AVAudioSession.sharedInstance().recordPermission() {
+      switch AVAudioSession.sharedInstance().recordPermission {
       case .denied:
         print("open settings for audio permission!")
       case .undetermined:

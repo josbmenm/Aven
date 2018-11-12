@@ -2,7 +2,6 @@ import OnoRestaurantContext from './OnoRestaurantContext';
 import mapObject from 'fbjs/lib/mapObject';
 import React from 'react';
 import withObservables from '@nozbe/with-observables';
-import { last } from 'rxjs/operators';
 
 export function withKitchen(Component) {
   const ComponentWithObservedState = withObservables(

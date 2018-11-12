@@ -11,7 +11,7 @@ import { setHostConfig } from './components/AirtableImage';
 import KioskHomeScreen from './screens/KioskHomeScreen';
 import MenuItemScreen from './screens/MenuItemScreen';
 import DebugStateScreen from './screens/DebugStateScreen';
-// import PaymentDebugScreen from './screens/PaymentDebugScreen';
+import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
 // import OrderConfirmScreen from './screens/OrderConfirmScreen';
 // import OrderCompleteScreen from './screens/OrderCompleteScreen';
@@ -98,7 +98,7 @@ const App = createFadeNavigator(
     // OrderComplete: OrderCompleteScreen,
     // CollectName: CollectNameScreen,
     // CollectEmail: CollectEmailScreen,
-    // PaymentDebug: PaymentDebugScreen,
+    PaymentDebug: PaymentDebugScreen,
   },
   {
     headerMode: 'none',

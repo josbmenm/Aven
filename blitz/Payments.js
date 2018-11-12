@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { NativeModules, NativeEventEmitter } from 'react-native';
+import { withRestaurant } from '../ono-cloud/OnoRestaurantContext';
 
 const OPaymentManager = NativeModules.OPaymentManager;
 
@@ -21,28 +22,6 @@ const setupPayment = authCode =>
 
 const getPayment = (price, description) =>
   OPaymentManager.getPayment(price, description);
-
-export const configurePayment = async () => {
-  throw new Error('need network access, yo!');
-  // const res = await dispatch({
-  //   type: 'getSquareMobileAuthToken',
-  // });
-  const authCode = res.result.authorization_code;
-  await setupPayment(authCode);
-};
-
-export const openSettings = async () => {
-  await configurePayment();
-  await new Promise(resolve => {
-    OPaymentManager.openSettings((err, resp) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(resp);
-      }
-    });
-  });
-};
 
 // AppEmitter.addListener('OPaymentCancelled', response =>
 //   alert('ono payment cancelled! ' + JSON.stringify(response)),
@@ -88,7 +67,7 @@ export const paymentContainer = PaymentComponent => {
 
       try {
         this._handleActivity({ type: 'PaymentConfigRequested' });
-        const config = await configurePayment();
+        const config = await this.configurePayment();
         this._handleActivity(
           { type: 'PaymentConfigured', ...config },
           { isReady: true },
@@ -101,6 +80,25 @@ export const paymentContainer = PaymentComponent => {
         );
       }
     }
+    configurePayment = async () => {
+      const res = await this.props.restaurant.dispatch({
+        type: 'GetSquareMobileAuthToken',
+      });
+      const authCode = res.result.authorization_code;
+      await setupPayment(authCode);
+    };
+    openSettings = async () => {
+      await this.configurePayment();
+      await new Promise(resolve => {
+        OPaymentManager.openSettings((err, resp) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(resp);
+          }
+        });
+      });
+    };
     componentWillUnmount() {
       AppEmitter.removeListener('OPaymentComplete', this._handlePayComplete);
       AppEmitter.removeListener('OPaymentError', this._handlePaymentError);
@@ -119,9 +117,10 @@ export const paymentContainer = PaymentComponent => {
           paymentRequest={this._getPayment}
           paymentError={error}
           paymentActivityLog={activityLog}
+          openSettings={this.openSettings}
         />
       );
     }
   }
-  return PaymentsContainer;
+  return withRestaurant(PaymentsContainer);
 };

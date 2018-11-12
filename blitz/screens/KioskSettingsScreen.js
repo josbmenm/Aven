@@ -5,7 +5,7 @@ import Hero from '../../ono-components/Hero';
 import GenericPage from '../components/GenericPage';
 import RowSection from '../../ono-components/RowSection';
 import LinkRow from '../../ono-components/LinkRow';
-import { openSettings } from '../Payments';
+import { paymentContainer } from '../Payments';
 import { withRestaurant } from '../../ono-cloud/OnoRestaurantContext';
 
 function UpdateAirtableRowWithRestaurant({ restaurant }) {
@@ -29,6 +29,16 @@ function UpdateAirtableRowWithRestaurant({ restaurant }) {
 }
 const UpdateAirtableRow = withRestaurant(UpdateAirtableRowWithRestaurant);
 
+const PaySettingsRow = paymentContainer(({ openSettings }) => (
+  <LinkRow
+    onPress={() => {
+      openSettings().catch(console.error);
+    }}
+    icon="🛠"
+    title="Square Reader Settings"
+  />
+));
+
 export default class KioskSettingsScreen extends Component {
   render() {
     const { navigation } = this.props;
@@ -36,13 +46,7 @@ export default class KioskSettingsScreen extends Component {
       <GenericPage>
         <Hero icon="⚙️" title="Kiosk Settings" />
         <RowSection>
-          <LinkRow
-            onPress={() => {
-              openSettings().catch(console.error);
-            }}
-            icon="🛠"
-            title="Square Reader Settings"
-          />
+          <PaySettingsRow />
           <LinkRow
             onPress={() => {
               navigation.navigate({ routeName: 'PaymentDebug' });

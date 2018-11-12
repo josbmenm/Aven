@@ -3,6 +3,7 @@ import { View, Text, TouchableHighlight } from 'react-native';
 import JSONView from '../../debug-views/JSONView';
 import { paymentContainer } from '../Payments';
 import GenericPage from '../components/GenericPage';
+import Hero from '../../ono-components/Hero';
 
 const CollectPaymentScreen = paymentContainer(
   ({
@@ -31,6 +32,7 @@ const CollectPaymentScreen = paymentContainer(
     if (isPaymentReady) {
       return (
         <GenericPage>
+          <Hero title="Payment Test Screen" />
           <TouchableHighlight
             onPress={() => {
               paymentRequest(100, 'Hello ono!');
