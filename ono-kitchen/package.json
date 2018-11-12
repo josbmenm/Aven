@@ -15,7 +15,7 @@
       "aven-cloud",
       "aven-cloud-server",
       "aven-cloud-browser",
-      "aven-cloud-postgres",
+      "aven-cloud-sql",
       "ono-cloud",
       "ono-website"
     ],

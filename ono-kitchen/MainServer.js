@@ -1,6 +1,5 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
-import startPostgresDataSource from '../aven-cloud-postgres/startPostgresDataSource';
 import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
 import createNodeNetworkSource from '../aven-cloud-server/createNodeNetworkSource';
 import createCloudClient from '../aven-cloud/createCloudClient';
@@ -10,6 +9,7 @@ import OnoCloudContext from '../ono-cloud/OnoCloudContext';
 import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import scrapeAirTable from '../ono-website/scrapeAirTable';
+import { getMobileAuthToken } from '../ono-website/Square';
 
 import startKitchen from './startKitchen';
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -249,6 +249,8 @@ const runServer = async () => {
         return await kitchen.dispatchCommand(action);
       case 'UpdateAirtable':
         return await scrapeAirTable(fsClient);
+      case 'GetSquareMobileAuthToken':
+        return getMobileAuthToken(action);
       default:
         return await memoryDataSource.dispatch(action);
     }

@@ -1,0 +1,20 @@
+{
+  "main": "App",
+  "aven": {
+    "env": "blitz-native",
+    "srcDependencies": [
+      "debug-views",
+      "ono-cloud",
+      "aven-cloud-native",
+      "ono-components",
+      "aven-navigation-fade-navigator"
+    ],
+    "moduleDependencies": [
+      "@nozbe/with-observables",
+      "@react-navigation/core",
+      "@react-navigation/native",
+      "react-navigation-stack",
+      "react-navigation-transitioner"
+    ]
+  }
+}

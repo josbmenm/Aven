@@ -12,7 +12,7 @@
     "srcDependencies": [
       "aven-web",
       "aven-cloud-server",
-      "aven-cloud-postgres"
+      "aven-cloud-sql"
     ],
     "moduleDependencies": [
       "@react-navigation/core",
