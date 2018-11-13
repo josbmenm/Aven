@@ -91,7 +91,7 @@ const deploy = async ({ appName, appPkg, location, srcDir }) => {
   }
 
   if (
-    appPkg.globe &&
+    appPkg.aven &&
     appPkg.aven.envOptions &&
     appPkg.aven.envOptions.deployEnv === 'Heroku'
   ) {
@@ -112,6 +112,23 @@ const deploy = async ({ appName, appPkg, location, srcDir }) => {
       appName;
     await spawnInBuildDir('heroku', ['git:remote', '--app', herokuAppName]);
     await spawnInBuildDir('git', ['push', '-f', 'heroku', 'master']);
+    return;
+  }
+
+  if (
+    appPkg.aven &&
+    appPkg.aven.envOptions &&
+    appPkg.aven.envOptions.deployEnv === 'Script'
+  ) {
+    console.log('Running Deploy Script..');
+    const script = pathJoin(
+      location,
+      'src',
+      'sync',
+      appName,
+      appPkg.aven.envOptions.deployScript,
+    );
+    await spawn(script, [], { cwd: location, stdio: 'inherit' });
     return;
   }
 
