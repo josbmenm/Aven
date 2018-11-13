@@ -12,7 +12,7 @@ export default class HomeScreen extends Component {
     const { navigation } = this.props;
     return (
       <GenericPage>
-        <Hero title="Blips and Chitz!!" icon="🍹" />
+        <Hero title="Blips and Chitz" icon="🍹" />
         <RowSection>
           <LinkRow
             onPress={() => {
