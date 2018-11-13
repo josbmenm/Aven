@@ -57,6 +57,8 @@ const runServer = async () => {
         return await getMobileAuthToken(action);
       case 'UpdateAirtable':
         return await scrapeAirTable(fsClient);
+      case 'Debug':
+        return { message: 'The cake is a lie.' };
       default:
         return await dataSource.dispatch(action);
     }
