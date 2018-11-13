@@ -2,8 +2,11 @@ import App from './App';
 import WebServer from '../aven-web/WebServer';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import startPostgresDataSource from '../aven-cloud-sql/startPostgresDataSource';
-import startDataService from '../aven-cloud-server/startDataService';
-import { scrapeAirTable } from './scrapeAirTable';
+import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
+import scrapeAirTable from './scrapeAirTable';
+import createCloudClient from '../aven-cloud/createCloudClient';
+import createFSClient from '../aven-cloud-server/createFSClient';
+import OnoCloudContext from '../ono-cloud/OnoCloudContext';
 import { getMobileAuthToken } from './Square';
 
 const runServer = async () => {
@@ -25,32 +28,50 @@ const runServer = async () => {
   } else if (getSecretConfig('SQL_HOST')) {
     pgConfig.host = getSecretConfig('SQL_HOST');
   }
-  const dataSource = await startPostgresDataSource({
-    pgConfig,
-    rootDomain: domain,
+  // const dataSource = await startPostgresDataSource({
+  //   pgConfig,
+  //   rootDomain: domain,
+  // });
+  const dataSource = startMemoryDataSource({
+    domain,
   });
-  const dataService = await startDataService({
+  // const dataService = await startDataService({
+  //   dataSource,
+  //   rootDomain: domain,
+  // });
+
+  const dataClient = createCloudClient({
     dataSource,
-    rootDomain: domain,
+    domain,
   });
 
+  const fsClient = createFSClient({ client: dataClient });
+
+  const context = new Map();
+  context.set(OnoCloudContext, dataClient);
+
   const dispatch = async action => {
+    console.log('huh', typeof action);
     switch (action.type) {
-      case 'getSquareMobileAuthToken':
-        return getMobileAuthToken(action);
-      case 'scrapeUpstream':
-        return await scrapeAirTable(dataService);
+      case 'GetSquareMobileAuthToken':
+        return await getMobileAuthToken(action);
+      case 'UpdateAirtable':
+        return await scrapeAirTable(fsClient);
       default:
-        return await dataService.dispatch(action);
+        return await dataSource.dispatch(action);
     }
   };
+
   const getEnv = c => process.env[c];
   const serverListenLocation = getEnv('PORT');
   const webService = await WebServer({
+    context,
     mainDomain: domain,
     App,
-    dispatch,
-    startSocketServer: dataService.startSocketServer,
+    dataSource: {
+      ...dataSource,
+      dispatch,
+    },
     serverListenLocation,
   });
   console.log('☁️️ Web Ready 🕸');
@@ -58,7 +79,6 @@ const runServer = async () => {
   return {
     close: async () => {
       await dataSource.close();
-      await dataService.close();
       await webService.close();
     },
   };

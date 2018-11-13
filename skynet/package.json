@@ -1,5 +1,5 @@
 {
-  "name": "ono-website",
+  "name": "skynet",
   "aven": {
     "env": "web",
     "publicAssetDir": "public",
@@ -11,6 +11,8 @@
     },
     "srcDependencies": [
       "aven-web",
+      "ono-cloud",
+      "aven-cloud",
       "aven-cloud-server",
       "aven-cloud-sql"
     ],
