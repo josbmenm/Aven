@@ -12,7 +12,7 @@ export default class HomeScreen extends Component {
     const { navigation } = this.props;
     return (
       <GenericPage>
-        <Hero title="Maui" icon="🍹" />
+        <Hero title="Maui Development" icon="🍹" />
         <RowSection>
           <LinkRow
             onPress={() => {
