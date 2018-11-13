@@ -51,7 +51,7 @@ AppRegistry.registerComponent('blitz', () => App);
     await runPlatformCommand(location, 'start');
   },
   build: async ({ location }) => {
-    console.log('Running yarn install');
+    console.log('Before build, running yarn install in ' + location);
     await spawn('yarn', ['install'], {
       cwd: location,
       stdio: 'inherit',
@@ -59,6 +59,11 @@ AppRegistry.registerComponent('blitz', () => App);
     await runPlatformCommand(location, 'build');
   },
   deploy: async ({ location }) => {
+    console.log('Before deploy, running yarn install in ' + location);
+    await spawn('yarn', ['install'], {
+      cwd: location,
+      stdio: 'inherit',
+    });
     await runPlatformCommand(location, 'deploy');
   },
   runInPlace: true,
