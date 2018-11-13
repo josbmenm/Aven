@@ -138,8 +138,10 @@ class OPaymentManager: NSObject {
   func dismissPayment(callback: @escaping RCTResponseSenderBlock) -> Void {
     DispatchQueue.main.async {
       let rootView = UIApplication.shared.keyWindow?.rootViewController;
-      rootView?.dismiss(animated: true, completion: {
-        print("woa")
+      rootView?.dismiss(animated: false, completion: {
+        callback([[
+          "done": true,
+        ]])
       })
     }
   }

@@ -3,10 +3,12 @@
   "scripts": {
     "start": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start",
     "build": "./node_modules/@aven-cloud/aven/aven-tools/cli.js build",
+    "deploy": "./node_modules/@aven-cloud/aven/aven-tools/cli.js deploy",
     "start-web": "PORT=8840 ./node_modules/@aven-cloud/aven/aven-tools/cli.js start ono-website",
     "deploy-web": "./node_modules/@aven-cloud/aven/aven-tools/cli.js deploy ono-website",
     "start-kitchen": " PORT=8830 ./node_modules/@aven-cloud/aven/aven-tools/cli.js start ono-kitchen",
     "start-blitz": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start blitz",
+    "open-blitz": "open env-blitz-ios/ios/blitz.xcodeproj",
     "start-mobile": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start ono-mobile",
     "clean": "./node_modules/@aven-cloud/aven/aven-tools/cli.js clean"
   },

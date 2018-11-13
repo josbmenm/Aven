@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import { View, Text, Image } from 'react-native';
-import { createStackNavigator } from 'react-navigation-stack';
-import { createAppContainer } from '@react-navigation/native';
-import { genericText } from '../../ono-components/Styles';
 import GenericPage from '../components/GenericPage';
 import Button from '../../ono-components/Button';
 import { withMenuItem, withRestaurant } from '../../ono-cloud/OnoKitchen';
@@ -106,6 +103,7 @@ function MenuItemScreenWithItem({ menuItem, placeOrder, navigation }) {
               menuItemId: menuItem.id,
             });
             navigation.navigate('DebugState');
+            // navigation.navigate('OrderConfirm');
           }}
           title="Order Blend"
         />

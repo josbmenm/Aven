@@ -1,18 +1,12 @@
-class OrderConfirm extends Component {
+import React, { Component } from 'react';
+import GenericPage from '../components/GenericPage';
+import Hero from '../../ono-components/Hero';
+
+export default class OrderConfirm extends Component {
   render() {
-    const id = this.props.navigation.getParam('id');
-    const product = Products.find(p => p.id === id);
     return (
-      <GenericPage {...this.props} title={product.name}>
-        <TitleView>Dip Card Now</TitleView>
-        <TitleView secondary>Total is {product.price}</TitleView>
-        <CallToActionButton
-          label="Done"
-          onPress={() => {
-            this.props.navigation.navigate('CollectName');
-            // this.props.navigation.navigate('CheckoutComplete');
-          }}
-        />
+      <GenericPage>
+        <Hero title="Confirm Order" />
       </GenericPage>
     );
   }

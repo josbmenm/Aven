@@ -6,6 +6,7 @@ const fs = require('fs-extra');
 const spawn = require('@expo/spawn-async');
 
 const runPlatformCommand = async (cwd, cmdName) => {
+  console.log('bleh', cwd);
   await spawn('yarn', ['aven:' + cmdName], {
     cwd,
     stdio: 'inherit',
@@ -13,7 +14,15 @@ const runPlatformCommand = async (cwd, cmdName) => {
 };
 
 module.exports = {
-  init: async () => {},
+  init: async ({ location }) => {
+    await spawn('rsync', [
+      '-a',
+      __dirname + '/',
+      location + '/',
+      '--exclude',
+      'node_modules',
+    ]);
+  },
   applyPackage: async ({ location, appName, srcDir, distPkg, appPkg }) => {
     const distPkgPath = pathJoin(location, 'package.json');
     await fs.writeFile(distPkgPath, JSON.stringify(distPkg, null, 2));

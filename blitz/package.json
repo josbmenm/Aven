@@ -1,7 +1,7 @@
 {
   "main": "App",
   "aven": {
-    "env": "blitz-native",
+    "env": "env-blitz-ios",
     "srcDependencies": [
       "debug-views",
       "ono-cloud",

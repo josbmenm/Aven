@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { NativeModules, NativeEventEmitter } from 'react-native';
+import { NativeModules, NativeEventEmitter, Modal, View } from 'react-native';
 import { withRestaurant } from '../ono-cloud/OnoRestaurantContext';
 
 const OPaymentManager = NativeModules.OPaymentManager;
@@ -35,7 +35,12 @@ const getPayment = (price, description) =>
 
 export const paymentContainer = PaymentComponent => {
   class PaymentsContainer extends Component {
-    state = { isReady: false, error: null, isComplete: false, activityLog: [] };
+    state = {
+      isReady: false,
+      error: null,
+      isComplete: false,
+      activityLog: [],
+    };
     _handleActivity = (event, stateFlags) => {
       this.setState(lastState => ({
         ...lastState,

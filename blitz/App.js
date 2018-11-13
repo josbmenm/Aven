@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, StatusBar, Image } from 'react-native';
 import { createAppContainer } from '@react-navigation/native';
+import codePush from 'react-native-code-push';
 
 import HomeScreen from './screens/HomeScreen';
 import HostHomeScreen from './screens/HostHomeScreen';
@@ -13,7 +14,7 @@ import MenuItemScreen from './screens/MenuItemScreen';
 import DebugStateScreen from './screens/DebugStateScreen';
 import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
-// import OrderConfirmScreen from './screens/OrderConfirmScreen';
+import OrderConfirmScreen from './screens/OrderConfirmScreen';
 // import OrderCompleteScreen from './screens/OrderCompleteScreen';
 // import CollectNameScreen from './screens/CollectNameScreen';
 // import CollectEmailScreen from './screens/CollectEmailScreen';
@@ -23,6 +24,23 @@ import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createNativeNetworkSource from '../aven-cloud-native/createNativeNetworkSource';
 import createFadeNavigator from '../aven-navigation-fade-navigator/createFadeNavigator';
+
+let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
+
+setInterval(() => {
+  codePush
+    .sync({
+      updateDialog: false,
+      installMode: codePush.InstallMode.IMMEDIATE,
+    })
+    .then(() => {
+      console.log('Code update check success');
+    })
+    .catch(e => {
+      console.error('Code update check failed');
+      console.error(e);
+    });
+}, 10000);
 
 StatusBar.setHidden(true, 'none');
 
@@ -94,7 +112,7 @@ const App = createFadeNavigator(
     MenuItem: MenuItemScreen,
     DebugState: DebugStateScreen,
 
-    // OrderConfirm: OrderConfirmScreen,
+    OrderConfirm: OrderConfirmScreen,
     // OrderComplete: OrderCompleteScreen,
     // CollectName: CollectNameScreen,
     // CollectEmail: CollectEmailScreen,
@@ -135,7 +153,9 @@ const FullApp = () => (
   </OnoRestaurantContext.Provider>
 );
 
-export default FullApp;
+const UpdatingApp = codePush(codePushOptions)(FullApp);
+
+export default UpdatingApp;
 
 // class ReadyOrders extends React.Component {
 //   state = {clearedIds: []}
