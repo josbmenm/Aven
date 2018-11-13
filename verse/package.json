@@ -18,7 +18,7 @@
       "aven-cloud-browser",
       "aven-cloud-sql",
       "ono-cloud",
-      "ono-website"
+      "skynet"
     ],
     "moduleDependencies": [
       "fbjs",

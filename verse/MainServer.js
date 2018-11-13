@@ -8,8 +8,8 @@ import createOnoCloudClient from '../ono-cloud/createOnoCloudClient';
 import OnoCloudContext from '../ono-cloud/OnoCloudContext';
 import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
-import scrapeAirTable from '../ono-website/scrapeAirTable';
-import { getMobileAuthToken } from '../ono-website/Square';
+import scrapeAirTable from '../skynet/scrapeAirTable';
+import { getMobileAuthToken } from '../skynet/Square';
 
 import startKitchen from './startKitchen';
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
