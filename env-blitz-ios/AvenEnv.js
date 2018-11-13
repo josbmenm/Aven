@@ -52,6 +52,10 @@ AppRegistry.registerComponent('blitz', () => App);
     await runPlatformCommand(location, 'start');
   },
   build: async ({ location }) => {
+    await spawn('yarn', [], {
+      cwd: location,
+      stdio: 'inherit',
+    });
     await runPlatformCommand(location, 'build');
   },
   deploy: async ({ location }) => {
