@@ -6,7 +6,6 @@ const fs = require('fs-extra');
 const spawn = require('@expo/spawn-async');
 
 const runPlatformCommand = async (cwd, cmdName) => {
-  console.log('bleh', cwd);
   await spawn('yarn', ['aven:' + cmdName], {
     cwd,
     stdio: 'inherit',
@@ -52,7 +51,8 @@ AppRegistry.registerComponent('blitz', () => App);
     await runPlatformCommand(location, 'start');
   },
   build: async ({ location }) => {
-    await spawn('yarn', [], {
+    console.log('Running yarn install');
+    await spawn('yarn', ['install'], {
       cwd: location,
       stdio: 'inherit',
     });
