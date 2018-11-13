@@ -228,6 +228,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     fetchConnectedValue,
     getConnectedValue,
     getObject,
+    getValue,
     observeValue,
     observe,
     write,

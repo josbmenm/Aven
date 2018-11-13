@@ -54,7 +54,7 @@ const deploy = async ({ appName, appPkg, location, srcDir }) => {
     appPkg.aven.envOptions &&
     appPkg.aven.envOptions.deployEnv === 'GoogleAppEngine'
   ) {
-    // this part isn't so generalized.. the app.yaml and secret serialization is all GAE specific
+    // Warning! This is not actively being used or maintained. We are using Heroku now..
     const appYamlPath = pathJoin(location, 'app.yaml');
     const appConfig = yaml.safeLoad(await fs.readFile(appYamlPath));
     const publicConfig = { _configType: 'public' };
