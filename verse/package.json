@@ -1,14 +1,15 @@
 {
-  "name": "ono-kitchen",
+  "name": "verse",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT",
   "dependencies": {},
   "aven": {
     "env": "web",
     "envOptions": {
       "mainServer": "MainServer.js",
-      "mainClient": "MainClient.js"
+      "mainClient": "MainClient.js",
+      "deployEnv": "Script",
+      "deployScript": "deploy.sh"
     },
     "srcDependencies": [
       "aven-web",
