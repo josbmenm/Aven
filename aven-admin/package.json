@@ -1,0 +1,9 @@
+{
+  "name": "aven-admin",
+  "aven": {
+    "srcDependencies": [
+      "aven-cloud",
+      "debug-views"
+    ]
+  }
+}

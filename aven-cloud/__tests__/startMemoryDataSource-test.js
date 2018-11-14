@@ -93,6 +93,44 @@ describe("ref storage", () => {
     });
     expect(ref.id).toEqual(obj.id);
   });
+  test("list ref works", async () => {
+    const ds = startMemoryDataSource({ domain: "test" });
+    let refs = null;
+    refs = await ds.dispatch({
+      type: "ListRefs",
+      domain: "test"
+    });
+    expect(refs).toEqual([]);
+
+    const obj = await ds.dispatch({
+      type: "PutObject",
+      domain: "test",
+      value: { foo: "bar" }
+    });
+    await ds.dispatch({
+      type: "PutRef",
+      domain: "test",
+      name: "foo",
+      id: obj.id
+    });
+    refs = await ds.dispatch({
+      type: "ListRefs",
+      domain: "test"
+    });
+    expect(refs).toEqual(["foo"]);
+
+    await ds.dispatch({
+      type: "PutRef",
+      domain: "test",
+      name: "bar",
+      id: obj.id
+    });
+    refs = await ds.dispatch({
+      type: "ListRefs",
+      domain: "test"
+    });
+    expect(refs).toEqual(["foo", "bar"]);
+  });
 });
 
 describe("observing refs", () => {

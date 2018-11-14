@@ -100,6 +100,15 @@ const startMemoryDataSource = (opts = {}) => {
     return null;
   }
 
+  async function ListRefs({ domain }) {
+    if (domain !== dataSourceDomain) {
+      return [];
+    }
+    return Object.keys(_refs);
+  }
+
+  async function ListObjects({ domain, name }) {}
+
   const GetStatus = () => ({
     ready: true,
     connected: true,
@@ -111,7 +120,9 @@ const startMemoryDataSource = (opts = {}) => {
     PutObject,
     GetObject,
     GetRef,
-    GetStatus
+    GetStatus,
+    ListRefs,
+    ListObjects
   };
 
   const close = () => {
