@@ -32,7 +32,7 @@
     "knex": "^0.15.2",
     "mime": "^2.3.1",
     "minimist": "^1.2.0",
-    "objection": "^1.4.0",
+    "objection": "https://github.com/ericvicenti/objection.js",
     "pg": "^7.5.0",
     "pg-format": "^1.0.4",
     "react": "^16.7.0-alpha.0",

@@ -87,7 +87,7 @@ const getAllModuleDependencies = async (srcDir, packageName, globePkg) => {
           throw new Error(
             'Cannot find ' +
               moduleDepName +
-              ' in the globe package.json while requiring ' +
+              ' in the source env package.json while requiring ' +
               pkgDep +
               '!',
           );

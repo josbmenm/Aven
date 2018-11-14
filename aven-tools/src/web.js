@@ -44,6 +44,10 @@ const init = async ({ location }) => {
 };
 
 const start = async ({ location }) => {
+  await spawn('npx', ['knex', 'migrate:latest'], {
+    cwd: location,
+    stdio: 'inherit',
+  });
   await spawn('yarn', ['start-dev'], { cwd: location, stdio: 'inherit' });
   return {};
 };

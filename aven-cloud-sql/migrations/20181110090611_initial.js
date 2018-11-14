@@ -21,7 +21,22 @@ exports.up = function(knex, Promise) {
         .inTable("objects");
       table.unique(["domain", "name"]);
     })
-    .createTable("object_relations", table => {
+    .createTable("ref_ownership", table => {
+      table
+        .string("fromName")
+        .references("name")
+        .inTable("refs");
+      table
+        .string("fromDomain")
+        .references("domain")
+        .inTable("refs");
+      table
+        .string("to")
+        .references("id")
+        .inTable("objects");
+      table.unique(["fromName", "fromDomain", "to"]);
+    })
+    .createTable("object_ownership", table => {
       table
         .string("from")
         .references("id")
@@ -30,6 +45,7 @@ exports.up = function(knex, Promise) {
         .string("to")
         .references("id")
         .inTable("objects");
+      table.unique(["from", "to"]);
     });
 };
 
@@ -38,5 +54,6 @@ exports.down = function(knex, Promise) {
     .dropTableIfExists("domains")
     .dropTableIfExists("objects")
     .dropTableIfExists("refs")
-    .dropTableIfExists("object_relations");
+    .dropTableIfExists("ref_ownership")
+    .dropTableIfExists("object_ownership");
 };
