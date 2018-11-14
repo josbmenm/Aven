@@ -19,11 +19,22 @@ describe("create client generic behavior", () => {
   });
 });
 
-describe("client object behavior", () => {
-  test("creates objects", () => {
+describe("client ref behavior", () => {
+  test("gets refs", async () => {
     const m = startMemoryDataSource({ domain: "mydomain" });
     const c = createCloudClient({ dataSource: m, domain: "mydomain" });
-    const obj = c.createObject({ foo: "bar" });
-    expect(obj.id).toBe("a5e744d0164540d33b1d7ea616c28f2fa97e754a");
+    const ref = c.getRef("foo");
+    expect(ref.id).toBe(undefined);
+    expect(ref.name).toBe("foo");
+    await ref.fetch();
+    expect(ref.id).toBe(undefined);
+  });
+
+  test("deduplicates gotten refs", async () => {
+    const m = startMemoryDataSource({ domain: "mydomain" });
+    const c = createCloudClient({ dataSource: m, domain: "mydomain" });
+    const r0 = c.getRef("foo");
+    const r1 = c.getRef("foo");
+    expect(r0).toBe(r1);
   });
 });

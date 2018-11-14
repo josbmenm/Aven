@@ -3,7 +3,13 @@ import SHA1 from "crypto-js/sha1";
 
 const JSONStringify = require("json-stable-stringify");
 
-export default function createCloudObject({ dataSource, id, domain, value }) {
+export default function createCloudObject({
+  dataSource,
+  id,
+  domain,
+  value,
+  name
+}) {
   let objectId = false;
   if (value) {
     const valueString = JSONStringify(value);
@@ -21,6 +27,9 @@ export default function createCloudObject({ dataSource, id, domain, value }) {
   }
   if (!domain) {
     throw new Error("domain must be provided to createCloudObject!");
+  }
+  if (!name) {
+    throw new Error("ref name must be provided to createCloudObject!");
   }
 
   const objState = new BehaviorSubject({
@@ -88,6 +97,7 @@ export default function createCloudObject({ dataSource, id, domain, value }) {
     const result = await dataSource.dispatch({
       type: "GetObject",
       domain,
+      name,
       id
     });
     if (!result || result.object === undefined) {
@@ -105,6 +115,7 @@ export default function createCloudObject({ dataSource, id, domain, value }) {
     }
     const res = await dataSource.dispatch({
       type: "PutObject",
+      name,
       domain,
       value: getState().value
     });
@@ -138,6 +149,7 @@ export default function createCloudObject({ dataSource, id, domain, value }) {
   // };
   return {
     id: objectId,
+    name,
     put,
     domain,
     getValue,

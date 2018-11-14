@@ -3,14 +3,29 @@ import createCloudObject from "../createCloudObject";
 
 describe("object generic behavior", () => {
   test("handles creation with empty value", () => {
-    const obj = createCloudObject({ dataSource: {}, domain: "foo", id: "bar" });
-    expect(obj.id).toBe("bar");
+    const obj = createCloudObject({
+      dataSource: {},
+      domain: "foo",
+      name: "bar",
+      id: "asdf1234"
+    });
+    expect(obj.id).toBe("asdf1234");
     expect(obj.domain).toBe("foo");
   });
   test("fails on creation without domain", () => {
     expect(() =>
       createCloudObject({
+        name: "foo",
         dataSource: {},
+        value: { foo: 42 }
+      })
+    ).toThrow();
+  });
+  test("fails on creation without name", () => {
+    expect(() =>
+      createCloudObject({
+        dataSource: {},
+        domain: "test",
         value: { foo: 42 }
       })
     ).toThrow();
@@ -18,6 +33,7 @@ describe("object generic behavior", () => {
   test("fails on creation without value or id", () => {
     expect(() =>
       createCloudObject({
+        name: "foo",
         dataSource: {},
         domain: "test"
       })
@@ -27,6 +43,7 @@ describe("object generic behavior", () => {
     const obj = createCloudObject({
       dataSource: {},
       domain: "foo",
+      name: "bar",
       value: { foo: 42 }
     });
     expect(obj.id).toBe("e7e71fa8b5db791e2346856ee09cb45f867439e4");
@@ -40,9 +57,15 @@ describe("basic object DataSource interaction", () => {
     const { id } = await m.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
-    const c = createCloudObject({ dataSource: m, domain: "test", id });
+    const c = createCloudObject({
+      dataSource: m,
+      domain: "test",
+      id,
+      name: "foo"
+    });
     expect(c.getValue()).toEqual(undefined);
     expect(c.getObject().lastFetchTime).toBe(null);
     await c.fetch();
@@ -54,9 +77,15 @@ describe("basic object DataSource interaction", () => {
     const { id } = await m.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: null
     });
-    const c = createCloudObject({ dataSource: m, domain: "test", id });
+    const c = createCloudObject({
+      dataSource: m,
+      domain: "test",
+      name: "foo",
+      id
+    });
     expect(c.getValue()).toEqual(undefined);
     expect(c.getObject().lastFetchTime).toBe(null);
     await c.fetch();
@@ -69,6 +98,7 @@ describe("basic object DataSource interaction", () => {
     const c = createCloudObject({
       dataSource: m,
       domain: "test",
+      name: "foo",
       value: { foo: 42 }
     });
     expect(c.getObject().lastPutTime).toBe(null);
@@ -78,6 +108,7 @@ describe("basic object DataSource interaction", () => {
     const obj = await m.dispatch({
       type: "GetObject",
       domain: "test",
+      name: "foo",
       id: c.id
     });
 
@@ -91,9 +122,15 @@ describe("observing", () => {
     const obj1 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
-    const c = createCloudObject({ dataSource, domain: "test", id: obj1.id });
+    const c = createCloudObject({
+      dataSource,
+      domain: "test",
+      name: "foo",
+      id: obj1.id
+    });
 
     let lastObserved = undefined;
     c.observe.subscribe({
@@ -110,9 +147,15 @@ describe("observing", () => {
     const obj1 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
-    const c = createCloudObject({ dataSource, domain: "test", id: obj1.id });
+    const c = createCloudObject({
+      dataSource,
+      domain: "test",
+      name: "foo",
+      id: obj1.id
+    });
 
     let lastObserved = undefined;
     c.observeValue.subscribe({

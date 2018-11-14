@@ -78,12 +78,17 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     if (objectCache[id]) {
       return objectCache[id];
     }
-    const o = (objectCache[id] = createCloudObject({ dataSource, domain, id }));
+    const o = (objectCache[id] = createCloudObject({
+      dataSource,
+      domain,
+      id,
+      name
+    }));
     return o;
   }
 
   function _getObjectWithValue(value) {
-    const obj = createCloudObject({ dataSource, domain, value });
+    const obj = createCloudObject({ dataSource, domain, value, name });
 
     if (objectCache[obj.id]) {
       return objectCache[obj.id];

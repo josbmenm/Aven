@@ -34,6 +34,7 @@ describe("basic ref DataSource interaction", () => {
     const { id } = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
     await dataSource.dispatch({
@@ -111,16 +112,19 @@ describe("observing refs", () => {
     const obj1 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
     const obj2 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "baz" }
     });
     const obj3 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "qux" }
     });
     await dataSource.dispatch({
@@ -163,16 +167,19 @@ describe("observing refs", () => {
     const obj1 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
     const obj2 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "baz" }
     });
     const obj3 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "qux" }
     });
     await dataSource.dispatch({
@@ -216,21 +223,25 @@ describe("observing refs", () => {
     const obj1a = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
     const obj1 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { the: { value: [obj1a.id] } }
     });
     const obj2a = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "baz" }
     });
     const obj2 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { the: { value: [obj2a.id] } }
     });
     await dataSource.dispatch({
@@ -272,21 +283,25 @@ describe("observing refs", () => {
     const obj1a = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
     const obj1 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { the: { value: [obj1a.id] } }
     });
     const obj2a = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "baz" }
     });
     const obj2 = await dataSource.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { the: { value: [obj2a.id] } }
     });
     await dataSource.dispatch({

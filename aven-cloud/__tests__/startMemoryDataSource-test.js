@@ -22,6 +22,17 @@ describe("object storage", () => {
       ds.dispatch({
         type: "PutObject",
         domain: "test2",
+        value: { foo: "bar" },
+        name: "foo"
+      })
+    ).rejects.toThrow();
+  });
+  test("object put fails with missing ref", async () => {
+    const ds = startMemoryDataSource({ domain: "test" });
+    await expect(
+      ds.dispatch({
+        type: "PutObject",
+        domain: "test",
         value: { foo: "bar" }
       })
     ).rejects.toThrow();
@@ -32,7 +43,8 @@ describe("object storage", () => {
     const putResult = await ds.dispatch({
       type: "PutObject",
       domain: "test",
-      value: { foo: "bar" }
+      value: { foo: "bar" },
+      name: "foo"
     });
     expect(typeof putResult.id).toEqual("string");
   });
@@ -41,11 +53,13 @@ describe("object storage", () => {
     const putResult = await ds.dispatch({
       type: "PutObject",
       domain: "test",
-      value: { foo: "bar" }
+      value: { foo: "bar" },
+      name: "foo"
     });
     const obj = await ds.dispatch({
       type: "GetObject",
       domain: "test",
+      name: "foo",
       id: putResult.id
     });
     expect(obj.object.foo).toEqual("bar");
@@ -55,11 +69,13 @@ describe("object storage", () => {
     const putResult = await ds.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: null
     });
     const obj = await ds.dispatch({
       type: "GetObject",
       domain: "test",
+      name: "foo",
       id: putResult.id
     });
     expect(obj.object).toEqual(null);
@@ -78,6 +94,7 @@ describe("ref storage", () => {
     const obj = await ds.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
     await ds.dispatch({
@@ -93,6 +110,43 @@ describe("ref storage", () => {
     });
     expect(ref.id).toEqual(obj.id);
   });
+  test("get missing ref", async () => {
+    const ds = startMemoryDataSource({ domain: "test" });
+    const ref = await ds.dispatch({
+      type: "GetRef",
+      domain: "test",
+      name: "foo"
+    });
+    expect(ref.id).toEqual(null);
+    expect(ref.owner).toEqual(null);
+  });
+  test("destroy ref works", async () => {
+    const ds = startMemoryDataSource({ domain: "test" });
+    const obj = await ds.dispatch({
+      type: "PutObject",
+      domain: "test",
+      name: "foo",
+      value: { foo: "bar" }
+    });
+    await ds.dispatch({
+      type: "PutRef",
+      domain: "test",
+      name: "foo",
+      id: obj.id
+    });
+    await ds.dispatch({
+      type: "DestroyRef",
+      domain: "test",
+      name: "foo"
+    });
+    const ref = await ds.dispatch({
+      type: "GetRef",
+      domain: "test",
+      name: "foo"
+    });
+    expect(ref.id).toEqual(null);
+    expect(ref.owner).toEqual(null);
+  });
   test("list ref works", async () => {
     const ds = startMemoryDataSource({ domain: "test" });
     let refs = null;
@@ -105,6 +159,7 @@ describe("ref storage", () => {
     const obj = await ds.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
     await ds.dispatch({
@@ -145,11 +200,13 @@ describe("observing refs", () => {
     const obj1 = await ds.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
     const obj2 = await ds.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "baz" }
     });
     await ds.dispatch({
@@ -178,11 +235,13 @@ describe("observing refs", () => {
     const obj1 = await ds.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
     const obj2 = await ds.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "baz" }
     });
     await ds.dispatch({
@@ -214,16 +273,19 @@ describe("observing refs", () => {
     const obj1 = await ds.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "bar" }
     });
     const obj2 = await ds.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: "baz" }
     });
     const obj3 = await ds.dispatch({
       type: "PutObject",
       domain: "test",
+      name: "foo",
       value: { foo: 42 }
     });
     await ds.dispatch({
