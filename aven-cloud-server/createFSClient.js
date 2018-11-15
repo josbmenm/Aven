@@ -9,6 +9,7 @@ export default function createFSClient({ client }) {
       object = JSON.parse(fileData);
     } catch (e) {
       object = {
+        type: "BinaryFileHex",
         data: fileData.toString("hex")
       };
     }
@@ -33,7 +34,7 @@ export default function createFSClient({ client }) {
     filesInDir.forEach((fileName, index) => {
       files[fileName] = { id: fileList[index] };
     });
-    const folderObj = { files };
+    const folderObj = { files, type: "Folder" };
     const { id } = await ref.write(folderObj);
     return id;
   }

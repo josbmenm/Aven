@@ -32,6 +32,14 @@ startClient();
 `;
   await fs.writeFile(clientAppPath, clientAppFileData);
 
+  if (appPkg.aven.envOptions.knexFile) {
+    const knexFilePath = pathJoin(location, 'knexfile.js');
+    const knexFileData = `module.exports = ${JSON.stringify(
+      appPkg.aven.envOptions.knexFile,
+    )};`;
+    await fs.writeFile(knexFilePath, knexFileData);
+  }
+
   const distPkgPath = pathJoin(location, 'package.json');
   await fs.writeFile(distPkgPath, JSON.stringify(distPkg, null, 2));
 
@@ -44,10 +52,13 @@ const init = async ({ location }) => {
 };
 
 const start = async ({ location }) => {
-  await spawn('npx', ['knex', 'migrate:latest'], {
-    cwd: location,
-    stdio: 'inherit',
-  });
+  const knexFilePath = pathJoin(location, 'knexfile.js');
+  if (await fs.exists(knexFilePath)) {
+    await spawn('npx', ['knex', 'migrate:latest'], {
+      cwd: location,
+      stdio: 'inherit',
+    });
+  }
   await spawn('yarn', ['start-dev'], { cwd: location, stdio: 'inherit' });
   return {};
 };

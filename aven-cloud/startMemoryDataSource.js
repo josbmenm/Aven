@@ -1,4 +1,6 @@
-import { Observable, BehaviorSubject } from "rxjs-compat";
+import { BehaviorSubject } from "rxjs-compat";
+import createDispatcher from "./createDispatcher";
+import uuid from "uuid/v1";
 const crypto = require("crypto");
 const stringify = require("json-stable-stringify");
 
@@ -11,14 +13,8 @@ function _renderRef({ id, isPublic, owner }) {
   };
 }
 
-const createDispatcher = actions => action => {
-  if (actions[action.type]) {
-    return actions[action.type](action);
-  }
-  throw new Error(`Cannot find action "${action.type}"`);
-};
-
 const startMemoryDataSource = (opts = {}) => {
+  const id = uuid();
   const dataSourceDomain = opts.domain;
   let _objects = {};
   let _objectsSize = {};
@@ -100,7 +96,6 @@ const startMemoryDataSource = (opts = {}) => {
       object: undefined
     };
   }
-
   function _isValidName(name) {
     return typeof name === "string" && name.length > 0;
   }
@@ -121,6 +116,9 @@ const startMemoryDataSource = (opts = {}) => {
     const sha = crypto.createHash("sha1");
     sha.update(objData);
     const id = sha.digest("hex");
+    if (_objects == null) {
+      throw new Error(`Memory source "${id}" has been closed!`);
+    }
     if (_objects[id] === undefined) {
       _objects[id] = value;
     }
@@ -155,6 +153,10 @@ const startMemoryDataSource = (opts = {}) => {
     return Object.keys(_refs);
   }
 
+  async function ListDomains() {
+    return [domain];
+  }
+
   async function ListObjects({ domain, name }) {}
 
   async function CollectGarbage() {
@@ -170,20 +172,13 @@ const startMemoryDataSource = (opts = {}) => {
     migrated: true
   });
 
-  const actions = {
-    PutRef,
-    PutObject,
-    GetObject,
-    GetRef,
-    GetStatus,
-    ListRefs,
-    ListObjects,
-    DestroyRef,
-    CollectGarbage,
-    ListRefObjects
-  };
-
   const close = () => {
+    if (_objects === null) {
+      throw new Error(
+        `Cannot close memory source "${id}" because it is already closed!`
+      );
+    }
+    console.log("Closing memory source " + id);
     _objects = null;
     _objectsSize = null;
     _refs = null;
@@ -201,11 +196,26 @@ const startMemoryDataSource = (opts = {}) => {
       return (r.behavior = new BehaviorSubject(_renderRef(r)));
     }
   };
+
+  console.log(`Memory source "${id}" is ready.`);
   return {
     isConnected,
     close,
     observeRef,
-    dispatch: createDispatcher(actions)
+    dispatch: createDispatcher({
+      PutRef,
+      PutObject,
+      GetObject,
+      GetRef,
+      GetStatus,
+      ListDomains,
+      ListRefs,
+      ListObjects,
+      DestroyRef,
+      CollectGarbage,
+      ListRefObjects
+    }),
+    id
   };
 };
 

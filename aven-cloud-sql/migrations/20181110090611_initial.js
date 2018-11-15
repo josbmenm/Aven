@@ -6,7 +6,8 @@ exports.up = function(knex, Promise) {
     })
     .createTable("objects", table => {
       table.string("id");
-      table.json("value");
+      table.string("value");
+      table.integer("size");
       table.unique("id");
     })
     .createTable("refs", table => {

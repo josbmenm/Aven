@@ -1,4 +1,19 @@
-// import startSQLDataSource from "../startSQLDataSource";
+import startSQLDataSource from "../startSQLDataSource";
+// import Knex from "knex";
+
+// beforeEach(async () => {
+//   const knex = Knex({
+//     client: "sqlite3",
+//     connection: {
+//       filename: "./testdb.sqlite"
+//     }
+//   });
+//   console.log("running migration!");
+//   await knex.migrate.latest({
+//     directory: "../migrations"
+//   });
+//   console.log("ran migration!");
+// });
 
 // const startTestDataSource = options =>
 //   startSQLDataSource({
