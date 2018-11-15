@@ -4,6 +4,7 @@ import {
   TextInput,
   Switch,
   TouchableOpacity,
+  ScrollView,
   StyleSheet
 } from "react-native";
 import React, { useState, useEffect } from "react";
@@ -14,6 +15,7 @@ import createBrowserNetworkSource from "../aven-cloud-browser/createBrowserNetwo
 import createCloudClient from "../aven-cloud/createCloudClient";
 import CloudContext from "../aven-cloud/CloudContext";
 import JSONView from "../debug-views/JSONView";
+import useObservable from "../aven-cloud/useObservable";
 
 function Hero({ title }) {
   return (
@@ -34,7 +36,8 @@ function Hero({ title }) {
 const Styles = {
   inputHeight: 50,
   highlightColor: "#027C6F",
-  labelColor: "#222"
+  labelColor: "#222",
+  rowBorderColor: "#ccc"
 };
 
 function Button({ onPress, title, style }) {
@@ -72,7 +75,12 @@ function FieldLabel({ label, onPress }) {
   return (
     <Text
       onPress={onPress}
-      style={{ color: Styles.labelColor, fontWeight: "bold", fontSize: 14 }}
+      style={{
+        marginHorizontal: 20,
+        color: Styles.labelColor,
+        fontWeight: "bold",
+        fontSize: 14
+      }}
     >
       {label}
     </Text>
@@ -90,8 +98,8 @@ function InputField({ name, value, onValue }) {
           backgroundColor: "white",
           height: Styles.inputHeight,
           borderRadius: Styles.inputHeight / 2,
-          paddingHorizontal: 25,
-          paddingVertical: 10,
+          paddingHorizontal: 20,
+          paddingVertical: 5,
           marginTop: 4
         }}
       />
@@ -119,6 +127,14 @@ function BooleanField({ name, value, onValue }) {
   );
 }
 
+function Form({ children }) {
+  return (
+    <View style={{ paddingVertical: 30, paddingHorizontal: 15, flex: 1 }}>
+      {children}
+    </View>
+  );
+}
+
 function LoginForm({ onClient }) {
   const [authority, setAuthority] = useState("localhost:3000");
   const [domain, setDomain] = useState("example.aven.cloud");
@@ -128,7 +144,7 @@ function LoginForm({ onClient }) {
     return <Text>One moment..</Text>;
   }
   return (
-    <React.Fragment>
+    <Form>
       <InputField value={authority} onValue={setAuthority} name="Authority" />
       <InputField value={domain} onValue={setDomain} name="Domain" />
       <BooleanField value={useSSL} onValue={setUseSSL} name="Use HTTPS" />
@@ -149,23 +165,22 @@ function LoginForm({ onClient }) {
           onClient(client);
         }}
       />
-    </React.Fragment>
+    </Form>
   );
 }
 
 function Pane({ children }) {
   return (
-    <View
+    <ScrollView
       style={{
         flex: 1,
         backgroundColor: "#f0f0f0",
-        padding: 20,
         borderRightWidth: StyleSheet.hairlineWidth,
         borderRightColor: "#aaa"
       }}
     >
       {children}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -188,41 +203,64 @@ function PlaceholderMainPane({ title }) {
   );
 }
 
-function LinkRow({ title, onPress, isSelected }) {
+function RowSection({ children }) {
   return (
-    <TouchableOpacity onPress={onPress}>
-      <View style={{ padding: 8 }}>
+    <View
+      style={{
+        borderTopWidth: StyleSheet.hairlineWidth,
+        borderTopColor: Styles.rowBorderColor
+      }}
+    >
+      {children}
+    </View>
+  );
+}
+
+function Row({ children, isSelected }) {
+  return (
+    <View
+      style={{
+        padding: 15,
+        backgroundColor: isSelected ? "#27DECA" : "white",
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: Styles.rowBorderColor
+      }}
+    >
+      {children}
+    </View>
+  );
+}
+
+function LinkRow({ title, onPress, isSelected }) {
+  const [isHighlighted, setIsHighlighted] = useState(false);
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      onMouseEnter={() => {
+        setIsHighlighted(true);
+      }}
+      onMouseLeave={() => {
+        setIsHighlighted(false);
+      }}
+    >
+      <Row isSelected={isSelected}>
         <Text
           style={{
-            color: isSelected ? "blue" : "black"
+            fontSize: 16,
+            color: isHighlighted ? "black" : "#222"
           }}
         >
           {title}
         </Text>
-      </View>
+      </Row>
     </TouchableOpacity>
   );
 }
 
 function RefsList({ activeRef, onActiveRef }) {
   const cloud = useCloud();
-  const [refs, setRefs] = useState(null);
-  useEffect(
-    () => {
-      cloud
-        .dispatch({
-          type: "ListRefs",
-          domain: cloud.domain
-        })
-        .then(r => {
-          setRefs(r);
-        })
-        .catch(console.error);
+  const refs = useObservable(cloud.observeRefs);
 
-      return () => {};
-    },
-    [1]
-  );
   if (!refs) {
     return null;
   }
@@ -230,10 +268,11 @@ function RefsList({ activeRef, onActiveRef }) {
     <View>
       {refs.map(ref => (
         <LinkRow
-          isSelected={ref === activeRef}
-          title={ref}
+          key={ref.name}
+          isSelected={ref.name === activeRef}
+          title={ref.name}
           onPress={() => {
-            onActiveRef(ref);
+            onActiveRef(ref.name);
           }}
         />
       ))}
@@ -246,13 +285,21 @@ function RefsPane({ onLogout, activeRef, onActiveRef }) {
   return (
     <Pane>
       <RefsList activeRef={activeRef} onActiveRef={onActiveRef} />
-      <Button
-        title="Create foo"
-        onPress={() => {
-          cloud.getRef("foo").put({ hello: "world" });
-        }}
-      />
-      <Button title="Log out" onPress={onLogout} />
+      <Form>
+        <Button
+          title="Create foo"
+          onPress={() => {
+            cloud.getRef("foo").put({ hello: "world" });
+          }}
+        />
+        <Button
+          title="Create bar"
+          onPress={() => {
+            cloud.getRef("bar").put(null);
+          }}
+        />
+        <Button title="Log out" onPress={onLogout} />
+      </Form>
     </Pane>
   );
 }
@@ -261,7 +308,7 @@ function Folder({ value }) {
   return (
     <Pane>
       {Object.keys(value.files).map(fileName => (
-        <Text>{fileName}</Text>
+        <Text key={fileName}>{fileName}</Text>
       ))}
     </Pane>
   );

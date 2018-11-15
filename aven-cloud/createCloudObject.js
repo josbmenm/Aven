@@ -11,7 +11,7 @@ export default function createCloudObject({
   name
 }) {
   let objectId = false;
-  if (value) {
+  if (value !== undefined) {
     const valueString = JSONStringify(value);
     objectId = SHA1(valueString).toString();
   } else {
@@ -39,7 +39,7 @@ export default function createCloudObject({
     lastFetchTime: null,
 
     // obj data:
-    value: value || undefined
+    value
   });
 
   const observe = Observable.create(observer => {
@@ -110,7 +110,7 @@ export default function createCloudObject({
   }
 
   async function put() {
-    if (getState().value == null) {
+    if (getState().value === undefined) {
       throw new Error(`Cannot put empty value from object "${objectId}"!`);
     }
     const res = await dataSource.dispatch({
