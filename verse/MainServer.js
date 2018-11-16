@@ -17,19 +17,11 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨');
 
-  const pgConfig = {
-    ssl: true,
-    user: getSecretConfig('SQL_USER'),
-    password: getSecretConfig('SQL_PASSWORD'),
-    database: getSecretConfig('SQL_DATABASE'),
-    host: getSecretConfig('SQL_HOST'),
-  };
-
-  console.log(JSON.stringify(pgConfig));
-
   const dataSource = await startSQLDataSource({
-    client: 'pg', // must have sqlite3 in the dependencies of this module.
-    connection: pgConfig,
+    client: 'sqlite3', // must have sqlite3 in the dependencies of this module.
+    connection: {
+      filename: 'cloud.sqlite',
+    },
   });
 
   const kitchenClient = createCloudClient({
@@ -232,9 +224,9 @@ const runServer = async () => {
 
   const dispatch = async action => {
     switch (action.type) {
-      case 'KitchenCommand':
-        // subsystem (eg 'IOSystem'), pulse (eg ['home']), values (eg: foo: 123)
-        return await kitchen.dispatchCommand(action);
+      // case 'KitchenCommand':
+      //   // subsystem (eg 'IOSystem'), pulse (eg ['home']), values (eg: foo: 123)
+      //   return await kitchen.dispatchCommand(action);
       case 'UpdateAirtable':
         return await scrapeAirTable(fsClient);
       case 'GetSquareMobileAuthToken':
@@ -278,7 +270,7 @@ const runServer = async () => {
       await dataSource.close();
       // await networkDataSource.close();
       await webService.close();
-      await kitchen.close();
+      // await kitchen.close();
     },
   };
 };
