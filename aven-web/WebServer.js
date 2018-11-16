@@ -5,6 +5,7 @@ import React from "react";
 import startServer from "./startServer";
 import startSocketServer from "./startSocketServer";
 import { IS_DEV } from "./config";
+import { NavigationContext } from "@react-navigation/core";
 import { handleServerRequest } from "@react-navigation/web";
 const yes = require("yes-https");
 const helmet = require("helmet");
@@ -118,6 +119,11 @@ export default async function WebServer({
       context.forEach((value, C) => {
         el = <C.Provider value={value}>{el}</C.Provider>;
       });
+      el = (
+        <NavigationContext.Provider value={props.navigation}>
+          {el}
+        </NavigationContext.Provider>
+      );
       return el;
     }
 

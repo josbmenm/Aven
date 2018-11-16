@@ -50,9 +50,15 @@ export default function createCloudClient({ dataSource, domain }) {
     return _refs[name];
   }
 
+  async function destroyRef(ref) {
+    await ref.destroy();
+    knownRefs.next(knownRefs.value.filter(r => r.name !== ref.name));
+  }
+
   return {
     ...dataSource,
     domain,
+    destroyRef,
     getRef,
     observeRefs
   };

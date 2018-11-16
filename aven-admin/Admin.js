@@ -5,9 +5,11 @@ import {
   Switch,
   TouchableOpacity,
   ScrollView,
-  StyleSheet
+  Image,
+  StyleSheet,
+  AsyncStorage
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 
 import useCloud from "../aven-cloud/useCloud";
 import useRefValue from "../aven-cloud/useRefValue";
@@ -16,6 +18,53 @@ import createCloudClient from "../aven-cloud/createCloudClient";
 import CloudContext from "../aven-cloud/CloudContext";
 import JSONView from "../debug-views/JSONView";
 import useObservable from "../aven-cloud/useObservable";
+import { useNavigationState, useNavigation } from "react-navigation-hooks";
+import {
+  SwitchRouter,
+  createNavigator,
+  NavigationContext
+} from "@react-navigation/core";
+
+function useActiveRoute() {
+  const state = useNavigationState();
+
+  return state.routes[state.index];
+}
+
+function useAsyncStorage(storageKey, defaultValue) {
+  const unloadedValue = {};
+  const [storageState, setInternalStorageState] = useState(unloadedValue);
+
+  useEffect(
+    () => {
+      AsyncStorage.getItem(storageKey)
+        .then(stored => {
+          if (stored === null) {
+            setInternalStorageState(defaultValue);
+          } else {
+            setInternalStorageState(JSON.parse(stored));
+          }
+        })
+        .catch(console.error);
+    },
+    [storageKey]
+  );
+
+  function setStorageState(updates) {
+    if (storageState === unloadedValue) {
+      throw new Error(
+        "Cannot merge storage state if it has not been loaded yet!"
+      );
+    }
+    const newState = { ...storageState, ...updates };
+    setInternalStorageState(newState);
+    AsyncStorage.setItem(storageKey, JSON.stringify(newState)).catch(
+      console.error
+    );
+  }
+
+  return [storageState, setStorageState];
+}
 
 function Hero({ title }) {
   return (
@@ -25,11 +74,39 @@ function Hero({ title }) {
         textAlign: "center",
         fontWeight: "300",
         marginVertical: 30,
-        color: "#343"
+        color: "#343",
+        paddingHorizontal: 15
       }}
     >
       {title}
     </Text>
+  );
+}
+function Title({ title }) {
+  return (
+    <View
+      style={{
+        marginVertical: 20,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        paddingHorizontal: 15
+      }}
+    >
+      {title.split(".").map((t, i, a) => (
+        <Text
+          key={i}
+          style={{
+            fontSize: 36,
+            textAlign: "center",
+            fontWeight: "300",
+            color: "#343"
+          }}
+        >
+          {t}
+          {i === a.length - 1 ? "" : "."}
+        </Text>
+      ))}
+    </View>
   );
 }
 
@@ -40,12 +117,12 @@ const Styles = {
   rowBorderColor: "#ccc"
 };
 
-function Button({ onPress, title, style }) {
+function Button({ onPress, title, style, secondary }) {
   return (
     <TouchableOpacity onPress={onPress}>
       <View
         style={{
-          backgroundColor: Styles.highlightColor,
+          backgroundColor: secondary ? "#ccc" : Styles.highlightColor,
           height: Styles.inputHeight,
           borderRadius: Styles.inputHeight / 2,
           paddingHorizontal: 25,
@@ -55,7 +132,7 @@ function Button({ onPress, title, style }) {
       >
         <Text
           style={{
-            color: "white",
+            color: secondary ? "#333" : "white",
             textAlign: "center",
             fontSize: 28
           }}
@@ -67,8 +144,12 @@ function Button({ onPress, title, style }) {
   );
 }
 
-function FormSubmitButton(props) {
-  return <Button {...props} style={{ marginTop: 30 }} />;
+function FormButton(props) {
+  return <Button {...props} style={{ marginVertical: 5 }} />;
+}
+
+function StandaloneButton(props) {
+  return <Button {...props} style={{ margin: 15 }} />;
 }
 
 function FieldLabel({ label, onPress }) {
@@ -129,17 +210,25 @@ function BooleanField({ name, value, onValue }) {
 
 function Form({ children }) {
   return (
-    <View style={{ paddingVertical: 30, paddingHorizontal: 15, flex: 1 }}>
+    <View
+      style={{
+        paddingVertical: 15,
+        paddingHorizontal: 15,
+        flex: 1,
+        backgroundColor: "#0001"
+      }}
+    >
       {children}
     </View>
   );
 }
 
-function LoginForm({ onClient }) {
-  const [authority, setAuthority] = useState("localhost:3000");
-  const [domain, setDomain] = useState("example.aven.cloud");
+function LoginForm({ onClientConfig, defaultSession }) {
+  const [authority, setAuthority] = useState(defaultSession.authority);
+  const [domain, setDomain] = useState(defaultSession.domain);
   const [useSSL, setUseSSL] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const { navigate } = useNavigation();
   if (isConnecting) {
     return <Text>One moment..</Text>;
   }
@@ -148,21 +237,16 @@ function LoginForm({ onClient }) {
       <InputField value={authority} onValue={setAuthority} name="Authority" />
       <InputField value={domain} onValue={setDomain} name="Domain" />
       <BooleanField value={useSSL} onValue={setUseSSL} name="Use HTTPS" />
-      <FormSubmitButton
+      <FormButton
         title="Connect"
         onPress={() => {
           setIsConnecting(true);
-
-          const dataSource = createBrowserNetworkSource({
+          onClientConfig({
             authority,
-            useSSL
-          });
-
-          const client = createCloudClient({
-            dataSource,
+            useSSL,
             domain
           });
-          onClient(client);
+          navigate("Home");
         }}
       />
     </Form>
@@ -176,7 +260,8 @@ function Pane({ children }) {
         flex: 1,
         backgroundColor: "#f0f0f0",
         borderRightWidth: StyleSheet.hairlineWidth,
-        borderRightColor: "#aaa"
+        borderRightColor: "#aaa",
+        maxWidth: 350
       }}
     >
       {children}
@@ -184,12 +269,19 @@ function Pane({ children }) {
   );
 }
 
-function LoginPane({ onClient }) {
+function LargePane({ children }) {
+  return <ScrollView style={{ flex: 4 }}>{children}</ScrollView>;
+}
+
+function LoginPane({ onClientConfig, defaultSession }) {
   return (
     <Pane>
       <Hero title="Login" />
       <View>
-        <LoginForm onClient={onClient} />
+        <LoginForm
+          onClientConfig={onClientConfig}
+          defaultSession={defaultSession}
+        />
       </View>
     </Pane>
   );
@@ -221,7 +313,7 @@ function Row({ children, isSelected }) {
     <View
       style={{
         padding: 15,
-        backgroundColor: isSelected ? "#27DECA" : "white",
+        backgroundColor: isSelected ? "#96F3E9" : "white",
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderBottomColor: Styles.rowBorderColor
       }}
@@ -257,49 +349,86 @@ function LinkRow({ title, onPress, isSelected }) {
   );
 }
 
-function RefsList({ activeRef, onActiveRef }) {
+function RefsList({ activeRef }) {
   const cloud = useCloud();
+  const { navigate } = useNavigation();
   const refs = useObservable(cloud.observeRefs);
 
   if (!refs) {
     return null;
   }
   return (
-    <View>
-      {refs.map(ref => (
+    <RowSection>
+      {refs.filter(r => !r.getState().isDestroyed).map(ref => (
         <LinkRow
           key={ref.name}
           isSelected={ref.name === activeRef}
           title={ref.name}
           onPress={() => {
-            onActiveRef(ref.name);
+            navigate("Ref", { name: ref.name });
           }}
         />
       ))}
-    </View>
+    </RowSection>
   );
 }
 
-function RefsPane({ onLogout, activeRef, onActiveRef }) {
+function AddRefSection() {
   const cloud = useCloud();
+  let [isOpened, setIsOpened] = useState(false);
+  let [newRefName, setNewRefName] = useState("");
+  if (isOpened) {
+    return (
+      <Form>
+        <InputField
+          value={newRefName}
+          onValue={setNewRefName}
+          name="New Ref Name"
+        />
+        <FormButton
+          title="Create Ref"
+          onPress={() => {
+            cloud.getRef(newRefName).put(null);
+            setIsOpened(false);
+            setNewRefName("");
+          }}
+        />
+        <FormButton
+          title="Cancel"
+          secondary
+          onPress={() => {
+            setIsOpened(false);
+            setNewRefName("");
+          }}
+        />
+      </Form>
+    );
+  }
+  return (
+    <StandaloneButton
+      title="Create Ref"
+      onPress={() => {
+        setIsOpened(true);
+      }}
+    />
+  );
+}
+
+function RefsPane({ onClientConfig, activeRef, onActiveRef }) {
+  const { domain } = useCloud();
+  const { navigate } = useNavigation();
   return (
     <Pane>
+      <Title title={domain} />
       <RefsList activeRef={activeRef} onActiveRef={onActiveRef} />
-      <Form>
-        <Button
-          title="Create foo"
-          onPress={() => {
-            cloud.getRef("foo").put({ hello: "world" });
-          }}
-        />
-        <Button
-          title="Create bar"
-          onPress={() => {
-            cloud.getRef("bar").put(null);
-          }}
-        />
-        <Button title="Log out" onPress={onLogout} />
-      </Form>
+      <AddRefSection />
+      <StandaloneButton
+        title="Log out"
+        onPress={() => {
+          onClientConfig(null);
+          navigate("Login");
+        }}
+      />
     </Pane>
   );
 }
@@ -307,14 +436,41 @@ function RefsPane({ onLogout, activeRef, onActiveRef }) {
 function Folder({ value }) {
   return (
     <Pane>
-      {Object.keys(value.files).map(fileName => (
-        <Text key={fileName}>{fileName}</Text>
-      ))}
+      <RowSection>
+        {Object.keys(value.files).map(fileName => (
+          <LinkRow
+            key={fileName}
+            isSelected={false}
+            title={fileName}
+            onPress={() => {}}
+          />
+        ))}
+      </RowSection>
     </Pane>
   );
 }
 
-function RefScreen({ value, cloudRef }) {
+process.env.REACT_NAV_LOGGING = true;
+
+function useParam(paramName) {
+  const { getParam, dangerouslyGetParent } = useNavigation();
+  let parent = dangerouslyGetParent();
+  let val = getParam(paramName);
+  while (val === undefined && parent && parent.getParam) {
+    val = parent.getParam(paramName);
+    parent = parent.dangerouslyGetParent();
+  }
+  return val;
+}
+
+function RefValuePane() {
+  const { navigate } = useNavigation();
+  const name = useParam("name");
+  const n = useNavigation();
+  const cloud = useCloud();
+  const cloudRef = cloud.getRef(name);
+  const value = useRefValue(cloudRef);
+
   if (value == null) {
     return <Text>Empty</Text>;
   }
@@ -322,59 +478,271 @@ function RefScreen({ value, cloudRef }) {
     return <Folder value={value} />;
   }
   return (
-    <React.Fragment>
+    <LargePane>
       <JSONView data={value} />
-      <Button
+      <StandaloneButton
         title="Modify"
         onPress={() => {
           cloudRef.put({ other: "value" });
         }}
       />
-    </React.Fragment>
+    </LargePane>
   );
 }
 
-function RefPane({ name }) {
-  const cloudRef = useCloud().getRef(name);
-  const value = useRefValue(cloudRef);
+function InfoSection({ text }) {
   return (
-    <View style={{ flex: 4 }}>
-      <RefScreen value={value} cloudRef={cloudRef} />
-    </View>
+    <Text style={{ paddingHorizontal: 15, paddingVertical: 5 }}>{text}</Text>
   );
 }
 
-function MainPane({ activeRef }) {
-  if (!activeRef) {
-    return <PlaceholderMainPane title="Select a ref" />;
-  }
-  return <RefPane name={activeRef} />;
-}
+function RefSetForm({ cloudRef }) {
+  const r = useObservable(cloudRef.observe);
 
-export default function App({ env }) {
-  let [client, setClient] = useState(null);
-  let [activeRef, setActiveRef] = useState(null);
-  if (!client) {
+  let [isOpened, setIsOpened] = useState(false);
+  let [nextId, setNextId] = useState(r ? r.id : "");
+  if (!isOpened) {
     return (
-      <View style={{ flex: 1, flexDirection: "row" }}>
-        <LoginPane onClient={setClient} />
-        <PlaceholderMainPane title="" />
-      </View>
+      <StandaloneButton
+        title="Set Object ID"
+        onPress={() => {
+          setIsOpened(true);
+        }}
+      />
     );
   }
   return (
-    <View style={{ flex: 1, flexDirection: "row" }}>
-      <CloudContext.Provider value={client}>
-        <RefsPane
-          activeRef={activeRef}
-          onLogout={() => {
-            setClient(null);
-            setActiveRef(null);
-          }}
-          onActiveRef={setActiveRef}
-        />
-        <MainPane activeRef={activeRef} />
-      </CloudContext.Provider>
+    <Form>
+      <InputField value={nextId} onValue={setNextId} name="New ID" />
+      <FormButton
+        title="Set ID"
+        onPress={() => {
+          setIsOpened(false);
+          setNextId(null);
+          cloudRef.putId(nextId).catch(e => {
+            alert("Error");
+            console.error(e);
+          });
+        }}
+      />
+    </Form>
+  );
+}
+
+function SlideableNavigation({ navigation, descriptors }) {
+  const { routes, index } = navigation.state;
+  const activeKey = routes[index].key;
+  const activeDescriptor = descriptors[activeKey];
+  const ScreenComponent = activeDescriptor.getComponent();
+  return (
+    <NavigationContext.Provider value={activeDescriptor.navigation}>
+      <ScreenComponent navigation={activeDescriptor.navigation} />
+    </NavigationContext.Provider>
+  );
+}
+
+function RefMetaPane() {
+  const { getParam, navigate } = useNavigation();
+  const name = useParam("name");
+  const n = useNavigation();
+  const cloud = useCloud();
+  const cloudRef = cloud.getRef(name);
+  const r = useObservable(cloudRef.observe);
+  return (
+    <Pane>
+      <Title title={cloudRef.name} />
+      {r && <InfoSection text={`Current ID: ${r.id}`} />}
+      <StandaloneButton
+        title="Destroy"
+        onPress={() => {
+          navigate("Refs");
+          cloud.destroyRef(cloudRef).catch(console.error);
+        }}
+      />
+      <RefSetForm cloudRef={cloudRef} />
+    </Pane>
+  );
+}
+
+const RefPaneNavigator = createNavigator(
+  SlideableNavigation,
+  SwitchRouter({
+    RefValue: { path: "", screen: RefValuePane }
+  }),
+  {}
+);
+
+function RefPane({ onClientConfig, navigation }) {
+  return (
+    <React.Fragment>
+      <RefMetaPane />
+      <RefPaneNavigator navigation={navigation} />
+    </React.Fragment>
+  );
+}
+RefPane.router = RefPaneNavigator.router;
+
+function EmptyScreen() {
+  return null;
+}
+
+const MainPaneNavigator = createNavigator(
+  SlideableNavigation,
+  SwitchRouter({
+    Refs: { path: "", screen: EmptyScreen },
+    Ref: {
+      path: "ref/:name",
+      screen: RefPane
+    }
+  }),
+  {}
+);
+
+function MainPane({ onClientConfig, navigation }) {
+  return (
+    <React.Fragment>
+      <RefsPane onClientConfig={onClientConfig} />
+      <MainPaneNavigator navigation={navigation} />
+    </React.Fragment>
+  );
+}
+MainPane.router = MainPaneNavigator.router;
+
+function BackgroundView({ children }) {
+  return (
+    <View style={{ flex: 1 }}>
+      <Image
+        style={{ flex: 1 }}
+        resizeMode="repeat"
+        source={require("./BgTexture.png")}
+      />
+      <View style={{ ...StyleSheet.absoluteFillObject, flexDirection: "row" }}>
+        {children}
+      </View>
     </View>
   );
 }
+
+function AdminApp({ defaultSession = {}, descriptors }) {
+  let [activeRef, setActiveRef] = useState(null);
+  let [sessionState, setSessionState] = useAsyncStorage("AvenSession", {
+    clientConfig: null
+  });
+  let client = useMemo(
+    () => {
+      if (!sessionState.clientConfig) {
+        return null;
+      }
+
+      const { authority, useSSL, domain } = sessionState.clientConfig;
+
+      const dataSource = createBrowserNetworkSource({
+        authority,
+        useSSL
+      });
+
+      const client = createCloudClient({
+        dataSource,
+        domain
+      });
+
+      return client;
+    },
+    [sessionState.clientConfig]
+  );
+
+  const activeRoute = useActiveRoute();
+
+  const { navigate } = useNavigation();
+
+  useEffect(
+    () => {
+      if (
+        sessionState.clientConfig !== undefined &&
+        !client &&
+        activeRoute.routeName !== "Login"
+      ) {
+        navigate("Login");
+      }
+    },
+    [sessionState, client]
+  );
+
+  function setClientConfig(clientConfig) {
+    setSessionState({ clientConfig });
+  }
+
+  const activeDescriptor = descriptors[activeRoute.key];
+
+  const ScreenComponent = activeDescriptor.getComponent();
+
+  if (!client && activeRoute.routeName !== "Login") {
+    return <Text>Wait..</Text>;
+  }
+
+  return (
+    <BackgroundView>
+      <CloudContext.Provider value={client}>
+        <NavigationContext.Provider value={activeDescriptor.navigation}>
+          <ScreenComponent
+            onClientConfig={setClientConfig}
+            defaultSession={{
+              authority: defaultSession.authority || "localhost:3000",
+              domain: defaultSession.domain || "test.aven.cloud"
+            }}
+            navigation={activeDescriptor.navigation}
+          />
+        </NavigationContext.Provider>
+      </CloudContext.Provider>
+    </BackgroundView>
+  );
+
+  // if (!client) {
+  //   return (
+  //     <BackgroundView>
+  //       <LoginPane
+  //         onClientConfig={setClientConfig}
+  //         defaultSession={{
+  //           authority: defaultSession.authority || "localhost:3000",
+  //           domain: defaultSession.domain || "test.aven.cloud"
+  //         }}
+  //       />
+  //       <PlaceholderMainPane title="" />
+  //     </BackgroundView>
+  //   );
+  // }
+  // return (
+  //   <BackgroundView>
+  //     <CloudContext.Provider value={client}>
+  //       <RefsPane
+  //         activeRef={activeRef}
+  //         onLogout={() => {
+  //           setClientConfig(null);
+  //           setActiveRef(null);
+  //         }}
+  //         onActiveRef={setActiveRef}
+  //       />
+  //       <MainPane activeRef={activeRef} onActiveRef={setActiveRef} />
+  //     </CloudContext.Provider>
+  //   </BackgroundView>
+  // );
+}
+
+const router = SwitchRouter({
+  Home: {
+    path: "",
+    screen: MainPane,
+    navigationOptions: {
+      title: "Admin"
+    }
+  },
+  Login: {
+    path: "login",
+    screen: LoginPane,
+    navigationOptions: {
+      title: "Login - Admin"
+    }
+  }
+});
+
+export default createNavigator(AdminApp, router, {});

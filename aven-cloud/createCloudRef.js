@@ -18,7 +18,8 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
   const refState = new BehaviorSubject({
     id: null,
     isConnected: false,
-    lastSyncTime: null
+    lastSyncTime: null,
+    isDestroyed: false
   });
 
   const setState = newState => {
@@ -42,6 +43,15 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
         lastSyncTime: Date.now()
       });
     }
+  }
+
+  async function destroy() {
+    setState({ isConnected: false, id: null, isDestroyed: true });
+    await dataSource.dispatch({
+      type: "DestroyRef",
+      domain,
+      name
+    });
   }
 
   async function fetchValue() {
@@ -223,6 +233,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
   }
 
   return {
+    getState,
     name,
     domain,
     fetch,
@@ -237,6 +248,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     observeValue,
     observe,
     write,
+    destroy,
     observeConnectedValue,
     transact
   };

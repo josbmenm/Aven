@@ -46,10 +46,8 @@ const startMemoryDataSource = (opts = {}) => {
       return; // avoid calling behavior.next if the ID hasn't changed
       // todo, respect owner and permissions here
     }
-    r.id = id;
-    r.owner = owner;
-    r.isPublic = true;
     r.objects[id] = true;
+    r.id = id;
     if (r.behavior) {
       r.behavior.next(_renderRef(r));
     } else {
@@ -69,12 +67,12 @@ const startMemoryDataSource = (opts = {}) => {
     const r = _getRef(name);
     r.objects = {};
     r.id = null;
-    r.owner = null;
     if (r.behavior) {
       r.behavior.next(_renderRef(r));
     } else {
       r.behavior = new BehaviorSubject(_renderRef(r));
     }
+    delete _refs[name];
   }
 
   async function GetObject({ domain, name, id }) {
@@ -134,8 +132,8 @@ const startMemoryDataSource = (opts = {}) => {
     if (domain !== dataSourceDomain) {
       return null;
     }
-    const r = _getRef(name);
-    return _renderRef(r);
+    const r = _refs[name];
+    return _renderRef(r || {});
   }
 
   async function ListRefObjects({ domain, name }) {

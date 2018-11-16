@@ -15,8 +15,9 @@
     "babel-preset-razzle": "^2.0.0",
     "express": "^4.16.3",
     "razzle": "^2.4.0",
-    "react": "^16.7.0-alpha.0",
-    "react-dom": "^16.7.0-alpha.0",
+    "react": "^16.7.0-alpha.2",
+    "react-dom": "^16.7.0-alpha.2",
+    "react-art": "^16.7.0-alpha.2",
     "react-native-web": "^0.9.5"
   }
 }

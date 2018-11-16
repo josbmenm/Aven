@@ -19,7 +19,11 @@ export default async function startSQLDataSource({
   const knex = Knex({
     client,
     connection,
-    useNullAsDefault: true
+    useNullAsDefault: true,
+    afterCreate: (connection, done) => {
+      isConnected.next(true);
+      done(null, connection);
+    }
   });
 
   const models = {
@@ -39,13 +43,11 @@ export default async function startSQLDataSource({
         insertMissing: true
       }
     );
-
     _announceRef(domain, name, {
       domain,
       name,
       id
     });
-    console.log("made it here at least!", f);
   }
   async function GetRef({ name, domain }) {
     const results = await models.Ref.query()
@@ -114,6 +116,7 @@ export default async function startSQLDataSource({
   async function CollectGarbage() {}
   async function ListRefObjects() {}
   async function close() {
+    isConnected.next(false);
     await knex.destroy();
   }
 

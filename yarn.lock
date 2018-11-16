@@ -40,10 +40,9 @@
   dependencies:
     rxjs "^6.2.2"
 
-"@react-navigation/core@^3.0.0-alpha.10":
+"@react-navigation/core@https://github.com/react-navigation/react-navigation-core#fixparams":
   version "3.0.0-alpha.19"
-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.0-alpha.19.tgz#262f3eb17d4171aaa9229695693d6d877b156bbe"
-  integrity sha512-INlFaXWOIzQqQV2EESr3wn+qYSSEy90iWBthQFiQ/bNofuSJ8fKqhftYGCI7u2ZKjXbKXc7qF5WfhgyDx9LNjQ==
+  resolved "https://github.com/react-navigation/react-navigation-core#88565761e1f163fbf39d0f5ee547a0c500a5466d"
   dependencies:
     create-react-context "^0.2.3"
     hoist-non-react-statics "^3.0.1"
@@ -4005,6 +4004,11 @@ react-native-vector-icons@6.0.0:
     lodash "^4.0.0"
     prop-types "^15.6.2"
     yargs "^8.0.2"
+
+react-navigation-hooks@^1.0.0-alpha.2:
+  version "1.0.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/react-navigation-hooks/-/react-navigation-hooks-1.0.0-alpha.2.tgz#e44de3790d1f0ba6ff33dc11caa0e55d2a4fc8f7"
+  integrity sha512-G/JlquD3Xs8fYSLywKz6TV+APev8IwHDThU7X9gK2fZnLyk5tX9OeuO4pTpv4jv/tTRcjk7wkKQ+pHI+rFXa/g==
 
 react-navigation-stack@^1.0.0-alpha.33:
   version "1.0.0-alpha.34"
