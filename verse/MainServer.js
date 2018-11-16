@@ -1,6 +1,6 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
-import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
+import startSQLDataSource from '../aven-cloud-sql/startSQLDataSource';
 import createNodeNetworkSource from '../aven-cloud-server/createNodeNetworkSource';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createFSClient from '../aven-cloud-server/createFSClient';
@@ -25,27 +25,15 @@ const runServer = async () => {
     host: getSecretConfig('SQL_HOST'),
   };
 
-  // const pgDataSource = await startPostgresDataSource({
-  //   pgConfig,
-  //   rootDomain: 'maui.onofood.co',
-  // });
-  const memoryDataSource = await startMemoryDataSource({
-    domain: 'kitchen.maui.onofood.co',
+  console.log(JSON.stringify(pgConfig));
+
+  const dataSource = await startSQLDataSource({
+    client: 'pg', // must have sqlite3 in the dependencies of this module.
+    connection: pgConfig,
   });
 
-  // const networkDataSource = await createNodeNetworkSource({
-  //   domain: 'onofood.co',
-  //   host: {
-  //     authority: 'www.onofood.co',
-  //   },
-  // });
-  // const mainDataSource = fallbackDataSource(
-  //   memoryDataSource,
-  //   networkDataSource
-  // )
-
   const kitchenClient = createCloudClient({
-    dataSource: memoryDataSource,
+    dataSource: dataSource,
     domain: 'kitchen.maui.onofood.co',
   });
 
@@ -252,7 +240,7 @@ const runServer = async () => {
       case 'GetSquareMobileAuthToken':
         return getMobileAuthToken(action);
       default:
-        return await memoryDataSource.dispatch(action);
+        return await dataSource.dispatch(action);
     }
   };
 
@@ -277,7 +265,7 @@ const runServer = async () => {
     App,
     context,
     dataSource: {
-      ...memoryDataSource,
+      ...dataSource,
       dispatch,
     },
     serverListenLocation,
@@ -287,7 +275,7 @@ const runServer = async () => {
   return {
     close: async () => {
       // await pgDataSource.close();
-      await memoryDataSource.close();
+      await dataSource.close();
       // await networkDataSource.close();
       await webService.close();
       await kitchen.close();

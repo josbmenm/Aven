@@ -12,13 +12,17 @@
       "deployScript": "deploy.sh",
       "knexFile": {
         "development": {
-          "client": "sqlite3",
+          "client": "pg",
           "useNullAsDefault": true,
           "migrations": {
             "directory": "src/sync/aven-cloud-sql/migrations"
           },
           "connection": {
-            "filename": "cloud.sqlite"
+            "ssl": true,
+            "user": "ub345rs4js20eg",
+            "password": "p2e193735a04fa6ba97cea323987e3afa8a19c5c3bdbbd2e24f35c538636a95ff",
+            "database": "d7qg73u7qhfg3r",
+            "host": "ec2-18-235-241-220.compute-1.amazonaws.com"
           }
         }
       }

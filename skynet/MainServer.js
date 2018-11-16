@@ -34,9 +34,6 @@ const runServer = async () => {
       filename: 'cloud.sqlite',
     },
   });
-  // const dataSource = startMemoryDataSource({
-  //   domain,
-  // });
 
   const dataClient = createCloudClient({
     dataSource,
