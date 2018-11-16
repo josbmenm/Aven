@@ -106,7 +106,10 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     return (objectCache[obj.id] = obj);
   }
 
-  function getObject() {
+  function getObject(requestedId) {
+    if (requestedId) {
+      return _getObjectWithId(requestedId);
+    }
     const { id } = refState.value;
     if (!id) {
       return undefined;

@@ -5,6 +5,9 @@ export default function useObservable(observable) {
 
   useEffect(
     () => {
+      if (!observable || !observable.subscribe) {
+        return;
+      }
       const subscription = observable.subscribe(setValue);
       return () => subscription.unsubscribe();
     },

@@ -9,7 +9,7 @@ import {
   StyleSheet,
   AsyncStorage
 } from "react-native";
-import React, { useState, useEffect, useMemo, useContext } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import useCloud from "../aven-cloud/useCloud";
 import useRefValue from "../aven-cloud/useRefValue";
@@ -270,7 +270,18 @@ function Pane({ children }) {
 }
 
 function LargePane({ children }) {
-  return <ScrollView style={{ flex: 4 }}>{children}</ScrollView>;
+  return (
+    <ScrollView
+      style={{
+        flex: 4,
+        backgroundColor: "#f0f0f0",
+        borderRightWidth: StyleSheet.hairlineWidth,
+        borderRightColor: "#aaa"
+      }}
+    >
+      {children}
+    </ScrollView>
+  );
 }
 
 function LoginPane({ onClientConfig, defaultSession }) {
@@ -284,14 +295,6 @@ function LoginPane({ onClientConfig, defaultSession }) {
         />
       </View>
     </Pane>
-  );
-}
-
-function PlaceholderMainPane({ title }) {
-  return (
-    <View style={{ flex: 4 }}>
-      <Hero title={title} />
-    </View>
   );
 }
 
@@ -349,9 +352,10 @@ function LinkRow({ title, onPress, isSelected }) {
   );
 }
 
-function RefsList({ activeRef }) {
+function RefsList() {
   const cloud = useCloud();
   const { navigate } = useNavigation();
+  const activeRef = useParam("name");
   const refs = useObservable(cloud.observeRefs);
 
   if (!refs) {
@@ -414,13 +418,13 @@ function AddRefSection() {
   );
 }
 
-function RefsPane({ onClientConfig, activeRef, onActiveRef }) {
+function RefsPane({ onClientConfig }) {
   const { domain } = useCloud();
   const { navigate } = useNavigation();
   return (
     <Pane>
       <Title title={domain} />
-      <RefsList activeRef={activeRef} onActiveRef={onActiveRef} />
+      <RefsList />
       <AddRefSection />
       <StandaloneButton
         title="Log out"
@@ -433,20 +437,60 @@ function RefsPane({ onClientConfig, activeRef, onActiveRef }) {
   );
 }
 
-function Folder({ value }) {
+function Folder({ value, path, cloudRef, pathContext }) {
+  let pathViews = null;
+  const navigation = useNavigation();
+
+  const pathSegments = path && path.split("/");
+  const nextPathSegment = pathSegments && pathSegments[0];
+  const restOfPath = pathSegments && pathSegments.slice(1).join("/");
+
+  const file = value.files[nextPathSegment];
+  const obj = useMemo(
+    () => {
+      if (!file || !file.id) {
+        return null;
+      }
+      return cloudRef.getObject(file.id);
+    },
+    [file]
+  );
+  const objValue = useObservable(obj && obj.observeValue);
+
+  if (objValue) {
+    pathViews = (
+      <ValuePane
+        value={objValue}
+        path={restOfPath}
+        cloudRef={cloudRef}
+        pathContext={[...pathContext, nextPathSegment]}
+      />
+    );
+  }
+
   return (
-    <Pane>
-      <RowSection>
-        {Object.keys(value.files).map(fileName => (
-          <LinkRow
-            key={fileName}
-            isSelected={false}
-            title={fileName}
-            onPress={() => {}}
-          />
-        ))}
-      </RowSection>
-    </Pane>
+    <React.Fragment>
+      <Pane>
+        <RowSection>
+          {Object.keys(value.files).map(fileName => (
+            <LinkRow
+              key={fileName}
+              isSelected={nextPathSegment === fileName}
+              title={fileName}
+              onPress={() => {
+                const nextPath = [...pathContext, fileName].join("/");
+                console.log(nextPath);
+                navigation.setParams({
+                  path: nextPath
+                });
+              }}
+            />
+          ))}
+        </RowSection>
+      </Pane>
+
+      {pathViews}
+    </React.Fragment>
   );
 }
 
@@ -463,22 +507,23 @@ function useParam(paramName) {
   return val;
 }
 
-function RefValuePane() {
-  const { navigate } = useNavigation();
-  const name = useParam("name");
-  const n = useNavigation();
-  const cloud = useCloud();
-  const cloudRef = cloud.getRef(name);
-  const value = useRefValue(cloudRef);
-
+function ValuePane({ value, path, cloudRef, pathContext }) {
   if (value == null) {
     return <Text>Empty</Text>;
   }
   if (value.type === "Folder") {
-    return <Folder value={value} />;
+    return (
+      <Folder
+        value={value}
+        path={path}
+        cloudRef={cloudRef}
+        pathContext={pathContext}
+      />
+    );
   }
   return (
     <LargePane>
+      <Title title={`${cloudRef.name}/${pathContext.join("/")}`} />
       <JSONView data={value} />
       <StandaloneButton
         title="Modify"
@@ -487,6 +532,18 @@ function RefValuePane() {
         }}
       />
     </LargePane>
+  );
+}
+
+function RefValuePane() {
+  const name = useParam("name");
+  const path = useParam("path");
+  const cloud = useCloud();
+  const cloudRef = cloud.getRef(name);
+  const value = useRefValue(cloudRef);
+
+  return (
+    <ValuePane cloudRef={cloudRef} value={value} path={path} pathContext={[]} />
   );
 }
 
@@ -542,9 +599,8 @@ function SlideableNavigation({ navigation, descriptors }) {
 }
 
 function RefMetaPane() {
-  const { getParam, navigate } = useNavigation();
+  const { navigate } = useNavigation();
   const name = useParam("name");
-  const n = useNavigation();
   const cloud = useCloud();
   const cloudRef = cloud.getRef(name);
   const r = useObservable(cloudRef.observe);
@@ -567,7 +623,7 @@ function RefMetaPane() {
 const RefPaneNavigator = createNavigator(
   SlideableNavigation,
   SwitchRouter({
-    RefValue: { path: "", screen: RefValuePane }
+    RefValue: { path: "value/:path*", screen: RefValuePane }
   }),
   {}
 );
@@ -624,7 +680,6 @@ function BackgroundView({ children }) {
 }
 
 function AdminApp({ defaultSession = {}, descriptors }) {
-  let [activeRef, setActiveRef] = useState(null);
   let [sessionState, setSessionState] = useAsyncStorage("AvenSession", {
     clientConfig: null
   });
