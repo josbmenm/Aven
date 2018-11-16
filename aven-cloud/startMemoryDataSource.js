@@ -152,7 +152,7 @@ const startMemoryDataSource = (opts = {}) => {
   }
 
   async function ListDomains() {
-    return [domain];
+    return [dataSourceDomain];
   }
 
   async function ListObjects({ domain, name }) {}
