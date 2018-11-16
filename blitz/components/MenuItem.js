@@ -4,7 +4,7 @@ import { withNavigation } from '@react-navigation/core';
 import {
   menuItemNameText,
   menuItemDescriptionText,
-} from '../../ono-components/Styles';
+} from '../../components/Styles';
 import AirtableImage from './AirtableImage';
 
 const MenuItemWithNav = ({ item, navigation }) => {

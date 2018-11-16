@@ -1,6 +1,6 @@
 import React from 'react';
 import GenericPage from '../components/GenericPage';
-import Title from '../ono-components/Title';
+import Title from '../components/Title';
 
 export default class OrderComplete extends Component {
   componentDidMount() {

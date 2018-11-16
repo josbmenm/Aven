@@ -9,6 +9,7 @@ import {
   Image,
 } from 'react-native';
 import { createSwitchNavigator } from '@react-navigation/core';
+import Admin from '../aven-admin/Admin';
 
 const colors = {
   bg: '#FFF3EB',
@@ -145,15 +146,35 @@ const GoogleAnalyticsTag = `
 </script>
 `;
 
-Main.navigationOptions = {
-  backgroundColor: colors.bg,
-  title: 'ono food co',
-  customCSS: fontsCSS,
-  customHTML: GoogleAnalyticsTag,
-};
+function SkynetAdmin(props) {
+  return (
+    <Admin
+      defaultSession={{
+        authority: 'localhost:8840',
+        domain: 'onofood.co',
+        useSSL: false,
+      }}
+      {...props}
+    />
+  );
+}
+SkynetAdmin.router = Admin.router;
 
 const App = createSwitchNavigator({
-  Main,
+  Main: {
+    screen: Main,
+    navigationOptions: {
+      backgroundColor: colors.bg,
+      title: 'ono food co',
+      customCSS: fontsCSS,
+      customHTML: GoogleAnalyticsTag,
+    },
+    path: '',
+  },
+  Admin: {
+    screen: SkynetAdmin,
+    path: 'admin',
+  },
 });
 
 export default App;

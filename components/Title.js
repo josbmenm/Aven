@@ -4,7 +4,7 @@ import { titleFontStyle } from './Styles';
 
 export default class TitleView extends Component {
   render() {
-    const { children, secondary } = this.props;
+    const { children } = this.props;
     return (
       <Text
         style={{

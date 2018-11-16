@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import Hero from '../../ono-components/Hero';
+import Hero from '../../components/Hero';
 
 import GenericPage from '../components/GenericPage';
-import RowSection from '../../ono-components/RowSection';
-import Row from '../../ono-components/Row';
-import Button from '../../ono-components/Button';
+import RowSection from '../../components/RowSection';
+import Row from '../../components/Row';
+import Button from '../../components/Button';
 
 export default class HomeScreen extends Component {
   render() {

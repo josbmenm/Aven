@@ -11,7 +11,7 @@ import {
   Image,
   TextInput,
 } from 'react-native';
-import { genericPageStyle } from '../../ono-components/Styles';
+import { genericPageStyle } from '../../components/Styles';
 import { withNavigation } from '@react-navigation/core';
 
 class GenericPage extends React.Component {

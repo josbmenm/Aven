@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import MenuItem from '../components/MenuItem';
 import GenericPage from '../components/GenericPage';
-import Hero from '../../ono-components/Hero';
+import Hero from '../../components/Hero';
 import { withMenu } from '../../ono-cloud/OnoKitchen';
 
 const MenuWithMenu = ({ menu }) => {

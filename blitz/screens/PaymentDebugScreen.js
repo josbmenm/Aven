@@ -3,7 +3,7 @@ import { View, Text, TouchableHighlight } from 'react-native';
 import JSONView from '../../debug-views/JSONView';
 import { paymentContainer } from '../Payments';
 import GenericPage from '../components/GenericPage';
-import Hero from '../../ono-components/Hero';
+import Hero from '../../components/Hero';
 
 const CollectPaymentScreen = paymentContainer(
   ({

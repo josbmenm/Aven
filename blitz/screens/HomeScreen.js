@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import GenericPage from '../components/GenericPage';
-import RowSection from '../../ono-components/RowSection';
-import Hero from '../../ono-components/Hero';
-import LinkRow from '../../ono-components/LinkRow';
+import RowSection from '../../components/RowSection';
+import Hero from '../../components/Hero';
+import LinkRow from '../../components/LinkRow';
 
 export default class HomeScreen extends Component {
   render() {

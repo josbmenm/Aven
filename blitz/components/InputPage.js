@@ -11,7 +11,7 @@ import {
   Image,
   TextInput,
 } from 'react-native';
-import { inputPageStyle } from '../../ono-components/Styles';
+import { inputPageStyle } from '../../components/Styles';
 
 export default class InputPage extends React.Component {
   state = { value: '' };

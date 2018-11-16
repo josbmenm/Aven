@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import Hero from '../../ono-components/Hero';
-import BitRow from '../../ono-components/BitRow';
+import Hero from '../../components/Hero';
+import BitRow from '../../components/BitRow';
 import { withNavigation } from '@react-navigation/core';
 
 import GenericPage from '../components/GenericPage';
-import RowSection from '../../ono-components/RowSection';
-import LinkRow from '../../ono-components/LinkRow';
+import RowSection from '../../components/RowSection';
+import LinkRow from '../../components/LinkRow';
 import {
   getSubsystemOverview,
   withKitchen,

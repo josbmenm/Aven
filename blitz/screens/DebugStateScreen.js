@@ -2,7 +2,7 @@ import React from 'react';
 import JSONView from '../../debug-views/JSONView';
 import GenericPage from '../components/GenericPage';
 import { withRestaurant, withKitchenLog } from '../../ono-cloud/OnoKitchen';
-import Hero from '../../ono-components/Hero';
+import Hero from '../../components/Hero';
 
 function DebugStateScreenWithState({ restaurant, kitchenLog }) {
   return (

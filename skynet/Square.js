@@ -1,6 +1,8 @@
 import { getSecretConfig } from '../aven-web/config';
 const {
   MobileAuthorizationApi,
+  CustomersApi,
+  TransactionsApi,
   CreateMobileAuthorizationCodeRequest,
   ApiClient,
 } = require('square-connect');
@@ -23,3 +25,11 @@ export const getMobileAuthToken = async action => {
 
   return { result };
 };
+
+// var transactions = new TransactionsApi();
+
+// export const listTransactions = async action => {
+//   const result = await transactions.listTransactions(LOCATION, {});
+
+//   return { result };
+// };

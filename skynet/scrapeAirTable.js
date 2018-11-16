@@ -120,6 +120,16 @@ export default async function scrapeAirTable(fsClient) {
   );
 
   await Promise.all(
+    Object.keys(baseTables).map(async baseTable => {
+      const tableData = baseTables[baseTable];
+      const safeTableName = baseTable.replace(' ', '_');
+      await fs.writeFile(
+        pathJoin(destPath, safeTableName + '.json'),
+        JSON.stringify(tableData, null, 2),
+      );
+    }),
+  );
+  await Promise.all(
     baseFilesURLs.map(async url => {
       const fileId = baseFiles[url];
       const fileDlPath = pathJoin(filesPath, fileId);

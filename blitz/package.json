@@ -6,7 +6,7 @@
       "debug-views",
       "ono-cloud",
       "aven-cloud-native",
-      "ono-components",
+      "components",
       "aven-navigation-fade-navigator"
     ],
     "moduleDependencies": [

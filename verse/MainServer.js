@@ -5,7 +5,7 @@ import createNodeNetworkSource from '../aven-cloud-server/createNodeNetworkSourc
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createFSClient from '../aven-cloud-server/createFSClient';
 import createOnoCloudClient from '../ono-cloud/createOnoCloudClient';
-import OnoCloudContext from '../ono-cloud/OnoCloudContext';
+import CloudContext from '../aven-cloud/CloudContext';
 import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import scrapeAirTable from '../skynet/scrapeAirTable';
@@ -271,7 +271,7 @@ const runServer = async () => {
 
   // const onoCloudClient = createOnoCloudClient(avenClient);
 
-  // context.set(OnoCloudContext, onoCloudClient);
+  context.set(CloudContext, kitchenClient);
   context.set(OnoRestaurantContext, kitchenClient);
   const webService = await WebServer({
     App,

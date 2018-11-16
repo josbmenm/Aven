@@ -9,18 +9,33 @@
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js",
       "deployEnv": "Script",
-      "deployScript": "deploy.sh"
+      "deployScript": "deploy.sh",
+      "knexFile": {
+        "development": {
+          "client": "sqlite3",
+          "useNullAsDefault": true,
+          "migrations": {
+            "directory": "src/sync/aven-cloud-sql/migrations"
+          },
+          "connection": {
+            "filename": "cloud.sqlite"
+          }
+        }
+      }
     },
     "srcDependencies": [
       "aven-web",
+      "aven-admin",
       "aven-cloud",
       "aven-cloud-server",
       "aven-cloud-browser",
       "aven-cloud-sql",
       "ono-cloud",
+      "components",
       "skynet"
     ],
     "moduleDependencies": [
+      "sqlite3",
       "fbjs",
       "ws",
       "rxjs-compat",

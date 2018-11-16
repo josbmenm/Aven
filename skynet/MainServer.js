@@ -1,8 +1,8 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
-import startPostgresDataSource from '../aven-cloud-sql/startPostgresDataSource';
-import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
+import startSQLDataSource from '../aven-cloud-sql/startSQLDataSource';
+// import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
 import scrapeAirTable from './scrapeAirTable';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createFSClient from '../aven-cloud-server/createFSClient';
@@ -28,16 +28,14 @@ const runServer = async () => {
   } else if (getSecretConfig('SQL_HOST')) {
     pgConfig.host = getSecretConfig('SQL_HOST');
   }
-  // const dataSource = await startPostgresDataSource({
-  //   pgConfig,
-  //   rootDomain: domain,
-  // });
-  const dataSource = startMemoryDataSource({
-    domain,
+  const dataSource = await startSQLDataSource({
+    client: 'sqlite3', // must have sqlite3 in the dependencies of this module.
+    connection: {
+      filename: 'cloud.sqlite',
+    },
   });
-  // const dataService = await startDataService({
-  //   dataSource,
-  //   rootDomain: domain,
+  // const dataSource = startMemoryDataSource({
+  //   domain,
   // });
 
   const dataClient = createCloudClient({
@@ -51,7 +49,6 @@ const runServer = async () => {
   context.set(OnoCloudContext, dataClient);
 
   const dispatch = async action => {
-    console.log('huh', typeof action);
     switch (action.type) {
       case 'GetSquareMobileAuthToken':
         return await getMobileAuthToken(action);

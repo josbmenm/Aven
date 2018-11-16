@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import Hero from '../../ono-components/Hero';
-import BitRow from '../../ono-components/BitRow';
-import IntRow from '../../ono-components/IntRow';
-import Row from '../../ono-components/Row';
-import Button from '../../ono-components/Button';
+import Hero from '../../components/Hero';
+import BitRow from '../../components/BitRow';
+import IntRow from '../../components/IntRow';
+import Row from '../../components/Row';
+import Button from '../../components/Button';
 import GenericPage from '../components/GenericPage';
-import RowSection from '../../ono-components/RowSection';
+import RowSection from '../../components/RowSection';
 import { AlertIOS, Text } from 'react-native';
 
 import { withKitchen, getSubsystem } from '../../ono-cloud/OnoKitchen';

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
-import Hero from '../../ono-components/Hero';
+import Hero from '../../components/Hero';
 
 import GenericPage from '../components/GenericPage';
-import RowSection from '../../ono-components/RowSection';
-import LinkRow from '../../ono-components/LinkRow';
+import RowSection from '../../components/RowSection';
+import LinkRow from '../../components/LinkRow';
 import { paymentContainer } from '../Payments';
 import { withRestaurant } from '../../ono-cloud/OnoRestaurantContext';
 

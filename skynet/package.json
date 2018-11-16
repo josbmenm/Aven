@@ -5,18 +5,32 @@
     "publicAssetDir": "public",
     "envOptions": {
       "deployEnv": "Heroku",
-      "herokuAppName": "ono-website",
+      "herokuAppName": "ono-skynet",
       "mainServer": "MainServer.js",
-      "mainClient": "MainClient.js"
+      "mainClient": "MainClient.js",
+      "knexFile": {
+        "development": {
+          "client": "sqlite3",
+          "useNullAsDefault": true,
+          "migrations": {
+            "directory": "src/sync/aven-cloud-sql/migrations"
+          },
+          "connection": {
+            "filename": "cloud.sqlite"
+          }
+        }
+      }
     },
     "srcDependencies": [
       "aven-web",
       "ono-cloud",
+      "aven-admin",
       "aven-cloud",
       "aven-cloud-server",
       "aven-cloud-sql"
     ],
     "moduleDependencies": [
+      "sqlite3",
       "@react-navigation/core",
       "airtable",
       "wget-improved",

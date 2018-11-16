@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import GenericPage from '../components/GenericPage';
-import Hero from '../../ono-components/Hero';
+import Hero from '../../components/Hero';
 
 export default class OrderConfirm extends Component {
   render() {

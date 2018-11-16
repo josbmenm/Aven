@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Image } from 'react-native';
 import GenericPage from '../components/GenericPage';
-import Button from '../../ono-components/Button';
+import Button from '../../components/Button';
 import { withMenuItem, withRestaurant } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 
