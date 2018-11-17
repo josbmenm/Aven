@@ -6,47 +6,52 @@ exports.up = function(knex, Promise) {
     })
     .createTable("objects", table => {
       table.string("id");
-      table.string("value");
+      table.text("value");
       table.integer("size");
       table.unique("id");
     })
     .createTable("refs", table => {
+      table.increments("refId");
+      table.string("domainName");
       table
-        .string("domain")
+        .foreign("domainName")
         .references("name")
         .inTable("domains");
       table.string("name");
       table
-        .string("id")
+        .string("currentObject")
         .references("id")
         .inTable("objects");
-      table.unique(["domain", "name"]);
+      table.unique(["domainName", "name"]);
     })
     .createTable("ref_ownership", table => {
       table
-        .string("fromName")
-        .references("name")
-        .inTable("refs");
+        .integer("ref")
+        .unsigned()
+        .notNullable();
       table
-        .string("fromDomain")
-        .references("domain")
+        .foreign("ref")
+        .references("refId")
         .inTable("refs");
+      table.string("ownedObject").notNullable();
       table
-        .string("to")
+        .foreign("ownedObject")
         .references("id")
         .inTable("objects");
-      table.unique(["fromName", "fromDomain", "to"]);
+      table.unique(["ref", "ownedObject"]);
     })
     .createTable("object_ownership", table => {
+      table.string("object").notNullable();
       table
-        .string("from")
+        .foreign("object")
         .references("id")
         .inTable("objects");
+      table.string("ownedObject").notNullable();
       table
-        .string("to")
+        .foreign("ownedObject")
         .references("id")
         .inTable("objects");
-      table.unique(["from", "to"]);
+      table.unique(["object", "ownedObject"]);
     });
 };
 

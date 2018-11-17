@@ -1,7 +1,7 @@
 import Knex from "knex";
-import DomainModel from "./DomainModel";
-import ObjectModel from "./ObjectModel";
-import RefModel from "./RefModel";
+import getDomainModel from "./getDomainModel";
+import getObjectModel from "./getObjectModel";
+import getRefModel from "./getRefModel";
 import { BehaviorSubject } from "rxjs-compat";
 import createDispatcher from "../aven-cloud/createDispatcher";
 import uuid from "uuid/v1";
@@ -26,20 +26,40 @@ export default async function startSQLDataSource({
     }
   });
 
-  const models = {
-    Domain: DomainModel.bindKnex(knex),
-    Ref: RefModel.bindKnex(knex),
-    Object: ObjectModel.bindKnex(knex)
-  };
+  async function GetRef({ name, domain }) {
+    const results = await models.Ref.query()
+      .where("name", "=", name)
+      .where("domainName", "=", domain)
+      .limit(1);
+    const ref = results[0];
+    if (!ref) {
+      return null;
+    }
+    _announceRef(domain, name, {
+      domain,
+      name,
+      id: ref.currentObject
+    });
+    return ref;
+  }
+
+  const models = {};
+  models.Domain = getDomainModel(models).bindKnex(knex);
+  models.Object = getObjectModel(models).bindKnex(knex);
+  models.Ref = getRefModel(models).bindKnex(knex);
 
   async function PutRef({ domain, name, id }) {
     const f = await models.Ref.query().upsertGraph(
       {
         name,
-        domain,
-        id
+        currentObject: id,
+
+        // seems silly but we have to have the value AND the relation here.
+        domain: { name: domain }, // the relation is here for insertMissing to insert the domain if it doesn't already exist
+        domainName: domain // value is used by objection to identify this row, (see getRefModel idColumn)
       },
       {
+        relate: true,
         insertMissing: true
       }
     );
@@ -49,22 +69,6 @@ export default async function startSQLDataSource({
       id
     });
   }
-  async function GetRef({ name, domain }) {
-    const results = await models.Ref.query()
-      .where("name", "=", name)
-      .where("domain", "=", domain)
-      .limit(1);
-    const ref = results[0];
-    if (!ref) {
-      return null;
-    }
-    _announceRef(domain, name, {
-      domain,
-      name,
-      id: ref.id
-    });
-    return ref;
-  }
 
   async function PutObject({ name, domain, value }) {
     const objData = stringify(value);
@@ -72,18 +76,34 @@ export default async function startSQLDataSource({
     const sha = crypto.createHash("sha1");
     sha.update(objData);
     const id = sha.digest("hex");
-    const f = await models.Object.query().upsertGraph(
-      {
-        id,
-        value: objData,
-        size
-      },
-      {
-        insertMissing: true
+    console.log("HEY", name, domain);
+    try {
+      await models.Object.query().insertGraph(
+        {
+          id,
+          value: objData,
+          size
+        },
+        {
+          insertMissing: true
+        }
+      );
+    } catch (e) {
+      // objects are unique and immutable
+
+      // handle postgres expected error
+      if (e.code !== "23505" || e.constraint !== "objects_id_unique") {
+        // handle sqlite expected error
+        if (e.code !== "SQLITE_CONSTRAINT") {
+          throw e;
+        }
       }
-    );
+    }
+    console.log("HO", name, domain);
+
     return { id };
   }
+
   async function GetObject({ domain, name, id }) {
     const results = await models.Object.query()
       .where("id", "=", id)
@@ -98,23 +118,36 @@ export default async function startSQLDataSource({
       object: JSON.parse(obj.value) // todo, use json field when on postgres, (and still provide fallback for sqlite)
     };
   }
+
   async function GetStatus() {
     return {
       isConnected: isConnected.value
     };
   }
+
   async function ListRefs({ domain }) {
-    const result = await models.Ref.query().where("domain", "=", domain);
+    const result = await models.Ref.query().where("domainName", "=", domain);
     return result.map(r => r.name);
   }
+
   async function ListDomains({}) {
     const result = await models.Domain.query();
     return result.map(r => r.name);
   }
+
   async function ListObjects() {}
-  async function DestroyRef() {}
+
+  async function DestroyRef({ domain, name }) {
+    const numDeleted = await models.Ref.query()
+      .where("name", "=", name)
+      .where("domainName", "=", domain)
+      .delete();
+  }
+
   async function CollectGarbage() {}
+
   async function ListRefObjects() {}
+
   async function close() {
     isConnected.next(false);
     await knex.destroy();
