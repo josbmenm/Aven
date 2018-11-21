@@ -3,7 +3,7 @@ import getDomainModel from "./getDomainModel";
 import getObjectModel from "./getObjectModel";
 import getRefModel from "./getRefModel";
 import { BehaviorSubject } from "rxjs-compat";
-import createDispatcher from "../aven-cloud/createDispatcher";
+import createDispatcher from "../aven-cloud-utils/createDispatcher";
 import uuid from "uuid/v1";
 
 const crypto = require("crypto");

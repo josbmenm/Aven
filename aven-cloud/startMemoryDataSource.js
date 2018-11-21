@@ -1,5 +1,5 @@
 import { BehaviorSubject } from "rxjs-compat";
-import createDispatcher from "./createDispatcher";
+import createDispatcher from "../aven-cloud-utils/createDispatcher";
 import uuid from "uuid/v1";
 const crypto = require("crypto");
 const stringify = require("json-stable-stringify");
@@ -32,7 +32,7 @@ const startMemoryDataSource = (opts = {}) => {
     throw new Error(`Empty domain passed to startMemoryDataSource`);
   }
 
-  async function PutRef({ domain, name, id, owner }) {
+  async function PutRef({ domain, name, id }) {
     if (domain === undefined || name === undefined) {
       throw new Error("Invalid use. ", { domain, name, id });
     }
@@ -44,7 +44,6 @@ const startMemoryDataSource = (opts = {}) => {
     const r = _getRef(name);
     if (r.id === id) {
       return; // avoid calling behavior.next if the ID hasn't changed
-      // todo, respect owner and permissions here
     }
     r.objects[id] = true;
     r.id = id;
@@ -195,7 +194,6 @@ const startMemoryDataSource = (opts = {}) => {
     }
   };
 
-  console.log(`Memory source "${id}" is ready.`);
   return {
     isConnected,
     close,

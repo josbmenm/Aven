@@ -14,6 +14,7 @@ const runServer = async () => {
     dataSource,
     domain: "example.aven.cloud"
   });
+
   const getEnv = c => process.env[c];
   const serverListenLocation = getEnv("PORT");
   const context = new Map();
