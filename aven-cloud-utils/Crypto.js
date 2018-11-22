@@ -19,7 +19,7 @@ export async function genAuthCode(length = 6) {
   return intStr.substr(3, length);
 }
 
-export async function genKey(length = 6) {
+export async function genKey() {
   const randBuf = await randomBytes(48);
   const hex = randBuf.toString("hex");
   return hex;

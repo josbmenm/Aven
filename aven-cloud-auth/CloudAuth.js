@@ -16,6 +16,28 @@ async function writeObj(dataSource, domain, name, value) {
   });
 }
 
+async function getObj(dataSource, domain, name) {
+  const r = await dataSource.dispatch({
+    domain,
+    type: "GetRef",
+    name
+  });
+  if (!r || !r.id) {
+    return null;
+  }
+
+  const o = await dataSource.dispatch({
+    type: "GetObject",
+    name,
+    domain,
+    id: r.id
+  });
+  if (!o) {
+    return o;
+  }
+  return o.object;
+}
+
 export default function CloudAuth({ dataSource, methods }) {
   async function ValidateSession({ auth, domain }) {
     if (!auth) {
@@ -23,26 +45,17 @@ export default function CloudAuth({ dataSource, methods }) {
     }
     const { accountId, sessionId, token } = auth;
 
-    const r = await dataSource.dispatch({
+    const savedSession = await getObj(
+      dataSource,
       domain,
-      type: "GetRef",
-      name: `auth/account/${accountId}/session/${sessionId}`
-    });
-    if (!r) {
-      return { accountId: null };
-    }
-    const obj = await dataSource.dispatch({
-      domain,
-      type: "GetObject",
-      name: `auth/account/${accountId}/session/${sessionId}`,
-      id: r.id
-    });
+      `auth/account/${accountId}/session/${sessionId}`
+    );
 
-    if (!obj.object || obj.object.token !== token) {
+    if (!savedSession || savedSession.token !== token) {
       return { accountId: null };
     }
 
-    return { accountId, method: obj.object.method };
+    return { accountId, method: savedSession.method };
   }
 
   async function CreateSessionRequest({ domain, accountId, authInfo }) {
@@ -54,10 +67,20 @@ export default function CloudAuth({ dataSource, methods }) {
       const methodToValidate = methodsToValidate[0];
 
       if (methodToValidate.canVerify(authInfo, accountId)) {
-        const verificationChallenge = await methodToValidate.requestVerification(
-          { authInfo, lastAuthState: null }
+        const authRefId = methodToValidate.getAuthId(authInfo);
+        const authRefName = `auth/account/${accountId}/method/${authRefId}`;
+
+        const lastAuthState = await getObj(dataSource, domain, authRefName);
+
+        const requestedVerification = await methodToValidate.requestVerification(
+          { authInfo, lastAuthState }
         );
-        return { verificationChallenge };
+
+        await writeObj(dataSource, domain, authRefName, requestedVerification);
+
+        return {
+          verificationChallenge: requestedVerification.verificationChallenge
+        };
       }
     }
 
@@ -76,24 +99,37 @@ export default function CloudAuth({ dataSource, methods }) {
 
     let methodsToValidate = [...methods];
 
-    let validatedAccountId = null;
+    let validatedMethodId = null;
+    let validatedMethodName = null;
 
-    while (methodsToValidate.length && !validatedAccountId) {
+    while (methodsToValidate.length && !validatedMethodId) {
       const methodToValidate = methodsToValidate[0];
-      if (
-        await methodToValidate.performVerification({
+      methodsToValidate = methodsToValidate.slice(1);
+      if (!methodToValidate.canVerify(authInfo, validatedMethodId)) {
+        continue;
+      }
+      const methodId = methodToValidate.getAuthId(authInfo);
+      const authRefName = `auth/account/${accountId}/method/${methodId}`;
+      const lastAuthState = await getObj(dataSource, domain, authRefName);
+
+      let nextAuthState = lastAuthState;
+      try {
+        nextAuthState = await methodToValidate.performVerification({
           accountId,
           authInfo,
-          lastAuthState: null,
+          lastAuthState,
           verificationResponse
-        })
-      ) {
-        validatedAccountId = accountId;
+        });
+        validatedMethodId = methodId;
+        validatedMethodName = methodToValidate.name;
+      } catch (e) {}
+
+      if (nextAuthState !== lastAuthState) {
+        await writeObj(dataSource, domain, authRefName, nextAuthState);
       }
-      methodsToValidate = methodsToValidate.slice(1);
     }
 
-    if (validatedAccountId !== accountId) {
+    if (!validatedMethodId || !validatedMethodName) {
       throw new Error("Cannot verify");
     }
 
@@ -103,8 +139,9 @@ export default function CloudAuth({ dataSource, methods }) {
       timeCreated: Date.now(),
       accountId,
       sessionId,
+      methodId: validatedMethodId,
       token,
-      method: authInfo.type
+      method: validatedMethodName
     };
     await writeObj(
       dataSource,
@@ -113,9 +150,7 @@ export default function CloudAuth({ dataSource, methods }) {
       session
     );
     return {
-      accountId,
-      sessionId,
-      token
+      session
     };
   }
   async function CreateAnonymousSession({ domain }) {
@@ -156,7 +191,7 @@ export default function CloudAuth({ dataSource, methods }) {
       return { canRead, canWrite, canPost };
     }
 
-    if (validated.method === "root" && validated.accountId === "root") {
+    if (validated.method === "auth-root" && validated.accountId === "root") {
       canRead = true;
       canWrite = true;
       canPost = true;

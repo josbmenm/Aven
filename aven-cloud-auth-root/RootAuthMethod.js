@@ -11,7 +11,7 @@ export default function RootAuthMethod({ rootPasswordHash }) {
     return false;
   }
 
-  async function getAuthID(authInfo) {
+  async function getAuthId(authInfo) {
     return "auth-root";
   }
 
@@ -47,9 +47,10 @@ export default function RootAuthMethod({ rootPasswordHash }) {
   }
 
   return {
+    name: "root",
     canVerify,
     requestVerification,
     performVerification,
-    getAuthID
+    getAuthId
   };
 }

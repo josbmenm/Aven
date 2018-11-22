@@ -1,4 +1,4 @@
-import { checksum } from "../aven-cloud-utils/Crypto";
+import { checksum, genAuthCode } from "../aven-cloud-utils/Crypto";
 
 export default function createMessageAuthMethod({
   authMethodName,
@@ -12,12 +12,12 @@ export default function createMessageAuthMethod({
     return true;
   }
 
-  async function getAuthID(authInfo) {
+  async function getAuthId(authInfo) {
     return `${authMethodName}-${await checksum(identifyAuthInfo(authInfo))}`;
   }
 
   async function requestVerification({ authInfo, lastAuthState, accountId }) {
-    const verificationKey = await genKey();
+    const verificationKey = await genAuthCode();
 
     // todo, check recent verification send time and avoid sending again
     await sendVerification(authInfo, verificationKey, accountId);
@@ -38,17 +38,27 @@ export default function createMessageAuthMethod({
     verificationResponse,
     accountId
   }) {
-    if (verificationResponse.key !== verificationKey) {
-      return false;
+    if (!lastAuthState || !lastAuthState.verificationKey) {
+      throw new Error("Invalid auth verification");
     }
     // todo check expiry time
-    return true;
+
+    if (verificationResponse.key !== lastAuthState.verificationKey) {
+      throw new Error("Invalid auth verification");
+    }
+    return {
+      ...lastAuthState,
+      verificationSendTime: null,
+      lastVerificationTime: Date.now(),
+      verificationKey: null
+    };
   }
 
   return {
+    name: authMethodName,
     canVerify,
     requestVerification,
     performVerification,
-    getAuthID
+    getAuthId
   };
 }
