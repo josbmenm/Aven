@@ -63,15 +63,22 @@ const startMemoryDataSource = (opts = {}) => {
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
-    const r = _getRef(name);
-    r.objects = {};
-    r.id = null;
-    if (r.behavior) {
-      r.behavior.next(_renderRef(r));
-    } else {
-      r.behavior = new BehaviorSubject(_renderRef(r));
-    }
-    delete _refs[name];
+    Object.keys(_refs)
+      .filter(refName => {
+        const m = refName.match(RegExp(`^${name}/?(.*)`));
+        return !!m;
+      })
+      .forEach(refName => {
+        const r = _getRef(refName);
+        r.objects = {};
+        r.id = null;
+        if (r.behavior) {
+          r.behavior.next(_renderRef(r));
+        } else {
+          r.behavior = new BehaviorSubject(_renderRef(r));
+        }
+        delete _refs[name];
+      });
   }
 
   async function GetObject({ domain, name, id }) {
@@ -143,11 +150,24 @@ const startMemoryDataSource = (opts = {}) => {
     return Object.keys(r.objects);
   }
 
-  async function ListRefs({ domain }) {
+  async function ListRefs({ domain, parentName }) {
     if (domain !== dataSourceDomain) {
       return [];
     }
-    return Object.keys(_refs);
+    if (parentName == null) {
+      return Object.keys(_refs).filter(refName => !refName.match(/\//));
+    }
+    return Object.keys(_refs)
+      .map(refName => {
+        const m = refName.match(RegExp(`^${parentName}/(.*)`));
+        if (!m || m[1] === "") {
+          return null;
+        }
+        return m[1];
+      })
+      .filter(name => {
+        return !!name && !name.match(/\//);
+      });
   }
 
   async function ListDomains() {

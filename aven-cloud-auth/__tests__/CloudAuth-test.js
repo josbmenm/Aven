@@ -15,7 +15,7 @@ describe("Cloud auth", () => {
 
     const authDataSource = CloudAuth({ dataSource, methods: [rootMethod] });
 
-    const rootSession = await authDataSource.dispatch({
+    const { session } = await authDataSource.dispatch({
       type: "CreateSession",
       domain: "test",
       authInfo: {
@@ -25,13 +25,13 @@ describe("Cloud auth", () => {
       verificationResponse: { password }
     });
 
-    expect(typeof rootSession.token).toEqual("string");
-    expect(typeof rootSession.sessionId).toEqual("string");
-    expect(typeof rootSession.accountId).toEqual("string");
+    expect(typeof session.token).toEqual("string");
+    expect(typeof session.sessionId).toEqual("string");
+    expect(typeof session.accountId).toEqual("string");
 
     const v = await authDataSource.dispatch({
       type: "ValidateSession",
-      auth: rootSession,
+      auth: session,
       domain: "test"
     });
 
@@ -66,7 +66,7 @@ describe("Cloud auth", () => {
 
     const authDataSource = CloudAuth({ dataSource, methods: [rootMethod] });
 
-    const rootSession = await authDataSource.dispatch({
+    const { session } = await authDataSource.dispatch({
       type: "CreateSession",
       domain: "test",
       authInfo: {
@@ -78,7 +78,7 @@ describe("Cloud auth", () => {
 
     const rootPermissions = await authDataSource.dispatch({
       type: "GetPermissions",
-      auth: rootSession,
+      auth: session,
       domain: "test",
       name: null
     });
@@ -88,7 +88,7 @@ describe("Cloud auth", () => {
     expect(rootPermissions.canPost).toEqual(true);
   });
 
-  test.only("log out via destroy session", async () => {
+  test("log out via destroy session", async () => {
     const dataSource = startMemoryDataSource({ domain: "test" });
 
     const password = "secret, foo";

@@ -1,8 +1,6 @@
 {
   "aven": {
-    "srcDependencies": [
-      "aven-cloud-server"
-    ],
+    "srcDependencies": ["aven-cloud-server", "aven-cloud-utils"],
     "moduleDependencies": [
       "pg-format",
       "pg",

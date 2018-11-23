@@ -31,7 +31,7 @@ export default function RootAuthMethod({ rootPasswordHash }) {
     accountId
   }) {
     if (accountId !== "root") {
-      return false;
+      throw new Error("Invalid auth verification");
     }
     const { password } = verificationResponse;
     if (!password) {
@@ -41,9 +41,11 @@ export default function RootAuthMethod({ rootPasswordHash }) {
     }
     const isValid = await compareSecureString(password, rootPasswordHash);
     if (!isValid) {
-      return false;
+      throw new Error("Invalid auth verification");
     }
-    return true;
+    return {
+      ...lastAuthState
+    };
   }
 
   return {

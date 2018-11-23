@@ -1,4 +1,4 @@
-import { uuid } from "../aven-cloud-utils/Crypto";
+import { uuid, checksum } from "../aven-cloud-utils/Crypto";
 import createDispatcher from "../aven-cloud-utils/createDispatcher";
 
 async function writeObj(dataSource, domain, name, value) {
@@ -67,7 +67,7 @@ export default function CloudAuth({ dataSource, methods }) {
       const methodToValidate = methodsToValidate[0];
 
       if (methodToValidate.canVerify(authInfo, accountId)) {
-        const authRefId = methodToValidate.getAuthId(authInfo);
+        const authRefId = await methodToValidate.getAuthId(authInfo);
         const authRefName = `auth/account/${accountId}/method/${authRefId}`;
 
         const lastAuthState = await getObj(dataSource, domain, authRefName);
@@ -108,7 +108,7 @@ export default function CloudAuth({ dataSource, methods }) {
       if (!methodToValidate.canVerify(authInfo, validatedMethodId)) {
         continue;
       }
-      const methodId = methodToValidate.getAuthId(authInfo);
+      const methodId = await methodToValidate.getAuthId(authInfo);
       const authRefName = `auth/account/${accountId}/method/${methodId}`;
       const lastAuthState = await getObj(dataSource, domain, authRefName);
 
@@ -134,7 +134,7 @@ export default function CloudAuth({ dataSource, methods }) {
     }
 
     const sessionId = uuid();
-    const token = uuid();
+    const token = await checksum(uuid());
     const session = {
       timeCreated: Date.now(),
       accountId,
@@ -180,7 +180,7 @@ export default function CloudAuth({ dataSource, methods }) {
     return session;
   }
 
-  async function GetPermissions({ auth, ref, domain }) {
+  async function GetPermissions({ auth, name, domain }) {
     let canRead = false;
     let canWrite = false;
     let canPost = false;
@@ -190,8 +190,7 @@ export default function CloudAuth({ dataSource, methods }) {
     if (!validated.accountId || validated.accountId !== auth.accountId) {
       return { canRead, canWrite, canPost };
     }
-
-    if (validated.method === "auth-root" && validated.accountId === "root") {
+    if (validated.method === "root" && validated.accountId === "root") {
       canRead = true;
       canWrite = true;
       canPost = true;
@@ -215,15 +214,77 @@ export default function CloudAuth({ dataSource, methods }) {
     return true; // uh
   }
 
+  async function DestroyAllSessions({ auth, domain }) {
+    const validated = await ValidateSession({ auth, domain });
+
+    if (!validated.accountId || validated.accountId !== auth.accountId) {
+      return false;
+    }
+
+    await dataSource.dispatch({
+      type: "DestroyRef",
+      domain,
+      name: `auth/account/${auth.accountId}/session`
+    });
+  }
+
+  const guardedActions = {};
+
+  const readActions = ["GetObject", "GetRef", "ListRefs", "ListRefObjects"];
+  const writeActions = ["PutObject", "PutRef"];
+  const adminActions = ["DestroyRef"];
+
+  function guardAction(actionName, permissionLevel) {
+    return async () => {
+      const p = await GetPermissions({ auth, name, domain });
+
+      // check that p has permissionLevel
+
+      await dataSource.dispatch({
+        auth,
+        name,
+        domain
+      });
+    };
+  }
+
+  readActions.forEach(actionName => {
+    guardedActions[actionName] = guardAction(actionName, "canRead");
+  });
+  writeActions.forEach(actionName => {
+    guardedActions[actionName] = guardAction(actionName, "canWrite");
+  });
+  adminActions.forEach(actionName => {
+    guardedActions[actionName] = guardAction(actionName, "canAdmin");
+  });
+
   const actions = {
-    //     ## CreateSession(accountId, authInfo, challengeResponse?) => auth?
+    ...guardedActions,
+    // ListObjects,
+    // CollectGarbage,
+
+    // can admin:
+    // DestroyRef,
+    // TransferOwnership,
+
+    // can write:
+    // PutObject,
+    // PutRef,
+
+    // can read:
+    // GetRef,
+    // GetObject,
+    // ListRefObjects
+    // ListRefs,
+
+    // anyone:
+    // GetStatus,
+    // ListDomains,
+
     CreateSession,
     CreateAnonymousSession,
-    // optionally run twice, first time without challengeResponse
-    // ## CreateAnonymousSession() => auth
-    // ## DestroySession(auth)
     DestroySession,
-    // ## DestroyAllSessions(auth)
+    DestroyAllSessions,
     ValidateSession,
 
     // ## PutAccountId(auth, newAccountId)

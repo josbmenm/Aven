@@ -23,6 +23,9 @@
     "srcDependencies": [
       "aven-web",
       "aven-cloud",
+      "aven-cloud-auth",
+      "aven-cloud-auth-sms",
+      "aven-cloud-auth-email",
       "aven-email-agent-sendgrid",
       "aven-sms-agent-twilio",
       "aven-cloud-browser",

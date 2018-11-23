@@ -1,1 +1,5 @@
-{ "aven": { "srcDependencies": ["aven-cloud-auth-message"] } }
+{
+  "aven": {
+    "srcDependencies": ["aven-cloud-auth-message"]
+  }
+}

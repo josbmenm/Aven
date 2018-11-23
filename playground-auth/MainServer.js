@@ -7,7 +7,7 @@ import EmailAgent from "../aven-email-agent-sendgrid/EmailAgent";
 import SMSAgent from "../aven-sms-agent-twilio/SMSAgent";
 import SMSAuthMethod from "../aven-cloud-auth-sms/SMSAuthMethod";
 import EmailAuthMethod from "../aven-cloud-auth-email/EmailAuthMethod";
-import CloudAuth from "./aven-cloud-auth/CloudAuth";
+import CloudAuth from "../aven-cloud-auth/CloudAuth";
 
 const getEnv = c => process.env[c];
 
@@ -32,7 +32,7 @@ const runServer = async () => {
   const smsAgent = SMSAgent({
     defaultFromNumber: getEnv("TWILIO_FROM_NUMBER"),
     config: {
-      accountSid: getEnv("TWILIO_ACCOUND_SID"),
+      accountSid: getEnv("TWILIO_ACCOUNT_SID"),
       authToken: getEnv("TWILIO_AUTH_TOKEN")
     }
   });

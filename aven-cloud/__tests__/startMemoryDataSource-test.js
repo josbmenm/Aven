@@ -146,6 +146,11 @@ describe("ref storage", () => {
     });
     expect(ref.id).toEqual(null);
     expect(ref.owner).toEqual(null);
+    const refs = await ds.dispatch({
+      type: "ListRefs",
+      domain: "test"
+    });
+    expect(refs).toEqual([]);
   });
   test("list ref works", async () => {
     const ds = startMemoryDataSource({ domain: "test" });
@@ -185,6 +190,105 @@ describe("ref storage", () => {
       domain: "test"
     });
     expect(refs).toEqual(["foo", "bar"]);
+  });
+});
+
+describe("parent child refs", () => {
+  test("can list with parents", async () => {
+    const ds = startMemoryDataSource({ domain: "test" });
+    let refs = null;
+    refs = await ds.dispatch({
+      type: "ListRefs",
+      domain: "test"
+    });
+    expect(refs).toEqual([]);
+
+    const obj = await ds.dispatch({
+      type: "PutObject",
+      domain: "test",
+      name: "foo",
+      value: { foo: "bar" }
+    });
+    await ds.dispatch({
+      type: "PutRef",
+      domain: "test",
+      name: "foo",
+      id: obj.id
+    });
+
+    await ds.dispatch({
+      type: "PutRef",
+      domain: "test",
+      name: "foo/bar",
+      id: obj.id
+    });
+
+    await ds.dispatch({
+      type: "PutRef",
+      domain: "test",
+      name: "foo/bar/boo",
+      id: obj.id
+    });
+
+    await ds.dispatch({
+      type: "PutRef",
+      domain: "test",
+      name: "foo/baz",
+      id: obj.id
+    });
+
+    refs = await ds.dispatch({
+      type: "ListRefs",
+      domain: "test",
+      parentName: "foo"
+    });
+    expect(refs).toEqual(["bar", "baz"]);
+
+    refs = await ds.dispatch({
+      type: "ListRefs",
+      domain: "test",
+      parentName: "foo/bar"
+    });
+    expect(refs).toEqual(["boo"]);
+
+    refs = await ds.dispatch({
+      type: "ListRefs",
+      domain: "test"
+    });
+    expect(refs).toEqual(["foo"]);
+  });
+  test("can destroy parent refs and children go away", async () => {
+    const ds = startMemoryDataSource({ domain: "test" });
+    const obj = await ds.dispatch({
+      type: "PutObject",
+      domain: "test",
+      name: "foo",
+      value: { foo: "bar" }
+    });
+    await ds.dispatch({
+      type: "PutRef",
+      domain: "test",
+      name: "foo",
+      id: obj.id
+    });
+    await ds.dispatch({
+      type: "PutRef",
+      domain: "test",
+      name: "foo/bar",
+      id: obj.id
+    });
+    await ds.dispatch({
+      type: "DestroyRef",
+      domain: "test",
+      name: "foo"
+    });
+    const ref = await ds.dispatch({
+      type: "GetRef",
+      domain: "test",
+      name: "foo/bar"
+    });
+    expect(ref.id).toEqual(null);
+    expect(ref.owner).toEqual(null);
   });
 });
 
