@@ -1,4 +1,4 @@
-import startSQLDataSource from "../startSQLDataSource";
+import startSQLDataSource from '../startSQLDataSource';
 // import Knex from "knex";
 
 // beforeEach(async () => {
@@ -15,23 +15,23 @@ import startSQLDataSource from "../startSQLDataSource";
 //   console.log("ran migration!");
 // });
 
-// const startTestDataSource = options =>
-//   startSQLDataSource({
-//     config: {
-//       client: "sqlite3",
-//       useNullAsDefault: true,
-//       connection: {
-//         filename: "./test.sqlite"
-//       }
-//     },
-//     ...options
-//   });
+const startTestDataSource = options =>
+  startSQLDataSource({
+    config: {
+      client: 'sqlite3',
+      useNullAsDefault: true,
+      connection: {
+        filename: './test.sqlite',
+      },
+    },
+    ...options,
+  });
 
-describe("basic data source setup", () => {
-  test("throws when starting without a domain", () => {
-    // expect(() => {
-    //   startTestDataSource({});
-    // }).toThrow();
+describe('basic data source setup', () => {
+  test.skip('throws when starting without a domain', () => {
+    expect(() => {
+      startTestDataSource({});
+    }).toThrow();
   });
   // test("gets status reports ready", async () => {
   //   const ds = startTestDataSource({ domain: "test" });

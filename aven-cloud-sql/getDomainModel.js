@@ -1,11 +1,11 @@
-import { Model } from "objection";
+import { Model } from 'objection';
 
-export default function getDomainModel(models) {
+export default function getDomainModel() {
   class Domain extends Model {
-    static tableName = "domains";
+    static tableName = 'domains';
 
     static get idColumn() {
-      return ["name"];
+      return ['name'];
     }
   }
 

@@ -1,90 +1,90 @@
-import startMemoryDataSource from "../startMemoryDataSource";
-import createCloudObject from "../createCloudObject";
+import startMemoryDataSource from '../startMemoryDataSource';
+import createCloudObject from '../createCloudObject';
 
-describe("object generic behavior", () => {
-  test("handles creation with empty value", () => {
+describe('object generic behavior', () => {
+  test('handles creation with empty value', () => {
     const obj = createCloudObject({
       dataSource: {},
-      domain: "foo",
-      name: "bar",
-      id: "asdf1234"
+      domain: 'foo',
+      name: 'bar',
+      id: 'asdf1234',
     });
-    expect(obj.id).toBe("asdf1234");
-    expect(obj.domain).toBe("foo");
+    expect(obj.id).toBe('asdf1234');
+    expect(obj.domain).toBe('foo');
   });
-  test("fails on creation without domain", () => {
+  test('fails on creation without domain', () => {
     expect(() =>
       createCloudObject({
-        name: "foo",
+        name: 'foo',
         dataSource: {},
-        value: { foo: 42 }
+        value: { foo: 42 },
       })
     ).toThrow();
   });
-  test("fails on creation without name", () => {
+  test('fails on creation without name', () => {
     expect(() =>
       createCloudObject({
         dataSource: {},
-        domain: "test",
-        value: { foo: 42 }
+        domain: 'test',
+        value: { foo: 42 },
       })
     ).toThrow();
   });
-  test("fails on creation without value or id", () => {
+  test('fails on creation without value or id', () => {
     expect(() =>
       createCloudObject({
-        name: "foo",
+        name: 'foo',
         dataSource: {},
-        domain: "test"
+        domain: 'test',
       })
     ).toThrow();
   });
-  test("handles creation with value", () => {
+  test('handles creation with value', () => {
     const obj = createCloudObject({
       dataSource: {},
-      domain: "foo",
-      name: "bar",
-      value: { foo: 42 }
+      domain: 'foo',
+      name: 'bar',
+      value: { foo: 42 },
     });
-    expect(obj.id).toBe("e7e71fa8b5db791e2346856ee09cb45f867439e4");
-    expect(obj.domain).toBe("foo");
+    expect(obj.id).toBe('e7e71fa8b5db791e2346856ee09cb45f867439e4');
+    expect(obj.domain).toBe('foo');
   });
 });
 
-describe("basic object DataSource interaction", () => {
-  test("fetches objects", async () => {
-    const m = startMemoryDataSource({ domain: "test" });
+describe('basic object DataSource interaction', () => {
+  test('fetches objects', async () => {
+    const m = startMemoryDataSource({ domain: 'test' });
     const { id } = await m.dispatch({
-      type: "PutObject",
-      domain: "test",
-      name: "foo",
-      value: { foo: "bar" }
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
     });
     const c = createCloudObject({
       dataSource: m,
-      domain: "test",
+      domain: 'test',
       id,
-      name: "foo"
+      name: 'foo',
     });
     expect(c.getValue()).toEqual(undefined);
     expect(c.getObject().lastFetchTime).toBe(null);
     await c.fetch();
     expect(c.getObject().lastFetchTime).not.toBe(null);
-    expect(c.getValue().foo).toEqual("bar");
+    expect(c.getValue().foo).toEqual('bar');
   });
-  test("fetches null objects", async () => {
-    const m = startMemoryDataSource({ domain: "test" });
+  test('fetches null objects', async () => {
+    const m = startMemoryDataSource({ domain: 'test' });
     const { id } = await m.dispatch({
-      type: "PutObject",
-      domain: "test",
-      name: "foo",
-      value: null
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: null,
     });
     const c = createCloudObject({
       dataSource: m,
-      domain: "test",
-      name: "foo",
-      id
+      domain: 'test',
+      name: 'foo',
+      id,
     });
     expect(c.getValue()).toEqual(undefined);
     expect(c.getObject().lastFetchTime).toBe(null);
@@ -92,79 +92,79 @@ describe("basic object DataSource interaction", () => {
     expect(c.getValue()).toEqual(null);
     expect(c.getObject().lastFetchTime).not.toBe(null);
   });
-  test("puts objects", async () => {
-    const m = startMemoryDataSource({ domain: "test" });
+  test('puts objects', async () => {
+    const m = startMemoryDataSource({ domain: 'test' });
 
     const c = createCloudObject({
       dataSource: m,
-      domain: "test",
-      name: "foo",
-      value: { foo: 42 }
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 42 },
     });
     expect(c.getObject().lastPutTime).toBe(null);
     await c.put();
     expect(c.getObject().lastPutTime).not.toBe(null);
 
     const obj = await m.dispatch({
-      type: "GetObject",
-      domain: "test",
-      name: "foo",
-      id: c.id
+      type: 'GetObject',
+      domain: 'test',
+      name: 'foo',
+      id: c.id,
     });
 
     expect(obj.object.foo).toEqual(42);
   });
 });
 
-describe("observing", () => {
-  test("observe obj", async () => {
-    const dataSource = startMemoryDataSource({ domain: "test" });
+describe('observing', () => {
+  test('observe obj', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
     const obj1 = await dataSource.dispatch({
-      type: "PutObject",
-      domain: "test",
-      name: "foo",
-      value: { foo: "bar" }
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
     });
     const c = createCloudObject({
       dataSource,
-      domain: "test",
-      name: "foo",
-      id: obj1.id
+      domain: 'test',
+      name: 'foo',
+      id: obj1.id,
     });
 
     let lastObserved = undefined;
     c.observe.subscribe({
       next: e => {
         lastObserved = e;
-      }
+      },
     });
     expect(lastObserved.value).toEqual(undefined);
     await c.fetch();
-    expect(lastObserved.value.foo).toEqual("bar");
+    expect(lastObserved.value.foo).toEqual('bar');
   });
-  test("observe value", async () => {
-    const dataSource = startMemoryDataSource({ domain: "test" });
+  test('observe value', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
     const obj1 = await dataSource.dispatch({
-      type: "PutObject",
-      domain: "test",
-      name: "foo",
-      value: { foo: "bar" }
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
     });
     const c = createCloudObject({
       dataSource,
-      domain: "test",
-      name: "foo",
-      id: obj1.id
+      domain: 'test',
+      name: 'foo',
+      id: obj1.id,
     });
 
     let lastObserved = undefined;
     c.observeValue.subscribe({
       next: e => {
         lastObserved = e;
-      }
+      },
     });
     expect(lastObserved).toEqual(undefined);
     await c.fetch();
-    expect(lastObserved.foo).toEqual("bar");
+    expect(lastObserved.foo).toEqual('bar');
   });
 });

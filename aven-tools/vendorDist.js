@@ -1,15 +1,13 @@
-const fs = require("fs-extra");
-const babel = require("babel-core");
-const presetReact = require("babel-preset-react");
-const restSpread = require("babel-plugin-transform-object-rest-spread");
-const pathJoin = require("path").join;
+const fs = require('fs-extra');
+const babel = require('babel-core');
+const pathJoin = require('path').join;
 const {
   identifier,
   importSpecifier,
   importDefaultSpecifier,
   expressionStatement,
-  nullLiteral
-} = require("babel-types");
+  nullLiteral,
+} = require('babel-types');
 
 const makeIndex = (fileName, defaultExports, normalExports) => {
   return {
@@ -24,9 +22,9 @@ ${defaultExports
               innerExportName => `
 get ${innerExportName}() {
   return require('${anExport.moduleAlias}').${innerExportName};
-},`
+},`,
             )
-            .join("\n");
+            .join('\n');
         }
 
         return `
@@ -35,288 +33,288 @@ get ${anExport}() {
 },
 `;
       })
-      .join("")}
+      .join('')}
       ${(normalExports || [])
         .map(
           exportName => `
   get ${exportName}() {
     return require('./${exportName}');
   },
-  `
+  `,
         )
-        .join("")}
+        .join('')}
 }
-`
+`,
   };
 };
 
-const baseDir = ".";
+const baseDir = '.';
 
 const transforms = [
-  { makeDirectory: baseDir + "/react-navigation-core" },
+  { makeDirectory: baseDir + '/react-navigation-core' },
   {
     fromRawJSON: {
-      name: "@react-navigation/core"
+      name: '@react-navigation/core',
     },
-    toFile: baseDir + "/react-navigation-core/package.json"
+    toFile: baseDir + '/react-navigation-core/package.json',
   },
   makeIndex(
-    baseDir + "/react-navigation-core/index.js",
+    baseDir + '/react-navigation-core/index.js',
     [
-      "createNavigator",
+      'createNavigator',
 
-      "NavigationActions",
-      "StackActions",
+      'NavigationActions',
+      'StackActions',
 
-      "StackRouter",
-      "SwitchRouter",
-      "TabRouter",
+      'StackRouter',
+      'SwitchRouter',
+      'TabRouter',
 
-      "NavigationContext",
-      "NavigationProvider",
-      "NavigationConsumer",
-      "getNavigationActionCreators",
-      "getNavigation",
+      'NavigationContext',
+      'NavigationProvider',
+      'NavigationConsumer',
+      'getNavigationActionCreators',
+      'getNavigation',
 
-      "SceneView",
-      "SwitchView",
-      "createSwitchNavigator",
-      "withNavigation"
+      'SceneView',
+      'SwitchView',
+      'createSwitchNavigator',
+      'withNavigation',
     ],
-    ["invariant"]
+    ['invariant'],
   ),
   {
-    fromFile: "node_modules/react-navigation/src/navigators/createNavigator.js",
-    toFile: baseDir + "/react-navigation-core/createNavigator.js",
+    fromFile: 'node_modules/react-navigation/src/navigators/createNavigator.js',
+    toFile: baseDir + '/react-navigation-core/createNavigator.js',
     importMap: {
-      "../getChildEventSubscriber": "./getChildEventSubscriber"
-    }
+      '../getChildEventSubscriber': './getChildEventSubscriber',
+    },
   },
   {
-    fromFile: "node_modules/react-navigation/src/routers/createConfigGetter.js",
-    toFile: baseDir + "/react-navigation-core/createConfigGetter.js",
+    fromFile: 'node_modules/react-navigation/src/routers/createConfigGetter.js',
+    toFile: baseDir + '/react-navigation-core/createConfigGetter.js',
     importMap: {
-      "../utils/invariant": "./invariant"
-    }
+      '../utils/invariant': './invariant',
+    },
   },
   {
-    fromFile: "node_modules/react-navigation/src/routers/pathUtils.js",
-    toFile: baseDir + "/react-navigation-core/pathUtils.js",
+    fromFile: 'node_modules/react-navigation/src/routers/pathUtils.js',
+    toFile: baseDir + '/react-navigation-core/pathUtils.js',
     importMap: {
-      "../NavigationActions": "./NavigationActions",
-      "../utils/invariant": "./invariant"
-    }
+      '../NavigationActions': './NavigationActions',
+      '../utils/invariant': './invariant',
+    },
   },
   {
-    fromFile: "node_modules/react-navigation/src/utils/withDefaultValue.js",
-    toFile: baseDir + "/react-navigation-core/withDefaultValue.js"
+    fromFile: 'node_modules/react-navigation/src/utils/withDefaultValue.js',
+    toFile: baseDir + '/react-navigation-core/withDefaultValue.js',
   },
   {
-    fromFile: "node_modules/react-navigation/src/StateUtils.js",
-    toFile: baseDir + "/react-navigation-core/StateUtils.js",
+    fromFile: 'node_modules/react-navigation/src/StateUtils.js',
+    toFile: baseDir + '/react-navigation-core/StateUtils.js',
     importMap: {
-      "./utils/invariant": "./invariant"
-    }
+      './utils/invariant': './invariant',
+    },
   },
   {
     fromFile:
-      "node_modules/react-navigation/src/routers/validateRouteConfigMap.js",
-    toFile: baseDir + "/react-navigation-core/validateRouteConfigMap.js",
+      'node_modules/react-navigation/src/routers/validateRouteConfigMap.js',
+    toFile: baseDir + '/react-navigation-core/validateRouteConfigMap.js',
     importMap: {
-      "../utils/invariant": "./invariant"
-    }
+      '../utils/invariant': './invariant',
+    },
   },
   {
-    fromFile: "node_modules/react-navigation/src/routers/SwitchRouter.js",
-    toFile: baseDir + "/react-navigation-core/SwitchRouter.js",
+    fromFile: 'node_modules/react-navigation/src/routers/SwitchRouter.js',
+    toFile: baseDir + '/react-navigation-core/SwitchRouter.js',
     importMap: {
-      "../utils/invariant": "./invariant",
-      "../NavigationActions": "./NavigationActions"
-    }
+      '../utils/invariant': './invariant',
+      '../NavigationActions': './NavigationActions',
+    },
   },
   {
-    fromFile: "node_modules/react-navigation/src/views/NavigationContext.js",
-    toFile: baseDir + "/react-navigation-core/NavigationContext.js",
-    importMap: {}
+    fromFile: 'node_modules/react-navigation/src/views/NavigationContext.js',
+    toFile: baseDir + '/react-navigation-core/NavigationContext.js',
+    importMap: {},
   },
   {
-    fromFile: "node_modules/react-navigation/src/views/NavigationProvider.js",
-    toFile: baseDir + "/react-navigation-core/NavigationProvider.js",
-    importMap: {}
+    fromFile: 'node_modules/react-navigation/src/views/NavigationProvider.js',
+    toFile: baseDir + '/react-navigation-core/NavigationProvider.js',
+    importMap: {},
   },
   {
-    fromFile: "node_modules/react-navigation/src/views/NavigationConsumer.js",
-    toFile: baseDir + "/react-navigation-core/NavigationConsumer.js",
-    importMap: {}
+    fromFile: 'node_modules/react-navigation/src/views/NavigationConsumer.js',
+    toFile: baseDir + '/react-navigation-core/NavigationConsumer.js',
+    importMap: {},
   },
   {
-    fromFile: "node_modules/react-navigation/src/views/SceneView.js",
-    toFile: baseDir + "/react-navigation-core/SceneView.js",
-    importMap: {}
+    fromFile: 'node_modules/react-navigation/src/views/SceneView.js',
+    toFile: baseDir + '/react-navigation-core/SceneView.js',
+    importMap: {},
   },
   {
-    fromFile: "node_modules/react-navigation/src/routers/KeyGenerator.js",
-    toFile: baseDir + "/react-navigation-core/KeyGenerator.js",
-    importMap: {}
+    fromFile: 'node_modules/react-navigation/src/routers/KeyGenerator.js',
+    toFile: baseDir + '/react-navigation-core/KeyGenerator.js',
+    importMap: {},
   },
   {
     fromFile:
-      "node_modules/react-navigation/src/views/SwitchView/SwitchView.js",
-    toFile: baseDir + "/react-navigation-core/SwitchView.js",
+      'node_modules/react-navigation/src/views/SwitchView/SwitchView.js',
+    toFile: baseDir + '/react-navigation-core/SwitchView.js',
     importMap: {
-      "../SceneView": "./SceneView"
-    }
+      '../SceneView': './SceneView',
+    },
   },
 
   {
     fromFile:
-      "node_modules/react-navigation/src/navigators/createSwitchNavigator.js",
-    toFile: baseDir + "/react-navigation-core/createSwitchNavigator.js",
+      'node_modules/react-navigation/src/navigators/createSwitchNavigator.js',
+    toFile: baseDir + '/react-navigation-core/createSwitchNavigator.js',
     importMap: {
-      "../navigators/createNavigator": "./createNavigator",
-      "../routers/SwitchRouter": "./SwitchRouter",
-      "../views/SwitchView/SwitchView": "./SwitchView"
-    }
+      '../navigators/createNavigator': './createNavigator',
+      '../routers/SwitchRouter': './SwitchRouter',
+      '../views/SwitchView/SwitchView': './SwitchView',
+    },
   },
   {
     fromFile:
-      "node_modules/react-navigation/src/navigators/createSwitchNavigator.js",
-    toFile: baseDir + "/react-navigation-core/createSwitchNavigator.js",
+      'node_modules/react-navigation/src/navigators/createSwitchNavigator.js',
+    toFile: baseDir + '/react-navigation-core/createSwitchNavigator.js',
     importMap: {
-      "../navigators/createNavigator": "./createNavigator",
-      "../routers/SwitchRouter": "./SwitchRouter",
-      "../views/SwitchView/SwitchView": "./SwitchView"
-    }
+      '../navigators/createNavigator': './createNavigator',
+      '../routers/SwitchRouter': './SwitchRouter',
+      '../views/SwitchView/SwitchView': './SwitchView',
+    },
   },
   {
-    fromFile: "node_modules/react-navigation/src/routers/TabRouter.js",
-    toFile: baseDir + "/react-navigation-core/TabRouter.js",
+    fromFile: 'node_modules/react-navigation/src/routers/TabRouter.js',
+    toFile: baseDir + '/react-navigation-core/TabRouter.js',
     importMap: {
-      "../utils/withDefaultValue": "./withDefaultValue"
-    }
+      '../utils/withDefaultValue': './withDefaultValue',
+    },
   },
   {
-    fromFile: "node_modules/react-navigation/src/routers/StackRouter.js",
-    toFile: baseDir + "/react-navigation-core/StackRouter.js",
+    fromFile: 'node_modules/react-navigation/src/routers/StackRouter.js',
+    toFile: baseDir + '/react-navigation-core/StackRouter.js',
     importMap: {
-      "../NavigationActions": "./NavigationActions",
-      "../utils/invariant": "./invariant",
-      "../StateUtils": "./StateUtils"
-    }
+      '../NavigationActions': './NavigationActions',
+      '../utils/invariant': './invariant',
+      '../StateUtils': './StateUtils',
+    },
   },
   {
-    fromFile: "node_modules/react-navigation/src/NavigationActions.js",
-    toFile: baseDir + "/react-navigation-core/NavigationActions.js",
-    importMap: {}
+    fromFile: 'node_modules/react-navigation/src/NavigationActions.js',
+    toFile: baseDir + '/react-navigation-core/NavigationActions.js',
+    importMap: {},
   },
   {
-    fromFile: "node_modules/react-navigation/src/routers/StackActions.js",
-    toFile: baseDir + "/react-navigation-core/StackActions.js",
-    importMap: {}
+    fromFile: 'node_modules/react-navigation/src/routers/StackActions.js',
+    toFile: baseDir + '/react-navigation-core/StackActions.js',
+    importMap: {},
   },
   {
     fromFile:
-      "node_modules/react-navigation/src/routers/getNavigationActionCreators.js",
-    toFile: baseDir + "/react-navigation-core/getNavigationActionCreators.js",
+      'node_modules/react-navigation/src/routers/getNavigationActionCreators.js',
+    toFile: baseDir + '/react-navigation-core/getNavigationActionCreators.js',
     importMap: {
-      "../utils/invariant": "./invariant",
-      "../NavigationActions": "./NavigationActions"
-    }
+      '../utils/invariant': './invariant',
+      '../NavigationActions': './NavigationActions',
+    },
   },
   {
     fromFile:
-      "node_modules/react-navigation/src/routers/validateScreenOptions.js",
-    toFile: baseDir + "/react-navigation-core/validateScreenOptions.js",
+      'node_modules/react-navigation/src/routers/validateScreenOptions.js',
+    toFile: baseDir + '/react-navigation-core/validateScreenOptions.js',
     importMap: {
-      "../utils/invariant": "./invariant"
-    }
+      '../utils/invariant': './invariant',
+    },
   },
   {
     fromFile:
-      "node_modules/react-navigation/src/routers/getScreenForRouteName.js",
-    toFile: baseDir + "/react-navigation-core/getScreenForRouteName.js",
-    importMap: { "../utils/invariant": "./invariant" }
+      'node_modules/react-navigation/src/routers/getScreenForRouteName.js',
+    toFile: baseDir + '/react-navigation-core/getScreenForRouteName.js',
+    importMap: { '../utils/invariant': './invariant' },
   },
   {
-    fromFile: "node_modules/react-navigation/src/getNavigation.js",
-    toFile: baseDir + "/react-navigation-core/getNavigation.js",
+    fromFile: 'node_modules/react-navigation/src/getNavigation.js',
+    toFile: baseDir + '/react-navigation-core/getNavigation.js',
     importMap: {
-      "./routers/getNavigationActionCreators": "./getNavigationActionCreators"
-    }
+      './routers/getNavigationActionCreators': './getNavigationActionCreators',
+    },
   },
   {
-    fromFile: "node_modules/react-navigation/src/getChildNavigation.js",
-    toFile: baseDir + "/react-navigation-core/getChildNavigation.js",
+    fromFile: 'node_modules/react-navigation/src/getChildNavigation.js',
+    toFile: baseDir + '/react-navigation-core/getChildNavigation.js',
     importMap: {
-      "./utils/invariant": "./invariant",
-      "./routers/getNavigationActionCreators": "./getNavigationActionCreators"
-    }
+      './utils/invariant': './invariant',
+      './routers/getNavigationActionCreators': './getNavigationActionCreators',
+    },
   },
   {
-    fromFile: "node_modules/react-navigation/src/getChildRouter.js",
-    toFile: baseDir + "/react-navigation-core/getChildRouter.js"
+    fromFile: 'node_modules/react-navigation/src/getChildRouter.js',
+    toFile: baseDir + '/react-navigation-core/getChildRouter.js',
   },
   {
-    fromFile: "node_modules/react-navigation/src/utils/invariant.js",
-    toFile: baseDir + "/react-navigation-core/invariant.js"
+    fromFile: 'node_modules/react-navigation/src/utils/invariant.js',
+    toFile: baseDir + '/react-navigation-core/invariant.js',
   },
   {
-    fromFile: "node_modules/react-navigation/src/getChildEventSubscriber.js",
-    toFile: baseDir + "/react-navigation-core/getChildEventSubscriber.js"
+    fromFile: 'node_modules/react-navigation/src/getChildEventSubscriber.js',
+    toFile: baseDir + '/react-navigation-core/getChildEventSubscriber.js',
   },
-  { makeDirectory: baseDir + "/react-navigation-native-container" },
+  { makeDirectory: baseDir + '/react-navigation-native-container' },
   {
-    toFile: baseDir + "/react-navigation-native-container/package.json",
+    toFile: baseDir + '/react-navigation-native-container/package.json',
     fromRawJSON: {
-      name: "@react-navigation/native-container"
-    }
+      name: '@react-navigation/native-container',
+    },
   },
-  makeIndex(baseDir + "/react-navigation-native-container/index.js", [
-    "createNavigationContainer"
+  makeIndex(baseDir + '/react-navigation-native-container/index.js', [
+    'createNavigationContainer',
   ]),
   {
-    fromFile: "node_modules/react-navigation/src/utils/docsUrl.js",
-    toFile: baseDir + "/react-navigation-native-container/docsUrl.js",
+    fromFile: 'node_modules/react-navigation/src/utils/docsUrl.js',
+    toFile: baseDir + '/react-navigation-native-container/docsUrl.js',
     importMap: {
-      "./utils/docsUrl": "./docsUrl"
-    }
+      './utils/docsUrl': './docsUrl',
+    },
   },
 
   {
-    fromFile: "node_modules/react-navigation/src/routers/pathUtils.js",
-    toFile: baseDir + "/react-navigation-native-container/pathUtils.js",
+    fromFile: 'node_modules/react-navigation/src/routers/pathUtils.js',
+    toFile: baseDir + '/react-navigation-native-container/pathUtils.js',
     importMap: {
-      "../NavigationActions": "../react-navigation-core"
+      '../NavigationActions': '../react-navigation-core',
     },
     nonDefaultImportMap: {
-      "../utils/invariant": "../react-navigation-core"
-    }
+      '../utils/invariant': '../react-navigation-core',
+    },
   },
   {
-    fromFile: "node_modules/react-navigation/src/createNavigationContainer.js",
+    fromFile: 'node_modules/react-navigation/src/createNavigationContainer.js',
     toFile:
       baseDir +
-      "/react-navigation-native-container/createNavigationContainer.js",
+      '/react-navigation-native-container/createNavigationContainer.js',
     importMap: {
-      "./utils/docsUrl": "./docsUrl",
-      "./routers/pathUtils": "./pathUtils"
+      './utils/docsUrl': './docsUrl',
+      './routers/pathUtils': './pathUtils',
     },
     nonDefaultImportMap: {
-      "./getNavigation": "../react-navigation-core",
-      "./createChildNavigationGetter": "../react-navigation-core",
-      "./utils/invariant": "../react-navigation-core",
-      "./routers/getNavigationActionCreators": "../react-navigation-core",
-      "./NavigationActions": "../react-navigation-core"
-    }
+      './getNavigation': '../react-navigation-core',
+      './createChildNavigationGetter': '../react-navigation-core',
+      './utils/invariant': '../react-navigation-core',
+      './routers/getNavigationActionCreators': '../react-navigation-core',
+      './NavigationActions': '../react-navigation-core',
+    },
   },
 
-  { makeDirectory: baseDir + "/react-navigation-stack" },
+  { makeDirectory: baseDir + '/react-navigation-stack' },
 
   {
-    toFile: baseDir + "/react-navigation-stack/package.json",
+    toFile: baseDir + '/react-navigation-stack/package.json',
     fromRawJSON: {
-      name: "@react-navigation/stack"
-    }
+      name: '@react-navigation/stack',
+    },
   },
   // makeIndex(baseDir + "/react-navigation-stack/index.js", [
   //   "createStackNavigator",
@@ -337,12 +335,12 @@ const transforms = [
   //   }
   // },
   {
-    fromFile: "node_modules/react-navigation/src/views/withNavigation.js",
-    toFile: baseDir + "/react-navigation-core/withNavigation.js",
+    fromFile: 'node_modules/react-navigation/src/views/withNavigation.js',
+    toFile: baseDir + '/react-navigation-core/withNavigation.js',
     importMap: {
-      "../utils/invariant": "./invariant"
+      '../utils/invariant': './invariant',
     },
-    nonDefaultImportMap: {}
+    nonDefaultImportMap: {},
   },
   // {
   //   fromFile:
@@ -529,162 +527,162 @@ const transforms = [
   //   nonDefaultImportMap: {}
   // },
 
-  { makeDirectory: baseDir + "/react-navigation-area-view" },
+  { makeDirectory: baseDir + '/react-navigation-area-view' },
   {
-    toFile: baseDir + "/react-navigation-area-view/package.json",
+    toFile: baseDir + '/react-navigation-area-view/package.json',
     fromRawJSON: {
-      name: "@react-navigation/area-view"
-    }
+      name: '@react-navigation/area-view',
+    },
   },
-  makeIndex(baseDir + "/react-navigation-area-view/index.js", [
-    "SafeAreaView",
-    "withOrientation"
+  makeIndex(baseDir + '/react-navigation-area-view/index.js', [
+    'SafeAreaView',
+    'withOrientation',
   ]),
   {
-    fromFile: "node_modules/react-native-safe-area-view/index.js",
-    toFile: baseDir + "/react-navigation-area-view/SafeAreaView.js",
+    fromFile: 'node_modules/react-native-safe-area-view/index.js',
+    toFile: baseDir + '/react-navigation-area-view/SafeAreaView.js',
     importMap: {},
-    nonDefaultImportMap: {}
+    nonDefaultImportMap: {},
   },
   {
-    fromFile: "node_modules/react-navigation/src/views/withOrientation.js",
-    toFile: baseDir + "/react-navigation-area-view/withOrientation.js"
+    fromFile: 'node_modules/react-navigation/src/views/withOrientation.js',
+    toFile: baseDir + '/react-navigation-area-view/withOrientation.js',
   },
 
-  { makeDirectory: baseDir + "/react-navigation-tabs" },
+  { makeDirectory: baseDir + '/react-navigation-tabs' },
   {
-    toFile: baseDir + "/react-navigation-tabs/package.json",
+    toFile: baseDir + '/react-navigation-tabs/package.json',
     fromRawJSON: {
-      name: "@react-navigation/tabs"
-    }
+      name: '@react-navigation/tabs',
+    },
   },
-  makeIndex(baseDir + "/react-navigation-tabs/index.js", [
-    "createBottomTabNavigator"
+  makeIndex(baseDir + '/react-navigation-tabs/index.js', [
+    'createBottomTabNavigator',
   ]),
   {
     fromFile:
-      "node_modules/react-navigation-tabs/src/navigators/createBottomTabNavigator.js",
-    toFile: baseDir + "/react-navigation-tabs/createBottomTabNavigator.js",
+      'node_modules/react-navigation-tabs/src/navigators/createBottomTabNavigator.js',
+    toFile: baseDir + '/react-navigation-tabs/createBottomTabNavigator.js',
     importMap: {
-      "../utils/createTabNavigator": "./createTabNavigator",
-      "../views/BottomTabBar": "./BottomTabBar",
-      "../views/ResourceSavingScene": "./ResourceSavingScene"
+      '../utils/createTabNavigator': './createTabNavigator',
+      '../views/BottomTabBar': './BottomTabBar',
+      '../views/ResourceSavingScene': './ResourceSavingScene',
     },
-    nonDefaultImportMap: {}
+    nonDefaultImportMap: {},
   },
   {
     fromFile:
-      "node_modules/react-navigation-tabs/src/utils/createTabNavigator.js",
-    toFile: baseDir + "/react-navigation-tabs/createTabNavigator.js",
+      'node_modules/react-navigation-tabs/src/utils/createTabNavigator.js',
+    toFile: baseDir + '/react-navigation-tabs/createTabNavigator.js',
     importMap: {
-      "react-navigation": "../react-navigation-core"
+      'react-navigation': '../react-navigation-core',
     },
-    nonDefaultImportMap: {}
+    nonDefaultImportMap: {},
   },
   {
-    fromFile: "node_modules/react-navigation-tabs/src/utils/withDimensions.js",
-    toFile: baseDir + "/react-navigation-tabs/withDimensions.js",
+    fromFile: 'node_modules/react-navigation-tabs/src/utils/withDimensions.js',
+    toFile: baseDir + '/react-navigation-tabs/withDimensions.js',
     importMap: {},
-    nonDefaultImportMap: {}
+    nonDefaultImportMap: {},
   },
   {
-    fromFile: "node_modules/react-navigation-tabs/src/views/BottomTabBar.js",
-    toFile: baseDir + "/react-navigation-tabs/BottomTabBar.js",
+    fromFile: 'node_modules/react-navigation-tabs/src/views/BottomTabBar.js',
+    toFile: baseDir + '/react-navigation-tabs/BottomTabBar.js',
     importMap: {
-      "../utils/withDimensions": "./withDimensions"
+      '../utils/withDimensions': './withDimensions',
     },
     nonDefaultImportMap: {
-      "react-native-safe-area-view": "../react-navigation-area-view"
-    }
+      'react-native-safe-area-view': '../react-navigation-area-view',
+    },
   },
   {
     fromFile:
-      "node_modules/react-navigation-tabs/src/views/ResourceSavingScene.js",
-    toFile: baseDir + "/react-navigation-tabs/ResourceSavingScene.js",
+      'node_modules/react-navigation-tabs/src/views/ResourceSavingScene.js',
+    toFile: baseDir + '/react-navigation-tabs/ResourceSavingScene.js',
     importMap: {},
-    nonDefaultImportMap: {}
+    nonDefaultImportMap: {},
   },
   {
-    fromFile: "node_modules/react-navigation-tabs/src/views/CrossFadeIcon.js",
-    toFile: baseDir + "/react-navigation-tabs/CrossFadeIcon.js",
+    fromFile: 'node_modules/react-navigation-tabs/src/views/CrossFadeIcon.js',
+    toFile: baseDir + '/react-navigation-tabs/CrossFadeIcon.js',
     importMap: {},
-    nonDefaultImportMap: {}
+    nonDefaultImportMap: {},
   },
 
-  { makeDirectory: baseDir + "/react-navigation-native-icons" },
+  { makeDirectory: baseDir + '/react-navigation-native-icons' },
   {
-    toFile: baseDir + "/react-navigation-native-icons/package.json",
+    toFile: baseDir + '/react-navigation-native-icons/package.json',
     fromRawJSON: {
-      name: "@react-navigation/native-icons"
-    }
-  },
-  makeIndex(baseDir + "/react-navigation-native-icons/index.js", ["Ionicons"]),
-  {
-    fromFile: "node_modules/@expo/vector-icons/Ionicons.js",
-    toFile: baseDir + "/react-navigation-native-icons/Ionicons.js",
-    importMap: {
-      "./vendor/react-native-vector-icons/glyphmaps/Ionicons.json":
-        "./glyphmaps/Ionicons.json"
+      name: '@react-navigation/native-icons',
     },
-    nonDefaultImportMap: {}
+  },
+  makeIndex(baseDir + '/react-navigation-native-icons/index.js', ['Ionicons']),
+  {
+    fromFile: 'node_modules/@expo/vector-icons/Ionicons.js',
+    toFile: baseDir + '/react-navigation-native-icons/Ionicons.js',
+    importMap: {
+      './vendor/react-native-vector-icons/glyphmaps/Ionicons.json':
+        './glyphmaps/Ionicons.json',
+    },
+    nonDefaultImportMap: {},
   },
 
   {
-    copyDirectory: "node_modules/react-native-vector-icons/Fonts",
-    toDirectory: "public/fonts"
+    copyDirectory: 'node_modules/react-native-vector-icons/Fonts',
+    toDirectory: 'public/fonts',
   },
   {
-    copyDirectory: "node_modules/react-native-vector-icons/dist/glyphmaps",
-    toDirectory: baseDir + "/react-navigation-icons/glyphmaps"
+    copyDirectory: 'node_modules/react-native-vector-icons/dist/glyphmaps',
+    toDirectory: baseDir + '/react-navigation-icons/glyphmaps',
   },
   {
     copyDirectory:
-      "node_modules/@expo/vector-icons/vendor/react-native-vector-icons/glyphmaps",
-    toDirectory: baseDir + "/react-navigation-native-icons/glyphmaps"
+      'node_modules/@expo/vector-icons/vendor/react-native-vector-icons/glyphmaps',
+    toDirectory: baseDir + '/react-navigation-native-icons/glyphmaps',
   },
   {
     copyDirectory:
-      "node_modules/@expo/vector-icons/vendor/react-native-vector-icons/lib",
-    toDirectory: baseDir + "/react-navigation-native-icons/vector-icons-lib"
+      'node_modules/@expo/vector-icons/vendor/react-native-vector-icons/lib',
+    toDirectory: baseDir + '/react-navigation-native-icons/vector-icons-lib',
   },
   {
-    fromFile: "node_modules/@expo/vector-icons/createIconSet.js",
-    toFile: baseDir + "/react-navigation-native-icons/createIconSet.js",
+    fromFile: 'node_modules/@expo/vector-icons/createIconSet.js',
+    toFile: baseDir + '/react-navigation-native-icons/createIconSet.js',
     importMap: {
-      "./vendor/react-native-vector-icons/lib/create-icon-set":
-        "./vector-icons-lib/create-icon-set",
-      "./vendor/react-native-vector-icons/lib/icon-button":
-        "./vector-icons-lib/icon-button"
+      './vendor/react-native-vector-icons/lib/create-icon-set':
+        './vector-icons-lib/create-icon-set',
+      './vendor/react-native-vector-icons/lib/icon-button':
+        './vector-icons-lib/icon-button',
     },
-    nonDefaultImportMap: {}
-  },
-
-  {
-    fromFile: "node_modules/react-native-vector-icons/lib/tab-bar-item-ios.js",
-    toFile: baseDir + "/react-navigation-icons/tab-bar-item-ios.js",
-    importMap: {
-      "./react-native": "react-native"
-    },
-    nonDefaultImportMap: {}
+    nonDefaultImportMap: {},
   },
 
   {
-    fromFile: "node_modules/react-native-vector-icons/lib/icon-button.js",
-    toFile: baseDir + "/react-navigation-icons/icon-button.js",
+    fromFile: 'node_modules/react-native-vector-icons/lib/tab-bar-item-ios.js',
+    toFile: baseDir + '/react-navigation-icons/tab-bar-item-ios.js',
     importMap: {
-      "./react-native": "react-native"
+      './react-native': 'react-native',
     },
-    nonDefaultImportMap: {}
+    nonDefaultImportMap: {},
   },
 
   {
-    fromFile: "node_modules/react-native-vector-icons/lib/toolbar-android.js",
-    toFile: baseDir + "/react-navigation-icons/toolbar-android.js",
+    fromFile: 'node_modules/react-native-vector-icons/lib/icon-button.js',
+    toFile: baseDir + '/react-navigation-icons/icon-button.js',
     importMap: {
-      "./react-native": "react-native"
+      './react-native': 'react-native',
     },
-    nonDefaultImportMap: {}
-  }
+    nonDefaultImportMap: {},
+  },
+
+  {
+    fromFile: 'node_modules/react-native-vector-icons/lib/toolbar-android.js',
+    toFile: baseDir + '/react-navigation-icons/toolbar-android.js',
+    importMap: {
+      './react-native': 'react-native',
+    },
+    nonDefaultImportMap: {},
+  },
 
   // { makeDirectory: baseDir + "/react-navigation-fluid" },
   // {
@@ -838,7 +836,7 @@ transforms.forEach(t => {
   }
 
   if (t.fromFile) {
-    fileData = fs.readFileSync(t.fromFile, { encoding: "utf8" });
+    fileData = fs.readFileSync(t.fromFile, { encoding: 'utf8' });
     fileData = fileData.replace(/__DEV__/, 'process.env === "development"');
   }
 
@@ -847,13 +845,13 @@ transforms.forEach(t => {
       sourceMaps: true,
       comments: true,
       parserOpts: {
-        plugins: ["jsx", "objectRestSpread", "classProperties", "flow"]
+        plugins: ['jsx', 'objectRestSpread', 'classProperties', 'flow'],
       },
       plugins: [
         ({ parse, traverse }) => ({
           visitor: {
             CallExpression(path) {
-              if (path.node.callee && path.node.callee.name === "require") {
+              if (path.node.callee && path.node.callee.name === 'require') {
                 if (
                   path.node.arguments.length === 1 &&
                   path.node.arguments[0].value &&
@@ -881,7 +879,7 @@ transforms.forEach(t => {
                 if (
                   nonDefaultImportMap[sourceName] &&
                   path.node.specifiers.length === 1 &&
-                  path.node.specifiers[0].type === "ImportDefaultSpecifier"
+                  path.node.specifiers[0].type === 'ImportDefaultSpecifier'
                 ) {
                   const local = path.node.specifiers[0].local.name;
                   const imported =
@@ -890,18 +888,18 @@ transforms.forEach(t => {
                   path.node.specifiers = [
                     importSpecifier(
                       identifier(local),
-                      identifier(imported || local)
-                    )
+                      identifier(imported || local),
+                    ),
                   ];
                 }
 
                 path.node.source.value =
                   importMap[sourceName] || nonDefaultImportMap[sourceName];
               }
-            }
-          }
-        })
-      ]
+            },
+          },
+        }),
+      ],
     });
     fileData = handledBabel.code;
   }

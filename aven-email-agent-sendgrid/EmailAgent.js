@@ -1,6 +1,6 @@
-const uuid = require("uuid/v1");
+const uuid = require('uuid/v1');
 
-const sg = require("@sendgrid/mail");
+const sg = require('@sendgrid/mail');
 
 export default function EmailAgent({ config, defaultFromEmail, name }) {
   const { sendgridAPIKey } = config;
@@ -16,10 +16,10 @@ export default function EmailAgent({ config, defaultFromEmail, name }) {
         to,
         from: finalFromEmail,
         subject,
-        text: message
+        text: message,
         // html: '<strong>coming soon</strong>',
       });
-    }
+    },
   };
 
   return { actions, remove: () => {}, name };

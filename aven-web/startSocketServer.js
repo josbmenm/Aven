@@ -1,10 +1,10 @@
-import uuid from "uuid/v1";
+import uuid from 'uuid/v1';
 
-const WebSocket = require("ws");
+const WebSocket = require('ws');
 
 const prepareSocketServer = (wss, dataSource) => {
   const socketClosers = {};
-  wss.on("connection", ws => {
+  wss.on('connection', ws => {
     const sendMessage = message => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify(message));
@@ -12,8 +12,8 @@ const prepareSocketServer = (wss, dataSource) => {
     };
 
     const clientId = uuid();
-    console.log("ws connection!", clientId);
-    sendMessage({ type: "ClientId", clientId });
+    console.log('ws connection!', clientId);
+    sendMessage({ type: 'ClientId', clientId });
 
     const _refSubscriptions = {};
 
@@ -29,19 +29,19 @@ const prepareSocketServer = (wss, dataSource) => {
       socketClosers[clientId] = null;
     };
     socketClosers[clientId] = closeSocket;
-    ws.on("close", () => {
+    ws.on('close', () => {
       closeSocket();
     });
-    ws.on("error", err => {
-      console.error("Websocket Error of Client " + clientId);
+    ws.on('error', err => {
+      console.error('Websocket Error of Client ' + clientId);
       console.error(err);
       closeSocket();
     });
-    ws.on("message", async message => {
+    ws.on('message', async message => {
       const action = { ...JSON.parse(message), clientId };
 
       switch (action.type) {
-        case "SubscribeRefs": {
+        case 'SubscribeRefs': {
           const { domain, refs } = action;
           refs.forEach(name => {
             dataSource.observeRef(domain, name).then(refObservable => {
@@ -50,20 +50,20 @@ const prepareSocketServer = (wss, dataSource) => {
                 .subscribe({
                   next: v => {
                     sendMessage({
-                      type: "RefUpdate",
+                      type: 'RefUpdate',
                       name,
                       domain: domain,
-                      ...v
+                      ...v,
                     });
                   },
                   error: () => {},
-                  complete: () => {}
+                  complete: () => {},
                 });
             });
           });
           return;
         }
-        case "UnsubscribeRefs": {
+        case 'UnsubscribeRefs': {
           action.refs.forEach(refName => {
             closeSubscription(`${action.domain}_${refName}`);
           });
@@ -71,7 +71,6 @@ const prepareSocketServer = (wss, dataSource) => {
         }
         default: {
           throw new Error(`unrecognized msg type "${action.type}"`);
-          return;
         }
       }
     });
@@ -82,7 +81,7 @@ const prepareSocketServer = (wss, dataSource) => {
       Object.keys(socketClosers).forEach(
         clientId => socketClosers[clientId] && socketClosers[clientId]()
       );
-    }
+    },
   };
 };
 

@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 
 // this will actually resolve to react-native-web... *eyeroll*
-import { AppRegistry } from "react-native";
+import { AppRegistry } from 'react-native';
 
-import { createBrowserApp } from "@react-navigation/web";
+import { createBrowserApp } from '@react-navigation/web';
 
 const emptyMap = new Map();
 
@@ -18,12 +18,12 @@ export default function startWebClient(App, context = emptyMap) {
     return el;
   }
 
-  AppRegistry.registerComponent("App", () => AppWithContext);
+  AppRegistry.registerComponent('App', () => AppWithContext);
 
-  AppRegistry.runApplication("App", {
+  AppRegistry.runApplication('App', {
     initialProps: {
-      env: "browser"
+      env: 'browser',
     },
-    rootTag: document.getElementById("root")
+    rootTag: window.document.getElementById('root'),
   });
 }

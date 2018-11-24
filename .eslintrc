@@ -10,6 +10,9 @@
 
   "rules": {
     "import/no-unresolved": "off",
+    "import/no-commonjs": "off",
+    "no-unused-vars": "off",
+    "import/named": "off",
     "react/sort-comp": "off",
     "jest/no-disabled-tests": "off",
   }

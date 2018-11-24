@@ -1,16 +1,12 @@
-import { View, Text } from "react-native";
-import React, { useContext } from "react";
-import CloudContext from "../aven-cloud/CloudContext";
+import { View, Text } from 'react-native';
+import React from 'react';
 
 const App = ({ env }) => {
-  const cloud = useContext(CloudContext);
-  const test = cloud.getRef("TestRef");
-  debugger;
   return (
     <View style={{ flex: 1 }}>
       <Text
         onPress={() => {
-          alert("Hello, client code!");
+          alert('Hello, client code!');
         }}
       >
         Aven Web. Env: {env}

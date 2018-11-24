@@ -1,15 +1,14 @@
-import startMemoryDataSource from "../../aven-cloud/startMemoryDataSource";
-import CloudAuth from "../../aven-cloud-auth/CloudAuth";
-import { hashSecureString } from "../../aven-cloud-utils/Crypto";
-import createMessageAuthMethod from "../createMessageAuthMethod";
+import startMemoryDataSource from '../../aven-cloud/startMemoryDataSource';
+import CloudAuth from '../../aven-cloud-auth/CloudAuth';
+import createMessageAuthMethod from '../createMessageAuthMethod';
 
-describe("Auth messaging behavior", () => {
-  test("Auth message flow", async () => {
+describe('Auth messaging behavior', () => {
+  test('Auth message flow', async () => {
     const dataSource = startMemoryDataSource({
-      domain: "test"
+      domain: 'test',
     });
 
-    const authMethodName = "example-method";
+    const authMethodName = 'example-method';
 
     function identifyAuthInfo(authInfo) {
       if (!authInfo || !authInfo.address) {
@@ -23,45 +22,45 @@ describe("Auth messaging behavior", () => {
     const method = createMessageAuthMethod({
       authMethodName,
       sendVerification,
-      identifyAuthInfo
+      identifyAuthInfo,
     });
 
     const authDataSource = CloudAuth({ dataSource, methods: [method] });
 
-    const verifyAuthResponse = await authDataSource.dispatch({
-      type: "CreateSession",
-      domain: "test",
+    await authDataSource.dispatch({
+      type: 'CreateSession',
+      domain: 'test',
       authInfo: {
-        address: "foobar"
+        address: 'foobar',
       },
-      accountId: "foo"
+      accountId: 'foo',
     });
 
     expect(sendVerification.mock.calls.length).toBe(1);
-    expect(sendVerification.mock.calls[0][0].address).toEqual("foobar");
+    expect(sendVerification.mock.calls[0][0].address).toEqual('foobar');
     expect(sendVerification.mock.calls[0][1].length).toEqual(6);
 
     const createSessionResp = await authDataSource.dispatch({
-      type: "CreateSession",
-      domain: "test",
+      type: 'CreateSession',
+      domain: 'test',
       authInfo: {
-        address: "foobar"
+        address: 'foobar',
       },
       verificationResponse: {
-        key: sendVerification.mock.calls[0][1]
+        key: sendVerification.mock.calls[0][1],
       },
-      accountId: "foo"
+      accountId: 'foo',
     });
 
-    expect(typeof createSessionResp.session.token).toEqual("string");
-    expect(typeof createSessionResp.session.accountId).toEqual("string");
-    expect(typeof createSessionResp.session.sessionId).toEqual("string");
+    expect(typeof createSessionResp.session.token).toEqual('string');
+    expect(typeof createSessionResp.session.accountId).toEqual('string');
+    expect(typeof createSessionResp.session.sessionId).toEqual('string');
   });
 
-  test("anon account can add auth method", async () => {
-    const dataSource = startMemoryDataSource({ domain: "test" });
+  test('anon account can add auth method', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
 
-    const authMethodName = "example-method";
+    const authMethodName = 'example-method';
 
     function identifyAuthInfo(authInfo) {
       if (!authInfo || !authInfo.address) {
@@ -75,43 +74,43 @@ describe("Auth messaging behavior", () => {
     const method = createMessageAuthMethod({
       authMethodName,
       sendVerification,
-      identifyAuthInfo
+      identifyAuthInfo,
     });
 
     const authDataSource = CloudAuth({ dataSource, methods: [method] });
 
     const { session } = await authDataSource.dispatch({
-      type: "CreateAnonymousSession",
-      domain: "test"
+      type: 'CreateAnonymousSession',
+      domain: 'test',
     });
 
-    const address = "great";
+    const address = 'great';
 
-    const authResp = await authDataSource.dispatch({
-      type: "PutAuthMethod",
-      domain: "test",
+    await authDataSource.dispatch({
+      type: 'PutAuthMethod',
+      domain: 'test',
       auth: session,
-      authInfo: { address, context: "heyo!" }
+      authInfo: { address, context: 'heyo!' },
     });
     expect(sendVerification.mock.calls[0][0].address).toEqual(address);
-    expect(sendVerification.mock.calls[0][0].context).toEqual("heyo!");
+    expect(sendVerification.mock.calls[0][0].context).toEqual('heyo!');
     expect(sendVerification.mock.calls[0][1].length).toEqual(6);
 
     const authFinalResp = await authDataSource.dispatch({
-      type: "PutAuthMethod",
-      domain: "test",
+      type: 'PutAuthMethod',
+      domain: 'test',
       auth: session,
       authInfo: { address },
       verificationResponse: {
-        key: sendVerification.mock.calls[0][1]
-      }
+        key: sendVerification.mock.calls[0][1],
+      },
     });
-    expect(typeof authFinalResp.verifiedMethodId).toEqual("string");
+    expect(typeof authFinalResp.verifiedMethodId).toEqual('string');
 
-    const newSessionCreationRequest = await authDataSource.dispatch({
-      type: "CreateSession",
-      domain: "test",
-      authInfo: { address }
+    await authDataSource.dispatch({
+      type: 'CreateSession',
+      domain: 'test',
+      authInfo: { address },
     });
     expect(sendVerification.mock.calls[1][1].length).toEqual(6);
     expect(sendVerification.mock.calls[1][1]).not.toEqual(
@@ -119,12 +118,12 @@ describe("Auth messaging behavior", () => {
     );
 
     const newSessionCreation = await authDataSource.dispatch({
-      type: "CreateSession",
-      domain: "test",
+      type: 'CreateSession',
+      domain: 'test',
       authInfo: { address },
       verificationResponse: {
-        key: sendVerification.mock.calls[1][1]
-      }
+        key: sendVerification.mock.calls[1][1],
+      },
     });
     expect(newSessionCreation.session.accountId).toEqual(session.accountId);
   });

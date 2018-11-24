@@ -1,6 +1,6 @@
-import { View, Text } from "react-native";
-import React, { useContext } from "react";
-import Admin from "../aven-admin/Admin";
+import { View } from 'react-native';
+import React from 'react';
+import Admin from '../aven-admin/Admin';
 
 const App = ({ navigation }) => {
   return (

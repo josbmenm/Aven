@@ -1,7 +1,7 @@
-import { default as withObs } from "@nozbe/with-observables";
-import { Observable, BehaviorSubject } from "rxjs-compat";
+import { default as withObs } from '@nozbe/with-observables';
+import { Observable, BehaviorSubject } from 'rxjs-compat';
 
-import createCloudRef from "./createCloudRef";
+import createCloudRef from './createCloudRef';
 
 export const withObservables = withObs;
 
@@ -18,11 +18,11 @@ export default function createCloudClient({ dataSource, domain }) {
 
   const knownRefs = new BehaviorSubject([]);
 
-  const observeRefs = Observable.create(observer => {
+  const observeRefs = Observable.create(() => {
     dataSource
       .dispatch({
-        type: "ListRefs",
-        domain
+        type: 'ListRefs',
+        domain,
       })
       .then(refNames => {
         const refs = refNames.map(getRef);
@@ -44,7 +44,7 @@ export default function createCloudClient({ dataSource, domain }) {
       dataSource,
       domain,
       name,
-      objectCache: _objects
+      objectCache: _objects,
     });
     knownRefs.next(uniqueOrdered([...knownRefs.value, _refs[name]]));
     return _refs[name];
@@ -60,6 +60,6 @@ export default function createCloudClient({ dataSource, domain }) {
     domain,
     destroyRef,
     getRef,
-    observeRefs
+    observeRefs,
   };
 }

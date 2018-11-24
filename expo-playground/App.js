@@ -1,12 +1,12 @@
-import { View, Text } from "react-native";
-import React from "react";
+import { View, Text } from 'react-native';
+import React from 'react';
 
-const App = ({}) => {
+const App = () => {
   return (
-    <View style={{ flex: 1, justifyContent: "center" }}>
+    <View style={{ flex: 1, justifyContent: 'center' }}>
       <Text
         onPress={() => {
-          alert("hello");
+          alert('hello');
         }}
       >
         Test me!

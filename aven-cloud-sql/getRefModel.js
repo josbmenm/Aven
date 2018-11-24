@@ -1,11 +1,11 @@
-import { Model } from "objection";
+import { Model } from 'objection';
 
 export default function getRefModel(models) {
   class Ref extends Model {
-    static tableName = "refs";
+    static tableName = 'refs';
 
     static get idColumn() {
-      return ["name", "domainName"];
+      return ['name', 'domainName'];
     }
 
     static get relationMappings() {
@@ -14,18 +14,18 @@ export default function getRefModel(models) {
           relation: Model.HasOneRelation,
           modelClass: models.Object,
           join: {
-            from: "refs.currentObject",
-            to: "objects.id"
-          }
+            from: 'refs.currentObject',
+            to: 'objects.id',
+          },
         },
         domain: {
           relation: Model.BelongsToOneRelation,
           modelClass: models.Domain,
           join: {
-            from: "refs.domainName",
-            to: "domains.name"
-          }
-        }
+            from: 'refs.domainName',
+            to: 'domains.name',
+          },
+        },
       };
     }
   }

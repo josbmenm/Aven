@@ -1,20 +1,18 @@
-import App from "./App";
+import App from './App';
 
-import startWebClient from "../aven-web/WebClient";
-import CloudContext from "../aven-cloud/CloudContext";
-import createCloudClient from "../aven-cloud/createCloudClient";
-import createBrowserNetworkSource from "../aven-cloud-browser/createBrowserNetworkSource";
-
-const IS_DEV = process.env.NODE_ENV !== "production";
+import startWebClient from '../aven-web/WebClient';
+import CloudContext from '../aven-cloud/CloudContext';
+import createCloudClient from '../aven-cloud/createCloudClient';
+import createBrowserNetworkSource from '../aven-cloud-browser/createBrowserNetworkSource';
 
 const networkSource = createBrowserNetworkSource({
-  authority: "localhost:3000",
-  useSSL: false
+  authority: 'localhost:3000',
+  useSSL: false,
 });
 
 const client = createCloudClient({
   dataSource: networkSource,
-  domain: "example.aven.cloud"
+  domain: 'example.aven.cloud',
 });
 
 const context = new Map();

@@ -7,23 +7,23 @@ import {
   ScrollView,
   Image,
   StyleSheet,
-  AsyncStorage
-} from "react-native";
-import React, { useState, useEffect, useMemo } from "react";
+  AsyncStorage,
+} from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
 
-import useCloud from "../aven-cloud/useCloud";
-import useRefValue from "../aven-cloud/useRefValue";
-import createBrowserNetworkSource from "../aven-cloud-browser/createBrowserNetworkSource";
-import createCloudClient from "../aven-cloud/createCloudClient";
-import CloudContext from "../aven-cloud/CloudContext";
-import JSONView from "../debug-views/JSONView";
-import useObservable from "../aven-cloud/useObservable";
-import { useNavigationState, useNavigation } from "react-navigation-hooks";
+import useCloud from '../aven-cloud/useCloud';
+import useRefValue from '../aven-cloud/useRefValue';
+import createBrowserNetworkSource from '../aven-cloud-browser/createBrowserNetworkSource';
+import createCloudClient from '../aven-cloud/createCloudClient';
+import CloudContext from '../aven-cloud/CloudContext';
+import JSONView from '../debug-views/JSONView';
+import useObservable from '../aven-cloud/useObservable';
+import { useNavigationState, useNavigation } from 'react-navigation-hooks';
 import {
   SwitchRouter,
   createNavigator,
-  NavigationContext
-} from "@react-navigation/core";
+  NavigationContext,
+} from '@react-navigation/core';
 
 function useActiveRoute() {
   const state = useNavigationState();
@@ -53,7 +53,7 @@ function useAsyncStorage(storageKey, defaultValue) {
   function setStorageState(updates) {
     if (storageState === unloadedValue) {
       throw new Error(
-        "Cannot merge storage state if it has not been loaded yet!"
+        'Cannot merge storage state if it has not been loaded yet!'
       );
     }
     const newState = { ...storageState, ...updates };
@@ -71,11 +71,11 @@ function Hero({ title }) {
     <Text
       style={{
         fontSize: 80,
-        textAlign: "center",
-        fontWeight: "300",
+        textAlign: 'center',
+        fontWeight: '300',
         marginVertical: 30,
-        color: "#343",
-        paddingHorizontal: 15
+        color: '#343',
+        paddingHorizontal: 15,
       }}
     >
       {title}
@@ -87,23 +87,23 @@ function Title({ title }) {
     <View
       style={{
         marginVertical: 20,
-        flexDirection: "row",
-        flexWrap: "wrap",
-        paddingHorizontal: 15
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        paddingHorizontal: 15,
       }}
     >
-      {title.split(".").map((t, i, a) => (
+      {title.split('.').map((t, i, a) => (
         <Text
           key={i}
           style={{
             fontSize: 36,
-            textAlign: "center",
-            fontWeight: "300",
-            color: "#343"
+            textAlign: 'center',
+            fontWeight: '300',
+            color: '#343',
           }}
         >
           {t}
-          {i === a.length - 1 ? "" : "."}
+          {i === a.length - 1 ? '' : '.'}
         </Text>
       ))}
     </View>
@@ -112,9 +112,9 @@ function Title({ title }) {
 
 const Styles = {
   inputHeight: 50,
-  highlightColor: "#027C6F",
-  labelColor: "#222",
-  rowBorderColor: "#ccc"
+  highlightColor: '#027C6F',
+  labelColor: '#222',
+  rowBorderColor: '#ccc',
 };
 
 function Button({ onPress, title, style, secondary }) {
@@ -122,19 +122,19 @@ function Button({ onPress, title, style, secondary }) {
     <TouchableOpacity onPress={onPress}>
       <View
         style={{
-          backgroundColor: secondary ? "#ccc" : Styles.highlightColor,
+          backgroundColor: secondary ? '#ccc' : Styles.highlightColor,
           height: Styles.inputHeight,
           borderRadius: Styles.inputHeight / 2,
           paddingHorizontal: 25,
           paddingVertical: 7,
-          ...style
+          ...style,
         }}
       >
         <Text
           style={{
-            color: secondary ? "#333" : "white",
-            textAlign: "center",
-            fontSize: 28
+            color: secondary ? '#333' : 'white',
+            textAlign: 'center',
+            fontSize: 28,
           }}
         >
           {title}
@@ -159,8 +159,8 @@ function FieldLabel({ label, onPress }) {
       style={{
         marginHorizontal: 20,
         color: Styles.labelColor,
-        fontWeight: "bold",
-        fontSize: 14
+        fontWeight: 'bold',
+        fontSize: 14,
       }}
     >
       {label}
@@ -176,12 +176,12 @@ function InputField({ name, value, onValue }) {
         value={value}
         onChangeText={onValue}
         style={{
-          backgroundColor: "white",
+          backgroundColor: 'white',
           height: Styles.inputHeight,
           borderRadius: Styles.inputHeight / 2,
           paddingHorizontal: 20,
           paddingVertical: 5,
-          marginTop: 4
+          marginTop: 4,
         }}
       />
     </View>
@@ -192,9 +192,9 @@ function BooleanField({ name, value, onValue }) {
   return (
     <View
       style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingVertical: 15
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 15,
       }}
     >
       <FieldLabel
@@ -215,7 +215,7 @@ function Form({ children }) {
         paddingVertical: 15,
         paddingHorizontal: 15,
         flex: 1,
-        backgroundColor: "#0001"
+        backgroundColor: '#0001',
       }}
     >
       {children}
@@ -244,9 +244,9 @@ function LoginForm({ onClientConfig, defaultSession }) {
           onClientConfig({
             authority,
             useSSL,
-            domain
+            domain,
           });
-          navigate("Home");
+          navigate('Home');
         }}
       />
     </Form>
@@ -258,10 +258,10 @@ function Pane({ children }) {
     <ScrollView
       style={{
         flex: 1,
-        backgroundColor: "#f0f0f0",
+        backgroundColor: '#f0f0f0',
         borderRightWidth: StyleSheet.hairlineWidth,
-        borderRightColor: "#aaa",
-        maxWidth: 350
+        borderRightColor: '#aaa',
+        maxWidth: 350,
       }}
     >
       {children}
@@ -274,9 +274,9 @@ function LargePane({ children }) {
     <ScrollView
       style={{
         flex: 4,
-        backgroundColor: "#f0f0f0",
+        backgroundColor: '#f0f0f0',
         borderRightWidth: StyleSheet.hairlineWidth,
-        borderRightColor: "#aaa"
+        borderRightColor: '#aaa',
       }}
     >
       {children}
@@ -303,7 +303,7 @@ function RowSection({ children }) {
     <View
       style={{
         borderTopWidth: StyleSheet.hairlineWidth,
-        borderTopColor: Styles.rowBorderColor
+        borderTopColor: Styles.rowBorderColor,
       }}
     >
       {children}
@@ -316,9 +316,9 @@ function Row({ children, isSelected }) {
     <View
       style={{
         padding: 15,
-        backgroundColor: isSelected ? "#96F3E9" : "white",
+        backgroundColor: isSelected ? '#96F3E9' : 'white',
         borderBottomWidth: StyleSheet.hairlineWidth,
-        borderBottomColor: Styles.rowBorderColor
+        borderBottomColor: Styles.rowBorderColor,
       }}
     >
       {children}
@@ -342,7 +342,7 @@ function LinkRow({ title, onPress, isSelected }) {
         <Text
           style={{
             fontSize: 16,
-            color: isHighlighted ? "black" : "#222"
+            color: isHighlighted ? 'black' : '#222',
           }}
         >
           {title}
@@ -355,7 +355,7 @@ function LinkRow({ title, onPress, isSelected }) {
 function RefsList() {
   const cloud = useCloud();
   const { navigate } = useNavigation();
-  const activeRef = useParam("name");
+  const activeRef = useParam('name');
   const refs = useObservable(cloud.observeRefs);
 
   if (!refs) {
@@ -363,16 +363,18 @@ function RefsList() {
   }
   return (
     <RowSection>
-      {refs.filter(r => !r.getState().isDestroyed).map(ref => (
-        <LinkRow
-          key={ref.name}
-          isSelected={ref.name === activeRef}
-          title={ref.name}
-          onPress={() => {
-            navigate("Ref", { name: ref.name });
-          }}
-        />
-      ))}
+      {refs
+        .filter(r => !r.getState().isDestroyed)
+        .map(ref => (
+          <LinkRow
+            key={ref.name}
+            isSelected={ref.name === activeRef}
+            title={ref.name}
+            onPress={() => {
+              navigate('Ref', { name: ref.name });
+            }}
+          />
+        ))}
     </RowSection>
   );
 }
@@ -380,7 +382,7 @@ function RefsList() {
 function AddRefSection() {
   const cloud = useCloud();
   let [isOpened, setIsOpened] = useState(false);
-  let [newRefName, setNewRefName] = useState("");
+  let [newRefName, setNewRefName] = useState('');
   if (isOpened) {
     return (
       <Form>
@@ -394,7 +396,7 @@ function AddRefSection() {
           onPress={() => {
             cloud.getRef(newRefName).put(null);
             setIsOpened(false);
-            setNewRefName("");
+            setNewRefName('');
           }}
         />
         <FormButton
@@ -402,7 +404,7 @@ function AddRefSection() {
           secondary
           onPress={() => {
             setIsOpened(false);
-            setNewRefName("");
+            setNewRefName('');
           }}
         />
       </Form>
@@ -430,7 +432,7 @@ function RefsPane({ onClientConfig }) {
         title="Log out"
         onPress={() => {
           onClientConfig(null);
-          navigate("Login");
+          navigate('Login');
         }}
       />
     </Pane>
@@ -441,9 +443,9 @@ function Folder({ value, path, cloudRef, pathContext }) {
   let pathViews = null;
   const navigation = useNavigation();
 
-  const pathSegments = path && path.split("/");
+  const pathSegments = path && path.split('/');
   const nextPathSegment = pathSegments && pathSegments[0];
-  const restOfPath = pathSegments && pathSegments.slice(1).join("/");
+  const restOfPath = pathSegments && pathSegments.slice(1).join('/');
 
   const file = value.files[nextPathSegment];
   const obj = useMemo(
@@ -478,10 +480,10 @@ function Folder({ value, path, cloudRef, pathContext }) {
               isSelected={nextPathSegment === fileName}
               title={fileName}
               onPress={() => {
-                const nextPath = [...pathContext, fileName].join("/");
+                const nextPath = [...pathContext, fileName].join('/');
                 console.log(nextPath);
                 navigation.setParams({
-                  path: nextPath
+                  path: nextPath,
                 });
               }}
             />
@@ -511,7 +513,7 @@ function ValuePane({ value, path, cloudRef, pathContext }) {
   if (value == null) {
     return <Text>Empty</Text>;
   }
-  if (value.type === "Folder") {
+  if (value.type === 'Folder') {
     return (
       <Folder
         value={value}
@@ -523,12 +525,12 @@ function ValuePane({ value, path, cloudRef, pathContext }) {
   }
   return (
     <LargePane>
-      <Title title={`${cloudRef.name}/${pathContext.join("/")}`} />
+      <Title title={`${cloudRef.name}/${pathContext.join('/')}`} />
       <JSONView data={value} />
       <StandaloneButton
         title="Modify"
         onPress={() => {
-          cloudRef.put({ other: "value" });
+          cloudRef.put({ other: 'value' });
         }}
       />
     </LargePane>
@@ -536,8 +538,8 @@ function ValuePane({ value, path, cloudRef, pathContext }) {
 }
 
 function RefValuePane() {
-  const name = useParam("name");
-  const path = useParam("path");
+  const name = useParam('name');
+  const path = useParam('path');
   const cloud = useCloud();
   const cloudRef = cloud.getRef(name);
   const value = useRefValue(cloudRef);
@@ -557,7 +559,7 @@ function RefSetForm({ cloudRef }) {
   const r = useObservable(cloudRef.observe);
 
   let [isOpened, setIsOpened] = useState(false);
-  let [nextId, setNextId] = useState(r ? r.id : "");
+  let [nextId, setNextId] = useState(r ? r.id : '');
   if (!isOpened) {
     return (
       <StandaloneButton
@@ -577,7 +579,7 @@ function RefSetForm({ cloudRef }) {
           setIsOpened(false);
           setNextId(null);
           cloudRef.putId(nextId).catch(e => {
-            alert("Error");
+            alert('Error');
             console.error(e);
           });
         }}
@@ -600,7 +602,7 @@ function SlideableNavigation({ navigation, descriptors }) {
 
 function RefMetaPane() {
   const { navigate } = useNavigation();
-  const name = useParam("name");
+  const name = useParam('name');
   const cloud = useCloud();
   const cloudRef = cloud.getRef(name);
   const r = useObservable(cloudRef.observe);
@@ -611,7 +613,7 @@ function RefMetaPane() {
       <StandaloneButton
         title="Destroy"
         onPress={() => {
-          navigate("Refs");
+          navigate('Refs');
           cloud.destroyRef(cloudRef).catch(console.error);
         }}
       />
@@ -623,12 +625,12 @@ function RefMetaPane() {
 const RefPaneNavigator = createNavigator(
   SlideableNavigation,
   SwitchRouter({
-    RefValue: { path: "value/:path*", screen: RefValuePane }
+    RefValue: { path: 'value/:path*', screen: RefValuePane },
   }),
   {}
 );
 
-function RefPane({ onClientConfig, navigation }) {
+function RefPane({ navigation }) {
   return (
     <React.Fragment>
       <RefMetaPane />
@@ -645,11 +647,11 @@ function EmptyScreen() {
 const MainPaneNavigator = createNavigator(
   SlideableNavigation,
   SwitchRouter({
-    Refs: { path: "", screen: EmptyScreen },
+    Refs: { path: '', screen: EmptyScreen },
     Ref: {
-      path: "ref/:name",
-      screen: RefPane
-    }
+      path: 'ref/:name',
+      screen: RefPane,
+    },
   }),
   {}
 );
@@ -670,9 +672,9 @@ function BackgroundView({ children }) {
       <Image
         style={{ flex: 1 }}
         resizeMode="repeat"
-        source={require("./BgTexture.png")}
+        source={require('./BgTexture.png')}
       />
-      <View style={{ ...StyleSheet.absoluteFillObject, flexDirection: "row" }}>
+      <View style={{ ...StyleSheet.absoluteFillObject, flexDirection: 'row' }}>
         {children}
       </View>
     </View>
@@ -680,8 +682,8 @@ function BackgroundView({ children }) {
 }
 
 function AdminApp({ defaultSession = {}, descriptors }) {
-  let [sessionState, setSessionState] = useAsyncStorage("AvenSession", {
-    clientConfig: null
+  let [sessionState, setSessionState] = useAsyncStorage('AvenSession', {
+    clientConfig: null,
   });
   let client = useMemo(
     () => {
@@ -693,12 +695,12 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
       const dataSource = createBrowserNetworkSource({
         authority,
-        useSSL
+        useSSL,
       });
 
       const client = createCloudClient({
         dataSource,
-        domain
+        domain,
       });
 
       return client;
@@ -715,9 +717,9 @@ function AdminApp({ defaultSession = {}, descriptors }) {
       if (
         sessionState.clientConfig !== undefined &&
         !client &&
-        activeRoute.routeName !== "Login"
+        activeRoute.routeName !== 'Login'
       ) {
-        navigate("Login");
+        navigate('Login');
       }
     },
     [sessionState, client]
@@ -731,7 +733,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
   const ScreenComponent = activeDescriptor.getComponent();
 
-  if (!client && activeRoute.routeName !== "Login") {
+  if (!client && activeRoute.routeName !== 'Login') {
     return <Text>Wait..</Text>;
   }
 
@@ -742,8 +744,8 @@ function AdminApp({ defaultSession = {}, descriptors }) {
           <ScreenComponent
             onClientConfig={setClientConfig}
             defaultSession={{
-              authority: defaultSession.authority || "localhost:3000",
-              domain: defaultSession.domain || "test.aven.cloud"
+              authority: defaultSession.authority || 'localhost:3000',
+              domain: defaultSession.domain || 'test.aven.cloud',
             }}
             navigation={activeDescriptor.navigation}
           />
@@ -785,19 +787,19 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
 const router = SwitchRouter({
   Home: {
-    path: "",
+    path: '',
     screen: MainPane,
     navigationOptions: {
-      title: "Admin"
-    }
+      title: 'Admin',
+    },
   },
   Login: {
-    path: "login",
+    path: 'login',
     screen: LoginPane,
     navigationOptions: {
-      title: "Login - Admin"
-    }
-  }
+      title: 'Login - Admin',
+    },
+  },
 });
 
 export default createNavigator(AdminApp, router, {});

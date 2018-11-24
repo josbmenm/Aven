@@ -1,5 +1,5 @@
-const uuid = require("uuid/v1");
-const Twilio = require("twilio");
+const uuid = require('uuid/v1');
+const Twilio = require('twilio');
 
 export default function SMSAgent({ config, defaultFromNumber, name }) {
   const { accountSid, authToken } = config;
@@ -13,10 +13,10 @@ export default function SMSAgent({ config, defaultFromNumber, name }) {
 
       await t.messages.create({
         body: message,
-        from: "+" + finalFromNumber,
-        to: "+" + to
+        from: '+' + finalFromNumber,
+        to: '+' + to,
       });
-    }
+    },
   };
 
   return { actions, remove: () => {}, name };

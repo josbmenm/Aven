@@ -1,5 +1,5 @@
-const fs = require("fs-extra");
-const pathJoin = require("path").join;
+const fs = require('fs-extra');
+const pathJoin = require('path').join;
 
 export default function createFSClient({ client }) {
   async function uploadFile({ filePath, ref }) {
@@ -9,8 +9,8 @@ export default function createFSClient({ client }) {
       object = JSON.parse(fileData);
     } catch (e) {
       object = {
-        type: "BinaryFileHex",
-        data: fileData.toString("hex")
+        type: 'BinaryFileHex',
+        data: fileData.toString('hex'),
       };
     }
     const { id } = await ref.write(object);
@@ -34,7 +34,7 @@ export default function createFSClient({ client }) {
     filesInDir.forEach((fileName, index) => {
       files[fileName] = { id: fileList[index] };
     });
-    const folderObj = { files, type: "Folder" };
+    const folderObj = { files, type: 'Folder' };
     const { id } = await ref.write(folderObj);
     return id;
   }

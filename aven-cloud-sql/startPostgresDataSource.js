@@ -1,21 +1,21 @@
-import { Observable, BehaviorSubject } from "rxjs-compat";
+import { Observable, BehaviorSubject } from 'rxjs-compat';
 
-const { schema, getSqlType } = require("./schema");
-const crypto = require("crypto");
-const stringify = require("json-stable-stringify");
+const { schema, getSqlType } = require('./schema');
+const crypto = require('crypto');
+const stringify = require('json-stable-stringify');
 
-const pgFormat = require("pg-format");
-const { Client } = require("pg");
+const pgFormat = require('pg-format');
+const { Client } = require('pg');
 
 const md5 = input => {
-  const sha = crypto.createHash("sha1");
+  const sha = crypto.createHash('sha1');
   sha.update(input);
-  const hash = sha.digest("hex");
+  const hash = sha.digest('hex');
   return hash;
 };
 
 const channelOfRefAndDomain = (refName, domain) =>
-  `ref_${domain.split(".").join("_")}_${md5(refName)}`;
+  `ref_${domain.split('.').join('_')}_${md5(refName)}`;
 
 const startPostgresDataSource = async ({ pgConfig, rootDomain }) => {
   const pg = new Client(pgConfig);
@@ -30,23 +30,23 @@ const startPostgresDataSource = async ({ pgConfig, rootDomain }) => {
     }
   }
   async function getTables() {
-    const schemaQuery = await pg.query("SELECT * FROM pg_catalog.pg_tables;");
+    const schemaQuery = await pg.query('SELECT * FROM pg_catalog.pg_tables;');
     const tableNames = schemaQuery.rows
-      .filter(r => r.schemaname === "public")
+      .filter(r => r.schemaname === 'public')
       .map(r => r.tablename);
     return new Set(tableNames);
   }
   async function getColumns(tableName) {
     const schemaQuery = await pg.query(
-      "SELECT * FROM information_schema.columns;"
+      'SELECT * FROM information_schema.columns;'
     );
     const columns = schemaQuery.rows
-      .filter(r => r.table_schema === "public")
+      .filter(r => r.table_schema === 'public')
       .filter(r => r.table_name === tableName)
       .map(r => ({
         columnName: r.column_name,
         isNullable: r.is_nullable,
-        dataType: r.data_type
+        dataType: r.data_type,
       }));
 
     return columns;
@@ -65,7 +65,7 @@ AND    i.indisprimary;
 `);
     const indexes = schemaQuery.rows.map(r => ({
       name: r.attname,
-      dataType: r.data_type
+      dataType: r.data_type,
     }));
     return indexes;
   }
@@ -88,13 +88,13 @@ WHERE constraint_type = 'FOREIGN KEY'
     if (lastConstraints.rows.find(r => r.constraint_name === constraintName)) {
       return;
     }
-    const sourceRefs = Object.keys(column.ref).filter(r => r[0] !== "_");
+    const sourceRefs = Object.keys(column.ref).filter(r => r[0] !== '_');
     await pg.query(
       `ALTER TABLE ${tableName} ADD CONSTRAINT ${constraintName} FOREIGN KEY (${sourceRefs.join(
-        ", "
+        ', '
       )}) REFERENCES ${column.ref._table}(${sourceRefs
         .map(r => column.ref[r])
-        .join(", ")}) ${column.ref._cascadeDelete ? "ON DELETE CASCADE" : ""}`
+        .join(', ')}) ${column.ref._cascadeDelete ? 'ON DELETE CASCADE' : ''}`
     );
   }
 
@@ -105,11 +105,11 @@ WHERE constraint_type = 'FOREIGN KEY'
     }
     if (lastColumn) {
       throw new Error(
-        "Must migrate data type! " +
+        'Must migrate data type! ' +
           tableName +
-          " " +
+          ' ' +
           columnName +
-          " " +
+          ' ' +
           sqlType
       );
     }
@@ -129,7 +129,7 @@ WHERE constraint_type = 'FOREIGN KEY'
 
     await pg.query(
       `CREATE UNIQUE INDEX ${tableName}_pkey ON ${tableName} (${primary.join(
-        ", "
+        ', '
       )});`
     );
     await pg.query(
@@ -185,11 +185,11 @@ WHERE constraint_type = 'FOREIGN KEY'
   async function putObject({ object }) {
     const objData = stringify(object);
     const size = objData.length;
-    const sha = crypto.createHash("sha1");
+    const sha = crypto.createHash('sha1');
     sha.update(objData);
-    const id = sha.digest("hex");
+    const id = sha.digest('hex');
     await pg.query(
-      "INSERT INTO objects (id, json, size) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
+      'INSERT INTO objects (id, json, size) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING',
       [id, object, size]
     );
     return { id };
@@ -201,7 +201,7 @@ WHERE constraint_type = 'FOREIGN KEY'
 
   async function getRef({ domain, ref }) {
     const res = await pg.query(
-      "SELECT owner, active_object, is_public FROM refs WHERE id = $1 AND domain = $2",
+      'SELECT owner, active_object, is_public FROM refs WHERE id = $1 AND domain = $2',
       [ref, domain]
     );
     if (res.rowCount < 1) {
@@ -214,7 +214,7 @@ WHERE constraint_type = 'FOREIGN KEY'
   }
 
   async function getObject({ id }) {
-    const res = await pg.query("SELECT * FROM objects WHERE id = $1", [id]);
+    const res = await pg.query('SELECT * FROM objects WHERE id = $1', [id]);
     if (res.rowCount < 1) {
       return null;
     }
@@ -246,17 +246,17 @@ WHERE constraint_type = 'FOREIGN KEY'
 
   async function ensureDomain(domain) {
     if (!!rootDomain && domain !== rootDomain) {
-      throw new Error("Invalid domain, currently in single root domain mode!");
+      throw new Error('Invalid domain, currently in single root domain mode!');
     }
     await pg.query(
-      "INSERT INTO domains (name) VALUES ($1) ON CONFLICT DO NOTHING",
+      'INSERT INTO domains (name) VALUES ($1) ON CONFLICT DO NOTHING',
       [domain]
     );
   }
 
   async function ensureRef(domain, ref, defaultOwner) {
     await pg.query(
-      "INSERT INTO refs (id, domain, owner) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
+      'INSERT INTO refs (id, domain, owner) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING',
       [ref, domain, defaultOwner]
     );
   }
@@ -270,7 +270,7 @@ WHERE constraint_type = 'FOREIGN KEY'
 
   async function setRefActiveObject({ domain, ref, id }) {
     await pg.query(
-      "UPDATE refs SET active_object = $3 WHERE id = $1 AND domain = $2 ",
+      'UPDATE refs SET active_object = $3 WHERE id = $1 AND domain = $2 ',
       [ref, domain, id]
     );
     await pg.query(
@@ -392,7 +392,7 @@ WHERE constraint_type = 'FOREIGN KEY'
     // destroyRef,
     // putRefPermission,
     // getRefObject,
-    getStatus
+    getStatus,
   };
 
   await init();
@@ -445,7 +445,7 @@ WHERE constraint_type = 'FOREIGN KEY'
     return refObs;
   };
 
-  pg.on("notification", message => {
+  pg.on('notification', message => {
     if (_notifyRefObservables[message.channel]) {
       const payload = JSON.parse(message.payload);
       _notifyRefObservables[message.channel](payload);
@@ -455,7 +455,7 @@ WHERE constraint_type = 'FOREIGN KEY'
   return {
     actions,
     close,
-    observeRef
+    observeRef,
   };
 };
 

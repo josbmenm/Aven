@@ -1,3 +1,6 @@
 export default function EmailAuthMethod({ agent }) {
-  return {};
+  function foo() {
+    return agent;
+  }
+  return { foo };
 }

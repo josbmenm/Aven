@@ -1,5 +1,4 @@
 const fs = require('fs-extra');
-const { promisify } = require('util');
 const net = require('net');
 
 async function isSocketInUse(socketPath) {
@@ -17,7 +16,7 @@ async function isSocketInUse(socketPath) {
       () => {
         clientSocket.unref();
         resolve(true);
-      },
+      }
     );
   });
 }

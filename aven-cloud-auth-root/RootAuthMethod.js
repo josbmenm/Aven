@@ -1,58 +1,58 @@
-import { compareSecureString } from "../aven-cloud-utils/Crypto";
+import { compareSecureString } from '../aven-cloud-utils/Crypto';
 
 export default function RootAuthMethod({ rootPasswordHash }) {
   function canVerify(authInfo, accountId) {
-    if (authInfo.type === "root") {
+    if (authInfo.type === 'root') {
       return true;
     }
-    if (accountId === "root") {
+    if (accountId === 'root') {
       return true;
     }
     return false;
   }
 
-  async function getMethodId(authInfo) {
-    return "auth-root";
+  async function getMethodId() {
+    return 'auth-root';
   }
 
-  async function requestVerification({ authInfo, methodState, accountId }) {
+  async function requestVerification({ authInfo, methodState }) {
     return {
+      ...methodState,
       verificationChallenge: {
-        message: "Provide Password" // this isn't really used..
+        message: 'Provide Password', // this isn't really used..
       },
-      authInfo
+      authInfo,
     };
   }
 
   async function performVerification({
-    authInfo,
     methodState,
     verificationResponse,
-    accountId
+    accountId,
   }) {
-    if (accountId !== "root") {
-      throw new Error("Invalid auth verification");
+    if (accountId !== 'root') {
+      throw new Error('Invalid auth verification');
     }
     const { password } = verificationResponse;
     if (!password) {
       throw new Error(
-        "no password provided in authInfo of performVerification"
+        'no password provided in verificationResponse of performVerification'
       );
     }
     const isValid = await compareSecureString(password, rootPasswordHash);
     if (!isValid) {
-      throw new Error("Invalid auth verification");
+      throw new Error('Invalid auth verification');
     }
     return {
-      ...methodState
+      ...methodState,
     };
   }
 
   return {
-    name: "root",
+    name: 'root',
     canVerify,
     requestVerification,
     performVerification,
-    getMethodId
+    getMethodId,
   };
 }

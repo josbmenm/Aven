@@ -1,19 +1,19 @@
-import uuidv1 from "uuid/v1";
-import { hash, compare } from "bcrypt";
+import uuidv1 from 'uuid/v1';
+import { hash, compare } from 'bcrypt';
 
-const crypto = require("crypto");
-const { promisify } = require("util");
+const crypto = require('crypto');
+const { promisify } = require('util');
 const randomBytes = promisify(crypto.randomBytes);
 
 export function checksum(input) {
-  const shasum = crypto.createHash("sha1");
+  const shasum = crypto.createHash('sha1');
   shasum.update(input);
-  return shasum.digest("hex");
+  return shasum.digest('hex');
 }
 
 export async function genAuthCode(length = 6) {
   const randBuf = await randomBytes(48);
-  const hex = randBuf.toString("hex");
+  const hex = randBuf.toString('hex');
   const int = parseInt(hex, 16);
   const intStr = String(int);
   return intStr.substr(3, length);
@@ -21,7 +21,7 @@ export async function genAuthCode(length = 6) {
 
 export async function genKey() {
   const randBuf = await randomBytes(48);
-  const hex = randBuf.toString("hex");
+  const hex = randBuf.toString('hex');
   return hex;
 }
 

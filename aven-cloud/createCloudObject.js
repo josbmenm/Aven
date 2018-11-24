@@ -1,14 +1,14 @@
-import { Observable, BehaviorSubject } from "rxjs-compat";
-import SHA1 from "crypto-js/sha1";
+import { Observable, BehaviorSubject } from 'rxjs-compat';
+import SHA1 from 'crypto-js/sha1';
 
-const JSONStringify = require("json-stable-stringify");
+const JSONStringify = require('json-stable-stringify');
 
 export default function createCloudObject({
   dataSource,
   id,
   domain,
   value,
-  name
+  name,
 }) {
   let objectId = false;
   if (value !== undefined) {
@@ -19,17 +19,17 @@ export default function createCloudObject({
   }
   if (id && objectId && id !== objectId) {
     throw new Error(
-      "id and value were both provided to createCloudObject, but the ID does not match the value!"
+      'id and value were both provided to createCloudObject, but the ID does not match the value!'
     );
   }
   if (!objectId) {
-    throw new Error("id or value must be provided to createCloudObject!");
+    throw new Error('id or value must be provided to createCloudObject!');
   }
   if (!domain) {
-    throw new Error("domain must be provided to createCloudObject!");
+    throw new Error('domain must be provided to createCloudObject!');
   }
   if (!name) {
-    throw new Error("ref name must be provided to createCloudObject!");
+    throw new Error('ref name must be provided to createCloudObject!');
   }
 
   const objState = new BehaviorSubject({
@@ -39,7 +39,7 @@ export default function createCloudObject({
     lastFetchTime: null,
 
     // obj data:
-    value
+    value,
   });
 
   const observe = Observable.create(observer => {
@@ -49,7 +49,7 @@ export default function createCloudObject({
     const upstreamSubscription = objState.subscribe({
       next: val => {
         observer.next(val);
-      }
+      },
     });
     return () => {
       upstreamSubscription.unsubscribe();
@@ -61,7 +61,7 @@ export default function createCloudObject({
   function setState(newState) {
     objState.next({
       ...objState.value,
-      ...newState
+      ...newState,
     });
   }
   function getState() {
@@ -95,17 +95,17 @@ export default function createCloudObject({
       return;
     }
     const result = await dataSource.dispatch({
-      type: "GetObject",
+      type: 'GetObject',
       domain,
       name,
-      id
+      id,
     });
     if (!result || result.object === undefined) {
       throw new Error(`Error fetching object "${id}" from remote!`);
     }
     setState({
       value: result.object,
-      lastFetchTime: Date.now()
+      lastFetchTime: Date.now(),
     });
   }
 
@@ -114,13 +114,13 @@ export default function createCloudObject({
       throw new Error(`Cannot put empty value from object "${objectId}"!`);
     }
     const res = await dataSource.dispatch({
-      type: "PutObject",
+      type: 'PutObject',
       name,
       domain,
-      value: getState().value
+      value: getState().value,
     });
     setState({
-      lastPutTime: Date.now()
+      lastPutTime: Date.now(),
     });
     if (res.id !== objectId) {
       // if we get here, we are truly screwed!
@@ -156,6 +156,6 @@ export default function createCloudObject({
     fetch,
     getObject,
     observe,
-    observeValue
+    observeValue,
   };
 }

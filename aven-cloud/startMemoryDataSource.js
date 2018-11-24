@@ -1,15 +1,15 @@
-import { BehaviorSubject } from "rxjs-compat";
-import createDispatcher from "../aven-cloud-utils/createDispatcher";
-import uuid from "uuid/v1";
-const crypto = require("crypto");
-const stringify = require("json-stable-stringify");
+import { BehaviorSubject } from 'rxjs-compat';
+import createDispatcher from '../aven-cloud-utils/createDispatcher';
+import uuid from 'uuid/v1';
+const crypto = require('crypto');
+const stringify = require('json-stable-stringify');
 
 function _renderRef({ id, isPublic, owner }) {
   // this strips out hidden features of the ref and snapshots the referenced values
   return {
     id: id || null,
     isPublic: isPublic || true,
-    owner: owner || null
+    owner: owner || null,
   };
 }
 
@@ -34,7 +34,7 @@ const startMemoryDataSource = (opts = {}) => {
 
   async function PutRef({ domain, name, id }) {
     if (domain === undefined || name === undefined) {
-      throw new Error("Invalid use. ", { domain, name, id });
+      throw new Error('Invalid use. ', { domain, name, id });
     }
     if (domain !== dataSourceDomain) {
       throw new Error(
@@ -56,7 +56,7 @@ const startMemoryDataSource = (opts = {}) => {
 
   async function DestroyRef({ domain, name }) {
     if (domain === undefined || name === undefined) {
-      throw new Error("Invalid use. ", { domain, name, id });
+      throw new Error('Invalid use. ', { domain, name, id });
     }
     if (domain !== dataSourceDomain) {
       throw new Error(
@@ -92,16 +92,16 @@ const startMemoryDataSource = (opts = {}) => {
     if (r.objects[id] && _objects[id] !== undefined) {
       return {
         id,
-        object: _objects[id]
+        object: _objects[id],
       };
     }
     return {
       id,
-      object: undefined
+      object: undefined,
     };
   }
   function _isValidName(name) {
-    return typeof name === "string" && name.length > 0;
+    return typeof name === 'string' && name.length > 0;
   }
 
   async function PutObject({ value, name, domain }) {
@@ -117,9 +117,9 @@ const startMemoryDataSource = (opts = {}) => {
     }
     const objData = stringify(value);
     const size = objData.length;
-    const sha = crypto.createHash("sha1");
+    const sha = crypto.createHash('sha1');
     sha.update(objData);
-    const id = sha.digest("hex");
+    const id = sha.digest('hex');
     if (_objects == null) {
       throw new Error(`Memory source "${id}" has been closed!`);
     }
@@ -160,7 +160,7 @@ const startMemoryDataSource = (opts = {}) => {
     return Object.keys(_refs)
       .map(refName => {
         const m = refName.match(RegExp(`^${parentName}/(.*)`));
-        if (!m || m[1] === "") {
+        if (!m || m[1] === '') {
           return null;
         }
         return m[1];
@@ -174,7 +174,9 @@ const startMemoryDataSource = (opts = {}) => {
     return [dataSourceDomain];
   }
 
-  async function ListObjects({ domain, name }) {}
+  async function ListObjects({ domain, name }) {
+    console.log('ok', domain, name);
+  }
 
   async function CollectGarbage() {
     // create list of all objects
@@ -186,7 +188,7 @@ const startMemoryDataSource = (opts = {}) => {
   const GetStatus = () => ({
     ready: true,
     connected: true,
-    migrated: true
+    migrated: true,
   });
 
   const close = () => {
@@ -195,7 +197,7 @@ const startMemoryDataSource = (opts = {}) => {
         `Cannot close memory source "${id}" because it is already closed!`
       );
     }
-    console.log("Closing memory source " + id);
+    console.log('Closing memory source ' + id);
     _objects = null;
     _objectsSize = null;
     _refs = null;
@@ -229,9 +231,9 @@ const startMemoryDataSource = (opts = {}) => {
       ListObjects,
       DestroyRef,
       CollectGarbage,
-      ListRefObjects
+      ListRefObjects,
     }),
-    id
+    id,
   };
 };
 

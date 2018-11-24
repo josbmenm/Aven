@@ -1,5 +1,5 @@
-import { Observable, BehaviorSubject } from "rxjs-compat";
-import createCloudObject from "./createCloudObject";
+import { Observable, BehaviorSubject } from 'rxjs-compat';
+import createCloudObject from './createCloudObject';
 
 const observeNull = Observable.create(observer => {
   observer.next(undefined);
@@ -9,38 +9,38 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
   const objectCache = opts.objectCache || {};
 
   if (!name) {
-    throw new Error("name must be provided to createCloudRef!");
+    throw new Error('name must be provided to createCloudRef!');
   }
   if (!domain) {
-    throw new Error("domain must be provided to createCloudRef!");
+    throw new Error('domain must be provided to createCloudRef!');
   }
 
   const refState = new BehaviorSubject({
     id: null,
     isConnected: false,
     lastSyncTime: null,
-    isDestroyed: false
+    isDestroyed: false,
   });
 
   const setState = newState => {
     refState.next({
       ...refState.value,
-      ...newState
+      ...newState,
     });
   };
   const getState = () => refState.value;
 
   async function fetch() {
     const result = await dataSource.dispatch({
-      type: "GetRef",
+      type: 'GetRef',
       domain,
-      name
+      name,
     });
     if (result) {
       refState.next({
         ...refState.value,
         id: result.id,
-        lastSyncTime: Date.now()
+        lastSyncTime: Date.now(),
       });
     }
   }
@@ -48,9 +48,9 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
   async function destroy() {
     setState({ isConnected: false, id: null, isDestroyed: true });
     await dataSource.dispatch({
-      type: "DestroyRef",
+      type: 'DestroyRef',
       domain,
-      name
+      name,
     });
   }
 
@@ -69,10 +69,10 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
         next: upstreamRef => {
           setState({
             id: upstreamRef.id,
-            lastSyncTime: Date.now()
+            lastSyncTime: Date.now(),
           });
           observer.next(refState.value);
-        }
+        },
       });
     });
 
@@ -92,7 +92,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
       dataSource,
       domain,
       id,
-      name
+      name,
     }));
     return o;
   }
@@ -132,10 +132,10 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
 
   async function putId(objId) {
     await dataSource.dispatch({
-      type: "PutRef",
+      type: 'PutRef',
       domain,
       name,
-      id: objId
+      id: objId,
     });
   }
 
@@ -155,7 +155,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     const lastId = state.id;
     setState({
       id: obj.id,
-      puttingFromId: state.id
+      puttingFromId: state.id,
     });
     try {
       await obj.put();
@@ -163,12 +163,12 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
 
       setState({
         puttingFromId: null,
-        lastPutTime: Date.now()
+        lastPutTime: Date.now(),
       });
     } catch (e) {
       setState({
         puttingFromId: null,
-        id: lastId
+        id: lastId,
       });
       console.error(e);
       throw new Error(`Failed to putObjectId "${obj.id}" to "${name}"!`);
@@ -193,7 +193,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     if (refVal == null) {
       return observeNull;
     }
-    if (typeof refVal !== "string") {
+    if (typeof refVal !== 'string') {
       throw new Error(
         `Cannot look up object ID in ${name} on ${lookup.join()}`
       );
@@ -253,6 +253,6 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     write,
     destroy,
     observeConnectedValue,
-    transact
+    transact,
   };
 }

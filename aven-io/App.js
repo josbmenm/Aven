@@ -1,14 +1,13 @@
-import { View, Text } from "react-native";
-import React, { useContext } from "react";
-import CloudContext from "../aven-cloud/CloudContext";
+import { View, Text } from 'react-native';
+import React from 'react';
 
 import {
   SwitchRouter,
   createNavigator,
-  SceneView
-} from "@react-navigation/core";
+  SceneView,
+} from '@react-navigation/core';
 
-import { Link } from "@react-navigation/web";
+import { Link } from '@react-navigation/web';
 
 function Header({ descriptors }) {
   return (
@@ -58,18 +57,18 @@ function About() {
 const AppRouter = SwitchRouter({
   Home: {
     screen: Home,
-    path: "",
+    path: '',
     navigationOptions: {
-      title: "Aven"
-    }
+      title: 'Aven',
+    },
   },
   About: {
     screen: About,
-    path: "about",
+    path: 'about',
     navigationOptions: {
-      title: "About Aven"
-    }
-  }
+      title: 'About Aven',
+    },
+  },
 });
 
 const AppNavigator = createNavigator(AppView, AppRouter, {});

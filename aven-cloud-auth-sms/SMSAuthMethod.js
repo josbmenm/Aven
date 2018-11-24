@@ -1,7 +1,7 @@
-import createMessageAuthMethod from "../aven-cloud-auth-message/createMessageAuthMethod";
+import createMessageAuthMethod from '../aven-cloud-auth-message/createMessageAuthMethod';
 
 export default function SMSAuthMethod({ agent }) {
-  const authMethodName = "sms";
+  const authMethodName = 'sms';
   function identifyAuthInfo(authInfo) {
     if (!authInfo || !authInfo.number) {
       return null;
@@ -11,14 +11,14 @@ export default function SMSAuthMethod({ agent }) {
   async function sendVerification(authInfo, verifyCode) {
     await agent.actions.SendSMS({
       to: authInfo.number,
-      message: `Your code is ${verifyCode}`
+      message: `Your code is ${verifyCode}`,
     });
   }
 
   return createMessageAuthMethod({
     authMethodName,
     sendVerification,
-    identifyAuthInfo
+    identifyAuthInfo,
   });
 }
 //   function checkRecognizedInfo(authInfo) {

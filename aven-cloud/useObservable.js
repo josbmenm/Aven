@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export default function useObservable(observable) {
   const [value, setValue] = useState(observable && observable.value);

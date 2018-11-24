@@ -12,7 +12,7 @@ const envStatePath = pathJoin(srcDir, '.aven-env-state.json');
 const extendOverride = process.env.AVEN_SRC_EXTEND_OVERRIDE;
 if (extendOverride) {
   console.log(
-    `⚠️ - Using AvenTools extendsSrcModule from process.env.AVEN_SRC_EXTEND_OVERRIDE (${extendOverride}). You are responsible for syncronization of the extended globe dir!`,
+    `⚠️ - Using AvenTools extendsSrcModule from process.env.AVEN_SRC_EXTEND_OVERRIDE (${extendOverride}). You are responsible for syncronization of the extended globe dir!`
   );
 }
 
@@ -52,12 +52,12 @@ const getAllSrcDependencies = async (srcDir, packageName, globePkg) => {
   const childPkgDeps = await Promise.all(
     pkgDeps.map(async pkgDep => {
       return await getAllSrcDependencies(srcDir, pkgDep, globePkg);
-    }),
+    })
   );
   const allPkgDeps = new Set(pkgDeps);
   allPkgDeps.add(packageName);
   childPkgDeps.forEach(cPkgDeps =>
-    cPkgDeps.forEach(cPkgDep => allPkgDeps.add(cPkgDep)),
+    cPkgDeps.forEach(cPkgDep => allPkgDeps.add(cPkgDep))
   );
   return allPkgDeps;
 };
@@ -70,7 +70,7 @@ const getAllModuleDependencies = async (srcDir, packageName, globePkg) => {
       const { packageDir, extendingSrcDir } = await getPackageDir(
         srcDir,
         pkgDep,
-        globePkg,
+        globePkg
       );
       const packageJSONPath = pathJoin(packageDir, 'package.json');
       const pkgJSON = JSON.parse(await fs.readFile(packageJSONPath));
@@ -79,7 +79,7 @@ const getAllModuleDependencies = async (srcDir, packageName, globePkg) => {
       const extendsSrcModulePkg =
         extendingSrcDir &&
         JSON.parse(
-          await fs.readFile(pathJoin(extendingSrcDir, 'package.json')),
+          await fs.readFile(pathJoin(extendingSrcDir, 'package.json'))
         );
       const srcPkg = extendsSrcModulePkg ? extendsSrcModulePkg : globePkg;
       moduleDeps.forEach(moduleDepName => {
@@ -89,12 +89,12 @@ const getAllModuleDependencies = async (srcDir, packageName, globePkg) => {
               moduleDepName +
               ' in the source env package.json while requiring ' +
               pkgDep +
-              '!',
+              '!'
           );
         }
         allModuleDeps[moduleDepName] = srcPkg.dependencies[moduleDepName];
       });
-    }),
+    })
   );
   return allModuleDeps;
 };
@@ -109,10 +109,10 @@ const getAllPublicAssetDirs = async (srcDir, packageName, globePkg) => {
       const pkgJSON = JSON.parse(await fs.readFile(packageJSONPath));
       if (pkgJSON.aven && pkgJSON.aven.publicAssetDir) {
         allPublicAssetDirs.push(
-          pathJoin(packageDir, pkgJSON.aven.publicAssetDir),
+          pathJoin(packageDir, pkgJSON.aven.publicAssetDir)
         );
       }
-    }),
+    })
   );
   return allPublicAssetDirs;
 };
@@ -142,7 +142,7 @@ const getAppEnv = async (appName, appPkg) => {
     const envPath = pathJoin(srcDir, envName);
     if (!(await fs.exists(envPath))) {
       throw new Error(
-        `Failed to load platform env "${envName}" as specified in package.json globe.env for "${appName}"`,
+        `Failed to load platform env "${envName}" as specified in package.json globe.env for "${appName}"`
       );
     }
     envModule = require(pathJoin(envPath, 'AvenEnv.js'));
@@ -204,7 +204,7 @@ const getAppLocation = async (appName, appPkg, platform, appState) => {
 const sync = async (appEnv, location, appName, appPkg, srcDir) => {
   const packageSourceDir = appEnv.getPackageSourceDir(location);
   const globePkg = JSON.parse(
-    await fs.readFile(pathJoin(srcDir, 'package.json')),
+    await fs.readFile(pathJoin(srcDir, 'package.json'))
   );
   await fs.mkdirp(packageSourceDir);
 
@@ -218,12 +218,12 @@ const sync = async (appEnv, location, appName, appPkg, srcDir) => {
       .map(async pkgToRemove => {
         const pkgToRemovePath = pathJoin(packageSourceDir, pkgToRemove);
         await fs.remove(pkgToRemovePath);
-      }),
+      })
   );
   await Promise.all(
     srcDeps.map(async srcDep => {
       await syncPackage(srcDep, srcDir, packageSourceDir, globePkg);
-    }),
+    })
   );
 
   const distPkgTemplate = await appEnv.getTemplatePkg(location);
@@ -231,7 +231,7 @@ const sync = async (appEnv, location, appName, appPkg, srcDir) => {
   const allModuleDeps = await getAllModuleDependencies(
     srcDir,
     appName,
-    globePkg,
+    globePkg
   );
 
   const distPkg = {
@@ -248,7 +248,7 @@ const sync = async (appEnv, location, appName, appPkg, srcDir) => {
   await Promise.all(
     assetDirs.map(async assetDir => {
       await spawn('rsync', ['-a', assetDir + '/', destAssetDir + '/']);
-    }),
+    })
   );
 
   await appEnv.applyPackage({
@@ -271,9 +271,7 @@ const runStart = async argv => {
   appState = await getAppLocation(appName, appPkg, appEnv, appState);
   const goSync = async () => {
     console.log(
-      `🌐 🏹 Syncronizing Workspace to App "${appName}" at ${
-        appState.location
-      }`,
+      `🌐 🏹 Syncronizing Workspace to App "${appName}" at ${appState.location}`
     );
     return await sync(appEnv, appState.location, appName, appPkg, srcDir);
   };
@@ -343,7 +341,7 @@ const runStart = async argv => {
       }
       extendedGlobeWatcher.on('ready', () => {
         console.log(
-          `🌐 👓 Also watching extended src dir ${extendOverride} for changes..`,
+          `🌐 👓 Also watching extended src dir ${extendOverride} for changes..`
         );
         resolve();
       });

@@ -1,53 +1,53 @@
-import startMemoryDataSource from "../../aven-cloud/startMemoryDataSource";
-import CloudAuth from "../CloudAuth";
-import RootAuthMethod from "../../aven-cloud-auth-root/RootAuthMethod";
+import startMemoryDataSource from '../../aven-cloud/startMemoryDataSource';
+import CloudAuth from '../CloudAuth';
+import RootAuthMethod from '../../aven-cloud-auth-root/RootAuthMethod';
 
-import { hashSecureString } from "../../aven-cloud-utils/Crypto";
+import { hashSecureString } from '../../aven-cloud-utils/Crypto';
 
-describe("Cloud auth sessions", () => {
-  test("gets root authentication", async () => {
-    const dataSource = startMemoryDataSource({ domain: "test" });
-    const password = "secret, foo";
+describe('Cloud auth sessions', () => {
+  test('gets root authentication', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
     const rootMethod = RootAuthMethod({
-      rootPasswordHash
+      rootPasswordHash,
     });
 
     const authDataSource = CloudAuth({ dataSource, methods: [rootMethod] });
 
     const { session } = await authDataSource.dispatch({
-      type: "CreateSession",
-      domain: "test",
+      type: 'CreateSession',
+      domain: 'test',
       authInfo: {
-        type: "root"
+        type: 'root',
       },
-      accountId: "root",
-      verificationResponse: { password }
+      accountId: 'root',
+      verificationResponse: { password },
     });
 
-    expect(typeof session.token).toEqual("string");
-    expect(typeof session.sessionId).toEqual("string");
-    expect(typeof session.accountId).toEqual("string");
+    expect(typeof session.token).toEqual('string');
+    expect(typeof session.sessionId).toEqual('string');
+    expect(typeof session.accountId).toEqual('string');
 
     const v = await authDataSource.dispatch({
-      type: "VerifySession",
+      type: 'VerifySession',
       auth: session,
-      domain: "test"
+      domain: 'test',
     });
 
-    expect(v.accountId).toEqual("root");
+    expect(v.accountId).toEqual('root');
   });
 
-  test("no authentication gets empty permissions at root", async () => {
-    const dataSource = startMemoryDataSource({ domain: "test" });
+  test('no authentication gets empty permissions at root', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
 
     const authDataSource = CloudAuth({ dataSource, methods: [] });
 
     const noAuthRootPermissions = await authDataSource.dispatch({
-      type: "GetPermissions",
+      type: 'GetPermissions',
       auth: null,
-      domain: "test",
-      name: null
+      domain: 'test',
+      name: null,
     });
 
     expect(noAuthRootPermissions.canRead).toEqual(false);
@@ -55,32 +55,32 @@ describe("Cloud auth sessions", () => {
     expect(noAuthRootPermissions.canPost).toEqual(false);
   });
 
-  test("root authentication gets full permissions of domain", async () => {
-    const dataSource = startMemoryDataSource({ domain: "test" });
+  test('root authentication gets full permissions of domain', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
 
-    const password = "secret, foo";
+    const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
     const rootMethod = RootAuthMethod({
-      rootPasswordHash
+      rootPasswordHash,
     });
 
     const authDataSource = CloudAuth({ dataSource, methods: [rootMethod] });
 
     const { session } = await authDataSource.dispatch({
-      type: "CreateSession",
-      domain: "test",
+      type: 'CreateSession',
+      domain: 'test',
       authInfo: {
-        type: "root"
+        type: 'root',
       },
-      accountId: "root",
-      verificationResponse: { password }
+      accountId: 'root',
+      verificationResponse: { password },
     });
 
     const rootPermissions = await authDataSource.dispatch({
-      type: "GetPermissions",
+      type: 'GetPermissions',
       auth: session,
-      domain: "test",
-      name: null
+      domain: 'test',
+      name: null,
     });
 
     expect(rootPermissions.canRead).toEqual(true);
@@ -88,38 +88,38 @@ describe("Cloud auth sessions", () => {
     expect(rootPermissions.canPost).toEqual(true);
   });
 
-  test("log out via destroy session", async () => {
-    const dataSource = startMemoryDataSource({ domain: "test" });
+  test('log out via destroy session', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
 
-    const password = "secret, foo";
+    const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
     const rootMethod = RootAuthMethod({
-      rootPasswordHash
+      rootPasswordHash,
     });
 
     const authDataSource = CloudAuth({ dataSource, methods: [rootMethod] });
 
     const { session } = await authDataSource.dispatch({
-      type: "CreateSession",
-      domain: "test",
+      type: 'CreateSession',
+      domain: 'test',
       authInfo: {
-        type: "root"
+        type: 'root',
       },
-      accountId: "root",
-      verificationResponse: { password }
+      accountId: 'root',
+      verificationResponse: { password },
     });
 
     await authDataSource.dispatch({
-      type: "DestroySession",
+      type: 'DestroySession',
       auth: session,
-      domain: "test"
+      domain: 'test',
     });
 
     const rootPermissionsAfterLogout = await authDataSource.dispatch({
-      type: "GetPermissions",
+      type: 'GetPermissions',
       auth: session,
-      domain: "test",
-      name: null
+      domain: 'test',
+      name: null,
     });
 
     expect(rootPermissionsAfterLogout.canRead).toEqual(false);
@@ -127,19 +127,18 @@ describe("Cloud auth sessions", () => {
     expect(rootPermissionsAfterLogout.canPost).toEqual(false);
   });
 
-  test("gets anon authentication", async () => {
-    const dataSource = startMemoryDataSource({ domain: "test" });
+  test('gets anon authentication', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
 
     const authDataSource = CloudAuth({ dataSource, methods: [] });
 
     const { session } = await authDataSource.dispatch({
-      type: "CreateAnonymousSession",
-      domain: "test"
+      type: 'CreateAnonymousSession',
+      domain: 'test',
     });
 
-    expect(typeof session.token).toEqual("string");
-    expect(typeof session.sessionId).toEqual("string");
-    expect(typeof session.accountId).toEqual("string");
+    expect(typeof session.token).toEqual('string');
+    expect(typeof session.sessionId).toEqual('string');
+    expect(typeof session.accountId).toEqual('string');
   });
 });
-

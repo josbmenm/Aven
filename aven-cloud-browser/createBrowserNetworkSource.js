@@ -1,11 +1,11 @@
-import { Observable, BehaviorSubject, Subject } from "rxjs-compat";
-import ReconnectingWebSocket from "reconnecting-websocket";
+import { Observable, BehaviorSubject, Subject } from 'rxjs-compat';
+import ReconnectingWebSocket from 'reconnecting-websocket';
 
 export default function createBrowserNetworkSource(opts) {
-  const httpEndpoint = `${opts.useSSL === false ? "http" : "https"}://${
+  const httpEndpoint = `${opts.useSSL === false ? 'http' : 'https'}://${
     opts.authority
   }/dispatch`;
-  const wsEndpoint = `${opts.useSSL === false ? "ws" : "wss"}://${
+  const wsEndpoint = `${opts.useSSL === false ? 'ws' : 'wss'}://${
     opts.authority
   }`;
   const isConnected = new BehaviorSubject(false);
@@ -15,12 +15,12 @@ export default function createBrowserNetworkSource(opts) {
 
   async function dispatch(action) {
     const res = await fetch(httpEndpoint, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(action)
+      body: JSON.stringify(action),
     });
 
     if (res.status >= 400) {
@@ -30,10 +30,10 @@ export default function createBrowserNetworkSource(opts) {
     try {
       result = JSON.parse(result);
     } catch (e) {
-      throw new Error("Expecting JSON but could not parse: " + result);
+      throw new Error('Expecting JSON but could not parse: ' + result);
     }
-    console.log("📣", action);
-    console.log("💨", result);
+    console.log('📣', action);
+    console.log('💨', result);
 
     return result;
   }
@@ -51,20 +51,20 @@ export default function createBrowserNetworkSource(opts) {
   function createDomainRefObserver(domain, name) {
     const domainRefObserver = {
       domain,
-      name
+      name,
     };
     domainRefObserver.observable = Observable.create(observer => {
       if (domainRefObserver.onNext) {
         throw new Error(
-          "Something has gone terribly wrong. There is somehow another observable already subscribed to this domain ref."
+          'Something has gone terribly wrong. There is somehow another observable already subscribed to this domain ref.'
         );
       }
       domainRefObserver.onNext = val => observer.next(val);
-      console.log("subscribing to upstream data!");
+      console.log('subscribing to upstream data!');
       socketSendIfConnected({
-        type: "SubscribeRefs",
+        type: 'SubscribeRefs',
         refs: [name],
-        domain
+        domain,
       });
 
       // observer.next({ name, domain, id: "init" });
@@ -75,12 +75,12 @@ export default function createBrowserNetworkSource(opts) {
       return () => {
         // domainRefObserver.onNext = null;
         socketSendIfConnected({
-          type: "UnsubscribeRefs",
+          type: 'UnsubscribeRefs',
           refs: [name],
-          domain
+          domain,
         });
 
-        console.log("unsubuscribing from upstream data!");
+        console.log('unsubuscribing from upstream data!');
         // clearInterval(tt);
         delete refObservables[domain][name];
       };
@@ -96,7 +96,7 @@ export default function createBrowserNetworkSource(opts) {
 
   function connectWS() {
     if (ws) {
-      throw new Error("ws already here!");
+      throw new Error('ws already here!');
     }
     ws = new ReconnectingWebSocket(wsEndpoint, [], {
       // debug: true,
@@ -105,7 +105,7 @@ export default function createBrowserNetworkSource(opts) {
       minUptime: 5000,
       reconnectionDelayGrowFactor: 1.3,
       connectionTimeout: 4000,
-      maxRetries: Infinity
+      maxRetries: Infinity,
     });
 
     wsClientId = null;
@@ -123,22 +123,22 @@ export default function createBrowserNetworkSource(opts) {
     ws.onmessage = msg => {
       const evt = JSON.parse(msg.data);
       switch (evt.type) {
-        case "ClientId": {
+        case 'ClientId': {
           wsClientId = evt.clientId;
           isConnected.next(true);
           Object.keys(refObservables).forEach(domain => {
             const refs = refObservables[domain];
             socketSendIfConnected({
-              type: "SubscribeRefs",
+              type: 'SubscribeRefs',
               domain,
-              refs: Object.keys(refObservables[domain])
+              refs: Object.keys(refObservables[domain]),
             });
             Object.keys(refs);
           });
-          console.log("Socket connected with client id: ", wsClientId);
+          console.log('Socket connected with client id: ', wsClientId);
           return;
         }
-        case "RefUpdate": {
+        case 'RefUpdate': {
           const o = getDomainRefObserver(evt.domain, evt.name);
           if (o && o.onNext) {
             o.onNext(evt);
@@ -147,7 +147,7 @@ export default function createBrowserNetworkSource(opts) {
         }
         default: {
           wsMessages.next(evt);
-          console.log("Unknown ws event:", evt);
+          console.log('Unknown ws event:', evt);
           return;
         }
       }
@@ -163,6 +163,6 @@ export default function createBrowserNetworkSource(opts) {
   return {
     dispatch,
     observeRef,
-    isConnected
+    isConnected,
   };
 }
