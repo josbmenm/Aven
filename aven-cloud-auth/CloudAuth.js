@@ -1,14 +1,21 @@
 import { uuid, checksum } from "../aven-cloud-utils/Crypto";
 import createDispatcher from "../aven-cloud-utils/createDispatcher";
 
+function thanksVeryMuch(dispatch) {
+  return async action => {
+    const resp = await dispatch(action);
+    // console.log("thanks", action, resp);
+    return resp;
+  };
+}
 async function writeObj(dataSource, domain, name, value) {
-  const obj = await dataSource.dispatch({
+  const obj = await thanksVeryMuch(dataSource.dispatch)({
     type: "PutObject",
     domain,
     value,
     name
   });
-  await dataSource.dispatch({
+  await thanksVeryMuch(dataSource.dispatch)({
     type: "PutRef",
     domain,
     id: obj.id,
@@ -17,7 +24,7 @@ async function writeObj(dataSource, domain, name, value) {
 }
 
 async function getObj(dataSource, domain, name) {
-  const r = await dataSource.dispatch({
+  const r = await thanksVeryMuch(dataSource.dispatch)({
     domain,
     type: "GetRef",
     name
@@ -26,7 +33,7 @@ async function getObj(dataSource, domain, name) {
     return null;
   }
 
-  const o = await dataSource.dispatch({
+  const o = await thanksVeryMuch(dataSource.dispatch)({
     type: "GetObject",
     name,
     domain,
@@ -39,7 +46,7 @@ async function getObj(dataSource, domain, name) {
 }
 
 export default function CloudAuth({ dataSource, methods }) {
-  async function ValidateSession({ auth, domain }) {
+  async function VerifySession({ auth, domain }) {
     if (!auth) {
       return { accountId: null };
     }
@@ -55,10 +62,10 @@ export default function CloudAuth({ dataSource, methods }) {
       return { accountId: null };
     }
 
-    return { accountId, method: savedSession.method };
+    return { ...savedSession, accountId };
   }
 
-  async function CreateSessionRequest({ domain, accountId, authInfo }) {
+  async function CreateVerificationRequest({ domain, accountId, authInfo }) {
     let methodsToValidate = [...methods];
 
     let validatedAccountId = null;
@@ -67,24 +74,134 @@ export default function CloudAuth({ dataSource, methods }) {
       const methodToValidate = methodsToValidate[0];
 
       if (methodToValidate.canVerify(authInfo, accountId)) {
-        const authRefId = await methodToValidate.getAuthId(authInfo);
-        const authRefName = `auth/account/${accountId}/method/${authRefId}`;
+        const methodId = await methodToValidate.getMethodId(authInfo);
+        const methodStateRefName = `auth/method/${methodId}`;
 
-        const lastAuthState = await getObj(dataSource, domain, authRefName);
-
-        const requestedVerification = await methodToValidate.requestVerification(
-          { authInfo, lastAuthState }
+        const methodState = await getObj(
+          dataSource,
+          domain,
+          methodStateRefName
         );
 
-        await writeObj(dataSource, domain, authRefName, requestedVerification);
+        const requestedVerification = await methodToValidate.requestVerification(
+          { authInfo, methodState }
+        );
+
+        await writeObj(
+          dataSource,
+          domain,
+          methodStateRefName,
+          requestedVerification
+        );
 
         return {
-          verificationChallenge: requestedVerification.verificationChallenge
+          verificationChallenge: requestedVerification.verificationChallenge,
+          methodId
         };
       }
     }
 
     throw new Error("No auth method matches this info and account!");
+  }
+  async function PutAuthMethod({
+    domain,
+    auth,
+    authInfo,
+    verificationResponse
+  }) {
+    const verifiedSession = await VerifySession({ auth, domain });
+
+    if (
+      !verifiedSession ||
+      !verifiedSession.accountId ||
+      verifiedSession.accountId !== auth.accountId
+    ) {
+      throw new Error("not authenticated");
+    }
+
+    const authMethodVerification = await VerifyAuthMethod({
+      accountId: verifiedSession.accountId,
+      domain,
+      authInfo,
+      verificationResponse
+    });
+    if (
+      !authMethodVerification.accountId ||
+      !authMethodVerification.verifiedMethodId ||
+      !authMethodVerification.verifiedMethodName ||
+      authMethodVerification.accountId !== verifiedSession.accountId
+    ) {
+      return authMethodVerification;
+    }
+
+    return authMethodVerification;
+  }
+
+  async function VerifyAuthMethod({
+    domain,
+    authInfo,
+    verificationResponse,
+    accountId
+  }) {
+    if (!verificationResponse) {
+      return CreateVerificationRequest({ domain, accountId, authInfo });
+    }
+
+    let methodsToValidate = [...methods];
+
+    let verifiedMethodId = null;
+    let verifiedMethodName = null;
+    let verifiedAccountId = null;
+
+    while (methodsToValidate.length && !verifiedMethodId) {
+      const methodToValidate = methodsToValidate[0];
+      methodsToValidate = methodsToValidate.slice(1);
+      if (!methodToValidate.canVerify(authInfo, verifiedMethodId)) {
+        continue;
+      }
+      const methodId = await methodToValidate.getMethodId(authInfo);
+      const methodStateRefName = `auth/method/${methodId}`;
+      const methodState = await getObj(dataSource, domain, methodStateRefName);
+      const methodStoredAccountId = methodState && methodState.accountId;
+      const methodAccountId = methodStoredAccountId || accountId;
+
+      if (
+        methodStoredAccountId &&
+        accountId &&
+        methodStoredAccountId !== accountId
+      ) {
+        throw new Error("Auth method in use by another account!");
+      }
+
+      let nextMethodState = methodState;
+      try {
+        nextMethodState = await methodToValidate.performVerification({
+          accountId: methodAccountId,
+          authInfo,
+          methodState,
+          verificationResponse
+        });
+        verifiedAccountId = verifiedMethodId = methodId;
+        verifiedMethodName = methodToValidate.name;
+        verifiedAccountId = methodAccountId;
+        if (accountId && !nextMethodState.accountId) {
+          nextMethodState = { ...nextMethodState, accountId };
+        }
+      } catch (e) {}
+
+      if (nextMethodState !== methodState) {
+        await writeObj(dataSource, domain, methodStateRefName, nextMethodState);
+      }
+    }
+
+    if (!verifiedMethodId || !verifiedMethodName) {
+      throw new Error("Cannot verify auth method");
+    }
+    return {
+      verifiedMethodName,
+      verifiedMethodId,
+      accountId: verifiedAccountId
+    };
   }
 
   async function CreateSession({
@@ -93,60 +210,35 @@ export default function CloudAuth({ dataSource, methods }) {
     authInfo,
     verificationResponse
   }) {
-    if (!verificationResponse) {
-      return CreateSessionRequest({ domain, accountId, authInfo });
+    const verification = await VerifyAuthMethod({
+      domain,
+      accountId,
+      authInfo,
+      verificationResponse
+    });
+
+    if (
+      !verification.accountId ||
+      !verification.verifiedMethodId ||
+      !verification.verifiedMethodName ||
+      (accountId && verification.accountId !== accountId)
+    ) {
+      return verification;
     }
-
-    let methodsToValidate = [...methods];
-
-    let validatedMethodId = null;
-    let validatedMethodName = null;
-
-    while (methodsToValidate.length && !validatedMethodId) {
-      const methodToValidate = methodsToValidate[0];
-      methodsToValidate = methodsToValidate.slice(1);
-      if (!methodToValidate.canVerify(authInfo, validatedMethodId)) {
-        continue;
-      }
-      const methodId = await methodToValidate.getAuthId(authInfo);
-      const authRefName = `auth/account/${accountId}/method/${methodId}`;
-      const lastAuthState = await getObj(dataSource, domain, authRefName);
-
-      let nextAuthState = lastAuthState;
-      try {
-        nextAuthState = await methodToValidate.performVerification({
-          accountId,
-          authInfo,
-          lastAuthState,
-          verificationResponse
-        });
-        validatedMethodId = methodId;
-        validatedMethodName = methodToValidate.name;
-      } catch (e) {}
-
-      if (nextAuthState !== lastAuthState) {
-        await writeObj(dataSource, domain, authRefName, nextAuthState);
-      }
-    }
-
-    if (!validatedMethodId || !validatedMethodName) {
-      throw new Error("Cannot verify");
-    }
-
     const sessionId = uuid();
     const token = await checksum(uuid());
     const session = {
       timeCreated: Date.now(),
-      accountId,
+      accountId: verification.accountId,
       sessionId,
-      methodId: validatedMethodId,
+      methodId: verification.verifiedMethodId,
       token,
-      method: validatedMethodName
+      method: verification.verifiedMethodName
     };
     await writeObj(
       dataSource,
       domain,
-      `auth/account/${accountId}/session/${sessionId}`,
+      `auth/account/${verification.accountId}/session/${sessionId}`,
       session
     );
     return {
@@ -164,6 +256,7 @@ export default function CloudAuth({ dataSource, methods }) {
 
     const session = {
       timeCreated: Date.now(),
+      methodId: "anonymous",
       accountId,
       sessionId,
       token
@@ -177,7 +270,7 @@ export default function CloudAuth({ dataSource, methods }) {
       session
     );
 
-    return session;
+    return { session };
   }
 
   async function GetPermissions({ auth, name, domain }) {
@@ -185,7 +278,7 @@ export default function CloudAuth({ dataSource, methods }) {
     let canWrite = false;
     let canPost = false;
 
-    const validated = await ValidateSession({ auth, domain });
+    const validated = await VerifySession({ auth, domain });
 
     if (!validated.accountId || validated.accountId !== auth.accountId) {
       return { canRead, canWrite, canPost };
@@ -199,7 +292,7 @@ export default function CloudAuth({ dataSource, methods }) {
   }
 
   async function DestroySession({ auth, domain }) {
-    const validated = await ValidateSession({ auth, domain });
+    const validated = await VerifySession({ auth, domain });
 
     if (!validated.accountId || validated.accountId !== auth.accountId) {
       return false;
@@ -215,7 +308,7 @@ export default function CloudAuth({ dataSource, methods }) {
   }
 
   async function DestroyAllSessions({ auth, domain }) {
-    const validated = await ValidateSession({ auth, domain });
+    const validated = await VerifySession({ auth, domain });
 
     if (!validated.accountId || validated.accountId !== auth.accountId) {
       return false;
@@ -235,16 +328,17 @@ export default function CloudAuth({ dataSource, methods }) {
   const adminActions = ["DestroyRef"];
 
   function guardAction(actionName, permissionLevel) {
-    return async () => {
-      const p = await GetPermissions({ auth, name, domain });
-
-      // check that p has permissionLevel
-
-      await dataSource.dispatch({
-        auth,
-        name,
-        domain
+    return async action => {
+      const p = await GetPermissions({
+        auth: action.auth,
+        name: action.name,
+        domain: action.domain
       });
+
+      if (!p[permissionLevel]) {
+        throw new Error("Insufficient permissions");
+      }
+      return await dataSource.dispatch(action);
     };
   }
 
@@ -285,10 +379,11 @@ export default function CloudAuth({ dataSource, methods }) {
     CreateAnonymousSession,
     DestroySession,
     DestroyAllSessions,
-    ValidateSession,
+    VerifySession,
 
     // ## PutAccountId(auth, newAccountId)
     // only the current session will move over
+    PutAuthMethod,
     // ## PutAuthMethod(auth, authInfo, challengeResponse?)
     // optionally run twice, first time without challengeResponse
     // ## DestroyAuthMethod(auth, authInfo)

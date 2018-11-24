@@ -57,4 +57,75 @@ describe("Auth messaging behavior", () => {
     expect(typeof createSessionResp.session.accountId).toEqual("string");
     expect(typeof createSessionResp.session.sessionId).toEqual("string");
   });
+
+  test("anon account can add auth method", async () => {
+    const dataSource = startMemoryDataSource({ domain: "test" });
+
+    const authMethodName = "example-method";
+
+    function identifyAuthInfo(authInfo) {
+      if (!authInfo || !authInfo.address) {
+        return null;
+      }
+      return String(authInfo.address);
+    }
+
+    const sendVerification = jest.fn();
+
+    const method = createMessageAuthMethod({
+      authMethodName,
+      sendVerification,
+      identifyAuthInfo
+    });
+
+    const authDataSource = CloudAuth({ dataSource, methods: [method] });
+
+    const { session } = await authDataSource.dispatch({
+      type: "CreateAnonymousSession",
+      domain: "test"
+    });
+
+    const address = "great";
+
+    const authResp = await authDataSource.dispatch({
+      type: "PutAuthMethod",
+      domain: "test",
+      auth: session,
+      authInfo: { address, context: "heyo!" }
+    });
+    expect(sendVerification.mock.calls[0][0].address).toEqual(address);
+    expect(sendVerification.mock.calls[0][0].context).toEqual("heyo!");
+    expect(sendVerification.mock.calls[0][1].length).toEqual(6);
+
+    const authFinalResp = await authDataSource.dispatch({
+      type: "PutAuthMethod",
+      domain: "test",
+      auth: session,
+      authInfo: { address },
+      verificationResponse: {
+        key: sendVerification.mock.calls[0][1]
+      }
+    });
+    expect(typeof authFinalResp.verifiedMethodId).toEqual("string");
+
+    const newSessionCreationRequest = await authDataSource.dispatch({
+      type: "CreateSession",
+      domain: "test",
+      authInfo: { address }
+    });
+    expect(sendVerification.mock.calls[1][1].length).toEqual(6);
+    expect(sendVerification.mock.calls[1][1]).not.toEqual(
+      sendVerification.mock.calls[0][1]
+    );
+
+    const newSessionCreation = await authDataSource.dispatch({
+      type: "CreateSession",
+      domain: "test",
+      authInfo: { address },
+      verificationResponse: {
+        key: sendVerification.mock.calls[1][1]
+      }
+    });
+    expect(newSessionCreation.session.accountId).toEqual(session.accountId);
+  });
 });

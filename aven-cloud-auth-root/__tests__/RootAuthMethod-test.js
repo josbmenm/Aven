@@ -14,7 +14,7 @@ describe("Auth method behavior", () => {
     const verified = await method.performVerification({
       accountId: "root",
       authInfo,
-      lastAuthState: undefined,
+      methodState: undefined,
       verificationResponse: { password }
     });
 

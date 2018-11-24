@@ -28,9 +28,9 @@ export default function SMSAuthMethod({ agent }) {
 //     return false;
 //   }
 
-//   async function getAuthID(authInfo) {}
+//   async function getMethodId(authInfo) {}
 
-//   async function requestVerification(authInfo, lastAuthState) {
+//   async function requestVerification(authInfo, methodState) {
 //     return {
 //       verificationChallenge: {},
 //       authInfo
@@ -39,7 +39,7 @@ export default function SMSAuthMethod({ agent }) {
 
 //   async function performVerification(
 //     authInfo,
-//     lastAuthState,
+//     methodState,
 //     verificationResponse
 //   ) {
 //     return {
@@ -51,6 +51,6 @@ export default function SMSAuthMethod({ agent }) {
 //     checkRecognizedInfo,
 //     requestVerification,
 //     performVerification,
-//     getAuthID
+//     getMethodId
 //   };
 // }

@@ -11,11 +11,11 @@ export default function RootAuthMethod({ rootPasswordHash }) {
     return false;
   }
 
-  async function getAuthId(authInfo) {
+  async function getMethodId(authInfo) {
     return "auth-root";
   }
 
-  async function requestVerification({ authInfo, lastAuthState, accountId }) {
+  async function requestVerification({ authInfo, methodState, accountId }) {
     return {
       verificationChallenge: {
         message: "Provide Password" // this isn't really used..
@@ -26,7 +26,7 @@ export default function RootAuthMethod({ rootPasswordHash }) {
 
   async function performVerification({
     authInfo,
-    lastAuthState,
+    methodState,
     verificationResponse,
     accountId
   }) {
@@ -44,7 +44,7 @@ export default function RootAuthMethod({ rootPasswordHash }) {
       throw new Error("Invalid auth verification");
     }
     return {
-      ...lastAuthState
+      ...methodState
     };
   }
 
@@ -53,6 +53,6 @@ export default function RootAuthMethod({ rootPasswordHash }) {
     canVerify,
     requestVerification,
     performVerification,
-    getAuthId
+    getMethodId
   };
 }

@@ -12,17 +12,18 @@ export default function createMessageAuthMethod({
     return true;
   }
 
-  async function getAuthId(authInfo) {
+  async function getMethodId(authInfo) {
     return `${authMethodName}-${await checksum(identifyAuthInfo(authInfo))}`;
   }
 
-  async function requestVerification({ authInfo, lastAuthState, accountId }) {
+  async function requestVerification({ authInfo, methodState, accountId }) {
     const verificationKey = await genAuthCode();
 
     // todo, check recent verification send time and avoid sending again
     await sendVerification(authInfo, verificationKey, accountId);
 
     return {
+      ...methodState,
       verificationKey,
       verificationSendTime: Date.now(),
       verificationChallenge: {
@@ -34,20 +35,20 @@ export default function createMessageAuthMethod({
 
   async function performVerification({
     authInfo,
-    lastAuthState,
+    methodState,
     verificationResponse,
     accountId
   }) {
-    if (!lastAuthState || !lastAuthState.verificationKey) {
+    if (!methodState || !methodState.verificationKey) {
       throw new Error("Invalid auth verification");
     }
     // todo check expiry time
 
-    if (verificationResponse.key !== lastAuthState.verificationKey) {
+    if (verificationResponse.key !== methodState.verificationKey) {
       throw new Error("Invalid auth verification");
     }
     return {
-      ...lastAuthState,
+      ...methodState,
       verificationSendTime: null,
       lastVerificationTime: Date.now(),
       verificationKey: null
@@ -59,6 +60,6 @@ export default function createMessageAuthMethod({
     canVerify,
     requestVerification,
     performVerification,
-    getAuthId
+    getMethodId
   };
 }
