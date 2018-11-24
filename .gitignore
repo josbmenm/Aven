@@ -11,3 +11,5 @@ yarn-error.log
 .aven-env-state.json
 
 ./**/node_modules/
+
+coverage

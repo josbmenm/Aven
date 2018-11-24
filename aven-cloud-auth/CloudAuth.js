@@ -321,14 +321,25 @@ export default function CloudAuth({ dataSource, methods }) {
     });
   }
 
+  async function PutPermissionRules({
+    auth,
+    domain,
+    name,
+    rules,
+    defaultRule
+  }) {}
+
   const guardedActions = {};
 
   const readActions = ["GetObject", "GetRef", "ListRefs", "ListRefObjects"];
   const writeActions = ["PutObject", "PutRef"];
   const adminActions = ["DestroyRef"];
 
-  function guardAction(actionName, permissionLevel) {
+  function guardAction(dispatch, actionType, permissionLevel) {
     return async action => {
+      if (action.type !== actionType) {
+        return await dispatch(action);
+      }
       const p = await GetPermissions({
         auth: action.auth,
         name: action.name,
@@ -338,22 +349,27 @@ export default function CloudAuth({ dataSource, methods }) {
       if (!p[permissionLevel]) {
         throw new Error("Insufficient permissions");
       }
-      return await dataSource.dispatch(action);
+      return await dispatch(action);
     };
   }
 
-  readActions.forEach(actionName => {
-    guardedActions[actionName] = guardAction(actionName, "canRead");
+  readActions.forEach(aName => {
+    guardedActions[aName] = guardAction(dataSource.dispatch, aName, "canRead");
   });
-  writeActions.forEach(actionName => {
-    guardedActions[actionName] = guardAction(actionName, "canWrite");
+  writeActions.forEach(aName => {
+    guardedActions[aName] = guardAction(dataSource.dispatch, aName, "canWrite");
   });
-  adminActions.forEach(actionName => {
-    guardedActions[actionName] = guardAction(actionName, "canAdmin");
+  adminActions.forEach(aName => {
+    guardedActions[aName] = guardAction(dataSource.dispatch, aName, "canAdmin");
   });
 
   const actions = {
     ...guardedActions,
+    PutPermissionRules: guardAction(
+      PutPermissionRules,
+      "PutPermissionRules",
+      "canAdmin"
+    ),
     // ListObjects,
     // CollectGarbage,
 

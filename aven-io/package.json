@@ -1,0 +1,32 @@
+{
+  "name": "aven-io",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "airtable": "^0.5.6",
+    "body-parser": "^1.18.3",
+    "express-enforces-ssl": "^1.1.0",
+    "helmet": "^3.13.0",
+    "json-stable-stringify": "^1.0.1",
+    "pg": "^7.4.3",
+    "square-connect": "^2.20180918.0",
+    "uuid": "^3.3.2",
+    "wget-improved": "^3.0.1",
+    "yes-https": "^0.0.4"
+  },
+  "aven": {
+    "publicAssetDir": "public",
+    "env": "web",
+    "moduleDependencies": ["@react-navigation/core", "@react-navigation/web"],
+    "envOptions": {
+      "mainServer": "MainServer.js",
+      "mainClient": "MainClient.js"
+    },
+    "srcDependencies": [
+      "aven-web",
+      "aven-cloud",
+      "aven-cloud-browser",
+      "aven-cloud-server"
+    ]
+  }
+}

@@ -28,9 +28,9 @@
 
 ## GetPermissions(auth?, refName)
 
-## PutAccountPermission(auth, refName, acctId, permissionObj)
+## PutAccountPermissionRule(auth, refName, acctId, permissionObj)
 
-## PutGlobalPermission(auth, refName, permission)
+## PutDefaultPermissionRule(auth, refName, permission)
 
 ## TransferOwnership(auth, refName, newOwnerAcctId)
 
@@ -56,10 +56,25 @@ AuthMethodState
 
 Permission
 
-- canRead
-- canWrite
-- canPut - allowed to write objects AND publish
-- canOwn - allowed to create direct children
+- canRead : can get and list data
+- canWrite : can put objects and put the ref
+- canOwn : allowed to create direct children and administrate them
+- canAdmin : deleting, change owner
+
+Rule
+
+- canRead : true to allow, false to block, null to pass through
+- canWrite : true to allow, false to block, null to pass through
+- canAdmin : true to allow, false to block, null to pass through
+- canOwn : true to allow, false to block, null to pass through
+
+Rules { // RWOA
+Block: '0000',
+CanRead: '1---',
+CanWrite: '11--',
+CanOwn: '--1-',
+CanAdmin: '1111',
+}
 
 UserAccount
 
