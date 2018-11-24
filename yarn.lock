@@ -126,9 +126,9 @@
   dependencies:
     rxjs "^6.2.2"
 
-"@react-navigation/core@https://github.com/react-navigation/react-navigation-core#fixparams":
+"@react-navigation/core@https://github.com/react-navigation/react-navigation-core.git#fixparams":
   version "3.0.0-alpha.19"
-  resolved "https://github.com/react-navigation/react-navigation-core#88565761e1f163fbf39d0f5ee547a0c500a5466d"
+  resolved "https://github.com/react-navigation/react-navigation-core.git#88565761e1f163fbf39d0f5ee547a0c500a5466d"
   dependencies:
     create-react-context "^0.2.3"
     hoist-non-react-statics "^3.0.1"
@@ -4555,9 +4555,9 @@ object.pick@^1.2.0, object.pick@^1.3.0:
   dependencies:
     isobject "^3.0.1"
 
-"objection@https://github.com/ericvicenti/objection.js":
+"objection@https://github.com/ericvicenti/objection.js.git":
   version "1.4.0"
-  resolved "https://github.com/ericvicenti/objection.js#2b42bc914f4729c8853b3e6355cc22854b28aa2c"
+  resolved "https://github.com/ericvicenti/objection.js.git#2b42bc914f4729c8853b3e6355cc22854b28aa2c"
   dependencies:
     ajv "^6.1.1"
     bluebird "^3.5.1"
