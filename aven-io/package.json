@@ -20,7 +20,9 @@
     "moduleDependencies": ["@react-navigation/core", "@react-navigation/web"],
     "envOptions": {
       "mainServer": "MainServer.js",
-      "mainClient": "MainClient.js"
+      "mainClient": "MainClient.js",
+      "deployEnv": "Heroku",
+      "herokuAppName": "aven-io"
     },
     "srcDependencies": [
       "aven-web",
