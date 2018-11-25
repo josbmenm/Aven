@@ -16,7 +16,6 @@ jobs:
           keys:
             - yarn-dependencies-{{ checksum "yarn.lock" }}
       - run: |
-          yarn cache clean
           yarn install --frozen-lockfile --network-concurrency 1
       - save_cache:
           key: yarn-dependencies-{{ checksum "yarn.lock" }}
