@@ -46,6 +46,7 @@ jobs:
           at: ~/project
       - run: |
           sudo apt install rsync
+          npm install -g heroku
           yarn deploy aven-io
 workflows:
   version: 2
