@@ -39,7 +39,12 @@ jobs:
       - store_artifacts:
           path: coverage
           destination: coverage
-
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run: yarn deploy aven-io
 workflows:
   version: 2
   build-and-test:
@@ -51,3 +56,7 @@ workflows:
       - tests:
           requires:
             - install-dependencies
+      - deploy:
+          requires:
+            - lint
+            - tests
