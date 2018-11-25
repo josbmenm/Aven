@@ -44,7 +44,9 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
-      - run: yarn deploy aven-io
+      - run: |
+          sudo apt install rsync
+          yarn deploy aven-io
 workflows:
   version: 2
   build-and-test:
