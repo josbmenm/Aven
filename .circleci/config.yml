@@ -46,6 +46,8 @@ jobs:
           at: ~/project
       - run: |
           sudo apt install rsync
+          git config --global user.email "admin@aven.io"
+          git config --global user.name "Aven Bot"
           yarn global add heroku
           yarn deploy aven-io
 workflows:
