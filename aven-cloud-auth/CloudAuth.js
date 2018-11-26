@@ -1,5 +1,5 @@
-import { uuid, checksum } from '../aven-cloud-utils/Crypto';
-import createDispatcher from '../aven-cloud-utils/createDispatcher';
+import { uuid, checksum } from "../aven-cloud-utils/Crypto";
+import createDispatcher from "../aven-cloud-utils/createDispatcher";
 
 function thanksVeryMuch(dispatch) {
   return async action => {
@@ -10,34 +10,34 @@ function thanksVeryMuch(dispatch) {
 }
 async function writeObj(dataSource, domain, name, value) {
   const obj = await thanksVeryMuch(dataSource.dispatch)({
-    type: 'PutObject',
+    type: "PutObject",
     domain,
     value,
-    name,
+    name
   });
   await thanksVeryMuch(dataSource.dispatch)({
-    type: 'PutRef',
+    type: "PutRef",
     domain,
     id: obj.id,
-    name,
+    name
   });
 }
 
 async function getObj(dataSource, domain, name) {
   const r = await thanksVeryMuch(dataSource.dispatch)({
     domain,
-    type: 'GetRef',
-    name,
+    type: "GetRef",
+    name
   });
   if (!r || !r.id) {
     return null;
   }
 
   const o = await thanksVeryMuch(dataSource.dispatch)({
-    type: 'GetObject',
+    type: "GetObject",
     name,
     domain,
-    id: r.id,
+    id: r.id
   });
   if (!o) {
     return o;
@@ -96,18 +96,18 @@ export default function CloudAuth({ dataSource, methods }) {
 
         return {
           verificationChallenge: requestedVerification.verificationChallenge,
-          methodId,
+          methodId
         };
       }
     }
 
-    throw new Error('No auth method matches this info and account!');
+    throw new Error("No auth method matches this info and account!");
   }
   async function PutAuthMethod({
     domain,
     auth,
     authInfo,
-    verificationResponse,
+    verificationResponse
   }) {
     const verifiedSession = await VerifySession({ auth, domain });
 
@@ -116,14 +116,14 @@ export default function CloudAuth({ dataSource, methods }) {
       !verifiedSession.accountId ||
       verifiedSession.accountId !== auth.accountId
     ) {
-      throw new Error('not authenticated');
+      throw new Error("not authenticated");
     }
 
     const authMethodVerification = await VerifyAuthMethod({
       accountId: verifiedSession.accountId,
       domain,
       authInfo,
-      verificationResponse,
+      verificationResponse
     });
     if (
       !authMethodVerification.accountId ||
@@ -141,7 +141,7 @@ export default function CloudAuth({ dataSource, methods }) {
     domain,
     authInfo,
     verificationResponse,
-    accountId,
+    accountId
   }) {
     if (!verificationResponse) {
       return CreateVerificationRequest({ domain, accountId, authInfo });
@@ -170,7 +170,7 @@ export default function CloudAuth({ dataSource, methods }) {
         accountId &&
         methodStoredAccountId !== accountId
       ) {
-        throw new Error('Auth method in use by another account!');
+        throw new Error("Auth method in use by another account!");
       }
 
       let nextMethodState = methodState;
@@ -178,7 +178,7 @@ export default function CloudAuth({ dataSource, methods }) {
         accountId: methodAccountId,
         authInfo,
         methodState,
-        verificationResponse,
+        verificationResponse
       });
       verifiedAccountId = verifiedMethodId = methodId;
       verifiedMethodName = methodToValidate.name;
@@ -193,12 +193,12 @@ export default function CloudAuth({ dataSource, methods }) {
     }
 
     if (!verifiedMethodId || !verifiedMethodName) {
-      throw new Error('Cannot verify auth method');
+      throw new Error("Cannot verify auth method");
     }
     return {
       verifiedMethodName,
       verifiedMethodId,
-      accountId: verifiedAccountId,
+      accountId: verifiedAccountId
     };
   }
 
@@ -206,13 +206,13 @@ export default function CloudAuth({ dataSource, methods }) {
     domain,
     accountId,
     authInfo,
-    verificationResponse,
+    verificationResponse
   }) {
     const verification = await VerifyAuthMethod({
       domain,
       accountId,
       authInfo,
-      verificationResponse,
+      verificationResponse
     });
 
     if (
@@ -231,7 +231,7 @@ export default function CloudAuth({ dataSource, methods }) {
       sessionId,
       methodId: verification.verifiedMethodId,
       token,
-      method: verification.verifiedMethodName,
+      method: verification.verifiedMethodName
     };
     await writeObj(
       dataSource,
@@ -240,7 +240,7 @@ export default function CloudAuth({ dataSource, methods }) {
       session
     );
     return {
-      session,
+      session
     };
   }
   async function CreateAnonymousSession({ domain }) {
@@ -249,15 +249,15 @@ export default function CloudAuth({ dataSource, methods }) {
     const token = uuid();
 
     const account = {
-      timeCreated: Date.now(),
+      timeCreated: Date.now()
     };
 
     const session = {
       timeCreated: Date.now(),
-      methodId: 'anonymous',
+      methodId: "anonymous",
       accountId,
       sessionId,
-      token,
+      token
     };
 
     await writeObj(dataSource, domain, `auth/account/${accountId}`, account);
@@ -271,24 +271,61 @@ export default function CloudAuth({ dataSource, methods }) {
     return { session };
   }
 
-  async function GetPermissions({ auth, name, domain }) {
-    let canRead = false;
-    let canWrite = false;
-    let canPost = false;
+  const Permissions = {
+    none: {
+      canRead: false,
+      canWrite: false,
+      canPost: false,
+      canAdmin: false
+    },
+    admin: {
+      canRead: true,
+      canWrite: true,
+      canPost: true,
+      canAdmin: true
+    }
+  };
+  const Rules = {
+    empty: {
+      canRead: null,
+      canWrite: null,
+      canPost: null,
+      canAdmin: null
+    }
+  };
+  const PermissionNames = ["canRead", "canWrite", "canPost", "canAdmin"];
 
+  async function GetPermissions({ auth, name, domain }) {
     const validated = await VerifySession({ auth, domain });
 
     if (!validated.accountId || validated.accountId !== auth.accountId) {
-      return { canRead, canWrite, canPost };
+      return Permissions.none;
     }
-    if (validated.method === 'root' && validated.accountId === 'root') {
-      canRead = true;
-      canWrite = true;
-      canPost = true;
+    if (validated.method === "root" && validated.accountId === "root") {
+      return Permissions.admin;
     }
 
-    console.log('hmm', name);
-    return { canRead, canWrite, canPost };
+    const authObjName = `${name}/_auth`;
+
+    const permissions = await getObj(dataSource, domain, authObjName);
+
+    const interpretedRule = {};
+
+    function applyPermission(permission) {
+      PermissionNames.forEach(permissionName => {
+        const p = permission[permissionName];
+        if (interpretedRule[permissionName] == null) {
+          interpretedRule[permissionName] = p;
+        }
+      });
+    }
+
+    applyPermission(permissions.defaultRule);
+
+    return {
+      ...Permissions.none,
+      ...interpretedRule
+    };
   }
 
   async function DestroySession({ auth, domain }) {
@@ -299,9 +336,9 @@ export default function CloudAuth({ dataSource, methods }) {
     }
 
     await dataSource.dispatch({
-      type: 'DestroyRef',
+      type: "DestroyRef",
       domain,
-      name: `auth/account/${auth.accountId}/session/${auth.sessionId}`,
+      name: `auth/account/${auth.accountId}/session/${auth.sessionId}`
     });
 
     return true; // uh
@@ -315,9 +352,9 @@ export default function CloudAuth({ dataSource, methods }) {
     }
 
     await dataSource.dispatch({
-      type: 'DestroyRef',
+      type: "DestroyRef",
       domain,
-      name: `auth/account/${auth.accountId}/session`,
+      name: `auth/account/${auth.accountId}/session`
     });
   }
 
@@ -326,22 +363,30 @@ export default function CloudAuth({ dataSource, methods }) {
     domain,
     name,
     rules,
-    defaultRule,
+    defaultRule
   }) {
-    console.log('putting permission rules!', {
-      auth,
-      domain,
-      name,
-      rules,
-      defaultRule,
-    });
+    const authObjName = `${name}/_auth`;
+
+    const lastPermissions = await getObj(dataSource, domain, authObjName);
+    const lastDefaultRule =
+      (lastPermissions && lastPermissions.defaultRule) || Rules.empty;
+    const lastRules = (lastPermissions && lastPermissions.rules) || [];
+
+    const permissions = {
+      ...lastPermissions,
+      rules: rules || lastRules,
+      defaultRule: defaultRule || lastDefaultRule,
+      lastWriteTime: Date.now()
+    };
+
+    await writeObj(dataSource, domain, authObjName, permissions);
   }
 
   const guardedActions = {};
 
-  const readActions = ['GetObject', 'GetRef', 'ListRefs', 'ListRefObjects'];
-  const writeActions = ['PutObject', 'PutRef'];
-  const adminActions = ['DestroyRef'];
+  const readActions = ["GetObject", "GetRef", "ListRefs", "ListRefObjects"];
+  const writeActions = ["PutObject", "PutRef"];
+  const adminActions = ["DestroyRef"];
 
   function guardAction(dispatch, actionType, permissionLevel) {
     return async action => {
@@ -351,32 +396,32 @@ export default function CloudAuth({ dataSource, methods }) {
       const p = await GetPermissions({
         auth: action.auth,
         name: action.name,
-        domain: action.domain,
+        domain: action.domain
       });
 
       if (!p[permissionLevel]) {
-        throw new Error('Insufficient permissions');
+        throw new Error("Insufficient permissions");
       }
       return await dispatch(action);
     };
   }
 
   readActions.forEach(aName => {
-    guardedActions[aName] = guardAction(dataSource.dispatch, aName, 'canRead');
+    guardedActions[aName] = guardAction(dataSource.dispatch, aName, "canRead");
   });
   writeActions.forEach(aName => {
-    guardedActions[aName] = guardAction(dataSource.dispatch, aName, 'canWrite');
+    guardedActions[aName] = guardAction(dataSource.dispatch, aName, "canWrite");
   });
   adminActions.forEach(aName => {
-    guardedActions[aName] = guardAction(dataSource.dispatch, aName, 'canAdmin');
+    guardedActions[aName] = guardAction(dataSource.dispatch, aName, "canAdmin");
   });
 
   const actions = {
     ...guardedActions,
     PutPermissionRules: guardAction(
       PutPermissionRules,
-      'PutPermissionRules',
-      'canAdmin'
+      "PutPermissionRules",
+      "canAdmin"
     ),
     // ListObjects,
     // CollectGarbage,
@@ -413,7 +458,7 @@ export default function CloudAuth({ dataSource, methods }) {
     // ## DestroyAuthMethod(auth, authInfo)
     // ## DestroyAccount(auth)
 
-    GetPermissions,
+    GetPermissions
     // ## GetPermissions(auth?, refName)
     // ## PutAccountPermission(auth, refName, acctId, permissionObj)
     // ## PutGlobalPermission(auth, refName, permission)
@@ -425,6 +470,6 @@ export default function CloudAuth({ dataSource, methods }) {
   const dispatch = createDispatcher(actions, dataSource.dispatch);
   return {
     ...dataSource,
-    dispatch,
+    dispatch
   };
 }
