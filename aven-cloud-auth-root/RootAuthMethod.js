@@ -1,8 +1,8 @@
 import { compareSecureString } from '../aven-cloud-utils/Crypto';
 
 export default function RootAuthMethod({ rootPasswordHash }) {
-  function canVerify(authInfo, accountId) {
-    if (authInfo.type === 'root') {
+  function canVerify(verificationInfo, accountId) {
+    if (verificationInfo.type === 'root') {
       return true;
     }
     if (accountId === 'root') {
@@ -15,13 +15,13 @@ export default function RootAuthMethod({ rootPasswordHash }) {
     return 'auth-root';
   }
 
-  async function requestVerification({ authInfo, methodState }) {
+  async function requestVerification({ verificationInfo, methodState }) {
     return {
       ...methodState,
       verificationChallenge: {
         message: 'Provide Password', // this isn't really used..
       },
-      authInfo,
+      verificationInfo,
     };
   }
 

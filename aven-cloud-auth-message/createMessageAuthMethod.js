@@ -3,33 +3,39 @@ import { checksum, genAuthCode } from '../aven-cloud-utils/Crypto';
 export default function createMessageAuthMethod({
   authMethodName,
   sendVerification,
-  identifyAuthInfo,
+  identifyAuth,
 }) {
-  function canVerify(authInfo) {
-    if (identifyAuthInfo(authInfo) === null) {
+  function canVerify(verificationInfo) {
+    if (identifyAuth(verificationInfo) === null) {
       return false;
     }
     return true;
   }
 
-  async function getMethodId(authInfo) {
-    return `${authMethodName}-${await checksum(identifyAuthInfo(authInfo))}`;
+  async function getMethodId(verificationInfo) {
+    return `${authMethodName}-${await checksum(
+      identifyAuth(verificationInfo)
+    )}`;
   }
 
-  async function requestVerification({ authInfo, methodState, accountId }) {
+  async function requestVerification({
+    verificationInfo,
+    methodState,
+    accountId,
+  }) {
     const verificationKey = await genAuthCode();
 
     // todo, check recent verification send time and avoid sending again
-    await sendVerification(authInfo, verificationKey, accountId);
+    await sendVerification(verificationInfo, verificationKey, accountId);
 
     return {
       ...methodState,
       verificationKey,
       verificationSendTime: Date.now(),
       verificationChallenge: {
-        ...authInfo,
+        ...verificationInfo,
       },
-      authInfo,
+      verificationInfo,
     };
   }
 

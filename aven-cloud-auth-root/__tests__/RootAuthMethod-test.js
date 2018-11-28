@@ -9,11 +9,11 @@ describe('Auth method behavior', () => {
 
     const method = RootAuthMethod({ rootPasswordHash });
 
-    const authInfo = { type: 'root' };
+    const verificationInfo = { type: 'root' };
 
     const verified = await method.performVerification({
       accountId: 'root',
-      authInfo,
+      verificationInfo,
       methodState: undefined,
       verificationResponse: { password },
     });

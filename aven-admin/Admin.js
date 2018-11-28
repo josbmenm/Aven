@@ -223,7 +223,7 @@ function Form({ children }) {
   );
 }
 
-function LoginForm({ onClientConfig, defaultSession }) {
+function ConnectionForm({ onClientConfig, defaultSession }) {
   const [authority, setAuthority] = useState(defaultSession.authority);
   const [domain, setDomain] = useState(defaultSession.domain);
   const [useSSL, setUseSSL] = useState(false);
@@ -246,7 +246,6 @@ function LoginForm({ onClientConfig, defaultSession }) {
             useSSL,
             domain,
           });
-          navigate('Home');
         }}
       />
     </Form>
@@ -284,12 +283,117 @@ function LargePane({ children }) {
   );
 }
 
+function EmailLoginInfo() {
+  const [email, setEmail] = useState('');
+  return <InputField name="Email Address" value={email} onValue={setEmail} />;
+}
+
+function SMSLoginInfo() {
+  const [phone, setPhone] = useState('');
+  return <InputField name="Phone Number" value={phone} onValue={setPhone} />;
+}
+
+function RootLoginInfo({ loginInfo, setLoginInfo }) {
+  return (
+    <InputField
+      name="Password"
+      value={loginInfo && loginInfo.password}
+      onValue={password => setLoginInfo({ password })}
+    />
+  );
+}
+
+function PasswordLoginInfo() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  return (
+    <React.Fragment>
+      <InputField name="Username" value={username} onValue={setUsername} />
+      <InputField name="Password" value={password} onValue={setPassword} />
+    </React.Fragment>
+  );
+}
+
+function LoginInfo({ mode, ...props }) {
+  switch (mode) {
+    case 'email':
+      return <EmailLoginInfo {...props} />;
+    case 'sms':
+      return <SMSLoginInfo {...props} />;
+    case 'password':
+      return <PasswordLoginInfo {...props} />;
+    case 'root':
+    default:
+      return <RootLoginInfo {...props} />;
+  }
+}
+
+function LoginForm() {
+  const [isWorking, setIsWorking] = useState(false);
+  const [loginInfo, setLoginInfo] = useState(null);
+  const [mode, setMode] = useState('root');
+  const { navigate } = useNavigation();
+  if (isWorking) {
+    return <Text>One moment..</Text>;
+  }
+  const cloud = useCloud();
+  return (
+    <Form>
+      <select
+        value={mode}
+        onChange={e => {
+          setMode(e.target.value);
+        }}
+      >
+        <option value="root">Root Authentication</option>
+        <option value="email">Email</option>
+        <option value="sms">Phone Number</option>
+        <option value="password">Password</option>
+      </select>
+      <LoginInfo
+        mode={mode}
+        loginInfo={loginInfo}
+        setLoginInfo={setLoginInfo}
+      />
+      {!!loginInfo && (
+        <FormButton
+          title="Login"
+          onPress={async () => {
+            setIsWorking(true);
+            await cloud.CreateSession({
+              accountId: loginInfo.accountId,
+              verificationResponse: loginInfo.verificationResponse,
+              verificationInfo: loginInfo.verificationInfo,
+            });
+            console.log('hi there', loginInfo);
+          }}
+        />
+      )}
+    </Form>
+  );
+}
+
 function LoginPane({ onClientConfig, defaultSession }) {
+  const cloud = useCloud();
+  console.log('uhh', cloud);
+  if (cloud) {
+    return (
+      <Pane>
+        <Hero title="Login" />
+        <View>
+          <LoginForm
+            onClientConfig={onClientConfig}
+            defaultSession={defaultSession}
+          />
+        </View>
+      </Pane>
+    );
+  }
   return (
     <Pane>
-      <Hero title="Login" />
+      <Hero title="Connect" />
       <View>
-        <LoginForm
+        <ConnectionForm
           onClientConfig={onClientConfig}
           defaultSession={defaultSession}
         />
@@ -707,6 +811,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
     },
     [sessionState.clientConfig]
   );
+  console.log('RENDER APP', sessionState, client);
 
   const activeRoute = useActiveRoute();
 

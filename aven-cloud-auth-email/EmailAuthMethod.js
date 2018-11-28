@@ -2,15 +2,15 @@ import createMessageAuthMethod from '../aven-cloud-auth-message/createMessageAut
 
 export default function EmailAuthMethod({ agent }) {
   const authMethodName = 'email';
-  function identifyAuthInfo(authInfo) {
-    if (!authInfo || !authInfo.email) {
+  function identifyInfo(verificationInfo) {
+    if (!verificationInfo || !verificationInfo.email) {
       return null;
     }
-    return String(authInfo.email);
+    return String(verificationInfo.email);
   }
-  async function sendVerification(authInfo, verifyCode) {
+  async function sendVerification(verificationInfo, verifyCode) {
     await agent.actions.SendEmail({
-      to: authInfo.email,
+      to: verificationInfo.email,
       subject: 'welcome',
       message: `Your code is ${verifyCode}`,
     });
@@ -19,6 +19,6 @@ export default function EmailAuthMethod({ agent }) {
   return createMessageAuthMethod({
     authMethodName,
     sendVerification,
-    identifyAuthInfo,
+    identifyInfo,
   });
 }

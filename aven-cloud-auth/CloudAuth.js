@@ -56,7 +56,7 @@ export default function CloudAuth({ dataSource, methods }) {
 
     if (auth.accountId) {
       const v = await VerifyAuthMethod({
-        authInfo: auth.verificationInfo, //renaming to verif
+        verificationInfo: auth.verificationInfo,
         domain,
         accountId: auth.accountId,
         verificationResponse: auth.verificationResponse,
@@ -98,7 +98,11 @@ export default function CloudAuth({ dataSource, methods }) {
     return { ...savedSession, accountId };
   }
 
-  async function CreateVerificationRequest({ domain, accountId, authInfo }) {
+  async function CreateVerificationRequest({
+    domain,
+    accountId,
+    verificationInfo,
+  }) {
     let methodsToValidate = [...methods];
 
     let validatedAccountId = null;
@@ -106,8 +110,8 @@ export default function CloudAuth({ dataSource, methods }) {
     while (methodsToValidate.length && !validatedAccountId) {
       const methodToValidate = methodsToValidate[0];
 
-      if (methodToValidate.canVerify(authInfo, accountId)) {
-        const methodId = await methodToValidate.getMethodId(authInfo);
+      if (methodToValidate.canVerify(verificationInfo, accountId)) {
+        const methodId = await methodToValidate.getMethodId(verificationInfo);
         const methodStateRefName = `auth/method/${methodId}`;
 
         const methodState = await getObj(
@@ -117,7 +121,7 @@ export default function CloudAuth({ dataSource, methods }) {
         );
 
         const requestedVerification = await methodToValidate.requestVerification(
-          { authInfo, methodState }
+          { verificationInfo, methodState }
         );
 
         await writeObj(
@@ -139,7 +143,7 @@ export default function CloudAuth({ dataSource, methods }) {
   async function PutAuthMethod({
     domain,
     auth,
-    authInfo,
+    verificationInfo,
     verificationResponse,
   }) {
     const verifiedSession = await VerifySession({ auth, domain });
@@ -155,7 +159,7 @@ export default function CloudAuth({ dataSource, methods }) {
     const authMethodVerification = await VerifyAuthMethod({
       accountId: verifiedSession.accountId,
       domain,
-      authInfo,
+      verificationInfo,
       verificationResponse,
     });
     if (
@@ -172,12 +176,12 @@ export default function CloudAuth({ dataSource, methods }) {
 
   async function VerifyAuthMethod({
     domain,
-    authInfo,
+    verificationInfo,
     verificationResponse,
     accountId,
   }) {
     if (!verificationResponse) {
-      return CreateVerificationRequest({ domain, accountId, authInfo });
+      return CreateVerificationRequest({ domain, accountId, verificationInfo });
     }
 
     let methodsToValidate = [...methods];
@@ -189,10 +193,10 @@ export default function CloudAuth({ dataSource, methods }) {
     while (methodsToValidate.length && !verifiedMethodId) {
       const methodToValidate = methodsToValidate[0];
       methodsToValidate = methodsToValidate.slice(1);
-      if (!methodToValidate.canVerify(authInfo, accountId)) {
+      if (!methodToValidate.canVerify(verificationInfo, accountId)) {
         continue;
       }
-      const methodId = await methodToValidate.getMethodId(authInfo);
+      const methodId = await methodToValidate.getMethodId(verificationInfo);
       const methodStateRefName = `auth/method/${methodId}`;
       const methodState = await getObj(dataSource, domain, methodStateRefName);
       const methodStoredAccountId = methodState && methodState.accountId;
@@ -209,7 +213,7 @@ export default function CloudAuth({ dataSource, methods }) {
       let nextMethodState = methodState;
       nextMethodState = await methodToValidate.performVerification({
         accountId: methodAccountId,
-        authInfo,
+        verificationInfo,
         methodState,
         verificationResponse,
       });
@@ -238,13 +242,13 @@ export default function CloudAuth({ dataSource, methods }) {
   async function CreateSession({
     domain,
     accountId,
-    authInfo,
+    verificationInfo,
     verificationResponse,
   }) {
     const verification = await VerifyAuthMethod({
       domain,
       accountId,
-      authInfo,
+      verificationInfo,
       verificationResponse,
     });
 
@@ -408,7 +412,7 @@ export default function CloudAuth({ dataSource, methods }) {
     accountRules,
     defaultRule,
   }) {
-    const authObjName = `${name}/_auth`;
+    const authObjName = name ? `${name}/_auth` : '_auth';
 
     const lastPermissions = await getObj(dataSource, domain, authObjName);
     const lastDefaultRule =
@@ -454,7 +458,11 @@ export default function CloudAuth({ dataSource, methods }) {
       });
 
       if (!p[permissionLevel]) {
-        throw new Error('Insufficient permissions');
+        throw new Error(
+          `Insufficient permissions for "${actionType}" on ${
+            action.name
+          }. Requires "${permissionLevel}"`
+        );
       }
       return await dispatch(action);
     };
@@ -482,49 +490,14 @@ export default function CloudAuth({ dataSource, methods }) {
       'GetPermissionRules',
       'canAdmin'
     ),
-    // ListObjects,
-    // CollectGarbage,
-
-    // can admin:
-    // DestroyRef,
-    // TransferOwnership,
-
-    // can write:
-    // PutObject,
-    // PutRef,
-
-    // can read:
-    // GetRef,
-    // GetObject,
-    // ListRefObjects
-    // ListRefs,
-
-    // anyone:
-    // GetStatus,
-    // ListDomains,
-
     CreateSession,
     CreateAnonymousSession,
     DestroySession,
     DestroyAllSessions,
     VerifySession,
     VerifyAuth,
-
-    // ## PutAccountId(auth, newAccountId)
-    // only the current session will move over
     PutAuthMethod,
-    // ## PutAuthMethod(auth, authInfo, challengeResponse?)
-    // optionally run twice, first time without challengeResponse
-    // ## DestroyAuthMethod(auth, authInfo)
-    // ## DestroyAccount(auth)
-
     GetPermissions,
-    // ## GetPermissions(auth?, refName)
-    // ## PutAccountPermission(auth, refName, acctId, permissionObj)
-    // ## PutGlobalPermission(auth, refName, permission)
-
-    // ## TransferOwnership(auth, refName, newOwnerAcctId)
-    // ## AcceptOwnership(auth, refName)
   };
 
   const dispatch = createDispatcher(actions, dataSource.dispatch);

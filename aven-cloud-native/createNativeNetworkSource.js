@@ -106,7 +106,6 @@ export default function createNativeNetworkSource(opts) {
       isConnected.next(false);
     };
     ws.onerror = e => {
-      console.error(e);
       isConnected.next(false);
     };
     ws.onmessage = msg => {

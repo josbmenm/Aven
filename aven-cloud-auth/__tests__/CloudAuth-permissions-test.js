@@ -28,7 +28,7 @@ async function establishPermissionsTestData() {
   const rootSessionCreated = await authDataSource.dispatch({
     type: 'CreateSession',
     domain: 'test',
-    authInfo: {
+    verificationInfo: {
       type: 'root',
     },
     accountId: 'root',
@@ -83,7 +83,7 @@ describe('Cloud auth Permissions', () => {
     const { session } = await authDataSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
-      authInfo: {
+      verificationInfo: {
         type: 'root',
       },
       accountId: 'root',

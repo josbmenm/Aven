@@ -1,4 +1,5 @@
 import { default as withObs } from '@nozbe/with-observables';
+import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import { Observable, BehaviorSubject } from 'rxjs-compat';
 
 import createCloudRef from './createCloudRef';
@@ -11,6 +12,8 @@ const uniqueOrdered = items =>
 export default function createCloudClient({ dataSource, domain }) {
   const _refs = {};
   const _objects = {};
+
+  let session = null;
 
   if (domain == null) {
     throw new Error(`domain must be provided to createCloudClient!`);
@@ -55,8 +58,32 @@ export default function createCloudClient({ dataSource, domain }) {
     knownRefs.next(knownRefs.value.filter(r => r.name !== ref.name));
   }
 
+  async function CreateSession({
+    verificationInfo,
+    verificationResponse,
+    accountId,
+  }) {
+    const created = await dataSource.dispatch({
+      type: 'CreateSession',
+      domain,
+      accountId,
+      verificationResponse,
+      verificationInfo,
+    });
+    console.log('CREATEDDDDD', created);
+    return created;
+  }
+
+  const actions = {
+    CreateSession,
+  };
+
+  const dispatch = createDispatcher(actions, dataSource.dispatch);
+
   return {
     ...dataSource,
+    CreateSession,
+    dispatch,
     domain,
     destroyRef,
     getRef,

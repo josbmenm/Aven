@@ -18,7 +18,7 @@ describe('Cloud auth sessions', () => {
     const { session } = await authDataSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
-      authInfo: {
+      verificationInfo: {
         type: 'root',
       },
       accountId: 'root',
@@ -69,7 +69,7 @@ describe('Cloud auth sessions', () => {
     const { session } = await authDataSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
-      authInfo: {
+      verificationInfo: {
         type: 'root',
       },
       accountId: 'root',
@@ -102,7 +102,7 @@ describe('Cloud auth sessions', () => {
     const { session } = await authDataSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
-      authInfo: {
+      verificationInfo: {
         type: 'root',
       },
       accountId: 'root',

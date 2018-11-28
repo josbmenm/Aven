@@ -10,11 +10,11 @@ describe('Auth messaging behavior', () => {
 
     const authMethodName = 'example-method';
 
-    function identifyAuthInfo(authInfo) {
-      if (!authInfo || !authInfo.address) {
+    function identifyAuth(verificationInfo) {
+      if (!verificationInfo || !verificationInfo.address) {
         return null;
       }
-      return String(authInfo.address);
+      return String(verificationInfo.address);
     }
 
     const sendVerification = jest.fn();
@@ -22,7 +22,7 @@ describe('Auth messaging behavior', () => {
     const method = createMessageAuthMethod({
       authMethodName,
       sendVerification,
-      identifyAuthInfo,
+      identifyAuth,
     });
 
     const authDataSource = CloudAuth({ dataSource, methods: [method] });
@@ -30,7 +30,7 @@ describe('Auth messaging behavior', () => {
     await authDataSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
-      authInfo: {
+      verificationInfo: {
         address: 'foobar',
       },
       accountId: 'foo',
@@ -43,7 +43,7 @@ describe('Auth messaging behavior', () => {
     const createSessionResp = await authDataSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
-      authInfo: {
+      verificationInfo: {
         address: 'foobar',
       },
       verificationResponse: {
@@ -62,11 +62,11 @@ describe('Auth messaging behavior', () => {
 
     const authMethodName = 'example-method';
 
-    function identifyAuthInfo(authInfo) {
-      if (!authInfo || !authInfo.address) {
+    function identifyAuth(verificationInfo) {
+      if (!verificationInfo || !verificationInfo.address) {
         return null;
       }
-      return String(authInfo.address);
+      return String(verificationInfo.address);
     }
 
     const sendVerification = jest.fn();
@@ -74,7 +74,7 @@ describe('Auth messaging behavior', () => {
     const method = createMessageAuthMethod({
       authMethodName,
       sendVerification,
-      identifyAuthInfo,
+      identifyAuth,
     });
 
     const authDataSource = CloudAuth({ dataSource, methods: [method] });
@@ -90,7 +90,7 @@ describe('Auth messaging behavior', () => {
       type: 'PutAuthMethod',
       domain: 'test',
       auth: session,
-      authInfo: { address, context: 'heyo!' },
+      verificationInfo: { address, context: 'heyo!' },
     });
     expect(sendVerification.mock.calls[0][0].address).toEqual(address);
     expect(sendVerification.mock.calls[0][0].context).toEqual('heyo!');
@@ -100,7 +100,7 @@ describe('Auth messaging behavior', () => {
       type: 'PutAuthMethod',
       domain: 'test',
       auth: session,
-      authInfo: { address },
+      verificationInfo: { address },
       verificationResponse: {
         key: sendVerification.mock.calls[0][1],
       },
@@ -110,7 +110,7 @@ describe('Auth messaging behavior', () => {
     await authDataSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
-      authInfo: { address },
+      verificationInfo: { address },
     });
     expect(sendVerification.mock.calls[1][1].length).toEqual(6);
     expect(sendVerification.mock.calls[1][1]).not.toEqual(
@@ -120,7 +120,7 @@ describe('Auth messaging behavior', () => {
     const newSessionCreation = await authDataSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
-      authInfo: { address },
+      verificationInfo: { address },
       verificationResponse: {
         key: sendVerification.mock.calls[1][1],
       },
