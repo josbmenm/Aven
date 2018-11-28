@@ -9,7 +9,7 @@ export default function EmailAgent({ config, defaultFromEmail, name }) {
   sg.setApiKey(sendgridAPIKey);
 
   const actions = {
-    sendEmail: async ({ to, subject, message, from, fromName }) => {
+    SendEmail: async ({ to, subject, message, from, fromName }) => {
       const finalFromEmail = from ? `${fromName} <${from}>` : defaultFromEmail;
 
       await sg.send({

@@ -46,6 +46,42 @@ function Home() {
   );
 }
 
+const DocsRouter = SwitchRouter({
+  DocsOverview: require('./docs/Aven-Overview').default,
+  AuthMethods: require('./docs/Auth-Methods').default,
+});
+
+function Sidebar({ descriptors }) {
+  return (
+    <View style={{ borderBottomWidth: 1, height: 50 }}>
+      {Object.keys(descriptors).map(descriptorId => {
+        return (
+          <Link key={descriptorId} routeName={descriptorId}>
+            {descriptorId}
+          </Link>
+        );
+      })}
+    </View>
+  );
+}
+
+function SidebarView({ navigation, descriptors }) {
+  const { state } = navigation;
+  const route = state.routes[state.index];
+  const descriptor = descriptors[route.key];
+  return (
+    <View style={{ flex: 1, flexDirection: 'row' }}>
+      <Sidebar descriptors={descriptors} navigation={navigation} />
+      <SceneView
+        component={descriptor.getComponent()}
+        navigation={descriptor.navigation}
+      />
+    </View>
+  );
+}
+
+const Docs = createNavigator(SidebarView, DocsRouter, {});
+
 function About() {
   return (
     <View style={{ flex: 1 }}>
@@ -60,6 +96,13 @@ const AppRouter = SwitchRouter({
     path: '',
     navigationOptions: {
       title: 'Aven',
+    },
+  },
+  Docs: {
+    screen: Docs,
+    path: 'docs',
+    navigationOptions: {
+      title: 'Aven Docs',
     },
   },
   About: {

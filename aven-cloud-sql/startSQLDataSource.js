@@ -29,14 +29,15 @@ export default async function startSQLDataSource({ client, connection }) {
       .limit(1);
     const ref = results[0];
     if (!ref) {
-      return null;
+      return {};
     }
-    _announceRef(domain, name, {
+    const renderedRef = {
       domain,
       name,
       id: ref.currentObject,
-    });
-    return ref;
+    };
+    _announceRef(domain, name, renderedRef);
+    return renderedRef;
   }
 
   const models = {};
@@ -72,7 +73,6 @@ export default async function startSQLDataSource({ client, connection }) {
     const sha = crypto.createHash('sha1');
     sha.update(objData);
     const id = sha.digest('hex');
-    console.log('HEY', name, domain);
     try {
       await models.Object.query().insertGraph(
         {
@@ -95,7 +95,6 @@ export default async function startSQLDataSource({ client, connection }) {
         }
       }
     }
-    console.log('HO', name, domain);
 
     return { id };
   }

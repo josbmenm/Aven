@@ -46,6 +46,39 @@ async function getObj(dataSource, domain, name) {
 }
 
 export default function CloudAuth({ dataSource, methods }) {
+  async function VerifyAuth({ auth, domain }) {
+    if (!auth) {
+      return {};
+    }
+    if (auth.sessionId) {
+      return await VerifySession({ auth, domain });
+    }
+
+    if (auth.accountId) {
+      const v = await VerifyAuthMethod({
+        authInfo: auth.verificationInfo, //renaming to verif
+        domain,
+        accountId: auth.accountId,
+        verificationResponse: auth.verificationResponse,
+      });
+
+      if (
+        !v.accountId ||
+        !v.verifiedMethodId ||
+        !v.verifiedMethodName ||
+        v.accountId !== auth.accountId
+      ) {
+        throw new Error('Cannot validate authentication');
+      }
+      return {
+        accountId: v.accountId,
+        method: v.verifiedMethodName,
+      };
+    }
+
+    return {};
+  }
+
   async function VerifySession({ auth, domain }) {
     if (!auth) {
       return { accountId: null };
@@ -156,7 +189,7 @@ export default function CloudAuth({ dataSource, methods }) {
     while (methodsToValidate.length && !verifiedMethodId) {
       const methodToValidate = methodsToValidate[0];
       methodsToValidate = methodsToValidate.slice(1);
-      if (!methodToValidate.canVerify(authInfo, verifiedMethodId)) {
+      if (!methodToValidate.canVerify(authInfo, accountId)) {
         continue;
       }
       const methodId = await methodToValidate.getMethodId(authInfo);
@@ -296,12 +329,9 @@ export default function CloudAuth({ dataSource, methods }) {
   const PermissionNames = ['canRead', 'canWrite', 'canPost', 'canAdmin'];
 
   async function GetPermissions({ auth, name, domain }) {
-    const validated = await VerifySession({ auth, domain });
+    const validatedAuth = await VerifyAuth({ auth, domain });
 
-    if (!validated.accountId || validated.accountId !== auth.accountId) {
-      return Permissions.none;
-    }
-    if (validated.method === 'root' && validated.accountId === 'root') {
+    if (validatedAuth.method === 'root' && validatedAuth.accountId === 'root') {
       return Permissions.admin;
     }
 
@@ -311,20 +341,32 @@ export default function CloudAuth({ dataSource, methods }) {
 
     const interpretedRule = {};
 
-    function applyPermission(permission) {
+    function applyRule(permissionRule) {
       PermissionNames.forEach(permissionName => {
-        const p = permission[permissionName];
+        const p = permissionRule[permissionName];
         if (interpretedRule[permissionName] == null) {
           interpretedRule[permissionName] = p;
         }
       });
     }
 
-    applyPermission(permissions.defaultRule);
+    permissions &&
+      permissions.defaultRule &&
+      applyRule(permissions.defaultRule);
+
+    permissions &&
+      permissions.accountRules &&
+      permissions.accountRules[validatedAuth.accountId] &&
+      applyRule(permissions.accountRules[validatedAuth.accountId]);
 
     return {
-      ...Permissions.none,
-      ...interpretedRule,
+      canRead:
+        interpretedRule.canRead ||
+        interpretedRule.canWrite ||
+        interpretedRule.canAdmin,
+      canWrite: interpretedRule.canWrite || interpretedRule.canAdmin,
+      canPost: interpretedRule.canPost || interpretedRule.canAdmin,
+      canAdmin: interpretedRule.canAdmin,
     };
   }
 
@@ -362,7 +404,7 @@ export default function CloudAuth({ dataSource, methods }) {
     auth,
     domain,
     name,
-    rules,
+    accountRules,
     defaultRule,
   }) {
     const authObjName = `${name}/_auth`;
@@ -370,16 +412,27 @@ export default function CloudAuth({ dataSource, methods }) {
     const lastPermissions = await getObj(dataSource, domain, authObjName);
     const lastDefaultRule =
       (lastPermissions && lastPermissions.defaultRule) || Rules.empty;
-    const lastRules = (lastPermissions && lastPermissions.rules) || [];
+    const lastAccountRules =
+      (lastPermissions && lastPermissions.accountRules) || {};
 
     const permissions = {
       ...lastPermissions,
-      rules: rules || lastRules,
+      accountRules: {
+        ...lastAccountRules,
+        ...accountRules,
+      },
       defaultRule: defaultRule || lastDefaultRule,
       lastWriteTime: Date.now(),
     };
 
     await writeObj(dataSource, domain, authObjName, permissions);
+  }
+
+  async function GetPermissionRules({ auth, domain, name }) {
+    const authObjName = `${name}/_auth`;
+
+    const lastPermissions = await getObj(dataSource, domain, authObjName);
+    return lastPermissions;
   }
 
   const guardedActions = {};
@@ -423,6 +476,11 @@ export default function CloudAuth({ dataSource, methods }) {
       'PutPermissionRules',
       'canAdmin'
     ),
+    GetPermissionRules: guardAction(
+      GetPermissionRules,
+      'GetPermissionRules',
+      'canAdmin'
+    ),
     // ListObjects,
     // CollectGarbage,
 
@@ -449,6 +507,7 @@ export default function CloudAuth({ dataSource, methods }) {
     DestroySession,
     DestroyAllSessions,
     VerifySession,
+    VerifyAuth,
 
     // ## PutAccountId(auth, newAccountId)
     // only the current session will move over

@@ -4,6 +4,70 @@ import RootAuthMethod from '../../aven-cloud-auth-root/RootAuthMethod';
 
 import { hashSecureString } from '../../aven-cloud-utils/Crypto';
 
+async function establishPermissionsTestData() {
+  const dataSource = startMemoryDataSource({ domain: 'test' });
+
+  const password = 'secret, foo';
+  const rootPasswordHash = await hashSecureString(password);
+  const rootMethod = RootAuthMethod({
+    rootPasswordHash,
+  });
+
+  const authDataSource = CloudAuth({ dataSource, methods: [rootMethod] });
+
+  const anonSessionCreated = await authDataSource.dispatch({
+    type: 'CreateAnonymousSession',
+    domain: 'test',
+  });
+  const anonSession = anonSessionCreated.session;
+  const anonSession2Created = await authDataSource.dispatch({
+    type: 'CreateAnonymousSession',
+    domain: 'test',
+  });
+  const anonSession2 = anonSession2Created.session;
+  const rootSessionCreated = await authDataSource.dispatch({
+    type: 'CreateSession',
+    domain: 'test',
+    authInfo: {
+      type: 'root',
+    },
+    accountId: 'root',
+    verificationResponse: { password },
+  });
+  const rootSession = rootSessionCreated.session;
+
+  const fooObj = await authDataSource.dispatch({
+    type: 'PutObject',
+    auth: rootSession,
+    domain: 'test',
+    name: 'something',
+    value: { foo: 'bar' },
+  });
+  const barObj = await authDataSource.dispatch({
+    type: 'PutObject',
+    auth: rootSession,
+    domain: 'test',
+    name: 'something',
+    value: { foo: 'baz' },
+  });
+
+  await authDataSource.dispatch({
+    type: 'PutRef',
+    auth: rootSession,
+    domain: 'test',
+    name: 'something',
+    id: fooObj.id,
+  });
+  return {
+    fooObj,
+    barObj,
+    authDataSource,
+    rootSession,
+    anonSession,
+    anonSession2,
+  };
+}
+
 describe('Cloud auth Permissions', () => {
   test('permissions are roughly respected', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
@@ -54,58 +118,16 @@ describe('Cloud auth Permissions', () => {
     });
   });
 
-  test('put permissions works', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+  test('default read permission', async () => {
+    const {
+      fooObj,
+      barObj,
+      rootSession,
+      anonSession,
+      authDataSource,
+    } = await establishPermissionsTestData();
 
-    const password = 'secret, foo';
-    const rootPasswordHash = await hashSecureString(password);
-    const rootMethod = RootAuthMethod({
-      rootPasswordHash,
-    });
-
-    const authDataSource = CloudAuth({ dataSource, methods: [rootMethod] });
-
-    const anonSessionCreated = await authDataSource.dispatch({
-      type: 'CreateAnonymousSession',
-      domain: 'test',
-    });
-    const anonSession = anonSessionCreated.session;
-    const rootSessionCreated = await authDataSource.dispatch({
-      type: 'CreateSession',
-      domain: 'test',
-      authInfo: {
-        type: 'root',
-      },
-      accountId: 'root',
-      verificationResponse: { password },
-    });
-    const rootSession = rootSessionCreated.session;
     let result = null;
-
-    expect(typeof anonSession.accountId).toEqual('string');
-    expect(typeof rootSession.accountId).toEqual('string');
-    const fooBar = await authDataSource.dispatch({
-      type: 'PutObject',
-      auth: rootSession,
-      domain: 'test',
-      name: 'something',
-      value: { foo: 'bar' },
-    });
-    const fooBaz = await authDataSource.dispatch({
-      type: 'PutObject',
-      auth: rootSession,
-      domain: 'test',
-      name: 'something',
-      value: { foo: 'baz' },
-    });
-
-    await authDataSource.dispatch({
-      type: 'PutRef',
-      auth: rootSession,
-      domain: 'test',
-      name: 'something',
-      id: fooBar.id,
-    });
 
     await expect(
       authDataSource.dispatch({
@@ -124,13 +146,6 @@ describe('Cloud auth Permissions', () => {
       defaultRule: {
         canRead: true,
       },
-      // rules: [
-      //   {
-      //     accountId: anonSession.accountId,
-      //     canWrite: true,
-      //     canOwn: true,
-      //   }
-      // ]
     });
 
     result = await authDataSource.dispatch({
@@ -139,7 +154,7 @@ describe('Cloud auth Permissions', () => {
       domain: 'test',
       name: 'something',
     });
-    expect(result.id).toEqual(fooBar.id);
+    expect(result.id).toEqual(fooObj.id);
 
     result = await authDataSource.dispatch({
       type: 'GetObject',
@@ -149,5 +164,246 @@ describe('Cloud auth Permissions', () => {
       id: result.id,
     });
     expect(result.object.foo).toEqual('bar');
+  });
+
+  test('account read permission', async () => {
+    const {
+      fooObj,
+      barObj,
+      rootSession,
+      anonSession,
+      authDataSource,
+    } = await establishPermissionsTestData();
+
+    let result = null;
+
+    await expect(
+      authDataSource.dispatch({
+        type: 'GetRef',
+        auth: anonSession,
+        domain: 'test',
+        name: 'something',
+      })
+    ).rejects.toThrow();
+
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: rootSession,
+      domain: 'test',
+      name: 'something',
+      defaultRule: {},
+      accountRules: {
+        [anonSession.accountId]: {
+          canRead: true,
+        },
+      },
+    });
+
+    result = await authDataSource.dispatch({
+      type: 'GetRef',
+      auth: anonSession,
+      domain: 'test',
+      name: 'something',
+    });
+    expect(result.id).toEqual(fooObj.id);
+
+    result = await authDataSource.dispatch({
+      type: 'GetObject',
+      auth: anonSession,
+      domain: 'test',
+      name: 'something',
+      id: result.id,
+    });
+    expect(result.object.foo).toEqual('bar');
+    await expect(
+      authDataSource.dispatch({
+        type: 'GetRef',
+        domain: 'test',
+        name: 'something',
+      })
+    ).rejects.toThrow();
+  });
+
+  test('account write permission', async () => {
+    const {
+      fooObj,
+      barObj,
+      rootSession,
+      anonSession,
+      authDataSource,
+    } = await establishPermissionsTestData();
+
+    let result = null;
+
+    await expect(
+      authDataSource.dispatch({
+        type: 'GetRef',
+        auth: anonSession,
+        domain: 'test',
+        name: 'something',
+      })
+    ).rejects.toThrow();
+
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: rootSession,
+      domain: 'test',
+      name: 'something',
+      defaultRule: {},
+      accountRules: {
+        [anonSession.accountId]: {
+          canWrite: true,
+        },
+      },
+    });
+
+    await expect(
+      authDataSource.dispatch({
+        type: 'GetRef',
+        domain: 'test',
+        name: 'something',
+      })
+    ).rejects.toThrow();
+
+    await expect(
+      authDataSource.dispatch({
+        type: 'PutRef',
+        domain: 'test',
+        name: 'something',
+        id: barObj.id,
+      })
+    ).rejects.toThrow();
+
+    await authDataSource.dispatch({
+      type: 'PutRef',
+      auth: anonSession,
+      domain: 'test',
+      name: 'something',
+      id: barObj.id,
+    });
+
+    result = await authDataSource.dispatch({
+      type: 'GetRef',
+      auth: anonSession,
+      domain: 'test',
+      name: 'something',
+    });
+    expect(result.id).toEqual(barObj.id);
+  });
+
+  test('account admin permission for PutPermissionRules', async () => {
+    const {
+      fooObj,
+      barObj,
+      rootSession,
+      anonSession,
+      anonSession2,
+      authDataSource,
+    } = await establishPermissionsTestData();
+
+    let result = null;
+
+    await expect(
+      authDataSource.dispatch({
+        type: 'PutPermissionRules',
+        auth: anonSession,
+        domain: 'test',
+        name: 'something',
+        defaultRule: {},
+        accountRules: {},
+      })
+    ).rejects.toThrow();
+
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: rootSession,
+      domain: 'test',
+      name: 'something',
+      defaultRule: {},
+      accountRules: {
+        [anonSession.accountId]: {
+          canAdmin: true,
+        },
+      },
+    });
+
+    await expect(
+      authDataSource.dispatch({
+        type: 'GetRef',
+        auth: anonSession2,
+        domain: 'test',
+        name: 'something',
+      })
+    ).rejects.toThrow();
+
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: anonSession,
+      domain: 'test',
+      name: 'something',
+      defaultRule: {},
+      accountRules: {
+        [anonSession.accountId]: {
+          canAdmin: true,
+        },
+        [anonSession2.accountId]: {
+          canRead: true,
+        },
+      },
+    });
+
+    result = await authDataSource.dispatch({
+      type: 'GetRef',
+      auth: anonSession2,
+      domain: 'test',
+      name: 'something',
+    });
+    expect(result.id).toEqual(fooObj.id);
+  });
+
+  test('account admin permission for GetPermissionRules', async () => {
+    const {
+      fooObj,
+      barObj,
+      rootSession,
+      anonSession,
+      anonSession2,
+      authDataSource,
+    } = await establishPermissionsTestData();
+
+    let result = null;
+
+    await expect(
+      authDataSource.dispatch({
+        type: 'GetPermissionRules',
+        auth: anonSession,
+        domain: 'test',
+        name: 'something',
+      })
+    ).rejects.toThrow();
+
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: rootSession,
+      domain: 'test',
+      name: 'something',
+      defaultRule: {
+        canRead: true,
+      },
+      accountRules: {
+        [anonSession.accountId]: {
+          canAdmin: true,
+        },
+      },
+    });
+
+    result = await authDataSource.dispatch({
+      type: 'GetPermissionRules',
+      auth: anonSession,
+      domain: 'test',
+      name: 'something',
+    });
+
+    expect(result.defaultRule.canRead).toEqual(true);
   });
 });

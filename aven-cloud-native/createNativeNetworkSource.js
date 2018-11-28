@@ -29,7 +29,7 @@ export default function createNativeNetworkSource(opts) {
     }
     let result = await res.text();
     try {
-      result = JSON.parse(result);
+      result = result.length ? JSON.parse(result) : null;
     } catch (e) {
       throw new Error('Expecting JSON but could not parse: ' + result);
     }
