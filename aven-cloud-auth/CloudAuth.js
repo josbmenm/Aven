@@ -109,7 +109,7 @@ export default function CloudAuth({ dataSource, methods }) {
 
     while (methodsToValidate.length && !validatedAccountId) {
       const methodToValidate = methodsToValidate[0];
-
+      methodsToValidate = methodsToValidate.slice(1);
       if (methodToValidate.canVerify(verificationInfo, accountId)) {
         const methodId = await methodToValidate.getMethodId(verificationInfo);
         const methodStateRefName = `auth/method/${methodId}`;
@@ -130,14 +130,12 @@ export default function CloudAuth({ dataSource, methods }) {
           methodStateRefName,
           requestedVerification
         );
-
         return {
           verificationChallenge: requestedVerification.verificationChallenge,
           methodId,
         };
       }
     }
-
     throw new Error('No auth method matches this info and account!');
   }
   async function PutAuthMethod({

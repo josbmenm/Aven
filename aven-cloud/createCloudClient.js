@@ -9,11 +9,13 @@ export const withObservables = withObs;
 const uniqueOrdered = items =>
   Array.from(new Set(items.sort((a, b) => a.name - b.name)));
 
-export default function createCloudClient({ dataSource, domain }) {
+export default function createCloudClient({
+  dataSource,
+  domain,
+  initialSession,
+}) {
   const _refs = {};
   const _objects = {};
-
-  let session = null;
 
   if (domain == null) {
     throw new Error(`domain must be provided to createCloudClient!`);
@@ -21,8 +23,20 @@ export default function createCloudClient({ dataSource, domain }) {
 
   const knownRefs = new BehaviorSubject([]);
 
-  const observeRefs = Observable.create(() => {
-    dataSource
+  const session = new BehaviorSubject(initialSession || null);
+
+  const dataSourceWithSession = {
+    ...dataSource,
+    dispatch: async action => {
+      return await dataSource.dispatch({
+        ...action,
+        auth: session.value,
+      });
+    },
+  };
+
+  function updateRefsList() {
+    dataSourceWithSession
       .dispatch({
         type: 'ListRefs',
         domain,
@@ -33,8 +47,22 @@ export default function createCloudClient({ dataSource, domain }) {
         knownRefs.next(mergedRefs);
       })
       .catch(console.error);
+  }
 
-    return () => {};
+  let isObservingRefs = false;
+
+  function updateRefsListIfObserving() {
+    if (isObservingRefs) {
+      updateRefsList();
+    }
+  }
+
+  const observeRefs = Observable.create(() => {
+    isObservingRefs = true;
+    updateRefsList();
+    return () => {
+      isObservingRefs = false;
+    };
   })
     .multicast(() => knownRefs)
     .refCount();
@@ -44,7 +72,7 @@ export default function createCloudClient({ dataSource, domain }) {
       return _refs[name];
     }
     _refs[name] = createCloudRef({
-      dataSource,
+      dataSource: dataSourceWithSession,
       domain,
       name,
       objectCache: _objects,
@@ -63,6 +91,9 @@ export default function createCloudClient({ dataSource, domain }) {
     verificationResponse,
     accountId,
   }) {
+    if (session.value) {
+      throw new Error('session already is set!');
+    }
     const created = await dataSource.dispatch({
       type: 'CreateSession',
       domain,
@@ -70,8 +101,23 @@ export default function createCloudClient({ dataSource, domain }) {
       verificationResponse,
       verificationInfo,
     });
-    console.log('CREATEDDDDD', created);
+    if (created && created.session) {
+      session.next(created.session);
+      updateRefsListIfObserving();
+    }
     return created;
+  }
+
+  async function DestroySession() {
+    if (!session.value) {
+      throw new Error('no session found!');
+    }
+    session.next(null);
+    await dataSource.dispatch({
+      type: 'DestroySession',
+      domain,
+      auth: session.value,
+    });
   }
 
   const actions = {
@@ -82,7 +128,9 @@ export default function createCloudClient({ dataSource, domain }) {
 
   return {
     ...dataSource,
+    observeSession: session,
     CreateSession,
+    DestroySession,
     dispatch,
     domain,
     destroyRef,

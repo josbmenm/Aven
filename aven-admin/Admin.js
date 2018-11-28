@@ -12,6 +12,7 @@ import {
 import React, { useState, useEffect, useMemo } from 'react';
 
 import useCloud from '../aven-cloud/useCloud';
+import useCloudSession from '../aven-cloud/useCloudSession';
 import useRefValue from '../aven-cloud/useRefValue';
 import createBrowserNetworkSource from '../aven-cloud-browser/createBrowserNetworkSource';
 import createCloudClient from '../aven-cloud/createCloudClient';
@@ -173,7 +174,7 @@ function InputField({ name, value, onValue }) {
     <View style={{ paddingVertical: 8 }}>
       <FieldLabel label={name} />
       <TextInput
-        value={value}
+        value={value || ''}
         onChangeText={onValue}
         style={{
           backgroundColor: 'white',
@@ -299,11 +300,15 @@ function RootLoginInfo({ loginInfo, setLoginInfo }) {
       name="Password"
       value={
         loginInfo &&
-        loginInfo.verificationInfo &&
-        loginInfo.verificationInfo.password
+        loginInfo.verificationResponse &&
+        loginInfo.verificationResponse.password
       }
       onValue={password =>
-        setLoginInfo({ accountId: 'root', verificationInfo: { password } })
+        setLoginInfo({
+          accountId: 'root',
+          verificationInfo: { type: 'root' },
+          verificationResponse: { password },
+        })
       }
     />
   );
@@ -334,7 +339,7 @@ function LoginInfo({ mode, ...props }) {
   }
 }
 
-function LoginForm() {
+function LoginForm({ onSession }) {
   const [isWorking, setIsWorking] = useState(false);
   const [loginInfo, setLoginInfo] = useState(null);
   const [mode, setMode] = useState('root');
@@ -367,12 +372,15 @@ function LoginForm() {
           title="Login"
           onPress={async () => {
             setIsWorking(true);
-            await cloud.CreateSession({
+            const resp = await cloud.CreateSession({
               accountId: loginInfo.accountId,
               verificationResponse: loginInfo.verificationResponse,
               verificationInfo: loginInfo.verificationInfo,
             });
-            console.log('hi there', loginInfo);
+            if (resp.session) {
+              onSession(resp.session);
+              navigate('Home');
+            }
           }}
         />
       )}
@@ -380,18 +388,23 @@ function LoginForm() {
   );
 }
 
-function LoginPane({ onClientConfig, defaultSession }) {
+function LoginPane({ onClientConfig, onSession, defaultSession }) {
   const cloud = useCloud();
+  const session = useCloudSession();
+  if (session) {
+    return (
+      <Pane>
+        <Hero title="Logged in" />
+      </Pane>
+    );
+  }
   console.log('uhh', cloud);
   if (cloud) {
     return (
       <Pane>
         <Hero title="Login" />
         <View>
-          <LoginForm
-            onClientConfig={onClientConfig}
-            defaultSession={defaultSession}
-          />
+          <LoginForm onSession={onSession} defaultSession={defaultSession} />
         </View>
       </Pane>
     );
@@ -531,7 +544,7 @@ function AddRefSection() {
   );
 }
 
-function RefsPane({ onClientConfig }) {
+function RefsPane({ onClientConfig, onSession }) {
   const { domain } = useCloud();
   const { navigate } = useNavigation();
   return (
@@ -543,6 +556,7 @@ function RefsPane({ onClientConfig }) {
         title="Log out"
         onPress={() => {
           onClientConfig(null);
+          onSession(null);
           navigate('Login');
         }}
       />
@@ -810,6 +824,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
       });
 
       const client = createCloudClient({
+        initialSession: sessionState.session,
         dataSource,
         domain,
       });
@@ -818,7 +833,6 @@ function AdminApp({ defaultSession = {}, descriptors }) {
     },
     [sessionState.clientConfig]
   );
-  console.log('RENDER APP', sessionState, client);
 
   const activeRoute = useActiveRoute();
 
@@ -838,7 +852,11 @@ function AdminApp({ defaultSession = {}, descriptors }) {
   );
 
   function setClientConfig(clientConfig) {
-    setSessionState({ clientConfig });
+    setSessionState({ ...sessionState, clientConfig });
+  }
+
+  function setSession(session) {
+    setSessionState({ ...sessionState, session });
   }
 
   const activeDescriptor = descriptors[activeRoute.key];
@@ -855,6 +873,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
         <NavigationContext.Provider value={activeDescriptor.navigation}>
           <ScreenComponent
             onClientConfig={setClientConfig}
+            onSession={setSession}
             defaultSession={{
               authority: defaultSession.authority || 'localhost:3000',
               domain: defaultSession.domain || 'test.aven.cloud',
