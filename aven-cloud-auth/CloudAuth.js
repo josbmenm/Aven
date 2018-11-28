@@ -363,10 +363,11 @@ export default function CloudAuth({ dataSource, methods }) {
       canRead:
         interpretedRule.canRead ||
         interpretedRule.canWrite ||
-        interpretedRule.canAdmin,
-      canWrite: interpretedRule.canWrite || interpretedRule.canAdmin,
-      canPost: interpretedRule.canPost || interpretedRule.canAdmin,
-      canAdmin: interpretedRule.canAdmin,
+        interpretedRule.canAdmin ||
+        false,
+      canWrite: interpretedRule.canWrite || interpretedRule.canAdmin || false,
+      canPost: interpretedRule.canPost || interpretedRule.canAdmin || false,
+      canAdmin: interpretedRule.canAdmin || false,
     };
   }
 
