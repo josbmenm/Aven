@@ -3,10 +3,10 @@ import { checksum, genAuthCode } from '../aven-cloud-utils/Crypto';
 export default function createMessageAuthMethod({
   authMethodName,
   sendVerification,
-  identifyAuth,
+  identifyInfo,
 }) {
   function canVerify(verificationInfo) {
-    if (identifyAuth(verificationInfo) === null) {
+    if (identifyInfo(verificationInfo) === null) {
       return false;
     }
     return true;
@@ -14,7 +14,7 @@ export default function createMessageAuthMethod({
 
   async function getMethodId(verificationInfo) {
     return `${authMethodName}-${await checksum(
-      identifyAuth(verificationInfo)
+      identifyInfo(verificationInfo)
     )}`;
   }
 

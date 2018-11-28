@@ -297,8 +297,14 @@ function RootLoginInfo({ loginInfo, setLoginInfo }) {
   return (
     <InputField
       name="Password"
-      value={loginInfo && loginInfo.password}
-      onValue={password => setLoginInfo({ password })}
+      value={
+        loginInfo &&
+        loginInfo.verificationInfo &&
+        loginInfo.verificationInfo.password
+      }
+      onValue={password =>
+        setLoginInfo({ accountId: 'root', verificationInfo: { password } })
+      }
     />
   );
 }
@@ -343,6 +349,7 @@ function LoginForm() {
         value={mode}
         onChange={e => {
           setMode(e.target.value);
+          setLoginInfo(null);
         }}
       >
         <option value="root">Root Authentication</option>

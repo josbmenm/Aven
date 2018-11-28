@@ -10,7 +10,7 @@ describe('Auth messaging behavior', () => {
 
     const authMethodName = 'example-method';
 
-    function identifyAuth(verificationInfo) {
+    function identifyInfo(verificationInfo) {
       if (!verificationInfo || !verificationInfo.address) {
         return null;
       }
@@ -22,7 +22,7 @@ describe('Auth messaging behavior', () => {
     const method = createMessageAuthMethod({
       authMethodName,
       sendVerification,
-      identifyAuth,
+      identifyInfo,
     });
 
     const authDataSource = CloudAuth({ dataSource, methods: [method] });
@@ -62,7 +62,7 @@ describe('Auth messaging behavior', () => {
 
     const authMethodName = 'example-method';
 
-    function identifyAuth(verificationInfo) {
+    function identifyInfo(verificationInfo) {
       if (!verificationInfo || !verificationInfo.address) {
         return null;
       }
@@ -74,7 +74,7 @@ describe('Auth messaging behavior', () => {
     const method = createMessageAuthMethod({
       authMethodName,
       sendVerification,
-      identifyAuth,
+      identifyInfo,
     });
 
     const authDataSource = CloudAuth({ dataSource, methods: [method] });
