@@ -19,9 +19,10 @@ import EmailAuthMethod from '../aven-cloud-auth-email/EmailAuthMethod';
 import RootAuthMethod from '../aven-cloud-auth-root/RootAuthMethod';
 import CloudAuth from '../aven-cloud-auth/CloudAuth';
 
+import startKitchen from './startKitchen';
+
 const getEnv = c => process.env[c];
 
-import startKitchen from './startKitchen';
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const ROOT_PASSWORD = 'SecretSmoothie'; //move to env variable please
