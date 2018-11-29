@@ -1,23 +1,25 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableWithoutFeedback } from 'react-native';
 import { withNavigation } from '@react-navigation/core';
 import {
   menuItemNameText,
   menuItemDescriptionText,
 } from '../../components/Styles';
 import AirtableImage from './AirtableImage';
+import uuid from 'uuid/v1';
 
 const MenuItemWithNav = ({ item, navigation }) => {
   return (
-    <TouchableOpacity
+    <TouchableWithoutFeedback
       onPress={() => {
-        navigation.navigate('MenuItem', { id: item.id });
+        navigation.navigate('MenuItem', { id: item.id, orderItemId: uuid() });
       }}
     >
       <View
         style={{
-          borderWidth: 1,
+          backgroundColor: 'white',
           padding: 40,
+          width: 500,
           marginHorizontal: 80,
           flexDirection: 'row',
           marginVertical: 30,
@@ -27,7 +29,11 @@ const MenuItemWithNav = ({ item, navigation }) => {
           {item.Recipe && (
             <AirtableImage
               image={item.Recipe['Recipe Image']}
-              style={{ width: 100, height: 100 }}
+              style={{
+                height: 200,
+                alignSelf: 'stretch',
+                resizeMode: 'contain',
+              }}
             />
           )}
           <Text style={{ fontSize: 42, ...menuItemNameText }}>
@@ -38,7 +44,7 @@ const MenuItemWithNav = ({ item, navigation }) => {
           </Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </TouchableWithoutFeedback>
   );
 };
 const MenuItem = withNavigation(MenuItemWithNav);

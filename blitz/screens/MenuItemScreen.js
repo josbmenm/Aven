@@ -1,115 +1,141 @@
 import React, { Component } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableHighlight } from 'react-native';
 import GenericPage from '../components/GenericPage';
 import Button from '../../components/Button';
 import { withMenuItem, withRestaurant } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
+const md5 = require('crypto-js/md5');
 
-// const PlaceholderImage = () => <View />;
+function Ingredient({ ingredient }) {
+  const image = ingredient['Ingredient Image'];
+  const origUrl = image && image[0] && image[0].url;
+  const imageURI = `/_/kitchen.maui.onofood.co/Airtable/files/${md5(
+    origUrl,
+  ).toString()}.jpg`;
 
-// const Features = ({ product }) => (
-//   <View style={{ flexDirection: 'row', marginBottom: 60 }}>
-//     {product.features.map(feature => (
-//       <View
-//         style={{ alignItems: 'center', marginTop: 20, marginRight: 20 }}
-//         key={feature.name}
-//       >
-//         <PlaceholderImage
-//           style={{ width: 100, height: 100, marginBottom: 30 }}
-//           color="#22cc22"
-//         />
-//         <Text
-//           style={{
-//             flex: 1,
-//             ...genericText,
-//             marginRight: 60,
-//             marginTop: 8,
-//             textAlign: 'center',
-//             alignSelf: 'center',
-//             fontSize: ingredientFontSize,
-//           }}
-//         >
-//           {feature.name}
-//         </Text>
-//       </View>
-//     ))}
-//   </View>
-// );
+  console.log(ingredient.Name, imageURI);
 
-const Ingredients = ({ menuItem }) => (
-  <View style={{ flexDirection: 'row', padding: 0 }}>
-    {menuItem.Recipe.Ingredients.map(i => (
-      <View
-        style={{ alignItems: 'center', marginTop: 20, marginRight: 20 }}
-        key={i.id}
-      >
-        <AirtableImage
-          image={i.Ingredient['Ingredient Image']}
-          style={{ width: 100, height: 100 }}
-        />
-        <Text
-          style={{
-            marginTop: 8,
-            textAlign: 'center',
-            minWidth: 190,
-          }}
-        >
-          {i.Ingredient && i.Ingredient.Name}
-        </Text>
-      </View>
-    ))}
-  </View>
-);
-
-// return (
-//   <GenericPage {...this.props} title={product.name} disableScroll>
-//     <ScreenContent>
-//       <View style={{ padding: 30 }}>
-//         <Features product={product} />
-//         <Text style={{ ...genericText, fontSize: 42, marginBottom: 30 }}>
-//           {product.description}
-//         </Text>
-//         <Text style={{ ...genericText, fontSize: 52 }}>
-//           <Text style={{ fontSize: 54 }}>ingredients | </Text>
-//           {product.size} - {product.nutrition}
-//         </Text>
-//         <Ingredients product={product} />
-//       </View>
-//     </ScreenContent>
-//     <CallToActionButton
-//       label="Checkout"
-//       onPress={() => {
-//         this.props.navigation.navigate('Payment', { id });
-//       }}
-//     />
-//   </GenericPage>
-// );
-
-function MenuItemScreenWithItem({ menuItem, placeOrder, navigation }) {
   return (
-    <GenericPage title={menuItem.name} disableScroll>
-      <View style={{ padding: 30 }}>
-        <Text style={{ fontSize: 42, marginBottom: 30 }}>
-          {menuItem['Display Description']}
-        </Text>
-        <Text style={{ fontSize: 52 }}>
-          <Text style={{ fontSize: 54 }}>ingredients | </Text>
-          {menuItem.Price} - {menuItem.Calories} cal
-        </Text>
-        <Ingredients menuItem={menuItem} />
-        <Button
-          onPress={() => {
-            placeOrder({
-              menuItemId: menuItem.id,
-            });
-            navigation.navigate('DebugState');
-            // navigation.navigate('OrderConfirm');
-          }}
-          title="Order Blend"
-        />
-      </View>
-    </GenericPage>
+    <View
+      style={{
+        alignItems: 'center',
+        marginTop: 20,
+        marginRight: 20,
+        width: 180,
+      }}
+    >
+      <AirtableImage
+        image={ingredient['Ingredient Image']}
+        style={{ width: 100, height: 100 }}
+      />
+      <Text
+        style={{
+          marginTop: 8,
+          textAlign: 'center',
+          fontSize: 20,
+          color: '#444',
+        }}
+      >
+        {ingredient.Name.toUpperCase()}
+      </Text>
+    </View>
   );
+}
+
+function Ingredients({ menuItem }) {
+  return (
+    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+      <View
+        style={{
+          padding: 10,
+          paddingLeft: 30,
+          backgroundColor: 'white',
+          flexWrap: 'wrap',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+      >
+        {menuItem.Recipe.Ingredients.map(i => (
+          <Ingredient ingredient={i.Ingredient} key={i.id} />
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function ChooseBeverage({ menuItem }) {
+  return (
+    <View>
+      {menuItem.Customization.Beverage.map(Ingredient => {
+        return (
+          <TouchableHighlight
+            key={Ingredient.id}
+            onPress={() => {
+              alert(Ingredient.id);
+            }}
+          >
+            <View>
+              <Text>{Ingredient.Name}</Text>
+            </View>
+          </TouchableHighlight>
+        );
+      })}
+    </View>
+  );
+}
+
+class MenuItemScreenWithItem extends React.Component {
+  render() {
+    const { menuItem, setOrderItem, navigation, orderItemId } = this.props;
+    if (!menuItem) {
+      return null;
+    }
+    return (
+      <GenericPage title={menuItem.name} disableScroll>
+        <View style={{ padding: 0 }}>
+          <Text style={{ fontSize: 42, marginBottom: 30, textAlign: 'center' }}>
+            {menuItem['Display Name']}
+          </Text>
+
+          <View style={{ flexDirection: 'row' }}>
+            <View style={{ flex: 1, padding: 30 }}>
+              <AirtableImage
+                image={menuItem.Recipe['Recipe Image']}
+                style={{ flex: 1, resizeMode: 'contain' }}
+              />
+              <Text
+                style={{
+                  fontSize: 32,
+                  marginBottom: 30,
+                  color: '#444',
+                  margin: 20,
+                }}
+              >
+                {menuItem['Display Description']}
+              </Text>
+
+              <Text style={{ fontSize: 52 }}>
+                {menuItem.Price} - {menuItem.Calories} cal
+              </Text>
+            </View>
+            <Ingredients menuItem={menuItem} />
+          </View>
+
+          <Button
+            onPress={() => {
+              setOrderItem(orderItemId, {
+                menuItemId: menuItem.id,
+              });
+              navigation.navigate('OrderConfirm');
+            }}
+            title="Order Blend"
+          />
+          <ChooseBeverage menuItem={menuItem} />
+          <Button onPress={() => {}} title="Customize" />
+        </View>
+      </GenericPage>
+    );
+  }
 }
 
 const MenuItemScreenWithId = withRestaurant(
@@ -121,6 +147,7 @@ export default class MenuItemScreen extends Component {
     return (
       <MenuItemScreenWithId
         menuItemId={this.props.navigation.getParam('id')}
+        orderItemId={this.props.navigation.getParam('orderItemId')}
         {...this.props}
       />
     );

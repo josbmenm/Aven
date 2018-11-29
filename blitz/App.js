@@ -15,9 +15,10 @@ import DebugStateScreen from './screens/DebugStateScreen';
 import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
 import OrderConfirmScreen from './screens/OrderConfirmScreen';
-// import OrderCompleteScreen from './screens/OrderCompleteScreen';
-// import CollectNameScreen from './screens/CollectNameScreen';
-// import CollectEmailScreen from './screens/CollectEmailScreen';
+import OrderCompleteScreen from './screens/OrderCompleteScreen';
+import CollectNameScreen from './screens/CollectNameScreen';
+import CollectEmailScreen from './screens/CollectEmailScreen';
+import AppUpsellScreen from './screens/AppUpsellScreen';
 
 import JSONView from '../debug-views/JSONView';
 import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
@@ -113,10 +114,11 @@ const App = createFadeNavigator(
     DebugState: DebugStateScreen,
 
     OrderConfirm: OrderConfirmScreen,
-    // OrderComplete: OrderCompleteScreen,
-    // CollectName: CollectNameScreen,
-    // CollectEmail: CollectEmailScreen,
+    OrderComplete: OrderCompleteScreen,
+    CollectName: CollectNameScreen,
+    CollectEmail: CollectEmailScreen,
     PaymentDebug: PaymentDebugScreen,
+    AppUpsell: AppUpsellScreen,
   },
   {
     headerMode: 'none',
@@ -136,7 +138,7 @@ const RESTAURANT_PROD = {
   authority: '192.168.1.200:8830',
 };
 
-const HOST_CONFIG = false ? RESTAURANT_DEV : RESTAURANT_PROD;
+const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
 
 setHostConfig(HOST_CONFIG);
 
@@ -147,9 +149,16 @@ const restaurant = createCloudClient({
   domain: 'kitchen.maui.onofood.co',
 });
 
+restaurant
+  .CreateAnonymousSession()
+  .then(() => {
+    console.log('session ready!');
+  })
+  .catch(console.error);
+
 const FullApp = () => (
   <OnoRestaurantContext.Provider value={restaurant}>
-    <AppContainer />
+    <AppContainer persistenceKey="nav" />
   </OnoRestaurantContext.Provider>
 );
 

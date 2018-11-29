@@ -20,7 +20,7 @@
     "rxjs-compat": "^6.3.3"
   },
   "devDependencies": {
-    "appcenter-cli": "^1.1.7",
+    "appcenter-cli": "^1.1.8",
     "babel-jest": "23.6.0",
     "jest": "23.6.0",
     "metro-react-native-babel-preset": "0.49.0",

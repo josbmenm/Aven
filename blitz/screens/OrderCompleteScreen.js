@@ -1,20 +1,34 @@
-import React from 'react';
+import React, { Component } from 'react';
 import GenericPage from '../components/GenericPage';
-import Title from '../components/Title';
+import Button from '../../components/Button';
+import Title from '../../components/Title';
 
 export default class OrderComplete extends Component {
   componentDidMount() {
-    setTimeout(() => {
-      this.props.navigation.navigate('Home');
-    }, 2000);
+    setTimeout(() => {}, 2000);
   }
   render() {
     return (
       <GenericPage>
-        <Title>
-          Your order will be ready in 5 minutes. Get the app to skip the line
-          next time:
-        </Title>
+        <Title>Order placed!</Title>
+        <Button
+          title="Free blend - text link to app"
+          onPress={() => {
+            this.props.navigation.navigate('AppUpsell');
+          }}
+        />
+        <Button
+          title="Email Reciept"
+          onPress={() => {
+            this.props.navigation.navigate('CollectEmail');
+          }}
+        />
+        <Button
+          title="Done!"
+          onPress={() => {
+            this.props.navigation.navigate('KioskHome');
+          }}
+        />
       </GenericPage>
     );
   }

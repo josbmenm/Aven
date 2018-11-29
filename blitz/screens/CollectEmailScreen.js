@@ -1,15 +1,27 @@
-class CollectEmail extends Component {
-  render() {
-    const { getParam } = this.props.navigation;
-    return (
-      <InputPage
-        {...this.props}
-        title={'Enter email'}
-        type="email-address"
-        onSubmit={email => {
-          this.props.navigation.navigate('CheckoutComplete');
-        }}
-      />
-    );
-  }
+import React from 'react';
+import InputPage from '../components/InputPage';
+import { withRestaurant } from '../../ono-cloud/OnoKitchen';
+
+function CollectEmailWithRestaurant({ navigation, cloud }) {
+  return (
+    <InputPage
+      title={'Reciept Email'}
+      type="email-address"
+      onSubmit={email => {
+        cloud
+          .dispatch({
+            type: 'PutAuthMethod',
+            verificationInfo: { email, context: 'Receipt' },
+          })
+          .catch(console.error)
+          .then(() => {
+            navigation.navigate('OrderComplete');
+          });
+      }}
+    />
+  );
 }
+
+const CollectEmail = withRestaurant(CollectEmailWithRestaurant);
+
+export default CollectEmail;

@@ -48,6 +48,17 @@ function atDataToMenu(atData) {
   const RecipeIngredients = atData.baseTables['Recipe Ingredients'];
   const Ingredients = atData.baseTables['Ingredients'];
 
+  const Customization = {};
+  Object.keys(Ingredients).forEach(IngredientId => {
+    const Ingredient = Ingredients[IngredientId];
+    Ingredient.CustomizationCategory &&
+      Ingredient.CustomizationCategory.forEach(categoryName => {
+        const c =
+          Customization[categoryName] || (Customization[categoryName] = []);
+        c.push(Ingredient);
+      });
+  });
+
   const MenuItems = sortByField(MenuItemsUnordered, '_index');
   const ActiveMenuItems = MenuItems.filter(i => i['Active in Kiosk']);
   const ActiveItemsWithRecipe = ActiveMenuItems.map(item => {
@@ -55,6 +66,7 @@ function atDataToMenu(atData) {
 
     return {
       ...item,
+      Customization,
       Recipe: {
         ...Recipe,
         Ingredients: Recipe.Ingredients.map(RecipeIngredientId => {
@@ -78,6 +90,56 @@ function atDataToMenuItemMapper(menuItemId) {
     const menu = atDataToMenu(atData);
     return menu.find(item => item.id === menuItemId);
   };
+}
+
+const TAX_RATE = 0.09;
+
+export function withPendingOrder(Component) {
+  const ComponentWithOrder = withObservables(
+    ['order', 'atData'],
+    ({ order, atData }) => ({
+      order: order,
+      orderWithMenu: order.switchMap(o => {
+        return (
+          atData &&
+          atData.map(at => {
+            if (!o || !o.items) {
+              return o;
+            }
+            const menu = atDataToMenu(at);
+            console.log('zooom', o, menu);
+            let subTotal = 0;
+            const items = Object.keys(o.items).map(itemId => {
+              const item = o.items[itemId];
+              const menuItem = menu.find(i => i.id === item.menuItemId);
+              subTotal += menuItem.Recipe['Sell Price'];
+              return {
+                ...item,
+                menuItem,
+              };
+            });
+            const tax = subTotal * TAX_RATE;
+            const total = subTotal + tax;
+            return { ...o, items, subTotal, tax, total, taxRate: TAX_RATE };
+          })
+        );
+      }),
+    }),
+  )(Component);
+
+  return props => (
+    <OnoRestaurantContext.Consumer>
+      {restaurant => (
+        <ComponentWithOrder
+          order={restaurant.getRef('PendingOrder').observeValue}
+          atData={restaurant
+            .getRef('Airtable')
+            .observeConnectedValue(['files', 'db.json', 'id'])}
+          {...props}
+        />
+      )}
+    </OnoRestaurantContext.Consumer>
+  );
 }
 
 export function withMenuItem(Component) {
@@ -152,9 +214,9 @@ export function withKitchenLog(Component) {
 
 export function withRestaurant(Component) {
   const ComponentWithObservedState = withObservables(
-    ['restaurant'],
-    ({ restaurant }) => {
-      return { restaurant };
+    ['restaurant', 'order'],
+    ({ restaurant, order }) => {
+      return { restaurant, order };
     },
   )(Component);
 
@@ -163,18 +225,52 @@ export function withRestaurant(Component) {
       {restaurant => (
         <ComponentWithObservedState
           restaurantClient={restaurant}
+          cloud={restaurant}
           restaurant={restaurant.getRef('Restaurant').observeValue}
-          placeOrder={order => {
-            restaurant.getRef('Restaurant').transact(lastState => ({
-              ...lastState,
-              queuedOrders: [
-                ...((lastState && lastState.queuedOrders) || []),
-                {
-                  ...order,
-                  orderTime: Date.now(),
+          order={restaurant.getRef('PendingOrder').observeValue}
+          setAppUpsellPhoneNumber={number => {
+            restaurant
+              .dispatch({
+                type: 'PutAuthMethod',
+                verificationInfo: { number, context: 'AppUpsell' },
+              })
+              .catch(console.error);
+          }}
+          setOrderName={name => {
+            restaurant
+              .getRef('PendingOrder')
+              .transact(lastState => ({
+                ...lastState,
+                name,
+              }))
+              .catch(console.error);
+          }}
+          setOrderItem={(itemId, item) => {
+            restaurant
+              .getRef('PendingOrder')
+              .transact(lastState => ({
+                ...lastState,
+                items: {
+                  ...((lastState && lastState.items) || {}),
+                  [itemId]: item,
                 },
-              ],
-            }));
+              }))
+              .catch(console.error);
+          }}
+          placeOrder={order => {
+            restaurant
+              .getRef('Restaurant')
+              .transact(lastState => ({
+                ...lastState,
+                queuedOrders: [
+                  ...((lastState && lastState.queuedOrders) || []),
+                  {
+                    ...order,
+                    orderTime: Date.now(),
+                  },
+                ],
+              }))
+              .catch(console.error);
           }}
           dispatch={restaurant.dispatch}
           {...props}

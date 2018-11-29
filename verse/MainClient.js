@@ -10,7 +10,7 @@ const IS_DEV = process.env.NODE_ENV !== 'production';
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  authority: 'localhost:8840',
+  authority: 'localhost:8830',
 };
 const RESTAURANT_PROD = {
   authority: 'www.onofood.co',

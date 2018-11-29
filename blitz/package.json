@@ -10,6 +10,7 @@
       "aven-navigation-fade-navigator"
     ],
     "moduleDependencies": [
+      "path",
       "@nozbe/with-observables",
       "@react-navigation/core",
       "@react-navigation/native",

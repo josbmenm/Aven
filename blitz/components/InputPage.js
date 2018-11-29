@@ -1,17 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { TextInput } from 'react-native';
 import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  StatusBar,
-  TouchableHighlight,
-  Image,
-  TextInput,
-} from 'react-native';
-import { inputPageStyle } from '../../components/Styles';
+  inputPageStyle,
+  keyboardAppearance,
+  textInputLargeStyle,
+} from '../../components/Styles';
+import Title from '../../components/Title';
+import GenericPage from './GenericPage';
 
 export default class InputPage extends React.Component {
   state = { value: '' };
@@ -20,21 +15,23 @@ export default class InputPage extends React.Component {
   }
   render() {
     return (
-      <View style={{ flex: 1, ...inputPageStyle }}>
-        <TitleView>{this.props.title}</TitleView>
+      <GenericPage style={{ flex: 1, ...inputPageStyle }}>
+        <Title>{this.props.title}</Title>
         <TextInput
           ref="ti"
           autoCorrect={false}
-          autoCapitalize={this.props.type !== 'email-address'}
+          autoCapitalize={
+            this.props.type === 'email-address' ? 'none' : 'words'
+          }
           keyboardType={this.props.type}
-          keyboardAppearance={Styles.keyboardAppearance}
+          keyboardAppearance={keyboardAppearance}
           onSubmitEditing={() => this.props.onSubmit(this.state.value)}
           onChangeText={t => this.setState({ value: t })}
           enablesReturnKeyAutomatically
           returnKeyType="done"
-          style={{ textAlign: 'center', ...Styles.textInputLargeStyle }}
+          style={{ textAlign: 'center', ...textInputLargeStyle }}
         />
-      </View>
+      </GenericPage>
     );
   }
 }

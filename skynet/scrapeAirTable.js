@@ -112,7 +112,10 @@ export default async function scrapeAirTable(fsClient) {
   });
   const base = { baseTables, baseFiles };
   const filesPath = pathJoin(destPath, 'files');
+  const tablesPath = pathJoin(destPath, 'tables');
+  await fs.remove(destPath);
   await fs.mkdirp(destPath);
+  await fs.mkdirp(tablesPath);
   await fs.mkdirp(filesPath);
   await fs.writeFile(
     pathJoin(destPath, 'db.json'),
@@ -124,7 +127,7 @@ export default async function scrapeAirTable(fsClient) {
       const tableData = baseTables[baseTable];
       const safeTableName = baseTable.replace(' ', '_');
       await fs.writeFile(
-        pathJoin(destPath, safeTableName + '.json'),
+        pathJoin(tablesPath, safeTableName + '.json'),
         JSON.stringify(tableData, null, 2),
       );
     }),

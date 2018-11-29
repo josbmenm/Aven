@@ -115,6 +115,7 @@ const extractActionValues = ({
 
 export default function startKitchen({ client, plcIP }) {
   let readyPLC = null;
+  let connectingPLC = null;
   let readyHandlers = new Set();
 
   let hasClosed = false;
@@ -130,7 +131,6 @@ export default function startKitchen({ client, plcIP }) {
         }, 1000);
     });
   };
-  let connectingPLC = null;
   function connectPLC() {
     if (readyPLC || connectingPLC || hasClosed) {
       return;
@@ -154,8 +154,6 @@ export default function startKitchen({ client, plcIP }) {
       })
       .catch(err => {
         readyPLC = null;
-        console.error('PLC Connection error!');
-        console.error(err);
       })
       .finally(() => {
         connectingPLC = null;
@@ -386,10 +384,9 @@ export default function startKitchen({ client, plcIP }) {
   // };
 
   const readTags = async schema => {
+    const readings = {};
     const PLC = await getReadyPLC();
     await PLC.readTagGroup(schema.allTagsGroup);
-
-    const readings = {};
 
     Object.keys(schema.config.tags).forEach(tagAlias => {
       readings[tagAlias] = {
@@ -397,6 +394,7 @@ export default function startKitchen({ client, plcIP }) {
         value: schema.tags[tagAlias].value,
       };
     });
+
     return readings;
   };
 
@@ -575,19 +573,24 @@ export default function startKitchen({ client, plcIP }) {
       isPLCConnected: false,
     });
 
-    let currentState;
     const getTagValues = tags => mapObject(tags, tag => tag.value);
+    let currentState = {};
     const updateTags = async () => {
       const lastState = currentState;
-      currentState = getTagValues(await readTags(mainRobotSchema, {}));
-      updateCount++;
-      if (shallowEqual(lastState, currentState)) {
+      let isPLCConnected = false;
+      try {
+        const readings = await readTags(mainRobotSchema, {});
+        isPLCConnected = true;
+        currentState = getTagValues(readings);
+        updateCount++;
+      } catch (e) {}
+      if (lastState === currentState || shallowEqual(lastState, currentState)) {
         await delay(500);
         return;
       }
       await stateRef.put({
         ...currentState,
-        isPLCConnected: true,
+        isPLCConnected,
       });
       await delay(200);
     };
@@ -626,7 +629,7 @@ export default function startKitchen({ client, plcIP }) {
   }
 
   let debugInterval = setInterval(() => {
-    console.log('Has updated tags ' + updateCount + ' times');
+    console.log('Has updated PLC ' + updateCount + ' times');
     updateCount = 0;
   }, 10000);
 

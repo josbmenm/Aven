@@ -7,7 +7,7 @@ function App({ navigation }) {
     <Admin
       navigation={navigation}
       defaultSession={{
-        authority: 'localhost:8840',
+        authority: 'localhost:8830',
         domain: 'kitchen.maui.onofood.co',
       }}
     />

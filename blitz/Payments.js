@@ -117,6 +117,7 @@ export const paymentContainer = PaymentComponent => {
       const { isComplete, isReady, error, activityLog } = this.state;
       return (
         <PaymentComponent
+          {...this.props}
           isPaymentReady={isReady}
           isPaymentComplete={isComplete}
           paymentRequest={this._getPayment}

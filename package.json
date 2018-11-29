@@ -27,6 +27,7 @@
     "helmet": "^3.13.0",
     "json-stable-stringify": "^1.0.1",
     "knex": "^0.15.2",
+    "path": "^0.12.7",
     "pg-format": "^1.0.4",
     "react-navigation-stack": "1.0.0-alpha.22",
     "react-navigation-transitioner": "^1.0.0-alpha.3",

@@ -14,7 +14,7 @@ export const titleFontStyle = {
   color: '#111',
 };
 
-export const pageBackgroundColor = '#fef2f2';
+export const pageBackgroundColor = '#f4f3f2';
 export const highlightBackgroundColor = '#fff';
 export const hairlineColor = '#bbb';
 export const rowBorderWidth = StyleSheet.hairlineWidth;

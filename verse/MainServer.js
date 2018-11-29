@@ -1,6 +1,6 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
-import startSQLDataSource from '../aven-cloud-sql/startSQLDataSource';
+import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
 import createNodeNetworkSource from '../aven-cloud-server/createNodeNetworkSource';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createFSClient from '../aven-cloud-server/createFSClient';
@@ -11,22 +11,118 @@ import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import scrapeAirTable from '../skynet/scrapeAirTable';
 import { getMobileAuthToken } from '../skynet/Square';
 
+import { hashSecureString } from '../aven-cloud-utils/Crypto';
+import EmailAgent from '../aven-email-agent-sendgrid/EmailAgent';
+import SMSAgent from '../aven-sms-agent-twilio/SMSAgent';
+import SMSAuthMethod from '../aven-cloud-auth-sms/SMSAuthMethod';
+import EmailAuthMethod from '../aven-cloud-auth-email/EmailAuthMethod';
+import RootAuthMethod from '../aven-cloud-auth-root/RootAuthMethod';
+import CloudAuth from '../aven-cloud-auth/CloudAuth';
+
+const getEnv = c => process.env[c];
+
 import startKitchen from './startKitchen';
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const ROOT_PASSWORD = 'SecretSmoothie'; //move to env variable please
 
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨');
 
-  const dataSource = await startSQLDataSource({
-    client: 'sqlite3', // must have sqlite3 in the dependencies of this module.
-    connection: {
-      filename: 'cloud.sqlite',
-    },
+  // const dataSource = await startSQLDataSource({
+  //   client: 'sqlite3', // must have sqlite3 in the dependencies of this module.
+  //   connection: {
+  //     filename: 'cloud.sqlite',
+  //   },
+  // });
+  const dataSource = startMemoryDataSource({
+    domain: 'kitchen.maui.onofood.co',
   });
 
   const kitchenClient = createCloudClient({
     dataSource: dataSource,
     domain: 'kitchen.maui.onofood.co',
+  });
+
+  const emailAgent = EmailAgent({
+    defaultFromEmail: 'Ono Blends <aloha@onofood.co>',
+    config: {
+      sendgridAPIKey: getEnv('SENDGRID_API_KEY'),
+    },
+  });
+
+  const smsAgent = SMSAgent({
+    defaultFromNumber: getEnv('TWILIO_FROM_NUMBER'),
+    config: {
+      accountSid: getEnv('TWILIO_ACCOUNT_SID'),
+      authToken: getEnv('TWILIO_AUTH_TOKEN'),
+    },
+  });
+
+  const smsAuthMethod = SMSAuthMethod({
+    agent: smsAgent,
+    getMessage: (authCode, verifyInfo, accountId) => {
+      if (verifyInfo.context === 'AppUpsell') {
+        return `Welcome to Ono Blends. For a free Blend on your next visit, get the app here: https://onofood.co/app?v=${authCode}&a=${accountId}`;
+      }
+      return `ono authentication: ${authCode}`;
+    },
+  });
+
+  const emailAuthMethod = EmailAuthMethod({
+    agent: emailAgent,
+    getMessage: async (authCode, verifyInfo, accountId) => {
+      const subject = 'Welcome to Ono Blends';
+
+      const message = `To log in, your code is ${authCode}`;
+
+      return { subject, message };
+    },
+  });
+
+  const rootAuthMethod = RootAuthMethod({
+    rootPasswordHash: await hashSecureString(ROOT_PASSWORD),
+  });
+  const authenticatedDataSource = CloudAuth({
+    dataSource,
+    methods: [smsAuthMethod, emailAuthMethod, rootAuthMethod],
+  });
+
+  const rootAuth = {
+    accountId: 'root',
+    verificationInfo: {},
+    verificationResponse: { password: ROOT_PASSWORD },
+  };
+  await authenticatedDataSource.dispatch({
+    domain: 'kitchen.maui.onofood.co',
+    type: 'PutPermissionRules',
+    auth: rootAuth,
+    defaultRule: { canRead: true },
+    name: 'Airtable',
+  });
+
+  await authenticatedDataSource.dispatch({
+    domain: 'kitchen.maui.onofood.co',
+    type: 'PutPermissionRules',
+    auth: rootAuth,
+    defaultRule: { canRead: true },
+    name: 'KitchenConfig',
+  });
+
+  await authenticatedDataSource.dispatch({
+    domain: 'kitchen.maui.onofood.co',
+    type: 'PutPermissionRules',
+    auth: rootAuth,
+    defaultRule: { canRead: true },
+    name: 'KitchenState',
+  });
+
+  await authenticatedDataSource.dispatch({
+    domain: 'kitchen.maui.onofood.co',
+    type: 'PutPermissionRules',
+    auth: rootAuth,
+    defaultRule: { canWrite: true },
+    name: 'PendingOrder',
   });
 
   const fsClient = createFSClient({ client: kitchenClient });
@@ -224,15 +320,15 @@ const runServer = async () => {
 
   const dispatch = async action => {
     switch (action.type) {
-      // case 'KitchenCommand':
-      //   // subsystem (eg 'IOSystem'), pulse (eg ['home']), values (eg: foo: 123)
-      //   return await kitchen.dispatchCommand(action);
+      case 'KitchenCommand':
+        // subsystem (eg 'IOSystem'), pulse (eg ['home']), values (eg: foo: 123)
+        return await kitchen.dispatchCommand(action);
       case 'UpdateAirtable':
         return await scrapeAirTable(fsClient);
       case 'GetSquareMobileAuthToken':
         return getMobileAuthToken(action);
       default:
-        return await dataSource.dispatch(action);
+        return await authenticatedDataSource.dispatch(action);
     }
   };
 
@@ -242,7 +338,6 @@ const runServer = async () => {
     })
     .catch(console.error);
 
-  const getEnv = c => process.env[c];
   const serverListenLocation = getEnv('PORT');
 
   const context = new Map();
@@ -257,7 +352,7 @@ const runServer = async () => {
     App,
     context,
     dataSource: {
-      ...dataSource,
+      ...authenticatedDataSource,
       dispatch,
     },
     serverListenLocation,
@@ -267,6 +362,7 @@ const runServer = async () => {
   return {
     close: async () => {
       // await pgDataSource.close();
+      await authenticatedDataSource.close();
       await dataSource.close();
       // await networkDataSource.close();
       await webService.close();
