@@ -14,7 +14,6 @@ const bodyParser = require('body-parser');
 const WebSocket = require('ws');
 const path = require('path');
 const mime = require('mime');
-const Buffer = require('buffer');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -52,7 +51,7 @@ async function objectResponse({
     const mimeType = mime.getType(path.extname(objName));
     return res => {
       res.header('Content-Type', mimeType);
-      res.send(Buffer.fromString(obj.object.data, 'hex'));
+      res.send(Buffer.from(obj.object.data, 'hex'));
     };
   }
   if (!obj.object || !obj.object.files) {

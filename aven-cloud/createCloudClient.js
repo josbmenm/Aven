@@ -25,14 +25,17 @@ export default function createCloudClient({
 
   const session = new BehaviorSubject(initialSession || null);
 
+  async function authDispatch(action) {
+    return await dataSource.dispatch({
+      ...action,
+      domain,
+      auth: session.value,
+    });
+  }
+
   const dataSourceWithSession = {
     ...dataSource,
-    dispatch: async action => {
-      return await dataSource.dispatch({
-        ...action,
-        auth: session.value,
-      });
-    },
+    dispatch: authDispatch,
   };
 
   function updateRefsList() {
@@ -108,6 +111,21 @@ export default function createCloudClient({
     return created;
   }
 
+  async function CreateAnonymousSession() {
+    if (session.value) {
+      throw new Error('session already is set!');
+    }
+    const created = await dataSource.dispatch({
+      type: 'CreateAnonymousSession',
+      domain,
+    });
+    if (created && created.session) {
+      session.next(created.session);
+      updateRefsListIfObserving();
+    }
+    return created;
+  }
+
   async function DestroySession() {
     if (!session.value) {
       throw new Error('no session found!');
@@ -124,12 +142,13 @@ export default function createCloudClient({
     CreateSession,
   };
 
-  const dispatch = createDispatcher(actions, dataSource.dispatch);
+  const dispatch = createDispatcher(actions, authDispatch);
 
   return {
     ...dataSource,
     observeSession: session,
     CreateSession,
+    CreateAnonymousSession,
     DestroySession,
     dispatch,
     domain,

@@ -781,10 +781,10 @@ const MainPaneNavigator = createNavigator(
   {}
 );
 
-function MainPane({ onClientConfig, navigation }) {
+function MainPane({ onClientConfig, onSession, navigation }) {
   return (
     <React.Fragment>
-      <RefsPane onClientConfig={onClientConfig} />
+      <RefsPane onClientConfig={onClientConfig} onSession={onSession} />
       <MainPaneNavigator navigation={navigation} />
     </React.Fragment>
   );
