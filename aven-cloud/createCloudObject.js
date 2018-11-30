@@ -109,6 +109,10 @@ export default function createCloudObject({
     });
   }
 
+  async function fetchValue() {
+    await fetch();
+  }
+
   async function put() {
     if (getState().value === undefined) {
       throw new Error(`Cannot put empty value from object "${objectId}"!`);
@@ -154,6 +158,7 @@ export default function createCloudObject({
     domain,
     getValue,
     fetch,
+    fetchValue,
     getObject,
     observe,
     observeValue,

@@ -28,7 +28,10 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
       ...newState,
     });
   };
-  const getState = () => refState.value;
+
+  function getState() {
+    return refState.value;
+  }
 
   async function fetch() {
     const result = await dataSource.dispatch({
@@ -235,7 +238,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     await put(newValue);
   }
 
-  return {
+  const r = {
     getState,
     name,
     domain,
@@ -255,4 +258,79 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     observeConnectedValue,
     transact,
   };
+
+  function flatArray(a) {
+    return [].concat.apply([], a);
+  }
+
+  function expand(expandFn) {
+    function isCloudValue(o) {
+      return (
+        typeof o === 'object' &&
+        typeof o.observeValue === 'object' &&
+        typeof o.observeValue.subscribe === 'function' &&
+        typeof o.fetchValue === 'function' &&
+        typeof o.getValue === 'function'
+      );
+    }
+    function doExpansion(o) {
+      if (isCloudValue(o)) {
+        return o.getValue();
+      } else if (o instanceof Array) {
+        return o.map(doExpansion);
+      } else if (typeof o === 'object') {
+        const out = {};
+        Object.keys(o).forEach(k => {
+          out[k] = doExpansion(o[k]);
+        });
+        return out;
+      }
+      return o;
+    }
+    function collectCloudValues(o) {
+      if (isCloudValue(o)) {
+        return [o];
+      } else if (o instanceof Array) {
+        return flatArray(o.map(collectCloudValues));
+      } else if (typeof o === 'object') {
+        return flatArray(Object.values(o).map(collectCloudValues));
+      }
+      return [];
+    }
+    return {
+      ...r,
+      fetchValue: async () => {
+        await r.fetchValue();
+        const expanded = expandFn(r.getValue(), r);
+        const cloudValues = collectCloudValues(expanded);
+        await Promise.all(cloudValues.map(v => v.fetchValue()));
+      },
+      observeValue: r.observeValue.switchMap(o => {
+        const cloudValues = collectCloudValues(o);
+        throw new Error('not ready yet! :-(');
+        return {};
+      }),
+      getValue: () => {
+        const o = r.getValue();
+        const expandSpec = expandFn(o, r);
+        const expanded = doExpansion(expandSpec);
+        return expanded;
+      },
+    };
+  }
+  r.expand = expand;
+
+  function map(mapFn) {
+    return {
+      ...r,
+      map: innerMapFn => r.map(v => innerMapFn(mapFn(v))),
+      observeValue: r.observeValue.map(mapFn),
+      getValue: () => {
+        return mapFn(r.getValue());
+      },
+    };
+  }
+  r.map = map;
+
+  return r;
 }
