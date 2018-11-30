@@ -92,12 +92,12 @@ const startMemoryDataSource = (opts = {}) => {
     if (r.objects[id] && _objects[id] !== undefined) {
       return {
         id,
-        object: _objects[id],
+        value: _objects[id],
       };
     }
     return {
       id,
-      object: undefined,
+      value: undefined,
     };
   }
   function _isValidName(name) {

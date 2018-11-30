@@ -398,7 +398,6 @@ function LoginPane({ onClientConfig, onSession, defaultSession }) {
       </Pane>
     );
   }
-  console.log('uhh', cloud);
   if (cloud) {
     return (
       <Pane>

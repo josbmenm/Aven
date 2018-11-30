@@ -100,11 +100,11 @@ export default function createCloudObject({
       name,
       id,
     });
-    if (!result || result.object === undefined) {
+    if (!result || result.value === undefined) {
       throw new Error(`Error fetching object "${id}" from remote!`);
     }
     setState({
-      value: result.object,
+      value: result.value,
       lastFetchTime: Date.now(),
     });
   }

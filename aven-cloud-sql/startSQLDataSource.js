@@ -110,7 +110,7 @@ export default async function startSQLDataSource({ client, connection }) {
     }
     return {
       id: obj.id,
-      object: JSON.parse(obj.value), // todo, use json field when on postgres, (and still provide fallback for sqlite)
+      value: JSON.parse(obj.value), // todo, use json field when on postgres, (and still provide fallback for sqlite)
     };
   }
 

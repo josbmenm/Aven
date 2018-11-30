@@ -61,7 +61,7 @@ describe('basic ref DataSource interaction', () => {
       name: 'myref',
       id,
     });
-    expect(result.object.foo).toEqual('zoom');
+    expect(result.value.foo).toEqual('zoom');
   });
 
   test('writes ref with putId', async () => {
@@ -82,7 +82,7 @@ describe('basic ref DataSource interaction', () => {
       name: 'myref',
       id: refResult.id,
     });
-    expect(result.object.foo).toEqual(42);
+    expect(result.value.foo).toEqual(42);
   });
 
   test('puts objects', async () => {
@@ -102,7 +102,7 @@ describe('basic ref DataSource interaction', () => {
       name: 'myref',
       id,
     });
-    expect(result.object.foo).toEqual(47);
+    expect(result.value.foo).toEqual(47);
   });
 });
 

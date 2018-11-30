@@ -112,7 +112,7 @@ describe('basic object DataSource interaction', () => {
       id: c.id,
     });
 
-    expect(obj.object.foo).toEqual(42);
+    expect(obj.value.foo).toEqual(42);
   });
 });
 

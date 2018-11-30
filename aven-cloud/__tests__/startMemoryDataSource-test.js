@@ -62,7 +62,7 @@ describe('object storage', () => {
       name: 'foo',
       id: putResult.id,
     });
-    expect(obj.object.foo).toEqual('bar');
+    expect(obj.value.foo).toEqual('bar');
   });
   test('puts and gets null object', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
@@ -78,7 +78,7 @@ describe('object storage', () => {
       name: 'foo',
       id: putResult.id,
     });
-    expect(obj.object).toEqual(null);
+    expect(obj.value).toEqual(null);
   });
 });
 

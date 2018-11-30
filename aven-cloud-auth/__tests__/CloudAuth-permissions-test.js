@@ -163,7 +163,7 @@ describe('Cloud auth Permissions', () => {
       name: 'something',
       id: result.id,
     });
-    expect(result.object.foo).toEqual('bar');
+    expect(result.value.foo).toEqual('bar');
   });
 
   test('account read permission', async () => {
@@ -214,7 +214,7 @@ describe('Cloud auth Permissions', () => {
       name: 'something',
       id: result.id,
     });
-    expect(result.object.foo).toEqual('bar');
+    expect(result.value.foo).toEqual('bar');
     await expect(
       authDataSource.dispatch({
         type: 'GetRef',

@@ -42,7 +42,7 @@ async function getObj(dataSource, domain, name) {
   if (!o) {
     return o;
   }
-  return o.object;
+  return o.value;
 }
 
 export default function CloudAuth({ dataSource, methods }) {
