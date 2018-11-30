@@ -110,6 +110,27 @@ describe('ref storage', () => {
     });
     expect(ref.id).toEqual(obj.id);
   });
+  test('get ref value works', async () => {
+    const ds = startMemoryDataSource({ domain: 'test' });
+    const obj = await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo',
+      id: obj.id,
+    });
+    const ref = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: 'foo',
+    });
+    expect(ref.value.foo).toEqual('bar');
+  });
   test('get missing ref', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const ref = await ds.dispatch({
@@ -436,3 +457,5 @@ describe('observing refs', () => {
     subs2.unsubscribe();
   });
 });
+
+describe('synthetic _refs and _objects', () => {});

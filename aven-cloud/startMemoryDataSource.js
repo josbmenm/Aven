@@ -216,6 +216,24 @@ const startMemoryDataSource = (opts = {}) => {
     }
   };
 
+  async function GetRefValue({ domain, name }) {
+    if (domain !== dataSourceDomain) {
+      return null;
+    }
+    const r = _getRef(name);
+
+    if (r.objects[r.id] && _objects[r.id] !== undefined) {
+      return {
+        id: r.id,
+        value: _objects[r.id],
+      };
+    }
+    return {
+      id: r.id,
+      value: null,
+    };
+  }
+
   return {
     isConnected,
     close,
@@ -225,6 +243,7 @@ const startMemoryDataSource = (opts = {}) => {
       PutObject,
       GetObject,
       GetRef,
+      GetRefValue,
       GetStatus,
       ListDomains,
       ListRefs,
