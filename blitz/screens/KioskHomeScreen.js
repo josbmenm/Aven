@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Image, StyleSheet } from 'react-native';
+import { View, ScrollView, Image, StyleSheet, Text } from 'react-native';
 import MenuItem from '../components/MenuItem';
 import GenericPage from '../components/GenericPage';
 import Hero from '../../components/Hero';
 import { genericPageStyle } from '../../components/Styles';
 import { withMenu } from '../../ono-cloud/OnoKitchen';
 
-const Home = ({ menu }) => {
+const Home = ({ menu, navigation }) => {
   return (
     <React.Fragment>
       <ScrollView
@@ -29,6 +29,13 @@ const Home = ({ menu }) => {
           source={require('../assets/OnoBlendsLogo.png')}
         />
       </View>
+      <Text
+        onPress={() => {
+          navigation.goBack();
+        }}
+      >
+        Exit Kiosk (INTERNAL ONLY)
+      </Text>
     </React.Fragment>
   );
 };
