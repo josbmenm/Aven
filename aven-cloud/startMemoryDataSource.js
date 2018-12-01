@@ -144,12 +144,23 @@ const startMemoryDataSource = (opts = {}) => {
     return _renderRef(r || {});
   }
 
-  async function ListRefObjects({ domain, name }) {
+  async function ListRefObjects({ domain, parentName }) {
     if (domain !== dataSourceDomain) {
       return [];
     }
-    const r = _getRef(name);
-    return Object.keys(r.objects);
+    if (parentName == null || parentName === '') {
+      return Object.keys(_objects);
+    }
+    const out = new Set();
+    Object.keys(_refs)
+      .filter(r => {
+        return r.slice(0, parentName.length) === parentName;
+      })
+      .forEach(refName => {
+        const r = _getRef(refName);
+        Object.keys(r.objects).forEach(objId => out.add(objId));
+      });
+    return Array.from(out);
   }
 
   async function ListRefs({ domain, parentName }) {
@@ -220,9 +231,16 @@ const startMemoryDataSource = (opts = {}) => {
       const refs = await ListRefs({ domain, parentName: listRefName });
       return { id: null, value: refs };
     }
-    const listObjectsRef = getListObjectsName(name);
-    if (typeof listObjectsRef === 'string') {
-      return { coming: 'soon' };
+    const listObjectsRefName = getListObjectsName(name);
+    if (typeof listObjectsRefName === 'string') {
+      const objs = await ListRefObjects({
+        domain,
+        parentName: listObjectsRefName,
+      });
+      return {
+        id: null,
+        value: objs,
+      };
     }
     if (domain !== dataSourceDomain) {
       return null;

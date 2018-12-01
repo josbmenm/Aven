@@ -219,6 +219,105 @@ describe('ref storage', () => {
     expect(refs).toEqual(['foo', 'bar']);
   });
 
+  test('list object works', async () => {
+    const ds = startMemoryDataSource({ domain: 'test' });
+    let objs = null;
+    objs = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: '_objects',
+    });
+    expect(objs.value).toEqual([]);
+
+    const obj = await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+
+    objs = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: '_objects',
+    });
+    expect(objs.value).toEqual([obj.id]);
+  });
+
+  test('list object of ref works', async () => {
+    const ds = startMemoryDataSource({ domain: 'test' });
+    let objs = null;
+    objs = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: 'foo/_objects',
+    });
+    expect(objs.value).toEqual([]);
+
+    await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'bar',
+      value: { foo: 'bar' },
+    });
+    const o1 = await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'foo' },
+    });
+    const o2 = await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'two' },
+    });
+
+    objs = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: 'foo/_objects',
+    });
+    expect(objs.value).toEqual([o1.id, o2.id]);
+  });
+
+  test('list object of ref cascades correctly', async () => {
+    const ds = startMemoryDataSource({ domain: 'test' });
+    let objs = null;
+    objs = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: 'foo/_objects',
+    });
+    expect(objs.value).toEqual([]);
+
+    await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'bar',
+      value: { foo: 'bar' },
+    });
+    const o1 = await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'foo' },
+    });
+    const o2 = await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo/bar',
+      value: { foo: 'two' },
+    });
+
+    objs = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: 'foo/_objects',
+    });
+    expect(objs.value).toEqual([o1.id, o2.id]);
+  });
+
   test('list ref works works with GetValue _refs', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     let refs = null;
