@@ -130,8 +130,6 @@ export default async function startSQLDataSource({ client, connection }) {
     return result.map(r => r.name);
   }
 
-  async function ListObjects() {}
-
   async function DestroyRef({ domain, name }) {
     const numDeleted = await models.Ref.query()
       .where('name', '=', name)
@@ -203,7 +201,6 @@ export default async function startSQLDataSource({ client, connection }) {
       GetStatus,
       ListDomains,
       ListRefs,
-      ListObjects,
       DestroyRef,
       CollectGarbage,
       ListRefObjects,

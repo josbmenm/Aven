@@ -183,10 +183,6 @@ const startMemoryDataSource = (opts = {}) => {
     return [dataSourceDomain];
   }
 
-  async function ListObjects({ domain, name }) {
-    console.log('ok', domain, name);
-  }
-
   async function CollectGarbage() {
     // create list of all objects
     // for each ref
@@ -261,7 +257,6 @@ const startMemoryDataSource = (opts = {}) => {
       GetStatus,
       ListDomains,
       ListRefs,
-      ListObjects,
       DestroyRef,
       CollectGarbage,
       ListRefObjects,
