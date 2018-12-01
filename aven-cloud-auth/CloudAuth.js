@@ -1,10 +1,10 @@
 import { uuid, checksum } from '../aven-cloud-utils/Crypto';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
-
+import { getAuthRefName } from '../aven-cloud-utils/RefNaming';
 function thanksVeryMuch(dispatch) {
   return async action => {
     const resp = await dispatch(action);
-    // console.log("thanks", action, resp);
+    // console.log("thanks ", action, "very much", resp);
     return resp;
   };
 }
@@ -431,7 +431,7 @@ export default function CloudAuth({ dataSource, methods }) {
     await writeObj(dataSource, domain, authObjName, permissions);
   }
 
-  async function GetPermissionRules({ auth, domain, name }) {
+  async function GetPermissionRules({ domain, name }) {
     const authObjName = `${name}/_auth`;
 
     const lastPermissions = await getObj(dataSource, domain, authObjName);
@@ -457,8 +457,9 @@ export default function CloudAuth({ dataSource, methods }) {
       }
       let refName = action.name;
       let realPermissionLevelRequired = null;
-      if (action.name.match(/^(.+)_auth$/)) {
-        refName = action.name.match(/^(.+)\/_auth$/)[1];
+      const authRefName = getAuthRefName(action.name);
+      if (typeof authRefName === 'string') {
+        refName = authRefName;
         type = 'canAdmin';
       }
       const p = await GetPermissions({
@@ -505,11 +506,11 @@ export default function CloudAuth({ dataSource, methods }) {
     ),
     CreateSession,
     CreateAnonymousSession,
-    DestroySession,
-    DestroyAllSessions,
+    DestroySession, // todo, guard
+    DestroyAllSessions, // todo, guard
     VerifySession,
     VerifyAuth,
-    PutAuthMethod,
+    PutAuthMethod, // todo, guard
     GetPermissions,
   };
 

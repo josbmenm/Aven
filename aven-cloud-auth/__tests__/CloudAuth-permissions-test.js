@@ -459,4 +459,79 @@ describe('Cloud auth Permissions', () => {
       },
     });
   });
+
+  test('root permission allows getting _auth', async () => {
+    const {
+      fooObj,
+      barObj,
+      rootSession,
+      anonSession,
+      anonSession2,
+      authDataSource,
+    } = await establishPermissionsTestData();
+
+    let result = null;
+
+    await expect(
+      authDataSource.dispatch({
+        type: 'GetRefValue',
+        auth: anonSession,
+        domain: 'test',
+        name: '_auth',
+      })
+    ).rejects.toThrow();
+
+    result = await authDataSource.dispatch({
+      type: 'GetRefValue',
+      auth: rootSession,
+      domain: 'test',
+      name: '_auth',
+    });
+
+    expect(result.value).toEqual(null);
+
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: rootSession,
+      domain: 'test',
+      name: '',
+      defaultRule: {
+        canRead: true,
+      },
+      accountRules: {},
+    });
+
+    result = await authDataSource.dispatch({
+      type: 'GetRefValue',
+      auth: rootSession,
+      domain: 'test',
+      name: '_auth',
+    });
+
+    expect(result.value.defaultRule).toEqual({
+      canRead: true,
+    });
+
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: rootSession,
+      domain: 'test',
+      //name: null, // null, undefined, and empty string mean the same thing for PutPermissionRules
+      defaultRule: {
+        canRead: false,
+      },
+      accountRules: {},
+    });
+
+    result = await authDataSource.dispatch({
+      type: 'GetRefValue',
+      auth: rootSession,
+      domain: 'test',
+      name: '_auth',
+    });
+
+    expect(result.value.defaultRule).toEqual({
+      canRead: false,
+    });
+  });
 });

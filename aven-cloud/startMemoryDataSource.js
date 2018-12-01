@@ -1,5 +1,9 @@
 import { BehaviorSubject } from 'rxjs-compat';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
+import {
+  getListRefName,
+  getListObjectsName,
+} from '../aven-cloud-utils/RefNaming';
 import uuid from 'uuid/v1';
 const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
@@ -9,17 +13,6 @@ function _renderRef({ id }) {
   return {
     id: id || null,
   };
-}
-
-function getListRefName(name) {
-  if (name === '_refs') {
-    return '';
-  }
-  const match = name.match(/^(.*)\/_refs$/);
-  if (match) {
-    return match[1];
-  }
-  return null;
 }
 
 const startMemoryDataSource = (opts = {}) => {
@@ -226,6 +219,10 @@ const startMemoryDataSource = (opts = {}) => {
     if (typeof listRefName === 'string') {
       const refs = await ListRefs({ domain, parentName: listRefName });
       return { id: null, value: refs };
+    }
+    const listObjectsRef = getListObjectsName(name);
+    if (typeof listObjectsRef === 'string') {
+      return { coming: 'soon' };
     }
     if (domain !== dataSourceDomain) {
       return null;
