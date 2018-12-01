@@ -440,7 +440,13 @@ export default function CloudAuth({ dataSource, methods }) {
 
   const guardedActions = {};
 
-  const readActions = ['GetObject', 'GetRef', 'ListRefs', 'ListRefObjects'];
+  const readActions = [
+    'GetObject',
+    'GetRef',
+    'GetRefValue',
+    'ListRefs',
+    'ListRefObjects',
+  ];
   const writeActions = ['PutObject', 'PutRef'];
   const adminActions = ['DestroyRef'];
 
@@ -449,13 +455,22 @@ export default function CloudAuth({ dataSource, methods }) {
       if (action.type !== actionType) {
         return await dispatch(action);
       }
+      let refName = action.name;
+      let realPermissionLevelRequired = null;
+      if (action.name.match(/^(.+)_auth$/)) {
+        refName = action.name.match(/^(.+)\/_auth$/)[1];
+        type = 'canAdmin';
+      }
       const p = await GetPermissions({
         auth: action.auth,
-        name: action.name,
+        name: refName,
         domain: action.domain,
       });
 
-      if (!p[permissionLevel]) {
+      if (
+        !p[permissionLevel] &&
+        (!realPermissionLevelRequired || p[realPermissionLevelRequired])
+      ) {
         throw new Error(
           `Insufficient permissions for "${actionType}" on ${
             action.name

@@ -4,13 +4,22 @@ import uuid from 'uuid/v1';
 const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
 
-function _renderRef({ id, isPublic, owner }) {
+function _renderRef({ id }) {
   // this strips out hidden features of the ref and snapshots the referenced values
   return {
     id: id || null,
-    isPublic: isPublic || true,
-    owner: owner || null,
   };
+}
+
+function getListRefName(name) {
+  if (name === '_refs') {
+    return '';
+  }
+  const match = name.match(/^(.*)\/_refs$/);
+  if (match) {
+    return match[1];
+  }
+  return null;
 }
 
 const startMemoryDataSource = (opts = {}) => {
@@ -154,7 +163,7 @@ const startMemoryDataSource = (opts = {}) => {
     if (domain !== dataSourceDomain) {
       return [];
     }
-    if (parentName == null) {
+    if (parentName == null || parentName === '') {
       return Object.keys(_refs).filter(refName => !refName.match(/\//));
     }
     return Object.keys(_refs)
@@ -217,6 +226,11 @@ const startMemoryDataSource = (opts = {}) => {
   };
 
   async function GetRefValue({ domain, name }) {
+    const listRefName = getListRefName(name);
+    if (typeof listRefName === 'string') {
+      const refs = await ListRefs({ domain, parentName: listRefName });
+      return { id: null, value: refs };
+    }
     if (domain !== dataSourceDomain) {
       return null;
     }

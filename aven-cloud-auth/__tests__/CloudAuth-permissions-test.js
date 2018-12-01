@@ -406,4 +406,57 @@ describe('Cloud auth Permissions', () => {
 
     expect(result.defaultRule.canRead).toEqual(true);
   });
+
+  test('account admin permission for getting _auth', async () => {
+    const {
+      fooObj,
+      barObj,
+      rootSession,
+      anonSession,
+      anonSession2,
+      authDataSource,
+    } = await establishPermissionsTestData();
+
+    let result = null;
+
+    await expect(
+      authDataSource.dispatch({
+        type: 'GetRefValue',
+        auth: anonSession,
+        domain: 'test',
+        name: 'something/_auth',
+      })
+    ).rejects.toThrow();
+
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: rootSession,
+      domain: 'test',
+      name: 'something',
+      defaultRule: {
+        canRead: true,
+      },
+      accountRules: {
+        [anonSession.accountId]: {
+          canAdmin: true,
+        },
+      },
+    });
+
+    result = await authDataSource.dispatch({
+      type: 'GetRefValue',
+      auth: anonSession,
+      domain: 'test',
+      name: 'something/_auth',
+    });
+
+    expect(result.value.defaultRule).toEqual({
+      canRead: true,
+    });
+    expect(result.value.accountRules).toEqual({
+      [anonSession.accountId]: {
+        canAdmin: true,
+      },
+    });
+  });
 });
