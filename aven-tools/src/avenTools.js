@@ -31,8 +31,7 @@ const getPackageDir = async (srcDir, packageName, globePkg) => {
 };
 
 const syncDirectories = async (from, to, exclude = []) => {
-  console.log('Syncing', from, to);
-  console.log(await fs.emptyDir(to));
+  await fs.emptyDir(to);
   return await fs.copy(from, to, {
     filter: file =>
       exclude.reduce((prev, next) => prev && !next.exec(file), true),
