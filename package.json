@@ -2,14 +2,12 @@
   "name": "@aven-cloud/aven",
   "version": "0.0.0",
   "scripts": {
-    "start": "./aven-tools/cli.js start",
-    "build": "./aven-tools/cli.js build",
-    "deploy": "./aven-tools/cli.js deploy",
+    "start": "node ./aven-tools/cli.js start",
+    "build": "node ./aven-tools/cli.js build",
+    "deploy": "node ./aven-tools/cli.js deploy",
     "lint": "eslint .",
     "format": "eslint . --fix",
-    "start-web-playground": "./aven-tools/cli.js start web-playground",
-    "start-expo-playground": "./aven-tools/cli.js start expo-playground",
-    "clean": "./aven-tools/cli.js clean",
+    "clean": "node ./aven-tools/cli.js clean",
     "test": "jest"
   },
   "devDependencies": {
