@@ -219,7 +219,7 @@ describe('ref storage', () => {
     expect(refs).toEqual(['foo', 'bar']);
   });
 
-  test.skip('implicit parent list ref ', async () => {
+  test('implicit parent list ref ', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     let result = null;
     result = await ds.dispatch({

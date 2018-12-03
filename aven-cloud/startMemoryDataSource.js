@@ -39,6 +39,11 @@ function getMainTerm(name) {
   return terms[terms.length - 1];
 }
 
+function getRootTerm(name) {
+  const terms = getTerms(name);
+  return terms[0];
+}
+
 function _renderRef({ id }) {
   // this strips out hidden features of the ref and snapshots the referenced values
   return {
@@ -235,23 +240,26 @@ const startMemoryDataSource = (opts = {}) => {
     if (domain !== dataSourceDomain) {
       return [];
     }
-    if (parentName == null || parentName === '') {
-      return Object.keys(_refs)
-        .filter(refName => !refName.match(/\//))
-        .filter(n => n !== '_refs' && n !== '_objects' && n !== '_auth');
-    }
-    return Object.keys(_refs)
+    const results = Object.keys(_refs)
       .map(refName => {
+        if (parentName == null || parentName === '') {
+          return refName;
+        }
         const m = refName.match(RegExp(`^${parentName}/(.*)`));
         if (!m || m[1] === '') {
           return null;
         }
         return m[1];
       })
-      .filter(name => {
-        return !!name && !name.match(/\//);
+      .map(name => {
+        if (!name) {
+          return null;
+        }
+        return getRootTerm(name);
       })
+      .filter(n => !!n)
       .filter(n => n !== '_refs' && n !== '_objects' && n !== '_auth');
+    return Array.from(new Set(results));
   }
 
   async function ListDomains() {
