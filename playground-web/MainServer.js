@@ -1,8 +1,9 @@
-import App from './App';
-import WebServer from '../aven-web/WebServer';
-import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
-import createCloudClient from '../aven-cloud/createCloudClient';
 import CloudContext from '../aven-cloud/CloudContext';
+import createCloudClient from '../aven-cloud/createCloudClient';
+import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
+import WebServer from '../aven-web/WebServer';
+
+import App from './App';
 
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');

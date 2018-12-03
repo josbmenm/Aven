@@ -1,30 +1,30 @@
 import {
-  View,
-  Text,
-  TextInput,
-  Switch,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  StyleSheet,
-  AsyncStorage,
-} from 'react-native';
-import React, { useState, useEffect, useMemo } from 'react';
-
-import useCloud from '../aven-cloud/useCloud';
-import useCloudSession from '../aven-cloud/useCloudSession';
-import useRefValue from '../aven-cloud/useRefValue';
-import createBrowserNetworkSource from '../aven-cloud-browser/createBrowserNetworkSource';
-import createCloudClient from '../aven-cloud/createCloudClient';
-import CloudContext from '../aven-cloud/CloudContext';
-import JSONView from '../debug-views/JSONView';
-import useObservable from '../aven-cloud/useObservable';
-import { useNavigationState, useNavigation } from 'react-navigation-hooks';
-import {
-  SwitchRouter,
   createNavigator,
   NavigationContext,
+  SwitchRouter,
 } from '@react-navigation/core';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  AsyncStorage,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useNavigation, useNavigationState } from 'react-navigation-hooks';
+
+import createBrowserNetworkSource from '../aven-cloud-browser/createBrowserNetworkSource';
+import CloudContext from '../aven-cloud/CloudContext';
+import createCloudClient from '../aven-cloud/createCloudClient';
+import useCloud from '../aven-cloud/useCloud';
+import useCloudSession from '../aven-cloud/useCloudSession';
+import useObservable from '../aven-cloud/useObservable';
+import useRefValue from '../aven-cloud/useRefValue';
+import JSONView from '../debug-views/JSONView';
 
 function useActiveRoute() {
   const state = useNavigationState();
@@ -71,7 +71,7 @@ function Hero({ title }) {
   return (
     <Text
       style={{
-        fontSize: 80,
+        fontSize: 20,
         textAlign: 'center',
         fontWeight: '300',
         marginVertical: 30,
@@ -733,7 +733,7 @@ function RefMetaPane() {
   return (
     <Pane>
       <Title title={cloudRef.name} />
-      {r && <InfoSection text={`Current ID: ${r.id}`} />}
+      {r && <InfoSection text={` ID: ${r.id}`} />}
       <StandaloneButton
         title="Destroy"
         onPress={() => {

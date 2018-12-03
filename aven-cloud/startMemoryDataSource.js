@@ -1,10 +1,12 @@
 import { BehaviorSubject } from 'rxjs-compat';
+import uuid from 'uuid/v1';
+
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import {
-  getListRefName,
   getListObjectsName,
+  getListRefName,
 } from '../aven-cloud-utils/RefNaming';
-import uuid from 'uuid/v1';
+
 const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
 

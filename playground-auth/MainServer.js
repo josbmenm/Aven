@@ -1,15 +1,16 @@
-import App from './App';
-import WebServer from '../aven-web/WebServer';
-import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
-import createCloudClient from '../aven-cloud/createCloudClient';
-import CloudContext from '../aven-cloud/CloudContext';
-import EmailAgent from '../aven-email-agent-sendgrid/EmailAgent';
-import SMSAgent from '../aven-sms-agent-twilio/SMSAgent';
-import SMSAuthMethod from '../aven-cloud-auth-sms/SMSAuthMethod';
 import EmailAuthMethod from '../aven-cloud-auth-email/EmailAuthMethod';
 import RootAuthMethod from '../aven-cloud-auth-root/RootAuthMethod';
+import SMSAuthMethod from '../aven-cloud-auth-sms/SMSAuthMethod';
 import CloudAuth from '../aven-cloud-auth/CloudAuth';
 import { hashSecureString } from '../aven-cloud-utils/Crypto';
+import CloudContext from '../aven-cloud/CloudContext';
+import createCloudClient from '../aven-cloud/createCloudClient';
+import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
+import EmailAgent from '../aven-email-agent-sendgrid/EmailAgent';
+import SMSAgent from '../aven-sms-agent-twilio/SMSAgent';
+import WebServer from '../aven-web/WebServer';
+
+import App from './App';
 
 const getEnv = c => process.env[c];
 
