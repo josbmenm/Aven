@@ -564,6 +564,71 @@ describe('observing refs', () => {
     });
     expect(lastObserved.id).toEqual(obj2.id);
   });
+
+  test('observe root ref list works', async () => {
+    const ds = startMemoryDataSource({ domain: 'test' });
+    const obs = await ds.observeRef('test', '_refs');
+    let lastObserved = undefined;
+    obs.subscribe({
+      next: newVal => {
+        lastObserved = newVal;
+      },
+    });
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo',
+      id: null,
+    });
+    expect(lastObserved.value).toEqual(['foo']);
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo/bar',
+      id: null,
+    });
+    expect(lastObserved.value).toEqual(['foo']);
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'baz',
+      id: null,
+    });
+    expect(lastObserved.value).toEqual(['foo', 'baz']);
+  });
+
+  test('observe named ref list works', async () => {
+    const ds = startMemoryDataSource({ domain: 'test' });
+    const obs = await ds.observeRef('test', 'foo/_refs');
+    let lastObserved = undefined;
+    obs.subscribe({
+      next: newVal => {
+        lastObserved = newVal;
+      },
+    });
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo',
+      id: null,
+    });
+    expect(lastObserved.value).toEqual([]);
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo/bar',
+      id: null,
+    });
+    expect(lastObserved.value).toEqual(['bar']);
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo/baz',
+      id: null,
+    });
+    expect(lastObserved.value).toEqual(['bar', 'baz']);
+  });
+
   test('observe cleanup works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj1 = await ds.dispatch({

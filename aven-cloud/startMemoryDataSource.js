@@ -8,6 +8,38 @@ import uuid from 'uuid/v1';
 const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
 
+function getTerms(name) {
+  return name.split('/');
+}
+
+function isRefNameValid(name) {
+  return getTerms(name).reduce((prev, now, i) => {
+    return prev && (now !== '_refs' && now !== '_objects');
+  }, true);
+}
+
+function getRefsListName(name) {
+  console.log('wtf', name);
+  const terms = getTerms(name);
+  const parentTerms = terms.slice(0, terms.length - 1);
+  const refsListName =
+    parentTerms.length === 0 ? '_refs' : parentTerms.join('/') + '/_refs';
+  console.log(
+    'hellooo',
+    name,
+    terms,
+    parentTerms,
+    parentTerms.length,
+    refsListName
+  );
+  return refsListName;
+}
+
+function getMainTerm(name) {
+  const terms = getTerms(name);
+  return terms[terms.length - 1];
+}
+
 function _renderRef({ id }) {
   // this strips out hidden features of the ref and snapshots the referenced values
   return {
@@ -35,6 +67,9 @@ const startMemoryDataSource = (opts = {}) => {
   }
 
   async function PutRef({ domain, name, id }) {
+    if (!isRefNameValid(name)) {
+      throw new Error(`Invalid Ref name "${name}"`);
+    }
     if (domain === undefined || name === undefined) {
       throw new Error('Invalid use. ', { domain, name, id });
     }
@@ -53,6 +88,17 @@ const startMemoryDataSource = (opts = {}) => {
       r.behavior.next(_renderRef(r));
     } else {
       r.behavior = new BehaviorSubject(_renderRef(r));
+    }
+
+    const listR = _getRef(getRefsListName(name));
+    console.log('argh', listR);
+    if (listR.behavior) {
+      const last = listR.behavior.value;
+      console.log('FM2L', last);
+      listR.behavior.next({
+        ...(last || {}),
+        value: [...((last && last.value) || []), getMainTerm(name)],
+      });
     }
   }
 
@@ -81,6 +127,21 @@ const startMemoryDataSource = (opts = {}) => {
         }
         delete _refs[name];
       });
+
+    const listR = _getRef(getRefsListName(name));
+    if (listR.behavior) {
+      const mainName = getMainTerm(name);
+      const last = listR.behavior.value;
+      if (!last.value) {
+        console.log('shitty bailout', last);
+
+        return;
+      }
+      listR.behavior.next({
+        ...last,
+        value: last.value.filter(v => v !== mainName),
+      });
+    }
   }
 
   async function GetObject({ domain, name, id }) {
@@ -168,7 +229,9 @@ const startMemoryDataSource = (opts = {}) => {
       return [];
     }
     if (parentName == null || parentName === '') {
-      return Object.keys(_refs).filter(refName => !refName.match(/\//));
+      return Object.keys(_refs)
+        .filter(refName => !refName.match(/\//))
+        .filter(n => n !== '_refs' && n !== '_objects' && n !== '_auth');
     }
     return Object.keys(_refs)
       .map(refName => {
@@ -180,7 +243,8 @@ const startMemoryDataSource = (opts = {}) => {
       })
       .filter(name => {
         return !!name && !name.match(/\//);
-      });
+      })
+      .filter(n => n !== '_refs' && n !== '_objects' && n !== '_auth');
   }
 
   async function ListDomains() {
@@ -221,15 +285,32 @@ const startMemoryDataSource = (opts = {}) => {
     if (r.behavior) {
       return r.behavior;
     } else {
+      const listRefName = getListRefName(name);
+      if (listRefName) {
+        r.behavior = new BehaviorSubject({ value: undefined });
+        ListRefs({ domain, parentName: listRefName })
+          .then(refList => {
+            r.behavior.next({ value: refList });
+          })
+          .catch(e => {
+            console.error(e);
+          });
+        return r.behavior;
+      }
       return (r.behavior = new BehaviorSubject(_renderRef(r)));
     }
   };
 
   async function GetRefValue({ domain, name }) {
+    if (domain !== dataSourceDomain) {
+      throw new Error(
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
+      );
+    }
     const listRefName = getListRefName(name);
     if (typeof listRefName === 'string') {
       const refs = await ListRefs({ domain, parentName: listRefName });
-      return { id: null, value: refs };
+      return { id: undefined, value: refs };
     }
     const listObjectsRefName = getListObjectsName(name);
     if (typeof listObjectsRefName === 'string') {
@@ -238,12 +319,9 @@ const startMemoryDataSource = (opts = {}) => {
         parentName: listObjectsRefName,
       });
       return {
-        id: null,
+        id: undefined,
         value: objs,
       };
-    }
-    if (domain !== dataSourceDomain) {
-      return null;
     }
     const r = _getRef(name);
 
