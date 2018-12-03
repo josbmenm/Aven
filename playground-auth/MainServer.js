@@ -7,7 +7,9 @@ import EmailAgent from '../aven-email-agent-sendgrid/EmailAgent';
 import SMSAgent from '../aven-sms-agent-twilio/SMSAgent';
 import SMSAuthMethod from '../aven-cloud-auth-sms/SMSAuthMethod';
 import EmailAuthMethod from '../aven-cloud-auth-email/EmailAuthMethod';
+import RootAuthMethod from '../aven-cloud-auth-root/RootAuthMethod';
 import CloudAuth from '../aven-cloud-auth/CloudAuth';
+import { hashSecureString } from '../aven-cloud-utils/Crypto';
 
 const getEnv = c => process.env[c];
 
@@ -48,13 +50,19 @@ const runServer = async () => {
     agent: smsAgent,
   });
 
+  const rootPasswordHash = await hashSecureString('hello');
+
+  const rootAuthMethod = RootAuthMethod({
+    rootPasswordHash,
+  });
+
   const emailAuthMethod = EmailAuthMethod({
     agent: emailAgent,
   });
 
   const authenticatedDataSource = CloudAuth({
     dataSource,
-    methods: [smsAuthMethod, emailAuthMethod],
+    methods: [smsAuthMethod, emailAuthMethod, rootAuthMethod],
   });
 
   const serverListenLocation = getEnv('PORT');
@@ -63,7 +71,7 @@ const runServer = async () => {
   const webService = await WebServer({
     App,
     context,
-    authenticatedDataSource,
+    dataSource: authenticatedDataSource,
     serverListenLocation,
   });
   console.log('☁️️ Web Ready 🕸');
