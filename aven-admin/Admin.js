@@ -32,8 +32,14 @@ function useActiveRoute() {
   return state.routes[state.index];
 }
 
+const UNLOADED_STATE = {};
+
+function isStateUnloaded(s) {
+  return s === UNLOADED_STATE;
+}
+
 function useAsyncStorage(storageKey, defaultValue) {
-  const unloadedValue = {};
+  const unloadedValue = UNLOADED_STATE;
   const [storageState, setInternalStorageState] = useState(unloadedValue);
 
   useEffect(
@@ -52,12 +58,13 @@ function useAsyncStorage(storageKey, defaultValue) {
   );
 
   function setStorageState(updates) {
-    if (storageState === unloadedValue) {
+    if (isStateUnloaded(storageState)) {
       throw new Error(
         'Cannot merge storage state if it has not been loaded yet!'
       );
     }
     const newState = { ...storageState, ...updates };
+    console.log('WAAAmbulance', newState);
     setInternalStorageState(newState);
     AsyncStorage.setItem(storageKey, JSON.stringify(newState)).catch(
       console.error
@@ -169,13 +176,14 @@ function FieldLabel({ label, onPress }) {
   );
 }
 
-function InputField({ name, value, onValue }) {
+function InputField({ name, value, onValue, onSubmit }) {
   return (
     <View style={{ paddingVertical: 8 }}>
       <FieldLabel label={name} />
       <TextInput
         value={value || ''}
         onChangeText={onValue}
+        onSubmitEditing={onSubmit}
         style={{
           backgroundColor: 'white',
           height: Styles.inputHeight,
@@ -233,22 +241,30 @@ function ConnectionForm({ onClientConfig, defaultSession }) {
   if (isConnecting) {
     return <Text>One moment..</Text>;
   }
+  function connect() {
+    setIsConnecting(true);
+    onClientConfig({
+      authority,
+      useSSL,
+      domain,
+    });
+  }
   return (
     <Form>
-      <InputField value={authority} onValue={setAuthority} name="Authority" />
-      <InputField value={domain} onValue={setDomain} name="Domain" />
-      <BooleanField value={useSSL} onValue={setUseSSL} name="Use HTTPS" />
-      <FormButton
-        title="Connect"
-        onPress={() => {
-          setIsConnecting(true);
-          onClientConfig({
-            authority,
-            useSSL,
-            domain,
-          });
-        }}
+      <InputField
+        value={authority}
+        onValue={setAuthority}
+        name="Authority"
+        onSubmit={connect}
       />
+      <InputField
+        value={domain}
+        onValue={setDomain}
+        name="Domain"
+        onSubmit={connect}
+      />
+      <BooleanField value={useSSL} onValue={setUseSSL} name="Use HTTPS" />
+      <FormButton title="Connect" onPress={connect} />
     </Form>
   );
 }
@@ -284,20 +300,35 @@ function LargePane({ children }) {
   );
 }
 
-function EmailLoginInfo() {
+function EmailLoginInfo({ onSubmit }) {
   const [email, setEmail] = useState('');
-  return <InputField name="Email Address" value={email} onValue={setEmail} />;
+  return (
+    <InputField
+      name="Email Address"
+      value={email}
+      onValue={setEmail}
+      onSubmit={onSubmit}
+    />
+  );
 }
 
-function SMSLoginInfo() {
+function SMSLoginInfo({ onSubmit }) {
   const [phone, setPhone] = useState('');
-  return <InputField name="Phone Number" value={phone} onValue={setPhone} />;
+  return (
+    <InputField
+      name="Phone Number"
+      value={phone}
+      onValue={setPhone}
+      onSubmit={onSubmit}
+    />
+  );
 }
 
-function RootLoginInfo({ loginInfo, setLoginInfo }) {
+function RootLoginInfo({ loginInfo, setLoginInfo, onSubmit }) {
   return (
     <InputField
       name="Password"
+      onSubmit={onSubmit}
       value={
         loginInfo &&
         loginInfo.verificationResponse &&
@@ -314,13 +345,23 @@ function RootLoginInfo({ loginInfo, setLoginInfo }) {
   );
 }
 
-function PasswordLoginInfo() {
+function PasswordLoginInfo({ onSubmit }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   return (
     <React.Fragment>
-      <InputField name="Username" value={username} onValue={setUsername} />
-      <InputField name="Password" value={password} onValue={setPassword} />
+      <InputField
+        name="Username"
+        value={username}
+        onValue={setUsername}
+        onSubmit={onSubmit}
+      />
+      <InputField
+        name="Password"
+        value={password}
+        onValue={setPassword}
+        onSubmit={onSubmit}
+      />
     </React.Fragment>
   );
 }
@@ -348,6 +389,18 @@ function LoginForm({ onSession }) {
     return <Text>One moment..</Text>;
   }
   const cloud = useCloud();
+  async function doLogin() {
+    setIsWorking(true);
+    const resp = await cloud.CreateSession({
+      accountId: loginInfo.accountId,
+      verificationResponse: loginInfo.verificationResponse,
+      verificationInfo: loginInfo.verificationInfo,
+    });
+    if (resp.session) {
+      onSession(resp.session);
+      navigate('Home');
+    }
+  }
   return (
     <Form>
       <select
@@ -366,24 +419,9 @@ function LoginForm({ onSession }) {
         mode={mode}
         loginInfo={loginInfo}
         setLoginInfo={setLoginInfo}
+        onSubmit={doLogin}
       />
-      {!!loginInfo && (
-        <FormButton
-          title="Login"
-          onPress={async () => {
-            setIsWorking(true);
-            const resp = await cloud.CreateSession({
-              accountId: loginInfo.accountId,
-              verificationResponse: loginInfo.verificationResponse,
-              verificationInfo: loginInfo.verificationInfo,
-            });
-            if (resp.session) {
-              onSession(resp.session);
-              navigate('Home');
-            }
-          }}
-        />
-      )}
+      {!!loginInfo && <FormButton title="Login" onPress={doLogin} />}
     </Form>
   );
 }
@@ -391,6 +429,7 @@ function LoginForm({ onSession }) {
 function LoginPane({ onClientConfig, onSession, defaultSession }) {
   const cloud = useCloud();
   const session = useCloudSession();
+  console.log('alright WTF!', !!cloud, session);
   if (session) {
     return (
       <Pane>
@@ -479,7 +518,8 @@ function RefsList() {
   const cloud = useCloud();
   const { navigate } = useNavigation();
   const activeRef = useParam('name');
-  const refs = useObservable(cloud.observeRefs);
+  const refNames = useObservable(cloud.getRef('_refs').observeValue);
+  const refs = refNames && refNames.map(cloud.getRef);
 
   if (!refs) {
     return null;
@@ -506,6 +546,11 @@ function AddRefSection() {
   const cloud = useCloud();
   let [isOpened, setIsOpened] = useState(false);
   let [newRefName, setNewRefName] = useState('');
+  function submit() {
+    cloud.getRef(newRefName).put(null);
+    setIsOpened(false);
+    setNewRefName('');
+  }
   if (isOpened) {
     return (
       <Form>
@@ -513,15 +558,9 @@ function AddRefSection() {
           value={newRefName}
           onValue={setNewRefName}
           name="New Ref Name"
+          onSubmit={submit}
         />
-        <FormButton
-          title="Create Ref"
-          onPress={() => {
-            cloud.getRef(newRefName).put(null);
-            setIsOpened(false);
-            setNewRefName('');
-          }}
-        />
+        <FormButton title="Create Ref" onPress={submit} />
         <FormButton
           title="Cancel"
           secondary
@@ -633,32 +672,225 @@ function useParam(paramName) {
   return val;
 }
 
-function ValuePane({ value, path, cloudRef, pathContext }) {
-  if (value == null) {
-    return <Text>Empty</Text>;
+function StringPane({ value, onValue }) {
+  return null;
+}
+
+function BooleanPane({ value, onValue }) {
+  return null;
+}
+
+function NumberPane({ value, onValue }) {
+  return null;
+}
+
+function AddKeySection({ onNewKey }) {
+  let [isOpened, setIsOpened] = useState(false);
+  let [keyName, setKeyName] = useState('');
+  function submit() {
+    onNewKey(keyName);
+    setIsOpened(false);
+    setKeyName('');
   }
-  if (value.type === 'Folder') {
+  if (isOpened) {
+    return (
+      <Form>
+        <InputField
+          value={keyName}
+          onValue={setKeyName}
+          name="New Key Name"
+          onSubmit={submit}
+        />
+        <FormButton title="Add Key" onPress={submit} />
+        <FormButton
+          title="Cancel"
+          secondary
+          onPress={() => {
+            setIsOpened(false);
+            setKeyName('');
+          }}
+        />
+      </Form>
+    );
+  }
+  return (
+    <StandaloneButton
+      title="Add Key"
+      onPress={() => {
+        setIsOpened(true);
+      }}
+    />
+  );
+}
+
+// function Folder({ value, path, cloudRef, pathContext }) {
+//   let pathViews = null;
+//   const navigation = useNavigation();
+
+//   const pathSegments = path && path.split('/');
+//   const nextPathSegment = pathSegments && pathSegments[0];
+//   const restOfPath = pathSegments && pathSegments.slice(1).join('/');
+
+//   const file = value.files[nextPathSegment];
+//   const obj = useMemo(
+//     () => {
+//       if (!file || !file.id) {
+//         return null;
+//       }
+//       return cloudRef.getObject(file.id);
+//     },
+//     [file]
+//   );
+//   const objValue = useObservable(obj && obj.observeValue);
+
+//   if (objValue) {
+//     pathViews = (
+//       <ValuePane
+//         value={objValue}
+//         path={restOfPath}
+//         cloudRef={cloudRef}
+//         pathContext={[...pathContext, nextPathSegment]}
+//       />
+//     );
+//   }
+
+//   return (
+//     <React.Fragment>
+//       <Pane>
+//         <RowSection>
+//           {Object.keys(value.files).map(fileName => (
+//             <LinkRow
+//               key={fileName}
+//               isSelected={nextPathSegment === fileName}
+//               title={fileName}
+//               onPress={() => {
+//                 const nextPath = [...pathContext, fileName].join('/');
+//                 console.log(nextPath);
+//                 navigation.setParams({
+//                   path: nextPath,
+//                 });
+//               }}
+//             />
+//           ))}
+//         </RowSection>
+//       </Pane>
+
+//       {pathViews}
+//     </React.Fragment>
+//   );
+// }
+
+function ObjectPane({ path, value, onValue, pathContext, cloudRef }) {
+  let pathViews = null;
+
+  const navigation = useNavigation();
+
+  const pathSegments = path && path.split('/');
+  const nextPathSegment = pathSegments && pathSegments[0];
+  const restOfPath = pathSegments && pathSegments.slice(1).join('/');
+  const pathValue = nextPathSegment != null && value[nextPathSegment];
+
+  if (pathValue) {
+    pathViews = (
+      <ValuePane
+        value={pathValue}
+        path={restOfPath}
+        cloudRef={cloudRef}
+        pathContext={[...pathContext, nextPathSegment]}
+      />
+    );
+  }
+
+  return (
+    <React.Fragment>
+      <Pane>
+        <RowSection>
+          {Object.keys(value).map(objKey => (
+            <LinkRow
+              key={objKey}
+              isSelected={false}
+              title={objKey}
+              onPress={() => {
+                const nextPath = [...pathContext, objKey].join('/');
+                console.log(nextPath);
+                navigation.setParams({
+                  path: nextPath,
+                });
+                // const nextPath = [...pathContext, objKey].join('/');
+                // console.log(nextPath);
+                // navigation.setParams({
+                //   path: nextPath,
+                // });
+              }}
+            />
+          ))}
+        </RowSection>
+        <AddKeySection
+          onNewKey={newKey => {
+            onValue({ ...value, [newKey]: null });
+          }}
+        />
+      </Pane>
+      {pathViews}
+    </React.Fragment>
+  );
+}
+
+function ValuePane({ value, path, cloudRef, pathContext }) {
+  let presentationValue = value === null ? {} : value;
+  if (value === undefined) {
+    return <Text>Loading</Text>;
+  }
+  if (typeof presentationValue === 'string') {
+    <StringPane
+      value={value}
+      onValue={v => {
+        cloudRef.put(v);
+      }}
+    />;
+  }
+  if (typeof presentationValue === 'boolean') {
+    <BooleanPane
+      value={value}
+      onValue={v => {
+        cloudRef.put(v);
+      }}
+    />;
+  }
+  if (typeof presentationValue === 'number') {
+    <NumberPane
+      value={value}
+      onValue={v => {
+        cloudRef.put(v);
+      }}
+    />;
+  }
+  if (presentationValue.type === 'Folder') {
     return (
       <Folder
-        value={value}
+        value={presentationValue}
         path={path}
         cloudRef={cloudRef}
         pathContext={pathContext}
       />
     );
   }
-  return (
-    <LargePane>
-      <Title title={`${cloudRef.name}/${pathContext.join('/')}`} />
-      <JSONView data={value} />
-      <StandaloneButton
-        title="Modify"
-        onPress={() => {
-          cloudRef.put({ other: 'value' });
+
+  if (typeof presentationValue === 'object') {
+    return (
+      <ObjectPane
+        value={presentationValue}
+        path={path}
+        cloudRef={cloudRef}
+        pathContext={pathContext}
+        onValue={v => {
+          cloudRef.put(v);
         }}
       />
-    </LargePane>
-  );
+    );
+  }
+
+  throw new Error('Bad type!');
 }
 
 function RefValuePane() {
@@ -694,20 +926,23 @@ function RefSetForm({ cloudRef }) {
       />
     );
   }
+  function submit() {
+    setIsOpened(false);
+    setNextId(null);
+    cloudRef.putId(nextId).catch(e => {
+      alert('Error');
+      console.error(e);
+    });
+  }
   return (
     <Form>
-      <InputField value={nextId} onValue={setNextId} name="New ID" />
-      <FormButton
-        title="Set ID"
-        onPress={() => {
-          setIsOpened(false);
-          setNextId(null);
-          cloudRef.putId(nextId).catch(e => {
-            alert('Error');
-            console.error(e);
-          });
-        }}
+      <InputField
+        value={nextId}
+        onValue={setNextId}
+        name="New ID"
+        onSubmit={submit}
       />
+      <FormButton title="Set ID" onPress={submit} />
     </Form>
   );
 }
@@ -806,31 +1041,38 @@ function BackgroundView({ children }) {
 }
 
 function AdminApp({ defaultSession = {}, descriptors }) {
-  let [sessionState, setSessionState] = useAsyncStorage('AvenSession', {
-    clientConfig: null,
-  });
+  let [sessionState, setSessionState] = useAsyncStorage(
+    'AvenSessionState',
+    null
+  );
+
+  let [clientConfig, setClientConfig] = useAsyncStorage(
+    'AvenClientConfig',
+    null
+  );
+
   let client = useMemo(
     () => {
-      if (!sessionState.clientConfig) {
+      if (isStateUnloaded(clientConfig) || clientConfig === null) {
         return null;
       }
+      console.log('hi!', sessionState, clientConfig);
 
-      const { authority, useSSL, domain } = sessionState.clientConfig;
+      const { authority, useSSL, domain } = clientConfig;
 
       const dataSource = createBrowserNetworkSource({
         authority,
         useSSL,
       });
-
       const client = createCloudClient({
-        initialSession: sessionState.session,
+        initialSession: sessionState,
         dataSource,
         domain,
       });
 
       return client;
     },
-    [sessionState.clientConfig]
+    [clientConfig]
   );
 
   const activeRoute = useActiveRoute();
@@ -839,24 +1081,30 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
   useEffect(
     () => {
+      console.log(
+        'alright main effect',
+        clientConfig,
+        sessionState,
+        client,
+        activeRoute
+      );
       if (
-        sessionState.clientConfig !== undefined &&
+        !isStateUnloaded(clientConfig) &&
         !client &&
         activeRoute.routeName !== 'Login'
       ) {
         navigate('Login');
       }
+      if (
+        !isStateUnloaded(sessionState) &&
+        !sessionState &&
+        activeRoute.routeName !== 'Login'
+      ) {
+        navigate('Login');
+      }
     },
-    [sessionState, client]
+    [activeRoute, sessionState, clientConfig, client]
   );
-
-  function setClientConfig(clientConfig) {
-    setSessionState({ ...sessionState, clientConfig });
-  }
-
-  function setSession(session) {
-    setSessionState({ ...sessionState, session });
-  }
 
   const activeDescriptor = descriptors[activeRoute.key];
 
@@ -872,7 +1120,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
         <NavigationContext.Provider value={activeDescriptor.navigation}>
           <ScreenComponent
             onClientConfig={setClientConfig}
-            onSession={setSession}
+            onSession={setSessionState}
             defaultSession={{
               authority: defaultSession.authority || 'localhost:3000',
               domain: defaultSession.domain || 'test.aven.cloud',

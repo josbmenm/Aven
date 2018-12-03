@@ -42,6 +42,7 @@ export default function createBrowserNetworkSource(opts) {
 
   function socketSendIfConnected(payload) {
     if (ws && ws.readyState === ReconnectingWebSocket.OPEN) {
+      console.log('📣', payload);
       ws.send(JSON.stringify({ ...payload, clientId: wsClientId }));
     }
   }
@@ -67,13 +68,7 @@ export default function createBrowserNetworkSource(opts) {
         domain,
       });
 
-      // observer.next({ name, domain, id: "init" });
-      // let i = 0;
-      // let tt = setInterval(() => {
-      //   observer.next({ name, domain, id: `num-${i++}` });
-      // }, 2000);
       return () => {
-        // domainRefObserver.onNext = null;
         socketSendIfConnected({
           type: 'UnsubscribeRefs',
           refs: [name],
@@ -81,7 +76,6 @@ export default function createBrowserNetworkSource(opts) {
         });
 
         console.log('unsubuscribing from upstream data!');
-        // clearInterval(tt);
         delete refObservables[domain][name];
       };
     });
@@ -122,6 +116,8 @@ export default function createBrowserNetworkSource(opts) {
     };
     ws.onmessage = msg => {
       const evt = JSON.parse(msg.data);
+      console.log('💨', evt);
+
       switch (evt.type) {
         case 'ClientId': {
           wsClientId = evt.clientId;

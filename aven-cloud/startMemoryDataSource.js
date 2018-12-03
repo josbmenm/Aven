@@ -86,9 +86,11 @@ const startMemoryDataSource = (opts = {}) => {
     const listR = _getRef(getRefsListName(name));
     if (listR.behavior) {
       const last = listR.behavior.value;
+      const refSet = new Set(last.value || []);
+      refSet.add(getMainTerm(name));
       listR.behavior.next({
         ...(last || {}),
-        value: [...((last && last.value) || []), getMainTerm(name)],
+        value: Array.from(refSet),
       });
     }
   }
@@ -121,14 +123,16 @@ const startMemoryDataSource = (opts = {}) => {
 
     const listR = _getRef(getRefsListName(name));
     if (listR.behavior) {
-      const mainName = getMainTerm(name);
       const last = listR.behavior.value;
-      if (!last.value) {
+      const refSet = new Set(last.value || []);
+      const thisTermName = getMainTerm(name);
+      if (!refSet.has(thisTermName)) {
         return;
       }
+      refSet.delete(thisTermName);
       listR.behavior.next({
-        ...last,
-        value: last.value.filter(v => v !== mainName),
+        ...(last || {}),
+        value: Array.from(refSet),
       });
     }
   }
@@ -276,12 +280,17 @@ const startMemoryDataSource = (opts = {}) => {
     } else {
       const listRefName = getListRefName(name);
       if (listRefName) {
+        console.log('hellooooo', listRefName);
         r.behavior = new BehaviorSubject({ value: undefined });
         ListRefs({ domain, parentName: listRefName })
           .then(refList => {
+            console.log('duuuuuude', refList);
+
             r.behavior.next({ value: refList });
           })
           .catch(e => {
+            console.log('whyyy', e);
+
             console.error(e);
           });
         return r.behavior;

@@ -4,6 +4,10 @@ import createCloudObject from './createCloudObject';
 const observeNull = Observable.create(observer => {
   observer.next(undefined);
 });
+const observeStatic = val =>
+  Observable.create(observer => {
+    observer.next(val);
+  });
 
 export default function createCloudRef({ dataSource, name, domain, ...opts }) {
   const objectCache = opts.objectCache || {};
@@ -70,9 +74,11 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
       setState({ isConnected: true });
       upstreamSubscription = upstreamObs.subscribe({
         next: upstreamRef => {
+          console.log('zomg', upstreamRef);
           setState({
             id: upstreamRef.id,
             lastSyncTime: Date.now(),
+            value: upstreamRef.value,
           });
           observer.next(refState.value);
         },
@@ -121,10 +127,14 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
   }
 
   function getValue() {
-    const obj = getObject();
-    if (!obj) {
+    const { id, value } = refState.value;
+    if (value) {
+      return value;
+    }
+    if (!id) {
       return undefined;
     }
+    const obj = _getObjectWithId(id);
     return obj.getValue();
   }
 
@@ -180,6 +190,9 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
 
   const observeValue = observe
     .map(r => {
+      if (r.value !== undefined) {
+        return observeStatic(r.value);
+      }
       if (!r.id) {
         return observeNull;
       }
@@ -306,9 +319,9 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
         await Promise.all(cloudValues.map(v => v.fetchValue()));
       },
       observeValue: r.observeValue.switchMap(o => {
-        const cloudValues = collectCloudValues(o);
+        // const cloudValues = collectCloudValues(o);
         throw new Error('not ready yet! :-(');
-        return {};
+        // return {};
       }),
       getValue: () => {
         const o = r.getValue();

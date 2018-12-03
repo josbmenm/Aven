@@ -43,13 +43,6 @@ const runServer = async () => {
         authToken: getEnv('TWILIO_AUTH_TOKEN'),
       },
     });
-  // setTimeout(() => {
-  //   console.log("sending sms!!");
-  //   smsAgent.actions.sendSMS({
-  //     to: "16502696176",
-  //     message: "Many message"
-  //   });
-  // }, 3000);
 
   const smsAuthMethod =
     smsAgent &&
