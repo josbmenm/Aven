@@ -627,6 +627,27 @@ describe('observing refs', () => {
       id: null,
     });
     expect(lastObserved.value).toEqual(['bar', 'baz']);
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo/baz/boo',
+      id: null,
+    });
+    expect(lastObserved.value).toEqual(['bar', 'baz']);
+    await ds.dispatch({
+      type: 'DestroyRef',
+      domain: 'test',
+      name: 'foo/baz',
+      id: null,
+    });
+    expect(lastObserved.value).toEqual(['bar']);
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo/baz',
+      id: null,
+    });
+    expect(lastObserved.value).toEqual(['bar', 'baz']);
   });
 
   test('observe cleanup works', async () => {

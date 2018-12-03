@@ -19,19 +19,10 @@ function isRefNameValid(name) {
 }
 
 function getRefsListName(name) {
-  console.log('wtf', name);
   const terms = getTerms(name);
   const parentTerms = terms.slice(0, terms.length - 1);
   const refsListName =
     parentTerms.length === 0 ? '_refs' : parentTerms.join('/') + '/_refs';
-  console.log(
-    'hellooo',
-    name,
-    terms,
-    parentTerms,
-    parentTerms.length,
-    refsListName
-  );
   return refsListName;
 }
 
@@ -91,10 +82,8 @@ const startMemoryDataSource = (opts = {}) => {
     }
 
     const listR = _getRef(getRefsListName(name));
-    console.log('argh', listR);
     if (listR.behavior) {
       const last = listR.behavior.value;
-      console.log('FM2L', last);
       listR.behavior.next({
         ...(last || {}),
         value: [...((last && last.value) || []), getMainTerm(name)],
@@ -133,8 +122,6 @@ const startMemoryDataSource = (opts = {}) => {
       const mainName = getMainTerm(name);
       const last = listR.behavior.value;
       if (!last.value) {
-        console.log('shitty bailout', last);
-
         return;
       }
       listR.behavior.next({

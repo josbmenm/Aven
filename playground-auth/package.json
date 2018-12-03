@@ -22,6 +22,7 @@
     },
     "srcDependencies": [
       "aven-web",
+      "aven-admin",
       "aven-cloud",
       "aven-cloud-auth",
       "aven-cloud-auth-sms",

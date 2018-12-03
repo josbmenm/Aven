@@ -1,18 +1,19 @@
-import { View, Text } from 'react-native';
 import React from 'react';
 
-const App = ({ env }) => {
+import Admin from '../aven-admin/Admin';
+
+function App({ navigation }) {
   return (
-    <View style={{ flex: 1 }}>
-      <Text
-        onPress={() => {
-          alert('Hello, client code!');
-        }}
-      >
-        Aven Web. Env: {env}
-      </Text>
-    </View>
+    <Admin
+      navigation={navigation}
+      defaultSession={{
+        authority: 'localhost:3000',
+        domain: 'example.aven.cloud',
+      }}
+    />
   );
-};
+}
+
+App.router = Admin.router;
 
 export default App;
