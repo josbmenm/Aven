@@ -24,20 +24,24 @@ const runServer = async () => {
     domain: 'example.aven.cloud',
   });
 
-  const emailAgent = EmailAgent({
-    defaultFromEmail: 'Aven Cloud <support@aven.io>',
-    config: {
-      sendgridAPIKey: getEnv('SENDGRID_API_KEY'),
-    },
-  });
+  const emailAgent =
+    getEnv('SENDGRID_API_KEY') &&
+    EmailAgent({
+      defaultFromEmail: 'Aven Cloud <support@aven.io>',
+      config: {
+        sendgridAPIKey: getEnv('SENDGRID_API_KEY'),
+      },
+    });
 
-  const smsAgent = SMSAgent({
-    defaultFromNumber: getEnv('TWILIO_FROM_NUMBER'),
-    config: {
-      accountSid: getEnv('TWILIO_ACCOUNT_SID'),
-      authToken: getEnv('TWILIO_AUTH_TOKEN'),
-    },
-  });
+  const smsAgent =
+    getEnv('TWILIO_ACCOUNT_SID') &&
+    SMSAgent({
+      defaultFromNumber: getEnv('TWILIO_FROM_NUMBER'),
+      config: {
+        accountSid: getEnv('TWILIO_ACCOUNT_SID'),
+        authToken: getEnv('TWILIO_AUTH_TOKEN'),
+      },
+    });
   // setTimeout(() => {
   //   console.log("sending sms!!");
   //   smsAgent.actions.sendSMS({
@@ -46,9 +50,11 @@ const runServer = async () => {
   //   });
   // }, 3000);
 
-  const smsAuthMethod = SMSAuthMethod({
-    agent: smsAgent,
-  });
+  const smsAuthMethod =
+    smsAgent &&
+    SMSAuthMethod({
+      agent: smsAgent,
+    });
 
   const rootPasswordHash = await hashSecureString('hello');
 
@@ -56,14 +62,18 @@ const runServer = async () => {
     rootPasswordHash,
   });
 
-  const emailAuthMethod = EmailAuthMethod({
-    agent: emailAgent,
-  });
+  const emailAuthMethod =
+    emailAgent &&
+    EmailAuthMethod({
+      agent: emailAgent,
+    });
 
-  const authenticatedDataSource = CloudAuth({
-    dataSource,
-    methods: [smsAuthMethod, emailAuthMethod, rootAuthMethod],
-  });
+  const methods = [];
+  if (smsAuthMethod) methods.push(smsAuthMethod);
+  if (emailAuthMethod) methods.push(emailAuthMethod);
+  if (rootAuthMethod) methods.push(rootAuthMethod);
+
+  const authenticatedDataSource = CloudAuth({ dataSource, methods });
 
   const serverListenLocation = getEnv('PORT');
   const context = new Map();
@@ -81,8 +91,8 @@ const runServer = async () => {
       await webService.close();
       await authenticatedDataSource.close();
       await dataSource.close();
-      await emailAgent.close();
-      await smsAgent.close();
+      if (emailAgent) await emailAgent.close();
+      if (smsAgent) await smsAgent.close();
     },
   };
 };
