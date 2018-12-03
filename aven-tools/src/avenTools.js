@@ -30,18 +30,19 @@ const getPackageDir = async (srcDir, packageName, globePkg) => {
   return { packageDir, extendingSrcDir };
 };
 
+const syncDirectories = async (from, to, exclude = []) => {
+  console.log('Syncing', from, to);
+  console.log(await fs.emptyDir(to));
+  return await fs.copy(from, to, {
+    filter: file =>
+      exclude.reduce((prev, next) => prev && !next.exec(file), true),
+  });
+};
+
 const syncPackage = async (packageName, srcDir, destLocation, globePkg) => {
   const { packageDir } = await getPackageDir(srcDir, packageName, globePkg);
   const destPackage = pathJoin(destLocation, packageName);
-  await spawn('rsync', [
-    '-a',
-    '--exclude',
-    'node_modules*',
-    '--exclude',
-    'src-sync*',
-    packageDir + '/',
-    destPackage + '/',
-  ]);
+  await syncDirectories(packageDir, destPackage, [/node_modules/, /src-sync/]);
 };
 
 const getAllSrcDependencies = async (srcDir, packageName, globePkg) => {
@@ -246,9 +247,7 @@ const sync = async (appEnv, location, appName, appPkg, srcDir) => {
   const assetDirs = await getAllPublicAssetDirs(srcDir, appName, globePkg);
   const destAssetDir = pathJoin(location, 'public');
   await Promise.all(
-    assetDirs.map(async assetDir => {
-      await spawn('rsync', ['-a', assetDir + '/', destAssetDir + '/']);
-    })
+    assetDirs.map(async assetDir => syncDirectories(assetDir, destAssetDir)),
   );
 
   await appEnv.applyPackage({
