@@ -13,3 +13,5 @@ yarn-error.log
 ./**/node_modules/
 
 coverage
+
+testdb.sqlite

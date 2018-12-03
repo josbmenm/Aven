@@ -74,7 +74,6 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
       setState({ isConnected: true });
       upstreamSubscription = upstreamObs.subscribe({
         next: upstreamRef => {
-          console.log('zomg', upstreamRef);
           setState({
             id: upstreamRef.id,
             lastSyncTime: Date.now(),

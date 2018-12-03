@@ -28,6 +28,12 @@ function getRefsListName(name) {
   return refsListName;
 }
 
+function getParentRef(name) {
+  const terms = getTerms(name);
+  const parentTerms = terms.slice(0, terms.length - 1);
+  return parentTerms.join('/');
+}
+
 function getMainTerm(name) {
   const terms = getTerms(name);
   return terms[terms.length - 1];
@@ -59,6 +65,23 @@ const startMemoryDataSource = (opts = {}) => {
     throw new Error(`Empty domain passed to startMemoryDataSource`);
   }
 
+  function putRefInList(refName) {
+    const listR = _getRef(getRefsListName(refName));
+    if (listR.behavior) {
+      const last = listR.behavior.value;
+      const refSet = new Set(last.value || []);
+      refSet.add(getMainTerm(refName));
+      listR.behavior.next({
+        ...(last || {}),
+        value: Array.from(refSet),
+      });
+    }
+    if (getMainTerm(refName) !== refName) {
+      // this is a child ref. also make sure the parent ref has been added to lists
+      putRefInList(getParentRef(refName));
+    }
+  }
+
   async function PutRef({ domain, name, id }) {
     if (!isRefNameValid(name)) {
       throw new Error(`Invalid Ref name "${name}"`);
@@ -83,16 +106,7 @@ const startMemoryDataSource = (opts = {}) => {
       r.behavior = new BehaviorSubject(_renderRef(r));
     }
 
-    const listR = _getRef(getRefsListName(name));
-    if (listR.behavior) {
-      const last = listR.behavior.value;
-      const refSet = new Set(last.value || []);
-      refSet.add(getMainTerm(name));
-      listR.behavior.next({
-        ...(last || {}),
-        value: Array.from(refSet),
-      });
-    }
+    putRefInList(name);
   }
 
   async function DestroyRef({ domain, name }) {
@@ -280,17 +294,12 @@ const startMemoryDataSource = (opts = {}) => {
     } else {
       const listRefName = getListRefName(name);
       if (listRefName) {
-        console.log('hellooooo', listRefName);
         r.behavior = new BehaviorSubject({ value: undefined });
         ListRefs({ domain, parentName: listRefName })
           .then(refList => {
-            console.log('duuuuuude', refList);
-
             r.behavior.next({ value: refList });
           })
           .catch(e => {
-            console.log('whyyy', e);
-
             console.error(e);
           });
         return r.behavior;

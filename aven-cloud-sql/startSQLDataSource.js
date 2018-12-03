@@ -9,12 +9,11 @@ import uuid from 'uuid/v1';
 const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
 
-export default async function startSQLDataSource({ client, connection }) {
+export default async function startSQLDataSource({ config, connection }) {
   const id = uuid();
   const isConnected = new BehaviorSubject(false);
   const knex = Knex({
-    client,
-    connection,
+    ...config,
     useNullAsDefault: true,
     afterCreate: (connection, done) => {
       isConnected.next(true);

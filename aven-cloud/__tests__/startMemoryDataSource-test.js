@@ -219,6 +219,42 @@ describe('ref storage', () => {
     expect(refs).toEqual(['foo', 'bar']);
   });
 
+  test.skip('implicit parent list ref ', async () => {
+    const ds = startMemoryDataSource({ domain: 'test' });
+    let result = null;
+    result = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: '_refs',
+    });
+    expect(result.value).toEqual([]);
+
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'hello/world',
+      id: null,
+    });
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'hello/mars',
+      id: null,
+    });
+    result = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: '_refs',
+    });
+    expect(result.value).toEqual(['hello']);
+    result = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: 'hello/_refs',
+    });
+    expect(result.value).toEqual(['world', 'mars']);
+  });
+
   test('list object works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     let objs = null;

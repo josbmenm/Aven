@@ -57,14 +57,12 @@ function useAsyncStorage(storageKey, defaultValue) {
     [storageKey]
   );
 
-  function setStorageState(updates) {
+  function setStorageState(newState) {
     if (isStateUnloaded(storageState)) {
       throw new Error(
         'Cannot merge storage state if it has not been loaded yet!'
       );
     }
-    const newState = { ...storageState, ...updates };
-    console.log('WAAAmbulance', newState);
     setInternalStorageState(newState);
     AsyncStorage.setItem(storageKey, JSON.stringify(newState)).catch(
       console.error
