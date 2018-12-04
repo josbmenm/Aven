@@ -1,10 +1,11 @@
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import React from 'react';
 
 import {
   SwitchRouter,
   createNavigator,
   SceneView,
+  getActiveChildNavigationOptions,
 } from '@react-navigation/core';
 
 import { Link } from '@react-navigation/web';
@@ -12,6 +13,10 @@ import { Link } from '@react-navigation/web';
 function Header({ descriptors }) {
   return (
     <View style={{ borderBottomWidth: 1, height: 50 }}>
+      <Image
+        source={require('./assets/AvenLogo.svg')}
+        style={{ width: 100, height: 100 }}
+      />
       {Object.keys(descriptors).map(descriptorId => {
         return (
           <Link key={descriptorId} routeName={descriptorId}>
@@ -53,7 +58,7 @@ const DocsRouter = SwitchRouter({
 
 function Sidebar({ descriptors }) {
   return (
-    <View style={{ borderBottomWidth: 1, height: 50 }}>
+    <View style={{ borderRightWidth: 1, flex: 1, maxWidth: 360 }}>
       {Object.keys(descriptors).map(descriptorId => {
         return (
           <Link key={descriptorId} routeName={descriptorId}>
@@ -101,9 +106,11 @@ const AppRouter = SwitchRouter({
   Docs: {
     screen: Docs,
     path: 'docs',
-    navigationOptions: {
-      title: 'Aven Docs',
-    },
+    navigationOptions: ({ navigation, screenProps }) => ({
+      title:
+        getActiveChildNavigationOptions(navigation, screenProps).title +
+        ' - Aven Docs',
+    }),
   },
   About: {
     screen: About,

@@ -502,7 +502,7 @@ function LinkRow({ title, onPress, isSelected }) {
         <Text
           style={{
             fontSize: 16,
-            color: isHighlighted ? 'black' : '#222',
+            color: isHighlighted ? 'black' : '#333',
           }}
         >
           {title}
@@ -514,11 +514,11 @@ function LinkRow({ title, onPress, isSelected }) {
 
 function RefsList() {
   const cloud = useCloud();
-  const { navigate } = useNavigation();
+  const { navigate, getParam } = useNavigation();
   const activeRef = useParam('name');
   const refNames = useObservable(cloud.getRef('_refs').observeValue);
   const refs = refNames && refNames.map(cloud.getRef);
-
+  console.log('durr', activeRef, getParam('name'));
   if (!refs) {
     return null;
   }
@@ -532,7 +532,7 @@ function RefsList() {
             isSelected={ref.name === activeRef}
             title={ref.name}
             onPress={() => {
-              navigate('Ref', { name: ref.name });
+              navigate('Ref', { name: ref.name, path: null });
             }}
           />
         ))}
@@ -1006,7 +1006,7 @@ const MainPaneNavigator = createNavigator(
   SwitchRouter({
     Refs: { path: '', screen: EmptyScreen },
     Ref: {
-      path: 'ref/:name',
+      path: 'ref',
       screen: RefPane,
     },
   }),

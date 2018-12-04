@@ -10,5 +10,5 @@ export function Body({ children }) {
 }
 
 export function Page({ children }) {
-  return <View>{children}</View>;
+  return <View style={{ flex: 1, padding: 40 }}>{children}</View>;
 }

@@ -42,26 +42,26 @@ async function objectResponse({
     return sendNotFound;
   }
   if (refPath === '/' || refPath === '') {
-    if (!obj.object || !obj.object.data) {
+    if (!obj.value || !obj.value.data) {
       // should be checking for some type here, rather than looking at "data"..
       return res => {
-        res.send(obj.object);
+        res.send(obj.value);
       };
     }
     const mimeType = mime.getType(path.extname(objName));
     return res => {
       res.header('Content-Type', mimeType);
-      res.send(Buffer.from(obj.object.data, 'hex'));
+      res.send(Buffer.from(obj.value.data, 'hex'));
     };
   }
-  if (!obj.object || !obj.object.files) {
+  if (!obj.value || !obj.value.files) {
     return sendNotFound;
   }
   const pathParts = refPath.split('/');
   const pathTermName = pathParts[1];
-  if (obj.object.files[pathTermName]) {
+  if (obj.value.files[pathTermName]) {
     const childRefPath = `/${pathParts.slice(2).join('/')}`;
-    const childId = obj.object.files[pathTermName].id;
+    const childId = obj.value.files[pathTermName].id;
     return await objectResponse({
       domain,
       refName,
