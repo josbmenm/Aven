@@ -92,10 +92,14 @@ export default async function scrapeAirTable(fsClient) {
     'Recipe Ingredients',
     'Ingredients',
     'Functions',
+    'Function Ingredients',
     'KitchenSystems',
     'KitchenSystemTags',
     'KitchenSystemFaults',
     'KitchenIngredients',
+    'IngredientCustomization',
+    'PortionCustomization',
+    'PortionCustomizationAmounts',
   ];
   const baseTables = {};
   await Promise.all(

@@ -30,6 +30,12 @@ export function withKitchen(Component) {
     </OnoRestaurantContext.Consumer>
   );
 }
+const currency = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+});
+
 const sortByField = (obj, fieldName) => {
   var sortable = [];
   for (var row in obj) {
@@ -48,16 +54,22 @@ function atDataToMenu(atData) {
   const RecipeIngredients = atData.baseTables['Recipe Ingredients'];
   const Ingredients = atData.baseTables['Ingredients'];
 
-  const Customization = {};
-  Object.keys(Ingredients).forEach(IngredientId => {
-    const Ingredient = Ingredients[IngredientId];
-    Ingredient.CustomizationCategory &&
-      Ingredient.CustomizationCategory.forEach(categoryName => {
-        const c =
-          Customization[categoryName] || (Customization[categoryName] = []);
-        c.push(Ingredient);
-      });
+  const IngredientCustomization = Object.keys(
+    atData.baseTables['IngredientCustomization'],
+  ).map(CustomizationId => {
+    const customCategory =
+      atData.baseTables['IngredientCustomization'][CustomizationId];
+    return {
+      ...customCategory,
+    };
   });
+  //   Ingredient.CustomizationCategory &&
+  //     Ingredient.CustomizationCategory.forEach(categoryName => {
+  //       const c =
+  //         Customization[categoryName] || (Customization[categoryName] = []);
+  //       c.push(Ingredient);
+  //     });
+  // });
 
   const MenuItems = sortByField(MenuItemsUnordered, '_index');
   const ActiveMenuItems = MenuItems.filter(i => i['Active in Kiosk']);
@@ -66,7 +78,8 @@ function atDataToMenu(atData) {
 
     return {
       ...item,
-      Customization,
+      IngredientCustomization,
+      DisplayPrice: currency.format(Recipe['Sell Price']),
       Recipe: {
         ...Recipe,
         Ingredients: Recipe.Ingredients.map(RecipeIngredientId => {

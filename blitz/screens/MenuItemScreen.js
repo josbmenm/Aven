@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Image, TouchableHighlight } from 'react-native';
-import GenericPage from '../components/GenericPage';
+import ActionPage from '../components/ActionPage';
 import Button from '../../components/Button';
 import { withMenuItem, withRestaurant } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
@@ -42,6 +42,27 @@ function Ingredient({ ingredient }) {
   );
 }
 
+function Customization({ menuItem }) {
+  return (
+    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+      <View
+        style={{
+          padding: 10,
+          paddingLeft: 30,
+          backgroundColor: 'white',
+          flexWrap: 'wrap',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+      >
+        {menuItem.Recipe.Ingredients.map(i => (
+          <Ingredient ingredient={i.Ingredient} key={i.id} />
+        ))}
+      </View>
+    </View>
+  );
+}
+
 function Ingredients({ menuItem }) {
   return (
     <View style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -63,26 +84,26 @@ function Ingredients({ menuItem }) {
   );
 }
 
-function ChooseBeverage({ menuItem }) {
-  return (
-    <View>
-      {menuItem.Customization.Beverage.map(Ingredient => {
-        return (
-          <TouchableHighlight
-            key={Ingredient.id}
-            onPress={() => {
-              alert(Ingredient.id);
-            }}
-          >
-            <View>
-              <Text>{Ingredient.Name}</Text>
-            </View>
-          </TouchableHighlight>
-        );
-      })}
-    </View>
-  );
-}
+// function ChooseBeverage({ menuItem }) {
+//   return (
+//     <View>
+//       {menuItem.Customization.Beverage.map(Ingredient => {
+//         return (
+//           <TouchableHighlight
+//             key={Ingredient.id}
+//             onPress={() => {
+//               alert(Ingredient.id);
+//             }}
+//           >
+//             <View>
+//               <Text>{Ingredient.Name}</Text>
+//             </View>
+//           </TouchableHighlight>
+//         );
+//       })}
+//     </View>
+//   );
+// }
 
 class MenuItemScreenWithItem extends React.Component {
   render() {
@@ -91,7 +112,20 @@ class MenuItemScreenWithItem extends React.Component {
       return null;
     }
     return (
-      <GenericPage title={menuItem.name} disableScroll>
+      <ActionPage
+        actions={[
+          {
+            title: 'Add to Cart',
+            onPress: () => {
+              setOrderItem(orderItemId, {
+                menuItemId: menuItem.id,
+              });
+              navigation.navigate('OrderConfirm');
+            },
+          },
+          { title: 'Customize', onPress: () => {} },
+        ]}
+      >
         <View style={{ padding: 0 }}>
           <Text style={{ fontSize: 42, marginBottom: 30, textAlign: 'center' }}>
             {menuItem['Display Name']}
@@ -115,27 +149,16 @@ class MenuItemScreenWithItem extends React.Component {
               </Text>
 
               <Text style={{ fontSize: 52 }}>
-                {menuItem.Price} - {menuItem.Calories} cal
+                {menuItem.DisplayPrice} - {menuItem.Calories} cal
               </Text>
             </View>
-            <Ingredients menuItem={menuItem} />
+            <Customization menuItem={menuItem} />
           </View>
-
-          <Button
-            onPress={() => {
-              setOrderItem(orderItemId, {
-                menuItemId: menuItem.id,
-              });
-              navigation.navigate('OrderConfirm');
-            }}
-            title="Order Blend"
-          />
-          <ChooseBeverage menuItem={menuItem} />
-          <Button onPress={() => {}} title="Customize" />
         </View>
-      </GenericPage>
+      </ActionPage>
     );
   }
+  // <Ingredients menuItem={menuItem} />
 }
 
 const MenuItemScreenWithId = withRestaurant(

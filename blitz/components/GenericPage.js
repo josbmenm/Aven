@@ -16,11 +16,12 @@ import { withNavigation } from '@react-navigation/core';
 
 class GenericPage extends React.Component {
   render() {
-    const { children, navigation } = this.props;
+    const { children, navigation, afterScrollView } = this.props;
     const canGoBack = navigation.dangerouslyGetParent().state.index > 0;
     return (
       <View style={{ flex: 1, ...genericPageStyle }}>
         <ScrollView style={{ flex: 1 }}>{children}</ScrollView>
+        {afterScrollView}
         {canGoBack && (
           <TouchableOpacity
             style={{

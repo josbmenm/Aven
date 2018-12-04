@@ -68,6 +68,7 @@ export const rowSectionInnerStyle = {
 };
 
 export const buttonTitleStyle = {
+  textAlign: 'center',
   color: 'white',
   fontSize: 42,
 };
