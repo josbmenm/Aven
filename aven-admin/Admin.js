@@ -518,7 +518,6 @@ function RefsList() {
   const activeRef = useParam('name');
   const refNames = useObservable(cloud.getRef('_refs').observeValue);
   const refs = refNames && refNames.map(cloud.getRef);
-  console.log('durr', activeRef, getParam('name'));
   if (!refs) {
     return null;
   }
@@ -1054,8 +1053,6 @@ function AdminApp({ defaultSession = {}, descriptors }) {
       if (isStateUnloaded(clientConfig) || clientConfig === null) {
         return null;
       }
-      console.log('hi!', sessionState, clientConfig);
-
       const { authority, useSSL, domain } = clientConfig;
 
       const dataSource = createBrowserNetworkSource({
@@ -1079,13 +1076,6 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
   useEffect(
     () => {
-      console.log(
-        'alright main effect',
-        clientConfig,
-        sessionState,
-        client,
-        activeRoute
-      );
       if (
         !isStateUnloaded(clientConfig) &&
         !client &&

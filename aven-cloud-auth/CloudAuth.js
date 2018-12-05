@@ -460,7 +460,7 @@ export default function CloudAuth({ dataSource, methods }) {
       const authRefName = getAuthRefName(action.name);
       if (typeof authRefName === 'string') {
         refName = authRefName;
-        type = 'canAdmin';
+        realPermissionLevelRequired = 'canAdmin';
       }
       const p = await GetPermissions({
         auth: action.auth,
