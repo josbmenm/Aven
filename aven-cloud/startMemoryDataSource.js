@@ -259,7 +259,8 @@ const startMemoryDataSource = (opts = {}) => {
       })
       .filter(n => !!n)
       .filter(n => n !== '_refs' && n !== '_objects' && n !== '_auth');
-    return Array.from(new Set(results));
+    const uniqueResults = Array.from(new Set(results));
+    return uniqueResults;
   }
 
   async function ListDomains() {
@@ -301,7 +302,7 @@ const startMemoryDataSource = (opts = {}) => {
       return r.behavior;
     } else {
       const listRefName = getListRefName(name);
-      if (listRefName) {
+      if (typeof listRefName === 'string') {
         r.behavior = new BehaviorSubject({ value: undefined });
         ListRefs({ domain, parentName: listRefName })
           .then(refList => {
