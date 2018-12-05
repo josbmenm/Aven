@@ -74,24 +74,45 @@ function atDataToMenu(atData) {
   const MenuItems = sortByField(MenuItemsUnordered, '_index');
   const ActiveMenuItems = MenuItems.filter(i => i['Active in Kiosk']);
   const ActiveItemsWithRecipe = ActiveMenuItems.map(item => {
-    const Recipe = Recipes && item.Recipe && Recipes[item.Recipe[0]];
-
+    const recipeId = item.Recipe[0];
+    const Recipe = Recipes && item.Recipe && Recipes[recipeId];
+    const thisRecipeIngredients = Recipe.Ingredients.map(RecipeIngredientId => {
+      const ri = RecipeIngredients[RecipeIngredientId];
+      if (!ri || !ri.Ingredient) {
+        return null;
+      }
+      return {
+        ...ri,
+        Ingredient: Ingredients[ri.Ingredient[0]],
+      };
+    }).filter(v => !!v);
+    const thisRecipeIngredientIds = thisRecipeIngredients.map(
+      ri => ri.Ingredient.id,
+    );
     return {
       ...item,
-      IngredientCustomization,
+      IngredientCustomization: IngredientCustomization.map(ic => {
+        if (ic.Recipes.indexOf(recipeId) === -1) {
+          return null;
+        }
+        const defaultValue = ic.Ingredients.filter(
+          IngredientId => thisRecipeIngredientIds.indexOf(IngredientId) !== -1,
+        );
+        return {
+          ...ic,
+          Recipes: undefined,
+          defaultValue,
+          optionLimit: defaultValue.length + ic['Overflow Limit'],
+          Ingredients: ic.Ingredients.map(
+            IngredientId => Ingredients[IngredientId],
+          ),
+        };
+      }).filter(ic => !!ic),
+      FunctionCustomization: atData.baseTables['Functions'],
       DisplayPrice: currency.format(Recipe['Sell Price']),
       Recipe: {
         ...Recipe,
-        Ingredients: Recipe.Ingredients.map(RecipeIngredientId => {
-          const ri = RecipeIngredients[RecipeIngredientId];
-          if (!ri || !ri.Ingredient) {
-            return null;
-          }
-          return {
-            ...ri,
-            Ingredient: Ingredients[ri.Ingredient[0]],
-          };
-        }).filter(v => !!v),
+        Ingredients: thisRecipeIngredients,
       },
     };
   });
