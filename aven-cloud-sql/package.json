@@ -1,7 +1,11 @@
 {
   "aven": {
-    "srcDependencies": ["aven-cloud-server", "aven-cloud-utils"],
+    "srcDependencies": [
+      "aven-cloud-server",
+      "aven-cloud-utils"
+    ],
     "moduleDependencies": [
+      "@types/knex",
       "pg-format",
       "pg",
       "knex",

@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "format": "eslint . --fix",
     "clean": "node ./aven-tools/cli.js clean",
-    "postinstall": "node ./aven-tools/vendorDist.js",
+    "import-vendor": "node ./aven-tools/importVendorCode.js",
     "test": "jest"
   },
   "devDependencies": {
@@ -28,6 +28,7 @@
     "@react-navigation/native": "^3.0.3",
     "@react-navigation/web": "^1.0.0-alpha.7",
     "@sendgrid/mail": "^6.3.1",
+    "@types/knex": "^0.15.1",
     "babel-core": "^6.26.3",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-react": "^6.24.1",

@@ -181,6 +181,11 @@
     "@sendgrid/client" "^6.3.0"
     "@sendgrid/helpers" "^6.3.0"
 
+"@types/bluebird@*":
+  version "3.5.24"
+  resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.24.tgz#11f76812531c14f793b8ecbf1de96f672905de8a"
+  integrity sha512-YeQoDpq4Lm8ppSBqAnAeF/xy1cYp/dMTif2JFcvmAbETMRlvKHT2iLcWu+WyYiJO3b3Ivokwo7EQca/xfLVJmg==
+
 "@types/body-parser@*":
   version "1.17.0"
   resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.17.0.tgz#9f5c9d9bd04bb54be32d5eb9fc0d8c974e6cf58c"
@@ -236,6 +241,14 @@
   resolved "https://registry.yarnpkg.com/@types/form-data/-/form-data-2.2.1.tgz#ee2b3b8eaa11c0938289953606b745b738c54b1e"
   integrity sha512-JAMFhOaHIciYVh8fb5/83nmuO/AHwmto+Hq7a9y8FzLDcC1KCU344XDOMEmahnrTFlHjgh4L0WJFczNIX2GxnQ==
   dependencies:
+    "@types/node" "*"
+
+"@types/knex@^0.15.1":
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/@types/knex/-/knex-0.15.1.tgz#349a1c25d481b338549df2cf4fce685676092523"
+  integrity sha512-eMXYxl8Jhg5tBYLtSGTF4acCGHeKO+0HYDocAM5jpYBsKC8w0HwQPF8eqi8TAzex5I4JkVK27p/phvY0wg09aQ==
+  dependencies:
+    "@types/bluebird" "*"
     "@types/node" "*"
 
 "@types/mime@*":
