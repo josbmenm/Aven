@@ -378,7 +378,7 @@ function LoginInfo({ mode, ...props }) {
   }
 }
 
-function LoginForm({ onSession }) {
+function LoginForm({ onSession, onClientConfig }) {
   const [isWorking, setIsWorking] = useState(false);
   const [loginInfo, setLoginInfo] = useState(null);
   const [mode, setMode] = useState('root');
@@ -401,6 +401,12 @@ function LoginForm({ onSession }) {
   }
   return (
     <Form>
+      <FormButton
+        title="Edit Connection"
+        onPress={() => {
+          onClientConfig(null);
+        }}
+      />
       <select
         value={mode}
         onChange={e => {
@@ -427,7 +433,6 @@ function LoginForm({ onSession }) {
 function LoginPane({ onClientConfig, onSession, defaultSession }) {
   const cloud = useCloud();
   const session = useCloudSession();
-  console.log('alright WTF!', !!cloud, session);
   if (session) {
     return (
       <Pane>
@@ -440,7 +445,11 @@ function LoginPane({ onClientConfig, onSession, defaultSession }) {
       <Pane>
         <Hero title="Login" />
         <View>
-          <LoginForm onSession={onSession} defaultSession={defaultSession} />
+          <LoginForm
+            onSession={onSession}
+            onClientConfig={onClientConfig}
+            defaultSession={defaultSession}
+          />
         </View>
       </Pane>
     );
