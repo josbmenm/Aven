@@ -25,7 +25,7 @@ const getEnv = c => process.env[c];
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const ROOT_PASSWORD = 'SecretSmoothie'; //move to env variable please
+const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨');
