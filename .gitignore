@@ -15,9 +15,3 @@ yarn-error.log
 coverage
 
 testdb.sqlite
-
-navigation-web
-navigation-core
-navigation-hooks
-navigation-native
-navigation-stack

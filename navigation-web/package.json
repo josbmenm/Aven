@@ -1,0 +1,10 @@
+{
+  "name": "@react-navigation/web",
+  "aven": {
+    "srcDependencies": [],
+    "moduleDependencies": [
+      "history",
+      "query-string"
+    ]
+  }
+}

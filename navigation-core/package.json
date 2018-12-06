@@ -1,0 +1,14 @@
+{
+  "name": "@react-navigation/core",
+  "aven": {
+    "srcDependencies": [],
+    "moduleDependencies": [
+      "create-react-context",
+      "hoist-non-react-statics",
+      "path-to-regexp",
+      "query-string",
+      "react-is",
+      "react-lifecycles-compat"
+    ]
+  }
+}

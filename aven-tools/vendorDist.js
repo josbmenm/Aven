@@ -119,10 +119,16 @@ async function vendUpstreams(upstreams) {
   upstreams.map(u => {
     vendedSrcDeps[u.moduleName] = u.srcName;
   });
+  console.log(`🗄  Copying the following modules from your dependencies into this workspace:
+
+${upstreams
+    .map(u => `node_modules/${u.moduleName} -> ./${u.srcName}`)
+    .join('\n')}
+
+⚠️  - You are responsible for syncronizing workspace source with the original modules!`);
   await Promise.all(upstreams.map(u => vendUpstream(u, vendedSrcDeps)));
 }
 
-console.log('Aven Vendor Distribution');
 vendUpstreams([
   {
     moduleName: '@react-navigation/core',
@@ -151,6 +157,6 @@ vendUpstreams([
   },
 ])
   .then(() => {
-    console.log('Done!');
+    console.log('✅ Done!');
   })
   .catch(console.error);
