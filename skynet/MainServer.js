@@ -36,8 +36,10 @@ const runServer = async () => {
   };
 
   const dataSource = await startSQLDataSource({
-    client: 'pg', // must have pg in the dependencies of this module.
-    connection: pgConfig,
+    config: {
+      client: 'pg', // must have pg in the dependencies of this module.
+      connection: pgConfig,
+    },
   });
 
   const emailAgent = EmailAgent({

@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import { createSwitchNavigator } from '@react-navigation/core';
+import { createSwitchNavigator } from '../navigation-core';
 import Admin from '../aven-admin/Admin';
 
 const colors = {
