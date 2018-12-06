@@ -7,16 +7,15 @@
       "ono-cloud",
       "aven-cloud-native",
       "components",
+      "navigation-core",
+      "navigation-native",
+      "navigation-stack",
+      "navigation-hooks",
       "aven-navigation-fade-navigator"
     ],
     "moduleDependencies": [
       "path",
-      "@nozbe/with-observables",
-      "@react-navigation/core",
-      "@react-navigation/native",
-      "react-navigation-stack",
-      "react-navigation-hooks",
-      "react-navigation-transitioner"
+      "@nozbe/with-observables"
     ]
   }
 }

@@ -5,7 +5,7 @@ import Button from '../../components/Button';
 import { withMenuItem, withRestaurant } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { pageBackgroundColor } from '../../components/Styles';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '../../navigation-hooks/Hooks';
 const md5 = require('crypto-js/md5');
 
 function Ingredient({ ingredient }) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, StatusBar, Image } from 'react-native';
-import { createAppContainer } from '@react-navigation/native';
+import { createAppContainer } from '../navigation-native';
 import codePush from 'react-native-code-push';
 
 import HomeScreen from './screens/HomeScreen';
@@ -24,7 +24,7 @@ import JSONView from '../debug-views/JSONView';
 import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createNativeNetworkSource from '../aven-cloud-native/createNativeNetworkSource';
-import createFadeNavigator from '../aven-navigation-fade-navigator/createFadeNavigator';
+import { createStackNavigator } from '../navigation-stack';
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
@@ -102,7 +102,7 @@ const PlaceholderImage = ({ style, color }) => (
 //   />
 // ));
 
-const App = createFadeNavigator(
+const App = createStackNavigator(
   {
     Home: HomeScreen,
     HostHome: HostHomeScreen,
