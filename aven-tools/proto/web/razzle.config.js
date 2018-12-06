@@ -3,6 +3,15 @@
 const webpack = require('webpack');
 
 module.exports = {
+  plugins: [
+    {
+      name: 'typescript',
+      options: {
+        useBabel: true,
+      },
+    },
+  ],
+
   modifyBabelOptions: options => ({
     ...options,
     babelrc: false,

@@ -15,9 +15,12 @@
     "babel-preset-razzle": "^2.0.0",
     "express": "^4.16.4",
     "razzle": "^2.4.0",
+    "razzle-plugin-typescript": "^2.4.0",
     "react": "^16.7.0-alpha.2",
     "react-dom": "^16.7.0-alpha.2",
     "react-art": "^16.7.0-alpha.2",
-    "react-native-web": "^0.9.5"
+    "react-native-web": "^0.9.5",
+    "typescript": "^3.2.1",
+    "tslint": "^5.11.0"
   }
 }
