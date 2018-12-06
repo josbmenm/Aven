@@ -1,7 +1,13 @@
 {
   "name": "aven-admin",
   "aven": {
-    "srcDependencies": ["aven-cloud", "aven-cloud-browser", "debug-views"],
-    "moduleDependencies": ["@react-navigation/core", "react-navigation-hooks"]
+    "srcDependencies": [
+      "aven-cloud",
+      "aven-cloud-browser",
+      "debug-views",
+      "navigation-core",
+      "navigation-hooks"
+    ],
+    "moduleDependencies": []
   }
 }

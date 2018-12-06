@@ -2,7 +2,7 @@ import {
   createNavigator,
   NavigationContext,
   SwitchRouter,
-} from '@react-navigation/core';
+} from '../navigation-core';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   AsyncStorage,
@@ -15,7 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useNavigation, useNavigationState } from 'react-navigation-hooks';
+import { useNavigation, useNavigationState } from '../navigation-hooks/Hooks';
 
 import createBrowserNetworkSource from '../aven-cloud-browser/createBrowserNetworkSource';
 import CloudContext from '../aven-cloud/CloudContext';

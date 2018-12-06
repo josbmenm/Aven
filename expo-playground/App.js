@@ -1,7 +1,10 @@
 import { View, Text } from 'react-native';
 import React from 'react';
 
-const App = () => {
+import { createAppContainer } from '@react-navigation/native';
+import createSwitchNavigator from '../navigation-core/navigators/createSwitchNavigator';
+
+const Home = () => {
   return (
     <View style={{ flex: 1, justifyContent: 'center' }}>
       <Text
@@ -14,5 +17,9 @@ const App = () => {
     </View>
   );
 };
+
+const AppNavigator = createSwitchNavigator({ Home });
+
+const App = createAppContainer(AppNavigator);
 
 export default App;

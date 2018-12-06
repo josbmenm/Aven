@@ -2,14 +2,21 @@
   "main": "App.js",
   "aven": {
     "env": "expo",
-    "srcDependencies": [],
+    "srcDependencies": [
+      "navigation-core"
+    ],
+    "moduleDependencies": [
+      "@react-navigation/native",
+      "@react-navigation/core",
+      "react-lifecycles-compat"
+    ],
     "envOptions": {
       "app": {
         "name": "playground",
         "description": "This project is really great.",
         "slug": "playground",
         "privacy": "unlisted",
-        "sdkVersion": "30.0.0",
+        "sdkVersion": "31.0.0",
         "platforms": [
           "ios",
           "android"

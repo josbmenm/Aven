@@ -1,21 +1,19 @@
 import { View, Text, Image } from 'react-native';
 import React from 'react';
 
-import {
-  SwitchRouter,
-  createNavigator,
-  SceneView,
-  getActiveChildNavigationOptions,
-} from '@react-navigation/core';
+import SwitchRouter from '../navigation-core/routers/SwitchRouter';
+import SceneView from '../navigation-core/views/SceneView';
+import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
+import createNavigator from '../navigation-core/navigators/createNavigator';
 
-import { Link } from '@react-navigation/web';
+import Link from '../navigation-web/Link';
 
 function Header({ descriptors }) {
   return (
-    <View style={{ borderBottomWidth: 1, height: 50 }}>
+    <View style={{ borderBottomWidth: 1, height: 90, flexDirection: 'row' }}>
       <Image
         source={require('./assets/AvenLogo.svg')}
-        style={{ width: 100, height: 100 }}
+        style={{ alignSelf: 'stretch', width: 200, margin: 20 }}
       />
       {Object.keys(descriptors).map(descriptorId => {
         return (
@@ -56,9 +54,10 @@ const DocsRouter = SwitchRouter({
   AuthMethods: require('./docs/Auth-Methods').default,
 });
 
-function Sidebar({ descriptors }) {
+function Sidebar({ descriptors, aboveList }) {
   return (
     <View style={{ borderRightWidth: 1, flex: 1, maxWidth: 360 }}>
+      {aboveList}
       {Object.keys(descriptors).map(descriptorId => {
         return (
           <Link key={descriptorId} routeName={descriptorId}>
@@ -76,7 +75,21 @@ function SidebarView({ navigation, descriptors }) {
   const descriptor = descriptors[route.key];
   return (
     <View style={{ flex: 1, flexDirection: 'row' }}>
-      <Sidebar descriptors={descriptors} navigation={navigation} />
+      <Sidebar
+        descriptors={descriptors}
+        navigation={navigation}
+        aboveList={
+          <select
+            value={navigation.getParam('version')}
+            onChange={e =>
+              navigation.setParams({ version: e.nativeEvent.target.value })
+            }
+          >
+            <option value="1">1</option>
+            <option value="2">2</option>
+          </select>
+        }
+      />
       <SceneView
         component={descriptor.getComponent()}
         navigation={descriptor.navigation}
@@ -105,7 +118,8 @@ const AppRouter = SwitchRouter({
   },
   Docs: {
     screen: Docs,
-    path: 'docs',
+    path: 'docs/:version',
+    params: { version: '1' },
     navigationOptions: ({ navigation, screenProps }) => ({
       title:
         getActiveChildNavigationOptions(navigation, screenProps).title +

@@ -4,6 +4,10 @@
   },
   "aven": {
     "publicAssetDir": "publicAssets",
+    "srcDependencies": [
+      "navigation-core",
+      "navigation-web"
+    ],
     "moduleDependencies": [
       "@react-navigation/web",
       "@react-navigation/core",
