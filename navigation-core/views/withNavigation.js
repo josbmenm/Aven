@@ -5,17 +5,29 @@ import NavigationContext from './NavigationContext';
 
 export default function withNavigation(Component) {
   class ComponentWithNavigation extends React.Component {
-    static displayName = `withNavigation(${Component.displayName || Component.name})`;
+    static displayName = `withNavigation(${Component.displayName ||
+      Component.name})`;
 
     render() {
       const navigationProp = this.props.navigation;
-      return <NavigationContext.Consumer>
+      return (
+        <NavigationContext.Consumer>
           {navigationContext => {
-          const navigation = navigationProp || navigationContext;
-          invariant(!!navigation, 'withNavigation can only be used on a view hierarchy of a navigator. The wrapped component is unable to get access to navigation from props or context.');
-          return <Component {...this.props} navigation={navigation} ref={this.props.onRef} />;
-        }}
-        </NavigationContext.Consumer>;
+            const navigation = navigationProp || navigationContext;
+            invariant(
+              !!navigation,
+              'withNavigation can only be used on a view hierarchy of a navigator. The wrapped component is unable to get access to navigation from props or context.'
+            );
+            return (
+              <Component
+                {...this.props}
+                navigation={navigation}
+                ref={this.props.onRef}
+              />
+            );
+          }}
+        </NavigationContext.Consumer>
+      );
     }
   }
 

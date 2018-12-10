@@ -14,16 +14,19 @@ describe('Transitioner', () => {
       navigation: {
         state: {
           index: 0,
-          routes: [{ key: '1', routeName: 'Foo' }, { key: '2', routeName: 'Bar' }]
+          routes: [
+            { key: '1', routeName: 'Foo' },
+            { key: '2', routeName: 'Bar' },
+          ],
         },
         goBack: () => false,
         dispatch: () => false,
         setParams: () => false,
-        navigate: () => false
+        navigate: () => false,
       },
       render: () => <div />,
       onTransitionStart: onTransitionStartCallback,
-      onTransitionEnd: onTransitionEndCallback
+      onTransitionEnd: onTransitionEndCallback,
     };
 
     const nextTransitionerProps = {
@@ -32,9 +35,12 @@ describe('Transitioner', () => {
         ...transitionerProps.navigation,
         state: {
           index: 0,
-          routes: [{ key: '1', routeName: 'Foo', params: { name: 'Zoom' } }, { key: '2', routeName: 'Bar' }]
-        }
-      }
+          routes: [
+            { key: '1', routeName: 'Foo', params: { name: 'Zoom' } },
+            { key: '2', routeName: 'Bar' },
+          ],
+        },
+      },
     };
     const component = renderer.create(<Transitioner {...transitionerProps} />);
     component.update(<Transitioner {...nextTransitionerProps} />);

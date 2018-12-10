@@ -28,7 +28,9 @@ export default function invariant(condition, format, a, b, c, d, e, f) {
   if (!condition) {
     var error;
     if (format === undefined) {
-      error = new Error('Minified exception occurred; use the non-minified dev environment for the full error message and additional helpful warnings.');
+      error = new Error(
+        'Minified exception occurred; use the non-minified dev environment for the full error message and additional helpful warnings.'
+      );
     } else {
       var args = [a, b, c, d, e, f];
       var argIndex = 0;

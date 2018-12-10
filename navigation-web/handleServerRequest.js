@@ -1,10 +1,15 @@
 import { NavigationActions, getNavigation } from '../navigation-core';
 
-export default function handleServerRequest(Router, pathWithLeadingSlash, query) {
+export default function handleServerRequest(
+  Router,
+  pathWithLeadingSlash,
+  query
+) {
   const path = pathWithLeadingSlash.slice(1);
 
   // Get initial action from the URL
-  const navigationAction = Router.getActionForPathAndParams(path, query) || NavigationActions.init();
+  const navigationAction =
+    Router.getActionForPathAndParams(path, query) || NavigationActions.init();
 
   // Get state from reducer
   const navigationState = Router.getStateForAction(navigationAction);
@@ -17,7 +22,14 @@ export default function handleServerRequest(Router, pathWithLeadingSlash, query)
     return navigation;
   }
 
-  navigation = getNavigation(Router, navigationState, () => {}, actionSubscribers, () => ({}), getCurrentNavigation);
+  navigation = getNavigation(
+    Router,
+    navigationState,
+    () => {},
+    actionSubscribers,
+    () => ({}),
+    getCurrentNavigation
+  );
 
   // Get title from active screen options
   const activeKey = navigationState.routes[navigationState.index].key;

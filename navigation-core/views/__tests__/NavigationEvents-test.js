@@ -10,7 +10,7 @@ const createEventListenersProp = () => ({
   onWillFocus: createPropListener(),
   onDidFocus: createPropListener(),
   onWillBlur: createPropListener(),
-  onDidBlur: createPropListener()
+  onDidBlur: createPropListener(),
 });
 
 const createTestNavigationAndHelpers = () => {
@@ -19,7 +19,7 @@ const createTestNavigationAndHelpers = () => {
       willFocus: [],
       didFocus: [],
       willBlur: [],
-      didBlur: []
+      didBlur: [],
     };
     return {
       add: (eventName, handler) => {
@@ -33,7 +33,7 @@ const createTestNavigationAndHelpers = () => {
       },
       call: eventName => {
         listeners[eventName].forEach(listener => listener());
-      }
+      },
     };
   })();
 
@@ -41,14 +41,14 @@ const createTestNavigationAndHelpers = () => {
     addListener: jest.fn((eventName, handler) => {
       NavigationListenersAPI.add(eventName, handler);
       return {
-        remove: () => NavigationListenersAPI.remove(eventName, handler)
+        remove: () => NavigationListenersAPI.remove(eventName, handler),
       };
-    })
+    }),
   };
 
   return {
     navigation,
-    NavigationListenersAPI
+    NavigationListenersAPI,
   };
 };
 
@@ -56,10 +56,12 @@ describe('NavigationEvents', () => {
   it('add all listeners on mount and remove them on unmount, even without any event prop provided (see #5058)', () => {
     const {
       navigation,
-      NavigationListenersAPI
+      NavigationListenersAPI,
     } = createTestNavigationAndHelpers();
 
-    const component = renderer.create(<NavigationEvents navigation={navigation} />);
+    const component = renderer.create(
+      <NavigationEvents navigation={navigation} />
+    );
     expect(NavigationListenersAPI.get('willFocus').length).toBe(1);
     expect(NavigationListenersAPI.get('didFocus').length).toBe(1);
     expect(NavigationListenersAPI.get('willBlur').length).toBe(1);
@@ -75,11 +77,13 @@ describe('NavigationEvents', () => {
   it('support context-provided navigation', () => {
     const {
       navigation,
-      NavigationListenersAPI
+      NavigationListenersAPI,
     } = createTestNavigationAndHelpers();
-    const component = renderer.create(<NavigationContext.Provider value={navigation}>
+    const component = renderer.create(
+      <NavigationContext.Provider value={navigation}>
         <NavigationEvents />
-      </NavigationContext.Provider>);
+      </NavigationContext.Provider>
+    );
 
     expect(NavigationListenersAPI.get('willFocus').length).toBe(1);
     expect(NavigationListenersAPI.get('didFocus').length).toBe(1);
@@ -96,11 +100,13 @@ describe('NavigationEvents', () => {
   it('wire props listeners to navigation listeners', () => {
     const {
       navigation,
-      NavigationListenersAPI
+      NavigationListenersAPI,
     } = createTestNavigationAndHelpers();
 
     const eventListenerProps = createEventListenersProp();
-    renderer.create(<NavigationEvents navigation={navigation} {...eventListenerProps} />);
+    renderer.create(
+      <NavigationEvents navigation={navigation} {...eventListenerProps} />
+    );
 
     const checkPropListenerIsCalled = (eventName, propName) => {
       expect(eventListenerProps[propName]).toHaveBeenCalledTimes(0);
@@ -117,21 +123,39 @@ describe('NavigationEvents', () => {
   it('wire latest props listener to navigation listeners on updates (support closure/arrow functions update)', () => {
     const {
       navigation,
-      NavigationListenersAPI
+      NavigationListenersAPI,
     } = createTestNavigationAndHelpers();
 
-    const component = renderer.create(<NavigationEvents navigation={navigation} {...createEventListenersProp()} />);
+    const component = renderer.create(
+      <NavigationEvents
+        navigation={navigation}
+        {...createEventListenersProp()}
+      />
+    );
 
-    component.update(<NavigationEvents navigation={navigation} onWillBlur={() => {
-      throw new Error('should not be called');
-    }} onDidFocus={() => {
-      throw new Error('should not be called');
-    }} />);
+    component.update(
+      <NavigationEvents
+        navigation={navigation}
+        onWillBlur={() => {
+          throw new Error('should not be called');
+        }}
+        onDidFocus={() => {
+          throw new Error('should not be called');
+        }}
+      />
+    );
 
-    component.update(<NavigationEvents navigation={navigation} {...createEventListenersProp()} />);
+    component.update(
+      <NavigationEvents
+        navigation={navigation}
+        {...createEventListenersProp()}
+      />
+    );
 
     const latestEventListenerProps = createEventListenersProp();
-    component.update(<NavigationEvents navigation={navigation} {...latestEventListenerProps} />);
+    component.update(
+      <NavigationEvents navigation={navigation} {...latestEventListenerProps} />
+    );
 
     const checkLatestPropListenerCalled = (eventName, propName) => {
       expect(latestEventListenerProps[propName]).toHaveBeenCalledTimes(0);

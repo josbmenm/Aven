@@ -10,24 +10,29 @@ import { createPathParser } from './pathUtils';
 const defaultActionCreators = () => ({});
 
 function childrenUpdateWithoutSwitchingIndex(actionType) {
-  return [NavigationActions.SET_PARAMS,
-  // Todo: make SwitchRouter not depend on StackActions..
-  StackActions.COMPLETE_TRANSITION].includes(actionType);
+  return [
+    NavigationActions.SET_PARAMS,
+    // Todo: make SwitchRouter not depend on StackActions..
+    StackActions.COMPLETE_TRANSITION,
+  ].includes(actionType);
 }
 
-export default ((routeConfigs, config = {}) => {
+export default (routeConfigs, config = {}) => {
   // Fail fast on invalid route definitions
   validateRouteConfigMap(routeConfigs);
 
   const order = config.order || Object.keys(routeConfigs);
 
-  const getCustomActionCreators = config.getCustomActionCreators || defaultActionCreators;
+  const getCustomActionCreators =
+    config.getCustomActionCreators || defaultActionCreators;
 
   const initialRouteParams = config.initialRouteParams;
   const initialRouteName = config.initialRouteName || order[0];
   const backBehavior = config.backBehavior || 'none';
   const shouldBackNavigateToInitialRoute = backBehavior === 'initialRoute';
-  const resetOnBlur = config.hasOwnProperty('resetOnBlur') ? config.resetOnBlur : true;
+  const resetOnBlur = config.hasOwnProperty('resetOnBlur')
+    ? config.resetOnBlur
+    : true;
   const initialRouteIndex = order.indexOf(initialRouteName);
   const childRouters = {};
   order.forEach(routeName => {
@@ -49,15 +54,19 @@ export default ((routeConfigs, config = {}) => {
 
   const {
     getPathAndParamsForRoute,
-    getActionForPathAndParams
+    getActionForPathAndParams,
   } = createPathParser(childRouters, routeConfigs, config);
 
   if (initialRouteIndex === -1) {
-    throw new Error(`Invalid initialRouteName '${initialRouteName}'.` + `Should be one of ${order.map(n => `"${n}"`).join(', ')}`);
+    throw new Error(
+      `Invalid initialRouteName '${initialRouteName}'.` +
+        `Should be one of ${order.map(n => `"${n}"`).join(', ')}`
+    );
   }
 
   function resetChildRoute(routeName) {
-    let initialParams = routeName === initialRouteName ? initialRouteParams : undefined;
+    let initialParams =
+      routeName === initialRouteName ? initialRouteParams : undefined;
     // note(brentvatne): merging initialRouteParams *on top* of default params
     // on the route seems incorrect but it's consistent with existing behavior
     // in stackrouter
@@ -69,13 +78,13 @@ export default ((routeConfigs, config = {}) => {
         ...childRouter.getStateForAction(childAction),
         key: routeName,
         routeName,
-        params
+        params,
       };
     }
     return {
       key: routeName,
       routeName,
-      params
+      params,
     };
   }
 
@@ -92,7 +101,7 @@ export default ((routeConfigs, config = {}) => {
 
       return {
         ...possibleNextState,
-        routes: nextRoutes
+        routes: nextRoutes,
       };
     } else {
       nextState = possibleNextState;
@@ -106,7 +115,7 @@ export default ((routeConfigs, config = {}) => {
     return {
       routes,
       index: initialRouteIndex,
-      isTransitioning: false
+      isTransitioning: false,
     };
   }
 
@@ -134,8 +143,10 @@ export default ((routeConfigs, config = {}) => {
             params: {
               ...route.params,
               ...params,
-              ...(route.routeName === initialRouteName ? initialRouteParams : null)
-            }
+              ...(route.routeName === initialRouteName
+                ? initialRouteParams
+                : null),
+            },
           }));
         }
       }
@@ -144,7 +155,10 @@ export default ((routeConfigs, config = {}) => {
       const activeChildLastState = state.routes[state.index];
       const activeChildRouter = childRouters[order[state.index]];
       if (activeChildRouter) {
-        const activeChildState = activeChildRouter.getStateForAction(action, activeChildLastState);
+        const activeChildState = activeChildRouter.getStateForAction(
+          action,
+          activeChildLastState
+        );
         if (!activeChildState && inputState) {
           return null;
         }
@@ -153,14 +167,15 @@ export default ((routeConfigs, config = {}) => {
           routes[state.index] = activeChildState;
           return getNextState(prevState, {
             ...state,
-            routes
+            routes,
           });
         }
       }
 
       // Handle tab changing. Do this after letting the current tab try to
       // handle the action, to allow inner children to change first
-      const isBackEligible = action.key == null || action.key === activeChildLastState.key;
+      const isBackEligible =
+        action.key == null || action.key === activeChildLastState.key;
       if (action.type === NavigationActions.BACK) {
         if (isBackEligible && shouldBackNavigateToInitialRoute) {
           activeChildIndex = initialRouteIndex;
@@ -184,7 +199,10 @@ export default ((routeConfigs, config = {}) => {
           let newChildState = childState;
 
           if (action.action && childRouter) {
-            const childStateUpdate = childRouter.getStateForAction(action.action, childState);
+            const childStateUpdate = childRouter.getStateForAction(
+              action.action,
+              childState
+            );
             if (childStateUpdate) {
               newChildState = childStateUpdate;
             }
@@ -195,8 +213,8 @@ export default ((routeConfigs, config = {}) => {
               ...newChildState,
               params: {
                 ...(newChildState.params || {}),
-                ...action.params
-              }
+                ...action.params,
+              },
             };
           }
 
@@ -206,10 +224,14 @@ export default ((routeConfigs, config = {}) => {
             const nextState = {
               ...state,
               routes,
-              index: activeChildIndex
+              index: activeChildIndex,
             };
             return getNextState(prevState, nextState);
-          } else if (newChildState === childState && state.index === activeChildIndex && prevState) {
+          } else if (
+            newChildState === childState &&
+            state.index === activeChildIndex &&
+            prevState
+          ) {
             return null;
           }
         }
@@ -221,16 +243,16 @@ export default ((routeConfigs, config = {}) => {
         if (lastRoute) {
           const params = {
             ...lastRoute.params,
-            ...action.params
+            ...action.params,
           };
           const routes = [...state.routes];
           routes[state.routes.indexOf(lastRoute)] = {
             ...lastRoute,
-            params
+            params,
           };
           return getNextState(prevState, {
             ...state,
-            routes
+            routes,
           });
         }
       }
@@ -238,7 +260,7 @@ export default ((routeConfigs, config = {}) => {
       if (activeChildIndex !== state.index) {
         return getNextState(prevState, {
           ...state,
-          index: activeChildIndex
+          index: activeChildIndex,
         });
       } else if (didNavigate && !inputState) {
         return state;
@@ -283,7 +305,7 @@ export default ((routeConfigs, config = {}) => {
         return getNextState(prevState, {
           ...state,
           index,
-          routes
+          routes,
         });
       }
       return state;
@@ -291,8 +313,11 @@ export default ((routeConfigs, config = {}) => {
 
     getComponentForState(state) {
       const routeName = state.routes[state.index].routeName;
-      invariant(routeName, `There is no route defined for index ${state.index}. Check that
-        that you passed in a navigation state with a valid tab/screen index.`);
+      invariant(
+        routeName,
+        `There is no route defined for index ${state.index}. Check that
+        that you passed in a navigation state with a valid tab/screen index.`
+      );
       const childRouter = childRouters[routeName];
       if (childRouter) {
         return childRouter.getComponentForState(state.routes[state.index]);
@@ -313,6 +338,9 @@ export default ((routeConfigs, config = {}) => {
       return getActionForPathAndParams(path, params);
     },
 
-    getScreenOptions: createConfigGetter(routeConfigs, config.defaultNavigationOptions)
+    getScreenOptions: createConfigGetter(
+      routeConfigs,
+      config.defaultNavigationOptions
+    ),
   };
-});
+};

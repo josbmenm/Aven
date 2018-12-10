@@ -2,7 +2,12 @@ import React from 'react';
 import { AsyncStorage, Linking, Platform, BackHandler } from 'react-native';
 import { polyfill } from 'react-lifecycles-compat';
 
-import { NavigationActions, pathUtils, getNavigation, NavigationProvider } from '../navigation-core';
+import {
+  NavigationActions,
+  pathUtils,
+  getNavigation,
+  NavigationProvider,
+} from '../navigation-core';
 import invariant from './utils/invariant';
 import docsUrl from './utils/docsUrl';
 
@@ -16,13 +21,20 @@ function validateProps(props) {
   if (isStateful(props)) {
     return;
   }
-  // eslint-disable-next-line no-unused-vars
+
   const { navigation, screenProps, ...containerProps } = props;
 
   const keys = Object.keys(containerProps);
 
   if (keys.length !== 0) {
-    throw new Error('This navigator has both navigation and container props, so it is ' + `unclear if it should own its own state. Remove props: "${keys.join(', ')}" ` + 'if the navigator should get its state from the navigation prop. If the ' + 'navigator should maintain its own state, do not pass a navigation prop.');
+    throw new Error(
+      'This navigator has both navigation and container props, so it is ' +
+        `unclear if it should own its own state. Remove props: "${keys.join(
+          ', '
+        )}" ` +
+        'if the navigator should get its state from the navigation prop. If the ' +
+        'navigator should maintain its own state, do not pass a navigation prop.'
+    );
   }
 }
 
@@ -84,12 +96,17 @@ export default function createNavigationContainer(Component) {
       }
 
       this.state = {
-        nav: this._isStateful() && !props.persistenceKey ? Component.router.getStateForAction(this._initialAction) : null
+        nav:
+          this._isStateful() && !props.persistenceKey
+            ? Component.router.getStateForAction(this._initialAction)
+            : null,
       };
     }
 
     _renderLoading() {
-      return this.props.renderLoadingExperimental ? this.props.renderLoadingExperimental() : null;
+      return this.props.renderLoadingExperimental
+        ? this.props.renderLoadingExperimental()
+        : null;
     }
 
     _isStateful() {
@@ -101,13 +118,19 @@ export default function createNavigationContainer(Component) {
         return;
       }
 
-      // eslint-disable-next-line no-unused-vars
       const { navigation, screenProps, ...containerProps } = props;
 
       const keys = Object.keys(containerProps);
 
       if (keys.length !== 0) {
-        throw new Error('This navigator has both navigation and container props, so it is ' + `unclear if it should own its own state. Remove props: "${keys.join(', ')}" ` + 'if the navigator should get its state from the navigation prop. If the ' + 'navigator should maintain its own state, do not pass a navigation prop.');
+        throw new Error(
+          'This navigator has both navigation and container props, so it is ' +
+            `unclear if it should own its own state. Remove props: "${keys.join(
+              ', '
+            )}" ` +
+            'if the navigator should get its state from the navigation prop. If the ' +
+            'navigator should maintain its own state, do not pass a navigation prop.'
+        );
       }
     }
 
@@ -127,7 +150,11 @@ export default function createNavigationContainer(Component) {
     };
 
     _onNavigationStateChange(prevNav, nav, action) {
-      if (typeof this.props.onNavigationStateChange === 'undefined' && this._isStateful() && !!process.env.REACT_NAV_LOGGING) {
+      if (
+        typeof this.props.onNavigationStateChange === 'undefined' &&
+        this._isStateful() &&
+        !!process.env.REACT_NAV_LOGGING
+      ) {
         if (console.group) {
           console.group('Navigation Dispatch: ');
           console.log('Action: ', action);
@@ -138,7 +165,7 @@ export default function createNavigationContainer(Component) {
           console.log('Navigation Dispatch: ', {
             action,
             newState: nav,
-            lastState: prevNav
+            lastState: prevNav,
           });
         }
         return;
@@ -167,7 +194,11 @@ export default function createNavigationContainer(Component) {
           // Temporarily only show this on iOS due to this issue:
           // https://github.com/react-navigation/react-navigation/issues/4196#issuecomment-390827829
           if (Platform.OS === 'ios') {
-            console.warn(`You should only render one navigator explicitly in your app, and other navigators should be rendered by including them in that navigator. Full details at: ${docsUrl('common-mistakes.html#explicitly-rendering-more-than-one-navigator')}`);
+            console.warn(
+              `You should only render one navigator explicitly in your app, and other navigators should be rendered by including them in that navigator. Full details at: ${docsUrl(
+                'common-mistakes.html#explicitly-rendering-more-than-one-navigator'
+              )}`
+            );
           }
         }
       }
@@ -179,7 +210,8 @@ export default function createNavigationContainer(Component) {
       let parsedUrl = null;
       let startupStateJSON = null;
       if (enableURLHandling !== false) {
-        startupStateJSON = persistenceKey && (await AsyncStorage.getItem(persistenceKey));
+        startupStateJSON =
+          persistenceKey && (await AsyncStorage.getItem(persistenceKey));
         const url = await Linking.getInitialURL();
         parsedUrl = url && urlToPathAndParams(url, uriPrefix);
       }
@@ -190,7 +222,8 @@ export default function createNavigationContainer(Component) {
       let action = this._initialAction;
       let startupState = this.state.nav;
       if (!startupState) {
-        !!process.env.REACT_NAV_LOGGING && console.log('Init new Navigation State');
+        !!process.env.REACT_NAV_LOGGING &&
+          console.log('Init new Navigation State');
         startupState = Component.router.getStateForAction(action);
       }
 
@@ -207,20 +240,33 @@ export default function createNavigationContainer(Component) {
       // Pull state out of URL
       if (parsedUrl) {
         const { path, params } = parsedUrl;
-        const urlAction = Component.router.getActionForPathAndParams(path, params);
+        const urlAction = Component.router.getActionForPathAndParams(
+          path,
+          params
+        );
         if (urlAction) {
-          !!process.env.REACT_NAV_LOGGING && console.log('Applying Navigation Action for Initial URL:', parsedUrl);
+          !!process.env.REACT_NAV_LOGGING &&
+            console.log(
+              'Applying Navigation Action for Initial URL:',
+              parsedUrl
+            );
           action = urlAction;
-          startupState = Component.router.getStateForAction(urlAction, startupState);
+          startupState = Component.router.getStateForAction(
+            urlAction,
+            startupState
+          );
         }
       }
 
-      const dispatchActions = () => this._actionEventSubscribers.forEach(subscriber => subscriber({
-        type: 'action',
-        action,
-        state: this.state.nav,
-        lastState: null
-      }));
+      const dispatchActions = () =>
+        this._actionEventSubscribers.forEach(subscriber =>
+          subscriber({
+            type: 'action',
+            action,
+            state: this.state.nav,
+            lastState: null,
+          })
+        );
 
       if (startupState === this.state.nav) {
         dispatchActions();
@@ -237,7 +283,9 @@ export default function createNavigationContainer(Component) {
     componentDidCatch(e) {
       if (_reactNavigationIsHydratingState) {
         _reactNavigationIsHydratingState = false;
-        console.warn('Uncaught exception while starting app from persisted navigation state! Trying to render again with a fresh navigation state..');
+        console.warn(
+          'Uncaught exception while starting app from persisted navigation state! Trying to render again with a fresh navigation state..'
+        );
         this.dispatch(NavigationActions.init());
       } else {
         throw e;
@@ -273,16 +321,21 @@ export default function createNavigationContainer(Component) {
       this._navState = this._navState || this.state.nav;
       const lastNavState = this._navState;
       invariant(lastNavState, 'should be set in constructor if stateful');
-      const reducedState = Component.router.getStateForAction(action, lastNavState);
+      const reducedState = Component.router.getStateForAction(
+        action,
+        lastNavState
+      );
       const navState = reducedState === null ? lastNavState : reducedState;
 
       const dispatchActionEvents = () => {
-        this._actionEventSubscribers.forEach(subscriber => subscriber({
-          type: 'action',
-          action,
-          state: navState,
-          lastState: lastNavState
-        }));
+        this._actionEventSubscribers.forEach(subscriber =>
+          subscriber({
+            type: 'action',
+            action,
+            state: navState,
+            lastState: lastNavState,
+          })
+        );
       };
 
       if (reducedState === null) {
@@ -317,14 +370,23 @@ export default function createNavigationContainer(Component) {
           return this._renderLoading();
         }
         if (!this._navigation || this._navigation.state !== navState) {
-          this._navigation = getNavigation(Component.router, navState, this.dispatch, this._actionEventSubscribers, this._getScreenProps, () => this._navigation);
+          this._navigation = getNavigation(
+            Component.router,
+            navState,
+            this.dispatch,
+            this._actionEventSubscribers,
+            this._getScreenProps,
+            () => this._navigation
+          );
         }
         navigation = this._navigation;
       }
       invariant(navigation, 'failed to get navigation');
-      return <NavigationProvider value={navigation}>
+      return (
+        <NavigationProvider value={navigation}>
           <Component {...this.props} navigation={navigation} />
-        </NavigationProvider>;
+        </NavigationProvider>
+      );
     }
   }
 

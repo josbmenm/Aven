@@ -5,7 +5,7 @@ import createBrowserApp from '../createBrowserApp';
 
 class HomeScreen extends Component {
   static navigationOptions = () => ({
-    title: 'Home'
+    title: 'Home',
   });
 
   render() {
@@ -15,7 +15,7 @@ class HomeScreen extends Component {
 
 class OtherScreen extends Component {
   static navigationOptions = () => ({
-    title: 'Other'
+    title: 'Other',
   });
 
   render() {
@@ -29,20 +29,20 @@ jest.mock('history', () => ({
     listen: () => {},
     location: {
       pathname: '/OtherScreen',
-      search: '?foo=bar'
-    }
-  })
+      search: '?foo=bar',
+    },
+  }),
 }));
 
 global.document = {
-  title: 'Empty Title'
+  title: 'Empty Title',
 };
 
 describe('SwitchNavigator works on web', () => {
   test('renders successfully', () => {
     const AppNavigator = createSwitchNavigator({
       HomeScreen,
-      OtherScreen
+      OtherScreen,
     });
     const App = createBrowserApp(AppNavigator);
     const rendered = renderer.create(<App />).toJSON();

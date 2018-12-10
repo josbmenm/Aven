@@ -1,5 +1,3 @@
-/* eslint-disable import/no-commonjs */
-
 module.exports = {
   get StateUtils() {
     return require('./StateUtils').default;
@@ -83,5 +81,5 @@ module.exports = {
   },
   get withNavigationFocus() {
     return require('./views/withNavigationFocus').default;
-  }
+  },
 };

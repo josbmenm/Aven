@@ -1,4 +1,3 @@
-/* eslint-disable import/no-commonjs */
 import { Platform } from 'react-native';
 
 module.exports = {
@@ -14,8 +13,11 @@ module.exports = {
    */
   get Assets() {
     return Platform.select({
-      ios: [require('./views/assets/back-icon.png'), require('./views/assets/back-icon-mask.png')],
-      android: [require('./views/assets/back-icon.png')]
+      ios: [
+        require('./views/assets/back-icon.png'),
+        require('./views/assets/back-icon-mask.png'),
+      ],
+      android: [require('./views/assets/back-icon.png')],
     });
   },
   get Header() {
@@ -56,5 +58,5 @@ module.exports = {
   },
   get StackGestureContext() {
     return require('./utils/StackGestureContext').default;
-  }
+  },
 };

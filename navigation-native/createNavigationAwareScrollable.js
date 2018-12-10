@@ -3,53 +3,65 @@ import hoistStatics from 'hoist-non-react-statics';
 import { withNavigation } from '../navigation-core';
 
 export default function createNavigationAwareScrollable(Component: any) {
-  const ComponentWithNavigationScrolling = withNavigation(class extends React.PureComponent<any> {
-    static displayName = `withNavigationScrolling(${Component.displayName || Component.name})`;
+  const ComponentWithNavigationScrolling = withNavigation(
+    class extends React.PureComponent<any> {
+      static displayName = `withNavigationScrolling(${Component.displayName ||
+        Component.name})`;
 
-    _subscription: any;
+      _subscription: any;
 
-    componentDidMount() {
-      this._subscription = this.props.navigation.addListener('refocus', () => {
-        const scrollableNode = this.getNode();
-        if (this.props.navigation.isFocused() && scrollableNode !== null) {
-          if (scrollableNode.scrollToTop != null) {
-            scrollableNode.scrollToTop();
-          } else if (scrollableNode.scrollTo != null) {
-            scrollableNode.scrollTo({ y: 0 });
+      componentDidMount() {
+        this._subscription = this.props.navigation.addListener(
+          'refocus',
+          () => {
+            const scrollableNode = this.getNode();
+            if (this.props.navigation.isFocused() && scrollableNode !== null) {
+              if (scrollableNode.scrollToTop != null) {
+                scrollableNode.scrollToTop();
+              } else if (scrollableNode.scrollTo != null) {
+                scrollableNode.scrollTo({ y: 0 });
+              }
+            }
           }
+        );
+      }
+
+      getNode() {
+        if (this._scrollRef === null) {
+          return null;
         }
-      });
-    }
 
-    getNode() {
-      if (this._scrollRef === null) {
-        return null;
+        if (this._scrollRef.getScrollResponder) {
+          return this._scrollRef.getScrollResponder();
+        } else if (this._scrollRef.getNode) {
+          return this._scrollRef.getNode();
+        } else {
+          return this._scrollRef;
+        }
       }
 
-      if (this._scrollRef.getScrollResponder) {
-        return this._scrollRef.getScrollResponder();
-      } else if (this._scrollRef.getNode) {
-        return this._scrollRef.getNode();
-      } else {
-        return this._scrollRef;
+      componentWillUnmount() {
+        if (this._subscription != null) {
+          this._subscription.remove();
+        }
+      }
+
+      render() {
+        return (
+          <Component
+            ref={view => {
+              this._scrollRef = view;
+            }}
+            {...this.props}
+          />
+        );
       }
     }
-
-    componentWillUnmount() {
-      if (this._subscription != null) {
-        this._subscription.remove();
-      }
-    }
-
-    render() {
-      return <Component ref={view => {
-        this._scrollRef = view;
-      }} {...this.props} />;
-    }
-  });
+  );
 
   class NavigationAwareScrollable extends React.PureComponent<any> {
-    static displayName = `NavigationAwareScrollable(${Component.displayName || Component.name})`;
+    static displayName = `NavigationAwareScrollable(${Component.displayName ||
+      Component.name})`;
 
     _captureRef = view => {
       this._innerRef = view;
@@ -89,7 +101,12 @@ export default function createNavigationAwareScrollable(Component: any) {
     };
 
     render() {
-      return <ComponentWithNavigationScrolling {...this.props} onRef={this._captureRef} />;
+      return (
+        <ComponentWithNavigationScrolling
+          {...this.props}
+          onRef={this._captureRef}
+        />
+      );
     }
   }
 

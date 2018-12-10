@@ -5,7 +5,7 @@ const EventNameToPropName = {
   willFocus: 'onWillFocus',
   didFocus: 'onDidFocus',
   willBlur: 'onWillBlur',
-  didBlur: 'onDidBlur'
+  didBlur: 'onDidBlur',
 };
 
 const EventNames = Object.keys(EventNameToPropName);
@@ -20,10 +20,13 @@ class NavigationEvents extends React.Component {
     // A former implementation was replacing (removing/adding) listeners on all update (if prop provided)
     // but there were issues (see https://github.com/react-navigation/react-navigation/issues/5058)
     EventNames.forEach(eventName => {
-      this.subscriptions[eventName] = this.props.navigation.addListener(eventName, (...args) => {
-        const propListener = this.getPropListener(eventName);
-        return propListener && propListener(...args);
-      });
+      this.subscriptions[eventName] = this.props.navigation.addListener(
+        eventName,
+        (...args) => {
+          const propListener = this.getPropListener(eventName);
+          return propListener && propListener(...args);
+        }
+      );
     });
   }
 

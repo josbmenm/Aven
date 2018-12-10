@@ -19,16 +19,16 @@ const performRouterTest = createTestRouter => {
   ProfileNavigator.router = StackRouter({
     list: {
       path: 'list/:id',
-      screen: ListScreen
-    }
+      screen: ListScreen,
+    },
   });
 
   const MainNavigator = () => <div />;
   MainNavigator.router = StackRouter({
     profile: {
       path: 'p/:id',
-      screen: ProfileNavigator
-    }
+      screen: ProfileNavigator,
+    },
   });
 
   const LoginScreen = () => <div />;
@@ -36,8 +36,8 @@ const performRouterTest = createTestRouter => {
   const AuthNavigator = () => <div />;
   AuthNavigator.router = StackRouter({
     login: {
-      screen: LoginScreen
-    }
+      screen: LoginScreen,
+    },
   });
 
   const BarScreen = () => <div />;
@@ -46,8 +46,8 @@ const performRouterTest = createTestRouter => {
     static router = StackRouter({
       bar: {
         path: 'b/:barThing',
-        screen: BarScreen
-      }
+        screen: BarScreen,
+      },
     });
     render() {
       return <div />;
@@ -58,118 +58,125 @@ const performRouterTest = createTestRouter => {
 
   const testRouter = createTestRouter({
     main: {
-      screen: MainNavigator
+      screen: MainNavigator,
     },
     baz: {
       path: null,
-      screen: FooNavigator
+      screen: FooNavigator,
     },
     auth: {
-      screen: AuthNavigator
+      screen: AuthNavigator,
     },
     person: {
       path: 'people/:id',
-      screen: PersonScreen
+      screen: PersonScreen,
     },
     foo: {
       path: 'fo/:fooThing',
-      screen: FooNavigator
-    }
+      screen: FooNavigator,
+    },
   });
 
   test('Handles empty URIs with empty action', () => {
-    const router = createTestRouter({
-      Foo: {
-        screen: () => <div />
+    const router = createTestRouter(
+      {
+        Foo: {
+          screen: () => <div />,
+        },
+        Bar: {
+          screen: () => <div />,
+        },
       },
-      Bar: {
-        screen: () => <div />
-      }
-    }, { initialRouteName: 'Bar', initialRouteParams: { foo: 42 } });
+      { initialRouteName: 'Bar', initialRouteParams: { foo: 42 } }
+    );
     const action = router.getActionForPathAndParams('');
     expect(action).toEqual(null);
     const state = router.getStateForAction(action || NavigationActions.init());
-    expect(state.routes[state.index]).toEqual(expect.objectContaining({
-      routeName: 'Bar',
-      params: { foo: 42 }
-    }));
+    expect(state.routes[state.index]).toEqual(
+      expect.objectContaining({
+        routeName: 'Bar',
+        params: { foo: 42 },
+      })
+    );
   });
 
   test('Handles paths with several params', () => {
     const router = createTestRouter({
       Person: {
         path: 'people/:person',
-        screen: () => <div />
+        screen: () => <div />,
       },
       Task: {
         path: 'people/:person/tasks/:task',
-        screen: () => <div />
+        screen: () => <div />,
       },
       ThingA: {
         path: 'things/:good',
-        screen: () => <div />
+        screen: () => <div />,
       },
       Thing: {
         path: 'things/:good/:thing',
-        screen: () => <div />
-      }
+        screen: () => <div />,
+      },
     });
-    const action = router.getActionForPathAndParams('people/brent/tasks/everything');
+    const action = router.getActionForPathAndParams(
+      'people/brent/tasks/everything'
+    );
     expect(action).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'Task',
-      params: { person: 'brent', task: 'everything' }
+      params: { person: 'brent', task: 'everything' },
     });
 
     const action1 = router.getActionForPathAndParams('people/lucy');
     expect(action1).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'Person',
-      params: { person: 'lucy' }
+      params: { person: 'lucy' },
     });
 
     const action2 = router.getActionForPathAndParams('things/foo/bar');
     expect(action2).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'Thing',
-      params: { good: 'foo', thing: 'bar' }
+      params: { good: 'foo', thing: 'bar' },
     });
 
     const action3 = router.getActionForPathAndParams('things/foo');
     expect(action3).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'ThingA',
-      params: { good: 'foo' }
+      params: { good: 'foo' },
     });
   });
 
   test('Handles empty path configuration', () => {
     const router = createTestRouter({
       Foo: {
-        screen: () => <div />
+        screen: () => <div />,
       },
       Bar: {
         screen: () => <div />,
-        path: ''
-      }
+        path: '',
+      },
     });
     const action = router.getActionForPathAndParams('');
     expect(action).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'Bar',
-      params: {}
+      params: {},
     });
   });
 
   test('Handles wildcard path configuration', () => {
     const router = createTestRouter({
       Foo: {
-        screen: () => <div />
+        screen: () => <div />,
       },
       Bar: {
         screen: () => <div />,
-        path: ':something'
-      }
+        path: ':something',
+      },
     });
     const action = router.getActionForPathAndParams('');
     expect(action).toEqual(null);
@@ -178,13 +185,13 @@ const performRouterTest = createTestRouter => {
     expect(action1).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'Foo',
-      params: {}
+      params: {},
     });
     const action2 = router.getActionForPathAndParams('asdf');
     expect(action2).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'Bar',
-      params: { something: 'asdf' }
+      params: { something: 'asdf' },
     });
   });
 
@@ -192,16 +199,16 @@ const performRouterTest = createTestRouter => {
     const ScreenA = () => <div />;
     const router = createTestRouter({
       Bar: {
-        screen: ScreenA
+        screen: ScreenA,
       },
       Foo: {
         path: null,
-        screen: ScreenA
+        screen: ScreenA,
       },
       Baz: {
         path: '',
-        screen: ScreenA
-      }
+        screen: ScreenA,
+      },
     });
     const action0 = router.getActionForPathAndParams('test/random', {});
     expect(action0).toBe(null);
@@ -216,31 +223,31 @@ const performRouterTest = createTestRouter => {
     const ScreenA = () => <div />;
     const ScreenB = () => <div />;
     ScreenB.router = createTestRouter({
-      Foo: ScreenA
+      Foo: ScreenA,
     });
     const ScreenC = () => <div />;
     ScreenC.router = createTestRouter({
       Bar: {
         path: 'bar/:id',
-        screen: ScreenA
+        screen: ScreenA,
       },
       Empty: {
         path: '',
-        screen: ScreenA
-      }
+        screen: ScreenA,
+      },
     });
     const router = createTestRouter({
       A: {
-        screen: ScreenA
+        screen: ScreenA,
       },
       B: {
         path: null,
-        screen: ScreenB
+        screen: ScreenB,
       },
       C: {
         path: null,
-        screen: ScreenC
-      }
+        screen: ScreenC,
+      },
     });
     const action0 = router.getActionForPathAndParams('Foo', {});
     expect(action0.routeName).toBe('B');
@@ -266,8 +273,8 @@ const performRouterTest = createTestRouter => {
       Foo: ScreenA,
       Baz: {
         screen: ScreenA,
-        path: ''
-      }
+        path: '',
+      },
     });
     const ScreenC = () => <div />;
     ScreenC.router = createTestRouter({
@@ -275,18 +282,18 @@ const performRouterTest = createTestRouter => {
       Bar: ScreenA,
       Baz: {
         screen: ScreenA,
-        path: ''
-      }
+        path: '',
+      },
     });
     const router = createTestRouter({
       B: {
         path: null,
-        screen: ScreenB
+        screen: ScreenB,
       },
       C: {
         path: '',
-        screen: ScreenC
-      }
+        screen: ScreenC,
+      },
     });
     const action0 = router.getActionForPathAndParams('', {});
     expect(action0.routeName).toBe('C');
@@ -310,20 +317,20 @@ const performRouterTest = createTestRouter => {
     const ScreenC = () => <div />;
     ScreenC.router = createTestRouter({
       Boo: ScreenA,
-      Bar: ScreenA
+      Bar: ScreenA,
     });
     Foo.router = createTestRouter({
       Quo: ScreenA,
       Qux: {
         screen: ScreenC,
-        path: ''
-      }
+        path: '',
+      },
     });
     const router = createTestRouter({
       Bar: {
-        screen: ScreenA
+        screen: ScreenA,
       },
-      Foo
+      Foo,
     });
     const action0 = router.getActionForPathAndParams('Foo/Bar', {});
     expect(action0.routeName).toBe('Foo');
@@ -337,38 +344,44 @@ const performRouterTest = createTestRouter => {
     const ScreenC = () => <div />;
     ScreenA.router = createTestRouter({
       Boo: { path: 'boo', screen: ScreenC },
-      Baz: { path: 'baz/:bazId', screen: ScreenB }
+      Baz: { path: 'baz/:bazId', screen: ScreenB },
     });
     ScreenC.router = createTestRouter({
-      Boo2: { path: '', screen: ScreenB }
+      Boo2: { path: '', screen: ScreenB },
     });
     const router = createTestRouter({
       Foo: {
         path: null,
-        screen: ScreenA
+        screen: ScreenA,
       },
       Bar: {
-        screen: ScreenB
-      }
+        screen: ScreenB,
+      },
     });
 
     {
       const state = {
         index: 0,
-        routes: [{
-          index: 1,
-          key: 'Foo',
-          routeName: 'Foo',
-          params: {
-            id: '123'
+        routes: [
+          {
+            index: 1,
+            key: 'Foo',
+            routeName: 'Foo',
+            params: {
+              id: '123',
+            },
+            routes: [
+              {
+                index: 0,
+                key: 'Boo',
+                routeName: 'Boo',
+                routes: [{ key: 'Boo2', routeName: 'Boo2' }],
+              },
+              { key: 'Baz', routeName: 'Baz', params: { bazId: '321' } },
+            ],
           },
-          routes: [{
-            index: 0,
-            key: 'Boo',
-            routeName: 'Boo',
-            routes: [{ key: 'Boo2', routeName: 'Boo2' }]
-          }, { key: 'Baz', routeName: 'Baz', params: { bazId: '321' } }]
-        }, { key: 'Bar', routeName: 'Bar' }]
+          { key: 'Bar', routeName: 'Bar' },
+        ],
       };
       const { path, params } = router.getPathAndParamsForState(state);
       expect(path).toEqual('baz/321');
@@ -378,20 +391,26 @@ const performRouterTest = createTestRouter => {
     {
       const state = {
         index: 0,
-        routes: [{
-          index: 0,
-          key: 'Foo',
-          routeName: 'Foo',
-          params: {
-            id: '123'
-          },
-          routes: [{
+        routes: [
+          {
             index: 0,
-            key: 'Boo',
-            routeName: 'Boo',
-            routes: [{ key: 'Boo2', routeName: 'Boo2' }]
-          }, { key: 'Baz', routeName: 'Baz', params: { bazId: '321' } }]
-        }, { key: 'Bar', routeName: 'Bar' }]
+            key: 'Foo',
+            routeName: 'Foo',
+            params: {
+              id: '123',
+            },
+            routes: [
+              {
+                index: 0,
+                key: 'Boo',
+                routeName: 'Boo',
+                routes: [{ key: 'Boo2', routeName: 'Boo2' }],
+              },
+              { key: 'Baz', routeName: 'Baz', params: { bazId: '321' } },
+            ],
+          },
+          { key: 'Bar', routeName: 'Bar' },
+        ],
       };
       const { path, params } = router.getPathAndParamsForState(state);
       expect(path).toEqual('boo');
@@ -405,9 +424,9 @@ const performRouterTest = createTestRouter => {
     expect(action).toEqual({
       routeName: 'person',
       params: {
-        id: '2018/02/07'
+        id: '2018/02/07',
       },
-      type: NavigationActions.NAVIGATE
+      type: NavigationActions.NAVIGATE,
     });
 
     const malformedUri = 'people/%E0%A4%A';
@@ -415,9 +434,9 @@ const performRouterTest = createTestRouter => {
     expect(action2).toEqual({
       routeName: 'person',
       params: {
-        id: '%E0%A4%A'
+        id: '%E0%A4%A',
       },
-      type: NavigationActions.NAVIGATE
+      type: NavigationActions.NAVIGATE,
     });
   });
 
@@ -426,9 +445,9 @@ const performRouterTest = createTestRouter => {
     expect(action).toEqual({
       routeName: 'person',
       params: {
-        id: 'Henry L'
+        id: 'Henry L',
       },
-      type: NavigationActions.NAVIGATE
+      type: NavigationActions.NAVIGATE,
     });
     const s = testRouter.getStateForAction(action);
     const out = testRouter.getPathAndParamsForState(s);
@@ -437,13 +456,16 @@ const performRouterTest = createTestRouter => {
   });
 
   test('Querystring params get passed to nested deep link', () => {
-    const action = testRouter.getActionForPathAndParams('main/p/4/list/10259959195', { code: 'test', foo: 'bar' });
+    const action = testRouter.getActionForPathAndParams(
+      'main/p/4/list/10259959195',
+      { code: 'test', foo: 'bar' }
+    );
     expect(action).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'main',
       params: {
         code: 'test',
-        foo: 'bar'
+        foo: 'bar',
       },
       action: {
         type: NavigationActions.NAVIGATE,
@@ -451,7 +473,7 @@ const performRouterTest = createTestRouter => {
         params: {
           id: '4',
           code: 'test',
-          foo: 'bar'
+          foo: 'bar',
         },
         action: {
           type: NavigationActions.NAVIGATE,
@@ -459,19 +481,22 @@ const performRouterTest = createTestRouter => {
           params: {
             id: '10259959195',
             code: 'test',
-            foo: 'bar'
-          }
-        }
-      }
+            foo: 'bar',
+          },
+        },
+      },
     });
 
-    const action2 = testRouter.getActionForPathAndParams('main/p/4/list/10259959195', { code: '', foo: 'bar' });
+    const action2 = testRouter.getActionForPathAndParams(
+      'main/p/4/list/10259959195',
+      { code: '', foo: 'bar' }
+    );
     expect(action2).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'main',
       params: {
         code: '',
-        foo: 'bar'
+        foo: 'bar',
       },
       action: {
         type: NavigationActions.NAVIGATE,
@@ -479,7 +504,7 @@ const performRouterTest = createTestRouter => {
         params: {
           id: '4',
           code: '',
-          foo: 'bar'
+          foo: 'bar',
         },
         action: {
           type: NavigationActions.NAVIGATE,
@@ -487,38 +512,44 @@ const performRouterTest = createTestRouter => {
           params: {
             id: '10259959195',
             code: '',
-            foo: 'bar'
-          }
-        }
-      }
+            foo: 'bar',
+          },
+        },
+      },
     });
   });
 
   test('paths option on router overrides path from route config', () => {
-    const router = createTestRouter({
-      main: {
-        screen: MainNavigator
+    const router = createTestRouter(
+      {
+        main: {
+          screen: MainNavigator,
+        },
+        baz: {
+          path: null,
+          screen: FooNavigator,
+        },
       },
-      baz: {
-        path: null,
-        screen: FooNavigator
-      }
-    }, { paths: { baz: 'overridden' } });
+      { paths: { baz: 'overridden' } }
+    );
     const action = router.getActionForPathAndParams('overridden', {});
     expect(action.type).toEqual(NavigationActions.NAVIGATE);
     expect(action.routeName).toEqual('baz');
   });
 
   test('paths option set as null on router overrides path from route config', () => {
-    const router = createTestRouter({
-      main: {
-        screen: MainNavigator
+    const router = createTestRouter(
+      {
+        main: {
+          screen: MainNavigator,
+        },
+        baz: {
+          path: 'bazPath',
+          screen: FooNavigator,
+        },
       },
-      baz: {
-        path: 'bazPath',
-        screen: FooNavigator
-      }
-    }, { paths: { baz: null } });
+      { paths: { baz: null } }
+    );
     const action = router.getActionForPathAndParams('b/noBaz', {});
     expect(action.type).toEqual(NavigationActions.NAVIGATE);
     expect(action.routeName).toEqual('baz');
@@ -538,12 +569,12 @@ test('Handles nested switch routers', () => {
   DocsNavigator.router = SwitchRouter({
     A: AScreen,
     B: AScreen,
-    C: AScreen
+    C: AScreen,
   });
   DocsNavigator.path = 'docs';
   const router = SwitchRouter({
     Docs: DocsNavigator,
-    D: AScreen
+    D: AScreen,
   });
   const action = router.getActionForPathAndParams('docs/B', {});
 
@@ -559,12 +590,15 @@ const performRouteNameAsPathDisabledTest = createTestRouter => {
   NestedNavigator.router = createTestRouter({
     B: {
       screen: BScreen,
-      path: 'baz'
-    }
+      path: 'baz',
+    },
   });
-  const router = createTestRouter({
-    A: NestedNavigator
-  }, { disableRouteNamePaths: true });
+  const router = createTestRouter(
+    {
+      A: NestedNavigator,
+    },
+    { disableRouteNamePaths: true }
+  );
 
   test('disableRouteNamePaths option on router prevent the default path to be the routeName', () => {
     const action = router.getActionForPathAndParams('baz', {});

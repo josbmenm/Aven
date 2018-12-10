@@ -8,29 +8,9 @@ import {
   NavigationProvider,
 } from '../navigation-core';
 
-/* eslint-disable import/no-commonjs */
 const queryString = require('query-string');
 
 const history = createBrowserHistory();
-
-function logAction(action, newState, lastState) {
-  if (!process.env.REACT_NAV_LOGGING) {
-    return;
-  }
-  if (console.group) {
-    console.group('Navigation Dispatch: ');
-    console.log('Action: ', action);
-    console.log('New State: ', newState);
-    console.log('Last State: ', lastState);
-    console.groupEnd();
-  } else {
-    console.log('Navigation Dispatch: ', {
-      action,
-      newState,
-      lastState,
-    });
-  }
-}
 
 const getPathAndParamsFromLocation = location => {
   const path = encodeURI(location.pathname.substr(1));
@@ -91,7 +71,6 @@ export default function createBrowserApp(App) {
           lastState: null,
         })
       );
-      logAction(initAction, this.state.nav, null);
     }
     componentDidUpdate() {
       this.updateTitle();
@@ -133,7 +112,6 @@ export default function createBrowserApp(App) {
         );
       if (newState && newState !== lastState) {
         this.setState({ nav: newState }, dispatchEvents);
-        logAction(action, newState, lastState);
         const pathAndParams =
           App.router.getPathAndParamsForState &&
           App.router.getPathAndParamsForState(newState);

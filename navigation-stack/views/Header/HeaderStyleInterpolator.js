@@ -10,9 +10,25 @@ function hasHeader(scene) {
 }
 
 const crossFadeInterpolation = (scenes, first, index, last) => ({
-  inputRange: [first, first + 0.001, index - 0.9, index - 0.2, index, last - 0.001, last],
-  outputRange: [0, hasHeader(scenes[first]) ? 0 : 1, hasHeader(scenes[first]) ? 0 : 1, hasHeader(scenes[first]) ? 0.3 : 1, hasHeader(scenes[index]) ? 1 : 0, hasHeader(scenes[last]) ? 0 : 1, 0],
-  extrapolate: 'clamp'
+  inputRange: [
+    first,
+    first + 0.001,
+    index - 0.9,
+    index - 0.2,
+    index,
+    last - 0.001,
+    last,
+  ],
+  outputRange: [
+    0,
+    hasHeader(scenes[first]) ? 0 : 1,
+    hasHeader(scenes[first]) ? 0 : 1,
+    hasHeader(scenes[first]) ? 0.3 : 1,
+    hasHeader(scenes[index]) ? 1 : 0,
+    hasHeader(scenes[last]) ? 0 : 1,
+    0,
+  ],
+  extrapolate: 'clamp',
 });
 
 /**
@@ -55,21 +71,28 @@ function forLayout(props) {
 
   // Make sure the header stays hidden when transitioning between 2 screens
   // with no header.
-  if (isBack && !hasHeader(scenes[index]) && !hasHeader(scenes[last]) || !isBack && !hasHeader(scenes[first]) && !hasHeader(scenes[index])) {
+  if (
+    (isBack && !hasHeader(scenes[index]) && !hasHeader(scenes[last])) ||
+    (!isBack && !hasHeader(scenes[first]) && !hasHeader(scenes[index]))
+  ) {
     return {
-      transform: [{ translateX: width }]
+      transform: [{ translateX: width }],
     };
   }
 
   const rtlMult = I18nManager.isRTL ? -1 : 1;
   const translateX = position.interpolate({
     inputRange: [first, index, last],
-    outputRange: [rtlMult * (hasHeader(scenes[first]) ? 0 : width), rtlMult * (hasHeader(scenes[index]) ? 0 : isBack ? width : -width), rtlMult * (hasHeader(scenes[last]) ? 0 : -width)],
-    extrapolate: 'clamp'
+    outputRange: [
+      rtlMult * (hasHeader(scenes[first]) ? 0 : width),
+      rtlMult * (hasHeader(scenes[index]) ? 0 : isBack ? width : -width),
+      rtlMult * (hasHeader(scenes[last]) ? 0 : -width),
+    ],
+    extrapolate: 'clamp',
   });
 
   return {
-    transform: [{ translateX }]
+    transform: [{ translateX }],
   };
 }
 
@@ -83,7 +106,9 @@ function forLeft(props) {
   const index = scene.index;
 
   return {
-    opacity: position.interpolate(crossFadeInterpolation(scenes, first, index, last))
+    opacity: position.interpolate(
+      crossFadeInterpolation(scenes, first, index, last)
+    ),
   };
 }
 
@@ -97,7 +122,9 @@ function forCenter(props) {
   const index = scene.index;
 
   return {
-    opacity: position.interpolate(crossFadeInterpolation(scenes, first, index, last))
+    opacity: position.interpolate(
+      crossFadeInterpolation(scenes, first, index, last)
+    ),
   };
 }
 
@@ -110,7 +137,9 @@ function forRight(props) {
   const index = scene.index;
 
   return {
-    opacity: position.interpolate(crossFadeInterpolation(scenes, first, index, last))
+    opacity: position.interpolate(
+      crossFadeInterpolation(scenes, first, index, last)
+    ),
   };
 }
 
@@ -131,15 +160,31 @@ function forLeftButton(props) {
   // when both scenes in transition have headers. When the current, next, or previous scene _don't_
   // have a header, we don't fade the button, and only set it's opacity to 0 at the last moment
   // of the transition.
-  const inputRange = [first, first + 0.001, first + Math.abs(index - first) / 2, index, last - Math.abs(last - index) / 2, last - 0.001, last];
-  const outputRange = [0, hasHeader(scenes[first]) ? 0 : 1, hasHeader(scenes[first]) ? 0.3 : 1, hasHeader(scenes[index]) ? 1 : 0, hasHeader(scenes[last]) ? 0.3 : 1, hasHeader(scenes[last]) ? 0 : 1, 0];
+  const inputRange = [
+    first,
+    first + 0.001,
+    first + Math.abs(index - first) / 2,
+    index,
+    last - Math.abs(last - index) / 2,
+    last - 0.001,
+    last,
+  ];
+  const outputRange = [
+    0,
+    hasHeader(scenes[first]) ? 0 : 1,
+    hasHeader(scenes[first]) ? 0.3 : 1,
+    hasHeader(scenes[index]) ? 1 : 0,
+    hasHeader(scenes[last]) ? 0.3 : 1,
+    hasHeader(scenes[last]) ? 0 : 1,
+    0,
+  ];
 
   return {
     opacity: position.interpolate({
       inputRange,
       outputRange,
-      extrapolate: 'clamp'
-    })
+      extrapolate: 'clamp',
+    }),
   };
 }
 
@@ -170,17 +215,49 @@ function forLeftLabel(props) {
     // differences between the label and title position can be hopefully not so
     // noticable to the user
     opacity: position.interpolate({
-      inputRange: [first, first + 0.001, index - 0.35, index, index + 0.5, last - 0.001, last],
-      outputRange: [0, hasHeader(scenes[first]) ? 0 : 1, hasHeader(scenes[first]) ? 0 : 1, hasHeader(scenes[index]) ? 1 : 0, hasHeader(scenes[last]) ? 0.5 : 1, hasHeader(scenes[last]) ? 0 : 1, 0],
-      extrapolate: 'clamp'
+      inputRange: [
+        first,
+        first + 0.001,
+        index - 0.35,
+        index,
+        index + 0.5,
+        last - 0.001,
+        last,
+      ],
+      outputRange: [
+        0,
+        hasHeader(scenes[first]) ? 0 : 1,
+        hasHeader(scenes[first]) ? 0 : 1,
+        hasHeader(scenes[index]) ? 1 : 0,
+        hasHeader(scenes[last]) ? 0.5 : 1,
+        hasHeader(scenes[last]) ? 0 : 1,
+        0,
+      ],
+      extrapolate: 'clamp',
     }),
-    transform: [{
-      translateX: position.interpolate({
-        inputRange: [first, first + 0.001, index, last - 0.001, last],
-        outputRange: I18nManager.isRTL ? [-offset * 1.5, hasHeader(scenes[first]) ? -offset * 1.5 : 0, 0, hasHeader(scenes[last]) ? offset : 0, offset] : [offset, hasHeader(scenes[first]) ? offset : 0, 0, hasHeader(scenes[last]) ? -offset * 1.5 : 0, -offset * 1.5],
-        extrapolate: 'clamp'
-      })
-    }]
+    transform: [
+      {
+        translateX: position.interpolate({
+          inputRange: [first, first + 0.001, index, last - 0.001, last],
+          outputRange: I18nManager.isRTL
+            ? [
+                -offset * 1.5,
+                hasHeader(scenes[first]) ? -offset * 1.5 : 0,
+                0,
+                hasHeader(scenes[last]) ? offset : 0,
+                offset,
+              ]
+            : [
+                offset,
+                hasHeader(scenes[first]) ? offset : 0,
+                0,
+                hasHeader(scenes[last]) ? -offset * 1.5 : 0,
+                -offset * 1.5,
+              ],
+          extrapolate: 'clamp',
+        }),
+      },
+    ],
   };
 }
 
@@ -208,17 +285,49 @@ function forCenterFromLeft(props) {
 
   return {
     opacity: position.interpolate({
-      inputRange: [first, first + 0.001, index - 0.5, index, index + 0.7, last - 0.001, last],
-      outputRange: [0, hasHeader(scenes[first]) ? 0 : 1, hasHeader(scenes[first]) ? 0 : 1, hasHeader(scenes[index]) ? 1 : 0, hasHeader(scenes[last]) ? 0 : 1, hasHeader(scenes[last]) ? 0 : 1, 0],
-      extrapolate: 'clamp'
+      inputRange: [
+        first,
+        first + 0.001,
+        index - 0.5,
+        index,
+        index + 0.7,
+        last - 0.001,
+        last,
+      ],
+      outputRange: [
+        0,
+        hasHeader(scenes[first]) ? 0 : 1,
+        hasHeader(scenes[first]) ? 0 : 1,
+        hasHeader(scenes[index]) ? 1 : 0,
+        hasHeader(scenes[last]) ? 0 : 1,
+        hasHeader(scenes[last]) ? 0 : 1,
+        0,
+      ],
+      extrapolate: 'clamp',
     }),
-    transform: [{
-      translateX: position.interpolate({
-        inputRange: [first, first + 0.001, index, last - 0.001, last],
-        outputRange: I18nManager.isRTL ? [-offset, hasHeader(scenes[first]) ? -offset : 0, 0, hasHeader(scenes[last]) ? offset : 0, offset] : [offset, hasHeader(scenes[first]) ? offset : 0, 0, hasHeader(scenes[last]) ? -offset : 0, -offset],
-        extrapolate: 'clamp'
-      })
-    }]
+    transform: [
+      {
+        translateX: position.interpolate({
+          inputRange: [first, first + 0.001, index, last - 0.001, last],
+          outputRange: I18nManager.isRTL
+            ? [
+                -offset,
+                hasHeader(scenes[first]) ? -offset : 0,
+                0,
+                hasHeader(scenes[last]) ? offset : 0,
+                offset,
+              ]
+            : [
+                offset,
+                hasHeader(scenes[first]) ? offset : 0,
+                0,
+                hasHeader(scenes[last]) ? -offset : 0,
+                -offset,
+              ],
+          extrapolate: 'clamp',
+        }),
+      },
+    ],
   };
 }
 
@@ -231,8 +340,8 @@ function forBackgroundWithFade(props) {
     opacity: position.interpolate({
       inputRange: [sceneRange.first, scene.index, sceneRange.last],
       outputRange: [0, 1, 0],
-      extrapolate: 'clamp'
-    })
+      extrapolate: 'clamp',
+    }),
   };
 }
 
@@ -255,13 +364,15 @@ function forBackgroundWithTranslation(props) {
   const offset = BACKGROUND_OFFSET;
   const outputRange = [offset, 0, -offset];
   return {
-    transform: [{
-      translateX: position.interpolate({
-        inputRange: [first, index, last],
-        outputRange: I18nManager.isRTL ? outputRange.reverse() : outputRange,
-        extrapolate: 'clamp'
-      })
-    }]
+    transform: [
+      {
+        translateX: position.interpolate({
+          inputRange: [first, index, last],
+          outputRange: I18nManager.isRTL ? outputRange.reverse() : outputRange,
+          extrapolate: 'clamp',
+        }),
+      },
+    ],
   };
 }
 
@@ -279,5 +390,5 @@ export default {
   forBackground,
   forBackgroundWithInactiveHidden,
   forBackgroundWithFade,
-  forBackgroundWithTranslation
+  forBackgroundWithTranslation,
 };

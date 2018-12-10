@@ -2,8 +2,24 @@ const fs = require('fs-extra');
 const pathJoin = require('path').join;
 const pathRelative = require('path').relative;
 const babel = require('babel-core');
+const spawn = require('@expo/spawn-async');
 
 const srcRoot = pathJoin(__dirname, '..');
+
+const UNUSED_DISABLES_TO_STRIP = [
+  '// eslint-disable-next-line no-unused-vars',
+  '// eslint-disable-next-line import/no-commonjs',
+  '/\\* eslint-disable import/no-commonjs \\*/',
+];
+
+function stripUnusedLintDisables(code) {
+  /* eslint-disable import/no-commonjs */
+  let exportedCode = code;
+  UNUSED_DISABLES_TO_STRIP.forEach(stripStr => {
+    exportedCode = exportedCode.replace(new RegExp(stripStr, 'g'), '');
+  });
+  return exportedCode;
+}
 
 function runTransform(input, vendedSrcDeps, fileDest) {
   const handledBabel = babel.transform(input, {
@@ -28,7 +44,7 @@ function runTransform(input, vendedSrcDeps, fileDest) {
       }),
     ],
   });
-  return handledBabel.code;
+  return stripUnusedLintDisables(handledBabel.code);
 }
 
 async function copyWithTransform(source, dest, vendedSrcDeps, file = '') {
@@ -127,6 +143,7 @@ ${upstreams
 
 ⚠️  - You are responsible for syncronizing workspace source with the original modules!`);
   await Promise.all(upstreams.map(u => vendUpstream(u, vendedSrcDeps)));
+  await spawn('yarn', ['format'], { stdio: 'inherit' });
 }
 
 vendUpstreams([

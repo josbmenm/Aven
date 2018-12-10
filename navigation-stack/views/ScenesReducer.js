@@ -35,7 +35,13 @@ function compareScenes(one, two) {
  * Whether two routes are the same.
  */
 function areScenesShallowEqual(one, two) {
-  return one.key === two.key && one.index === two.index && one.isStale === two.isStale && one.isActive === two.isActive && areRoutesShallowEqual(one.route, two.route);
+  return (
+    one.key === two.key &&
+    one.index === two.index &&
+    one.isStale === two.isStale &&
+    one.isActive === two.isActive &&
+    areRoutesShallowEqual(one.route, two.route)
+  );
 }
 
 /**
@@ -53,7 +59,12 @@ function areRoutesShallowEqual(one, two) {
   return shallowEqual(one, two);
 }
 
-export default function ScenesReducer(scenes, nextState, prevState, descriptors) {
+export default function ScenesReducer(
+  scenes,
+  nextState,
+  prevState,
+  descriptors
+) {
   // Always update the descriptors
   // This is a workaround for https://github.com/react-navigation/react-navigation/issues/4271
   // It will be resolved in a better way when we re-write Transitioner
@@ -85,7 +96,9 @@ export default function ScenesReducer(scenes, nextState, prevState, descriptors)
   const nextKeys = new Set();
   let nextRoutes = nextState.routes;
   if (nextRoutes.length > nextState.index + 1) {
-    console.warn('StackRouter provided invalid state, index should always be the top route');
+    console.warn(
+      'StackRouter provided invalid state, index should always be the top route'
+    );
     nextRoutes = nextState.routes.slice(0, nextState.index + 1);
   }
 
@@ -100,9 +113,13 @@ export default function ScenesReducer(scenes, nextState, prevState, descriptors)
       isStale: false,
       key,
       route,
-      descriptor
+      descriptor,
     };
-    invariant(!nextKeys.has(key), `navigation.state.routes[${index}].key "${key}" conflicts with ` + 'another route!');
+    invariant(
+      !nextKeys.has(key),
+      `navigation.state.routes[${index}].key "${key}" conflicts with ` +
+        'another route!'
+    );
     nextKeys.add(key);
 
     if (staleScenes.has(key)) {
@@ -116,7 +133,9 @@ export default function ScenesReducer(scenes, nextState, prevState, descriptors)
   if (prevState) {
     let prevRoutes = prevState.routes;
     if (prevRoutes.length > prevState.index + 1) {
-      console.warn('StackRouter provided invalid state, index should always be the top route');
+      console.warn(
+        'StackRouter provided invalid state, index should always be the top route'
+      );
       prevRoutes = prevRoutes.slice(0, prevState.index + 1);
     }
     // Look at the previous routes and classify any removed scenes as `stale`.
@@ -132,7 +151,9 @@ export default function ScenesReducer(scenes, nextState, prevState, descriptors)
       // there is no lastScene. If the descriptor is not available on the lastScene
       // or the descriptors prop then we just skip adding it to stale scenes and it's
       // not ever rendered.
-      const descriptor = lastScene ? lastScene.descriptor : descriptors[route.key];
+      const descriptor = lastScene
+        ? lastScene.descriptor
+        : descriptors[route.key];
 
       if (descriptor) {
         staleScenes.set(key, {
@@ -141,7 +162,7 @@ export default function ScenesReducer(scenes, nextState, prevState, descriptors)
           isStale: true,
           key,
           route,
-          descriptor
+          descriptor,
         });
       }
     });
@@ -172,7 +193,7 @@ export default function ScenesReducer(scenes, nextState, prevState, descriptors)
     if (isActive !== scene.isActive) {
       nextScenes[ii] = {
         ...scene,
-        isActive
+        isActive,
       };
     }
     if (isActive) {
@@ -180,13 +201,21 @@ export default function ScenesReducer(scenes, nextState, prevState, descriptors)
     }
   });
 
-  invariant(activeScenesCount === 1, 'there should always be only one scene active, not %s.', activeScenesCount);
+  invariant(
+    activeScenesCount === 1,
+    'there should always be only one scene active, not %s.',
+    activeScenesCount
+  );
 
   if (nextScenes.length !== scenes.length) {
     return nextScenes;
   }
 
-  if (nextScenes.some((scene, index) => !areScenesShallowEqual(scenes[index], scene))) {
+  if (
+    nextScenes.some(
+      (scene, index) => !areScenesShallowEqual(scenes[index], scene)
+    )
+  ) {
     return nextScenes;
   }
 

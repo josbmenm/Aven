@@ -5,12 +5,19 @@ test('getNavigation provides default action helpers', () => {
     getActionCreators: () => ({}),
     getStateForAction(action, lastState = {}) {
       return lastState;
-    }
+    },
   };
 
   const dispatch = jest.fn();
 
-  const topNav = getNavigation(router, {}, dispatch, new Set(), () => ({}), () => topNav);
+  const topNav = getNavigation(
+    router,
+    {},
+    dispatch,
+    new Set(),
+    () => ({}),
+    () => topNav
+  );
 
   topNav.navigate('GreatRoute');
 
@@ -22,16 +29,23 @@ test('getNavigation provides default action helpers', () => {
 test('getNavigation provides router action helpers', () => {
   const router = {
     getActionCreators: () => ({
-      foo: bar => ({ type: 'FooBarAction', bar })
+      foo: bar => ({ type: 'FooBarAction', bar }),
     }),
     getStateForAction(action, lastState = {}) {
       return lastState;
-    }
+    },
   };
 
   const dispatch = jest.fn();
 
-  const topNav = getNavigation(router, {}, dispatch, new Set(), () => ({}), () => topNav);
+  const topNav = getNavigation(
+    router,
+    {},
+    dispatch,
+    new Set(),
+    () => ({}),
+    () => topNav
+  );
 
   topNav.foo('Great');
 
@@ -48,29 +62,39 @@ test('getNavigation get child navigation with router', () => {
     getActionCreators: () => ({}),
     getStateForAction(action, lastState = {}) {
       return lastState;
-    }
+    },
   };
   const router = {
     childRouters: {
-      RouteA: routerA
+      RouteA: routerA,
     },
     getActionCreators: () => ({}),
     getStateForAction(action, lastState = {}) {
       return lastState;
-    }
+    },
   };
 
   const initState = {
     index: 0,
-    routes: [{
-      key: 'a',
-      routeName: 'RouteA',
-      routes: [{ key: 'c', routeName: 'RouteC' }],
-      index: 0
-    }, { key: 'b', routeName: 'RouteB' }]
+    routes: [
+      {
+        key: 'a',
+        routeName: 'RouteA',
+        routes: [{ key: 'c', routeName: 'RouteC' }],
+        index: 0,
+      },
+      { key: 'b', routeName: 'RouteB' },
+    ],
   };
 
-  const topNav = getNavigation(router, initState, () => {}, actionSubscribers, () => ({}), () => navigation);
+  const topNav = getNavigation(
+    router,
+    initState,
+    () => {},
+    actionSubscribers,
+    () => ({}),
+    () => navigation
+  );
 
   const childNavA = topNav.getChildNavigation('a');
 

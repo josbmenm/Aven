@@ -8,12 +8,12 @@ const AnimatedBaseButton = Animated.createAnimatedComponent(BaseButton);
 export default class BorderlessButton extends React.Component {
   static propTypes = {
     ...BaseButton.propTypes,
-    borderless: PropTypes.bool
+    borderless: PropTypes.bool,
   };
 
   static defaultProps = {
     activeOpacity: 0.3,
-    borderless: true
+    borderless: true,
   };
 
   constructor(props) {
@@ -31,7 +31,7 @@ export default class BorderlessButton extends React.Component {
         restDisplacementThreshold: 0.01,
         restSpeedThreshold: 0.01,
         toValue: active ? this.props.activeOpacity : 1,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
 
@@ -41,8 +41,14 @@ export default class BorderlessButton extends React.Component {
   render() {
     const { children, style, ...rest } = this.props;
 
-    return <AnimatedBaseButton {...rest} onActiveStateChange={this._onActiveStateChange} style={[style, Platform.OS === 'ios' && { opacity: this._opacity }]}>
+    return (
+      <AnimatedBaseButton
+        {...rest}
+        onActiveStateChange={this._onActiveStateChange}
+        style={[style, Platform.OS === 'ios' && { opacity: this._opacity }]}
+      >
         {children}
-      </AnimatedBaseButton>;
+      </AnimatedBaseButton>
+    );
   }
 }

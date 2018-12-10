@@ -9,39 +9,50 @@ function applyConfig(configurer, navigationOptions, configProps) {
       ...navigationOptions,
       ...configurer({
         ...configProps,
-        navigationOptions
-      })
+        navigationOptions,
+      }),
     };
   }
   if (typeof configurer === 'object') {
     return {
       ...navigationOptions,
-      ...configurer
+      ...configurer,
     };
   }
   return navigationOptions;
 }
 
-export default ((routeConfigs, navigatorScreenConfig) => (navigation, screenProps) => {
+export default (routeConfigs, navigatorScreenConfig) => (
+  navigation,
+  screenProps
+) => {
   const { state } = navigation;
   const route = state;
 
-  invariant(route.routeName && typeof route.routeName === 'string', 'Cannot get config because the route does not have a routeName.');
+  invariant(
+    route.routeName && typeof route.routeName === 'string',
+    'Cannot get config because the route does not have a routeName.'
+  );
 
   const Component = getScreenForRouteName(routeConfigs, route.routeName);
 
   const routeConfig = routeConfigs[route.routeName];
 
-  const routeScreenConfig = routeConfig === Component ? null : routeConfig.navigationOptions;
+  const routeScreenConfig =
+    routeConfig === Component ? null : routeConfig.navigationOptions;
   const componentScreenConfig = Component.navigationOptions;
 
   const configOptions = { navigation, screenProps: screenProps || {} };
 
   let outputConfig = applyConfig(navigatorScreenConfig, {}, configOptions);
-  outputConfig = applyConfig(componentScreenConfig, outputConfig, configOptions);
+  outputConfig = applyConfig(
+    componentScreenConfig,
+    outputConfig,
+    configOptions
+  );
   outputConfig = applyConfig(routeScreenConfig, outputConfig, configOptions);
 
   validateScreenOptions(outputConfig, route);
 
   return outputConfig;
-});
+};

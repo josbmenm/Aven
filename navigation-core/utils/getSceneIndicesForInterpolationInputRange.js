@@ -10,17 +10,26 @@ function getSceneIndicesForInterpolationInputRange(props) {
     const targetSceneIndex = scenes[targetSceneIndexInScenes].index;
     const lastSceneIndex = scenes[lastSceneIndexInScenes].index;
 
-    if (index !== targetSceneIndex && currentSceneIndexInScenes === lastSceneIndexInScenes) {
+    if (
+      index !== targetSceneIndex &&
+      currentSceneIndexInScenes === lastSceneIndexInScenes
+    ) {
       return {
         first: Math.min(targetSceneIndex, index - 1),
-        last: index + 1
+        last: index + 1,
       };
-    } else if (index === targetSceneIndex && currentSceneIndexInScenes === targetSceneIndexInScenes) {
+    } else if (
+      index === targetSceneIndex &&
+      currentSceneIndexInScenes === targetSceneIndexInScenes
+    ) {
       return {
         first: index - 1,
-        last: Math.max(lastSceneIndex, index + 1)
+        last: Math.max(lastSceneIndex, index + 1),
       };
-    } else if (index === targetSceneIndex || currentSceneIndexInScenes > targetSceneIndexInScenes) {
+    } else if (
+      index === targetSceneIndex ||
+      currentSceneIndexInScenes > targetSceneIndexInScenes
+    ) {
       return null;
     } else {
       return { first: index - 1, last: index + 1 };

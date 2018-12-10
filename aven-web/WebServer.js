@@ -7,6 +7,7 @@ import startSocketServer from './startSocketServer';
 import { IS_DEV } from './config';
 import NavigationContext from '../navigation-core/views/NavigationContext';
 import handleServerRequest from '../navigation-web/handleServerRequest';
+import Buffer from '../buffer';
 const yes = require('yes-https');
 const helmet = require('helmet');
 const http = require('http');

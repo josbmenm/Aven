@@ -9,7 +9,10 @@ import { generateKey } from './KeyGenerator';
 import { createPathParser } from './pathUtils';
 
 function behavesLikePushAction(action) {
-  return action.type === NavigationActions.NAVIGATE || action.type === StackActions.PUSH;
+  return (
+    action.type === NavigationActions.NAVIGATE ||
+    action.type === StackActions.PUSH
+  );
 }
 
 const defaultActionCreators = () => ({});
@@ -18,7 +21,7 @@ function isResetToRootStack(action) {
   return action.type === StackActions.RESET && action.key === null;
 }
 
-export default ((routeConfigs, stackConfig = {}) => {
+export default (routeConfigs, stackConfig = {}) => {
   // Fail fast on invalid route definitions
   validateRouteConfigMap(routeConfigs);
 
@@ -38,7 +41,8 @@ export default ((routeConfigs, stackConfig = {}) => {
   });
 
   const { initialRouteParams } = stackConfig;
-  const getCustomActionCreators = stackConfig.getCustomActionCreators || defaultActionCreators;
+  const getCustomActionCreators =
+    stackConfig.getCustomActionCreators || defaultActionCreators;
 
   const initialRouteName = stackConfig.initialRouteName || routeNames[0];
 
@@ -53,7 +57,8 @@ export default ((routeConfigs, stackConfig = {}) => {
       let childState = {};
       // The router is null for normal leaf routes
       if (childRouter !== null) {
-        const childAction = action.action || NavigationActions.init({ params: action.params });
+        const childAction =
+          action.action || NavigationActions.init({ params: action.params });
         childState = childRouter.getStateForAction(childAction);
       }
 
@@ -61,39 +66,46 @@ export default ((routeConfigs, stackConfig = {}) => {
         key: 'StackRouterRoot',
         isTransitioning: false,
         index: 0,
-        routes: [{
-          params: action.params,
-          ...childState,
-          key: action.key || generateKey(),
-          routeName: action.routeName
-        }]
+        routes: [
+          {
+            params: action.params,
+            ...childState,
+            key: action.key || generateKey(),
+            routeName: action.routeName,
+          },
+        ],
       };
     }
 
     if (initialChildRouter) {
-      route = initialChildRouter.getStateForAction(NavigationActions.navigate({
-        routeName: initialRouteName,
-        params: initialRouteParams
-      }));
+      route = initialChildRouter.getStateForAction(
+        NavigationActions.navigate({
+          routeName: initialRouteName,
+          params: initialRouteParams,
+        })
+      );
     }
-    const params = (routeConfigs[initialRouteName].params || route.params || action.params || initialRouteParams) && {
+    const params = (routeConfigs[initialRouteName].params ||
+      route.params ||
+      action.params ||
+      initialRouteParams) && {
       ...(routeConfigs[initialRouteName].params || {}),
       ...(route.params || {}),
       ...(action.params || {}),
-      ...(initialRouteParams || {})
+      ...(initialRouteParams || {}),
     };
     const { initialRouteKey } = stackConfig;
     route = {
       ...route,
       ...(params ? { params } : {}),
       routeName: initialRouteName,
-      key: action.key || initialRouteKey || generateKey()
+      key: action.key || initialRouteKey || generateKey(),
     };
     return {
       key: 'StackRouterRoot',
       isTransitioning: false,
       index: 0,
-      routes: [route]
+      routes: [route],
     };
   }
 
@@ -108,7 +120,7 @@ export default ((routeConfigs, stackConfig = {}) => {
 
   const {
     getPathAndParamsForRoute,
-    getActionForPathAndParams
+    getActionForPathAndParams,
   } = createPathParser(childRouters, routeConfigs, stackConfig);
 
   return {
@@ -130,16 +142,18 @@ export default ((routeConfigs, stackConfig = {}) => {
     getActionCreators(route, navStateKey) {
       return {
         ...getCustomActionCreators(route, navStateKey),
-        pop: (n, params) => StackActions.pop({
-          n,
-          ...params
-        }),
+        pop: (n, params) =>
+          StackActions.pop({
+            n,
+            ...params,
+          }),
         popToTop: params => StackActions.popToTop(params),
-        push: (routeName, params, action) => StackActions.push({
-          routeName,
-          params,
-          action
-        }),
+        push: (routeName, params, action) =>
+          StackActions.push({
+            routeName,
+            params,
+            action,
+          }),
         replace: (replaceWith, params, action, newKey) => {
           if (typeof replaceWith === 'string') {
             return StackActions.replace({
@@ -147,23 +161,37 @@ export default ((routeConfigs, stackConfig = {}) => {
               params,
               action,
               key: route.key,
-              newKey
+              newKey,
             });
           }
-          invariant(typeof replaceWith === 'object', 'Must replaceWith an object or a string');
-          invariant(params == null, 'Params must not be provided to .replace() when specifying an object');
-          invariant(action == null, 'Child action must not be provided to .replace() when specifying an object');
-          invariant(newKey == null, 'Child action must not be provided to .replace() when specifying an object');
+          invariant(
+            typeof replaceWith === 'object',
+            'Must replaceWith an object or a string'
+          );
+          invariant(
+            params == null,
+            'Params must not be provided to .replace() when specifying an object'
+          );
+          invariant(
+            action == null,
+            'Child action must not be provided to .replace() when specifying an object'
+          );
+          invariant(
+            newKey == null,
+            'Child action must not be provided to .replace() when specifying an object'
+          );
           return StackActions.replace(replaceWith);
         },
-        reset: (actions, index) => StackActions.reset({
-          actions,
-          index: index == null ? actions.length - 1 : index,
-          key: navStateKey
-        }),
-        dismiss: () => NavigationActions.back({
-          key: navStateKey
-        })
+        reset: (actions, index) =>
+          StackActions.reset({
+            actions,
+            index: index == null ? actions.length - 1 : index,
+            key: navStateKey,
+          }),
+        dismiss: () =>
+          NavigationActions.back({
+            key: navStateKey,
+          }),
       };
     },
 
@@ -175,15 +203,25 @@ export default ((routeConfigs, stackConfig = {}) => {
 
       const activeChildRoute = state.routes[state.index];
 
-      if (!isResetToRootStack(action) && action.type !== NavigationActions.NAVIGATE) {
+      if (
+        !isResetToRootStack(action) &&
+        action.type !== NavigationActions.NAVIGATE
+      ) {
         // Let the active child router handle the action
         const activeChildRouter = childRouters[activeChildRoute.routeName];
         if (activeChildRouter) {
-          const route = activeChildRouter.getStateForAction(action, activeChildRoute);
+          const route = activeChildRouter.getStateForAction(
+            action,
+            activeChildRoute
+          );
           if (route !== null && route !== activeChildRoute) {
-            return StateUtils.replaceAt(state, activeChildRoute.key, route,
-            // the following tells replaceAt to NOT change the index to this route for the setParam action, because people don't expect param-setting actions to switch the active route
-            action.type === NavigationActions.SET_PARAMS);
+            return StateUtils.replaceAt(
+              state,
+              activeChildRoute.key,
+              route,
+              // the following tells replaceAt to NOT change the index to this route for the setParam action, because people don't expect param-setting actions to switch the active route
+              action.type === NavigationActions.SET_PARAMS
+            );
           }
         }
       } else if (action.type === NavigationActions.NAVIGATE) {
@@ -192,16 +230,29 @@ export default ((routeConfigs, stackConfig = {}) => {
 
         for (let childRoute of state.routes.slice().reverse()) {
           let childRouter = childRouters[childRoute.routeName];
-          let childAction = action.routeName === childRoute.routeName && action.action ? action.action : action;
+          let childAction =
+            action.routeName === childRoute.routeName && action.action
+              ? action.action
+              : action;
 
           if (childRouter) {
-            const nextRouteState = childRouter.getStateForAction(childAction, childRoute);
+            const nextRouteState = childRouter.getStateForAction(
+              childAction,
+              childRoute
+            );
 
             if (nextRouteState === null || nextRouteState !== childRoute) {
-              const newState = StateUtils.replaceAndPrune(state, nextRouteState ? nextRouteState.key : childRoute.key, nextRouteState ? nextRouteState : childRoute);
+              const newState = StateUtils.replaceAndPrune(
+                state,
+                nextRouteState ? nextRouteState.key : childRoute.key,
+                nextRouteState ? nextRouteState : childRoute
+              );
               return {
                 ...newState,
-                isTransitioning: state.index !== newState.index ? action.immediate !== true : state.isTransitioning
+                isTransitioning:
+                  state.index !== newState.index
+                    ? action.immediate !== true
+                    : state.isTransitioning,
               };
             }
           }
@@ -210,80 +261,93 @@ export default ((routeConfigs, stackConfig = {}) => {
 
       // Handle push and navigate actions. This must happen after the focused
       // child router has had a chance to handle the action.
-      if (behavesLikePushAction(action) && childRouters[action.routeName] !== undefined // undefined means it's not a childRouter or a screen
+      if (
+        behavesLikePushAction(action) &&
+        childRouters[action.routeName] !== undefined // undefined means it's not a childRouter or a screen
       ) {
-          const childRouter = childRouters[action.routeName];
-          let route;
+        const childRouter = childRouters[action.routeName];
+        let route;
 
-          invariant(action.type !== StackActions.PUSH || action.key == null, 'StackRouter does not support key on the push action');
+        invariant(
+          action.type !== StackActions.PUSH || action.key == null,
+          'StackRouter does not support key on the push action'
+        );
 
-          // Before pushing a new route we first try to find one in the existing route stack
-          // More information on this: https://github.com/react-navigation/rfcs/blob/master/text/0004-less-pushy-navigate.md
-          const lastRouteIndex = state.routes.findIndex(r => {
-            if (action.key) {
-              return r.key === action.key;
-            } else {
-              return r.routeName === action.routeName;
-            }
-          });
-
-          // An instance of this route exists already and we're dealing with a navigate action
-          if (action.type !== StackActions.PUSH && lastRouteIndex !== -1) {
-            // If index is unchanged and params are not being set, leave state identity intact
-            if (state.index === lastRouteIndex && !action.params) {
-              return null;
-            }
-
-            // Remove the now unused routes at the tail of the routes array
-            const routes = state.routes.slice(0, lastRouteIndex + 1);
-
-            // Apply params if provided, otherwise leave route identity intact
-            if (action.params) {
-              const route = state.routes[lastRouteIndex];
-              routes[lastRouteIndex] = {
-                ...route,
-                params: {
-                  ...route.params,
-                  ...action.params
-                }
-              };
-            }
-            // Return state with new index. Change isTransitioning only if index has changed
-            return {
-              ...state,
-              isTransitioning: state.index !== lastRouteIndex ? action.immediate !== true : state.isTransitioning,
-              index: lastRouteIndex,
-              routes
-            };
-          }
-
-          if (childRouter) {
-            // Delegate to the child router with the given action, or init it
-            const childAction = action.action || NavigationActions.init({
-              params: getParamsForRouteAndAction(action.routeName, action)
-            });
-            route = {
-              params: getParamsForRouteAndAction(action.routeName, action),
-              // note(brentvatne): does it make sense to wipe out the params
-              // here? or even to add params at all? need more info about what
-              // this solves
-              ...childRouter.getStateForAction(childAction),
-              routeName: action.routeName,
-              key: action.key || generateKey()
-            };
+        // Before pushing a new route we first try to find one in the existing route stack
+        // More information on this: https://github.com/react-navigation/rfcs/blob/master/text/0004-less-pushy-navigate.md
+        const lastRouteIndex = state.routes.findIndex(r => {
+          if (action.key) {
+            return r.key === action.key;
           } else {
-            // Create the route from scratch
-            route = {
-              params: getParamsForRouteAndAction(action.routeName, action),
-              routeName: action.routeName,
-              key: action.key || generateKey()
+            return r.routeName === action.routeName;
+          }
+        });
+
+        // An instance of this route exists already and we're dealing with a navigate action
+        if (action.type !== StackActions.PUSH && lastRouteIndex !== -1) {
+          // If index is unchanged and params are not being set, leave state identity intact
+          if (state.index === lastRouteIndex && !action.params) {
+            return null;
+          }
+
+          // Remove the now unused routes at the tail of the routes array
+          const routes = state.routes.slice(0, lastRouteIndex + 1);
+
+          // Apply params if provided, otherwise leave route identity intact
+          if (action.params) {
+            const route = state.routes[lastRouteIndex];
+            routes[lastRouteIndex] = {
+              ...route,
+              params: {
+                ...route.params,
+                ...action.params,
+              },
             };
           }
+          // Return state with new index. Change isTransitioning only if index has changed
           return {
-            ...StateUtils.push(state, route),
-            isTransitioning: action.immediate !== true
+            ...state,
+            isTransitioning:
+              state.index !== lastRouteIndex
+                ? action.immediate !== true
+                : state.isTransitioning,
+            index: lastRouteIndex,
+            routes,
           };
-        } else if (action.type === StackActions.PUSH && childRouters[action.routeName] === undefined) {
+        }
+
+        if (childRouter) {
+          // Delegate to the child router with the given action, or init it
+          const childAction =
+            action.action ||
+            NavigationActions.init({
+              params: getParamsForRouteAndAction(action.routeName, action),
+            });
+          route = {
+            params: getParamsForRouteAndAction(action.routeName, action),
+            // note(brentvatne): does it make sense to wipe out the params
+            // here? or even to add params at all? need more info about what
+            // this solves
+            ...childRouter.getStateForAction(childAction),
+            routeName: action.routeName,
+            key: action.key || generateKey(),
+          };
+        } else {
+          // Create the route from scratch
+          route = {
+            params: getParamsForRouteAndAction(action.routeName, action),
+            routeName: action.routeName,
+            key: action.key || generateKey(),
+          };
+        }
+        return {
+          ...StateUtils.push(state, route),
+          isTransitioning: action.immediate !== true,
+        };
+      } else if (
+        action.type === StackActions.PUSH &&
+        childRouters[action.routeName] === undefined
+      ) {
         // Return the state identity to bubble the action up
         return state;
       }
@@ -296,9 +360,14 @@ export default ((routeConfigs, stackConfig = {}) => {
           const childRouter = childRouters[childRouterName];
           if (childRouter) {
             // For each child router, start with a blank state
-            const initChildRoute = childRouter.getStateForAction(NavigationActions.init());
+            const initChildRoute = childRouter.getStateForAction(
+              NavigationActions.init()
+            );
             // Then check to see if the router handles our navigate action
-            const navigatedChildRoute = childRouter.getStateForAction(action, initChildRoute);
+            const navigatedChildRoute = childRouter.getStateForAction(
+              action,
+              initChildRoute
+            );
             let routeToPush = null;
             if (navigatedChildRoute === null) {
               // Push the route if the router has 'handled' the action and returned null
@@ -311,11 +380,11 @@ export default ((routeConfigs, stackConfig = {}) => {
               const route = {
                 ...routeToPush,
                 routeName: childRouterName,
-                key: action.key || generateKey()
+                key: action.key || generateKey(),
               };
               return {
                 ...StateUtils.push(state, route),
-                isTransitioning: action.immediate !== true
+                isTransitioning: action.immediate !== true,
               };
             }
           }
@@ -337,7 +406,7 @@ export default ((routeConfigs, stackConfig = {}) => {
             ...state,
             isTransitioning: action.immediate !== true,
             index: 0,
-            routes: [state.routes[0]]
+            routes: [state.routes[0]],
           };
         }
         return state;
@@ -359,9 +428,11 @@ export default ((routeConfigs, stackConfig = {}) => {
           const childRouter = childRouters[action.routeName];
           let childState = {};
           if (childRouter) {
-            const childAction = action.action || NavigationActions.init({
-              params: getParamsForRouteAndAction(action.routeName, action)
-            });
+            const childAction =
+              action.action ||
+              NavigationActions.init({
+                params: getParamsForRouteAndAction(action.routeName, action),
+              });
             childState = childRouter.getStateForAction(childAction);
           }
           const routes = [...state.routes];
@@ -370,17 +441,22 @@ export default ((routeConfigs, stackConfig = {}) => {
             // merge the child state in this order to allow params override
             ...childState,
             routeName: action.routeName,
-            key: action.newKey || generateKey()
+            key: action.newKey || generateKey(),
           };
           return { ...state, routes };
         }
       }
 
       // Update transitioning state
-      if (action.type === StackActions.COMPLETE_TRANSITION && (action.key == null || action.key === state.key) && action.toChildKey === state.routes[state.index].key && state.isTransitioning) {
+      if (
+        action.type === StackActions.COMPLETE_TRANSITION &&
+        (action.key == null || action.key === state.key) &&
+        action.toChildKey === state.routes[state.index].key &&
+        state.isTransitioning
+      ) {
         return {
           ...state,
-          isTransitioning: false
+          isTransitioning: false,
         };
       }
 
@@ -390,16 +466,16 @@ export default ((routeConfigs, stackConfig = {}) => {
         if (lastRoute) {
           const params = {
             ...lastRoute.params,
-            ...action.params
+            ...action.params,
           };
           const routes = [...state.routes];
           routes[state.routes.indexOf(lastRoute)] = {
             ...lastRoute,
-            params
+            params,
           };
           return {
             ...state,
-            routes
+            routes,
           };
         }
       }
@@ -421,25 +497,36 @@ export default ((routeConfigs, stackConfig = {}) => {
             let childState = {};
 
             if (router) {
-              const childAction = newStackAction.action || NavigationActions.init({
-                params: getParamsForRouteAndAction(newStackAction.routeName, newStackAction)
-              });
+              const childAction =
+                newStackAction.action ||
+                NavigationActions.init({
+                  params: getParamsForRouteAndAction(
+                    newStackAction.routeName,
+                    newStackAction
+                  ),
+                });
 
               childState = router.getStateForAction(childAction);
             }
 
             return {
-              params: getParamsForRouteAndAction(newStackAction.routeName, newStackAction),
+              params: getParamsForRouteAndAction(
+                newStackAction.routeName,
+                newStackAction
+              ),
               ...childState,
               routeName: newStackAction.routeName,
-              key: newStackAction.key || generateKey()
+              key: newStackAction.key || generateKey(),
             };
           }),
-          index: action.index
+          index: action.index,
         };
       }
 
-      if (action.type === NavigationActions.BACK || action.type === StackActions.POP) {
+      if (
+        action.type === NavigationActions.BACK ||
+        action.type === StackActions.POP
+      ) {
         const { key, n, immediate } = action;
         let backRouteIndex = state.index;
         if (action.type === StackActions.POP && n != null) {
@@ -456,7 +543,7 @@ export default ((routeConfigs, stackConfig = {}) => {
             ...state,
             routes: state.routes.slice(0, backRouteIndex),
             index: backRouteIndex - 1,
-            isTransitioning: immediate !== true
+            isTransitioning: immediate !== true,
           };
         }
       }
@@ -486,10 +573,16 @@ export default ((routeConfigs, stackConfig = {}) => {
           if (route === null) {
             return state;
           } else if (route && route !== childRoute) {
-            return StateUtils.replaceAt(state, childRoute.key, route,
-            // the following tells replaceAt to NOT change the index to this route for the setParam action or complete transition action,
-            // because people don't expect these actions to switch the active route
-            action.type === NavigationActions.SET_PARAMS || action.type === StackActions.COMPLETE_TRANSITION || action.type.includes('DRAWER'));
+            return StateUtils.replaceAt(
+              state,
+              childRoute.key,
+              route,
+              // the following tells replaceAt to NOT change the index to this route for the setParam action or complete transition action,
+              // because people don't expect these actions to switch the active route
+              action.type === NavigationActions.SET_PARAMS ||
+                action.type === StackActions.COMPLETE_TRANSITION ||
+                action.type.includes('DRAWER')
+            );
           }
         }
       }
@@ -506,6 +599,9 @@ export default ((routeConfigs, stackConfig = {}) => {
       return getActionForPathAndParams(path, params);
     },
 
-    getScreenOptions: createConfigGetter(routeConfigs, stackConfig.defaultNavigationOptions)
+    getScreenOptions: createConfigGetter(
+      routeConfigs,
+      stackConfig.defaultNavigationOptions
+    ),
   };
-});
+};

@@ -7,32 +7,32 @@ const COMPLETE_TRANSITION = 'Navigation/COMPLETE_TRANSITION';
 
 const pop = payload => ({
   type: POP,
-  ...payload
+  ...payload,
 });
 
 const popToTop = payload => ({
   type: POP_TO_TOP,
-  ...payload
+  ...payload,
 });
 
 const push = payload => ({
   type: PUSH,
-  ...payload
+  ...payload,
 });
 
 const reset = payload => ({
   type: RESET,
-  ...payload
+  ...payload,
 });
 
 const replace = payload => ({
   type: REPLACE,
-  ...payload
+  ...payload,
 });
 
 const completeTransition = payload => ({
   type: COMPLETE_TRANSITION,
-  ...payload
+  ...payload,
 });
 
 export default {
@@ -48,5 +48,5 @@ export default {
   push,
   reset,
   replace,
-  completeTransition
+  completeTransition,
 };

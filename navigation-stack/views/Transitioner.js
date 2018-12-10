@@ -8,7 +8,7 @@ import NavigationScenesReducer from './ScenesReducer';
 const DefaultTransitionSpec = {
   duration: 250,
   easing: Easing.inOut(Easing.ease),
-  timing: Animated.timing
+  timing: Animated.timing,
 };
 
 class Transitioner extends React.Component {
@@ -22,11 +22,11 @@ class Transitioner extends React.Component {
       initHeight: 0,
       initWidth: 0,
       isMeasured: false,
-      width: new Animated.Value(0)
+      width: new Animated.Value(0),
     };
 
     const position = new Animated.Value(this.props.navigation.state.index);
-    this._positionListener = position.addListener(() => /* { value } */{
+    this._positionListener = position.addListener(() => /* { value } */ {
       // This should work until we detach position from a view! so we have to be
       // careful to not ever detach it, thus the gymnastics in _getPosition in
       // StackViewLayout
@@ -39,7 +39,12 @@ class Transitioner extends React.Component {
     this.state = {
       layout,
       position,
-      scenes: NavigationScenesReducer([], this.props.navigation.state, null, this.props.descriptors)
+      scenes: NavigationScenesReducer(
+        [],
+        this.props.navigation.state,
+        null,
+        this.props.descriptors
+      ),
     };
 
     this._prevTransitionProps = null;
@@ -56,7 +61,8 @@ class Transitioner extends React.Component {
 
   componentWillUnmount() {
     this._isMounted = false;
-    this._positionListener && this.state.position.removeListener(this._positionListener);
+    this._positionListener &&
+      this.state.position.removeListener(this._positionListener);
   }
 
   // eslint-disable-next-line react/no-deprecated
@@ -72,7 +78,12 @@ class Transitioner extends React.Component {
   }
 
   _computeScenes = (props, nextProps) => {
-    let nextScenes = NavigationScenesReducer(this.state.scenes, nextProps.navigation.state, props.navigation.state, nextProps.descriptors);
+    let nextScenes = NavigationScenesReducer(
+      this.state.scenes,
+      nextProps.navigation.state,
+      props.navigation.state,
+      nextProps.descriptors
+    );
 
     if (!nextProps.navigation.state.isTransitioning) {
       nextScenes = filterStale(nextScenes);
@@ -92,7 +103,8 @@ class Transitioner extends React.Component {
   };
 
   _startTransition(props, nextProps) {
-    const indexHasChanged = props.navigation.state.index !== nextProps.navigation.state.index;
+    const indexHasChanged =
+      props.navigation.state.index !== nextProps.navigation.state.index;
     let nextScenes = this._computeScenes(props, nextProps);
 
     if (!nextScenes) {
@@ -113,7 +125,7 @@ class Transitioner extends React.Component {
 
     const nextState = {
       ...this.state,
-      scenes: nextScenes
+      scenes: nextScenes,
     };
 
     // grab the position animated value
@@ -134,7 +146,10 @@ class Transitioner extends React.Component {
     if (!isTransitioning || !indexHasChanged) {
       this.setState(nextState, async () => {
         if (nextProps.onTransitionStart) {
-          const result = nextProps.onTransitionStart(this._transitionProps, this._prevTransitionProps);
+          const result = nextProps.onTransitionStart(
+            this._transitionProps,
+            this._prevTransitionProps
+          );
           if (result instanceof Promise) {
             // why do we bother awaiting the result here?
             await result;
@@ -149,7 +164,10 @@ class Transitioner extends React.Component {
       this._isTransitionRunning = true;
       this.setState(nextState, async () => {
         if (nextProps.onTransitionStart) {
-          const result = nextProps.onTransitionStart(this._transitionProps, this._prevTransitionProps);
+          const result = nextProps.onTransitionStart(
+            this._transitionProps,
+            this._prevTransitionProps
+          );
 
           // why do we bother awaiting the result here?
           if (result instanceof Promise) {
@@ -159,11 +177,16 @@ class Transitioner extends React.Component {
       });
 
       // get the transition spec.
-      const transitionUserSpec = nextProps.configureTransition ? nextProps.configureTransition(this._transitionProps, this._prevTransitionProps) : null;
+      const transitionUserSpec = nextProps.configureTransition
+        ? nextProps.configureTransition(
+            this._transitionProps,
+            this._prevTransitionProps
+          )
+        : null;
 
       const transitionSpec = {
         ...DefaultTransitionSpec,
-        ...transitionUserSpec
+        ...transitionUserSpec,
       };
 
       const { timing } = transitionSpec;
@@ -174,7 +197,7 @@ class Transitioner extends React.Component {
       if (indexHasChanged && positionHasChanged) {
         timing(position, {
           ...transitionSpec,
-          toValue: nextProps.navigation.state.index
+          toValue: nextProps.navigation.state.index,
         }).start(() => {
           // In case the animation is immediately interrupted for some reason,
           // we move this to the next frame so that onTransitionStart can fire
@@ -188,21 +211,26 @@ class Transitioner extends React.Component {
   }
 
   render() {
-    return <View onLayout={this._onLayout} style={styles.main}>
+    return (
+      <View onLayout={this._onLayout} style={styles.main}>
         {this.props.render(this._transitionProps, this._prevTransitionProps)}
-      </View>;
+      </View>
+    );
   }
 
   _onLayout = event => {
     const { height, width } = event.nativeEvent.layout;
-    if (this.state.layout.initWidth === width && this.state.layout.initHeight === height) {
+    if (
+      this.state.layout.initWidth === width &&
+      this.state.layout.initHeight === height
+    ) {
       return;
     }
     const layout = {
       ...this.state.layout,
       initHeight: height,
       initWidth: width,
-      isMeasured: true
+      isMeasured: true,
     };
 
     layout.height.setValue(height);
@@ -210,7 +238,7 @@ class Transitioner extends React.Component {
 
     const nextState = {
       ...this.state,
-      layout
+      layout,
     };
 
     this._transitionProps = buildTransitionProps(this.props, nextState);
@@ -228,14 +256,17 @@ class Transitioner extends React.Component {
 
     const nextState = {
       ...this.state,
-      scenes
+      scenes,
     };
 
     this._transitionProps = buildTransitionProps(this.props, nextState);
 
     this.setState(nextState, async () => {
       if (this.props.onTransitionEnd) {
-        const result = this.props.onTransitionEnd(this._transitionProps, prevTransitionProps);
+        const result = this.props.onTransitionEnd(
+          this._transitionProps,
+          prevTransitionProps
+        );
 
         if (result instanceof Promise) {
           await result;
@@ -269,7 +300,7 @@ function buildTransitionProps(props, state) {
     scenes,
     scene,
     options,
-    index: scene.index
+    index: scene.index,
   };
 }
 
@@ -291,8 +322,8 @@ function isSceneActive(scene) {
 
 const styles = StyleSheet.create({
   main: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
 export default Transitioner;

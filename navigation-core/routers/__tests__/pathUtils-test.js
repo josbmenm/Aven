@@ -25,7 +25,10 @@ test('urlToPathAndParams with params', () => {
 });
 
 test('urlToPathAndParams with custom delimeter', () => {
-  const { path, params } = urlToPathAndParams('https://example.com/foo/bar?asdf=1', 'https://example.com/');
+  const { path, params } = urlToPathAndParams(
+    'https://example.com/foo/bar?asdf=1',
+    'https://example.com/'
+  );
   expect(path).toBe('foo/bar');
   expect(params).toEqual({ asdf: '1' });
 });

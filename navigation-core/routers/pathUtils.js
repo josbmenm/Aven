@@ -1,5 +1,3 @@
-/* eslint-disable import/no-commonjs */
-
 import pathToRegexp, { compile } from 'path-to-regexp';
 import NavigationActions from '../NavigationActions';
 import invariant from '../utils/invariant';
@@ -8,29 +6,31 @@ const queryString = require('query-string');
 
 export const getParamsFromPath = (inputParams, pathMatch, pathMatchKeys) => {
   const params = pathMatch.slice(1).reduce(
-  // iterate over matched path params
-  (paramsOut, matchResult, i) => {
-    const key = pathMatchKeys[i];
-    if (!key || key.asterisk) {
-      return paramsOut;
-    }
-    const paramName = key.name;
-
-    let decodedMatchResult;
-    if (matchResult) {
-      try {
-        decodedMatchResult = decodeURIComponent(matchResult);
-      } catch (e) {
-        // ignore `URIError: malformed URI`
+    // iterate over matched path params
+    (paramsOut, matchResult, i) => {
+      const key = pathMatchKeys[i];
+      if (!key || key.asterisk) {
+        return paramsOut;
       }
-    }
+      const paramName = key.name;
 
-    paramsOut[paramName] = decodedMatchResult || matchResult;
-    return paramsOut;
-  }, {
-    // start with the input(query string) params, which will get overridden by path params
-    ...inputParams
-  });
+      let decodedMatchResult;
+      if (matchResult) {
+        try {
+          decodedMatchResult = decodeURIComponent(matchResult);
+        } catch (e) {
+          // ignore `URIError: malformed URI`
+        }
+      }
+
+      paramsOut[paramName] = decodedMatchResult || matchResult;
+      return paramsOut;
+    },
+    {
+      // start with the input(query string) params, which will get overridden by path params
+      ...inputParams,
+    }
+  );
   return params;
 };
 const getRestOfPath = (pathMatch, pathMatchKeys) => {
@@ -55,11 +55,15 @@ export const urlToPathAndParams = (url, uriPrefix) => {
   }
   return {
     path,
-    params
+    params,
   };
 };
 
-export const createPathParser = (childRouters, routeConfigs, { paths: pathConfigs = {}, disableRouteNamePaths }) => {
+export const createPathParser = (
+  childRouters,
+  routeConfigs,
+  { paths: pathConfigs = {}, disableRouteNamePaths }
+) => {
   const pathsByRouteNames = {};
   let paths = [];
 
@@ -79,16 +83,24 @@ export const createPathParser = (childRouters, routeConfigs, { paths: pathConfig
       pathPattern = disableRouteNamePaths ? null : routeName;
     }
 
-    invariant(pathPattern === null || typeof pathPattern === 'string', `Route path for ${routeName} must be specified as a string, or null.`);
+    invariant(
+      pathPattern === null || typeof pathPattern === 'string',
+      `Route path for ${routeName} must be specified as a string, or null.`
+    );
 
     // the path may be specified as null, which is similar to empty string because it allows child routers to handle the action, but it will not match empty paths
     const isPathMatchable = pathPattern !== null;
     // pathPattern is a string with inline params, such as people/:id/*foo
     const exactReKeys = [];
-    const exactRe = isPathMatchable ? pathToRegexp(pathPattern, exactReKeys) : null;
+    const exactRe = isPathMatchable
+      ? pathToRegexp(pathPattern, exactReKeys)
+      : null;
     const extendedPathReKeys = [];
     const isWildcard = pathPattern === '' || !isPathMatchable;
-    const extendedPathRe = pathToRegexp(isWildcard ? '*' : `${pathPattern}/*`, extendedPathReKeys);
+    const extendedPathRe = pathToRegexp(
+      isWildcard ? '*' : `${pathPattern}/*`,
+      extendedPathReKeys
+    );
 
     pathsByRouteNames[routeName] = {
       exactRe,
@@ -96,7 +108,7 @@ export const createPathParser = (childRouters, routeConfigs, { paths: pathConfig
       extendedPathRe,
       extendedPathReKeys,
       isWildcard,
-      toPath: pathPattern === null ? () => '' : compile(pathPattern)
+      toPath: pathPattern === null ? () => '' : compile(pathPattern),
     };
   });
 
@@ -112,17 +124,21 @@ export const createPathParser = (childRouters, routeConfigs, { paths: pathConfig
       const exactMatch = exactRe && exactRe.exec(pathToResolve);
 
       if (exactMatch && exactMatch.length) {
-        const extendedMatch = extendedPathRe && extendedPathRe.exec(pathToResolve);
+        const extendedMatch =
+          extendedPathRe && extendedPathRe.exec(pathToResolve);
         let childAction = null;
         if (extendedMatch && childRouter) {
           const restOfPath = getRestOfPath(extendedMatch, extendedPathReKeys);
-          childAction = childRouter.getActionForPathAndParams(restOfPath, inputParams);
+          childAction = childRouter.getActionForPathAndParams(
+            restOfPath,
+            inputParams
+          );
         }
 
         return NavigationActions.navigate({
           routeName,
           params: getParamsFromPath(inputParams, exactMatch, exactReKeys),
-          action: childAction
+          action: childAction,
         });
       }
     }
@@ -131,21 +147,29 @@ export const createPathParser = (childRouters, routeConfigs, { paths: pathConfig
       const { extendedPathRe, extendedPathReKeys } = path;
       const childRouter = childRouters[routeName];
 
-      const extendedMatch = extendedPathRe && extendedPathRe.exec(pathToResolve);
+      const extendedMatch =
+        extendedPathRe && extendedPathRe.exec(pathToResolve);
 
       if (extendedMatch && extendedMatch.length) {
         const restOfPath = getRestOfPath(extendedMatch, extendedPathReKeys);
         let childAction = null;
         if (childRouter) {
-          childAction = childRouter.getActionForPathAndParams(restOfPath, inputParams);
+          childAction = childRouter.getActionForPathAndParams(
+            restOfPath,
+            inputParams
+          );
         }
         if (!childAction) {
           continue;
         }
         return NavigationActions.navigate({
           routeName,
-          params: getParamsFromPath(inputParams, extendedMatch, extendedPathReKeys),
-          action: childAction
+          params: getParamsFromPath(
+            inputParams,
+            extendedMatch,
+            extendedPathReKeys
+          ),
+          action: childAction,
         });
       }
     }
@@ -159,9 +183,11 @@ export const createPathParser = (childRouters, routeConfigs, { paths: pathConfig
     const subPath = toPath(params);
     const nonPathParams = {};
     if (params) {
-      Object.keys(params).filter(paramName => !exactReKeys.find(k => k.name === paramName)).forEach(paramName => {
-        nonPathParams[paramName] = params[paramName];
-      });
+      Object.keys(params)
+        .filter(paramName => !exactReKeys.find(k => k.name === paramName))
+        .forEach(paramName => {
+          nonPathParams[paramName] = params[paramName];
+        });
     }
     if (childRouter) {
       // If it has a router it's a navigator.
@@ -169,12 +195,14 @@ export const createPathParser = (childRouters, routeConfigs, { paths: pathConfig
       const child = childRouter.getPathAndParamsForState(route);
       return {
         path: subPath ? `${subPath}/${child.path}` : child.path,
-        params: child.params ? { ...nonPathParams, ...child.params } : nonPathParams
+        params: child.params
+          ? { ...nonPathParams, ...child.params }
+          : nonPathParams,
       };
     }
     return {
       path: subPath,
-      params: nonPathParams
+      params: nonPathParams,
     };
   };
   return { getActionForPathAndParams, getPathAndParamsForRoute };

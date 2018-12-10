@@ -23,22 +23,34 @@ export default function createPointerEventsContainer(Component) {
       this._bindPosition();
       this._pointerEvents = this._computePointerEvents();
 
-      return <Component {...this.props} pointerEvents={this._pointerEvents} onComponentRef={this._onComponentRef} />;
+      return (
+        <Component
+          {...this.props}
+          pointerEvents={this._pointerEvents}
+          onComponentRef={this._onComponentRef}
+        />
+      );
     }
 
     _onComponentRef = component => {
       this._component = component;
       if (component) {
-        invariant(typeof component.setNativeProps === 'function', 'component must implement method `setNativeProps`');
+        invariant(
+          typeof component.setNativeProps === 'function',
+          'component must implement method `setNativeProps`'
+        );
       }
     };
 
     _bindPosition() {
       this._positionListener && this._positionListener.remove();
-      this._positionListener = new AnimatedValueSubscription(this.props.realPosition, this._onPositionChange);
+      this._positionListener = new AnimatedValueSubscription(
+        this.props.realPosition,
+        this._onPositionChange
+      );
     }
 
-    _onPositionChange = () => /* { value } */{
+    _onPositionChange = () => /* { value } */ {
       // This should log each frame when releasing the gesture or when pressing
       // the back button! If not, something has gone wrong with the animated
       // value subscription

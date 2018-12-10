@@ -1,6 +1,19 @@
 import React from 'react';
-import { Animated, StyleSheet, Platform, View, I18nManager, Easing, Dimensions } from 'react-native';
-import { SceneView, StackActions, NavigationActions, NavigationProvider } from '../../../navigation-core';
+import {
+  Animated,
+  StyleSheet,
+  Platform,
+  View,
+  I18nManager,
+  Easing,
+  Dimensions,
+} from 'react-native';
+import {
+  SceneView,
+  StackActions,
+  NavigationActions,
+  NavigationProvider,
+} from '../../../navigation-core';
 import { withOrientation } from '../../../navigation-native';
 import { ScreenContainer } from 'react-native-screens';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
@@ -16,7 +29,14 @@ import { supportsImprovedSpringAnimation } from '../../utils/ReactNativeFeatures
 const IPHONE_XS_HEIGHT = 812; // iPhone X and XS
 const IPHONE_XR_HEIGHT = 896; // iPhone XR and XS Max
 const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } = Dimensions.get('window');
-const IS_IPHONE_X = Platform.OS === 'ios' && !Platform.isPad && !Platform.isTVOS && (WINDOW_HEIGHT === IPHONE_XS_HEIGHT || WINDOW_WIDTH === IPHONE_XS_HEIGHT || WINDOW_HEIGHT === IPHONE_XR_HEIGHT || WINDOW_WIDTH === IPHONE_XR_HEIGHT);
+const IS_IPHONE_X =
+  Platform.OS === 'ios' &&
+  !Platform.isPad &&
+  !Platform.isTVOS &&
+  (WINDOW_HEIGHT === IPHONE_XS_HEIGHT ||
+    WINDOW_WIDTH === IPHONE_XS_HEIGHT ||
+    WINDOW_HEIGHT === IPHONE_XR_HEIGHT ||
+    WINDOW_WIDTH === IPHONE_XR_HEIGHT);
 
 const EaseInOut = Easing.inOut(Easing.ease);
 
@@ -94,7 +114,7 @@ class StackViewLayout extends React.Component {
       // on mount what the header height is so we have just used the most
       // common cases here.
       floatingHeaderHeight: getDefaultHeaderHeight(props.isLandscape),
-      gesturePosition: null
+      gesturePosition: null,
     };
   }
 
@@ -103,7 +123,9 @@ class StackViewLayout extends React.Component {
     const { header } = options;
 
     if (__DEV__ && typeof header === 'string') {
-      throw new Error(`Invalid header value: "${header}". The header option must be a valid React component or null, not a string.`);
+      throw new Error(
+        `Invalid header value: "${header}". The header option must be a valid React component or null, not a string.`
+      );
     }
 
     if (header === null && headerMode === 'screen') {
@@ -122,7 +144,7 @@ class StackViewLayout extends React.Component {
       headerLeftInterpolator,
       headerTitleInterpolator,
       headerRightInterpolator,
-      headerBackgroundInterpolator
+      headerBackgroundInterpolator,
     } = this._getTransitionConfig();
 
     let backgroundTransitionPresetInterpolator = this._getHeaderBackgroundTransitionPreset();
@@ -132,22 +154,24 @@ class StackViewLayout extends React.Component {
 
     const { transitionProps, ...passProps } = this.props;
 
-    return <NavigationProvider value={scene.descriptor.navigation}>
+    return (
+      <NavigationProvider value={scene.descriptor.navigation}>
         {renderHeader({
-        ...passProps,
-        ...transitionProps,
-        position: this._getPosition(),
-        scene,
-        mode: headerMode,
-        transitionPreset: this._getHeaderTransitionPreset(),
-        layoutPreset: this._getHeaderLayoutPreset(),
-        backTitleVisible: this._getHeaderBackTitleVisible(),
-        leftInterpolator: headerLeftInterpolator,
-        titleInterpolator: headerTitleInterpolator,
-        rightInterpolator: headerRightInterpolator,
-        backgroundInterpolator: headerBackgroundInterpolator
-      })}
-      </NavigationProvider>;
+          ...passProps,
+          ...transitionProps,
+          position: this._getPosition(),
+          scene,
+          mode: headerMode,
+          transitionPreset: this._getHeaderTransitionPreset(),
+          layoutPreset: this._getHeaderLayoutPreset(),
+          backTitleVisible: this._getHeaderBackTitleVisible(),
+          leftInterpolator: headerLeftInterpolator,
+          titleInterpolator: headerTitleInterpolator,
+          rightInterpolator: headerRightInterpolator,
+          backgroundInterpolator: headerBackgroundInterpolator,
+        })}
+      </NavigationProvider>
+    );
   }
 
   _reset(resetToIndex, duration) {
@@ -160,14 +184,14 @@ class StackViewLayout extends React.Component {
         overshootClamping: true,
         restDisplacementThreshold: 0.01,
         restSpeedThreshold: 0.01,
-        useNativeDriver: USE_NATIVE_DRIVER
+        useNativeDriver: USE_NATIVE_DRIVER,
       }).start();
     } else {
       Animated.timing(this.props.transitionProps.position, {
         toValue: resetToIndex,
         duration,
         easing: EaseInOut,
-        useNativeDriver: USE_NATIVE_DRIVER
+        useNativeDriver: USE_NATIVE_DRIVER,
       }).start();
     }
   }
@@ -184,10 +208,12 @@ class StackViewLayout extends React.Component {
       this._immediateIndex = null;
       const backFromScene = scenes.find(s => s.index === toValue + 1);
       if (backFromScene) {
-        navigation.dispatch(NavigationActions.back({
-          key: backFromScene.route.key,
-          immediate: true
-        }));
+        navigation.dispatch(
+          NavigationActions.back({
+            key: backFromScene.route.key,
+            immediate: true,
+          })
+        );
         navigation.dispatch(StackActions.completeTransition());
       }
     };
@@ -201,14 +227,14 @@ class StackViewLayout extends React.Component {
         overshootClamping: true,
         restDisplacementThreshold: 0.01,
         restSpeedThreshold: 0.01,
-        useNativeDriver: USE_NATIVE_DRIVER
+        useNativeDriver: USE_NATIVE_DRIVER,
       }).start(onCompleteAnimation);
     } else {
       Animated.timing(position, {
         toValue,
         duration,
         easing: EaseInOut,
-        useNativeDriver: USE_NATIVE_DRIVER
+        useNativeDriver: USE_NATIVE_DRIVER,
       }).start(onCompleteAnimation);
     }
   }
@@ -223,28 +249,52 @@ class StackViewLayout extends React.Component {
 
     if (headerMode === 'float') {
       const { scene } = this.props.transitionProps;
-      floatingHeader = <View style={styles.floatingHeader} pointerEvents="box-none" onLayout={this._onFloatingHeaderLayout}>
+      floatingHeader = (
+        <View
+          style={styles.floatingHeader}
+          pointerEvents="box-none"
+          onLayout={this._onFloatingHeaderLayout}
+        >
           {this._renderHeader(scene, headerMode)}
-        </View>;
+        </View>
+      );
     }
     const {
-      transitionProps: { navigation, scene, scenes }
+      transitionProps: { navigation, scene, scenes },
     } = this.props;
     const { options } = scene.descriptor;
     const { index } = navigation.state;
 
-    const gesturesEnabled = typeof options.gesturesEnabled === 'boolean' ? options.gesturesEnabled : Platform.OS === 'ios';
+    const gesturesEnabled =
+      typeof options.gesturesEnabled === 'boolean'
+        ? options.gesturesEnabled
+        : Platform.OS === 'ios';
 
-    const containerStyle = [styles.container, this._getTransitionConfig().containerStyle];
+    const containerStyle = [
+      styles.container,
+      this._getTransitionConfig().containerStyle,
+    ];
 
-    return <PanGestureHandler {...this._gestureActivationCriteria()} ref={this.panGestureRef} onGestureEvent={Animated.event([{
-      nativeEvent: {
-        translationX: this.gestureX,
-        translationY: this.gestureY
-      }
-    }], {
-      useNativeDriver: USE_NATIVE_DRIVER
-    })} onHandlerStateChange={this._handlePanGestureStateChange} enabled={index > 0 && gesturesEnabled}>
+    return (
+      <PanGestureHandler
+        {...this._gestureActivationCriteria()}
+        ref={this.panGestureRef}
+        onGestureEvent={Animated.event(
+          [
+            {
+              nativeEvent: {
+                translationX: this.gestureX,
+                translationY: this.gestureY,
+              },
+            },
+          ],
+          {
+            useNativeDriver: USE_NATIVE_DRIVER,
+          }
+        )}
+        onHandlerStateChange={this._handlePanGestureStateChange}
+        enabled={index > 0 && gesturesEnabled}
+      >
         <Animated.View style={containerStyle}>
           <StackGestureContext.Provider value={this.panGestureRef}>
             <ScreenContainer style={styles.scenes}>
@@ -253,7 +303,8 @@ class StackViewLayout extends React.Component {
             {floatingHeader}
           </StackGestureContext.Provider>
         </Animated.View>
-      </PanGestureHandler>;
+      </PanGestureHandler>
+    );
   }
 
   componentDidUpdate(prevProps) {
@@ -268,11 +319,15 @@ class StackViewLayout extends React.Component {
     const { scene } = this.props.transitionProps;
     const { options } = scene.descriptor;
     const {
-      gestureResponseDistance: userGestureResponseDistance = {}
+      gestureResponseDistance: userGestureResponseDistance = {},
     } = options;
 
     // Doesn't make sense for a response distance of 0, so this works fine
-    return this._isModal() ? userGestureResponseDistance.vertical || GESTURE_RESPONSE_DISTANCE_VERTICAL : userGestureResponseDistance.horizontal || GESTURE_RESPONSE_DISTANCE_HORIZONTAL;
+    return this._isModal()
+      ? userGestureResponseDistance.vertical ||
+          GESTURE_RESPONSE_DISTANCE_VERTICAL
+      : userGestureResponseDistance.horizontal ||
+          GESTURE_RESPONSE_DISTANCE_HORIZONTAL;
   };
 
   _gestureActivationCriteria = () => {
@@ -286,7 +341,9 @@ class StackViewLayout extends React.Component {
       return {
         maxDeltaX: 15,
         minOffsetY: isMotionInverted ? -5 : 5,
-        hitSlop: isMotionInverted ? { top: -height + gestureResponseDistance } : { bottom: -height + gestureResponseDistance }
+        hitSlop: isMotionInverted
+          ? { top: -height + gestureResponseDistance }
+          : { bottom: -height + gestureResponseDistance },
       };
     } else {
       let width = layout.width.__getValue();
@@ -295,7 +352,7 @@ class StackViewLayout extends React.Component {
       return {
         minOffsetX: isMotionInverted ? -5 : 5,
         maxDeltaY: 20,
-        hitSlop: isMotionInverted ? { left: hitSlop } : { right: hitSlop }
+        hitSlop: isMotionInverted ? { left: hitSlop } : { right: hitSlop },
       };
     }
   };
@@ -321,7 +378,7 @@ class StackViewLayout extends React.Component {
   // This only currently applies to the horizontal gesture!
   _isMotionInverted = () => {
     const {
-      transitionProps: { scene }
+      transitionProps: { scene },
     } = this.props;
     const { options } = scene.descriptor;
     const { gestureDirection } = options;
@@ -329,7 +386,9 @@ class StackViewLayout extends React.Component {
     if (this._isModal()) {
       return gestureDirection === 'inverted';
     } else {
-      return typeof gestureDirection === 'string' ? gestureDirection === 'inverted' : I18nManager.isRTL;
+      return typeof gestureDirection === 'string'
+        ? gestureDirection === 'inverted'
+        : I18nManager.isRTL;
     }
   };
 
@@ -340,7 +399,7 @@ class StackViewLayout extends React.Component {
 
   _computeHorizontalGestureValue = ({ translationX }) => {
     let {
-      transitionProps: { navigation, layout }
+      transitionProps: { navigation, layout },
     } = this.props;
 
     let { index } = navigation.state;
@@ -356,7 +415,7 @@ class StackViewLayout extends React.Component {
 
   _computeVerticalGestureValue = ({ translationY }) => {
     let {
-      transitionProps: { navigation, layout }
+      transitionProps: { navigation, layout },
     } = this.props;
 
     let { index } = navigation.state;
@@ -406,19 +465,34 @@ class StackViewLayout extends React.Component {
 
     if (this._isMotionInverted()) {
       this.setState({
-        gesturePosition: Animated.add(index, Animated.divide(this.gestureX, this.props.transitionProps.layout.width)).interpolate({
+        gesturePosition: Animated.add(
+          index,
+          Animated.divide(
+            this.gestureX,
+            this.props.transitionProps.layout.width
+          )
+        ).interpolate({
           inputRange: [index - 1, index],
           outputRange: [index - 1, index],
-          extrapolate: 'clamp'
-        })
+          extrapolate: 'clamp',
+        }),
       });
     } else {
       this.setState({
-        gesturePosition: Animated.add(index, Animated.multiply(-1, Animated.divide(this.gestureX, this.props.transitionProps.layout.width))).interpolate({
+        gesturePosition: Animated.add(
+          index,
+          Animated.multiply(
+            -1,
+            Animated.divide(
+              this.gestureX,
+              this.props.transitionProps.layout.width
+            )
+          )
+        ).interpolate({
           inputRange: [index - 1, index],
           outputRange: [index - 1, index],
-          extrapolate: 'clamp'
-        })
+          extrapolate: 'clamp',
+        }),
       });
     }
   };
@@ -428,29 +502,45 @@ class StackViewLayout extends React.Component {
 
     if (this._isMotionInverted()) {
       this.setState({
-        gesturePosition: Animated.add(index, Animated.divide(this.gestureY, this.props.transitionProps.layout.height)).interpolate({
+        gesturePosition: Animated.add(
+          index,
+          Animated.divide(
+            this.gestureY,
+            this.props.transitionProps.layout.height
+          )
+        ).interpolate({
           inputRange: [index - 1, index],
           outputRange: [index - 1, index],
-          extrapolate: 'clamp'
-        })
+          extrapolate: 'clamp',
+        }),
       });
     } else {
       this.setState({
-        gesturePosition: Animated.add(index, Animated.multiply(-1, Animated.divide(this.gestureY, this.props.transitionProps.layout.height))).interpolate({
+        gesturePosition: Animated.add(
+          index,
+          Animated.multiply(
+            -1,
+            Animated.divide(
+              this.gestureY,
+              this.props.transitionProps.layout.height
+            )
+          )
+        ).interpolate({
           inputRange: [index - 1, index],
           outputRange: [index - 1, index],
-          extrapolate: 'clamp'
-        })
+          extrapolate: 'clamp',
+        }),
       });
     }
   };
 
   _handleReleaseHorizontal = nativeEvent => {
     const {
-      transitionProps: { navigation, position, layout }
+      transitionProps: { navigation, position, layout },
     } = this.props;
     const { index } = navigation.state;
-    const immediateIndex = this._immediateIndex == null ? index : this._immediateIndex;
+    const immediateIndex =
+      this._immediateIndex == null ? index : this._immediateIndex;
 
     // Calculate animate duration according to gesture speed and moved distance
     const distance = layout.width.__getValue();
@@ -459,8 +549,12 @@ class StackViewLayout extends React.Component {
     const gestureVelocity = movementDirection * nativeEvent.velocityX;
     const defaultVelocity = distance / ANIMATION_DURATION;
     const velocity = Math.max(Math.abs(gestureVelocity), defaultVelocity);
-    const resetDuration = this._isMotionInverted() ? (distance - movedDistance) / velocity : movedDistance / velocity;
-    const goBackDuration = this._isMotionInverted() ? movedDistance / velocity : (distance - movedDistance) / velocity;
+    const resetDuration = this._isMotionInverted()
+      ? (distance - movedDistance) / velocity
+      : movedDistance / velocity;
+    const goBackDuration = this._isMotionInverted()
+      ? movedDistance / velocity
+      : (distance - movedDistance) / velocity;
 
     // Get the current position value and reset to using the statically driven
     // (rather than gesture driven) position.
@@ -494,10 +588,11 @@ class StackViewLayout extends React.Component {
 
   _handleReleaseVertical = nativeEvent => {
     const {
-      transitionProps: { navigation, position, layout }
+      transitionProps: { navigation, position, layout },
     } = this.props;
     const { index } = navigation.state;
-    const immediateIndex = this._immediateIndex == null ? index : this._immediateIndex;
+    const immediateIndex =
+      this._immediateIndex == null ? index : this._immediateIndex;
 
     // Calculate animate duration according to gesture speed and moved distance
     const distance = layout.height.__getValue();
@@ -507,8 +602,12 @@ class StackViewLayout extends React.Component {
     const gestureVelocity = movementDirection * nativeEvent.velocityY;
     const defaultVelocity = distance / ANIMATION_DURATION;
     const velocity = Math.max(Math.abs(gestureVelocity), defaultVelocity);
-    const resetDuration = isMotionInverted ? (distance - movedDistance) / velocity : movedDistance / velocity;
-    const goBackDuration = isMotionInverted ? movedDistance / velocity : (distance - movedDistance) / velocity;
+    const resetDuration = isMotionInverted
+      ? (distance - movedDistance) / velocity
+      : movedDistance / velocity;
+    const goBackDuration = isMotionInverted
+      ? movedDistance / velocity
+      : (distance - movedDistance) / velocity;
 
     let value = this._computeVerticalGestureValue(nativeEvent);
     position.setValue(value);
@@ -551,7 +650,11 @@ class StackViewLayout extends React.Component {
   _getHeaderBackgroundTransitionPreset() {
     const { headerBackgroundTransitionPreset } = this.props;
     if (headerBackgroundTransitionPreset) {
-      if (HEADER_BACKGROUND_TRANSITION_PRESET.includes(headerBackgroundTransitionPreset)) {
+      if (
+        HEADER_BACKGROUND_TRANSITION_PRESET.includes(
+          headerBackgroundTransitionPreset
+        )
+      ) {
         if (headerBackgroundTransitionPreset === 'fade') {
           return HeaderStyleInterpolator.forBackgroundWithFade;
         } else if (headerBackgroundTransitionPreset === 'translate') {
@@ -561,7 +664,11 @@ class StackViewLayout extends React.Component {
         }
       } else {
         if (__DEV__) {
-          console.error(`Invalid configuration applied for headerBackgroundTransitionPreset - expected one of ${HEADER_BACKGROUND_TRANSITION_PRESET.join(', ')} but received ${JSON.stringify(headerBackgroundTransitionPreset)}`);
+          console.error(
+            `Invalid configuration applied for headerBackgroundTransitionPreset - expected one of ${HEADER_BACKGROUND_TRANSITION_PRESET.join(
+              ', '
+            )} but received ${JSON.stringify(headerBackgroundTransitionPreset)}`
+          );
         }
       }
     }
@@ -573,8 +680,14 @@ class StackViewLayout extends React.Component {
     const { headerLayoutPreset } = this.props;
     if (headerLayoutPreset) {
       if (__DEV__) {
-        if (this._getHeaderTransitionPreset() === 'uikit' && headerLayoutPreset === 'left' && Platform.OS === 'ios') {
-          console.warn(`headerTransitionPreset with the value 'uikit' is incompatible with headerLayoutPreset 'left'`);
+        if (
+          this._getHeaderTransitionPreset() === 'uikit' &&
+          headerLayoutPreset === 'left' &&
+          Platform.OS === 'ios'
+        ) {
+          console.warn(
+            `headerTransitionPreset with the value 'uikit' is incompatible with headerLayoutPreset 'left'`
+          );
         }
       }
       if (HEADER_LAYOUT_PRESET.includes(headerLayoutPreset)) {
@@ -582,7 +695,11 @@ class StackViewLayout extends React.Component {
       }
 
       if (__DEV__) {
-        console.error(`Invalid configuration applied for headerLayoutPreset - expected one of ${HEADER_LAYOUT_PRESET.join(', ')} but received ${JSON.stringify(headerLayoutPreset)}`);
+        console.error(
+          `Invalid configuration applied for headerLayoutPreset - expected one of ${HEADER_LAYOUT_PRESET.join(
+            ', '
+          )} but received ${JSON.stringify(headerLayoutPreset)}`
+        );
       }
     }
 
@@ -607,7 +724,11 @@ class StackViewLayout extends React.Component {
       }
 
       if (__DEV__) {
-        console.error(`Invalid configuration applied for headerTransitionPreset - expected one of ${HEADER_TRANSITION_PRESET.join(', ')} but received ${JSON.stringify(headerTransitionPreset)}`);
+        console.error(
+          `Invalid configuration applied for headerTransitionPreset - expected one of ${HEADER_TRANSITION_PRESET.join(
+            ', '
+          )} but received ${JSON.stringify(headerTransitionPreset)}`
+        );
       }
     }
 
@@ -620,9 +741,13 @@ class StackViewLayout extends React.Component {
 
     // Even when we align to center on Android, people should need to opt-in to
     // showing the back title
-    const enabledByDefault = !(layoutPreset === 'left' || Platform.OS === 'android');
+    const enabledByDefault = !(
+      layoutPreset === 'left' || Platform.OS === 'android'
+    );
 
-    return typeof headerBackTitleVisible === 'boolean' ? headerBackTitleVisible : enabledByDefault;
+    return typeof headerBackTitleVisible === 'boolean'
+      ? headerBackTitleVisible
+      : enabledByDefault;
   }
 
   _renderInnerScene(scene) {
@@ -632,21 +757,38 @@ class StackViewLayout extends React.Component {
     const { screenProps } = this.props;
     const headerMode = this._getHeaderMode();
     if (headerMode === 'screen') {
-      return <View style={styles.container}>
+      return (
+        <View style={styles.container}>
           <View style={styles.scenes}>
-            <SceneView screenProps={screenProps} navigation={navigation} component={SceneComponent} />
+            <SceneView
+              screenProps={screenProps}
+              navigation={navigation}
+              component={SceneComponent}
+            />
           </View>
           {this._renderHeader(scene, headerMode)}
-        </View>;
+        </View>
+      );
     }
-    return <SceneView screenProps={screenProps} navigation={navigation} component={SceneComponent} />;
+    return (
+      <SceneView
+        screenProps={screenProps}
+        navigation={navigation}
+        component={SceneComponent}
+      />
+    );
   }
 
   _getTransitionConfig = () => {
-    return TransitionConfigs.getTransitionConfig(this.props.transitionConfig, {
-      ...this.props.transitionProps,
-      position: this._getPosition()
-    }, this.props.lastTransitionProps, this._isModal());
+    return TransitionConfigs.getTransitionConfig(
+      this.props.transitionConfig,
+      {
+        ...this.props.transitionProps,
+        position: this._getPosition(),
+      },
+      this.props.lastTransitionProps,
+      this._isModal()
+    );
   };
 
   _getPosition = () => {
@@ -654,7 +796,10 @@ class StackViewLayout extends React.Component {
       return this.props.transitionProps.position;
     } else {
       let { gesturePosition } = this.state;
-      let staticPosition = Animated.add(this.props.transitionProps.position, Animated.multiply(-1, this.props.transitionProps.position));
+      let staticPosition = Animated.add(
+        this.props.transitionProps.position,
+        Animated.multiply(-1, this.props.transitionProps.position)
+      );
       return Animated.add(gesturePosition, staticPosition);
     }
   };
@@ -662,13 +807,15 @@ class StackViewLayout extends React.Component {
   _renderCard = scene => {
     const { screenInterpolator } = this._getTransitionConfig();
 
-    const style = screenInterpolator && screenInterpolator({
-      ...this.props.transitionProps,
-      shadowEnabled: this.props.shadowEnabled,
-      cardOverlayEnabled: this.props.cardOverlayEnabled,
-      position: this._getPosition(),
-      scene
-    });
+    const style =
+      screenInterpolator &&
+      screenInterpolator({
+        ...this.props.transitionProps,
+        shadowEnabled: this.props.shadowEnabled,
+        cardOverlayEnabled: this.props.cardOverlayEnabled,
+        position: this._getPosition(),
+        scene,
+      });
 
     // When using a floating header, we need to add some top
     // padding on the scene.
@@ -680,9 +827,20 @@ class StackViewLayout extends React.Component {
       paddingTop = this.state.floatingHeaderHeight;
     }
 
-    return <Card {...this.props.transitionProps} key={`card_${scene.key}`} position={this._getPosition()} realPosition={this.props.transitionProps.position} animatedStyle={style} transparent={this.props.transparentCard} style={[{ paddingTop }, this.props.cardStyle]} scene={scene}>
+    return (
+      <Card
+        {...this.props.transitionProps}
+        key={`card_${scene.key}`}
+        position={this._getPosition()}
+        realPosition={this.props.transitionProps.position}
+        animatedStyle={style}
+        transparent={this.props.transparentCard}
+        style={[{ paddingTop }, this.props.cardStyle]}
+        scene={scene}
+      >
         {this._renderInnerScene(scene)}
-      </Card>;
+      </Card>
+    );
   };
 }
 
@@ -694,17 +852,17 @@ const styles = StyleSheet.create({
     // That said, we'd have use `flexDirection: 'column-reverse'` to move
     // Header above the scenes.
     flexDirection: 'column-reverse',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   scenes: {
-    flex: 1
+    flex: 1,
   },
   floatingHeader: {
     position: 'absolute',
     left: 0,
     top: 0,
-    right: 0
-  }
+    right: 0,
+  },
 });
 
 export default withOrientation(StackViewLayout);

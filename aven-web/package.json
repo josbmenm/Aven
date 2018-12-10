@@ -6,7 +6,8 @@
     "publicAssetDir": "publicAssets",
     "srcDependencies": [
       "navigation-core",
-      "navigation-web"
+      "navigation-web",
+      "buffer"
     ],
     "moduleDependencies": [
       "@react-navigation/web",

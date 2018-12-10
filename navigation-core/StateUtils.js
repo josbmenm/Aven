@@ -38,7 +38,11 @@ const StateUtils = {
    * stack is at.
    */
   push(state, route) {
-    invariant(StateUtils.indexOf(state, route.key) === -1, 'should not push route with duplicated key %s', route.key);
+    invariant(
+      StateUtils.indexOf(state, route.key) === -1,
+      'should not push route with duplicated key %s',
+      route.key
+    );
 
     const routes = state.routes.slice();
     routes.push(route);
@@ -46,7 +50,7 @@ const StateUtils = {
     return {
       ...state,
       index: routes.length - 1,
-      routes
+      routes,
     };
   },
 
@@ -64,7 +68,7 @@ const StateUtils = {
     return {
       ...state,
       index: routes.length - 1,
-      routes
+      routes,
     };
   },
 
@@ -80,7 +84,7 @@ const StateUtils = {
 
     return {
       ...state,
-      index
+      index,
     };
   },
 
@@ -121,7 +125,7 @@ const StateUtils = {
 
     return {
       ...replaced,
-      routes: replaced.routes.slice(0, index + 1)
+      routes: replaced.routes.slice(0, index + 1),
     };
   },
 
@@ -146,7 +150,12 @@ const StateUtils = {
    * stack is at.
    */
   replaceAtIndex(state, index, route) {
-    invariant(!!state.routes[index], 'invalid index %s for replacing route %s', index, route.key);
+    invariant(
+      !!state.routes[index],
+      'invalid index %s for replacing route %s',
+      index,
+      route.key
+    );
 
     if (state.routes[index] === route && index === state.index) {
       return state;
@@ -158,7 +167,7 @@ const StateUtils = {
     return {
       ...state,
       index,
-      routes
+      routes,
     };
   },
 
@@ -168,7 +177,10 @@ const StateUtils = {
    * stack is at if the param `index` isn't provided.
    */
   reset(state, routes, index) {
-    invariant(routes.length && Array.isArray(routes), 'invalid routes to replace');
+    invariant(
+      routes.length && Array.isArray(routes),
+      'invalid routes to replace'
+    );
 
     const nextIndex = index === undefined ? routes.length - 1 : index;
 
@@ -184,9 +196,9 @@ const StateUtils = {
     return {
       ...state,
       index: nextIndex,
-      routes
+      routes,
     };
-  }
+  },
 };
 
 export default StateUtils;

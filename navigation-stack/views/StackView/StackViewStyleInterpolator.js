@@ -30,7 +30,7 @@ function forInitial(props) {
   const translate = focused ? 0 : 1000000;
   return {
     opacity,
-    transform: [{ translateX: translate }, { translateY: translate }]
+    transform: [{ translateX: translate }, { translateY: translate }],
   };
 }
 
@@ -53,26 +53,32 @@ function forHorizontal(props) {
   const width = layout.initWidth;
   const translateX = position.interpolate({
     inputRange: [first, index, last],
-    outputRange: I18nManager.isRTL ? [-width, 0, width * 0.3] : [width, 0, width * -0.3],
-    extrapolate: 'clamp'
+    outputRange: I18nManager.isRTL
+      ? [-width, 0, width * 0.3]
+      : [width, 0, width * -0.3],
+    extrapolate: 'clamp',
   });
 
-  const shadowOpacity = props.shadowEnabled ? position.interpolate({
-    inputRange: [first, index, last],
-    outputRange: [0, 0.7, 0],
-    extrapolate: 'clamp'
-  }) : null;
+  const shadowOpacity = props.shadowEnabled
+    ? position.interpolate({
+        inputRange: [first, index, last],
+        outputRange: [0, 0.7, 0],
+        extrapolate: 'clamp',
+      })
+    : null;
 
-  let overlayOpacity = props.cardOverlayEnabled ? position.interpolate({
-    inputRange: [index, last - 0.5, last, last + EPS],
-    outputRange: [0, 0.07, 0.07, 0],
-    extrapolate: 'clamp'
-  }) : null;
+  let overlayOpacity = props.cardOverlayEnabled
+    ? position.interpolate({
+        inputRange: [index, last - 0.5, last, last + EPS],
+        outputRange: [0, 0.07, 0.07, 0],
+        extrapolate: 'clamp',
+      })
+    : null;
 
   return {
     transform: [{ translateX }],
     overlayOpacity,
-    shadowOpacity
+    shadowOpacity,
   };
 }
 
@@ -95,11 +101,11 @@ function forVertical(props) {
   const translateY = position.interpolate({
     inputRange: [first, index, last],
     outputRange: [height, 0, 0],
-    extrapolate: 'clamp'
+    extrapolate: 'clamp',
   });
 
   return {
-    transform: [{ translateY }]
+    transform: [{ translateY }],
   };
 }
 
@@ -121,7 +127,7 @@ function forFadeFromBottomAndroid(props) {
   const opacity = position.interpolate({
     inputRange: [first, first + 0.5, first + 0.9, index, last],
     outputRange: [0, 0.25, 0.7, 1, 0],
-    extrapolate: 'clamp'
+    extrapolate: 'clamp',
   });
 
   const height = layout.initHeight;
@@ -129,12 +135,12 @@ function forFadeFromBottomAndroid(props) {
   const translateY = position.interpolate({
     inputRange: [first, index, last],
     outputRange: [maxTranslation, 0, 0],
-    extrapolate: 'clamp'
+    extrapolate: 'clamp',
   });
 
   return {
     opacity,
-    transform: [{ translateY }]
+    transform: [{ translateY }],
   };
 }
 
@@ -155,7 +161,7 @@ function forFadeToBottomAndroid(props) {
   const opacity = position.interpolate({
     inputRange,
     outputRange: [0, 1, 0],
-    extrapolate: 'clamp'
+    extrapolate: 'clamp',
   });
 
   const height = layout.initHeight;
@@ -164,12 +170,12 @@ function forFadeToBottomAndroid(props) {
   const translateY = position.interpolate({
     inputRange,
     outputRange: [maxTranslation, 0, 0],
-    extrapolate: 'clamp'
+    extrapolate: 'clamp',
   });
 
   return {
     opacity,
-    transform: [{ translateY }]
+    transform: [{ translateY }],
   };
 }
 
@@ -191,11 +197,11 @@ function forFade(props) {
   const opacity = position.interpolate({
     inputRange: [first, index, last],
     outputRange: [0, 1, 1],
-    extrapolate: 'clamp'
+    extrapolate: 'clamp',
   });
 
   return {
-    opacity
+    opacity,
   };
 }
 
@@ -204,5 +210,5 @@ export default {
   forVertical,
   forFadeFromBottomAndroid,
   forFadeToBottomAndroid,
-  forFade
+  forFade,
 };

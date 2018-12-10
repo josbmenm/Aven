@@ -40,7 +40,6 @@ const setParams = payload => ({
   type: SET_PARAMS,
   key: payload.key,
   params: payload.params,
-  explicit: payload.explicit,
 });
 
 export default {

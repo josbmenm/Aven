@@ -32,13 +32,18 @@ function getChildNavigation(navigation, childKey, getCurrentParentNavigation) {
   // behave as expected. We don't explicitly require that routers implement routes
   // and index properties, but if we did then we would put an invariant here to
   // ensure that a focusedGrandChildRoute exists if childRouter is defined.
-  const focusedGrandChildRoute = childRoute.routes && typeof childRoute.index === 'number' ? childRoute.routes[childRoute.index] : null;
+  const focusedGrandChildRoute =
+    childRoute.routes && typeof childRoute.index === 'number'
+      ? childRoute.routes[childRoute.index]
+      : null;
 
   const actionCreators = {
     ...navigation.actions,
     ...navigation.router.getActionCreators(childRoute, navigation.state.key),
-    ...(childRouter ? childRouter.getActionCreators(focusedGrandChildRoute, childRoute.key) : {}),
-    ...getNavigationActionCreators(childRoute)
+    ...(childRouter
+      ? childRouter.getActionCreators(focusedGrandChildRoute, childRoute.key)
+      : {}),
+    ...getNavigationActionCreators(childRoute),
   };
 
   const actionHelpers = {};
@@ -57,11 +62,14 @@ function getChildNavigation(navigation, childKey, getCurrentParentNavigation) {
       state: childRoute,
       router: childRouter,
       actions: actionCreators,
-      getParam: createParamGetter(childRoute)
+      getParam: createParamGetter(childRoute),
     };
     return children[childKey];
   } else {
-    const childSubscriber = getChildEventSubscriber(navigation.addListener, childKey);
+    const childSubscriber = getChildEventSubscriber(
+      navigation.addListener,
+      childKey
+    );
 
     children[childKey] = {
       ...actionHelpers,
@@ -71,10 +79,11 @@ function getChildNavigation(navigation, childKey, getCurrentParentNavigation) {
       actions: actionCreators,
       getParam: createParamGetter(childRoute),
 
-      getChildNavigation: grandChildKey => getChildNavigation(children[childKey], grandChildKey, () => {
-        const nav = getCurrentParentNavigation();
-        return nav && nav.getChildNavigation(childKey);
-      }),
+      getChildNavigation: grandChildKey =>
+        getChildNavigation(children[childKey], grandChildKey, () => {
+          const nav = getCurrentParentNavigation();
+          return nav && nav.getChildNavigation(childKey);
+        }),
 
       isFocused: () => {
         const currentNavigation = getCurrentParentNavigation();
@@ -94,7 +103,7 @@ function getChildNavigation(navigation, childKey, getCurrentParentNavigation) {
       getScreenProps: navigation.getScreenProps,
       dangerouslyGetParent: getCurrentParentNavigation,
       addListener: childSubscriber.addListener,
-      emit: childSubscriber.emit
+      emit: childSubscriber.emit,
     };
     return children[childKey];
   }

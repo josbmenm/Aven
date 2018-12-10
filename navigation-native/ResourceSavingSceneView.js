@@ -19,7 +19,7 @@ class ResourceSavingSceneView extends React.PureComponent {
     super();
 
     this.state = {
-      awake: props.lazy ? props.isFocused : true
+      awake: props.lazy ? props.isFocused : true,
     };
   }
 
@@ -32,11 +32,27 @@ class ResourceSavingSceneView extends React.PureComponent {
       ...rest
     } = this.props;
 
-    return <View style={styles.container} collapsable={false} removeClippedSubviews={Platform.OS === 'android' ? removeClippedSubviews : !isFocused && removeClippedSubviews}>
-        <View style={this._mustAlwaysBeVisible() || isFocused ? styles.innerAttached : styles.innerDetached}>
+    return (
+      <View
+        style={styles.container}
+        collapsable={false}
+        removeClippedSubviews={
+          Platform.OS === 'android'
+            ? removeClippedSubviews
+            : !isFocused && removeClippedSubviews
+        }
+      >
+        <View
+          style={
+            this._mustAlwaysBeVisible() || isFocused
+              ? styles.innerAttached
+              : styles.innerDetached
+          }
+        >
           {awake ? <SceneView {...rest} navigation={childNavigation} /> : null}
         </View>
-      </View>;
+      </View>
+    );
   }
 
   _mustAlwaysBeVisible = () => {
@@ -47,15 +63,15 @@ class ResourceSavingSceneView extends React.PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   innerAttached: {
-    flex: 1
+    flex: 1,
   },
   innerDetached: {
     flex: 1,
-    top: FAR_FAR_AWAY
-  }
+    top: FAR_FAR_AWAY,
+  },
 });
 
 export default polyfill(ResourceSavingSceneView);

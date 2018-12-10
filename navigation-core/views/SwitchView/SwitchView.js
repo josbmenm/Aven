@@ -8,6 +8,12 @@ export default class SwitchView extends React.Component {
     const descriptor = this.props.descriptors[activeKey];
     const ChildComponent = descriptor.getComponent();
 
-    return <SceneView component={ChildComponent} navigation={descriptor.navigation} screenProps={this.props.screenProps} />;
+    return (
+      <SceneView
+        component={ChildComponent}
+        navigation={descriptor.navigation}
+        screenProps={this.props.screenProps}
+      />
+    );
   }
 }

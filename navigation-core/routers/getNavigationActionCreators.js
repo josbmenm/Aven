@@ -40,9 +40,6 @@ const getNavigationActionCreators = route => {
       );
       return NavigationActions.setParams({ params, key: route.key });
     },
-    setExplicitParams: params => {
-      return NavigationActions.setParams({ params, explicit: true });
-    },
   };
 };
 

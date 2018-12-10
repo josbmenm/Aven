@@ -1,5 +1,3 @@
-/* eslint-disable import/no-commonjs */
-
 module.exports = {
   get createAppContainer() {
     return require('./createAppContainer').default;
@@ -35,5 +33,5 @@ module.exports = {
 
   get SectionList() {
     return require('./Scrollables').SectionList;
-  }
+  },
 };

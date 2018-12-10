@@ -8,44 +8,52 @@ const ListScreen = () => <div />;
 const ProfileNavigator = () => <div />;
 ProfileNavigator.router = StackRouter({
   list: {
-    screen: ListScreen
-  }
+    screen: ListScreen,
+  },
 });
 
 describe('validateRouteConfigMap', () => {
   test('Fails on empty bare screen', () => {
     const invalidMap = {
-      Home: undefined
+      Home: undefined,
     };
-    expect(() => validateRouteConfigMap(invalidMap)).toThrowErrorMatchingSnapshot();
+    expect(() =>
+      validateRouteConfigMap(invalidMap)
+    ).toThrowErrorMatchingSnapshot();
   });
   test('Fails on empty config', () => {
     const invalidMap = {};
-    expect(() => validateRouteConfigMap(invalidMap)).toThrowErrorMatchingSnapshot();
+    expect(() =>
+      validateRouteConfigMap(invalidMap)
+    ).toThrowErrorMatchingSnapshot();
   });
   test('Fails on bad object', () => {
     const invalidMap = {
       Home: {
-        foo: 'bar'
-      }
+        foo: 'bar',
+      },
     };
-    expect(() => validateRouteConfigMap(invalidMap)).toThrowErrorMatchingSnapshot();
+    expect(() =>
+      validateRouteConfigMap(invalidMap)
+    ).toThrowErrorMatchingSnapshot();
   });
   test('Fails if both screen and getScreen are defined', () => {
     const invalidMap = {
       Home: {
         screen: ListScreen,
-        getScreen: () => ListScreen
-      }
+        getScreen: () => ListScreen,
+      },
     };
-    expect(() => validateRouteConfigMap(invalidMap)).toThrowErrorMatchingSnapshot();
+    expect(() =>
+      validateRouteConfigMap(invalidMap)
+    ).toThrowErrorMatchingSnapshot();
   });
   test('Succeeds on a valid config', () => {
     const validMap = {
       Home: {
-        screen: ProfileNavigator
+        screen: ProfileNavigator,
       },
-      Chat: ListScreen
+      Chat: ListScreen,
     };
     validateRouteConfigMap(validMap);
   });

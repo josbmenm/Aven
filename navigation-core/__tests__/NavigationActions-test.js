@@ -8,7 +8,7 @@ describe('generic navigation actions', () => {
     expect(NavigationActions.back()).toEqual({ type: NavigationActions.BACK });
     expect(NavigationActions.back({ key: 'test' })).toEqual({
       type: NavigationActions.BACK,
-      key: 'test'
+      key: 'test',
     });
   });
 
@@ -16,38 +16,42 @@ describe('generic navigation actions', () => {
     expect(NavigationActions.init()).toEqual({ type: NavigationActions.INIT });
     expect(NavigationActions.init({ params })).toEqual({
       type: NavigationActions.INIT,
-      params
+      params,
     });
   });
 
   it('exports navigate action and type', () => {
     expect(NavigationActions.navigate({ routeName: 'test' })).toEqual({
       type: NavigationActions.NAVIGATE,
-      routeName: 'test'
-    });
-    expect(NavigationActions.navigate({
       routeName: 'test',
-      params,
-      action: navigateAction
-    })).toEqual({
+    });
+    expect(
+      NavigationActions.navigate({
+        routeName: 'test',
+        params,
+        action: navigateAction,
+      })
+    ).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'test',
       params,
       action: {
         type: NavigationActions.NAVIGATE,
-        routeName: 'another'
-      }
+        routeName: 'another',
+      },
     });
   });
 
   it('exports setParams action and type', () => {
-    expect(NavigationActions.setParams({
-      key: 'test',
-      params
-    })).toEqual({
+    expect(
+      NavigationActions.setParams({
+        key: 'test',
+        params,
+      })
+    ).toEqual({
       type: NavigationActions.SET_PARAMS,
       key: 'test',
-      params
+      params,
     });
   });
 });

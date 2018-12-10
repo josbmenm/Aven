@@ -5,20 +5,20 @@ import StackNavigator from '../createStackNavigator';
 
 const SubNavigator = StackNavigator({
   Home: {
-    screen: () => null
-  }
+    screen: () => null,
+  },
 });
 
 const NavNestedDirect = StackNavigator({
   Sub: {
-    screen: SubNavigator
-  }
+    screen: SubNavigator,
+  },
 });
 
 const NavNestedIndirect = StackNavigator({
   Sub: {
-    screen: props => <SubNavigator {...props} />
-  }
+    screen: props => <SubNavigator {...props} />,
+  },
 });
 
 /* Prevent React error boundaries from swallowing the errors */

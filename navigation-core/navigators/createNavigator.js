@@ -9,27 +9,40 @@ function createNavigator(NavigatorView, router, navigationConfig) {
 
     state = {
       descriptors: {},
-      screenProps: this.props.screenProps
+      screenProps: this.props.screenProps,
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
       const prevDescriptors = prevState.descriptors;
       const { navigation, screenProps } = nextProps;
-      invariant(navigation != null, 'The navigation prop is missing for this navigator. In react-navigation 3 you must set up your app container directly. More info: https://reactnavigation.org/docs/en/app-containers.html');
+      invariant(
+        navigation != null,
+        'The navigation prop is missing for this navigator. In react-navigation 3 you must set up your app container directly. More info: https://reactnavigation.org/docs/en/app-containers.html'
+      );
       const { state } = navigation;
       const { routes } = state;
       if (typeof routes === 'undefined') {
-        throw new TypeError('No "routes" found in navigation state. Did you try to pass the navigation prop of a React component to a Navigator child? See https://reactnavigation.org/docs/en/custom-navigators.html#navigator-navigation-prop');
+        throw new TypeError(
+          'No "routes" found in navigation state. Did you try to pass the navigation prop of a React component to a Navigator child? See https://reactnavigation.org/docs/en/custom-navigators.html#navigator-navigation-prop'
+        );
       }
 
       const descriptors = {};
 
       routes.forEach(route => {
-        if (prevDescriptors && prevDescriptors[route.key] && route === prevDescriptors[route.key].state && screenProps === prevState.screenProps) {
+        if (
+          prevDescriptors &&
+          prevDescriptors[route.key] &&
+          route === prevDescriptors[route.key].state &&
+          screenProps === prevState.screenProps
+        ) {
           descriptors[route.key] = prevDescriptors[route.key];
           return;
         }
-        const getComponent = router.getComponentForRouteName.bind(null, route.routeName);
+        const getComponent = router.getComponentForRouteName.bind(
+          null,
+          route.routeName
+        );
         const childNavigation = navigation.getChildNavigation(route.key);
         const options = router.getScreenOptions(childNavigation, screenProps);
         descriptors[route.key] = {
@@ -37,7 +50,7 @@ function createNavigator(NavigatorView, router, navigationConfig) {
           getComponent,
           options,
           state: route,
-          navigation: childNavigation
+          navigation: childNavigation,
         };
       });
 
@@ -45,7 +58,15 @@ function createNavigator(NavigatorView, router, navigationConfig) {
     }
 
     render() {
-      return <NavigatorView {...this.props} screenProps={this.state.screenProps} navigation={this.props.navigation} navigationConfig={navigationConfig} descriptors={this.state.descriptors} />;
+      return (
+        <NavigatorView
+          {...this.props}
+          screenProps={this.state.screenProps}
+          navigation={this.props.navigation}
+          navigationConfig={navigationConfig}
+          descriptors={this.state.descriptors}
+        />
+      );
     }
   }
 

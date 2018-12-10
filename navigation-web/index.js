@@ -7,5 +7,5 @@ module.exports = {
   },
   get Link() {
     return require('./Link').default;
-  }
+  },
 };
