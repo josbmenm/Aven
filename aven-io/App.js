@@ -8,6 +8,8 @@ import createNavigator from '../navigation-core/navigators/createNavigator';
 
 import Link from '../navigation-web/Link';
 
+process.env.REACT_NAV_LOGGING = true;
+
 function Header({ descriptors }) {
   return (
     <View style={{ borderBottomWidth: 1, height: 90, flexDirection: 'row' }}>
@@ -120,6 +122,7 @@ const AppRouter = SwitchRouter({
     screen: Docs,
     path: 'docs/:version',
     params: { version: '1' },
+    inheritParams: ['version'],
     navigationOptions: ({ navigation, screenProps }) => ({
       title:
         getActiveChildNavigationOptions(navigation, screenProps).title +

@@ -990,7 +990,7 @@ function RefMetaPane() {
 const RefPaneNavigator = createNavigator(
   SlideableNavigation,
   SwitchRouter({
-    RefValue: { path: 'value', screen: RefValuePane },
+    RefValue: { path: 'value', screen: RefValuePane, params: { refPath: '' } },
   }),
   {}
 );
@@ -1016,6 +1016,8 @@ const MainPaneNavigator = createNavigator(
     Ref: {
       path: 'ref',
       screen: RefPane,
+      params: { refName: '' },
+      passDownParams: ['refName'],
     },
   }),
   {}

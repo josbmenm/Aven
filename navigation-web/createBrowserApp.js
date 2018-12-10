@@ -2,12 +2,35 @@
 
 import { createBrowserHistory } from 'history';
 import React from 'react';
-import { NavigationActions, getNavigation, NavigationProvider } from '../navigation-core';
+import {
+  NavigationActions,
+  getNavigation,
+  NavigationProvider,
+} from '../navigation-core';
 
 /* eslint-disable import/no-commonjs */
 const queryString = require('query-string');
 
 const history = createBrowserHistory();
+
+function logAction(action, newState, lastState) {
+  if (!process.env.REACT_NAV_LOGGING) {
+    return;
+  }
+  if (console.group) {
+    console.group('Navigation Dispatch: ');
+    console.log('Action: ', action);
+    console.log('New State: ', newState);
+    console.log('Last State: ', lastState);
+    console.groupEnd();
+  } else {
+    console.log('Navigation Dispatch: ', {
+      action,
+      newState,
+      lastState,
+    });
+  }
+}
 
 const getPathAndParamsFromLocation = location => {
   const path = encodeURI(location.pathname.substr(1));
@@ -28,7 +51,11 @@ const matchPathAndParams = (a, b) => {
 let currentPathAndParams = getPathAndParamsFromLocation(history.location);
 
 export default function createBrowserApp(App) {
-  const initAction = App.router.getActionForPathAndParams(currentPathAndParams.path, currentPathAndParams.params) || NavigationActions.init();
+  const initAction =
+    App.router.getActionForPathAndParams(
+      currentPathAndParams.path,
+      currentPathAndParams.params
+    ) || NavigationActions.init();
 
   const setHistoryListener = dispatch => {
     history.listen(location => {
@@ -37,7 +64,10 @@ export default function createBrowserApp(App) {
         return;
       }
       currentPathAndParams = pathAndParams;
-      const action = App.router.getActionForPathAndParams(pathAndParams.path, pathAndParams.params);
+      const action = App.router.getActionForPathAndParams(
+        pathAndParams.path,
+        pathAndParams.params
+      );
       if (action) {
         dispatch(action);
       } else {
@@ -53,12 +83,15 @@ export default function createBrowserApp(App) {
     componentDidMount() {
       setHistoryListener(this._dispatch);
       this.updateTitle();
-      this._actionEventSubscribers.forEach(subscriber => subscriber({
-        type: 'action',
-        action: initAction,
-        state: this.state.nav,
-        lastState: null
-      }));
+      this._actionEventSubscribers.forEach(subscriber =>
+        subscriber({
+          type: 'action',
+          action: initAction,
+          state: this.state.nav,
+          lastState: null,
+        })
+      );
+      logAction(initAction, this.state.nav, null);
     }
     componentDidUpdate() {
       this.updateTitle();
@@ -72,26 +105,48 @@ export default function createBrowserApp(App) {
       document.title = this._title;
     }
     render() {
-      this._navigation = getNavigation(App.router, this.state.nav, this._dispatch, this._actionEventSubscribers, () => this.props.screenProps, () => this._navigation);
-      return <NavigationProvider value={this._navigation}>
+      this._navigation = getNavigation(
+        App.router,
+        this.state.nav,
+        this._dispatch,
+        this._actionEventSubscribers,
+        () => this.props.screenProps,
+        () => this._navigation
+      );
+      return (
+        <NavigationProvider value={this._navigation}>
           <App navigation={this._navigation} />
-        </NavigationProvider>;
+        </NavigationProvider>
+      );
     }
     _dispatch = action => {
       const lastState = this.state.nav;
       const newState = App.router.getStateForAction(action, lastState);
-      const dispatchEvents = () => this._actionEventSubscribers.forEach(subscriber => subscriber({
-        type: 'action',
-        action,
-        state: newState,
-        lastState
-      }));
+      const dispatchEvents = () =>
+        this._actionEventSubscribers.forEach(subscriber =>
+          subscriber({
+            type: 'action',
+            action,
+            state: newState,
+            lastState,
+          })
+        );
       if (newState && newState !== lastState) {
         this.setState({ nav: newState }, dispatchEvents);
-        const pathAndParams = App.router.getPathAndParamsForState && App.router.getPathAndParamsForState(newState);
-        if (pathAndParams && !matchPathAndParams(pathAndParams, currentPathAndParams)) {
+        logAction(action, newState, lastState);
+        const pathAndParams =
+          App.router.getPathAndParamsForState &&
+          App.router.getPathAndParamsForState(newState);
+        if (
+          pathAndParams &&
+          !matchPathAndParams(pathAndParams, currentPathAndParams)
+        ) {
           currentPathAndParams = pathAndParams;
-          history.push(`/${pathAndParams.path}?${queryString.stringify(pathAndParams.params)}`);
+          history.push(
+            `/${pathAndParams.path}?${queryString.stringify(
+              pathAndParams.params
+            )}`
+          );
         }
       } else {
         dispatchEvents();

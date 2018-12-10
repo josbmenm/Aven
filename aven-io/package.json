@@ -18,7 +18,8 @@
       "aven-cloud-browser",
       "aven-cloud-server",
       "navigation-web",
-      "navigation-core"
+      "navigation-core",
+      "navigation-hooks"
     ]
   }
 }

@@ -6,12 +6,12 @@ const SET_PARAMS = 'Navigation/SET_PARAMS';
 const back = (payload = {}) => ({
   type: BACK,
   key: payload.key,
-  immediate: payload.immediate
+  immediate: payload.immediate,
 });
 
 const init = (payload = {}) => {
   const action = {
-    type: INIT
+    type: INIT,
   };
   if (payload.params) {
     action.params = payload.params;
@@ -22,7 +22,7 @@ const init = (payload = {}) => {
 const navigate = payload => {
   const action = {
     type: NAVIGATE,
-    routeName: payload.routeName
+    routeName: payload.routeName,
   };
   if (payload.params) {
     action.params = payload.params;
@@ -39,7 +39,8 @@ const navigate = payload => {
 const setParams = payload => ({
   type: SET_PARAMS,
   key: payload.key,
-  params: payload.params
+  params: payload.params,
+  explicit: payload.explicit,
 });
 
 export default {
@@ -53,5 +54,5 @@ export default {
   back,
   init,
   navigate,
-  setParams
+  setParams,
 };

@@ -1,11 +1,14 @@
 import React from 'react';
 import { Title, Body, Page } from '../DocViews';
+import { useNavigation } from '../../navigation-hooks/Hooks';
 
 function DocPage() {
+  const { getParam } = useNavigation();
   return (
     <Page>
       <Title>Aven Overview</Title>
-      <Body>Hello, world!</Body>
+      <Body>Version: {getParam('version')}</Body>
+      <Body>Section: {getParam('section')}</Body>
     </Page>
   );
 }
