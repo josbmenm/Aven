@@ -467,10 +467,9 @@ export default function CloudAuth({ dataSource, methods }) {
         name: refName,
         domain: action.domain,
       });
-
       if (
-        !p[permissionLevel] &&
-        (!realPermissionLevelRequired || p[realPermissionLevelRequired])
+        !p[permissionLevel] ||
+        (realPermissionLevelRequired && !p[realPermissionLevelRequired])
       ) {
         throw new Error(
           `Insufficient permissions for "${actionType}" on ${
