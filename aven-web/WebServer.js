@@ -109,7 +109,7 @@ export default async function WebServer({
     res.header('Access-Control-Allow-Origin', '*');
     res.header(
       'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept'
+      'Origin, X-Requested-With, Content-Type, Accept',
     );
     next();
   });
@@ -223,7 +223,7 @@ export default async function WebServer({
         <div id="root">${html}</div>
         ${options.customHTML || ''}
     </body>
-</html>`
+</html>`,
     );
   });
 
