@@ -74,6 +74,20 @@ describe('client ref behavior', () => {
     const r1 = c.getRef('foo');
     expect(r0).toBe(r1);
   });
+
+  test.only('ref posting', async () => {
+    const m = startMemoryDataSource({ domain: 'd' });
+    const c = createCloudClient({ dataSource: m, domain: 'd' });
+    const ref = c.getRef('foo');
+
+    await ref.put({
+      hello: 'world',
+    });
+    const postedRef = await ref.post();
+    await postedRef.put({
+      good: 'news, everybody!',
+    });
+  });
 });
 
 describe('client ref map', () => {
