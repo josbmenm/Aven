@@ -75,18 +75,48 @@ describe('client ref behavior', () => {
     expect(r0).toBe(r1);
   });
 
-  test.only('ref posting', async () => {
+  test('ref posting', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
     const ref = c.getRef('foo');
-
+    let refsList = null;
     await ref.put({
       hello: 'world',
     });
     const postedRef = await ref.post();
+    refsList = await m.dispatch({
+      type: 'GetRefValue',
+      domain: 'd',
+      name: 'foo/_refs',
+    });
+    expect(refsList.value.length).toEqual(0);
     await postedRef.put({
       good: 'news, everybody!',
     });
+    expect(postedRef.name.match(/^foo\/(.+)$/)).not.toBeNull();
+    refsList = await m.dispatch({
+      type: 'GetRefValue',
+      domain: 'd',
+      name: 'foo/_refs',
+    });
+    expect(refsList.value.length).toEqual(1);
+    const bar = ref.get('bar');
+    await bar.put({ woah: 42 });
+    refsList = await m.dispatch({
+      type: 'GetRefValue',
+      domain: 'd',
+      name: 'foo/_refs',
+    });
+    expect(refsList.value.length).toEqual(2);
+    expect(refsList.value.indexOf('bar')).not.toEqual(-1);
+    await bar.destroy();
+    refsList = await m.dispatch({
+      type: 'GetRefValue',
+      domain: 'd',
+      name: 'foo/_refs',
+    });
+    expect(refsList.value.length).toEqual(1);
+    expect(refsList.value.indexOf('bar')).toEqual(-1);
   });
 });
 

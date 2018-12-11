@@ -78,6 +78,7 @@ export default function createCloudClient({
       dataSource: dataSourceWithSession,
       domain,
       name,
+      onRef: getRef,
       objectCache: _objects,
     });
     knownRefs.next(uniqueOrdered([...knownRefs.value, _refs[name]]));

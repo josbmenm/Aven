@@ -1,5 +1,7 @@
 import { Observable, BehaviorSubject } from 'rxjs-compat';
 import createCloudObject from './createCloudObject';
+import uuid from 'uuid/v1';
+const pathJoin = require('path').join;
 
 const observeNull = Observable.create(observer => {
   observer.next(undefined);
@@ -9,7 +11,13 @@ const observeStatic = val =>
     observer.next(val);
   });
 
-export default function createCloudRef({ dataSource, name, domain, ...opts }) {
+export default function createCloudRef({
+  dataSource,
+  name,
+  domain,
+  onRef,
+  ...opts
+}) {
   const objectCache = opts.objectCache || {};
 
   if (!name) {
@@ -142,6 +150,17 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     await putObject(obj);
   }
 
+  async function post() {
+    const id = uuid();
+    const fullName = pathJoin(name, id);
+    return onRef(fullName);
+  }
+
+  function get(subRefName) {
+    const fullName = pathJoin(name, subRefName);
+    return onRef(fullName);
+  }
+
   async function putId(objId) {
     await dataSource.dispatch({
       type: 'PutRef',
@@ -161,7 +180,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     const state = getState();
     if (state.puttingFromObjectId) {
       throw new Error(
-        `Cannot putObject of "${name}" while another put is in progress!`
+        `Cannot putObject of "${name}" while another put is in progress!`,
       );
     }
     const lastId = state.id;
@@ -210,7 +229,7 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
     }
     if (typeof refVal !== 'string') {
       throw new Error(
-        `Cannot look up object ID in ${name} on ${lookup.join()}`
+        `Cannot look up object ID in ${name} on ${lookup.join()}`,
       );
     }
     const connectedObj = _getObjectWithId(refVal);
@@ -251,11 +270,13 @@ export default function createCloudRef({ dataSource, name, domain, ...opts }) {
   }
 
   const r = {
+    get,
     getState,
     name,
     domain,
     fetch,
     put,
+    post,
     putId,
     putObject,
     fetchValue,
