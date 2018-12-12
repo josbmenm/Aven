@@ -12,7 +12,7 @@ const envStatePath = pathJoin(srcDir, '.aven-env-state.json');
 const extendOverride = process.env.AVEN_SRC_EXTEND_OVERRIDE;
 if (extendOverride) {
   console.log(
-    `⚠️ - Using AvenTools extendsSrcModule from process.env.AVEN_SRC_EXTEND_OVERRIDE (${extendOverride}). You are responsible for syncronization of the extended globe dir!`,
+    `⚠️ - Using AvenTools extendsSrcModule from process.env.AVEN_SRC_EXTEND_OVERRIDE (${extendOverride}). You are responsible for syncronization of the extended aven src dir!`,
   );
 }
 
@@ -142,7 +142,7 @@ const getAppEnv = async (appName, appPkg) => {
     const envPath = pathJoin(srcDir, envName);
     if (!(await fs.exists(envPath))) {
       throw new Error(
-        `Failed to load platform env "${envName}" as specified in package.json globe.env for "${appName}"`,
+        `Failed to load platform env "${envName}" as specified in package.json aven.env for "${appName}"`,
       );
     }
     envModule = require(pathJoin(envPath, 'AvenEnv.js'));

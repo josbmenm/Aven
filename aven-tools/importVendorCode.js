@@ -33,11 +33,23 @@ function runTransform(input, vendedSrcDeps, fileDest) {
         visitor: {
           ImportDeclaration(path) {
             const sourceName = path.node.source.value;
-            const vendedDep = vendedSrcDeps[sourceName];
+            let vendedDep = null;
+            let insideModulePath = '';
+            Object.keys(vendedSrcDeps).forEach(possibleDepName => {
+              if (sourceName.match(new RegExp('^' + possibleDepName))) {
+                vendedDep = vendedSrcDeps[possibleDepName];
+                insideModulePath = sourceName.slice(possibleDepName.length);
+                // terrible hack because we copy out of the src dir into ./depname
+                if (insideModulePath.match(/^\/src/)) {
+                  insideModulePath = insideModulePath.slice('/src'.length);
+                }
+              }
+            });
             if (vendedDep) {
               const destModule = pathJoin(srcRoot, vendedDep);
               const fileDestDir = pathJoin(fileDest, '..');
-              path.node.source.value = pathRelative(fileDestDir, destModule);
+              const relativeModule = pathRelative(fileDestDir, destModule);
+              path.node.source.value = relativeModule + insideModulePath;
             }
           },
         },
@@ -79,7 +91,7 @@ async function copyWithTransform(source, dest, vendedSrcDeps, file = '') {
 }
 
 async function vendUpstream(
-  { moduleName, srcName, moduleSrcPath },
+  { moduleName, srcName, moduleSrcPath, ...upstreamSpec },
   vendedSrcDeps,
 ) {
   const destPath = pathJoin(srcRoot, srcName);
@@ -100,7 +112,10 @@ async function vendUpstream(
   );
   const srcPkg = JSON.parse(await fs.readFile(modulePkgPath));
   const peerDeps = new Set(Object.keys(srcPkg.peerDependencies || {}));
-  const moduleDependencies = Object.keys(srcPkg.dependencies || {});
+  const moduleDependencies = [
+    ...Object.keys(srcPkg.dependencies || {}),
+    // ...(upstreamSpec.moduleDependencies || []),
+  ];
   const srcDependencies = [];
   const destPkg = {
     name: moduleName,
@@ -166,6 +181,7 @@ vendUpstreams([
     moduleName: 'react-navigation-hooks',
     srcName: 'navigation-hooks',
     moduleSrcPath: 'src',
+    moduleDependencies: ['@types/jest'],
   },
   {
     moduleName: 'react-navigation-stack',

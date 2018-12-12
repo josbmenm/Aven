@@ -180,7 +180,7 @@ export default function createCloudRef({
     const state = getState();
     if (state.puttingFromObjectId) {
       throw new Error(
-        `Cannot putObject of "${name}" while another put is in progress!`,
+        `Cannot putObject of "${name}" while another put is in progress!`
       );
     }
     const lastId = state.id;
@@ -229,7 +229,7 @@ export default function createCloudRef({
     }
     if (typeof refVal !== 'string') {
       throw new Error(
-        `Cannot look up object ID in ${name} on ${lookup.join()}`,
+        `Cannot look up object ID in ${name} on ${lookup.join()}`
       );
     }
     const connectedObj = _getObjectWithId(refVal);

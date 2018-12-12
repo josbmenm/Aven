@@ -275,7 +275,8 @@ function Pane({ children }) {
         backgroundColor: '#f0f0f0',
         borderRightWidth: StyleSheet.hairlineWidth,
         borderRightColor: '#aaa',
-        maxWidth: 350,
+        maxWidth: 450,
+        minWidth: 300,
       }}
     >
       {children}
@@ -521,11 +522,14 @@ function LinkRow({ title, onPress, isSelected }) {
   );
 }
 
-function RefsList() {
+function RefsList({ parent }) {
   const cloud = useCloud();
-  const { navigate, getParam } = useNavigation();
-  const activeRef = useParam('name');
-  const refNames = useObservable(cloud.getRef('_refs').observeValue);
+  const { navigate, state, getParam } = useNavigation();
+  const refRoute =
+    state.routes && state.routes.find(r => r.routeName === 'Ref');
+  const activeRef = refRoute && refRoute.params.refName;
+  const refsListName = parent ? `${parent}/_refs` : '_refs';
+  const refNames = useObservable(cloud.getRef(refsListName).observeValue);
   const refs = refNames && refNames.map(cloud.getRef);
   if (!refs) {
     return null;
@@ -540,7 +544,7 @@ function RefsList() {
             isSelected={ref.name === activeRef}
             title={ref.name}
             onPress={() => {
-              navigate('Ref', { name: ref.name, path: null });
+              navigate('Ref', { refName: ref.name, refPath: null });
             }}
           />
         ))}
@@ -594,7 +598,7 @@ function RefsPane({ onClientConfig, onSession }) {
   return (
     <Pane>
       <Title title={domain} />
-      <RefsList />
+      <RefsList parent={null} />
       <AddRefSection />
       <StandaloneButton
         title="Log out"
@@ -650,9 +654,8 @@ function Folder({ value, path, cloudRef, pathContext }) {
               title={fileName}
               onPress={() => {
                 const nextPath = [...pathContext, fileName].join('/');
-                console.log(nextPath);
                 navigation.setParams({
-                  path: nextPath,
+                  refPath: nextPath,
                 });
               }}
             />
@@ -671,23 +674,35 @@ function useParam(paramName) {
   const { getParam, dangerouslyGetParent } = useNavigation();
   let parent = dangerouslyGetParent();
   let val = getParam(paramName);
-  while (val === undefined && parent && parent.getParam) {
-    val = parent.getParam(paramName);
-    parent = parent.dangerouslyGetParent();
-  }
+  // while (val === undefined && parent && parent.getParam) {
+  //   val = parent.getParam(paramName);
+  //   parent = parent.dangerouslyGetParent();
+  // }
   return val;
 }
 
 function StringPane({ value, onValue }) {
-  return null;
+  return (
+    <Pane>
+      <Text>{value}</Text>
+    </Pane>
+  );
 }
 
 function BooleanPane({ value, onValue }) {
-  return null;
+  return (
+    <Pane>
+      <Text>{value ? 'True' : 'False'}</Text>
+    </Pane>
+  );
 }
 
 function NumberPane({ value, onValue }) {
-  return null;
+  return (
+    <Pane>
+      <Text>{value}</Text>
+    </Pane>
+  );
 }
 
 function AddKeySection({ onNewKey }) {
@@ -820,13 +835,8 @@ function ObjectPane({ path, value, onValue, pathContext, cloudRef }) {
                 const nextPath = [...pathContext, objKey].join('/');
                 console.log(nextPath);
                 navigation.setParams({
-                  path: nextPath,
+                  refPath: nextPath,
                 });
-                // const nextPath = [...pathContext, objKey].join('/');
-                // console.log(nextPath);
-                // navigation.setParams({
-                //   path: nextPath,
-                // });
               }}
             />
           ))}
@@ -848,28 +858,34 @@ function ValuePane({ value, path, cloudRef, pathContext }) {
     return <Text>Loading</Text>;
   }
   if (typeof presentationValue === 'string') {
-    <StringPane
-      value={value}
-      onValue={v => {
-        cloudRef.put(v);
-      }}
-    />;
+    return (
+      <StringPane
+        value={value}
+        onValue={v => {
+          cloudRef.put(v);
+        }}
+      />
+    );
   }
   if (typeof presentationValue === 'boolean') {
-    <BooleanPane
-      value={value}
-      onValue={v => {
-        cloudRef.put(v);
-      }}
-    />;
+    return (
+      <BooleanPane
+        value={value}
+        onValue={v => {
+          cloudRef.put(v);
+        }}
+      />
+    );
   }
   if (typeof presentationValue === 'number') {
-    <NumberPane
-      value={value}
-      onValue={v => {
-        cloudRef.put(v);
-      }}
-    />;
+    return (
+      <NumberPane
+        value={value}
+        onValue={v => {
+          cloudRef.put(v);
+        }}
+      />
+    );
   }
   if (presentationValue.type === 'Folder') {
     return (
@@ -895,14 +911,15 @@ function ValuePane({ value, path, cloudRef, pathContext }) {
       />
     );
   }
-
+  console.log('ummm', presentationValue);
   throw new Error('Bad type!');
 }
 
 function RefValuePane() {
-  const name = useParam('name');
-  const path = useParam('path');
+  const name = useParam('refName');
+  const path = useParam('refPath');
   const cloud = useCloud();
+
   const cloudRef = cloud.getRef(name);
   const value = useRefValue(cloudRef);
 
@@ -965,9 +982,25 @@ function SlideableNavigation({ navigation, descriptors }) {
   );
 }
 
+function pathApartName(name) {
+  const parts = name.split('/');
+}
+
+function RefMetaPanes() {
+  const { navigate } = useNavigation();
+  const name = useParam('refName');
+  const cloud = useCloud();
+  const cloudRef = cloud.getRef(name);
+  const r = useObservable(cloudRef.observe);
+  pathApartName;
+
+  // return nameParts.map(name => <RefMetaPane name={name} />);
+  return null;
+}
+
 function RefMetaPane() {
   const { navigate } = useNavigation();
-  const name = useParam('name');
+  const name = useParam('refName');
   const cloud = useCloud();
   const cloudRef = cloud.getRef(name);
   const r = useObservable(cloudRef.observe);
@@ -983,6 +1016,7 @@ function RefMetaPane() {
         }}
       />
       <RefSetForm cloudRef={cloudRef} />
+      <RefsList parent={name} />
     </Pane>
   );
 }
@@ -990,15 +1024,22 @@ function RefMetaPane() {
 const RefPaneNavigator = createNavigator(
   SlideableNavigation,
   SwitchRouter({
-    RefValue: { path: 'value', screen: RefValuePane, params: { refPath: '' } },
+    RefValue: {
+      path: 'value',
+      screen: RefValuePane,
+      params: { refPath: '' },
+      inheritParams: ['refName'],
+    },
   }),
-  {}
+  {
+    explicitParams: true,
+  }
 );
 
 function RefPane({ navigation }) {
   return (
     <React.Fragment>
-      <RefMetaPane />
+      <RefMetaPanes />
       <RefPaneNavigator navigation={navigation} />
     </React.Fragment>
   );
@@ -1016,11 +1057,12 @@ const MainPaneNavigator = createNavigator(
     Ref: {
       path: 'ref',
       screen: RefPane,
-      params: { refName: '' },
-      passDownParams: ['refName'],
+      params: { refName: null },
     },
   }),
-  {}
+  {
+    explicitParams: true,
+  }
 );
 
 function MainPane({ onClientConfig, onSession, navigation }) {
@@ -1117,15 +1159,17 @@ function AdminApp({ defaultSession = {}, descriptors }) {
     <BackgroundView>
       <CloudContext.Provider value={client}>
         <NavigationContext.Provider value={activeDescriptor.navigation}>
-          <ScreenComponent
-            onClientConfig={setClientConfig}
-            onSession={setSessionState}
-            defaultSession={{
-              authority: defaultSession.authority || 'localhost:3000',
-              domain: defaultSession.domain || 'test.aven.cloud',
-            }}
-            navigation={activeDescriptor.navigation}
-          />
+          <ScrollView horizontal>
+            <ScreenComponent
+              onClientConfig={setClientConfig}
+              onSession={setSessionState}
+              defaultSession={{
+                authority: defaultSession.authority || 'localhost:3000',
+                domain: defaultSession.domain || 'test.aven.cloud',
+              }}
+              navigation={activeDescriptor.navigation}
+            />
+          </ScrollView>
         </NavigationContext.Provider>
       </CloudContext.Provider>
     </BackgroundView>
@@ -1162,21 +1206,26 @@ function AdminApp({ defaultSession = {}, descriptors }) {
   // );
 }
 
-const router = SwitchRouter({
-  Home: {
-    path: '',
-    screen: MainPane,
-    navigationOptions: {
-      title: 'Admin',
+const router = SwitchRouter(
+  {
+    Home: {
+      path: '',
+      screen: MainPane,
+      navigationOptions: {
+        title: 'Admin',
+      },
+    },
+    Login: {
+      path: 'login',
+      screen: LoginPane,
+      navigationOptions: {
+        title: 'Login - Admin',
+      },
     },
   },
-  Login: {
-    path: 'login',
-    screen: LoginPane,
-    navigationOptions: {
-      title: 'Login - Admin',
-    },
-  },
-});
+  {
+    explicitParams: true,
+  }
+);
 
 export default createNavigator(AdminApp, router, {});

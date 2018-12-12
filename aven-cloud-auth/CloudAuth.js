@@ -517,5 +517,6 @@ export default function CloudAuth({ dataSource, methods }) {
   return {
     ...dataSource,
     dispatch,
+    close: () => {},
   };
 }

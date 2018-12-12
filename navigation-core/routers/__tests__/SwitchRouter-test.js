@@ -94,6 +94,250 @@ describe('SwitchRouter', () => {
     expect(activeGrandChildRoute.routeName).toEqual('B2');
   });
 
+  test('explicit param mode guards against conflicting param names', () => {
+    const PlainScreen = () => <div />;
+    const SwitchA = () => <div />;
+
+    SwitchA.router = SwitchRouter({
+      A1: {
+        screen: PlainScreen,
+        path: 'a1/:name',
+      },
+      A2: PlainScreen,
+    });
+
+    expect(() => {
+      SwitchRouter(
+        {
+          A: {
+            screen: SwitchA,
+            path: 'a/:name',
+          },
+          B: PlainScreen,
+        },
+        {
+          explicitParams: true,
+        }
+      );
+    }).toThrow();
+  });
+
+  test('explicit param mode parses path/params correctly', () => {
+    const PlainScreen = () => <div />;
+    const SwitchA = () => <div />;
+
+    SwitchA.router = SwitchRouter({
+      A1: {
+        screen: PlainScreen,
+        path: 'a1/:name',
+        params: { baz: 'boo' },
+      },
+      A2: PlainScreen,
+    });
+
+    const router = SwitchRouter(
+      {
+        A: {
+          screen: SwitchA,
+          path: 'a/:foo',
+          params: { bar: null },
+        },
+        B: PlainScreen,
+      },
+      {
+        explicitParams: true,
+      }
+    );
+
+    const action = router.getActionForPathAndParams('a/foovalue/a1/namevalue', {
+      bar: 'a',
+      baz: 'b',
+      something: 'c',
+    });
+    expect(action).toEqual({
+      type: NavigationActions.NAVIGATE,
+      routeName: 'A',
+      params: { foo: 'foovalue', bar: 'a' },
+      action: {
+        type: NavigationActions.NAVIGATE,
+        routeName: 'A1',
+        params: { name: 'namevalue', baz: 'b' },
+      },
+    });
+  });
+
+  test('explicit param mode throws error when setting missing params', () => {
+    const PlainScreen = () => <div />;
+    const router = SwitchRouter(
+      {
+        A: {
+          screen: PlainScreen,
+          path: 'a/:foo',
+          params: { bar: 'hello', baz: null },
+        },
+        B: PlainScreen,
+      },
+      {
+        explicitParams: true,
+      }
+    );
+    const initState = router.getStateForAction({});
+    const initRoute = initState.routes[initState.index];
+    expect(initRoute.routeName).toEqual('A');
+    expect(initRoute.params).toEqual({ bar: 'hello', baz: null });
+    const nextState = router.getStateForAction({
+      type: NavigationActions.SET_PARAMS,
+      key: initRoute.key,
+      params: { baz: 'woah', bar: 'bye', foo: 'ok' },
+    });
+    const nextRoute = nextState.routes[nextState.index];
+    expect(nextRoute.params).toEqual({ baz: 'woah', bar: 'bye', foo: 'ok' });
+    expect(() =>
+      router.getStateForAction({
+        type: NavigationActions.SET_PARAMS,
+        key: initRoute.key,
+        params: { badParam: 'not ok' },
+      })
+    ).toThrow();
+  });
+
+  test('explicit param mode on deep conflicting param names', () => {
+    const PlainScreen = () => <div />;
+    const SwitchA = () => <div />;
+    const SwitchFoo = () => <div />;
+
+    SwitchFoo.router = SwitchRouter({
+      A1: {
+        screen: PlainScreen,
+        path: 'a1/:name',
+      },
+      A2: PlainScreen,
+    });
+
+    SwitchA.router = SwitchRouter({
+      Foo: {
+        screen: SwitchFoo,
+      },
+      Bar: PlainScreen,
+    });
+
+    expect(() => {
+      SwitchRouter(
+        {
+          A: {
+            screen: SwitchA,
+            path: 'a/:name',
+          },
+          B: PlainScreen,
+        },
+        {
+          explicitParams: true,
+        }
+      );
+    }).toThrow();
+  });
+
+  test('inherit params', () => {
+    const PlainScreen = () => <div />;
+    const SwitchA = () => <div />;
+
+    SwitchA.router = SwitchRouter({
+      A1: {
+        screen: PlainScreen,
+        path: 'a1',
+        inheritParams: ['name'],
+        params: { age: null },
+      },
+      A2: PlainScreen,
+    });
+
+    const router = SwitchRouter(
+      {
+        A: {
+          screen: SwitchA,
+          path: 'a/:name',
+        },
+        B: PlainScreen,
+      },
+      {
+        explicitParams: true,
+      }
+    );
+    const s1 = router.getStateForAction(
+      {
+        type: NavigationActions.NAVIGATE,
+        routeName: 'A',
+        params: { name: 'Lucy' },
+      },
+      null
+    );
+    const activeRoute = s1.routes[s1.index];
+    expect(activeRoute.routeName).toEqual('A');
+    expect(activeRoute.params).toEqual({ name: 'Lucy' });
+    const activeChildRoute = activeRoute.routes[activeRoute.index];
+    expect(activeChildRoute.routeName).toEqual('A1');
+    expect(activeChildRoute.params).toEqual({ name: 'Lucy', age: null });
+  });
+
+  test('inherit deep params. navigate applies params on correct route', () => {
+    const PlainScreen = () => <div />;
+    const SwitchA = () => <div />;
+    const SwitchA1 = () => <div />;
+
+    SwitchA1.router = SwitchRouter({
+      z1: {
+        screen: PlainScreen,
+        inheritParams: ['name', 'age'],
+      },
+      z2: PlainScreen,
+    });
+
+    SwitchA.router = SwitchRouter({
+      A1: {
+        screen: SwitchA1,
+        path: 'a1',
+        inheritParams: ['name'],
+        params: { age: null },
+      },
+      A2: PlainScreen,
+    });
+
+    const router = SwitchRouter(
+      {
+        B: PlainScreen,
+        A: {
+          screen: SwitchA,
+          path: 'a/:name',
+        },
+      },
+      {
+        explicitParams: true,
+      }
+    );
+    const s1 = router.getStateForAction(
+      {
+        type: NavigationActions.NAVIGATE,
+        routeName: 'A',
+        params: { name: 'Lucy' },
+        action: {
+          type: NavigationActions.NAVIGATE,
+          routeName: 'A1',
+          params: { age: 123 },
+        },
+      },
+      null
+    );
+    const activeRoute = s1.routes[s1.index];
+    expect(activeRoute.routeName).toEqual('A');
+    expect(activeRoute.params).toEqual({ name: 'Lucy' });
+    const activeChildRoute = activeRoute.routes[activeRoute.index];
+    expect(activeChildRoute.routeName).toEqual('A1');
+    expect(activeChildRoute.params).toEqual({ name: 'Lucy', age: 123 });
+    const activeBabyRoute = activeChildRoute.routes[activeChildRoute.index];
+    expect(activeBabyRoute.routeName).toEqual('z1');
+    expect(activeBabyRoute.params).toEqual({ name: 'Lucy', age: 123 });
+  });
+
   test('handles nested actions and params simultaneously', () => {
     const router = getExampleRouter();
     const state = router.getStateForAction({ type: NavigationActions.INIT });

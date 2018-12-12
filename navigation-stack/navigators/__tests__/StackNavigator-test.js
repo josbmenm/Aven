@@ -7,7 +7,7 @@ import createStackNavigator from '../createStackNavigator';
 
 import createAppContainer, {
   _TESTING_ONLY_reset_container_count,
-} from '@react-navigation/native/src/createAppContainer';
+} from '../../../navigation-native/createAppContainer';
 const NavigationTestUtils = {
   resetInternalState: _TESTING_ONLY_reset_container_count,
 };
