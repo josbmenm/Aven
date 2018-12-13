@@ -89,9 +89,9 @@ describe('client ref behavior', () => {
       name: 'foo/_refs',
     });
     expect(refsList.value.length).toEqual(0);
-    const postedRef = await ref.post();
-
-    expect(postedRef.getName().match(/^foo\/(.+)$/)).not.toBeNull();
+    const postedRef = ref.post();
+    expect(postedRef.getFullName().match(/^foo\/(.+)$/)).not.toBeNull();
+    await postedRef.put({ some: 'data' });
     refsList = await m.dispatch({
       type: 'GetRefValue',
       domain: 'd',
@@ -115,6 +115,14 @@ describe('client ref behavior', () => {
     });
     expect(refsList.value.length).toEqual(1);
     expect(refsList.value.indexOf('bar')).toEqual(-1);
+  });
+  test('ref getting', async () => {
+    const m = startMemoryDataSource({ domain: 'd' });
+    const c = createCloudClient({ dataSource: m, domain: 'd' });
+    const fooRef = c.get('foo');
+    const fooBarRef = c.get('foo/bar');
+    const fooBarChained = fooRef.get('bar');
+    expect(fooBarRef).toEqual(fooBarChained);
   });
 });
 

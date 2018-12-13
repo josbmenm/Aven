@@ -2,7 +2,7 @@ import { default as withObs } from '@nozbe/with-observables';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import { Observable, BehaviorSubject } from 'rxjs-compat';
 
-import createCloudRef from './createCloudRef';
+import { createRefPool } from './createCloudRef';
 
 export const withObservables = withObs;
 
@@ -14,14 +14,11 @@ export default function createCloudClient({
   domain,
   initialSession,
 }) {
-  const _refs = {};
   const _objects = {};
 
   if (domain == null) {
     throw new Error(`domain must be provided to createCloudClient!`);
   }
-
-  const knownRefs = new BehaviorSubject([]);
 
   const session = new BehaviorSubject(initialSession || null);
 
@@ -38,56 +35,16 @@ export default function createCloudClient({
     dispatch: authDispatch,
   };
 
-  function updateRefsList() {
-    dataSourceWithSession
-      .dispatch({
-        type: 'ListRefs',
-        domain,
-      })
-      .then(refNames => {
-        const refs = refNames.map(get);
-        const mergedRefs = uniqueOrdered([...refs, ...knownRefs.value]);
-        knownRefs.next(mergedRefs);
-      })
-      .catch(console.error);
-  }
-
-  let isObservingRefs = false;
-
-  function updateRefsListIfObserving() {
-    if (isObservingRefs) {
-      updateRefsList();
-    }
-  }
-
-  const observeRefs = Observable.create(() => {
-    isObservingRefs = true;
-    updateRefsList();
-    return () => {
-      isObservingRefs = false;
-    };
-  })
-    .multicast(() => knownRefs)
-    .refCount();
-
-  function get(name) {
-    if (_refs[name]) {
-      return _refs[name];
-    }
-    _refs[name] = createCloudRef({
-      dataSource: dataSourceWithSession,
-      domain,
-      name,
-      onRef: get,
-      objectCache: _objects,
-    });
-    knownRefs.next(uniqueOrdered([...knownRefs.value, _refs[name]]));
-    return _refs[name];
-  }
+  const refs = createRefPool({
+    onGetParentName: () => null,
+    objectCache: _objects,
+    dataSource: dataSourceWithSession,
+    domain,
+  });
 
   async function destroyRef(ref) {
     await ref.destroy();
-    knownRefs.next(knownRefs.value.filter(r => r.getName() !== ref.getName()));
+    // knownRefs.next(knownRefs.value.filter(r => r.getName() !== ref.getName()));
   }
 
   async function CreateSession({
@@ -107,7 +64,6 @@ export default function createCloudClient({
     });
     if (created && created.session) {
       session.next(created.session);
-      updateRefsListIfObserving();
     }
     return created;
   }
@@ -122,7 +78,6 @@ export default function createCloudClient({
     });
     if (created && created.session) {
       session.next(created.session);
-      updateRefsListIfObserving();
     }
     return created;
   }
@@ -154,7 +109,6 @@ export default function createCloudClient({
     dispatch,
     domain,
     destroyRef,
-    get,
-    observeRefs,
+    get: refs.get,
   };
 }

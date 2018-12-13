@@ -12,6 +12,9 @@ const stringify = require('json-stable-stringify');
 const pathJoin = require('path').join;
 
 function getTerms(name) {
+  if (!name) {
+    return [];
+  }
   return name.split('/');
 }
 
@@ -119,7 +122,7 @@ const startMemoryDataSource = (opts = {}) => {
     if (!isRefNameValid(name)) {
       throw new Error(`Invalid Ref name "${name}"`);
     }
-    if (domain === undefined || name === undefined) {
+    if (domain === undefined) {
       throw new Error('Invalid use. ', { domain, name, id });
     }
     if (domain !== dataSourceDomain) {
@@ -127,7 +130,7 @@ const startMemoryDataSource = (opts = {}) => {
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
       );
     }
-    const postedName = pathJoin(name, uuid());
+    const postedName = name ? pathJoin(name, uuid()) : uuid();
     if (!id && value !== undefined) {
       await PutRef({ domain, name: postedName, id: null });
       const obj = await PutObject({ domain, name: postedName, value });

@@ -1,6 +1,9 @@
 import startMemoryDataSource from '../startMemoryDataSource';
 import createCloudRef from '../createCloudRef';
 
+function getNull() {
+  return null;
+}
 describe('ref generic behavior', () => {
   test('handles creation', () => {
     const dataSource = startMemoryDataSource({ domain: 'foo' });
@@ -26,6 +29,17 @@ describe('ref generic behavior', () => {
       }),
     ).toThrow();
   });
+
+  test('fails on creation for name with slash', () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
+    expect(() =>
+      createCloudRef({
+        dataSource,
+        domain: 'test',
+        name: 'foo/bar',
+      }),
+    ).toThrow();
+  });
 });
 
 describe('basic ref DataSource interaction', () => {
@@ -43,7 +57,12 @@ describe('basic ref DataSource interaction', () => {
       name: 'myref',
       id,
     });
-    const r = createCloudRef({ dataSource, domain: 'test', name: 'myref' });
+    const r = createCloudRef({
+      dataSource,
+      domain: 'test',
+      name: 'myref',
+      onGetParentName: getNull,
+    });
     expect(r.getObject()).toEqual(undefined);
     await r.fetch();
     expect(r.getObject().id).toEqual(id);
@@ -51,7 +70,12 @@ describe('basic ref DataSource interaction', () => {
 
   test('writes objects', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
-    const r = createCloudRef({ dataSource, domain: 'test', name: 'myref' });
+    const r = createCloudRef({
+      dataSource,
+      domain: 'test',
+      name: 'myref',
+      onGetParentName: getNull,
+    });
     const { id } = await r.write({
       foo: 'zoom',
     });
@@ -66,7 +90,12 @@ describe('basic ref DataSource interaction', () => {
 
   test('writes ref with putId', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
-    const r = createCloudRef({ dataSource, domain: 'test', name: 'myref' });
+    const r = createCloudRef({
+      dataSource,
+      domain: 'test',
+      name: 'myref',
+      onGetParentName: getNull,
+    });
     const { id } = await r.write({
       foo: 42,
     });
@@ -87,7 +116,12 @@ describe('basic ref DataSource interaction', () => {
 
   test('puts objects', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
-    const r = createCloudRef({ dataSource, domain: 'test', name: 'myref' });
+    const r = createCloudRef({
+      dataSource,
+      domain: 'test',
+      name: 'myref',
+      onGetParentName: getNull,
+    });
     await r.put({
       foo: 47,
     });
@@ -133,7 +167,12 @@ describe('observing refs', () => {
       name: 'foo',
       id: obj1.id,
     });
-    const r = createCloudRef({ dataSource, domain: 'test', name: 'foo' });
+    const r = createCloudRef({
+      dataSource,
+      domain: 'test',
+      name: 'foo',
+      onGetParentName: getNull,
+    });
     let lastObserved = null;
     const subscription = r.observe.subscribe({
       next: e => {
@@ -188,7 +227,12 @@ describe('observing refs', () => {
       name: 'foo',
       id: obj1.id,
     });
-    const r = createCloudRef({ dataSource, domain: 'test', name: 'foo' });
+    const r = createCloudRef({
+      dataSource,
+      domain: 'test',
+      name: 'foo',
+      onGetParentName: getNull,
+    });
     let lastObserved = undefined;
     const subscription = r.observeValue.subscribe({
       next: v => {
@@ -250,7 +294,12 @@ describe('observing refs', () => {
       name: 'foo',
       id: obj1.id,
     });
-    const r = createCloudRef({ dataSource, domain: 'test', name: 'foo' });
+    const r = createCloudRef({
+      dataSource,
+      domain: 'test',
+      name: 'foo',
+      onGetParentName: getNull,
+    });
     let lastObserved = undefined;
     r.observeConnectedValue(['the', 'value', 0]).subscribe({
       next: v => {
@@ -273,7 +322,12 @@ describe('observing refs', () => {
   test('observe connected value before creation', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
 
-    const r = createCloudRef({ dataSource, domain: 'test', name: 'foo' });
+    const r = createCloudRef({
+      dataSource,
+      domain: 'test',
+      name: 'foo',
+      onGetParentName: getNull,
+    });
     let lastObserved = undefined;
     r.observeConnectedValue(['the', 'value', 0]).subscribe({
       next: v => {

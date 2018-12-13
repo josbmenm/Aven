@@ -11,20 +11,93 @@ const observeStatic = val =>
     observer.next(val);
   });
 
-const POSTING_REF_NAME = Symbol('POSTING_REF_NAME');
+export const POSTING_REF_NAME = Symbol('POSTING_REF_NAME');
+
+function hasDepth(name) {
+  return name.match(/\//);
+}
+
+export function createRefPool({
+  objectCache,
+  domain,
+  dataSource,
+  onGetParentName,
+}) {
+  const _refs = {};
+
+  function get(name) {
+    const localName = name.split('/')[0];
+    let restOfName = null;
+    if (localName.length < name.length - 1) {
+      restOfName = name.slice(localName.length + 1);
+    }
+    if (!_refs[localName]) {
+      _refs[localName] = createCloudRef({
+        dataSource,
+        domain,
+        name: localName,
+        objectCache: objectCache,
+        onRename: newName => move(localName, newName),
+        onGetParentName,
+      });
+    }
+    if (restOfName) {
+      return _refs[localName].get(restOfName);
+    }
+    return _refs[localName];
+  }
+
+  function move(fromName, toName) {
+    if (hasDepth(fromName)) {
+      throw new Error(
+        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`,
+      );
+    }
+    if (hasDepth(toName)) {
+      throw new Error(
+        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`,
+      );
+    }
+    _refs[toName] = _refs[fromName];
+    _refs[toName].$setName(toName);
+    delete _refs[fromName];
+  }
+
+  function post() {
+    const localName = uuid();
+    _refs[localName] = createCloudRef({
+      dataSource,
+      domain,
+      name: localName,
+      objectCache: objectCache,
+      onGetParentName,
+      onRename: newName => move(localName, newName),
+      isUnposted: true,
+    });
+    return _refs[localName];
+  }
+
+  return { get, move, post };
+}
 
 export default function createCloudRef({
   dataSource,
   name,
   domain,
-  onRef,
-  parent,
+  onGetParentName,
+  isUnposted,
+  onRename,
   ...opts
 }) {
   const objectCache = opts.objectCache || {};
 
   if (!name) {
     throw new Error('name must be provided to createCloudRef!');
+  }
+  if (name.match(/\//)) {
+    throw new Error(
+      `ref name ${name} must not contain slashes. Instead, pass a parent`,
+    );
   }
   if (!domain) {
     throw new Error('domain must be provided to createCloudRef!');
@@ -36,7 +109,49 @@ export default function createCloudRef({
     isConnected: false,
     lastSyncTime: null,
     isDestroyed: false,
+    isPosted: !isUnposted,
   });
+
+  let postingInProgress = null;
+
+  async function ensurePosted(obj) {
+    if (refState.value.isPosted) {
+      return null;
+    }
+    const parent = onGetParentName();
+    if (!postingInProgress) {
+      let postData = { id: null };
+      if (obj && obj.getValue()) {
+        postData = { value: obj.getValue() };
+      } else if (obj) {
+        postData = { id: obj.id };
+      }
+      postingInProgress = dataSource.dispatch({
+        type: 'PostRef',
+        name: parent,
+        domain,
+        ...postData,
+      });
+    }
+    let result = null;
+    try {
+      result = await postingInProgress;
+    } finally {
+      postingInProgress = null;
+    }
+    if (result.name) {
+      const resultingChildName = result.name.slice(parent.length + 1);
+      onRename(resultingChildName);
+      setState({
+        isPosted: true,
+      });
+      if (obj.id === result.id) {
+        return obj;
+      }
+      return null; // probably this is not an error because there may have been race conditions with multiple calls to ensurePosted
+    }
+    throw new Error('Could not post this ref!');
+  }
 
   const setState = newState => {
     refState.next({
@@ -50,18 +165,34 @@ export default function createCloudRef({
   }
 
   function getName() {
-    return refState.value.name;
+    const name = refState.value.name;
+    return name;
   }
+
+  function getFullName() {
+    const name = getName();
+    const parent = onGetParentName();
+    if (parent) {
+      return pathJoin(parent, name);
+    }
+    return name;
+  }
+
+  const refs = createRefPool({
+    onGetParentName: getFullName,
+    objectCache,
+    dataSource,
+    domain,
+  });
 
   async function fetch() {
     const result = await dataSource.dispatch({
       type: 'GetRef',
       domain,
-      name,
+      name: getFullName(),
     });
     if (result) {
-      refState.next({
-        ...refState.value,
+      setState({
         id: result.id,
         lastSyncTime: Date.now(),
       });
@@ -73,7 +204,7 @@ export default function createCloudRef({
     await dataSource.dispatch({
       type: 'DestroyRef',
       domain,
-      name,
+      name: getFullName(),
     });
   }
 
@@ -158,33 +289,28 @@ export default function createCloudRef({
     await putObject(obj);
   }
 
-  async function post() {
-    const id = uuid();
-    const fullName = pathJoin(name, id);
-    return onRef(fullName);
-  }
-
-  function get(subRefName) {
-    const fullName = pathJoin(name, subRefName);
-    return onRef(fullName);
-  }
-
   async function putId(objId) {
     await dataSource.dispatch({
       type: 'PutRef',
       domain,
-      name,
+      name: getFullName(),
       id: objId,
     });
   }
 
   async function write(value) {
+    await ensurePosted();
     const obj = _getObjectWithValue(value);
     await obj.put();
     return { id: obj.id };
   }
 
   async function putObject(obj) {
+    const postResult = await ensurePosted(obj);
+    if (postResult === obj) {
+      return;
+    }
+
     const state = getState();
     if (state.puttingFromObjectId) {
       throw new Error(
@@ -277,14 +403,23 @@ export default function createCloudRef({
     await put(newValue);
   }
 
+  function $setName(newName) {
+    setState({
+      name: newName,
+    });
+    // todo, send this to the server!
+  }
+
   const r = {
-    get,
+    $setName,
+    get: refs.get,
+    post: refs.post,
     getState,
     getName,
+    getFullName,
     domain,
     fetch,
     put,
-    post,
     putId,
     putObject,
     fetchValue,
