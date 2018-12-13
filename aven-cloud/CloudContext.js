@@ -1,5 +1,5 @@
-import createCloudContext from './createCloudContext';
+import { createContext } from 'react';
 
-const CloudContext = createCloudContext();
+const CloudContext = createContext(null);
 
 export default CloudContext;
