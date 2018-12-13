@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NativeModules, NativeEventEmitter, Modal, View } from 'react-native';
-import { withRestaurant } from '../ono-cloud/OnoRestaurantContext';
+import CloudContext from '../aven-cloud/CloudContext';
 
 const OPaymentManager = NativeModules.OPaymentManager;
 
@@ -35,6 +35,7 @@ const getPayment = (price, description) =>
 
 export const paymentContainer = PaymentComponent => {
   class PaymentsContainer extends Component {
+    static contextType = CloudContext;
     state = {
       isReady: false,
       error: null,
@@ -86,7 +87,7 @@ export const paymentContainer = PaymentComponent => {
       }
     }
     configurePayment = async () => {
-      const res = await this.props.restaurant.dispatch({
+      const res = await this.context.dispatch({
         type: 'GetSquareMobileAuthToken',
       });
       const authCode = res.result.authorization_code;
@@ -128,5 +129,5 @@ export const paymentContainer = PaymentComponent => {
       );
     }
   }
-  return withRestaurant(PaymentsContainer);
+  return PaymentsContainer;
 };

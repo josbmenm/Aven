@@ -1,4 +1,4 @@
-import OnoRestaurantContext from './OnoRestaurantContext';
+import CloudContext from '../aven-cloud/CloudContext';
 import mapObject from 'fbjs/lib/mapObject';
 import React from 'react';
 import withObservables from '@nozbe/with-observables';
@@ -10,11 +10,11 @@ export function withKitchen(Component) {
   )(Component);
 
   return props => (
-    <OnoRestaurantContext.Consumer>
+    <CloudContext.Consumer>
       {restaurant => (
         <ComponentWithObservedState
-          kitchenConfig={restaurant.getRef('KitchenConfig').observeValue}
-          kitchenState={restaurant.getRef('KitchenState').observeValue}
+          kitchenConfig={restaurant.get('KitchenConfig').observeValue}
+          kitchenState={restaurant.get('KitchenState').observeValue}
           kitchenCommand={async (subsystemName, pulse, values) => {
             await restaurant.dispatch({
               type: 'KitchenCommand',
@@ -27,7 +27,7 @@ export function withKitchen(Component) {
           {...props}
         />
       )}
-    </OnoRestaurantContext.Consumer>
+    </CloudContext.Consumer>
   );
 }
 const currency = new Intl.NumberFormat('en-US', {
@@ -45,12 +45,12 @@ const sortByField = (obj, fieldName) => {
   return sortable.map(kVal => kVal[1]);
 };
 
-function atDataToMenu(atData) {
+function atDataToBlendMenu(atData) {
   if (!atData) {
     return [];
   }
   const Recipes = atData.baseTables['Recipes'];
-  const MenuItemsUnordered = atData.baseTables['Kiosk Menu'];
+  const MenuItemsUnordered = atData.baseTables['KioskBlendMenu'];
   const RecipeIngredients = atData.baseTables['Recipe Ingredients'];
   const Ingredients = atData.baseTables['Ingredients'];
 
@@ -119,9 +119,20 @@ function atDataToMenu(atData) {
   return ActiveItemsWithRecipe;
 }
 
-function atDataToMenuItemMapper(menuItemId) {
+function atDataToFoodMenu(atData) {
+  if (!atData) {
+    return [];
+  }
+  const MenuItemsUnordered = atData.baseTables['KioskFoodMenu'];
+  console.log(MenuItemsUnordered);
+  const MenuItems = sortByField(MenuItemsUnordered, '_index');
+  const ActiveMenuItems = MenuItems.filter(i => i['Active in Kiosk']);
+  return ActiveMenuItems;
+}
+
+function atDataToBlendMenuItemMapper(menuItemId) {
   return atData => {
-    const menu = atDataToMenu(atData);
+    const menu = atDataToBlendMenu(atData);
     return menu.find(item => item.id === menuItemId);
   };
 }
@@ -140,7 +151,7 @@ export function withPendingOrder(Component) {
             if (!o || !o.items) {
               return o;
             }
-            const menu = atDataToMenu(at);
+            const menu = atDataToBlendMenu(at);
             console.log('zooom', o, menu);
             let subTotal = 0;
             const items = Object.keys(o.items).map(itemId => {
@@ -162,17 +173,17 @@ export function withPendingOrder(Component) {
   )(Component);
 
   return props => (
-    <OnoRestaurantContext.Consumer>
+    <CloudContext.Consumer>
       {restaurant => (
         <ComponentWithOrder
-          order={restaurant.getRef('PendingOrder').observeValue}
+          order={restaurant.get('PendingOrder').observeValue}
           atData={restaurant
-            .getRef('Airtable')
+            .get('Airtable')
             .observeConnectedValue(['files', 'db.json', 'id'])}
           {...props}
         />
       )}
-    </OnoRestaurantContext.Consumer>
+    </CloudContext.Consumer>
   );
 }
 
@@ -180,49 +191,52 @@ export function withMenuItem(Component) {
   const ComponentWithObservedState = withObservables(
     ['atData', 'menuItemId'],
     ({ atData, menuItemId }) => ({
-      menuItem: atData.map(atDataToMenuItemMapper(menuItemId)),
+      menuItem: atData.map(atDataToBlendMenuItemMapper(menuItemId)),
     }),
   )(Component);
 
   return props => (
-    <OnoRestaurantContext.Consumer>
+    <CloudContext.Consumer>
       {restaurant => (
         <ComponentWithObservedState
           atData={restaurant
-            .getRef('Airtable')
+            .get('Airtable')
             .observeConnectedValue(['files', 'db.json', 'id'])}
           {...props}
         />
       )}
-    </OnoRestaurantContext.Consumer>
+    </CloudContext.Consumer>
   );
 }
 
 export function withMenu(Component) {
   const ComponentWithObservedState = withObservables(
     ['atData'],
-    ({ atData }) => ({ menu: atData.map(atDataToMenu) }),
+    ({ atData }) => ({
+      blendMenu: atData.map(atDataToBlendMenu),
+      foodMenu: atData.map(atDataToFoodMenu),
+    }),
   )(Component);
 
   return props => (
-    <OnoRestaurantContext.Consumer>
+    <CloudContext.Consumer>
       {restaurant => (
         <ComponentWithObservedState
           atData={restaurant
-            .getRef('Airtable')
+            .get('Airtable')
             .observeConnectedValue(['files', 'db.json', 'id'])}
           {...props}
         />
       )}
-    </OnoRestaurantContext.Consumer>
+    </CloudContext.Consumer>
   );
 }
 
 export function withDispatch(Component) {
   return props => (
-    <OnoRestaurantContext.Consumer>
+    <CloudContext.Consumer>
       {restaurant => <Component dispatch={restaurant.dispatch} {...props} />}
-    </OnoRestaurantContext.Consumer>
+    </CloudContext.Consumer>
   );
 }
 
@@ -235,33 +249,32 @@ export function withKitchenLog(Component) {
   )(Component);
 
   return props => (
-    <OnoRestaurantContext.Consumer>
+    <CloudContext.Consumer>
       {restaurant => (
         <ComponentWithObservedState
-          kitchenLog={restaurant.getRef('KitchenLog').observeValue}
+          kitchenLog={restaurant.get('KitchenLog').observeValue}
           {...props}
         />
       )}
-    </OnoRestaurantContext.Consumer>
+    </CloudContext.Consumer>
   );
 }
 
 export function withRestaurant(Component) {
   const ComponentWithObservedState = withObservables(
-    ['restaurant', 'order'],
-    ({ restaurant, order }) => {
-      return { restaurant, order };
+    ['restaurant'],
+    ({ restaurant }) => {
+      return { restaurant };
     },
   )(Component);
 
   return props => (
-    <OnoRestaurantContext.Consumer>
+    <CloudContext.Consumer>
       {restaurant => (
         <ComponentWithObservedState
           restaurantClient={restaurant}
           cloud={restaurant}
-          restaurant={restaurant.getRef('Restaurant').observeValue}
-          order={restaurant.getRef('PendingOrder').observeValue}
+          restaurant={restaurant.get('Restaurant').observeValue}
           setAppUpsellPhoneNumber={number => {
             restaurant
               .dispatch({
@@ -270,9 +283,31 @@ export function withRestaurant(Component) {
               })
               .catch(console.error);
           }}
+          dispatch={restaurant.dispatch}
+          {...props}
+        />
+      )}
+    </CloudContext.Consumer>
+  );
+}
+
+export function startOrder() {
+  console.log('starting order ok');
+}
+
+export function withOrder(Component) {
+  const ComponentWithObservedState = withObservables(['order'], ({ order }) => {
+    return { order };
+  })(Component);
+
+  return props => (
+    <CloudContext.Consumer>
+      {cloud => (
+        <ComponentWithObservedState
+          order={cloud.get('Orders/' + props.orderId).observeValue}
           setOrderName={name => {
-            restaurant
-              .getRef('PendingOrder')
+            cloud
+              .get('Orders/' + props.orderId)
               .transact(lastState => ({
                 ...lastState,
                 name,
@@ -280,8 +315,8 @@ export function withRestaurant(Component) {
               .catch(console.error);
           }}
           setOrderItem={(itemId, item) => {
-            restaurant
-              .getRef('PendingOrder')
+            cloud
+              .get('Orders/' + props.orderId)
               .transact(lastState => ({
                 ...lastState,
                 items: {
@@ -292,8 +327,8 @@ export function withRestaurant(Component) {
               .catch(console.error);
           }}
           placeOrder={order => {
-            restaurant
-              .getRef('Restaurant')
+            cloud
+              .get('Restaurant')
               .transact(lastState => ({
                 ...lastState,
                 queuedOrders: [
@@ -306,11 +341,11 @@ export function withRestaurant(Component) {
               }))
               .catch(console.error);
           }}
-          dispatch={restaurant.dispatch}
+          dispatch={cloud.dispatch}
           {...props}
         />
       )}
-    </OnoRestaurantContext.Consumer>
+    </CloudContext.Consumer>
   );
 }
 

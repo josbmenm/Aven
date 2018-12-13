@@ -6,13 +6,14 @@ import GenericPage from '../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import LinkRow from '../../components/LinkRow';
 import { paymentContainer } from '../Payments';
-import { withRestaurant } from '../../ono-cloud/OnoRestaurantContext';
+import useCloud from '../../aven-cloud/useCloud';
 
-function UpdateAirtableRowWithRestaurant({ restaurant }) {
+function UpdateAirtableRow() {
+  const cloud = useCloud();
   return (
     <LinkRow
       onPress={() => {
-        restaurant
+        cloud
           .dispatch({ type: 'UpdateAirtable' })
           .then(() => {
             alert('Airtable Updated!');
@@ -27,7 +28,6 @@ function UpdateAirtableRowWithRestaurant({ restaurant }) {
     />
   );
 }
-const UpdateAirtableRow = withRestaurant(UpdateAirtableRowWithRestaurant);
 
 const PaySettingsRow = paymentContainer(({ openSettings }) => (
   <LinkRow

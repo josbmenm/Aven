@@ -26,7 +26,7 @@ const getEnv = c => process.env[c];
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
-
+console.log('========= WOAH code running!');
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨');
 
@@ -122,6 +122,14 @@ const runServer = async () => {
     domain: 'kitchen.maui.onofood.co',
     type: 'PutPermissionRules',
     auth: rootAuth,
+    defaultRule: { canPost: true },
+    name: 'Orders',
+  });
+
+  await authenticatedDataSource.dispatch({
+    domain: 'kitchen.maui.onofood.co',
+    type: 'PutPermissionRules',
+    auth: rootAuth,
     defaultRule: { canWrite: true },
     name: 'PendingOrder',
   });
@@ -154,7 +162,7 @@ const runServer = async () => {
       isReadyToDeliver: isReadyToFill,
     };
   }
-  const restaurant = kitchenClient.getRef('Restaurant');
+  const restaurant = kitchenClient.get('Restaurant');
 
   async function runFill({ amount, system, slot }) {
     await kitchen.dispatchCommand({
@@ -306,13 +314,13 @@ const runServer = async () => {
     }
   }
 
-  kitchenClient.getRef('KitchenState').observeValue.subscribe({
+  kitchenClient.get('KitchenState').observeValue.subscribe({
     next: v => {
       kitchenState = v;
       runSideEffects();
     },
   });
-  kitchenClient.getRef('Restaurant').observeValue.subscribe({
+  kitchenClient.get('Restaurant').observeValue.subscribe({
     next: v => {
       restaurantState = v;
       runSideEffects();
@@ -362,12 +370,11 @@ const runServer = async () => {
 
   return {
     close: async () => {
-      // await pgDataSource.close();
       await authenticatedDataSource.close();
       await dataSource.close();
-      // await networkDataSource.close();
       await webService.close();
-      // await kitchen.close();
+      await kitchen.close();
+      console.log('😵 Server Closed');
     },
   };
 };

@@ -477,10 +477,10 @@ export default function startKitchen({ client, plcIP }) {
 
   let updateCount = 0;
   async function connectKitchenClient() {
-    const configRef = client.getRef('KitchenConfig');
+    const configRef = client.get('KitchenConfig');
     let fff = null;
     client
-      .getRef('Airtable')
+      .get('Airtable')
       .observeConnectedValue(['files', 'db.json', 'id'])
       .subscribe({
         next: atData => {
@@ -567,7 +567,7 @@ export default function startKitchen({ client, plcIP }) {
         complete: () => {},
       });
 
-    const stateRef = client.getRef('KitchenState');
+    const stateRef = client.get('KitchenState');
 
     await stateRef.put({
       isPLCConnected: false,
@@ -614,7 +614,7 @@ export default function startKitchen({ client, plcIP }) {
   }
 
   async function dispatchCommand(action) {
-    await client.getRef('KitchenLog').transact(log => [...(log || []), action]);
+    await client.get('KitchenLog').transact(log => [...(log || []), action]);
     const subsystem = subsystems[action.subsystem];
     const { immediateOutput, clearPulseOutput } = extractActionValues({
       subSystemConfig: subsystem,

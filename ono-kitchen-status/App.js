@@ -16,7 +16,7 @@ const nameText = {
 
 const withTruckState = Component => {
   return withObservables([], () => ({
-    truckState: Client.getRef('truckState').observeObjectValue,
+    truckState: Client.get('truckState').observeObjectValue,
   }))(Component);
 };
 

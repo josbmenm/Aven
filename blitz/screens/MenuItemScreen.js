@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, Image, TouchableHighlight } from 'react-native';
 import ActionPage from '../components/ActionPage';
 import Button from '../../components/Button';
-import { withMenuItem, withRestaurant } from '../../ono-cloud/OnoKitchen';
+import { withMenuItem, withOrder } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { pageBackgroundColor } from '../../components/Styles';
 import { useNavigation } from '../../navigation-hooks/Hooks';
-const md5 = require('crypto-js/md5');
+import CloudContext from '../../aven-cloud/CloudContext';
 
 function Ingredient({ ingredient }) {
   return (
@@ -242,7 +242,7 @@ function ActiveFunctions({ menuItem, customizationState }) {
   return activeFunctionIds.map(id => {
     const fn = menuItem.FunctionCustomization[id];
     return (
-      <React.Fragment>
+      <React.Fragment key={id}>
         <Text
           style={{
             fontSize: 32,
@@ -268,14 +268,31 @@ function ActiveFunctions({ menuItem, customizationState }) {
   });
 }
 
-function MenuItemScreenWithItem({
-  menuItem,
-  setOrderItem,
+function useOrder() {
+  let cloud = useContext(CloudContext);
+  let [order, setOrder] = useState();
+  return [order, setOrder];
+}
 
-  orderItemId,
-}) {
+function useOrderItem(orderItemId) {
+  let [order, setOrder] = useOrder();
+
+  const item = null;
+  function setItem(itemId, item) {
+    // setOrder()
+  }
+  return {
+    item,
+    setItem,
+    order,
+  };
+}
+
+function MenuItemScreenWithItem({ menuItem, orderItemId }) {
   let [isCustomizing, setIsCustomizing] = useState(false);
   let [customizationState, setCustomization] = useState({});
+
+  let { item, order, setItem } = useOrderItem(orderItemId);
   if (!menuItem) {
     return null;
   }
@@ -286,7 +303,7 @@ function MenuItemScreenWithItem({
         {
           title: 'Add to Cart',
           onPress: () => {
-            setOrderItem(orderItemId, {
+            setItem(orderItemId, {
               menuItemId: menuItem.id,
               customization: customizationState,
             });
@@ -350,9 +367,7 @@ function MenuItemScreenWithItem({
   );
 }
 
-const MenuItemScreenWithId = withRestaurant(
-  withMenuItem(MenuItemScreenWithItem),
-);
+const MenuItemScreenWithId = withMenuItem(MenuItemScreenWithItem);
 
 export default function MenuItemScreen({ navigation, ...props }) {
   return (

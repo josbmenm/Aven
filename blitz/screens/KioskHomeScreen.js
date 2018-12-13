@@ -1,24 +1,31 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Image, StyleSheet, Text } from 'react-native';
+import {
+  View,
+  ScrollView,
+  Image,
+  TouchableWithoutFeedback,
+  Text,
+} from 'react-native';
 import MenuItem from '../components/MenuItem';
 import GenericPage from '../components/GenericPage';
 import Hero from '../../components/Hero';
 import { genericPageStyle } from '../../components/Styles';
-import { withMenu } from '../../ono-cloud/OnoKitchen';
 
-const Home = ({ menu, navigation }) => {
+import { startOrder } from '../../ono-cloud/OnoKitchen';
+
+export default function KioskHomeScreen({ navigation }) {
   return (
-    <React.Fragment>
-      <ScrollView
+    <TouchableWithoutFeedback
+      onPress={() => {
+        startOrder();
+        navigation.navigate('ProductHome');
+      }}
+    >
+      <View
         horizontal
         style={{ flex: 1, ...genericPageStyle }}
         contentContainerStyle={{ paddingTop: 400 }}
       >
-        {menu.map(item => (
-          <MenuItem item={item} key={item.id} />
-        ))}
-      </ScrollView>
-      <View style={{ ...StyleSheet.absoluteFillObject }} pointerEvents="none">
         <Image
           style={{
             marginTop: 150,
@@ -28,16 +35,24 @@ const Home = ({ menu, navigation }) => {
           }}
           source={require('../assets/OnoBlendsLogo.png')}
         />
+
+        <Text
+          style={{
+            fontSize: 28,
+            textAlign: 'center',
+          }}
+        >
+          Tap To Begin
+        </Text>
+        <Text
+          style={{ color: '#555', textAlign: 'center' }}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
+          Exit Kiosk (INTERNAL ONLY)
+        </Text>
       </View>
-      <Text
-        onPress={() => {
-          navigation.goBack();
-        }}
-      >
-        Exit Kiosk (INTERNAL ONLY)
-      </Text>
-    </React.Fragment>
+    </TouchableWithoutFeedback>
   );
-};
-const KioskHomeScreen = withMenu(Home);
-export default KioskHomeScreen;
+}

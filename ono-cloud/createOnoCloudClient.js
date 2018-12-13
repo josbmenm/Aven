@@ -20,10 +20,10 @@
 //   domain: 'onofood.co',
 // });
 
-// export const airtableData = Client.getRef(
+// export const airtableData = Client.get(
 //   'airtable',
 // ).observeConnectedObjectValue(['files', 'db.json']);
-// export const testData = Client.getRef('airtable').observeConnectedObjectValue([
+// export const testData = Client.get('airtable').observeConnectedObjectValue([
 //   'files',
 //   'files',
 // ]);
@@ -43,7 +43,7 @@
 
 // export const mainMenu = airtableTables.map(t => {
 //   const Recipes = t['Recipes'];
-//   const MenuItemsUnordered = t['Kiosk Menu'];
+//   const MenuItemsUnordered = t['KioskBlendMenu'];
 //   const MenuItems = sortByField(MenuItemsUnordered, '_index');
 //   const ActiveMenuItems = MenuItems.filter(i => i['Active in Kiosk']);
 //   const ActiveItemsWithRecipe = ActiveMenuItems.map(item => ({
@@ -58,7 +58,7 @@
 // export const topMenuItem = airtableTables.map(t => {
 //   const Recipes = t['Recipes'];
 //   console.log('wat', t);
-//   const MenuItemsUnordered = t['Kiosk Menu'];
+//   const MenuItemsUnordered = t['KioskBlendMenu'];
 //   const MenuItems = sortByField(MenuItemsUnordered, '_index');
 //   const ActiveMenuItems = MenuItems.filter(i => i['Active in Kiosk']);
 //   const ActiveItemsWithRecipe = ActiveMenuItems.map(item => ({

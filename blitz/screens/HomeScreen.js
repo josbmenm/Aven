@@ -6,8 +6,8 @@ import LinkRow from '../../components/LinkRow';
 
 export default class HomeScreen extends Component {
   render() {
-    // <DebugData input={Client.getRef('airtable').observeObjectValue} />
-    // <DebugData input={Client.getRef('truckState').observeObjectValue} />
+    // <DebugData input={Client.get('airtable').observeObjectValue} />
+    // <DebugData input={Client.get('truckState').observeObjectValue} />
     // <ConnectionStatus />
     const { navigation } = this.props;
     return (

@@ -87,7 +87,8 @@ export default async function scrapeAirTable(fsClient) {
   };
 
   const tableNames = [
-    'Kiosk Menu',
+    'KioskBlendMenu',
+    'KioskFoodMenu',
     'Recipes',
     'Recipe Ingredients',
     'Ingredients',

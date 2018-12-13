@@ -5,8 +5,8 @@ import { useContext } from 'react';
 
 export function useKitchen() {
   const restaurant = useContext(OnoRestaurantContext);
-  const kitchenState = useRefValue(restaurant.getRef('KitchenState'));
-  const kitchenConfig = useRefValue(restaurant.getRef('KitchenConfig'));
+  const kitchenState = useRefValue(restaurant.get('KitchenState'));
+  const kitchenConfig = useRefValue(restaurant.get('KitchenConfig'));
   async function kitchenCommand(subsystemName, pulse, values) {
     await restaurant.dispatch({
       type: 'KitchenCommand',
