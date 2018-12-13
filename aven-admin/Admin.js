@@ -527,8 +527,8 @@ function RefsList({ parent, activeRef }) {
   const cloud = useCloud();
   const { navigate } = useNavigation();
   const refsListName = parent ? `${parent}/_refs` : '_refs';
-  const refNames = useObservable(cloud.getRef(refsListName).observeValue);
-  const refs = refNames && refNames.map(cloud.getRef);
+  const refNames = useObservable(cloud.get(refsListName).observeValue);
+  const refs = refNames && refNames.map(cloud.get);
   if (!refs) {
     return null;
   }
@@ -537,14 +537,15 @@ function RefsList({ parent, activeRef }) {
       {refs
         .filter(r => !r.getState().isDestroyed)
         .map(ref => {
-          const refName = parent ? pathJoin(parent, ref.name) : ref.name;
+          const localName = ref.getName();
+          const refName = parent ? pathJoin(parent, localName) : localName;
           const matchingRef = activeRef && activeRef.match(refName);
           const isSelected = !!matchingRef && matchingRef.index === 0;
           return (
             <LinkRow
-              key={ref.name}
+              key={localName}
               isSelected={isSelected}
-              title={ref.name}
+              title={localName}
               onPress={() => {
                 navigate('Ref', { refName, refPath: null });
               }}
@@ -560,7 +561,7 @@ function AddRefSection() {
   let [isOpened, setIsOpened] = useState(false);
   let [newRefName, setNewRefName] = useState('');
   function submit() {
-    cloud.getRef(newRefName).put(null);
+    cloud.get(newRefName).put(null);
     setIsOpened(false);
     setNewRefName('');
   }
@@ -867,7 +868,7 @@ function RefValuePane() {
   const path = useParam('refPath');
   const cloud = useCloud();
 
-  const cloudRef = cloud.getRef(name);
+  const cloudRef = cloud.get(name);
   const value = useRefValue(cloudRef);
 
   return (
@@ -945,13 +946,13 @@ function RefMetaPanes() {
 function RefMetaPane({ name }) {
   const { navigate, getParam } = useNavigation();
   const cloud = useCloud();
-  const cloudRef = cloud.getRef(name);
+  const cloudRef = cloud.get(name);
   const r = useObservable(cloudRef.observe);
   const activeRef = getParam('refName');
 
   return (
     <Pane>
-      <Title title={cloudRef.name} />
+      <Title title={cloudRef.getName()} />
       {r && <InfoSection text={` ID: ${r.id}`} />}
       <StandaloneButton
         title="Destroy"

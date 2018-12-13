@@ -23,9 +23,9 @@ describe('client ref behavior', () => {
   test('gets refs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
-    const ref = c.getRef('foo');
+    const ref = c.get('foo');
     expect(ref.getState().id).toBe(null);
-    expect(ref.name).toBe('foo');
+    expect(ref.getName()).toBe('foo');
     await ref.fetch();
     const first = await m.dispatch({
       type: 'PutObject',
@@ -47,9 +47,9 @@ describe('client ref behavior', () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
 
-    const ref = c.getRef('foo');
+    const ref = c.get('foo');
     expect(ref.id).toBe(undefined);
-    expect(ref.name).toBe('foo');
+    expect(ref.getName()).toBe('foo');
     await ref.fetch();
     const first = await m.dispatch({
       type: 'PutObject',
@@ -70,15 +70,15 @@ describe('client ref behavior', () => {
   test('deduplicates gotten refs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
-    const r0 = c.getRef('foo');
-    const r1 = c.getRef('foo');
+    const r0 = c.get('foo');
+    const r1 = c.get('foo');
     expect(r0).toBe(r1);
   });
 
   test('ref posting', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
-    const ref = c.getRef('foo');
+    const ref = c.get('foo');
     let refsList = null;
     await ref.put({
       hello: 'world',
@@ -91,7 +91,7 @@ describe('client ref behavior', () => {
     expect(refsList.value.length).toEqual(0);
     const postedRef = await ref.post();
 
-    expect(postedRef.name.match(/^foo\/(.+)$/)).not.toBeNull();
+    expect(postedRef.getName().match(/^foo\/(.+)$/)).not.toBeNull();
     refsList = await m.dispatch({
       type: 'GetRefValue',
       domain: 'd',
@@ -141,7 +141,7 @@ describe('client ref map', () => {
     });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
     const mapped = c
-      .getRef('foo')
+      .get('foo')
       .map(o => o && { squaredCount: o.count * o.count });
     await mapped.fetchValue();
     expect(mapped.getValue().squaredCount).toEqual(1);
@@ -177,7 +177,7 @@ describe('client ref map', () => {
     });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
     const mapped = c
-      .getRef('foo')
+      .get('foo')
       .map(o => o && { squaredCount: o.count * o.count })
       .map(o => o && { squaredSquaredCount: o.squaredCount * o.squaredCount });
     await mapped.fetchValue();
@@ -226,7 +226,7 @@ describe('client ref map', () => {
     });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
     const expanded = c
-      .getRef('foo')
+      .get('foo')
       .expand((o, r) => o && { great: r.getObject(o.countObj) });
     await expanded.fetchValue();
     expect(expanded.getValue().great.count).toEqual(12);

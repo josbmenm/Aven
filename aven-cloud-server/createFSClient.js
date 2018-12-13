@@ -28,7 +28,7 @@ export default function createFSClient({ client }) {
         } else {
           return await uploadFile({ filePath, ref });
         }
-      })
+      }),
     );
     const files = {};
     filesInDir.forEach((fileName, index) => {
@@ -40,7 +40,7 @@ export default function createFSClient({ client }) {
   }
 
   async function putFolder({ folderPath, name }) {
-    const ref = client.getRef(name);
+    const ref = client.get(name);
     const id = await uploadFolder({ folderPath, ref });
     await ref.putId(id);
     return { id, name };

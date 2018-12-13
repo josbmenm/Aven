@@ -5,7 +5,7 @@ describe('ref generic behavior', () => {
   test('handles creation', () => {
     const dataSource = startMemoryDataSource({ domain: 'foo' });
     const r = createCloudRef({ dataSource, domain: 'foo', name: 'bar' });
-    expect(r.name).toBe('bar');
+    expect(r.getName()).toBe('bar');
     expect(r.domain).toBe('foo');
   });
   test('fails on creation without domain', () => {
@@ -14,7 +14,7 @@ describe('ref generic behavior', () => {
       createCloudRef({
         dataSource,
         name: 'foo',
-      })
+      }),
     ).toThrow();
   });
   test('fails on creation without name', () => {
@@ -23,7 +23,7 @@ describe('ref generic behavior', () => {
       createCloudRef({
         dataSource,
         domain: 'test',
-      })
+      }),
     ).toThrow();
   });
 });

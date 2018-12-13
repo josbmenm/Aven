@@ -31,6 +31,7 @@ export default function createCloudRef({
   }
 
   const refState = new BehaviorSubject({
+    name,
     id: null,
     isConnected: false,
     lastSyncTime: null,
@@ -46,6 +47,10 @@ export default function createCloudRef({
 
   function getState() {
     return refState.value;
+  }
+
+  function getName() {
+    return refState.value.name;
   }
 
   async function fetch() {
@@ -275,7 +280,7 @@ export default function createCloudRef({
   const r = {
     get,
     getState,
-    name,
+    getName,
     domain,
     fetch,
     put,

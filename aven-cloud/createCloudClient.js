@@ -45,7 +45,7 @@ export default function createCloudClient({
         domain,
       })
       .then(refNames => {
-        const refs = refNames.map(getRef);
+        const refs = refNames.map(get);
         const mergedRefs = uniqueOrdered([...refs, ...knownRefs.value]);
         knownRefs.next(mergedRefs);
       })
@@ -70,7 +70,7 @@ export default function createCloudClient({
     .multicast(() => knownRefs)
     .refCount();
 
-  function getRef(name) {
+  function get(name) {
     if (_refs[name]) {
       return _refs[name];
     }
@@ -78,7 +78,7 @@ export default function createCloudClient({
       dataSource: dataSourceWithSession,
       domain,
       name,
-      onRef: getRef,
+      onRef: get,
       objectCache: _objects,
     });
     knownRefs.next(uniqueOrdered([...knownRefs.value, _refs[name]]));
@@ -87,7 +87,7 @@ export default function createCloudClient({
 
   async function destroyRef(ref) {
     await ref.destroy();
-    knownRefs.next(knownRefs.value.filter(r => r.name !== ref.name));
+    knownRefs.next(knownRefs.value.filter(r => r.getName() !== ref.getName()));
   }
 
   async function CreateSession({
@@ -154,7 +154,7 @@ export default function createCloudClient({
     dispatch,
     domain,
     destroyRef,
-    getRef,
+    get,
     observeRefs,
   };
 }
