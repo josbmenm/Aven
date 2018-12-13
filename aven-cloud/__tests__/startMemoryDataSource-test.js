@@ -24,7 +24,7 @@ describe('object storage', () => {
         domain: 'test2',
         value: { foo: 'bar' },
         name: 'foo',
-      })
+      }),
     ).rejects.toThrow();
   });
   test('object put fails with missing ref', async () => {
@@ -34,7 +34,7 @@ describe('object storage', () => {
         type: 'PutObject',
         domain: 'test',
         value: { foo: 'bar' },
-      })
+      }),
     ).rejects.toThrow();
   });
 
@@ -86,7 +86,7 @@ describe('ref storage', () => {
   test('puts ref fails when an object is missing', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     await expect(
-      ds.dispatch({ type: 'PutRef', domain: 'test', objectId: 'foo' })
+      ds.dispatch({ type: 'PutRef', domain: 'test', objectId: 'foo' }),
     ).rejects.toThrow();
   });
   test('puts ref works', async () => {
@@ -118,6 +118,32 @@ describe('ref storage', () => {
     });
     expect(gotObj.value.foo).toEqual('bar');
   });
+
+  test('post ref works', async () => {
+    const ds = startMemoryDataSource({ domain: 'test' });
+    const obj = await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    const postResult = await ds.dispatch({
+      type: 'PostRef',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    expect(postResult.name).toMatch(/^foo\//);
+    expect(postResult.id).toEqual(obj.id);
+
+    const getResult = await ds.dispatch({
+      type: 'GetRef',
+      domain: 'test',
+      name: postResult.name,
+    });
+    expect(getResult.id).toEqual(obj.id);
+  });
+
   test('get ref value works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj = await ds.dispatch({
@@ -562,7 +588,7 @@ describe('observing refs', () => {
   test('puts ref fails when an object is missing', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     await expect(
-      ds.dispatch({ type: 'PutRef', domain: 'test', objectId: 'foo' })
+      ds.dispatch({ type: 'PutRef', domain: 'test', objectId: 'foo' }),
     ).rejects.toThrow();
   });
   test('observe ref works', async () => {

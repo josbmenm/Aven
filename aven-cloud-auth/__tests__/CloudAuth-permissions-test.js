@@ -98,8 +98,9 @@ describe('Cloud auth Permissions', () => {
     });
 
     expect(rootPermissions.canRead).toEqual(true);
-    expect(rootPermissions.canWrite).toEqual(true);
     expect(rootPermissions.canPost).toEqual(true);
+    expect(rootPermissions.canWrite).toEqual(true);
+    expect(rootPermissions.canAdmin).toEqual(true);
 
     await expect(
       authDataSource.dispatch({
@@ -107,7 +108,7 @@ describe('Cloud auth Permissions', () => {
         auth: null,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -135,7 +136,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -183,7 +184,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -220,10 +221,155 @@ describe('Cloud auth Permissions', () => {
         type: 'GetRef',
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
   });
 
+  test('anon session post permission', async () => {
+    const {
+      rootSession,
+      anonSession,
+      authDataSource,
+    } = await establishPermissionsTestData();
+
+    let result = null;
+
+    await expect(
+      authDataSource.dispatch({
+        type: 'PostRef',
+        auth: anonSession,
+        domain: 'test',
+        name: 'something',
+        value: { foo: 'bar' },
+      }),
+    ).rejects.toThrow();
+
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: rootSession,
+      domain: 'test',
+      name: 'something',
+      defaultRule: {
+        canPost: true,
+      },
+    });
+
+    const postResult = await authDataSource.dispatch({
+      type: 'PostRef',
+      auth: anonSession,
+      domain: 'test',
+      name: 'something',
+      value: { foo: 'bar' },
+    });
+    expect(postResult.name).toMatch(/^something\//);
+  });
+
+  test('permissions cascade properly', async () => {
+    const {
+      rootSession,
+      anonSession,
+      authDataSource,
+    } = await establishPermissionsTestData();
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: rootSession,
+      domain: 'test',
+      name: 'great',
+      defaultRule: {
+        canPost: true,
+      },
+    });
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: rootSession,
+      domain: 'test',
+      name: 'great/news',
+      defaultRule: {
+        canWrite: true,
+      },
+    });
+    const p1 = await authDataSource.dispatch({
+      type: 'GetPermissions',
+      auth: anonSession,
+      domain: 'test',
+      name: 'great',
+    });
+    expect(p1).toEqual({
+      canRead: false,
+      canPost: true,
+      canWrite: false,
+      canAdmin: false,
+      owner: null,
+    });
+    const p2 = await authDataSource.dispatch({
+      type: 'GetPermissions',
+      auth: anonSession,
+      domain: 'test',
+      name: 'great/news',
+    });
+    expect(p2).toEqual({
+      canRead: true,
+      canPost: true,
+      canWrite: true,
+      canAdmin: false,
+      owner: null,
+    });
+  });
+
+  test('posted ref ownership', async () => {
+    const {
+      rootSession,
+      anonSession,
+      authDataSource,
+    } = await establishPermissionsTestData();
+
+    let result = null;
+
+    await authDataSource.dispatch({
+      type: 'PutPermissionRules',
+      auth: rootSession,
+      domain: 'test',
+      name: 'something',
+      defaultRule: {
+        canPost: true,
+      },
+    });
+
+    const postResult = await authDataSource.dispatch({
+      type: 'PostRef',
+      auth: anonSession,
+      domain: 'test',
+      name: 'something',
+      value: { foo: 'bar' },
+    });
+
+    const perms = await authDataSource.dispatch({
+      type: 'GetPermissions',
+      auth: anonSession,
+      domain: 'test',
+      name: postResult.name,
+    });
+    expect(perms).toEqual({
+      canRead: true,
+      canWrite: true,
+      canPost: true,
+      canAdmin: true,
+      owner: anonSession.accountId,
+    });
+    const childPerms = await authDataSource.dispatch({
+      type: 'GetPermissions',
+      auth: anonSession,
+      domain: 'test',
+      name: postResult.name + '/foo',
+    });
+    expect(childPerms).toEqual({
+      canRead: true,
+      canWrite: true,
+      canPost: true,
+      canAdmin: true,
+      owner: anonSession.accountId,
+    });
+  });
   test('account write permission', async () => {
     const {
       fooObj,
@@ -241,7 +387,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -262,7 +408,7 @@ describe('Cloud auth Permissions', () => {
         type: 'GetRef',
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
     await expect(
@@ -271,7 +417,7 @@ describe('Cloud auth Permissions', () => {
         domain: 'test',
         name: 'something',
         id: barObj.id,
-      })
+      }),
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -311,7 +457,7 @@ describe('Cloud auth Permissions', () => {
         name: 'something',
         defaultRule: {},
         accountRules: {},
-      })
+      }),
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -333,7 +479,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession2,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -379,7 +525,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -425,7 +571,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: 'something/_auth',
-      })
+      }),
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -478,7 +624,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: '_auth',
-      })
+      }),
     ).rejects.toThrow();
 
     result = await authDataSource.dispatch({

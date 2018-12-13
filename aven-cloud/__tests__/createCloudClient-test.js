@@ -83,16 +83,14 @@ describe('client ref behavior', () => {
     await ref.put({
       hello: 'world',
     });
-    const postedRef = await ref.post();
     refsList = await m.dispatch({
       type: 'GetRefValue',
       domain: 'd',
       name: 'foo/_refs',
     });
     expect(refsList.value.length).toEqual(0);
-    await postedRef.put({
-      good: 'news, everybody!',
-    });
+    const postedRef = await ref.post();
+
     expect(postedRef.name.match(/^foo\/(.+)$/)).not.toBeNull();
     refsList = await m.dispatch({
       type: 'GetRefValue',

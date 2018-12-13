@@ -11,11 +11,14 @@ const observeStatic = val =>
     observer.next(val);
   });
 
+const POSTING_REF_NAME = Symbol('POSTING_REF_NAME');
+
 export default function createCloudRef({
   dataSource,
   name,
   domain,
   onRef,
+  parent,
   ...opts
 }) {
   const objectCache = opts.objectCache || {};
@@ -77,7 +80,7 @@ export default function createCloudRef({
     }
   }
   const observe = Observable.create(observer => {
-    let upstreamSubscription = () => {};
+    let upstreamSubscription = null;
     dataSource.observeRef(domain, name).then(upstreamObs => {
       setState({ isConnected: true });
       upstreamSubscription = upstreamObs.subscribe({
@@ -94,7 +97,7 @@ export default function createCloudRef({
 
     return () => {
       setState({ isConnected: false });
-      upstreamSubscription.unsubscribe();
+      upstreamSubscription && upstreamSubscription.unsubscribe();
     };
   })
     .multicast(() => new BehaviorSubject(refState.value))
@@ -180,7 +183,7 @@ export default function createCloudRef({
     const state = getState();
     if (state.puttingFromObjectId) {
       throw new Error(
-        `Cannot putObject of "${name}" while another put is in progress!`
+        `Cannot putObject of "${name}" while another put is in progress!`,
       );
     }
     const lastId = state.id;
@@ -229,7 +232,7 @@ export default function createCloudRef({
     }
     if (typeof refVal !== 'string') {
       throw new Error(
-        `Cannot look up object ID in ${name} on ${lookup.join()}`
+        `Cannot look up object ID in ${name} on ${lookup.join()}`,
       );
     }
     const connectedObj = _getObjectWithId(refVal);

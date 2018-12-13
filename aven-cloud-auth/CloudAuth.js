@@ -88,7 +88,7 @@ export default function CloudAuth({ dataSource, methods }) {
     const savedSession = await getObj(
       dataSource,
       domain,
-      `auth/account/${accountId}/session/${sessionId}`
+      `auth/account/${accountId}/session/${sessionId}`,
     );
 
     if (!savedSession || savedSession.token !== token) {
@@ -117,18 +117,18 @@ export default function CloudAuth({ dataSource, methods }) {
         const methodState = await getObj(
           dataSource,
           domain,
-          methodStateRefName
+          methodStateRefName,
         );
 
         const requestedVerification = await methodToValidate.requestVerification(
-          { verificationInfo, methodState }
+          { verificationInfo, methodState },
         );
 
         await writeObj(
           dataSource,
           domain,
           methodStateRefName,
-          requestedVerification
+          requestedVerification,
         );
         return {
           verificationChallenge: requestedVerification.verificationChallenge,
@@ -272,7 +272,7 @@ export default function CloudAuth({ dataSource, methods }) {
       dataSource,
       domain,
       `auth/account/${verification.accountId}/session/${sessionId}`,
-      session
+      session,
     );
     return {
       session,
@@ -300,7 +300,7 @@ export default function CloudAuth({ dataSource, methods }) {
       dataSource,
       domain,
       `auth/account/${accountId}/session/${sessionId}`,
-      session
+      session,
     );
 
     return { session };
@@ -330,16 +330,37 @@ export default function CloudAuth({ dataSource, methods }) {
   };
   const PermissionNames = ['canRead', 'canWrite', 'canPost', 'canAdmin'];
 
+  function pathApartName(name) {
+    if (!name) {
+      return [];
+    }
+    const parts = name.split('/');
+    return parts.map((p, index) => {
+      return parts.slice(0, index + 1).join('/');
+    });
+  }
+
+  function getAuthObjName(name) {
+    const authObjName = `${name}/_auth`;
+    return authObjName;
+  }
+
   async function GetPermissions({ auth, name, domain }) {
     const validatedAuth = await VerifyAuth({ auth, domain });
 
-    if (validatedAuth.method === 'root' && validatedAuth.accountId === 'root') {
-      return Permissions.admin;
-    }
+    const isRootAccount =
+      validatedAuth.method === 'root' && validatedAuth.accountId === 'root';
 
-    const authObjName = `${name}/_auth`;
+    const permissionObjects = await Promise.all(
+      pathApartName(name)
+        .map(getAuthObjName)
+        .map(async authObjName => {
+          return await getObj(dataSource, domain, authObjName);
+        }),
+    );
 
-    const permissions = await getObj(dataSource, domain, authObjName);
+    let owner = null;
+    let userDoesOwn = false;
 
     const interpretedRule = {};
 
@@ -351,17 +372,27 @@ export default function CloudAuth({ dataSource, methods }) {
         }
       });
     }
+    permissionObjects.forEach(permissions => {
+      if (!permissions) return;
+      if (permissions.owner) {
+        owner = permissions.owner;
+        if (permissions.owner === auth.accountId) {
+          userDoesOwn = true;
+        }
+      }
+      permissions.defaultRule && applyRule(permissions.defaultRule);
 
-    permissions &&
-      permissions.defaultRule &&
-      applyRule(permissions.defaultRule);
-
-    permissions &&
       permissions.accountRules &&
-      permissions.accountRules[validatedAuth.accountId] &&
-      applyRule(permissions.accountRules[validatedAuth.accountId]);
+        permissions.accountRules[validatedAuth.accountId] &&
+        applyRule(permissions.accountRules[validatedAuth.accountId]);
+    });
 
-    return {
+    if (isRootAccount || userDoesOwn) {
+      return { ...Permissions.admin, owner };
+    }
+
+    const finalPermissions = {
+      owner,
       canRead:
         interpretedRule.canRead ||
         interpretedRule.canWrite ||
@@ -371,6 +402,13 @@ export default function CloudAuth({ dataSource, methods }) {
       canPost: interpretedRule.canPost || interpretedRule.canAdmin || false,
       canAdmin: interpretedRule.canAdmin || false,
     };
+
+    if (finalPermissions.canRead || finalPermissions.canPost) {
+      return finalPermissions;
+    } else {
+      // avoid sending the 'owner' if the user is not even allowed to read or post
+      return Permissions.none;
+    }
   }
 
   async function DestroySession({ auth, domain }) {
@@ -447,6 +485,7 @@ export default function CloudAuth({ dataSource, methods }) {
     'ListRefs',
     'ListRefObjects',
   ];
+  const postActions = ['PostRef'];
   const writeActions = ['PutObject', 'PutRef'];
   const adminActions = ['DestroyRef'];
 
@@ -474,15 +513,25 @@ export default function CloudAuth({ dataSource, methods }) {
         throw new Error(
           `Insufficient permissions for "${actionType}" on ${
             action.name
-          }. Requires "${permissionLevel}"`
+          }. Requires "${permissionLevel}"`,
         );
       }
-      return await dispatch(action);
+      const result = await dispatch(action);
+      if (action.type === 'PostRef' && result) {
+        const authObjName = `${result.name}/_auth`;
+        await writeObj(dataSource, action.domain, authObjName, {
+          owner: action.auth.accountId,
+        });
+      }
+      return result;
     };
   }
 
   readActions.forEach(aName => {
     guardedActions[aName] = guardAction(dataSource.dispatch, aName, 'canRead');
+  });
+  postActions.forEach(aName => {
+    guardedActions[aName] = guardAction(dataSource.dispatch, aName, 'canPost');
   });
   writeActions.forEach(aName => {
     guardedActions[aName] = guardAction(dataSource.dispatch, aName, 'canWrite');
@@ -496,12 +545,12 @@ export default function CloudAuth({ dataSource, methods }) {
     PutPermissionRules: guardAction(
       PutPermissionRules,
       'PutPermissionRules',
-      'canAdmin'
+      'canAdmin',
     ),
     GetPermissionRules: guardAction(
       GetPermissionRules,
       'GetPermissionRules',
-      'canAdmin'
+      'canAdmin',
     ),
     CreateSession,
     CreateAnonymousSession,

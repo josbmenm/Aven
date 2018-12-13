@@ -56,7 +56,7 @@ export default function createNativeNetworkSource(opts) {
     domainRefObserver.observable = Observable.create(observer => {
       if (domainRefObserver.onNext) {
         throw new Error(
-          'Something has gone terribly wrong. There is somehow another observable already subscribed to this domain ref.'
+          'Something has gone terribly wrong. There is somehow another observable already subscribed to this domain ref.',
         );
       }
       domainRefObserver.onNext = val => observer.next(val);

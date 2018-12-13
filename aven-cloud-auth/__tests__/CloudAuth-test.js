@@ -51,8 +51,9 @@ describe('Cloud auth sessions', () => {
     });
 
     expect(noAuthRootPermissions.canRead).toEqual(false);
-    expect(noAuthRootPermissions.canWrite).toEqual(false);
     expect(noAuthRootPermissions.canPost).toEqual(false);
+    expect(noAuthRootPermissions.canWrite).toEqual(false);
+    expect(noAuthRootPermissions.canAdmin).toEqual(false);
   });
 
   test('root authentication gets full permissions of domain', async () => {
@@ -84,8 +85,9 @@ describe('Cloud auth sessions', () => {
     });
 
     expect(rootPermissions.canRead).toEqual(true);
-    expect(rootPermissions.canWrite).toEqual(true);
     expect(rootPermissions.canPost).toEqual(true);
+    expect(rootPermissions.canWrite).toEqual(true);
+    expect(rootPermissions.canAdmin).toEqual(true);
   });
 
   test('log out via destroy session', async () => {
@@ -123,8 +125,9 @@ describe('Cloud auth sessions', () => {
     });
 
     expect(rootPermissionsAfterLogout.canRead).toEqual(false);
-    expect(rootPermissionsAfterLogout.canWrite).toEqual(false);
     expect(rootPermissionsAfterLogout.canPost).toEqual(false);
+    expect(rootPermissionsAfterLogout.canWrite).toEqual(false);
+    expect(rootPermissionsAfterLogout.canAdmin).toEqual(false);
   });
 
   test('gets anon authentication', async () => {

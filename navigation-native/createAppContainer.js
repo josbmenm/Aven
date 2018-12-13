@@ -30,10 +30,10 @@ function validateProps(props) {
     throw new Error(
       'This navigator has both navigation and container props, so it is ' +
         `unclear if it should own its own state. Remove props: "${keys.join(
-          ', '
+          ', ',
         )}" ` +
         'if the navigator should get its state from the navigation prop. If the ' +
-        'navigator should maintain its own state, do not pass a navigation prop.'
+        'navigator should maintain its own state, do not pass a navigation prop.',
     );
   }
 }
@@ -126,10 +126,10 @@ export default function createNavigationContainer(Component) {
         throw new Error(
           'This navigator has both navigation and container props, so it is ' +
             `unclear if it should own its own state. Remove props: "${keys.join(
-              ', '
+              ', ',
             )}" ` +
             'if the navigator should get its state from the navigation prop. If the ' +
-            'navigator should maintain its own state, do not pass a navigation prop.'
+            'navigator should maintain its own state, do not pass a navigation prop.',
         );
       }
     }
@@ -196,8 +196,8 @@ export default function createNavigationContainer(Component) {
           if (Platform.OS === 'ios') {
             console.warn(
               `You should only render one navigator explicitly in your app, and other navigators should be rendered by including them in that navigator. Full details at: ${docsUrl(
-                'common-mistakes.html#explicitly-rendering-more-than-one-navigator'
-              )}`
+                'common-mistakes.html#explicitly-rendering-more-than-one-navigator',
+              )}`,
             );
           }
         }
@@ -242,18 +242,18 @@ export default function createNavigationContainer(Component) {
         const { path, params } = parsedUrl;
         const urlAction = Component.router.getActionForPathAndParams(
           path,
-          params
+          params,
         );
         if (urlAction) {
           !!process.env.REACT_NAV_LOGGING &&
             console.log(
               'Applying Navigation Action for Initial URL:',
-              parsedUrl
+              parsedUrl,
             );
           action = urlAction;
           startupState = Component.router.getStateForAction(
             urlAction,
-            startupState
+            startupState,
           );
         }
       }
@@ -265,7 +265,7 @@ export default function createNavigationContainer(Component) {
             action,
             state: this.state.nav,
             lastState: null,
-          })
+          }),
         );
 
       if (startupState === this.state.nav) {
@@ -281,10 +281,12 @@ export default function createNavigationContainer(Component) {
     }
 
     componentDidCatch(e) {
+      console.error('hi there');
+      return;
       if (_reactNavigationIsHydratingState) {
         _reactNavigationIsHydratingState = false;
         console.warn(
-          'Uncaught exception while starting app from persisted navigation state! Trying to render again with a fresh navigation state..'
+          'Uncaught exception while starting app from persisted navigation state! Trying to render again with a fresh navigation state..',
         );
         this.dispatch(NavigationActions.init());
       } else {
@@ -323,7 +325,7 @@ export default function createNavigationContainer(Component) {
       invariant(lastNavState, 'should be set in constructor if stateful');
       const reducedState = Component.router.getStateForAction(
         action,
-        lastNavState
+        lastNavState,
       );
       const navState = reducedState === null ? lastNavState : reducedState;
 
@@ -334,7 +336,7 @@ export default function createNavigationContainer(Component) {
             action,
             state: navState,
             lastState: lastNavState,
-          })
+          }),
         );
       };
 
@@ -376,7 +378,7 @@ export default function createNavigationContainer(Component) {
             this.dispatch,
             this._actionEventSubscribers,
             this._getScreenProps,
-            () => this._navigation
+            () => this._navigation,
           );
         }
         navigation = this._navigation;
