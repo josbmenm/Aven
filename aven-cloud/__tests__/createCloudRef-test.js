@@ -139,6 +139,8 @@ describe('basic ref DataSource interaction', () => {
     expect(result.value.foo).toEqual(47);
   });
 });
+const waitForSync_TODO_REMOVE_THIS = () =>
+  new Promise(res => setTimeout(res, 1));
 
 describe('observing refs', () => {
   test('observe ref works', async () => {
@@ -250,6 +252,7 @@ describe('observing refs', () => {
       name: 'foo',
       id: obj2.id,
     });
+    await waitForSync_TODO_REMOVE_THIS();
     expect(lastObserved.foo).toEqual('baz');
 
     subscription.unsubscribe();
@@ -259,6 +262,8 @@ describe('observing refs', () => {
       name: 'foo',
       id: obj3.id,
     });
+    await waitForSync_TODO_REMOVE_THIS();
+
     expect(lastObserved.foo).toEqual('baz');
   });
 

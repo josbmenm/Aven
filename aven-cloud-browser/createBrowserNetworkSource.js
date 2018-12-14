@@ -57,11 +57,10 @@ export default function createBrowserNetworkSource(opts) {
     domainRefObserver.observable = Observable.create(observer => {
       if (domainRefObserver.onNext) {
         throw new Error(
-          'Something has gone terribly wrong. There is somehow another observable already subscribed to this domain ref.'
+          'Something has gone terribly wrong. There is somehow another observable already subscribed to this domain ref.',
         );
       }
       domainRefObserver.onNext = val => observer.next(val);
-      console.log('subscribing to upstream data!');
       socketSendIfConnected({
         type: 'SubscribeRefs',
         refs: [name],

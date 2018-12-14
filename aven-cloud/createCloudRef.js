@@ -216,8 +216,10 @@ export default function createCloudRef({
     }
   }
   const observe = Observable.create(observer => {
+    // todo, re-observe when name changes!!
     let upstreamSubscription = null;
-    dataSource.observeRef(domain, name).then(upstreamObs => {
+    const myName = getFullName();
+    dataSource.observeRef(domain, myName).then(upstreamObs => {
       setState({ isConnected: true });
       upstreamSubscription = upstreamObs.subscribe({
         next: upstreamRef => {
@@ -239,21 +241,29 @@ export default function createCloudRef({
     .multicast(() => new BehaviorSubject(refState.value))
     .refCount();
 
+  function _namedDispatch(action) {
+    return dataSource.dispatch({
+      ...action,
+      domain,
+      name: getFullName(),
+    });
+  }
   function _getObjectWithId(id) {
     if (objectCache[id]) {
       return objectCache[id];
     }
     const o = (objectCache[id] = createCloudObject({
-      dataSource,
-      domain,
+      onNamedDispatch: _namedDispatch,
       id,
-      name,
     }));
     return o;
   }
 
   function _getObjectWithValue(value) {
-    const obj = createCloudObject({ dataSource, domain, value, name });
+    const obj = createCloudObject({
+      onNamedDispatch: _namedDispatch,
+      value,
+    });
 
     if (objectCache[obj.id]) {
       return objectCache[obj.id];

@@ -940,7 +940,7 @@ function pathApartName(name) {
 function RefMetaPanes() {
   const name = useParam('refName');
   const nameParts = pathApartName(name);
-  return nameParts.map(name => <RefMetaPane name={name} />);
+  return nameParts.map(name => <RefMetaPane name={name} key={name} />);
 }
 
 function RefMetaPane({ name }) {

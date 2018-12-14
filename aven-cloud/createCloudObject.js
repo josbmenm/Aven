@@ -3,13 +3,7 @@ import SHA1 from 'crypto-js/sha1';
 
 const JSONStringify = require('json-stable-stringify');
 
-export default function createCloudObject({
-  dataSource,
-  id,
-  domain,
-  value,
-  name,
-}) {
+export default function createCloudObject({ onNamedDispatch, id, value }) {
   let objectId = false;
   if (value !== undefined) {
     const valueString = JSONStringify(value);
@@ -19,17 +13,15 @@ export default function createCloudObject({
   }
   if (id && objectId && id !== objectId) {
     throw new Error(
-      'id and value were both provided to createCloudObject, but the ID does not match the value!'
+      'id and value were both provided to createCloudObject, but the ID does not match the value!',
     );
+  }
+
+  if (!onNamedDispatch) {
+    throw new Error('onNamedDispatch be provided to createCloudObject!');
   }
   if (!objectId) {
     throw new Error('id or value must be provided to createCloudObject!');
-  }
-  if (!domain) {
-    throw new Error('domain must be provided to createCloudObject!');
-  }
-  if (!name) {
-    throw new Error('ref name must be provided to createCloudObject!');
   }
 
   const objState = new BehaviorSubject({
@@ -76,28 +68,20 @@ export default function createCloudObject({
     return getState();
   }
 
-  // const observe = new BehaviorSubject(_state);
-
-  // const _setState = newVals => {
-  //   _state = {
-  //     ..._state,
-  //     ...newVals
-  //   };
-  //   this.observe.next(_state);
-  // };
-
   const observeValue = observe
-    .map(state => state.value)
-    .filter(val => val !== undefined);
+    .map(state => {
+      return state.value;
+    })
+    .filter(val => {
+      return val !== undefined;
+    });
 
   async function fetch() {
     if (getState().value !== undefined) {
       return;
     }
-    const result = await dataSource.dispatch({
+    const result = await onNamedDispatch({
       type: 'GetObject',
-      domain,
-      name,
       id,
     });
     if (!result || result.value === undefined) {
@@ -117,10 +101,8 @@ export default function createCloudObject({
     if (getState().value === undefined) {
       throw new Error(`Cannot put empty value from object "${objectId}"!`);
     }
-    const res = await dataSource.dispatch({
+    const res = await onNamedDispatch({
       type: 'PutObject',
-      name,
-      domain,
       value: getState().value,
     });
     setState({
@@ -131,7 +113,7 @@ export default function createCloudObject({
       throw new Error(
         `Server and client objectIds do not match! Server: ${
           res.id
-        }, Client: ${objectId}`
+        }, Client: ${objectId}`,
       );
     }
     return res;
@@ -153,9 +135,7 @@ export default function createCloudObject({
   // };
   return {
     id: objectId,
-    name,
     put,
-    domain,
     getValue,
     fetch,
     fetchValue,

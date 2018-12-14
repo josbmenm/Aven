@@ -5,49 +5,31 @@ describe('object generic behavior', () => {
   test('handles creation with empty value', () => {
     const obj = createCloudObject({
       dataSource: {},
-      domain: 'foo',
-      name: 'bar',
+      onNamedDispatch: () => {},
       id: 'asdf1234',
     });
     expect(obj.id).toBe('asdf1234');
-    expect(obj.domain).toBe('foo');
   });
-  test('fails on creation without domain', () => {
+  test('fails on creation without onNamedDispatch', () => {
     expect(() =>
       createCloudObject({
-        name: 'foo',
-        dataSource: {},
         value: { foo: 42 },
-      })
-    ).toThrow();
-  });
-  test('fails on creation without name', () => {
-    expect(() =>
-      createCloudObject({
-        dataSource: {},
-        domain: 'test',
-        value: { foo: 42 },
-      })
+      }),
     ).toThrow();
   });
   test('fails on creation without value or id', () => {
     expect(() =>
       createCloudObject({
-        name: 'foo',
-        dataSource: {},
-        domain: 'test',
-      })
+        onNamedDispatch: () => {},
+      }),
     ).toThrow();
   });
   test('handles creation with value', () => {
     const obj = createCloudObject({
-      dataSource: {},
-      domain: 'foo',
-      name: 'bar',
+      onNamedDispatch: () => {},
       value: { foo: 42 },
     });
     expect(obj.id).toBe('e7e71fa8b5db791e2346856ee09cb45f867439e4');
-    expect(obj.domain).toBe('foo');
   });
 });
 
@@ -61,10 +43,9 @@ describe('basic object DataSource interaction', () => {
       value: { foo: 'bar' },
     });
     const c = createCloudObject({
-      dataSource: m,
-      domain: 'test',
+      onNamedDispatch: action =>
+        m.dispatch({ ...action, name: 'foo', domain: 'test' }),
       id,
-      name: 'foo',
     });
     expect(c.getValue()).toEqual(undefined);
     expect(c.getObject().lastFetchTime).toBe(null);
@@ -81,9 +62,8 @@ describe('basic object DataSource interaction', () => {
       value: null,
     });
     const c = createCloudObject({
-      dataSource: m,
-      domain: 'test',
-      name: 'foo',
+      onNamedDispatch: action =>
+        m.dispatch({ ...action, name: 'foo', domain: 'test' }),
       id,
     });
     expect(c.getValue()).toEqual(undefined);
@@ -96,9 +76,8 @@ describe('basic object DataSource interaction', () => {
     const m = startMemoryDataSource({ domain: 'test' });
 
     const c = createCloudObject({
-      dataSource: m,
-      domain: 'test',
-      name: 'foo',
+      onNamedDispatch: action =>
+        m.dispatch({ ...action, name: 'foo', domain: 'test' }),
       value: { foo: 42 },
     });
     expect(c.getObject().lastPutTime).toBe(null);
@@ -118,17 +97,16 @@ describe('basic object DataSource interaction', () => {
 
 describe('observing', () => {
   test('observe obj', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
-    const obj1 = await dataSource.dispatch({
+    const m = startMemoryDataSource({ domain: 'test' });
+    const obj1 = await m.dispatch({
       type: 'PutObject',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
     const c = createCloudObject({
-      dataSource,
-      domain: 'test',
-      name: 'foo',
+      onNamedDispatch: action =>
+        m.dispatch({ ...action, name: 'foo', domain: 'test' }),
       id: obj1.id,
     });
 
@@ -143,17 +121,16 @@ describe('observing', () => {
     expect(lastObserved.value.foo).toEqual('bar');
   });
   test('observe value', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
-    const obj1 = await dataSource.dispatch({
+    const m = startMemoryDataSource({ domain: 'test' });
+    const obj1 = await m.dispatch({
       type: 'PutObject',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
     const c = createCloudObject({
-      dataSource,
-      domain: 'test',
-      name: 'foo',
+      onNamedDispatch: action =>
+        m.dispatch({ ...action, name: 'foo', domain: 'test' }),
       id: obj1.id,
     });
 
