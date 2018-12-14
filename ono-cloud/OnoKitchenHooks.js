@@ -1,10 +1,8 @@
-import OnoRestaurantContext from './OnoRestaurantContext';
+import useCloud from '../aven-cloud/useCloud';
 import useRefValue from '../aven-cloud/useRefValue';
 
-import { useContext } from 'react';
-
 export function useKitchen() {
-  const restaurant = useContext(OnoRestaurantContext);
+  const restaurant = useCloud();
   const kitchenState = useRefValue(restaurant.get('KitchenState'));
   const kitchenConfig = useRefValue(restaurant.get('KitchenConfig'));
   async function kitchenCommand(subsystemName, pulse, values) {

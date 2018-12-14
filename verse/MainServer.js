@@ -6,7 +6,6 @@ import createCloudClient from '../aven-cloud/createCloudClient';
 import createFSClient from '../aven-cloud-server/createFSClient';
 import createOnoCloudClient from '../ono-cloud/createOnoCloudClient';
 import CloudContext from '../aven-cloud/CloudContext';
-import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import scrapeAirTable from '../skynet/scrapeAirTable';
 import { getMobileAuthToken } from '../skynet/Square';
@@ -26,7 +25,7 @@ const getEnv = c => process.env[c];
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
-console.log('========= WOAH code running!');
+
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨');
 
@@ -356,7 +355,6 @@ const runServer = async () => {
   // const onoCloudClient = createOnoCloudClient(avenClient);
 
   context.set(CloudContext, kitchenClient);
-  context.set(OnoRestaurantContext, kitchenClient);
   const webService = await WebServer({
     App,
     context,

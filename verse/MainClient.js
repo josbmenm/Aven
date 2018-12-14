@@ -1,7 +1,6 @@
 import App from './App';
 
 import startWebClient from '../aven-web/WebClient';
-import OnoRestaurantContext from '../ono-cloud/OnoRestaurantContext';
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createBrowserNetworkSource from '../aven-cloud-browser/createBrowserNetworkSource';
@@ -30,7 +29,6 @@ const restaurantClient = createCloudClient({
 const context = new Map();
 
 context.set(CloudContext, restaurantClient);
-context.set(OnoRestaurantContext, restaurantClient);
 
 export default function startClient() {
   startWebClient(App, context);

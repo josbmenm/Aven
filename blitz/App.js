@@ -16,6 +16,7 @@ import DebugStateScreen from './screens/DebugStateScreen';
 import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
 import OrderConfirmScreen from './screens/OrderConfirmScreen';
+import ManageOrdersScreen from './screens/ManageOrdersScreen';
 import OrderCompleteScreen from './screens/OrderCompleteScreen';
 import CollectNameScreen from './screens/CollectNameScreen';
 import CollectEmailScreen from './screens/CollectEmailScreen';
@@ -25,6 +26,7 @@ import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createNativeNetworkSource from '../aven-cloud-native/createNativeNetworkSource';
 import { createStackNavigator } from '../navigation-stack';
+import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
@@ -56,7 +58,8 @@ const App = createStackNavigator(
     MenuItem: MenuItemScreen,
     DebugState: DebugStateScreen,
     ProductHome: ProductHomeScreen,
-    // OrderConfirm: OrderConfirmScreen,
+    ManageOrders: ManageOrdersScreen,
+    OrderConfirm: OrderConfirmScreen,
     OrderComplete: OrderCompleteScreen,
     CollectName: CollectNameScreen,
     CollectEmail: CollectEmailScreen,
@@ -101,7 +104,9 @@ restaurant
 
 const FullApp = () => (
   <CloudContext.Provider value={restaurant}>
-    <AppContainer persistenceKey="2344" />
+    <OrderContextProvider>
+      <AppContainer persistenceKey="242321123244" />
+    </OrderContextProvider>
   </CloudContext.Provider>
 );
 

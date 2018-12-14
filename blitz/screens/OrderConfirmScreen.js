@@ -1,10 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import GenericPage from '../components/GenericPage';
 import Hero from '../../components/Hero';
 import Button from '../../components/Button';
 import { Text, View } from 'react-native';
-import { withPendingOrder } from '../../ono-cloud/OnoKitchen';
+import {
+  withMenu,
+  useOrder,
+  useOrderSummary,
+} from '../../ono-cloud/OnoKitchen';
+import useObservable from '../../aven-cloud/useObservable';
 import { paymentContainer } from '../Payments';
+import { useNavigation } from '../../navigation-hooks/Hooks';
 
 const currency = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -35,8 +41,19 @@ function OrderItemRow({ item }) {
   );
 }
 
-function OverviewWithOrder({ orderWithMenu }) {
-  console.log('ok fml', orderWithMenu);
+function OverviewWithOrder({ foodMenu, blendMenu }) {
+  const { navigate } = useNavigation();
+  const summary = useOrderSummary();
+  // useEffect(
+  //   () => {
+  //     if (!summary) {
+  //       navigate('KioskHome');
+  //     }
+  //   },
+  //   [summary],
+  // );
+  console.log('ok fml', summary);
+  return null;
   if (!orderWithMenu || !orderWithMenu.items) {
     return null;
   }
@@ -53,7 +70,7 @@ function OverviewWithOrder({ orderWithMenu }) {
   );
 }
 
-const Overview = withPendingOrder(OverviewWithOrder);
+const Overview = withMenu(OverviewWithOrder);
 
 function OrderConfirmWithPayment({
   paymentRequest,

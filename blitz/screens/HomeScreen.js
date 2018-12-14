@@ -48,10 +48,10 @@ export default class HomeScreen extends Component {
           />
           <LinkRow
             onPress={() => {
-              navigation.navigate({ routeName: 'DebugState' });
+              navigation.navigate({ routeName: 'ManageOrders' });
             }}
-            icon="🚛"
-            title="Restaurant State"
+            icon="🍽"
+            title="Order Management"
           />
           <LinkRow
             onPress={() => {

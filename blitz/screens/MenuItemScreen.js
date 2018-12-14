@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, Text, Image, TouchableHighlight } from 'react-native';
 import ActionPage from '../components/ActionPage';
 import Button from '../../components/Button';
-import { withMenuItem, withOrder } from '../../ono-cloud/OnoKitchen';
+import { withMenuItem, useOrderItem } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { pageBackgroundColor } from '../../components/Styles';
 import { useNavigation } from '../../navigation-hooks/Hooks';
@@ -268,32 +268,13 @@ function ActiveFunctions({ menuItem, customizationState }) {
   });
 }
 
-function useOrder() {
-  let cloud = useContext(CloudContext);
-  let [order, setOrder] = useState();
-  return [order, setOrder];
-}
-
-function useOrderItem(orderItemId) {
-  let [order, setOrder] = useOrder();
-
-  const item = null;
-  function setItem(itemId, item) {
-    // setOrder()
-  }
-  return {
-    item,
-    setItem,
-    order,
-  };
-}
-
 function MenuItemScreenWithItem({ menuItem, orderItemId }) {
   let [isCustomizing, setIsCustomizing] = useState(false);
   let [customizationState, setCustomization] = useState({});
 
   let { item, order, setItem } = useOrderItem(orderItemId);
-  if (!menuItem) {
+  console.log('pre-existing order item', item);
+  if (!menuItem || !order) {
     return null;
   }
   const navigation = useNavigation();
@@ -303,7 +284,9 @@ function MenuItemScreenWithItem({ menuItem, orderItemId }) {
         {
           title: 'Add to Cart',
           onPress: () => {
-            setItem(orderItemId, {
+            setItem({
+              id: orderItemId,
+              type: 'blend',
               menuItemId: menuItem.id,
               customization: customizationState,
             });

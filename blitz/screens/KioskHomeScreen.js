@@ -11,9 +11,10 @@ import GenericPage from '../components/GenericPage';
 import Hero from '../../components/Hero';
 import { genericPageStyle } from '../../components/Styles';
 
-import { startOrder } from '../../ono-cloud/OnoKitchen';
+import { useOrder } from '../../ono-cloud/OnoKitchen';
 
 export default function KioskHomeScreen({ navigation }) {
+  const { startOrder } = useOrder();
   return (
     <TouchableWithoutFeedback
       onPress={() => {
