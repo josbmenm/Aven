@@ -281,8 +281,6 @@ export default function createNavigationContainer(Component) {
     }
 
     componentDidCatch(e) {
-      console.error('hi there');
-      return;
       if (_reactNavigationIsHydratingState) {
         _reactNavigationIsHydratingState = false;
         console.warn(
