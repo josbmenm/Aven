@@ -242,7 +242,7 @@ describe('observing refs', () => {
       },
     });
 
-    expect(lastObserved).toEqual(undefined);
+    expect(lastObserved).toEqual(null);
     await r.fetchValue();
     expect(lastObserved.foo).toEqual('bar');
 
@@ -311,7 +311,7 @@ describe('observing refs', () => {
         lastObserved = v;
       },
     });
-    expect(lastObserved).toEqual(undefined);
+    expect(lastObserved).toEqual(null);
     await r.fetchConnectedValue(['the', 'value', 0]);
     expect(lastObserved.foo).toEqual('bar');
     await dataSource.dispatch({
@@ -369,7 +369,7 @@ describe('observing refs', () => {
       name: 'foo',
       id: obj1.id,
     });
-    expect(lastObserved).toEqual(undefined);
+    expect(lastObserved).toEqual(null);
     await r.fetchConnectedValue(['the', 'value', 0]);
     expect(lastObserved.foo).toEqual('bar');
     // await dataSource.dispatch({

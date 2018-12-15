@@ -51,7 +51,7 @@ function getRootTerm(name) {
 function _renderRef({ id }) {
   // this strips out hidden features of the ref and snapshots the referenced values
   return {
-    id: id || null,
+    id,
   };
 }
 
@@ -104,9 +104,7 @@ const startMemoryDataSource = (opts = {}) => {
       );
     }
     const r = _getRef(name);
-    if (r.id === id) {
-      return; // avoid calling behavior.next if the ID hasn't changed
-    }
+    const prevId = r.id;
     r.objects[id] = true;
     r.id = id;
     if (r.behavior) {
@@ -132,7 +130,6 @@ const startMemoryDataSource = (opts = {}) => {
     }
     const postedName = name ? pathJoin(name, uuid()) : uuid();
     if (!id && value !== undefined) {
-      await PutRef({ domain, name: postedName, id: null });
       const obj = await PutObject({ domain, name: postedName, value });
       await PutRef({ domain, name: postedName, id: obj.id });
       return { name: postedName, id: obj.id };

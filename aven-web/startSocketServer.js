@@ -49,6 +49,9 @@ const prepareSocketServer = (wss, dataSource) => {
                 .filter(z => !!z)
                 .subscribe({
                   next: v => {
+                    if (v.id === undefined) {
+                      return;
+                    }
                     sendMessage({
                       type: 'RefUpdate',
                       name,
@@ -79,7 +82,7 @@ const prepareSocketServer = (wss, dataSource) => {
   return {
     close: () => {
       Object.keys(socketClosers).forEach(
-        clientId => socketClosers[clientId] && socketClosers[clientId]()
+        clientId => socketClosers[clientId] && socketClosers[clientId](),
       );
     },
   };

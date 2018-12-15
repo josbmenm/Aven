@@ -4,7 +4,7 @@ import uuid from 'uuid/v1';
 const pathJoin = require('path').join;
 
 const observeNull = Observable.create(observer => {
-  observer.next(undefined);
+  observer.next(null);
 });
 const observeStatic = val =>
   Observable.create(observer => {
@@ -119,6 +119,11 @@ export default function createCloudRef({
       return null;
     }
     const parent = onGetParentName();
+    const puttingFromId = r.id;
+    setState({
+      id: obj.id,
+      puttingFromId,
+    });
     if (!postingInProgress) {
       let postData = { id: null };
       if (obj && obj.getValue()) {
@@ -136,6 +141,15 @@ export default function createCloudRef({
     let result = null;
     try {
       result = await postingInProgress;
+      setState({
+        puttingFromId: null,
+        lastPutTime: Date.now(),
+      });
+    } catch (e) {
+      setState({
+        puttingFromId: null,
+        id: puttingFromId,
+      });
     } finally {
       postingInProgress = null;
     }
@@ -154,6 +168,7 @@ export default function createCloudRef({
   }
 
   const setState = newState => {
+    console.log('Ref setState of ' + getFullName(), newState);
     refState.next({
       ...refState.value,
       ...newState,
@@ -223,6 +238,7 @@ export default function createCloudRef({
       setState({ isConnected: true });
       upstreamSubscription = upstreamObs.subscribe({
         next: upstreamRef => {
+          console.log('has upstream!!!' + getFullName(), upstreamRef);
           setState({
             id: upstreamRef.id,
             lastSyncTime: Date.now(),
@@ -351,14 +367,17 @@ export default function createCloudRef({
   }
 
   const observeValue = observe
-    .map(r => {
-      if (r.value !== undefined) {
+    .map(rr => {
+      if (rr.value !== undefined) {
+        console.log('------------RING DIGN DING DING');
         return observeStatic(r.value);
       }
-      if (!r.id) {
+      if (!rr.id) {
+        console.log('ref observing null', getFullName());
         return observeNull;
       }
-      const obj = _getObjectWithId(r.id);
+      const obj = _getObjectWithId(rr.id);
+      console.log('ref observe object value', getFullName(), rr.id);
       return obj.observeValue;
     })
     .switch();
@@ -487,15 +506,20 @@ export default function createCloudRef({
       ...r,
       fetchValue: async () => {
         await r.fetchValue();
-        const expanded = expandFn(r.getValue(), r);
-        const cloudValues = collectCloudValues(expanded);
+        const expandSpec = expandFn(r.getValue(), r);
+        const cloudValues = collectCloudValues(expandSpec);
         await Promise.all(cloudValues.map(v => v.fetchValue()));
       },
-      observeValue: r.observeValue.switchMap(o => {
-        // const cloudValues = collectCloudValues(o);
-        throw new Error('not ready yet! :-(');
-        // return {};
-      }),
+      observeValue: r.observeValue
+        .distinctUntilChanged()
+        .mergeMap(async o => {
+          const expandSpec = expandFn(o, r);
+          const cloudValues = collectCloudValues(expandSpec);
+          await Promise.all(cloudValues.map(v => v.fetchValue()));
+          const expanded = doExpansion(expandSpec);
+          return expanded;
+        })
+        .distinctUntilChanged(),
       getValue: () => {
         const o = r.getValue();
         const expandSpec = expandFn(o, r);
@@ -510,7 +534,12 @@ export default function createCloudRef({
     return {
       ...r,
       map: innerMapFn => r.map(v => innerMapFn(mapFn(v))),
-      observeValue: r.observeValue.map(mapFn),
+      observeValue: r.observeValue
+        .distinctUntilChanged()
+        .map(data => {
+          return mapFn(data);
+        })
+        .distinctUntilChanged(),
       getValue: () => {
         return mapFn(r.getValue());
       },

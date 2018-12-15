@@ -30,18 +30,35 @@ const getPackageDir = async (srcDir, packageName, globePkg) => {
   return { packageDir, extendingSrcDir };
 };
 
-const syncDirectories = async (from, to, exclude = []) => {
+async function syncDirectoriesMac(from, to, exclude = []) {
+  const args = ['-a'];
+  exclude.forEach(ex => {
+    args.push('--exclude');
+    args.push(ex + '*');
+  });
+  args.push(from + '/');
+  args.push(to + '/');
+  await spawn('rsync', args);
+}
+
+async function syncDirectories(from, to, exclude = []) {
+  if (process.platform === 'darwin') {
+    return await syncDirectoriesMac(from, to, exclude);
+  }
   await fs.emptyDir(to);
   await fs.copy(from, to, {
     filter: file =>
-      exclude.reduce((prev, next) => prev && !next.exec(file), true),
+      exclude.reduce(
+        (prev, next) => prev && !new RegExp(next).exec(file),
+        true,
+      ),
   });
-};
+}
 
 const syncPackage = async (packageName, srcDir, destLocation, globePkg) => {
   const { packageDir } = await getPackageDir(srcDir, packageName, globePkg);
   const destPackage = pathJoin(destLocation, packageName);
-  await syncDirectories(packageDir, destPackage, [/node_modules/, /src-sync/]);
+  await syncDirectories(packageDir, destPackage, ['node_modules', 'src-sync']);
 };
 
 const getAllSrcDependencies = async (srcDir, packageName, globePkg) => {

@@ -19,6 +19,7 @@
     "eslint-config-satya164": "^1.0.1",
     "eslint-plugin-react-native-globals": "^0.1.0",
     "jest": "^23.6.0",
+    "jest-cli": "^23.6.0",
     "prettier": "^1.15.2",
     "react-native": "^0.57.7",
     "react-test-renderer": "^16.6.3",
