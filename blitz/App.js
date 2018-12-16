@@ -9,7 +9,6 @@ import HostHomeScreen from './screens/HostHomeScreen';
 import KitchenEngScreen from './screens/KitchenEngScreen';
 import KitchenEngSubScreen from './screens/KitchenEngSubScreen';
 import KioskSettingsScreen from './screens/KioskSettingsScreen';
-import { setHostConfig } from './components/AirtableImage';
 import KioskHomeScreen from './screens/KioskHomeScreen';
 import MenuItemScreen from './screens/MenuItemScreen';
 import DebugStateScreen from './screens/DebugStateScreen';
@@ -24,24 +23,27 @@ import AppUpsellScreen from './screens/AppUpsellScreen';
 
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
-import createNativeNetworkSource from '../aven-cloud-native/createNativeNetworkSource';
 import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
+import dataSource from './CloudDataSource';
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
-setInterval(() => {
-  codePush
-    .sync({
-      updateDialog: false,
-      installMode: codePush.InstallMode.IMMEDIATE,
-    })
-    .then(() => {})
-    .catch(e => {
-      console.error('Code update check failed');
-      console.error(e);
-    });
-}, 10000);
+const isProduction = process.env.NODE_ENV !== 'development';
+
+isProduction &&
+  setInterval(() => {
+    codePush
+      .sync({
+        updateDialog: false,
+        installMode: codePush.InstallMode.IMMEDIATE,
+      })
+      .then(() => {})
+      .catch(e => {
+        console.error('Code update check failed');
+        console.error(e);
+      });
+  }, 10000);
 
 StatusBar.setHidden(true, 'none');
 
@@ -72,23 +74,6 @@ const App = createStackNavigator(
 );
 
 const AppContainer = createAppContainer(App);
-
-const IS_DEV = process.env.NODE_ENV !== 'production';
-
-const RESTAURANT_DEV = {
-  useSSL: false,
-  authority: 'localhost:8830',
-};
-const RESTAURANT_PROD = {
-  useSSL: false,
-  authority: '192.168.1.200:8830',
-};
-
-const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
-
-setHostConfig(HOST_CONFIG);
-
-const dataSource = createNativeNetworkSource(HOST_CONFIG);
 
 const restaurant = createCloudClient({
   dataSource,

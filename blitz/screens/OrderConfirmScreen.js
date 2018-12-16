@@ -11,6 +11,7 @@ import {
 import useObservable from '../../aven-cloud/useObservable';
 import { paymentContainer } from '../Payments';
 import { useNavigation } from '../../navigation-hooks/Hooks';
+import useEmptyOrderEscape from '../useEmptyOrderEscape';
 
 const currency = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -41,9 +42,11 @@ function OrderItemRow({ item }) {
   );
 }
 
-function OverviewWithOrder({ foodMenu, blendMenu }) {
+function Overview({ foodMenu, blendMenu }) {
   const { navigate } = useNavigation();
   const summary = useOrderSummary();
+  useEmptyOrderEscape();
+
   // useEffect(
   //   () => {
   //     if (!summary) {
@@ -53,24 +56,21 @@ function OverviewWithOrder({ foodMenu, blendMenu }) {
   //   [summary],
   // );
   console.log('ok fml', summary);
-  return null;
-  if (!orderWithMenu || !orderWithMenu.items) {
+  if (!summary) {
     return null;
   }
   return (
     <View style={{ backgroundColor: 'white', padding: 30 }}>
-      {orderWithMenu.items.map(item => (
+      {summary.items.map(item => (
         <OrderItemRow item={item} />
       ))}
       <View style={{ height: 80 }} />
-      <RecieptRow label="SubTotal" amount={orderWithMenu.subTotal} />
-      <RecieptRow label="Tax" amount={orderWithMenu.tax} />
-      <RecieptRow label="Total" amount={orderWithMenu.total} emphasize />
+      <RecieptRow label="SubTotal" amount={summary.subTotal} />
+      <RecieptRow label="Tax" amount={summary.tax} />
+      <RecieptRow label="Total" amount={summary.total} emphasize />
     </View>
   );
 }
-
-const Overview = withMenu(OverviewWithOrder);
 
 function OrderConfirmWithPayment({
   paymentRequest,
@@ -80,19 +80,22 @@ function OrderConfirmWithPayment({
   paymentActivityLog,
   navigation,
 }) {
+  const { submitOrder } = useOrder();
   return (
     <GenericPage>
       <Hero title="Review Order" />
       <Overview />
       <Button
         title="Pay Now"
-        onPress={() => {
+        onPress={async () => {
+          await submitOrder();
           paymentRequest(100, 'Ono Blends');
         }}
       />
       <Button
         title="Skip Payment (TEST ONLY)"
-        onPress={() => {
+        onPress={async () => {
+          await submitOrder();
           navigation.navigate('CollectName');
         }}
       />

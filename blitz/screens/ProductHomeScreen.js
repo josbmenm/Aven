@@ -8,7 +8,8 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import GenericPage from '../components/GenericPage';
-import { withMenu } from '../../ono-cloud/OnoKitchen';
+import Button from '../../components/Button';
+import { withMenu, useOrderSummary } from '../../ono-cloud/OnoKitchen';
 
 import { withNavigation } from '../../navigation-core';
 import {
@@ -19,6 +20,7 @@ import AirtableImage from '../components/AirtableImage';
 import uuid from 'uuid/v1';
 
 import { useNavigation } from '../../navigation-hooks/Hooks';
+import useEmptyOrderEscape from '../useEmptyOrderEscape';
 
 const MENU_ITEM_WIDTH = 350;
 
@@ -119,9 +121,61 @@ function FoodMenu({ menu }) {
   );
 }
 
+function OrderItem({ item }) {
+  return <Text>{item.id}</Text>;
+}
+
+function OrderPanel() {
+  const { navigate } = useNavigation();
+  const summary = useOrderSummary();
+  useEmptyOrderEscape();
+
+  if (!summary) {
+    return null;
+  }
+  console.log('ORDER SUMMARY');
+  return (
+    <View style={{}}>
+      {summary.items.map(item => (
+        <OrderItem item={item} key={item.id} />
+      ))}
+      <Button
+        title="Checkout"
+        onPress={() => {
+          navigate('OrderConfirm');
+        }}
+      />
+      <Button
+        title="Cancel Order"
+        onPress={() => {
+          navigate('KioskHome');
+        }}
+      />
+    </View>
+  );
+}
+
+function OrderPanelOverlay() {
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: 300,
+        borderLeftWidth: StyleSheet.hairlineWidth,
+        borderLeftColor: 'blue',
+      }}
+    >
+      <OrderPanel />
+    </View>
+  );
+}
+
 const Home = ({ blendMenu, foodMenu, navigation }) => {
   return (
-    <GenericPage>
+    <GenericPage afterScrollView={<OrderPanelOverlay />}>
       <BlendsMenu menu={blendMenu} />
       <FoodMenu menu={foodMenu} />
     </GenericPage>

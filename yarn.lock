@@ -4,7 +4,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#e2fe4c4781c016cab53c1e5feab67fa350d00522"
+  resolved "https://github.com/AvenCloud/Aven.git#0b9bc11b7cab28cbc2e94f3c0d23b18951479324"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     "@expo/vector-icons" "^8.0.0"
@@ -284,9 +284,9 @@
     "@sendgrid/helpers" "^6.3.0"
 
 "@types/bluebird@*":
-  version "3.5.24"
-  resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.24.tgz#11f76812531c14f793b8ecbf1de96f672905de8a"
-  integrity sha512-YeQoDpq4Lm8ppSBqAnAeF/xy1cYp/dMTif2JFcvmAbETMRlvKHT2iLcWu+WyYiJO3b3Ivokwo7EQca/xfLVJmg==
+  version "3.5.25"
+  resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.25.tgz#59188b871208092e37767e4b3d80c3b3eaae43bd"
+  integrity sha512-yfhIBix+AIFTmYGtkC0Bi+XGjSkOINykqKvO/Wqdz/DuXlAKK7HmhLAXdPIGsV4xzKcL3ev/zYc4yLNo+OvGaw==
 
 "@types/body-parser@*":
   version "1.17.0"
@@ -364,9 +364,9 @@
   integrity sha512-A2TAGbTFdBw9azHbpVd+/FkdW2T6msN1uct1O9bH3vTerEHKZhTXJUQXy+hNq1B0RagfU8U+KBdqiZpxjhOUQA==
 
 "@types/node@*":
-  version "10.12.12"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.12.tgz#e15a9d034d9210f00320ef718a50c4a799417c47"
-  integrity sha512-Pr+6JRiKkfsFvmU/LK68oBRCQeEg36TyAbPhc2xpez24OOZZCuoIhWGTd39VZy6nGafSbxzGouFPTFD/rR1A0A==
+  version "10.12.15"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.15.tgz#20e85651b62fd86656e57c9c9bc771ab1570bc59"
+  integrity sha512-9kROxduaN98QghwwHmxXO2Xz3MaWf+I1sLVAA6KJDF5xix+IyXVhds0MAfdNwtcpSrzhaTsNB0/jnL86fgUhqA==
 
 "@types/range-parser@*":
   version "1.2.3"
@@ -710,11 +710,6 @@ babel-plugin-istanbul@^4.1.6:
   version "4.1.6"
   resolved "https://registry.yarnpkg.com/babel-plugin-istanbul/-/babel-plugin-istanbul-4.1.6.tgz#36c59b2192efce81c5b378321b74175add1c9a45"
   integrity sha512-PWP9FQ1AhZhS01T/4qLSKoHGY/xvkZdVBGlKM/HuxxS3+sC66HhTNR7+MpbO/so/cz/wY94MeSWJuP1hXIPfwQ==
-  dependencies:
-    babel-plugin-syntax-object-rest-spread "^6.13.0"
-    find-up "^2.1.0"
-    istanbul-lib-instrument "^1.10.1"
-    test-exclude "^4.2.1"
 
 babel-plugin-jest-hoist@^23.2.0:
   version "23.2.0"
@@ -3413,8 +3408,6 @@ map-visit@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/map-visit/-/map-visit-1.0.0.tgz#ecdca8f13144e660f1b5bd41f12f3479d98dfb8f"
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
-  dependencies:
-    object-visit "^1.0.0"
 
 math-random@^1.0.1:
   version "1.0.1"
@@ -4336,9 +4329,9 @@ react-lifecycles-compat@^3.0.4:
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
 react-native-gesture-handler@^1.0.0:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.10.tgz#160e55e4886471931b7f7d52e22d94007540ab83"
-  integrity sha512-GNVZ+rbwfi147qOxIvWyfHcTswr+CRT/bSy/Gr5Dz17/tWmomf9D6tGr1yJhyW8IhEZ307KLBWRCXLBM9Q2YQg==
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.12.tgz#99a22f90212df299245357dbd3a9a01c788f310b"
+  integrity sha512-Qp5FjRmqUFeCevSu2IYQG1Xw+YXZ9YOzqze/ZxaIvWzYAoKsRchlgHhNoxvCqElp/befrnVFIjAEQyUxcmBKJw==
   dependencies:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
@@ -4935,9 +4928,9 @@ sqlite3@^4.0.4:
     request "^2.87.0"
 
 square-connect@^2.20180918.0:
-  version "2.20181205.0"
-  resolved "https://registry.yarnpkg.com/square-connect/-/square-connect-2.20181205.0.tgz#8d36dc708f14adc8aef8f22dacb1bf9194e9696f"
-  integrity sha512-gj9T2sgBNK49Y7ibxjDoEBF+bs9vT2EhTraYnfsJhCrHm4q8nrcIyWaD1f4IWSgz/ie/Zc1iX0n4sMy9O6aCSg==
+  version "2.20181212.0"
+  resolved "https://registry.yarnpkg.com/square-connect/-/square-connect-2.20181212.0.tgz#f29778fe804fa0b653d76c6b64308f4ac4b34707"
+  integrity sha512-VRzwr/LbIGmY3iH94hAXiGc2X2/x2Cgad1/cb6/sYOm0vtdAAXUf61+M56+RvkaBUcr4JaGfE55lG8lydsOCTw==
   dependencies:
     superagent "3.8.3"
 
@@ -5423,9 +5416,6 @@ unset-value@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/unset-value/-/unset-value-1.0.0.tgz#8376873f7d2335179ffb1e6fc3a8ed0dfc8ab559"
   integrity sha1-g3aHP30jNRef+x5vw6jtDfyKtVk=
-  dependencies:
-    has-value "^0.3.1"
-    isobject "^3.0.0"
 
 uri-js@^4.2.2:
   version "4.2.2"

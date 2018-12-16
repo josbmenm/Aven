@@ -39,7 +39,7 @@ const runServer = async () => {
     domain: 'kitchen.maui.onofood.co',
   });
 
-  const kitchenClient = createCloudClient({
+  const cloud = createCloudClient({
     dataSource: dataSource,
     domain: 'kitchen.maui.onofood.co',
   });
@@ -133,12 +133,12 @@ const runServer = async () => {
     name: 'PendingOrder',
   });
 
-  const fsClient = createFSClient({ client: kitchenClient });
+  const fsClient = createFSClient({ client: cloud });
 
-  const kitchen = startKitchen({
-    client: kitchenClient,
-    plcIP: '192.168.1.122',
-  });
+  // const kitchen = startKitchen({
+  //   client: cloud,
+  //   plcIP: '192.168.1.122',
+  // });
 
   let restaurantState = null;
   let kitchenState = null;
@@ -161,7 +161,7 @@ const runServer = async () => {
       isReadyToDeliver: isReadyToFill,
     };
   }
-  const restaurant = kitchenClient.get('Restaurant');
+  const restaurant = cloud.get('Restaurant');
 
   async function runFill({ amount, system, slot }) {
     await kitchen.dispatchCommand({
@@ -313,13 +313,13 @@ const runServer = async () => {
     }
   }
 
-  kitchenClient.get('KitchenState').observeValue.subscribe({
+  cloud.get('KitchenState').observeValue.subscribe({
     next: v => {
       kitchenState = v;
       runSideEffects();
     },
   });
-  kitchenClient.get('Restaurant').observeValue.subscribe({
+  cloud.get('Restaurant').observeValue.subscribe({
     next: v => {
       restaurantState = v;
       runSideEffects();
@@ -354,7 +354,7 @@ const runServer = async () => {
 
   // const onoCloudClient = createOnoCloudClient(avenClient);
 
-  context.set(CloudContext, kitchenClient);
+  context.set(CloudContext, cloud);
   const webService = await WebServer({
     App,
     context,
@@ -371,7 +371,7 @@ const runServer = async () => {
       await authenticatedDataSource.close();
       await dataSource.close();
       await webService.close();
-      await kitchen.close();
+      // await kitchen.close();
       console.log('😵 Server Closed');
     },
   };

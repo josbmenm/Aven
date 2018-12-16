@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import {
   View,
   ScrollView,
@@ -14,7 +14,10 @@ import { genericPageStyle } from '../../components/Styles';
 import { useOrder } from '../../ono-cloud/OnoKitchen';
 
 export default function KioskHomeScreen({ navigation }) {
-  const { startOrder } = useOrder();
+  const { startOrder, resetOrder } = useOrder();
+  useEffect(() => {
+    resetOrder();
+  }, []);
   return (
     <TouchableWithoutFeedback
       onPress={() => {

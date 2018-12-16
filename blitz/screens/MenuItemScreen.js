@@ -290,7 +290,7 @@ function MenuItemScreenWithItem({ menuItem, orderItemId }) {
               menuItemId: menuItem.id,
               customization: customizationState,
             });
-            navigation.navigate('OrderConfirm');
+            navigation.navigate('ProductHome');
           },
         },
         {

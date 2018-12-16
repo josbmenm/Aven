@@ -1,7 +1,7 @@
 import CloudContext from '../aven-cloud/CloudContext';
 import useCloud from '../aven-cloud/useCloud';
 import mapObject from 'fbjs/lib/mapObject';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 import useObservable from '../aven-cloud/useObservable';
 import withObservables from '@nozbe/with-observables';
 
@@ -15,20 +15,24 @@ export function OrderContextProvider({ children }) {
     resetOrder: () => {
       setCurrentOrder(null);
     },
-    submitOrder: () => {
-      throw new Error('not yet implemented');
+    submitOrder: async () => {
+      await currentOrder.transact(lastOrder => ({
+        ...lastOrder,
+        isConfirmed: true,
+      }));
+      setCurrentOrder(null);
     },
     startOrder: () => {
-      if (currentOrder) {
-        throw new Error('Must reset or submit current order!');
-      }
       const order = cloud.get('Orders').post();
       setCurrentOrder(order);
-      order.put({
-        startTime: Date.now(),
-        items: [],
-        customization: {},
-      });
+      order
+        .put({
+          startTime: Date.now(),
+          items: [],
+          customization: {},
+        })
+        .then(() => {})
+        .catch(console.error);
     },
   };
   return (
@@ -38,15 +42,82 @@ export function OrderContextProvider({ children }) {
   );
 }
 
+export function useCompanyConfig() {
+  return useObservable(useMemo(getAirtableData));
+}
+
+const TAX_RATE = 0.09;
+
+function getOrderSummary(orderState, companyConfig) {
+  const menu = companyConfigToMenu(companyConfig);
+  if (!orderState) {
+    return orderState;
+  }
+  let subTotal = 0;
+  const items = orderState.items.map(item => {
+    const menuItem =
+      item.type === 'blend'
+        ? menu.blends.find(i => i.id === item.menuItemId)
+        : menu.food.find(i => i.id === item.menuItemId);
+    const sellPrice = menuItem.Recipe
+      ? menuItem.Recipe['Sell Price']
+      : menuItem['Sell Price'];
+    subTotal += sellPrice;
+    return {
+      ...item,
+      sellPrice,
+      menuItem,
+    };
+  });
+  const tax = subTotal * TAX_RATE;
+  const total = subTotal + tax;
+  return {
+    name: orderState.name || 'No Name',
+    state: orderState.isConfirmed ? 'confirmed' : 'pending',
+    order: orderState,
+    menu,
+    items,
+    subTotal,
+    tax,
+    total,
+    taxRate: TAX_RATE,
+  };
+}
+
 export function useOrders() {
   let cloud = useCloud();
+  if (!cloud) {
+    return [];
+  }
 
-  let orders = useObservable(cloud.get('Orders/_refs').observeValue);
+  const companyConfig = useCompanyConfig();
+
+  let ordersSource = useMemo(() => {
+    return cloud.get('Orders/_refs').expand((o, r) => {
+      return (
+        o &&
+        o.map(orderId => ({
+          id: orderId,
+          orderState: cloud.get(`Orders/${orderId}`),
+        }))
+      );
+    }).observeValue;
+  }, []);
+
+  let orders = useObservable(ordersSource);
+
   if (!orders) {
     return [];
   }
-  return orders.map(o => {
-    return { id: o };
+
+  return orders.map(order => {
+    return {
+      ...order,
+      summary: getOrderSummary(order.orderState, companyConfig),
+      destroy: () => {
+        cloud.get(`Orders/${order.id}`).destroy();
+      },
+    };
   });
 }
 
@@ -56,11 +127,12 @@ export function useOrder() {
 }
 
 export function useCurrentOrder() {
-  let { order } = useOrder();
+  let { order } = useContext(OrderContext);
   if (!order) {
-    return null;
+    return order;
   }
-  return useObservable(order.observeValue);
+  const observedOrder = useObservable(order.observeValue);
+  return observedOrder;
 }
 
 export function useOrderItem(orderItemId) {
@@ -136,7 +208,7 @@ const sortByField = (obj, fieldName) => {
   return sortable.map(kVal => kVal[1]);
 };
 
-function atDataToBlendMenu(atData) {
+function companyConfigToBlendMenu(atData) {
   if (!atData) {
     return [];
   }
@@ -210,7 +282,7 @@ function atDataToBlendMenu(atData) {
   return ActiveItemsWithRecipe;
 }
 
-function atDataToFoodMenu(atData) {
+function companyConfigToFoodMenu(atData) {
   if (!atData) {
     return [];
   }
@@ -220,68 +292,25 @@ function atDataToFoodMenu(atData) {
   return ActiveMenuItems;
 }
 
-function atDataToBlendMenuItemMapper(menuItemId) {
+function companyConfigToBlendMenuItemMapper(menuItemId) {
   return atData => {
-    const menu = atDataToBlendMenu(atData);
+    const menu = companyConfigToBlendMenu(atData);
     return menu.find(item => item.id === menuItemId);
   };
 }
 
-const TAX_RATE = 0.09;
-
-// export function withPendingOrder(Component) {
-//   const ComponentWithOrder = withObservables(
-//     ['order', 'atData'],
-//     ({ order, atData }) => ({
-//       order: order,
-//       orderWithMenu: order.switchMap(o => {
-//         return (
-//           atData &&
-//           atData.map(at => {
-//             if (!o || !o.items) {
-//               return o;
-//             }
-//             const menu = atDataToBlendMenu(at);
-//             console.log('zooom', o, menu);
-//             let subTotal = 0;
-//             const items = Object.keys(o.items).map(itemId => {
-//               const item = o.items[itemId];
-//               const menuItem = menu.find(i => i.id === item.menuItemId);
-//               subTotal += menuItem.Recipe['Sell Price'];
-//               return {
-//                 ...item,
-//                 menuItem,
-//               };
-//             });
-//             const tax = subTotal * TAX_RATE;
-//             const total = subTotal + tax;
-//             return { ...o, items, subTotal, tax, total, taxRate: TAX_RATE };
-//           })
-//         );
-//       }),
-//     }),
-//   )(Component);
-
-//   return props => (
-//     <CloudContext.Consumer>
-//       {restaurant => (
-//         <ComponentWithOrder
-//           order={restaurant.get('PendingOrder').observeValue}
-//           atData={restaurant
-//             .get('Airtable')
-//             .observeConnectedValue(['files', 'db.json', 'id'])}
-//           {...props}
-//         />
-//       )}
-//     </CloudContext.Consumer>
-//   );
-// }
+function companyConfigToMenu(companyConfig) {
+  return {
+    food: companyConfigToFoodMenu(companyConfig),
+    blends: companyConfigToBlendMenu(companyConfig),
+  };
+}
 
 export function withMenuItem(Component) {
   const ComponentWithObservedState = withObservables(
     ['atData', 'menuItemId'],
     ({ atData, menuItemId }) => ({
-      menuItem: atData.map(atDataToBlendMenuItemMapper(menuItemId)),
+      menuItem: atData.map(companyConfigToBlendMenuItemMapper(menuItemId)),
     }),
   )(Component);
 
@@ -303,8 +332,8 @@ export function withMenu(Component) {
   const ComponentWithObservedState = withObservables(
     ['atData'],
     ({ atData }) => ({
-      blendMenu: atData.map(atDataToBlendMenu),
-      foodMenu: atData.map(atDataToFoodMenu),
+      blendMenu: atData.map(companyConfigToBlendMenu),
+      foodMenu: atData.map(companyConfigToFoodMenu),
     }),
   )(Component);
 
@@ -322,54 +351,22 @@ export function withMenu(Component) {
   );
 }
 
-export function useMenu() {
-  console.log('A');
+function getAirtableData() {
   const cloud = useCloud();
-  console.log('B');
+  return cloud
+    .get('Airtable')
+    .observeConnectedValue(['files', 'db.json', 'id']);
+}
 
-  const atData = useObservable(
-    cloud.get('Airtable').observeConnectedValue(['files', 'db.json', 'id']),
-  );
-  console.log('C');
-
-  const blendMenu = atDataToBlendMenu(atData);
-  const foodMenu = atDataToFoodMenu(atData);
-  console.log('D');
-  throw new Error('zzz');
-  return { blendMenu, foodMenu };
+export function useMenu() {
+  const companyConfig = useCompanyConfig();
+  return companyConfigToMenu(companyConfig);
 }
 
 export function useOrderSummary() {
-  const { blendMenu, foodMenu } = useMenu();
-  const order = useCurrentOrder();
-  // let order = null;
-  // let blendMenu = null;
-  console.log('useORderSummary,', blendMenu, order);
-  if (!order) {
-    return null;
-  }
-  let subTotal = 0;
-  const items = Object.keys(order.items).map(item => {
-    const menuItem = blendMenu.find(i => i.id === item.menuItemId);
-    subTotal += menuItem.Recipe['Sell Price'];
-    return {
-      ...item,
-      menuItem,
-    };
-  });
-  const tax = subTotal * TAX_RATE;
-  const total = subTotal + tax;
-
-  return {
-    order,
-    blendMenu,
-    foodMenu,
-    items,
-    subTotal,
-    tax,
-    total,
-    taxRate: TAX_RATE,
-  };
+  const currentOrder = useCurrentOrder();
+  const companyConfig = useCompanyConfig();
+  return getOrderSummary(currentOrder, companyConfig);
 }
 
 export function withDispatch(Component) {

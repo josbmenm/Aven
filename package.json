@@ -8,6 +8,7 @@
     "deploy-skynet": "./node_modules/@aven-cloud/aven/aven-tools/cli.js deploy skynet",
     "start-verse": "PORT=8830 ./node_modules/@aven-cloud/aven/aven-tools/cli.js start verse",
     "start-blitz": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start blitz",
+    "start-blitz-app": "cd env-blitz-ios && react-native run-ios --simulator=\"iPad Pro (12.9-inch) (3rd generation)\"",
     "open-blitz": "open env-blitz-ios/ios/blitz.xcodeproj",
     "start-mobile": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start ono-mobile",
     "clean": "./node_modules/@aven-cloud/aven/aven-tools/cli.js clean"
