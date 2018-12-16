@@ -22,7 +22,7 @@ export default function createCloudClient({
 
   const session = new BehaviorSubject(initialSession || null);
 
-  async function authDispatch(action) {
+  async function sessionDispatch(action) {
     return await dataSource.dispatch({
       ...action,
       domain,
@@ -30,9 +30,14 @@ export default function createCloudClient({
     });
   }
 
+  async function sessionObserveRef(domain, name) {
+    return await dataSource.observeRef(domain, name, session.value);
+  }
+
   const dataSourceWithSession = {
     ...dataSource,
-    dispatch: authDispatch,
+    observeRef: sessionObserveRef,
+    dispatch: sessionDispatch,
   };
 
   const refs = createRefPool({
@@ -98,7 +103,7 @@ export default function createCloudClient({
     CreateSession,
   };
 
-  const dispatch = createDispatcher(actions, authDispatch);
+  const dispatch = createDispatcher(actions, sessionDispatch);
 
   return {
     ...dataSource,

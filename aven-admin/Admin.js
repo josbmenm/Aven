@@ -73,23 +73,22 @@ function useAsyncStorage(storageKey, defaultValue) {
   return [storageState, setStorageState];
 }
 
+function isPrimitive(v) {
+  const t = typeof v;
+  return v == null || t === 'boolean' || t === 'string' || t === 'number';
+}
+
 function Hero({ title }) {
   return (
-    <Text
+    <Title
+      title={title}
       style={{
-        fontSize: 20,
         textAlign: 'center',
-        fontWeight: '300',
-        marginVertical: 30,
-        color: '#343',
-        paddingHorizontal: 15,
       }}
-    >
-      {title}
-    </Text>
+    />
   );
 }
-function Title({ title }) {
+function Title({ title, style }) {
   return (
     <View
       style={{
@@ -107,6 +106,7 @@ function Title({ title }) {
             textAlign: 'center',
             fontWeight: '300',
             color: '#343',
+            ...style,
           }}
         >
           {t}
@@ -195,6 +195,21 @@ function InputField({ name, value, onValue, onSubmit }) {
     </View>
   );
 }
+function OptionField({ options, value, onValue }) {
+  return (
+    <select
+      value={value}
+      onChange={e => {
+        onValue(e.target.value);
+      }}
+    >
+      {' '}
+      {options.map(option => (
+        <option value={option.value}>{option.label}</option>
+      ))}
+    </select>
+  );
+}
 
 function BooleanField({ name, value, onValue }) {
   return (
@@ -272,12 +287,9 @@ function Pane({ children }) {
   return (
     <ScrollView
       style={{
-        flex: 1,
-        backgroundColor: '#f0f0f0',
-        borderRightWidth: StyleSheet.hairlineWidth,
-        borderRightColor: '#aaa',
-        maxWidth: 450,
-        minWidth: 300,
+        backgroundColor: '#fdfeff',
+        marginHorizontal: 10,
+        width: 300,
       }}
     >
       {children}
@@ -409,18 +421,19 @@ function LoginForm({ onSession, onClientConfig }) {
           onClientConfig(null);
         }}
       />
-      <select
+      <OptionField
+        options={[
+          { value: 'root', label: 'Root Authentication' },
+          { value: 'email', label: 'Email' },
+          { value: 'sms', label: 'Phone Number' },
+          { value: 'password', label: 'Password' },
+        ]}
         value={mode}
-        onChange={e => {
-          setMode(e.target.value);
+        onValue={nextMode => {
+          setMode(nextMode);
           setLoginInfo(null);
         }}
-      >
-        <option value="root">Root Authentication</option>
-        <option value="email">Email</option>
-        <option value="sms">Phone Number</option>
-        <option value="password">Password</option>
-      </select>
+      />
       <LoginInfo
         mode={mode}
         loginInfo={loginInfo}
@@ -490,6 +503,7 @@ function Row({ children, isSelected }) {
         backgroundColor: isSelected ? '#96F3E9' : 'white',
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderBottomColor: Styles.rowBorderColor,
+        justifyContent: 'space-between',
       }}
     >
       {children}
@@ -497,7 +511,13 @@ function Row({ children, isSelected }) {
   );
 }
 
-function LinkRow({ title, onPress, isSelected }) {
+function LinkRow({
+  title,
+  onPress,
+  isSelected,
+  tintColor = 'black',
+  children,
+}) {
   const [isHighlighted, setIsHighlighted] = useState(false);
   return (
     <TouchableOpacity
@@ -513,11 +533,13 @@ function LinkRow({ title, onPress, isSelected }) {
         <Text
           style={{
             fontSize: 16,
-            color: isHighlighted ? 'black' : '#333',
+            opacity: isHighlighted ? 1 : 0.8,
+            color: tintColor,
           }}
         >
           {title}
         </Text>
+        {children}
       </Row>
     </TouchableOpacity>
   );
@@ -556,12 +578,13 @@ function RefsList({ parent, activeRef }) {
   );
 }
 
-function AddRefSection() {
+function AddRefSection({ parent }) {
   const cloud = useCloud();
   let [isOpened, setIsOpened] = useState(false);
   let [newRefName, setNewRefName] = useState('');
   function submit() {
-    cloud.get(newRefName).put(null);
+    const newRefFullName = parent ? `${parent}/${newRefName}` : newRefName;
+    cloud.get(newRefFullName).put(null);
     setIsOpened(false);
     setNewRefName('');
   }
@@ -606,7 +629,7 @@ function RefsPane({ onClientConfig, onSession }) {
     <Pane>
       <Title title={domain} />
       <RefsList parent={null} activeRef={activeRef} />
-      <AddRefSection />
+      <AddRefSection parent={null} />
       <StandaloneButton
         title="Log out"
         onPress={() => {
@@ -712,11 +735,21 @@ function NumberPane({ value, onValue }) {
   );
 }
 
-function AddKeySection({ onNewKey }) {
+function PrimitivePane({ value, onValue }) {
+  return (
+    <Pane>
+      <Text>{value}</Text>
+      <DestroyButton onValue={onValue} />
+      <SetTypeSection value={value} onValue={onValue} />
+    </Pane>
+  );
+}
+
+function AddKeySection({ value, onValue }) {
   let [isOpened, setIsOpened] = useState(false);
   let [keyName, setKeyName] = useState('');
   function submit() {
-    onNewKey(keyName);
+    onValue({ ...value, [keyName]: null });
     setIsOpened(false);
     setKeyName('');
   }
@@ -751,6 +784,56 @@ function AddKeySection({ onNewKey }) {
   );
 }
 
+function SetTypeSection({ value, onValue }) {
+  let [isOpened, setIsOpened] = useState(false);
+  function submit() {}
+  if (isOpened) {
+    return (
+      <Form>
+        <OptionField options={[]} onValue={() => {}} value={null} />
+        <FormButton title="Set Type" onPress={submit} />
+        <FormButton
+          title="Cancel"
+          secondary
+          onPress={() => {
+            setIsOpened(false);
+          }}
+        />
+      </Form>
+    );
+  }
+  return (
+    <StandaloneButton
+      title="Change Type"
+      onPress={() => {
+        setIsOpened(true);
+      }}
+    />
+  );
+}
+
+function RowValue({ value }) {
+  let type = typeof value;
+  if (value == null) {
+    return <Text>Empty</Text>;
+  }
+  if (type !== 'boolean' && type !== 'string' && type !== 'number') {
+    return null;
+  }
+  return <Text>{JSON.stringify(value)}</Text>;
+}
+
+function DestroyButton({ onValue }) {
+  return (
+    <StandaloneButton
+      title="Destroy"
+      onPress={() => {
+        onValue(null);
+      }}
+    />
+  );
+}
+
 function ObjectPane({ path, value, onValue, pathContext, cloudRef }) {
   let pathViews = null;
 
@@ -771,30 +854,51 @@ function ObjectPane({ path, value, onValue, pathContext, cloudRef }) {
       />
     );
   }
+  let rows = null;
 
+  if (value instanceof Array) {
+    rows = value.map((value, index) => (
+      <LinkRow
+        key={index}
+        tintColor="red"
+        isSelected={nextPathSegment == index}
+        title={`#${index}`}
+        onPress={() => {
+          const nextPath = [...pathContext, String(index)].join('/');
+          navigation.setParams({
+            refPath: nextPath,
+          });
+        }}
+      >
+        <RowValue value={value} />
+      </LinkRow>
+    ));
+  } else {
+    rows = Object.keys(value).map(objKey => (
+      <LinkRow
+        key={objKey}
+        tintColor={isPrimitive(value[objKey]) ? '#311' : 'black'}
+        isSelected={nextPathSegment === objKey}
+        title={objKey}
+        onPress={() => {
+          const nextPath = [...pathContext, objKey].join('/');
+          navigation.setParams({
+            refPath: nextPath,
+          });
+        }}
+      >
+        <RowValue value={value[objKey]} />
+      </LinkRow>
+    ));
+  }
   return (
     <React.Fragment>
       <Pane>
-        <RowSection>
-          {Object.keys(value).map(objKey => (
-            <LinkRow
-              key={objKey}
-              isSelected={false}
-              title={objKey}
-              onPress={() => {
-                const nextPath = [...pathContext, objKey].join('/');
-                navigation.setParams({
-                  refPath: nextPath,
-                });
-              }}
-            />
-          ))}
-        </RowSection>
-        <AddKeySection
-          onNewKey={newKey => {
-            onValue({ ...value, [newKey]: null });
-          }}
-        />
+        <RowSection>{rows}</RowSection>
+
+        <DestroyButton onValue={onValue} />
+        <SetTypeSection value={value} onValue={onValue} />
+        <AddKeySection value={value} onValue={onValue} />
       </Pane>
       {pathViews}
     </React.Fragment>
@@ -806,29 +910,9 @@ function ValuePane({ value, path, cloudRef, pathContext }) {
   if (value === undefined) {
     return <Text>Loading</Text>;
   }
-  if (typeof presentationValue === 'string') {
+  if (isPrimitive(presentationValue)) {
     return (
-      <StringPane
-        value={value}
-        onValue={v => {
-          cloudRef.put(v);
-        }}
-      />
-    );
-  }
-  if (typeof presentationValue === 'boolean') {
-    return (
-      <BooleanPane
-        value={value}
-        onValue={v => {
-          cloudRef.put(v);
-        }}
-      />
-    );
-  }
-  if (typeof presentationValue === 'number') {
-    return (
-      <NumberPane
+      <PrimitivePane
         value={value}
         onValue={v => {
           cloudRef.put(v);
@@ -963,6 +1047,7 @@ function RefMetaPane({ name }) {
       />
       <RefSetForm cloudRef={cloudRef} />
       <RefsList parent={name} activeRef={activeRef} />
+      <AddRefSection parent={name} />
     </Pane>
   );
 }
@@ -1013,10 +1098,15 @@ const MainPaneNavigator = createNavigator(
 
 function MainPane({ onClientConfig, onSession, navigation }) {
   return (
-    <React.Fragment>
+    <View
+      style={{
+        flexDirection: 'row',
+        flex: 1,
+      }}
+    >
       <RefsPane onClientConfig={onClientConfig} onSession={onSession} />
       <MainPaneNavigator navigation={navigation} />
-    </React.Fragment>
+    </View>
   );
 }
 MainPane.router = MainPaneNavigator.router;
@@ -1029,9 +1119,7 @@ function BackgroundView({ children }) {
         resizeMode="repeat"
         source={require('./BgTexture.png')}
       />
-      <View style={{ ...StyleSheet.absoluteFillObject, flexDirection: 'row' }}>
-        {children}
-      </View>
+      {children}
     </View>
   );
 }
@@ -1105,7 +1193,18 @@ function AdminApp({ defaultSession = {}, descriptors }) {
     <BackgroundView>
       <CloudContext.Provider value={client}>
         <NavigationContext.Provider value={activeDescriptor.navigation}>
-          <ScrollView horizontal>
+          <ScrollView
+            horizontal
+            style={{
+              ...StyleSheet.absoluteFillObject,
+            }}
+            contentContainerStyle={{
+              minWidth: '100%',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
             <ScreenComponent
               onClientConfig={setClientConfig}
               onSession={setSessionState}
@@ -1120,36 +1219,6 @@ function AdminApp({ defaultSession = {}, descriptors }) {
       </CloudContext.Provider>
     </BackgroundView>
   );
-
-  // if (!client) {
-  //   return (
-  //     <BackgroundView>
-  //       <LoginPane
-  //         onClientConfig={setClientConfig}
-  //         defaultSession={{
-  //           authority: defaultSession.authority || "localhost:3000",
-  //           domain: defaultSession.domain || "test.aven.cloud"
-  //         }}
-  //       />
-  //       <PlaceholderMainPane title="" />
-  //     </BackgroundView>
-  //   );
-  // }
-  // return (
-  //   <BackgroundView>
-  //     <CloudContext.Provider value={client}>
-  //       <RefsPane
-  //         activeRef={activeRef}
-  //         onLogout={() => {
-  //           setClientConfig(null);
-  //           setActiveRef(null);
-  //         }}
-  //         onActiveRef={setActiveRef}
-  //       />
-  //       <MainPane activeRef={activeRef} onActiveRef={setActiveRef} />
-  //     </CloudContext.Provider>
-  //   </BackgroundView>
-  // );
 }
 
 const router = SwitchRouter(

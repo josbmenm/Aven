@@ -563,8 +563,16 @@ export default function CloudAuth({ dataSource, methods }) {
   };
 
   const dispatch = createDispatcher(actions, dataSource.dispatch);
+  async function observeRef(domain, name, auth) {
+    const permissions = await GetPermissions({ name, auth, domain });
+    if (!permissions.canRead) {
+      throw new Error('Not authorized to subscribe here');
+    }
+    return await dataSource.observeRef(domain, name);
+  }
   return {
     ...dataSource,
+    observeRef,
     dispatch,
     close: () => {},
   };

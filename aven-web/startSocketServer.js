@@ -42,14 +42,15 @@ const prepareSocketServer = (wss, dataSource) => {
 
       switch (action.type) {
         case 'SubscribeRefs': {
-          const { domain, refs } = action;
+          const { domain, refs, auth } = action;
           refs.forEach(name => {
-            dataSource.observeRef(domain, name).then(refObservable => {
+            dataSource.observeRef(domain, name, auth).then(refObservable => {
               _refSubscriptions[`${domain}_${name}`] = refObservable
                 .filter(z => !!z)
+                .distinctUntilChanged()
                 .subscribe({
                   next: v => {
-                    if (v.id === undefined) {
+                    if (v.id === undefined && v.value === undefined) {
                       return;
                     }
                     sendMessage({

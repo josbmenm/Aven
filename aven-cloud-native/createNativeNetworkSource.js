@@ -48,7 +48,7 @@ export default function createNativeNetworkSource(opts) {
 
   const refObservables = {};
 
-  function createDomainRefObserver(domain, name) {
+  function createDomainRefObserver(domain, name, auth) {
     const domainRefObserver = {
       domain,
       name,
@@ -64,6 +64,7 @@ export default function createNativeNetworkSource(opts) {
         type: 'SubscribeRefs',
         refs: [name],
         domain,
+        auth,
       });
 
       return () => {
@@ -78,9 +79,10 @@ export default function createNativeNetworkSource(opts) {
     return domainRefObserver;
   }
 
-  function getDomainRefObserver(domain, name) {
+  function getDomainRefObserver(domain, name, auth) {
     const d = refObservables[domain] || (refObservables[domain] = {});
-    const r = d[name] || (d[name] = createDomainRefObserver(domain, name));
+    const r =
+      d[name] || (d[name] = createDomainRefObserver(domain, name, auth));
     return r;
   }
 
@@ -142,8 +144,8 @@ export default function createNativeNetworkSource(opts) {
 
   connectWS();
 
-  async function observeRef(domain, name) {
-    return getDomainRefObserver(domain, name).observable;
+  async function observeRef(domain, name, auth) {
+    return getDomainRefObserver(domain, name, auth).observable;
   }
 
   return {

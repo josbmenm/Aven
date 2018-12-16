@@ -168,7 +168,6 @@ export default function createCloudRef({
   }
 
   const setState = newState => {
-    console.log('Ref setState of ' + getFullName(), newState);
     refState.next({
       ...refState.value,
       ...newState,
@@ -238,7 +237,6 @@ export default function createCloudRef({
       setState({ isConnected: true });
       upstreamSubscription = upstreamObs.subscribe({
         next: upstreamRef => {
-          console.log('has upstream!!!' + getFullName(), upstreamRef);
           setState({
             id: upstreamRef.id,
             lastSyncTime: Date.now(),
@@ -369,15 +367,12 @@ export default function createCloudRef({
   const observeValue = observe
     .map(rr => {
       if (rr.value !== undefined) {
-        console.log('------------RING DIGN DING DING');
-        return observeStatic(r.value);
+        return observeStatic(rr.value);
       }
       if (!rr.id) {
-        console.log('ref observing null', getFullName());
         return observeNull;
       }
       const obj = _getObjectWithId(rr.id);
-      console.log('ref observe object value', getFullName(), rr.id);
       return obj.observeValue;
     })
     .switch();
