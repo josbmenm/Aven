@@ -1,11 +1,10 @@
 import { Observable, BehaviorSubject } from 'rxjs-compat';
+import { filter } from 'rxjs/operators';
+import observeNull from './observeNull';
 import createCloudObject from './createCloudObject';
 import uuid from 'uuid/v1';
 const pathJoin = require('path').join;
 
-const observeNull = Observable.create(observer => {
-  observer.next(null);
-});
 const observeStatic = val =>
   Observable.create(observer => {
     observer.next(val);
@@ -15,6 +14,10 @@ export const POSTING_REF_NAME = Symbol('POSTING_REF_NAME');
 
 function hasDepth(name) {
   return name.match(/\//);
+}
+
+function filterUndefined() {
+  return filter(value => value !== undefined);
 }
 
 export function createRefPool({
@@ -237,6 +240,9 @@ export default function createCloudRef({
       setState({ isConnected: true });
       upstreamSubscription = upstreamObs.subscribe({
         next: upstreamRef => {
+          if (upstreamRef === undefined) {
+            return;
+          }
           setState({
             id: upstreamRef.id,
             lastSyncTime: Date.now(),
@@ -423,8 +429,11 @@ export default function createCloudRef({
 
   async function transact(transactionFn) {
     await fetchValue();
-    const newValue = transactionFn(getValue());
-    await put(newValue);
+    const lastValue = getValue();
+    const newValue = transactionFn(lastValue);
+    if (lastValue !== newValue) {
+      await put(newValue);
+    }
   }
 
   function $setName(newName) {
@@ -466,6 +475,7 @@ export default function createCloudRef({
   function expand(expandFn) {
     function isCloudValue(o) {
       return (
+        o != null &&
         typeof o === 'object' &&
         typeof o.observeValue === 'object' &&
         typeof o.observeValue.subscribe === 'function' &&
@@ -474,7 +484,9 @@ export default function createCloudRef({
       );
     }
     function doExpansion(o) {
-      if (isCloudValue(o)) {
+      if (o == null) {
+        return [];
+      } else if (isCloudValue(o)) {
         return o.getValue();
       } else if (o instanceof Array) {
         return o.map(doExpansion);
@@ -488,11 +500,13 @@ export default function createCloudRef({
       return o;
     }
     function collectCloudValues(o) {
-      if (isCloudValue(o)) {
+      if (o == null) {
+        return [];
+      } else if (isCloudValue(o)) {
         return [o];
       } else if (o instanceof Array) {
         return flatArray(o.map(collectCloudValues));
-      } else if (typeof o === 'object') {
+      } else if (!!o && typeof o === 'object') {
         return flatArray(Object.values(o).map(collectCloudValues));
       }
       return [];
@@ -507,6 +521,7 @@ export default function createCloudRef({
       },
       observeValue: r.observeValue
         .distinctUntilChanged()
+        .pipe(filterUndefined())
         .mergeMap(async o => {
           const expandSpec = expandFn(o, r);
           const cloudValues = collectCloudValues(expandSpec);
@@ -514,6 +529,7 @@ export default function createCloudRef({
           const expanded = doExpansion(expandSpec);
           return expanded;
         })
+        .pipe(filterUndefined())
         .distinctUntilChanged(),
       getValue: () => {
         const o = r.getValue();

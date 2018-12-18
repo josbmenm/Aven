@@ -172,7 +172,7 @@ describe('ref storage', () => {
       domain: 'test',
       name: 'foo',
     });
-    expect(ref.id).toEqual(null);
+    expect(ref.id).toEqual(undefined);
   });
   test('destroy ref works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
@@ -198,7 +198,7 @@ describe('ref storage', () => {
       domain: 'test',
       name: 'foo',
     });
-    expect(ref.id).toEqual(null);
+    expect(ref.id).toEqual(undefined);
     const refs = await ds.dispatch({
       type: 'ListRefs',
       domain: 'test',

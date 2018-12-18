@@ -57,7 +57,7 @@ export default function createBrowserNetworkSource(opts) {
     domainRefObserver.observable = Observable.create(observer => {
       if (domainRefObserver.onNext) {
         throw new Error(
-          'Something has gone terribly wrong. There is somehow another observable already subscribed to this domain ref.',
+          `Something has gone terribly wrong. There is somehow another observable already subscribed to the "${name}" ref on "${domain}"`,
         );
       }
       domainRefObserver.onNext = val => observer.next(val);
@@ -78,7 +78,9 @@ export default function createBrowserNetworkSource(opts) {
         console.log('unsubuscribing from upstream data!');
         delete refObservables[domain][name];
       };
-    });
+    })
+      .multicast(() => new BehaviorSubject(undefined))
+      .refCount();
     return domainRefObserver;
   }
 

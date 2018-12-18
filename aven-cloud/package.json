@@ -1,7 +1,10 @@
 {
   "aven": {
-    "srcDependencies": ["aven-cloud-utils"],
+    "srcDependencies": [
+      "aven-cloud-utils"
+    ],
     "moduleDependencies": [
+      "rxjs",
       "rxjs-compat",
       "json-stable-stringify",
       "crypto-js",
