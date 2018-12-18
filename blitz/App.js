@@ -15,6 +15,7 @@ import DebugStateScreen from './screens/DebugStateScreen';
 import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
 import OrderConfirmScreen from './screens/OrderConfirmScreen';
+import ManageOrderScreen from './screens/ManageOrderScreen';
 import ManageOrdersScreen from './screens/ManageOrdersScreen';
 import OrderCompleteScreen from './screens/OrderCompleteScreen';
 import CollectNameScreen from './screens/CollectNameScreen';
@@ -61,6 +62,7 @@ const App = createStackNavigator(
     DebugState: DebugStateScreen,
     ProductHome: ProductHomeScreen,
     ManageOrders: ManageOrdersScreen,
+    ManageOrder: ManageOrderScreen,
     OrderConfirm: OrderConfirmScreen,
     OrderComplete: OrderCompleteScreen,
     CollectName: CollectNameScreen,
@@ -82,15 +84,13 @@ const restaurant = createCloudClient({
 
 restaurant
   .CreateAnonymousSession()
-  .then(() => {
-    console.log('session ready!');
-  })
+  .then(() => {})
   .catch(console.error);
 
 const FullApp = () => (
   <CloudContext.Provider value={restaurant}>
     <OrderContextProvider>
-      <AppContainer persistenceKey="242321123244" />
+      <AppContainer persistenceKey="242312321123244" />
     </OrderContextProvider>
   </CloudContext.Provider>
 );

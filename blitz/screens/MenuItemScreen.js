@@ -1,12 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, Image, TouchableHighlight } from 'react-native';
 import ActionPage from '../components/ActionPage';
-import Button from '../../components/Button';
 import { withMenuItem, useOrderItem } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { pageBackgroundColor } from '../../components/Styles';
-import { useNavigation } from '../../navigation-hooks/Hooks';
-import CloudContext from '../../aven-cloud/CloudContext';
+import OrderSidebar from '../components/OrderSidebar';
 
 function Ingredient({ ingredient }) {
   return (
@@ -277,7 +275,6 @@ function MenuItemScreenWithItem({ menuItem, orderItemId }) {
   if (!menuItem || !order) {
     return null;
   }
-  const navigation = useNavigation();
   return (
     <ActionPage
       actions={[
@@ -290,7 +287,6 @@ function MenuItemScreenWithItem({ menuItem, orderItemId }) {
               menuItemId: menuItem.id,
               customization: customizationState,
             });
-            navigation.navigate('ProductHome');
           },
         },
         {
@@ -346,6 +342,7 @@ function MenuItemScreenWithItem({ menuItem, orderItemId }) {
           {!isCustomizing && <Ingredients menuItem={menuItem} />}
         </View>
       </View>
+      <OrderSidebar />
     </ActionPage>
   );
 }

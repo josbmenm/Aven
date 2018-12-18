@@ -1,19 +1,19 @@
 import React from 'react';
 import InputPage from '../components/InputPage';
-import { withRestaurant } from '../../ono-cloud/OnoKitchen';
+import { useOrder } from '../../ono-cloud/OnoKitchen';
+import { useNavigation } from '../../navigation-hooks/Hooks';
 
-function CollectNameWithRestaurant({ navigation, setOrderName }) {
+export default function CollectName() {
+  const { navigate } = useNavigation();
+  const { setOrderName } = useOrder();
   return (
     <InputPage
       {...this.props}
       title={'Pickup Name'}
       onSubmit={name => {
         setOrderName(name);
-        navigation.navigate('OrderComplete');
+        navigate('OrderConfirm');
       }}
     />
   );
 }
-const CollectName = withRestaurant(CollectNameWithRestaurant);
-
-export default CollectName;

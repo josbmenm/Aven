@@ -2,22 +2,28 @@ import React from 'react';
 import Tag from '../../components/Tag';
 import GenericPage from '../components/GenericPage';
 import RowSection from '../../components/RowSection';
-import Row from '../../components/Row';
+import LinkRow from '../../components/LinkRow';
 import Hero from '../../components/Hero';
 import Button from '../../components/Button';
 import { useOrders } from '../../ono-cloud/OnoKitchen';
 import AdminSessionContainer from '../AdminSessionContainer';
+import { useNavigation } from '../../navigation-hooks/Hooks';
 
 function PendingStateTag() {
-  return <Tag title="Pending" color="blue" />;
+  return <Tag title="Pending" color="#4358A9" />;
 }
 
 function ConfirmedStateTag() {
-  return <Tag title="Confirmed" color="green" />;
+  return <Tag title="Confirmed" color="#8A43A9" />;
+}
+
+function CancelledStateTag() {
+  return <Tag title="Cancelled" color="#504D51" />;
 }
 
 const StateTags = {
   pending: PendingStateTag,
+  cancelled: CancelledStateTag,
   confirmed: ConfirmedStateTag,
 };
 
@@ -25,11 +31,19 @@ function ManageOrderRow({ order }) {
   console.log(order);
   const title = order.summary.name || order.id;
   const StateTag = StateTags[order.summary.state];
+  const { navigate } = useNavigation();
   return (
-    <Row title={title}>
-      <Button title="Delete" onPress={order.destroy} />
+    <LinkRow
+      title={title}
+      onPress={() => {
+        navigate('ManageOrder', { orderId: order.id });
+      }}
+    >
+      {!order.summary.isCancelled && (
+        <Button title="Cancel" onPress={order.cancel} />
+      )}
       <StateTag />
-    </Row>
+    </LinkRow>
   );
 }
 

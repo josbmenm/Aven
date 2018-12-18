@@ -4,35 +4,63 @@ import mapObject from 'fbjs/lib/mapObject';
 import React, { createContext, useContext, useState, useMemo } from 'react';
 import useObservable from '../aven-cloud/useObservable';
 import withObservables from '@nozbe/with-observables';
+import observeNull from '../aven-cloud/observeNull';
 
 const OrderContext = createContext(null);
+
+function doCancelOrder(lastOrder) {
+  if (lastOrder.isCancelled) {
+    return lastOrder;
+  }
+  return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
+}
+
+function doCancelOrderIfNotConfirmed(lastOrder) {
+  if (lastOrder.isConfirmed) {
+    return lastOrder;
+  }
+  if (lastOrder.isCancelled) {
+    return lastOrder;
+  }
+  return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
+}
+
+function doConfirmOrder(lastOrder) {
+  if (lastOrder.isConfirmed) {
+    return lastOrder;
+  }
+  return { ...lastOrder, isConfirmed: true, confirmedTime: Date.now() };
+}
 
 export function OrderContextProvider({ children }) {
   let cloud = useContext(CloudContext);
   let [currentOrder, setCurrentOrder] = useState(null);
   let orderContext = {
     order: currentOrder,
-    resetOrder: () => {
-      setCurrentOrder(null);
-    },
-    submitOrder: async () => {
+    setOrderName: async name => {
       await currentOrder.transact(lastOrder => ({
         ...lastOrder,
-        isConfirmed: true,
+        orderName: name,
       }));
+    },
+    resetOrder: async () => {
+      if (!currentOrder) {
+        return;
+      }
+      await currentOrder.transact(doCancelOrderIfNotConfirmed);
       setCurrentOrder(null);
     },
-    startOrder: () => {
+    confirmOrder: async () => {
+      await currentOrder.transact(doConfirmOrder);
+    },
+    startOrder: async () => {
       const order = cloud.get('Orders').post();
       setCurrentOrder(order);
-      order
-        .put({
-          startTime: Date.now(),
-          items: [],
-          customization: {},
-        })
-        .then(() => {})
-        .catch(console.error);
+      await order.put({
+        startTime: Date.now(),
+        items: [],
+        customization: {},
+      });
     },
   };
   return (
@@ -43,7 +71,7 @@ export function OrderContextProvider({ children }) {
 }
 
 export function useCompanyConfig() {
-  return useObservable(useMemo(getAirtableData));
+  return useObservable(useMemo(getAirtableData, []));
 }
 
 const TAX_RATE = 0.09;
@@ -59,6 +87,13 @@ function getOrderSummary(orderState, companyConfig) {
       item.type === 'blend'
         ? menu.blends.find(i => i.id === item.menuItemId)
         : menu.food.find(i => i.id === item.menuItemId);
+    if (!menuItem) {
+      throw new Error(
+        `Cannot compute order summary item because menuItemId "${
+          item.menuItemId
+        }" of order "${orderState}" was not found`,
+      );
+    }
     const sellPrice = menuItem.Recipe
       ? menuItem.Recipe['Sell Price']
       : menuItem['Sell Price'];
@@ -71,9 +106,16 @@ function getOrderSummary(orderState, companyConfig) {
   });
   const tax = subTotal * TAX_RATE;
   const total = subTotal + tax;
+  const { isConfirmed, isCancelled } = orderState;
+  let state = isConfirmed ? 'confirmed' : 'pending';
+  if (isCancelled) {
+    state = 'cancelled';
+  }
   return {
-    name: orderState.name || 'No Name',
-    state: orderState.isConfirmed ? 'confirmed' : 'pending',
+    isCancelled,
+    isConfirmed,
+    name: orderState.orderName || 'No Name',
+    state,
     order: orderState,
     menu,
     items,
@@ -84,25 +126,25 @@ function getOrderSummary(orderState, companyConfig) {
   };
 }
 
+function getAllOrders() {
+  let cloud = useCloud();
+  return cloud.get('Orders/_refs').expand((o, r) => {
+    return (
+      o &&
+      o.map(orderId => ({
+        id: orderId,
+        orderState: cloud.get(`Orders/${orderId}`),
+      }))
+    );
+  }).observeValue;
+}
+
 export function useOrders() {
   let cloud = useCloud();
-  if (!cloud) {
-    return [];
-  }
 
   const companyConfig = useCompanyConfig();
 
-  let ordersSource = useMemo(() => {
-    return cloud.get('Orders/_refs').expand((o, r) => {
-      return (
-        o &&
-        o.map(orderId => ({
-          id: orderId,
-          orderState: cloud.get(`Orders/${orderId}`),
-        }))
-      );
-    }).observeValue;
-  }, []);
+  let ordersSource = useMemo(getAllOrders, []);
 
   let orders = useObservable(ordersSource);
 
@@ -114,8 +156,8 @@ export function useOrders() {
     return {
       ...order,
       summary: getOrderSummary(order.orderState, companyConfig),
-      destroy: () => {
-        cloud.get(`Orders/${order.id}`).destroy();
+      cancel: () => {
+        cloud.get(`Orders/${order.id}`).transact(doCancelOrder);
       },
     };
   });
@@ -128,10 +170,7 @@ export function useOrder() {
 
 export function useCurrentOrder() {
   let { order } = useContext(OrderContext);
-  if (!order) {
-    return order;
-  }
-  const observedOrder = useObservable(order.observeValue);
+  const observedOrder = useObservable(order ? order.observeValue : observeNull);
   return observedOrder;
 }
 
@@ -353,6 +392,9 @@ export function withMenu(Component) {
 
 function getAirtableData() {
   const cloud = useCloud();
+  if (!cloud) {
+    return observeNull;
+  }
   return cloud
     .get('Airtable')
     .observeConnectedValue(['files', 'db.json', 'id']);
@@ -367,6 +409,14 @@ export function useOrderSummary() {
   const currentOrder = useCurrentOrder();
   const companyConfig = useCompanyConfig();
   return getOrderSummary(currentOrder, companyConfig);
+}
+
+export function useOrderIdSummary(orderId) {
+  const cloud = useCloud();
+  const order = useMemo(() => cloud.get(`Orders/${orderId}`), [orderId]);
+  const orderState = useObservable(order ? order.observeValue : observeNull);
+  const companyConfig = useCompanyConfig();
+  return getOrderSummary(orderState, companyConfig);
 }
 
 export function withDispatch(Component) {

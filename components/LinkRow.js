@@ -6,12 +6,13 @@ import {
   linkRowTitleTextStyle,
 } from './Styles';
 
-const LinkRow = ({ onPress, title, icon }) => {
+const LinkRow = ({ onPress, title, icon, children }) => {
   return (
     <TouchableHighlight onPress={onPress}>
       <View style={{ ...linkRowStyle, flexDirection: 'row' }}>
         <Text style={linkRowIconTextStyle}>{icon}</Text>
         <Text style={linkRowTitleTextStyle}>{title}</Text>
+        {children}
       </View>
     </TouchableHighlight>
   );

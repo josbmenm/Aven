@@ -20,8 +20,8 @@ export default function KioskHomeScreen({ navigation }) {
   }, []);
   return (
     <TouchableWithoutFeedback
-      onPress={() => {
-        startOrder();
+      onPress={async () => {
+        await startOrder();
         navigation.navigate('ProductHome');
       }}
     >
