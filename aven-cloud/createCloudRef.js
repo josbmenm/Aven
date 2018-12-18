@@ -511,19 +511,18 @@ export default function createCloudRef({
       }
       return [];
     }
-    return {
-      ...r,
+    const expanded = {
       fetchValue: async () => {
-        await r.fetchValue();
-        const expandSpec = expandFn(r.getValue(), r);
+        await this.fetchValue();
+        const expandSpec = expandFn(this.getValue(), this);
         const cloudValues = collectCloudValues(expandSpec);
         await Promise.all(cloudValues.map(v => v.fetchValue()));
       },
-      observeValue: r.observeValue
+      observeValue: this.observeValue
         .distinctUntilChanged()
         .pipe(filterUndefined())
         .mergeMap(async o => {
-          const expandSpec = expandFn(o, r);
+          const expandSpec = expandFn(o, this);
           const cloudValues = collectCloudValues(expandSpec);
           await Promise.all(cloudValues.map(v => v.fetchValue()));
           const expanded = doExpansion(expandSpec);
@@ -532,31 +531,37 @@ export default function createCloudRef({
         .pipe(filterUndefined())
         .distinctUntilChanged(),
       getValue: () => {
-        const o = r.getValue();
+        const o = this.getValue();
         const expandSpec = expandFn(o, r);
         const expanded = doExpansion(expandSpec);
         return expanded;
       },
     };
+    expanded.map = map.bind(expanded);
+    expanded.expand = expand.bind(expanded);
+    return expanded;
   }
   r.expand = expand;
 
   function map(mapFn) {
-    return {
-      ...r,
-      map: innerMapFn => r.map(v => innerMapFn(mapFn(v))),
-      observeValue: r.observeValue
+    const mapped = {
+      fetchValue: this.fetchValue,
+      observeValue: this.observeValue
         .distinctUntilChanged()
         .map(data => {
           return mapFn(data);
         })
         .distinctUntilChanged(),
       getValue: () => {
-        return mapFn(r.getValue());
+        return mapFn(this.getValue());
       },
     };
+    mapped.map = map.bind(mapped);
+    mapped.expand = expand.bind(mapped);
+    return mapped;
   }
-  r.map = map;
+  r.map = map.bind(r);
+  r.expand = expand.bind(r);
 
   return r;
 }
