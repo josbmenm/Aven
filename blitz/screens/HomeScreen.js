@@ -21,37 +21,12 @@ export default class HomeScreen extends Component {
             icon="🛠"
             title="Kitchen Engineering"
           />
-
           <LinkRow
             onPress={() => {
-              navigation.navigate({
-                routeName: 'KitchenEngSub',
-                params: {
-                  system: 'BlendSystem',
-                },
-              });
-            }}
-            icon="🤖"
-            title="Blend System"
-          />
-          <LinkRow
-            onPress={() => {
-              navigation.navigate({
-                routeName: 'KitchenEngSub',
-                params: {
-                  system: 'IOSystem',
-                },
-              });
-            }}
-            icon="🔌"
-            title="IO"
-          />
-          <LinkRow
-            onPress={() => {
-              navigation.navigate({ routeName: 'ManageOrders' });
+              navigation.navigate({ routeName: 'HostHome' });
             }}
             icon="🍽"
-            title="Order Management"
+            title="Vehicle Host Panel"
           />
           <LinkRow
             onPress={() => {
@@ -65,7 +40,7 @@ export default class HomeScreen extends Component {
               navigation.navigate({ routeName: 'KioskSettings' });
             }}
             icon="⚙️"
-            title="Kiosk Settings"
+            title="Settings"
           />
         </RowSection>
       </GenericPage>

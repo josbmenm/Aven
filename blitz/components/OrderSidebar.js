@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import Button from '../../components/Button';
 import { useOrderSummary } from '../../ono-cloud/OnoKitchen';
 import OrderSummary from '../../components/OrderSummary';
+import SummonHost from './SummonHost';
 
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
@@ -18,7 +19,7 @@ function OrderPanel() {
   return (
     <View style={{}}>
       <OrderSummary summary={summary} />
-
+      <SummonHost />
       <Button
         title="Checkout"
         onPress={() => {

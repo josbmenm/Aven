@@ -93,44 +93,51 @@ const runServer = async () => {
     verificationInfo: {},
     verificationResponse: { password: ROOT_PASSWORD },
   };
-  await authenticatedDataSource.dispatch({
-    domain: 'kitchen.maui.onofood.co',
-    type: 'PutPermissionRules',
-    auth: rootAuth,
+
+  async function putPermission({ name, defaultRule }) {
+    await authenticatedDataSource.dispatch({
+      domain: 'kitchen.maui.onofood.co',
+      type: 'PutPermissionRules',
+      auth: rootAuth,
+      defaultRule,
+      name,
+    });
+  }
+
+  await putPermission({
     defaultRule: { canRead: true },
     name: 'Airtable',
   });
 
-  await authenticatedDataSource.dispatch({
-    domain: 'kitchen.maui.onofood.co',
-    type: 'PutPermissionRules',
-    auth: rootAuth,
+  await putPermission({
     defaultRule: { canRead: true },
     name: 'KitchenConfig',
   });
 
-  await authenticatedDataSource.dispatch({
-    domain: 'kitchen.maui.onofood.co',
-    type: 'PutPermissionRules',
-    auth: rootAuth,
+  await putPermission({
     defaultRule: { canRead: true },
     name: 'KitchenState',
   });
 
-  await authenticatedDataSource.dispatch({
-    domain: 'kitchen.maui.onofood.co',
-    type: 'PutPermissionRules',
-    auth: rootAuth,
+  await putPermission({
     defaultRule: { canPost: true },
     name: 'Orders',
   });
 
-  await authenticatedDataSource.dispatch({
-    domain: 'kitchen.maui.onofood.co',
-    type: 'PutPermissionRules',
-    auth: rootAuth,
+  await putPermission({
     defaultRule: { canWrite: true },
     name: 'PendingOrder',
+  });
+
+  await putPermission({
+    // todo, offer better auth for kiosk state
+    defaultRule: { canWrite: true },
+    name: 'Kiosk/Left',
+  });
+  await putPermission({
+    // todo, offer better auth for kiosk state
+    defaultRule: { canWrite: true },
+    name: 'Kiosk/Right',
   });
 
   const fsClient = createFSClient({ client: cloud });
