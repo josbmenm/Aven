@@ -99,17 +99,18 @@ export default async function WebServer({
   dataSource,
   context,
   serverListenLocation,
+  extraneousExpressRouting,
 }) {
   const expressApp = express();
   const jsonParser = bodyParser.json();
-  expressApp.use(jsonParser);
+  expressApp.use(jsonParser); // hmm.. we should probably parse json less aggressively..
   process.env.ENFORCE_HTTPS && expressApp.use(yes());
   expressApp.use(helmet());
   expressApp.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header(
       'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept'
+      'Origin, X-Requested-With, Content-Type, Accept',
     );
     next();
   });
@@ -150,6 +151,8 @@ export default async function WebServer({
         res.status(500).send(String(err));
       });
   });
+
+  extraneousExpressRouting && extraneousExpressRouting(expressApp);
 
   expressApp.get('/_/:domain/:ref*', (req, res) => {
     const refName = req.params.ref;
@@ -223,7 +226,7 @@ export default async function WebServer({
         <div id="root">${html}</div>
         ${options.customHTML || ''}
     </body>
-</html>`
+</html>`,
     );
   });
 
