@@ -6,7 +6,6 @@ import RowSection from '../../components/RowSection';
 import LinkRow from '../../components/LinkRow';
 import Row from '../../components/Row';
 import Button from '../../components/Button';
-import AdminSessionContainer from '../AdminSessionContainer';
 import { useNavigation } from '../../navigation-hooks/Hooks';
 
 import useCloud from '../../aven-cloud/useCloud';
@@ -76,27 +75,25 @@ function HostRequests() {
 export default function HomeScreen() {
   const { navigate } = useNavigation();
   return (
-    <AdminSessionContainer>
-      <GenericPage>
-        <Hero icon="🖥" title="Maui Host" />
-        <HostRequests />
-        <RowSection>
-          <LinkRow
-            onPress={() => {
-              navigate({ routeName: 'ManageOrders' });
-            }}
-            icon="🍽"
-            title="Order Management"
-          />
-          <LinkRow
-            onPress={() => {
-              navigate({ routeName: 'ManageOrders' });
-            }}
-            icon="🍹"
-            title="Make Free Blends"
-          />
-        </RowSection>
-      </GenericPage>
-    </AdminSessionContainer>
+    <GenericPage>
+      <Hero icon="📋" title="Ono Blends Host" />
+      <HostRequests />
+      <RowSection>
+        <LinkRow
+          onPress={() => {
+            navigate({ routeName: 'ManageOrders' });
+          }}
+          icon="🍽"
+          title="Order Management"
+        />
+        <LinkRow
+          onPress={() => {
+            navigate({ routeName: 'ManageOrders' });
+          }}
+          icon="🍹"
+          title="Make Free Blends"
+        />
+      </RowSection>
+    </GenericPage>
   );
 }

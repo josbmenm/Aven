@@ -28,7 +28,8 @@ function OrderPanel() {
       />
       <Button
         title="Cancel Order"
-        onPress={() => {
+        onPress={async () => {
+          await summary.cancel();
           navigate('KioskHome');
         }}
       />

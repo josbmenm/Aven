@@ -5,10 +5,8 @@ import { Button, Text, View } from 'react-native';
 import useObservable from '../../aven-cloud/useObservable';
 
 export default function SummonHost() {
-  console.log('a');
   let [kioskName] = useKioskName();
   const cloud = useCloud();
-  console.log('b');
   const kioskRef = isStateUnloaded(kioskName)
     ? null
     : cloud.get(`Kiosk/${kioskName}`);
@@ -38,6 +36,10 @@ export default function SummonHost() {
         kioskRef.transact(kioskState => ({
           ...kioskState,
           isRequestingHost: true,
+          hostRequestCount:
+            kioskState && kioskState.hostRequestCount
+              ? kioskState.hostRequestCount + 1
+              : 1,
           hostRequestTime: Date.now(),
         }));
       }}

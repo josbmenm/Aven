@@ -35,6 +35,7 @@
       "skynet"
     ],
     "moduleDependencies": [
+      "stripe",
       "sqlite3",
       "fbjs",
       "ws",

@@ -27,6 +27,7 @@ import createCloudClient from '../aven-cloud/createCloudClient';
 import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import dataSource from './CloudDataSource';
+import AdminSessionContainer from './AdminSessionContainer';
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
@@ -50,25 +51,43 @@ StatusBar.setHidden(true, 'none');
 
 // console.ignoredYellowBox = ['Warning:'];
 
+const InnerHostNavigator = createStackNavigator(
+  {
+    HostHome: HostHomeScreen,
+    ManageOrders: ManageOrdersScreen,
+    ManageOrder: ManageOrderScreen,
+    DebugState: DebugStateScreen,
+  },
+  {
+    headerMode: 'none',
+  },
+);
+
+function HostNavigator({ navigation }) {
+  return (
+    <AdminSessionContainer>
+      <InnerHostNavigator navigation={navigation} />
+    </AdminSessionContainer>
+  );
+}
+HostNavigator.router = InnerHostNavigator.router;
+
 const App = createStackNavigator(
   {
     Home: HomeScreen,
-    HostHome: HostHomeScreen,
+    KioskHome: KioskHomeScreen,
     KitchenEng: KitchenEngScreen,
     KitchenEngSub: KitchenEngSubScreen,
     KioskSettings: KioskSettingsScreen,
-    KioskHome: KioskHomeScreen,
     MenuItem: MenuItemScreen,
-    DebugState: DebugStateScreen,
     ProductHome: ProductHomeScreen,
-    ManageOrders: ManageOrdersScreen,
-    ManageOrder: ManageOrderScreen,
     OrderConfirm: OrderConfirmScreen,
     OrderComplete: OrderCompleteScreen,
     CollectName: CollectNameScreen,
     CollectEmail: CollectEmailScreen,
     PaymentDebug: PaymentDebugScreen,
     AppUpsell: AppUpsellScreen,
+    Host: HostNavigator,
   },
   {
     headerMode: 'none',
@@ -90,7 +109,7 @@ restaurant
 const FullApp = () => (
   <CloudContext.Provider value={restaurant}>
     <OrderContextProvider>
-      <AppContainer persistenceKey="242312321123244" />
+      <AppContainer persistenceKey="24231234211235244" />
     </OrderContextProvider>
   </CloudContext.Provider>
 );

@@ -13,8 +13,9 @@ import { paymentContainer } from '../Payments';
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
 import OrderSummary from '../../components/OrderSummary';
+import { useCardReader } from '../CardReader';
 
-function OrderConfirmWithPayment({
+export default function OrderConfirmScreen({
   paymentRequest,
   paymentError,
   isPaymentReady,
@@ -24,15 +25,29 @@ function OrderConfirmWithPayment({
 }) {
   const { confirmOrder } = useOrder();
   const summary = useOrderSummary();
-
+  const { cancelPayment, getPayment, readerIsReady } = useCardReader();
+  const currentlyReady = useObservable(readerIsReady);
+  useEffect(
+    () => {
+      if (currentlyReady) {
+        getPayment(summary.total, 'Ono Blends')
+          .then(() => {
+            console.log('payment done!!!!');
+          })
+          .catch(e => {
+            console.error(e);
+          });
+      }
+    },
+    [currentlyReady, summary],
+  );
   return (
     <GenericPage>
       <OrderSummary summary={summary} />
       <Button
-        title="Pay Now"
+        title="Cancel"
         onPress={async () => {
-          await confirmOrder();
-          paymentRequest(100, 'Ono Blends');
+          await cancelPayment();
         }}
       />
       <Button
@@ -45,7 +60,3 @@ function OrderConfirmWithPayment({
     </GenericPage>
   );
 }
-
-const OrderConfirm = paymentContainer(OrderConfirmWithPayment);
-
-export default OrderConfirm;

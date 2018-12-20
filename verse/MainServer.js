@@ -19,6 +19,7 @@ import RootAuthMethod from '../aven-cloud-auth-root/RootAuthMethod';
 import CloudAuth from '../aven-cloud-auth/CloudAuth';
 
 import startKitchen from './startKitchen';
+import { getConnectionToken, capturePayment } from './Stripe';
 
 const getEnv = c => process.env[c];
 
@@ -142,10 +143,10 @@ const runServer = async () => {
 
   const fsClient = createFSClient({ client: cloud });
 
-  // const kitchen = startKitchen({
-  //   client: cloud,
-  //   plcIP: '192.168.1.122',
-  // });
+  const kitchen = startKitchen({
+    client: cloud,
+    plcIP: '192.168.1.122',
+  });
 
   let restaurantState = null;
   let kitchenState = null;
@@ -342,6 +343,10 @@ const runServer = async () => {
         return await scrapeAirTable(fsClient);
       case 'GetSquareMobileAuthToken':
         return getMobileAuthToken(action);
+      case 'StripeGetConnectionToken':
+        return getConnectionToken(action);
+      case 'StripeCapturePayment':
+        return capturePayment(action);
       default:
         return await authenticatedDataSource.dispatch(action);
     }
@@ -361,7 +366,7 @@ const runServer = async () => {
 
   // const onoCloudClient = createOnoCloudClient(avenClient);
 
-  context.set(CloudContext, cloud);
+  // context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
   const webService = await WebServer({
     App,
     context,
@@ -378,7 +383,7 @@ const runServer = async () => {
       await authenticatedDataSource.close();
       await dataSource.close();
       await webService.close();
-      // await kitchen.close();
+      await kitchen.close();
       console.log('😵 Server Closed');
     },
   };

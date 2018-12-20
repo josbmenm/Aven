@@ -6,7 +6,6 @@ import LinkRow from '../../components/LinkRow';
 import Hero from '../../components/Hero';
 import Button from '../../components/Button';
 import { useOrders } from '../../ono-cloud/OnoKitchen';
-import AdminSessionContainer from '../AdminSessionContainer';
 import { useNavigation } from '../../navigation-hooks/Hooks';
 
 function PendingStateTag() {
@@ -47,7 +46,7 @@ function ManageOrderRow({ order }) {
   );
 }
 
-function MangeOrders() {
+export default function MangeOrders() {
   const orders = useOrders();
   return (
     <GenericPage>
@@ -58,13 +57,5 @@ function MangeOrders() {
         ))}
       </RowSection>
     </GenericPage>
-  );
-}
-
-export default function ManageOrdersScreen() {
-  return (
-    <AdminSessionContainer>
-      <MangeOrders />
-    </AdminSessionContainer>
   );
 }

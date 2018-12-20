@@ -8,13 +8,6 @@ import observeNull from '../aven-cloud/observeNull';
 
 const OrderContext = createContext(null);
 
-function doCancelOrder(lastOrder) {
-  if (lastOrder.isCancelled) {
-    return lastOrder;
-  }
-  return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
-}
-
 function doCancelOrderIfNotConfirmed(lastOrder) {
   if (lastOrder.isConfirmed) {
     return lastOrder;
@@ -106,13 +99,14 @@ function getOrderSummary(orderState, companyConfig) {
   });
   const tax = subTotal * TAX_RATE;
   const total = subTotal + tax;
-  const { isConfirmed, isCancelled } = orderState;
+  const { isConfirmed, isCancelled, orderId } = orderState;
   let state = isConfirmed ? 'confirmed' : 'pending';
   if (isCancelled) {
     state = 'cancelled';
   }
   return {
     isCancelled,
+    orderId,
     isConfirmed,
     name: orderState.orderName || 'No Name',
     state,
@@ -139,6 +133,18 @@ function getAllOrders() {
   }).observeValue;
 }
 
+function getOrderCancelHandler(cloud, orderId) {
+  async function cancelOrder() {
+    await cloud.get(`Orders/${orderId}`).transact(lastOrder => {
+      if (lastOrder.isCancelled) {
+        return lastOrder;
+      }
+      return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
+    });
+  }
+  return cancelOrder;
+}
+
 export function useOrders() {
   let cloud = useCloud();
 
@@ -156,9 +162,7 @@ export function useOrders() {
     return {
       ...order,
       summary: getOrderSummary(order.orderState, companyConfig),
-      cancel: () => {
-        cloud.get(`Orders/${order.id}`).transact(doCancelOrder);
-      },
+      cancel: getOrderCancelHandler(cloud, order.id),
     };
   });
 }
@@ -171,7 +175,11 @@ export function useOrder() {
 export function useCurrentOrder() {
   let { order } = useContext(OrderContext);
   const observedOrder = useObservable(order ? order.observeValue : observeNull);
-  return observedOrder;
+  if (!observedOrder) {
+    return observedOrder;
+  }
+
+  return { ...observedOrder, orderId: order.getName() };
 }
 
 export function useOrderItem(orderItemId) {
@@ -408,7 +416,15 @@ export function useMenu() {
 export function useOrderSummary() {
   const currentOrder = useCurrentOrder();
   const companyConfig = useCompanyConfig();
-  return getOrderSummary(currentOrder, companyConfig);
+  const cloud = useCloud();
+  const summary = getOrderSummary(currentOrder, companyConfig);
+  if (!summary) {
+    return summary;
+  }
+  return {
+    ...summary,
+    cancel: getOrderCancelHandler(cloud, summary.orderId),
+  };
 }
 
 export function useOrderIdSummary(orderId) {
