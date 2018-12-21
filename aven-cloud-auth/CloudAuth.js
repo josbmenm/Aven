@@ -1,6 +1,7 @@
 import { uuid, checksum } from '../aven-cloud-utils/Crypto';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import { getAuthRefName } from '../aven-cloud-utils/RefNaming';
+
 function thanksVeryMuch(dispatch) {
   return async action => {
     const resp = await dispatch(action);
@@ -98,6 +99,30 @@ export default function CloudAuth({ dataSource, methods }) {
     return { ...savedSession, accountId };
   }
 
+  async function GetAccountIdForAuthMethod({ methodId, domain, accountId }) {
+    const methodAccountLookupName = `auth/method/${methodId}`;
+    const accountLookup = await getObj(
+      dataSource,
+      domain,
+      methodAccountLookupName,
+    );
+    if (accountLookup) {
+      if (accountId && accountId !== accountLookup.accountId) {
+        throw new Error('Auth method in use by another account!');
+      }
+      return accountLookup.accountId;
+    }
+    let newAuthMethodAccountId = accountId;
+    if (!newAuthMethodAccountId) {
+      newAuthMethodAccountId = await CreateAnonymousAccount({ domain });
+    }
+    await writeObj(dataSource, domain, methodAccountLookupName, {
+      accountId: newAuthMethodAccountId,
+      creationTime: Date.now(),
+    });
+    return newAuthMethodAccountId;
+  }
+
   async function CreateVerificationRequest({
     domain,
     accountId,
@@ -112,7 +137,14 @@ export default function CloudAuth({ dataSource, methods }) {
       methodsToValidate = methodsToValidate.slice(1);
       if (methodToValidate.canVerify(verificationInfo, accountId)) {
         const methodId = await methodToValidate.getMethodId(verificationInfo);
-        const methodStateRefName = `auth/method/${methodId}`;
+
+        const authenticatingAccountId = await GetAccountIdForAuthMethod({
+          methodId,
+          accountId,
+          domain,
+        });
+
+        const methodStateRefName = `auth/account/${authenticatingAccountId}/method/${methodId}`;
 
         const methodState = await getObj(
           dataSource,
@@ -178,6 +210,7 @@ export default function CloudAuth({ dataSource, methods }) {
     verificationResponse,
     accountId,
   }) {
+    let authenticatingAccountId = null;
     if (!verificationResponse) {
       return CreateVerificationRequest({ domain, accountId, verificationInfo });
     }
@@ -195,45 +228,28 @@ export default function CloudAuth({ dataSource, methods }) {
         continue;
       }
       const methodId = await methodToValidate.getMethodId(verificationInfo);
-      const methodStateRefName = `auth/method/${methodId}`;
-      const methodState = await getObj(dataSource, domain, methodStateRefName);
-      const methodStoredAccountId = methodState && methodState.accountId;
-      const methodAccountId = methodStoredAccountId || accountId;
 
-      if (
-        methodStoredAccountId &&
-        accountId &&
-        methodStoredAccountId !== accountId
-      ) {
-        throw new Error('Auth method in use by another account!');
-      }
+      authenticatingAccountId = await GetAccountIdForAuthMethod({
+        domain,
+        methodId,
+        accountId,
+      });
+
+      const methodStateRefName = `auth/account/${authenticatingAccountId}/method/${methodId}`;
+      const methodState = await getObj(dataSource, domain, methodStateRefName);
 
       let nextMethodState = methodState;
-      console.log('VERIFYING!', {
-        methodAccountId,
-        verificationInfo,
-        verificationResponse,
-        methodState,
-      });
+
       nextMethodState = await methodToValidate.performVerification({
-        accountId: methodAccountId,
+        accountId: authenticatingAccountId,
         verificationInfo,
         methodState,
         verificationResponse,
       });
       verifiedMethodId = methodId;
       verifiedMethodName = methodToValidate.name;
-      verifiedAccountId = methodAccountId;
-      if (accountId && !nextMethodState.accountId) {
-        nextMethodState = { ...nextMethodState, accountId };
-      }
-      console.log('herro?', accountId, verifiedAccountId);
-      if (!accountId && !verifiedAccountId) {
-        // the authentication method checks out but there is no account here.. we should create one so the user can have a session. later they may rename the account and/or add more auth methods
-        const newAccountId = await CreateAnonymousAccount({ domain });
-        verifiedAccountId = newAccountId;
-        nextMethodState = { ...nextMethodState, accountId: newAccountId };
-      }
+      verifiedAccountId = authenticatingAccountId;
+
       if (nextMethodState !== methodState) {
         await writeObj(dataSource, domain, methodStateRefName, nextMethodState);
       }
@@ -242,7 +258,6 @@ export default function CloudAuth({ dataSource, methods }) {
     if (!verifiedMethodId || !verifiedMethodName) {
       throw new Error('Cannot verify auth method');
     }
-    console.log('duuude?', verifiedAccountId);
 
     return {
       verifiedMethodName,
@@ -263,7 +278,6 @@ export default function CloudAuth({ dataSource, methods }) {
       verificationInfo,
       verificationResponse,
     });
-    console.log('righto', { verification, accountId });
     if (
       !verification.accountId ||
       !verification.verifiedMethodId ||

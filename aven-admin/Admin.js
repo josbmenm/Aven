@@ -477,7 +477,6 @@ function AuthMethodInput({
   onLoginInfo,
 }) {
   const [mode, setMode] = useState('root');
-  console.log('ALRIGHT DUUDE!', mode);
   return (
     <React.Fragment>
       <OptionField
