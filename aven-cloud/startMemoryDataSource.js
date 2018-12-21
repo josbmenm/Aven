@@ -97,10 +97,11 @@ const startMemoryDataSource = (opts = {}) => {
       const last = listR.behavior.value;
       const refSet = new Set(last.value || []);
       refSet.delete(getMainTerm(refName));
-      listR.behavior.next({
+      const muchNext = {
         ...(last || {}),
         value: Array.from(refSet),
-      });
+      };
+      listR.behavior.next(muchNext);
     }
   }
 
@@ -149,13 +150,12 @@ const startMemoryDataSource = (opts = {}) => {
       const match = refName.match(re);
       if (match) {
         const toName = to + match[1];
-        putRefInList(toName);
-        removeRefFromList(refName);
         _refs[toName] = _refs[refName];
         delete _refs[refName];
-        console.log('Moving from ' + refName + ' to ' + toName);
       }
     });
+    removeRefFromList(from);
+    putRefInList(to);
   }
 
   async function PostRef({ domain, name, id, value }) {
