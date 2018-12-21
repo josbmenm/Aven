@@ -203,9 +203,10 @@ function OptionField({ options, value, onValue }) {
         onValue(e.target.value);
       }}
     >
-      {' '}
       {options.map(option => (
-        <option value={option.value}>{option.label}</option>
+        <option value={option.value} key={option.value}>
+          {option.label}
+        </option>
       ))}
     </select>
   );
@@ -312,31 +313,108 @@ function LargePane({ children }) {
   );
 }
 
-function EmailLoginInfo({ onSubmit }) {
-  const [email, setEmail] = useState('');
+function EmailLoginInfo({
+  loginInfo,
+  onLoginInfo,
+  onSubmit,
+  verificationChallenge,
+}) {
+  if (verificationChallenge) {
+    return (
+      <React.Fragment>
+        <Text>Enter code sent to {verificationChallenge.email}</Text>
+        <InputField
+          name="Verification Code"
+          value={
+            loginInfo &&
+            loginInfo.verificationResponse &&
+            loginInfo.verificationResponse.key
+          }
+          onValue={key => {
+            onLoginInfo({
+              ...loginInfo,
+              verificationResponse: {
+                key,
+              },
+            });
+          }}
+          onSubmit={onSubmit}
+        />
+      </React.Fragment>
+    );
+  }
   return (
     <InputField
       name="Email Address"
-      value={email}
-      onValue={setEmail}
+      value={
+        loginInfo &&
+        loginInfo.verificationInfo &&
+        loginInfo.verificationInfo.email
+      }
+      onValue={email => {
+        onLoginInfo({
+          ...loginInfo,
+          verificationInfo: {
+            email,
+          },
+        });
+      }}
       onSubmit={onSubmit}
     />
   );
 }
 
-function SMSLoginInfo({ onSubmit }) {
-  const [phone, setPhone] = useState('');
+function SMSLoginInfo({
+  loginInfo,
+  onLoginInfo,
+  onSubmit,
+  verificationChallenge,
+}) {
+  if (verificationChallenge) {
+    return (
+      <React.Fragment>
+        <Text>Enter code sent to {verificationChallenge.phone}</Text>
+        <InputField
+          name="Verification Code"
+          value={
+            loginInfo &&
+            loginInfo.verificationResponse &&
+            loginInfo.verificationResponse.key
+          }
+          onValue={key => {
+            onLoginInfo({
+              ...loginInfo,
+              verificationResponse: {
+                key,
+              },
+            });
+          }}
+          onSubmit={onSubmit}
+        />
+      </React.Fragment>
+    );
+  }
   return (
     <InputField
       name="Phone Number"
-      value={phone}
-      onValue={setPhone}
+      value={
+        loginInfo &&
+        loginInfo.verificationInfo &&
+        loginInfo.verificationInfo.number
+      }
+      onValue={number => {
+        onLoginInfo({
+          verificationInfo: {
+            number,
+          },
+        });
+      }}
       onSubmit={onSubmit}
     />
   );
 }
 
-function RootLoginInfo({ loginInfo, setLoginInfo, onSubmit }) {
+function RootLoginInfo({ loginInfo, onLoginInfo, onSubmit }) {
   return (
     <InputField
       name="Password"
@@ -347,7 +425,7 @@ function RootLoginInfo({ loginInfo, setLoginInfo, onSubmit }) {
         loginInfo.verificationResponse.password
       }
       onValue={password =>
-        setLoginInfo({
+        onLoginInfo({
           accountId: 'root',
           verificationInfo: { type: 'root' },
           verificationResponse: { password },
@@ -392,14 +470,45 @@ function LoginInfo({ mode, ...props }) {
   }
 }
 
+function AuthMethodInput({
+  onSubmit,
+  verificationChallenge,
+  loginInfo,
+  onLoginInfo,
+}) {
+  const [mode, setMode] = useState('root');
+  console.log('ALRIGHT DUUDE!', mode);
+  return (
+    <React.Fragment>
+      <OptionField
+        options={[
+          { value: 'root', label: 'Root Authentication' },
+          { value: 'email', label: 'Email' },
+          { value: 'sms', label: 'Phone Number' },
+          { value: 'password', label: 'Password' },
+        ]}
+        value={mode}
+        onValue={nextMode => {
+          setMode(nextMode);
+          onLoginInfo(null);
+        }}
+      />
+      <LoginInfo
+        mode={mode}
+        loginInfo={loginInfo}
+        onLoginInfo={onLoginInfo}
+        verificationChallenge={verificationChallenge}
+        onSubmit={onSubmit}
+      />
+    </React.Fragment>
+  );
+}
+
 function LoginForm({ onSession, onClientConfig }) {
   const [isWorking, setIsWorking] = useState(false);
   const [loginInfo, setLoginInfo] = useState(null);
-  const [mode, setMode] = useState('root');
+  const [verificationChallenge, setVerificationChallenge] = useState(null);
   const { navigate } = useNavigation();
-  if (isWorking) {
-    return <Text>One moment..</Text>;
-  }
   const cloud = useCloud();
   async function doLogin() {
     setIsWorking(true);
@@ -408,6 +517,10 @@ function LoginForm({ onSession, onClientConfig }) {
       verificationResponse: loginInfo.verificationResponse,
       verificationInfo: loginInfo.verificationInfo,
     });
+    setIsWorking(false);
+    if (resp.verificationChallenge) {
+      setVerificationChallenge(resp.verificationChallenge);
+    }
     if (resp.session) {
       onSession(resp.session);
       navigate('Home');
@@ -421,23 +534,11 @@ function LoginForm({ onSession, onClientConfig }) {
           onClientConfig(null);
         }}
       />
-      <OptionField
-        options={[
-          { value: 'root', label: 'Root Authentication' },
-          { value: 'email', label: 'Email' },
-          { value: 'sms', label: 'Phone Number' },
-          { value: 'password', label: 'Password' },
-        ]}
-        value={mode}
-        onValue={nextMode => {
-          setMode(nextMode);
-          setLoginInfo(null);
-        }}
-      />
-      <LoginInfo
-        mode={mode}
+      {isWorking && <Text>One moment..</Text>}
+      <AuthMethodInput
+        onLoginInfo={setLoginInfo}
         loginInfo={loginInfo}
-        setLoginInfo={setLoginInfo}
+        verificationChallenge={verificationChallenge}
         onSubmit={doLogin}
       />
       {!!loginInfo && <FormButton title="Login" onPress={doLogin} />}
@@ -628,6 +729,14 @@ function RefsPane({ onClientConfig, onSession }) {
   return (
     <Pane>
       <Title title={domain} />
+      <LinkRow
+        key="my-account"
+        title="My Account"
+        isSelected={false}
+        onPress={() => {
+          navigate('Account');
+        }}
+      />
       <RefsList parent={null} activeRef={activeRef} />
       <AddRefSection parent={null} />
       <StandaloneButton
@@ -1052,6 +1161,17 @@ function RefMetaPane({ name }) {
   );
 }
 
+function AccountPane() {
+  const cloud = useCloud();
+  const session = useObservable(cloud.observeSession);
+  return (
+    <Pane>
+      <Title title={'My account'} />
+      {session && <InfoSection text={session.accountId} />}
+    </Pane>
+  );
+}
+
 const RefPaneNavigator = createNavigator(
   SlideableNavigation,
   SwitchRouter({
@@ -1089,6 +1209,10 @@ const MainPaneNavigator = createNavigator(
       path: 'ref',
       screen: RefPane,
       params: { refName: null },
+    },
+    Account: {
+      path: 'account',
+      screen: AccountPane,
     },
   }),
   {

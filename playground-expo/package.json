@@ -23,9 +23,9 @@
         ],
         "version": "1.0.0",
         "orientation": "portrait",
-        "icon": "./src-sync/expo-playground/assets/icon.png",
+        "icon": "./src-sync/playground-expo/assets/icon.png",
         "splash": {
-          "image": "./src-sync/expo-playground/assets/splash.png",
+          "image": "./src-sync/playground-expo/assets/splash.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         },

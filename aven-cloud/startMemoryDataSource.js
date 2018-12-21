@@ -91,6 +91,19 @@ const startMemoryDataSource = (opts = {}) => {
     }
   }
 
+  function removeRefFromList(refName) {
+    const listR = _getRef(getRefsListName(refName));
+    if (listR.behavior) {
+      const last = listR.behavior.value;
+      const refSet = new Set(last.value || []);
+      refSet.delete(getMainTerm(refName));
+      listR.behavior.next({
+        ...(last || {}),
+        value: Array.from(refSet),
+      });
+    }
+  }
+
   async function PutRef({ domain, name, id }) {
     if (!isRefNameValid(name)) {
       throw new Error(`Invalid Ref name "${name}"`);
@@ -114,6 +127,35 @@ const startMemoryDataSource = (opts = {}) => {
     }
 
     putRefInList(name);
+  }
+
+  async function MoveRef({ domain, from, to }) {
+    if (!isRefNameValid(from)) {
+      throw new Error(`Invalid from Ref name "${from}"`);
+    }
+    if (!isRefNameValid(to)) {
+      throw new Error(`Invalid to Ref name "${to}"`);
+    }
+    if (domain === undefined || from === undefined || to === undefined) {
+      throw new Error('Invalid use. ', { domain, from, to });
+    }
+    if (domain !== dataSourceDomain) {
+      throw new Error(
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
+      );
+    }
+    const re = new RegExp('^' + from + '(.*)$');
+    Object.keys(_refs).forEach(refName => {
+      const match = refName.match(re);
+      if (match) {
+        const toName = to + match[1];
+        putRefInList(toName);
+        removeRefFromList(refName);
+        _refs[toName] = _refs[refName];
+        delete _refs[refName];
+        console.log('Moving from ' + refName + ' to ' + toName);
+      }
+    });
   }
 
   async function PostRef({ domain, name, id, value }) {
@@ -395,6 +437,7 @@ const startMemoryDataSource = (opts = {}) => {
       DestroyRef,
       CollectGarbage,
       ListRefObjects,
+      MoveRef,
     }),
     id,
   };

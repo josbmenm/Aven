@@ -209,19 +209,31 @@ export default function CloudAuth({ dataSource, methods }) {
       }
 
       let nextMethodState = methodState;
+      console.log('VERIFYING!', {
+        methodAccountId,
+        verificationInfo,
+        verificationResponse,
+        methodState,
+      });
       nextMethodState = await methodToValidate.performVerification({
         accountId: methodAccountId,
         verificationInfo,
         methodState,
         verificationResponse,
       });
-      verifiedAccountId = verifiedMethodId = methodId;
+      verifiedMethodId = methodId;
       verifiedMethodName = methodToValidate.name;
       verifiedAccountId = methodAccountId;
       if (accountId && !nextMethodState.accountId) {
         nextMethodState = { ...nextMethodState, accountId };
       }
-
+      console.log('herro?', accountId, verifiedAccountId);
+      if (!accountId && !verifiedAccountId) {
+        // the authentication method checks out but there is no account here.. we should create one so the user can have a session. later they may rename the account and/or add more auth methods
+        const newAccountId = await CreateAnonymousAccount({ domain });
+        verifiedAccountId = newAccountId;
+        nextMethodState = { ...nextMethodState, accountId: newAccountId };
+      }
       if (nextMethodState !== methodState) {
         await writeObj(dataSource, domain, methodStateRefName, nextMethodState);
       }
@@ -230,6 +242,8 @@ export default function CloudAuth({ dataSource, methods }) {
     if (!verifiedMethodId || !verifiedMethodName) {
       throw new Error('Cannot verify auth method');
     }
+    console.log('duuude?', verifiedAccountId);
+
     return {
       verifiedMethodName,
       verifiedMethodId,
@@ -249,7 +263,7 @@ export default function CloudAuth({ dataSource, methods }) {
       verificationInfo,
       verificationResponse,
     });
-
+    console.log('righto', { verification, accountId });
     if (
       !verification.accountId ||
       !verification.verifiedMethodId ||
@@ -278,14 +292,20 @@ export default function CloudAuth({ dataSource, methods }) {
       session,
     };
   }
-  async function CreateAnonymousSession({ domain }) {
-    const accountId = uuid();
-    const sessionId = uuid();
-    const token = uuid();
 
+  async function CreateAnonymousAccount({ domain }) {
+    const accountId = uuid();
     const account = {
       timeCreated: Date.now(),
     };
+    await writeObj(dataSource, domain, `auth/account/${accountId}`, account);
+    return accountId;
+  }
+
+  async function CreateAnonymousSession({ domain }) {
+    const accountId = await CreateAnonymousAccount({ domain });
+    const sessionId = uuid();
+    const token = uuid();
 
     const session = {
       timeCreated: Date.now(),
@@ -295,7 +315,6 @@ export default function CloudAuth({ dataSource, methods }) {
       token,
     };
 
-    await writeObj(dataSource, domain, `auth/account/${accountId}`, account);
     await writeObj(
       dataSource,
       domain,
@@ -409,6 +428,21 @@ export default function CloudAuth({ dataSource, methods }) {
       // avoid sending the 'owner' if the user is not even allowed to read or post
       return Permissions.none;
     }
+  }
+
+  async function PutAccountId({ accountId, auth, domain }) {
+    const validated = await VerifySession({ auth, domain });
+
+    if (!validated.accountId || validated.accountId !== auth.accountId) {
+      throw new Error('Invalid authentication!');
+    }
+
+    await dataSource.dispatch({
+      type: 'MoveRef',
+      from: `auth/account/${validated.accountId}`,
+      to: `auth/account/${accountId}`,
+      domain,
+    });
   }
 
   async function DestroySession({ auth, domain }) {
@@ -557,6 +591,7 @@ export default function CloudAuth({ dataSource, methods }) {
     DestroySession, // todo, guard
     DestroyAllSessions, // todo, guard
     VerifySession,
+    PutAccountId,
     VerifyAuth,
     PutAuthMethod, // todo, guard
     GetPermissions,

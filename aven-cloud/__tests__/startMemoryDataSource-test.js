@@ -89,7 +89,7 @@ describe('ref storage', () => {
       ds.dispatch({ type: 'PutRef', domain: 'test', objectId: 'foo' }),
     ).rejects.toThrow();
   });
-  test('puts ref works', async () => {
+  test('put ref works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj = await ds.dispatch({
       type: 'PutObject',
@@ -142,6 +142,137 @@ describe('ref storage', () => {
       name: postResult.name,
     });
     expect(getResult.id).toEqual(obj.id);
+  });
+
+  test('move ref works', async () => {
+    const ds = startMemoryDataSource({ domain: 'test' });
+    const obj = await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo',
+      id: obj.id,
+    });
+    await ds.dispatch({
+      type: 'MoveRef',
+      domain: 'test',
+      from: 'foo',
+      to: 'foobob',
+    });
+    const ref = await ds.dispatch({
+      type: 'GetRef',
+      domain: 'test',
+      name: 'foobob',
+    });
+    expect(ref.id).toEqual(obj.id);
+
+    const gotObj = await ds.dispatch({
+      type: 'GetObject',
+      domain: 'test',
+      name: 'foobob',
+      id: ref.id,
+    });
+    expect(gotObj.value.foo).toEqual('bar');
+  });
+
+  test('move ref shows in list', async () => {
+    const ds = startMemoryDataSource({ domain: 'test' });
+    const obj = await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo',
+      id: obj.id,
+    });
+    let result;
+    result = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: '_refs',
+    });
+    expect(result.value).toEqual(['foo']);
+    await ds.dispatch({
+      type: 'MoveRef',
+      domain: 'test',
+      from: 'foo',
+      to: 'foobob',
+    });
+    result = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: '_refs',
+    });
+    expect(result.value).toEqual(['foobob']);
+  });
+
+  test('move ref affects children too', async () => {
+    const ds = startMemoryDataSource({ domain: 'test' });
+    const obj = await ds.dispatch({
+      type: 'PutObject',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo',
+      id: obj.id,
+    });
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo/bar',
+      id: obj.id,
+    });
+    await ds.dispatch({
+      type: 'PutRef',
+      domain: 'test',
+      name: 'foo/baz',
+      id: obj.id,
+    });
+    let result;
+    result = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: '_refs',
+    });
+    expect(result.value).toEqual(['foo']);
+    result = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: 'foo/_refs',
+    });
+    expect(result.value).toEqual(['bar', 'baz']);
+    await ds.dispatch({
+      type: 'MoveRef',
+      domain: 'test',
+      from: 'foo',
+      to: 'foobob',
+    });
+
+    result = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: '_refs',
+    });
+    expect(result.value).toEqual(['foobob']);
+    result = await ds.dispatch({
+      type: 'GetRefValue',
+      domain: 'test',
+      name: 'foobob/_refs',
+    });
+    expect(result.value).toEqual(['bar', 'baz']);
   });
 
   test('get ref value works', async () => {
