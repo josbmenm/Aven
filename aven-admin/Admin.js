@@ -3,7 +3,14 @@ import {
   NavigationContext,
   SwitchRouter,
 } from '../navigation-core';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useContext,
+  createContext,
+} from 'react';
 import {
   AsyncStorage,
   Image,
@@ -13,6 +20,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { useNavigation, useNavigationState } from '../navigation-hooks/Hooks';
@@ -738,6 +746,7 @@ function RefsPane({ onClientConfig, onSession }) {
       />
       <RefsList parent={null} activeRef={activeRef} />
       <AddRefSection parent={null} />
+      <TestPopoverButton />
       <StandaloneButton
         title="Log out"
         onPress={() => {
@@ -853,6 +862,100 @@ function PrimitivePane({ value, onValue }) {
   );
 }
 
+const PopoverContext = createContext(null);
+
+function PopoverOverlay({ children, location, onClose }) {
+  console.log('location, location', location);
+  return (
+    <React.Fragment>
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View
+          style={{ backgroundColor: '#2228', ...StyleSheet.absoluteFillObject }}
+        />
+      </TouchableWithoutFeedback>
+      <View
+        style={{
+          width: 400,
+          height: 400,
+          position: 'absolute',
+          left: location.pageX,
+          top: location.pageY,
+        }}
+      >
+        {children}
+      </View>
+    </React.Fragment>
+  );
+}
+
+function PopoverContainer({ children }) {
+  let [popover, setPopover] = useState(null);
+  let [popoverLocation, setLocation] = useState({});
+  let popoverContext = {
+    openPopover: (popover, location) => {
+      console.log('setting popover', popover, location);
+      setLocation(location || {});
+      setPopover(popover);
+    },
+  };
+
+  return (
+    <PopoverContext.Provider value={popoverContext}>
+      <View style={{ flex: 1 }}>
+        {children}
+        {popover && (
+          <PopoverOverlay
+            location={popoverLocation}
+            onClose={() => {
+              setPopover(null);
+            }}
+          >
+            {popover}
+          </PopoverOverlay>
+        )}
+      </View>
+    </PopoverContext.Provider>
+  );
+}
+
+function usePopover() {
+  const target = useRef(null);
+  const context = useContext(PopoverContext);
+  function openPopover(view, location) {
+    if (!context) {
+      throw new Error('no popover context!');
+    }
+    context.openPopover(view, location);
+  }
+  return { openPopover, target };
+}
+
+function TestPopoverButton() {
+  let { openPopover } = usePopover();
+  let viewRef = useRef(null);
+  return (
+    <View ref={viewRef}>
+      <FormButton
+        title="Test Popover"
+        onPress={async () => {
+          const location = await new Promise(resolve =>
+            viewRef.current.measure((x, y, width, height, pageX, pageY) => {
+              console.log('hiho', location);
+              resolve({ x, y, width, height, pageX, pageY });
+            }),
+          );
+          console.log('lolwaht', location);
+          openPopover(
+            <View style={{ backgroundColor: 'white', padding: 30 }}>
+              <Text>Hello, World!</Text>
+            </View>,
+            location,
+          );
+        }}
+      />
+    </View>
+  );
+}
 function AddKeySection({ value, onValue }) {
   let [isOpened, setIsOpened] = useState(false);
   let [keyName, setKeyName] = useState('');
@@ -871,6 +974,7 @@ function AddKeySection({ value, onValue }) {
           onSubmit={submit}
         />
         <FormButton title="Add Key" onPress={submit} />
+        <FormButton title="Add Key" onPress={submit} />
         <FormButton
           title="Cancel"
           secondary
@@ -883,12 +987,15 @@ function AddKeySection({ value, onValue }) {
     );
   }
   return (
-    <StandaloneButton
-      title="Add Key"
-      onPress={() => {
-        setIsOpened(true);
-      }}
-    />
+    <React.Fragment>
+      <TestPopoverButton />
+      <StandaloneButton
+        title="Add Key"
+        onPress={() => {
+          setIsOpened(true);
+        }}
+      />
+    </React.Fragment>
   );
 }
 
@@ -1167,6 +1274,25 @@ function AccountPane() {
     <Pane>
       <Title title={'My account'} />
       {session && <InfoSection text={session.accountId} />}
+      <StandaloneButton title="Set Username" onPress={() => {}} />
+      <StandaloneButton
+        title="Add Email Address"
+        onPress={() => {
+          // cloud
+          //   .dispatch({
+          //     type: 'PutAuthMethod',
+          //     verificationInfo: {
+          //       email: 'eric@onofood.co',
+          //     },
+          //     verificationResponse: null,
+          //   })
+          //   .then(() => {
+          //     console.log('auth put done!');
+          //   })
+          //   .catch(console.error);
+        }}
+      />
+      <StandaloneButton title="Add Phone Number" onPress={() => {}} />
     </Pane>
   );
 }
@@ -1313,7 +1439,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
   }
 
   return (
-    <BackgroundView>
+    <PopoverContainer>
       <CloudContext.Provider value={client}>
         <NavigationContext.Provider value={activeDescriptor.navigation}>
           <ScrollView
@@ -1340,7 +1466,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
           </ScrollView>
         </NavigationContext.Provider>
       </CloudContext.Provider>
-    </BackgroundView>
+    </PopoverContainer>
   );
 }
 
