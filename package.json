@@ -10,7 +10,8 @@
     "format": "eslint . --fix",
     "clean": "node ./aven-tools/cli.js clean",
     "import-vendor": "node ./aven-tools/importVendorCode.js",
-    "test": "jest"
+    "test": "jest",
+    "test-sql": "cd aven-cloud-sql; ./test.sh startSQLDataSource"
   },
   "devDependencies": {
     "babel-jest": "^23.6.0",
@@ -90,6 +91,9 @@
     ],
     "coveragePathIgnorePatterns": [
       "jest-setup.js"
+    ],
+    "testPathIgnorePatterns": [
+      "aven-cloud-sql/"
     ],
     "transformIgnorePatterns": [
       "node_modules/(?!(jest-)?react-native|react-clone-referenced-element)"

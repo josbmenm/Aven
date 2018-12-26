@@ -30,7 +30,7 @@ jobs:
           at: ~/project
       - run: |
           yarn run lint
-  tests:
+  test-js:
     <<: *defaults
     steps:
       - attach_workspace:
@@ -39,6 +39,12 @@ jobs:
       - store_artifacts:
           path: coverage
           destination: coverage
+  test-sql:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run: yarn test-sql
   deploy:
     <<: *defaults
     steps:
@@ -58,10 +64,14 @@ workflows:
       - lint:
           requires:
             - install-dependencies
-      - tests:
+      - test-js:
+          requires:
+            - install-dependencies
+      - test-sql:
           requires:
             - install-dependencies
       - deploy:
           requires:
             - lint
-            - tests
+            - test-js
+            - test-sql
