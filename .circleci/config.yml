@@ -46,7 +46,7 @@ jobs:
       - attach_workspace:
           at: ~/project
 
-      - run: curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+      - run: curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
       - run: sudo apt-get install -y nodejs
 
       - run: curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
