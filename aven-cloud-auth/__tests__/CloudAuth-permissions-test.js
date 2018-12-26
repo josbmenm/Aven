@@ -108,7 +108,7 @@ describe('Cloud auth Permissions', () => {
         auth: null,
         domain: 'test',
         name: 'something',
-      }),
+      })
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -136,7 +136,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      }),
+      })
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -184,7 +184,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      }),
+      })
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -221,7 +221,7 @@ describe('Cloud auth Permissions', () => {
         type: 'GetRef',
         domain: 'test',
         name: 'something',
-      }),
+      })
     ).rejects.toThrow();
   });
 
@@ -241,7 +241,7 @@ describe('Cloud auth Permissions', () => {
         domain: 'test',
         name: 'something',
         value: { foo: 'bar' },
-      }),
+      })
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -387,7 +387,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      }),
+      })
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -408,7 +408,7 @@ describe('Cloud auth Permissions', () => {
         type: 'GetRef',
         domain: 'test',
         name: 'something',
-      }),
+      })
     ).rejects.toThrow();
 
     await expect(
@@ -417,7 +417,7 @@ describe('Cloud auth Permissions', () => {
         domain: 'test',
         name: 'something',
         id: barObj.id,
-      }),
+      })
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -457,7 +457,7 @@ describe('Cloud auth Permissions', () => {
         name: 'something',
         defaultRule: {},
         accountRules: {},
-      }),
+      })
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -479,7 +479,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession2,
         domain: 'test',
         name: 'something',
-      }),
+      })
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -525,7 +525,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      }),
+      })
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -571,7 +571,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: 'something/_auth',
-      }),
+      })
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
@@ -624,7 +624,7 @@ describe('Cloud auth Permissions', () => {
         auth: anonSession,
         domain: 'test',
         name: '_auth',
-      }),
+      })
     ).rejects.toThrow();
 
     result = await authDataSource.dispatch({

@@ -57,7 +57,7 @@ export default async function startSQLDataSource({ config, connection }) {
       {
         relate: true,
         insertMissing: true,
-      },
+      }
     );
     _announceRef(domain, name, {
       domain,
@@ -81,7 +81,7 @@ export default async function startSQLDataSource({ config, connection }) {
         },
         {
           insertMissing: true,
-        },
+        }
       );
     } catch (e) {
       // objects are unique and immutable

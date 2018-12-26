@@ -24,7 +24,7 @@ describe('object storage', () => {
         domain: 'test2',
         value: { foo: 'bar' },
         name: 'foo',
-      }),
+      })
     ).rejects.toThrow();
   });
   test('object put fails with missing ref', async () => {
@@ -34,7 +34,7 @@ describe('object storage', () => {
         type: 'PutObject',
         domain: 'test',
         value: { foo: 'bar' },
-      }),
+      })
     ).rejects.toThrow();
   });
 
@@ -86,7 +86,7 @@ describe('ref storage', () => {
   test('puts ref fails when an object is missing', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     await expect(
-      ds.dispatch({ type: 'PutRef', domain: 'test', objectId: 'foo' }),
+      ds.dispatch({ type: 'PutRef', domain: 'test', objectId: 'foo' })
     ).rejects.toThrow();
   });
   test('put ref works', async () => {
@@ -719,7 +719,7 @@ describe('observing refs', () => {
   test('puts ref fails when an object is missing', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     await expect(
-      ds.dispatch({ type: 'PutRef', domain: 'test', objectId: 'foo' }),
+      ds.dispatch({ type: 'PutRef', domain: 'test', objectId: 'foo' })
     ).rejects.toThrow();
   });
   test('observe ref works', async () => {

@@ -17,7 +17,7 @@ describe('ref generic behavior', () => {
       createCloudRef({
         dataSource,
         name: 'foo',
-      }),
+      })
     ).toThrow();
   });
   test('fails on creation without name', () => {
@@ -26,7 +26,7 @@ describe('ref generic behavior', () => {
       createCloudRef({
         dataSource,
         domain: 'test',
-      }),
+      })
     ).toThrow();
   });
 
@@ -37,7 +37,7 @@ describe('ref generic behavior', () => {
         dataSource,
         domain: 'test',
         name: 'foo/bar',
-      }),
+      })
     ).toThrow();
   });
 });

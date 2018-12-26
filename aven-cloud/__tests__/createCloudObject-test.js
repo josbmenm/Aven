@@ -14,14 +14,14 @@ describe('object generic behavior', () => {
     expect(() =>
       createCloudObject({
         value: { foo: 42 },
-      }),
+      })
     ).toThrow();
   });
   test('fails on creation without value or id', () => {
     expect(() =>
       createCloudObject({
         onNamedDispatch: () => {},
-      }),
+      })
     ).toThrow();
   });
   test('handles creation with value', () => {

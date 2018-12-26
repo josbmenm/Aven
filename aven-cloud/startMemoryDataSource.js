@@ -114,7 +114,7 @@ const startMemoryDataSource = (opts = {}) => {
     }
     if (domain !== dataSourceDomain) {
       throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
     const r = _getRef(name);
@@ -142,7 +142,7 @@ const startMemoryDataSource = (opts = {}) => {
     }
     if (domain !== dataSourceDomain) {
       throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
     const re = new RegExp('^' + from + '(.*)$');
@@ -167,7 +167,7 @@ const startMemoryDataSource = (opts = {}) => {
     }
     if (domain !== dataSourceDomain) {
       throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
     const postedName = name ? pathJoin(name, uuid()) : uuid();
@@ -187,7 +187,7 @@ const startMemoryDataSource = (opts = {}) => {
     }
     if (domain !== dataSourceDomain) {
       throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
     Object.keys(_refs)
@@ -226,7 +226,7 @@ const startMemoryDataSource = (opts = {}) => {
   async function GetObject({ domain, name, id }) {
     if (domain !== dataSourceDomain) {
       throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
     const r = _getRef(name);
@@ -249,12 +249,12 @@ const startMemoryDataSource = (opts = {}) => {
   async function PutObject({ value, name, domain }) {
     if (domain !== dataSourceDomain) {
       throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
     if (!_isValidName(name)) {
       throw new Error(
-        `Invalid ref name "${name}", must be provided with PutObject`,
+        `Invalid ref name "${name}", must be provided with PutObject`
       );
     }
     const objData = stringify(value);
@@ -350,7 +350,7 @@ const startMemoryDataSource = (opts = {}) => {
   const close = () => {
     if (_objects === null) {
       throw new Error(
-        `Cannot close memory source "${id}" because it is already closed!`,
+        `Cannot close memory source "${id}" because it is already closed!`
       );
     }
     console.log('Closing memory source ' + id);
@@ -361,7 +361,7 @@ const startMemoryDataSource = (opts = {}) => {
   const observeRef = async (domain, name) => {
     if (domain !== dataSourceDomain) {
       throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
     const r = _getRef(name);
@@ -387,7 +387,7 @@ const startMemoryDataSource = (opts = {}) => {
   async function GetRefValue({ domain, name }) {
     if (domain !== dataSourceDomain) {
       throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
+        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
     const listRefName = getListRefName(name);

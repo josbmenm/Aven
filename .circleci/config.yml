@@ -41,6 +41,7 @@ jobs:
           destination: coverage
   test-sql:
     <<: *defaults
+    machine: true
     steps:
       - attach_workspace:
           at: ~/project

@@ -113,7 +113,7 @@ describe('Auth messaging behavior', () => {
     });
     expect(sendVerification.mock.calls[1][1].length).toEqual(6);
     expect(sendVerification.mock.calls[1][1]).not.toEqual(
-      sendVerification.mock.calls[0][1],
+      sendVerification.mock.calls[0][1]
     );
 
     const newSessionCreation = await authDataSource.dispatch({

@@ -13,7 +13,7 @@ export default function createCloudObject({ onNamedDispatch, id, value }) {
   }
   if (id && objectId && id !== objectId) {
     throw new Error(
-      'id and value were both provided to createCloudObject, but the ID does not match the value!',
+      'id and value were both provided to createCloudObject, but the ID does not match the value!'
     );
   }
 
@@ -113,7 +113,7 @@ export default function createCloudObject({ onNamedDispatch, id, value }) {
       throw new Error(
         `Server and client objectIds do not match! Server: ${
           res.id
-        }, Client: ${objectId}`,
+        }, Client: ${objectId}`
       );
     }
     return res;

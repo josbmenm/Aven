@@ -89,7 +89,7 @@ export default function CloudAuth({ dataSource, methods }) {
     const savedSession = await getObj(
       dataSource,
       domain,
-      `auth/account/${accountId}/session/${sessionId}`,
+      `auth/account/${accountId}/session/${sessionId}`
     );
 
     if (!savedSession || savedSession.token !== token) {
@@ -104,7 +104,7 @@ export default function CloudAuth({ dataSource, methods }) {
     const accountLookup = await getObj(
       dataSource,
       domain,
-      methodAccountLookupName,
+      methodAccountLookupName
     );
     if (accountLookup) {
       if (accountId && accountId !== accountLookup.accountId) {
@@ -149,18 +149,18 @@ export default function CloudAuth({ dataSource, methods }) {
         const methodState = await getObj(
           dataSource,
           domain,
-          methodStateRefName,
+          methodStateRefName
         );
 
         const requestedVerification = await methodToValidate.requestVerification(
-          { verificationInfo, methodState },
+          { verificationInfo, methodState }
         );
 
         await writeObj(
           dataSource,
           domain,
           methodStateRefName,
-          requestedVerification,
+          requestedVerification
         );
         return {
           verificationChallenge: requestedVerification.verificationChallenge,
@@ -300,7 +300,7 @@ export default function CloudAuth({ dataSource, methods }) {
       dataSource,
       domain,
       `auth/account/${verification.accountId}/session/${sessionId}`,
-      session,
+      session
     );
     return {
       session,
@@ -333,7 +333,7 @@ export default function CloudAuth({ dataSource, methods }) {
       dataSource,
       domain,
       `auth/account/${accountId}/session/${sessionId}`,
-      session,
+      session
     );
 
     return { session };
@@ -389,7 +389,7 @@ export default function CloudAuth({ dataSource, methods }) {
         .map(getAuthObjName)
         .map(async authObjName => {
           return await getObj(dataSource, domain, authObjName);
-        }),
+        })
     );
 
     let owner = null;
@@ -561,7 +561,7 @@ export default function CloudAuth({ dataSource, methods }) {
         throw new Error(
           `Insufficient permissions for "${actionType}" on ${
             action.name
-          }. Requires "${permissionLevel}"`,
+          }. Requires "${permissionLevel}"`
         );
       }
       const result = await dispatch(action);
@@ -593,12 +593,12 @@ export default function CloudAuth({ dataSource, methods }) {
     PutPermissionRules: guardAction(
       PutPermissionRules,
       'PutPermissionRules',
-      'canAdmin',
+      'canAdmin'
     ),
     GetPermissionRules: guardAction(
       GetPermissionRules,
       'GetPermissionRules',
-      'canAdmin',
+      'canAdmin'
     ),
     CreateSession,
     CreateAnonymousSession,
