@@ -2,6 +2,8 @@
 
 [![CircleCI badge](https://circleci.com/gh/AvenCloud/Aven/tree/master.svg?style=shield)](https://circleci.com/gh/AvenCloud/Aven/tree/master)
 
+Caution: Aven is under heavy development. Brave early adopters are welcome, but everything here is highly unstable, and the API may change at any time.
+
 A full-stack app framework built with Javascript and React Native, supporting web server, client, and React Native on iOS and Android. Aven includes solutions for rendering views (React Native, RNWeb, RNDOM), navigation (React Navigation), and database syncronization (Aven Cloud).
 
 - Open Source, Apache 2
