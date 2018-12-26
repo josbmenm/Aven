@@ -40,7 +40,9 @@ jobs:
           path: coverage
           destination: coverage
   test-sql:
-    <<: *defaults
+    docker:
+      - image: circleci/node:8
+    working_directory: ~/project
     machine: true
     steps:
       - attach_workspace:
