@@ -3,7 +3,7 @@ import uuid from 'uuid/v1';
 
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import {
-  getListObjectsName,
+  getListBlocksName,
   getListRefName,
 } from '../aven-cloud-utils/RefNaming';
 
@@ -20,7 +20,7 @@ function getTerms(name) {
 
 function isRefNameValid(name) {
   return getTerms(name).reduce((prev, now, i) => {
-    return prev && (now !== '_refs' && now !== '_objects');
+    return prev && (now !== '_refs' && now !== '_blocks');
   }, true);
 }
 
@@ -58,13 +58,13 @@ function _renderRef({ id }) {
 const startMemoryDataSource = (opts = {}) => {
   const id = uuid();
   const dataSourceDomain = opts.domain;
-  let _objects = {};
-  let _objectsSize = {};
+  let _blocks = {};
+  let _blocksSize = {};
   let _refs = {};
 
   function _getRef(name) {
     const r = _refs[name] || (_refs[name] = {});
-    r.objects = r.objects || {};
+    r.blocks = r.blocks || {};
     return r;
   }
 
@@ -119,7 +119,7 @@ const startMemoryDataSource = (opts = {}) => {
     }
     const r = _getRef(name);
     const prevId = r.id;
-    r.objects[id] = true;
+    r.blocks[id] = true;
     r.id = id;
     if (r.behavior) {
       r.behavior.next(_renderRef(r));
@@ -172,9 +172,9 @@ const startMemoryDataSource = (opts = {}) => {
     }
     const postedName = name ? pathJoin(name, uuid()) : uuid();
     if (!id && value !== undefined) {
-      const obj = await PutObject({ domain, name: postedName, value });
-      await PutRef({ domain, name: postedName, id: obj.id });
-      return { name: postedName, id: obj.id };
+      const block = await PutBlock({ domain, name: postedName, value });
+      await PutRef({ domain, name: postedName, id: block.id });
+      return { name: postedName, id: block.id };
     } else {
       await PutRef({ domain, name: postedName, id });
       return { name: postedName, id };
@@ -197,7 +197,7 @@ const startMemoryDataSource = (opts = {}) => {
       })
       .forEach(refName => {
         const r = _getRef(refName);
-        r.objects = {};
+        r.blocks = {};
         r.id = null;
         if (r.behavior) {
           r.behavior.next(_renderRef(r));
@@ -223,7 +223,7 @@ const startMemoryDataSource = (opts = {}) => {
     }
   }
 
-  async function GetObject({ domain, name, id }) {
+  async function GetBlock({ domain, name, id }) {
     if (domain !== dataSourceDomain) {
       throw new Error(
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
@@ -231,10 +231,10 @@ const startMemoryDataSource = (opts = {}) => {
     }
     const r = _getRef(name);
 
-    if (r.objects[id] && _objects[id] !== undefined) {
+    if (r.blocks[id] && _blocks[id] !== undefined) {
       return {
         id,
-        value: _objects[id],
+        value: _blocks[id],
       };
     }
     return {
@@ -246,7 +246,7 @@ const startMemoryDataSource = (opts = {}) => {
     return typeof name === 'string' && name.length > 0;
   }
 
-  async function PutObject({ value, name, domain }) {
+  async function PutBlock({ value, name, domain }) {
     if (domain !== dataSourceDomain) {
       throw new Error(
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
@@ -254,25 +254,25 @@ const startMemoryDataSource = (opts = {}) => {
     }
     if (!_isValidName(name)) {
       throw new Error(
-        `Invalid ref name "${name}", must be provided with PutObject`
+        `Invalid ref name "${name}", must be provided with PutBlock`
       );
     }
-    const objData = stringify(value);
-    const size = objData.length;
+    const blockData = stringify(value);
+    const size = blockData.length;
     const sha = crypto.createHash('sha1');
-    sha.update(objData);
+    sha.update(blockData);
     const id = sha.digest('hex');
-    if (_objects == null) {
+    if (_blocks == null) {
       throw new Error(`Memory source "${id}" has been closed!`);
     }
-    if (_objects[id] === undefined) {
-      _objects[id] = value;
+    if (_blocks[id] === undefined) {
+      _blocks[id] = value;
     }
-    if (_objectsSize[id] === undefined) {
-      _objectsSize[id] = size;
+    if (_blocksSize[id] === undefined) {
+      _blocksSize[id] = size;
     }
     const r = _getRef(name);
-    r.objects[id] = true;
+    r.blocks[id] = true;
     return { id };
   }
 
@@ -284,12 +284,12 @@ const startMemoryDataSource = (opts = {}) => {
     return _renderRef(r || {});
   }
 
-  async function ListRefObjects({ domain, parentName }) {
+  async function ListRefBlocks({ domain, parentName }) {
     if (domain !== dataSourceDomain) {
       return [];
     }
     if (parentName == null || parentName === '') {
-      return Object.keys(_objects);
+      return Object.keys(_blocks);
     }
     const out = new Set();
     Object.keys(_refs)
@@ -298,7 +298,7 @@ const startMemoryDataSource = (opts = {}) => {
       })
       .forEach(refName => {
         const r = _getRef(refName);
-        Object.keys(r.objects).forEach(objId => out.add(objId));
+        Object.keys(r.blocks).forEach(blockId => out.add(blockId));
       });
     return Array.from(out);
   }
@@ -325,7 +325,7 @@ const startMemoryDataSource = (opts = {}) => {
         return getRootTerm(name);
       })
       .filter(n => !!n)
-      .filter(n => n !== '_refs' && n !== '_objects' && n !== '_auth');
+      .filter(n => n !== '_refs' && n !== '_blocks' && n !== '_auth');
     const uniqueResults = Array.from(new Set(results));
     return uniqueResults;
   }
@@ -335,10 +335,10 @@ const startMemoryDataSource = (opts = {}) => {
   }
 
   async function CollectGarbage() {
-    // create list of all objects
+    // create list of all blocks
     // for each ref
-    //   remove all of Object.keys(r.objects) from list of objects
-    // delete each object in the list
+    //   remove all of Object.keys(r.blocks) from list of blocks
+    // delete each block in the list
   }
 
   const GetStatus = () => ({
@@ -348,14 +348,14 @@ const startMemoryDataSource = (opts = {}) => {
   });
 
   const close = () => {
-    if (_objects === null) {
+    if (_blocks === null) {
       throw new Error(
         `Cannot close memory source "${id}" because it is already closed!`
       );
     }
     console.log('Closing memory source ' + id);
-    _objects = null;
-    _objectsSize = null;
+    _blocks = null;
+    _blocksSize = null;
     _refs = null;
   };
   const observeRef = async (domain, name) => {
@@ -395,23 +395,23 @@ const startMemoryDataSource = (opts = {}) => {
       const refs = await ListRefs({ domain, parentName: listRefName });
       return { id: undefined, value: refs };
     }
-    const listObjectsRefName = getListObjectsName(name);
-    if (typeof listObjectsRefName === 'string') {
-      const objs = await ListRefObjects({
+    const listBlocksRefName = getListBlocksName(name);
+    if (typeof listBlocksRefName === 'string') {
+      const blockIds = await ListRefBlocks({
         domain,
-        parentName: listObjectsRefName,
+        parentName: listBlocksRefName,
       });
       return {
         id: undefined,
-        value: objs,
+        value: blockIds,
       };
     }
     const r = _getRef(name);
 
-    if (r.objects[r.id] && _objects[r.id] !== undefined) {
+    if (r.blocks[r.id] && _blocks[r.id] !== undefined) {
       return {
         id: r.id,
-        value: _objects[r.id],
+        value: _blocks[r.id],
       };
     }
     return {
@@ -427,8 +427,8 @@ const startMemoryDataSource = (opts = {}) => {
     dispatch: createDispatcher({
       PutRef,
       PostRef,
-      PutObject,
-      GetObject,
+      PutBlock,
+      GetBlock,
       GetRef,
       GetRefValue,
       GetStatus,
@@ -436,7 +436,7 @@ const startMemoryDataSource = (opts = {}) => {
       ListRefs,
       DestroyRef,
       CollectGarbage,
-      ListRefObjects,
+      ListRefBlocks,
       MoveRef,
     }),
     id,

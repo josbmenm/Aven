@@ -10,12 +10,12 @@ export default function getRefModel(models) {
 
     static get relationMappings() {
       return {
-        object: {
+        block: {
           relation: Model.HasOneRelation,
-          modelClass: models.Object,
+          modelClass: models.Block,
           join: {
-            from: 'refs.currentObject',
-            to: 'objects.id',
+            from: 'refs.currentBlock',
+            to: 'blocks.id',
           },
         },
         domain: {

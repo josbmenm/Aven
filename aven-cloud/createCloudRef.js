@@ -1,7 +1,7 @@
 import { Observable, BehaviorSubject } from 'rxjs-compat';
 import { filter } from 'rxjs/operators';
 import observeNull from './observeNull';
-import createCloudObject from './createCloudObject';
+import createCloudBlock from './createCloudBlock';
 import uuid from 'uuid/v1';
 const pathJoin = require('path').join;
 
@@ -21,7 +21,7 @@ function filterUndefined() {
 }
 
 export function createRefPool({
-  objectCache,
+  blockCache,
   domain,
   dataSource,
   onGetParentName,
@@ -39,7 +39,7 @@ export function createRefPool({
         dataSource,
         domain,
         name: localName,
-        objectCache: objectCache,
+        blockCache: blockCache,
         onRename: newName => move(localName, newName),
         onGetParentName,
       });
@@ -72,7 +72,7 @@ export function createRefPool({
       dataSource,
       domain,
       name: localName,
-      objectCache: objectCache,
+      blockCache: blockCache,
       onGetParentName,
       onRename: newName => move(localName, newName),
       isUnposted: true,
@@ -92,7 +92,7 @@ export default function createCloudRef({
   onRename,
   ...opts
 }) {
-  const objectCache = opts.objectCache || {};
+  const blockCache = opts.blockCache || {};
 
   if (!name) {
     throw new Error('name must be provided to createCloudRef!');
@@ -197,7 +197,7 @@ export default function createCloudRef({
 
   const refs = createRefPool({
     onGetParentName: getFullName,
-    objectCache,
+    blockCache,
     dataSource,
     domain,
   });
@@ -227,7 +227,7 @@ export default function createCloudRef({
 
   async function fetchValue() {
     await fetch();
-    const obj = getObject();
+    const obj = getBlock();
     if (obj) {
       await obj.fetch();
     }
@@ -268,38 +268,38 @@ export default function createCloudRef({
       name: getFullName(),
     });
   }
-  function _getObjectWithId(id) {
-    if (objectCache[id]) {
-      return objectCache[id];
+  function _getBlockWithId(id) {
+    if (blockCache[id]) {
+      return blockCache[id];
     }
-    const o = (objectCache[id] = createCloudObject({
+    const o = (blockCache[id] = createCloudBlock({
       onNamedDispatch: _namedDispatch,
       id,
     }));
     return o;
   }
 
-  function _getObjectWithValue(value) {
-    const obj = createCloudObject({
+  function _getBlockWithValue(value) {
+    const obj = createCloudBlock({
       onNamedDispatch: _namedDispatch,
       value,
     });
 
-    if (objectCache[obj.id]) {
-      return objectCache[obj.id];
+    if (blockCache[obj.id]) {
+      return blockCache[obj.id];
     }
-    return (objectCache[obj.id] = obj);
+    return (blockCache[obj.id] = obj);
   }
 
-  function getObject(requestedId) {
+  function getBlock(requestedId) {
     if (requestedId) {
-      return _getObjectWithId(requestedId);
+      return _getBlockWithId(requestedId);
     }
     const { id } = refState.value;
     if (!id) {
       return undefined;
     }
-    return _getObjectWithId(id);
+    return _getBlockWithId(id);
   }
 
   function getValue() {
@@ -310,13 +310,13 @@ export default function createCloudRef({
     if (!id) {
       return undefined;
     }
-    const obj = _getObjectWithId(id);
+    const obj = _getBlockWithId(id);
     return obj.getValue();
   }
 
   async function put(value) {
-    const obj = _getObjectWithValue(value);
-    await putObject(obj);
+    const obj = _getBlockWithValue(value);
+    await putBlock(obj);
   }
 
   async function putId(objId) {
@@ -330,21 +330,21 @@ export default function createCloudRef({
 
   async function write(value) {
     await ensurePosted();
-    const obj = _getObjectWithValue(value);
+    const obj = _getBlockWithValue(value);
     await obj.put();
     return { id: obj.id };
   }
 
-  async function putObject(obj) {
+  async function putBlock(obj) {
     const postResult = await ensurePosted(obj);
     if (postResult === obj) {
       return;
     }
 
     const state = getState();
-    if (state.puttingFromObjectId) {
+    if (state.puttingFromId) {
       throw new Error(
-        `Cannot putObject of "${name}" while another put is in progress!`
+        `Cannot putBlock of "${name}" while another put is in progress!`
       );
     }
     const lastId = state.id;
@@ -366,7 +366,7 @@ export default function createCloudRef({
         id: lastId,
       });
       console.error(e);
-      throw new Error(`Failed to putObjectId "${obj.id}" to "${name}"!`);
+      throw new Error(`Failed to putBlockId "${obj.id}" to "${name}"!`);
     }
   }
 
@@ -378,12 +378,12 @@ export default function createCloudRef({
       if (!rr.id) {
         return observeNull;
       }
-      const obj = _getObjectWithId(rr.id);
+      const obj = _getBlockWithId(rr.id);
       return obj.observeValue;
     })
     .switch();
 
-  function lookupRefObject(inputVal, lookup) {
+  function lookupRefBlock(inputVal, lookup) {
     let refVal = inputVal;
     lookup.forEach(v => {
       refVal = refVal && refVal[v];
@@ -392,11 +392,9 @@ export default function createCloudRef({
       return observeNull;
     }
     if (typeof refVal !== 'string') {
-      throw new Error(
-        `Cannot look up object ID in ${name} on ${lookup.join()}`
-      );
+      throw new Error(`Cannot look up block ID in ${name} on ${lookup.join()}`);
     }
-    const connectedObj = _getObjectWithId(refVal);
+    const connectedObj = _getBlockWithId(refVal);
     return connectedObj;
   }
   function observeConnectedValue(lookup) {
@@ -405,7 +403,7 @@ export default function createCloudRef({
         if (!value) {
           return observeNull;
         }
-        const connected = lookupRefObject(value, lookup);
+        const connected = lookupRefBlock(value, lookup);
         return connected.observeValue;
       })
       .switch();
@@ -413,15 +411,15 @@ export default function createCloudRef({
 
   async function fetchConnectedValue(lookup) {
     await fetchValue();
-    const connected = lookupRefObject(getValue(), lookup);
+    const connected = lookupRefBlock(getValue(), lookup);
     if (connected) {
       await connected.fetch();
     }
   }
 
   async function getConnectedValue(lookup) {
-    const obj = getObject();
-    const connected = lookupRefObject(obj.value, lookup);
+    const obj = getBlock();
+    const connected = lookupRefBlock(obj.value, lookup);
     if (connected) {
       return connected.getValue();
     }
@@ -454,11 +452,11 @@ export default function createCloudRef({
     fetch,
     put,
     putId,
-    putObject,
+    putBlock,
     fetchValue,
     fetchConnectedValue,
     getConnectedValue,
-    getObject,
+    getBlock,
     getValue,
     observeValue,
     observe,

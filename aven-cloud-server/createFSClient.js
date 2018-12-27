@@ -4,16 +4,16 @@ const pathJoin = require('path').join;
 export default function createFSClient({ client }) {
   async function uploadFile({ filePath, ref }) {
     const fileData = await fs.readFile(filePath);
-    let object;
+    let block;
     try {
-      object = JSON.parse(fileData);
+      block = JSON.parse(fileData);
     } catch (e) {
-      object = {
+      block = {
         type: 'BinaryFileHex',
         data: fileData.toString('hex'),
       };
     }
-    const { id } = await ref.write(object);
+    const { id } = await ref.write(block);
     return id;
   }
 

@@ -1,6 +1,6 @@
 import Knex from 'knex';
 import getDomainModel from './getDomainModel';
-import getObjectModel from './getObjectModel';
+import getBlockModel from './getBlockModel';
 import getRefModel from './getRefModel';
 import { BehaviorSubject } from 'rxjs-compat';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
@@ -33,7 +33,7 @@ export default async function startSQLDataSource({ config, connection }) {
     const renderedRef = {
       domain,
       name,
-      id: ref.currentObject,
+      id: ref.currentBlock,
     };
     _announceRef(domain, name, renderedRef);
     return renderedRef;
@@ -41,14 +41,14 @@ export default async function startSQLDataSource({ config, connection }) {
 
   const models = {};
   models.Domain = getDomainModel(models).bindKnex(knex);
-  models.Object = getObjectModel(models).bindKnex(knex);
+  models.Block = getBlockModel(models).bindKnex(knex);
   models.Ref = getRefModel(models).bindKnex(knex);
 
   async function PutRef({ domain, name, id }) {
     await models.Ref.query().upsertGraph(
       {
         name,
-        currentObject: id,
+        currentBlock: id,
 
         // seems silly but we have to have the value AND the relation here.
         domain: { name: domain }, // the relation is here for insertMissing to insert the domain if it doesn't already exist
@@ -66,17 +66,17 @@ export default async function startSQLDataSource({ config, connection }) {
     });
   }
 
-  async function PutObject({ name, domain, value }) {
-    const objData = stringify(value);
-    const size = objData.length;
+  async function PutBlock({ name, domain, value }) {
+    const blockData = stringify(value);
+    const size = blockData.length;
     const sha = crypto.createHash('sha1');
-    sha.update(objData);
+    sha.update(blockData);
     const id = sha.digest('hex');
     try {
-      await models.Object.query().insertGraph(
+      await models.Block.query().insertGraph(
         {
           id,
-          value: objData,
+          value: blockData,
           size,
         },
         {
@@ -84,10 +84,10 @@ export default async function startSQLDataSource({ config, connection }) {
         }
       );
     } catch (e) {
-      // objects are unique and immutable
+      // blocks are unique and immutable
 
       // handle postgres expected error
-      if (e.code !== '23505' || e.constraint !== 'objects_id_unique') {
+      if (e.code !== '23505' || e.constraint !== 'blocks_id_unique') {
         // handle sqlite expected error
         if (e.code !== 'SQLITE_CONSTRAINT') {
           throw e;
@@ -98,18 +98,18 @@ export default async function startSQLDataSource({ config, connection }) {
     return { id };
   }
 
-  async function GetObject({ domain, name, id }) {
-    const results = await models.Object.query()
+  async function GetBlock({ domain, name, id }) {
+    const results = await models.Block.query()
       .where('id', '=', id)
       .eager(['value'])
       .limit(1);
-    const obj = results[0];
-    if (!obj) {
+    const block = results[0];
+    if (!block) {
       return { id };
     }
     return {
-      id: obj.id,
-      value: JSON.parse(obj.value), // todo, use json field when on postgres, (and still provide fallback for sqlite)
+      id: block.id,
+      value: JSON.parse(block.value), // todo, use json field when on postgres, (and still provide fallback for sqlite)
     };
   }
 
@@ -138,7 +138,7 @@ export default async function startSQLDataSource({ config, connection }) {
 
   async function CollectGarbage() {}
 
-  async function ListRefObjects() {}
+  async function ListRefBlocks() {}
 
   async function close() {
     isConnected.next(false);
@@ -194,15 +194,15 @@ export default async function startSQLDataSource({ config, connection }) {
     observeRef,
     dispatch: createDispatcher({
       PutRef,
-      PutObject,
-      GetObject,
+      PutBlock,
+      GetBlock,
       GetRef,
       GetStatus,
       ListDomains,
       ListRefs,
       DestroyRef,
       CollectGarbage,
-      ListRefObjects,
+      ListRefBlocks,
     }),
     id,
   };

@@ -2,12 +2,12 @@ export default function testDataSource(startTestDataSource) {
   test('basic put and get', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const putResult = await ds.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       value: { foo: 'bar' },
     });
     const obj = await ds.dispatch({
-      type: 'GetObject',
+      type: 'GetBlock',
       domain: 'test',
       id: putResult.id,
     });

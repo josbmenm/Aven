@@ -1,9 +1,9 @@
 import startMemoryDataSource from '../startMemoryDataSource';
-import createCloudObject from '../createCloudObject';
+import createCloudBlock from '../createCloudBlock';
 
 describe('object generic behavior', () => {
   test('handles creation with empty value', () => {
-    const obj = createCloudObject({
+    const obj = createCloudBlock({
       dataSource: {},
       onNamedDispatch: () => {},
       id: 'asdf1234',
@@ -12,20 +12,20 @@ describe('object generic behavior', () => {
   });
   test('fails on creation without onNamedDispatch', () => {
     expect(() =>
-      createCloudObject({
+      createCloudBlock({
         value: { foo: 42 },
       })
     ).toThrow();
   });
   test('fails on creation without value or id', () => {
     expect(() =>
-      createCloudObject({
+      createCloudBlock({
         onNamedDispatch: () => {},
       })
     ).toThrow();
   });
   test('handles creation with value', () => {
-    const obj = createCloudObject({
+    const obj = createCloudBlock({
       onNamedDispatch: () => {},
       value: { foo: 42 },
     });
@@ -37,55 +37,55 @@ describe('basic object DataSource interaction', () => {
   test('fetches objects', async () => {
     const m = startMemoryDataSource({ domain: 'test' });
     const { id } = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
-    const c = createCloudObject({
+    const c = createCloudBlock({
       onNamedDispatch: action =>
         m.dispatch({ ...action, name: 'foo', domain: 'test' }),
       id,
     });
     expect(c.getValue()).toEqual(undefined);
-    expect(c.getObject().lastFetchTime).toBe(null);
+    expect(c.getBlock().lastFetchTime).toBe(null);
     await c.fetch();
-    expect(c.getObject().lastFetchTime).not.toBe(null);
+    expect(c.getBlock().lastFetchTime).not.toBe(null);
     expect(c.getValue().foo).toEqual('bar');
   });
   test('fetches null objects', async () => {
     const m = startMemoryDataSource({ domain: 'test' });
     const { id } = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: null,
     });
-    const c = createCloudObject({
+    const c = createCloudBlock({
       onNamedDispatch: action =>
         m.dispatch({ ...action, name: 'foo', domain: 'test' }),
       id,
     });
     expect(c.getValue()).toEqual(undefined);
-    expect(c.getObject().lastFetchTime).toBe(null);
+    expect(c.getBlock().lastFetchTime).toBe(null);
     await c.fetch();
     expect(c.getValue()).toEqual(null);
-    expect(c.getObject().lastFetchTime).not.toBe(null);
+    expect(c.getBlock().lastFetchTime).not.toBe(null);
   });
   test('puts objects', async () => {
     const m = startMemoryDataSource({ domain: 'test' });
 
-    const c = createCloudObject({
+    const c = createCloudBlock({
       onNamedDispatch: action =>
         m.dispatch({ ...action, name: 'foo', domain: 'test' }),
       value: { foo: 42 },
     });
-    expect(c.getObject().lastPutTime).toBe(null);
+    expect(c.getBlock().lastPutTime).toBe(null);
     await c.put();
-    expect(c.getObject().lastPutTime).not.toBe(null);
+    expect(c.getBlock().lastPutTime).not.toBe(null);
 
     const obj = await m.dispatch({
-      type: 'GetObject',
+      type: 'GetBlock',
       domain: 'test',
       name: 'foo',
       id: c.id,
@@ -99,12 +99,12 @@ describe('observing', () => {
   test('observe obj', async () => {
     const m = startMemoryDataSource({ domain: 'test' });
     const obj1 = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
-    const c = createCloudObject({
+    const c = createCloudBlock({
       onNamedDispatch: action =>
         m.dispatch({ ...action, name: 'foo', domain: 'test' }),
       id: obj1.id,
@@ -123,12 +123,12 @@ describe('observing', () => {
   test('observe value', async () => {
     const m = startMemoryDataSource({ domain: 'test' });
     const obj1 = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
-    const c = createCloudObject({
+    const c = createCloudBlock({
       onNamedDispatch: action =>
         m.dispatch({ ...action, name: 'foo', domain: 'test' }),
       id: obj1.id,

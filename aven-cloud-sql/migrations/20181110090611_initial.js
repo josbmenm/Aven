@@ -4,7 +4,7 @@ exports.up = function(knex) {
       table.string('name');
       table.unique('name');
     })
-    .createTable('objects', table => {
+    .createTable('blocks', table => {
       table.string('id');
       table.text('value');
       table.integer('size');
@@ -19,9 +19,9 @@ exports.up = function(knex) {
         .inTable('domains');
       table.string('name');
       table
-        .string('currentObject')
+        .string('currentBlock')
         .references('id')
-        .inTable('objects');
+        .inTable('blocks');
       table.unique(['domainName', 'name']);
     })
     .createTable('ref_ownership', table => {
@@ -33,33 +33,33 @@ exports.up = function(knex) {
         .foreign('ref')
         .references('refId')
         .inTable('refs');
-      table.string('ownedObject').notNullable();
+      table.string('ownedBlock').notNullable();
       table
-        .foreign('ownedObject')
+        .foreign('ownedBlock')
         .references('id')
-        .inTable('objects');
-      table.unique(['ref', 'ownedObject']);
+        .inTable('blocks');
+      table.unique(['ref', 'ownedBlock']);
     })
-    .createTable('object_ownership', table => {
-      table.string('object').notNullable();
+    .createTable('block_ownership', table => {
+      table.string('block').notNullable();
       table
-        .foreign('object')
+        .foreign('block')
         .references('id')
-        .inTable('objects');
-      table.string('ownedObject').notNullable();
+        .inTable('blocks');
+      table.string('ownedBlock').notNullable();
       table
-        .foreign('ownedObject')
+        .foreign('ownedBlock')
         .references('id')
-        .inTable('objects');
-      table.unique(['object', 'ownedObject']);
+        .inTable('blocks');
+      table.unique(['block', 'ownedBlock']);
     });
 };
 
 exports.down = function(knex) {
   return knex.schema
     .dropTableIfExists('domains')
-    .dropTableIfExists('objects')
+    .dropTableIfExists('blocks')
     .dropTableIfExists('refs')
     .dropTableIfExists('ref_ownership')
-    .dropTableIfExists('object_ownership');
+    .dropTableIfExists('block_ownership');
 };

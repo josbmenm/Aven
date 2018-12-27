@@ -46,7 +46,7 @@ describe('basic ref DataSource interaction', () => {
   test('fetches refs', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const { id } = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
@@ -63,12 +63,12 @@ describe('basic ref DataSource interaction', () => {
       name: 'myref',
       onGetParentName: getNull,
     });
-    expect(r.getObject()).toEqual(undefined);
+    expect(r.getBlock()).toEqual(undefined);
     await r.fetch();
-    expect(r.getObject().id).toEqual(id);
+    expect(r.getBlock().id).toEqual(id);
   });
 
-  test('writes objects', async () => {
+  test('writes data', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const r = createCloudRef({
       dataSource,
@@ -80,7 +80,7 @@ describe('basic ref DataSource interaction', () => {
       foo: 'zoom',
     });
     const result = await dataSource.dispatch({
-      type: 'GetObject',
+      type: 'GetBlock',
       domain: 'test',
       name: 'myref',
       id,
@@ -106,7 +106,7 @@ describe('basic ref DataSource interaction', () => {
       name: 'myref',
     });
     const result = await dataSource.dispatch({
-      type: 'GetObject',
+      type: 'GetBlock',
       domain: 'test',
       name: 'myref',
       id: refResult.id,
@@ -114,7 +114,7 @@ describe('basic ref DataSource interaction', () => {
     expect(result.value.foo).toEqual(42);
   });
 
-  test('puts objects', async () => {
+  test('puts blocks', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const r = createCloudRef({
       dataSource,
@@ -131,7 +131,7 @@ describe('basic ref DataSource interaction', () => {
       name: 'myref',
     });
     const result = await dataSource.dispatch({
-      type: 'GetObject',
+      type: 'GetBlock',
       domain: 'test',
       name: 'myref',
       id,
@@ -146,19 +146,19 @@ describe('observing refs', () => {
   test('observe ref works', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const obj1 = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
     const obj2 = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'baz' },
     });
     const obj3 = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'qux' },
@@ -206,19 +206,19 @@ describe('observing refs', () => {
   test('observe value', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const obj1 = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
     const obj2 = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'baz' },
     });
     const obj3 = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'qux' },
@@ -270,25 +270,25 @@ describe('observing refs', () => {
   test('observe connected value', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const obj1a = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
     const obj1 = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { the: { value: [obj1a.id] } },
     });
     const obj2a = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'baz' },
     });
     const obj2 = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { the: { value: [obj2a.id] } },
@@ -340,25 +340,25 @@ describe('observing refs', () => {
       },
     });
     const obj1a = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
     const obj1 = await dataSource.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       domain: 'test',
       name: 'foo',
       value: { the: { value: [obj1a.id] } },
     });
     // const obj2a = await dataSource.dispatch({
-    //   type: 'PutObject',
+    //   type: 'PutBlock',
     //   domain: 'test',
     //   name: 'foo',
     //   value: { foo: 'baz' },
     // });
     // const obj2 = await dataSource.dispatch({
-    //   type: 'PutObject',
+    //   type: 'PutBlock',
     //   domain: 'test',
     //   name: 'foo',
     //   value: { the: { value: [obj2a.id] } },

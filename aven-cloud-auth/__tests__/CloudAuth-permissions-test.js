@@ -37,14 +37,14 @@ async function establishPermissionsTestData() {
   const rootSession = rootSessionCreated.session;
 
   const fooObj = await authDataSource.dispatch({
-    type: 'PutObject',
+    type: 'PutBlock',
     auth: rootSession,
     domain: 'test',
     name: 'something',
     value: { foo: 'bar' },
   });
   const barObj = await authDataSource.dispatch({
-    type: 'PutObject',
+    type: 'PutBlock',
     auth: rootSession,
     domain: 'test',
     name: 'something',
@@ -158,7 +158,7 @@ describe('Cloud auth Permissions', () => {
     expect(result.id).toEqual(fooObj.id);
 
     result = await authDataSource.dispatch({
-      type: 'GetObject',
+      type: 'GetBlock',
       auth: anonSession,
       domain: 'test',
       name: 'something',
@@ -209,7 +209,7 @@ describe('Cloud auth Permissions', () => {
     expect(result.id).toEqual(fooObj.id);
 
     result = await authDataSource.dispatch({
-      type: 'GetObject',
+      type: 'GetBlock',
       auth: anonSession,
       domain: 'test',
       name: 'something',

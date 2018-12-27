@@ -14,7 +14,7 @@ export default function createCloudClient({
   domain,
   initialSession,
 }) {
-  const _objects = {};
+  const _blocks = {};
 
   if (domain == null) {
     throw new Error(`domain must be provided to createCloudClient!`);
@@ -42,7 +42,7 @@ export default function createCloudClient({
 
   const refs = createRefPool({
     onGetParentName: () => null,
-    objectCache: _objects,
+    blockCache: _blocks,
     dataSource: dataSourceWithSession,
     domain,
   });

@@ -25,50 +25,50 @@ const sendNotFound = res => {
   res.send('Not found');
 };
 
-async function objectResponse({
+async function blockResponse({
   domain,
   refName,
   dispatch,
   refPath,
-  objId,
-  objName,
+  blockId,
+  blockName,
 }) {
-  const obj = await dispatch({
-    type: 'GetObject',
+  const block = await dispatch({
+    type: 'GetBlock',
     domain,
     name: refName,
-    id: objId,
+    id: blockId,
   });
-  if (!obj) {
+  if (!block) {
     return sendNotFound;
   }
   if (refPath === '/' || refPath === '') {
-    if (!obj.value || !obj.value.data) {
+    if (!block.value || !block.value.data) {
       // should be checking for some type here, rather than looking at "data"..
       return res => {
-        res.send(obj.value);
+        res.send(block.value);
       };
     }
-    const mimeType = mime.getType(path.extname(objName));
+    const mimeType = mime.getType(path.extname(blockName));
     return res => {
       res.header('Content-Type', mimeType);
-      res.send(Buffer.from(obj.value.data, 'hex'));
+      res.send(Buffer.from(block.value.data, 'hex'));
     };
   }
-  if (!obj.value || !obj.value.files) {
+  if (!block.value || !block.value.files) {
     return sendNotFound;
   }
   const pathParts = refPath.split('/');
   const pathTermName = pathParts[1];
-  if (obj.value.files[pathTermName]) {
+  if (block.value.files[pathTermName]) {
     const childRefPath = `/${pathParts.slice(2).join('/')}`;
-    const childId = obj.value.files[pathTermName].id;
-    return await objectResponse({
+    const childId = block.value.files[pathTermName].id;
+    return await blockResponse({
       domain,
       refName,
       dispatch,
-      objName: pathTermName,
-      objId: childId,
+      blockName: pathTermName,
+      blockId: childId,
       refPath: childRefPath,
     });
   }
@@ -84,12 +84,12 @@ async function webDataInterface({ domain, refName, dispatch, refPath }) {
   if (!ref || !ref.id) {
     return sendNotFound;
   }
-  return await objectResponse({
+  return await blockResponse({
     domain,
     refName,
     dispatch,
-    objName: refName,
-    objId: ref.id,
+    blockName: refName,
+    blockId: ref.id,
     refPath,
   });
 }

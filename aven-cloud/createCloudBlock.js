@@ -3,34 +3,34 @@ import SHA1 from 'crypto-js/sha1';
 
 const JSONStringify = require('json-stable-stringify');
 
-export default function createCloudObject({ onNamedDispatch, id, value }) {
-  let objectId = false;
+export default function createCloudBlock({ onNamedDispatch, id, value }) {
+  let blockId = false;
   if (value !== undefined) {
     const valueString = JSONStringify(value);
-    objectId = SHA1(valueString).toString();
+    blockId = SHA1(valueString).toString();
   } else {
-    objectId = id;
+    blockId = id;
   }
-  if (id && objectId && id !== objectId) {
+  if (id && blockId && id !== blockId) {
     throw new Error(
-      'id and value were both provided to createCloudObject, but the ID does not match the value!'
+      'id and value were both provided to createCloudBlock, but the ID does not match the value!'
     );
   }
 
   if (!onNamedDispatch) {
-    throw new Error('onNamedDispatch be provided to createCloudObject!');
+    throw new Error('onNamedDispatch be provided to createCloudBlock!');
   }
-  if (!objectId) {
-    throw new Error('id or value must be provided to createCloudObject!');
+  if (!blockId) {
+    throw new Error('id or value must be provided to createCloudBlock!');
   }
 
-  const objState = new BehaviorSubject({
+  const blockState = new BehaviorSubject({
     // sync state:
     isConnected: value !== undefined,
     lastPutTime: null,
     lastFetchTime: null,
 
-    // obj data:
+    // block data:
     value,
   });
 
@@ -38,7 +38,7 @@ export default function createCloudObject({ onNamedDispatch, id, value }) {
     fetch()
       .then(() => {})
       .catch(console.error); // todo improve async error handling, set err state, etc..
-    const upstreamSubscription = objState.subscribe({
+    const upstreamSubscription = blockState.subscribe({
       next: val => {
         observer.next(val);
       },
@@ -47,24 +47,24 @@ export default function createCloudObject({ onNamedDispatch, id, value }) {
       upstreamSubscription.unsubscribe();
     };
   })
-    .multicast(() => new BehaviorSubject(objState.value))
+    .multicast(() => new BehaviorSubject(blockState.value))
     .refCount();
 
   function setState(newState) {
-    objState.next({
-      ...objState.value,
+    blockState.next({
+      ...blockState.value,
       ...newState,
     });
   }
   function getState() {
-    return objState.value;
+    return blockState.value;
   }
 
   function getValue() {
     return getState().value;
   }
 
-  function getObject() {
+  function getBlock() {
     return getState();
   }
 
@@ -81,11 +81,11 @@ export default function createCloudObject({ onNamedDispatch, id, value }) {
       return;
     }
     const result = await onNamedDispatch({
-      type: 'GetObject',
+      type: 'GetBlock',
       id,
     });
     if (!result || result.value === undefined) {
-      throw new Error(`Error fetching object "${id}" from remote!`);
+      throw new Error(`Error fetching block "${id}" from remote!`);
     }
     setState({
       value: result.value,
@@ -99,21 +99,21 @@ export default function createCloudObject({ onNamedDispatch, id, value }) {
 
   async function put() {
     if (getState().value === undefined) {
-      throw new Error(`Cannot put empty value from object "${objectId}"!`);
+      throw new Error(`Cannot put empty value from block "${blockId}"!`);
     }
     const res = await onNamedDispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       value: getState().value,
     });
     setState({
       lastPutTime: Date.now(),
     });
-    if (res.id !== objectId) {
+    if (res.id !== blockId) {
       // if we get here, we are truly screwed!
       throw new Error(
-        `Server and client objectIds do not match! Server: ${
+        `Server and client blockIds do not match! Server: ${
           res.id
-        }, Client: ${objectId}`
+        }, Client: ${blockId}`
       );
     }
     return res;
@@ -128,18 +128,18 @@ export default function createCloudObject({ onNamedDispatch, id, value }) {
   //   put,
   //   observe,
   //   getValue,
-  //   objectId,
+  //   blockId,
   //   domain,
   //   observeValue,
   //   observeConnectedValue
   // };
   return {
-    id: objectId,
+    id: blockId,
     put,
     getValue,
     fetch,
     fetchValue,
-    getObject,
+    getBlock,
     observe,
     observeValue,
   };

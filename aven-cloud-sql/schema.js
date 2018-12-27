@@ -36,7 +36,7 @@ const schema = DBSchema({
       },
       primary: ['name'],
     }),
-    objects: TableSchema({
+    blocks: TableSchema({
       columns: {
         id: ColumnSchema('shortstring'),
         size: ColumnSchema('int'),
@@ -62,10 +62,10 @@ const schema = DBSchema({
             domain: 'domain',
           },
         }),
-        active_object: ColumnSchema('shortstring', {
+        active_block: ColumnSchema('shortstring', {
           ref: {
-            _table: 'objects',
-            active_object: 'id',
+            _table: 'blocks',
+            active_block: 'id',
           },
         }),
       },
@@ -102,7 +102,7 @@ const schema = DBSchema({
       },
       primary: ['ref', 'permission', 'owner', 'domain'],
     }),
-    object_refs: TableSchema({
+    block_refs: TableSchema({
       columns: {
         ref: ColumnSchema('shortstring', {
           ref: {
@@ -119,15 +119,15 @@ const schema = DBSchema({
             domain: 'name',
           },
         }),
-        object: ColumnSchema('shortstring', {
+        block: ColumnSchema('shortstring', {
           ref: {
-            _table: 'objects',
+            _table: 'blocks',
             _cascadeDelete: true,
-            object: 'id',
+            block: 'id',
           },
         }),
       },
-      primary: ['ref', 'object'],
+      primary: ['ref', 'block'],
     }),
   },
 });

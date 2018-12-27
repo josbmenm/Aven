@@ -9,9 +9,9 @@ function thanksVeryMuch(dispatch) {
     return resp;
   };
 }
-async function writeObj(dataSource, domain, name, value) {
-  const obj = await thanksVeryMuch(dataSource.dispatch)({
-    type: 'PutObject',
+async function writeDocValue(dataSource, domain, name, value) {
+  const block = await thanksVeryMuch(dataSource.dispatch)({
+    type: 'PutBlock',
     domain,
     value,
     name,
@@ -19,12 +19,12 @@ async function writeObj(dataSource, domain, name, value) {
   await thanksVeryMuch(dataSource.dispatch)({
     type: 'PutRef',
     domain,
-    id: obj.id,
+    id: block.id,
     name,
   });
 }
 
-async function getObj(dataSource, domain, name) {
+async function getDocValue(dataSource, domain, name) {
   const r = await thanksVeryMuch(dataSource.dispatch)({
     domain,
     type: 'GetRef',
@@ -35,7 +35,7 @@ async function getObj(dataSource, domain, name) {
   }
 
   const o = await thanksVeryMuch(dataSource.dispatch)({
-    type: 'GetObject',
+    type: 'GetBlock',
     name,
     domain,
     id: r.id,
@@ -86,7 +86,7 @@ export default function CloudAuth({ dataSource, methods }) {
     }
     const { accountId, sessionId, token } = auth;
 
-    const savedSession = await getObj(
+    const savedSession = await getDocValue(
       dataSource,
       domain,
       `auth/account/${accountId}/session/${sessionId}`
@@ -101,7 +101,7 @@ export default function CloudAuth({ dataSource, methods }) {
 
   async function GetAccountIdForAuthMethod({ methodId, domain, accountId }) {
     const methodAccountLookupName = `auth/method/${methodId}`;
-    const accountLookup = await getObj(
+    const accountLookup = await getDocValue(
       dataSource,
       domain,
       methodAccountLookupName
@@ -116,7 +116,7 @@ export default function CloudAuth({ dataSource, methods }) {
     if (!newAuthMethodAccountId) {
       newAuthMethodAccountId = await CreateAnonymousAccount({ domain });
     }
-    await writeObj(dataSource, domain, methodAccountLookupName, {
+    await writeDocValue(dataSource, domain, methodAccountLookupName, {
       accountId: newAuthMethodAccountId,
       creationTime: Date.now(),
     });
@@ -146,7 +146,7 @@ export default function CloudAuth({ dataSource, methods }) {
 
         const methodStateRefName = `auth/account/${authenticatingAccountId}/method/${methodId}`;
 
-        const methodState = await getObj(
+        const methodState = await getDocValue(
           dataSource,
           domain,
           methodStateRefName
@@ -156,7 +156,7 @@ export default function CloudAuth({ dataSource, methods }) {
           { verificationInfo, methodState }
         );
 
-        await writeObj(
+        await writeDocValue(
           dataSource,
           domain,
           methodStateRefName,
@@ -236,7 +236,11 @@ export default function CloudAuth({ dataSource, methods }) {
       });
 
       const methodStateRefName = `auth/account/${authenticatingAccountId}/method/${methodId}`;
-      const methodState = await getObj(dataSource, domain, methodStateRefName);
+      const methodState = await getDocValue(
+        dataSource,
+        domain,
+        methodStateRefName
+      );
 
       let nextMethodState = methodState;
 
@@ -251,7 +255,12 @@ export default function CloudAuth({ dataSource, methods }) {
       verifiedAccountId = authenticatingAccountId;
 
       if (nextMethodState !== methodState) {
-        await writeObj(dataSource, domain, methodStateRefName, nextMethodState);
+        await writeDocValue(
+          dataSource,
+          domain,
+          methodStateRefName,
+          nextMethodState
+        );
       }
     }
 
@@ -296,7 +305,7 @@ export default function CloudAuth({ dataSource, methods }) {
       token,
       method: verification.verifiedMethodName,
     };
-    await writeObj(
+    await writeDocValue(
       dataSource,
       domain,
       `auth/account/${verification.accountId}/session/${sessionId}`,
@@ -312,7 +321,12 @@ export default function CloudAuth({ dataSource, methods }) {
     const account = {
       timeCreated: Date.now(),
     };
-    await writeObj(dataSource, domain, `auth/account/${accountId}`, account);
+    await writeDocValue(
+      dataSource,
+      domain,
+      `auth/account/${accountId}`,
+      account
+    );
     return accountId;
   }
 
@@ -329,7 +343,7 @@ export default function CloudAuth({ dataSource, methods }) {
       token,
     };
 
-    await writeObj(
+    await writeDocValue(
       dataSource,
       domain,
       `auth/account/${accountId}/session/${sessionId}`,
@@ -373,9 +387,9 @@ export default function CloudAuth({ dataSource, methods }) {
     });
   }
 
-  function getAuthObjName(name) {
-    const authObjName = `${name}/_auth`;
-    return authObjName;
+  function getAuthDocName(name) {
+    const docName = `${name}/_auth`;
+    return docName;
   }
 
   async function GetPermissions({ auth, name, domain }) {
@@ -386,9 +400,9 @@ export default function CloudAuth({ dataSource, methods }) {
 
     const permissionObjects = await Promise.all(
       pathApartName(name)
-        .map(getAuthObjName)
-        .map(async authObjName => {
-          return await getObj(dataSource, domain, authObjName);
+        .map(getAuthDocName)
+        .map(async docName => {
+          return await getDocValue(dataSource, domain, docName);
         })
     );
 
@@ -498,7 +512,7 @@ export default function CloudAuth({ dataSource, methods }) {
   }) {
     const authObjName = name ? `${name}/_auth` : '_auth';
 
-    const lastPermissions = await getObj(dataSource, domain, authObjName);
+    const lastPermissions = await getDocValue(dataSource, domain, authObjName);
     const lastDefaultRule =
       (lastPermissions && lastPermissions.defaultRule) || Rules.empty;
     const lastAccountRules =
@@ -514,27 +528,27 @@ export default function CloudAuth({ dataSource, methods }) {
       lastWriteTime: Date.now(),
     };
 
-    await writeObj(dataSource, domain, authObjName, permissions);
+    await writeDocValue(dataSource, domain, authObjName, permissions);
   }
 
   async function GetPermissionRules({ domain, name }) {
     const authObjName = `${name}/_auth`;
 
-    const lastPermissions = await getObj(dataSource, domain, authObjName);
+    const lastPermissions = await getDocValue(dataSource, domain, authObjName);
     return lastPermissions;
   }
 
   const guardedActions = {};
 
   const readActions = [
-    'GetObject',
+    'GetBlock',
     'GetRef',
     'GetRefValue',
     'ListRefs',
-    'ListRefObjects',
+    'ListRefBlocks',
   ];
   const postActions = ['PostRef'];
-  const writeActions = ['PutObject', 'PutRef'];
+  const writeActions = ['PutBlock', 'PutRef'];
   const adminActions = ['DestroyRef'];
 
   function guardAction(dispatch, actionType, permissionLevel) {
@@ -567,7 +581,7 @@ export default function CloudAuth({ dataSource, methods }) {
       const result = await dispatch(action);
       if (action.type === 'PostRef' && result) {
         const authObjName = `${result.name}/_auth`;
-        await writeObj(dataSource, action.domain, authObjName, {
+        await writeDocValue(dataSource, action.domain, authObjName, {
           owner: action.auth.accountId,
         });
       }

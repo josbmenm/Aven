@@ -773,7 +773,7 @@ function Folder({ value, path, cloudRef, pathContext }) {
       if (!file || !file.id) {
         return null;
       }
-      return cloudRef.getObject(file.id);
+      return cloudRef.getBlock(file.id);
     },
     [file]
   );
@@ -1189,7 +1189,7 @@ function RefSetForm({ cloudRef }) {
   if (!isOpened) {
     return (
       <StandaloneButton
-        title="Set Object ID"
+        title="Set Block ID"
         onPress={() => {
           setIsOpened(true);
         }}

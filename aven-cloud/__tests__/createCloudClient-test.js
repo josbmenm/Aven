@@ -28,7 +28,7 @@ describe('client ref behavior', () => {
     expect(ref.getName()).toBe('foo');
     await ref.fetch();
     const first = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       name: 'foo',
       domain: 'd',
       value: { count: 12 },
@@ -52,7 +52,7 @@ describe('client ref behavior', () => {
     expect(ref.getName()).toBe('foo');
     await ref.fetch();
     const first = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       name: 'foo',
       domain: 'd',
       value: { count: 12 },
@@ -130,13 +130,13 @@ describe('client ref map', () => {
   test('fetches mapped refs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const first = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       name: 'foo',
       domain: 'd',
       value: { count: 1 },
     });
     const second = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       name: 'foo',
       domain: 'd',
       value: { count: 2 },
@@ -166,13 +166,13 @@ describe('client ref map', () => {
   test('fetches chained mapped refs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const first = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       name: 'foo',
       domain: 'd',
       value: { count: 1 },
     });
     const second = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       name: 'foo',
       domain: 'd',
       value: { count: 2 },
@@ -203,25 +203,25 @@ describe('client ref map', () => {
   test('fetches expand refs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const firstCount = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       name: 'foo',
       domain: 'd',
       value: { count: 12 },
     });
     const first = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       name: 'foo',
       domain: 'd',
       value: { countObj: firstCount.id },
     });
     const secondCount = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       name: 'foo',
       domain: 'd',
       value: { count: 42 },
     });
     const second = await m.dispatch({
-      type: 'PutObject',
+      type: 'PutBlock',
       name: 'foo',
       domain: 'd',
       value: { countObj: secondCount.id },
@@ -235,7 +235,7 @@ describe('client ref map', () => {
     const c = createCloudClient({ dataSource: m, domain: 'd' });
     const expanded = c
       .get('foo')
-      .expand((o, r) => o && { great: r.getObject(o.countObj) });
+      .expand((o, r) => o && { great: r.getBlock(o.countObj) });
     await expanded.fetchValue();
     expect(expanded.getValue().great.count).toEqual(12);
     await m.dispatch({

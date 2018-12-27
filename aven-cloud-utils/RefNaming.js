@@ -12,14 +12,14 @@ export function getListRefName(name) {
   return null;
 }
 
-export function getListObjectsName(name) {
+export function getListBlocksName(name) {
   if (name == null) {
     return null;
   }
-  if (name === '_objects') {
+  if (name === '_blocks') {
     return '';
   }
-  const match = name.match(/^(.*)\/_objects$/);
+  const match = name.match(/^(.*)\/_blocks$/);
   if (match) {
     return match[1];
   }

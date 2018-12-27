@@ -1,8 +1,8 @@
 import { Model } from 'objection';
 
-export default function getObjectModel() {
+export default function getBlockModel() {
   class Obj extends Model {
-    static tableName = 'objects';
+    static tableName = 'blocks';
 
     static get idColumn() {
       return ['id'];
