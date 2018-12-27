@@ -10,7 +10,7 @@ const observeStatic = val =>
     observer.next(val);
   });
 
-export const POSTING_REF_NAME = Symbol('POSTING_REF_NAME');
+export const POSTING_DOC_NAME = Symbol('POSTING_DOC_NAME');
 
 function hasDepth(name) {
   return name.match(/\//);
@@ -20,13 +20,13 @@ function filterUndefined() {
   return filter(value => value !== undefined);
 }
 
-export function createRefPool({
+export function createDocPool({
   blockCache,
   domain,
   dataSource,
   onGetParentName,
 }) {
-  const _refs = {};
+  const _docs = {};
 
   function get(name) {
     const localName = name.split('/')[0];
@@ -34,8 +34,8 @@ export function createRefPool({
     if (localName.length < name.length - 1) {
       restOfName = name.slice(localName.length + 1);
     }
-    if (!_refs[localName]) {
-      _refs[localName] = createCloudRef({
+    if (!_docs[localName]) {
+      _docs[localName] = createCloudDoc({
         dataSource,
         domain,
         name: localName,
@@ -45,9 +45,9 @@ export function createRefPool({
       });
     }
     if (restOfName) {
-      return _refs[localName].get(restOfName);
+      return _docs[localName].get(restOfName);
     }
-    return _refs[localName];
+    return _docs[localName];
   }
 
   function move(fromName, toName) {
@@ -61,14 +61,14 @@ export function createRefPool({
         `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`
       );
     }
-    _refs[toName] = _refs[fromName];
-    _refs[toName].$setName(toName);
-    delete _refs[fromName];
+    _docs[toName] = _docs[fromName];
+    _docs[toName].$setName(toName);
+    delete _docs[fromName];
   }
 
   function post() {
     const localName = uuid();
-    _refs[localName] = createCloudRef({
+    _docs[localName] = createCloudDoc({
       dataSource,
       domain,
       name: localName,
@@ -77,13 +77,13 @@ export function createRefPool({
       onRename: newName => move(localName, newName),
       isUnposted: true,
     });
-    return _refs[localName];
+    return _docs[localName];
   }
 
   return { get, move, post };
 }
 
-export default function createCloudRef({
+export default function createCloudDoc({
   dataSource,
   name,
   domain,
@@ -95,18 +95,18 @@ export default function createCloudRef({
   const blockCache = opts.blockCache || {};
 
   if (!name) {
-    throw new Error('name must be provided to createCloudRef!');
+    throw new Error('name must be provided to createCloudDoc!');
   }
   if (name.match(/\//)) {
     throw new Error(
-      `ref name ${name} must not contain slashes. Instead, pass a parent`
+      `doc name ${name} must not contain slashes. Instead, pass a parent`
     );
   }
   if (!domain) {
-    throw new Error('domain must be provided to createCloudRef!');
+    throw new Error('domain must be provided to createCloudDoc!');
   }
 
-  const refState = new BehaviorSubject({
+  const docState = new BehaviorSubject({
     name,
     id: null,
     isConnected: false,
@@ -118,7 +118,7 @@ export default function createCloudRef({
   let postingInProgress = null;
 
   async function ensurePosted(obj) {
-    if (refState.value.isPosted) {
+    if (docState.value.isPosted) {
       return null;
     }
     const parent = onGetParentName();
@@ -135,7 +135,7 @@ export default function createCloudRef({
         postData = { id: obj.id };
       }
       postingInProgress = dataSource.dispatch({
-        type: 'PostRef',
+        type: 'PostDoc',
         name: parent,
         domain,
         ...postData,
@@ -167,22 +167,22 @@ export default function createCloudRef({
       }
       return null; // probably this is not an error because there may have been race conditions with multiple calls to ensurePosted
     }
-    throw new Error('Could not post this ref!');
+    throw new Error('Could not post this doc!');
   }
 
   const setState = newState => {
-    refState.next({
-      ...refState.value,
+    docState.next({
+      ...docState.value,
       ...newState,
     });
   };
 
   function getState() {
-    return refState.value;
+    return docState.value;
   }
 
   function getName() {
-    const name = refState.value.name;
+    const name = docState.value.name;
     return name;
   }
 
@@ -195,7 +195,7 @@ export default function createCloudRef({
     return name;
   }
 
-  const refs = createRefPool({
+  const docs = createDocPool({
     onGetParentName: getFullName,
     blockCache,
     dataSource,
@@ -204,7 +204,7 @@ export default function createCloudRef({
 
   async function fetch() {
     const result = await dataSource.dispatch({
-      type: 'GetRef',
+      type: 'GetDoc',
       domain,
       name: getFullName(),
     });
@@ -219,7 +219,7 @@ export default function createCloudRef({
   async function destroy() {
     setState({ isConnected: false, id: null, isDestroyed: true });
     await dataSource.dispatch({
-      type: 'DestroyRef',
+      type: 'DestroyDoc',
       domain,
       name: getFullName(),
     });
@@ -236,19 +236,19 @@ export default function createCloudRef({
     // todo, re-observe when name changes!!
     let upstreamSubscription = null;
     const myName = getFullName();
-    dataSource.observeRef(domain, myName).then(upstreamObs => {
+    dataSource.observeDoc(domain, myName).then(upstreamObs => {
       setState({ isConnected: true });
       upstreamSubscription = upstreamObs.subscribe({
-        next: upstreamRef => {
-          if (upstreamRef === undefined) {
+        next: upstreamDoc => {
+          if (upstreamDoc === undefined) {
             return;
           }
           setState({
-            id: upstreamRef.id,
+            id: upstreamDoc.id,
             lastSyncTime: Date.now(),
-            value: upstreamRef.value,
+            value: upstreamDoc.value,
           });
-          observer.next(refState.value);
+          observer.next(docState.value);
         },
       });
     });
@@ -258,7 +258,7 @@ export default function createCloudRef({
       upstreamSubscription && upstreamSubscription.unsubscribe();
     };
   })
-    .multicast(() => new BehaviorSubject(refState.value))
+    .multicast(() => new BehaviorSubject(docState.value))
     .refCount();
 
   function _namedDispatch(action) {
@@ -295,7 +295,7 @@ export default function createCloudRef({
     if (requestedId) {
       return _getBlockWithId(requestedId);
     }
-    const { id } = refState.value;
+    const { id } = docState.value;
     if (!id) {
       return undefined;
     }
@@ -303,7 +303,7 @@ export default function createCloudRef({
   }
 
   function getValue() {
-    const { id, value } = refState.value;
+    const { id, value } = docState.value;
     if (value) {
       return value;
     }
@@ -321,7 +321,7 @@ export default function createCloudRef({
 
   async function putId(objId) {
     await dataSource.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain,
       name: getFullName(),
       id: objId,
@@ -383,18 +383,18 @@ export default function createCloudRef({
     })
     .switch();
 
-  function lookupRefBlock(inputVal, lookup) {
-    let refVal = inputVal;
+  function lookupDocBlock(inputVal, lookup) {
+    let docValue = inputVal;
     lookup.forEach(v => {
-      refVal = refVal && refVal[v];
+      docValue = docValue && docValue[v];
     });
-    if (refVal == null) {
+    if (docValue == null) {
       return observeNull;
     }
-    if (typeof refVal !== 'string') {
+    if (typeof docValue !== 'string') {
       throw new Error(`Cannot look up block ID in ${name} on ${lookup.join()}`);
     }
-    const connectedObj = _getBlockWithId(refVal);
+    const connectedObj = _getBlockWithId(docValue);
     return connectedObj;
   }
   function observeConnectedValue(lookup) {
@@ -403,7 +403,7 @@ export default function createCloudRef({
         if (!value) {
           return observeNull;
         }
-        const connected = lookupRefBlock(value, lookup);
+        const connected = lookupDocBlock(value, lookup);
         return connected.observeValue;
       })
       .switch();
@@ -411,7 +411,7 @@ export default function createCloudRef({
 
   async function fetchConnectedValue(lookup) {
     await fetchValue();
-    const connected = lookupRefBlock(getValue(), lookup);
+    const connected = lookupDocBlock(getValue(), lookup);
     if (connected) {
       await connected.fetch();
     }
@@ -419,7 +419,7 @@ export default function createCloudRef({
 
   async function getConnectedValue(lookup) {
     const obj = getBlock();
-    const connected = lookupRefBlock(obj.value, lookup);
+    const connected = lookupDocBlock(obj.value, lookup);
     if (connected) {
       return connected.getValue();
     }
@@ -443,8 +443,8 @@ export default function createCloudRef({
 
   const r = {
     $setName,
-    get: refs.get,
-    post: refs.post,
+    get: docs.get,
+    post: docs.post,
     getState,
     getName,
     getFullName,

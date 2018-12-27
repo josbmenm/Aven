@@ -1,8 +1,8 @@
 import { Model } from 'objection';
 
-export default function getRefModel(models) {
-  class Ref extends Model {
-    static tableName = 'refs';
+export default function getDocModel(models) {
+  class Doc extends Model {
+    static tableName = 'docs';
 
     static get idColumn() {
       return ['name', 'domainName'];
@@ -14,7 +14,7 @@ export default function getRefModel(models) {
           relation: Model.HasOneRelation,
           modelClass: models.Block,
           join: {
-            from: 'refs.currentBlock',
+            from: 'docs.currentBlock',
             to: 'blocks.id',
           },
         },
@@ -22,12 +22,12 @@ export default function getRefModel(models) {
           relation: Model.BelongsToOneRelation,
           modelClass: models.Domain,
           join: {
-            from: 'refs.domainName',
+            from: 'docs.domainName',
             to: 'domains.name',
           },
         },
       };
     }
   }
-  return Ref;
+  return Doc;
 }

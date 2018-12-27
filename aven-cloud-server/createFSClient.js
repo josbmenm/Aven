@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const pathJoin = require('path').join;
 
 export default function createFSClient({ client }) {
-  async function uploadFile({ filePath, ref }) {
+  async function uploadFile({ filePath, doc }) {
     const fileData = await fs.readFile(filePath);
     let block;
     try {
@@ -13,20 +13,20 @@ export default function createFSClient({ client }) {
         data: fileData.toString('hex'),
       };
     }
-    const { id } = await ref.write(block);
+    const { id } = await doc.write(block);
     return id;
   }
 
-  async function uploadFolder({ folderPath, ref }) {
+  async function uploadFolder({ folderPath, doc }) {
     const filesInDir = await fs.readdir(folderPath);
     const fileList = await Promise.all(
       filesInDir.map(async fileName => {
         const filePath = pathJoin(folderPath, fileName);
         const stat = await fs.stat(filePath);
         if (stat.isDirectory()) {
-          return await uploadFolder({ folderPath: filePath, ref });
+          return await uploadFolder({ folderPath: filePath, doc });
         } else {
-          return await uploadFile({ filePath, ref });
+          return await uploadFile({ filePath, doc });
         }
       })
     );
@@ -35,14 +35,14 @@ export default function createFSClient({ client }) {
       files[fileName] = { id: fileList[index] };
     });
     const folderObj = { files, type: 'Folder' };
-    const { id } = await ref.write(folderObj);
+    const { id } = await doc.write(folderObj);
     return id;
   }
 
   async function putFolder({ folderPath, name }) {
-    const ref = client.get(name);
-    const id = await uploadFolder({ folderPath, ref });
-    await ref.putId(id);
+    const doc = client.get(name);
+    const id = await uploadFolder({ folderPath, doc });
+    await doc.putId(id);
     return { id, name };
   }
 

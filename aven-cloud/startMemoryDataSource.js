@@ -4,8 +4,8 @@ import uuid from 'uuid/v1';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import {
   getListBlocksName,
-  getListRefName,
-} from '../aven-cloud-utils/RefNaming';
+  getListDocName,
+} from '../aven-cloud-utils/MetaDocNames';
 
 const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
@@ -18,21 +18,23 @@ function getTerms(name) {
   return name.split('/');
 }
 
-function isRefNameValid(name) {
+function isDocNameValid(name) {
   return getTerms(name).reduce((prev, now, i) => {
-    return prev && (now !== '_refs' && now !== '_blocks');
+    return prev && (now !== '_children' && now !== '_blocks');
   }, true);
 }
 
-function getRefsListName(name) {
+function getDocsListName(name) {
   const terms = getTerms(name);
   const parentTerms = terms.slice(0, terms.length - 1);
-  const refsListName =
-    parentTerms.length === 0 ? '_refs' : parentTerms.join('/') + '/_refs';
-  return refsListName;
+  const docsListName =
+    parentTerms.length === 0
+      ? '_children'
+      : parentTerms.join('/') + '/_children';
+  return docsListName;
 }
 
-function getParentRef(name) {
+function getParentDoc(name) {
   const terms = getTerms(name);
   const parentTerms = terms.slice(0, terms.length - 1);
   return parentTerms.join('/');
@@ -48,8 +50,8 @@ function getRootTerm(name) {
   return terms[0];
 }
 
-function _renderRef({ id }) {
-  // this strips out hidden features of the ref and snapshots the referenced values
+function _renderDoc({ id }) {
+  // this strips out hidden features of the doc and snapshots the referenced values
   return {
     id,
   };
@@ -60,10 +62,10 @@ const startMemoryDataSource = (opts = {}) => {
   const dataSourceDomain = opts.domain;
   let _blocks = {};
   let _blocksSize = {};
-  let _refs = {};
+  let _docs = {};
 
-  function _getRef(name) {
-    const r = _refs[name] || (_refs[name] = {});
+  function _getDoc(name) {
+    const r = _docs[name] || (_docs[name] = {});
     r.blocks = r.blocks || {};
     return r;
   }
@@ -74,40 +76,40 @@ const startMemoryDataSource = (opts = {}) => {
     throw new Error(`Empty domain passed to startMemoryDataSource`);
   }
 
-  function putRefInList(refName) {
-    const listR = _getRef(getRefsListName(refName));
+  function putDocInList(docName) {
+    const listR = _getDoc(getDocsListName(docName));
     if (listR.behavior) {
       const last = listR.behavior.value;
-      const refSet = new Set(last.value || []);
-      refSet.add(getMainTerm(refName));
+      const docSet = new Set(last.value || []);
+      docSet.add(getMainTerm(docName));
       listR.behavior.next({
         ...(last || {}),
-        value: Array.from(refSet),
+        value: Array.from(docSet),
       });
     }
-    if (getMainTerm(refName) !== refName) {
-      // this is a child ref. also make sure the parent ref has been added to lists
-      putRefInList(getParentRef(refName));
+    if (getMainTerm(docName) !== docName) {
+      // this is a child doc. also make sure the parent doc has been added to lists
+      putDocInList(getParentDoc(docName));
     }
   }
 
-  function removeRefFromList(refName) {
-    const listR = _getRef(getRefsListName(refName));
+  function removeDocFromList(docName) {
+    const listR = _getDoc(getDocsListName(docName));
     if (listR.behavior) {
       const last = listR.behavior.value;
-      const refSet = new Set(last.value || []);
-      refSet.delete(getMainTerm(refName));
+      const docSet = new Set(last.value || []);
+      docSet.delete(getMainTerm(docName));
       const muchNext = {
         ...(last || {}),
-        value: Array.from(refSet),
+        value: Array.from(docSet),
       };
       listR.behavior.next(muchNext);
     }
   }
 
-  async function PutRef({ domain, name, id }) {
-    if (!isRefNameValid(name)) {
-      throw new Error(`Invalid Ref name "${name}"`);
+  async function PutDoc({ domain, name, id }) {
+    if (!isDocNameValid(name)) {
+      throw new Error(`Invalid Doc name "${name}"`);
     }
     if (domain === undefined || name === undefined) {
       throw new Error('Invalid use. ', { domain, name, id });
@@ -117,25 +119,25 @@ const startMemoryDataSource = (opts = {}) => {
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
-    const r = _getRef(name);
+    const r = _getDoc(name);
     const prevId = r.id;
     r.blocks[id] = true;
     r.id = id;
     if (r.behavior) {
-      r.behavior.next(_renderRef(r));
+      r.behavior.next(_renderDoc(r));
     } else {
-      r.behavior = new BehaviorSubject(_renderRef(r));
+      r.behavior = new BehaviorSubject(_renderDoc(r));
     }
 
-    putRefInList(name);
+    putDocInList(name);
   }
 
-  async function MoveRef({ domain, from, to }) {
-    if (!isRefNameValid(from)) {
-      throw new Error(`Invalid from Ref name "${from}"`);
+  async function MoveDoc({ domain, from, to }) {
+    if (!isDocNameValid(from)) {
+      throw new Error(`Invalid from Doc name "${from}"`);
     }
-    if (!isRefNameValid(to)) {
-      throw new Error(`Invalid to Ref name "${to}"`);
+    if (!isDocNameValid(to)) {
+      throw new Error(`Invalid to Doc name "${to}"`);
     }
     if (domain === undefined || from === undefined || to === undefined) {
       throw new Error('Invalid use. ', { domain, from, to });
@@ -146,21 +148,21 @@ const startMemoryDataSource = (opts = {}) => {
       );
     }
     const re = new RegExp('^' + from + '(.*)$');
-    Object.keys(_refs).forEach(refName => {
-      const match = refName.match(re);
+    Object.keys(_docs).forEach(docName => {
+      const match = docName.match(re);
       if (match) {
         const toName = to + match[1];
-        _refs[toName] = _refs[refName];
-        delete _refs[refName];
+        _docs[toName] = _docs[docName];
+        delete _docs[docName];
       }
     });
-    removeRefFromList(from);
-    putRefInList(to);
+    removeDocFromList(from);
+    putDocInList(to);
   }
 
-  async function PostRef({ domain, name, id, value }) {
-    if (!isRefNameValid(name)) {
-      throw new Error(`Invalid Ref name "${name}"`);
+  async function PostDoc({ domain, name, id, value }) {
+    if (!isDocNameValid(name)) {
+      throw new Error(`Invalid Doc name "${name}"`);
     }
     if (domain === undefined) {
       throw new Error('Invalid use. ', { domain, name, id });
@@ -173,15 +175,15 @@ const startMemoryDataSource = (opts = {}) => {
     const postedName = name ? pathJoin(name, uuid()) : uuid();
     if (!id && value !== undefined) {
       const block = await PutBlock({ domain, name: postedName, value });
-      await PutRef({ domain, name: postedName, id: block.id });
+      await PutDoc({ domain, name: postedName, id: block.id });
       return { name: postedName, id: block.id };
     } else {
-      await PutRef({ domain, name: postedName, id });
+      await PutDoc({ domain, name: postedName, id });
       return { name: postedName, id };
     }
   }
 
-  async function DestroyRef({ domain, name }) {
+  async function DestroyDoc({ domain, name }) {
     if (domain === undefined || name === undefined) {
       throw new Error('Invalid use. ', { domain, name, id });
     }
@@ -190,35 +192,35 @@ const startMemoryDataSource = (opts = {}) => {
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
-    Object.keys(_refs)
-      .filter(refName => {
-        const m = refName.match(RegExp(`^${name}/?(.*)`));
+    Object.keys(_docs)
+      .filter(docName => {
+        const m = docName.match(RegExp(`^${name}/?(.*)`));
         return !!m;
       })
-      .forEach(refName => {
-        const r = _getRef(refName);
+      .forEach(docName => {
+        const r = _getDoc(docName);
         r.blocks = {};
         r.id = null;
         if (r.behavior) {
-          r.behavior.next(_renderRef(r));
+          r.behavior.next(_renderDoc(r));
         } else {
-          r.behavior = new BehaviorSubject(_renderRef(r));
+          r.behavior = new BehaviorSubject(_renderDoc(r));
         }
-        delete _refs[name];
+        delete _docs[name];
       });
 
-    const listR = _getRef(getRefsListName(name));
+    const listR = _getDoc(getDocsListName(name));
     if (listR.behavior) {
       const last = listR.behavior.value;
-      const refSet = new Set(last.value || []);
+      const docSet = new Set(last.value || []);
       const thisTermName = getMainTerm(name);
-      if (!refSet.has(thisTermName)) {
+      if (!docSet.has(thisTermName)) {
         return;
       }
-      refSet.delete(thisTermName);
+      docSet.delete(thisTermName);
       listR.behavior.next({
         ...(last || {}),
-        value: Array.from(refSet),
+        value: Array.from(docSet),
       });
     }
   }
@@ -229,7 +231,7 @@ const startMemoryDataSource = (opts = {}) => {
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
-    const r = _getRef(name);
+    const r = _getDoc(name);
 
     if (r.blocks[id] && _blocks[id] !== undefined) {
       return {
@@ -254,7 +256,7 @@ const startMemoryDataSource = (opts = {}) => {
     }
     if (!_isValidName(name)) {
       throw new Error(
-        `Invalid ref name "${name}", must be provided with PutBlock`
+        `Invalid doc name "${name}", must be provided with PutBlock`
       );
     }
     const blockData = stringify(value);
@@ -271,20 +273,20 @@ const startMemoryDataSource = (opts = {}) => {
     if (_blocksSize[id] === undefined) {
       _blocksSize[id] = size;
     }
-    const r = _getRef(name);
+    const r = _getDoc(name);
     r.blocks[id] = true;
     return { id };
   }
 
-  async function GetRef({ domain, name }) {
+  async function GetDoc({ domain, name }) {
     if (domain !== dataSourceDomain) {
       return null;
     }
-    const r = _refs[name];
-    return _renderRef(r || {});
+    const r = _docs[name];
+    return _renderDoc(r || {});
   }
 
-  async function ListRefBlocks({ domain, parentName }) {
+  async function ListDocBlocks({ domain, parentName }) {
     if (domain !== dataSourceDomain) {
       return [];
     }
@@ -292,27 +294,27 @@ const startMemoryDataSource = (opts = {}) => {
       return Object.keys(_blocks);
     }
     const out = new Set();
-    Object.keys(_refs)
+    Object.keys(_docs)
       .filter(r => {
         return r.slice(0, parentName.length) === parentName;
       })
-      .forEach(refName => {
-        const r = _getRef(refName);
+      .forEach(docName => {
+        const r = _getDoc(docName);
         Object.keys(r.blocks).forEach(blockId => out.add(blockId));
       });
     return Array.from(out);
   }
 
-  async function ListRefs({ domain, parentName }) {
+  async function ListDocs({ domain, parentName }) {
     if (domain !== dataSourceDomain) {
       return [];
     }
-    const results = Object.keys(_refs)
-      .map(refName => {
+    const results = Object.keys(_docs)
+      .map(docName => {
         if (parentName == null || parentName === '') {
-          return refName;
+          return docName;
         }
-        const m = refName.match(RegExp(`^${parentName}/(.*)`));
+        const m = docName.match(RegExp(`^${parentName}/(.*)`));
         if (!m || m[1] === '') {
           return null;
         }
@@ -325,7 +327,7 @@ const startMemoryDataSource = (opts = {}) => {
         return getRootTerm(name);
       })
       .filter(n => !!n)
-      .filter(n => n !== '_refs' && n !== '_blocks' && n !== '_auth');
+      .filter(n => n !== '_children' && n !== '_blocks' && n !== '_auth');
     const uniqueResults = Array.from(new Set(results));
     return uniqueResults;
   }
@@ -336,7 +338,7 @@ const startMemoryDataSource = (opts = {}) => {
 
   async function CollectGarbage() {
     // create list of all blocks
-    // for each ref
+    // for each doc
     //   remove all of Object.keys(r.blocks) from list of blocks
     // delete each block in the list
   }
@@ -356,57 +358,57 @@ const startMemoryDataSource = (opts = {}) => {
     console.log('Closing memory source ' + id);
     _blocks = null;
     _blocksSize = null;
-    _refs = null;
+    _docs = null;
   };
-  const observeRef = async (domain, name) => {
+  const observeDoc = async (domain, name) => {
     if (domain !== dataSourceDomain) {
       throw new Error(
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
-    const r = _getRef(name);
+    const r = _getDoc(name);
     if (r.behavior) {
       return r.behavior;
     } else {
-      const listRefName = getListRefName(name);
-      if (typeof listRefName === 'string') {
+      const listDocName = getListDocName(name);
+      if (typeof listDocName === 'string') {
         r.behavior = new BehaviorSubject({ value: undefined });
-        ListRefs({ domain, parentName: listRefName })
-          .then(refList => {
-            r.behavior.next({ value: refList });
+        ListDocs({ domain, parentName: listDocName })
+          .then(docList => {
+            r.behavior.next({ value: docList });
           })
           .catch(e => {
             console.error(e);
           });
         return r.behavior;
       }
-      return (r.behavior = new BehaviorSubject(_renderRef(r)));
+      return (r.behavior = new BehaviorSubject(_renderDoc(r)));
     }
   };
 
-  async function GetRefValue({ domain, name }) {
+  async function GetDocValue({ domain, name }) {
     if (domain !== dataSourceDomain) {
       throw new Error(
         `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`
       );
     }
-    const listRefName = getListRefName(name);
-    if (typeof listRefName === 'string') {
-      const refs = await ListRefs({ domain, parentName: listRefName });
-      return { id: undefined, value: refs };
+    const listDocName = getListDocName(name);
+    if (typeof listDocName === 'string') {
+      const docNames = await ListDocs({ domain, parentName: listDocName });
+      return { id: undefined, value: docNames };
     }
-    const listBlocksRefName = getListBlocksName(name);
-    if (typeof listBlocksRefName === 'string') {
-      const blockIds = await ListRefBlocks({
+    const listBlocksDocName = getListBlocksName(name);
+    if (typeof listBlocksDocName === 'string') {
+      const blockIds = await ListDocBlocks({
         domain,
-        parentName: listBlocksRefName,
+        parentName: listBlocksDocName,
       });
       return {
         id: undefined,
         value: blockIds,
       };
     }
-    const r = _getRef(name);
+    const r = _getDoc(name);
 
     if (r.blocks[r.id] && _blocks[r.id] !== undefined) {
       return {
@@ -423,21 +425,21 @@ const startMemoryDataSource = (opts = {}) => {
   return {
     isConnected,
     close,
-    observeRef,
+    observeDoc,
     dispatch: createDispatcher({
-      PutRef,
-      PostRef,
+      PutDoc,
+      PostDoc,
       PutBlock,
       GetBlock,
-      GetRef,
-      GetRefValue,
+      GetDoc,
+      GetDocValue,
       GetStatus,
       ListDomains,
-      ListRefs,
-      DestroyRef,
+      ListDocs,
+      DestroyDoc,
       CollectGarbage,
-      ListRefBlocks,
-      MoveRef,
+      ListDocBlocks,
+      MoveDoc,
     }),
     id,
   };

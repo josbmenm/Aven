@@ -10,8 +10,8 @@ exports.up = function(knex) {
       table.integer('size');
       table.unique('id');
     })
-    .createTable('refs', table => {
-      table.increments('refId');
+    .createTable('docs', table => {
+      table.increments('docId');
       table.string('domainName');
       table
         .foreign('domainName')
@@ -24,21 +24,21 @@ exports.up = function(knex) {
         .inTable('blocks');
       table.unique(['domainName', 'name']);
     })
-    .createTable('ref_ownership', table => {
+    .createTable('doc_ownership', table => {
       table
-        .integer('ref')
+        .integer('doc')
         .unsigned()
         .notNullable();
       table
-        .foreign('ref')
-        .references('refId')
-        .inTable('refs');
+        .foreign('doc')
+        .references('docId')
+        .inTable('docs');
       table.string('ownedBlock').notNullable();
       table
         .foreign('ownedBlock')
         .references('id')
         .inTable('blocks');
-      table.unique(['ref', 'ownedBlock']);
+      table.unique(['doc', 'ownedBlock']);
     })
     .createTable('block_ownership', table => {
       table.string('block').notNullable();
@@ -59,7 +59,7 @@ exports.down = function(knex) {
   return knex.schema
     .dropTableIfExists('domains')
     .dropTableIfExists('blocks')
-    .dropTableIfExists('refs')
-    .dropTableIfExists('ref_ownership')
+    .dropTableIfExists('docs')
+    .dropTableIfExists('doc_ownership')
     .dropTableIfExists('block_ownership');
 };

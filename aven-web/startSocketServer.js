@@ -15,16 +15,16 @@ const prepareSocketServer = (wss, dataSource) => {
     console.log('ws connection!', clientId);
     sendMessage({ type: 'ClientId', clientId });
 
-    const _refSubscriptions = {};
+    const _docSubscriptions = {};
 
-    const closeSubscription = localRefId => {
-      _refSubscriptions[localRefId] &&
-        _refSubscriptions[localRefId].unsubscribe();
-      delete _refSubscriptions[localRefId];
+    const closeSubscription = localDocId => {
+      _docSubscriptions[localDocId] &&
+        _docSubscriptions[localDocId].unsubscribe();
+      delete _docSubscriptions[localDocId];
     };
     const closeSocket = () => {
-      Object.keys(_refSubscriptions).forEach(refName => {
-        closeSubscription(refName);
+      Object.keys(_docSubscriptions).forEach(docName => {
+        closeSubscription(docName);
       });
       socketClosers[clientId] = null;
     };
@@ -41,11 +41,11 @@ const prepareSocketServer = (wss, dataSource) => {
       const action = { ...JSON.parse(message), clientId };
 
       switch (action.type) {
-        case 'SubscribeRefs': {
-          const { domain, refs, auth } = action;
-          refs.forEach(name => {
-            dataSource.observeRef(domain, name, auth).then(refObservable => {
-              _refSubscriptions[`${domain}_${name}`] = refObservable
+        case 'SubscribeDocs': {
+          const { domain, docs, auth } = action;
+          docs.forEach(name => {
+            dataSource.observeDoc(domain, name, auth).then(docObservable => {
+              _docSubscriptions[`${domain}_${name}`] = docObservable
                 .filter(z => !!z)
                 .distinctUntilChanged()
                 .subscribe({
@@ -54,7 +54,7 @@ const prepareSocketServer = (wss, dataSource) => {
                       return;
                     }
                     sendMessage({
-                      type: 'RefUpdate',
+                      type: 'DocUpdate',
                       name,
                       domain: domain,
                       ...v,
@@ -67,9 +67,9 @@ const prepareSocketServer = (wss, dataSource) => {
           });
           return;
         }
-        case 'UnsubscribeRefs': {
-          action.refs.forEach(refName => {
-            closeSubscription(`${action.domain}_${refName}`);
+        case 'UnsubscribeDocs': {
+          action.docs.forEach(docName => {
+            closeSubscription(`${action.domain}_${docName}`);
           });
           return;
         }

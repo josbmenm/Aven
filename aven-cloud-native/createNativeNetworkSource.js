@@ -46,45 +46,45 @@ export default function createNativeNetworkSource(opts) {
     }
   }
 
-  const refObservables = {};
+  const docObservables = {};
 
-  function createDomainRefObserver(domain, name, auth) {
-    const domainRefObserver = {
+  function createDomainDocObserver(domain, name, auth) {
+    const domainDocObserver = {
       domain,
       name,
     };
-    domainRefObserver.observable = Observable.create(observer => {
-      if (domainRefObserver.onNext) {
+    domainDocObserver.observable = Observable.create(observer => {
+      if (domainDocObserver.onNext) {
         throw new Error(
-          `Something has gone terribly wrong. There is somehow another observable already subscribed to the "${name}" ref on "${domain}"`
+          `Something has gone terribly wrong. There is somehow another observable already subscribed to the "${name}" doc on "${domain}"`
         );
       }
-      domainRefObserver.onNext = val => observer.next(val);
+      domainDocObserver.onNext = val => observer.next(val);
       socketSendIfConnected({
-        type: 'SubscribeRefs',
-        refs: [name],
+        type: 'SubscribeDocs',
+        docs: [name],
         domain,
         auth,
       });
 
       return () => {
         socketSendIfConnected({
-          type: 'UnsubscribeRefs',
-          refs: [name],
+          type: 'UnsubscribeDocs',
+          docs: [name],
           domain,
         });
-        delete refObservables[domain][name];
+        delete docObservables[domain][name];
       };
     })
       .multicast(() => new BehaviorSubject(undefined))
       .refCount();
-    return domainRefObserver;
+    return domainDocObserver;
   }
 
-  function getDomainRefObserver(domain, name, auth) {
-    const d = refObservables[domain] || (refObservables[domain] = {});
+  function getDomainDocObserver(domain, name, auth) {
+    const d = docObservables[domain] || (docObservables[domain] = {});
     const r =
-      d[name] || (d[name] = createDomainRefObserver(domain, name, auth));
+      d[name] || (d[name] = createDomainDocObserver(domain, name, auth));
     return r;
   }
 
@@ -118,18 +118,18 @@ export default function createNativeNetworkSource(opts) {
         case 'ClientId': {
           wsClientId = evt.clientId;
           isConnected.next(true);
-          Object.keys(refObservables).forEach(domain => {
-            const refs = Object.keys(refObservables[domain]);
+          Object.keys(docObservables).forEach(domain => {
+            const docs = Object.keys(docObservables[domain]);
             socketSendIfConnected({
-              type: 'SubscribeRefs',
+              type: 'SubscribeDocs',
               domain,
-              refs,
+              docs,
             });
           });
           return;
         }
-        case 'RefUpdate': {
-          const o = getDomainRefObserver(evt.domain, evt.name);
+        case 'DocUpdate': {
+          const o = getDomainDocObserver(evt.domain, evt.name);
           if (o && o.onNext) {
             o.onNext(evt);
           }
@@ -146,13 +146,13 @@ export default function createNativeNetworkSource(opts) {
 
   connectWS();
 
-  async function observeRef(domain, name, auth) {
-    return getDomainRefObserver(domain, name, auth).observable;
+  async function observeDoc(domain, name, auth) {
+    return getDomainDocObserver(domain, name, auth).observable;
   }
 
   return {
     dispatch,
-    observeRef,
+    observeDoc,
     isConnected,
   };
 }

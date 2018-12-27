@@ -26,15 +26,15 @@
 
 ## DestroyAccount(auth)
 
-## GetPermissions(auth?, refName)
+## GetPermissions(auth?, docName)
 
-## PutAccountPermissionRule(auth, refName, acctId, permissionObj)
+## PutAccountPermissionRule(auth, docName, acctId, permissionObj)
 
-## PutDefaultPermissionRule(auth, refName, permission)
+## PutDefaultPermissionRule(auth, docName, permission)
 
-## TransferOwnership(auth, refName, newOwnerAcctId)
+## TransferOwnership(auth, docName, newOwnerAcctId)
 
-## AcceptOwnership(auth, refName)
+## AcceptOwnership(auth, docName)
 
 # Data Types
 
@@ -92,7 +92,7 @@ Session
 
 createAnonymousSession
 
-put+write to 'orders/${orderId}', using session
+put+write to 'orders/\${orderId}', using session
 
 authentication
 
@@ -121,13 +121,13 @@ service.getAuthToken
 
 == story: delete account
 
-refs/
+docs/
 auth/
-permission/${...refName}
+permission/${...docName}
 id/
 ${auth_id}
 method/
 ${method_id}
 session/
 ${auth_id}
-${session_id}
+\${session_id}

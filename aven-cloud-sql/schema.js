@@ -21,11 +21,11 @@ const TableSchema = ({ columns, primary }) => ({
   columns,
   primary,
 });
-const ColumnSchema = (type, { options, ref } = {}) => ({
+const ColumnSchema = (type, { options, doc } = {}) => ({
   type: 'column',
   columnType: type,
   options,
-  ref,
+  doc,
 });
 
 const schema = DBSchema({
@@ -45,25 +45,25 @@ const schema = DBSchema({
       },
       primary: ['id'],
     }),
-    refs: TableSchema({
+    docs: TableSchema({
       columns: {
         id: ColumnSchema('shortstring'),
         domain: ColumnSchema('shortstring', {
-          ref: {
+          doc: {
             _table: 'domains',
             domain: 'name',
           },
         }),
         is_public: ColumnSchema('boolean'),
         owner: ColumnSchema('shortstring', {
-          ref: {
-            _table: 'refs',
+          doc: {
+            _table: 'docs',
             owner: 'id',
             domain: 'domain',
           },
         }),
         active_block: ColumnSchema('shortstring', {
-          ref: {
+          doc: {
             _table: 'blocks',
             active_block: 'id',
           },
@@ -74,23 +74,23 @@ const schema = DBSchema({
     permissions: TableSchema({
       columns: {
         owner: ColumnSchema('shortstring', {
-          ref: {
-            _table: 'refs',
+          doc: {
+            _table: 'docs',
             _cascadeDelete: true,
             owner: 'id',
             domain: 'domain',
           },
         }),
-        ref: ColumnSchema('shortstring', {
-          ref: {
-            _table: 'refs',
+        doc: ColumnSchema('shortstring', {
+          doc: {
+            _table: 'docs',
             _cascadeDelete: true,
-            ref: 'id',
+            doc: 'id',
             domain: 'domain',
           },
         }),
         domain: ColumnSchema('shortstring', {
-          ref: {
+          doc: {
             _table: 'domains',
             _cascadeDelete: true,
             domain: 'name',
@@ -100,34 +100,34 @@ const schema = DBSchema({
           options: ['read', 'write', 'force', 'admin'],
         }),
       },
-      primary: ['ref', 'permission', 'owner', 'domain'],
+      primary: ['doc', 'permission', 'owner', 'domain'],
     }),
-    block_refs: TableSchema({
+    block_docs: TableSchema({
       columns: {
-        ref: ColumnSchema('shortstring', {
-          ref: {
-            _table: 'refs',
+        doc: ColumnSchema('shortstring', {
+          doc: {
+            _table: 'docs',
             _cascadeDelete: true,
-            ref: 'id',
+            doc: 'id',
             domain: 'domain',
           },
         }),
         domain: ColumnSchema('shortstring', {
-          ref: {
+          doc: {
             _table: 'domains',
             _cascadeDelete: true,
             domain: 'name',
           },
         }),
         block: ColumnSchema('shortstring', {
-          ref: {
+          doc: {
             _table: 'blocks',
             _cascadeDelete: true,
             block: 'id',
           },
         }),
       },
-      primary: ['ref', 'block'],
+      primary: ['doc', 'block'],
     }),
   },
 });

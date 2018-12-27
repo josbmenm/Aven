@@ -31,7 +31,7 @@ import createCloudClient from '../aven-cloud/createCloudClient';
 import useCloud from '../aven-cloud/useCloud';
 import useCloudSession from '../aven-cloud/useCloudSession';
 import useObservable from '../aven-cloud/useObservable';
-import useRefValue from '../aven-cloud/useRefValue';
+import useDocValue from '../aven-cloud/useDocValue';
 import JSONView from '../debug-views/JSONView';
 const pathJoin = require('path').join;
 
@@ -63,18 +63,18 @@ function useAsyncStorage(storageKey, defaultValue) {
         })
         .catch(console.error);
     },
-    [storageKey]
+    [storageKey],
   );
 
   function setStorageState(newState) {
     if (isStateUnloaded(storageState)) {
       throw new Error(
-        'Cannot merge storage state if it has not been loaded yet!'
+        'Cannot merge storage state if it has not been loaded yet!',
       );
     }
     setInternalStorageState(newState);
     AsyncStorage.setItem(storageKey, JSON.stringify(newState)).catch(
-      console.error
+      console.error,
     );
   }
 
@@ -653,31 +653,31 @@ function LinkRow({
   );
 }
 
-function RefsList({ parent, activeRef }) {
+function DocsList({ parent, activeDoc }) {
   const cloud = useCloud();
   const { navigate } = useNavigation();
-  const refsListName = parent ? `${parent}/_refs` : '_refs';
-  const refNames = useObservable(cloud.get(refsListName).observeValue);
-  const refs = refNames && refNames.map(cloud.get);
-  if (!refs) {
+  const docsListName = parent ? `${parent}/_children` : '_children';
+  const docNames = useObservable(cloud.get(docsListName).observeValue);
+  const docs = docNames && docNames.map(cloud.get);
+  if (!docs) {
     return null;
   }
   return (
     <RowSection>
-      {refs
+      {docs
         .filter(r => !r.getState().isDestroyed)
-        .map(ref => {
-          const localName = ref.getName();
-          const refName = parent ? pathJoin(parent, localName) : localName;
-          const matchingRef = activeRef && activeRef.match(refName);
-          const isSelected = !!matchingRef && matchingRef.index === 0;
+        .map(doc => {
+          const localName = doc.getName();
+          const docName = parent ? pathJoin(parent, localName) : localName;
+          const matchingDoc = activeDoc && activeDoc.match(docName);
+          const isSelected = !!matchingDoc && matchingDoc.index === 0;
           return (
             <LinkRow
               key={localName}
               isSelected={isSelected}
               title={localName}
               onPress={() => {
-                navigate('Ref', { refName, refPath: null });
+                navigate('Doc', { docName, docPath: null });
               }}
             />
           );
@@ -686,32 +686,32 @@ function RefsList({ parent, activeRef }) {
   );
 }
 
-function AddRefSection({ parent }) {
+function AddDocSection({ parent }) {
   const cloud = useCloud();
   let [isOpened, setIsOpened] = useState(false);
-  let [newRefName, setNewRefName] = useState('');
+  let [newDocName, setNewDocName] = useState('');
   function submit() {
-    const newRefFullName = parent ? `${parent}/${newRefName}` : newRefName;
-    cloud.get(newRefFullName).put(null);
+    const newDocFullName = parent ? `${parent}/${newDocName}` : newDocName;
+    cloud.get(newDocFullName).put(null);
     setIsOpened(false);
-    setNewRefName('');
+    setNewDocName('');
   }
   if (isOpened) {
     return (
       <Form>
         <InputField
-          value={newRefName}
-          onValue={setNewRefName}
-          name="New Ref Name"
+          value={newDocName}
+          onValue={setNewDocName}
+          name="New Doc Name"
           onSubmit={submit}
         />
-        <FormButton title="Create Ref" onPress={submit} />
+        <FormButton title="Create Doc" onPress={submit} />
         <FormButton
           title="Cancel"
           secondary
           onPress={() => {
             setIsOpened(false);
-            setNewRefName('');
+            setNewDocName('');
           }}
         />
       </Form>
@@ -719,7 +719,7 @@ function AddRefSection({ parent }) {
   }
   return (
     <StandaloneButton
-      title="Create Ref"
+      title="Create Doc"
       onPress={() => {
         setIsOpened(true);
       }}
@@ -727,12 +727,12 @@ function AddRefSection({ parent }) {
   );
 }
 
-function RefsPane({ onClientConfig, onSession }) {
+function DocsPane({ onClientConfig, onSession }) {
   const { domain } = useCloud();
   const { navigate, state } = useNavigation();
-  const refRoute =
-    state.routes && state.routes.find(r => r.routeName === 'Ref');
-  const activeRef = refRoute && refRoute.params.refName;
+  const docRoute =
+    state.routes && state.routes.find(r => r.routeName === 'Doc');
+  const activeDoc = docRoute && docRoute.params.docName;
   return (
     <Pane>
       <Title title={domain} />
@@ -744,8 +744,8 @@ function RefsPane({ onClientConfig, onSession }) {
           navigate('Account');
         }}
       />
-      <RefsList parent={null} activeRef={activeRef} />
-      <AddRefSection parent={null} />
+      <DocsList parent={null} activeDoc={activeDoc} />
+      <AddDocSection parent={null} />
       <TestPopoverButton />
       <StandaloneButton
         title="Log out"
@@ -759,7 +759,7 @@ function RefsPane({ onClientConfig, onSession }) {
   );
 }
 
-function Folder({ value, path, cloudRef, pathContext }) {
+function Folder({ value, path, doc, pathContext }) {
   let pathViews = null;
   const navigation = useNavigation();
 
@@ -773,9 +773,9 @@ function Folder({ value, path, cloudRef, pathContext }) {
       if (!file || !file.id) {
         return null;
       }
-      return cloudRef.getBlock(file.id);
+      return doc.getBlock(file.id);
     },
-    [file]
+    [file],
   );
   const objValue = useObservable(obj && obj.observeValue);
 
@@ -784,7 +784,7 @@ function Folder({ value, path, cloudRef, pathContext }) {
       <ValuePane
         value={objValue}
         path={restOfPath}
-        cloudRef={cloudRef}
+        doc={doc}
         pathContext={[...pathContext, nextPathSegment]}
       />
     );
@@ -802,7 +802,7 @@ function Folder({ value, path, cloudRef, pathContext }) {
               onPress={() => {
                 const nextPath = [...pathContext, fileName].join('/');
                 navigation.setParams({
-                  refPath: nextPath,
+                  docPath: nextPath,
                 });
               }}
             />
@@ -942,14 +942,14 @@ function TestPopoverButton() {
             viewRef.current.measure((x, y, width, height, pageX, pageY) => {
               console.log('hiho', location);
               resolve({ x, y, width, height, pageX, pageY });
-            })
+            }),
           );
           console.log('lolwaht', location);
           openPopover(
             <View style={{ backgroundColor: 'white', padding: 30 }}>
               <Text>Hello, World!</Text>
             </View>,
-            location
+            location,
           );
         }}
       />
@@ -1049,7 +1049,7 @@ function DestroyButton({ onValue }) {
   );
 }
 
-function ObjectPane({ path, value, onValue, pathContext, cloudRef }) {
+function ObjectPane({ path, value, onValue, pathContext, doc }) {
   let pathViews = null;
 
   const navigation = useNavigation();
@@ -1064,7 +1064,7 @@ function ObjectPane({ path, value, onValue, pathContext, cloudRef }) {
       <ValuePane
         value={pathValue}
         path={restOfPath}
-        cloudRef={cloudRef}
+        doc={doc}
         pathContext={[...pathContext, nextPathSegment]}
       />
     );
@@ -1081,7 +1081,7 @@ function ObjectPane({ path, value, onValue, pathContext, cloudRef }) {
         onPress={() => {
           const nextPath = [...pathContext, String(index)].join('/');
           navigation.setParams({
-            refPath: nextPath,
+            docPath: nextPath,
           });
         }}
       >
@@ -1098,7 +1098,7 @@ function ObjectPane({ path, value, onValue, pathContext, cloudRef }) {
         onPress={() => {
           const nextPath = [...pathContext, objKey].join('/');
           navigation.setParams({
-            refPath: nextPath,
+            docPath: nextPath,
           });
         }}
       >
@@ -1120,7 +1120,7 @@ function ObjectPane({ path, value, onValue, pathContext, cloudRef }) {
   );
 }
 
-function ValuePane({ value, path, cloudRef, pathContext }) {
+function ValuePane({ value, path, doc, pathContext }) {
   let presentationValue = value === null ? {} : value;
   if (value === undefined) {
     return <Text>Loading</Text>;
@@ -1130,7 +1130,7 @@ function ValuePane({ value, path, cloudRef, pathContext }) {
       <PrimitivePane
         value={value}
         onValue={v => {
-          cloudRef.put(v);
+          doc.put(v);
         }}
       />
     );
@@ -1140,7 +1140,7 @@ function ValuePane({ value, path, cloudRef, pathContext }) {
       <Folder
         value={presentationValue}
         path={path}
-        cloudRef={cloudRef}
+        doc={doc}
         pathContext={pathContext}
       />
     );
@@ -1151,10 +1151,10 @@ function ValuePane({ value, path, cloudRef, pathContext }) {
       <ObjectPane
         value={presentationValue}
         path={path}
-        cloudRef={cloudRef}
+        doc={doc}
         pathContext={pathContext}
         onValue={v => {
-          cloudRef.put(v);
+          doc.put(v);
         }}
       />
     );
@@ -1162,17 +1162,15 @@ function ValuePane({ value, path, cloudRef, pathContext }) {
   throw new Error('Bad type!');
 }
 
-function RefValuePane() {
-  const name = useParam('refName');
-  const path = useParam('refPath');
+function DocValuePane() {
+  const name = useParam('docName');
+  const path = useParam('docPath');
   const cloud = useCloud();
 
-  const cloudRef = cloud.get(name);
-  const value = useRefValue(cloudRef);
+  const doc = cloud.get(name);
+  const value = useDocValue(doc);
 
-  return (
-    <ValuePane cloudRef={cloudRef} value={value} path={path} pathContext={[]} />
-  );
+  return <ValuePane doc={doc} value={value} path={path} pathContext={[]} />;
 }
 
 function InfoSection({ text }) {
@@ -1181,8 +1179,8 @@ function InfoSection({ text }) {
   );
 }
 
-function RefSetForm({ cloudRef }) {
-  const r = useObservable(cloudRef.observe);
+function DocSetIDForm({ doc }) {
+  const r = useObservable(doc.observe);
 
   let [isOpened, setIsOpened] = useState(false);
   let [nextId, setNextId] = useState(r ? r.id : '');
@@ -1199,7 +1197,7 @@ function RefSetForm({ cloudRef }) {
   function submit() {
     setIsOpened(false);
     setNextId(null);
-    cloudRef.putId(nextId).catch(e => {
+    doc.putId(nextId).catch(e => {
       alert('Error');
       console.error(e);
     });
@@ -1236,33 +1234,33 @@ function pathApartName(name) {
   });
 }
 
-function RefMetaPanes() {
-  const name = useParam('refName');
+function DocMetaPanes() {
+  const name = useParam('docName');
   const nameParts = pathApartName(name);
-  return nameParts.map(name => <RefMetaPane name={name} key={name} />);
+  return nameParts.map(name => <DocMetaPane name={name} key={name} />);
 }
 
-function RefMetaPane({ name }) {
+function DocMetaPane({ name }) {
   const { navigate, getParam } = useNavigation();
   const cloud = useCloud();
-  const cloudRef = cloud.get(name);
-  const r = useObservable(cloudRef.observe);
-  const activeRef = getParam('refName');
+  const doc = cloud.get(name);
+  const r = useObservable(doc.observe);
+  const activeDoc = getParam('docName');
 
   return (
     <Pane>
-      <Title title={cloudRef.getName()} />
+      <Title title={doc.getName()} />
       {r && <InfoSection text={` ID: ${r.id}`} />}
       <StandaloneButton
         title="Destroy"
         onPress={() => {
-          navigate('Refs');
-          cloud.destroyRef(cloudRef).catch(console.error);
+          navigate('Docs');
+          cloud.destroyDoc(doc).catch(console.error);
         }}
       />
-      <RefSetForm cloudRef={cloudRef} />
-      <RefsList parent={name} activeRef={activeRef} />
-      <AddRefSection parent={name} />
+      <DocSetIDForm doc={doc} />
+      <DocsList parent={name} activeDoc={activeDoc} />
+      <AddDocSection parent={name} />
     </Pane>
   );
 }
@@ -1297,30 +1295,30 @@ function AccountPane() {
   );
 }
 
-const RefPaneNavigator = createNavigator(
+const DocPaneNavigator = createNavigator(
   SlideableNavigation,
   SwitchRouter({
-    RefValue: {
+    DocValue: {
       path: 'value',
-      screen: RefValuePane,
-      params: { refPath: '' },
-      inheritParams: ['refName'],
+      screen: DocValuePane,
+      params: { docPath: '' },
+      inheritParams: ['docName'],
     },
   }),
   {
     explicitParams: true,
-  }
+  },
 );
 
-function RefPane({ navigation }) {
+function DocPane({ navigation }) {
   return (
     <React.Fragment>
-      <RefMetaPanes />
-      <RefPaneNavigator navigation={navigation} />
+      <DocMetaPanes />
+      <DocPaneNavigator navigation={navigation} />
     </React.Fragment>
   );
 }
-RefPane.router = RefPaneNavigator.router;
+DocPane.router = DocPaneNavigator.router;
 
 function EmptyScreen() {
   return null;
@@ -1329,11 +1327,11 @@ function EmptyScreen() {
 const MainPaneNavigator = createNavigator(
   SlideableNavigation,
   SwitchRouter({
-    Refs: { path: '', screen: EmptyScreen },
-    Ref: {
-      path: 'ref',
-      screen: RefPane,
-      params: { refName: null },
+    Docs: { path: '', screen: EmptyScreen },
+    Doc: {
+      path: 'doc',
+      screen: DocPane,
+      params: { docName: null },
     },
     Account: {
       path: 'account',
@@ -1342,7 +1340,7 @@ const MainPaneNavigator = createNavigator(
   }),
   {
     explicitParams: true,
-  }
+  },
 );
 
 function MainPane({ onClientConfig, onSession, navigation }) {
@@ -1353,7 +1351,7 @@ function MainPane({ onClientConfig, onSession, navigation }) {
         flex: 1,
       }}
     >
-      <RefsPane onClientConfig={onClientConfig} onSession={onSession} />
+      <DocsPane onClientConfig={onClientConfig} onSession={onSession} />
       <MainPaneNavigator navigation={navigation} />
     </View>
   );
@@ -1376,12 +1374,12 @@ function BackgroundView({ children }) {
 function AdminApp({ defaultSession = {}, descriptors }) {
   let [sessionState, setSessionState] = useAsyncStorage(
     'AvenSessionState',
-    null
+    null,
   );
 
   let [clientConfig, setClientConfig] = useAsyncStorage(
     'AvenClientConfig',
-    null
+    null,
   );
 
   let client = useMemo(
@@ -1403,7 +1401,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
       return client;
     },
-    [clientConfig]
+    [clientConfig],
   );
 
   const activeRoute = useActiveRoute();
@@ -1427,7 +1425,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
         navigate('Login');
       }
     },
-    [activeRoute, sessionState, clientConfig, client]
+    [activeRoute, sessionState, clientConfig, client],
   );
 
   const activeDescriptor = descriptors[activeRoute.key];
@@ -1489,7 +1487,7 @@ const router = SwitchRouter(
   },
   {
     explicitParams: true,
-  }
+  },
 );
 
 export default createNavigator(AdminApp, router, {});

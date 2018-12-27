@@ -27,7 +27,7 @@ const sendNotFound = res => {
 
 async function blockResponse({
   domain,
-  refName,
+  docName,
   dispatch,
   refPath,
   blockId,
@@ -36,7 +36,7 @@ async function blockResponse({
   const block = await dispatch({
     type: 'GetBlock',
     domain,
-    name: refName,
+    name: docName,
     id: blockId,
   });
   if (!block) {
@@ -65,7 +65,7 @@ async function blockResponse({
     const childId = block.value.files[pathTermName].id;
     return await blockResponse({
       domain,
-      refName,
+      docName,
       dispatch,
       blockName: pathTermName,
       blockId: childId,
@@ -75,20 +75,20 @@ async function blockResponse({
   return sendNotFound;
 }
 
-async function webDataInterface({ domain, refName, dispatch, refPath }) {
+async function webDataInterface({ domain, docName, dispatch, refPath }) {
   const ref = await dispatch({
-    type: 'GetRef',
+    type: 'GetDoc',
     domain,
-    name: refName,
+    name: docName,
   });
   if (!ref || !ref.id) {
     return sendNotFound;
   }
   return await blockResponse({
     domain,
-    refName,
+    docName,
     dispatch,
-    blockName: refName,
+    blockName: docName,
     blockId: ref.id,
     refPath,
   });
@@ -155,13 +155,13 @@ export default async function WebServer({
   extraneousExpressRouting && extraneousExpressRouting(expressApp);
 
   expressApp.get('/_/:domain/:ref*', (req, res) => {
-    const refName = req.params.ref;
+    const docName = req.params.ref;
     const domain = req.params.domain;
     const refPath = req.params['0'];
 
     webDataInterface({
       domain,
-      refName,
+      docName,
       refPath,
       dispatch: dataSource.dispatch,
     })

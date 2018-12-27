@@ -2,7 +2,7 @@ import { default as withObs } from '@nozbe/with-observables';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import { Observable, BehaviorSubject } from 'rxjs-compat';
 
-import { createRefPool } from './createCloudRef';
+import { createDocPool } from './createCloudDoc';
 
 export const withObservables = withObs;
 
@@ -30,26 +30,25 @@ export default function createCloudClient({
     });
   }
 
-  async function sessionObserveRef(domain, name) {
-    return await dataSource.observeRef(domain, name, session.value);
+  async function sessionObserveDoc(domain, name) {
+    return await dataSource.observeDoc(domain, name, session.value);
   }
 
   const dataSourceWithSession = {
     ...dataSource,
-    observeRef: sessionObserveRef,
+    observeDoc: sessionObserveDoc,
     dispatch: sessionDispatch,
   };
 
-  const refs = createRefPool({
+  const docs = createDocPool({
     onGetParentName: () => null,
     blockCache: _blocks,
     dataSource: dataSourceWithSession,
     domain,
   });
 
-  async function destroyRef(ref) {
-    await ref.destroy();
-    // knownRefs.next(knownRefs.value.filter(r => r.getName() !== ref.getName()));
+  async function destroyDoc(doc) {
+    await doc.destroy();
   }
 
   async function CreateSession({
@@ -113,7 +112,7 @@ export default function createCloudClient({
     DestroySession,
     dispatch,
     domain,
-    destroyRef,
-    get: refs.get,
+    destroyDoc,
+    get: docs.get,
   };
 }

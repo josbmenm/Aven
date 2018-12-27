@@ -1,7 +1,7 @@
 import Knex from 'knex';
 import getDomainModel from './getDomainModel';
 import getBlockModel from './getBlockModel';
-import getRefModel from './getRefModel';
+import getDocModel from './getDocModel';
 import { BehaviorSubject } from 'rxjs-compat';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import uuid from 'uuid/v1';
@@ -21,45 +21,45 @@ export default async function startSQLDataSource({ config, connection }) {
     },
   });
 
-  async function GetRef({ name, domain }) {
-    const results = await models.Ref.query()
+  async function GetDoc({ name, domain }) {
+    const results = await models.Doc.query()
       .where('name', '=', name)
       .where('domainName', '=', domain)
       .limit(1);
-    const ref = results[0];
-    if (!ref) {
+    const doc = results[0];
+    if (!doc) {
       return {};
     }
-    const renderedRef = {
+    const renderedDoc = {
       domain,
       name,
-      id: ref.currentBlock,
+      id: doc.currentBlock,
     };
-    _announceRef(domain, name, renderedRef);
-    return renderedRef;
+    _announceDoc(domain, name, renderedDoc);
+    return renderedDoc;
   }
 
   const models = {};
   models.Domain = getDomainModel(models).bindKnex(knex);
   models.Block = getBlockModel(models).bindKnex(knex);
-  models.Ref = getRefModel(models).bindKnex(knex);
+  models.Doc = getDocModel(models).bindKnex(knex);
 
-  async function PutRef({ domain, name, id }) {
-    await models.Ref.query().upsertGraph(
+  async function PutDoc({ domain, name, id }) {
+    await models.Doc.query().upsertGraph(
       {
         name,
         currentBlock: id,
 
         // seems silly but we have to have the value AND the relation here.
         domain: { name: domain }, // the relation is here for insertMissing to insert the domain if it doesn't already exist
-        domainName: domain, // value is used by objection to identify this row, (see getRefModel idColumn)
+        domainName: domain, // value is used by objection to identify this row, (see getDocModel idColumn)
       },
       {
         relate: true,
         insertMissing: true,
       }
     );
-    _announceRef(domain, name, {
+    _announceDoc(domain, name, {
       domain,
       name,
       id,
@@ -119,8 +119,8 @@ export default async function startSQLDataSource({ config, connection }) {
     };
   }
 
-  async function ListRefs({ domain }) {
-    const result = await models.Ref.query().where('domainName', '=', domain);
+  async function ListDocs({ domain }) {
+    const result = await models.Doc.query().where('domainName', '=', domain);
     return result.map(r => r.name);
   }
 
@@ -129,8 +129,8 @@ export default async function startSQLDataSource({ config, connection }) {
     return result.map(r => r.name);
   }
 
-  async function DestroyRef({ domain, name }) {
-    const numDeleted = await models.Ref.query()
+  async function DestroyDoc({ domain, name }) {
+    const numDeleted = await models.Doc.query()
       .where('name', '=', name)
       .where('domainName', '=', domain)
       .delete();
@@ -138,7 +138,7 @@ export default async function startSQLDataSource({ config, connection }) {
 
   async function CollectGarbage() {}
 
-  async function ListRefBlocks() {}
+  async function ListDocBlocks() {}
 
   async function close() {
     isConnected.next(false);
@@ -148,42 +148,42 @@ export default async function startSQLDataSource({ config, connection }) {
   const subscriptionPolicy = 'local'; // todo, check 'client', and add support for postgres pub sub
 
   const _localSubscriptions = {};
-  function _getLocalRef(domain, name) {
+  function _getLocalDoc(domain, name) {
     const d = _localSubscriptions[domain] || (_localSubscriptions[domain] = {});
     const r = d[name] || (d[name] = {});
     return r;
   }
-  function _announceLocalRef(domain, name, ref) {
-    const r = _getLocalRef(domain, name);
+  function _announceLocalDoc(domain, name, doc) {
+    const r = _getLocalDoc(domain, name);
     if (r.behavior) {
-      if (r.behavior.value.id === ref.id) {
+      if (r.behavior.value.id === doc.id) {
         return;
       }
-      r.behavior.next(ref);
+      r.behavior.next(doc);
     } else {
-      r.behavior = new BehaviorSubject(ref);
+      r.behavior = new BehaviorSubject(doc);
     }
   }
-  function _observeLocalRef(domain, name) {
-    const r = _getLocalRef(domain, name);
+  function _observeLocalDoc(domain, name) {
+    const r = _getLocalDoc(domain, name);
     if (!r.behavior) {
       r.behavior = new BehaviorSubject({ domain, name, id: null });
     }
     if (!r.behavior.value.id) {
-      GetRef({ domain, name }).catch(console.error);
+      GetDoc({ domain, name }).catch(console.error);
     }
     return r.behavior;
   }
-  function _announceRef(domain, name, ref) {
+  function _announceDoc(domain, name, doc) {
     if (subscriptionPolicy === 'local') {
-      return _announceLocalRef(domain, name, ref);
+      return _announceLocalDoc(domain, name, doc);
     }
     throw new Error(`Unsupported subscription policy "${subscriptionPolicy}"`);
   }
 
-  async function observeRef(domain, name) {
+  async function observeDoc(domain, name) {
     if (subscriptionPolicy === 'local') {
-      return _observeLocalRef(domain, name);
+      return _observeLocalDoc(domain, name);
     }
     throw new Error(`Unsupported subscription policy "${subscriptionPolicy}"`);
   }
@@ -191,18 +191,18 @@ export default async function startSQLDataSource({ config, connection }) {
   return {
     isConnected,
     close,
-    observeRef,
+    observeDoc,
     dispatch: createDispatcher({
-      PutRef,
+      PutDoc,
       PutBlock,
       GetBlock,
-      GetRef,
+      GetDoc,
       GetStatus,
       ListDomains,
-      ListRefs,
-      DestroyRef,
+      ListDocs,
+      DestroyDoc,
       CollectGarbage,
-      ListRefBlocks,
+      ListDocBlocks,
     }),
     id,
   };

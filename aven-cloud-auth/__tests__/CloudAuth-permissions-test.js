@@ -52,7 +52,7 @@ async function establishPermissionsTestData() {
   });
 
   await authDataSource.dispatch({
-    type: 'PutRef',
+    type: 'PutDoc',
     auth: rootSession,
     domain: 'test',
     name: 'something',
@@ -104,7 +104,7 @@ describe('Cloud auth Permissions', () => {
 
     await expect(
       authDataSource.dispatch({
-        type: 'PutRef',
+        type: 'PutDoc',
         auth: null,
         domain: 'test',
         name: 'something',
@@ -112,7 +112,7 @@ describe('Cloud auth Permissions', () => {
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       auth: session,
       domain: 'test',
       name: 'something',
@@ -132,7 +132,7 @@ describe('Cloud auth Permissions', () => {
 
     await expect(
       authDataSource.dispatch({
-        type: 'GetRef',
+        type: 'GetDoc',
         auth: anonSession,
         domain: 'test',
         name: 'something',
@@ -150,7 +150,7 @@ describe('Cloud auth Permissions', () => {
     });
 
     result = await authDataSource.dispatch({
-      type: 'GetRef',
+      type: 'GetDoc',
       auth: anonSession,
       domain: 'test',
       name: 'something',
@@ -180,7 +180,7 @@ describe('Cloud auth Permissions', () => {
 
     await expect(
       authDataSource.dispatch({
-        type: 'GetRef',
+        type: 'GetDoc',
         auth: anonSession,
         domain: 'test',
         name: 'something',
@@ -201,7 +201,7 @@ describe('Cloud auth Permissions', () => {
     });
 
     result = await authDataSource.dispatch({
-      type: 'GetRef',
+      type: 'GetDoc',
       auth: anonSession,
       domain: 'test',
       name: 'something',
@@ -218,7 +218,7 @@ describe('Cloud auth Permissions', () => {
     expect(result.value.foo).toEqual('bar');
     await expect(
       authDataSource.dispatch({
-        type: 'GetRef',
+        type: 'GetDoc',
         domain: 'test',
         name: 'something',
       })
@@ -236,7 +236,7 @@ describe('Cloud auth Permissions', () => {
 
     await expect(
       authDataSource.dispatch({
-        type: 'PostRef',
+        type: 'PostDoc',
         auth: anonSession,
         domain: 'test',
         name: 'something',
@@ -255,7 +255,7 @@ describe('Cloud auth Permissions', () => {
     });
 
     const postResult = await authDataSource.dispatch({
-      type: 'PostRef',
+      type: 'PostDoc',
       auth: anonSession,
       domain: 'test',
       name: 'something',
@@ -316,7 +316,7 @@ describe('Cloud auth Permissions', () => {
     });
   });
 
-  test('posted ref ownership', async () => {
+  test('posted doc ownership', async () => {
     const {
       rootSession,
       anonSession,
@@ -336,7 +336,7 @@ describe('Cloud auth Permissions', () => {
     });
 
     const postResult = await authDataSource.dispatch({
-      type: 'PostRef',
+      type: 'PostDoc',
       auth: anonSession,
       domain: 'test',
       name: 'something',
@@ -383,7 +383,7 @@ describe('Cloud auth Permissions', () => {
 
     await expect(
       authDataSource.dispatch({
-        type: 'GetRef',
+        type: 'GetDoc',
         auth: anonSession,
         domain: 'test',
         name: 'something',
@@ -405,7 +405,7 @@ describe('Cloud auth Permissions', () => {
 
     await expect(
       authDataSource.dispatch({
-        type: 'GetRef',
+        type: 'GetDoc',
         domain: 'test',
         name: 'something',
       })
@@ -413,7 +413,7 @@ describe('Cloud auth Permissions', () => {
 
     await expect(
       authDataSource.dispatch({
-        type: 'PutRef',
+        type: 'PutDoc',
         domain: 'test',
         name: 'something',
         id: barObj.id,
@@ -421,7 +421,7 @@ describe('Cloud auth Permissions', () => {
     ).rejects.toThrow();
 
     await authDataSource.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       auth: anonSession,
       domain: 'test',
       name: 'something',
@@ -429,7 +429,7 @@ describe('Cloud auth Permissions', () => {
     });
 
     result = await authDataSource.dispatch({
-      type: 'GetRef',
+      type: 'GetDoc',
       auth: anonSession,
       domain: 'test',
       name: 'something',
@@ -475,7 +475,7 @@ describe('Cloud auth Permissions', () => {
 
     await expect(
       authDataSource.dispatch({
-        type: 'GetRef',
+        type: 'GetDoc',
         auth: anonSession2,
         domain: 'test',
         name: 'something',
@@ -499,7 +499,7 @@ describe('Cloud auth Permissions', () => {
     });
 
     result = await authDataSource.dispatch({
-      type: 'GetRef',
+      type: 'GetDoc',
       auth: anonSession2,
       domain: 'test',
       name: 'something',
@@ -567,7 +567,7 @@ describe('Cloud auth Permissions', () => {
 
     await expect(
       authDataSource.dispatch({
-        type: 'GetRefValue',
+        type: 'GetDocValue',
         auth: anonSession,
         domain: 'test',
         name: 'something/_auth',
@@ -590,7 +590,7 @@ describe('Cloud auth Permissions', () => {
     });
 
     result = await authDataSource.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       auth: anonSession,
       domain: 'test',
       name: 'something/_auth',
@@ -620,7 +620,7 @@ describe('Cloud auth Permissions', () => {
 
     await expect(
       authDataSource.dispatch({
-        type: 'GetRefValue',
+        type: 'GetDocValue',
         auth: anonSession,
         domain: 'test',
         name: '_auth',
@@ -628,7 +628,7 @@ describe('Cloud auth Permissions', () => {
     ).rejects.toThrow();
 
     result = await authDataSource.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       auth: rootSession,
       domain: 'test',
       name: '_auth',
@@ -648,7 +648,7 @@ describe('Cloud auth Permissions', () => {
     });
 
     result = await authDataSource.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       auth: rootSession,
       domain: 'test',
       name: '_auth',
@@ -670,7 +670,7 @@ describe('Cloud auth Permissions', () => {
     });
 
     result = await authDataSource.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       auth: rootSession,
       domain: 'test',
       name: '_auth',

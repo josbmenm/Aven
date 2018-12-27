@@ -24,17 +24,17 @@ describe('object storage', () => {
         domain: 'test2',
         value: { foo: 'bar' },
         name: 'foo',
-      })
+      }),
     ).rejects.toThrow();
   });
-  test('object put fails with missing ref', async () => {
+  test('object put fails with missing doc', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     await expect(
       ds.dispatch({
         type: 'PutBlock',
         domain: 'test',
         value: { foo: 'bar' },
-      })
+      }),
     ).rejects.toThrow();
   });
 
@@ -82,14 +82,14 @@ describe('object storage', () => {
   });
 });
 
-describe('ref storage', () => {
-  test('puts ref fails when an object is missing', async () => {
+describe('doc storage', () => {
+  test('puts doc fails when an object is missing', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     await expect(
-      ds.dispatch({ type: 'PutRef', domain: 'test', objectId: 'foo' })
+      ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' }),
     ).rejects.toThrow();
   });
-  test('put ref works', async () => {
+  test('put doc works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj = await ds.dispatch({
       type: 'PutBlock',
@@ -98,28 +98,28 @@ describe('ref storage', () => {
       value: { foo: 'bar' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj.id,
     });
-    const ref = await ds.dispatch({
-      type: 'GetRef',
+    const doc = await ds.dispatch({
+      type: 'GetDoc',
       domain: 'test',
       name: 'foo',
     });
-    expect(ref.id).toEqual(obj.id);
+    expect(doc.id).toEqual(obj.id);
 
     const gotObj = await ds.dispatch({
       type: 'GetBlock',
       domain: 'test',
       name: 'foo',
-      id: ref.id,
+      id: doc.id,
     });
     expect(gotObj.value.foo).toEqual('bar');
   });
 
-  test('post ref works', async () => {
+  test('post doc works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj = await ds.dispatch({
       type: 'PutBlock',
@@ -128,7 +128,7 @@ describe('ref storage', () => {
       value: { foo: 'bar' },
     });
     const postResult = await ds.dispatch({
-      type: 'PostRef',
+      type: 'PostDoc',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
@@ -137,14 +137,14 @@ describe('ref storage', () => {
     expect(postResult.id).toEqual(obj.id);
 
     const getResult = await ds.dispatch({
-      type: 'GetRef',
+      type: 'GetDoc',
       domain: 'test',
       name: postResult.name,
     });
     expect(getResult.id).toEqual(obj.id);
   });
 
-  test('move ref works', async () => {
+  test('move doc works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj = await ds.dispatch({
       type: 'PutBlock',
@@ -153,34 +153,34 @@ describe('ref storage', () => {
       value: { foo: 'bar' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj.id,
     });
     await ds.dispatch({
-      type: 'MoveRef',
+      type: 'MoveDoc',
       domain: 'test',
       from: 'foo',
       to: 'foobob',
     });
-    const ref = await ds.dispatch({
-      type: 'GetRef',
+    const doc = await ds.dispatch({
+      type: 'GetDoc',
       domain: 'test',
       name: 'foobob',
     });
-    expect(ref.id).toEqual(obj.id);
+    expect(doc.id).toEqual(obj.id);
 
     const gotObj = await ds.dispatch({
       type: 'GetBlock',
       domain: 'test',
       name: 'foobob',
-      id: ref.id,
+      id: doc.id,
     });
     expect(gotObj.value.foo).toEqual('bar');
   });
 
-  test('move ref shows in list', async () => {
+  test('move doc shows in list', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj = await ds.dispatch({
       type: 'PutBlock',
@@ -189,33 +189,33 @@ describe('ref storage', () => {
       value: { foo: 'bar' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj.id,
     });
     let result;
     result = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
-      name: '_refs',
+      name: '_children',
     });
     expect(result.value).toEqual(['foo']);
     await ds.dispatch({
-      type: 'MoveRef',
+      type: 'MoveDoc',
       domain: 'test',
       from: 'foo',
       to: 'foobob',
     });
     result = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
-      name: '_refs',
+      name: '_children',
     });
     expect(result.value).toEqual(['foobob']);
   });
 
-  test('move ref affects children too', async () => {
+  test('move doc affects children too', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj = await ds.dispatch({
       type: 'PutBlock',
@@ -224,58 +224,58 @@ describe('ref storage', () => {
       value: { foo: 'bar' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj.id,
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/bar',
       id: obj.id,
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/baz',
       id: obj.id,
     });
     let result;
     result = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
-      name: '_refs',
+      name: '_children',
     });
     expect(result.value).toEqual(['foo']);
     result = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
-      name: 'foo/_refs',
+      name: 'foo/_children',
     });
     expect(result.value).toEqual(['bar', 'baz']);
     await ds.dispatch({
-      type: 'MoveRef',
+      type: 'MoveDoc',
       domain: 'test',
       from: 'foo',
       to: 'foobob',
     });
 
     result = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
-      name: '_refs',
+      name: '_children',
     });
     expect(result.value).toEqual(['foobob']);
     result = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
-      name: 'foobob/_refs',
+      name: 'foobob/_children',
     });
     expect(result.value).toEqual(['bar', 'baz']);
   });
 
-  test('get ref value works', async () => {
+  test('get doc value works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj = await ds.dispatch({
       type: 'PutBlock',
@@ -284,28 +284,28 @@ describe('ref storage', () => {
       value: { foo: 'bar' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj.id,
     });
-    const ref = await ds.dispatch({
-      type: 'GetRefValue',
+    const doc = await ds.dispatch({
+      type: 'GetDocValue',
       domain: 'test',
       name: 'foo',
     });
-    expect(ref.value.foo).toEqual('bar');
+    expect(doc.value.foo).toEqual('bar');
   });
-  test('get missing ref', async () => {
+  test('get missing doc', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
-    const ref = await ds.dispatch({
-      type: 'GetRef',
+    const doc = await ds.dispatch({
+      type: 'GetDoc',
       domain: 'test',
       name: 'foo',
     });
-    expect(ref.id).toEqual(undefined);
+    expect(doc.id).toEqual(undefined);
   });
-  test('destroy ref works', async () => {
+  test('destroy doc works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj = await ds.dispatch({
       type: 'PutBlock',
@@ -314,36 +314,36 @@ describe('ref storage', () => {
       value: { foo: 'bar' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj.id,
     });
     await ds.dispatch({
-      type: 'DestroyRef',
+      type: 'DestroyDoc',
       domain: 'test',
       name: 'foo',
     });
-    const ref = await ds.dispatch({
-      type: 'GetRef',
+    const doc = await ds.dispatch({
+      type: 'GetDoc',
       domain: 'test',
       name: 'foo',
     });
-    expect(ref.id).toEqual(undefined);
-    const refs = await ds.dispatch({
-      type: 'ListRefs',
+    expect(doc.id).toEqual(undefined);
+    const docs = await ds.dispatch({
+      type: 'ListDocs',
       domain: 'test',
     });
-    expect(refs).toEqual([]);
+    expect(docs).toEqual([]);
   });
-  test('list ref works', async () => {
+  test('list doc works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
-    let refs = null;
-    refs = await ds.dispatch({
-      type: 'ListRefs',
+    let docs = null;
+    docs = await ds.dispatch({
+      type: 'ListDocs',
       domain: 'test',
     });
-    expect(refs).toEqual([]);
+    expect(docs).toEqual([]);
 
     const obj = await ds.dispatch({
       type: 'PutBlock',
@@ -352,62 +352,62 @@ describe('ref storage', () => {
       value: { foo: 'bar' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj.id,
     });
-    refs = await ds.dispatch({
-      type: 'ListRefs',
+    docs = await ds.dispatch({
+      type: 'ListDocs',
       domain: 'test',
     });
-    expect(refs).toEqual(['foo']);
+    expect(docs).toEqual(['foo']);
 
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'bar',
       id: obj.id,
     });
-    refs = await ds.dispatch({
-      type: 'ListRefs',
+    docs = await ds.dispatch({
+      type: 'ListDocs',
       domain: 'test',
     });
-    expect(refs).toEqual(['foo', 'bar']);
+    expect(docs).toEqual(['foo', 'bar']);
   });
 
-  test('implicit parent list ref ', async () => {
+  test('implicit parent list doc ', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     let result = null;
     result = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
-      name: '_refs',
+      name: '_children',
     });
     expect(result.value).toEqual([]);
 
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'hello/world',
       id: null,
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'hello/mars',
       id: null,
     });
     result = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
-      name: '_refs',
+      name: '_children',
     });
     expect(result.value).toEqual(['hello']);
     result = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
-      name: 'hello/_refs',
+      name: 'hello/_children',
     });
     expect(result.value).toEqual(['world', 'mars']);
   });
@@ -416,7 +416,7 @@ describe('ref storage', () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     let objs = null;
     objs = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
       name: '_blocks',
     });
@@ -430,18 +430,18 @@ describe('ref storage', () => {
     });
 
     objs = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
       name: '_blocks',
     });
     expect(objs.value).toEqual([obj.id]);
   });
 
-  test('list object of ref works', async () => {
+  test('list object of doc works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     let objs = null;
     objs = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
       name: 'foo/_blocks',
     });
@@ -467,18 +467,18 @@ describe('ref storage', () => {
     });
 
     objs = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
       name: 'foo/_blocks',
     });
     expect(objs.value).toEqual([o1.id, o2.id]);
   });
 
-  test('list object of ref cascades correctly', async () => {
+  test('list object of doc cascades correctly', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     let objs = null;
     objs = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
       name: 'foo/_blocks',
     });
@@ -504,22 +504,22 @@ describe('ref storage', () => {
     });
 
     objs = await ds.dispatch({
-      type: 'GetRefValue',
+      type: 'GetDocValue',
       domain: 'test',
       name: 'foo/_blocks',
     });
     expect(objs.value).toEqual([o1.id, o2.id]);
   });
 
-  test('list ref works works with GetValue _refs', async () => {
+  test('list doc works works with GetValue _children', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
-    let refs = null;
-    refs = await ds.dispatch({
-      type: 'GetRefValue',
+    let docs = null;
+    docs = await ds.dispatch({
+      type: 'GetDocValue',
       domain: 'test',
-      name: '_refs',
+      name: '_children',
     });
-    expect(refs.value).toEqual([]);
+    expect(docs.value).toEqual([]);
 
     const obj = await ds.dispatch({
       type: 'PutBlock',
@@ -528,54 +528,54 @@ describe('ref storage', () => {
       value: { foo: 'bar' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: null,
     });
-    refs = await ds.dispatch({
-      type: 'GetRefValue',
+    docs = await ds.dispatch({
+      type: 'GetDocValue',
       domain: 'test',
-      name: '_refs',
+      name: '_children',
     });
-    expect(refs.value).toEqual(['foo']);
+    expect(docs.value).toEqual(['foo']);
 
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'bar',
       id: obj.id,
     });
-    refs = await ds.dispatch({
-      type: 'GetRefValue',
+    docs = await ds.dispatch({
+      type: 'GetDocValue',
       domain: 'test',
-      name: '_refs',
+      name: '_children',
     });
-    expect(refs.value).toEqual(['foo', 'bar']);
+    expect(docs.value).toEqual(['foo', 'bar']);
 
     await ds.dispatch({
-      type: 'DestroyRef',
+      type: 'DestroyDoc',
       domain: 'test',
       name: 'foo',
     });
-    refs = await ds.dispatch({
-      type: 'GetRefValue',
+    docs = await ds.dispatch({
+      type: 'GetDocValue',
       domain: 'test',
-      name: '_refs',
+      name: '_children',
     });
-    expect(refs.value).toEqual(['bar']);
+    expect(docs.value).toEqual(['bar']);
   });
 });
 
-describe('parent child refs', () => {
+describe('parent child docs', () => {
   test('can list with parents', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
-    let refs = null;
-    refs = await ds.dispatch({
-      type: 'ListRefs',
+    let docs = null;
+    docs = await ds.dispatch({
+      type: 'ListDocs',
       domain: 'test',
     });
-    expect(refs).toEqual([]);
+    expect(docs).toEqual([]);
 
     const obj = await ds.dispatch({
       type: 'PutBlock',
@@ -584,54 +584,54 @@ describe('parent child refs', () => {
       value: { foo: 'bar' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj.id,
     });
 
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/bar',
       id: obj.id,
     });
 
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/bar/boo',
       id: obj.id,
     });
 
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/baz',
       id: obj.id,
     });
 
-    refs = await ds.dispatch({
-      type: 'ListRefs',
+    docs = await ds.dispatch({
+      type: 'ListDocs',
       domain: 'test',
       parentName: 'foo',
     });
-    expect(refs).toEqual(['bar', 'baz']);
+    expect(docs).toEqual(['bar', 'baz']);
 
-    refs = await ds.dispatch({
-      type: 'ListRefs',
+    docs = await ds.dispatch({
+      type: 'ListDocs',
       domain: 'test',
       parentName: 'foo/bar',
     });
-    expect(refs).toEqual(['boo']);
+    expect(docs).toEqual(['boo']);
 
-    refs = await ds.dispatch({
-      type: 'ListRefs',
+    docs = await ds.dispatch({
+      type: 'ListDocs',
       domain: 'test',
     });
-    expect(refs).toEqual(['foo']);
+    expect(docs).toEqual(['foo']);
   });
-  test('can destroy parent refs and children go away', async () => {
+  test('can destroy parent docs and children go away', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj = await ds.dispatch({
       type: 'PutBlock',
@@ -640,89 +640,89 @@ describe('parent child refs', () => {
       value: { foo: 'bar' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj.id,
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/bar',
       id: obj.id,
     });
     await ds.dispatch({
-      type: 'DestroyRef',
+      type: 'DestroyDoc',
       domain: 'test',
       name: 'foo',
     });
-    const ref = await ds.dispatch({
-      type: 'GetRef',
+    const doc = await ds.dispatch({
+      type: 'GetDoc',
       domain: 'test',
       name: 'foo/bar',
     });
-    expect(ref.id).toEqual(null);
+    expect(doc.id).toEqual(null);
   });
 
-  test('list child refs only with GetValue _refs', async () => {
+  test('list child docs only with GetValue _children', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
-    let refs = null;
+    let docs = null;
 
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: null,
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/bar',
       id: null,
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/boo',
       id: null,
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/bar/baz',
       id: null,
     });
-    refs = await ds.dispatch({
-      type: 'GetRefValue',
+    docs = await ds.dispatch({
+      type: 'GetDocValue',
       domain: 'test',
-      name: '_refs',
+      name: '_children',
     });
-    expect(refs.value).toEqual(['foo']);
+    expect(docs.value).toEqual(['foo']);
 
-    refs = await ds.dispatch({
-      type: 'GetRefValue',
+    docs = await ds.dispatch({
+      type: 'GetDocValue',
       domain: 'test',
-      name: 'foo/_refs',
+      name: 'foo/_children',
     });
-    expect(refs.value).toEqual(['bar', 'boo']);
+    expect(docs.value).toEqual(['bar', 'boo']);
 
-    refs = await ds.dispatch({
-      type: 'GetRefValue',
+    docs = await ds.dispatch({
+      type: 'GetDocValue',
       domain: 'test',
-      name: 'foo/bar/_refs',
+      name: 'foo/bar/_children',
     });
-    expect(refs.value).toEqual(['baz']);
+    expect(docs.value).toEqual(['baz']);
   });
 });
 
-describe('observing refs', () => {
-  test('puts ref fails when an object is missing', async () => {
+describe('observing docs', () => {
+  test('puts doc fails when an object is missing', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     await expect(
-      ds.dispatch({ type: 'PutRef', domain: 'test', objectId: 'foo' })
+      ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' }),
     ).rejects.toThrow();
   });
-  test('observe ref works', async () => {
+  test('observe doc works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj1 = await ds.dispatch({
       type: 'PutBlock',
@@ -737,12 +737,12 @@ describe('observing refs', () => {
       value: { foo: 'baz' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj1.id,
     });
-    const obs = await ds.observeRef('test', 'foo');
+    const obs = await ds.observeDoc('test', 'foo');
     let lastObserved = undefined;
     obs.subscribe({
       next: newVal => {
@@ -750,7 +750,7 @@ describe('observing refs', () => {
       },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj2.id,
@@ -758,9 +758,9 @@ describe('observing refs', () => {
     expect(lastObserved.id).toEqual(obj2.id);
   });
 
-  test('observe root ref list works', async () => {
+  test('observe root doc list works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
-    const obs = await ds.observeRef('test', '_refs');
+    const obs = await ds.observeDoc('test', '_children');
     let lastObserved = undefined;
     obs.subscribe({
       next: newVal => {
@@ -768,21 +768,21 @@ describe('observing refs', () => {
       },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: null,
     });
     expect(lastObserved.value).toEqual(['foo']);
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/bar',
       id: null,
     });
     expect(lastObserved.value).toEqual(['foo']);
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'baz',
       id: null,
@@ -790,9 +790,9 @@ describe('observing refs', () => {
     expect(lastObserved.value).toEqual(['foo', 'baz']);
   });
 
-  test('observe named ref list works', async () => {
+  test('observe named doc list works', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
-    const obs = await ds.observeRef('test', 'foo/_refs');
+    const obs = await ds.observeDoc('test', 'foo/_children');
     let lastObserved = undefined;
     obs.subscribe({
       next: newVal => {
@@ -800,42 +800,42 @@ describe('observing refs', () => {
       },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: null,
     });
     expect(lastObserved.value).toEqual([]);
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/bar',
       id: null,
     });
     expect(lastObserved.value).toEqual(['bar']);
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/baz',
       id: null,
     });
     expect(lastObserved.value).toEqual(['bar', 'baz']);
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/baz/boo',
       id: null,
     });
     expect(lastObserved.value).toEqual(['bar', 'baz']);
     await ds.dispatch({
-      type: 'DestroyRef',
+      type: 'DestroyDoc',
       domain: 'test',
       name: 'foo/baz',
       id: null,
     });
     expect(lastObserved.value).toEqual(['bar']);
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo/baz',
       id: null,
@@ -858,12 +858,12 @@ describe('observing refs', () => {
       value: { foo: 'baz' },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj1.id,
     });
-    const obs = await ds.observeRef('test', 'foo');
+    const obs = await ds.observeDoc('test', 'foo');
     let lastObserved = undefined;
     const subs = obs.subscribe({
       next: newVal => {
@@ -873,7 +873,7 @@ describe('observing refs', () => {
     expect(lastObserved.id).toEqual(obj1.id);
     subs.unsubscribe();
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj2.id,
@@ -881,7 +881,7 @@ describe('observing refs', () => {
     expect(lastObserved.id).toEqual(obj1.id);
   });
 
-  test('observe same ref multiple times', async () => {
+  test('observe same doc multiple times', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     const obj1 = await ds.dispatch({
       type: 'PutBlock',
@@ -902,13 +902,13 @@ describe('observing refs', () => {
       value: { foo: 42 },
     });
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj1.id,
     });
-    const obs1 = await ds.observeRef('test', 'foo');
-    const obs2 = await ds.observeRef('test', 'foo');
+    const obs1 = await ds.observeDoc('test', 'foo');
+    const obs2 = await ds.observeDoc('test', 'foo');
     let lastObserved1 = undefined;
     let lastObserved2 = undefined;
     const subs1 = obs1.subscribe({
@@ -925,7 +925,7 @@ describe('observing refs', () => {
     expect(lastObserved2.id).toEqual(obj1.id);
 
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj2.id,
@@ -935,7 +935,7 @@ describe('observing refs', () => {
 
     subs1.unsubscribe();
     await ds.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj3.id,
@@ -946,4 +946,4 @@ describe('observing refs', () => {
   });
 });
 
-describe('synthetic _refs and _blocks', () => {});
+describe('synthetic _children and _blocks', () => {});

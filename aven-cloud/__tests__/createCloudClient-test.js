@@ -11,7 +11,7 @@ describe('create client generic behavior', () => {
           lastDispatched = a;
         },
         close: () => {},
-        observeRef: () => {},
+        observeDoc: () => {},
       },
     });
     c.dispatch({ type: 'my action' });
@@ -19,14 +19,14 @@ describe('create client generic behavior', () => {
   });
 });
 
-describe('client ref behavior', () => {
-  test('gets refs', async () => {
+describe('client doc behavior', () => {
+  test('gets docs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
-    const ref = c.get('foo');
-    expect(ref.getState().id).toBe(null);
-    expect(ref.getName()).toBe('foo');
-    await ref.fetch();
+    const doc = c.get('foo');
+    expect(doc.getState().id).toBe(null);
+    expect(doc.getName()).toBe('foo');
+    await doc.fetch();
     const first = await m.dispatch({
       type: 'PutBlock',
       name: 'foo',
@@ -34,23 +34,23 @@ describe('client ref behavior', () => {
       value: { count: 12 },
     });
     await m.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       name: 'foo',
       domain: 'd',
       id: first.id,
     });
-    await ref.fetch();
-    expect(ref.getState().id).toBe(first.id);
+    await doc.fetch();
+    expect(doc.getState().id).toBe(first.id);
   });
 
-  test('gets ref values', async () => {
+  test('gets doc values', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
 
-    const ref = c.get('foo');
-    expect(ref.id).toBe(undefined);
-    expect(ref.getName()).toBe('foo');
-    await ref.fetch();
+    const doc = c.get('foo');
+    expect(doc.id).toBe(undefined);
+    expect(doc.getName()).toBe('foo');
+    await doc.fetch();
     const first = await m.dispatch({
       type: 'PutBlock',
       name: 'foo',
@@ -58,16 +58,16 @@ describe('client ref behavior', () => {
       value: { count: 12 },
     });
     await m.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       name: 'foo',
       domain: 'd',
       id: first.id,
     });
-    await ref.fetchValue();
-    expect(ref.getValue()).toEqual({ count: 12 });
+    await doc.fetchValue();
+    expect(doc.getValue()).toEqual({ count: 12 });
   });
 
-  test('deduplicates gotten refs', async () => {
+  test('deduplicates gotten docs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
     const r0 = c.get('foo');
@@ -75,59 +75,59 @@ describe('client ref behavior', () => {
     expect(r0).toBe(r1);
   });
 
-  test('ref posting', async () => {
+  test('doc posting', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
-    const ref = c.get('foo');
-    let refsList = null;
-    await ref.put({
+    const doc = c.get('foo');
+    let docsList = null;
+    await doc.put({
       hello: 'world',
     });
-    refsList = await m.dispatch({
-      type: 'GetRefValue',
+    docsList = await m.dispatch({
+      type: 'GetDocValue',
       domain: 'd',
-      name: 'foo/_refs',
+      name: 'foo/_children',
     });
-    expect(refsList.value.length).toEqual(0);
-    const postedRef = ref.post();
-    expect(postedRef.getFullName().match(/^foo\/(.+)$/)).not.toBeNull();
-    await postedRef.put({ some: 'data' });
-    refsList = await m.dispatch({
-      type: 'GetRefValue',
+    expect(docsList.value.length).toEqual(0);
+    const postedDoc = doc.post();
+    expect(postedDoc.getFullName().match(/^foo\/(.+)$/)).not.toBeNull();
+    await postedDoc.put({ some: 'data' });
+    docsList = await m.dispatch({
+      type: 'GetDocValue',
       domain: 'd',
-      name: 'foo/_refs',
+      name: 'foo/_children',
     });
-    expect(refsList.value.length).toEqual(1);
-    const bar = ref.get('bar');
+    expect(docsList.value.length).toEqual(1);
+    const bar = doc.get('bar');
     await bar.put({ woah: 42 });
-    refsList = await m.dispatch({
-      type: 'GetRefValue',
+    docsList = await m.dispatch({
+      type: 'GetDocValue',
       domain: 'd',
-      name: 'foo/_refs',
+      name: 'foo/_children',
     });
-    expect(refsList.value.length).toEqual(2);
-    expect(refsList.value.indexOf('bar')).not.toEqual(-1);
+    expect(docsList.value.length).toEqual(2);
+    expect(docsList.value.indexOf('bar')).not.toEqual(-1);
     await bar.destroy();
-    refsList = await m.dispatch({
-      type: 'GetRefValue',
+    docsList = await m.dispatch({
+      type: 'GetDocValue',
       domain: 'd',
-      name: 'foo/_refs',
+      name: 'foo/_children',
     });
-    expect(refsList.value.length).toEqual(1);
-    expect(refsList.value.indexOf('bar')).toEqual(-1);
+    expect(docsList.value.length).toEqual(1);
+    expect(docsList.value.indexOf('bar')).toEqual(-1);
   });
-  test('ref getting', async () => {
+  test('doc getting', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
-    const fooRef = c.get('foo');
-    const fooBarRef = c.get('foo/bar');
-    const fooBarChained = fooRef.get('bar');
-    expect(fooBarRef).toEqual(fooBarChained);
+    const fooDoc = c.get('foo');
+    const fooBarDoc = c.get('foo/bar');
+    const fooBarChained = fooDoc.get('bar');
+    expect(fooBarDoc).toEqual(fooBarChained);
   });
 });
 
-describe('client ref map', () => {
-  test('fetches mapped refs', async () => {
+describe('client doc map', () => {
+  test('fetches mapped docs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const first = await m.dispatch({
       type: 'PutBlock',
@@ -142,7 +142,7 @@ describe('client ref map', () => {
       value: { count: 2 },
     });
     await m.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       name: 'foo',
       domain: 'd',
       id: first.id,
@@ -154,7 +154,7 @@ describe('client ref map', () => {
     await mapped.fetchValue();
     expect(mapped.getValue().squaredCount).toEqual(1);
     await m.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       name: 'foo',
       domain: 'd',
       id: second.id,
@@ -163,7 +163,7 @@ describe('client ref map', () => {
     expect(mapped.getValue().squaredCount).toEqual(4);
   });
 
-  test('fetches chained mapped refs', async () => {
+  test('fetches chained mapped docs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const first = await m.dispatch({
       type: 'PutBlock',
@@ -178,7 +178,7 @@ describe('client ref map', () => {
       value: { count: 2 },
     });
     await m.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       name: 'foo',
       domain: 'd',
       id: first.id,
@@ -191,7 +191,7 @@ describe('client ref map', () => {
     await mapped.fetchValue();
     expect(mapped.getValue().squaredSquaredCount).toEqual(1);
     await m.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       name: 'foo',
       domain: 'd',
       id: second.id,
@@ -200,7 +200,7 @@ describe('client ref map', () => {
     expect(mapped.getValue().squaredSquaredCount).toEqual(16);
   });
 
-  test('fetches expand refs', async () => {
+  test('fetches expand docs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const firstCount = await m.dispatch({
       type: 'PutBlock',
@@ -227,7 +227,7 @@ describe('client ref map', () => {
       value: { countObj: secondCount.id },
     });
     await m.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       name: 'foo',
       domain: 'd',
       id: first.id,
@@ -239,7 +239,7 @@ describe('client ref map', () => {
     await expanded.fetchValue();
     expect(expanded.getValue().great.count).toEqual(12);
     await m.dispatch({
-      type: 'PutRef',
+      type: 'PutDoc',
       name: 'foo',
       domain: 'd',
       id: second.id,
