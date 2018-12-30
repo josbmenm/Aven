@@ -36,14 +36,14 @@ async function establishPermissionsTestData() {
   });
   const rootSession = rootSessionCreated.session;
 
-  const fooObj = await authDataSource.dispatch({
+  const fooBlock = await authDataSource.dispatch({
     type: 'PutBlock',
     auth: rootSession,
     domain: 'test',
     name: 'something',
     value: { foo: 'bar' },
   });
-  const barObj = await authDataSource.dispatch({
+  const barBlock = await authDataSource.dispatch({
     type: 'PutBlock',
     auth: rootSession,
     domain: 'test',
@@ -56,11 +56,11 @@ async function establishPermissionsTestData() {
     auth: rootSession,
     domain: 'test',
     name: 'something',
-    id: fooObj.id,
+    id: fooBlock.id,
   });
   return {
-    fooObj,
-    barObj,
+    fooBlock,
+    barBlock,
     authDataSource,
     rootSession,
     anonSession,
@@ -121,8 +121,8 @@ describe('Cloud auth Permissions', () => {
 
   test('default read permission', async () => {
     const {
-      fooObj,
-      barObj,
+      fooBlock,
+      barBlock,
       rootSession,
       anonSession,
       authDataSource,
@@ -155,7 +155,7 @@ describe('Cloud auth Permissions', () => {
       domain: 'test',
       name: 'something',
     });
-    expect(result.id).toEqual(fooObj.id);
+    expect(result.id).toEqual(fooBlock.id);
 
     result = await authDataSource.dispatch({
       type: 'GetBlock',
@@ -169,8 +169,8 @@ describe('Cloud auth Permissions', () => {
 
   test('account read permission', async () => {
     const {
-      fooObj,
-      barObj,
+      fooBlock,
+      barBlock,
       rootSession,
       anonSession,
       authDataSource,
@@ -206,7 +206,7 @@ describe('Cloud auth Permissions', () => {
       domain: 'test',
       name: 'something',
     });
-    expect(result.id).toEqual(fooObj.id);
+    expect(result.id).toEqual(fooBlock.id);
 
     result = await authDataSource.dispatch({
       type: 'GetBlock',
@@ -372,8 +372,8 @@ describe('Cloud auth Permissions', () => {
   });
   test('account write permission', async () => {
     const {
-      fooObj,
-      barObj,
+      fooBlock,
+      barBlock,
       rootSession,
       anonSession,
       authDataSource,
@@ -416,7 +416,7 @@ describe('Cloud auth Permissions', () => {
         type: 'PutDoc',
         domain: 'test',
         name: 'something',
-        id: barObj.id,
+        id: barBlock.id,
       })
     ).rejects.toThrow();
 
@@ -425,7 +425,7 @@ describe('Cloud auth Permissions', () => {
       auth: anonSession,
       domain: 'test',
       name: 'something',
-      id: barObj.id,
+      id: barBlock.id,
     });
 
     result = await authDataSource.dispatch({
@@ -434,13 +434,13 @@ describe('Cloud auth Permissions', () => {
       domain: 'test',
       name: 'something',
     });
-    expect(result.id).toEqual(barObj.id);
+    expect(result.id).toEqual(barBlock.id);
   });
 
   test('account admin permission for PutPermissionRules', async () => {
     const {
-      fooObj,
-      barObj,
+      fooBlock,
+      barBlock,
       rootSession,
       anonSession,
       anonSession2,
@@ -504,13 +504,13 @@ describe('Cloud auth Permissions', () => {
       domain: 'test',
       name: 'something',
     });
-    expect(result.id).toEqual(fooObj.id);
+    expect(result.id).toEqual(fooBlock.id);
   });
 
   test('account admin permission for GetPermissionRules', async () => {
     const {
-      fooObj,
-      barObj,
+      fooBlock,
+      barBlock,
       rootSession,
       anonSession,
       anonSession2,
@@ -555,8 +555,8 @@ describe('Cloud auth Permissions', () => {
 
   test('account admin permission for getting _auth', async () => {
     const {
-      fooObj,
-      barObj,
+      fooBlock,
+      barBlock,
       rootSession,
       anonSession,
       anonSession2,
@@ -608,8 +608,8 @@ describe('Cloud auth Permissions', () => {
 
   test('root permission allows getting _auth', async () => {
     const {
-      fooObj,
-      barObj,
+      fooBlock,
+      barBlock,
       rootSession,
       anonSession,
       anonSession2,

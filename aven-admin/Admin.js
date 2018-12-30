@@ -63,18 +63,18 @@ function useAsyncStorage(storageKey, defaultValue) {
         })
         .catch(console.error);
     },
-    [storageKey],
+    [storageKey]
   );
 
   function setStorageState(newState) {
     if (isStateUnloaded(storageState)) {
       throw new Error(
-        'Cannot merge storage state if it has not been loaded yet!',
+        'Cannot merge storage state if it has not been loaded yet!'
       );
     }
     setInternalStorageState(newState);
     AsyncStorage.setItem(storageKey, JSON.stringify(newState)).catch(
-      console.error,
+      console.error
     );
   }
 
@@ -775,7 +775,7 @@ function Folder({ value, path, doc, pathContext }) {
       }
       return doc.getBlock(file.id);
     },
-    [file],
+    [file]
   );
   const objValue = useObservable(obj && obj.observeValue);
 
@@ -942,14 +942,14 @@ function TestPopoverButton() {
             viewRef.current.measure((x, y, width, height, pageX, pageY) => {
               console.log('hiho', location);
               resolve({ x, y, width, height, pageX, pageY });
-            }),
+            })
           );
           console.log('lolwaht', location);
           openPopover(
             <View style={{ backgroundColor: 'white', padding: 30 }}>
               <Text>Hello, World!</Text>
             </View>,
-            location,
+            location
           );
         }}
       />
@@ -1307,7 +1307,7 @@ const DocPaneNavigator = createNavigator(
   }),
   {
     explicitParams: true,
-  },
+  }
 );
 
 function DocPane({ navigation }) {
@@ -1340,7 +1340,7 @@ const MainPaneNavigator = createNavigator(
   }),
   {
     explicitParams: true,
-  },
+  }
 );
 
 function MainPane({ onClientConfig, onSession, navigation }) {
@@ -1374,12 +1374,12 @@ function BackgroundView({ children }) {
 function AdminApp({ defaultSession = {}, descriptors }) {
   let [sessionState, setSessionState] = useAsyncStorage(
     'AvenSessionState',
-    null,
+    null
   );
 
   let [clientConfig, setClientConfig] = useAsyncStorage(
     'AvenClientConfig',
-    null,
+    null
   );
 
   let client = useMemo(
@@ -1401,7 +1401,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
       return client;
     },
-    [clientConfig],
+    [clientConfig]
   );
 
   const activeRoute = useActiveRoute();
@@ -1425,7 +1425,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
         navigate('Login');
       }
     },
-    [activeRoute, sessionState, clientConfig, client],
+    [activeRoute, sessionState, clientConfig, client]
   );
 
   const activeDescriptor = descriptors[activeRoute.key];
@@ -1487,7 +1487,7 @@ const router = SwitchRouter(
   },
   {
     explicitParams: true,
-  },
+  }
 );
 
 export default createNavigator(AdminApp, router, {});

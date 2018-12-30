@@ -24,7 +24,7 @@ describe('object storage', () => {
         domain: 'test2',
         value: { foo: 'bar' },
         name: 'foo',
-      }),
+      })
     ).rejects.toThrow();
   });
   test('object put fails with missing doc', async () => {
@@ -34,7 +34,7 @@ describe('object storage', () => {
         type: 'PutBlock',
         domain: 'test',
         value: { foo: 'bar' },
-      }),
+      })
     ).rejects.toThrow();
   });
 
@@ -86,7 +86,7 @@ describe('doc storage', () => {
   test('puts doc fails when an object is missing', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     await expect(
-      ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' }),
+      ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' })
     ).rejects.toThrow();
   });
   test('put doc works', async () => {
@@ -719,7 +719,7 @@ describe('observing docs', () => {
   test('puts doc fails when an object is missing', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     await expect(
-      ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' }),
+      ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' })
     ).rejects.toThrow();
   });
   test('observe doc works', async () => {

@@ -57,7 +57,7 @@ AuthMethodState
 Permission
 
 - canRead : can get and list data
-- canWrite : can put objects and put the ref
+- canWrite : can put objects and put the doc
 - canOwn : allowed to create direct children and administrate them
 - canAdmin : deleting, change owner
 

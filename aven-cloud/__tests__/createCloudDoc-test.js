@@ -17,7 +17,7 @@ describe('doc generic behavior', () => {
       createCloudDoc({
         dataSource,
         name: 'foo',
-      }),
+      })
     ).toThrow();
   });
   test('fails on creation without name', () => {
@@ -26,7 +26,7 @@ describe('doc generic behavior', () => {
       createCloudDoc({
         dataSource,
         domain: 'test',
-      }),
+      })
     ).toThrow();
   });
 
@@ -37,7 +37,7 @@ describe('doc generic behavior', () => {
         dataSource,
         domain: 'test',
         name: 'foo/bar',
-      }),
+      })
     ).toThrow();
   });
 });

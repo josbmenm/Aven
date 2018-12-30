@@ -89,7 +89,7 @@ export default function CloudAuth({ dataSource, methods }) {
     const savedSession = await getDocValue(
       dataSource,
       domain,
-      `auth/account/${accountId}/session/${sessionId}`,
+      `auth/account/${accountId}/session/${sessionId}`
     );
 
     if (!savedSession || savedSession.token !== token) {
@@ -104,7 +104,7 @@ export default function CloudAuth({ dataSource, methods }) {
     const accountLookup = await getDocValue(
       dataSource,
       domain,
-      methodAccountLookupName,
+      methodAccountLookupName
     );
     if (accountLookup) {
       if (accountId && accountId !== accountLookup.accountId) {
@@ -149,18 +149,18 @@ export default function CloudAuth({ dataSource, methods }) {
         const methodState = await getDocValue(
           dataSource,
           domain,
-          methodStateDocName,
+          methodStateDocName
         );
 
         const requestedVerification = await methodToValidate.requestVerification(
-          { verificationInfo, methodState },
+          { verificationInfo, methodState }
         );
 
         await writeDocValue(
           dataSource,
           domain,
           methodStateDocName,
-          requestedVerification,
+          requestedVerification
         );
         return {
           verificationChallenge: requestedVerification.verificationChallenge,
@@ -239,7 +239,7 @@ export default function CloudAuth({ dataSource, methods }) {
       const methodState = await getDocValue(
         dataSource,
         domain,
-        methodStateDocName,
+        methodStateDocName
       );
 
       let nextMethodState = methodState;
@@ -259,7 +259,7 @@ export default function CloudAuth({ dataSource, methods }) {
           dataSource,
           domain,
           methodStateDocName,
-          nextMethodState,
+          nextMethodState
         );
       }
     }
@@ -309,7 +309,7 @@ export default function CloudAuth({ dataSource, methods }) {
       dataSource,
       domain,
       `auth/account/${verification.accountId}/session/${sessionId}`,
-      session,
+      session
     );
     return {
       session,
@@ -325,7 +325,7 @@ export default function CloudAuth({ dataSource, methods }) {
       dataSource,
       domain,
       `auth/account/${accountId}`,
-      account,
+      account
     );
     return accountId;
   }
@@ -347,7 +347,7 @@ export default function CloudAuth({ dataSource, methods }) {
       dataSource,
       domain,
       `auth/account/${accountId}/session/${sessionId}`,
-      session,
+      session
     );
 
     return { session };
@@ -387,7 +387,7 @@ export default function CloudAuth({ dataSource, methods }) {
     });
   }
 
-  function getAuthDocName(name) {
+  function nameToAuthDocName(name) {
     const docName = `${name}/_auth`;
     return docName;
   }
@@ -400,10 +400,10 @@ export default function CloudAuth({ dataSource, methods }) {
 
     const permissionBlocks = await Promise.all(
       pathApartName(name)
-        .map(getAuthDocName)
+        .map(nameToAuthDocName)
         .map(async docName => {
           return await getDocValue(dataSource, domain, docName);
-        }),
+        })
     );
 
     let owner = null;
@@ -533,7 +533,6 @@ export default function CloudAuth({ dataSource, methods }) {
 
   async function GetPermissionRules({ domain, name }) {
     const authDocName = `${name}/_auth`;
-    console.log('helllyoo', authDocName);
     const lastPermissions = await getDocValue(dataSource, domain, authDocName);
     return lastPermissions;
   }
@@ -575,7 +574,7 @@ export default function CloudAuth({ dataSource, methods }) {
         throw new Error(
           `Insufficient permissions for "${actionType}" on ${
             action.name
-          }. Requires "${permissionLevel}"`,
+          }. Requires "${permissionLevel}"`
         );
       }
       const result = await dispatch(action);
@@ -607,12 +606,12 @@ export default function CloudAuth({ dataSource, methods }) {
     PutPermissionRules: guardAction(
       PutPermissionRules,
       'PutPermissionRules',
-      'canAdmin',
+      'canAdmin'
     ),
     GetPermissionRules: guardAction(
       GetPermissionRules,
       'GetPermissionRules',
-      'canAdmin',
+      'canAdmin'
     ),
     CreateSession,
     CreateAnonymousSession,
