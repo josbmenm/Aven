@@ -893,7 +893,6 @@ function PopoverContainer({ children }) {
   let [popoverLocation, setLocation] = useState({});
   let popoverContext = {
     openPopover: (popover, location) => {
-      console.log('setting popover', popover, location);
       setLocation(location || {});
       setPopover(popover);
     },
@@ -944,7 +943,6 @@ function TestPopoverButton() {
               resolve({ x, y, width, height, pageX, pageY });
             })
           );
-          console.log('lolwaht', location);
           openPopover(
             <View style={{ backgroundColor: 'white', padding: 30 }}>
               <Text>Hello, World!</Text>

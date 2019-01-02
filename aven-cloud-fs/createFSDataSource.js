@@ -57,12 +57,15 @@ function _renderDoc({ id }) {
   };
 }
 
-const startMemoryDataSource = (opts = {}) => {
+export default async function startFSDataSource(opts = {}) {
   const id = uuid();
   const dataSourceDomain = opts.domain;
   let _blocks = {};
   let _blocksSize = {};
   let _docs = {};
+  let dataDir = opts.dataDir || process.cwd();
+
+  // FS data source needs sync access to docs, and will handle blocks on a file-by-file basis. we start by reading all docs:
 
   function _getDoc(name) {
     const r = _docs[name] || (_docs[name] = {});
@@ -73,7 +76,7 @@ const startMemoryDataSource = (opts = {}) => {
   const isConnected = new BehaviorSubject(true);
 
   if (dataSourceDomain == null) {
-    throw new Error(`Empty domain passed to startMemoryDataSource`);
+    throw new Error(`Empty domain passed to startFSDataSource`);
   }
 
   function putDocInList(docName) {
@@ -333,10 +336,10 @@ const startMemoryDataSource = (opts = {}) => {
   const close = () => {
     if (_blocks === null) {
       throw new Error(
-        `Cannot close memory source "${id}" because it is already closed!`,
+        `Cannot close fs source "${id}" because it is already closed!`,
       );
     }
-    console.log('Closing memory source ' + id);
+    console.log('Closing fs data source ' + id);
     _blocks = null;
     _blocksSize = null;
     _docs = null;
@@ -378,6 +381,7 @@ const startMemoryDataSource = (opts = {}) => {
       const docNames = await ListDocs({ domain, parentName: listDocName });
       return { id: undefined, value: docNames };
     }
+
     const r = _getDoc(name);
 
     if (r.blocks[r.id] && _blocks[r.id] !== undefined) {
@@ -412,6 +416,4 @@ const startMemoryDataSource = (opts = {}) => {
     }),
     id,
   };
-};
-
-export default startMemoryDataSource;
+}

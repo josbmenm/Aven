@@ -1,4 +1,16 @@
 import startMemoryDataSource from '../startMemoryDataSource';
+import dataSourceTests from './dataSourceTests';
+
+beforeAll(async () => {});
+
+async function startTestDataSource(options) {
+  const ds = startMemoryDataSource({ domain: 'test' });
+  return ds;
+}
+
+describe('memory data source source setup', () => {
+  dataSourceTests(startTestDataSource);
+});
 
 describe('basic data source setup', () => {
   test('throws when starting without a domain', () => {
@@ -24,7 +36,7 @@ describe('object storage', () => {
         domain: 'test2',
         value: { foo: 'bar' },
         name: 'foo',
-      })
+      }),
     ).rejects.toThrow();
   });
   test('object put fails with missing doc', async () => {
@@ -34,7 +46,7 @@ describe('object storage', () => {
         type: 'PutBlock',
         domain: 'test',
         value: { foo: 'bar' },
-      })
+      }),
     ).rejects.toThrow();
   });
 
@@ -86,7 +98,7 @@ describe('doc storage', () => {
   test('puts doc fails when an object is missing', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     await expect(
-      ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' })
+      ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' }),
     ).rejects.toThrow();
   });
   test('put doc works', async () => {
@@ -412,104 +424,104 @@ describe('doc storage', () => {
     expect(result.value).toEqual(['world', 'mars']);
   });
 
-  test('list object works', async () => {
-    const ds = startMemoryDataSource({ domain: 'test' });
-    let objs = null;
-    objs = await ds.dispatch({
-      type: 'GetDocValue',
-      domain: 'test',
-      name: '_blocks',
-    });
-    expect(objs.value).toEqual([]);
+  // test('list object works', async () => {
+  //   const ds = startMemoryDataSource({ domain: 'test' });
+  //   let objs = null;
+  //   objs = await ds.dispatch({
+  //     type: 'GetDocValue',
+  //     domain: 'test',
+  //     name: '_blocks',
+  //   });
+  //   expect(objs.value).toEqual([]);
 
-    const obj = await ds.dispatch({
-      type: 'PutBlock',
-      domain: 'test',
-      name: 'foo',
-      value: { foo: 'bar' },
-    });
+  //   const obj = await ds.dispatch({
+  //     type: 'PutBlock',
+  //     domain: 'test',
+  //     name: 'foo',
+  //     value: { foo: 'bar' },
+  //   });
 
-    objs = await ds.dispatch({
-      type: 'GetDocValue',
-      domain: 'test',
-      name: '_blocks',
-    });
-    expect(objs.value).toEqual([obj.id]);
-  });
+  //   objs = await ds.dispatch({
+  //     type: 'GetDocValue',
+  //     domain: 'test',
+  //     name: '_blocks',
+  //   });
+  //   expect(objs.value).toEqual([obj.id]);
+  // });
 
-  test('list object of doc works', async () => {
-    const ds = startMemoryDataSource({ domain: 'test' });
-    let objs = null;
-    objs = await ds.dispatch({
-      type: 'GetDocValue',
-      domain: 'test',
-      name: 'foo/_blocks',
-    });
-    expect(objs.value).toEqual([]);
+  // test('list object of doc works', async () => {
+  //   const ds = startMemoryDataSource({ domain: 'test' });
+  //   let objs = null;
+  //   objs = await ds.dispatch({
+  //     type: 'GetDocValue',
+  //     domain: 'test',
+  //     name: 'foo/_blocks',
+  //   });
+  //   expect(objs.value).toEqual([]);
 
-    await ds.dispatch({
-      type: 'PutBlock',
-      domain: 'test',
-      name: 'bar',
-      value: { foo: 'bar' },
-    });
-    const o1 = await ds.dispatch({
-      type: 'PutBlock',
-      domain: 'test',
-      name: 'foo',
-      value: { foo: 'foo' },
-    });
-    const o2 = await ds.dispatch({
-      type: 'PutBlock',
-      domain: 'test',
-      name: 'foo',
-      value: { foo: 'two' },
-    });
+  //   await ds.dispatch({
+  //     type: 'PutBlock',
+  //     domain: 'test',
+  //     name: 'bar',
+  //     value: { foo: 'bar' },
+  //   });
+  //   const o1 = await ds.dispatch({
+  //     type: 'PutBlock',
+  //     domain: 'test',
+  //     name: 'foo',
+  //     value: { foo: 'foo' },
+  //   });
+  //   const o2 = await ds.dispatch({
+  //     type: 'PutBlock',
+  //     domain: 'test',
+  //     name: 'foo',
+  //     value: { foo: 'two' },
+  //   });
 
-    objs = await ds.dispatch({
-      type: 'GetDocValue',
-      domain: 'test',
-      name: 'foo/_blocks',
-    });
-    expect(objs.value).toEqual([o1.id, o2.id]);
-  });
+  //   objs = await ds.dispatch({
+  //     type: 'GetDocValue',
+  //     domain: 'test',
+  //     name: 'foo/_blocks',
+  //   });
+  //   expect(objs.value).toEqual([o1.id, o2.id]);
+  // });
 
-  test('list object of doc cascades correctly', async () => {
-    const ds = startMemoryDataSource({ domain: 'test' });
-    let objs = null;
-    objs = await ds.dispatch({
-      type: 'GetDocValue',
-      domain: 'test',
-      name: 'foo/_blocks',
-    });
-    expect(objs.value).toEqual([]);
+  // test('list object of doc cascades correctly', async () => {
+  //   const ds = startMemoryDataSource({ domain: 'test' });
+  //   let objs = null;
+  //   objs = await ds.dispatch({
+  //     type: 'GetDocValue',
+  //     domain: 'test',
+  //     name: 'foo/_blocks',
+  //   });
+  //   expect(objs.value).toEqual([]);
 
-    await ds.dispatch({
-      type: 'PutBlock',
-      domain: 'test',
-      name: 'bar',
-      value: { foo: 'bar' },
-    });
-    const o1 = await ds.dispatch({
-      type: 'PutBlock',
-      domain: 'test',
-      name: 'foo',
-      value: { foo: 'foo' },
-    });
-    const o2 = await ds.dispatch({
-      type: 'PutBlock',
-      domain: 'test',
-      name: 'foo/bar',
-      value: { foo: 'two' },
-    });
+  //   await ds.dispatch({
+  //     type: 'PutBlock',
+  //     domain: 'test',
+  //     name: 'bar',
+  //     value: { foo: 'bar' },
+  //   });
+  //   const o1 = await ds.dispatch({
+  //     type: 'PutBlock',
+  //     domain: 'test',
+  //     name: 'foo',
+  //     value: { foo: 'foo' },
+  //   });
+  //   const o2 = await ds.dispatch({
+  //     type: 'PutBlock',
+  //     domain: 'test',
+  //     name: 'foo/bar',
+  //     value: { foo: 'two' },
+  //   });
 
-    objs = await ds.dispatch({
-      type: 'GetDocValue',
-      domain: 'test',
-      name: 'foo/_blocks',
-    });
-    expect(objs.value).toEqual([o1.id, o2.id]);
-  });
+  //   objs = await ds.dispatch({
+  //     type: 'GetDocValue',
+  //     domain: 'test',
+  //     name: 'foo/_blocks',
+  //   });
+  //   expect(objs.value).toEqual([o1.id, o2.id]);
+  // });
 
   test('list doc works works with GetValue _children', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
@@ -719,7 +731,7 @@ describe('observing docs', () => {
   test('puts doc fails when an object is missing', async () => {
     const ds = startMemoryDataSource({ domain: 'test' });
     await expect(
-      ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' })
+      ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' }),
     ).rejects.toThrow();
   });
   test('observe doc works', async () => {

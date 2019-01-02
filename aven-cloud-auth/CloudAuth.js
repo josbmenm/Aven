@@ -539,13 +539,7 @@ export default function CloudAuth({ dataSource, methods }) {
 
   const guardedActions = {};
 
-  const readActions = [
-    'GetBlock',
-    'GetDoc',
-    'GetDocValue',
-    'ListDocs',
-    'ListDocBlocks',
-  ];
+  const readActions = ['GetBlock', 'GetDoc', 'GetDocValue', 'ListDocs'];
   const postActions = ['PostDoc'];
   const writeActions = ['PutBlock', 'PutDoc'];
   const adminActions = ['DestroyDoc'];

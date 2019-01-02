@@ -138,8 +138,6 @@ export default async function startSQLDataSource({ config, connection }) {
 
   async function CollectGarbage() {}
 
-  async function ListDocBlocks() {}
-
   async function close() {
     isConnected.next(false);
     await knex.destroy();
@@ -202,7 +200,6 @@ export default async function startSQLDataSource({ config, connection }) {
       ListDocs,
       DestroyDoc,
       CollectGarbage,
-      ListDocBlocks,
     }),
     id,
   };

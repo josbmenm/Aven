@@ -1,6 +1,6 @@
 import startSQLDataSource from '../startSQLDataSource';
 import Knex from 'knex';
-import dataSourceTests from './dataSourceTests';
+import dataSourceTests from '../../aven-cloud/__tests__/dataSourceTests';
 const pathJoin = require('path').join;
 
 const DB_CONFIG = {

@@ -1,6 +1,6 @@
 import startSQLDataSource from '../startSQLDataSource';
 import Knex from 'knex';
-import dataSourceTests from './dataSourceTests';
+import dataSourceTests from '../../aven-cloud/__tests__/dataSourceTests';
 const fs = require('fs-extra');
 const pathJoin = require('path').join;
 

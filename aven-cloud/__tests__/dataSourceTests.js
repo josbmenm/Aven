@@ -5,11 +5,13 @@ export default function testDataSource(startTestDataSource) {
       type: 'PutBlock',
       domain: 'test',
       value: { foo: 'bar' },
+      name: 'foo',
     });
     const obj = await ds.dispatch({
       type: 'GetBlock',
       domain: 'test',
       id: putResult.id,
+      name: 'foo',
     });
     await ds.close();
     expect(obj.value.foo).toEqual('bar');
