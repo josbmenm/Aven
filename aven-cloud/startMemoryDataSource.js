@@ -200,7 +200,7 @@ const startMemoryDataSource = (opts = {}) => {
       .forEach(docName => {
         const r = _getDoc(docName);
         r.blocks = {};
-        r.id = null;
+        r.id = undefined;
         if (r.behavior) {
           r.behavior.next(_renderDoc(r));
         } else {
@@ -336,7 +336,6 @@ const startMemoryDataSource = (opts = {}) => {
         `Cannot close memory source "${id}" because it is already closed!`,
       );
     }
-    console.log('Closing memory source ' + id);
     _blocks = null;
     _blocksSize = null;
     _docs = null;

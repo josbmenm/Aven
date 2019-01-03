@@ -7,6 +7,7 @@ import {
   getListDocName,
 } from '../aven-cloud-utils/MetaDocNames';
 
+const fs = require('fs-extra');
 const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
 const pathJoin = require('path').join;
@@ -20,7 +21,7 @@ function getTerms(name) {
 
 function isDocNameValid(name) {
   return getTerms(name).reduce((prev, now, i) => {
-    return prev && (now !== '_children' && now !== '_blocks');
+    return prev && now !== '_children';
   }, true);
 }
 
@@ -34,7 +35,7 @@ function getDocsListName(name) {
   return docsListName;
 }
 
-function getParentDoc(name) {
+function getParentDocName(name) {
   const terms = getTerms(name);
   const parentTerms = terms.slice(0, terms.length - 1);
   return parentTerms.join('/');
@@ -50,6 +51,13 @@ function getRootTerm(name) {
   return terms[0];
 }
 
+function getChildName(name) {
+  const terms = getTerms(name);
+  const childTerms = terms.slice(1);
+  const childName = childTerms.join('/');
+  return childName;
+}
+
 function _renderDoc({ id }) {
   // this strips out hidden features of the doc and snapshots the referenced values
   return {
@@ -57,123 +65,98 @@ function _renderDoc({ id }) {
   };
 }
 
-export default async function startFSDataSource(opts = {}) {
-  const id = uuid();
-  const dataSourceDomain = opts.domain;
-  let _blocks = {};
-  let _blocksSize = {};
-  let _docs = {};
-  let dataDir = opts.dataDir || process.cwd();
+function verifyDomain(inputDomain, dataSourceDomain) {
+  if (inputDomain !== dataSourceDomain) {
+    throw new Error(
+      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`,
+    );
+  }
+}
 
-  // FS data source needs sync access to docs, and will handle blocks on a file-by-file basis. we start by reading all docs:
-
-  function _getDoc(name) {
-    const r = _docs[name] || (_docs[name] = {});
-    r.blocks = r.blocks || {};
-    return r;
+function createGenericDataSource({
+  getBlock,
+  getAllBlockIds,
+  commitBlock,
+  commitDoc,
+  commitDocDestroy,
+  commitDocMove,
+  isConnected,
+  docState,
+  domain: dataSourceDomain,
+  id,
+}) {
+  const dataSourceId = id || uuid();
+  function getWriteNode(name, context) {
+    let currentNode = context || docState;
+    if (name === '') {
+      return currentNode;
+    }
+    let rootTerm = getRootTerm(name);
+    if (!currentNode.children) {
+      currentNode.children = {};
+    }
+    const { children } = currentNode;
+    if (!children[rootTerm]) {
+      children[rootTerm] = {};
+    }
+    const childNode = children[rootTerm];
+    if (name === rootTerm) {
+      return childNode;
+    }
+    const childPath = getChildName(name);
+    return getWriteNode(childPath, childNode);
   }
 
-  const isConnected = new BehaviorSubject(true);
-
-  if (dataSourceDomain == null) {
-    throw new Error(`Empty domain passed to startFSDataSource`);
-  }
-
-  function putDocInList(docName) {
-    const listR = _getDoc(getDocsListName(docName));
-    if (listR.behavior) {
-      const last = listR.behavior.value;
-      const docSet = new Set(last.value || []);
-      docSet.add(getMainTerm(docName));
-      listR.behavior.next({
-        ...(last || {}),
-        value: Array.from(docSet),
-      });
+  function getReadNode(name, context) {
+    let currentNode = context || docState;
+    if (name === '') {
+      return currentNode;
     }
-    if (getMainTerm(docName) !== docName) {
-      // this is a child doc. also make sure the parent doc has been added to lists
-      putDocInList(getParentDoc(docName));
+    let rootTerm = getRootTerm(name);
+    if (!currentNode.children) {
+      return null;
     }
-  }
-
-  function removeDocFromList(docName) {
-    const listR = _getDoc(getDocsListName(docName));
-    if (listR.behavior) {
-      const last = listR.behavior.value;
-      const docSet = new Set(last.value || []);
-      docSet.delete(getMainTerm(docName));
-      const muchNext = {
-        ...(last || {}),
-        value: Array.from(docSet),
-      };
-      listR.behavior.next(muchNext);
+    const { children } = currentNode;
+    if (!children[rootTerm]) {
+      return null;
     }
+    const childNode = children[rootTerm];
+    if (name === rootTerm) {
+      return childNode;
+    }
+    const childPath = getChildName(name);
+    return getWriteNode(childPath, childNode);
   }
 
   async function PutDoc({ domain, name, id }) {
-    if (!isDocNameValid(name)) {
-      throw new Error(`Invalid Doc name "${name}"`);
-    }
-    if (domain === undefined || name === undefined) {
-      throw new Error('Invalid use. ', { domain, name, id });
-    }
-    if (domain !== dataSourceDomain) {
-      throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
-      );
-    }
-    const r = _getDoc(name);
-    const prevId = r.id;
-    r.blocks[id] = true;
-    r.id = id;
-    if (r.behavior) {
-      r.behavior.next(_renderDoc(r));
-    } else {
-      r.behavior = new BehaviorSubject(_renderDoc(r));
-    }
-
-    putDocInList(name);
+    verifyDomain(domain, dataSourceDomain);
+    const memoryDoc = getWriteNode(name);
+    memoryDoc.id = id;
+    await commitDoc(name, id);
   }
 
   async function MoveDoc({ domain, from, to }) {
-    if (!isDocNameValid(from)) {
-      throw new Error(`Invalid from Doc name "${from}"`);
-    }
-    if (!isDocNameValid(to)) {
-      throw new Error(`Invalid to Doc name "${to}"`);
-    }
-    if (domain === undefined || from === undefined || to === undefined) {
-      throw new Error('Invalid use. ', { domain, from, to });
-    }
-    if (domain !== dataSourceDomain) {
-      throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
-      );
-    }
-    const re = new RegExp('^' + from + '(.*)$');
-    Object.keys(_docs).forEach(docName => {
-      const match = docName.match(re);
-      if (match) {
-        const toName = to + match[1];
-        _docs[toName] = _docs[docName];
-        delete _docs[docName];
-      }
-    });
-    removeDocFromList(from);
-    putDocInList(to);
+    verifyDomain(domain, dataSourceDomain);
+    await commitDocMove(from, to);
+    const fromParentName = getParentDocName(from);
+    const fromChildName = getMainTerm(from);
+    const toParentName = getParentDocName(to);
+    const toChildName = getMainTerm(to);
+    const fromParent = getReadNode(fromParentName);
+    const toParent = getWriteNode(toParentName);
+    const docToMove = fromParent.children[fromChildName];
+    toParent.children[toChildName] = docToMove;
+    delete fromParent.children[fromChildName];
   }
 
   async function PostDoc({ domain, name, id, value }) {
+    verifyDomain(domain, dataSourceDomain);
+
     if (!isDocNameValid(name)) {
       throw new Error(`Invalid Doc name "${name}"`);
     }
     if (domain === undefined) {
       throw new Error('Invalid use. ', { domain, name, id });
-    }
-    if (domain !== dataSourceDomain) {
-      throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
-      );
     }
     const postedName = name ? pathJoin(name, uuid()) : uuid();
     if (!id && value !== undefined) {
@@ -187,145 +170,59 @@ export default async function startFSDataSource(opts = {}) {
   }
 
   async function DestroyDoc({ domain, name }) {
-    if (domain === undefined || name === undefined) {
-      throw new Error('Invalid use. ', { domain, name, id });
+    verifyDomain(domain, dataSourceDomain);
+    const fromParentName = getParentDocName(name);
+    const fromParent = getReadNode(fromParentName);
+    const destroyChildName = getMainTerm(name);
+    if (fromParent.children) {
+      delete fromParent.children[destroyChildName];
     }
-    if (domain !== dataSourceDomain) {
-      throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
-      );
-    }
-    Object.keys(_docs)
-      .filter(docName => {
-        const m = docName.match(RegExp(`^${name}/?(.*)`));
-        return !!m;
-      })
-      .forEach(docName => {
-        const r = _getDoc(docName);
-        r.blocks = {};
-        r.id = null;
-        if (r.behavior) {
-          r.behavior.next(_renderDoc(r));
-        } else {
-          r.behavior = new BehaviorSubject(_renderDoc(r));
-        }
-        delete _docs[name];
-      });
-
-    const listR = _getDoc(getDocsListName(name));
-    if (listR.behavior) {
-      const last = listR.behavior.value;
-      const docSet = new Set(last.value || []);
-      const thisTermName = getMainTerm(name);
-      if (!docSet.has(thisTermName)) {
-        return;
-      }
-      docSet.delete(thisTermName);
-      listR.behavior.next({
-        ...(last || {}),
-        value: Array.from(docSet),
-      });
-    }
+    await commitDocDestroy(name);
   }
 
   async function GetBlock({ domain, name, id }) {
-    if (domain !== dataSourceDomain) {
-      throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
-      );
+    if (!name) {
+      throw new Error('Name must be provided while getting a block!');
+      // and theoretically, shouldn't we actually verify that the block actually belongs to this doc??
     }
-    const r = _getDoc(name);
-
-    if (r.blocks[id] && _blocks[id] !== undefined) {
-      return {
-        id,
-        value: _blocks[id],
-      };
-    }
-    return {
-      id,
-      value: undefined,
-    };
-  }
-  function _isValidName(name) {
-    return typeof name === 'string' && name.length > 0;
+    verifyDomain(domain, dataSourceDomain);
+    const value = await getBlock(id);
+    return { id, value };
   }
 
   async function PutBlock({ value, name, domain }) {
-    if (domain !== dataSourceDomain) {
-      throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
-      );
+    if (!name) {
+      throw new Error('Name must be provided while getting a block!');
+      // and theoretically, shouldn't we actually save this block under the context of this doc??
     }
-    if (!_isValidName(name)) {
-      throw new Error(
-        `Invalid doc name "${name}", must be provided with PutBlock`,
-      );
-    }
-    const blockData = stringify(value);
-    const size = blockData.length;
-    const sha = crypto.createHash('sha1');
-    sha.update(blockData);
-    const id = sha.digest('hex');
-    if (_blocks == null) {
-      throw new Error(`Memory source "${id}" has been closed!`);
-    }
-    if (_blocks[id] === undefined) {
-      _blocks[id] = value;
-    }
-    if (_blocksSize[id] === undefined) {
-      _blocksSize[id] = size;
-    }
-    const r = _getDoc(name);
-    r.blocks[id] = true;
-    return { id };
+    verifyDomain(domain, dataSourceDomain);
+    return await commitBlock(value);
   }
 
   async function GetDoc({ domain, name }) {
-    if (domain !== dataSourceDomain) {
-      return null;
+    verifyDomain(domain, dataSourceDomain);
+    const memoryDoc = getReadNode(name);
+    if (!memoryDoc) {
+      return { id: undefined };
     }
-    const r = _docs[name];
-    return _renderDoc(r || {});
+    return { id: memoryDoc.id };
   }
 
   async function ListDocs({ domain, parentName }) {
-    if (domain !== dataSourceDomain) {
+    verifyDomain(domain, dataSourceDomain);
+    const parentMemoryDoc = getReadNode(parentName || '');
+    if (!parentMemoryDoc) {
       return [];
     }
-    const results = Object.keys(_docs)
-      .map(docName => {
-        if (parentName == null || parentName === '') {
-          return docName;
-        }
-        const m = docName.match(RegExp(`^${parentName}/(.*)`));
-        if (!m || m[1] === '') {
-          return null;
-        }
-        return m[1];
-      })
-      .map(name => {
-        if (!name) {
-          return null;
-        }
-        return getRootTerm(name);
-      })
-      .filter(n => !!n)
-      .filter(n => n !== '_children' && n !== '_blocks' && n !== '_auth');
-    const uniqueResults = Array.from(new Set(results));
-    return uniqueResults;
+    const childList = Object.keys(parentMemoryDoc.children || {});
+    return childList;
   }
 
   async function ListDomains() {
     return [dataSourceDomain];
   }
 
-  async function CollectGarbage() {
-    // create list of all blocks
-    // for each doc
-    //   remove all of Object.keys(r.blocks) from list of blocks
-    // delete each block in the list
-  }
+  async function CollectGarbage() {}
 
   const GetStatus = () => ({
     ready: true,
@@ -334,65 +231,24 @@ export default async function startFSDataSource(opts = {}) {
   });
 
   const close = () => {
-    if (_blocks === null) {
-      throw new Error(
-        `Cannot close fs source "${id}" because it is already closed!`,
-      );
-    }
-    console.log('Closing fs data source ' + id);
-    _blocks = null;
-    _blocksSize = null;
-    _docs = null;
+    docState = null;
   };
-  const observeDoc = async (domain, name) => {
-    if (domain !== dataSourceDomain) {
-      throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
-      );
-    }
-    const r = _getDoc(name);
-    if (r.behavior) {
-      return r.behavior;
-    } else {
-      const listDocName = getListDocName(name);
-      if (typeof listDocName === 'string') {
-        r.behavior = new BehaviorSubject({ value: undefined });
-        ListDocs({ domain, parentName: listDocName })
-          .then(docList => {
-            r.behavior.next({ value: docList });
-          })
-          .catch(e => {
-            console.error(e);
-          });
-        return r.behavior;
-      }
-      return (r.behavior = new BehaviorSubject(_renderDoc(r)));
-    }
-  };
+  const observeDoc = async (domain, name) => {};
 
   async function GetDocValue({ domain, name }) {
-    if (domain !== dataSourceDomain) {
-      throw new Error(
-        `Invalid domain "${domain}", must use "${dataSourceDomain}" with this memory data source`,
-      );
-    }
+    verifyDomain(domain, dataSourceDomain);
+
     const listDocName = getListDocName(name);
     if (typeof listDocName === 'string') {
       const docNames = await ListDocs({ domain, parentName: listDocName });
       return { id: undefined, value: docNames };
     }
-
-    const r = _getDoc(name);
-
-    if (r.blocks[r.id] && _blocks[r.id] !== undefined) {
-      return {
-        id: r.id,
-        value: _blocks[r.id],
-      };
-    }
+    const doc = await GetDoc({ domain, name });
+    const id = doc && doc.id;
+    const block = await GetBlock({ domain, name, id });
     return {
-      id: r.id,
-      value: null,
+      id,
+      value: block.value,
     };
   }
 
@@ -414,6 +270,144 @@ export default async function startFSDataSource(opts = {}) {
       CollectGarbage,
       MoveDoc,
     }),
+    id: dataSourceId,
+  };
+}
+
+async function readFSDoc(dataDir, name) {
+  const docsDir = pathJoin(dataDir, 'docs');
+  const docPath = pathJoin(docsDir, name);
+  const childList = await fs.readdir(docPath);
+  const children = {};
+  let id = undefined;
+  await Promise.all(
+    childList.map(async child => {
+      if (child === '__document.json') {
+        const docFile = await fs.readFile(pathJoin(docPath, '__document.json'));
+        const docData = JSON.parse(docFile);
+        id = docData.id;
+        return;
+      }
+      children[child] = await readFSDoc(dataDir, pathJoin(name, child));
+    }),
+  );
+  return {
+    children,
     id,
   };
+}
+
+async function writeFSBlock(dataDir, value) {
+  const blocksDir = pathJoin(dataDir, 'blocks');
+  const blockData = stringify(value);
+  const sha = crypto.createHash('sha1');
+  sha.update(blockData);
+  const id = sha.digest('hex');
+  const blockPath = pathJoin(blocksDir, id);
+  if (!(await fs.exists(blockPath))) {
+    await fs.writeFile(blockPath, blockData);
+  }
+  return { id };
+}
+
+async function readFSBlock(dataDir, id) {
+  const blocksDir = pathJoin(dataDir, 'blocks');
+  const blockPath = pathJoin(blocksDir, id);
+  const blockData = await fs.readFile(blockPath);
+  return JSON.parse(blockData);
+}
+
+async function readFSBlockList(dataDir) {
+  const blocksDir = pathJoin(dataDir, 'blocks');
+  return await fs.readdir(blocksDir);
+}
+
+async function writeFSDoc(dataDir, name, id) {
+  const docsDir = pathJoin(dataDir, 'docs');
+  const docPath = pathJoin(docsDir, name);
+  await fs.mkdirp(docPath);
+  const docFilePath = pathJoin(docPath, '__document.json');
+  await fs.writeFile(docFilePath, JSON.stringify({ id }));
+}
+
+async function destroyFSDoc(dataDir, name) {
+  const docsDir = pathJoin(dataDir, 'docs');
+  const docPath = pathJoin(docsDir, name);
+  await fs.remove(docPath);
+}
+
+async function moveFSDoc(dataDir, prevName, newName) {
+  const docsDir = pathJoin(dataDir, 'docs');
+  const sourcePath = pathJoin(docsDir, prevName);
+  const destPath = pathJoin(docsDir, newName);
+  await fs.move(sourcePath, destPath);
+}
+
+export default async function startFSDataSource(opts = {}) {
+  const dataSourceDomain = opts.domain;
+  let dataDir = opts.dataDir;
+
+  if (!dataDir) {
+    throw new Error(
+      'Cannot start a FS data source without specifying a dataDir to store data files',
+    );
+  }
+
+  if (!dataSourceDomain) {
+    throw new Error(
+      'Cannot start a FS data source without specifying a domain',
+    );
+  }
+
+  const blocksDir = pathJoin(dataDir, 'blocks');
+  const docsDir = pathJoin(dataDir, 'docs');
+
+  await fs.mkdirp(blocksDir);
+  await fs.mkdirp(docsDir);
+
+  // FS data source needs sync access to docs, and will handle blocks on a file-by-file basis. we start by reading all docs:
+  const docState = await readFSDoc(dataDir, '');
+
+  const isConnected = new BehaviorSubject(true);
+
+  async function getBlock(blockId) {
+    return await readFSBlock(dataDir, blockId);
+  }
+
+  async function getAllBlockIds() {
+    return await readFSBlockList(dataDir);
+  }
+
+  async function commitBlock(value) {
+    return await writeFSBlock(dataDir, value);
+  }
+
+  async function commitDoc(name, id) {
+    await writeFSDoc(dataDir, name, id);
+  }
+
+  async function commitDocDestroy(name) {
+    await destroyFSDoc(dataDir, name);
+  }
+
+  async function commitDocMove(name, newName) {
+    await moveFSDoc(dataDir, name, newName);
+  }
+
+  return createGenericDataSource({
+    id: opts.id,
+
+    domain: dataSourceDomain,
+    docState,
+
+    getBlock,
+    getAllBlockIds,
+
+    commitBlock,
+    commitDoc,
+    commitDocDestroy,
+    commitDocMove,
+
+    isConnected,
+  });
 }
