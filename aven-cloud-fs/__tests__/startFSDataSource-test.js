@@ -1,4 +1,4 @@
-import createFSDataSource from '../createFSDataSource';
+import createFSDataSource from '../startFSDataSource';
 import dataSourceTests from '../../aven-cloud/__tests__/dataSourceTests';
 import uuid from 'uuid/v1';
 
@@ -8,7 +8,7 @@ const TMP_DIR = require('os').tmpdir();
 
 beforeAll(async () => {});
 
-async function startTestDataSource(options) {
+async function startTestDataSource(options = {}) {
   const dataDir = pathJoin(TMP_DIR, uuid());
   return createFSDataSource({
     domain: 'test',
@@ -27,14 +27,14 @@ describe('basic fs source setup', () => {
     expect(
       createFSDataSource({
         dataDir,
-      }),
+      })
     ).rejects.toThrow();
   });
   test('throws when starting without a data directory', () => {
     expect(
       createFSDataSource({
         domain: 'test',
-      }),
+      })
     ).rejects.toThrow();
   });
 });
