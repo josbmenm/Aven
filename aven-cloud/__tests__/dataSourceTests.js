@@ -479,7 +479,7 @@ export default function testDataSource(startTestDataSource) {
           domain: 'test2',
           value: { foo: 'bar' },
           name: 'foo',
-        })
+        }),
       ).rejects.toThrow();
     });
     test('block put fails with missing doc name', async () => {
@@ -489,7 +489,7 @@ export default function testDataSource(startTestDataSource) {
           type: 'PutBlock',
           domain: 'test',
           value: { foo: 'bar' },
-        })
+        }),
       ).rejects.toThrow();
     });
 
@@ -548,7 +548,7 @@ export default function testDataSource(startTestDataSource) {
     test('puts doc fails when a referenced block is missing', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       await expect(
-        ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' })
+        ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' }),
       ).rejects.toThrow();
     });
   });
@@ -557,7 +557,7 @@ export default function testDataSource(startTestDataSource) {
     test('puts doc fails when an object is missing', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       await expect(
-        ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' })
+        ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' }),
       ).rejects.toThrow();
     });
     test('put doc works', async () => {
@@ -740,6 +740,8 @@ export default function testDataSource(startTestDataSource) {
   describe('observing docs', () => {
     test('observe doc works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
+      // note: we run observeDoc before the doc exists to intentionally test that the subscription works on an empty doc
+      const obs = await ds.observeDoc('test', 'foo');
       const obj1 = await ds.dispatch({
         type: 'PutBlock',
         domain: 'test',
@@ -758,7 +760,6 @@ export default function testDataSource(startTestDataSource) {
         name: 'foo',
         id: obj1.id,
       });
-      const obs = await ds.observeDoc('test', 'foo');
       let lastObserved = undefined;
       obs.subscribe({
         next: newVal => {

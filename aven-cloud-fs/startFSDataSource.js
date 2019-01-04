@@ -68,7 +68,7 @@ function _renderDoc({ id }) {
 function verifyDomain(inputDomain, dataSourceDomain) {
   if (inputDomain !== dataSourceDomain) {
     throw new Error(
-      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`
+      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`,
     );
   }
 }
@@ -86,7 +86,7 @@ function createGenericDataSource({
   id,
 }) {
   const dataSourceId = id || uuid();
-  function getWriteNode(name, context) {
+  function getMemoryNode(name, ensureExistence, context) {
     let currentNode = context || docState;
     if (name === '') {
       return currentNode;
@@ -95,10 +95,13 @@ function createGenericDataSource({
     if (!currentNode.children) {
       currentNode.children = {};
     }
-    const { children, childrenSet, childrenSetBehavior } = currentNode;
+    if (!currentNode.childrenSet) {
+      currentNode.childrenSet = new Set();
+    }
+    let { children, childrenSet, childrenSetBehavior } = currentNode;
     if (!children[rootTerm]) {
       children[rootTerm] = {};
-      if (childrenSet && !childrenSet.has(rootTerm)) {
+      if (ensureExistence && !childrenSet.has(rootTerm)) {
         childrenSet.add(rootTerm);
         childrenSetBehavior &&
           childrenSetBehavior.next({
@@ -111,34 +114,13 @@ function createGenericDataSource({
       return childNode;
     }
     const childPath = getChildName(name);
-    return getWriteNode(childPath, childNode);
-  }
-
-  function getReadNode(name, context) {
-    let currentNode = context || docState;
-    if (name === '') {
-      return currentNode;
-    }
-    let rootTerm = getRootTerm(name);
-    if (!currentNode.children) {
-      return null;
-    }
-    const { children } = currentNode;
-    if (!children[rootTerm]) {
-      return null;
-    }
-    const childNode = children[rootTerm];
-    if (name === rootTerm) {
-      return childNode;
-    }
-    const childPath = getChildName(name);
-    return getReadNode(childPath, childNode);
+    return getMemoryNode(childPath, ensureExistence, childNode);
   }
 
   async function PutDoc({ domain, name, id }) {
     verifyDomain(domain, dataSourceDomain);
     await commitDoc(name, id);
-    const memoryDoc = getWriteNode(name);
+    const memoryDoc = getMemoryNode(name, true);
     memoryDoc.id = id;
     if (memoryDoc.behavior) {
       memoryDoc.behavior.next(_renderDoc(memoryDoc));
@@ -146,7 +128,10 @@ function createGenericDataSource({
       memoryDoc.behavior = new BehaviorSubject(_renderDoc(memoryDoc));
     }
   }
-
+  function publishChildrenBehavior(memoryDoc) {
+    memoryDoc.childrenSetBehavior &&
+      memoryDoc.childrenSetBehavior.next({ value: [...memoryDoc.childrenSet] });
+  }
   async function MoveDoc({ domain, from, to }) {
     verifyDomain(domain, dataSourceDomain);
     await commitDocMove(from, to);
@@ -154,11 +139,15 @@ function createGenericDataSource({
     const fromChildName = getMainTerm(from);
     const toParentName = getParentDocName(to);
     const toChildName = getMainTerm(to);
-    const fromParent = getReadNode(fromParentName);
-    const toParent = getWriteNode(toParentName);
+    const fromParent = getMemoryNode(fromParentName, false);
+    const toParent = getMemoryNode(toParentName, true);
     const docToMove = fromParent.children[fromChildName];
     toParent.children[toChildName] = docToMove;
+    toParent.childrenSet.add(toChildName);
+    publishChildrenBehavior(toParent);
     delete fromParent.children[fromChildName];
+    fromParent.childrenSet.delete(fromChildName);
+    publishChildrenBehavior(fromParent);
   }
 
   async function PostDoc({ domain, name, id, value }) {
@@ -184,7 +173,7 @@ function createGenericDataSource({
   async function DestroyDoc({ domain, name }) {
     verifyDomain(domain, dataSourceDomain);
     await commitDocDestroy(name);
-    const parentMemoryDoc = getReadNode(getParentDocName(name));
+    const parentMemoryDoc = getMemoryNode(getParentDocName(name), false);
     const destroyChildName = getMainTerm(name);
     if (!parentMemoryDoc || !parentMemoryDoc.children[destroyChildName]) {
       throw new Error('Cannot destroy doc that does not exist');
@@ -220,7 +209,7 @@ function createGenericDataSource({
 
   async function GetDoc({ domain, name }) {
     verifyDomain(domain, dataSourceDomain);
-    const memoryDoc = getReadNode(name);
+    const memoryDoc = getMemoryNode(name, false);
     if (!memoryDoc) {
       return { id: undefined };
     }
@@ -229,11 +218,11 @@ function createGenericDataSource({
 
   async function ListDocs({ domain, parentName }) {
     verifyDomain(domain, dataSourceDomain);
-    const parentMemoryDoc = getReadNode(parentName || '');
+    const parentMemoryDoc = getMemoryNode(parentName || '', false);
     if (!parentMemoryDoc) {
       return [];
     }
-    const children = Object.keys(parentMemoryDoc.children || {});
+    const children = [...parentMemoryDoc.childrenSet];
     return children;
   }
 
@@ -254,24 +243,27 @@ function createGenericDataSource({
   };
   const observeDoc = async (domain, name) => {
     verifyDomain(domain, dataSourceDomain);
-    const memoryDoc = getReadNode(name);
+    const listDocName = getListDocName(name);
+    if (typeof listDocName === 'string') {
+      const memoryDoc = getMemoryNode(listDocName, false);
+      if (memoryDoc.childrenSetBehavior) {
+        return memoryDoc.childrenSetBehavior;
+      } else {
+        const childrenNames = Object.keys(memoryDoc.children || {});
+        memoryDoc.childrenSetBehavior = new BehaviorSubject({
+          value: childrenNames,
+        });
+        memoryDoc.childrenSet = new Set(childrenNames);
+        return memoryDoc.childrenSetBehavior;
+      }
+    }
+    const memoryDoc = getMemoryNode(name, false);
+    if (memoryDoc === null) {
+      throw new Error(`Cannot observe nonexistent doc "${name}"`);
+    }
     if (memoryDoc && memoryDoc.behavior) {
       return memoryDoc.behavior;
     } else {
-      const listDocName = getListDocName(name);
-      if (typeof listDocName === 'string') {
-        const memoryDoc = getReadNode(listDocName);
-        if (memoryDoc.childrenSetBehavior) {
-          return memoryDoc.childrenSetBehavior;
-        } else {
-          const childrenNames = Object.keys(memoryDoc.children || {});
-          memoryDoc.childrenSetBehavior = new BehaviorSubject({
-            value: childrenNames,
-          });
-          memoryDoc.childrenSet = new Set(childrenNames);
-          return memoryDoc.childrenSetBehavior;
-        }
-      }
       return (memoryDoc.behavior = new BehaviorSubject(_renderDoc(memoryDoc)));
     }
   };
@@ -320,6 +312,7 @@ async function readFSDoc(dataDir, name) {
   const docPath = pathJoin(docsDir, name);
   const childList = await fs.readdir(docPath);
   const children = {};
+  const childrenSet = new Set();
   let id = undefined;
   await Promise.all(
     childList.map(async child => {
@@ -330,10 +323,12 @@ async function readFSDoc(dataDir, name) {
         return;
       }
       children[child] = await readFSDoc(dataDir, pathJoin(name, child));
-    })
+      childrenSet.add(child);
+    }),
   );
   return {
     children,
+    childrenSet,
     id,
   };
 }
@@ -387,16 +382,17 @@ async function moveFSDoc(dataDir, prevName, newName) {
 export default async function startFSDataSource(opts = {}) {
   const dataSourceDomain = opts.domain;
   let dataDir = opts.dataDir;
+  console.log('herrooo', dataDir);
 
   if (!dataDir) {
     throw new Error(
-      'Cannot start a FS data source without specifying a dataDir to store data files'
+      'Cannot start a FS data source without specifying a dataDir to store data files',
     );
   }
 
   if (!dataSourceDomain) {
     throw new Error(
-      'Cannot start a FS data source without specifying a domain'
+      'Cannot start a FS data source without specifying a domain',
     );
   }
 

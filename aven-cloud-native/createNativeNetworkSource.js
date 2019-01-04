@@ -41,12 +41,19 @@ export default function createNativeNetworkSource(opts) {
 
   function socketSendIfConnected(payload) {
     if (ws && ws.readyState === ReconnectingWebSocket.OPEN) {
-      const msg = JSON.stringify({ ...payload, clientId: wsClientId });
-      ws.send(msg);
+      console.log('📣', payload);
+      ws.send(JSON.stringify({ ...payload, clientId: wsClientId }));
     }
   }
 
-  const docObservables = {};
+  function getNamedAuth(auth) {
+    if (auth && auth.accountId) {
+      return auth.accountId;
+    }
+    return null;
+  }
+
+  const domainObservables = {};
 
   function createDomainDocObserver(domain, name, auth) {
     const domainDocObserver = {
@@ -56,7 +63,7 @@ export default function createNativeNetworkSource(opts) {
     domainDocObserver.observable = Observable.create(observer => {
       if (domainDocObserver.onNext) {
         throw new Error(
-          `Something has gone terribly wrong. There is somehow another observable already subscribed to the "${name}" doc on "${domain}"`
+          `Something has gone terribly wrong. There is somehow another observable already subscribed to the "${name}" doc on "${domain}"`,
         );
       }
       domainDocObserver.onNext = val => observer.next(val);
@@ -72,8 +79,10 @@ export default function createNativeNetworkSource(opts) {
           type: 'UnsubscribeDocs',
           docs: [name],
           domain,
+          auth,
         });
-        delete docObservables[domain][name];
+        const docObs = domainObservables[domain].get(auth);
+        delete docObs[name];
       };
     })
       .multicast(() => new BehaviorSubject(undefined))
@@ -82,10 +91,16 @@ export default function createNativeNetworkSource(opts) {
   }
 
   function getDomainDocObserver(domain, name, auth) {
-    const d = docObservables[domain] || (docObservables[domain] = {});
-    const r =
-      d[name] || (d[name] = createDomainDocObserver(domain, name, auth));
-    return r;
+    const authObs =
+      domainObservables[domain] || (domainObservables[domain] = new Map());
+    if (!authObs.has(auth)) {
+      authObs.set(auth, {});
+    }
+    const docsObs = authObs.get(auth);
+    const docObs =
+      docsObs[name] ||
+      (docsObs[name] = createDomainDocObserver(domain, name, auth));
+    return docObs;
   }
 
   function connectWS() {
@@ -108,31 +123,54 @@ export default function createNativeNetworkSource(opts) {
     };
     ws.onclose = () => {
       isConnected.next(false);
+      ws = null;
     };
-    ws.onerror = e => {
+    ws.onerror = () => {
       isConnected.next(false);
+      ws = null;
     };
     ws.onmessage = msg => {
       const evt = JSON.parse(msg.data);
+      console.log('💨', evt);
+
       switch (evt.type) {
         case 'ClientId': {
           wsClientId = evt.clientId;
           isConnected.next(true);
-          Object.keys(docObservables).forEach(domain => {
-            const docs = Object.keys(docObservables[domain]);
-            socketSendIfConnected({
-              type: 'SubscribeDocs',
-              domain,
-              docs,
+          Object.keys(domainObservables).forEach(domain => {
+            const authObs = domainObservables[domain];
+            authObs.forEach((docsObs, auth) => {
+              socketSendIfConnected({
+                type: 'SubscribeDocs',
+                domain,
+                docs: Object.keys(docsObs),
+                auth,
+              });
             });
           });
+          console.log('Socket connected with client id: ', wsClientId);
           return;
         }
         case 'DocUpdate': {
-          const o = getDomainDocObserver(evt.domain, evt.name);
-          if (o && o.onNext) {
-            o.onNext(evt);
-          }
+          const authObs = domainObservables[evt.domain];
+          authObs.forEach((docObs, auth) => {
+            if (auth || evt.auth) {
+              if (
+                !auth ||
+                !evt.auth ||
+                !evt.auth.sessionId ||
+                evt.auth.sessionId !== auth.sessionId
+              ) {
+                return;
+              }
+            }
+            docObs[evt.name] &&
+              docObs[evt.name].onNext &&
+              docObs[evt.name].onNext({
+                ...evt,
+                auth: undefined,
+              });
+          });
           return;
         }
         default: {

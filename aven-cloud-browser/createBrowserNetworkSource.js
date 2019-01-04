@@ -11,6 +11,7 @@ export default function createBrowserNetworkSource(opts) {
   const isConnected = new BehaviorSubject(false);
   const wsMessages = new Subject();
 
+  let ws = null;
   let wsClientId = null;
 
   async function dispatch(action) {
@@ -28,7 +29,7 @@ export default function createBrowserNetworkSource(opts) {
     }
     let result = await res.text();
     try {
-      result = JSON.parse(result);
+      result = result.length ? JSON.parse(result) : null;
     } catch (e) {
       throw new Error('Expecting JSON but could not parse: ' + result);
     }
@@ -38,8 +39,6 @@ export default function createBrowserNetworkSource(opts) {
     return result;
   }
 
-  let ws = null;
-
   function socketSendIfConnected(payload) {
     if (ws && ws.readyState === ReconnectingWebSocket.OPEN) {
       console.log('📣', payload);
@@ -47,7 +46,14 @@ export default function createBrowserNetworkSource(opts) {
     }
   }
 
-  const docObservables = {};
+  function getNamedAuth(auth) {
+    if (auth && auth.accountId) {
+      return auth.accountId;
+    }
+    return null;
+  }
+
+  const domainObservables = {};
 
   function createDomainDocObserver(domain, name, auth) {
     const domainDocObserver = {
@@ -57,7 +63,7 @@ export default function createBrowserNetworkSource(opts) {
     domainDocObserver.observable = Observable.create(observer => {
       if (domainDocObserver.onNext) {
         throw new Error(
-          `Something has gone terribly wrong. There is somehow another observable already subscribed to the "${name}" doc on "${domain}"`
+          `Something has gone terribly wrong. There is somehow another observable already subscribed to the "${name}" doc on "${domain}"`,
         );
       }
       domainDocObserver.onNext = val => observer.next(val);
@@ -73,10 +79,10 @@ export default function createBrowserNetworkSource(opts) {
           type: 'UnsubscribeDocs',
           docs: [name],
           domain,
+          auth,
         });
-
-        console.log('unsubuscribing from upstream data!');
-        delete docObservables[domain][name];
+        const docObs = domainObservables[domain].get(auth);
+        delete docObs[name];
       };
     })
       .multicast(() => new BehaviorSubject(undefined))
@@ -85,10 +91,16 @@ export default function createBrowserNetworkSource(opts) {
   }
 
   function getDomainDocObserver(domain, name, auth) {
-    const d = docObservables[domain] || (docObservables[domain] = {});
-    const r =
-      d[name] || (d[name] = createDomainDocObserver(domain, name, auth));
-    return r;
+    const authObs =
+      domainObservables[domain] || (domainObservables[domain] = new Map());
+    if (!authObs.has(auth)) {
+      authObs.set(auth, {});
+    }
+    const docsObs = authObs.get(auth);
+    const docObs =
+      docsObs[name] ||
+      (docsObs[name] = createDomainDocObserver(domain, name, auth));
+    return docObs;
   }
 
   function connectWS() {
@@ -125,23 +137,40 @@ export default function createBrowserNetworkSource(opts) {
         case 'ClientId': {
           wsClientId = evt.clientId;
           isConnected.next(true);
-          Object.keys(docObservables).forEach(domain => {
-            const docs = docObservables[domain];
-            socketSendIfConnected({
-              type: 'SubscribeDocs',
-              domain,
-              docs: Object.keys(docObservables[domain]),
+          Object.keys(domainObservables).forEach(domain => {
+            const authObs = domainObservables[domain];
+            authObs.forEach((docsObs, auth) => {
+              socketSendIfConnected({
+                type: 'SubscribeDocs',
+                domain,
+                docs: Object.keys(docsObs),
+                auth,
+              });
             });
-            Object.keys(docs);
           });
           console.log('Socket connected with client id: ', wsClientId);
           return;
         }
         case 'DocUpdate': {
-          const o = getDomainDocObserver(evt.domain, evt.name);
-          if (o && o.onNext) {
-            o.onNext(evt);
-          }
+          const authObs = domainObservables[evt.domain];
+          authObs.forEach((docObs, auth) => {
+            if (auth || evt.auth) {
+              if (
+                !auth ||
+                !evt.auth ||
+                !evt.auth.sessionId ||
+                evt.auth.sessionId !== auth.sessionId
+              ) {
+                return;
+              }
+            }
+            docObs[evt.name] &&
+              docObs[evt.name].onNext &&
+              docObs[evt.name].onNext({
+                ...evt,
+                auth: undefined,
+              });
+          });
           return;
         }
         default: {
