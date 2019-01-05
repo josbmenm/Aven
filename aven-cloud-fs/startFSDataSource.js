@@ -101,13 +101,13 @@ function createGenericDataSource({
     let { children, childrenSet, childrenSetBehavior } = currentNode;
     if (!children[rootTerm]) {
       children[rootTerm] = {};
-      if (ensureExistence && !childrenSet.has(rootTerm)) {
-        childrenSet.add(rootTerm);
-        childrenSetBehavior &&
-          childrenSetBehavior.next({
-            value: [...childrenSet],
-          });
-      }
+    }
+    if (ensureExistence && !childrenSet.has(rootTerm)) {
+      childrenSet.add(rootTerm);
+      childrenSetBehavior &&
+        childrenSetBehavior.next({
+          value: [...childrenSet],
+        });
     }
     const childNode = children[rootTerm];
     if (name === rootTerm) {
@@ -249,11 +249,9 @@ function createGenericDataSource({
       if (memoryDoc.childrenSetBehavior) {
         return memoryDoc.childrenSetBehavior;
       } else {
-        const childrenNames = Object.keys(memoryDoc.children || {});
         memoryDoc.childrenSetBehavior = new BehaviorSubject({
-          value: childrenNames,
+          value: [...memoryDoc.childrenSet],
         });
-        memoryDoc.childrenSet = new Set(childrenNames);
         return memoryDoc.childrenSetBehavior;
       }
     }
@@ -382,7 +380,6 @@ async function moveFSDoc(dataDir, prevName, newName) {
 export default async function startFSDataSource(opts = {}) {
   const dataSourceDomain = opts.domain;
   let dataDir = opts.dataDir;
-  console.log('herrooo', dataDir);
 
   if (!dataDir) {
     throw new Error(

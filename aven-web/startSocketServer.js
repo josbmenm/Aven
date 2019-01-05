@@ -21,7 +21,7 @@ const prepareSocketServer = (wss, dataSource) => {
       dataSource
         .observeDoc(domain, name, auth)
         .then(docObservable => {
-          const subscription = docObservable.distinctUntilChanged().subscribe({
+          const subscription = docObservable.subscribe({
             next: onValue,
             error: () => {},
             complete: () => {},
