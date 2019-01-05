@@ -42,6 +42,7 @@
 		874614646B8442FF9E31D722 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 877472BB20D24FF39CD7312B /* libz.tbd */; };
 		A961FDD821CAAFCF00D6A1D5 /* CardReaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A961FDD721CAAFCF00D6A1D5 /* CardReaderManager.swift */; };
 		A961FDDA21CAB1FF00D6A1D5 /* CardReaderManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = A961FDD921CAB1FF00D6A1D5 /* CardReaderManagerBridge.m */; };
+		A9A1FD7621E0150D00F69635 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = A9A1FD4B21E0150D00F69635 /* fonts */; };
 		A9A437F5219A24250023BB51 /* SquareReaderSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A437F4219A24250023BB51 /* SquareReaderSDK.framework */; };
 		A9A437F6219A24250023BB51 /* SquareReaderSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A9A437F4219A24250023BB51 /* SquareReaderSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A9E55107219A3A5F0023801A /* ReactNativeEventEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = A9E55101219A3A5F0023801A /* ReactNativeEventEmitter.m */; };
@@ -414,6 +415,7 @@
 		877472BB20D24FF39CD7312B /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		A961FDD721CAAFCF00D6A1D5 /* CardReaderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardReaderManager.swift; sourceTree = "<group>"; };
 		A961FDD921CAB1FF00D6A1D5 /* CardReaderManagerBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CardReaderManagerBridge.m; sourceTree = "<group>"; };
+		A9A1FD4B21E0150D00F69635 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		A9A437F4219A24250023BB51 /* SquareReaderSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SquareReaderSDK.framework; sourceTree = "<group>"; };
 		A9E550D6219A3A5E0023801A /* blitz-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "blitz-Bridging-Header.h"; sourceTree = "<group>"; };
 		A9E55101219A3A5F0023801A /* ReactNativeEventEmitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeEventEmitter.m; sourceTree = "<group>"; };
@@ -678,6 +680,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				A9A1FD4B21E0150D00F69635 /* fonts */,
 				A9A437F4219A24250023BB51 /* SquareReaderSDK.framework */,
 				13B07FAE1A68108700A75B9A /* blitz */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -1271,6 +1274,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9A1FD7621E0150D00F69635 /* fonts in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);

@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import Button from '../../components/Button';
+import TextButton from '../../components/TextButton';
 import { useOrderSummary } from '../../ono-cloud/OnoKitchen';
-import OrderSummary from '../../components/OrderSummary';
-import SummonHost from './SummonHost';
+import Cart from '../../components/Cart';
 
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
@@ -17,23 +17,22 @@ function OrderPanel() {
     return null;
   }
   return (
-    <View style={{}}>
-      <OrderSummary summary={summary} />
-      <SummonHost />
-      <Button
-        title="Checkout"
-        onPress={() => {
-          navigate('CollectName');
-        }}
-      />
-      <Button
-        title="Cancel Order"
+    <ScrollView style={{}}>
+      <TextButton
+        title="cancel order"
         onPress={async () => {
           await summary.cancel();
           navigate('KioskHome');
         }}
       />
-    </View>
+      <Cart summary={summary} />
+      <Button
+        title="checkout"
+        onPress={() => {
+          navigate('CollectName');
+        }}
+      />
+    </ScrollView>
   );
 }
 
@@ -46,8 +45,10 @@ export default function OrderSidebar() {
         right: 0,
         bottom: 0,
         width: 300,
-        borderLeftWidth: StyleSheet.hairlineWidth,
-        borderLeftColor: '#aaa',
+        backgroundColor: '#fff',
+        shadowOffset: { width: -6, height: 0 },
+        shadowColor: 'black',
+        shadowOpacity: 0.3,
       }}
     >
       <OrderPanel />

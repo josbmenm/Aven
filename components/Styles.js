@@ -14,7 +14,24 @@ export const titleFontStyle = {
   color: '#111',
 };
 
-export const pageBackgroundColor = '#f4f3f2';
+export const prettyShadow = {
+  shadowOffset: { width: 0, height: 0 },
+  shadowColor: 'black',
+  shadowOpacity: 0.1,
+  shadowRadius: 30,
+  borderWidth: StyleSheet.hairlineWidth,
+  borderColor: '#e5e5e5',
+};
+
+export const highlightPrimaryColor = '#0B5151';
+export const mutedPrimaryColor = '#88ACAC';
+export const splashText = {
+  color: highlightPrimaryColor,
+  fontSize: 28,
+  fontFamily: 'Maax-Bold',
+};
+
+export const pageBackgroundColor = '#fff';
 export const highlightBackgroundColor = '#fff';
 export const hairlineColor = '#bbb';
 export const rowBorderWidth = StyleSheet.hairlineWidth;
@@ -67,19 +84,68 @@ export const rowSectionInnerStyle = {
   borderColor: hairlineColor,
 };
 
+export const fontSmall = {
+  fontSize: 22,
+};
+
+export const fontMedium = {
+  fontSize: 28,
+};
+
+export const fontLarge = {
+  fontSize: 36,
+};
+
+export const primaryFontFace = {
+  fontFamily: 'Maax',
+};
+
+export const boldPrimaryFontFace = {
+  fontFamily: 'Maax-Bold',
+};
+
+export const titleStyle = {
+  color: highlightPrimaryColor,
+  ...boldPrimaryFontFace,
+};
+
 export const buttonTitleStyle = {
+  ...fontMedium,
   textAlign: 'center',
   color: 'white',
   fontSize: 42,
+  fontFamily: 'Maax-Bold',
 };
 
 export const buttonStyle = {
-  backgroundColor: '#333',
+  backgroundColor: highlightPrimaryColor,
   borderRadius: 10,
   padding: 10,
   paddingHorizontal: 20,
   marginHorizontal: 10,
   marginVertical: 10,
+  justifyContent: 'center',
+};
+
+export const secondaryButtonStyle = {
+  ...buttonStyle,
+  backgroundColor: null,
+  borderColor: highlightPrimaryColor,
+  borderWidth: 5,
+};
+
+export const secondaryButtonTitleStyle = {
+  ...buttonTitleStyle,
+  color: highlightPrimaryColor,
+};
+
+export const textButtonStyle = {
+  ...boldPrimaryFontFace,
+  ...fontSmall,
+  color: highlightPrimaryColor,
+};
+export const textButtonContainerStyle = {
+  padding: 20,
 };
 
 export const menuItemNameText = { ...genericText };

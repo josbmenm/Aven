@@ -10,7 +10,7 @@ export default function AdminSessionContainer({ children }) {
     if (!cloud) {
       const newCloud = createCloudClient({
         dataSource,
-        domain: 'kitchen.maui.onofood.co',
+        domain: 'onofood.co',
       });
       AlertIOS.prompt('Login', 'Root password', password => {
         newCloud

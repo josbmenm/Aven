@@ -136,6 +136,7 @@ AppEmitter.addListener('CardReaderError', evt => {
 });
 
 AppEmitter.addListener('CardReaderPaymentStatus', evt => {
+  console.log('hass reader status!', evt.status);
   readerStatus.next(evt.status);
 });
 
@@ -154,6 +155,12 @@ async function prepareReader() {
     });
   });
 }
+
+const readerIsReady = readerStatus
+  .map(s => s === 'Ready')
+  .multicast(() => new BehaviorSubject(readerStatus.value === 'Ready'))
+  .refCount();
+
 export function useCardReader() {
   const { dispatch } = useCloud();
   useEffect(
@@ -165,7 +172,7 @@ export function useCardReader() {
     [dispatch],
   );
   return {
-    readerIsReady: readerStatus.map(s => s === 'Ready'),
+    readerIsReady,
     readerIsWaitingForInput,
     readerHasCardInserted,
     readerAllowedPaymentOptions,

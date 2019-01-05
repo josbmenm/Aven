@@ -11,6 +11,7 @@ export default function ActionPage({ children, actions }) {
           {actions.map((action, i) => (
             <Button
               key={i}
+              secondary={action.secondary}
               title={action.title}
               onPress={action.onPress}
               style={{ flex: 1 }}

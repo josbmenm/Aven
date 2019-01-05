@@ -12,7 +12,7 @@ import useObservable from '../../aven-cloud/useObservable';
 import { paymentContainer } from '../Payments';
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
-import OrderSummary from '../../components/OrderSummary';
+import Reciept from '../../components/Reciept';
 import { useCardReader } from '../CardReader';
 
 export default function OrderConfirmScreen({
@@ -43,15 +43,16 @@ export default function OrderConfirmScreen({
   );
   return (
     <GenericPage>
-      <OrderSummary summary={summary} />
+      <Reciept summary={summary} />
       <Button
-        title="Cancel"
+        secondary
+        title="cancel"
         onPress={async () => {
           await cancelPayment();
         }}
       />
       <Button
-        title="Skip Payment (TEST ONLY)"
+        title="skip payment (TEST ONLY)"
         onPress={async () => {
           await confirmOrder();
           navigation.navigate('OrderComplete');

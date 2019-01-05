@@ -98,7 +98,7 @@ const AppContainer = createAppContainer(App);
 
 const restaurant = createCloudClient({
   dataSource,
-  domain: 'kitchen.maui.onofood.co',
+  domain: 'onofood.co',
 });
 
 restaurant

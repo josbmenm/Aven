@@ -23,7 +23,7 @@ const restaurantSource = createBrowserNetworkSource(RESTAURANT_CONFIG);
 
 const restaurantClient = createCloudClient({
   dataSource: restaurantSource,
-  domain: 'kitchen.maui.onofood.co',
+  domain: 'onofood.co',
 });
 
 const context = new Map();

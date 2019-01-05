@@ -8,7 +8,7 @@ function App({ navigation }) {
       navigation={navigation}
       defaultSession={{
         authority: 'localhost:8830',
-        domain: 'kitchen.maui.onofood.co',
+        domain: 'onofood.co',
       }}
     />
   );

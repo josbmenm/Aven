@@ -6,6 +6,7 @@ const currency = new Intl.NumberFormat('en-US', {
   currency: 'USD',
   minimumFractionDigits: 2,
 });
+
 function RecieptRow({ label, amount, emphasize }) {
   const textStyle = { fontSize: 32, color: emphasize ? '#111' : '#333' };
   return (
@@ -20,17 +21,8 @@ function RecieptRow({ label, amount, emphasize }) {
   );
 }
 
-function OrderItemRow({ item }) {
-  return (
-    <RecieptRow
-      label={item.menuItem['Display Name']}
-      amount={item.menuItem.Recipe['Sell Price']}
-      emphasize
-    />
-  );
-}
-
-export default function OrderSummary({ summary }) {
+export default function Reciept({ summary }) {
+  console.log('DUUUDE', summary);
   if (!summary) {
     return null;
   }
@@ -38,7 +30,12 @@ export default function OrderSummary({ summary }) {
     <View style={{ backgroundColor: 'white', padding: 30 }}>
       <Text style={{ fontSize: 52 }}>Review order for "{summary.name}"</Text>
       {summary.items.map(item => (
-        <OrderItemRow item={item} key={item.id} />
+        <RecieptRow
+          label={item.menuItem['Display Name']}
+          amount={item.menuItem.Recipe['Sell Price']}
+          key={item.id}
+          emphasize
+        />
       ))}
       <View style={{ height: 80 }} />
       <RecieptRow label="SubTotal" amount={summary.subTotal} />

@@ -11,8 +11,8 @@ import { useNavigation } from '../../navigation-hooks/Hooks';
 import useCloud from '../../aven-cloud/useCloud';
 import useObservable from '../../aven-cloud/useObservable';
 
-function getRefs(cloud, name) {
-  const refList = cloud.get(`${name}/_refs`);
+function getDocs(cloud, name) {
+  const refList = cloud.get(`${name}/_children`);
   return refList.expand((o, r) => {
     return (
       o &&
@@ -28,7 +28,7 @@ function HostRequests() {
   const cloud = useCloud();
   const requests = useMemo(
     () =>
-      getRefs(cloud, 'Kiosk').map(kiosks => {
+      getDocs(cloud, 'Kiosk').map(kiosks => {
         if (!kiosks) {
           return kiosks;
         }

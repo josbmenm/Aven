@@ -5,6 +5,7 @@ import { withMenuItem, useOrderItem } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { pageBackgroundColor } from '../../components/Styles';
 import OrderSidebar from '../components/OrderSidebar';
+import MenuCard from '../components/MenuCard';
 
 function Ingredient({ ingredient }) {
   return (
@@ -234,38 +235,6 @@ function Ingredients({ menuItem }) {
   );
 }
 
-function ActiveFunctions({ menuItem, customizationState }) {
-  const activeFunctionIds =
-    customizationState.functions || menuItem.Recipe.DefaultFunction;
-  return activeFunctionIds.map(id => {
-    const fn = menuItem.FunctionCustomization[id];
-    return (
-      <React.Fragment key={id}>
-        <Text
-          style={{
-            fontSize: 32,
-            marginBottom: 30,
-            color: '#444',
-            margin: 20,
-          }}
-        >
-          {fn.Name}
-        </Text>
-        <Text
-          style={{
-            fontSize: 24,
-            marginBottom: 30,
-            color: '#444',
-            margin: 20,
-          }}
-        >
-          {fn.Description}
-        </Text>
-      </React.Fragment>
-    );
-  });
-}
-
 function MenuItemScreenWithItem({ menuItem, orderItemId }) {
   let [isCustomizing, setIsCustomizing] = useState(false);
   let [customizationState, setCustomization] = useState({});
@@ -290,6 +259,7 @@ function MenuItemScreenWithItem({ menuItem, orderItemId }) {
           },
         },
         {
+          secondary: true,
           title: 'Customize',
           onPress: () => {
             setIsCustomizing(!isCustomizing);
@@ -299,18 +269,21 @@ function MenuItemScreenWithItem({ menuItem, orderItemId }) {
     >
       <View style={{ flexDirection: 'row' }}>
         <View style={{ padding: 30, width: 440, marginTop: 120 }}>
-          <Text style={{ fontSize: 42 }}>{menuItem['Display Name']}</Text>
-          <AirtableImage
-            image={menuItem.Recipe['Recipe Image']}
-            style={{
-              resizeMode: 'contain',
-              height: 440,
-              width: 380,
-            }}
+          <MenuCard
+            key={menuItem.id}
+            title={menuItem['Display Name']}
+            tag={menuItem.DefaultFunctionName}
+            price={menuItem.Recipe['Sell Price']}
+            photo={menuItem.Recipe['Recipe Image']}
+            onPress={null}
           />
-          <Text style={{ fontSize: 36, color: '#444', textAlign: 'right' }}>
-            {menuItem.DisplayPrice}
-          </Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-start',
+          }}
+        >
           <Text
             style={{
               fontSize: 32,
@@ -321,17 +294,6 @@ function MenuItemScreenWithItem({ menuItem, orderItemId }) {
           >
             {menuItem['Display Description']}
           </Text>
-          <ActiveFunctions
-            menuItem={menuItem}
-            customizationState={customizationState}
-          />
-        </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'flex-start',
-          }}
-        >
           {isCustomizing && (
             <Customization
               menuItem={menuItem}

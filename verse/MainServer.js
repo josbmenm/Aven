@@ -1,6 +1,6 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
-import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
+import startFSDataSource from '../aven-cloud-fs/startFSDataSource';
 import createNodeNetworkSource from '../aven-cloud-server/createNodeNetworkSource';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createFSClient from '../aven-cloud-server/createFSClient';
@@ -28,7 +28,7 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
 const runServer = async () => {
-  console.log('☁️ Starting Restaurant Server 💨');
+  console.log('☁️ Starting Restaurant Server 💨 ' + process.cwd() + '/db');
 
   // const dataSource = await startSQLDataSource({
   //   client: 'sqlite3', // must have sqlite3 in the dependencies of this module.
@@ -36,13 +36,14 @@ const runServer = async () => {
   //     filename: 'cloud.sqlite',
   //   },
   // });
-  const dataSource = startMemoryDataSource({
-    domain: 'kitchen.maui.onofood.co',
+  const dataSource = await startFSDataSource({
+    domain: 'onofood.co',
+    dataDir: process.cwd() + '/db',
   });
 
   const cloud = createCloudClient({
     dataSource: dataSource,
-    domain: 'kitchen.maui.onofood.co',
+    domain: 'onofood.co',
   });
 
   const emailAgent = EmailAgent({
@@ -97,7 +98,7 @@ const runServer = async () => {
 
   async function putPermission({ name, defaultRule }) {
     await authenticatedDataSource.dispatch({
-      domain: 'kitchen.maui.onofood.co',
+      domain: 'onofood.co',
       type: 'PutPermissionRules',
       auth: rootAuth,
       defaultRule,

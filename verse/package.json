@@ -29,6 +29,7 @@
       "aven-cloud",
       "aven-cloud-server",
       "aven-cloud-browser",
+      "aven-cloud-fs",
       "aven-cloud-sql",
       "ono-cloud",
       "components",

@@ -14,6 +14,7 @@ import { withNavigation } from '../../navigation-core';
 import {
   menuItemNameText,
   menuItemDescriptionText,
+  titleStyle,
 } from '../../components/Styles';
 import AirtableImage from '../components/AirtableImage';
 import uuid from 'uuid/v1';
@@ -21,43 +22,26 @@ import uuid from 'uuid/v1';
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import OrderSidebar from '../components/OrderSidebar';
 
+import MenuCard from '../components/MenuCard';
+
 const MENU_ITEM_WIDTH = 350;
 
-const MenuItemWithNav = ({ photo, description, title, onPress }) => {
-  return (
-    <TouchableWithoutFeedback onPress={onPress}>
-      <View
-        style={{
-          backgroundColor: 'white',
-          padding: 40,
-          width: MENU_ITEM_WIDTH,
-          flexDirection: 'row',
-          marginVertical: 30,
-        }}
-      >
-        <View style={{ flex: 1, marginLeft: 40, justifyContent: 'center' }}>
-          {photo && (
-            <AirtableImage
-              image={photo}
-              style={{
-                height: 200,
-                alignSelf: 'stretch',
-                resizeMode: 'contain',
-              }}
-            />
-          )}
-          {title && (
-            <Text style={{ fontSize: 42, ...menuItemNameText }}>{title}</Text>
-          )}
-          {description && (
-            <Text style={{ ...menuItemDescriptionText }}>{description}</Text>
-          )}
-        </View>
-      </View>
-    </TouchableWithoutFeedback>
-  );
+const titleLargeStyle = {
+  fontSize: 52,
+  ...titleStyle,
 };
-const MenuItem = withNavigation(MenuItemWithNav);
+const titleSmallStyle = {
+  fontSize: 42,
+  ...titleStyle,
+};
+
+function TitleLarge({ title }) {
+  return <Text style={titleLargeStyle}>{title}</Text>;
+}
+
+function TitleSmall({ title }) {
+  return <Text style={titleSmallStyle}>{title}</Text>;
+}
 
 function MenuSection({ title, children }) {
   return (
@@ -67,7 +51,7 @@ function MenuSection({ title, children }) {
         borderBottomColor: '#ccc',
       }}
     >
-      <Text style={{ fontSize: 42 }}>{title}</Text>
+      {title}
       <ScrollView
         pagingEnabled={true}
         snapToInterval={MENU_ITEM_WIDTH}
@@ -85,12 +69,13 @@ function MenuSection({ title, children }) {
 function BlendsMenu({ menu }) {
   const { navigate } = useNavigation();
   return (
-    <MenuSection title="Blends">
+    <MenuSection title={<TitleLarge title="choose a blend" />}>
       {menu.map(item => (
-        <MenuItem
+        <MenuCard
           key={item.id}
           title={item['Display Name']}
-          description={item['Display Description']}
+          price={item.Recipe['Sell Price']}
+          tag={item.DefaultFunctionName}
           photo={item.Recipe && item.Recipe['Recipe Image']}
           onPress={() => {
             navigate('MenuItem', {
@@ -106,9 +91,9 @@ function BlendsMenu({ menu }) {
 
 function FoodMenu({ menu }) {
   return (
-    <MenuSection title="Bites">
+    <MenuSection title={<TitleSmall title="add a snack" />}>
       {menu.map(item => (
-        <MenuItem
+        <MenuCard
           key={item.id}
           title={item['Name']}
           description={item['Display Description']}

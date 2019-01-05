@@ -122,7 +122,7 @@ function getOrderSummary(orderState, companyConfig) {
 
 function getAllOrders() {
   let cloud = useCloud();
-  return cloud.get('Orders/_refs').expand((o, r) => {
+  return cloud.get('Orders/_children').expand((o, r) => {
     return (
       o &&
       o.map(orderId => ({
@@ -299,6 +299,12 @@ function companyConfigToBlendMenu(atData) {
     const thisRecipeIngredientIds = thisRecipeIngredients.map(
       ri => ri.Ingredient.id,
     );
+    const defaultFunctionId =
+      Recipe && Recipe.DefaultFunction && Recipe.DefaultFunction[0];
+    const Functions = atData.baseTables['Functions'];
+    const DefaultFunction = defaultFunctionId
+      ? Functions[defaultFunctionId]
+      : null;
     return {
       ...item,
       IngredientCustomization: IngredientCustomization.map(ic => {
@@ -318,7 +324,9 @@ function companyConfigToBlendMenu(atData) {
           ),
         };
       }).filter(ic => !!ic),
-      FunctionCustomization: atData.baseTables['Functions'],
+      FunctionCustomization: Functions,
+      DefaultFunction,
+      DefaultFunctionName: DefaultFunction && DefaultFunction.Name,
       DisplayPrice: currency.format(Recipe['Sell Price']),
       Recipe: {
         ...Recipe,

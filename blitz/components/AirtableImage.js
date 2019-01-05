@@ -16,7 +16,7 @@ const AirtableImage = ({ image, style }) => {
   const ext = path.extname(origUrl);
   const imageURI = `${
     useSSL ? 'https' : 'http'
-  }://${authority}/_/kitchen.maui.onofood.co/Airtable/files/${md5(
+  }://${authority}/_/onofood.co/Airtable/files/${md5(
     origUrl,
   ).toString()}${ext}`;
   return <Image style={style} imageURI={imageURI} />;
