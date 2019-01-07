@@ -7,6 +7,7 @@ import Cart from '../../components/Cart';
 
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
+import { prettyShadow } from '../../components/Styles';
 
 function OrderPanel() {
   const { navigate } = useNavigation();
@@ -46,9 +47,7 @@ export default function OrderSidebar() {
         bottom: 0,
         width: 300,
         backgroundColor: '#fff',
-        shadowOffset: { width: -6, height: 0 },
-        shadowColor: 'black',
-        shadowOpacity: 0.3,
+        ...prettyShadow,
       }}
     >
       <OrderPanel />

@@ -1,11 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, Image, TouchableHighlight } from 'react-native';
 import ActionPage from '../components/ActionPage';
-import { withMenuItem, useOrderItem } from '../../ono-cloud/OnoKitchen';
+import { useOrderItem, useMenuItem } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { pageBackgroundColor } from '../../components/Styles';
 import OrderSidebar from '../components/OrderSidebar';
 import MenuCard from '../components/MenuCard';
+import useObservable from '../../aven-cloud/useObservable';
 
 function Ingredient({ ingredient }) {
   return (
@@ -235,38 +236,43 @@ function Ingredients({ menuItem }) {
   );
 }
 
-function MenuItemScreenWithItem({ menuItem, orderItemId }) {
+function MenuItemScreenWithId({ orderItemId, menuItemId }) {
+  console.log('whahah', orderItemId);
   let [isCustomizing, setIsCustomizing] = useState(false);
   let [customizationState, setCustomization] = useState({});
 
-  let { item, order, setItem } = useOrderItem(orderItemId);
-  console.log('pre-existing order item', item);
+  let { order, setItem, orderItem } = useOrderItem(orderItemId);
+  const menuItem = useMenuItem(menuItemId);
+  const item = orderItem && useObservable(orderItem.observeValue);
+  console.log('woaahhhhh order iteeeeeem', { item, order, orderItem });
   if (!menuItem || !order) {
     return null;
   }
+  const actions = [
+    {
+      secondary: true,
+      title: 'customize',
+      onPress: () => {
+        setIsCustomizing(!isCustomizing);
+      },
+    },
+  ];
+  if (!item || item.quantity < 1) {
+    actions.push({
+      title: 'add to cart',
+      onPress: () => {
+        setItem({
+          id: orderItemId,
+          type: 'blend',
+          menuItemId: menuItem.id,
+          customization: customizationState,
+          quantity: 1,
+        });
+      },
+    });
+  }
   return (
-    <ActionPage
-      actions={[
-        {
-          title: 'Add to Cart',
-          onPress: () => {
-            setItem({
-              id: orderItemId,
-              type: 'blend',
-              menuItemId: menuItem.id,
-              customization: customizationState,
-            });
-          },
-        },
-        {
-          secondary: true,
-          title: 'Customize',
-          onPress: () => {
-            setIsCustomizing(!isCustomizing);
-          },
-        },
-      ]}
-    >
+    <ActionPage actions={actions.reverse()}>
       <View style={{ flexDirection: 'row' }}>
         <View style={{ padding: 30, width: 440, marginTop: 120 }}>
           <MenuCard
@@ -308,8 +314,6 @@ function MenuItemScreenWithItem({ menuItem, orderItemId }) {
     </ActionPage>
   );
 }
-
-const MenuItemScreenWithId = withMenuItem(MenuItemScreenWithItem);
 
 export default function MenuItemScreen({ navigation, ...props }) {
   return (

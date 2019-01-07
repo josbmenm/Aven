@@ -40,22 +40,15 @@ class CardReaderManager: NSObject, TerminalDelegate, ConnectionTokenProvider, Di
     return statusString
   }
   
+  @objc static
+    func requiresMainQueueSetup() -> Bool {
+    return true
+  }
+  
   @objc(prepareReader:)
   func prepareReader(callback: @escaping RCTResponseSenderBlock) -> Void {
     DispatchQueue.main.async {
       
-//      if (CardReaderManager.terminal != nil) {
-//        let status = CardReaderManager.terminal?.paymentStatus ?? PaymentStatus.notReady
-//        EventEmitter.sharedInstance.dispatch(name: "CardReaderPaymentStatus", body: [
-//          "status": CardReaderManager.stringConnectionStatus(status: status),
-//          "message": Terminal.stringFromPaymentStatus(status),
-//        ])
-//        callback([
-//          NSNull()
-//        ])
-//        return;
-//      }
-print("a", CardReaderManager.terminal == nil)
       if (CardReaderManager.terminal == nil) {
         let config = TerminalConfiguration()
         CardReaderManager.terminal = Terminal(configuration: config,

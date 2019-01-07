@@ -1,17 +1,20 @@
 import { useEffect } from 'react';
 import { useNavigation } from '../navigation-hooks/Hooks';
-import { useOrderSummary } from '../ono-cloud/OnoKitchen';
+import { useOrder } from '../ono-cloud/OnoKitchen';
+import useObservable from '../aven-cloud/useObservable';
+
+process.env.REACT_NAV_LOGGING = true;
 
 export default function useEmptyOrderEscape() {
   const { navigate } = useNavigation();
-  const orderSummary = useOrderSummary();
-
+  const { order } = useOrder();
+  const orderValue = order && useObservable(order.observeValue);
   useEffect(
     () => {
-      if (orderSummary === null) {
+      if (orderValue === null) {
         navigate('KioskHome');
       }
     },
-    [orderSummary],
+    [orderValue],
   );
 }

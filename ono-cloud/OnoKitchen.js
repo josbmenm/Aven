@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useMemo } from 'react';
 import useObservable from '../aven-cloud/useObservable';
 import withObservables from '@nozbe/with-observables';
 import observeNull from '../aven-cloud/observeNull';
-
+import { formatCurrency } from '../components/Utils';
 const OrderContext = createContext(null);
 
 function doCancelOrderIfNotConfirmed(lastOrder) {
@@ -52,7 +52,6 @@ export function OrderContextProvider({ children }) {
       await order.put({
         startTime: Date.now(),
         items: [],
-        customization: {},
       });
     },
   };
@@ -69,34 +68,37 @@ export function useCompanyConfig() {
 
 const TAX_RATE = 0.09;
 
-function getOrderSummary(orderState, companyConfig) {
-  const menu = companyConfigToMenu(companyConfig);
-  if (!orderState) {
-    return orderState;
-  }
-  let subTotal = 0;
-  const items = orderState.items.map(item => {
+function getOrderItemMapper(menu) {
+  return item => {
+    console.log('OMG shit goin donw', { item, menu });
     const menuItem =
       item.type === 'blend'
         ? menu.blends.find(i => i.id === item.menuItemId)
         : menu.food.find(i => i.id === item.menuItemId);
-    if (!menuItem) {
-      throw new Error(
-        `Cannot compute order summary item because menuItemId "${
-          item.menuItemId
-        }" of order "${orderState}" was not found`,
-      );
-    }
     const sellPrice = menuItem.Recipe
       ? menuItem.Recipe['Sell Price']
       : menuItem['Sell Price'];
-    subTotal += sellPrice;
+    const itemPrice = sellPrice * item.quantity;
     return {
       ...item,
+      itemPrice,
       sellPrice,
       menuItem,
     };
-  });
+  };
+}
+
+function getOrderSummary(orderState, companyConfig) {
+  const menu = companyConfigToMenu(companyConfig);
+  if (!orderState) {
+    return null;
+  }
+  if (!menu) {
+    return null;
+  }
+  console.log('SOOOO', orderState.items);
+  const items = orderState.items.map(getOrderItemMapper(menu));
+  const subTotal = items.reduce((acc, item) => acc + item.itemPrice, 0);
   const tax = subTotal * TAX_RATE;
   const total = subTotal + tax;
   const { isConfirmed, isCancelled, orderId } = orderState;
@@ -184,6 +186,7 @@ export function useCurrentOrder() {
 
 export function useOrderItem(orderItemId) {
   let { order } = useOrder();
+  const config = useCompanyConfig();
 
   async function setItem(item) {
     await order.transact(lastOrder => {
@@ -200,15 +203,39 @@ export function useOrderItem(orderItemId) {
       };
     });
   }
+  async function removeItem() {
+    await order.transact(lastOrder => {
+      const items = lastOrder.items.filter(i => i.id !== orderItemId);
+      return {
+        ...lastOrder,
+        items,
+      };
+    });
+  }
+  const orderItem = useMemo(
+    () => {
+      const menu = companyConfigToMenu(config);
+      if (!menu) {
+        return null;
+      }
+      const itemMapper = getOrderItemMapper(menu);
+      return (
+        order &&
+        order.map(orderState => {
+          const item =
+            orderState.items &&
+            orderState.items.find(i => i.id === orderItemId);
+          return item && itemMapper(item);
+        })
+      );
+    },
+    [order, orderItemId, config],
+  );
   return {
     orderItemId,
-    orderItem:
-      order &&
-      order.map(orderState => {
-        const item = orderState.items && orderState.items[orderItemId];
-        return item || {};
-      }),
+    orderItem,
     setItem,
+    removeItem,
     order,
   };
 }
@@ -240,11 +267,6 @@ export function withKitchen(Component) {
     </CloudContext.Consumer>
   );
 }
-const currency = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2,
-});
 
 const sortByField = (obj, fieldName) => {
   var sortable = [];
@@ -257,7 +279,7 @@ const sortByField = (obj, fieldName) => {
 
 function companyConfigToBlendMenu(atData) {
   if (!atData) {
-    return [];
+    return null;
   }
   const Recipes = atData.baseTables['Recipes'];
   const MenuItemsUnordered = atData.baseTables['KioskBlendMenu'];
@@ -327,7 +349,7 @@ function companyConfigToBlendMenu(atData) {
       FunctionCustomization: Functions,
       DefaultFunction,
       DefaultFunctionName: DefaultFunction && DefaultFunction.Name,
-      DisplayPrice: currency.format(Recipe['Sell Price']),
+      DisplayPrice: formatCurrency(Recipe['Sell Price']),
       Recipe: {
         ...Recipe,
         Ingredients: thisRecipeIngredients,
@@ -339,7 +361,7 @@ function companyConfigToBlendMenu(atData) {
 
 function companyConfigToFoodMenu(atData) {
   if (!atData) {
-    return [];
+    return null;
   }
   const MenuItemsUnordered = atData.baseTables['KioskFoodMenu'];
   const MenuItems = sortByField(MenuItemsUnordered, '_index');
@@ -350,15 +372,31 @@ function companyConfigToFoodMenu(atData) {
 function companyConfigToBlendMenuItemMapper(menuItemId) {
   return atData => {
     const menu = companyConfigToBlendMenu(atData);
+    if (!menu) {
+      debugger;
+    }
     return menu.find(item => item.id === menuItemId);
   };
 }
 
+export function useMenuItem(menuItemId) {
+  const config = useCompanyConfig();
+  return useMemo(
+    () => {
+      if (!config) return null;
+      return companyConfigToBlendMenuItemMapper(menuItemId)(config);
+    },
+    [config, menuItemId],
+  );
+}
+
 function companyConfigToMenu(companyConfig) {
-  return {
-    food: companyConfigToFoodMenu(companyConfig),
-    blends: companyConfigToBlendMenu(companyConfig),
-  };
+  const food = companyConfigToFoodMenu(companyConfig);
+  const blends = companyConfigToBlendMenu(companyConfig);
+  if (food && blends) {
+    return { food, blends };
+  }
+  return null;
 }
 
 export function withMenuItem(Component) {

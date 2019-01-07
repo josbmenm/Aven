@@ -56,7 +56,10 @@ export default function MenuCard({ photo, title, price, tag, onPress }) {
           <Text
             style={{
               fontSize: 32,
+              paddingTop: 15,
               color: highlightPrimaryColor,
+              textAlign: 'right',
+              lineHeight: 24,
               ...boldPrimaryFontFace,
             }}
           >

@@ -57,6 +57,9 @@ export const intRowStyle = {
   ...rowStyle,
 };
 
+export const cardTopInset = 200;
+export const pageInset = 80;
+
 export const genericPageStyle = {
   backgroundColor: pageBackgroundColor,
 };

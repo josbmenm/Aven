@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import GenericPage from '../components/GenericPage';
-import { withMenu } from '../../ono-cloud/OnoKitchen';
+import { withMenu, useMenu } from '../../ono-cloud/OnoKitchen';
 
 import { withNavigation } from '../../navigation-core';
 import {
@@ -105,13 +105,15 @@ function FoodMenu({ menu }) {
   );
 }
 
-const Home = ({ blendMenu, foodMenu, navigation }) => {
+export default function KioskHomeScreen() {
+  const menu = useMenu();
+  if (!menu) {
+    return null;
+  }
   return (
     <GenericPage afterScrollView={<OrderSidebar />}>
-      <BlendsMenu menu={blendMenu} />
-      <FoodMenu menu={foodMenu} />
+      <BlendsMenu menu={menu.blends} />
+      <FoodMenu menu={menu.food} />
     </GenericPage>
   );
-};
-const KioskHomeScreen = withMenu(Home);
-export default KioskHomeScreen;
+}
