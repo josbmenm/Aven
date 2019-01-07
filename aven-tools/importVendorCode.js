@@ -188,6 +188,11 @@ vendUpstreams([
     srcName: 'navigation-stack',
     moduleSrcPath: 'src',
   },
+  {
+    moduleName: 'react-navigation-transitioner',
+    srcName: 'navigation-transitioner',
+    moduleSrcPath: 'src',
+  },
 ])
   .then(() => {
     console.log('✅ Done!');

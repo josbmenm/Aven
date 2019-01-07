@@ -63,7 +63,7 @@ export default function createBrowserNetworkSource(opts) {
     domainDocObserver.observable = Observable.create(observer => {
       if (domainDocObserver.onNext) {
         throw new Error(
-          `Something has gone terribly wrong. There is somehow another observable already subscribed to the "${name}" doc on "${domain}"`,
+          `Something has gone terribly wrong. There is somehow another observable already subscribed to the "${name}" doc on "${domain}"`
         );
       }
       domainDocObserver.onNext = val => observer.next(val);

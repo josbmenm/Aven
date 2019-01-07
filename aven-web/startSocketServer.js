@@ -87,7 +87,7 @@ const prepareSocketServer = (wss, dataSource) => {
                   type: 'DocSubscriptionError',
                   error,
                 });
-              },
+              }
             );
           });
           return;
@@ -114,7 +114,7 @@ const prepareSocketServer = (wss, dataSource) => {
   return {
     close: () => {
       Object.keys(socketClosers).forEach(
-        clientId => socketClosers[clientId] && socketClosers[clientId](),
+        clientId => socketClosers[clientId] && socketClosers[clientId]()
       );
     },
   };
