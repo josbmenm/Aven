@@ -17,40 +17,40 @@ export default function testDataSource(startTestDataSource) {
     expect(blk.value.foo).toEqual('bar');
   });
 
-  // test('move doc shows in list', async () => {
-  //   const ds = await startTestDataSource({ domain: 'test' });
-  //   const blk = await ds.dispatch({
-  //     type: 'PutBlock',
-  //     domain: 'test',
-  //     name: 'foo',
-  //     value: { foo: 'bar' },
-  //   });
-  //   await ds.dispatch({
-  //     type: 'PutDoc',
-  //     domain: 'test',
-  //     name: 'foo',
-  //     id: blk.id,
-  //   });
-  //   let result;
-  //   result = await ds.dispatch({
-  //     type: 'GetDocValue',
-  //     domain: 'test',
-  //     name: '_children',
-  //   });
-  //   expect(result.value).toEqual(['foo']);
-  //   await ds.dispatch({
-  //     type: 'MoveDoc',
-  //     domain: 'test',
-  //     from: 'foo',
-  //     to: 'foobob',
-  //   });
-  //   result = await ds.dispatch({
-  //     type: 'GetDocValue',
-  //     domain: 'test',
-  //     name: '_children',
-  //   });
-  //   expect(result.value).toEqual(['foobob']);
-  // });
+  test('move doc shows in list', async () => {
+    const ds = await startTestDataSource({ domain: 'test' });
+    const blk = await ds.dispatch({
+      type: 'PutBlock',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    await ds.dispatch({
+      type: 'PutDoc',
+      domain: 'test',
+      name: 'foo',
+      id: blk.id,
+    });
+    let result;
+    result = await ds.dispatch({
+      type: 'GetDocValue',
+      domain: 'test',
+      name: '_children',
+    });
+    expect(result.value).toEqual(['foo']);
+    await ds.dispatch({
+      type: 'MoveDoc',
+      domain: 'test',
+      from: 'foo',
+      to: 'foobob',
+    });
+    result = await ds.dispatch({
+      type: 'GetDocValue',
+      domain: 'test',
+      name: '_children',
+    });
+    expect(result.value).toEqual(['foobob']);
+  });
 
   test('move doc works', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
