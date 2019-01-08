@@ -52,7 +52,7 @@ function _renderDoc({ id }) {
 function verifyDomain(inputDomain, dataSourceDomain) {
   if (inputDomain !== dataSourceDomain) {
     throw new Error(
-      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`
+      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`,
     );
   }
 }
@@ -112,6 +112,13 @@ export default function createGenericDataSource({
       memoryDoc.behavior = new BehaviorSubject(_renderDoc(memoryDoc));
     }
   }
+
+  async function PutDocValue({ domain, name, value }) {
+    const blk = await PutBlock({ value, name, domain });
+    const id = blk.id;
+    await PutDoc({ domain, name, id });
+  }
+
   function publishChildrenBehavior(memoryDoc) {
     memoryDoc.childrenSetBehavior &&
       memoryDoc.childrenSetBehavior.next({ value: [...memoryDoc.childrenSet] });
@@ -276,6 +283,7 @@ export default function createGenericDataSource({
     observeDoc,
     dispatch: createDispatcher({
       PutDoc,
+      PutDocValue,
       PostDoc,
       PutBlock,
       GetBlock,
