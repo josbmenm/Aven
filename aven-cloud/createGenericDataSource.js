@@ -3,6 +3,7 @@ import uuid from 'uuid/v1';
 
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import { getListDocName } from '../aven-cloud-utils/MetaDocNames';
+import { getMaxBlockRefCount } from './maxBlockRefCount';
 
 const pathJoin = require('path').join;
 
@@ -52,7 +53,7 @@ function _renderDoc({ id }) {
 function verifyDomain(inputDomain, dataSourceDomain) {
   if (inputDomain !== dataSourceDomain) {
     throw new Error(
-      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`
+      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`,
     );
   }
 }
@@ -71,6 +72,7 @@ export default function createGenericDataSource({
   id,
 }) {
   const dataSourceId = id || uuid();
+
   function getMemoryNode(name, ensureExistence, context) {
     let currentNode = context || docState;
     if (!currentNode.children) {
@@ -102,6 +104,42 @@ export default function createGenericDataSource({
     return getMemoryNode(childPath, ensureExistence, childNode);
   }
 
+  async function commitDeepBlock(blockData) {
+    if (blockData === null || typeof blockData !== 'object') {
+      return { value: blockData, refs: [] };
+    }
+    if (blockData.type === 'BlockReference') {
+      if (blockData.value) {
+        const { value: referenceValue, refs } = await commitDeepBlock(
+          blockData.value,
+        );
+        const { id } = await commitBlock(referenceValue, refs);
+        return { value: { id, type: 'BlockReference' }, refs: [id] };
+      } else if (!blockData.id) {
+        throw new Error(
+          `This block includes a {type: 'BlockReference'}, without a value or an id!`,
+        );
+      }
+    }
+    const outputValue = {};
+    let outputRefs = new Set();
+    await Promise.all(
+      Object.keys(blockData).map(async blockDataKey => {
+        const innerBlock = blockData[blockDataKey];
+        const { value, refs } = await commitDeepBlock(innerBlock);
+        refs.forEach(ref => outputRefs.add(ref));
+        outputValue[blockDataKey] = value;
+      }),
+    );
+    if (outputRefs.size > getMaxBlockRefCount()) {
+      throw new Error(
+        `This block has too many BlockReferences, you should paginate or compress instead. You can defer this error with setMaxBlockRefCount`,
+      );
+    }
+
+    return { value: outputValue, refs: [...outputRefs] };
+  }
+
   async function PutDoc({ domain, name, id }) {
     verifyDomain(domain, dataSourceDomain);
     if (id !== null) {
@@ -119,7 +157,8 @@ export default function createGenericDataSource({
 
   async function PutDocValue({ domain, name, value }) {
     verifyDomain(domain, dataSourceDomain);
-    const blk = await commitBlock(value);
+    const { value: referenceValue, refs } = await commitDeepBlock(value);
+    const blk = await commitBlock(referenceValue, refs);
     const id = blk.id;
     await commitDoc(name, id);
     const memoryDoc = getMemoryNode(name, true);
@@ -207,7 +246,8 @@ export default function createGenericDataSource({
     //   // and ACTUALLY, shouldn't we actually save this block under the context of this doc??
     // }
     verifyDomain(domain, dataSourceDomain);
-    return await commitBlock(value);
+    const { value: referenceValue, refs } = await commitDeepBlock(value);
+    return await commitBlock(referenceValue, refs);
   }
 
   async function GetDoc({ domain, name }) {

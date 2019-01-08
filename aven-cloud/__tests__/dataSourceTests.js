@@ -479,7 +479,7 @@ export default function testDataSource(startTestDataSource) {
           domain: 'test2',
           value: { foo: 'bar' },
           name: 'foo',
-        })
+        }),
       ).rejects.toThrow();
     });
     test.skip('block put fails with missing doc name', async () => {
@@ -489,7 +489,7 @@ export default function testDataSource(startTestDataSource) {
           type: 'PutBlock',
           domain: 'test',
           value: { foo: 'bar' },
-        })
+        }),
       ).rejects.toThrow();
     });
 
@@ -556,7 +556,7 @@ export default function testDataSource(startTestDataSource) {
           domain: 'test',
           name: 'foo',
           id: 'wrong',
-        })
+        }),
       ).rejects.toThrow();
     });
 
@@ -582,8 +582,34 @@ export default function testDataSource(startTestDataSource) {
       expect(gotBlk.value.foo).toEqual('bar');
     });
 
-    // test('put doc value correctly dereferences blocks', async () => {
-    // })
+    test.only('put doc value correctly dereferences blocks', async () => {
+      const ds = await startTestDataSource({ domain: 'test' });
+      await ds.dispatch({
+        type: 'PutDocValue',
+        domain: 'test',
+        name: 'foo',
+        value: {
+          foo: 'bar',
+          baz: { type: 'BlockReference', value: { woah: 42 } },
+        },
+      });
+      const docResult = await ds.dispatch({
+        type: 'GetDocValue',
+        domain: 'test',
+        name: 'foo',
+      });
+      expect(docResult.value.foo).toBe('bar');
+      expect(docResult.value.baz.type).toBe('BlockReference');
+      expect(typeof docResult.value.baz.id).toBe('string');
+      expect(docResult.value.baz.value).toBe(undefined);
+      const bazBlock = await ds.dispatch({
+        type: 'GetBlock',
+        domain: 'test',
+        name: 'foo',
+        id: docResult.value.baz.id,
+      });
+      expect(bazBlock.value.woah).toEqual(42);
+    });
 
     test('put doc works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
