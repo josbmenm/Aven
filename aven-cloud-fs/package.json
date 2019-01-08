@@ -1,6 +1,6 @@
 {
   "aven": {
-    "moduleDependencies": [
+    "srcDependencies": [
       "aven-cloud"
     ]
   }
