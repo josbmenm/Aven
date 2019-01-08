@@ -41,6 +41,12 @@ export default function startMemoryDataSource(opts = {}) {
     return { id };
   }
 
+  async function commitBlockId(id) {
+    if (id == null || _blocks[id] === undefined) {
+      throw new Error(`Cannot find block with id "${id}"`);
+    }
+  }
+
   async function commitDoc(name, id) {}
 
   async function commitDocDestroy(name) {}
@@ -57,6 +63,7 @@ export default function startMemoryDataSource(opts = {}) {
     getAllBlockIds,
 
     commitBlock,
+    commitBlockId,
     commitDoc,
     commitDocDestroy,
     commitDocMove,

@@ -52,7 +52,7 @@ function _renderDoc({ id }) {
 function verifyDomain(inputDomain, dataSourceDomain) {
   if (inputDomain !== dataSourceDomain) {
     throw new Error(
-      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`,
+      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`
     );
   }
 }
@@ -61,6 +61,7 @@ export default function createGenericDataSource({
   getBlock,
   getAllBlockIds,
   commitBlock,
+  commitBlockId,
   commitDoc,
   commitDocDestroy,
   commitDocMove,
@@ -103,6 +104,9 @@ export default function createGenericDataSource({
 
   async function PutDoc({ domain, name, id }) {
     verifyDomain(domain, dataSourceDomain);
+    if (id !== null) {
+      await commitBlockId(id);
+    }
     await commitDoc(name, id);
     const memoryDoc = getMemoryNode(name, true);
     memoryDoc.id = id;
@@ -114,9 +118,17 @@ export default function createGenericDataSource({
   }
 
   async function PutDocValue({ domain, name, value }) {
-    const blk = await PutBlock({ value, name, domain });
+    verifyDomain(domain, dataSourceDomain);
+    const blk = await commitBlock(value);
     const id = blk.id;
-    await PutDoc({ domain, name, id });
+    await commitDoc(name, id);
+    const memoryDoc = getMemoryNode(name, true);
+    memoryDoc.id = id;
+    if (memoryDoc.behavior) {
+      memoryDoc.behavior.next(_renderDoc(memoryDoc));
+    } else {
+      memoryDoc.behavior = new BehaviorSubject(_renderDoc(memoryDoc));
+    }
   }
 
   function publishChildrenBehavior(memoryDoc) {
@@ -190,10 +202,10 @@ export default function createGenericDataSource({
   }
 
   async function PutBlock({ value, name, domain }) {
-    if (!name) {
-      throw new Error('Name must be provided while getting a block!');
-      // and theoretically, shouldn't we actually save this block under the context of this doc??
-    }
+    // if (!name) {
+    //   throw new Error('Name must be provided while getting a block!');
+    //   // and ACTUALLY, shouldn't we actually save this block under the context of this doc??
+    // }
     verifyDomain(domain, dataSourceDomain);
     return await commitBlock(value);
   }

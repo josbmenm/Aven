@@ -116,6 +116,7 @@ describe('Cloud auth Permissions', () => {
       auth: session,
       domain: 'test',
       name: 'something',
+      id: null,
     });
   });
 

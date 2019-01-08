@@ -479,17 +479,17 @@ export default function testDataSource(startTestDataSource) {
           domain: 'test2',
           value: { foo: 'bar' },
           name: 'foo',
-        }),
+        })
       ).rejects.toThrow();
     });
-    test('block put fails with missing doc name', async () => {
+    test.skip('block put fails with missing doc name', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       await expect(
         ds.dispatch({
           type: 'PutBlock',
           domain: 'test',
           value: { foo: 'bar' },
-        }),
+        })
       ).rejects.toThrow();
     });
 
@@ -548,7 +548,7 @@ export default function testDataSource(startTestDataSource) {
   });
 
   describe('doc storage', () => {
-    test.skip('puts doc fails when a referenced block is missing', async () => {
+    test('puts doc fails when a referenced block is missing', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       await expect(
         ds.dispatch({
@@ -556,7 +556,7 @@ export default function testDataSource(startTestDataSource) {
           domain: 'test',
           name: 'foo',
           id: 'wrong',
-        }),
+        })
       ).rejects.toThrow();
     });
 
@@ -581,6 +581,9 @@ export default function testDataSource(startTestDataSource) {
       });
       expect(gotBlk.value.foo).toEqual('bar');
     });
+
+    // test('put doc value correctly dereferences blocks', async () => {
+    // })
 
     test('put doc works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });

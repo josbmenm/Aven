@@ -52,6 +52,16 @@ async function readFSBlock(dataDir, id) {
   return JSON.parse(blockData);
 }
 
+async function hasFSBlock(dataDir, id) {
+  if (id == null) {
+    return false;
+  }
+  const blocksDir = pathJoin(dataDir, 'blocks');
+  const blockPath = pathJoin(blocksDir, id);
+  const hasBlock = await fs.exists(blockPath);
+  return hasBlock;
+}
+
 async function readFSBlockList(dataDir) {
   const blocksDir = pathJoin(dataDir, 'blocks');
   return await fs.readdir(blocksDir);
@@ -117,6 +127,13 @@ export default async function startFSDataSource(opts = {}) {
     return await writeFSBlock(dataDir, value);
   }
 
+  async function commitBlockId(id) {
+    // we just need to make sure we have this block.
+    if (!(await hasFSBlock(dataDir, id))) {
+      throw new Error(`Cannot find block with id "${id}"`);
+    }
+  }
+
   async function commitDoc(name, id) {
     await writeFSDoc(dataDir, name, id);
   }
@@ -139,6 +156,7 @@ export default async function startFSDataSource(opts = {}) {
     getAllBlockIds,
 
     commitBlock,
+    commitBlockId,
     commitDoc,
     commitDocDestroy,
     commitDocMove,
