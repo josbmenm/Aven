@@ -1,0 +1,7 @@
+{
+  "aven": {
+    "moduleDependencies": [
+      "ajv"
+    ]
+  }
+}
