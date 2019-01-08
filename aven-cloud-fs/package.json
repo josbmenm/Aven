@@ -1,3 +1,7 @@
 {
-  "aven": {}
+  "aven": {
+    "moduleDependencies": [
+      "aven-cloud"
+    ]
+  }
 }

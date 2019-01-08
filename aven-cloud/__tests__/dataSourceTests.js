@@ -545,19 +545,18 @@ export default function testDataSource(startTestDataSource) {
       });
       expect(status.ready).toEqual(true);
     });
-    test('puts doc fails when a referenced block is missing', async () => {
-      const ds = await startTestDataSource({ domain: 'test' });
-      await expect(
-        ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' })
-      ).rejects.toThrow();
-    });
   });
 
   describe('doc storage', () => {
-    test('puts doc fails when an object is missing', async () => {
+    test.skip('puts doc fails when a referenced block is missing', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       await expect(
-        ds.dispatch({ type: 'PutDoc', domain: 'test', objectId: 'foo' })
+        ds.dispatch({
+          type: 'PutDoc',
+          domain: 'test',
+          name: 'foo',
+          id: 'wrong',
+        })
       ).rejects.toThrow();
     });
     test('put doc works', async () => {

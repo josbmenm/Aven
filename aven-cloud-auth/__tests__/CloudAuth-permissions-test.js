@@ -634,7 +634,7 @@ describe('Cloud auth Permissions', () => {
       name: '_auth',
     });
 
-    expect(result.value).toEqual(null);
+    expect(result.value).toEqual(undefined);
 
     await authDataSource.dispatch({
       type: 'PutPermissionRules',
