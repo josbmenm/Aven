@@ -21,6 +21,9 @@ const setAnimatedValueOnKey = (obj, key, value) => {
 
 const setLayoutOnKey = (obj, key, layout) => {
   const layoutObj = obj[key] || (obj[key] = {});
+  if (!layout) {
+    return;
+  }
   setAnimatedValueOnKey(layoutObj, 'w', layout.w);
   setAnimatedValueOnKey(layoutObj, 'h', layout.h);
   setAnimatedValueOnKey(layoutObj, 'x', layout.x);
@@ -89,8 +92,15 @@ const runSharedTransition = async (
       return await measureEl(element);
     })
   );
-  const transitionScreenLayout = await measureEl(transitionScreen.getEl());
-  const fromScreenLayout = await measureEl(fromScreen.getEl());
+
+  async function getScreenLayout(screen) {
+    if (!screen || !screen.getEl) {
+      return null;
+    }
+    return await measureEl(screen.getEl());
+  }
+  const transitionScreenLayout = await getScreenLayout(transitionScreen);
+  const fromScreenLayout = await getScreenLayout(fromScreen);
 
   setLayoutOnKey(transition, 'transitionScreenLayout', transitionScreenLayout);
   setLayoutOnKey(transition, 'fromScreenLayout', fromScreenLayout);
@@ -108,7 +118,9 @@ const runSharedTransition = async (
   )
     ? 1
     : 0;
+
   await new Promise(resolve => {
+    // animated bug here. this doesn't work:
     timing(transition.progress, {
       easing: Easing.out(Easing.cubic),
       duration: 600,
@@ -159,7 +171,6 @@ export class SharedFadeTransition extends React.Component {
           style={{
             flex: 1,
             opacity,
-            ...this.props.style,
           }}
         >
           {children}

@@ -37,15 +37,7 @@ const defaultCreateTransition = transition => {
 
 const defaultRunTransition = () => {};
 
-const defaultRenderContainer = (
-  transitionRouteKey,
-  transitions,
-  navigation,
-  transitioningFromState,
-  transitioningToState,
-  transitionRefs,
-  children,
-) => <React.Fragment>{children}</React.Fragment>;
+const DefaultContainerView = props => props.children;
 
 const getStateForNavChange = (props, state) => {
   // by this point we know the nav state has changed and it is safe to provide a new state. static
@@ -220,7 +212,7 @@ export class Transitioner extends React.Component {
       navState,
       descriptors,
     } = this.state;
-    const { navigation } = this.props;
+    const { navigation, navigationConfig } = this.props;
     const mainRouteKeys = navState.routes.map(r => r.key);
     let routeKeys = mainRouteKeys;
 
@@ -236,79 +228,72 @@ export class Transitioner extends React.Component {
     const transitionDescriptor =
       descriptors[transitionRouteKey] ||
       transitioningFromDescriptors[transitionRouteKey];
-    const renderContainerFunc =
-      (transitionDescriptor && transitionDescriptor.options.renderContainer) ||
-      defaultRenderContainer;
+    const ContainerView =
+      (navigationConfig && navigationConfig.ContainerView) ||
+      DefaultContainerView;
+    const transitioningToState = transitionRouteKey ? navigation.state : null;
+
+    const screens = routeKeys.map((key, index) => {
+      const ref =
+        this._transitionRefs[key] ||
+        (this._transitionRefs[key] = React.createRef());
+      const descriptor = descriptors[key] || transitioningFromDescriptors[key];
+      const C = descriptor.getComponent();
+
+      const aboveScreenRouteKeys = routeKeys.slice(index + 1);
+      let behindScreenStyles = aboveScreenRouteKeys.map(aboveScreenRouteKey => {
+        const aboveTransition = transitions[aboveScreenRouteKey];
+        const aboveScreenDescriptor =
+          descriptors[aboveScreenRouteKey] ||
+          transitioningFromDescriptors[aboveScreenRouteKey];
+        const { options } = aboveScreenDescriptor;
+        if (!aboveTransition || !options.getBehindTransitionAnimatedStyle) {
+          return {};
+        }
+        return options.getBehindTransitionAnimatedStyle(aboveTransition);
+      });
+
+      let transition = transitions[key];
+      if (behindScreenStyles.length === 0) {
+        // bizarre react-native bug that refuses to clear Animated.View styles unless you do something like this..
+        // to reproduce the problem, set a getBehindTransitionAnimatedStyle that puts opacity at 0.5
+        behindScreenStyles = [{ opacity: 1 }];
+      }
+      return (
+        <NavigationProvider key={key} value={descriptor.navigation}>
+          <Animated.View
+            key={key}
+            style={[{ ...StyleSheet.absoluteFillObject }, behindScreenStyles]}
+            pointerEvents={'auto'}
+          >
+            <C
+              transition={transition}
+              transitions={transitions}
+              transitioningFromState={transitioningFromState}
+              transitioningToState={transitioningToState}
+              transitionRouteKey={transitionRouteKey}
+              navigation={descriptor.navigation}
+              transitionRef={ref}
+            />
+          </Animated.View>
+        </NavigationProvider>
+      );
+    });
 
     return (
       <TransitionContext.Provider value={this._transitionContext}>
-        {renderContainerFunc(
-          transitionRouteKey,
-          transitions,
-          navigation,
-          transitioningFromState,
-          transitionRouteKey ? navigation.state : null,
-          this._transitionRefs,
-          routeKeys.map((key, index) => {
-            const ref =
-              this._transitionRefs[key] ||
-              (this._transitionRefs[key] = React.createRef());
-            const descriptor =
-              descriptors[key] || transitioningFromDescriptors[key];
-            const C = descriptor.getComponent();
-
-            const aboveScreenRouteKeys = routeKeys.slice(index + 1);
-            let behindScreenStyles = aboveScreenRouteKeys.map(
-              aboveScreenRouteKey => {
-                const aboveTransition = transitions[aboveScreenRouteKey];
-                const aboveScreenDescriptor =
-                  descriptors[aboveScreenRouteKey] ||
-                  transitioningFromDescriptors[aboveScreenRouteKey];
-                const { options } = aboveScreenDescriptor;
-                if (
-                  !aboveTransition ||
-                  !options.getBehindTransitionAnimatedStyle
-                ) {
-                  return {};
-                }
-                return options.getBehindTransitionAnimatedStyle(
-                  aboveTransition,
-                );
-              },
-            );
-
-            let transition = transitions[key];
-            if (behindScreenStyles.length === 0) {
-              // bizarre react-native bug that refuses to clear Animated.View styles unless you do something like this..
-              // to reproduce the problem, set a getBehindTransitionAnimatedStyle that puts opacity at 0.5
-              behindScreenStyles = [{ opacity: 1 }];
-            }
-            return (
-              <NavigationProvider key={key} value={descriptor.navigation}>
-                <Animated.View
-                  key={key}
-                  style={[
-                    { ...StyleSheet.absoluteFillObject },
-                    behindScreenStyles,
-                  ]}
-                  pointerEvents={'auto'}
-                >
-                  <C
-                    transition={transition}
-                    transitions={transitions}
-                    transitioningFromState={transitioningFromState}
-                    transitioningToState={
-                      transitionRouteKey ? navigation.state : null
-                    }
-                    transitionRouteKey={transitionRouteKey}
-                    navigation={descriptor.navigation}
-                    transitionRef={ref}
-                  />
-                </Animated.View>
-              </NavigationProvider>
-            );
-          }),
-        )}
+        <ContainerView
+          transitions={transitions}
+          navigation={navigation}
+          transitionRouteKey={transitionRouteKey}
+          transitioningFromState={transitioningFromState}
+          transitioningToState={transitioningToState}
+          transitionDescriptor={transitionDescriptor}
+          transitionRefs={this._transitionRefs}
+          {...this.props}
+        >
+          {screens}
+        </ContainerView>
       </TransitionContext.Provider>
     );
   }
