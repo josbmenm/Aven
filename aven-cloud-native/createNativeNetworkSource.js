@@ -1,6 +1,12 @@
 import { Observable, BehaviorSubject, Subject } from 'rxjs-compat';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
+const shouldLog = false;
+
+const log = (...data) => {
+  shouldLog && console.log(...data);
+};
+
 export default function createNativeNetworkSource(opts) {
   const httpEndpoint = `${opts.useSSL === false ? 'http' : 'https'}://${
     opts.authority
@@ -25,7 +31,10 @@ export default function createNativeNetworkSource(opts) {
     });
 
     if (res.status >= 400) {
-      throw new Error(await res.text());
+      const result = await res.text();
+      log('📣', action);
+      log('🚨', result);
+      throw new Error(result);
     }
     let result = await res.text();
     try {
@@ -33,15 +42,15 @@ export default function createNativeNetworkSource(opts) {
     } catch (e) {
       throw new Error('Expecting JSON but could not parse: ' + result);
     }
-    console.log('📣', action);
-    console.log('💨', result);
+    log('📣', action);
+    log('💨', result);
 
     return result;
   }
 
   function socketSendIfConnected(payload) {
     if (ws && ws.readyState === ReconnectingWebSocket.OPEN) {
-      console.log('📣', payload);
+      log('📣', payload);
       ws.send(JSON.stringify({ ...payload, clientId: wsClientId }));
     }
   }

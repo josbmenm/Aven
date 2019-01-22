@@ -1,8 +1,8 @@
 import { BehaviorSubject } from 'rxjs-compat';
 import createGenericDataSource from '../aven-cloud/createGenericDataSource';
+import SHA1 from 'crypto-js/sha1';
 
 const fs = require('fs-extra');
-const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
 const pathJoin = require('path').join;
 
@@ -23,7 +23,7 @@ async function readFSDoc(dataDir, name) {
       }
       children[child] = await readFSDoc(dataDir, pathJoin(name, child));
       childrenSet.add(child);
-    })
+    }),
   );
   return {
     children,
@@ -35,9 +35,7 @@ async function readFSDoc(dataDir, name) {
 async function writeFSBlock(dataDir, value) {
   const blocksDir = pathJoin(dataDir, 'blocks');
   const blockData = stringify(value);
-  const sha = crypto.createHash('sha1');
-  sha.update(blockData);
-  const id = sha.digest('hex');
+  const id = SHA1(blockData).toString();
   const blockPath = pathJoin(blocksDir, id);
   if (!(await fs.exists(blockPath))) {
     await fs.writeFile(blockPath, blockData);
@@ -94,13 +92,13 @@ export default async function startFSDataSource(opts = {}) {
 
   if (!dataDir) {
     throw new Error(
-      'Cannot start a FS data source without specifying a dataDir to store data files'
+      'Cannot start a FS data source without specifying a dataDir to store data files',
     );
   }
 
   if (!dataSourceDomain) {
     throw new Error(
-      'Cannot start a FS data source without specifying a domain'
+      'Cannot start a FS data source without specifying a domain',
     );
   }
 

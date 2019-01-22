@@ -2,7 +2,7 @@ export default function testDataSource(startTestDataSource) {
   test('basic put and get', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const putResult = await ds.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       domain: 'test',
       value: { foo: 'bar' },
       name: 'foo',
@@ -20,7 +20,7 @@ export default function testDataSource(startTestDataSource) {
   test('move doc shows in list', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const blk = await ds.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
@@ -55,7 +55,7 @@ export default function testDataSource(startTestDataSource) {
   test('move doc works', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const blk = await ds.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
@@ -98,16 +98,10 @@ export default function testDataSource(startTestDataSource) {
     expect(docs).toEqual([]);
 
     const blk = await ds.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
-    });
-    await ds.dispatch({
-      type: 'PutDoc',
-      domain: 'test',
-      name: 'foo',
-      id: blk.id,
     });
     docs = await ds.dispatch({
       type: 'ListDocs',
@@ -139,7 +133,7 @@ export default function testDataSource(startTestDataSource) {
     expect(docs.value).toEqual([]);
 
     const blk = await ds.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
@@ -186,16 +180,10 @@ export default function testDataSource(startTestDataSource) {
   test('move doc affects children too', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const blk = await ds.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
-    });
-    await ds.dispatch({
-      type: 'PutDoc',
-      domain: 'test',
-      name: 'foo',
-      id: blk.id,
     });
     await ds.dispatch({
       type: 'PutDoc',
@@ -292,16 +280,10 @@ export default function testDataSource(startTestDataSource) {
   test('can destroy parent docs and children go away', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const blk = await ds.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
-    });
-    await ds.dispatch({
-      type: 'PutDoc',
-      domain: 'test',
-      name: 'foo',
-      id: blk.id,
     });
     await ds.dispatch({
       type: 'PutDoc',
@@ -324,17 +306,11 @@ export default function testDataSource(startTestDataSource) {
 
   test('destroy doc works', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
-    const blk = await ds.dispatch({
-      type: 'PutBlock',
+    await ds.dispatch({
+      type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
-    });
-    await ds.dispatch({
-      type: 'PutDoc',
-      domain: 'test',
-      name: 'foo',
-      id: blk.id,
     });
     await ds.dispatch({
       type: 'DestroyDoc',
@@ -365,16 +341,10 @@ export default function testDataSource(startTestDataSource) {
       expect(docs).toEqual([]);
 
       const blk = await ds.dispatch({
-        type: 'PutBlock',
+        type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
         value: { foo: 'bar' },
-      });
-      await ds.dispatch({
-        type: 'PutDoc',
-        domain: 'test',
-        name: 'foo',
-        id: blk.id,
       });
 
       await ds.dispatch({
@@ -470,73 +440,6 @@ export default function testDataSource(startTestDataSource) {
     });
   });
 
-  describe('block storage', () => {
-    test('block put fails with invalid domain', async () => {
-      const ds = await startTestDataSource({ domain: 'test' });
-      await expect(
-        ds.dispatch({
-          type: 'PutBlock',
-          domain: 'test2',
-          value: { foo: 'bar' },
-          name: 'foo',
-        }),
-      ).rejects.toThrow();
-    });
-    test.skip('block put fails with missing doc name', async () => {
-      const ds = await startTestDataSource({ domain: 'test' });
-      await expect(
-        ds.dispatch({
-          type: 'PutBlock',
-          domain: 'test',
-          value: { foo: 'bar' },
-        }),
-      ).rejects.toThrow();
-    });
-
-    test('puts blocks without error', async () => {
-      const ds = await startTestDataSource({ domain: 'test' });
-      const putResult = await ds.dispatch({
-        type: 'PutBlock',
-        domain: 'test',
-        value: { foo: 'bar' },
-        name: 'foo',
-      });
-      expect(typeof putResult.id).toEqual('string');
-    });
-    test('puts and gets block', async () => {
-      const ds = await startTestDataSource({ domain: 'test' });
-      const putResult = await ds.dispatch({
-        type: 'PutBlock',
-        domain: 'test',
-        value: { foo: 'bar' },
-        name: 'foo',
-      });
-      const blk = await ds.dispatch({
-        type: 'GetBlock',
-        domain: 'test',
-        name: 'foo',
-        id: putResult.id,
-      });
-      expect(blk.value.foo).toEqual('bar');
-    });
-    test('puts and gets null block', async () => {
-      const ds = await startTestDataSource({ domain: 'test' });
-      const putResult = await ds.dispatch({
-        type: 'PutBlock',
-        domain: 'test',
-        name: 'foo',
-        value: null,
-      });
-      const blk = await ds.dispatch({
-        type: 'GetBlock',
-        domain: 'test',
-        name: 'foo',
-        id: putResult.id,
-      });
-      expect(blk.value).toEqual(null);
-    });
-  });
-
   describe('basic data source setup', () => {
     test('gets status reports ready', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
@@ -556,7 +459,7 @@ export default function testDataSource(startTestDataSource) {
           domain: 'test',
           name: 'foo',
           id: 'wrong',
-        }),
+        })
       ).rejects.toThrow();
     });
 
@@ -582,7 +485,7 @@ export default function testDataSource(startTestDataSource) {
       expect(gotBlk.value.foo).toEqual('bar');
     });
 
-    test.only('put doc value correctly dereferences blocks', async () => {
+    test('put doc value correctly dereferences blocks', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       await ds.dispatch({
         type: 'PutDocValue',
@@ -614,10 +517,16 @@ export default function testDataSource(startTestDataSource) {
     test('put doc works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       const blk = await ds.dispatch({
-        type: 'PutBlock',
+        type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
         value: { foo: 'bar' },
+      });
+      await ds.dispatch({
+        type: 'PutDocValue',
+        domain: 'test',
+        name: 'foo',
+        value: null,
       });
       await ds.dispatch({
         type: 'PutDoc',
@@ -644,7 +553,7 @@ export default function testDataSource(startTestDataSource) {
     test('post doc works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       const blk = await ds.dispatch({
-        type: 'PutBlock',
+        type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
         value: { foo: 'bar' },
@@ -669,16 +578,10 @@ export default function testDataSource(startTestDataSource) {
     test('get doc value works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       const blk = await ds.dispatch({
-        type: 'PutBlock',
+        type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
         value: { foo: 'bar' },
-      });
-      await ds.dispatch({
-        type: 'PutDoc',
-        domain: 'test',
-        name: 'foo',
-        id: blk.id,
       });
       const doc = await ds.dispatch({
         type: 'GetDocValue',
@@ -694,23 +597,17 @@ export default function testDataSource(startTestDataSource) {
       const ds = await startTestDataSource({ domain: 'test' });
       // note: we run observeDoc before the doc exists to intentionally test that the subscription works on an empty doc
       const obs = await ds.observeDoc('test', 'foo');
-      const blk1 = await ds.dispatch({
-        type: 'PutBlock',
-        domain: 'test',
-        name: 'foo',
-        value: { foo: 'bar' },
-      });
       const blk2 = await ds.dispatch({
-        type: 'PutBlock',
+        type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
         value: { foo: 'baz' },
       });
       await ds.dispatch({
-        type: 'PutDoc',
+        type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
-        id: blk1.id,
+        value: { foo: 'bar' },
       });
       let lastObserved = undefined;
       obs.subscribe({
@@ -730,13 +627,13 @@ export default function testDataSource(startTestDataSource) {
     test('observe cleanup works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       const blk1 = await ds.dispatch({
-        type: 'PutBlock',
+        type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
         value: { foo: 'bar' },
       });
       const blk2 = await ds.dispatch({
-        type: 'PutBlock',
+        type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
         value: { foo: 'baz' },
@@ -768,19 +665,19 @@ export default function testDataSource(startTestDataSource) {
     test('observe same doc multiple times', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       const blk1 = await ds.dispatch({
-        type: 'PutBlock',
+        type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
         value: { foo: 'bar' },
       });
       const blk2 = await ds.dispatch({
-        type: 'PutBlock',
+        type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
         value: { foo: 'baz' },
       });
       const blk3 = await ds.dispatch({
-        type: 'PutBlock',
+        type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
         value: { foo: 42 },

@@ -40,7 +40,10 @@ export function createDocPool({
         domain,
         name: localName,
         blockCache: blockCache,
-        onRename: newName => move(localName, newName),
+        onRename: newName => {
+          console.log('wow rename', newName, localName, onGetParentName());
+          return move(localName, newName);
+        },
         onGetParentName,
       });
     }
@@ -61,14 +64,21 @@ export function createDocPool({
         `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`
       );
     }
-    _docs[toName] = _docs[fromName];
-    _docs[toName].$setName(toName);
+    const doc = _docs[fromName];
+    if (!doc) {
+      throw new Error(
+        `Cannot move "${fromName}" to "${toName}" because it does not exist`
+      );
+    }
+    _docs[toName] = doc;
+    doc.$setName(toName);
     delete _docs[fromName];
   }
 
   function post() {
     const localName = uuid();
-    _docs[localName] = createCloudDoc({
+    console.log('posting under', onGetParentName(), localName);
+    const postedDoc = createCloudDoc({
       dataSource,
       domain,
       name: localName,
@@ -77,7 +87,9 @@ export function createDocPool({
       onRename: newName => move(localName, newName),
       isUnposted: true,
     });
-    return _docs[localName];
+    console.log('assigning posted doc ' + localName);
+    _docs[localName] = postedDoc;
+    return postedDoc;
   }
 
   return { get, move, post };
@@ -117,22 +129,19 @@ export default function createCloudDoc({
 
   let postingInProgress = null;
 
-  async function ensurePosted(obj) {
-    if (docState.value.isPosted) {
-      return null;
-    }
+  async function doPost(block) {
     const parent = onGetParentName();
-    const puttingFromId = r.id;
+    const puttingFromId = cloudDoc.id;
     setState({
-      id: obj.id,
+      id: block.id,
       puttingFromId,
     });
     if (!postingInProgress) {
       let postData = { id: null };
-      if (obj && obj.getValue()) {
-        postData = { value: obj.getValue() };
-      } else if (obj) {
-        postData = { id: obj.id };
+      if (block && block.getValue()) {
+        postData = { value: block.getValue() };
+      } else if (block) {
+        postData = { id: block.id };
       }
       postingInProgress = dataSource.dispatch({
         type: 'PostDoc',
@@ -162,10 +171,10 @@ export default function createCloudDoc({
       setState({
         isPosted: true,
       });
-      if (obj.id === result.id) {
-        return obj;
+      if (block.id !== result.id) {
+        return null; // probably this is not an error because there may have been race conditions
       }
-      return null; // probably this is not an error because there may have been race conditions with multiple calls to ensurePosted
+      return block;
     }
     throw new Error('Could not post this doc!');
   }
@@ -227,9 +236,9 @@ export default function createCloudDoc({
 
   async function fetchValue() {
     await fetch();
-    const obj = getBlock();
-    if (obj) {
-      await obj.fetch();
+    const block = getBlock();
+    if (block) {
+      await block.fetch();
     }
   }
   const observe = Observable.create(observer => {
@@ -280,15 +289,15 @@ export default function createCloudDoc({
   }
 
   function _getBlockWithValue(value) {
-    const obj = createCloudBlock({
+    const block = createCloudBlock({
       onNamedDispatch: _namedDispatch,
       value,
     });
 
-    if (blockCache[obj.id]) {
-      return blockCache[obj.id];
+    if (blockCache[block.id]) {
+      return blockCache[block.id];
     }
-    return (blockCache[obj.id] = obj);
+    return (blockCache[block.id] = block);
   }
 
   function getBlock(requestedId) {
@@ -310,51 +319,73 @@ export default function createCloudDoc({
     if (!id) {
       return undefined;
     }
-    const obj = _getBlockWithId(id);
-    return obj.getValue();
+    const block = _getBlockWithId(id);
+    return block.getValue();
   }
 
   async function put(value) {
-    const obj = _getBlockWithValue(value);
-    await putBlock(obj);
+    const block = _getBlockWithValue(value);
+    await putBlock(block);
+    return { id: block.id };
   }
 
-  async function putId(objId) {
+  async function putId(blockId) {
+    // err.. shouldn't this be using state.puttingFromId to avoid race conditions??
+    // review this and perhaps merge with `putBlock`
     await dataSource.dispatch({
       type: 'PutDoc',
       domain,
       name: getFullName(),
-      id: objId,
+      id: blockId,
     });
   }
 
-  async function write(value) {
-    await ensurePosted();
-    const obj = _getBlockWithValue(value);
-    await obj.put();
-    return { id: obj.id };
-  }
+  let postingPromise = null;
 
-  async function putBlock(obj) {
-    const postResult = await ensurePosted(obj);
-    if (postResult === obj) {
+  async function putBlock(block) {
+    let postResult = null;
+
+    if (!docState.value.isPosted && !postingPromise) {
+      postingPromise = doPost(block);
+      await postingPromise;
+      postingPromise = null;
+      return;
+    }
+
+    if (postingPromise) {
+      await postingPromise;
+    }
+
+    if (postResult === block) {
       return;
     }
 
     const state = getState();
     if (state.puttingFromId) {
-      throw new Error(
-        `Cannot putBlock of "${name}" while another put is in progress!`
+      console.log(
+        `Warning.. putBlock of "${name}" while another put from ${
+          state.puttingFromId
+        } is in progress`
       );
     }
     const lastId = state.id;
     setState({
-      id: obj.id,
+      id: block.id,
       puttingFromId: state.id,
     });
     try {
-      await obj.put();
-      await putId(obj.id);
+      if (block.isPublished()) {
+        await putId(block.id);
+      } else {
+        await dataSource.dispatch({
+          type: 'PutDocValue',
+          domain,
+          name: getFullName(),
+          id: block.id,
+          value: block.getValue(),
+        });
+        block.setPutTime();
+      }
 
       setState({
         puttingFromId: null,
@@ -366,20 +397,20 @@ export default function createCloudDoc({
         id: lastId,
       });
       console.error(e);
-      throw new Error(`Failed to putBlockId "${obj.id}" to "${name}"!`);
+      throw new Error(`Failed to putBlockId "${block.id}" to "${name}"!`);
     }
   }
 
   const observeValue = observe
-    .map(rr => {
-      if (rr.value !== undefined) {
-        return observeStatic(rr.value);
+    .map(cloudDocValue => {
+      if (cloudDocValue.value !== undefined) {
+        return observeStatic(cloudDocValue.value);
       }
-      if (!rr.id) {
+      if (!cloudDocValue.id) {
         return observeNull;
       }
-      const obj = _getBlockWithId(rr.id);
-      return obj.observeValue;
+      const block = _getBlockWithId(cloudDocValue.id);
+      return block.observeValue;
     })
     .switch();
 
@@ -394,8 +425,8 @@ export default function createCloudDoc({
     if (typeof docValue !== 'string') {
       throw new Error(`Cannot look up block ID in ${name} on ${lookup.join()}`);
     }
-    const connectedObj = _getBlockWithId(docValue);
-    return connectedObj;
+    const connectedBlock = _getBlockWithId(docValue);
+    return connectedBlock;
   }
   function observeConnectedValue(lookup) {
     return observeValue
@@ -418,8 +449,8 @@ export default function createCloudDoc({
   }
 
   async function getConnectedValue(lookup) {
-    const obj = getBlock();
-    const connected = lookupDocBlock(obj.value, lookup);
+    const block = getBlock();
+    const connected = lookupDocBlock(block.value, lookup);
     if (connected) {
       return connected.getValue();
     }
@@ -441,7 +472,7 @@ export default function createCloudDoc({
     // todo, send this to the server!
   }
 
-  const r = {
+  const cloudDoc = {
     $setName,
     get: docs.get,
     post: docs.post,
@@ -452,7 +483,6 @@ export default function createCloudDoc({
     fetch,
     put,
     putId,
-    putBlock,
     fetchValue,
     fetchConnectedValue,
     getConnectedValue,
@@ -460,7 +490,6 @@ export default function createCloudDoc({
     getValue,
     observeValue,
     observe,
-    write,
     destroy,
     observeConnectedValue,
     transact,
@@ -530,7 +559,7 @@ export default function createCloudDoc({
         .distinctUntilChanged(),
       getValue: () => {
         const o = this.getValue();
-        const expandSpec = expandFn(o, r);
+        const expandSpec = expandFn(o, this);
         const expanded = doExpansion(expandSpec);
         return expanded;
       },
@@ -539,7 +568,6 @@ export default function createCloudDoc({
     expanded.expand = expand.bind(expanded);
     return expanded;
   }
-  r.expand = expand;
 
   function map(mapFn) {
     const mapped = {
@@ -558,8 +586,8 @@ export default function createCloudDoc({
     mapped.expand = expand.bind(mapped);
     return mapped;
   }
-  r.map = map.bind(r);
-  r.expand = expand.bind(r);
+  cloudDoc.map = map.bind(cloudDoc);
+  cloudDoc.expand = expand.bind(cloudDoc);
 
-  return r;
+  return cloudDoc;
 }

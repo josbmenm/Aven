@@ -40,44 +40,15 @@ describe('basic fs source setup', () => {
 });
 
 describe('persistence', () => {
-  test('block persistence', async () => {
-    const dataDir = pathJoin(TMP_DIR, uuid());
-
-    const ds1 = await startTestDataSource({ dataDir });
-    const putResult = await ds1.dispatch({
-      type: 'PutBlock',
-      name: 'foo',
-      domain: 'test',
-      value: { bar: 42 },
-    });
-    await ds1.close();
-
-    const ds2 = await startTestDataSource({ dataDir });
-    const result = await ds2.dispatch({
-      type: 'GetBlock',
-      name: 'foo',
-      domain: 'test',
-      id: putResult.id,
-    });
-    expect(result.value.bar).toEqual(42);
-    await ds2.close();
-  });
-
   test('doc persistence', async () => {
     const dataDir = pathJoin(TMP_DIR, uuid());
 
     const ds1 = await startTestDataSource({ dataDir });
-    const putBlockResult = await ds1.dispatch({
-      type: 'PutBlock',
+    const putResult = await ds1.dispatch({
+      type: 'PutDocValue',
       name: 'foo',
       domain: 'test',
       value: { bar: 42 },
-    });
-    const putResult = await ds1.dispatch({
-      type: 'PutDoc',
-      name: 'foo',
-      domain: 'test',
-      id: putBlockResult.id,
     });
     await ds1.close();
 
@@ -87,7 +58,9 @@ describe('persistence', () => {
       name: 'foo',
       domain: 'test',
     });
-    expect(result.id).toEqual(putBlockResult.id);
+    expect(result.id).toEqual(putResult.id);
     await ds2.close();
   });
+
+  // should also test persitence of doc children lists, and deeply referenced blocks
 });

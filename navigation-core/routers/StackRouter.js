@@ -205,18 +205,36 @@ export default (routeConfigs, stackConfig = {}) => {
 
       const activeChildRoute = state.routes[state.index];
 
+      invariant(
+        !!activeChildRoute,
+        'Invalid navigation state provided. There is no route at state.routes[state.index]'
+      );
+      console.log('getStateForAction', { action, state });
+
       if (
         !isResetToRootStack(action) &&
         action.type !== NavigationActions.NAVIGATE
       ) {
         // Let the active child router handle the action
         const activeChildRouter = childRouters[activeChildRoute.routeName];
+
+        console.log('handling child: ', {
+          activeChildRouter: !!activeChildRouter,
+          activeChildRoute,
+        });
         if (activeChildRouter) {
           const route = activeChildRouter.getStateForAction(
             action,
             activeChildRoute
           );
+          console.log('RESULTING ROUTE', route);
           if (route !== null && route !== activeChildRoute) {
+            console.log(
+              'RETURNING REPLACED!',
+              state,
+              activeChildRoute.key,
+              route
+            );
             return StateUtils.replaceAt(
               state,
               activeChildRoute.key,

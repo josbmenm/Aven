@@ -34,10 +34,10 @@ describe('object generic behavior', () => {
 });
 
 describe('basic object DataSource interaction', () => {
-  test('fetches objects', async () => {
+  test('fetches blocks', async () => {
     const m = startMemoryDataSource({ domain: 'test' });
     const { id } = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
@@ -56,7 +56,7 @@ describe('basic object DataSource interaction', () => {
   test('fetches null objects', async () => {
     const m = startMemoryDataSource({ domain: 'test' });
     const { id } = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: null,
@@ -72,34 +72,13 @@ describe('basic object DataSource interaction', () => {
     expect(c.getValue()).toEqual(null);
     expect(c.getBlock().lastFetchTime).not.toBe(null);
   });
-  test('puts objects', async () => {
-    const m = startMemoryDataSource({ domain: 'test' });
-
-    const c = createCloudBlock({
-      onNamedDispatch: action =>
-        m.dispatch({ ...action, name: 'foo', domain: 'test' }),
-      value: { foo: 42 },
-    });
-    expect(c.getBlock().lastPutTime).toBe(null);
-    await c.put();
-    expect(c.getBlock().lastPutTime).not.toBe(null);
-
-    const obj = await m.dispatch({
-      type: 'GetBlock',
-      domain: 'test',
-      name: 'foo',
-      id: c.id,
-    });
-
-    expect(obj.value.foo).toEqual(42);
-  });
 });
 
 describe('observing', () => {
   test('observe obj', async () => {
     const m = startMemoryDataSource({ domain: 'test' });
     const obj1 = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
@@ -123,7 +102,7 @@ describe('observing', () => {
   test('observe value', async () => {
     const m = startMemoryDataSource({ domain: 'test' });
     const obj1 = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },

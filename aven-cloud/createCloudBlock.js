@@ -3,11 +3,18 @@ import SHA1 from 'crypto-js/sha1';
 
 const JSONStringify = require('json-stable-stringify');
 
-export default function createCloudBlock({ onNamedDispatch, id, value }) {
+export default function createCloudBlock({
+  onNamedDispatch,
+  id,
+  value,
+  lastFetchTime, // should be set if this block came from the server..
+}) {
   let blockId = false;
   if (value !== undefined) {
     const valueString = JSONStringify(value);
     blockId = SHA1(valueString).toString();
+    console.log('CLIENT checksum', blockId, valueString.length);
+    console.log(valueString);
   } else {
     blockId = id;
   }
@@ -28,7 +35,7 @@ export default function createCloudBlock({ onNamedDispatch, id, value }) {
     // sync state:
     isConnected: value !== undefined,
     lastPutTime: null,
-    lastFetchTime: null,
+    lastFetchTime: lastFetchTime || null,
 
     // block data:
     value,
@@ -59,7 +66,14 @@ export default function createCloudBlock({ onNamedDispatch, id, value }) {
   function getState() {
     return blockState.value;
   }
-
+  function isPublished() {
+    return !!blockState.value.lastPutTime || !!blockState.value.lastFetchTime;
+  }
+  function setPutTime() {
+    setState({
+      lastPutTime: Date.now(),
+    });
+  }
   function getValue() {
     return getState().value;
   }
@@ -97,27 +111,27 @@ export default function createCloudBlock({ onNamedDispatch, id, value }) {
     await fetch();
   }
 
-  async function put() {
-    if (getState().value === undefined) {
-      throw new Error(`Cannot put empty value from block "${blockId}"!`);
-    }
-    const res = await onNamedDispatch({
-      type: 'PutBlock',
-      value: getState().value,
-    });
-    setState({
-      lastPutTime: Date.now(),
-    });
-    if (res.id !== blockId) {
-      // if we get here, we are truly screwed!
-      throw new Error(
-        `Server and client blockIds do not match! Server: ${
-          res.id
-        }, Client: ${blockId}`
-      );
-    }
-    return res;
-  }
+  // async function put() {
+  //   if (getState().value === undefined) {
+  //     throw new Error(`Cannot put empty value from block "${blockId}"!`);
+  //   }
+  //   const res = await onNamedDispatch({
+  //     type: 'PutBlock',
+  //     value: getState().value,
+  //   });
+  //   setState({
+  //     lastPutTime: Date.now(),
+  //   });
+  //   if (res.id !== blockId) {
+  //     // if we get here, we are truly screwed!
+  //     throw new Error(
+  //       `Server and client blockIds do not match! Server: ${
+  //         res.id
+  //       }, Client: ${blockId}`
+  //     );
+  //   }
+  //   return res;
+  // }
 
   // function getValue() {
   //   return this._state.value;
@@ -135,7 +149,8 @@ export default function createCloudBlock({ onNamedDispatch, id, value }) {
   // };
   return {
     id: blockId,
-    put,
+    isPublished,
+    setPutTime,
     getValue,
     fetch,
     fetchValue,

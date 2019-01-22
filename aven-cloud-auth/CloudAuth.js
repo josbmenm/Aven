@@ -10,16 +10,10 @@ function thanksVeryMuch(dispatch) {
   };
 }
 async function writeDocValue(dataSource, domain, name, value) {
-  const block = await thanksVeryMuch(dataSource.dispatch)({
-    type: 'PutBlock',
+  await thanksVeryMuch(dataSource.dispatch)({
+    type: 'PutDocValue',
     domain,
     value,
-    name,
-  });
-  await thanksVeryMuch(dataSource.dispatch)({
-    type: 'PutDoc',
-    domain,
-    id: block.id,
     name,
   });
 }
@@ -541,7 +535,7 @@ export default function CloudAuth({ dataSource, methods }) {
 
   const readActions = ['GetBlock', 'GetDoc', 'GetDocValue', 'ListDocs'];
   const postActions = ['PostDoc'];
-  const writeActions = ['PutBlock', 'PutDoc'];
+  const writeActions = ['PutDoc', 'PutDocValue'];
   const adminActions = ['DestroyDoc'];
 
   function guardAction(dispatch, actionType, permissionLevel) {

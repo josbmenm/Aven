@@ -8,7 +8,44 @@ describe('schema validation on memory data source', () => {
     });
     const schemaDs = createSchemaDataSource({ dataSource });
     await dataSource.dispatch({
-      type: 'PutDoc',
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo/_schema',
+      value: {
+        self: {
+          $schema: 'http://json-schema.org/draft-07/schema#',
+          title: 'FooPerson',
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: "The person's name.",
+            },
+            age: {
+              description:
+                'Age in years which must be equal to or greater than zero.',
+              type: 'integer',
+              minimum: 0,
+            },
+          },
+        },
+      },
+    });
+
+    expect(
+      schemaDs.dispatch({
+        type: 'PutDocValue',
+        domain: 'test',
+        name: 'foo/_schema',
+        value: { invalid: 'person' },
+      })
+    ).rejects.toThrow();
+
+    await schemaDs.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo/_schema',
+      value: { invalid: 'person' },
     });
   });
 });

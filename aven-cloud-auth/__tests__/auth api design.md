@@ -98,7 +98,7 @@ authentication
 
 await session = createSession({
 accountId: uuid(),
-authInfo: { type: email, email: foo@example.com, messageContext: 'reciept', messageParams: {...recieptParams} }
+authInfo: { type: email, email: foo@example.com, messageContext: 'receipt', messageParams: {...receiptParams} }
 })
 
 == story: create account with email/sms

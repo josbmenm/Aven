@@ -36,28 +36,21 @@ async function establishPermissionsTestData() {
   });
   const rootSession = rootSessionCreated.session;
 
-  const fooBlock = await authDataSource.dispatch({
-    type: 'PutBlock',
-    auth: rootSession,
-    domain: 'test',
-    name: 'something',
-    value: { foo: 'bar' },
-  });
   const barBlock = await authDataSource.dispatch({
-    type: 'PutBlock',
+    type: 'PutDocValue',
     auth: rootSession,
     domain: 'test',
     name: 'something',
     value: { foo: 'baz' },
   });
-
-  await authDataSource.dispatch({
-    type: 'PutDoc',
+  const fooBlock = await authDataSource.dispatch({
+    type: 'PutDocValue',
     auth: rootSession,
     domain: 'test',
     name: 'something',
-    id: fooBlock.id,
+    value: { foo: 'bar' },
   });
+
   return {
     fooBlock,
     barBlock,

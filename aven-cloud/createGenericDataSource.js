@@ -53,7 +53,7 @@ function _renderDoc({ id }) {
 function verifyDomain(inputDomain, dataSourceDomain) {
   if (inputDomain !== dataSourceDomain) {
     throw new Error(
-      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`,
+      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`
     );
   }
 }
@@ -111,33 +111,61 @@ export default function createGenericDataSource({
     if (blockData.type === 'BlockReference') {
       if (blockData.value) {
         const { value: referenceValue, refs } = await commitDeepBlock(
-          blockData.value,
+          blockData.value
         );
         const { id } = await commitBlock(referenceValue, refs);
         return { value: { id, type: 'BlockReference' }, refs: [id] };
       } else if (!blockData.id) {
         throw new Error(
-          `This block includes a {type: 'BlockReference'}, without a value or an id!`,
+          `This block includes a {type: 'BlockReference'}, without a value or an id!`
         );
       }
     }
-    const outputValue = {};
+    let outputValue = {};
     let outputRefs = new Set();
-    await Promise.all(
-      Object.keys(blockData).map(async blockDataKey => {
-        const innerBlock = blockData[blockDataKey];
-        const { value, refs } = await commitDeepBlock(innerBlock);
-        refs.forEach(ref => outputRefs.add(ref));
-        outputValue[blockDataKey] = value;
-      }),
-    );
+    if (blockData instanceof Array) {
+      outputValue = [];
+      await Promise.all(
+        blockData.map(async innerBlock => {
+          const { value, refs } = await commitDeepBlock(innerBlock);
+          refs.forEach(ref => outputRefs.add(ref));
+          outputValue.push(value);
+        })
+      );
+    } else {
+      await Promise.all(
+        Object.keys(blockData).map(async blockDataKey => {
+          const innerBlock = blockData[blockDataKey];
+          const { value, refs } = await commitDeepBlock(innerBlock);
+          refs.forEach(ref => outputRefs.add(ref));
+          outputValue[blockDataKey] = value;
+        })
+      );
+    }
     if (outputRefs.size > getMaxBlockRefCount()) {
       throw new Error(
-        `This block has too many BlockReferences, you should paginate or compress instead. You can defer this error with setMaxBlockRefCount`,
+        `This block has too many BlockReferences, you should paginate or compress instead. You can defer this error with setMaxBlockRefCount`
       );
     }
 
     return { value: outputValue, refs: [...outputRefs] };
+  }
+
+  async function _putDoc(name, id) {
+    await commitDoc(name, id);
+    const memoryDoc = getMemoryNode(name, true);
+    memoryDoc.id = id;
+    if (memoryDoc.behavior) {
+      memoryDoc.behavior.next(_renderDoc(memoryDoc));
+    } else {
+      memoryDoc.behavior = new BehaviorSubject(_renderDoc(memoryDoc));
+    }
+  }
+
+  async function _putBlock(fullValue) {
+    const { value, refs } = await commitDeepBlock(fullValue);
+    const block = await commitBlock(value, refs);
+    return block;
   }
 
   async function PutDoc({ domain, name, id }) {
@@ -145,29 +173,28 @@ export default function createGenericDataSource({
     if (id !== null) {
       await commitBlockId(id);
     }
-    await commitDoc(name, id);
-    const memoryDoc = getMemoryNode(name, true);
-    memoryDoc.id = id;
-    if (memoryDoc.behavior) {
-      memoryDoc.behavior.next(_renderDoc(memoryDoc));
-    } else {
-      memoryDoc.behavior = new BehaviorSubject(_renderDoc(memoryDoc));
-    }
+    await _putDoc(name, id);
   }
 
-  async function PutDocValue({ domain, name, value }) {
+  async function PutDocValue({ domain, name, value, id }) {
     verifyDomain(domain, dataSourceDomain);
-    const { value: referenceValue, refs } = await commitDeepBlock(value);
-    const blk = await commitBlock(referenceValue, refs);
-    const id = blk.id;
-    await commitDoc(name, id);
+    if (value === undefined) {
+      throw new Error('Must provide value to PutDocValue');
+    }
+    const { id: blockId } = await _putBlock(value);
+    if (id && id !== blockId) {
+      console.log('huh', { id, blockId });
+      throw new Error('Id not match!');
+    }
+    await commitDoc(name, blockId);
     const memoryDoc = getMemoryNode(name, true);
-    memoryDoc.id = id;
+    memoryDoc.id = blockId;
     if (memoryDoc.behavior) {
       memoryDoc.behavior.next(_renderDoc(memoryDoc));
     } else {
       memoryDoc.behavior = new BehaviorSubject(_renderDoc(memoryDoc));
     }
+    return { id: blockId, name, domain };
   }
 
   function publishChildrenBehavior(memoryDoc) {
@@ -202,10 +229,10 @@ export default function createGenericDataSource({
       throw new Error('Invalid use. ', { domain, name, id });
     }
     const postedName = name ? pathJoin(name, uuid()) : uuid();
-    if (!id && value !== undefined) {
-      const block = await PutBlock({ domain, name: postedName, value });
-      await PutDoc({ domain, name: postedName, id: block.id });
-      return { name: postedName, id: block.id };
+    if (value !== undefined) {
+      const { id } = await _putBlock(value);
+      await _putDoc(postedName, id);
+      return { name: postedName, id };
     } else {
       await PutDoc({ domain, name: postedName, id });
       return { name: postedName, id };
@@ -240,15 +267,15 @@ export default function createGenericDataSource({
     return { id, value };
   }
 
-  async function PutBlock({ value, name, domain }) {
-    // if (!name) {
-    //   throw new Error('Name must be provided while getting a block!');
-    //   // and ACTUALLY, shouldn't we actually save this block under the context of this doc??
-    // }
-    verifyDomain(domain, dataSourceDomain);
-    const { value: referenceValue, refs } = await commitDeepBlock(value);
-    return await commitBlock(referenceValue, refs);
-  }
+  // async function PutBlock({ value, name, domain }) {
+  //   // if (!name) {
+  //   //   throw new Error('Name must be provided while getting a block!');
+  //   //   // and ACTUALLY, shouldn't we actually save this block under the context of this doc??
+  //   // }
+  //   verifyDomain(domain, dataSourceDomain);
+  //   const { value: referenceValue, refs } = await commitDeepBlock(value);
+  //   return await commitBlock(referenceValue, refs);
+  // }
 
   async function GetDoc({ domain, name }) {
     verifyDomain(domain, dataSourceDomain);
@@ -337,7 +364,7 @@ export default function createGenericDataSource({
       PutDoc,
       PutDocValue,
       PostDoc,
-      PutBlock,
+      // PutBlock,
       GetBlock,
       GetDoc,
       GetDocValue,

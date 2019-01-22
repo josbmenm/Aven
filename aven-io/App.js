@@ -54,6 +54,7 @@ function Home() {
 const DocsRouter = SwitchRouter({
   DocsOverview: require('./docs/Aven-Overview').default,
   AuthMethods: require('./docs/Auth-Methods').default,
+  Brainstorm: require('./docs/Auth-Methods').default,
 });
 
 function Sidebar({ descriptors, aboveList }) {

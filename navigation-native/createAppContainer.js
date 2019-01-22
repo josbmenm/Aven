@@ -150,11 +150,7 @@ export default function createNavigationContainer(Component) {
     };
 
     _onNavigationStateChange(prevNav, nav, action) {
-      if (
-        typeof this.props.onNavigationStateChange === 'undefined' &&
-        this._isStateful() &&
-        !!process.env.REACT_NAV_LOGGING
-      ) {
+      if (this._isStateful() && !!process.env.REACT_NAV_LOGGING) {
         if (console.group) {
           console.group('Navigation Dispatch: ');
           console.log('Action: ', action);
@@ -210,8 +206,10 @@ export default function createNavigationContainer(Component) {
       let parsedUrl = null;
       let startupStateJSON = null;
       if (enableURLHandling !== false) {
-        startupStateJSON =
-          persistenceKey && (await AsyncStorage.getItem(persistenceKey));
+        if (persistenceKey) {
+          _reactNavigationIsHydratingState = true;
+          startupStateJSON = await AsyncStorage.getItem(persistenceKey);
+        }
         const url = await Linking.getInitialURL();
         parsedUrl = url && urlToPathAndParams(url, uriPrefix);
       }
@@ -221,20 +219,23 @@ export default function createNavigationContainer(Component) {
       // due to changes while async function was resolving
       let action = this._initialAction;
       let startupState = this.state.nav;
+
+      // Use persisted state from AsyncStorage. Unfortunately this will squash
+      // any changes made while AsyncStorage was loading..
+      if (startupStateJSON) {
+        try {
+          startupState = JSON.parse(startupStateJSON);
+          !!process.env.REACT_NAV_LOGGING &&
+            console.log('Loaded previous Navigation State', startupState);
+        } catch (e) {
+          /* do nothing */
+        }
+      }
+
       if (!startupState) {
         !!process.env.REACT_NAV_LOGGING &&
           console.log('Init new Navigation State');
         startupState = Component.router.getStateForAction(action);
-      }
-
-      // Pull persisted state from AsyncStorage
-      if (startupStateJSON) {
-        try {
-          startupState = JSON.parse(startupStateJSON);
-          _reactNavigationIsHydratingState = true;
-        } catch (e) {
-          /* do nothing */
-        }
       }
 
       // Pull state out of URL

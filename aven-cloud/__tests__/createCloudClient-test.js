@@ -28,7 +28,7 @@ describe('client doc behavior', () => {
     expect(doc.getName()).toBe('foo');
     await doc.fetch();
     const first = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       name: 'foo',
       domain: 'd',
       value: { count: 12 },
@@ -52,7 +52,7 @@ describe('client doc behavior', () => {
     expect(doc.getName()).toBe('foo');
     await doc.fetch();
     const first = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       name: 'foo',
       domain: 'd',
       value: { count: 12 },
@@ -130,13 +130,13 @@ describe('client doc map', () => {
   test('fetches mapped docs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const first = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       name: 'foo',
       domain: 'd',
       value: { count: 1 },
     });
     const second = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       name: 'foo',
       domain: 'd',
       value: { count: 2 },
@@ -166,13 +166,13 @@ describe('client doc map', () => {
   test('fetches chained mapped docs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const first = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       name: 'foo',
       domain: 'd',
       value: { count: 1 },
     });
     const second = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       name: 'foo',
       domain: 'd',
       value: { count: 2 },
@@ -203,25 +203,25 @@ describe('client doc map', () => {
   test('fetches expand docs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });
     const firstCount = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       name: 'foo',
       domain: 'd',
       value: { count: 12 },
     });
     const first = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       name: 'foo',
       domain: 'd',
       value: { countObj: firstCount.id },
     });
     const secondCount = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       name: 'foo',
       domain: 'd',
       value: { count: 42 },
     });
     const second = await m.dispatch({
-      type: 'PutBlock',
+      type: 'PutDocValue',
       name: 'foo',
       domain: 'd',
       value: { countObj: secondCount.id },
