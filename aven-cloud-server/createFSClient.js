@@ -28,7 +28,7 @@ export default function createFSClient({ client }) {
         } else {
           return await uploadFile({ filePath, writeTemporary });
         }
-      }),
+      })
     );
     const files = {};
     filesInDir.forEach((fileName, index) => {

@@ -77,7 +77,6 @@ export function createDocPool({
 
   function post() {
     const localName = uuid();
-    console.log('posting under', onGetParentName(), localName);
     const postedDoc = createCloudDoc({
       dataSource,
       domain,
@@ -87,7 +86,6 @@ export function createDocPool({
       onRename: newName => move(localName, newName),
       isUnposted: true,
     });
-    console.log('assigning posted doc ' + localName);
     _docs[localName] = postedDoc;
     return postedDoc;
   }

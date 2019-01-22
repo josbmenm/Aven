@@ -4,6 +4,8 @@ import uuid from 'uuid/v1';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import { getListDocName } from '../aven-cloud-utils/MetaDocNames';
 import { getMaxBlockRefCount } from './maxBlockRefCount';
+import SHA1 from 'crypto-js/sha1';
+const stringify = require('json-stable-stringify');
 
 const pathJoin = require('path').join;
 
@@ -183,7 +185,6 @@ export default function createGenericDataSource({
     }
     const { id: blockId } = await _putBlock(value);
     if (id && id !== blockId) {
-      console.log('huh', { id, blockId });
       throw new Error('Id not match!');
     }
     await commitDoc(name, blockId);

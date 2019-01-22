@@ -82,7 +82,7 @@ export default (routeConfigs, stackConfig = {}) => {
         NavigationActions.navigate({
           routeName: initialRouteName,
           params: initialRouteParams,
-        })
+        }),
       );
     }
     const params = (routeConfigs[initialRouteName].params ||
@@ -168,19 +168,19 @@ export default (routeConfigs, stackConfig = {}) => {
           }
           invariant(
             typeof replaceWith === 'object',
-            'Must replaceWith an object or a string'
+            'Must replaceWith an object or a string',
           );
           invariant(
             params == null,
-            'Params must not be provided to .replace() when specifying an object'
+            'Params must not be provided to .replace() when specifying an object',
           );
           invariant(
             action == null,
-            'Child action must not be provided to .replace() when specifying an object'
+            'Child action must not be provided to .replace() when specifying an object',
           );
           invariant(
             newKey == null,
-            'Child action must not be provided to .replace() when specifying an object'
+            'Child action must not be provided to .replace() when specifying an object',
           );
           return StackActions.replace(replaceWith);
         },
@@ -207,9 +207,8 @@ export default (routeConfigs, stackConfig = {}) => {
 
       invariant(
         !!activeChildRoute,
-        'Invalid navigation state provided. There is no route at state.routes[state.index]'
+        'Invalid navigation state provided. There is no route at state.routes[state.index]',
       );
-      console.log('getStateForAction', { action, state });
 
       if (
         !isResetToRootStack(action) &&
@@ -218,29 +217,18 @@ export default (routeConfigs, stackConfig = {}) => {
         // Let the active child router handle the action
         const activeChildRouter = childRouters[activeChildRoute.routeName];
 
-        console.log('handling child: ', {
-          activeChildRouter: !!activeChildRouter,
-          activeChildRoute,
-        });
         if (activeChildRouter) {
           const route = activeChildRouter.getStateForAction(
             action,
-            activeChildRoute
+            activeChildRoute,
           );
-          console.log('RESULTING ROUTE', route);
           if (route !== null && route !== activeChildRoute) {
-            console.log(
-              'RETURNING REPLACED!',
-              state,
-              activeChildRoute.key,
-              route
-            );
             return StateUtils.replaceAt(
               state,
               activeChildRoute.key,
               route,
               // the following tells replaceAt to NOT change the index to this route for the setParam action, because people don't expect param-setting actions to switch the active route
-              action.type === NavigationActions.SET_PARAMS
+              action.type === NavigationActions.SET_PARAMS,
             );
           }
         }
@@ -258,14 +246,14 @@ export default (routeConfigs, stackConfig = {}) => {
           if (childRouter) {
             const nextRouteState = childRouter.getStateForAction(
               childAction,
-              childRoute
+              childRoute,
             );
 
             if (nextRouteState === null || nextRouteState !== childRoute) {
               const newState = StateUtils.replaceAndPrune(
                 state,
                 nextRouteState ? nextRouteState.key : childRoute.key,
-                nextRouteState ? nextRouteState : childRoute
+                nextRouteState ? nextRouteState : childRoute,
               );
               return {
                 ...newState,
@@ -290,7 +278,7 @@ export default (routeConfigs, stackConfig = {}) => {
 
         invariant(
           action.type !== StackActions.PUSH || action.key == null,
-          'StackRouter does not support key on the push action'
+          'StackRouter does not support key on the push action',
         );
 
         // Before pushing a new route we first try to find one in the existing route stack
@@ -381,12 +369,12 @@ export default (routeConfigs, stackConfig = {}) => {
           if (childRouter) {
             // For each child router, start with a blank state
             const initChildRoute = childRouter.getStateForAction(
-              NavigationActions.init()
+              NavigationActions.init(),
             );
             // Then check to see if the router handles our navigate action
             const navigatedChildRoute = childRouter.getStateForAction(
               action,
-              initChildRoute
+              initChildRoute,
             );
             let routeToPush = null;
             if (navigatedChildRoute === null) {
@@ -522,7 +510,7 @@ export default (routeConfigs, stackConfig = {}) => {
                 NavigationActions.init({
                   params: getParamsForRouteAndAction(
                     newStackAction.routeName,
-                    newStackAction
+                    newStackAction,
                   ),
                 });
 
@@ -532,7 +520,7 @@ export default (routeConfigs, stackConfig = {}) => {
             return {
               params: getParamsForRouteAndAction(
                 newStackAction.routeName,
-                newStackAction
+                newStackAction,
               ),
               ...childState,
               routeName: newStackAction.routeName,
@@ -601,7 +589,7 @@ export default (routeConfigs, stackConfig = {}) => {
               // because people don't expect these actions to switch the active route
               action.type === NavigationActions.SET_PARAMS ||
                 action.type === StackActions.COMPLETE_TRANSITION ||
-                action.type.includes('DRAWER')
+                action.type.includes('DRAWER'),
             );
           }
         }
@@ -621,7 +609,7 @@ export default (routeConfigs, stackConfig = {}) => {
 
     getScreenOptions: createConfigGetter(
       routeConfigs,
-      stackConfig.defaultNavigationOptions
+      stackConfig.defaultNavigationOptions,
     ),
   };
 };

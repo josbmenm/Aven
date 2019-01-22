@@ -13,8 +13,6 @@ export default function createCloudBlock({
   if (value !== undefined) {
     const valueString = JSONStringify(value);
     blockId = SHA1(valueString).toString();
-    console.log('CLIENT checksum', blockId, valueString.length);
-    console.log(valueString);
   } else {
     blockId = id;
   }

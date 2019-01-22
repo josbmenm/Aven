@@ -23,7 +23,7 @@ async function readFSDoc(dataDir, name) {
       }
       children[child] = await readFSDoc(dataDir, pathJoin(name, child));
       childrenSet.add(child);
-    }),
+    })
   );
   return {
     children,
@@ -92,13 +92,13 @@ export default async function startFSDataSource(opts = {}) {
 
   if (!dataDir) {
     throw new Error(
-      'Cannot start a FS data source without specifying a dataDir to store data files',
+      'Cannot start a FS data source without specifying a dataDir to store data files'
     );
   }
 
   if (!dataSourceDomain) {
     throw new Error(
-      'Cannot start a FS data source without specifying a domain',
+      'Cannot start a FS data source without specifying a domain'
     );
   }
 
