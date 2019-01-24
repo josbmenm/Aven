@@ -60,11 +60,16 @@ const createSharedTransition = transition => {
   };
 };
 
-const runSharedTransition = async (
+const defaultTimingConfig = {
+  easing: Easing.out(Easing.cubic),
+  duration: 600,
+};
+
+const runSharedTransition = timingConfig => async (
   transition,
   transitionScreenRefs,
   fromState,
-  toState
+  toState,
 ) => {
   // By now, everything is already rendered. This is our opportunity to measure shared
   // elements and set those measurements into Animated values so that the pre-rendered
@@ -78,19 +83,19 @@ const runSharedTransition = async (
   const toSharedElements =
     (transitionScreen && transitionScreen.sharedElements) || {};
   const sharedElementIds = Object.keys(fromSharedElements).filter(
-    i => Object.keys(toSharedElements).indexOf(i) !== -1
+    i => Object.keys(toSharedElements).indexOf(i) !== -1,
   );
   const fromLayouts = await Promise.all(
     sharedElementIds.map(async id => {
       const element = fromSharedElements[id];
       return await measureEl(element);
-    })
+    }),
   ); // todo, collapse these into one parallel promise.all:
   const transitionLayouts = await Promise.all(
     sharedElementIds.map(async id => {
       const element = toSharedElements[id];
       return await measureEl(element);
-    })
+    }),
   );
 
   async function getScreenLayout(screen) {
@@ -109,12 +114,12 @@ const runSharedTransition = async (
     setLayoutOnKey(
       transition.transitionLayouts,
       sharedElId,
-      transitionLayouts[index]
+      transitionLayouts[index],
     );
     setLayoutOnKey(transition.fromLayouts, sharedElId, fromLayouts[index]);
   });
   const destValue = toState.routes.find(
-    r => r.key === transition.transitionRouteKey
+    r => r.key === transition.transitionRouteKey,
   )
     ? 1
     : 0;
@@ -122,21 +127,73 @@ const runSharedTransition = async (
   await new Promise(resolve => {
     // animated bug here. this doesn't work:
     timing(transition.progress, {
-      easing: Easing.out(Easing.cubic),
-      duration: 600,
+      ...defaultTimingConfig,
+      ...(timingConfig || {}),
       toValue: destValue,
       useNativeDriver: true,
     }).start(resolve);
   });
 };
 
+export const sharedNavigationOptionsWithConfig = config => ({
+  createTransition: createSharedTransition,
+  runTransition: runSharedTransition(config),
+});
+
+export const sharedNavigationOptions = {
+  createTransition: createSharedTransition,
+  runTransition: runSharedTransition({}),
+};
+
 const SharedScreenContext = React.createContext(null);
 
-export class SharedFadeTransition extends React.Component {
-  static navigationOptions = {
-    createTransition: createSharedTransition,
-    runTransition: runSharedTransition,
-  };
+// export class SharedFadeTransition extends React.Component {
+//   static navigationOptions = sharedNavigationOptions;
+
+//   sharedElements = {};
+//   _screenEl = React.createRef();
+
+//   getEl = () => {
+//     return this._screenEl.current;
+//   };
+
+//   _setSharedElement = (id, ref) => {
+//     this.sharedElements[id] = ref;
+//   };
+//   _sharedScreenContext = {
+//     setSharedElement: this._setSharedElement,
+//     getNavigation: () => this.props.navigation,
+//     getTransitioningFromState: () => this.props.transitioningFromState,
+//     getTransitioningToState: () => this.props.transitioningToState,
+//   };
+//   render() {
+//     const { transition, children } = this.props;
+//     let opacity = 1;
+//     if (transition) {
+//       const { progress } = transition;
+//       opacity = interpolate(progress, {
+//         inputRange: [0, 1],
+//         outputRange: [0, 1],
+//       });
+//     }
+//     return (
+//       <SharedScreenContext.Provider value={this._sharedScreenContext}>
+//         <Animated.View
+//           ref={this._screenEl}
+//           style={{
+//             flex: 1,
+//             opacity,
+//           }}
+//         >
+//           {children}
+//         </Animated.View>
+//       </SharedScreenContext.Provider>
+//     );
+//   }
+// }
+
+export class SharedTransition extends React.Component {
+  static navigationOptions = sharedNavigationOptions;
 
   sharedElements = {};
   _screenEl = React.createRef();
@@ -155,23 +212,17 @@ export class SharedFadeTransition extends React.Component {
     getTransitioningToState: () => this.props.transitioningToState,
   };
   render() {
-    const { transition, children } = this.props;
-    let opacity = 1;
-    if (transition) {
-      const { progress } = transition;
-      opacity = interpolate(progress, {
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      });
-    }
+    const { transition, children, style } = this.props;
     return (
       <SharedScreenContext.Provider value={this._sharedScreenContext}>
         <Animated.View
           ref={this._screenEl}
-          style={{
-            flex: 1,
-            opacity,
-          }}
+          style={[
+            {
+              flex: 1,
+            },
+            style,
+          ]}
         >
           {children}
         </Animated.View>
@@ -180,9 +231,28 @@ export class SharedFadeTransition extends React.Component {
   }
 }
 
+export function SharedFadeTransition(props) {
+  return (
+    <SharedTransition
+      style={{
+        opacity: props.transition
+          ? interpolate(props.transition.progress, {
+              inputRange: [0, 1],
+              outputRange: [0, 1],
+            })
+          : 1,
+      }}
+      ref={props.transitionRef}
+      {...props}
+    />
+  );
+}
+SharedFadeTransition.navigationOptions = sharedNavigationOptions;
+
 const getTransitionElementStyle = (transitionContext, screenContext, id) => {
   const transition = transitionContext.getTransition();
-  const thisScreenKey = screenContext.getNavigation().state.key;
+  const screenNavigation = screenContext.getNavigation();
+  const thisScreenKey = screenNavigation.state.key;
   if (!transition) {
     return [{ transform: [] }];
   }
@@ -190,7 +260,7 @@ const getTransitionElementStyle = (transitionContext, screenContext, id) => {
   const fromLayout = getLayout(transition.fromLayouts, id);
 
   if (!transitionLayout || !fromLayout) {
-    throw new Error('This is unexpected');
+    return {};
   }
   const transitionRouteKey = transition.transitionRouteKey;
   const fromRouteKey = transition.fromRouteKey;
@@ -220,9 +290,9 @@ const getTransitionElementStyle = (transitionContext, screenContext, id) => {
         0,
         sub(
           add(fromOffset, divide(fromScale, 2)),
-          add(toOffset, divide(toScale, 2))
+          add(toOffset, divide(toScale, 2)),
         ),
-        0
+        0,
       );
     } else if (isFromScreen) {
       return doInterpolate(
@@ -230,8 +300,8 @@ const getTransitionElementStyle = (transitionContext, screenContext, id) => {
         0,
         sub(
           add(toOffset, divide(toScale, 2)),
-          add(fromOffset, divide(fromScale, 2))
-        )
+          add(fromOffset, divide(fromScale, 2)),
+        ),
       );
     } else {
       return doInterpolate(0, 0, 0);
@@ -244,7 +314,7 @@ const getTransitionElementStyle = (transitionContext, screenContext, id) => {
     cond(
       isMeasured,
       interpolateTranslate(toOffset, fromOffset, toScale, fromScale),
-      0
+      0,
     );
 
   return {
@@ -254,7 +324,7 @@ const getTransitionElementStyle = (transitionContext, screenContext, id) => {
           transitionLayout.x,
           fromLayout.x,
           transitionLayout.w,
-          fromLayout.w
+          fromLayout.w,
         ),
       },
       {
@@ -262,7 +332,7 @@ const getTransitionElementStyle = (transitionContext, screenContext, id) => {
           transitionLayout.y,
           fromLayout.y,
           transitionLayout.h,
-          fromLayout.h
+          fromLayout.h,
         ),
       },
       {
@@ -360,7 +430,7 @@ class SharedTextWithContext extends React.Component {
           getTransitionElementStyle(
             transitionContext,
             sharedScreenContext,
-            sharedElId
+            sharedElId,
           ),
           { alignSelf: 'center' },
         ]}
