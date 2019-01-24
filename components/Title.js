@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
-import { titleFontStyle } from './Styles';
+import { titleStyle } from './Styles';
 
 export default class TitleView extends Component {
   render() {
@@ -8,7 +8,8 @@ export default class TitleView extends Component {
     return (
       <Text
         style={{
-          ...titleFontStyle,
+          ...titleStyle,
+          fontSize: 48,
         }}
       >
         {children}

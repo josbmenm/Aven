@@ -5,7 +5,7 @@ import { withRestaurant } from '../../ono-cloud/OnoKitchen';
 function CollectEmailWithRestaurant({ navigation, cloud }) {
   return (
     <InputPage
-      title={'Reciept Email'}
+      title={'Receipt Email'}
       type="email-address"
       onSubmit={email => {
         cloud

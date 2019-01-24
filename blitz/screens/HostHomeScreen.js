@@ -72,10 +72,10 @@ function HostRequests() {
   );
 }
 
-export default function HomeScreen() {
+export default function HomeScreen(props) {
   const { navigate } = useNavigation();
   return (
-    <GenericPage>
+    <GenericPage {...props}>
       <Hero icon="📋" title="Ono Blends Host" />
       <HostRequests />
       <RowSection>
@@ -97,3 +97,5 @@ export default function HomeScreen() {
     </GenericPage>
   );
 }
+
+HomeScreen.navigationOptions = GenericPage.navigationOptions;

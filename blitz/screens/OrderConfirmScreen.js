@@ -9,11 +9,11 @@ import {
   useOrderSummary,
 } from '../../ono-cloud/OnoKitchen';
 import useObservable from '../../aven-cloud/useObservable';
-import { paymentContainer } from '../Payments';
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
-import Reciept from '../../components/Reciept';
-import { useCardReader } from '../CardReader';
+import Receipt from '../../components/Receipt';
+import { useCardPaymentCapture } from '../CardReader';
+import OrderConfirmPage from '../components/OrderConfirmPage';
 
 export default function OrderConfirmScreen({
   paymentRequest,
@@ -22,42 +22,40 @@ export default function OrderConfirmScreen({
   isPaymentComplete,
   paymentActivityLog,
   navigation,
+  ...props
 }) {
-  const { confirmOrder } = useOrder();
+  const { confirmOrder, order } = useOrder();
   const summary = useOrderSummary();
-  const { cancelPayment, getPayment, readerIsReady } = useCardReader();
-  const currentlyReady = useObservable(readerIsReady);
-  useEffect(
-    () => {
-      if (currentlyReady) {
-        getPayment(summary.total, 'Ono Blends')
-          .then(() => {
-            console.log('payment done!!!!');
-          })
-          .catch(e => {
-            console.error(e);
-          });
-      }
-    },
-    [currentlyReady, summary],
-  );
+  const paymentDetails = summary && {
+    amount: Math.floor(summary.total * 100), // ugh.. we should really be using cents everywhere..
+    description: 'Ono Blends',
+  };
+  function onPaymentComplete() {
+    confirmOrder()
+      .then(() => {
+        console.log('confirmmmed');
+      })
+      .catch(console.error);
+    navigation.navigate('Receipt', { orderId: order.getName() });
+  }
+  const { state } = useCardPaymentCapture(paymentDetails, onPaymentComplete);
+  useEmptyOrderEscape();
   return (
-    <GenericPage>
-      <Reciept summary={summary} />
-      <Button
-        secondary
-        title="cancel"
-        onPress={async () => {
-          await cancelPayment();
-        }}
-      />
-      <Button
-        title="skip payment (TEST ONLY)"
-        onPress={async () => {
-          await confirmOrder();
-          navigation.navigate('OrderComplete');
-        }}
-      />
-    </GenericPage>
+    <OrderConfirmPage
+      summary={summary}
+      readerState={state}
+      backBehavior={() => {
+        cancelPayment();
+        goBack();
+      }}
+      skipPayment={async () => {
+        await confirmOrder();
+        navigation.navigate('Receipt', { orderId: order.getName() });
+      }}
+      {...props}
+      navigation={navigation}
+    />
   );
 }
+
+OrderConfirmScreen.navigationOptions = OrderConfirmPage.navigationOptions;

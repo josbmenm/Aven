@@ -43,6 +43,14 @@ export function OrderContextProvider({ children }) {
       await currentOrder.transact(doCancelOrderIfNotConfirmed);
       setCurrentOrder(null);
     },
+    cancelOrder: async () => {
+      await currentOrder.transact(lastOrder => {
+        if (lastOrder.isCancelled) {
+          return lastOrder;
+        }
+        return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
+      });
+    },
     confirmOrder: async () => {
       await currentOrder.transact(doConfirmOrder);
     },
@@ -66,21 +74,30 @@ export function useCompanyConfig() {
   return useObservable(useMemo(getAirtableData, []));
 }
 
+export function displayNameOfMenuItem(menuItem) {
+  return menuItem['Display Name'] || menuItem['Name'];
+}
+
+export function sellPriceOfMenuItem(menuItem) {
+  const sellPrice = menuItem.Recipe
+    ? menuItem.Recipe['Sell Price']
+    : menuItem['Sell Price'];
+  return sellPrice;
+}
+
 const TAX_RATE = 0.09;
 
 function getOrderItemMapper(menu) {
   return item => {
-    console.log('OMG shit goin donw', { item, menu });
     const menuItem =
       item.type === 'blend'
         ? menu.blends.find(i => i.id === item.menuItemId)
         : menu.food.find(i => i.id === item.menuItemId);
-    const sellPrice = menuItem.Recipe
-      ? menuItem.Recipe['Sell Price']
-      : menuItem['Sell Price'];
+    const sellPrice = sellPriceOfMenuItem(menuItem);
     const itemPrice = sellPrice * item.quantity;
     return {
       ...item,
+      state: item,
       itemPrice,
       sellPrice,
       menuItem,
@@ -96,7 +113,6 @@ function getOrderSummary(orderState, companyConfig) {
   if (!menu) {
     return null;
   }
-  console.log('SOOOO', orderState.items);
   const items = orderState.items.map(getOrderItemMapper(menu));
   const subTotal = items.reduce((acc, item) => acc + item.itemPrice, 0);
   const tax = subTotal * TAX_RATE;
@@ -127,29 +143,17 @@ function getAllOrders() {
   return cloud.get('Orders/_children').expand((o, r) => {
     return (
       o &&
-      o.map(orderId => ({
-        id: orderId,
-        orderState: cloud.get(`Orders/${orderId}`),
-      }))
+      o
+        .filter(n => n[0] !== '_')
+        .map(orderId => ({
+          id: orderId,
+          orderState: cloud.get(`Orders/${orderId}`),
+        }))
     );
   }).observeValue;
 }
 
-function getOrderCancelHandler(cloud, orderId) {
-  async function cancelOrder() {
-    await cloud.get(`Orders/${orderId}`).transact(lastOrder => {
-      if (lastOrder.isCancelled) {
-        return lastOrder;
-      }
-      return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
-    });
-  }
-  return cancelOrder;
-}
-
 export function useOrders() {
-  let cloud = useCloud();
-
   const companyConfig = useCompanyConfig();
 
   let ordersSource = useMemo(getAllOrders, []);
@@ -159,12 +163,10 @@ export function useOrders() {
   if (!orders) {
     return [];
   }
-
   return orders.map(order => {
     return {
       ...order,
       summary: getOrderSummary(order.orderState, companyConfig),
-      cancel: getOrderCancelHandler(cloud, order.id),
     };
   });
 }
@@ -181,7 +183,7 @@ export function useCurrentOrder() {
     return observedOrder;
   }
 
-  return { ...observedOrder, orderId: order.getName() };
+  return { ...observedOrder, orderId: order && order.getName() };
 }
 
 export function useOrderItem(orderItemId) {
@@ -372,10 +374,14 @@ function companyConfigToFoodMenu(atData) {
 function companyConfigToBlendMenuItemMapper(menuItemId) {
   return atData => {
     const menu = companyConfigToBlendMenu(atData);
-    if (!menu) {
-      debugger;
-    }
     return menu.find(item => item.id === menuItemId);
+  };
+}
+
+function companyConfigToFoodMenuItemMapper(foodItemId) {
+  return atData => {
+    const menu = companyConfigToFoodMenu(atData);
+    return menu.find(item => item.id === foodItemId);
   };
 }
 
@@ -387,6 +393,17 @@ export function useMenuItem(menuItemId) {
       return companyConfigToBlendMenuItemMapper(menuItemId)(config);
     },
     [config, menuItemId],
+  );
+}
+
+export function useFoodItem(foodItemId) {
+  const config = useCompanyConfig();
+  return useMemo(
+    () => {
+      if (!config) return null;
+      return companyConfigToFoodMenuItemMapper(foodItemId)(config);
+    },
+    [config, foodItemId],
   );
 }
 
@@ -462,15 +479,8 @@ export function useMenu() {
 export function useOrderSummary() {
   const currentOrder = useCurrentOrder();
   const companyConfig = useCompanyConfig();
-  const cloud = useCloud();
   const summary = getOrderSummary(currentOrder, companyConfig);
-  if (!summary) {
-    return summary;
-  }
-  return {
-    ...summary,
-    cancel: getOrderCancelHandler(cloud, summary.orderId),
-  };
+  return summary;
 }
 
 export function useOrderIdSummary(orderId) {

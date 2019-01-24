@@ -1,37 +1,28 @@
-import React, { Component } from 'react';
-import GenericPage from '../components/GenericPage';
-import Button from '../../components/Button';
-import Title from '../../components/Title';
+import React from 'react';
 import { useOrder } from '../../ono-cloud/OnoKitchen';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
 import { useNavigation } from '../../navigation-hooks/Hooks';
+import OrderCompletePage from '../components/OrderCompletePage';
 
-export default function OrderComplete() {
+export default function OrderCompleteScreen({ props }) {
   const { navigate } = useNavigation();
   const { resetOrder } = useOrder();
   useEmptyOrderEscape();
   return (
-    <GenericPage>
-      <Title>Order placed!</Title>
-      <Button
-        title="Free blend - text link to app"
-        onPress={() => {
-          navigate('AppUpsell');
-        }}
-      />
-      <Button
-        title="Email Reciept"
-        onPress={() => {
-          navigate('CollectEmail');
-        }}
-      />
-      <Button
-        title="Done!"
-        onPress={() => {
-          resetOrder();
-          navigate('KioskHome');
-        }}
-      />
-    </GenericPage>
+    <OrderCompletePage
+      onSms={() => {
+        navigate('SendReciept', { type: 'sms' });
+      }}
+      onEmail={() => {
+        navigate('SendReciept', { type: 'email' });
+      }}
+      onNoReceipt={() => {
+        resetOrder();
+        navigate('AppUpsell');
+      }}
+      {...props}
+    />
   );
 }
+
+OrderCompleteScreen.navigationOptions = OrderCompletePage.navigationOptions;

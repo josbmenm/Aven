@@ -1,30 +1,42 @@
 import { StyleSheet } from 'react-native';
 
-export const genericText = {
-  color: '#111',
-};
 export const titleFontSize = 60;
 export const textInputLargeStyle = {
   fontSize: titleFontSize,
 };
 
-export const titleFontStyle = {
-  fontSize: titleFontSize,
-  textAlign: 'center',
-  color: '#111',
-};
-
 export const prettyShadow = {
   shadowOffset: { width: 0, height: 0 },
   shadowColor: 'black',
-  shadowOpacity: 0.1,
-  shadowRadius: 30,
-  borderWidth: StyleSheet.hairlineWidth,
-  borderColor: '#e5e5e5',
+  shadowOpacity: 0.1, //0.08,
+  shadowRadius: 24,
 };
 
-export const highlightPrimaryColor = '#0B5151';
-export const mutedPrimaryColor = '#88ACAC';
+export const pagePaddingTop = 84;
+
+export const menuZoneTopInset = 160;
+export const menuZonePaddingBottom = 116;
+export const largeHorizontalPadding = 60;
+export const midPageHorizPadding = 60;
+export const rightSidebarWidth = 250;
+export const cardLargeWidth = 340;
+// export const prettyExtraShadow = {
+//   shadowOffset: { width: 0, height: 0 },
+//   shadowColor: 'black',
+//   shadowOpacity: 0.04,
+//   shadowRadius: 8,
+// };
+
+export const monsterra = '#005151';
+export const monsterra8 = monsterra + '14';
+export const monsterra30 = monsterra + '4C';
+export const monsterra40 = monsterra + '66';
+export const monsterra60 = monsterra + '99';
+export const monsterra70 = monsterra + 'B2';
+export const monsterra80 = monsterra + 'CC';
+
+export const highlightPrimaryColor = monsterra;
+export const mutedPrimaryColor = monsterra60;
 export const splashText = {
   color: highlightPrimaryColor,
   fontSize: 28,
@@ -37,9 +49,12 @@ export const hairlineColor = '#bbb';
 export const rowBorderWidth = StyleSheet.hairlineWidth;
 export const rowStyle = {
   backgroundColor: highlightBackgroundColor,
-  borderBottomWidth: rowBorderWidth,
-  borderColor: hairlineColor,
+  // borderBottomWidth: rowBorderWidth,
+  // borderColor: hairlineColor,
   padding: 20,
+  marginVertical: 10,
+  overflow: 'hidden',
+  ...prettyShadow,
 };
 export const rowTitleStyle = {
   fontSize: 26,
@@ -60,9 +75,7 @@ export const intRowStyle = {
 export const cardTopInset = 200;
 export const pageInset = 80;
 
-export const genericPageStyle = {
-  backgroundColor: pageBackgroundColor,
-};
+export const genericPageStyle = {};
 export const inputPageStyle = {
   backgroundColor: pageBackgroundColor,
 };
@@ -70,6 +83,7 @@ export const inputPageStyle = {
 export const rowSectionStyle = {
   marginBottom: 15,
   paddingHorizontal: 20,
+  ...prettyShadow,
 };
 
 export const linkRowIconTextStyle = {
@@ -81,10 +95,10 @@ export const linkRowTitleTextStyle = {
 };
 
 export const rowSectionInnerStyle = {
-  borderTopWidth: rowBorderWidth,
-  borderLeftWidth: rowBorderWidth,
-  borderRightWidth: rowBorderWidth,
-  borderColor: hairlineColor,
+  // borderTopWidth: rowBorderWidth,
+  // borderLeftWidth: rowBorderWidth,
+  // borderRightWidth: rowBorderWidth,
+  // borderColor: hairlineColor,
 };
 
 export const fontSmall = {
@@ -103,6 +117,10 @@ export const primaryFontFace = {
   fontFamily: 'Maax',
 };
 
+export const proseFontFace = {
+  fontFamily: 'Lora',
+};
+
 export const boldPrimaryFontFace = {
   fontFamily: 'Maax-Bold',
 };
@@ -112,29 +130,87 @@ export const titleStyle = {
   ...boldPrimaryFontFace,
 };
 
+export const genericText = {
+  color: '#111',
+  ...primaryFontFace,
+};
+
+export const descriptionTextStyle = {
+  color: highlightPrimaryColor,
+  ...proseFontFace,
+  fontSize: 18,
+};
+
+export const detailTextStyle = {
+  color: highlightPrimaryColor,
+  ...primaryFontFace,
+  fontSize: 12,
+};
+
 export const buttonTitleStyle = {
   ...fontMedium,
   textAlign: 'center',
   color: 'white',
-  fontSize: 42,
+  fontSize: 24,
+  lineHeight: 26,
   fontFamily: 'Maax-Bold',
 };
+export const headerHeight = 66;
+export const prettyShadowRespectedRadius = 30;
+export const buttonHeight = 56;
+export const actionPagePadding = 20;
 
 export const buttonStyle = {
-  backgroundColor: highlightPrimaryColor,
-  borderRadius: 10,
-  padding: 10,
-  paddingHorizontal: 20,
-  marginHorizontal: 10,
-  marginVertical: 10,
+  backgroundColor: monsterra80,
+  borderRadius: 4,
+  paddingTop: 15,
+  paddingBottom: 15,
+  paddingHorizontal: 16,
+  margin: 10,
+  minHeight: buttonHeight,
   justifyContent: 'center',
+};
+
+export const textInputHorizPadding = 20;
+export const textInputStyle = {
+  minHeight: 56,
+  paddingHorizontal: textInputHorizPadding,
+  ...boldPrimaryFontFace,
+  color: highlightPrimaryColor,
+};
+
+export const textInputContainerStyle = {
+  borderRadius: 4,
+  paddingTop: 15,
+  borderColor: monsterra60,
+  borderWidth: 3,
+};
+
+export const textInputLabelStyle = {
+  paddingHorizontal: textInputHorizPadding,
+  ...primaryFontFace,
+  color: monsterra40,
+};
+
+export const blockFormMessageTextStyle = {
+  marginVertical: 3,
+  ...proseFontFace,
+  fontSize: 26,
+  color: highlightPrimaryColor,
+};
+
+export const blockFormTitleTextStyle = {
+  marginBottom: 4,
+  fontSize: 38,
+  ...titleStyle,
 };
 
 export const secondaryButtonStyle = {
   ...buttonStyle,
+  paddingTop: 12,
   backgroundColor: null,
   borderColor: highlightPrimaryColor,
-  borderWidth: 5,
+  borderWidth: 3,
 };
 
 export const secondaryButtonTitleStyle = {
@@ -156,6 +232,12 @@ export const menuItemDescriptionText = { ...genericText };
 
 export const keyboardAppearance = 'dark';
 
-export const heroViewStyle = { padding: 20, paddingVertical: 60 };
-export const heroIconStyle = { fontSize: 100, textAlign: 'center' };
+export const heroViewStyle = {
+  padding: 35,
+  paddingTop: 80,
+  paddingBottom: 40,
+  flexDirection: 'row',
+  alignItems: 'center',
+};
+export const heroIconStyle = { top: 15, fontSize: 64, paddingHorizontal: 120 };
 export const heroSubtitleStyle = { fontSize: 50 };

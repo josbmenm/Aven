@@ -28,8 +28,6 @@
     }
   }
   
-  [SQRDReaderSDK initializeWithApplicationLaunchOptions:launchOptions];
-
     #ifdef DEBUG
         jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
     #else

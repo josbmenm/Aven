@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { NativeModules, NativeEventEmitter } from 'react-native';
 import useCloud from '../aven-cloud/useCloud';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { debounceTime, map, distinctUntilChanged } from 'rxjs/operators';
+import useObservable from '../aven-cloud/useObservable';
 
 const CardReaderManager = NativeModules.CardReaderManager;
 
@@ -11,12 +13,20 @@ const AppEmitter = new NativeEventEmitter(
 
 let cloudDispatch = null;
 
-export const readerIsWaitingForInput = new BehaviorSubject(false);
-export const readerHasCardInserted = new BehaviorSubject(false);
-export const readerAllowedPaymentOptions = new BehaviorSubject([]);
-export const readerPrompt = new BehaviorSubject(null);
-export const readerStatus = new BehaviorSubject('Unknown');
 export const readerErrors = new Subject();
+export const readerState = new BehaviorSubject({
+  status: 'Unknown',
+});
+
+function setReaderState(updates) {
+  const values = {
+    ...readerState.value,
+    ...updates,
+  };
+  readerState.next({
+    ...values,
+  });
+}
 
 AppEmitter.addListener('CardReaderTokenRequested', () => {
   if (!cloudDispatch) {
@@ -49,7 +59,6 @@ async function startPayment(amount, description) {
 }
 
 async function cancelPayment(paymentIntentId) {
-  readerIsWaitingForInput.next(false);
   paymentRejectersByIntentId[paymentIntentId] &&
     paymentRejectersByIntentId[paymentIntentId]({
       code: 20,
@@ -92,8 +101,6 @@ async function getPayment(amount, description) {
 
 AppEmitter.addListener('CardReaderPaymentReadyForCapture', request => {
   const paymentIntentId = request.paymentIntentId;
-  readerIsWaitingForInput.next(false);
-  readerPrompt.next(null);
 
   if (!cloudDispatch) {
     throw new Error(
@@ -116,32 +123,14 @@ AppEmitter.addListener('CardReaderPaymentReadyForCapture', request => {
     });
 });
 
-// AppEmitter.addListener('CardReaderReady', response => {
-// });
-
-AppEmitter.addListener('CardReaderWaitingForInput', response => {
-  readerAllowedPaymentOptions.next(response.options);
-  readerIsWaitingForInput.next(true);
-});
-
-AppEmitter.addListener('CardReaderPrompt', promptEvent => {
-  readerPrompt.next(promptEvent);
-});
-
 AppEmitter.addListener('CardReaderError', evt => {
-  readerIsWaitingForInput.next(false);
   readerErrors.next(evt);
 
   console.error('==== ! JS CardReaderError ' + JSON.stringify(evt));
 });
 
-AppEmitter.addListener('CardReaderPaymentStatus', evt => {
-  console.log('hass reader status!', evt.status);
-  readerStatus.next(evt.status);
-});
-
-AppEmitter.addListener('CardReaderInsertState', evt => {
-  readerHasCardInserted.next(evt.isInserted);
+AppEmitter.addListener('CardReaderState', evt => {
+  setReaderState(evt);
 });
 
 async function prepareReader() {
@@ -156,29 +145,130 @@ async function prepareReader() {
   });
 }
 
-const readerIsReady = readerStatus
-  .map(s => s === 'Ready')
-  .multicast(() => new BehaviorSubject(readerStatus.value === 'Ready'))
-  .refCount();
+function stateMap(mapper) {
+  return (
+    readerState
+      .pipe(map(mapper))
+      .pipe(distinctUntilChanged())
+      // .pipe(debounceTime(500))
+      .multicast(() => new BehaviorSubject(mapper(readerState.value)))
+      .refCount()
+  );
+}
+
+const readerIsReady = stateMap(
+  s => s.status === 'Ready' || s.status === 'CollectingPaymentMethod',
+);
+
+const readerHasCardInserted = stateMap(s => s.isCardInserted);
+
+const readerPrompt = stateMap(s => {
+  if (s.promptMessage) {
+    return s.promptMessage;
+  }
+  return 'Wait for reader';
+});
+
+const readerStatus = stateMap(s => s.status);
+
+const stateMessage = stateMap(s => {
+  if (s.promptMessage) {
+    return s.promptMessage;
+  }
+  return s.status || 'Who knows..';
+});
+
+export function useCardPaymentCapture(request) {
+  const { dispatch } = useCloud();
+  const currentReaderState = useObservable(readerState);
+  const [hasRequestedPayment, setHasRequestedPayment] = useState(false);
+  useEffect(
+    () => {
+      cloudDispatch = dispatch; // terrible hack to give card reader access to our *contextual* dispatch, with existing authority, domain and auth
+      if (currentReaderState.status === undefined) return;
+      if (hasRequestedPayment) {
+        // nothing?
+        return;
+      }
+
+      if (currentReaderState.status === 'Unknown') {
+        console.log('==== READER STATE IS UNKNIWN. PREPARING..');
+        prepareReader()
+          .then(() => {
+            console.log('===== JS reader prep requested..?!');
+          })
+          .catch(e => {
+            console.error('===== JS reador prep failure', e);
+          });
+      } else if (currentReaderState.status === 'Ready') {
+        console.log('==== READER STATE IS READY. GETTING PAYMENT..');
+        getPayment(request.amount, request.description)
+          .then(() => {
+            console.log('===== GETPAYMENTDONE!!!!');
+          })
+          .catch(e => {
+            console.error('===== JS reador payment failure', e);
+          });
+        setHasRequestedPayment(true);
+      } else if (currentReaderState.status === 'CollectingPaymentMethod') {
+        console.log(
+          '==== READER STATE IS CollectingPaymentMethod. Cancelling..',
+        );
+        // cancelPayment()
+        //   .then(() => {
+        //     console.log('===== CANCELLED OLD PAYMENT!!!!');
+        //   })
+        //   .catch(e => {
+        //     console.error('===== JS reador payment failure', e);
+        //   });
+      } else if (currentReaderState.status === 'NotReady') {
+        // wait (should do timeout probably)
+      } else {
+        throw new Error(
+          'wot unexpected reader status ' + currentReaderState.status,
+        );
+      }
+
+      return () => {
+        console.log('===== READER CLEANUP!!!', hasRequestedPayment);
+
+        // this is so jank
+        cancelPayment()
+          .then(() => {
+            console.log('===== CANCELLED current PAYMENT!!!!');
+          })
+          .catch(e => {
+            console.error('===== JS CANCEL payment failure', e);
+          });
+      };
+    },
+    [
+      dispatch,
+      hasRequestedPayment,
+      currentReaderState.status === undefined,
+      currentReaderState.status === 'Ready',
+    ],
+  );
+
+  return { stateMessage: JSON.stringify(currentReaderState) };
+}
 
 export function useCardReader() {
   const { dispatch } = useCloud();
   useEffect(
     () => {
-      cloudDispatch = dispatch;
-      console.log('===== JS Requesting prepared reader!');
-      prepareReader();
+      cloudDispatch = dispatch; // terrible hack to give card reader access to our *contextual* dispatch, with existing authority, domain and auth
     },
     [dispatch],
   );
   return {
     readerIsReady,
-    readerIsWaitingForInput,
     readerHasCardInserted,
-    readerAllowedPaymentOptions,
-    readerPrompt,
     readerStatus,
-    cancelPayment,
+    readerState,
+    readerPrompt,
+    cancelPayment: cancelPayment,
     getPayment,
+    prepareReader,
   };
 }

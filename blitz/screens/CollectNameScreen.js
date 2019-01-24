@@ -1,15 +1,16 @@
 import React from 'react';
-import InputPage from '../components/InputPage';
+import CollectNamePage from '../components/CollectNamePage';
 import { useOrder } from '../../ono-cloud/OnoKitchen';
 import { useNavigation } from '../../navigation-hooks/Hooks';
+import useEmptyOrderEscape from '../useEmptyOrderEscape';
 
-export default function CollectName() {
+export default function CollectNameScreen(props) {
   const { navigate } = useNavigation();
   const { setOrderName } = useOrder();
+  useEmptyOrderEscape();
   return (
-    <InputPage
-      {...this.props}
-      title={'Pickup Name'}
+    <CollectNamePage
+      {...props}
       onSubmit={name => {
         setOrderName(name);
         navigate('OrderConfirm');
@@ -17,3 +18,5 @@ export default function CollectName() {
     />
   );
 }
+
+CollectNameScreen.navigationOptions = CollectNamePage.navigationOptions;

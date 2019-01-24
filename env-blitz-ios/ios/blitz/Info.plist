@@ -2,10 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Application </key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Ono Blends</string>
+	<string>Blends</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -40,20 +42,12 @@
 		</dict>
 	</dict>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>This app integrates with Square for card processing. Square uses Bluetooth to connect your device to compatible hardware.
-</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app integrates with Square for card processing. Upload your account logo, feature photo and product images with the photos stored on your mobile device.
+	<string>Card reader requires Bluetooth to connect.
 </string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app integrates with Square for card processing. To protect buyers and sellers, Square requires your location to process payments.
-</string>
+	<string>Payment processor requires access to device location for fraud detection</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>This app integrates with Square for card processing. To swipe magnetic cards via the headphone jack, Square requires access to the microphone.
-</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app integrates with Square for card processing. Upload your account logo, feature photo and product images with the photos stored on your mobile device.
-</string>
+	<string>Card reader requires access to the microphone.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>fonts/Caput.ttf</string>

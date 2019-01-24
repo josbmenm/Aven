@@ -13,9 +13,9 @@ const Button = ({ onPress, title, style, secondary }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={{ flexDirection: 'row', ...viewStyle }}
+      style={{ flexDirection: 'row', ...viewStyle, ...style }}
     >
-      <Text style={titleStyle}>{title}</Text>
+      <Text style={{ ...titleStyle, alignSelf: 'center' }}>{title}</Text>
     </TouchableOpacity>
   );
 };

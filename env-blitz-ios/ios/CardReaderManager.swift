@@ -55,46 +55,35 @@ class CardReaderManager: NSObject, TerminalDelegate, ConnectionTokenProvider, Di
                                 tokenProvider: self,
                                 delegate: self)
       }
-      print("b")
 
       let status = CardReaderManager.terminal?.paymentStatus ?? PaymentStatus.notReady
 
-      if (status == PaymentStatus.collectingPaymentMethod) {
-        CardReaderManager.cancelable?.cancel() { cancelError in
-          if let error = cancelError {
-            // foo
-          }
-          else {
-            // asdf
-          }
-        }
-      }
-
-      EventEmitter.sharedInstance.dispatch(name: "CardReaderPaymentStatus", body: [
+      
+      EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
         "status": CardReaderManager.stringConnectionStatus(status: status),
-        "message": Terminal.stringFromPaymentStatus(status),
+        "statusMessage": Terminal.stringFromPaymentStatus(status),
       ])
       
-      print("c")
+      callback([NSNull()])
 
-      if (CardReaderManager.terminal?.connectedReader == nil) {
-        guard let discoverConfig = DiscoveryConfiguration(deviceType: DeviceType.chipper2X, method: DiscoveryMethod.bluetoothProximity) else { return }
-        
-        self.shouldConnectFirstReader = true;
-        
-        CardReaderManager.terminal?.discoverReaders(discoverConfig, delegate: self) { error in
-          if let error = error {
-            EventEmitter.sharedInstance.dispatch(name: "CardReaderError", body: [
-              "step": "discoverReaders",
-              "error": error
+      if (status == PaymentStatus.notReady) {
+    
+        if (CardReaderManager.terminal?.connectedReader == nil) {
+          guard let discoverConfig = DiscoveryConfiguration(deviceType: DeviceType.chipper2X, method: DiscoveryMethod.bluetoothProximity) else { return }
+          
+          self.shouldConnectFirstReader = true;
+          
+          CardReaderManager.terminal?.discoverReaders(discoverConfig, delegate: self) { error in
+            if let error = error {
+              EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
+                "errorStep": "discoverReaders",
+                "error": error
               ])
+            }
           }
         }
       }
-      
-      callback([
-        NSNull()
-      ])
+
     }
   }
   
@@ -107,18 +96,20 @@ class CardReaderManager: NSObject, TerminalDelegate, ConnectionTokenProvider, Di
   @objc(getPayment:description:callback:)
   func getPayment(amount: NSNumber, description: String, callback: @escaping RCTResponseSenderBlock) -> Void {
     
-    print("==== STARTING getPayment", amount, description)
-    
     let payParams = PaymentIntentParameters(amount: UInt(truncating: amount), currency: "USD")
     CardReaderManager.terminal?.createPaymentIntent(payParams) { (intent, error) in
       if let error = error {
-        print("==== ! createPaymentIntent failed: \(error)")
         callback([error])
       }
       else if let intent = intent {
+        EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
+          "paymentIntentId": intent.stripeId
+        ])
         callback([
           NSNull(),
-          ["paymentIntentId": intent.stripeId ]
+          [
+            "paymentIntentId": intent.stripeId,
+          ]
         ])
 
         CardReaderManager.cancelable = CardReaderManager.terminal?.collectPaymentMethod(intent, delegate: self) { intentWithSource, attachError in
@@ -126,27 +117,29 @@ class CardReaderManager: NSObject, TerminalDelegate, ConnectionTokenProvider, Di
           CardReaderManager.cancelable = nil
           if let error = attachError {
             if (error._code == 102) {
+              EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
+                "errorStep": "confirmPaymentIntent",
+                "error": error,
+                ])
               // error code for cancelled payment
               return
             }
-            print("==== ! collectPaymentMethod failed: \(error)")
-            EventEmitter.sharedInstance.dispatch(name: "CardReaderError", body: [
-              "step": "collectPaymentMethod",
-              "error": error
+            EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
+              "errorStep": "collectPaymentMethod",
+              "error": error,
             ])
           }
           else if let intent = intentWithSource {
             CardReaderManager.terminal?.confirmPaymentIntent(intent) { confirmedIntent, confirmError in
               if let error = confirmError {
-                print("==== ! collectPaymentMethod failed: \(error)")
-                EventEmitter.sharedInstance.dispatch(name: "CardReaderError", body: [
-                  "step": "confirmPaymentIntent",
-                  "error": error
+                EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
+                  "errorStep": "confirmPaymentIntent",
+                  "error": error,
                 ])
               }
               else if let intent = confirmedIntent {
                 EventEmitter.sharedInstance.dispatch(name: "CardReaderPaymentReadyForCapture", body: [
-                  "paymentIntentId": intent.stripeId
+                  "paymentIntentId": intent.stripeId,
                 ])
               }
             }
@@ -169,7 +162,7 @@ class CardReaderManager: NSObject, TerminalDelegate, ConnectionTokenProvider, Di
       }
     }
     else {
-      callback(["Nothing to cancel"])
+      callback([NSNull()])
     }
   }
  
@@ -178,14 +171,17 @@ class CardReaderManager: NSObject, TerminalDelegate, ConnectionTokenProvider, Di
   
   func terminal(_ terminal: Terminal, didUpdateDiscoveredReaders readers: [Reader]) {
     if (self.shouldConnectFirstReader) {
-      CardReaderManager.terminal?.connectReader(readers[0]) { reader, error in
+      CardReaderManager.terminal?.connectReader(readers[0]) { reader, readerError in
         if let reader = reader {
-          EventEmitter.sharedInstance.dispatch(name: "CardReaderReady", body: ["readerSerialNumber": reader.serialNumber])
+          EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
+            "connectionError": false,
+            "readerSerialNumber": reader.serialNumber
+          ])
         }
-        else if let error = error {
-          EventEmitter.sharedInstance.dispatch(name: "CardReaderError", body: [
-            "step": "connectReader",
-            "error": error
+        else if let error = readerError {
+          EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
+            "connectionError": error,
+            "errorStep": "connectReader",
           ])
         }
       }
@@ -204,6 +200,9 @@ class CardReaderManager: NSObject, TerminalDelegate, ConnectionTokenProvider, Di
     EventEmitter.sharedInstance.dispatch(name: "CardReaderPaymentReadyForCapture", body: [
       "paymentIntentId": paymentIntentId
     ])
+    EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
+      "paymentIntentId": paymentIntentId
+    ])
   }
 
   // MARK: ReaderInputDelegate
@@ -219,9 +218,9 @@ class CardReaderManager: NSObject, TerminalDelegate, ConnectionTokenProvider, Di
     if inputOptions.contains(ReaderInputOptions.tapCard) {
       namedOptions.append("TapCard")
     }
-    EventEmitter.sharedInstance.dispatch(name: "CardReaderWaitingForInput", body: [
-      "message": Terminal.stringFromReaderInputOptions(inputOptions),
-      "options": namedOptions,
+    EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
+      "inputOptionsMessage": Terminal.stringFromReaderInputOptions(inputOptions),
+      "inputOptions": namedOptions,
     ])
   }
   
@@ -251,7 +250,7 @@ class CardReaderManager: NSObject, TerminalDelegate, ConnectionTokenProvider, Di
     else if inputPrompt == ReaderInputPrompt.multipleContactlessCardsDetected {
       promptType = "MultipleContactlessCardsDetected";
     }
-    EventEmitter.sharedInstance.dispatch(name: "CardReaderPrompt", body: [
+    EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
       "promptType": promptType,
       "promptMessage": Terminal.stringFromReaderInputPrompt(inputPrompt),
     ])
@@ -260,24 +259,22 @@ class CardReaderManager: NSObject, TerminalDelegate, ConnectionTokenProvider, Di
   func terminal(_ terminal: Terminal, didReportReaderEvent event: ReaderEvent, info: [AnyHashable : Any]?) {
     switch (event) {
     case .cardInserted:
-      EventEmitter.sharedInstance.dispatch(name: "CardReaderInsertState", body: [
-        "isInserted": true,
-        "info": info,
+      EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
+        "isCardInserted": true,
       ])
       break;
     case .cardRemoved:
-      EventEmitter.sharedInstance.dispatch(name: "CardReaderInsertState", body: [
-        "isInserted": false,
-        "info": info,
+      EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
+        "isCardInserted": false,
       ])
       break;
     }
   }
   
   func terminal(_ terminal: Terminal, didChangePaymentStatus status: PaymentStatus) {
-    EventEmitter.sharedInstance.dispatch(name: "CardReaderPaymentStatus", body: [
+    EventEmitter.sharedInstance.dispatch(name: "CardReaderState", body: [
       "status": CardReaderManager.stringConnectionStatus(status: status),
-      "message": Terminal.stringFromPaymentStatus(status),
+      "statusMessage": Terminal.stringFromPaymentStatus(status),
     ])
   }
 

@@ -1,14 +1,11 @@
 import React, { Component, useEffect } from 'react';
 import {
   View,
-  ScrollView,
+  StyleSheet,
   Image,
   TouchableWithoutFeedback,
   Text,
 } from 'react-native';
-import MenuItem from '../components/MenuItem';
-import GenericPage from '../components/GenericPage';
-import Hero from '../../components/Hero';
 import {
   genericPageStyle,
   splashText,
@@ -16,14 +13,15 @@ import {
 } from '../../components/Styles';
 
 import { useOrder } from '../../ono-cloud/OnoKitchen';
+import FadeTransition from '../components/FadeTransition';
 
-export default function KioskHomeScreen({ navigation }) {
+export default function KioskHomeScreen({ navigation, ...props }) {
   const { startOrder, resetOrder } = useOrder();
   useEffect(() => {
     resetOrder();
   }, []);
   return (
-    <React.Fragment>
+    <FadeTransition {...props} navigation={navigation}>
       <TouchableWithoutFeedback
         onPress={async () => {
           await startOrder();
@@ -33,6 +31,16 @@ export default function KioskHomeScreen({ navigation }) {
         <View
           style={{ flex: 1, justifyContent: 'center', ...genericPageStyle }}
         >
+          <Image
+            source={require('../assets/BgHome.png')}
+            style={{
+              flex: 1,
+              width: null,
+              height: null,
+              resizeMode: 'contain',
+              ...StyleSheet.absoluteFillObject,
+            }}
+          />
           <Image
             style={{
               width: '100%',
@@ -54,14 +62,8 @@ export default function KioskHomeScreen({ navigation }) {
           </Text>
         </View>
       </TouchableWithoutFeedback>
-      <Text
-        style={{ color: '#555', textAlign: 'center' }}
-        onPress={() => {
-          navigation.goBack();
-        }}
-      >
-        Exit Kiosk (INTERNAL ONLY)
-      </Text>
-    </React.Fragment>
+    </FadeTransition>
   );
 }
+
+KioskHomeScreen.navigationOptions = FadeTransition.navigationOptions;

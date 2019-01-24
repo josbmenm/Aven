@@ -5,9 +5,9 @@ import Hero from '../../components/Hero';
 import GenericPage from '../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import LinkRow from '../../components/LinkRow';
-import { paymentContainer } from '../Payments';
 import useCloud from '../../aven-cloud/useCloud';
 import useKioskName from '../useKioskName';
+import codePush from 'react-native-code-push';
 
 function UpdateAirtableRow() {
   const cloud = useCloud();
@@ -30,29 +30,18 @@ function UpdateAirtableRow() {
   );
 }
 
-const PaySettingsRow = paymentContainer(({ openSettings }) => (
-  <LinkRow
-    onPress={() => {
-      openSettings().catch(console.error);
-    }}
-    icon="🛠"
-    title="Square Reader Settings"
-  />
-));
-
-export default function KioskSettingsScreen({ navigation }) {
+export default function KioskSettingsScreen({ navigation, ...props }) {
   let [kioskName, setKioskName] = useKioskName();
   return (
-    <GenericPage>
+    <GenericPage {...props} navigation={navigation}>
       <Hero icon="⚙️" title="Kiosk Settings" />
       <RowSection>
-        <PaySettingsRow />
         <LinkRow
           onPress={() => {
             navigation.navigate({ routeName: 'PaymentDebug' });
           }}
           icon="💸"
-          title="Test Payment"
+          title="Card Reader Debugging"
         />
         <LinkRow
           onPress={() => {
@@ -60,6 +49,13 @@ export default function KioskSettingsScreen({ navigation }) {
           }}
           icon="⚠️"
           title="Test App Error"
+        />
+        <LinkRow
+          onPress={() => {
+            codePush.restartApp();
+          }}
+          icon="♻️"
+          title="Refresh App"
         />
         <LinkRow
           onPress={() => {
@@ -77,3 +73,5 @@ export default function KioskSettingsScreen({ navigation }) {
     </GenericPage>
   );
 }
+
+KioskSettingsScreen.navigationOptions = GenericPage.navigationOptions;

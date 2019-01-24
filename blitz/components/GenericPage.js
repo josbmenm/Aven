@@ -1,53 +1,46 @@
 import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  StatusBar,
-  TouchableHighlight,
-  Image,
-  TextInput,
-} from 'react-native';
-import { genericPageStyle } from '../../components/Styles';
-import { withNavigation } from '@react-navigation/core';
+import { ScrollView, StyleSheet, Image } from 'react-native';
+import { pageBackgroundColor } from '../../components/Styles';
+import BackButton from './BackButton';
+import { useNavigation } from '../../navigation-hooks/Hooks';
 
-class GenericPage extends React.Component {
-  render() {
-    const { children, navigation, afterScrollView } = this.props;
-    const canGoBack = navigation.dangerouslyGetParent().state.index > 0;
-    return (
-      <View style={{ flex: 1, ...genericPageStyle }}>
-        <ScrollView style={{ flex: 1 }}>{children}</ScrollView>
-        {afterScrollView}
-        {canGoBack && (
-          <TouchableOpacity
-            style={{
-              width: 140,
-              height: 140,
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              paddingTop: 50,
-            }}
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <Text
-              style={{ fontSize: 100, color: '#0009', textAlign: 'center' }}
-            >
-              ⬅︎
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-  }
+import FadeTransition from './FadeTransition';
+
+export default function GenericPage({
+  children,
+  afterScrollView,
+  hideBackButton,
+  ...props
+}) {
+  const { goBack } = useNavigation();
+  return (
+    <FadeTransition
+      {...props}
+      background={
+        <Image
+          source={require('../assets/BgGeneric.png')}
+          style={{
+            flex: 1,
+            width: null,
+            height: null,
+            resizeMode: 'contain',
+            ...StyleSheet.absoluteFillObject,
+          }}
+        />
+      }
+    >
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{}}>
+        {children}
+      </ScrollView>
+      {afterScrollView}
+      {!hideBackButton && (
+        <BackButton
+          backBehavior={() => {
+            goBack(null);
+          }}
+        />
+      )}
+    </FadeTransition>
+  );
 }
-
-const GenericPageWithNavigation = withNavigation(GenericPage);
-
-export default GenericPageWithNavigation;
+GenericPage.navigationOptions = FadeTransition.navigationOptions;

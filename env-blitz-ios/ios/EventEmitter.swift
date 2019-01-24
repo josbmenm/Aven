@@ -20,19 +20,11 @@ class EventEmitter {
   /// All Events which must be support by React Native.
   lazy var allEvents: [String] = {
     var allEventNames: [String] = []
-    
-    allEventNames.append("OPaymentCancelled");
-    allEventNames.append("OPaymentComplete");
-    allEventNames.append("OPaymentError");
-    
+
     allEventNames.append("CardReaderTokenRequested");
-    allEventNames.append("CardReaderReady");
-    allEventNames.append("CardReaderWaitingForInput");
-    allEventNames.append("CardReaderPrompt");
     allEventNames.append("CardReaderError");
     allEventNames.append("CardReaderPaymentReadyForCapture");
-    allEventNames.append("CardReaderPaymentStatus");
-    allEventNames.append("CardReaderInsertState");
+    allEventNames.append("CardReaderState");
   
     return allEventNames
   }()

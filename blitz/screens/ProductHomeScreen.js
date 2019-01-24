@@ -1,119 +1,88 @@
-import React, { Component } from 'react';
-import {
-  View,
-  ScrollView,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import GenericPage from '../components/GenericPage';
-import { withMenu, useMenu } from '../../ono-cloud/OnoKitchen';
+import React, { useState, memo } from 'react';
 
-import { withNavigation } from '../../navigation-core';
+import GenericPage from '../components/GenericPage';
 import {
-  menuItemNameText,
-  menuItemDescriptionText,
-  titleStyle,
-} from '../../components/Styles';
-import AirtableImage from '../components/AirtableImage';
+  useMenu,
+  sellPriceOfMenuItem,
+  displayNameOfMenuItem,
+} from '../../ono-cloud/OnoKitchen';
 import uuid from 'uuid/v1';
 
 import { useNavigation } from '../../navigation-hooks/Hooks';
-import OrderSidebar from '../components/OrderSidebar';
 
-import MenuCard from '../components/MenuCard';
-
-const MENU_ITEM_WIDTH = 350;
-
-const titleLargeStyle = {
-  fontSize: 52,
-  ...titleStyle,
-};
-const titleSmallStyle = {
-  fontSize: 42,
-  ...titleStyle,
-};
-
-function TitleLarge({ title }) {
-  return <Text style={titleLargeStyle}>{title}</Text>;
-}
-
-function TitleSmall({ title }) {
-  return <Text style={titleSmallStyle}>{title}</Text>;
-}
-
-function MenuSection({ title, children }) {
-  return (
-    <View
-      style={{
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        borderBottomColor: '#ccc',
-      }}
-    >
-      {title}
-      <ScrollView
-        pagingEnabled={true}
-        snapToInterval={MENU_ITEM_WIDTH}
-        horizontal
-        style={{ flex: 1 }}
-        contentContainerStyle={{}}
-        showsHorizontalScrollIndicator={false}
-      >
-        {children}
-      </ScrollView>
-    </View>
-  );
-}
+import { MenuCardCarousel } from '../components/MenuCard';
+import { MenuZone } from '../components/MenuZone';
 
 function BlendsMenu({ menu }) {
   const { navigate } = useNavigation();
   return (
-    <MenuSection title={<TitleLarge title="choose a blend" />}>
-      {menu.map(item => (
-        <MenuCard
-          key={item.id}
-          title={item['Display Name']}
-          price={item.Recipe['Sell Price']}
-          tag={item.DefaultFunctionName}
-          photo={item.Recipe && item.Recipe['Recipe Image']}
-          onPress={() => {
-            navigate('MenuItem', {
-              id: item.id,
-              orderItemId: uuid(),
+    <MenuZone title="choose a blend">
+      <MenuCardCarousel
+        style={{}}
+        large
+        items={menu.map(item => ({
+          key: item.id,
+          title: displayNameOfMenuItem(item),
+          price: sellPriceOfMenuItem(item),
+          tag: item.DefaultFunctionName,
+          photo: item.Recipe && item.Recipe['Recipe Image'],
+          onPress: () => {
+            navigate({
+              routeName: 'Blend',
+              key: `Blend-MenuItem-${item.id}`,
+              params: {
+                menuItemId: item.id,
+                orderItemId: uuid(),
+              },
             });
-          }}
-        />
-      ))}
-    </MenuSection>
+          },
+        }))}
+      />
+    </MenuZone>
   );
 }
 
 function FoodMenu({ menu }) {
+  const { navigate } = useNavigation();
   return (
-    <MenuSection title={<TitleSmall title="add a snack" />}>
-      {menu.map(item => (
-        <MenuCard
-          key={item.id}
-          title={item['Name']}
-          description={item['Display Description']}
-          photo={item.Photo}
-          onPress={null}
-        />
-      ))}
-    </MenuSection>
+    <MenuZone small title="add a snack">
+      <MenuCardCarousel
+        items={menu.map(item => ({
+          key: item.id,
+          title: item['Name'],
+          price: sellPriceOfMenuItem(item),
+          description: displayNameOfMenuItem(item),
+          photo: item.Photo,
+          onPress: () => {
+            navigate('Food', {
+              id: item.id,
+            });
+          },
+        }))}
+      />
+    </MenuZone>
   );
 }
 
-export default function KioskHomeScreen() {
+function ProductHomeScreenMemo({ ...props }) {
   const menu = useMenu();
-  if (!menu) {
-    return null;
+  let menuViews = null;
+  if (menu) {
+    menuViews = (
+      <React.Fragment>
+        <BlendsMenu menu={menu.blends} />
+        <FoodMenu menu={menu.food} />
+      </React.Fragment>
+    );
   }
   return (
-    <GenericPage afterScrollView={<OrderSidebar />}>
-      <BlendsMenu menu={menu.blends} />
-      <FoodMenu menu={menu.food} />
+    <GenericPage hideBackButton={true} {...props}>
+      {menuViews}
     </GenericPage>
   );
 }
+const ProductHomeScreen = memo(ProductHomeScreenMemo);
+
+ProductHomeScreen.navigationOptions = GenericPage.navigationOptions;
+
+export default ProductHomeScreen;

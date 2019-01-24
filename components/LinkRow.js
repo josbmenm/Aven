@@ -1,20 +1,21 @@
 import React from 'react';
-import { TouchableHighlight, View, Text } from 'react-native';
+import { TouchableOpacity, View, Text } from 'react-native';
 import {
   linkRowStyle,
   linkRowIconTextStyle,
   linkRowTitleTextStyle,
 } from './Styles';
+import SharedIcon from './SharedIcon';
 
 const LinkRow = ({ onPress, title, icon, children }) => {
   return (
-    <TouchableHighlight onPress={onPress}>
+    <TouchableOpacity onPress={onPress}>
       <View style={{ ...linkRowStyle, flexDirection: 'row' }}>
-        <Text style={linkRowIconTextStyle}>{icon}</Text>
+        <SharedIcon style={linkRowIconTextStyle} icon={icon} />
         <Text style={linkRowTitleTextStyle}>{title}</Text>
         {children}
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 };
 

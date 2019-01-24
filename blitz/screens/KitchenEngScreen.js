@@ -58,10 +58,11 @@ const Subsystems = withNavigation(
 );
 
 export default class KitchenEngScreen extends Component {
+  static navigationOptions = GenericPage.navigationOptions;
   render() {
     return (
-      <GenericPage>
-        <Hero title="Kitchen Engineering" />
+      <GenericPage {...this.props}>
+        <Hero title="Kitchen Engineering" icon="🛠" />
         <RowSection>
           <PLCConnectedRow />
           <IsConnectedRow />

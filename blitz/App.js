@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
-import { View, StatusBar, Image } from 'react-native';
+import { View, StatusBar, Image, Button, AsyncStorage } from 'react-native';
 import { createAppContainer } from '../navigation-native';
+import { createNavigator, StackRouter } from '../navigation-core';
 import codePush from 'react-native-code-push';
 
 import HomeScreen from './screens/HomeScreen';
+import ComponentPlaygroundScreen from './screens/ComponentPlaygroundScreen';
 import ProductHomeScreen from './screens/ProductHomeScreen';
 import HostHomeScreen from './screens/HostHomeScreen';
 import KitchenEngScreen from './screens/KitchenEngScreen';
 import KitchenEngSubScreen from './screens/KitchenEngSubScreen';
 import KioskSettingsScreen from './screens/KioskSettingsScreen';
 import KioskHomeScreen from './screens/KioskHomeScreen';
-import MenuItemScreen from './screens/MenuItemScreen';
+import BlendScreen from './screens/BlendScreen';
+import CustomizeBlendScreen from './screens/CustomizeBlendScreen';
+import FoodScreen from './screens/FoodScreen';
 import DebugStateScreen from './screens/DebugStateScreen';
 import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
@@ -19,8 +23,11 @@ import ManageOrderScreen from './screens/ManageOrderScreen';
 import ManageOrdersScreen from './screens/ManageOrdersScreen';
 import OrderCompleteScreen from './screens/OrderCompleteScreen';
 import CollectNameScreen from './screens/CollectNameScreen';
-import CollectEmailScreen from './screens/CollectEmailScreen';
+import SendReceiptScreen from './screens/SendReceiptScreen';
+import ReceiptScreen from './screens/ReceiptScreen';
 import AppUpsellScreen from './screens/AppUpsellScreen';
+import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
+import Transitioner from '../navigation-transitioner/Transitioner';
 
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
@@ -28,6 +35,7 @@ import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import dataSource from './CloudDataSource';
 import AdminSessionContainer from './AdminSessionContainer';
+import OrderSidebarPage from './components/OrderSidebarPage';
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
@@ -51,17 +59,12 @@ StatusBar.setHidden(true, 'none');
 
 // console.ignoredYellowBox = ['Warning:'];
 
-const InnerHostNavigator = createStackNavigator(
-  {
-    HostHome: HostHomeScreen,
-    ManageOrders: ManageOrdersScreen,
-    ManageOrder: ManageOrderScreen,
-    DebugState: DebugStateScreen,
-  },
-  {
-    headerMode: 'none',
-  },
-);
+const InnerHostNavigator = createStackTransitionNavigator({
+  HostHome: HostHomeScreen,
+  ManageOrders: ManageOrdersScreen,
+  ManageOrder: ManageOrderScreen,
+  DebugState: DebugStateScreen,
+});
 
 function HostNavigator({ navigation }) {
   return (
@@ -72,27 +75,40 @@ function HostNavigator({ navigation }) {
 }
 HostNavigator.router = InnerHostNavigator.router;
 
-const App = createStackNavigator(
+const OrderNavigator = createStackTransitionNavigator(
   {
-    Home: HomeScreen,
-    KioskHome: KioskHomeScreen,
-    KitchenEng: KitchenEngScreen,
-    KitchenEngSub: KitchenEngSubScreen,
-    KioskSettings: KioskSettingsScreen,
-    MenuItem: MenuItemScreen,
     ProductHome: ProductHomeScreen,
-    OrderConfirm: OrderConfirmScreen,
-    OrderComplete: OrderCompleteScreen,
-    CollectName: CollectNameScreen,
-    CollectEmail: CollectEmailScreen,
-    PaymentDebug: PaymentDebugScreen,
-    AppUpsell: AppUpsellScreen,
-    Host: HostNavigator,
+    Blend: BlendScreen,
+    CustomizeBlend: CustomizeBlendScreen,
+    Food: FoodScreen,
   },
   {
-    headerMode: 'none',
+    alwaysTopRoute: null,
+    ContainerView: OrderSidebarPage,
   },
 );
+
+const App = createStackTransitionNavigator({
+  Home: HomeScreen,
+  KioskHome: KioskHomeScreen,
+  ComponentPlayground: ComponentPlaygroundScreen,
+  KitchenEng: KitchenEngScreen,
+  KitchenEngSub: KitchenEngSubScreen,
+  KioskSettings: KioskSettingsScreen,
+  // Blend: BlendScreen,
+  // CustomizeBlend: CustomizeBlendScreen,
+  // Food: FoodScreen,
+  // ProductHome: ProductHomeScreen,
+  OrderConfirm: OrderConfirmScreen,
+  OrderComplete: OrderCompleteScreen,
+  CollectName: CollectNameScreen,
+  SendReceipt: SendReceiptScreen,
+  Receipt: ReceiptScreen,
+  PaymentDebug: PaymentDebugScreen,
+  AppUpsell: AppUpsellScreen,
+  Host: HostNavigator,
+  OrderNavigator,
+});
 
 const AppContainer = createAppContainer(App);
 
@@ -106,14 +122,54 @@ restaurant
   .then(() => {})
   .catch(console.error);
 
+const NAV_STORAGE_KEY = 'NavigationState2';
 const FullApp = () => (
   <CloudContext.Provider value={restaurant}>
     <OrderContextProvider>
-      <AppContainer persistenceKey="24231234211235244" />
+      <AppContainer persistenceKey={NAV_STORAGE_KEY} />
     </OrderContextProvider>
   </CloudContext.Provider>
 );
 
-const AutoUpdatingApp = codePush(codePushOptions)(FullApp);
+const ENABLE_DEV_OVERLAY = true;
+
+function withDevOverlay(FullApp) {
+  if (__DEV__ && ENABLE_DEV_OVERLAY) {
+    function FullAppDev() {
+      return (
+        <View style={{ flex: 1 }}>
+          <FullApp />
+          <View
+            style={{
+              position: 'absolute',
+              right: 250,
+              left: 250,
+              height: 50,
+              top: 0,
+              backgroundColor: '#eeeeee',
+            }}
+          >
+            <Button
+              title="refresh"
+              onPress={() => {
+                codePush.restartApp();
+              }}
+            />
+            <Button
+              title="clear nav"
+              onPress={() => {
+                AsyncStorage.removeItem(NAV_STORAGE_KEY);
+              }}
+            />
+          </View>
+        </View>
+      );
+    }
+    return FullAppDev;
+  }
+  return FullApp;
+}
+
+const AutoUpdatingApp = codePush(codePushOptions)(withDevOverlay(FullApp));
 
 export default AutoUpdatingApp;

@@ -133,9 +133,10 @@ function Subsystem({ systemId, kitchenState, kitchenConfig, kitchenCommand }) {
 const SubsystemWithKitchen = withKitchen(Subsystem);
 
 export default class KitchenEngSubScreen extends Component {
+  static navigationOptions = GenericPage.navigationOptions;
   render() {
     return (
-      <GenericPage>
+      <GenericPage {...this.props}>
         <SubsystemWithKitchen
           systemId={this.props.navigation.getParam('system')}
         />

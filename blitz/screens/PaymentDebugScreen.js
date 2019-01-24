@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableHighlight } from 'react-native';
 import JSONView from '../../debug-views/JSONView';
-import { paymentContainer } from '../Payments';
 import GenericPage from '../components/GenericPage';
 import Hero from '../../components/Hero';
 import Button from '../../components/Button';
 
-import { useCardReader, readerIsReady } from '../CardReader';
+import { useCardReader, useCardPaymentCapture } from '../CardReader';
 import useObservable from '../../aven-cloud/useObservable';
 import RowSection from '../../components/RowSection';
 import TextRow from '../../components/TextRow';
@@ -22,57 +21,105 @@ function ObservableJSONRow({ value, title }) {
   return <TextRow text={JSON.stringify(currentValue)} title={title} />;
 }
 
-export default function PaymentDebugScreen() {
+function FullPaymentExample() {
+  const { stateMessage } = useCardPaymentCapture(
+    {
+      amount: 123,
+      description: 'Full workflow payment',
+    },
+    () => {
+      alert('Money recieved!');
+    },
+  );
+
+  return <TextRow text={stateMessage} title="Full workflow message" />;
+}
+
+function UseCardExample() {
   const {
     getPayment,
     cancelPayment,
+    prepareReader,
+    readerState,
     readerStatus,
     readerIsReady,
-    readerIsWaitingForInput,
     readerHasCardInserted,
-    readerAllowedPaymentOptions,
-    readerPrompt,
   } = useCardReader();
   return (
-    <GenericPage>
-      <Hero title="Payment Debugging" />
+    <React.Fragment>
+      <ObservableBitRow title="Reader is Ready" value={readerIsReady} />
+      <ObservableBitRow
+        title="Card is inserted"
+        value={readerHasCardInserted}
+      />
+      <ObservableJSONRow title="State" value={readerState} />
+      <ObservableJSONRow title="Status" value={readerStatus} />
+      <Button
+        title="Prepare Reader"
+        onPress={() => {
+          prepareReader()
+            .then(() => {
+              alert('Prepare Reader Done');
+            })
+            .catch(e => console.error(e));
+        }}
+      />
+      <Button
+        title="Cancel Payment"
+        onPress={() => {
+          cancelPayment()
+            .then(() => {
+              alert('Cancel Payment Done');
+            })
+            .catch(e => console.error(e));
+        }}
+      />
+
+      <Button
+        title="Take $1.11"
+        onPress={() => {
+          getPayment(111, 'Hello Stripe in my App!')
+            .then(() => {
+              console.log('==== JS THANKS FOR YOUR MONEY');
+            })
+            .catch(e => {
+              if (e.code === 20) {
+                // payment was cancelled manually
+                return;
+              }
+              console.error(e);
+            });
+        }}
+      />
+    </React.Fragment>
+  );
+}
+
+export default function PaymentDebugScreen(props) {
+  const [isShowingFullExample, setFullExample] = useState(false);
+  const [isShowingUseCard, setUseCard] = useState(false);
+  return (
+    <GenericPage {...props}>
+      <Hero title="Card Reader Debugging" icon="💸" />
       <RowSection>
-        <ObservableBitRow title="Reader is Ready" value={readerIsReady} />
-        <ObservableBitRow
-          title="Is waiting for payment"
-          value={readerIsWaitingForInput}
-        />
-        <ObservableBitRow
-          title="Card is inserted"
-          value={readerHasCardInserted}
-        />
-        <ObservableJSONRow title="Status" value={readerStatus} />
-        <ObservableJSONRow title="Prompt" value={readerPrompt} />
-        <ObservableJSONRow
-          title="Allowed Payment Methods"
-          value={readerAllowedPaymentOptions}
-        />
         <Button
-          title="Cancel Payment"
+          title="Test useCardPaymentCapture"
           onPress={() => {
-            cancelPayment()
-              .then(() => {
-                console.log('==== JS Payment Cancelled');
-              })
-              .catch(e => console.error(e));
+            setFullExample(!isShowingFullExample);
           }}
         />
+        {isShowingFullExample && <FullPaymentExample />}
+
         <Button
-          title="Take $1.11"
+          title="Test useCardReader"
           onPress={() => {
-            getPayment(111, 'Hello Stripe in my App!')
-              .then(() => {
-                console.log('==== JS THANKS FOR YOUR MONEY');
-              })
-              .catch(e => console.error(e));
+            setUseCard(!isShowingUseCard);
           }}
         />
+        {isShowingUseCard && <UseCardExample />}
       </RowSection>
     </GenericPage>
   );
 }
+
+PaymentDebugScreen.navigationOptions = GenericPage.navigationOptions;

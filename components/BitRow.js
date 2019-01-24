@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import { bitRowStyle } from './Styles';
+import { bitRowStyle, genericText } from './Styles';
 import Tag from './Tag';
 
 const BitRow = ({ title, value }) => (
@@ -14,6 +14,7 @@ const BitRow = ({ title, value }) => (
     <Text
       style={{
         fontSize: 32,
+        ...genericText,
       }}
     >
       {title}

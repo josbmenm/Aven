@@ -27,8 +27,10 @@ const StateTags = {
 };
 
 function ManageOrderRow({ order }) {
-  console.log(order);
-  const title = order.summary.name || order.id;
+  if (!order.summary) {
+    return null; // simple hack around the _auth object showing up
+  }
+  const title = order.id;
   const StateTag = StateTags[order.summary.state];
   const { navigate } = useNavigation();
   return (
@@ -46,10 +48,10 @@ function ManageOrderRow({ order }) {
   );
 }
 
-export default function MangeOrders() {
+export default function MangeOrders(props) {
   const orders = useOrders();
   return (
-    <GenericPage>
+    <GenericPage {...props}>
       <Hero title="Manage Orders" />
       <RowSection>
         {orders.map(order => (
@@ -59,3 +61,4 @@ export default function MangeOrders() {
     </GenericPage>
   );
 }
+MangeOrders.navigationOptions = GenericPage.navigationOptions;

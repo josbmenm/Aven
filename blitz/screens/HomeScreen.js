@@ -1,14 +1,21 @@
-import React, { Component } from 'react';
+import React, { Component, memo } from 'react';
 import GenericPage from '../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import Hero from '../../components/Hero';
 import LinkRow from '../../components/LinkRow';
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreenMemo({ navigation, ...props }) {
   return (
-    <GenericPage>
+    <GenericPage hideBackButton navigation={navigation} {...props}>
       <Hero title="Maui Development" icon="🍹" />
       <RowSection>
+        <LinkRow
+          onPress={() => {
+            navigation.navigate({ routeName: 'ComponentPlayground' });
+          }}
+          icon="🧱"
+          title="Component Playground"
+        />
         <LinkRow
           onPress={() => {
             navigation.navigate({ routeName: 'KitchenEng' });
@@ -41,3 +48,7 @@ export default function HomeScreen({ navigation }) {
     </GenericPage>
   );
 }
+
+const HomeScreen = memo(HomeScreenMemo);
+
+HomeScreen.navigationOptions = GenericPage.navigationOptions;
