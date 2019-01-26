@@ -36,7 +36,7 @@ describe('schema validation on memory data source', () => {
       schemaDs.dispatch({
         type: 'PutDocValue',
         domain: 'test',
-        name: 'foo/_schema',
+        name: 'foo',
         value: { invalid: 'person' },
       })
     ).rejects.toThrow();
@@ -44,8 +44,8 @@ describe('schema validation on memory data source', () => {
     await schemaDs.dispatch({
       type: 'PutDocValue',
       domain: 'test',
-      name: 'foo/_schema',
-      value: { invalid: 'person' },
+      name: 'foo',
+      value: { name: 'Sean', age: 99 },
     });
   });
 });
