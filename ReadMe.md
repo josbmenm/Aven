@@ -25,7 +25,7 @@ A component toolkit for React Native and React Native Web. The UI building block
 
 ### Aven Cloud
 
-The database layer helps you manage several sources of data, handles real-time data syncronization, and supports user authentication and permissions (coming soon).
+The database abstraction is a set of loosly-coupled modules to connect to databases, perform authentication and validation, and compute derived data from source documents.
 
 ### Aven Navigation
 
