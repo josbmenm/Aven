@@ -330,6 +330,95 @@ export default function testDataSource(startTestDataSource) {
     expect(docs).toEqual([]);
   });
 
+  test('transaction enforcement on PutDocValue', async () => {
+    const ds = await startTestDataSource({ domain: 'test' });
+
+    const { id } = await ds.dispatch({
+      type: 'PutDocValue',
+      name: 'foo',
+      domain: 'test',
+      value: {
+        name: 'init',
+      },
+    });
+
+    // failed transaction with bad "on" block reference
+    await expect(
+      ds.dispatch({
+        type: 'PutDocValue',
+        name: 'foo',
+        domain: 'test',
+        value: {
+          type: 'TransactionValue',
+          on: { type: 'BlockReference', id: 'badId' },
+          value: {
+            name: 'changed',
+          },
+        },
+      })
+    ).rejects.toThrow();
+
+    const result = await ds.dispatch({
+      type: 'PutDocValue',
+      name: 'foo',
+      domain: 'test',
+      value: {
+        type: 'TransactionValue',
+        on: { type: 'BlockReference', id },
+        value: {
+          name: 'changed',
+        },
+      },
+    });
+
+    expect(result.id).not.toBe(null);
+
+    const valueResult = await ds.dispatch({
+      type: 'GetDocValue',
+      name: 'foo',
+      domain: 'test',
+    });
+
+    expect(valueResult.value.on.id).toEqual(id);
+    expect(valueResult.value.value.name).toEqual('changed');
+  });
+
+  test('PutTransactionValue action', async () => {
+    // this action behaves like PutDoc, but always forces the type and "on" to be set
+
+    const ds = await startTestDataSource({ domain: 'test' });
+
+    // transact on nonexistent value
+    const { id } = await ds.dispatch({
+      type: 'PutDocValue',
+      name: 'foo',
+      domain: 'test',
+      value: {
+        name: 'init',
+      },
+    });
+
+    const result = await ds.dispatch({
+      type: 'PutTransactionValue',
+      name: 'foo',
+      domain: 'test',
+      value: {
+        name: 'changed',
+      },
+    });
+
+    expect(result.id).not.toBe(null);
+
+    const valueResult = await ds.dispatch({
+      type: 'GetDocValue',
+      name: 'foo',
+      domain: 'test',
+    });
+
+    expect(valueResult.value.on.id).toEqual(id);
+    expect(valueResult.value.value.name).toEqual('changed');
+  });
+
   describe('parent child docs', () => {
     test('can list with parents', async () => {
       const ds = await startTestDataSource({ domain: 'test' });

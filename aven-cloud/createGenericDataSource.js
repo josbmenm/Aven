@@ -171,6 +171,9 @@ export default function createGenericDataSource({
   }
 
   async function PutDoc({ domain, name, id }) {
+    if (id === undefined) {
+      throw new Error('Cannot PutDoc without id set to null or valid block id');
+    }
     verifyDomain(domain, dataSourceDomain);
     if (id !== null) {
       await commitBlockId(id);
@@ -183,12 +186,34 @@ export default function createGenericDataSource({
     if (value === undefined) {
       throw new Error('Must provide value to PutDocValue');
     }
+    const memoryDoc = getMemoryNode(name, true);
+    if (
+      typeof value === 'object' &&
+      value != null &&
+      value.type === 'TransactionValue'
+    ) {
+      const { on } = value;
+      if (typeof on !== 'object') {
+        throw new Error(
+          'Cannot PutDocValue a TransactionValue with invalid "on" field'
+        );
+      } else if (on === null) {
+        if (memoryDoc.id != null) {
+          throw new Error(
+            'Cannot PutDocValue a TransactionValue on a null id, because the current doc id is not null.'
+          );
+        }
+      } else if (on.id !== memoryDoc.id) {
+        throw new Error(
+          'Cannot put a transaction value when the previous id does not match `on.id`'
+        );
+      }
+    }
     const { id: blockId } = await _putBlock(value);
     if (id && id !== blockId) {
       throw new Error('Id not match!');
     }
     await commitDoc(name, blockId);
-    const memoryDoc = getMemoryNode(name, true);
     memoryDoc.id = blockId;
     if (memoryDoc.behavior) {
       memoryDoc.behavior.next(_renderDoc(memoryDoc));
@@ -196,6 +221,28 @@ export default function createGenericDataSource({
       memoryDoc.behavior = new BehaviorSubject(_renderDoc(memoryDoc));
     }
     return { id: blockId, name, domain };
+  }
+
+  async function PutTransactionValue({ domain, name, value }) {
+    verifyDomain(domain, dataSourceDomain);
+    if (value === undefined) {
+      throw new Error('Must provide value to PutTransactionValue');
+    }
+    const memoryDoc = getMemoryNode(name, true);
+    const finalValue = {
+      type: 'TransactionValue',
+      on: { id: memoryDoc.id, type: 'BlockReference' },
+      value,
+    };
+    const { id } = await _putBlock(finalValue);
+    await commitDoc(name, id);
+    memoryDoc.id = id;
+    if (memoryDoc.behavior) {
+      memoryDoc.behavior.next(_renderDoc(memoryDoc));
+    } else {
+      memoryDoc.behavior = new BehaviorSubject(_renderDoc(memoryDoc));
+    }
+    return { id, name, domain };
   }
 
   function publishChildrenBehavior(memoryDoc) {
@@ -267,16 +314,6 @@ export default function createGenericDataSource({
     const value = await getBlock(id);
     return { id, value };
   }
-
-  // async function PutBlock({ value, name, domain }) {
-  //   // if (!name) {
-  //   //   throw new Error('Name must be provided while getting a block!');
-  //   //   // and ACTUALLY, shouldn't we actually save this block under the context of this doc??
-  //   // }
-  //   verifyDomain(domain, dataSourceDomain);
-  //   const { value: referenceValue, refs } = await commitDeepBlock(value);
-  //   return await commitBlock(referenceValue, refs);
-  // }
 
   async function GetDoc({ domain, name }) {
     verifyDomain(domain, dataSourceDomain);
@@ -364,8 +401,8 @@ export default function createGenericDataSource({
     dispatch: createDispatcher({
       PutDoc,
       PutDocValue,
+      PutTransactionValue,
       PostDoc,
-      // PutBlock,
       GetBlock,
       GetDoc,
       GetDocValue,
