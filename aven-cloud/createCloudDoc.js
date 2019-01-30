@@ -41,7 +41,6 @@ export function createDocPool({
         name: localName,
         blockCache: blockCache,
         onRename: newName => {
-          console.log('wow rename', newName, localName, onGetParentName());
           return move(localName, newName);
         },
         onGetParentName,
@@ -299,6 +298,7 @@ export default function createCloudDoc({
   }
 
   function getBlock(requestedId) {
+    // this method is extremely confusing. it currently means both "get a block with this id" and "get your current active block"
     if (requestedId) {
       return _getBlockWithId(requestedId);
     }

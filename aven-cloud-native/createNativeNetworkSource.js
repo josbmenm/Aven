@@ -31,10 +31,15 @@ export default function createNativeNetworkSource(opts) {
     });
 
     if (res.status >= 400) {
-      const result = await res.text();
+      let result = await res.text();
+      try {
+        result = result.length ? JSON.parse(result) : null;
+      } catch (e) {
+        // fine! plaintext error. (see if I care!)
+      }
       log('📣', action);
       log('🚨', result);
-      throw new Error(result);
+      throw result;
     }
     let result = await res.text();
     try {

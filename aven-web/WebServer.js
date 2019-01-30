@@ -148,7 +148,13 @@ export default async function WebServer({
       })
       .catch(err => {
         console.error(err);
-        res.status(500).send(String(err));
+        res.status(500).send(
+          JSON.stringify({
+            message: String(err),
+            code: err.code,
+            params: err.params,
+          })
+        );
       });
   });
 

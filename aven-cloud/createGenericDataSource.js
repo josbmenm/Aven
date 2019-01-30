@@ -4,8 +4,19 @@ import uuid from 'uuid/v1';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import { getListDocName } from '../aven-cloud-utils/MetaDocNames';
 import { getMaxBlockRefCount } from './maxBlockRefCount';
-import SHA1 from 'crypto-js/sha1';
-const stringify = require('json-stable-stringify');
+
+class IDMatchError extends Error {
+  constructor(providedId, computedId) {
+    super(
+      `The Id spcified does not match! "${providedId}" was specified, but the checksum id of the block is "${computedId}"`
+    );
+    this.params = {
+      providedId,
+      computedId,
+    };
+  }
+  code = 'IDMatchError';
+}
 
 const pathJoin = require('path').join;
 
@@ -126,12 +137,11 @@ export default function createGenericDataSource({
     let outputValue = {};
     let outputRefs = new Set();
     if (blockData instanceof Array) {
-      outputValue = [];
-      await Promise.all(
+      outputValue = await Promise.all(
         blockData.map(async innerBlock => {
           const { value, refs } = await commitDeepBlock(innerBlock);
           refs.forEach(ref => outputRefs.add(ref));
-          outputValue.push(value);
+          return value;
         })
       );
     } else {
@@ -211,7 +221,7 @@ export default function createGenericDataSource({
     }
     const { id: blockId } = await _putBlock(value);
     if (id && id !== blockId) {
-      throw new Error('Id not match!');
+      throw new IDMatchError(id, blockId);
     }
     await commitDoc(name, blockId);
     memoryDoc.id = blockId;
