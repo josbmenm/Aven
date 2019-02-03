@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { NavigationProvider } from '../navigation-core';
+import { NavigationProvider, StackActions } from '../navigation-core';
 
 export const TransitionContext = React.createContext(null);
 
@@ -60,7 +60,7 @@ const getStateForNavChange = (props, state) => {
   }
   const transitionRouteKey = getTransitionOwnerRouteKey(
     state.navState,
-    nextNavState
+    nextNavState,
   );
   const descriptor =
     props.descriptors[transitionRouteKey] ||
@@ -118,10 +118,11 @@ export class Transitioner extends React.Component {
     return getStateForNavChange(props, state);
   };
 
-  async _startTransition() {
+  _startTransition = async () => {
     // Put state in function scope, so we are confident that we refer to the exact same state later for getStateForNavChange.
     // Even though our state shouldn't change during the animation.
     const { state } = this;
+    const { navigation } = this.props;
     const {
       transitions,
       transitionRouteKey,
@@ -143,7 +144,13 @@ export class Transitioner extends React.Component {
       transition,
       this._transitionRefs,
       transitioningFromState,
-      navState
+      navState,
+    );
+    navigation.dispatch(
+      StackActions.completeTransition({
+        key: navigation.state.key,
+        toChildKey: navState.routes[navState.index].key,
+      }),
     );
 
     // after async animator, this.props may have changed. re-check it now:
@@ -173,7 +180,7 @@ export class Transitioner extends React.Component {
       // Navigation state prop has changed during the transtion! Schedule another transition
       this.setState(getStateForNavChange(this.props, state));
     }
-  }
+  };
 
   componentDidUpdate(lastProps, lastState) {
     if (
@@ -186,7 +193,7 @@ export class Transitioner extends React.Component {
         () => {},
         e => {
           console.error('Error running transition:', e);
-        }
+        },
       );
     }
   }
@@ -196,7 +203,7 @@ export class Transitioner extends React.Component {
       const { navState, transitionFromState, transitions } = this.state;
       const defaultTransitionKey = getTransitionOwnerRouteKey(
         navState,
-        transitionFromState
+        transitionFromState,
       );
       const key = transitionRouteKey || defaultTransitionKey;
       return transitions[key];
@@ -223,17 +230,11 @@ export class Transitioner extends React.Component {
         routeKeys = interleaveArrays(prevRouteKeys, mainRouteKeys);
       }
     }
-
-    console.log(
-      `Hello I am transitioner ${
-        navigation.state.key
-      }. My routes are: ${routeKeys.join()}. transitionRouteKey: ${transitionRouteKey}`
-    );
-
     // Use render container function from last route descriptor
     const transitionDescriptor =
       descriptors[transitionRouteKey] ||
-      transitioningFromDescriptors[transitionRouteKey];
+      (transitioningFromDescriptors &&
+        transitioningFromDescriptors[transitionRouteKey]);
     const ContainerView =
       (navigationConfig && navigationConfig.ContainerView) ||
       DefaultContainerView;
