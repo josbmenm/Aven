@@ -17,6 +17,68 @@ export function useNavigationKey() {
   return useNavigation().state.key;
 }
 
+export function useNavigationDidFocusEffect(handleDidFocus) {
+  const navigation = useNavigation();
+  useEffect(
+    () => {
+      const { key } = navigation.state;
+      const parentState = navigation.dangerouslyGetParent().state;
+      const isFocused = parentState.routes[parentState.index].key === key;
+      const { isTransitioning } = parentState;
+      if (isFocused && !isTransitioning) {
+        handleDidFocus();
+      }
+      const subsDF = navigation.addListener('didFocus', handleDidFocus);
+      return () => {
+        subsDF.remove();
+      };
+    },
+    [navigation.addListener]
+  );
+}
+
+export function useNavigationWillFocusEffect(handleWillFocus) {
+  const navigation = useNavigation();
+  useEffect(
+    () => {
+      if (navigation.isFocused()) {
+        handleWillFocus();
+      }
+      const subsWF = navigation.addListener('willFocus', handleWillFocus);
+      return () => {
+        subsWF.remove();
+      };
+    },
+    [navigation.addListener]
+  );
+}
+
+export function useNavigationWillBlurEffect(handleWillBlur) {
+  const navigation = useNavigation();
+  useEffect(
+    () => {
+      const subsWB = navigation.addListener('willBlur', handleWillBlur);
+      return () => {
+        subsWB.remove();
+      };
+    },
+    [navigation.addListener]
+  );
+}
+
+export function useNavigationDidBlurEffect(handleDidBlur) {
+  const navigation = useNavigation();
+  useEffect(
+    () => {
+      const subsDB = navigation.addListener('didBlur', handleDidBlur);
+      return () => {
+        subsDB.remove();
+      };
+    },
+    [navigation.addListener]
+  );
+}
+
 export function useNavigationEvents(handleEvt) {
   const navigation = useNavigation();
   useEffect(
@@ -38,8 +100,9 @@ export function useNavigationEvents(handleEvt) {
     // identifies the nav object, then we should probably pass [navigation.state.key] here, to
     // make sure react doesn't needlessly detach and re-attach this effect. In practice this
     // seems to cause troubles
-    undefined
+    // undefined,
     // [navigation.state.key]
+    [navigation.addListener]
   );
 }
 

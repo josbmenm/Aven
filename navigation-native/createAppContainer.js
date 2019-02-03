@@ -233,9 +233,9 @@ export default function createNavigationContainer(Component) {
       }
 
       if (!startupState) {
-        !!process.env.REACT_NAV_LOGGING &&
-          console.log('Init new Navigation State');
         startupState = Component.router.getStateForAction(action);
+        !!process.env.REACT_NAV_LOGGING &&
+          console.log('Init new Navigation State', startupState);
       }
 
       // Pull state out of URL
