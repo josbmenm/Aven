@@ -4,6 +4,7 @@ import {
   SharedTransition,
   sharedNavigationOptionsWithConfig,
 } from '../../navigation-transitioner/Shared';
+import { StyleSheet } from 'react-native';
 const { Value, timing, interpolate } = Animated;
 
 export default class FadeTransition extends React.Component {
@@ -13,7 +14,6 @@ export default class FadeTransition extends React.Component {
   render() {
     const {
       transition,
-      backgroundColor,
       background,
       transitionRef,
       disableTransform,
@@ -38,16 +38,22 @@ export default class FadeTransition extends React.Component {
       <SharedTransition
         style={{
           flex: 1,
-          backgroundColor,
-          opacity: interpolate(progress, {
-            inputRange: [0, 0.75, 1],
-            outputRange: [0, 1, 1],
-          }),
         }}
         {...this.props}
         ref={transitionRef}
       >
-        {background}
+        <Animated.View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            opacity: interpolate(progress, {
+              inputRange: [0, 0.75, 1],
+              outputRange: [0, 1, 1],
+            }),
+          }}
+        >
+          {background}
+        </Animated.View>
+
         <Animated.View
           style={{
             flex: 1,

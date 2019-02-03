@@ -7,6 +7,7 @@ import { BlurView } from 'react-native-blur';
 import Animated, { Easing } from 'react-native-reanimated';
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import FadeTransition from './FadeTransition';
+import { boldPrimaryFontFace } from '../../components/Styles';
 
 const cardHeight = 516;
 
@@ -70,7 +71,7 @@ function AnimateyCreditCard({ ready }) {
           {
             translateY: Animated.interpolate(position, {
               inputRange: [0, 1, 2],
-              outputRange: [cardHeight, cardHeight * 0.4, cardHeight * 0.6],
+              outputRange: [cardHeight, cardHeight * 0.5, cardHeight * 0.7],
             }),
           },
         ],
@@ -116,6 +117,70 @@ export default function OrderConfirmPage({
   backBehavior,
   ...props
 }) {
+  console.log('---- =======');
+  console.log(`---- errorStep: ${JSON.stringify(readerState.errorStep)}`);
+  console.log(`---- inputOptions: ${JSON.stringify(readerState.inputOptions)}`);
+  console.log(`---- status: ${JSON.stringify(readerState.status)}`);
+  console.log(`---- promptType: ${JSON.stringify(readerState.promptType)}`);
+  console.log(`---- isCollecting: ${JSON.stringify(readerState.isCollecting)}`);
+  console.log(`---- errorCode: ${JSON.stringify(readerState.errorCode)}`);
+  console.log(
+    `---- errorDeclineCode: ${JSON.stringify(readerState.errorDeclineCode)}`,
+  );
+  console.log(
+    `---- isCardInserted: ${JSON.stringify(readerState.isCardInserted)}`,
+  );
+
+  const {
+    inputOptions,
+    status,
+    promptType,
+    isCollecting,
+    isCardInserted,
+    errorStep,
+    errorCode,
+    errorDeclineCode,
+  } = readerState;
+  let message = null;
+
+  function hasInputOption(name) {
+    return (
+      status === 'CollectingPaymentMethod' &&
+      inputOptions &&
+      inputOptions.indexOf(name) !== -1
+    );
+  }
+  if (
+    isCollecting &&
+    !isCardInserted &&
+    hasInputOption('InsertCard') &&
+    hasInputOption('TapCard')
+  ) {
+    message = 'insert card or tap payment';
+  } else if (isCollecting && !isCardInserted && hasInputOption('InsertCard')) {
+    message = 'insert card';
+  }
+
+  if (!message && promptType === 'TryAnotherReadMethod') {
+    message = 'try another payment method';
+  }
+
+  if (!message && status === 'CollectingPaymentIntent') {
+    message = 'please wait.';
+  }
+
+  if (!message && status === 'NotReady') {
+    message = 'please wait.';
+  }
+
+  if (!message && errorStep === 'confirmPaymentIntent' && errorCode === 103) {
+    message = 'card declined ' + errorDeclineCode;
+  }
+
+  if (!message) {
+    message = 'hmm..';
+  }
+
   return (
     <FadeTransition
       backgroundColor={'#00000040'}
@@ -129,33 +194,34 @@ export default function OrderConfirmPage({
       {...props}
     >
       <CloseButton />
-      <Receipt summary={summary} readerState={readerState} />
+      <Receipt summary={summary} />
       <Text
         style={{
           color: 'white',
           fontSize: 30,
-          width: 300,
           position: 'absolute',
           left: 0,
-          top: 0,
-          bottom: 0,
+          right: 0,
+          height: 50,
+          textAlign: 'center',
+          bottom: 300,
+          ...boldPrimaryFontFace,
         }}
       >
-        {JSON.stringify(readerState)}
+        {message}
       </Text>
-
+      <AnimateyCreditCard />
       <View
         style={{
           position: 'absolute',
           right: 20,
           bottom: 20,
           width: 350,
-          height: 50,
+          height: 80,
         }}
       >
         <Button title="skip payment (TEST ONLY)" onPress={skipPayment} />
       </View>
-      <AnimateyCreditCard />
     </FadeTransition>
   );
 }

@@ -6,7 +6,7 @@ import startSQLDataSource from '../aven-cloud-sql/startSQLDataSource';
 import scrapeAirTable from './scrapeAirTable';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createFSClient from '../aven-cloud-server/createFSClient';
-import OnoCloudContext from '../ono-cloud/OnoCloudContext';
+import OnoCloud from '../ono-cloud/OnoCloud';
 import { getMobileAuthToken } from './Square';
 
 import { hashSecureString } from '../aven-cloud-utils/Crypto';
@@ -94,7 +94,7 @@ const runServer = async () => {
   const fsClient = createFSClient({ client: dataClient });
 
   const context = new Map();
-  context.set(OnoCloudContext, dataClient);
+  context.set(OnoCloud, dataClient);
 
   const dispatch = async action => {
     switch (action.type) {

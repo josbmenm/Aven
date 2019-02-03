@@ -146,13 +146,14 @@ function CardPhoto({ photo, style }) {
   );
 }
 
-export function MenuCard({ photo, title, price, tag, onPress }) {
+export function MenuCard({ photo, title, price, tag, onPress, style }) {
   return (
     <CardContainer
       onPress={onPress}
       style={{
         width: cardLargeWidth,
         height: cardLargeWidth * cardHeightRatio,
+        ...style,
       }}
     >
       <CardHeader title={title} price={price} tag={tag} />

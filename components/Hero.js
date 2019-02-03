@@ -10,7 +10,9 @@ export default class Hero extends Component {
     return (
       <View style={heroViewStyle}>
         <SharedIcon icon={icon} style={heroIconStyle} />
-        <Title>{title}</Title>
+        <View style={{ paddingLeft: 25 }}>
+          <Title>{title}</Title>
+        </View>
         {subtitle && <Text style={heroSubtitleStyle}>{subtitle}</Text>}
       </View>
     );

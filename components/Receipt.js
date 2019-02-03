@@ -2,7 +2,8 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import {
   sellPriceOfMenuItem,
-  displayNameOfMenuItem,
+  displayNameOfOrderItem,
+  getItemCustomizationSummary,
 } from '../ono-cloud/OnoKitchen';
 import { titleStyle, boldPrimaryFontFace, primaryFontFace } from './Styles';
 import { formatCurrency } from './Utils';
@@ -38,7 +39,7 @@ const receiptRowQuantityTextStyle = {
   fontSize: 15,
 };
 
-function ReceiptRow({ label, amount, quantity }) {
+function ReceiptRow({ label, amount, quantity, summary }) {
   return (
     <View
       style={{ flexDirection: 'row', marginVertical: 8, alignSelf: 'stretch' }}
@@ -48,6 +49,11 @@ function ReceiptRow({ label, amount, quantity }) {
       </View>
       <View style={{ flex: 1, marginLeft: 8 }}>
         <Text style={receiptRowTextStyle}>{label}</Text>
+        {summary.map((summaryItem, index) => (
+          <Text key={index} style={receiptRowTextStyle}>
+            - {summaryItem}
+          </Text>
+        ))}
       </View>
       <View style={{}}>
         <Text style={receiptRowTextStyle}>{formatCurrency(amount)}</Text>
@@ -106,7 +112,7 @@ function HorizontalRule() {
     />
   );
 }
-export default function Receipt({ summary, readerState }) {
+export default function Receipt({ summary }) {
   if (!summary) {
     return null;
   }
@@ -114,14 +120,14 @@ export default function Receipt({ summary, readerState }) {
     <View style={{ padding: 30, width: 520, alignSelf: 'center' }}>
       <SummarySubTitle title={getOrderName(summary)} />
       <SummaryTitle title="order summary" />
-      <SummaryTitle title={JSON.stringify(readerState)} />
       <HorizontalRule />
       {summary.items.map(item => (
         <ReceiptRow
-          label={displayNameOfMenuItem(item.menuItem)}
+          label={displayNameOfOrderItem(item, item.menuItem)}
           amount={sellPriceOfMenuItem(item.menuItem)}
           quantity={item.quantity}
           key={item.id}
+          summary={getItemCustomizationSummary(item)}
         />
       ))}
       <HorizontalRule />

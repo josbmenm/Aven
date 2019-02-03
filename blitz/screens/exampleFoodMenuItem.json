@@ -1,0 +1,63 @@
+{
+  "Active in Kiosk": true,
+  "Brand Description": "Milk Bar is a dessert empire and lifestyle brand, called “one of the most exciting bakeries in the country” by Bon Appétit magazine. Founded by award-winning pastry chef Christina Tosi, Milk Bar opened its doors in NYC’s East Village in 2008, and quickly became a cult sensation. With wildly popular storefronts in New York, Washington, D.C., Toronto, Las Vegas and most recently, Los Angeles, Milk Bar is known for its familiar yet unexpected desserts including Crack Pie®, the Compost Cookie®, “naked” layer cakes with unfrosted sides, and Cereal Milk Soft Serve, among other playful and craveable treats.",
+  "Brand Name": "Milkbar",
+  "Brand Photo": [
+    {
+      "filename": "MilkBar.png",
+      "id": "atttFl7g05liXoOhx",
+      "size": 27267,
+      "thumbnails": {
+        "full": {
+          "height": 200,
+          "url": "https://dl.airtable.com/CN9CiNvFRua2q2aUHmjg_full_MilkBar.png",
+          "width": 369
+        },
+        "large": {
+          "height": 200,
+          "url": "https://dl.airtable.com/NHa8g77YR3CBdHxcufnK_large_MilkBar.png",
+          "width": 369
+        },
+        "small": {
+          "height": 36,
+          "url": "https://dl.airtable.com/aO2PApaxQaqU5Io12Sdc_small_MilkBar.png",
+          "width": 66
+        }
+      },
+      "type": "image/png",
+      "url": "https://dl.airtable.com/7MaatKIBTple31IbLGNg_MilkBar.png"
+    }
+  ],
+  "Display Description": "Milk Bar everything bagel bread filled with scallion cream cheese and bacon.",
+  "Name": "Bagel Bomb",
+  "Nutrition Info": "250 cal.",
+  "Photo": [
+    {
+      "filename": "bagel-bomb.jpg",
+      "id": "att4ueQvcwsCAxSqW",
+      "size": 36300,
+      "thumbnails": {
+        "full": {
+          "height": 800,
+          "url": "https://dl.airtable.com/Bm7rggwAReGWBqaowg6F_full_bagel-bomb.jpg",
+          "width": 800
+        },
+        "large": {
+          "height": 512,
+          "url": "https://dl.airtable.com/OwqwRlGtSjSgJk5xBfgm_large_bagel-bomb.jpg",
+          "width": 512
+        },
+        "small": {
+          "height": 36,
+          "url": "https://dl.airtable.com/k6btGGYwTUaeqTaSugcd_small_bagel-bomb.jpg",
+          "width": 36
+        }
+      },
+      "type": "image/jpeg",
+      "url": "https://dl.airtable.com/LW46NanjRw6dxzoqu43z_bagel-bomb.jpg"
+    }
+  ],
+  "Sell Price": 2,
+  "_index": 0,
+  "id": "rec2gyolDloHLyDEC"
+}

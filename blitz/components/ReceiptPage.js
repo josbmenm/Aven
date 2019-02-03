@@ -10,11 +10,11 @@ export default function ReceiptPage({
   onSms,
   onEmail,
   onNoReceipt,
-  backBehavior,
+  hideBackButton,
   ...props
 }) {
   return (
-    <ShortBlockFormPage backBehavior={backBehavior} {...props}>
+    <ShortBlockFormPage hideBackButton={hideBackButton} {...props}>
       <BlockForm>
         <BlockFormMessage message="You're almost ready to go..." />
         <BlockFormTitle title="would you like a receipt?" />

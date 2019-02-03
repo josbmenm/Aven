@@ -1,9 +1,8 @@
 import React, { useState, useEffect, createContext } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import Button from '../../components/Button';
+import { View } from 'react-native';
 import TextButton from '../../components/TextButton';
 import { useOrderSummary, useOrder } from '../../ono-cloud/OnoKitchen';
-import Cart from '../../components/Cart';
+import CartSidebar from '../../components/CartSidebar';
 
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
@@ -17,24 +16,6 @@ import {
 import Animated, { Easing } from 'react-native-reanimated';
 import FadeTransition from './FadeTransition';
 const { interpolate } = Animated;
-function OrderPanel({ summary }) {
-  const { navigate } = useNavigation();
-  return (
-    <ScrollView
-      style={{ marginTop: headerHeight }}
-      contentContainerStyle={{ paddingVertical: 20 }}
-    >
-      <Cart summary={summary} />
-      <Button
-        title="checkout"
-        style={{ margin: 20 }}
-        onPress={() => {
-          navigate('CollectName');
-        }}
-      />
-    </ScrollView>
-  );
-}
 
 export const SidebarOverlayContext = createContext({});
 
@@ -57,7 +38,7 @@ export default function OrderSidebarPage({ children, ...props }) {
     [shouldBeOpen],
   );
 
-  const panel = summary && <OrderPanel summary={summary} />;
+  const panel = summary && <CartSidebar summary={summary} />;
 
   return (
     <FadeTransition

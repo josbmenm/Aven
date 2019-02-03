@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, View, StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, View, StyleSheet, Image } from 'react-native';
 import BackButton from './BackButton';
 import { pageBackgroundColor } from '../../components/Styles';
 import { useNavigation } from '../../navigation-hooks/Hooks';
@@ -8,14 +8,27 @@ import FadeTransition from './FadeTransition';
 export default function ShortBlockFormPage({
   children,
   backBehavior,
+  hideBackButton,
   ...props
 }) {
   const { goBack } = useNavigation();
-  const doGoBack = () => goBack(); // call me crazy...
-  let realBackBehavior =
-    backBehavior === null ? null : backBehavior || doGoBack;
   return (
-    <FadeTransition backgroundColor={pageBackgroundColor} {...props}>
+    <FadeTransition
+      backgroundColor={pageBackgroundColor}
+      background={
+        <Image
+          source={require('../assets/BgGeneric.png')}
+          style={{
+            flex: 1,
+            width: null,
+            height: null,
+            resizeMode: 'contain',
+            ...StyleSheet.absoluteFillObject,
+          }}
+        />
+      }
+      {...props}
+    >
       <KeyboardAvoidingView
         behavior="padding"
         style={{
@@ -24,7 +37,13 @@ export default function ShortBlockFormPage({
       >
         {children}
       </KeyboardAvoidingView>
-      {realBackBehavior && <BackButton backBehavior={realBackBehavior} />}
+      {!hideBackButton && (
+        <BackButton
+          backBehavior={() => {
+            goBack(null);
+          }}
+        />
+      )}
     </FadeTransition>
   );
 }

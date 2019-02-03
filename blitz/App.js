@@ -1,5 +1,16 @@
+if (__DEV__) {
+  import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
+}
+
 import React, { Component } from 'react';
-import { View, StatusBar, Image, Button, AsyncStorage } from 'react-native';
+import {
+  View,
+  StatusBar,
+  Image,
+  Button,
+  AsyncStorage,
+  Alert,
+} from 'react-native';
 import { createAppContainer } from '../navigation-native';
 import { createNavigator, StackRouter } from '../navigation-core';
 import codePush from 'react-native-code-push';
@@ -28,12 +39,13 @@ import ReceiptScreen from './screens/ReceiptScreen';
 import AppUpsellScreen from './screens/AppUpsellScreen';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
 import Transitioner from '../navigation-transitioner/Transitioner';
+import LinearGradient from 'react-native-linear-gradient';
 
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
-import dataSource from './CloudDataSource';
+import OnoCloud from './OnoCloud';
 import AdminSessionContainer from './AdminSessionContainer';
 import OrderSidebarPage from './components/OrderSidebarPage';
 
@@ -113,7 +125,7 @@ const App = createStackTransitionNavigator({
 const AppContainer = createAppContainer(App);
 
 const restaurant = createCloudClient({
-  dataSource,
+  dataSource: OnoCloud,
   domain: 'onofood.co',
 });
 
@@ -122,14 +134,50 @@ restaurant
   .then(() => {})
   .catch(console.error);
 
+class ErrorHandlerContainer extends React.Component {
+  componentDidCatch(e) {
+    Alert.alert(e.code || 'Error', e.message);
+    return true;
+  }
+  render() {
+    const { children } = this.props;
+    return children;
+  }
+}
+
 const NAV_STORAGE_KEY = 'NavigationState2';
 const FullApp = () => (
   <CloudContext.Provider value={restaurant}>
     <OrderContextProvider>
-      <AppContainer persistenceKey={NAV_STORAGE_KEY} />
+      <ErrorHandlerContainer>
+        <AppContainer persistenceKey={NAV_STORAGE_KEY} />
+      </ErrorHandlerContainer>
     </OrderContextProvider>
   </CloudContext.Provider>
 );
+
+const PRELOAD_IMAGES = {
+  kioskHomeScreen: require('./assets/BgHome.png'),
+  genericScreen: require('./assets/BgGeneric.png'),
+};
+
+async function loadImages(images) {
+  // thanks to https://github.com/DylanVann/react-native-fast-image/issues/160#issuecomment-373938649
+  return Promise.all(
+    Object.keys(images).map(i => {
+      let img = {
+        ...Image.resolveAssetSource(images[i]),
+        cache: 'force-cache',
+      };
+
+      return Image.prefetch(img);
+    }),
+  );
+}
+
+loadImages(PRELOAD_IMAGES).then(results => {
+  console.log('images preloaded!');
+});
 
 const ENABLE_DEV_OVERLAY = true;
 
@@ -139,29 +187,33 @@ function withDevOverlay(FullApp) {
       return (
         <View style={{ flex: 1 }}>
           <FullApp />
-          <View
+          <LinearGradient
+            colors={['#ffffffff', '#ffffff00']}
             style={{
               position: 'absolute',
               right: 250,
               left: 250,
               height: 50,
               top: 0,
-              backgroundColor: '#eeeeee',
+              flexDirection: 'row',
+              justifyContent: 'center',
             }}
           >
             <Button
               title="refresh"
+              color="#000000"
               onPress={() => {
                 codePush.restartApp();
               }}
             />
             <Button
               title="clear nav"
+              color="#880000"
               onPress={() => {
                 AsyncStorage.removeItem(NAV_STORAGE_KEY);
               }}
             />
-          </View>
+          </LinearGradient>
         </View>
       );
     }

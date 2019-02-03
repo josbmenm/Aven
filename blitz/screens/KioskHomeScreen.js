@@ -21,7 +21,22 @@ export default function KioskHomeScreen({ navigation, ...props }) {
     resetOrder();
   }, []);
   return (
-    <FadeTransition {...props} navigation={navigation}>
+    <FadeTransition
+      {...props}
+      navigation={navigation}
+      background={
+        <Image
+          source={require('../assets/BgHome.png')}
+          style={{
+            // flex: 1,
+            width: null,
+            height: null,
+            resizeMode: 'contain',
+            ...StyleSheet.absoluteFillObject,
+          }}
+        />
+      }
+    >
       <TouchableWithoutFeedback
         onPress={async () => {
           await startOrder();
@@ -31,16 +46,6 @@ export default function KioskHomeScreen({ navigation, ...props }) {
         <View
           style={{ flex: 1, justifyContent: 'center', ...genericPageStyle }}
         >
-          <Image
-            source={require('../assets/BgHome.png')}
-            style={{
-              flex: 1,
-              width: null,
-              height: null,
-              resizeMode: 'contain',
-              ...StyleSheet.absoluteFillObject,
-            }}
-          />
           <Image
             style={{
               width: '100%',

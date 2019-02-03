@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableHighlight } from 'react-native';
+import { View, Text, TouchableHighlight, Alert } from 'react-native';
 import JSONView from '../../debug-views/JSONView';
 import GenericPage from '../components/GenericPage';
 import Hero from '../../components/Hero';
@@ -10,6 +10,7 @@ import useObservable from '../../aven-cloud/useObservable';
 import RowSection from '../../components/RowSection';
 import TextRow from '../../components/TextRow';
 import BitRow from '../../components/BitRow';
+import { rowStyle } from '../../components/Styles';
 
 function ObservableBitRow({ value, title }) {
   const currentValue = useObservable(value);
@@ -22,17 +23,36 @@ function ObservableJSONRow({ value, title }) {
 }
 
 function FullPaymentExample() {
-  const { stateMessage } = useCardPaymentCapture(
+  const {
+    stateMessage,
+    hasRequestedPayment,
+    hasCompleted,
+    hasCompletedPayment,
+    declinedWithMessage,
+    state,
+  } = useCardPaymentCapture(
     {
       amount: 123,
       description: 'Full workflow payment',
     },
-    () => {
-      alert('Money recieved!');
+    result => {
+      Alert.alert('Money recieved!', JSON.stringify(result));
     },
   );
-
-  return <TextRow text={stateMessage} title="Full workflow message" />;
+  return (
+    <View style={{ ...rowStyle }}>
+      <JSONView
+        data={{
+          state,
+          hasRequestedPayment,
+          stateMessage,
+          hasCompleted,
+          hasCompletedPayment,
+          declinedWithMessage,
+        }}
+      />
+    </View>
+  );
 }
 
 function UseCardExample() {

@@ -9,7 +9,10 @@ import Animated, { Easing } from 'react-native-reanimated';
 
 const textInputFontSize = 26;
 
-function BlockFormInputWithRef({ value, onValue, label }, ref) {
+function BlockFormInputWithRef(
+  { value, onValue, label, mode, onSubmit, onFocus, onBlur },
+  ref,
+) {
   const desiredPlaceholderOpen = value ? 0 : 1;
   const [placeholderOpenProgress] = useState(
     new Animated.Value(desiredPlaceholderOpen),
@@ -24,6 +27,17 @@ function BlockFormInputWithRef({ value, onValue, label }, ref) {
     },
     [desiredPlaceholderOpen],
   );
+  const autoCorrect = false;
+  let autoComplete = null;
+  let keyboardType = 'default';
+  let enablesReturnKeyAutomatically = true;
+  if (mode === 'phone') {
+    keyboardType = 'phone-pad';
+  } else if (mode === 'email') {
+    keyboardType = 'email-address';
+  } else if (mode === 'name') {
+    autoComplete = 'words';
+  }
   return (
     <View
       style={{
@@ -56,9 +70,17 @@ function BlockFormInputWithRef({ value, onValue, label }, ref) {
         {label}
       </Animated.Text>
       <TextInput
+        enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
+        keyboardAppearance="dark"
+        keyboardType={keyboardType}
+        autoCorrect={autoCorrect}
+        autoCapitalize={autoComplete}
         ref={ref}
         value={value}
+        onFocus={onFocus}
+        onBlur={onBlur}
         onChangeText={onValue}
+        onSubmitEditing={onSubmit}
         style={{ fontSize: textInputFontSize, ...textInputStyle }}
       />
     </View>

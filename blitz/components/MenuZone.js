@@ -68,7 +68,6 @@ export function MenuZone({ title, children, small }) {
     <View
       style={{
         flex: 1,
-        paddingBottom: menuZonePaddingBottom,
         paddingTop: 160,
       }}
     >

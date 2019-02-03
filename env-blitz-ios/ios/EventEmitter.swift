@@ -25,6 +25,7 @@ class EventEmitter {
     allEventNames.append("CardReaderError");
     allEventNames.append("CardReaderPaymentReadyForCapture");
     allEventNames.append("CardReaderState");
+    allEventNames.append("CardInsertState")
   
     return allEventNames
   }()

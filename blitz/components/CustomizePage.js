@@ -1,11 +1,5 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import AirtableImage from './AirtableImage';
 import {
   pageBackgroundColor,
@@ -17,10 +11,15 @@ import {
   proseFontFace,
   monsterra,
   primaryFontFace,
+  boldPrimaryFontFace,
+  black8,
 } from '../../components/Styles';
 import { MenuZone, MenuHLayout } from './MenuZone';
 import ActionPage from '../components/ActionPage';
+import TabSectionScrollView from './TabSectionScrollView';
+import ListAnimation from './ListAnimation';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useNavigation } from '../../navigation-hooks/Hooks';
 
 const tagSize = {
   width: 144,
@@ -39,10 +38,10 @@ function TextButton({ title, onPress, style }) {
 
 function IngredientTag({ image, onPress, onRemove, inlineStyle, style }) {
   return (
-    <TouchableHighlight
+    <TouchableOpacity
       onPress={onPress}
-      underlayColor={'red'}
       style={{ ...style }}
+      disabled={!onPress}
     >
       <View
         style={{
@@ -82,7 +81,7 @@ function IngredientTag({ image, onPress, onRemove, inlineStyle, style }) {
         </View>
         {onRemove && <XButton onPress={onRemove} />}
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 }
 
@@ -92,10 +91,16 @@ function CustomizationMainSection({ section }) {
     message = `Choose a ${section.displayName}`;
   }
   return (
-    <View>
-      <Text style={{ fontSize: 24, ...titleStyle }}>{section.displayName}</Text>
+    <View style={{ paddingBottom: 60 }}>
       {message && (
-        <Text style={{ fontSize: 18, color: monsterra60, ...proseFontFace }}>
+        <Text
+          style={{
+            fontSize: 20,
+            paddingTop: 6,
+            color: monsterra60,
+            ...proseFontFace,
+          }}
+        >
           {message}
         </Text>
       )}
@@ -161,16 +166,16 @@ function CustomizationMainSection({ section }) {
 
 // const MAX_FUNCTIONS = 2;
 
-// function FunctionCustomization({ customization, state, onState, menuItem }) {
+// function BenefitCustomization({ customization, state, onState, menuItem }) {
 //   return (
 //     <CustomizationSection
 //       title="Blend Function"
 //       subtitle={`Choose ${MAX_FUNCTIONS}`}
 //     >
-//       {Object.keys(menuItem.FunctionCustomization).map(functionId => (
+//       {Object.keys(menuItem.BenefitCustomization).map(functionId => (
 //         <CustomFunctionPuck
 //           key={functionId}
-//           fn={menuItem.FunctionCustomization[functionId]}
+//           fn={menuItem.BenefitCustomization[functionId]}
 //           state={state}
 //           onPress={() => {
 //             const wasSelected = state.indexOf(functionId) !== -1;
@@ -193,6 +198,9 @@ function getCustomizationSections(
   customizationState,
   setCustomization,
 ) {
+  if (!menuItem) {
+    return [];
+  }
   const sections = [
     {
       name: 'benefit',
@@ -224,9 +232,14 @@ function getCustomizationSections(
         setIngredientCustomization([...selectedIngredients, addIngredientId]);
       }
       function removeIngredient(removeIngredientId) {
-        setIngredientCustomization(
-          selectedIngredients.filter(id => id !== removeIngredientId),
+        const ingredientToRemove = selectedIngredients.findIndex(
+          id => id === removeIngredientId,
         );
+        if (ingredientToRemove !== -1) {
+          const ingredientsAfterRemoval = [...selectedIngredients];
+          ingredientsAfterRemoval.splice(ingredientToRemove, 1);
+          setIngredientCustomization(ingredientsAfterRemoval);
+        }
       }
 
       return {
@@ -265,6 +278,12 @@ function XButton({ onPress }) {
   return (
     <TouchableOpacity
       onPress={onPress}
+      hitSlop={{
+        left: 40,
+        top: 40,
+        right: 40,
+        bottom: 40,
+      }}
       style={{
         borderWidth: 1,
         borderColor: '#00000014',
@@ -304,7 +323,15 @@ function AddItem({ onPress, style }) {
       }}
       onPress={onPress}
     >
-      <Text style={{ fontSize: 42, lineHeight: 38, textAlign: 'center' }}>
+      <Text
+        style={{
+          fontSize: 26,
+          lineHeight: 24,
+          textAlign: 'center',
+          color: monsterra60,
+          ...primaryFontFace,
+        }}
+      >
         +
       </Text>
     </TouchableOpacity>
@@ -315,6 +342,7 @@ function CustomizationSidebar({
   setCustomization,
   customizationState,
   menuItem,
+  onAddToSection,
 }) {
   const sections = getCustomizationSections(
     menuItem,
@@ -330,13 +358,6 @@ function CustomizationSidebar({
         ...prettyShadow,
       }}
     >
-      <TextButton
-        style={{ position: 'absolute', right: 20, top: 14 }}
-        onPress={() => {
-          setCustomization(null);
-        }}
-        title="reset"
-      />
       <View style={{}}>
         {sections.map(section => {
           return (
@@ -360,81 +381,73 @@ function CustomizationSidebar({
                   paddingLeft: 20,
                 }}
               >
-                {Array(section.slotCount)
-                  .fill(0)
-                  .map((_, index) => {
-                    const ingredient = section.selectedIngredients[index];
-                    if (!ingredient) {
+                <ListAnimation
+                  list={Array(section.slotCount)
+                    .fill(0)
+                    .map((_, index) => {
+                      const ingredient = section.selectedIngredients[index];
+                      if (!ingredient) {
+                        return 'add';
+                      }
+                      const hasMany =
+                        section.selectedIngredients.filter(
+                          i => i.id === ingredient.id,
+                        ).length > 1;
+                      return {
+                        onRemove: () => {
+                          section.removeIngredient(ingredient.id);
+                        },
+                        image: ingredient['Ingredient Image'],
+                        key: `${ingredient.id}-${index}`,
+                      };
+                    })}
+                  renderItem={(item, index) => {
+                    if (item === 'add') {
                       return (
                         <AddItem
                           key={index}
                           style={{ marginRight: 12, marginBottom: 12 }}
+                          onPress={() => onAddToSection(section)}
                         />
                       );
                     }
                     return (
                       <IngredientTag
-                        key={index}
-                        onRemove={() => {
-                          section.removeIngredient(ingredient.id);
-                        }}
-                        image={ingredient['Ingredient Image']}
+                        key={item.key}
+                        onRemove={item.onRemove}
+                        image={item.image}
                         inlineStyle
                         style={{ marginRight: 12, marginBottom: 12 }}
                       />
                     );
-                  })}
+                  }}
+                />
               </View>
             </View>
           );
         })}
       </View>
+      <TextButton
+        style={{ position: 'absolute', right: 20, top: 14 }}
+        onPress={() => {
+          setCustomization(null);
+        }}
+        title="reset"
+      />
     </View>
   );
 }
 
-function TabSectionScrollView({ sections, style }) {
-  const [topMeasurements] = useState({});
-  function setSectionTop(sectionName, top) {
-    topMeasurements[sectionName] = top;
-    console.log(
-      'heyho',
-      sectionName,
-      Object.keys(topMeasurements).length,
-      sections.length,
-    );
-    if (Object.keys(topMeasurements).length === sections.length) {
-      console.log('whey there!', topMeasurements);
-    }
-  }
-  return (
-    <ScrollView style={{ flex: 1, ...style }}>
-      {sections.map(section => (
-        <View
-          key={section.name}
-          style={{}}
-          onLayout={e => {
-            setSectionTop(section.name, e.nativeEvent.layout.y);
-          }}
-        >
-          {section.content}
-        </View>
-      ))}
-    </ScrollView>
-  );
-}
-
 function Customization({ menuItem, setCustomization, customizationState }) {
-  if (!menuItem) {
-    return null;
-  }
-  const ingredientStates =
-    (customizationState && customizationState.ingredients) || {};
   const sections = getCustomizationSections(
     menuItem,
     customizationState,
     setCustomization,
   );
+  const [activeSection, setActiveSection] = useState({
+    name: sections[0].name,
+  });
+
   return (
     <MenuZone>
       <MenuHLayout
@@ -443,11 +456,15 @@ function Customization({ menuItem, setCustomization, customizationState }) {
             menuItem={menuItem}
             setCustomization={setCustomization}
             customizationState={customizationState}
+            onAddToSection={section => setActiveSection({ name: section.name })}
           />
         }
       >
         <TabSectionScrollView
           style={{}}
+          contentContainerStyle={{ padding: 30 }}
+          activeSection={activeSection}
+          onActiveSection={setActiveSection}
           sections={sections.map(section => {
             return {
               name: section.name,
@@ -475,6 +492,7 @@ export default function CustomizePage({
   ...props
 }) {
   let customizeContent = null;
+  const { goBack } = useNavigation();
   if (menuItem) {
     customizeContent = (
       <Customization
@@ -484,7 +502,28 @@ export default function CustomizePage({
       />
     );
   }
+  const isSave = cartItem && !!cartItem.quantity;
   const actions = [
+    {
+      title: isSave ? 'save' : 'add to cart',
+      onPress: () => {
+        console.log('waaah', isSave, cartItem, customizationState);
+        const nextItem = isSave
+          ? {
+              ...cartItem.state,
+              customization: customizationState,
+            }
+          : {
+              id: orderItemId,
+              type: 'blend',
+              menuItemId: menuItem.id,
+              customization: customizationState,
+              quantity: 1,
+            };
+        setCartItem(nextItem);
+        goBack();
+      },
+    },
     {
       secondary: true,
       title: 'cancel',
@@ -493,30 +532,6 @@ export default function CustomizePage({
       },
     },
   ];
-  if (!cartItem || cartItem.quantity < 1) {
-    actions.push({
-      title: 'add to cart',
-      onPress: () => {
-        setCartItem({
-          id: orderItemId,
-          type: 'blend',
-          menuItemId: menuItem.id,
-          customization: customizationState,
-          quantity: 1,
-        });
-      },
-    });
-  } else {
-    actions.push({
-      title: 'save',
-      onPress: () => {
-        setCartItem({
-          ...cartItem,
-          customization: customizationState,
-        });
-      },
-    });
-  }
   return (
     <ActionPage actions={actions.reverse()} {...props} disableScrollView>
       {customizeContent}

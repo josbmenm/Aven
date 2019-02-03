@@ -23,7 +23,7 @@
         "type": "blend",
         "menuItemId": "rec3SzrHfP2zJnoaO",
         "customization": {
-          "functions": ["recTMd8dy2c66I9xk"],
+          "benefits": ["recTMd8dy2c66I9xk"],
           "ingredients": { "Beverage": ["recQpwh1QhYX2T1AZ"] }
         },
         "quantity": 1
@@ -1451,7 +1451,7 @@
             "optionLimit": 4
           }
         ],
-        "FunctionCustomization": {
+        "BenefitCustomization": {
           "recDCiSzzrmzia1df": {
             "Description": "supports stress and mood.",
             "Function Ingredients 2": [
@@ -2856,7 +2856,7 @@
             "optionLimit": 4
           }
         ],
-        "FunctionCustomization": {
+        "BenefitCustomization": {
           "recDCiSzzrmzia1df": {
             "Description": "supports stress and mood.",
             "Function Ingredients 2": [
@@ -4453,7 +4453,7 @@
             "optionLimit": 4
           }
         ],
-        "FunctionCustomization": {
+        "BenefitCustomization": {
           "recDCiSzzrmzia1df": {
             "Description": "supports stress and mood.",
             "Function Ingredients 2": [
@@ -5459,7 +5459,7 @@
             "optionLimit": 1
           }
         ],
-        "FunctionCustomization": {
+        "BenefitCustomization": {
           "recDCiSzzrmzia1df": {
             "Description": "supports stress and mood.",
             "Function Ingredients 2": [
@@ -7211,7 +7211,7 @@
             "optionLimit": 3
           }
         ],
-        "FunctionCustomization": {
+        "BenefitCustomization": {
           "recDCiSzzrmzia1df": {
             "Description": "supports stress and mood.",
             "Function Ingredients 2": [
@@ -8840,7 +8840,7 @@
             "optionLimit": 4
           }
         ],
-        "FunctionCustomization": {
+        "BenefitCustomization": {
           "recDCiSzzrmzia1df": {
             "Description": "supports stress and mood.",
             "Function Ingredients 2": [
@@ -9085,7 +9085,7 @@
       "type": "blend",
       "menuItemId": "rec3SzrHfP2zJnoaO",
       "customization": {
-        "functions": ["recTMd8dy2c66I9xk"],
+        "benefits": ["recTMd8dy2c66I9xk"],
         "ingredients": { "Beverage": ["recQpwh1QhYX2T1AZ"] }
       },
       "quantity": 1,
@@ -9094,7 +9094,7 @@
         "type": "blend",
         "menuItemId": "rec3SzrHfP2zJnoaO",
         "customization": {
-          "functions": ["recTMd8dy2c66I9xk"],
+          "benefits": ["recTMd8dy2c66I9xk"],
           "ingredients": { "Beverage": ["recQpwh1QhYX2T1AZ"] }
         },
         "quantity": 1
@@ -10267,7 +10267,7 @@
             "optionLimit": 4
           }
         ],
-        "FunctionCustomization": {
+        "BenefitCustomization": {
           "recDCiSzzrmzia1df": {
             "Description": "supports stress and mood.",
             "Function Ingredients 2": [

@@ -33,6 +33,7 @@ class ActionPageWithNavigation extends React.Component {
       navigation,
       sidebarContext,
       disableScrollView,
+      hideBackButton,
     } = this.props;
     let transform = [];
     if (sidebarContext && sidebarContext.openProgress) {
@@ -92,7 +93,13 @@ class ActionPageWithNavigation extends React.Component {
             ))}
           </Animated.View>
         </View>
-        <BackButton backBehavior={() => navigation.goBack(null)} />
+        {!hideBackButton && (
+          <BackButton
+            backBehavior={() => {
+              navigation.goBack(null);
+            }}
+          />
+        )}
       </View>
     );
   }

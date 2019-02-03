@@ -28,39 +28,60 @@ function doConfirmOrder(lastOrder) {
 export function OrderContextProvider({ children }) {
   let cloud = useContext(CloudContext);
   let [currentOrder, setCurrentOrder] = useState(null);
+  let [asyncError, setAsyncError] = useState(null);
+
+  if (asyncError) {
+    setAsyncError(null);
+    throw asyncError;
+    // alert(asyncError);
+  }
+
+  function guardAsync(promise) {
+    promise
+      .then(() => {})
+      .catch(e => {
+        setAsyncError(e);
+      });
+  }
   let orderContext = {
     order: currentOrder,
-    setOrderName: async name => {
-      await currentOrder.transact(lastOrder => ({
-        ...lastOrder,
-        orderName: name,
-      }));
+    setOrderName: name => {
+      guardAsync(
+        currentOrder.transact(lastOrder => ({
+          ...lastOrder,
+          orderName: name,
+        })),
+      );
     },
-    resetOrder: async () => {
+    resetOrder: () => {
       if (!currentOrder) {
         return;
       }
-      await currentOrder.transact(doCancelOrderIfNotConfirmed);
+      guardAsync(currentOrder.transact(doCancelOrderIfNotConfirmed));
       setCurrentOrder(null);
     },
-    cancelOrder: async () => {
-      await currentOrder.transact(lastOrder => {
-        if (lastOrder.isCancelled) {
-          return lastOrder;
-        }
-        return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
-      });
+    cancelOrder: () => {
+      guardAsync(
+        currentOrder.transact(lastOrder => {
+          if (lastOrder.isCancelled) {
+            return lastOrder;
+          }
+          return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
+        }),
+      );
     },
-    confirmOrder: async () => {
-      await currentOrder.transact(doConfirmOrder);
+    confirmOrder: () => {
+      guardAsync(currentOrder.transact(doConfirmOrder));
     },
-    startOrder: async () => {
+    startOrder: () => {
       const order = cloud.get('Orders').post();
       setCurrentOrder(order);
-      await order.put({
-        startTime: Date.now(),
-        items: [],
-      });
+      guardAsync(
+        order.put({
+          startTime: Date.now(),
+          items: [],
+        }),
+      );
     },
   };
   return (
@@ -75,7 +96,22 @@ export function useCompanyConfig() {
 }
 
 export function displayNameOfMenuItem(menuItem) {
+  if (!menuItem) {
+    return 'Unknown';
+  }
   return menuItem['Display Name'] || menuItem['Name'];
+}
+
+export function displayNameOfOrderItem(orderItem, menuItem) {
+  if (!orderItem) {
+    return displayNameOfMenuItem(menuItem);
+  }
+  const { customization } = orderItem;
+  const name = menuItem['Display Name'] || menuItem['Name'];
+  if (customization && customization.ingredients) {
+    return `custom ${name}`;
+  }
+  return name;
 }
 
 export function sellPriceOfMenuItem(menuItem) {
@@ -176,6 +212,90 @@ export function useOrder() {
   return orderContext;
 }
 
+export function getItemCustomizationSummary(item) {
+  if (item.type !== 'blend') {
+    return [];
+  }
+  if (!item.customization) {
+    return [];
+  }
+  function getIngredientName(ing) {
+    return ing.Name.toLowerCase();
+  }
+  let summaryItems = [];
+  Object.keys(item.customization.ingredients).forEach(categoryName => {
+    const categorySpec = item.menuItem.IngredientCustomization.find(
+      a => a.Name === categoryName,
+    );
+    const categorySize =
+      categorySpec.defaultValue.length + categorySpec['Overflow Limit'];
+    const category = item.customization.ingredients[categoryName];
+    if (categorySize === 1) {
+      const ing = categorySpec.Ingredients.find(i => i.id === category[0]);
+      summaryItems.push('with ' + getIngredientName(ing));
+    } else {
+      const defaultIngCounts = {};
+      const allIngIds = new Set();
+      categorySpec.defaultValue.forEach(ingId => {
+        defaultIngCounts[ingId] = defaultIngCounts[ingId]
+          ? defaultIngCounts[ingId] + 1
+          : 1;
+        allIngIds.add(ingId);
+      });
+      const customIngCounts = {};
+      category.forEach(ingId => {
+        customIngCounts[ingId] = customIngCounts[ingId]
+          ? customIngCounts[ingId] + 1
+          : 1;
+        allIngIds.add(ingId);
+      });
+      allIngIds.forEach(ingId => {
+        const ing = categorySpec.Ingredients.find(i => i.id === ingId);
+        if (!ing) {
+          return;
+        }
+        const defaultCount = defaultIngCounts[ingId] || 0;
+        const customCount = customIngCounts[ingId] || 0;
+        if (customCount === defaultCount + 1) {
+          summaryItems.push(`add ${getIngredientName(ing)}`);
+        } else if (customCount > defaultCount) {
+          summaryItems.push(
+            `add ${customCount - defaultCount} ${getIngredientName(ing)}`,
+          );
+        } else if (customCount === defaultCount - 1) {
+          summaryItems.push(`remove ${getIngredientName(ing)}`);
+        } else if (customCount < defaultCount) {
+          summaryItems.push(
+            `remove ${defaultCount - customCount} ${getIngredientName(ing)}`,
+          );
+        }
+      });
+    }
+  });
+
+  return summaryItems;
+}
+
+export function addMenuItemToCartItem({
+  menuItem,
+  orderItemId,
+  item,
+  itemType,
+}) {
+  return item
+    ? {
+        ...item,
+        quantity: item.quantity + 1,
+      }
+    : {
+        id: orderItemId,
+        type: itemType,
+        menuItemId: menuItem.id,
+        customization: null,
+        quantity: 1,
+      };
+}
+
 export function useCurrentOrder() {
   let { order } = useContext(OrderContext);
   const observedOrder = useObservable(order ? order.observeValue : observeNull);
@@ -190,7 +310,8 @@ export function useOrderItem(orderItemId) {
   let { order } = useOrder();
   const config = useCompanyConfig();
 
-  async function setItem(item) {
+  async function setItemState(item) {
+    console.log('setItemState', item, orderItemId);
     await order.transact(lastOrder => {
       const items = [...lastOrder.items];
       const itemIndex = items.findIndex(i => i.id === item.id);
@@ -204,6 +325,7 @@ export function useOrderItem(orderItemId) {
         items,
       };
     });
+    console.log('DONE setItemState', item, orderItemId);
   }
   async function removeItem() {
     await order.transact(lastOrder => {
@@ -236,7 +358,7 @@ export function useOrderItem(orderItemId) {
   return {
     orderItemId,
     orderItem,
-    setItem,
+    setItemState,
     removeItem,
     order,
   };
@@ -325,9 +447,9 @@ function companyConfigToBlendMenu(atData) {
     );
     const defaultFunctionId =
       Recipe && Recipe.DefaultFunction && Recipe.DefaultFunction[0];
-    const Functions = atData.baseTables['Functions'];
+    const Benefits = atData.baseTables['Benefits'];
     const DefaultFunction = defaultFunctionId
-      ? Functions[defaultFunctionId]
+      ? Benefits[defaultFunctionId]
       : null;
     return {
       ...item,
@@ -348,7 +470,7 @@ function companyConfigToBlendMenu(atData) {
           ),
         };
       }).filter(ic => !!ic),
-      FunctionCustomization: Functions,
+      BenefitCustomization: Benefits,
       DefaultFunction,
       DefaultFunctionName: DefaultFunction && DefaultFunction.Name,
       DisplayPrice: formatCurrency(Recipe['Sell Price']),
@@ -416,51 +538,6 @@ function companyConfigToMenu(companyConfig) {
   return null;
 }
 
-export function withMenuItem(Component) {
-  const ComponentWithObservedState = withObservables(
-    ['atData', 'menuItemId'],
-    ({ atData, menuItemId }) => ({
-      menuItem: atData.map(companyConfigToBlendMenuItemMapper(menuItemId)),
-    }),
-  )(Component);
-
-  return props => (
-    <CloudContext.Consumer>
-      {restaurant => (
-        <ComponentWithObservedState
-          atData={restaurant
-            .get('Airtable')
-            .observeConnectedValue(['files', 'db.json', 'id'])}
-          {...props}
-        />
-      )}
-    </CloudContext.Consumer>
-  );
-}
-
-export function withMenu(Component) {
-  const ComponentWithObservedState = withObservables(
-    ['atData'],
-    ({ atData }) => ({
-      blendMenu: atData.map(companyConfigToBlendMenu),
-      foodMenu: atData.map(companyConfigToFoodMenu),
-    }),
-  )(Component);
-
-  return props => (
-    <CloudContext.Consumer>
-      {restaurant => (
-        <ComponentWithObservedState
-          atData={restaurant
-            .get('Airtable')
-            .observeConnectedValue(['files', 'db.json', 'id'])}
-          {...props}
-        />
-      )}
-    </CloudContext.Consumer>
-  );
-}
-
 function getAirtableData() {
   const cloud = useCloud();
   if (!cloud) {
@@ -491,34 +568,6 @@ export function useOrderIdSummary(orderId) {
   return getOrderSummary(orderState, companyConfig);
 }
 
-export function withDispatch(Component) {
-  return props => (
-    <CloudContext.Consumer>
-      {restaurant => <Component dispatch={restaurant.dispatch} {...props} />}
-    </CloudContext.Consumer>
-  );
-}
-
-export function withKitchenLog(Component) {
-  const ComponentWithObservedState = withObservables(
-    ['kitchenLog'],
-    ({ kitchenLog }) => {
-      return { kitchenLog };
-    },
-  )(Component);
-
-  return props => (
-    <CloudContext.Consumer>
-      {restaurant => (
-        <ComponentWithObservedState
-          kitchenLog={restaurant.get('KitchenLog').observeValue}
-          {...props}
-        />
-      )}
-    </CloudContext.Consumer>
-  );
-}
-
 export function withRestaurant(Component) {
   const ComponentWithObservedState = withObservables(
     ['restaurant'],
@@ -543,60 +592,6 @@ export function withRestaurant(Component) {
               .catch(console.error);
           }}
           dispatch={restaurant.dispatch}
-          {...props}
-        />
-      )}
-    </CloudContext.Consumer>
-  );
-}
-
-export function withOrder(Component) {
-  const ComponentWithObservedState = withObservables(['order'], ({ order }) => {
-    return { order };
-  })(Component);
-
-  return props => (
-    <CloudContext.Consumer>
-      {cloud => (
-        <ComponentWithObservedState
-          order={cloud.get('Orders/' + props.orderId).observeValue}
-          setOrderName={name => {
-            cloud
-              .get('Orders/' + props.orderId)
-              .transact(lastState => ({
-                ...lastState,
-                name,
-              }))
-              .catch(console.error);
-          }}
-          setOrderItem={(itemId, item) => {
-            cloud
-              .get('Orders/' + props.orderId)
-              .transact(lastState => ({
-                ...lastState,
-                items: {
-                  ...((lastState && lastState.items) || {}),
-                  [itemId]: item,
-                },
-              }))
-              .catch(console.error);
-          }}
-          placeOrder={order => {
-            cloud
-              .get('Restaurant')
-              .transact(lastState => ({
-                ...lastState,
-                queuedOrders: [
-                  ...((lastState && lastState.queuedOrders) || []),
-                  {
-                    ...order,
-                    orderTime: Date.now(),
-                  },
-                ],
-              }))
-              .catch(console.error);
-          }}
-          dispatch={cloud.dispatch}
           {...props}
         />
       )}

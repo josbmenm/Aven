@@ -8,7 +8,7 @@ export default function CustomizeBlendScreen({ navigation, ...props }) {
   const orderItemId = getParam('orderItemId');
   const menuItemId = getParam('menuItemId');
 
-  let { orderItem, setItem } = useOrderItem(orderItemId);
+  let { orderItem, setItemState } = useOrderItem(orderItemId);
   const menuItem = useMenuItem(menuItemId);
   const item = useObservable(orderItem && orderItem.observeValue);
   const initialCustomization = useMemo(
@@ -34,7 +34,7 @@ export default function CustomizeBlendScreen({ navigation, ...props }) {
       customizationState={customizationState}
       menuItem={menuItem}
       cartItem={item}
-      setCartItem={setItem}
+      setCartItem={setItemState}
       navigation={navigation}
       {...props}
     />

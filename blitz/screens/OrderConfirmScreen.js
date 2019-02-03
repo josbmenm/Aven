@@ -3,11 +3,7 @@ import GenericPage from '../components/GenericPage';
 import Hero from '../../components/Hero';
 import Button from '../../components/Button';
 import { Text, View } from 'react-native';
-import {
-  withMenu,
-  useOrder,
-  useOrderSummary,
-} from '../../ono-cloud/OnoKitchen';
+import { useOrder, useOrderSummary } from '../../ono-cloud/OnoKitchen';
 import useObservable from '../../aven-cloud/useObservable';
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
@@ -30,15 +26,14 @@ export default function OrderConfirmScreen({
     amount: Math.floor(summary.total * 100), // ugh.. we should really be using cents everywhere..
     description: 'Ono Blends',
   };
-  function onPaymentComplete() {
-    confirmOrder()
-      .then(() => {
-        console.log('confirmmmed');
-      })
-      .catch(console.error);
+  function onPaymentCompleteAndCardRemoved() {
+    confirmOrder();
     navigation.navigate('Receipt', { orderId: order.getName() });
   }
-  const { state } = useCardPaymentCapture(paymentDetails, onPaymentComplete);
+  const { state } = useCardPaymentCapture(paymentDetails, {
+    onPaymentCompleteAndCardRemoved,
+  });
+  console.log('----', state);
   useEmptyOrderEscape();
   return (
     <OrderConfirmPage
@@ -49,7 +44,7 @@ export default function OrderConfirmScreen({
         goBack();
       }}
       skipPayment={async () => {
-        await confirmOrder();
+        confirmOrder();
         navigation.navigate('Receipt', { orderId: order.getName() });
       }}
       {...props}

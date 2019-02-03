@@ -9,7 +9,7 @@ export const prettyShadow = {
   shadowOffset: { width: 0, height: 0 },
   shadowColor: 'black',
   shadowOpacity: 0.1, //0.08,
-  shadowRadius: 24,
+  shadowRadius: 22,
 };
 
 export const pagePaddingTop = 84;
@@ -17,7 +17,7 @@ export const pagePaddingTop = 84;
 export const menuZoneTopInset = 160;
 export const menuZonePaddingBottom = 116;
 export const largeHorizontalPadding = 60;
-export const midPageHorizPadding = 60;
+export const midPageHorizPadding = 30; // the page is responsible for the additional 30, because of shadow
 export const rightSidebarWidth = 250;
 export const cardLargeWidth = 340;
 // export const prettyExtraShadow = {
@@ -27,6 +27,7 @@ export const cardLargeWidth = 340;
 //   shadowRadius: 8,
 // };
 
+export const black8 = '#00000014';
 export const monsterra = '#005151';
 export const monsterra8 = monsterra + '14';
 export const monsterra30 = monsterra + '4C';
@@ -52,6 +53,7 @@ export const rowStyle = {
   // borderBottomWidth: rowBorderWidth,
   // borderColor: hairlineColor,
   padding: 20,
+  paddingHorizontal: 30,
   marginVertical: 10,
   overflow: 'hidden',
   ...prettyShadow,
@@ -87,10 +89,12 @@ export const rowSectionStyle = {
 };
 
 export const linkRowIconTextStyle = {
-  marginRight: 28,
   fontSize: 42,
 };
 export const linkRowTitleTextStyle = {
+  ...primaryFontFace,
+  color: monsterra80,
+  paddingLeft: 30,
   fontSize: 42,
 };
 
@@ -239,5 +243,5 @@ export const heroViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
 };
-export const heroIconStyle = { top: 15, fontSize: 64, paddingHorizontal: 120 };
+export const heroIconStyle = { top: 15, fontSize: 64 };
 export const heroSubtitleStyle = { fontSize: 50 };

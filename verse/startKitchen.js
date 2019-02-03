@@ -113,6 +113,13 @@ const extractActionValues = ({
   return { immediateOutput, clearPulseOutput };
 };
 
+class PLCConnectionError extends Error {
+  constructor() {
+    super('Timeout while connecting to PLC');
+  }
+  code = 'PLC_Connection';
+}
+
 export default function startKitchen({ client, plcIP }) {
   let readyPLC = null;
   let connectingPLC = null;
@@ -127,7 +134,7 @@ export default function startKitchen({ client, plcIP }) {
     return new Promise((resolve, reject) => {
       readyHandlers.add(resolve),
         setTimeout(() => {
-          reject(new Error('Timeout while connecting to PLC'));
+          reject(new PLCConnectionError());
         }, 1000);
     });
   };
@@ -383,8 +390,9 @@ export default function startKitchen({ client, plcIP }) {
   //   },
   // };
 
-  const readTags = async schema => {
+  async function readTags(schema) {
     const readings = {};
+
     const PLC = await getReadyPLC();
     await PLC.readTagGroup(schema.allTagsGroup);
 
@@ -396,7 +404,7 @@ export default function startKitchen({ client, plcIP }) {
     });
 
     return readings;
-  };
+  }
 
   const writeTags = async (schema, values) => {
     const outputGroup = new TagGroup();
@@ -601,7 +609,6 @@ export default function startKitchen({ client, plcIP }) {
       updateTags()
         .then(() => {})
         .catch(async e => {
-          console.error(e);
           await stateRef.put({
             isPLCConnected: false,
           });
@@ -628,13 +635,8 @@ export default function startKitchen({ client, plcIP }) {
     return { ...immediateOutput, ...clearPulseOutput };
   }
 
-  let debugInterval = setInterval(() => {
-    console.log('Has updated PLC ' + updateCount + ' times');
-    updateCount = 0;
-  }, 10000);
-
   function close() {
-    clearInterval(debugInterval);
+    // clearInterval(debugInterval);
     readyPLC && readyPLC.destroy();
     readyPLC = null;
     hasClosed = true;

@@ -4,7 +4,6 @@ import startFSDataSource from '../aven-cloud-fs/startFSDataSource';
 // import createNodeNetworkSource from '../aven-cloud-server/createNodeNetworkSource';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createFSClient from '../aven-cloud-server/createFSClient';
-import createOnoCloudClient from '../ono-cloud/createOnoCloudClient';
 import CloudContext from '../aven-cloud/CloudContext';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import scrapeAirTable from '../skynet/scrapeAirTable';
@@ -364,8 +363,6 @@ const runServer = async () => {
   const context = new Map();
 
   // const avenClient = createCloudClient(networkDataSource);
-
-  // const onoCloudClient = createOnoCloudClient(avenClient);
 
   // context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
   const webService = await WebServer({
