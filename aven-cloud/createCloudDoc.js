@@ -159,6 +159,7 @@ export default function createCloudDoc({
         puttingFromId: null,
         id: puttingFromId,
       });
+      throw e;
     } finally {
       postingInProgress = null;
     }
