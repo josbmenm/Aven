@@ -9,7 +9,7 @@ export default function startMemoryDataSource(opts = {}) {
 
   if (!dataSourceDomain) {
     throw new Error(
-      'Cannot start a memory data source without specifying a domain'
+      'Cannot start a memory data source without specifying a domain',
     );
   }
 
@@ -20,6 +20,10 @@ export default function startMemoryDataSource(opts = {}) {
   const isConnected = new BehaviorSubject(true);
 
   async function getBlock(blockId) {
+    if (typeof blockId !== 'string') {
+      console.error(blockId);
+      throw new Error(`Block ID is not valid ${blockId}`);
+    }
     if (_blocks[blockId] === undefined) {
       throw new Error(`Block ID "${blockId}" was not found`);
     }

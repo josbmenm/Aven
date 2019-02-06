@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 
 const minimist = require('minimist');
-const { runClean, runStart, runBuild, runDeploy } = require('./src/avenTools');
+const {
+  runClean,
+  runStart,
+  runBuild,
+  runDeploy,
+  runPublish,
+} = require('./src/avenTools');
 
 const logRespectfully = (argv, logStr) => {
   if (!argv.q) {
@@ -27,7 +33,7 @@ const runCLI = async argv => {
       logRespectfully(argv, '🌐 Aven Clean 🔥');
       logRespectfully(
         argv,
-        'Cleaning all Aven apps and state. This will not touch your working directory, except for the local .aven-env-state.json file, which should be ignored by git.'
+        'Cleaning all Aven apps and state. This will not touch your working directory, except for the local .aven-env-state.json file, which should be ignored by git.',
       );
       return runClean(argv);
     }
@@ -43,13 +49,19 @@ const runCLI = async argv => {
       logResult(
         argv,
         result,
-        `🌐 Aven Build Complete 🗜\n${result.buildLocation}`
+        `🌐 Aven Build Complete 🗜\n${result.buildLocation}`,
       );
       return;
     }
     case 'deploy': {
       logRespectfully(argv, '🌐 Aven Deploy 🚀');
       const result = await runDeploy(argv);
+      logResult(argv, result, '');
+      return;
+    }
+    case 'publish': {
+      logRespectfully(argv, '🌐 Aven Publish 🚀');
+      const result = await runPublish(argv);
       logResult(argv, result, '');
       return;
     }
@@ -62,7 +74,7 @@ const runCLI = async argv => {
       console.log('🌐 Aven CLI 🌐');
       console.log('Usage:');
       console.log(
-        'aven start [appName] (launch the dev environment for this app)'
+        'aven start [appName] (launch the dev environment for this app)',
       );
       console.log('aven build [appName] (run a build for this app)');
       console.log('aven clear (wipe out all derived app data)');

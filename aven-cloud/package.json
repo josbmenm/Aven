@@ -1,4 +1,6 @@
 {
+  "name": "@aven-cloud/cloud",
+  "version": "1.5.0",
   "aven": {
     "srcDependencies": [
       "aven-cloud-utils"
@@ -10,5 +12,6 @@
       "crypto-js",
       "@nozbe/with-observables"
     ]
-  }
+  },
+  "srcChecksum": "d870f1338f9faac4b659917115da7a64fd010bb4"
 }

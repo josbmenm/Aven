@@ -98,11 +98,68 @@ export default function createCloudClient({
     });
   }
 
+  async function GetBlock({ domain: actionDomain, name, id }) {
+    const defaultAction = () =>
+      dataSource.dispatch({
+        type: 'GetBlock',
+        actionDomain,
+        name,
+        id,
+      });
+    if (actionDomain !== domain) {
+      return await defaultAction();
+    }
+    if (_blocks[id]) {
+      try {
+        return _blocks[id].serialize();
+      } catch (e) {
+        return await defaultAction;
+      }
+    }
+    return await defaultAction();
+  }
+  async function GetDoc({ domain: actionDomain, name }) {
+    const defaultAction = () =>
+      dataSource.dispatch({
+        type: 'GetDoc',
+        actionDomain,
+        name,
+      });
+    if (actionDomain !== domain) {
+      return await defaultAction();
+    }
+    const doc = docs.get(name);
+    await doc.fetch();
+    return { id: doc.getBlock().id, domain, name };
+  }
+  async function GetDocValue({ domain: actionDomain, name }) {
+    const defaultAction = () =>
+      dataSource.dispatch({
+        type: 'GetDocValue',
+        actionDomain,
+        name,
+      });
+    if (actionDomain !== domain) {
+      return await defaultAction();
+    }
+    const doc = docs.get(name);
+    await doc.fetchValue();
+    return {
+      id: doc.getId(),
+      value: doc.getValue(),
+    };
+  }
+
   const actions = {
     CreateSession,
+    CreateAnonymousSession,
+    DestroySession,
+    GetBlock,
+    GetDoc,
+    GetDocValue,
   };
 
-  const dispatch = createDispatcher(actions, sessionDispatch);
+  const dispatch = createDispatcher(actions, sessionDispatch, domain);
 
   return {
     ...dataSource,

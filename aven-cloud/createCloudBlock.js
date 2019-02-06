@@ -9,16 +9,18 @@ export default function createCloudBlock({
   value,
   lastFetchTime, // should be set if this block came from the server..
 }) {
-  let blockId = false;
+  let observedBlockId = null;
   if (value !== undefined) {
     const valueString = JSONStringify(value);
-    blockId = SHA1(valueString).toString();
-  } else {
-    blockId = id;
+    observedBlockId = SHA1(valueString).toString();
   }
-  if (id && blockId && id !== blockId) {
+  const blockId = id || observedBlockId;
+  if (!blockId) {
+    throw new Error('Block id could not be determined!');
+  }
+  if (id && observedBlockId && id !== observedBlockId) {
     throw new Error(
-      'id and value were both provided to createCloudBlock, but the ID does not match the value!'
+      'id and value were both provided to createCloudBlock, but the id does not match the value!',
     );
   }
 
@@ -38,6 +40,13 @@ export default function createCloudBlock({
     // block data:
     value,
   });
+
+  function serialize() {
+    if (blockState.value.value === undefined || !blockId) {
+      throw new Error('Cannot serialize an incomplete block');
+    }
+    return { value: blockState.value.value, id: blockId };
+  }
 
   const observe = Observable.create(observer => {
     fetch()
@@ -145,6 +154,13 @@ export default function createCloudBlock({
   //   observeValue,
   //   observeConnectedValue
   // };
+
+  function getReference() {
+    return {
+      type: 'BlockReference',
+      id: blockId,
+    };
+  }
   return {
     id: blockId,
     isPublished,
@@ -155,5 +171,7 @@ export default function createCloudBlock({
     getBlock,
     observe,
     observeValue,
+    serialize,
+    getReference,
   };
 }

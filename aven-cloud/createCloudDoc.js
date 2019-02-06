@@ -55,18 +55,18 @@ export function createDocPool({
   function move(fromName, toName) {
     if (hasDepth(fromName)) {
       throw new Error(
-        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`
+        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`,
       );
     }
     if (hasDepth(toName)) {
       throw new Error(
-        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`
+        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`,
       );
     }
     const doc = _docs[fromName];
     if (!doc) {
       throw new Error(
-        `Cannot move "${fromName}" to "${toName}" because it does not exist`
+        `Cannot move "${fromName}" to "${toName}" because it does not exist`,
       );
     }
     _docs[toName] = doc;
@@ -108,7 +108,7 @@ export default function createCloudDoc({
   }
   if (name.match(/\//)) {
     throw new Error(
-      `doc name ${name} must not contain slashes. Instead, pass a parent`
+      `doc name ${name} must not contain slashes. Instead, pass a parent`,
     );
   }
   if (!domain) {
@@ -188,6 +188,10 @@ export default function createCloudDoc({
     return docState.value;
   }
 
+  function getId() {
+    return getState().id;
+  }
+
   function getName() {
     const name = docState.value.name;
     return name;
@@ -233,10 +237,31 @@ export default function createCloudDoc({
   }
 
   async function fetchValue() {
-    await fetch();
-    const block = getBlock();
-    if (block) {
-      await block.fetch();
+    console.log('fetchValue', getFullName());
+    if (getFullName().length > 255) {
+      throw new Error('Name is too long. Probably a recursive loop');
+    }
+    if (getBlock()) {
+      // we have a previous existing block. do a fetch (which only checks the ID)
+      await fetch();
+      const block = getBlock();
+      if (block) {
+        // this will be a no-op if the block has already been fetched
+        await block.fetch();
+      }
+    } else {
+      const result = await dataSource.dispatch({
+        type: 'GetDocValue',
+        domain,
+        name: getFullName(),
+      });
+      if (result.id && result.value !== undefined) {
+        _getBlockWithValueAndId(result.value, result.id);
+      }
+      setState({
+        id: result.id,
+        lastSyncTime: Date.now(),
+      });
     }
   }
   const observe = Observable.create(observer => {
@@ -298,10 +323,41 @@ export default function createCloudDoc({
     return (blockCache[block.id] = block);
   }
 
+  function _getBlockWithValueAndId(value, id) {
+    const block = createCloudBlock({
+      onNamedDispatch: _namedDispatch,
+      value,
+      id,
+    });
+
+    if (blockCache[id]) {
+      return blockCache[id];
+    }
+    return (blockCache[id] = block);
+  }
+
   function getBlock(requestedId) {
-    // this method is extremely confusing. it currently means both "get a block with this id" and "get your current active block"
-    if (requestedId) {
-      return _getBlockWithId(requestedId);
+    // this method is extremely confusing. it currently means:
+    // - "get a block with this id", or
+    // - "get a doc with this BlockReference object", or
+    // - "get your current active block"
+
+    if (
+      typeof requestedId === 'object' &&
+      requestedId.type !== 'BlockReference'
+    ) {
+      throw new Error(
+        `Bad reference type "${
+          requestedId.type
+        }" for getBlock! Expected "BlockReference".`,
+      );
+    }
+    const queryId =
+      typeof requestedId === 'string'
+        ? requestedId
+        : requestedId && requestedId.id;
+    if (queryId) {
+      return _getBlockWithId(queryId);
     }
     const { id } = docState.value;
     if (!id) {
@@ -326,6 +382,17 @@ export default function createCloudDoc({
     const block = _getBlockWithValue(value);
     await putBlock(block);
     return { id: block.id };
+  }
+
+  async function putTransaction(value) {
+    const result = await dataSource.dispatch({
+      type: 'PutTransactionValue',
+      domain,
+      name: getFullName(),
+      value,
+    });
+
+    return result;
   }
 
   async function putId(blockId) {
@@ -364,7 +431,7 @@ export default function createCloudDoc({
       console.log(
         `Warning.. putBlock of "${name}" while another put from ${
           state.puttingFromId
-        } is in progress`
+        } is in progress`,
       );
     }
     const lastId = state.id;
@@ -471,16 +538,26 @@ export default function createCloudDoc({
     // todo, send this to the server!
   }
 
+  function getReference() {
+    return {
+      type: 'DocReference',
+      domain,
+      name: getFullName(),
+    };
+  }
+
   const cloudDoc = {
     $setName,
     get: docs.get,
     post: docs.post,
     getState,
+    getId,
     getName,
     getFullName,
     domain,
     fetch,
     put,
+    putTransaction,
     putId,
     fetchValue,
     fetchConnectedValue,
@@ -492,6 +569,7 @@ export default function createCloudDoc({
     destroy,
     observeConnectedValue,
     transact,
+    getReference,
   };
 
   function flatArray(a) {

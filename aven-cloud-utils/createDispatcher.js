@@ -1,5 +1,12 @@
-export default function createDispatcher(actions, fallbackDispatch) {
+export default function createDispatcher(
+  actions,
+  fallbackDispatch,
+  filterDomain,
+) {
   function dispatch(action) {
+    if (filterDomain && fallbackDispatch && action.domain !== filterDomain) {
+      return fallbackDispatch(action);
+    }
     if (actions[action.type]) {
       return actions[action.type](action);
     }

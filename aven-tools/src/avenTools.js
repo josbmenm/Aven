@@ -4,6 +4,70 @@ const uuid = require('uuid/v1');
 const sane = require('sane');
 const homeDir = require('os').homedir();
 const spawn = require('@expo/spawn-async');
+const semver = require('semver');
+const crypto = require('crypto');
+const isBinaryFile = require('isbinaryfile').isBinaryFile;
+
+function checksum(input) {
+  const shasum = crypto.createHash('sha1');
+  shasum.update(input);
+  return shasum.digest('hex');
+}
+
+async function checksumFolder(dir, overrides) {
+  const children = {};
+  const childFiles = await fs.readdir(dir);
+  await childFiles.map(async childName => {
+    const childPath = pathJoin(dir, childName);
+    const stat = await fs.stat(childPath);
+    if (stat.isDirectory()) {
+      children[childName] = await checksumFolder(childPath, {});
+    } else {
+      const fileData = await fs.readFile(childPath);
+      children[childName] = checksum(fileData);
+    }
+  });
+  const finalChildren = {
+    ...children,
+    overrides,
+  };
+  return checksum(JSON.stringify(finalChildren));
+}
+
+async function syncAndReplace(source, dest, replacements) {
+  const info = await fs.stat(source);
+  if (info.isDirectory()) {
+    const children = await fs.readdir(source);
+    try {
+      await fs.mkdir(dest);
+    } catch (e) {
+      // assume it already exisdted
+    }
+    await Promise.all(
+      children.map(async childName => {
+        const destChild = pathJoin(dest, childName);
+        const sourceChild = pathJoin(source, childName);
+        await syncAndReplace(sourceChild, destChild, replacements);
+      }),
+    );
+
+    return;
+  }
+  if (await isBinaryFile(source)) {
+    await fs.copy(source, dest);
+  } else {
+    const data = await fs.readFile(source);
+    let newData = data;
+    Object.keys(replacements).forEach(fromReplace => {
+      const toReplace = replacements[fromReplace];
+      newData = newData
+        .toString()
+        .split(fromReplace)
+        .join(toReplace);
+    });
+    await fs.writeFile(dest, newData);
+  }
+}
 
 const srcDir = process.cwd();
 const avenHomeDir = pathJoin(homeDir, '.aven');
@@ -446,9 +510,160 @@ const runClean = async () => {
   await fs.remove(avenHomeDir);
   await fs.remove(envStatePath);
 };
+
+async function doPublish(packageName, localParentDeps = []) {
+  const packageDir = pathJoin(srcDir, packageName);
+  const localPackagePath = pathJoin(packageDir, 'package.json');
+
+  const localPackage = await getAppPackage(packageName);
+  const { moduleDependencies, srcDependencies } = await localPackage.aven;
+  const globePkg = JSON.parse(
+    await fs.readFile(pathJoin(srcDir, 'package.json')),
+  );
+  let publishedVersion = localPackage.version;
+  let publishedName = localPackage.name;
+  const finalPkgJson = {
+    ...localPackage,
+    aven: undefined,
+    // these are stripped for now, so that the checksum remains pure:
+    version: undefined,
+    srcChecksum: undefined,
+    dependencies: {
+      '@babel/polyfill': '^7.2.5',
+    },
+  };
+  if (moduleDependencies) {
+    moduleDependencies.forEach(depName => {
+      finalPkgJson.dependencies[depName] = globePkg.dependencies[depName];
+    });
+  }
+  const npmNames = {};
+  if (srcDependencies) {
+    await Promise.all(
+      srcDependencies.map(async localDepName => {
+        const result = await doPublish(localDepName, [
+          ...localParentDeps,
+          packageName,
+        ]);
+        finalPkgJson.dependencies[result.publishedName] =
+          '^' + result.publishedVersion;
+        npmNames[localDepName] = result.publishedName;
+      }),
+    );
+  }
+
+  packageJSONChecksum = checksum(JSON.stringify(finalPkgJson));
+
+  const srcChecksum = await checksumFolder(packageDir, {
+    'package.json': packageJSONChecksum,
+  });
+  let buildDir = null;
+  if (srcChecksum !== localPackage.srcChecksum) {
+    // time to cut a new version
+
+    publishedVersion = semver.inc(localPackage.version, 'minor');
+
+    finalPkgJson.version = publishedVersion;
+
+    finalPkgJson.scripts = {
+      build: 'babel src --out-dir .',
+    };
+    finalPkgJson.devDependencies = {
+      '@babel/cli': '^7.2.3',
+      '@babel/core': '^7.2.2',
+      '@babel/node': '^7.2.2',
+      '@babel/preset-env': '^7.3.1',
+      '@babel/plugin-proposal-class-properties': '^7.3.0',
+    };
+
+    // doing publish
+    buildDir = pathJoin(avenHomeDir, packageName + '_publish');
+    // try {
+    await fs.remove(buildDir);
+    // } catch (e) {}
+    const buildSrcDir = pathJoin(buildDir, 'src');
+    await fs.mkdirp(buildSrcDir);
+
+    await fs.writeFile(
+      pathJoin(buildSrcDir, '.babelrc'),
+      JSON.stringify(
+        {
+          presets: ['@babel/preset-env'],
+          plugins: ['@babel/plugin-proposal-class-properties'],
+        },
+        null,
+        2,
+      ),
+    );
+
+    const replacements = {};
+    srcDependencies &&
+      srcDependencies.forEach(depName => {
+        replacements[`../${depName}/`] = `${npmNames[depName]}/`;
+      });
+
+    await syncAndReplace(packageDir, buildSrcDir, replacements);
+
+    try {
+      await fs.remove(pathJoin(buildSrcDir, 'package.json'));
+    } catch (e) {}
+    await fs.writeFile(
+      pathJoin(buildDir, 'package.json'),
+      JSON.stringify(finalPkgJson, null, 2),
+    );
+    await spawn('yarn', [], {
+      cwd: buildDir,
+      stdio: 'inherit',
+    });
+    await spawn('yarn', ['build'], {
+      cwd: buildDir,
+      stdio: 'inherit',
+    });
+
+    const dryRun = !!process.env.DRY_RUN;
+    if (!dryRun) {
+      await spawn('npm', ['publish', '--access', 'public'], {
+        cwd: buildDir,
+        stdio: 'inherit',
+      });
+
+      // write new version and checksum to local package
+      await fs.writeFile(
+        localPackagePath,
+        JSON.stringify(
+          {
+            ...localPackage,
+            version: publishedVersion,
+            srcChecksum,
+          },
+          null,
+          2,
+        ),
+      );
+    }
+  }
+
+  console.log('ppp', {
+    buildDir,
+    finalPkgJson,
+    publishedVersion,
+    publishedName,
+    packageJSONChecksum,
+    srcChecksum,
+  });
+
+  return { publishedVersion, publishedName };
+}
+
+async function runPublish(argv) {
+  const packageName = argv._[1];
+  return await doPublish(packageName);
+}
+
 module.exports = {
   runStart,
   runBuild,
   runDeploy,
   runClean,
+  runPublish,
 };

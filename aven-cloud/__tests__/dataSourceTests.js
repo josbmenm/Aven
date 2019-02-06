@@ -355,7 +355,7 @@ export default function testDataSource(startTestDataSource) {
             name: 'changed',
           },
         },
-      })
+      }),
     ).rejects.toThrow();
 
     const result = await ds.dispatch({
@@ -548,7 +548,7 @@ export default function testDataSource(startTestDataSource) {
           domain: 'test',
           name: 'foo',
           id: 'wrong',
-        })
+        }),
       ).rejects.toThrow();
     });
 

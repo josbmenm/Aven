@@ -1,6 +1,8 @@
 import startMemoryDataSource from '../startMemoryDataSource';
 import createCloudClient from '../createCloudClient';
 
+import dataSourceTests from './dataSourceTests';
+
 describe('create client generic behavior', () => {
   test('passes arbitrary actions to dispatch', () => {
     let lastDispatched = null;
@@ -235,7 +237,7 @@ describe('client doc map', () => {
     const c = createCloudClient({ dataSource: m, domain: 'd' });
     const expanded = c
       .get('foo')
-      .expand((o, r) => o && { great: r.getBlock(o.countObj) });
+      .expand((value, doc) => value && { great: doc.getBlock(value.countObj) });
     await expanded.fetchValue();
     expect(expanded.getValue().great.count).toEqual(12);
     await m.dispatch({
@@ -247,4 +249,14 @@ describe('client doc map', () => {
     await expanded.fetchValue();
     expect(expanded.getValue().great.count).toEqual(42);
   });
+});
+
+describe.skip('client behaves as data source', async () => {
+  async function startTestDataSource(options = {}) {
+    const dataSource = startMemoryDataSource({ domain: 'test', ...options });
+    const client = createCloudClient({ dataSource, domain: 'test' });
+    return client;
+  }
+
+  dataSourceTests(startTestDataSource);
 });
