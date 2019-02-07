@@ -23,8 +23,8 @@ export default function App() {
     });
   }, []);
 
-  // cloud.get('log/_by/reduceLog')
-  const data = useObservable(cloud.get('log/_by/reduceLog').observeValue);
+  // cloud.get('log^reduceLog')
+  const data = useObservable(cloud.get('log^reduceLog').observeValue);
   return (
     <View style={{ flex: 1 }}>
       <Text

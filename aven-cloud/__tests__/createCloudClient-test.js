@@ -128,6 +128,104 @@ describe('client doc behavior', () => {
   });
 });
 
+describe('block fetching', () => {
+  test('fetches blocks with doc#blockid', async () => {
+    const m = startMemoryDataSource({ domain: 'd' });
+    const first = await m.dispatch({
+      type: 'PutDocValue',
+      name: 'foo',
+      domain: 'd',
+      value: { count: 1 },
+    });
+    const second = await m.dispatch({
+      type: 'PutDocValue',
+      name: 'foo',
+      domain: 'd',
+      value: { count: 2 },
+    });
+    const c = createCloudClient({ dataSource: m, domain: 'd' });
+    const block1 = c.get('foo#' + first.id);
+    await block1.fetchValue();
+    const result = block1.getValue();
+    expect(result.count).toEqual(1);
+    expect(block1.getReference()).toMatchObject({
+      type: 'BlockReference',
+      id: first.id,
+    });
+  });
+  test('fetches nested blocks with foo/bar#blockid', async () => {
+    const m = startMemoryDataSource({ domain: 'd' });
+    const first = await m.dispatch({
+      type: 'PutDocValue',
+      name: 'foo/bar',
+      domain: 'd',
+      value: { count: 1 },
+    });
+    const second = await m.dispatch({
+      type: 'PutDocValue',
+      name: 'foo/bar',
+      domain: 'd',
+      value: { count: 2 },
+    });
+    const c = createCloudClient({ dataSource: m, domain: 'd' });
+    const block1 = c.get('foo/bar#' + first.id);
+    expect(block1).not.toBeNull();
+    await block1.fetchValue();
+    const result = block1.getValue();
+    expect(result.count).toEqual(1);
+    expect(block1.getReference()).toMatchObject({
+      type: 'BlockReference',
+      id: first.id,
+    });
+  });
+});
+
+describe('eval', () => {
+  test.skip('basic eval value', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'd' });
+    const c = createCloudClient({ dataSource, domain: 'd' });
+    await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'foo',
+      value: 2,
+    });
+    await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'squared',
+      value: {
+        type: 'LambdaFunction',
+        code: 'a => a * a',
+      },
+    });
+    const s = c.get('foo^squared');
+    await s.fetchValue();
+    const result = s.getValue();
+    expect(result).toBe(4);
+  });
+});
+
+describe('onDocMiss', () => {
+  test('basic doc miss example', async () => {
+    const m = startMemoryDataSource({ domain: 'd' });
+    const missedDocs = [];
+    async function onDocMiss(docName) {
+      missedDocs.push(docName);
+      const value = { yourName: docName };
+      return {
+        value,
+      };
+    }
+    const c = createCloudClient({ dataSource: m, domain: 'd', onDocMiss });
+    const foo = c.get('foo');
+    await foo.fetchValue();
+    const result = foo.getValue();
+    expect(missedDocs.length).toBe(1);
+    expect(result.yourName).toEqual('foo');
+  });
+});
+
 describe('client doc map', () => {
   test('fetches mapped docs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });

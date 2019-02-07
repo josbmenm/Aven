@@ -41,11 +41,13 @@ export default function createCloudBlock({
     value,
   });
 
-  function serialize() {
-    if (blockState.value.value === undefined || !blockId) {
-      throw new Error('Cannot serialize an incomplete block');
+  function getReference() {
+    if (!blockId) {
+      throw new Error(
+        'Cannot getReference of an incomplete block without a value or id',
+      );
     }
-    return { value: blockState.value.value, id: blockId };
+    return { type: 'BlockReference', id: blockId };
   }
 
   const observe = Observable.create(observer => {
@@ -155,13 +157,8 @@ export default function createCloudBlock({
   //   observeConnectedValue
   // };
 
-  function getReference() {
-    return {
-      type: 'BlockReference',
-      id: blockId,
-    };
-  }
   return {
+    getId: () => blockId,
     id: blockId,
     isPublished,
     setPutTime,
@@ -171,7 +168,6 @@ export default function createCloudBlock({
     getBlock,
     observe,
     observeValue,
-    serialize,
     getReference,
   };
 }

@@ -20,26 +20,75 @@ function filterUndefined() {
   return filter(value => value !== undefined);
 }
 
+function computeLambdaResult(doc, lambdaDoc, cloudClient, options) {
+  const lambdaValue = lambdaDoc.getValue();
+
+  const evalCode = `({useValue}) => {
+    // console.log = () => {};
+    return ${lambdaValue.code};
+  }`;
+
+  const lambdaContext = eval(evalCode);
+
+  const dependencies = new Set();
+  function useValue(cloudValue) {
+    dependencies.add(cloudValue);
+    return cloudValue.getValue();
+  }
+  const lambda = lambdaContext({ useValue });
+
+  function computeResult() {
+    const thisValue = doc.getValue();
+    return lambda(thisValue, doc, cloudClient, options);
+  }
+
+  return {
+    result: computeResult(),
+    dependencies,
+    reComputeResult: computeResult,
+  };
+}
+
 export function createDocPool({
   blockCache,
   domain,
   dataSource,
   onGetParentName,
+  onGetSelf,
+  onDocMiss,
+  cloudClient,
 }) {
   const _docs = {};
 
   function get(name) {
-    const localName = name.split('/')[0];
-    let restOfName = null;
-    if (localName.length < name.length - 1) {
-      restOfName = name.slice(localName.length + 1);
+    if (name === '') {
+      return onGetSelf();
     }
-    if (!_docs[localName]) {
-      _docs[localName] = createCloudDoc({
+    const executionTerms = name.split('^');
+    const restExecutionTerms = executionTerms.slice(1);
+    const docIdTerms = executionTerms[0].split('#');
+    const blockId = docIdTerms[1];
+    if (docIdTerms.length !== 1 && docIdTerms.length !== 2) {
+      throw new Error(
+        `Cannot get doc "${
+          executionTerms[0]
+        }" because the blockId specifier ("#") is defined more than once!`,
+      );
+    }
+    const fullName = docIdTerms[0];
+    const localName = fullName.split('/')[0];
+    let restOfName = null;
+    if (localName.length < fullName.length - 1) {
+      restOfName = fullName.slice(localName.length + 1);
+    }
+    let doc = _docs[localName];
+    if (!doc) {
+      doc = _docs[localName] = createCloudDoc({
         dataSource,
         domain,
         name: localName,
         blockCache: blockCache,
+        onDocMiss,
         onRename: newName => {
           return move(localName, newName);
         },
@@ -47,9 +96,13 @@ export function createDocPool({
       });
     }
     if (restOfName) {
-      return _docs[localName].get(restOfName);
+      doc = doc.get(restOfName);
     }
-    return _docs[localName];
+    if (blockId) {
+      const block = doc.getBlock(blockId);
+      return block;
+    }
+    return doc;
   }
 
   function move(fromName, toName) {
@@ -82,6 +135,7 @@ export function createDocPool({
       name: localName,
       blockCache: blockCache,
       onGetParentName,
+      cloudClient,
       onRename: newName => move(localName, newName),
       isUnposted: true,
     });
@@ -93,12 +147,14 @@ export function createDocPool({
 }
 
 export default function createCloudDoc({
+  cloudClient,
   dataSource,
   name,
   domain,
   onGetParentName,
   isUnposted,
   onRename,
+  onDocMiss,
   ...opts
 }) {
   const blockCache = opts.blockCache || {};
@@ -211,6 +267,7 @@ export default function createCloudDoc({
     blockCache,
     dataSource,
     domain,
+    onGetSelf: () => cloudDoc,
   });
 
   async function fetch() {
@@ -220,6 +277,9 @@ export default function createCloudDoc({
       name: getFullName(),
     });
     if (result) {
+      if (result.id === null) {
+        onDocMiss(getFullName());
+      }
       setState({
         id: result.id,
         lastSyncTime: Date.now(),
@@ -237,7 +297,6 @@ export default function createCloudDoc({
   }
 
   async function fetchValue() {
-    console.log('fetchValue', getFullName());
     if (getFullName().length > 255) {
       throw new Error('Name is too long. Probably a recursive loop');
     }
@@ -255,6 +314,14 @@ export default function createCloudDoc({
         domain,
         name: getFullName(),
       });
+      if (result.id === undefined) {
+        const missResult = await onDocMiss(getFullName());
+        if (missResult.value) {
+          const block = _getBlockWithValue(missResult.value);
+          await putBlock(block);
+          return;
+        }
+      }
       if (result.id && result.value !== undefined) {
         _getBlockWithValueAndId(result.value, result.id);
       }
@@ -263,6 +330,7 @@ export default function createCloudDoc({
         lastSyncTime: Date.now(),
       });
     }
+    return getValue();
   }
   const observe = Observable.create(observer => {
     // todo, re-observe when name changes!!
@@ -356,6 +424,7 @@ export default function createCloudDoc({
       typeof requestedId === 'string'
         ? requestedId
         : requestedId && requestedId.id;
+
     if (queryId) {
       return _getBlockWithId(queryId);
     }
@@ -410,7 +479,6 @@ export default function createCloudDoc({
 
   async function putBlock(block) {
     let postResult = null;
-
     if (!docState.value.isPosted && !postingPromise) {
       postingPromise = doPost(block);
       await postingPromise;
@@ -643,6 +711,7 @@ export default function createCloudDoc({
     };
     expanded.map = map.bind(expanded);
     expanded.expand = expand.bind(expanded);
+    expanded.eval = evalDoc.bind(expanded);
     return expanded;
   }
 
@@ -661,10 +730,63 @@ export default function createCloudDoc({
     };
     mapped.map = map.bind(mapped);
     mapped.expand = expand.bind(mapped);
+    mapped.eval = evalDoc.bind(mapped);
     return mapped;
   }
+
+  function evalDoc(lambdaDoc) {
+    const evaluatedDoc = {
+      fetchValue: async () => {
+        await this.fetchValue();
+        await lambdaDoc.fetchValue();
+
+        // run once to fill dependencies
+        const { dependencies, reComputeResult } = computeLambdaResult(
+          this,
+          lambdaDoc,
+          cloudClient,
+          {},
+        );
+
+        await Promise.all(
+          [...dependencies].map(async dep => {
+            await dep.fetchValue();
+          }),
+        );
+
+        return reComputeResult();
+      },
+      observeValue: this.observeValue
+        .distinctUntilChanged()
+        .pipe(filterUndefined())
+        .mergeMap(async o => {
+          const expandSpec = expandFn(o, this);
+          const cloudValues = collectCloudValues(expandSpec);
+          await Promise.all(cloudValues.map(v => v.fetchValue()));
+          const expanded = doExpansion(expandSpec);
+          return expanded;
+        })
+        .pipe(filterUndefined())
+        .distinctUntilChanged(),
+      getValue: () => {
+        const { result } = computeLambdaResult(
+          this,
+          lambdaDoc,
+          cloudClient,
+          {},
+        );
+        return result;
+      },
+    };
+    evaluatedDoc.map = map.bind(evaluatedDoc);
+    evaluatedDoc.expand = expand.bind(evaluatedDoc);
+    evaluatedDoc.eval = evalDoc.bind(evaluatedDoc);
+    return evaluatedDoc;
+  }
+
   cloudDoc.map = map.bind(cloudDoc);
   cloudDoc.expand = expand.bind(cloudDoc);
+  cloudDoc.eval = evalDoc.bind(cloudDoc);
 
   return cloudDoc;
 }

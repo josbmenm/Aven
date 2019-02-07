@@ -8,17 +8,22 @@ export default function createInterpretedDataSource({ dataSource, domain }) {
   function onDocMiss(name) {
     // example names:
     // - foo/bar/baz
-    // - foo/bar/_by/baz
-    // - foo/bar/_by/baz/boo
+    // - foo/bar^baz
+    // - foo/bar^baz/boo
+    // - foo/bar#123^baz/boo
+    // - foo#123^baz
     // example expanded names
-    // - foo/bar#123/_by/baz/boo#456
+    // - foo#123
+    // - foo/bar#123^baz/boo#456
+    console.log('name', name);
+    throw new Error('coming soon');
   }
   const cloud = createCloudClient({ dataSource, domain, onDocMiss });
 
   async function GetDocValue({ domain, name }) {
     console.log('GetDocValue', name);
     const pathParts = name.split('/');
-    const indexOfLastByPart = pathParts.lastIndexOf('_by');
+    // const indexOfLastByPart = pathParts.lastIndexOf('_by');
     if (indexOfLastByPart === -1) {
       return await dataSource.dispatch({ type: 'GetDocValue', domain, name });
     }
@@ -54,12 +59,6 @@ export default function createInterpretedDataSource({ dataSource, domain }) {
       return cloudValue.getValue();
     }
     const lambda = lambdaContext({ useValue });
-    // `(a, doc) => {
-    //   // a is the current value of the doc
-    //   const fooA = useObservable(doc.get('a').observeValue);
-    //   const fooB = useObservable(doc.get('b').observeValue);
-    //   return fooA * fooB;
-    // }`,
 
     // run once to fill dependencies
     lambda(argumentDoc.getValue(), argumentDoc, cloud, { isScanPass: true });

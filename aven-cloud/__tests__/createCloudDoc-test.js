@@ -17,7 +17,7 @@ describe('doc generic behavior', () => {
       createCloudDoc({
         dataSource,
         name: 'foo',
-      })
+      }),
     ).toThrow();
   });
   test('fails on creation without name', () => {
@@ -26,7 +26,7 @@ describe('doc generic behavior', () => {
       createCloudDoc({
         dataSource,
         domain: 'test',
-      })
+      }),
     ).toThrow();
   });
 
@@ -37,8 +37,34 @@ describe('doc generic behavior', () => {
         dataSource,
         domain: 'test',
         name: 'foo/bar',
-      })
+      }),
     ).toThrow();
+  });
+});
+
+describe('doc get', () => {
+  test('handles get of child', () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const doc = createCloudDoc({
+      dataSource,
+      domain: 'test',
+      name: 'myDoc',
+      onGetParentName: getNull,
+    });
+    const child = doc.get('friend');
+    expect(child.getFullName()).toEqual('myDoc/friend');
+    expect(child.domain).toEqual('test');
+  });
+  test('handles get of self', () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const doc = createCloudDoc({
+      dataSource,
+      domain: 'test',
+      name: 'myDoc',
+      onGetParentName: getNull,
+    });
+    const gotDoc = doc.get('');
+    expect(gotDoc).toEqual(doc);
   });
 });
 

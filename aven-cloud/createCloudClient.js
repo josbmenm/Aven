@@ -13,6 +13,7 @@ export default function createCloudClient({
   dataSource,
   domain,
   initialSession,
+  onDocMiss,
 }) {
   const _blocks = {};
 
@@ -44,7 +45,9 @@ export default function createCloudClient({
     onGetParentName: () => null,
     blockCache: _blocks,
     dataSource: dataSourceWithSession,
+    onDocMiss,
     domain,
+    onGetSelf: () => cloudClient,
   });
 
   async function destroyDoc(doc) {
@@ -111,7 +114,7 @@ export default function createCloudClient({
     }
     if (_blocks[id]) {
       try {
-        return _blocks[id].serialize();
+        return _blocks[id].getReference();
       } catch (e) {
         return await defaultAction;
       }
@@ -161,7 +164,7 @@ export default function createCloudClient({
 
   const dispatch = createDispatcher(actions, sessionDispatch, domain);
 
-  return {
+  const cloudClient = {
     ...dataSource,
     observeSession: session,
     CreateSession,
@@ -172,4 +175,5 @@ export default function createCloudClient({
     destroyDoc,
     get: docs.get,
   };
+  return cloudClient;
 }
