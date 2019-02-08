@@ -5,10 +5,9 @@ import getDocModel from './getDocModel';
 import { BehaviorSubject } from 'rxjs-compat';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import uuid from 'uuid/v1';
+import getIdOfValue from '../aven-cloud-utils/getIdOfValue';
 
-const crypto = require('crypto');
 const stringify = require('json-stable-stringify');
-
 export default async function startSQLDataSource({ config, connection }) {
   const id = uuid();
   const isConnected = new BehaviorSubject(false);
@@ -69,9 +68,7 @@ export default async function startSQLDataSource({ config, connection }) {
   async function PutBlock({ name, domain, value }) {
     const blockData = stringify(value);
     const size = blockData.length;
-    const sha = crypto.createHash('sha1');
-    sha.update(blockData);
-    const id = sha.digest('hex');
+    const id = getIdOfValue(value);
     try {
       await models.Block.query().insertGraph(
         {

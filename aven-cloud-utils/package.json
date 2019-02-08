@@ -3,7 +3,9 @@
   "version": "1.5.0",
   "aven": {
     "moduleDependencies": [
-      "bcrypt"
+      "bcrypt",
+      "json-stable-stringify",
+      "crypto-js"
     ]
   },
   "srcChecksum": "6285295ed651904f673d6231a1f0b85110485e29"

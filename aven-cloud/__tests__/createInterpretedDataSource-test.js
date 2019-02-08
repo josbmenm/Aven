@@ -3,7 +3,7 @@ import createInterpretedDataSource from '../createInterpretedDataSource';
 
 beforeAll(async () => {});
 
-describe.skip('interpreted data sources', () => {
+describe('interpreted data sources', () => {
   test('basic interpreted value', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
@@ -72,7 +72,7 @@ describe.skip('interpreted data sources', () => {
     expect(result.value).toBe(16);
   });
 
-  test('computations for specific blocks', async () => {
+  test.skip('computations for specific blocks', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
@@ -109,7 +109,7 @@ describe.skip('interpreted data sources', () => {
     expect(result.value).toBe(4);
   });
 
-  test('expanding interpreted value', async () => {
+  test.skip('expanding interpreted value', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,

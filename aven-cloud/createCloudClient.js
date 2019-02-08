@@ -1,5 +1,6 @@
 import { default as withObs } from '@nozbe/with-observables';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
+import getIdOfValue from '../aven-cloud-utils/getIdOfValue';
 import { Observable, BehaviorSubject } from 'rxjs-compat';
 
 import { createDocPool } from './createCloudDoc';
@@ -40,15 +41,6 @@ export default function createCloudClient({
     observeDoc: sessionObserveDoc,
     dispatch: sessionDispatch,
   };
-
-  const docs = createDocPool({
-    onGetParentName: () => null,
-    blockCache: _blocks,
-    dataSource: dataSourceWithSession,
-    onDocMiss,
-    domain,
-    onGetSelf: () => cloudClient,
-  });
 
   async function destroyDoc(doc) {
     await doc.destroy();
@@ -146,11 +138,11 @@ export default function createCloudClient({
       return await defaultAction();
     }
     const doc = docs.get(name);
+    console.log('GEtting doc value!', name);
     await doc.fetchValue();
-    return {
-      id: doc.getId(),
-      value: doc.getValue(),
-    };
+    const value = doc.getValue();
+    const id = getIdOfValue(value);
+    return { value, id };
   }
 
   const actions = {
@@ -173,7 +165,18 @@ export default function createCloudClient({
     dispatch,
     domain,
     destroyDoc,
-    get: docs.get,
   };
+
+  const docs = createDocPool({
+    onGetParentName: () => null,
+    blockCache: _blocks,
+    dataSource: dataSourceWithSession,
+    onDocMiss,
+    domain,
+    cloudClient,
+    onGetSelf: () => cloudClient,
+  });
+  cloudClient.get = docs.get;
+
   return cloudClient;
 }

@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const isBinaryFile = require('isbinaryfile').isBinaryFile;
 
 function checksum(input) {
-  const shasum = crypto.createHash('sha1');
+  const shasum = crypto.createHash('sha256');
   shasum.update(input);
   return shasum.digest('hex');
 }

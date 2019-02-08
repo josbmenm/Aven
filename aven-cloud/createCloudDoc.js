@@ -64,31 +64,53 @@ export function createDocPool({
     if (name === '') {
       return onGetSelf();
     }
-    const executionTerms = name.split('^');
-    const restExecutionTerms = executionTerms.slice(1);
-    const docIdTerms = executionTerms[0].split('#');
+    if (name[0] === '^') {
+      const doc = onGetSelf();
+      const evalName = name.slice(1);
+      const evalDoc = cloudClient.get(evalName);
+      return doc.eval(evalDoc);
+    }
+    const firstEvalTermIndex = name.indexOf('^');
+    const evalTerms =
+      firstEvalTermIndex === -1
+        ? null
+        : name.slice(firstEvalTermIndex + 1).split('^');
+    const docNameWithBlockId =
+      firstEvalTermIndex === -1 ? name : name.slice(0, firstEvalTermIndex);
+    const docIdTerms = docNameWithBlockId.split('#');
     const blockId = docIdTerms[1];
     if (docIdTerms.length !== 1 && docIdTerms.length !== 2) {
       throw new Error(
-        `Cannot get doc "${
-          executionTerms[0]
-        }" because the blockId specifier ("#") is defined more than once!`,
+        `Cannot get doc "${docNameWithBlockId}" because the blockId specifier ("#") is defined more than once.`
       );
     }
     const fullName = docIdTerms[0];
     const localName = fullName.split('/')[0];
+
+    console.log({
+      evalTerms,
+      docNameWithBlockId,
+      name,
+      blockId,
+      fullName,
+      localName,
+    });
+
+    let returningCloudValue = null;
+
     let restOfName = null;
     if (localName.length < fullName.length - 1) {
       restOfName = fullName.slice(localName.length + 1);
     }
-    let doc = _docs[localName];
-    if (!doc) {
-      doc = _docs[localName] = createCloudDoc({
+    returningCloudValue = _docs[localName];
+    if (!returningCloudValue) {
+      returningCloudValue = _docs[localName] = createCloudDoc({
         dataSource,
         domain,
         name: localName,
         blockCache: blockCache,
         onDocMiss,
+        cloudClient,
         onRename: newName => {
           return move(localName, newName);
         },
@@ -96,30 +118,36 @@ export function createDocPool({
       });
     }
     if (restOfName) {
-      doc = doc.get(restOfName);
+      returningCloudValue = returningCloudValue.get(restOfName);
     }
     if (blockId) {
-      const block = doc.getBlock(blockId);
-      return block;
+      returningCloudValue = returningCloudValue.getBlock(blockId);
     }
-    return doc;
+
+    if (evalTerms) {
+      evalTerms.forEach(evalTerm => {
+        const evalDoc = get(evalTerm);
+        returningCloudValue = returningCloudValue.eval(evalDoc);
+      });
+    }
+    return returningCloudValue;
   }
 
   function move(fromName, toName) {
     if (hasDepth(fromName)) {
       throw new Error(
-        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`,
+        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`
       );
     }
     if (hasDepth(toName)) {
       throw new Error(
-        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`,
+        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`
       );
     }
     const doc = _docs[fromName];
     if (!doc) {
       throw new Error(
-        `Cannot move "${fromName}" to "${toName}" because it does not exist`,
+        `Cannot move "${fromName}" to "${toName}" because it does not exist`
       );
     }
     _docs[toName] = doc;
@@ -164,7 +192,7 @@ export default function createCloudDoc({
   }
   if (name.match(/\//)) {
     throw new Error(
-      `doc name ${name} must not contain slashes. Instead, pass a parent`,
+      `doc name ${name} must not contain slashes. Instead, pass a parent`
     );
   }
   if (!domain) {
@@ -267,6 +295,7 @@ export default function createCloudDoc({
     blockCache,
     dataSource,
     domain,
+    cloudClient,
     onGetSelf: () => cloudDoc,
   });
 
@@ -417,7 +446,7 @@ export default function createCloudDoc({
       throw new Error(
         `Bad reference type "${
           requestedId.type
-        }" for getBlock! Expected "BlockReference".`,
+        }" for getBlock! Expected "BlockReference".`
       );
     }
     const queryId =
@@ -499,7 +528,7 @@ export default function createCloudDoc({
       console.log(
         `Warning.. putBlock of "${name}" while another put from ${
           state.puttingFromId
-        } is in progress`,
+        } is in progress`
       );
     }
     const lastId = state.id;
@@ -684,6 +713,15 @@ export default function createCloudDoc({
       return [];
     }
     const expanded = {
+      type: 'ExpandedDoc',
+      getFullName: () => {
+        return this.getFullName() + '__expanded';
+      },
+      get: toGet => {
+        throw new Error(
+          `Cannot get "${toGet}" on ${this.getFullName()} because it has been evaluated.`
+        );
+      },
       fetchValue: async () => {
         await this.fetchValue();
         const expandSpec = expandFn(this.getValue(), this);
@@ -717,6 +755,15 @@ export default function createCloudDoc({
 
   function map(mapFn) {
     const mapped = {
+      type: 'MappedDoc',
+      getFullName: () => {
+        return this.getFullName() + '__mapped';
+      },
+      get: toGet => {
+        throw new Error(
+          `Cannot get "${toGet}" on ${this.getFullName()} because it has been mapped.`
+        );
+      },
       fetchValue: this.fetchValue,
       observeValue: this.observeValue
         .distinctUntilChanged()
@@ -736,7 +783,22 @@ export default function createCloudDoc({
 
   function evalDoc(lambdaDoc) {
     const evaluatedDoc = {
+      type: 'EvaluatedDoc',
+      getFullName: () => {
+        return this.getFullName() + '__evaluated';
+      },
+      get: toGet => {
+        throw new Error(
+          `Cannot get "${toGet}" on ${this.getFullName()} because it has been evaluated.`
+        );
+      },
       fetchValue: async () => {
+        // console.log(
+        //   'DOING EVAL FETCH VALUE!',
+        //   this.getReference(),
+        //   lambdaDoc.getReference(),
+        // );
+
         await this.fetchValue();
         await lambdaDoc.fetchValue();
 
@@ -745,35 +807,35 @@ export default function createCloudDoc({
           this,
           lambdaDoc,
           cloudClient,
-          {},
+          {}
         );
 
         await Promise.all(
           [...dependencies].map(async dep => {
             await dep.fetchValue();
-          }),
+          })
         );
 
         return reComputeResult();
       },
-      observeValue: this.observeValue
-        .distinctUntilChanged()
-        .pipe(filterUndefined())
-        .mergeMap(async o => {
-          const expandSpec = expandFn(o, this);
-          const cloudValues = collectCloudValues(expandSpec);
-          await Promise.all(cloudValues.map(v => v.fetchValue()));
-          const expanded = doExpansion(expandSpec);
-          return expanded;
-        })
-        .pipe(filterUndefined())
-        .distinctUntilChanged(),
+      // observeValue: this.observeValue
+      //   .distinctUntilChanged()
+      //   .pipe(filterUndefined())
+      //   .mergeMap(async o => {
+      //     const expandSpec = expandFn(o, this);
+      //     const cloudValues = collectCloudValues(expandSpec);
+      //     await Promise.all(cloudValues.map(v => v.fetchValue()));
+      //     const expanded = doExpansion(expandSpec);
+      //     return expanded;
+      //   })
+      //   .pipe(filterUndefined())
+      //   .distinctUntilChanged(),
       getValue: () => {
         const { result } = computeLambdaResult(
           this,
           lambdaDoc,
           cloudClient,
-          {},
+          {}
         );
         return result;
       },

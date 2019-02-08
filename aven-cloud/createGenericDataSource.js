@@ -8,7 +8,7 @@ import { getMaxBlockRefCount } from './maxBlockRefCount';
 class IDMatchError extends Error {
   constructor(providedId, computedId) {
     super(
-      `The Id spcified does not match! "${providedId}" was specified, but the checksum id of the block is "${computedId}"`,
+      `The Id spcified does not match! "${providedId}" was specified, but the checksum id of the block is "${computedId}"`
     );
     this.params = {
       providedId,
@@ -66,7 +66,7 @@ function _renderDoc({ id }) {
 function verifyDomain(inputDomain, dataSourceDomain) {
   if (inputDomain !== dataSourceDomain) {
     throw new Error(
-      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`,
+      `Invalid domain for this data source. Expecting "${dataSourceDomain}", but "${inputDomain}" was provided as the domain`
     );
   }
 }
@@ -124,7 +124,7 @@ export default function createGenericDataSource({
     if (blockData.type === 'BlockReference') {
       if (blockData.value) {
         const { value: referenceValue, refs } = await commitDeepBlock(
-          blockData.value,
+          blockData.value
         );
         const { id } = await commitBlock(referenceValue, refs);
         return { value: { id, type: 'BlockReference' }, refs: [id] };
@@ -132,7 +132,7 @@ export default function createGenericDataSource({
         console.log('====');
         console.log(blockData);
         throw new Error(
-          `This block includes a {type: 'BlockReference'}, without a value or an id!`,
+          `This block includes a {type: 'BlockReference'}, without a value or an id!`
         );
       }
     }
@@ -144,7 +144,7 @@ export default function createGenericDataSource({
           const { value, refs } = await commitDeepBlock(innerBlock);
           refs.forEach(ref => outputRefs.add(ref));
           return value;
-        }),
+        })
       );
     } else {
       await Promise.all(
@@ -153,12 +153,12 @@ export default function createGenericDataSource({
           const { value, refs } = await commitDeepBlock(innerBlock);
           refs.forEach(ref => outputRefs.add(ref));
           outputValue[blockDataKey] = value;
-        }),
+        })
       );
     }
     if (outputRefs.size > getMaxBlockRefCount()) {
       throw new Error(
-        `This block has too many BlockReferences, you should paginate or compress instead. You can defer this error with setMaxBlockRefCount`,
+        `This block has too many BlockReferences, you should paginate or compress instead. You can defer this error with setMaxBlockRefCount`
       );
     }
 
@@ -207,17 +207,17 @@ export default function createGenericDataSource({
       const { on } = value;
       if (typeof on !== 'object') {
         throw new Error(
-          'Cannot PutDocValue a TransactionValue with invalid "on" field',
+          'Cannot PutDocValue a TransactionValue with invalid "on" field'
         );
       } else if (on === null) {
         if (memoryDoc.id != null) {
           throw new Error(
-            'Cannot PutDocValue a TransactionValue on a null id, because the current doc id is not null.',
+            'Cannot PutDocValue a TransactionValue on a null id, because the current doc id is not null.'
           );
         }
       } else if (on.id !== memoryDoc.id) {
         throw new Error(
-          'Cannot put a transaction value when the previous id does not match `on.id`',
+          'Cannot put a transaction value when the previous id does not match `on.id`'
         );
       }
     }

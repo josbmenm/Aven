@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs-compat';
 import createGenericDataSource from '../aven-cloud/createGenericDataSource';
-import SHA1 from 'crypto-js/sha1';
+import getIdOfValue from '../aven-cloud-utils/getIdOfValue';
 
 const fs = require('fs-extra');
 const stringify = require('json-stable-stringify');
@@ -35,7 +35,7 @@ async function readFSDoc(dataDir, name) {
 async function writeFSBlock(dataDir, value) {
   const blocksDir = pathJoin(dataDir, 'blocks');
   const blockData = stringify(value);
-  const id = SHA1(blockData).toString();
+  const id = getIdOfValue(value);
   const blockPath = pathJoin(blocksDir, id);
   if (!(await fs.exists(blockPath))) {
     await fs.writeFile(blockPath, blockData);

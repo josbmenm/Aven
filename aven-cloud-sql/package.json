@@ -9,8 +9,7 @@
       "pg-format",
       "pg",
       "knex",
-      "objection",
-      "json-stable-stringify"
+      "objection"
     ]
   }
 }

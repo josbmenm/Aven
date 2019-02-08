@@ -1,15 +1,13 @@
 import { BehaviorSubject } from 'rxjs-compat';
 import createGenericDataSource from './createGenericDataSource';
-
-const crypto = require('crypto');
-const stringify = require('json-stable-stringify');
+import getIdOfValue from '../aven-cloud-utils/getIdOfValue';
 
 export default function startMemoryDataSource(opts = {}) {
   const dataSourceDomain = opts.domain;
 
   if (!dataSourceDomain) {
     throw new Error(
-      'Cannot start a memory data source without specifying a domain',
+      'Cannot start a memory data source without specifying a domain'
     );
   }
 
@@ -35,10 +33,7 @@ export default function startMemoryDataSource(opts = {}) {
   }
 
   async function commitBlock(value) {
-    const blockData = stringify(value);
-    const sha = crypto.createHash('sha1');
-    sha.update(blockData);
-    const id = sha.digest('hex');
+    const id = getIdOfValue(value);
     if (!_blocks[id]) {
       _blocks[id] = value;
     }
