@@ -5,7 +5,9 @@ import bindCloudValueFunctions from './bindCloudValueFunctions';
 const JSONStringify = require('json-stable-stringify');
 
 export default function createCloudBlock({
-  onNamedDispatch,
+  domain,
+  onGetName,
+  dispatch,
   id,
   value,
   lastFetchTime, // should be set if this block came from the server..
@@ -22,13 +24,10 @@ export default function createCloudBlock({
   }
   if (id && observedBlockId && id !== observedBlockId) {
     throw new Error(
-      'id and value were both provided to createCloudBlock, but the id does not match the value!',
+      'id and value were both provided to createCloudBlock, but the id does not match the value!'
     );
   }
 
-  if (!onNamedDispatch) {
-    throw new Error('onNamedDispatch be provided to createCloudBlock!');
-  }
   if (!blockId) {
     throw new Error('id or value must be provided to createCloudBlock!');
   }
@@ -46,7 +45,7 @@ export default function createCloudBlock({
   function getReference() {
     if (!blockId) {
       throw new Error(
-        'Cannot getReference of an incomplete block without a value or id',
+        'Cannot getReference of an incomplete block without a value or id'
       );
     }
     return { type: 'BlockReference', id: blockId };
@@ -105,9 +104,11 @@ export default function createCloudBlock({
     if (getState().value !== undefined) {
       return;
     }
-    const result = await onNamedDispatch({
+    const result = await dispatch({
       type: 'GetBlock',
       id,
+      domain,
+      name: onGetName(),
     });
     if (!result || result.value === undefined) {
       throw new Error(`Error fetching block "${id}" from remote!`);
@@ -122,45 +123,8 @@ export default function createCloudBlock({
     await fetch();
   }
 
-  // async function put() {
-  //   if (getState().value === undefined) {
-  //     throw new Error(`Cannot put empty value from block "${blockId}"!`);
-  //   }
-  //   const res = await onNamedDispatch({
-  //     type: 'PutBlock',
-  //     value: getState().value,
-  //   });
-  //   setState({
-  //     lastPutTime: Date.now(),
-  //   });
-  //   if (res.id !== blockId) {
-  //     // if we get here, we are truly screwed!
-  //     throw new Error(
-  //       `Server and client blockIds do not match! Server: ${
-  //         res.id
-  //       }, Client: ${blockId}`
-  //     );
-  //   }
-  //   return res;
-  // }
-
-  // function getValue() {
-  //   return this._state.value;
-  // }
-
-  // return {
-  //   fetch,
-  //   put,
-  //   observe,
-  //   getValue,
-  //   blockId,
-  //   domain,
-  //   observeValue,
-  //   observeConnectedValue
-  // };
-
   const cloudBlock = {
-    getFullName: () => `#${blockId}`,
+    getFullName: () => onGetName(),
     getId: () => blockId,
     id: blockId,
     get: () => {

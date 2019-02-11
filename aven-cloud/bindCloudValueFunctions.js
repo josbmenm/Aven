@@ -9,7 +9,7 @@ function computeLambdaResult(
   lambdaValue,
   docContext,
   cloudClient,
-  options,
+  options
 ) {
   const evalCode = `({useValue}) => {
     // console.log = () => {};
@@ -89,7 +89,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
     },
     get: toGet => {
       throw new Error(
-        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`,
+        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
       );
     },
     fetchValue: async () => {
@@ -129,7 +129,7 @@ function evalCloudValue(cloudValue, cloudClient, lambdaDoc) {
     },
     get: toGet => {
       throw new Error(
-        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`,
+        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
       );
     },
     fetchValue: async () => {
@@ -142,13 +142,13 @@ function evalCloudValue(cloudValue, cloudClient, lambdaDoc) {
         lambdaDoc.getValue(),
         cloudValue,
         cloudClient,
-        {},
+        {}
       );
 
       await Promise.all(
         [...dependencies].map(async dep => {
           await dep.fetchValue();
-        }),
+        })
       );
 
       return reComputeResult();
@@ -167,13 +167,13 @@ function evalCloudValue(cloudValue, cloudClient, lambdaDoc) {
               lambdaDocValue,
               cloudValue,
               cloudClient,
-              {},
+              {}
             );
 
             await Promise.all(
               [...dependencies].map(async dep => {
                 await dep.fetchValue();
-              }),
+              })
             );
 
             return reComputeResult();
@@ -187,7 +187,7 @@ function evalCloudValue(cloudValue, cloudClient, lambdaDoc) {
         lambdaDoc.getValue(),
         cloudValue,
         cloudClient,
-        {},
+        {}
       );
       return result;
     },
@@ -204,7 +204,7 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
     },
     get: toGet => {
       throw new Error(
-        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been mapped.`,
+        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been mapped.`
       );
     },
     fetchValue: cloudValue.fetchValue,

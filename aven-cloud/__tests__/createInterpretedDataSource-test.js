@@ -214,7 +214,7 @@ describe('interpreted data sources', () => {
     expect(blockResult.value).toBe(9);
   });
 
-  test.only('interpteted reduced value', async () => {
+  test('interpteted reduced value', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
@@ -262,7 +262,6 @@ describe('interpreted data sources', () => {
         }
         if (a.on && a.on.id) {
           const ancestorName = doc.getFullName() + '#' + a.on.id + '^listValue';
-          console.log('woah', ancestorName)
           state = useValue(cloud.get(ancestorName)) || [];
         }
 

@@ -28,7 +28,6 @@ export function createDocPool({
   const _docs = {};
 
   function get(name) {
-    console.log('Now getting: ', name);
     if (name === '') {
       return onGetSelf();
     }
@@ -49,7 +48,7 @@ export function createDocPool({
     const blockId = docIdTerms[1];
     if (docIdTerms.length !== 1 && docIdTerms.length !== 2) {
       throw new Error(
-        `Cannot get doc "${docNameWithBlockId}" because the blockId specifier ("#") is defined more than once.`,
+        `Cannot get doc "${docNameWithBlockId}" because the blockId specifier ("#") is defined more than once.`
       );
     }
     const fullName = docIdTerms[0];
@@ -95,18 +94,18 @@ export function createDocPool({
   function move(fromName, toName) {
     if (hasDepth(fromName)) {
       throw new Error(
-        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`,
+        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`
       );
     }
     if (hasDepth(toName)) {
       throw new Error(
-        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`,
+        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`
       );
     }
     const doc = _docs[fromName];
     if (!doc) {
       throw new Error(
-        `Cannot move "${fromName}" to "${toName}" because it does not exist`,
+        `Cannot move "${fromName}" to "${toName}" because it does not exist`
       );
     }
     _docs[toName] = doc;
@@ -151,7 +150,7 @@ export default function createCloudDoc({
   }
   if (name.match(/\//)) {
     throw new Error(
-      `doc name ${name} must not contain slashes. Instead, pass a parent`,
+      `doc name ${name} must not contain slashes. Instead, pass a parent`
     );
   }
   if (!domain) {
@@ -349,19 +348,14 @@ export default function createCloudDoc({
     .multicast(() => new BehaviorSubject(docState.value))
     .refCount();
 
-  function _namedDispatch(action) {
-    return dataSource.dispatch({
-      ...action,
-      domain,
-      name: getFullName(),
-    });
-  }
   function _getBlockWithId(id) {
     if (blockCache[id]) {
       return blockCache[id];
     }
     const o = (blockCache[id] = createCloudBlock({
-      onNamedDispatch: _namedDispatch,
+      dispatch: dataSource.dispatch,
+      onGetName: getFullName,
+      domain,
       id,
       cloudClient,
     }));
@@ -370,7 +364,9 @@ export default function createCloudDoc({
 
   function _getBlockWithValue(value) {
     const block = createCloudBlock({
-      onNamedDispatch: _namedDispatch,
+      dispatch: dataSource.dispatch,
+      onGetName: getFullName,
+      domain,
       value,
       cloudClient,
     });
@@ -383,7 +379,9 @@ export default function createCloudDoc({
 
   function _getBlockWithValueAndId(value, id) {
     const block = createCloudBlock({
-      onNamedDispatch: _namedDispatch,
+      dispatch: dataSource.dispatch,
+      onGetName: getFullName,
+      domain,
       value,
       id,
       cloudClient,
@@ -408,7 +406,7 @@ export default function createCloudDoc({
       throw new Error(
         `Bad reference type "${
           requestedId.type
-        }" for getBlock! Expected "BlockReference".`,
+        }" for getBlock! Expected "BlockReference".`
       );
     }
     const queryId =
@@ -490,7 +488,7 @@ export default function createCloudDoc({
       console.log(
         `Warning.. putBlock of "${name}" while another put from ${
           state.puttingFromId
-        } is in progress`,
+        } is in progress`
       );
     }
     const lastId = state.id;

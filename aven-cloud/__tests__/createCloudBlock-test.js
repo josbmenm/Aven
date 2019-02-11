@@ -4,30 +4,29 @@ import createCloudBlock from '../createCloudBlock';
 describe('object generic behavior', () => {
   test('handles creation with empty value', () => {
     const obj = createCloudBlock({
+      domain: 'test',
+      onGetName: () => 'foo',
       dataSource: {},
-      onNamedDispatch: () => {},
       id: 'asdf1234',
+      dispatch: () => {},
     });
     expect(obj.id).toBe('asdf1234');
-  });
-  test('fails on creation without onNamedDispatch', () => {
-    expect(() =>
-      createCloudBlock({
-        value: { foo: 42 },
-      })
-    ).toThrow();
   });
   test('fails on creation without value or id', () => {
     expect(() =>
       createCloudBlock({
-        onNamedDispatch: () => {},
+        domain: 'test',
+        onGetName: () => 'foo',
+        dispatch: () => {},
       })
     ).toThrow();
   });
   test('handles creation with value', () => {
     const obj = createCloudBlock({
-      onNamedDispatch: () => {},
+      domain: 'test',
+      onGetName: () => 'foo',
       value: { foo: 42 },
+      dispatch: () => {},
     });
     expect(obj.id).toBe('e7e71fa8b5db791e2346856ee09cb45f867439e4');
   });
@@ -43,8 +42,9 @@ describe('basic object DataSource interaction', () => {
       value: { foo: 'bar' },
     });
     const c = createCloudBlock({
-      onNamedDispatch: action =>
-        m.dispatch({ ...action, name: 'foo', domain: 'test' }),
+      dispatch: m.dispatch,
+      onGetName: () => 'foo',
+      domain: 'test',
       id,
     });
     expect(c.getValue()).toEqual(undefined);
@@ -62,8 +62,9 @@ describe('basic object DataSource interaction', () => {
       value: null,
     });
     const c = createCloudBlock({
-      onNamedDispatch: action =>
-        m.dispatch({ ...action, name: 'foo', domain: 'test' }),
+      dispatch: m.dispatch,
+      onGetName: () => 'foo',
+      domain: 'test',
       id,
     });
     expect(c.getValue()).toEqual(undefined);
@@ -84,8 +85,9 @@ describe('observing', () => {
       value: { foo: 'bar' },
     });
     const c = createCloudBlock({
-      onNamedDispatch: action =>
-        m.dispatch({ ...action, name: 'foo', domain: 'test' }),
+      dispatch: m.dispatch,
+      onGetName: () => 'foo',
+      domain: 'test',
       id: obj1.id,
     });
 
@@ -108,8 +110,9 @@ describe('observing', () => {
       value: { foo: 'bar' },
     });
     const c = createCloudBlock({
-      onNamedDispatch: action =>
-        m.dispatch({ ...action, name: 'foo', domain: 'test' }),
+      dispatch: m.dispatch,
+      onGetName: () => 'foo',
+      domain: 'test',
       id: obj1.id,
     });
 
