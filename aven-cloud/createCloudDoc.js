@@ -1,8 +1,8 @@
 import { Observable, BehaviorSubject } from 'rxjs-compat';
-import { filter } from 'rxjs/operators';
 import observeNull from './observeNull';
 import createCloudBlock from './createCloudBlock';
 import uuid from 'uuid/v1';
+import bindCloudValueFunctions from './bindCloudValueFunctions';
 const pathJoin = require('path').join;
 
 const observeStatic = val =>
@@ -14,45 +14,6 @@ export const POSTING_DOC_NAME = Symbol('POSTING_DOC_NAME');
 
 function hasDepth(name) {
   return name.match(/\//);
-}
-
-function filterUndefined() {
-  return filter(value => value !== undefined);
-}
-
-function computeLambdaResult(
-  argumentValue,
-  lambdaValue,
-  docContext,
-  cloudClient,
-  options
-) {
-  const evalCode = `({useValue}) => {
-    // console.log = () => {};
-    return ${lambdaValue.code};
-  }`;
-
-  const lambdaContext = eval(evalCode);
-
-  const dependencies = new Set();
-  function useValue(cloudValue) {
-    dependencies.add(cloudValue);
-    return cloudValue.getValue();
-  }
-  const lambda = lambdaContext({ useValue });
-
-  function computeResult() {
-    if (typeof lambda !== 'function') {
-      return null;
-    }
-    return lambda(argumentValue, docContext, cloudClient, options);
-  }
-
-  return {
-    result: computeResult(),
-    dependencies,
-    reComputeResult: computeResult,
-  };
 }
 
 export function createDocPool({
@@ -67,6 +28,7 @@ export function createDocPool({
   const _docs = {};
 
   function get(name) {
+    console.log('Now getting: ', name);
     if (name === '') {
       return onGetSelf();
     }
@@ -87,7 +49,7 @@ export function createDocPool({
     const blockId = docIdTerms[1];
     if (docIdTerms.length !== 1 && docIdTerms.length !== 2) {
       throw new Error(
-        `Cannot get doc "${docNameWithBlockId}" because the blockId specifier ("#") is defined more than once.`
+        `Cannot get doc "${docNameWithBlockId}" because the blockId specifier ("#") is defined more than once.`,
       );
     }
     const fullName = docIdTerms[0];
@@ -133,18 +95,18 @@ export function createDocPool({
   function move(fromName, toName) {
     if (hasDepth(fromName)) {
       throw new Error(
-        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`
+        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`,
       );
     }
     if (hasDepth(toName)) {
       throw new Error(
-        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`
+        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`,
       );
     }
     const doc = _docs[fromName];
     if (!doc) {
       throw new Error(
-        `Cannot move "${fromName}" to "${toName}" because it does not exist`
+        `Cannot move "${fromName}" to "${toName}" because it does not exist`,
       );
     }
     _docs[toName] = doc;
@@ -189,7 +151,7 @@ export default function createCloudDoc({
   }
   if (name.match(/\//)) {
     throw new Error(
-      `doc name ${name} must not contain slashes. Instead, pass a parent`
+      `doc name ${name} must not contain slashes. Instead, pass a parent`,
     );
   }
   if (!domain) {
@@ -401,6 +363,7 @@ export default function createCloudDoc({
     const o = (blockCache[id] = createCloudBlock({
       onNamedDispatch: _namedDispatch,
       id,
+      cloudClient,
     }));
     return o;
   }
@@ -409,6 +372,7 @@ export default function createCloudDoc({
     const block = createCloudBlock({
       onNamedDispatch: _namedDispatch,
       value,
+      cloudClient,
     });
 
     if (blockCache[block.id]) {
@@ -422,6 +386,7 @@ export default function createCloudDoc({
       onNamedDispatch: _namedDispatch,
       value,
       id,
+      cloudClient,
     });
 
     if (blockCache[id]) {
@@ -443,7 +408,7 @@ export default function createCloudDoc({
       throw new Error(
         `Bad reference type "${
           requestedId.type
-        }" for getBlock! Expected "BlockReference".`
+        }" for getBlock! Expected "BlockReference".`,
       );
     }
     const queryId =
@@ -525,7 +490,7 @@ export default function createCloudDoc({
       console.log(
         `Warning.. putBlock of "${name}" while another put from ${
           state.puttingFromId
-        } is in progress`
+        } is in progress`,
       );
     }
     const lastId = state.id;
@@ -666,196 +631,7 @@ export default function createCloudDoc({
     getReference,
   };
 
-  function flatArray(a) {
-    return [].concat.apply([], a);
-  }
-
-  function expand(expandFn) {
-    function isCloudValue(o) {
-      return (
-        o != null &&
-        typeof o === 'object' &&
-        typeof o.observeValue === 'object' &&
-        typeof o.observeValue.subscribe === 'function' &&
-        typeof o.fetchValue === 'function' &&
-        typeof o.getValue === 'function'
-      );
-    }
-    function doExpansion(o) {
-      if (o == null) {
-        return [];
-      } else if (isCloudValue(o)) {
-        return o.getValue();
-      } else if (o instanceof Array) {
-        return o.map(doExpansion);
-      } else if (typeof o === 'object') {
-        const out = {};
-        Object.keys(o).forEach(k => {
-          out[k] = doExpansion(o[k]);
-        });
-        return out;
-      }
-      return o;
-    }
-    function collectCloudValues(o) {
-      if (o == null) {
-        return [];
-      } else if (isCloudValue(o)) {
-        return [o];
-      } else if (o instanceof Array) {
-        return flatArray(o.map(collectCloudValues));
-      } else if (!!o && typeof o === 'object') {
-        return flatArray(Object.values(o).map(collectCloudValues));
-      }
-      return [];
-    }
-    const expanded = {
-      type: 'ExpandedDoc',
-      getFullName: () => {
-        return this.getFullName() + '__expanded';
-      },
-      get: toGet => {
-        throw new Error(
-          `Cannot get "${toGet}" on ${this.getFullName()} because it has been evaluated.`
-        );
-      },
-      fetchValue: async () => {
-        await this.fetchValue();
-        const expandSpec = expandFn(this.getValue(), this);
-        const cloudValues = collectCloudValues(expandSpec);
-        await Promise.all(cloudValues.map(v => v.fetchValue()));
-      },
-      observeValue: this.observeValue
-        .distinctUntilChanged()
-        .pipe(filterUndefined())
-        .mergeMap(async o => {
-          const expandSpec = expandFn(o, this);
-          const cloudValues = collectCloudValues(expandSpec);
-          await Promise.all(cloudValues.map(v => v.fetchValue()));
-          const expanded = doExpansion(expandSpec);
-          return expanded;
-        })
-        .pipe(filterUndefined())
-        .distinctUntilChanged(),
-      getValue: () => {
-        const o = this.getValue();
-        const expandSpec = expandFn(o, this);
-        const expanded = doExpansion(expandSpec);
-        return expanded;
-      },
-    };
-    expanded.map = map.bind(expanded);
-    expanded.expand = expand.bind(expanded);
-    expanded.eval = evalDoc.bind(expanded);
-    return expanded;
-  }
-
-  function map(mapFn) {
-    const mapped = {
-      type: 'MappedDoc',
-      getFullName: () => {
-        return this.getFullName() + '__mapped';
-      },
-      get: toGet => {
-        throw new Error(
-          `Cannot get "${toGet}" on ${this.getFullName()} because it has been mapped.`
-        );
-      },
-      fetchValue: this.fetchValue,
-      observeValue: this.observeValue.distinctUntilChanged().map(data => {
-        return mapFn(data);
-      }),
-      // distinctUntilChanged(),
-      getValue: () => {
-        return mapFn(this.getValue());
-      },
-    };
-    mapped.map = map.bind(mapped);
-    mapped.expand = expand.bind(mapped);
-    mapped.eval = evalDoc.bind(mapped);
-    return mapped;
-  }
-
-  function evalDoc(lambdaDoc) {
-    const evaluatedDoc = {
-      type: 'EvaluatedDoc',
-      getFullName: () => {
-        return this.getFullName() + '__evaluated';
-      },
-      get: toGet => {
-        throw new Error(
-          `Cannot get "${toGet}" on ${this.getFullName()} because it has been evaluated.`
-        );
-      },
-      fetchValue: async () => {
-        await this.fetchValue();
-        await lambdaDoc.fetchValue();
-
-        // run once to fill dependencies
-        const { dependencies, reComputeResult } = computeLambdaResult(
-          this.getValue(),
-          lambdaDoc.getValue(),
-          this,
-          cloudClient,
-          {}
-        );
-
-        await Promise.all(
-          [...dependencies].map(async dep => {
-            await dep.fetchValue();
-          })
-        );
-
-        return reComputeResult();
-      },
-      observeValue: lambdaDoc.observeValue
-        .distinctUntilChanged()
-        .switchMap(lambdaDocValue => {
-          return this.observeValue
-            .distinctUntilChanged()
-            .flatMap(async argumentValue => {
-              if (argumentValue == null || lambdaDocValue == null) {
-                return null;
-              }
-              const { dependencies, reComputeResult } = computeLambdaResult(
-                argumentValue,
-                lambdaDocValue,
-                this,
-                cloudClient,
-                {}
-              );
-
-              await Promise.all(
-                [...dependencies].map(async dep => {
-                  await dep.fetchValue();
-                })
-              );
-
-              return reComputeResult();
-            });
-        })
-        .pipe(filterUndefined())
-        .distinctUntilChanged(),
-      getValue: () => {
-        const { result } = computeLambdaResult(
-          this.getValue(),
-          lambdaDoc.getValue(),
-          this,
-          cloudClient,
-          {}
-        );
-        return result;
-      },
-    };
-    evaluatedDoc.map = map.bind(evaluatedDoc);
-    evaluatedDoc.expand = expand.bind(evaluatedDoc);
-    evaluatedDoc.eval = evalDoc.bind(evaluatedDoc);
-    return evaluatedDoc;
-  }
-
-  cloudDoc.map = map.bind(cloudDoc);
-  cloudDoc.expand = expand.bind(cloudDoc);
-  cloudDoc.eval = evalDoc.bind(cloudDoc);
+  bindCloudValueFunctions(cloudDoc, cloudClient);
 
   return cloudDoc;
 }

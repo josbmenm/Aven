@@ -214,7 +214,7 @@ describe('interpreted data sources', () => {
     expect(blockResult.value).toBe(9);
   });
 
-  test.skip('interpteted reduced value', async () => {
+  test.only('interpteted reduced value', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
@@ -257,8 +257,10 @@ describe('interpreted data sources', () => {
         type: 'LambdaFunction',
         code: `(a, doc, cloud, opts) => {
         let state = [];
-        console.log('a', a)
-        if (a.on.id) {
+        if (!a) {
+          return [];
+        }
+        if (a.on && a.on.id) {
           const ancestorName = doc.getFullName() + '#' + a.on.id + '^listValue';
           console.log('woah', ancestorName)
           state = useValue(cloud.get(ancestorName)) || [];
@@ -276,8 +278,6 @@ describe('interpreted data sources', () => {
       }`,
       },
     });
-
-    console.log('herro');
 
     const result = await interpretedSource.dispatch({
       type: 'GetDocValue',

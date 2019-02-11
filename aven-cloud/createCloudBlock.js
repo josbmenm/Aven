@@ -1,5 +1,6 @@
 import { Observable, BehaviorSubject } from 'rxjs-compat';
 import SHA1 from 'crypto-js/sha1';
+import bindCloudValueFunctions from './bindCloudValueFunctions';
 
 const JSONStringify = require('json-stable-stringify');
 
@@ -8,6 +9,7 @@ export default function createCloudBlock({
   id,
   value,
   lastFetchTime, // should be set if this block came from the server..
+  cloudClient,
 }) {
   let observedBlockId = null;
   if (value !== undefined) {
@@ -20,7 +22,7 @@ export default function createCloudBlock({
   }
   if (id && observedBlockId && id !== observedBlockId) {
     throw new Error(
-      'id and value were both provided to createCloudBlock, but the id does not match the value!'
+      'id and value were both provided to createCloudBlock, but the id does not match the value!',
     );
   }
 
@@ -44,7 +46,7 @@ export default function createCloudBlock({
   function getReference() {
     if (!blockId) {
       throw new Error(
-        'Cannot getReference of an incomplete block without a value or id'
+        'Cannot getReference of an incomplete block without a value or id',
       );
     }
     return { type: 'BlockReference', id: blockId };
@@ -157,7 +159,8 @@ export default function createCloudBlock({
   //   observeConnectedValue
   // };
 
-  return {
+  const cloudBlock = {
+    getFullName: () => `#${blockId}`,
     getId: () => blockId,
     id: blockId,
     get: () => {
@@ -173,4 +176,8 @@ export default function createCloudBlock({
     observeValue,
     getReference,
   };
+
+  bindCloudValueFunctions(cloudBlock, cloudClient);
+
+  return cloudBlock;
 }
