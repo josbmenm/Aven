@@ -20,9 +20,13 @@ function filterUndefined() {
   return filter(value => value !== undefined);
 }
 
-function computeLambdaResult(doc, lambdaDoc, cloudClient, options) {
-  const lambdaValue = lambdaDoc.getValue();
-
+function computeLambdaResult(
+  argumentValue,
+  lambdaValue,
+  docContext,
+  cloudClient,
+  options
+) {
   const evalCode = `({useValue}) => {
     // console.log = () => {};
     return ${lambdaValue.code};
@@ -38,8 +42,10 @@ function computeLambdaResult(doc, lambdaDoc, cloudClient, options) {
   const lambda = lambdaContext({ useValue });
 
   function computeResult() {
-    const thisValue = doc.getValue();
-    return lambda(thisValue, doc, cloudClient, options);
+    if (typeof lambda !== 'function') {
+      return null;
+    }
+    return lambda(argumentValue, docContext, cloudClient, options);
   }
 
   return {
@@ -86,15 +92,6 @@ export function createDocPool({
     }
     const fullName = docIdTerms[0];
     const localName = fullName.split('/')[0];
-
-    console.log({
-      evalTerms,
-      docNameWithBlockId,
-      name,
-      blockId,
-      fullName,
-      localName,
-    });
 
     let returningCloudValue = null;
 
@@ -306,7 +303,7 @@ export default function createCloudDoc({
       name: getFullName(),
     });
     if (result) {
-      if (result.id === null) {
+      if (onDocMiss && result.id === null) {
         onDocMiss(getFullName());
       }
       setState({
@@ -343,7 +340,7 @@ export default function createCloudDoc({
         domain,
         name: getFullName(),
       });
-      if (result.id === undefined) {
+      if (onDocMiss && result.id === undefined) {
         const missResult = await onDocMiss(getFullName());
         if (missResult.value) {
           const block = _getBlockWithValue(missResult.value);
@@ -765,12 +762,10 @@ export default function createCloudDoc({
         );
       },
       fetchValue: this.fetchValue,
-      observeValue: this.observeValue
-        .distinctUntilChanged()
-        .map(data => {
-          return mapFn(data);
-        })
-        .distinctUntilChanged(),
+      observeValue: this.observeValue.distinctUntilChanged().map(data => {
+        return mapFn(data);
+      }),
+      // distinctUntilChanged(),
       getValue: () => {
         return mapFn(this.getValue());
       },
@@ -793,19 +788,14 @@ export default function createCloudDoc({
         );
       },
       fetchValue: async () => {
-        // console.log(
-        //   'DOING EVAL FETCH VALUE!',
-        //   this.getReference(),
-        //   lambdaDoc.getReference(),
-        // );
-
         await this.fetchValue();
         await lambdaDoc.fetchValue();
 
         // run once to fill dependencies
         const { dependencies, reComputeResult } = computeLambdaResult(
+          this.getValue(),
+          lambdaDoc.getValue(),
           this,
-          lambdaDoc,
           cloudClient,
           {}
         );
@@ -818,22 +808,39 @@ export default function createCloudDoc({
 
         return reComputeResult();
       },
-      // observeValue: this.observeValue
-      //   .distinctUntilChanged()
-      //   .pipe(filterUndefined())
-      //   .mergeMap(async o => {
-      //     const expandSpec = expandFn(o, this);
-      //     const cloudValues = collectCloudValues(expandSpec);
-      //     await Promise.all(cloudValues.map(v => v.fetchValue()));
-      //     const expanded = doExpansion(expandSpec);
-      //     return expanded;
-      //   })
-      //   .pipe(filterUndefined())
-      //   .distinctUntilChanged(),
+      observeValue: lambdaDoc.observeValue
+        .distinctUntilChanged()
+        .switchMap(lambdaDocValue => {
+          return this.observeValue
+            .distinctUntilChanged()
+            .flatMap(async argumentValue => {
+              if (argumentValue == null || lambdaDocValue == null) {
+                return null;
+              }
+              const { dependencies, reComputeResult } = computeLambdaResult(
+                argumentValue,
+                lambdaDocValue,
+                this,
+                cloudClient,
+                {}
+              );
+
+              await Promise.all(
+                [...dependencies].map(async dep => {
+                  await dep.fetchValue();
+                })
+              );
+
+              return reComputeResult();
+            });
+        })
+        .pipe(filterUndefined())
+        .distinctUntilChanged(),
       getValue: () => {
         const { result } = computeLambdaResult(
+          this.getValue(),
+          lambdaDoc.getValue(),
           this,
-          lambdaDoc,
           cloudClient,
           {}
         );

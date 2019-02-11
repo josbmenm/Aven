@@ -181,7 +181,7 @@ describe('block fetching', () => {
 });
 
 describe('eval', () => {
-  test.skip('basic eval value', async () => {
+  test('basic eval value', async () => {
     const dataSource = startMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource, domain: 'd' });
     await dataSource.dispatch({

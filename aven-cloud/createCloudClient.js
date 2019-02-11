@@ -97,7 +97,7 @@ export default function createCloudClient({
     const defaultAction = () =>
       dataSource.dispatch({
         type: 'GetBlock',
-        actionDomain,
+        domain: actionDomain,
         name,
         id,
       });
@@ -124,21 +124,20 @@ export default function createCloudClient({
       return await defaultAction();
     }
     const doc = docs.get(name);
-    await doc.fetch();
-    return { id: doc.getBlock().id, domain, name };
+    const value = await doc.fetchValue();
+    return { id: getIdOfValue(value), domain, name };
   }
   async function GetDocValue({ domain: actionDomain, name }) {
     const defaultAction = () =>
       dataSource.dispatch({
         type: 'GetDocValue',
-        actionDomain,
+        domain: actionDomain,
         name,
       });
     if (actionDomain !== domain) {
       return await defaultAction();
     }
     const doc = docs.get(name);
-    console.log('GEtting doc value!', name);
     await doc.fetchValue();
     const value = doc.getValue();
     const id = getIdOfValue(value);

@@ -73,6 +73,7 @@ describe('interpreted data sources', () => {
   });
 
   test.skip('computations for specific blocks', async () => {
+    // fix by allowing eval on cloud blocks!
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
@@ -109,13 +110,19 @@ describe('interpreted data sources', () => {
     expect(result.value).toBe(4);
   });
 
-  test.skip('expanding interpreted value', async () => {
+  test('expanding interpreted value', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
       domain: 'test',
     });
 
+    await interpretedSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: null,
+    });
     await interpretedSource.dispatch({
       type: 'PutDocValue',
       domain: 'test',
@@ -156,7 +163,7 @@ describe('interpreted data sources', () => {
     expect(result.value).toBe(15);
   });
 
-  test.skip('getdoc works', async () => {
+  test.skip('getdoc works with block fetch', async () => {
     const dataSource = startMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
@@ -196,6 +203,7 @@ describe('interpreted data sources', () => {
       domain: 'test',
       name: 'foo^squared',
     });
+    console.log(docResult);
     expect(initialId).not.toEqual(docResult.id);
     let blockResult = await interpretedSource.dispatch({
       type: 'GetBlock',

@@ -146,243 +146,340 @@ describe('basic doc DataSource interaction', () => {
 const waitForSync_TODO_REMOVE_THIS = () =>
   new Promise(res => setTimeout(res, 1));
 
-// describe('observing docs', () => {
-//   test('observe doc works', async () => {
-//     const dataSource = startMemoryDataSource({ domain: 'test' });
-//     const obj1 = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { foo: 'bar' },
-//     });
-//     const obj2 = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { foo: 'baz' },
-//     });
-//     const obj3 = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { foo: 'qux' },
-//     });
-//     await dataSource.dispatch({
-//       type: 'PutDoc',
-//       domain: 'test',
-//       name: 'foo',
-//       id: obj1.id,
-//     });
-//     const doc = createCloudDoc({
-//       dataSource,
-//       domain: 'test',
-//       name: 'foo',
-//       onGetParentName: getNull,
-//     });
-//     let lastObserved = null;
-//     const subscription = doc.observe.subscribe({
-//       next: e => {
-//         lastObserved = e;
-//       },
-//     });
-//     expect(lastObserved.id).toEqual(null);
-//     await doc.fetch();
-//     expect(lastObserved.id).toEqual(obj1.id);
+describe('observing docs', () => {
+  test('observe doc works', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const obj1 = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    const obj2 = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'baz' },
+    });
+    const obj3 = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'qux' },
+    });
+    await dataSource.dispatch({
+      type: 'PutDoc',
+      domain: 'test',
+      name: 'foo',
+      id: obj1.id,
+    });
+    const doc = createCloudDoc({
+      dataSource,
+      domain: 'test',
+      name: 'foo',
+      onGetParentName: getNull,
+    });
+    let lastObserved = null;
+    const subscription = doc.observe.subscribe({
+      next: e => {
+        lastObserved = e;
+      },
+    });
+    expect(lastObserved.id).toEqual(null);
+    await doc.fetch();
+    expect(lastObserved.id).toEqual(obj1.id);
 
-//     await dataSource.dispatch({
-//       type: 'PutDoc',
-//       domain: 'test',
-//       name: 'foo',
-//       id: obj2.id,
-//     });
-//     expect(lastObserved.id).toEqual(obj2.id);
+    await dataSource.dispatch({
+      type: 'PutDoc',
+      domain: 'test',
+      name: 'foo',
+      id: obj2.id,
+    });
+    expect(lastObserved.id).toEqual(obj2.id);
 
-//     subscription.unsubscribe();
-//     await dataSource.dispatch({
-//       type: 'PutDoc',
-//       domain: 'test',
-//       name: 'foo',
-//       id: obj3.id,
-//     });
-//     expect(lastObserved.id).toEqual(obj2.id);
-//   });
+    subscription.unsubscribe();
+    await dataSource.dispatch({
+      type: 'PutDoc',
+      domain: 'test',
+      name: 'foo',
+      id: obj3.id,
+    });
+    expect(lastObserved.id).toEqual(obj2.id);
+  });
 
-//   test('observe value', async () => {
-//     const dataSource = startMemoryDataSource({ domain: 'test' });
-//     const obj1 = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { foo: 'bar' },
-//     });
-//     const obj2 = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { foo: 'baz' },
-//     });
-//     const obj3 = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { foo: 'qux' },
-//     });
-//     await dataSource.dispatch({
-//       type: 'PutDoc',
-//       domain: 'test',
-//       name: 'foo',
-//       id: obj1.id,
-//     });
-//     const doc = createCloudDoc({
-//       dataSource,
-//       domain: 'test',
-//       name: 'foo',
-//       onGetParentName: getNull,
-//     });
-//     let lastObserved = undefined;
-//     const subscription = doc.observeValue.subscribe({
-//       next: v => {
-//         lastObserved = v;
-//       },
-//     });
+  test('observe value', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const obj1 = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    const obj2 = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'baz' },
+    });
+    const obj3 = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'qux' },
+    });
+    await dataSource.dispatch({
+      type: 'PutDoc',
+      domain: 'test',
+      name: 'foo',
+      id: obj1.id,
+    });
+    const doc = createCloudDoc({
+      dataSource,
+      domain: 'test',
+      name: 'foo',
+      onGetParentName: getNull,
+    });
+    let lastObserved = undefined;
+    const subscription = doc.observeValue.subscribe({
+      next: v => {
+        lastObserved = v;
+      },
+    });
 
-//     expect(lastObserved).toEqual(null);
-//     await doc.fetchValue();
-//     expect(lastObserved.foo).toEqual('bar');
+    expect(lastObserved).toEqual(null);
+    await doc.fetchValue();
+    expect(lastObserved.foo).toEqual('bar');
 
-//     await dataSource.dispatch({
-//       type: 'PutDoc',
-//       domain: 'test',
-//       name: 'foo',
-//       id: obj2.id,
-//     });
-//     await waitForSync_TODO_REMOVE_THIS();
-//     expect(lastObserved.foo).toEqual('baz');
+    await dataSource.dispatch({
+      type: 'PutDoc',
+      domain: 'test',
+      name: 'foo',
+      id: obj2.id,
+    });
+    await waitForSync_TODO_REMOVE_THIS();
+    expect(lastObserved.foo).toEqual('baz');
 
-//     subscription.unsubscribe();
-//     await dataSource.dispatch({
-//       type: 'PutDoc',
-//       domain: 'test',
-//       name: 'foo',
-//       id: obj3.id,
-//     });
-//     await waitForSync_TODO_REMOVE_THIS();
+    subscription.unsubscribe();
+    await dataSource.dispatch({
+      type: 'PutDoc',
+      domain: 'test',
+      name: 'foo',
+      id: obj3.id,
+    });
+    await waitForSync_TODO_REMOVE_THIS();
 
-//     expect(lastObserved.foo).toEqual('baz');
-//   });
+    expect(lastObserved.foo).toEqual('baz');
+  });
 
-//   test('observe connected value', async () => {
-//     const dataSource = startMemoryDataSource({ domain: 'test' });
-//     const obj1a = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { foo: 'bar' },
-//     });
-//     const obj1 = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { the: { value: [obj1a.id] } },
-//     });
-//     const obj2a = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { foo: 'baz' },
-//     });
-//     const obj2 = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { the: { value: [obj2a.id] } },
-//     });
-//     await dataSource.dispatch({
-//       type: 'PutDoc',
-//       domain: 'test',
-//       name: 'foo',
-//       id: obj1.id,
-//     });
-//     const doc = createCloudDoc({
-//       dataSource,
-//       domain: 'test',
-//       name: 'foo',
-//       onGetParentName: getNull,
-//     });
-//     let lastObserved = undefined;
-//     doc.observeConnectedValue(['the', 'value', 0]).subscribe({
-//       next: v => {
-//         lastObserved = v;
-//       },
-//     });
-//     expect(lastObserved).toEqual(null);
-//     await doc.fetchConnectedValue(['the', 'value', 0]);
-//     expect(lastObserved.foo).toEqual('bar');
-//     await dataSource.dispatch({
-//       type: 'PutDoc',
-//       domain: 'test',
-//       name: 'foo',
-//       id: obj2.id,
-//     });
-//     await doc.fetchConnectedValue(['the', 'value', 0]); // todo, things should pass without this line!
-//     expect(lastObserved.foo).toEqual('baz');
-//   });
+  test('observe connected value', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const obj1a = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    const obj1 = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { the: { value: [obj1a.id] } },
+    });
+    const obj2a = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'baz' },
+    });
+    const obj2 = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { the: { value: [obj2a.id] } },
+    });
+    await dataSource.dispatch({
+      type: 'PutDoc',
+      domain: 'test',
+      name: 'foo',
+      id: obj1.id,
+    });
+    const doc = createCloudDoc({
+      dataSource,
+      domain: 'test',
+      name: 'foo',
+      onGetParentName: getNull,
+    });
+    let lastObserved = undefined;
+    doc.observeConnectedValue(['the', 'value', 0]).subscribe({
+      next: v => {
+        lastObserved = v;
+      },
+    });
+    expect(lastObserved).toEqual(null);
+    await doc.fetchConnectedValue(['the', 'value', 0]);
+    expect(lastObserved.foo).toEqual('bar');
+    await dataSource.dispatch({
+      type: 'PutDoc',
+      domain: 'test',
+      name: 'foo',
+      id: obj2.id,
+    });
+    await doc.fetchConnectedValue(['the', 'value', 0]); // todo, things should pass without this line!
+    expect(lastObserved.foo).toEqual('baz');
+  });
 
-//   test('observe connected value before creation', async () => {
-//     const dataSource = startMemoryDataSource({ domain: 'test' });
+  test.skip('observe connected value before creation', async () => {
+    const dataSource = startMemoryDataSource({ domain: 'test' });
 
-//     const doc = createCloudDoc({
-//       dataSource,
-//       domain: 'test',
-//       name: 'foo',
-//       onGetParentName: getNull,
-//     });
-//     let lastObserved = undefined;
-//     doc.observeConnectedValue(['the', 'value', 0]).subscribe({
-//       next: v => {
-//         lastObserved = v;
-//       },
-//     });
-//     const obj1a = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { foo: 'bar' },
-//     });
-//     const obj1 = await dataSource.dispatch({
-//       type: 'PutDocValue',
-//       domain: 'test',
-//       name: 'foo',
-//       value: { the: { value: [obj1a.id] } },
-//     });
-//     // const obj2a = await dataSource.dispatch({
-//     //   type: 'PutDocValue',
-//     //   domain: 'test',
-//     //   name: 'foo',
-//     //   value: { foo: 'baz' },
-//     // });
-//     // const obj2 = await dataSource.dispatch({
-//     //   type: 'PutDocValue',
-//     //   domain: 'test',
-//     //   name: 'foo',
-//     //   value: { the: { value: [obj2a.id] } },
-//     // });
-//     await dataSource.dispatch({
-//       type: 'PutDoc',
-//       domain: 'test',
-//       name: 'foo',
-//       id: obj1.id,
-//     });
-//     expect(lastObserved).toEqual(null);
-//     await doc.fetchConnectedValue(['the', 'value', 0]);
-//     expect(lastObserved.foo).toEqual('bar');
-//     // await dataSource.dispatch({
-//     //   type: "PutDoc",
-//     //   domain: "test",
-//     //   name: "foo",
-//     //   id: obj2.id
-//     // });
-//     // await doc.fetchConnectedValue(["the", "value", 0]); // todo, things should pass without this line!
-//     // expect(lastObserved.foo).toEqual("baz");
-//   });
-// });
+    const doc = createCloudDoc({
+      dataSource,
+      domain: 'test',
+      name: 'foo',
+      onGetParentName: getNull,
+    });
+    let lastObserved = undefined;
+    doc.observeConnectedValue(['the', 'value', 0]).subscribe({
+      next: v => {
+        lastObserved = v;
+      },
+    });
+    const obj1a = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    const obj1 = await dataSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { the: { value: [obj1a.id] } },
+    });
+    // const obj2a = await dataSource.dispatch({
+    //   type: 'PutDocValue',
+    //   domain: 'test',
+    //   name: 'foo',
+    //   value: { foo: 'baz' },
+    // });
+    // const obj2 = await dataSource.dispatch({
+    //   type: 'PutDocValue',
+    //   domain: 'test',
+    //   name: 'foo',
+    //   value: { the: { value: [obj2a.id] } },
+    // });
+    await dataSource.dispatch({
+      type: 'PutDoc',
+      domain: 'test',
+      name: 'foo',
+      id: obj1.id,
+    });
+    expect(lastObserved).toEqual(null);
+    await doc.fetchConnectedValue(['the', 'value', 0]);
+    expect(lastObserved.foo).toEqual('bar');
+    // await dataSource.dispatch({
+    //   type: "PutDoc",
+    //   domain: "test",
+    //   name: "foo",
+    //   id: obj2.id
+    // });
+    // await doc.fetchConnectedValue(["the", "value", 0]); // todo, things should pass without this line!
+    // expect(lastObserved.foo).toEqual("baz");
+  });
+});
+
+async function justASec() {
+  return new Promise(resolve => setTimeout(resolve, 1));
+}
+
+test('value mapping', async () => {
+  const dataSource = startMemoryDataSource({ domain: 'test' });
+  await dataSource.dispatch({
+    type: 'PutDocValue',
+    domain: 'test',
+    name: 'foo',
+    value: 2,
+  });
+  const doc = createCloudDoc({
+    dataSource,
+    domain: 'test',
+    name: 'foo',
+    onGetParentName: getNull,
+    cloudClient: {},
+  });
+  const mapped = doc.map(o => (typeof o === 'number' ? o * o : null));
+  let lastObserved = undefined;
+  mapped.observeValue.subscribe({
+    next: v => {
+      lastObserved = v;
+    },
+  });
+  expect(lastObserved).toEqual(null);
+  await mapped.fetchValue();
+  expect(lastObserved).toEqual(4);
+  await dataSource.dispatch({
+    type: 'PutDocValue',
+    domain: 'test',
+    name: 'foo',
+    value: 3,
+  });
+  await justASec();
+  expect(lastObserved).toEqual(9);
+});
+
+test('value evaluation', async () => {
+  const dataSource = startMemoryDataSource({ domain: 'test' });
+  await dataSource.dispatch({
+    type: 'PutDocValue',
+    domain: 'test',
+    name: 'foo',
+    value: 2,
+  });
+  await dataSource.dispatch({
+    type: 'PutDocValue',
+    domain: 'test',
+    name: 'squared',
+    value: {
+      type: 'LambdaFunction',
+      code: 'a => a * a',
+    },
+  });
+  const squaredDoc = createCloudDoc({
+    dataSource,
+    domain: 'test',
+    name: 'squared',
+    onGetParentName: getNull,
+    cloudClient: {},
+  });
+  const doc = createCloudDoc({
+    dataSource,
+    domain: 'test',
+    name: 'foo',
+    onGetParentName: getNull,
+    cloudClient: {
+      get: name => {
+        if (name === 'squared') {
+          return squaredDoc;
+        }
+        throw new Error('not expecting that!');
+      },
+    },
+  });
+  const evald = doc.get('^squared');
+  let lastObserved = undefined;
+  evald.observeValue.subscribe({
+    next: v => {
+      lastObserved = v;
+    },
+  });
+  expect(lastObserved).toEqual(undefined);
+  await evald.fetchValue();
+  expect(lastObserved).toEqual(4);
+  await dataSource.dispatch({
+    type: 'PutDocValue',
+    domain: 'test',
+    name: 'foo',
+    value: 3,
+  });
+  await justASec();
+  expect(lastObserved).toEqual(9);
+});
