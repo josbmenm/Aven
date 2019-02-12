@@ -86,8 +86,18 @@ export default function createGenericDataSource({
 }) {
   const dataSourceId = id || uuid();
 
+  if (!docState) {
+    throw new Error('Cannot create a data source without a state object');
+  }
+
   function getMemoryNode(name, ensureExistence, context) {
     let currentNode = context || docState;
+    if (!currentNode && !ensureExistence) {
+      return null;
+    }
+    if (!currentNode) {
+      throw new Error('Cannot access this memory node without a context');
+    }
     if (!currentNode.children) {
       currentNode.children = {};
     }
@@ -129,8 +139,6 @@ export default function createGenericDataSource({
         const { id } = await commitBlock(referenceValue, refs);
         return { value: { id, type: 'BlockReference' }, refs: [id] };
       } else if (!blockData.id) {
-        console.log('====');
-        console.log(blockData);
         throw new Error(
           `This block includes a {type: 'BlockReference'}, without a value or an id!`
         );
@@ -305,6 +313,7 @@ export default function createGenericDataSource({
   async function DestroyDoc({ domain, name }) {
     verifyDomain(domain, dataSourceDomain);
     await commitDocDestroy(name);
+
     const parentMemoryDoc = getMemoryNode(getParentDocName(name), false);
     const destroyChildName = getMainTerm(name);
     if (!parentMemoryDoc || !parentMemoryDoc.children[destroyChildName]) {
@@ -346,6 +355,7 @@ export default function createGenericDataSource({
 
   async function ListDocs({ domain, parentName }) {
     verifyDomain(domain, dataSourceDomain);
+
     const parentMemoryDoc = getMemoryNode(parentName || '', false);
     if (!parentMemoryDoc) {
       return [];

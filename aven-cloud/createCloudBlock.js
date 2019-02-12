@@ -12,11 +12,16 @@ export default function createCloudBlock({
   value,
   lastFetchTime, // should be set if this block came from the server..
   cloudClient,
+  blockValueCache,
 }) {
   let observedBlockId = null;
+
+  blockValueCache = blockValueCache || {}; // reassigning an argument is clumsy but convenient here
+
   if (value !== undefined) {
     const valueString = JSONStringify(value);
     observedBlockId = SHA1(valueString).toString();
+    blockValueCache[observedBlockId] = value;
   }
   const blockId = id || observedBlockId;
   if (!blockId) {
@@ -31,6 +36,8 @@ export default function createCloudBlock({
   if (!blockId) {
     throw new Error('id or value must be provided to createCloudBlock!');
   }
+
+  value = blockValueCache[blockId];
 
   const blockState = new BehaviorSubject({
     // sync state:
@@ -49,6 +56,14 @@ export default function createCloudBlock({
       );
     }
     return { type: 'BlockReference', id: blockId };
+  }
+
+  function serialize() {
+    const value = getState().value;
+    if (value == null) {
+      throw new Error('Cannot serialize a block without a value');
+    }
+    return { value, id: blockId };
   }
 
   const observe = Observable.create(observer => {
@@ -85,7 +100,13 @@ export default function createCloudBlock({
     });
   }
   function getValue() {
-    return getState().value;
+    let val = getState().value;
+    if (val === undefined && blockValueCache[blockId] !== undefined) {
+      setState({ value: blockValueCache[blockId] });
+      return blockValueCache[blockId];
+    } else {
+      return val;
+    }
   }
 
   function getBlock() {
@@ -101,7 +122,7 @@ export default function createCloudBlock({
     });
 
   async function fetch() {
-    if (getState().value !== undefined) {
+    if (getValue() !== undefined) {
       return;
     }
     const result = await dispatch({
@@ -139,6 +160,7 @@ export default function createCloudBlock({
     observe,
     observeValue,
     getReference,
+    serialize,
   };
 
   bindCloudValueFunctions(cloudBlock, cloudClient);

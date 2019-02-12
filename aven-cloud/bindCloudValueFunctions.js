@@ -8,8 +8,7 @@ function computeLambdaResult(
   argumentValue,
   lambdaValue,
   docContext,
-  cloudClient,
-  options
+  cloudClient
 ) {
   const evalCode = `({useValue}) => {
     // console.log = () => {};
@@ -29,7 +28,7 @@ function computeLambdaResult(
     if (typeof lambda !== 'function') {
       return null;
     }
-    return lambda(argumentValue, docContext, cloudClient, options);
+    return lambda(argumentValue, docContext, cloudClient);
   }
 
   return {
@@ -41,6 +40,65 @@ function computeLambdaResult(
 
 function filterUndefined() {
   return filter(value => value !== undefined);
+}
+
+async function fetchEvalCache(
+  evalCache,
+  lambdaValue,
+  argumentValue,
+  docContext,
+  cloudClient
+) {
+  let lambdaCache = evalCache.get(lambdaValue);
+  if (!lambdaCache) {
+    lambdaCache = new Map();
+    evalCache.set(lambdaValue, lambdaCache);
+  }
+
+  let result = lambdaCache.get(argumentValue);
+  if (result === undefined) {
+    const { dependencies, reComputeResult } = computeLambdaResult(
+      argumentValue,
+      lambdaValue,
+      docContext,
+      cloudClient
+    );
+
+    await Promise.all(
+      [...dependencies].map(async dep => {
+        await dep.fetchValue();
+      })
+    );
+
+    result = reComputeResult();
+    lambdaCache.set(argumentValue, result);
+  }
+  return result;
+}
+
+function hitEvalCache(
+  evalCache,
+  lambdaValue,
+  argumentValue,
+  docContext,
+  cloudClient
+) {
+  let lambdaCache = evalCache.get(lambdaValue);
+  if (!lambdaCache) {
+    lambdaCache = new Map();
+    evalCache.set(lambdaValue, lambdaCache);
+  }
+  let result = lambdaCache.get(argumentValue);
+  if (result === undefined) {
+    const computed = computeLambdaResult(
+      argumentValue,
+      lambdaValue,
+      docContext,
+      cloudClient
+    );
+    result = computed.result;
+  }
+  return result;
 }
 
 function expandCloudValue(cloudValue, cloudClient, expandFn) {
@@ -121,7 +179,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
   return expanded;
 }
 
-function evalCloudValue(cloudValue, cloudClient, lambdaDoc) {
+function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
   const evaluatedDoc = {
     type: 'EvaluatedDoc',
     getFullName: () => {
@@ -135,23 +193,20 @@ function evalCloudValue(cloudValue, cloudClient, lambdaDoc) {
     fetchValue: async () => {
       await cloudValue.fetchValue();
       await lambdaDoc.fetchValue();
-
-      // run once to fill dependencies
-      const { dependencies, reComputeResult } = computeLambdaResult(
-        cloudValue.getValue(),
+      if (lambdaDoc.getValue() == null) {
+        throw new Error(
+          `Cannot compute lambda of empty "${lambdaDoc.getFullName()}" doc`
+        );
+      }
+      const result = await fetchEvalCache(
+        evalCache,
         lambdaDoc.getValue(),
+        cloudValue.getValue(),
         cloudValue,
-        cloudClient,
-        {}
+        cloudClient
       );
 
-      await Promise.all(
-        [...dependencies].map(async dep => {
-          await dep.fetchValue();
-        })
-      );
-
-      return reComputeResult();
+      return result;
     },
     observeValue: lambdaDoc.observeValue
       .distinctUntilChanged()
@@ -159,36 +214,37 @@ function evalCloudValue(cloudValue, cloudClient, lambdaDoc) {
         return cloudValue.observeValue
           .distinctUntilChanged()
           .flatMap(async argumentValue => {
-            if (argumentValue == null || lambdaDocValue == null) {
+            if (lambdaDocValue == null) {
               return null;
             }
-            const { dependencies, reComputeResult } = computeLambdaResult(
-              argumentValue,
+
+            const result = await fetchEvalCache(
+              evalCache,
               lambdaDocValue,
+              argumentValue,
               cloudValue,
-              cloudClient,
-              {}
+              cloudClient
             );
 
-            await Promise.all(
-              [...dependencies].map(async dep => {
-                await dep.fetchValue();
-              })
-            );
-
-            return reComputeResult();
+            return result;
           });
       })
       .pipe(filterUndefined())
       .distinctUntilChanged(),
     getValue: () => {
-      const { result } = computeLambdaResult(
-        cloudValue.getValue(),
-        lambdaDoc.getValue(),
+      const lambdaValue = lambdaDoc.getValue();
+      const argumentValue = cloudValue.getValue();
+      if (!lambdaValue) {
+        return null;
+      }
+      const result = hitEvalCache(
+        evalCache,
+        lambdaValue,
+        argumentValue,
         cloudValue,
-        cloudClient,
-        {}
+        cloudClient
       );
+
       return result;
     },
   };
@@ -222,9 +278,10 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
 }
 
 export default function bindCloudValueFunctions(cloudValue, cloudClient) {
+  const evalCache = new Map();
   cloudValue.map = (...args) => mapCloudValue(cloudValue, cloudClient, ...args);
   cloudValue.expand = (...args) =>
     expandCloudValue(cloudValue, cloudClient, ...args);
   cloudValue.eval = (...args) =>
-    evalCloudValue(cloudValue, cloudClient, ...args);
+    evalCloudValue(cloudValue, cloudClient, evalCache, ...args);
 }

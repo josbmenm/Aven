@@ -1,14 +1,11 @@
 import { default as withObs } from '@nozbe/with-observables';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import getIdOfValue from '../aven-cloud-utils/getIdOfValue';
-import { Observable, BehaviorSubject } from 'rxjs-compat';
+import { BehaviorSubject } from 'rxjs-compat';
 
 import { createDocPool } from './createCloudDoc';
 
 export const withObservables = withObs;
-
-const uniqueOrdered = items =>
-  Array.from(new Set(items.sort((a, b) => a.name - b.name)));
 
 export default function createCloudClient({
   dataSource,
@@ -16,7 +13,7 @@ export default function createCloudClient({
   initialSession,
   onDocMiss,
 }) {
-  const _blocks = {};
+  const _blockValues = {};
 
   if (domain == null) {
     throw new Error(`domain must be provided to createCloudClient!`);
@@ -104,15 +101,11 @@ export default function createCloudClient({
     if (actionDomain !== domain) {
       return await defaultAction();
     }
-    if (_blocks[id]) {
-      try {
-        return _blocks[id].getReference();
-      } catch (e) {
-        return await defaultAction;
-      }
-    }
-    return await defaultAction();
+    const doc = docs.get(name);
+    const block = doc.getBlock(id);
+    return block && block.serialize();
   }
+
   async function GetDoc({ domain: actionDomain, name }) {
     const defaultAction = () =>
       dataSource.dispatch({
@@ -168,7 +161,7 @@ export default function createCloudClient({
 
   const docs = createDocPool({
     onGetParentName: () => null,
-    blockCache: _blocks,
+    blockValueCache: _blockValues,
     dataSource: dataSourceWithSession,
     onDocMiss,
     domain,

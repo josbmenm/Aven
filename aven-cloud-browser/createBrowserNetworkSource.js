@@ -46,13 +46,6 @@ export default function createBrowserNetworkSource(opts) {
     }
   }
 
-  function getNamedAuth(auth) {
-    if (auth && auth.accountId) {
-      return auth.accountId;
-    }
-    return null;
-  }
-
   const domainObservables = {};
 
   function createDomainDocObserver(domain, name, auth) {

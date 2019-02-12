@@ -17,7 +17,7 @@ function hasDepth(name) {
 }
 
 export function createDocPool({
-  blockCache,
+  blockValueCache,
   domain,
   dataSource,
   onGetParentName,
@@ -66,7 +66,7 @@ export function createDocPool({
         dataSource,
         domain,
         name: localName,
-        blockCache: blockCache,
+        blockValueCache: blockValueCache,
         onDocMiss,
         cloudClient,
         onRename: newName => {
@@ -119,7 +119,7 @@ export function createDocPool({
       dataSource,
       domain,
       name: localName,
-      blockCache: blockCache,
+      blockValueCache: blockValueCache,
       onGetParentName,
       cloudClient,
       onRename: newName => move(localName, newName),
@@ -143,7 +143,11 @@ export default function createCloudDoc({
   onDocMiss,
   ...opts
 }) {
-  const blockCache = opts.blockCache || {};
+  // used for caching the block *values* only. The in-memory block representations are stored on a per-doc basis in _docBlocks
+  const blockValueCache = opts.blockValueCache || {};
+
+  // our internal representation of blocks. There may be duplicate IDs elsewhere in the cloud, but the values are saved in the blockValueCache
+  const _docBlocks = {};
 
   if (!name) {
     throw new Error('name must be provided to createCloudDoc!');
@@ -250,7 +254,7 @@ export default function createCloudDoc({
 
   const docs = createDocPool({
     onGetParentName: getFullName,
-    blockCache,
+    blockValueCache,
     dataSource,
     domain,
     cloudClient,
@@ -349,15 +353,16 @@ export default function createCloudDoc({
     .refCount();
 
   function _getBlockWithId(id) {
-    if (blockCache[id]) {
-      return blockCache[id];
+    if (_docBlocks[id]) {
+      return _docBlocks[id];
     }
-    const o = (blockCache[id] = createCloudBlock({
+    const o = (_docBlocks[id] = createCloudBlock({
       dispatch: dataSource.dispatch,
       onGetName: getFullName,
       domain,
       id,
       cloudClient,
+      blockValueCache,
     }));
     return o;
   }
@@ -369,12 +374,13 @@ export default function createCloudDoc({
       domain,
       value,
       cloudClient,
+      blockValueCache,
     });
 
-    if (blockCache[block.id]) {
-      return blockCache[block.id];
+    if (_docBlocks[block.id]) {
+      return _docBlocks[block.id];
     }
-    return (blockCache[block.id] = block);
+    return (_docBlocks[block.id] = block);
   }
 
   function _getBlockWithValueAndId(value, id) {
@@ -385,12 +391,13 @@ export default function createCloudDoc({
       value,
       id,
       cloudClient,
+      blockValueCache,
     });
 
-    if (blockCache[id]) {
-      return blockCache[id];
+    if (_docBlocks[id]) {
+      return _docBlocks[id];
     }
-    return (blockCache[id] = block);
+    return (_docBlocks[id] = block);
   }
 
   function getBlock(requestedId) {
@@ -443,6 +450,22 @@ export default function createCloudDoc({
   }
 
   async function putTransaction(value) {
+    const prevId = getId();
+    const expectedTransactionValue = {
+      type: 'TransactionValue',
+      on: {
+        type: 'BlockReference',
+        id: prevId,
+      },
+      value,
+    };
+    const expectedBlock = _getBlockWithValue(expectedTransactionValue);
+
+    setState({
+      id: expectedBlock.id,
+      puttingFromId: prevId,
+    });
+
     const result = await dataSource.dispatch({
       type: 'PutTransactionValue',
       domain,
@@ -450,6 +473,9 @@ export default function createCloudDoc({
       value,
     });
 
+    if (result.id !== expectedBlock.id) {
+      throw new Error('w0t m8');
+    }
     return result;
   }
 

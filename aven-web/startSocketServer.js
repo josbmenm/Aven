@@ -29,7 +29,8 @@ const prepareSocketServer = (wss, dataSource) => {
           const authSubs =
             subscriptions[domain] || (subscriptions[domain] = {});
           const docSubs =
-            authSubs[auth.sessionId] || (authSubs[auth.sessionId] = {});
+            authSubs[auth && auth.sessionId] ||
+            (authSubs[auth && auth.sessionId] = {});
           docSubs[name] = subscription;
         })
         .catch(onError);
