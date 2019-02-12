@@ -226,6 +226,71 @@ describe('onDocMiss', () => {
   });
 });
 
+async function justASec() {
+  return new Promise(resolve => setTimeout(resolve, 1));
+}
+
+function spyOnDataSource(ds) {
+  const _observedActionCounts = {};
+  return {
+    ...ds,
+    dispatch: async action => {
+      const prevCount = _observedActionCounts[action.type] || 0;
+      _observedActionCounts[action.type] = prevCount + 1;
+      return await ds.dispatch(action);
+    },
+    _observedActionCounts,
+  };
+}
+
+describe('cache behavior', () => {
+  test('doc id cache during subscription', async () => {
+    const m = spyOnDataSource(startMemoryDataSource({ domain: 'd' }));
+    const first = await m.dispatch({
+      type: 'PutDocValue',
+      name: 'foo',
+      domain: 'd',
+      value: { count: 1 },
+    });
+    const second = await m.dispatch({
+      type: 'PutDocValue',
+      name: 'foo',
+      domain: 'd',
+      value: { count: 2 },
+    });
+    await m.dispatch({
+      type: 'PutDoc',
+      name: 'foo',
+      domain: 'd',
+      id: first.id,
+    });
+    const c = createCloudClient({ dataSource: m, domain: 'd' });
+
+    const doc = c.get('foo');
+    expect(doc.isConnected.getValue()).toBe(false);
+    let lastObserved = undefined;
+    doc.observe.subscribe({
+      next: v => {
+        lastObserved = v;
+      },
+    });
+    await justASec();
+    expect(lastObserved.id).toEqual(first.id);
+
+    await m.dispatch({
+      type: 'PutDoc',
+      name: 'foo',
+      domain: 'd',
+      id: second.id,
+    });
+    expect(doc.isConnected.getValue()).toBe(true);
+
+    await doc.fetchValue();
+
+    expect(m._observedActionCounts.GetDoc || 0).toEqual(0);
+  });
+});
+
 describe('client doc map', () => {
   test('fetches mapped docs', async () => {
     const m = startMemoryDataSource({ domain: 'd' });

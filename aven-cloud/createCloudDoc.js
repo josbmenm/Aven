@@ -262,6 +262,10 @@ export default function createCloudDoc({
   });
 
   async function fetch() {
+    if (getState().isConnected) {
+      // we are connected via a subscription. we do not need to query
+      return;
+    }
     const result = await dataSource.dispatch({
       type: 'GetDoc',
       domain,
@@ -629,6 +633,12 @@ export default function createCloudDoc({
     };
   }
 
+  const isConnected = new BehaviorSubject(getState().isConnected);
+  docState
+    .map(s => s.isConnected)
+    .subscribe({
+      next: newVal => isConnected.next(newVal),
+    });
   const cloudDoc = {
     $setName,
     get: docs.get,
@@ -653,6 +663,7 @@ export default function createCloudDoc({
     observeConnectedValue,
     transact,
     getReference,
+    isConnected,
   };
 
   bindCloudValueFunctions(cloudDoc, cloudClient);
