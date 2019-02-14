@@ -1,12 +1,15 @@
-import { View, Text, Image } from 'react-native';
-import React from 'react';
+import { View, Text, Image, TextInput, Button } from 'react-native';
+import React, { useState } from 'react';
 
 import SwitchRouter from '../navigation-core/routers/SwitchRouter';
 import SceneView from '../navigation-core/views/SceneView';
 import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
 import createNavigator from '../navigation-core/navigators/createNavigator';
-
+import useCloud from '../aven-cloud/useCloud';
+import useCloudValue from '../aven-cloud/useCloudValue';
+import useCloudReducer from '../aven-cloud/useCloudReducer';
 import Link from '../navigation-web/Link';
+import uuid from 'uuid/v1';
 
 process.env.REACT_NAV_LOGGING = true;
 
@@ -43,10 +46,118 @@ const AppView = ({ navigation, descriptors }) => {
   );
 };
 
+// function TodoItem({ item }) {
+//   return <Text>{item.label}</Text>;
+// }
+
+// function TodoList() {
+//   const cloud = useCloud();
+//   const todosDoc = cloud.get('todos');
+//   const todos = useCloudValue(todosDoc);
+//   if (!todos || todos.length === 0) {
+//     return <Text>Nothing to do!</Text>;
+//   }
+//   return todos.map(item => <TodoItem item={item} key={item.key} />);
+// }
+
+// function AddTodo() {
+//   const cloud = useCloud();
+//   const todosDoc = cloud.get('todos');
+//   const todos = useCloudValue(todosDoc);
+//   const [newTodoText, setNewTodoText] = useState('');
+//   return (
+//     <TextInput
+//       style={{
+//         width: 400,
+//         borderWidth: 1,
+//         borderColor: '#ccc',
+//         borderRadius: 5,
+//       }}
+//       onSubmitEditing={() => {
+//         todosDoc.put([...(todos || []), { label: newTodoText, key: uuid() }]);
+//       }}
+//       onChangeText={setNewTodoText}
+//       value={newTodoText}
+//     />
+//   );
+// }
+
+const reduceStatusDisplayState = `
+  if (!action) {
+    return state;
+  }
+  if (action.type === 'AddTodo') {
+    return [
+      ...state,
+      action.todo,
+    ];
+  }
+  if (action.type === 'RemoveTodo') {
+    return state.filter(item => item.key !== action.key);
+  }
+  return state;
+`;
+
+function useTodosTransactional() {
+  return useCloudReducer('todosTransactional', reduceStatusDisplayState, []);
+}
+
+function TodoItem({ item }) {
+  const [_, dispatch] = useTodosTransactional();
+  return (
+    <View>
+      <Text>{item.label}</Text>
+      <Button
+        onPress={() => {
+          dispatch({ type: 'RemoveTodo', key: item.key });
+        }}
+        title="remove"
+      />
+    </View>
+  );
+}
+
+function TodoList() {
+  const [todos] = useTodosTransactional();
+  if (todos === null) {
+    return null;
+  }
+  if (!todos || todos.length === 0) {
+    return <Text>Nothing to do!</Text>;
+  }
+  return todos.map(item => <TodoItem item={item} key={item.key} />);
+}
+
+function AddTodo() {
+  const [_, dispatch] = useTodosTransactional();
+  const [newTodoText, setNewTodoText] = useState('');
+  return (
+    <TextInput
+      style={{
+        width: 400,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+      }}
+      onSubmitEditing={() => {
+        setNewTodoText('');
+        dispatch({
+          type: 'AddTodo',
+          todo: { label: newTodoText, key: uuid() },
+        });
+      }}
+      onChangeText={setNewTodoText}
+      value={newTodoText}
+    />
+  );
+}
+
 function Home() {
   return (
     <View style={{ flex: 1 }}>
-      <Text>Home!</Text>
+      <Text style={{ fontSize: 42 }}>My Todos:</Text>
+      <TodoList />
+      <AddTodo />
     </View>
   );
 }

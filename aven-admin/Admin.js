@@ -31,7 +31,7 @@ import createCloudClient from '../aven-cloud/createCloudClient';
 import useCloud from '../aven-cloud/useCloud';
 import useCloudSession from '../aven-cloud/useCloudSession';
 import useObservable from '../aven-cloud/useObservable';
-import useDocValue from '../aven-cloud/useDocValue';
+import useCloudValue from '../aven-cloud/useCloudValue';
 import JSONView from '../debug-views/JSONView';
 const pathJoin = require('path').join;
 
@@ -1166,7 +1166,7 @@ function DocValuePane() {
   const cloud = useCloud();
 
   const doc = cloud.get(name);
-  const value = useDocValue(doc);
+  const value = useCloudValue(doc);
 
   return <ValuePane doc={doc} value={value} path={path} pathContext={[]} />;
 }
