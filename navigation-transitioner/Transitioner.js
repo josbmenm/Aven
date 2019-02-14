@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { NavigationProvider, StackActions } from '../navigation-core';
+import PerformanceDebugging from './PerformanceDebugging';
 
 export const TransitionContext = React.createContext(null);
 
@@ -195,6 +196,9 @@ export class Transitioner extends React.Component {
           console.error('Error running transition:', e);
         }
       );
+    }
+    if (lastState.transitionRouteKey && !this.state.transitionRouteKey) {
+      PerformanceDebugging.markTransitionComplete(lastState.transitionRouteKey);
     }
   }
 
