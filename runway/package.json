@@ -1,0 +1,23 @@
+{
+  "name": "runway",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {},
+  "aven": {
+    "env": "web",
+    "envOptions": {
+      "mainServer": "MainServer.js",
+      "mainClient": "MainClient.js"
+    },
+    "moduleDependencies": [
+      "uuid"
+    ],
+    "srcDependencies": [
+      "aven-web",
+      "aven-cloud",
+      "aven-cloud-browser",
+      "aven-cloud-native",
+      "aven-cloud-server"
+    ]
+  }
+}
