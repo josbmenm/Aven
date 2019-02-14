@@ -455,6 +455,7 @@ export default function createCloudDoc({
 
   async function putTransaction(value) {
     const prevId = getId();
+    await fetch();
     const expectedTransactionValue = {
       type: 'TransactionValue',
       on: {
@@ -478,7 +479,11 @@ export default function createCloudDoc({
     });
 
     if (result.id !== expectedBlock.id) {
-      throw new Error('w0t m8');
+      console.warn(
+        `Expected to put block id "${expectedBlock.id}", but actually put id "${
+          result.id
+        }"`
+      );
     }
     return result;
   }
