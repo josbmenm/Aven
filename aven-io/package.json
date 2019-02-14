@@ -15,6 +15,7 @@
     "srcDependencies": [
       "aven-web",
       "aven-cloud",
+      "aven-cloud-fs",
       "aven-cloud-browser",
       "aven-cloud-server",
       "navigation-web",
