@@ -114,7 +114,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
   }
   function doExpansion(o) {
     if (o == null) {
-      return [];
+      return null;
     } else if (isCloudValue(o)) {
       return o.getValue();
     } else if (o instanceof Array) {
