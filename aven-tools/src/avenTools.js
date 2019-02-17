@@ -106,9 +106,12 @@ async function syncDirectoriesMac(from, to, exclude = []) {
 }
 
 async function syncDirectories(from, to, exclude = []) {
-  if (process.platform === 'darwin') {
-    return await syncDirectoriesMac(from, to, exclude);
+  if (process.platform === 'win32') {
+    const winPrefix = /^([a-z]):/i;
+    from = from.replace(winPrefix, '/cygdrive/$1');
+    to = to.replace(winPrefix, '/cygdrive/$1');
   }
+  return await syncDirectoriesMac(from, to, exclude);
   await fs.emptyDir(to);
   await fs.copy(from, to, {
     filter: file =>
@@ -366,10 +369,11 @@ const runStart = async argv => {
   });
   let syncState = await goSync();
 
-  const watcher = sane(srcDir, { watchman: true });
+  const watcher = sane(srcDir, { watchman: process.platform != 'win32' });
 
   let extendedGlobeWatcher =
-    extendOverride && sane(extendOverride, { watchman: true });
+    extendOverride &&
+    sane(extendOverride, { watchman: process.platform != 'win32' });
 
   let syncTimeout = null;
   const scheduleSync = (filepath, root, stat) => {
