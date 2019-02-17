@@ -655,15 +655,6 @@ async function doPublish(packageName, localParentDeps = []) {
     }
   }
 
-  console.log('ppp', {
-    buildDir,
-    finalPkgJson,
-    publishedVersion,
-    publishedName,
-    packageJSONChecksum,
-    srcChecksum,
-  });
-
   return { publishedVersion, publishedName };
 }
 

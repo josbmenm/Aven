@@ -1,4 +1,6 @@
 {
+  "name": "@aven-cloud/web",
+  "version": "1.1.0",
   "dependencies": {
     "fs-extra": "^7.0.0"
   },
@@ -7,15 +9,14 @@
     "srcDependencies": [
       "navigation-core",
       "navigation-web",
-      "buffer"
+      "utils"
     ],
     "moduleDependencies": [
-      "@react-navigation/web",
-      "@react-navigation/core",
       "yes-https",
       "helmet",
       "mime",
       "body-parser"
     ]
-  }
+  },
+  "srcChecksum": "ec947c616f8bd233917c773d2e488218dd50d113332d15770a54921c828e0cc2"
 }

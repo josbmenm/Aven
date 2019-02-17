@@ -10,8 +10,6 @@ const observeStatic = val =>
     observer.next(val);
   });
 
-export const POSTING_DOC_NAME = Symbol('POSTING_DOC_NAME');
-
 function hasDepth(name) {
   return name.match(/\//);
 }
