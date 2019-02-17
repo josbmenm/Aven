@@ -1,19 +1,18 @@
 import React from 'react';
 import { Title, Body, Page } from '../DocViews';
-import { useNavigation } from '../../navigation-hooks/Hooks';
 
 function DocPage() {
-  const { getParam } = useNavigation();
   return (
     <Page>
-      <Title>Aven Overview</Title>
+      <Title>Spec - AuthDataSource</Title>
+      <Body>Coming Soon.</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: 'Aven Docs Home',
+  title: 'Spec - AuthDataSource',
 };
-DocPage.path = '';
+DocPage.path = 'spec-auth-data-source';
 
 export default DocPage;

@@ -4,15 +4,15 @@ import { Title, Body, Page } from '../DocViews';
 function DocPage() {
   return (
     <Page>
-      <Title>Aven Overview</Title>
-      <Body>Hello, world!</Body>
+      <Title>API - createNativeNetworkSource</Title>
+      <Body>Coming Soon.</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: 'Aven Docs Home',
+  title: 'API - createNativeNetworkSource',
 };
-DocPage.path = '';
+DocPage.path = 'api-create-native-network-source';
 
 export default DocPage;

@@ -4,15 +4,15 @@ import { Title, Body, Page } from '../DocViews';
 function DocPage() {
   return (
     <Page>
-      <Title>Aven Overview</Title>
+      <Title>Tutorial 1 - Data Sources</Title>
       <Body>Hello, world!</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: 'Aven Docs Home',
+  title: '1: Intro to Data Sources',
 };
-DocPage.path = '';
+DocPage.path = 'intro-data-sources';
 
 export default DocPage;

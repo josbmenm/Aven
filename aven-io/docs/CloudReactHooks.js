@@ -1,19 +1,18 @@
 import React from 'react';
 import { Title, Body, Page } from '../DocViews';
-import { useNavigation } from '../../navigation-hooks/Hooks';
 
 function DocPage() {
-  const { getParam } = useNavigation();
   return (
     <Page>
-      <Title>Aven Overview</Title>
+      <Title>Cloud React Hooks</Title>
+      <Body>Coming Soon.</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: 'Aven Docs Home',
+  title: 'Cloud React Hooks',
 };
-DocPage.path = '';
+DocPage.path = 'cloud-react-hooks';
 
 export default DocPage;

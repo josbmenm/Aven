@@ -1,19 +1,18 @@
 import React from 'react';
 import { Title, Body, Page } from '../DocViews';
-import { useNavigation } from '../../navigation-hooks/Hooks';
 
 function DocPage() {
-  const { getParam } = useNavigation();
   return (
     <Page>
-      <Title>Aven Overview</Title>
+      <Title>API - createBrowserNetworkSource</Title>
+      <Body>Coming Soon.</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: 'Aven Docs Home',
+  title: 'API - createBrowserNetworkSource',
 };
-DocPage.path = '';
+DocPage.path = 'api-create-browser-network-source';
 
 export default DocPage;

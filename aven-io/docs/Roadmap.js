@@ -1,19 +1,18 @@
 import React from 'react';
 import { Title, Body, Page } from '../DocViews';
-import { useNavigation } from '../../navigation-hooks/Hooks';
 
 function DocPage() {
-  const { getParam } = useNavigation();
   return (
     <Page>
-      <Title>Aven Overview</Title>
+      <Title>Roadmap</Title>
+      <Body>Coming Soon.</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: 'Aven Docs Home',
+  title: 'Roadmap',
 };
-DocPage.path = '';
+DocPage.path = 'roadmap';
 
 export default DocPage;

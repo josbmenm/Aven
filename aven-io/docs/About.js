@@ -4,15 +4,15 @@ import { Title, Body, Page } from '../DocViews';
 function DocPage() {
   return (
     <Page>
-      <Title>Aven Overview</Title>
-      <Body>Hello, world!</Body>
+      <Title>About Aven</Title>
+      <Body>Coming Soon.</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: 'Aven Docs Home',
+  title: 'About Aven',
 };
-DocPage.path = '';
+DocPage.path = 'about';
 
 export default DocPage;

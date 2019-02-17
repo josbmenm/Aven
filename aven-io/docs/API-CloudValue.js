@@ -4,15 +4,15 @@ import { Title, Body, Page } from '../DocViews';
 function DocPage() {
   return (
     <Page>
-      <Title>Auth Methods</Title>
-      <Body>Hello, world!</Body>
+      <Title>API - Cloud Value</Title>
+      <Body>Coming Soon.</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: 'Authe Methods',
+  title: 'API - Cloud Value',
 };
-DocPage.path = 'auth-methods';
+DocPage.path = 'api-cloud-value';
 
 export default DocPage;

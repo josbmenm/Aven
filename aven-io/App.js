@@ -1,4 +1,12 @@
-import { View, Text, Image, TextInput, Button } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  Button,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import React, { useState } from 'react';
 
 import SwitchRouter from '../navigation-core/routers/SwitchRouter';
@@ -13,20 +21,58 @@ import uuid from 'uuid/v1';
 
 process.env.REACT_NAV_LOGGING = true;
 
-function Header({ descriptors }) {
+const shadow = {
+  shadowOffset: { width: 0, height: 0 },
+  shadowColor: 'black',
+  shadowOpacity: 0.06,
+  shadowRadius: 11,
+};
+const shadowBorderColor = '#d8d8d8';
+
+function HeaderLink({ title, ...props }) {
   return (
-    <View style={{ borderBottomWidth: 1, height: 90, flexDirection: 'row' }}>
+    <Link
+      {...props}
+      renderContent={isSelected => (
+        <View
+          style={{
+            backgroundColor: isSelected ? '#ddf' : '#fff',
+            alignSelf: 'stretch',
+            padding: 20,
+          }}
+        >
+          <Text style={{ fontSize: 24, color: '#111' }}>{title}</Text>
+        </View>
+      )}
+    />
+  );
+}
+
+function Header() {
+  return (
+    <View
+      style={{
+        zIndex: 100,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        ...shadow,
+        height: 70,
+        flexDirection: 'row',
+      }}
+    >
       <Image
         source={require('./assets/AvenLogo.svg')}
-        style={{ alignSelf: 'stretch', width: 200, margin: 20 }}
+        style={{
+          marginHorizontal: 20,
+          alignSelf: 'center',
+          width: 452 / 3,
+          height: 100 / 3,
+        }}
       />
-      {Object.keys(descriptors).map(descriptorId => {
-        return (
-          <Link key={descriptorId} routeName={descriptorId}>
-            {descriptorId}
-          </Link>
-        );
-      })}
+      <HeaderLink title="Home" routeName="Home" />
+      <HeaderLink title="Docs" routeName="Docs" />
+      <HeaderLink title="About" routeName="About" />
+      <HeaderLink title="Github" url="https://github.com/AvenCloud/Aven" />
     </View>
   );
 }
@@ -164,22 +210,186 @@ function Home() {
 
 const DocsRouter = SwitchRouter({
   DocsOverview: require('./docs/Aven-Overview').default,
-  AuthMethods: require('./docs/Auth-Methods').default,
-  Brainstorm: require('./docs/Auth-Methods').default,
+  QuickStart: require('./docs/QuickStart').default,
+  Tutorial1: require('./docs/1-Data-Sources').default,
+  Tutorial2: require('./docs/2-Connect-React').default,
+  Tutorial3: require('./docs/3-Authentication').default,
+  'API-createCloudClient': require('./docs/API-createCloudClient').default,
+  'API-CloudBlock': require('./docs/API-CloudBlock').default,
+  'API-CloudDoc': require('./docs/API-CloudDoc').default,
+  'API-CloudValue': require('./docs/API-CloudValue').default,
+  'API-createSMSAuthProvider': require('./docs/API-createSMSAuthProvider')
+    .default,
+  'API-createEmailAuthProvider': require('./docs/API-createEmailAuthProvider')
+    .default,
+  'API-createAuthDataSource': require('./docs/API-createAuthDataSource')
+    .default,
+  'API-createMemoryDataSource': require('./docs/API-createMemoryDataSource')
+    .default,
+  'API-createFSDataSource': require('./docs/API-createFSDataSource').default,
+  'API-createPostgresDataSource': require('./docs/API-createPostgresDataSource')
+    .default,
+  'API-createBrowserNetworkSource': require('./docs/API-createBrowserNetworkSource')
+    .default,
+  'API-createNodeNetworkSource': require('./docs/API-createNodeNetworkSource')
+    .default,
+  'API-createNativeNetworkSource': require('./docs/API-createNativeNetworkSource')
+    .default,
+  ObservableUsage: require('./docs/ObservableUsage').default,
+  CloudReactHooks: require('./docs/CloudReactHooks').default,
+  CloudClientIntro: require('./docs/CloudClientIntro').default,
+  AuthIntro: require('./docs/AuthIntro').default,
+  About: require('./docs/About').default,
+  Roadmap: require('./docs/Roadmap').default,
+  Contributors: require('./docs/Contributors').default,
+  DocPermissions: require('./docs/DocPermissions').default,
+  'Spec-AuthDataSource': require('./docs/Spec-AuthDataSource').default,
+  'Spec-AuthProvider': require('./docs/Spec-AuthProvider').default,
+  'Spec-DataSource': require('./docs/Spec-DataSource').default,
 });
 
-function Sidebar({ descriptors, aboveList }) {
+function SidebarSection({ title, children }) {
   return (
-    <View style={{ borderRightWidth: 1, flex: 1, maxWidth: 360 }}>
-      {aboveList}
-      {Object.keys(descriptors).map(descriptorId => {
-        return (
-          <Link key={descriptorId} routeName={descriptorId}>
-            {descriptorId}
-          </Link>
-        );
-      })}
+    <View
+      style={{
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+        paddingBottom: 20,
+      }}
+    >
+      <Text
+        style={{
+          color: '#111',
+          fontSize: 30,
+          paddingTop: 20,
+          paddingBottom: 10,
+          paddingHorizontal: 20,
+        }}
+      >
+        {title}
+      </Text>
+      {children}
     </View>
+  );
+}
+function SidebarLink({ title, routeName }) {
+  return (
+    <Link
+      routeName={routeName}
+      renderContent={isActive => (
+        <View
+          style={{
+            backgroundColor: isActive ? '#fff' : undefined,
+            paddingHorizontal: 20,
+            paddingVertical: 8,
+          }}
+        >
+          <Text
+            style={{
+              color: isActive ? '#007' : '#333',
+              fontSize: 16,
+            }}
+          >
+            {title}
+          </Text>
+        </View>
+      )}
+    />
+  );
+}
+function Sidebar() {
+  return (
+    <ScrollView
+      style={{
+        flex: 1,
+        maxWidth: 360,
+        backgroundColor: '#f8f8f8',
+        ...shadow,
+        borderRightColor: shadowBorderColor,
+        borderRightWidth: StyleSheet.hairlineWidth,
+      }}
+    >
+      <View style={{}}>
+        <SidebarSection title="Getting Started">
+          <SidebarLink title="Quick Start" routeName="QuickStart" />
+          <SidebarLink title="1. Data Sources" routeName="Tutorial1" />
+          <SidebarLink title="2. Connect React" routeName="Tutorial2" />
+          <SidebarLink title="3. Authentication" routeName="Tutorial3" />
+        </SidebarSection>
+        <SidebarSection title="Data & Network Sources">
+          <SidebarLink
+            title="API: createMemoryDataSource"
+            routeName="API-createMemoryDataSource"
+          />
+          <SidebarLink
+            title="API: createFSDataSource"
+            routeName="API-createFSDataSource"
+          />
+          <SidebarLink
+            title="API: createPostgresDataSource"
+            routeName="API-createPostgresDataSource"
+          />
+          <SidebarLink
+            title="API: createBrowserNetworkSource"
+            routeName="API-createBrowserNetworkSource"
+          />
+          <SidebarLink
+            title="API: createNodeNetworkSource"
+            routeName="API-createNodeNetworkSource"
+          />
+          <SidebarLink
+            title="API: createNativeNetworkSource"
+            routeName="API-createNativeNetworkSource"
+          />
+          <SidebarLink title="SPEC: Data Source" routeName="Spec-DataSource" />
+        </SidebarSection>
+        <SidebarSection title="Cloud Client">
+          <SidebarLink
+            title="Introduce Cloud Client"
+            routeName="CloudClientIntro"
+          />
+          <SidebarLink title="Using observables" routeName="ObservableUsage" />
+          <SidebarLink title="Cloud React Hooks" routeName="CloudReactHooks" />
+          <SidebarLink
+            title="API: createCloudClient"
+            routeName="API-createCloudClient"
+          />
+          <SidebarLink title="API: Client Value" routeName="API-CloudValue" />
+          <SidebarLink title="API: Client Doc" routeName="API-CloudDoc" />
+          <SidebarLink title="API: Client Block" routeName="API-CloudBlock" />
+        </SidebarSection>
+        <SidebarSection title="Auth & Permissions">
+          <SidebarLink title="Auth and Auth Methods" routeName="AuthIntro" />
+          <SidebarLink title="Doc Permissions" routeName="DocPermissions" />
+          <SidebarLink
+            title="API: createAuthDataSource"
+            routeName="API-createAuthDataSource"
+          />
+          <SidebarLink
+            title="API: createEmailAuthProvider"
+            routeName="API-createEmailAuthProvider"
+          />
+          <SidebarLink
+            title="API: createSMSAuthProvider"
+            routeName="API-createSMSAuthProvider"
+          />
+          <SidebarLink
+            title="Spec: Auth Data Source"
+            routeName="Spec-AuthDataSource"
+          />
+          <SidebarLink
+            title="Spec: Auth Provider"
+            routeName="Spec-AuthProvider"
+          />
+        </SidebarSection>
+        <SidebarSection title="Advanced" />
+        <SidebarSection title="Community">
+          <SidebarLink title="About Aven" routeName="About" />
+          <SidebarLink title="Roadmap" routeName="Roadmap" />
+          <SidebarLink title="Contributors" routeName="Contributors" />
+        </SidebarSection>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -189,21 +399,7 @@ function SidebarView({ navigation, descriptors }) {
   const descriptor = descriptors[route.key];
   return (
     <View style={{ flex: 1, flexDirection: 'row' }}>
-      <Sidebar
-        descriptors={descriptors}
-        navigation={navigation}
-        aboveList={
-          <select
-            value={navigation.getParam('version')}
-            onChange={e =>
-              navigation.setParams({ version: e.nativeEvent.target.value })
-            }
-          >
-            <option value="1">1</option>
-            <option value="2">2</option>
-          </select>
-        }
-      />
+      <Sidebar descriptors={descriptors} navigation={navigation} />
       <SceneView
         component={descriptor.getComponent()}
         navigation={descriptor.navigation}
@@ -232,9 +428,8 @@ const AppRouter = SwitchRouter({
   },
   Docs: {
     screen: Docs,
-    path: 'docs/:version',
-    params: { version: '1' },
-    inheritParams: ['version'],
+    path: 'docs',
+    params: {},
     navigationOptions: ({ navigation, screenProps }) => ({
       title:
         getActiveChildNavigationOptions(navigation, screenProps).title +

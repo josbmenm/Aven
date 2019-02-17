@@ -1,19 +1,18 @@
 import React from 'react';
 import { Title, Body, Page } from '../DocViews';
-import { useNavigation } from '../../navigation-hooks/Hooks';
 
 function DocPage() {
-  const { getParam } = useNavigation();
   return (
     <Page>
-      <Title>Aven Overview</Title>
+      <Title>Tutorial 2 - Connect Cloud to React</Title>
+      <Body>Hello, world!</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: 'Aven Docs Home',
+  title: '2: Connect to React',
 };
-DocPage.path = '';
+DocPage.path = 'intro-connect-react';
 
 export default DocPage;
