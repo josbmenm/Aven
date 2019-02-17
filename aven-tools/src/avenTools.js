@@ -516,7 +516,15 @@ async function doPublish(packageName, localParentDeps = []) {
   const localPackagePath = pathJoin(packageDir, 'package.json');
 
   const localPackage = await getAppPackage(packageName);
-  const { moduleDependencies, srcDependencies } = await localPackage.aven;
+  if (!localPackage) {
+    throw new Error(`Cannot read package of "${packageName}"`);
+  }
+  if (!localPackage.aven) {
+    throw new Error(
+      `Package "${packageName}" does not have ".aven" configured`,
+    );
+  }
+  const { moduleDependencies, srcDependencies } = localPackage.aven;
   const globePkg = JSON.parse(
     await fs.readFile(pathJoin(srcDir, 'package.json')),
   );
@@ -574,6 +582,7 @@ async function doPublish(packageName, localParentDeps = []) {
       '@babel/node': '^7.2.2',
       '@babel/preset-env': '^7.3.1',
       '@babel/plugin-proposal-class-properties': '^7.3.0',
+      '@babel/plugin-transform-react-jsx': '^7.3.0',
     };
 
     // doing publish
@@ -589,7 +598,10 @@ async function doPublish(packageName, localParentDeps = []) {
       JSON.stringify(
         {
           presets: ['@babel/preset-env'],
-          plugins: ['@babel/plugin-proposal-class-properties'],
+          plugins: [
+            '@babel/plugin-proposal-class-properties',
+            '@babel/plugin-transform-react-jsx',
+          ],
         },
         null,
         2,
