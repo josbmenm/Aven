@@ -1,10 +1,12 @@
 {
-  "name": "@react-navigation/web",
+  "name": "@aven-cloud/navigation-web",
+  "version": "1.1.0",
   "aven": {
     "srcDependencies": [],
     "moduleDependencies": [
       "history",
       "query-string"
     ]
-  }
+  },
+  "srcChecksum": "a51d3733564d0b3d6d2d99246192b01680b7365ab870fc31d4f502eb4ee0fee6"
 }

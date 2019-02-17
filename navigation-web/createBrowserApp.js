@@ -98,8 +98,15 @@ export default function createBrowserApp(App) {
         </NavigationProvider>
       );
     }
+    _openUrl = url => {
+      window.location = url;
+      return null;
+    };
     _dispatch = action => {
-      const lastState = this.state.nav;
+      if (action.type === NavigationActions.URL) {
+        return this._openUrl(action.url);
+      }
+      const lastState = this.statsnav;
       const newState = App.router.getStateForAction(action, lastState);
       const dispatchEvents = () =>
         this._actionEventSubscribers.forEach(subscriber =>

@@ -2,11 +2,17 @@ const BACK = 'Navigation/BACK';
 const INIT = 'Navigation/INIT';
 const NAVIGATE = 'Navigation/NAVIGATE';
 const SET_PARAMS = 'Navigation/SET_PARAMS';
+const URL = 'Navigation/URL';
 
 const back = (payload = {}) => ({
   type: BACK,
   key: payload.key,
   immediate: payload.immediate,
+});
+
+const url = inputUrl => ({
+  type: URL,
+  url: inputUrl,
 });
 
 const init = (payload = {}) => {
@@ -48,10 +54,12 @@ export default {
   INIT,
   NAVIGATE,
   SET_PARAMS,
+  URL,
 
   // Action creators
   back,
   init,
   navigate,
   setParams,
+  url,
 };
