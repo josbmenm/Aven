@@ -11,6 +11,13 @@ const getTopNavigation = navigation => {
   return navigation;
 };
 
+function getUrlAction(url) {
+  if (url) {
+    return NavigationActions.url(url);
+  }
+  return null;
+}
+
 class LinkWithNavigation extends Component {
   render() {
     const {
@@ -20,19 +27,22 @@ class LinkWithNavigation extends Component {
       routeKey,
       navigation,
       action,
+      url,
+      renderContent,
     } = this.props;
     const topNavigation = getTopNavigation(navigation);
     const topRouter = topNavigation.router;
     const navAction =
       action ||
+      getUrlAction(url) ||
       NavigationActions.navigate({
         routeName,
         key: routeKey,
         params,
       });
-    if (!action && !routeName && !routeKey) {
+    if (!action && !routeName && !routeKey && !url) {
       throw new Error(
-        'Must provide a routeName, routeKey, or a navigation action prop to <Link>'
+        'Must provide a routeName, routeKey, url, or a navigation action prop to <Link>'
       );
     }
     if (action && routeKey) {
@@ -52,22 +62,40 @@ class LinkWithNavigation extends Component {
     const nextState =
       navActionResponse === null ? topNavigation.state : navActionResponse;
     const pathAndParams = topRouter.getPathAndParamsForState(nextState);
-    const href = Object.keys(pathAndParams.params).length
-      ? `/${pathAndParams.path}?${queryString.stringify(pathAndParams.params)}`
-      : `/${pathAndParams.path}`;
+    let href = url;
+    if (!href) {
+      href = Object.keys(pathAndParams.params).length
+        ? `/${pathAndParams.path}?${queryString.stringify(
+            pathAndParams.params
+          )}`
+        : `/${pathAndParams.path}`;
+    }
+    const isActive = navActionResponse === null;
     return (
       <a
+        style={{ textDecoration: 'none' }}
         href={href}
         onClick={e => {
-          navigation.dispatch(navAction);
-          e.preventDefault();
+          if (navAction.type === NavigationActions.URL) {
+            // correct behavior is default
+          } else {
+            navigation.dispatch(navAction);
+            e.preventDefault();
+          }
         }}
       >
-        {children}
+        {renderContent ? renderContent(isActive) : children}
       </a>
     );
   }
 }
 const Link = withNavigation(LinkWithNavigation);
+
+export function withLinking(LinkView) {
+  function CustomLink({ ...props }) {
+    return <LinkView {...props} />;
+  }
+  return withNavigation(CustomLink);
+}
 
 export default Link;
