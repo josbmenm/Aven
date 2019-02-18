@@ -4,15 +4,15 @@ import { Title, Body, Page } from '../DocViews';
 function DocPage() {
   return (
     <Page>
-      <Title>Tutorial 1 - Data Sources</Title>
-      <Body>Data </Body>
+      <Title>Data Sources</Title>
+      <Body>Coming Soon.</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: '1: Intro to Data Sources',
+  title: 'Data Sources',
 };
-DocPage.path = 'intro-data-sources';
+DocPage.path = 'data-sources';
 
 export default DocPage;

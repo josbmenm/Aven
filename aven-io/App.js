@@ -237,6 +237,7 @@ const DocsRouter = SwitchRouter({
     .default,
   ObservableUsage: require('./docs/ObservableUsage').default,
   CloudReactHooks: require('./docs/CloudReactHooks').default,
+  DataSources: require('./docs/DataSources').default,
   CloudClientIntro: require('./docs/CloudClientIntro').default,
   AuthIntro: require('./docs/AuthIntro').default,
   About: require('./docs/About').default,
@@ -317,6 +318,7 @@ function Sidebar() {
           <SidebarLink title="3. Authentication" routeName="Tutorial3" />
         </SidebarSection>
         <SidebarSection title="Data & Network Sources">
+          <SidebarLink title="Intro to Data Sources" routeName="DataSources" />
           <SidebarLink
             title="API: createMemoryDataSource"
             routeName="API-createMemoryDataSource"
