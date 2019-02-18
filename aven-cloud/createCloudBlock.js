@@ -1,6 +1,7 @@
 import { Observable, BehaviorSubject } from 'rxjs-compat';
 import SHA1 from 'crypto-js/sha1';
 import bindCloudValueFunctions from './bindCloudValueFunctions';
+import mapBehaviorSubject from '../utils/mapBehaviorSubject';
 
 const JSONStringify = require('json-stable-stringify');
 
@@ -89,10 +90,10 @@ export default function createCloudBlock({
     });
   }
   function getState() {
-    return blockState.value;
+    return blockState.getValue();
   }
-  function isPublished() {
-    return !!blockState.value.lastPutTime || !!blockState.value.lastFetchTime;
+  function getIsPublished() {
+    return !!getState().lastPutTime || !!getState().lastFetchTime;
   }
   function setPutTime() {
     setState({
@@ -107,10 +108,6 @@ export default function createCloudBlock({
     } else {
       return val;
     }
-  }
-
-  function getBlock() {
-    return getState();
   }
 
   const observeValue = observe
@@ -137,6 +134,7 @@ export default function createCloudBlock({
     setState({
       value: result.value,
       lastFetchTime: Date.now(),
+      isConnected: true,
     });
   }
 
@@ -144,19 +142,25 @@ export default function createCloudBlock({
     await fetch();
   }
 
+  const isConnected = mapBehaviorSubject(
+    blockState,
+    state => state.isConnected
+  );
+
   const cloudBlock = {
+    isConnected,
     getFullName: () => onGetName(),
     getId: () => blockId,
     id: blockId,
     get: () => {
       throw new Error('Cannot "get" on a block');
     },
-    isPublished,
-    setPutTime,
+    getIsPublished,
+    setPutTime, // deprecate me!
     getValue,
     fetch,
     fetchValue,
-    getBlock,
+    getState,
     observe,
     observeValue,
     getReference,

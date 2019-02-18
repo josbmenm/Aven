@@ -3,6 +3,8 @@ import observeNull from './observeNull';
 import createCloudBlock from './createCloudBlock';
 import uuid from 'uuid/v1';
 import bindCloudValueFunctions from './bindCloudValueFunctions';
+import mapBehaviorSubject from '../utils/mapBehaviorSubject';
+
 const pathJoin = require('path').join;
 
 const observeStatic = val =>
@@ -229,7 +231,7 @@ export default function createCloudDoc({
   };
 
   function getState() {
-    return docState.value;
+    return docState.getValue();
   }
 
   function getId() {
@@ -237,7 +239,7 @@ export default function createCloudDoc({
   }
 
   function getName() {
-    const name = docState.value.name;
+    const name = getState().name;
     return name;
   }
 
@@ -530,7 +532,7 @@ export default function createCloudDoc({
       puttingFromId: state.id,
     });
     try {
-      if (block.isPublished()) {
+      if (block.getIsPublished()) {
         await putId(block.id);
       } else {
         await dataSource.dispatch({
@@ -636,14 +638,11 @@ export default function createCloudDoc({
     };
   }
 
-  const isConnected = new BehaviorSubject(getState().isConnected);
-  docState
-    .map(s => s.isConnected)
-    .subscribe({
-      next: newVal => isConnected.next(newVal),
-    });
+  const isConnected = mapBehaviorSubject(docState, state => state.isConnected);
+
   const cloudDoc = {
-    $setName,
+    $setName, // implementation detail of doc moving..?
+
     get: docs.get,
     post: docs.post,
     getState,
@@ -655,18 +654,21 @@ export default function createCloudDoc({
     put,
     putTransaction,
     putId,
-    fetchValue,
     fetchConnectedValue,
     getConnectedValue,
     getBlock,
-    getValue,
-    observeValue,
     observe,
     destroy,
-    observeConnectedValue,
+    observeConnectedValue, // todo, document or remove! (why should people use this instead of expand?)
     transact,
-    getReference,
+
+    // cloud value APIs:
+    getValue,
+    observeValue,
     isConnected,
+    fetchValue,
+    getReference,
+    // todo: serialize?
   };
 
   bindCloudValueFunctions(cloudDoc, cloudClient);
