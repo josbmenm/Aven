@@ -35,7 +35,7 @@ startClient();
   if (appPkg.aven.envOptions.knexFile) {
     const knexFilePath = pathJoin(location, 'knexfile.js');
     const knexFileData = `module.exports = ${JSON.stringify(
-      appPkg.aven.envOptions.knexFile
+      appPkg.aven.envOptions.knexFile,
     )};`;
     await fs.writeFile(knexFilePath, knexFileData);
   }
@@ -125,8 +125,14 @@ const deploy = async ({ appName, appPkg, location, srcDir }) => {
       (appPkg.aven.envOptions && appPkg.aven.envOptions.herokuAppName) ||
       process.env.HEROKU_DEPLOY_APP ||
       appName;
+    const HEROKU_API_KEY = process.env.HEROKU_API_KEY;
     await spawnInBuildDir('heroku', ['git:remote', '--app', herokuAppName]);
-    await spawnInBuildDir('git', ['push', '-f', 'heroku', 'master']);
+    await spawnInBuildDir('git', [
+      'push',
+      '-f',
+      `https://heroku:${HEROKU_API_KEY}@git.heroku.com/${herokuAppName}.git`,
+      'master',
+    ]);
     return;
   }
 
@@ -141,21 +147,21 @@ const deploy = async ({ appName, appPkg, location, srcDir }) => {
       'src',
       'sync',
       appName,
-      appPkg.aven.envOptions.deployScript
+      appPkg.aven.envOptions.deployScript,
     );
     await spawn(script, [], { cwd: location, stdio: 'inherit' });
     return;
   }
 
   throw new Error(
-    'Invalid pkg.aven.envOptions.deployEnv in "' + appName + '"!'
+    'Invalid pkg.aven.envOptions.deployEnv in "' + appName + '"!',
   );
 };
 
 const build = async ({ appName, appPkg, location, srcDir }) => {
   const razzleLocation = pathJoin(
     location,
-    'node_modules/razzle/bin/razzle.js'
+    'node_modules/razzle/bin/razzle.js',
   );
   const buildResult = await spawn(razzleLocation, ['build'], {
     cwd: location,

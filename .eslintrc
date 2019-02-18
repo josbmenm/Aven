@@ -14,6 +14,7 @@
     "no-unused-vars": "off",
     "import/named": "off",
     "react/sort-comp": "off",
+    "react/jsx-key": "warn",
     "jest/no-disabled-tests": "off"
   }
 }
