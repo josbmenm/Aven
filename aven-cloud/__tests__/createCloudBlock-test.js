@@ -18,7 +18,7 @@ describe('object generic behavior', () => {
         domain: 'test',
         onGetName: () => 'foo',
         dispatch: () => {},
-      })
+      }),
     ).toThrow();
   });
   test('handles creation with value', () => {
@@ -48,9 +48,9 @@ describe('basic object DataSource interaction', () => {
       id,
     });
     expect(c.getValue()).toEqual(undefined);
-    expect(c.getBlock().lastFetchTime).toBe(null);
+    expect(c.getState().lastFetchTime).toBe(null);
     await c.fetch();
-    expect(c.getBlock().lastFetchTime).not.toBe(null);
+    expect(c.getState().lastFetchTime).not.toBe(null);
     expect(c.getValue().foo).toEqual('bar');
   });
   test('fetches null objects', async () => {
@@ -68,10 +68,10 @@ describe('basic object DataSource interaction', () => {
       id,
     });
     expect(c.getValue()).toEqual(undefined);
-    expect(c.getBlock().lastFetchTime).toBe(null);
+    expect(c.getState().lastFetchTime).toBe(null);
     await c.fetch();
     expect(c.getValue()).toEqual(null);
-    expect(c.getBlock().lastFetchTime).not.toBe(null);
+    expect(c.getState().lastFetchTime).not.toBe(null);
   });
 });
 
