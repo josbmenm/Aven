@@ -5,7 +5,9 @@
   "aven": {
     "publicAssetDir": "public",
     "env": "web",
-    "moduleDependencies": [],
+    "moduleDependencies": [
+      "prism-react-renderer"
+    ],
     "envOptions": {
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js",

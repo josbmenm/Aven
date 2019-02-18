@@ -1,4 +1,4 @@
-import startMemoryDataSource from '../startMemoryDataSource';
+import createMemoryDataSource from '../createMemoryDataSource';
 import createTransactionDataSource from '../createTransactionDataSource';
 
 beforeAll(async () => {});
@@ -6,7 +6,7 @@ beforeAll(async () => {});
 test('TransactDoc action', async () => {
   // this action behaves like PutDoc, but always forces the type and "on" to be set
 
-  const ds = startMemoryDataSource({ domain: 'test' });
+  const ds = createMemoryDataSource({ domain: 'test' });
   const ts = createTransactionDataSource(ds);
 
   // transact on nonexistent value

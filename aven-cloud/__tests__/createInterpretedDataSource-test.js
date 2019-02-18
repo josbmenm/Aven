@@ -1,11 +1,11 @@
-import startMemoryDataSource from '../startMemoryDataSource';
+import createMemoryDataSource from '../createMemoryDataSource';
 import createInterpretedDataSource from '../createInterpretedDataSource';
 
 beforeAll(async () => {});
 
 describe('interpreted data sources', () => {
   test('basic interpreted value', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
       domain: 'test',
@@ -38,7 +38,7 @@ describe('interpreted data sources', () => {
   });
 
   test('twice interpreted value', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
       domain: 'test',
@@ -74,7 +74,7 @@ describe('interpreted data sources', () => {
 
   test.skip('computations for specific blocks', async () => {
     // fix by allowing eval on cloud blocks!
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
       domain: 'test',
@@ -111,7 +111,7 @@ describe('interpreted data sources', () => {
   });
 
   test('expanding interpreted value', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
       domain: 'test',
@@ -164,7 +164,7 @@ describe('interpreted data sources', () => {
   });
 
   test.skip('getdoc works with block fetch', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
       domain: 'test',
@@ -215,7 +215,7 @@ describe('interpreted data sources', () => {
   });
 
   test('interpteted reduced value', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const interpretedSource = createInterpretedDataSource({
       dataSource,
       domain: 'test',

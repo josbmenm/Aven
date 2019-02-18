@@ -1,6 +1,6 @@
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
-import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
+import createMemoryDataSource from '../aven-cloud/createMemoryDataSource';
 import WebServer from '../aven-web/WebServer';
 
 import App from './App';
@@ -8,7 +8,7 @@ import App from './App';
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');
 
-  const dataSource = await startMemoryDataSource({
+  const dataSource = await createMemoryDataSource({
     domain: 'example.aven.cloud',
   });
   const client = createCloudClient({

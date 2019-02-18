@@ -1,9 +1,9 @@
 import createSchemaDataSource from '../createSchemaDataSource';
-import startMemoryDataSource from '../../aven-cloud/startMemoryDataSource';
+import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
 
 describe('schema validation on memory data source', () => {
   test.skip('basic validation', async () => {
-    const dataSource = startMemoryDataSource({
+    const dataSource = createMemoryDataSource({
       domain: 'test',
     });
     const schemaDs = createSchemaDataSource({ dataSource });

@@ -1,4 +1,4 @@
-import startMemoryDataSource from '../startMemoryDataSource';
+import createMemoryDataSource from '../createMemoryDataSource';
 import createCloudDoc from '../createCloudDoc';
 
 function getNull() {
@@ -6,13 +6,13 @@ function getNull() {
 }
 describe('doc generic behavior', () => {
   test('handles creation', () => {
-    const dataSource = startMemoryDataSource({ domain: 'foo' });
+    const dataSource = createMemoryDataSource({ domain: 'foo' });
     const doc = createCloudDoc({ dataSource, domain: 'foo', name: 'bar' });
     expect(doc.getName()).toBe('bar');
     expect(doc.domain).toBe('foo');
   });
   test('fails on creation without domain', () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     expect(() =>
       createCloudDoc({
         dataSource,
@@ -21,7 +21,7 @@ describe('doc generic behavior', () => {
     ).toThrow();
   });
   test('fails on creation without name', () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     expect(() =>
       createCloudDoc({
         dataSource,
@@ -31,7 +31,7 @@ describe('doc generic behavior', () => {
   });
 
   test('fails on creation for name with slash', () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     expect(() =>
       createCloudDoc({
         dataSource,
@@ -44,7 +44,7 @@ describe('doc generic behavior', () => {
 
 describe('doc get', () => {
   test('handles get of child', () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const doc = createCloudDoc({
       dataSource,
       domain: 'test',
@@ -56,7 +56,7 @@ describe('doc get', () => {
     expect(child.domain).toEqual('test');
   });
   test('handles get of self', () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const doc = createCloudDoc({
       dataSource,
       domain: 'test',
@@ -70,7 +70,7 @@ describe('doc get', () => {
 
 describe('basic doc DataSource interaction', () => {
   test('fetches docs', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const { id } = await dataSource.dispatch({
       type: 'PutDocValue',
       domain: 'test',
@@ -89,7 +89,7 @@ describe('basic doc DataSource interaction', () => {
   });
 
   test('doc can putId of old put id', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const doc = createCloudDoc({
       dataSource,
       domain: 'test',
@@ -119,7 +119,7 @@ describe('basic doc DataSource interaction', () => {
   });
 
   test('puts blocks', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const doc = createCloudDoc({
       dataSource,
       domain: 'test',
@@ -148,7 +148,7 @@ const waitForSync_TODO_REMOVE_THIS = () =>
 
 describe('observing docs', () => {
   test('observe doc works', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const obj1 = await dataSource.dispatch({
       type: 'PutDocValue',
       domain: 'test',
@@ -208,7 +208,7 @@ describe('observing docs', () => {
   });
 
   test('observe value', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const obj1 = await dataSource.dispatch({
       type: 'PutDocValue',
       domain: 'test',
@@ -272,7 +272,7 @@ describe('observing docs', () => {
   });
 
   test('observe connected value', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
     const obj1a = await dataSource.dispatch({
       type: 'PutDocValue',
       domain: 'test',
@@ -329,7 +329,7 @@ describe('observing docs', () => {
   });
 
   test.skip('observe connected value before creation', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
 
     const doc = createCloudDoc({
       dataSource,
@@ -392,7 +392,7 @@ async function justASec() {
 }
 
 test('value mapping', async () => {
-  const dataSource = startMemoryDataSource({ domain: 'test' });
+  const dataSource = createMemoryDataSource({ domain: 'test' });
   await dataSource.dispatch({
     type: 'PutDocValue',
     domain: 'test',
@@ -427,7 +427,7 @@ test('value mapping', async () => {
 });
 
 test('value evaluation', async () => {
-  const dataSource = startMemoryDataSource({ domain: 'test' });
+  const dataSource = createMemoryDataSource({ domain: 'test' });
   await dataSource.dispatch({
     type: 'PutDocValue',
     domain: 'test',

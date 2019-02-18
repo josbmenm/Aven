@@ -1,4 +1,4 @@
-import startMemoryDataSource from '../startMemoryDataSource';
+import createMemoryDataSource from '../createMemoryDataSource';
 import createCloudClient from '../createCloudClient';
 
 import dataSourceTests from './dataSourceTests';
@@ -23,7 +23,7 @@ describe('create client generic behavior', () => {
 
 describe('client doc behavior', () => {
   test('gets docs', async () => {
-    const m = startMemoryDataSource({ domain: 'd' });
+    const m = createMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
     const doc = c.get('foo');
     expect(doc.getState().id).toBe(null);
@@ -46,7 +46,7 @@ describe('client doc behavior', () => {
   });
 
   test('gets doc values', async () => {
-    const m = startMemoryDataSource({ domain: 'd' });
+    const m = createMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
 
     const doc = c.get('foo');
@@ -70,7 +70,7 @@ describe('client doc behavior', () => {
   });
 
   test('deduplicates gotten docs', async () => {
-    const m = startMemoryDataSource({ domain: 'd' });
+    const m = createMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
     const r0 = c.get('foo');
     const r1 = c.get('foo');
@@ -78,7 +78,7 @@ describe('client doc behavior', () => {
   });
 
   test('doc posting', async () => {
-    const m = startMemoryDataSource({ domain: 'd' });
+    const m = createMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
     const doc = c.get('foo');
     let docsList = null;
@@ -119,7 +119,7 @@ describe('client doc behavior', () => {
     expect(docsList.value.indexOf('bar')).toEqual(-1);
   });
   test('doc getting', async () => {
-    const m = startMemoryDataSource({ domain: 'd' });
+    const m = createMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource: m, domain: 'd' });
     const fooDoc = c.get('foo');
     const fooBarDoc = c.get('foo/bar');
@@ -130,7 +130,7 @@ describe('client doc behavior', () => {
 
 describe('block fetching', () => {
   test('fetches blocks with doc#blockid', async () => {
-    const m = startMemoryDataSource({ domain: 'd' });
+    const m = createMemoryDataSource({ domain: 'd' });
     const first = await m.dispatch({
       type: 'PutDocValue',
       name: 'foo',
@@ -154,7 +154,7 @@ describe('block fetching', () => {
     });
   });
   test('fetches nested blocks with foo/bar#blockid', async () => {
-    const m = startMemoryDataSource({ domain: 'd' });
+    const m = createMemoryDataSource({ domain: 'd' });
     const first = await m.dispatch({
       type: 'PutDocValue',
       name: 'foo/bar',
@@ -182,7 +182,7 @@ describe('block fetching', () => {
 
 describe('eval', () => {
   test('basic eval value', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'd' });
+    const dataSource = createMemoryDataSource({ domain: 'd' });
     const c = createCloudClient({ dataSource, domain: 'd' });
     await dataSource.dispatch({
       type: 'PutDocValue',
@@ -208,7 +208,7 @@ describe('eval', () => {
 
 describe('onDocMiss', () => {
   test('basic doc miss example', async () => {
-    const m = startMemoryDataSource({ domain: 'd' });
+    const m = createMemoryDataSource({ domain: 'd' });
     const missedDocs = [];
     async function onDocMiss(docName) {
       missedDocs.push(docName);
@@ -245,7 +245,7 @@ function spyOnDataSource(ds) {
 
 describe('cache behavior', () => {
   test('doc id cache during subscription', async () => {
-    const m = spyOnDataSource(startMemoryDataSource({ domain: 'd' }));
+    const m = spyOnDataSource(createMemoryDataSource({ domain: 'd' }));
     const first = await m.dispatch({
       type: 'PutDocValue',
       name: 'foo',
@@ -293,7 +293,7 @@ describe('cache behavior', () => {
 
 describe('client doc map', () => {
   test('fetches mapped docs', async () => {
-    const m = startMemoryDataSource({ domain: 'd' });
+    const m = createMemoryDataSource({ domain: 'd' });
     const first = await m.dispatch({
       type: 'PutDocValue',
       name: 'foo',
@@ -329,7 +329,7 @@ describe('client doc map', () => {
   });
 
   test('fetches chained mapped docs', async () => {
-    const m = startMemoryDataSource({ domain: 'd' });
+    const m = createMemoryDataSource({ domain: 'd' });
     const first = await m.dispatch({
       type: 'PutDocValue',
       name: 'foo',
@@ -366,7 +366,7 @@ describe('client doc map', () => {
   });
 
   test('fetches expand docs', async () => {
-    const m = startMemoryDataSource({ domain: 'd' });
+    const m = createMemoryDataSource({ domain: 'd' });
     const firstCount = await m.dispatch({
       type: 'PutDocValue',
       name: 'foo',
@@ -416,7 +416,7 @@ describe('client doc map', () => {
 
 describe.skip('client behaves as data source', async () => {
   async function startTestDataSource(options = {}) {
-    const dataSource = startMemoryDataSource({ domain: 'test', ...options });
+    const dataSource = createMemoryDataSource({ domain: 'test', ...options });
     const client = createCloudClient({ dataSource, domain: 'test' });
     return client;
   }

@@ -1,11 +1,11 @@
-import startMemoryDataSource from '../../aven-cloud/startMemoryDataSource';
+import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
 import CloudAuth from '../CloudAuth';
 import RootAuthMethod from '../../aven-cloud-auth-root/RootAuthMethod';
 
 import { hashSecureString } from '../../aven-cloud-utils/Crypto';
 
 async function establishPermissionsTestData() {
-  const dataSource = startMemoryDataSource({ domain: 'test' });
+  const dataSource = createMemoryDataSource({ domain: 'test' });
 
   const password = 'secret, foo';
   const rootPasswordHash = await hashSecureString(password);
@@ -63,7 +63,7 @@ async function establishPermissionsTestData() {
 
 describe('Cloud auth Permissions', () => {
   test('permissions are roughly respected', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
 
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);

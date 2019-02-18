@@ -41,7 +41,9 @@ function HeaderLink({ title, ...props }) {
             padding: 20,
           }}
         >
-          <Text style={{ fontSize: 24, color: '#111' }}>{title}</Text>
+          <Text style={{ fontSize: 22, color: isSelected ? 'black' : '#222' }}>
+            {title}
+          </Text>
         </View>
       )}
     />
@@ -69,6 +71,7 @@ function Header() {
           height: 100 / 3,
         }}
       />
+      <View style={{ flex: 1 }} />
       <HeaderLink title="Home" routeName="Home" />
       <HeaderLink title="Docs" routeName="Docs" />
       <HeaderLink title="About" routeName="About" />
@@ -226,8 +229,8 @@ const DocsRouter = SwitchRouter({
     .default,
   'API-createMemoryDataSource': require('./docs/API-createMemoryDataSource')
     .default,
-  'API-createFSDataSource': require('./docs/API-createFSDataSource').default,
-  'API-createPostgresDataSource': require('./docs/API-createPostgresDataSource')
+  'API-startFSDataSource': require('./docs/API-startFSDataSource').default,
+  'API-startPostgresDataSource': require('./docs/API-startPostgresDataSource')
     .default,
   'API-createBrowserNetworkSource': require('./docs/API-createBrowserNetworkSource')
     .default,
@@ -324,12 +327,12 @@ function Sidebar() {
             routeName="API-createMemoryDataSource"
           />
           <SidebarLink
-            title="API: createFSDataSource"
-            routeName="API-createFSDataSource"
+            title="API: startFSDataSource"
+            routeName="API-startFSDataSource"
           />
           <SidebarLink
-            title="API: createPostgresDataSource"
-            routeName="API-createPostgresDataSource"
+            title="API: startPostgresDataSource"
+            routeName="API-startPostgresDataSource"
           />
           <SidebarLink
             title="API: createBrowserNetworkSource"
@@ -412,14 +415,6 @@ function SidebarView({ navigation, descriptors }) {
 
 const Docs = createNavigator(SidebarView, DocsRouter, {});
 
-function About() {
-  return (
-    <View style={{ flex: 1 }}>
-      <Text>Abouuut</Text>
-    </View>
-  );
-}
-
 const AppRouter = SwitchRouter({
   Home: {
     screen: Home,
@@ -437,13 +432,6 @@ const AppRouter = SwitchRouter({
         getActiveChildNavigationOptions(navigation, screenProps).title +
         ' - Aven Docs',
     }),
-  },
-  About: {
-    screen: About,
-    path: 'about',
-    navigationOptions: {
-      title: 'About Aven',
-    },
   },
 });
 

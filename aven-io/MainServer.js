@@ -1,6 +1,6 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
-import startMemoryDataSource from '../aven-cloud/startMemoryDataSource';
+import createMemoryDataSource from '../aven-cloud/createMemoryDataSource';
 import startFSDataSource from '../aven-cloud-fs/startFSDataSource';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import CloudContext from '../aven-cloud/CloudContext';
@@ -13,7 +13,7 @@ const runServer = async () => {
   //   dataDir: process.cwd() + '/db',
   // });
 
-  const dataSource = await startMemoryDataSource({
+  const dataSource = await createMemoryDataSource({
     domain: 'example.aven.cloud',
   });
 

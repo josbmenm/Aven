@@ -1,10 +1,10 @@
-import startMemoryDataSource from '../../aven-cloud/startMemoryDataSource';
+import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
 import CloudAuth from '../../aven-cloud-auth/CloudAuth';
 import createMessageAuthMethod from '../createMessageAuthMethod';
 
 describe('Auth messaging behavior', () => {
   test('Auth message flow', async () => {
-    const dataSource = startMemoryDataSource({
+    const dataSource = createMemoryDataSource({
       domain: 'test',
     });
 
@@ -58,7 +58,7 @@ describe('Auth messaging behavior', () => {
   });
 
   test('anon account can add auth method', async () => {
-    const dataSource = startMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryDataSource({ domain: 'test' });
 
     const authMethodName = 'example-method';
 

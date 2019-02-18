@@ -4,15 +4,16 @@ import { Title, Body, Page } from '../DocViews';
 function DocPage() {
   return (
     <Page>
-      <Title>API - createFSDataSource</Title>
+      <Title>API - startFSDataSource</Title>
+
       <Body>Coming Soon.</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: 'API - createFSDataSource',
+  title: 'API - startFSDataSource',
 };
-DocPage.path = 'api-create-fs-data-source';
+DocPage.path = 'api-start-fs-data-source';
 
 export default DocPage;

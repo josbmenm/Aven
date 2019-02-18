@@ -2,7 +2,7 @@ import { BehaviorSubject } from 'rxjs-compat';
 import createGenericDataSource from './createGenericDataSource';
 import getIdOfValue from '../aven-cloud-utils/getIdOfValue';
 
-export default function startMemoryDataSource(opts = {}) {
+export default function createMemoryDataSource(opts = {}) {
   const dataSourceDomain = opts.domain;
 
   if (!dataSourceDomain) {

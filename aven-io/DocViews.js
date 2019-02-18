@@ -1,7 +1,11 @@
 import React from 'react';
 import { Text, View, ScrollView } from 'react-native';
+import Highlight, { defaultProps } from 'prism-react-renderer';
+import theme from 'prism-react-renderer/themes/duotoneLight';
 
 import InnerLink from '../navigation-web/Link';
+
+const baseFontSize = 16;
 
 export function Link({ children, ...props }) {
   return <InnerLink {...props}>{children}</InnerLink>;
@@ -16,7 +20,11 @@ export function Bold({ children }) {
 }
 
 export function Body({ children }) {
-  return <Text style={{ fontSize: 14, paddingVertical: 10 }}>{children}</Text>;
+  return (
+    <Text style={{ fontSize: baseFontSize, paddingVertical: 10 }}>
+      {children}
+    </Text>
+  );
 }
 
 export function Page({ children }) {
@@ -28,17 +36,33 @@ export function Page({ children }) {
 }
 
 export function List({ children }) {
-  return <View style={{ flex: 1, marginVertical: 10 }}>{children}</View>;
+  return <View style={{ marginVertical: 10 }}>{children}</View>;
 }
 
 export function Snippet({ code }) {
-  return <Text style={{ fontSize: 14, paddingVertical: 10 }}>{code}</Text>;
+  return (
+    <Highlight {...defaultProps} code={code} language="jsx" theme={theme}>
+      {({ className, style, tokens, getLineProps, getTokenProps }) => (
+        <pre className={className} style={{ fontSize: baseFontSize, ...style }}>
+          <View style={{ paddingVertical: 3, paddingHorizontal: 20 }}>
+            {tokens.map((line, i) => (
+              <div {...getLineProps({ line, key: i })}>
+                {line.map((token, key) => (
+                  <span {...getTokenProps({ token, key })} />
+                ))}
+              </div>
+            ))}
+          </View>
+        </pre>
+      )}
+    </Highlight>
+  );
 }
 
 function createSectionWithSizes(sizes) {
   function Section({ title, children }) {
     return (
-      <View style={{ flex: 1, marginVertical: 10 }}>
+      <View style={{ marginVertical: 10 }}>
         <Text style={{ fontSize: sizes.title }}>{title}</Text>
         {children}
       </View>
