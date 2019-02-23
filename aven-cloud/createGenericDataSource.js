@@ -339,6 +339,15 @@ export default function createGenericDataSource({
     return { id, value };
   }
 
+  async function GetBlocks({ domain, name, ids }) {
+    const results = await Promise.all(
+      ids.map(async id => {
+        return await GetBlock({ domain, name, id });
+      })
+    );
+    return { results };
+  }
+
   async function GetDoc({ domain, name }) {
     verifyDomain(domain, dataSourceDomain);
     const nameParts = name.split('#');
@@ -351,6 +360,15 @@ export default function createGenericDataSource({
       return { id: undefined };
     }
     return { id: memoryDoc.id };
+  }
+
+  async function GetDocs({ domain, names }) {
+    const results = await Promise.all(
+      names.map(async name => {
+        return await GetDoc({ domain, name });
+      })
+    );
+    return { results };
   }
 
   async function ListDocs({ domain, parentName }) {
@@ -424,6 +442,15 @@ export default function createGenericDataSource({
     };
   }
 
+  async function GetDocValues({ domain, names }) {
+    const results = await Promise.all(
+      names.map(async name => {
+        return await GetDocValue({ domain, name });
+      })
+    );
+    return { results };
+  }
+
   return {
     isConnected,
     close,
@@ -434,8 +461,11 @@ export default function createGenericDataSource({
       PutTransactionValue,
       PostDoc,
       GetBlock,
+      GetBlocks,
       GetDoc,
+      GetDocs,
       GetDocValue,
+      GetDocValues,
       GetStatus,
       ListDomains,
       ListDocs,

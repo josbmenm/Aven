@@ -17,6 +17,55 @@ export default function testDataSource(startTestDataSource) {
     expect(blk.value.foo).toEqual('bar');
   });
 
+  test('get blocks', async () => {
+    const ds = await startTestDataSource({ domain: 'test' });
+    const putResult1 = await ds.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      value: { foo: 'bar' },
+      name: 'foo',
+    });
+    const putResult2 = await ds.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      value: { foo: 'foo' },
+      name: 'foo',
+    });
+    const { results } = await ds.dispatch({
+      type: 'GetBlocks',
+      domain: 'test',
+      ids: [putResult1.id, putResult2.id],
+      name: 'foo',
+    });
+    expect(results[0].id).toEqual(putResult1.id);
+    expect(results[1].id).toEqual(putResult2.id);
+    await ds.close();
+  });
+
+  test('gets multiple docs', async () => {
+    const ds = await startTestDataSource({ domain: 'test' });
+    await ds.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      value: { myName: 'isFoo' },
+      name: 'foo',
+    });
+    await ds.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      value: { myName: 'isBar' },
+      name: 'bar',
+    });
+    const { results } = await ds.dispatch({
+      type: 'GetDocValues',
+      domain: 'test',
+      names: ['foo', 'bar'],
+    });
+    expect(results[0].value.myName).toEqual('isFoo');
+    expect(results[1].value.myName).toEqual('isBar');
+    await ds.close();
+  });
+
   test('move doc shows in list', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const blk = await ds.dispatch({
@@ -239,6 +288,17 @@ export default function testDataSource(startTestDataSource) {
       name: 'foo',
     });
     expect(doc.id).toEqual(undefined);
+  });
+
+  test('gets multiple missing docs', async () => {
+    const ds = await startTestDataSource({ domain: 'test' });
+    const doc = await ds.dispatch({
+      type: 'GetDocs',
+      domain: 'test',
+      names: ['foo', 'bar'],
+    });
+    expect(doc.results[0].id).toEqual(undefined);
+    expect(doc.results[1].id).toEqual(undefined);
   });
 
   test('implicit parent list doc ', async () => {
