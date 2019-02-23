@@ -205,6 +205,7 @@ const globeEnvs = {
   dom: require('./dom'),
   expo: require('./expo'),
   web: require('./web'),
+  reactnative: require('./reactnative'),
 };
 
 const getAppPackage = async appName => {
@@ -667,10 +668,53 @@ async function runPublish(argv) {
   return await doPublish(packageName);
 }
 
+async function createLib(pkgName) {
+  const packageDir = pathJoin(srcDir, pkgName);
+
+  if (await fs.exists(packageDir)) {
+    throw new Error(
+      `Cannot create a lib at "${packageDir}" because it already exists.`,
+    );
+  }
+
+  await fs.mkdir(packageDir);
+  const pkg = {
+    name: pkgName,
+    aven: { moduleDependencies: {}, srcDependencies: {} },
+  };
+  await fs.writeFile(
+    pathJoin(packageDir, 'package.json'),
+    JSON.stringify(pkg, null, 2),
+  );
+}
+
+async function createApp(appName, envName) {
+  const appDir = pathJoin(srcDir, appName);
+
+  if (await fs.exists(appDir)) {
+    throw new Error(
+      `Cannot create an app at "${appDir}" because it already exists.`,
+    );
+  }
+
+  await fs.mkdir(appDir);
+
+  const pkg = {
+    name: appName,
+    aven: { moduleDependencies: {}, srcDependencies: {} },
+  };
+  await fs.writeFile(
+    pathJoin(appDir, 'package.json'),
+    JSON.stringify(pkg, null, 2),
+  );
+}
+
 module.exports = {
   runStart,
   runBuild,
   runDeploy,
   runClean,
   runPublish,
+  createLib,
+  createApp,
 };
