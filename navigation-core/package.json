@@ -1,6 +1,6 @@
 {
-  "name": "@react-navigation/core",
-  "version": "1.1.0",
+  "name": "@aven-cloud/navigation-core",
+  "version": "1.2.0",
   "aven": {
     "srcDependencies": [],
     "moduleDependencies": [
@@ -12,5 +12,5 @@
       "react-lifecycles-compat"
     ]
   },
-  "srcChecksum": "7ad291632e0387955288ff15894c65996590974219d01aaf9a70491b13be0c39"
+  "srcChecksum": "0ccea279ca7eebf627eec5eab1ccdd04713265397317ee53335cc4e944f09d14"
 }

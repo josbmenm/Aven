@@ -29,6 +29,7 @@ class LinkWithNavigation extends Component {
       action,
       url,
       renderContent,
+      overrideATagCSS, // ugh, escape hatches get long ugly names. css is applied directly, not RN style!
     } = this.props;
     const topNavigation = getTopNavigation(navigation);
     const topRouter = topNavigation.router;
@@ -73,7 +74,7 @@ class LinkWithNavigation extends Component {
     const isActive = navActionResponse === null;
     return (
       <a
-        style={{ textDecoration: 'none' }}
+        style={{ textDecoration: 'none', ...overrideATagCSS }}
         href={href}
         onClick={e => {
           if (navAction.type === NavigationActions.URL) {

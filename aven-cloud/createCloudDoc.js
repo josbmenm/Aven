@@ -22,7 +22,6 @@ export function createDocPool({
   dataSource,
   onGetParentName,
   onGetSelf,
-  onDocMiss,
   cloudClient,
 }) {
   const _docs = {};
@@ -67,7 +66,6 @@ export function createDocPool({
         domain,
         name: localName,
         blockValueCache: blockValueCache,
-        onDocMiss,
         cloudClient,
         onRename: newName => {
           return move(localName, newName);
@@ -140,7 +138,6 @@ export default function createCloudDoc({
   onGetParentName,
   isUnposted,
   onRename,
-  onDocMiss,
   ...opts
 }) {
   // used for caching the block *values* only. The in-memory block representations are stored on a per-doc basis in _docBlocks
@@ -272,9 +269,6 @@ export default function createCloudDoc({
       name: getFullName(),
     });
     if (result) {
-      if (onDocMiss && result.id === null) {
-        onDocMiss(getFullName());
-      }
       setState({
         id: result.id,
         lastSyncTime: Date.now(),
@@ -309,14 +303,6 @@ export default function createCloudDoc({
         domain,
         name: getFullName(),
       });
-      if (onDocMiss && result.id === undefined) {
-        const missResult = await onDocMiss(getFullName());
-        if (missResult.value) {
-          const block = _getBlockWithValue(missResult.value);
-          await putBlock(block);
-          return;
-        }
-      }
       if (result.id && result.value !== undefined) {
         _getBlockWithValueAndId(result.value, result.id);
       }

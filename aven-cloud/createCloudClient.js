@@ -11,7 +11,6 @@ export default function createCloudClient({
   dataSource,
   domain,
   initialSession,
-  onDocMiss,
 }) {
   const _blockValues = {};
 
@@ -163,7 +162,6 @@ export default function createCloudClient({
     onGetParentName: () => null,
     blockValueCache: _blockValues,
     dataSource: dataSourceWithSession,
-    onDocMiss,
     domain,
     cloudClient,
     onGetSelf: () => cloudClient,

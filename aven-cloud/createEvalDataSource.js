@@ -1,21 +1,8 @@
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import createCloudClient from './createCloudClient';
 
-export default function createInterpretedDataSource({ dataSource, domain }) {
-  function onDocMiss(name) {
-    // example names:
-    // - foo/bar/baz
-    // - foo/bar^baz
-    // - foo/bar^baz/boo
-    // - foo/bar#123^baz/boo
-    // - foo#123^baz
-    // example expanded names
-    // - foo#123
-    // - foo/bar#123^baz/boo#456
-    console.log('DOC NAME MISS!', name);
-    throw new Error('coming soon');
-  }
-  const cloud = createCloudClient({ dataSource, domain, onDocMiss });
+export default function createEvalDataSource({ dataSource, domain }) {
+  const cloud = createCloudClient({ dataSource, domain });
 
   // async function GetDocValue({ domain, name }) {
   //   console.log('GetDocValue', name);
@@ -80,7 +67,7 @@ export default function createInterpretedDataSource({ dataSource, domain }) {
   //   // return { id, value };
   // }
 
-  // const interpretedDataSource = {
+  // const evalDataSource = {
   //   ...dataSource,
   //   dispatch: createDispatcher(
   //     {
@@ -93,6 +80,6 @@ export default function createInterpretedDataSource({ dataSource, domain }) {
   //   ),
   // };
 
-  // return interpretedDataSource;
+  // return evalDataSource;
   return cloud;
 }

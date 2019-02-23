@@ -83,7 +83,7 @@ function useAsyncStorage(storageKey, defaultValue) {
 
 function isPrimitive(v) {
   const t = typeof v;
-  return v == null || t === 'boolean' || t === 'string' || t === 'number';
+  return v === null || t === 'boolean' || t === 'string' || t === 'number';
 }
 
 function Hero({ title }) {
@@ -292,11 +292,11 @@ function ConnectionForm({ onClientConfig, defaultSession }) {
   );
 }
 
-function Pane({ children }) {
+function Pane({ children, pageColor }) {
   return (
     <ScrollView
       style={{
-        backgroundColor: '#fdfeff',
+        backgroundColor: pageColor || '#fff',
         marginHorizontal: 10,
         width: 300,
       }}
@@ -783,6 +783,7 @@ function Folder({ value, path, doc, pathContext }) {
     pathViews = (
       <ValuePane
         value={objValue}
+        onValue={v => doc.put(v)}
         path={restOfPath}
         doc={doc}
         pathContext={[...pathContext, nextPathSegment]}
@@ -828,34 +829,10 @@ function useParam(paramName) {
   return val;
 }
 
-function StringPane({ value, onValue }) {
-  return (
-    <Pane>
-      <Text>{value}</Text>
-    </Pane>
-  );
-}
-
-function BooleanPane({ value, onValue }) {
-  return (
-    <Pane>
-      <Text>{value ? 'True' : 'False'}</Text>
-    </Pane>
-  );
-}
-
-function NumberPane({ value, onValue }) {
-  return (
-    <Pane>
-      <Text>{value}</Text>
-    </Pane>
-  );
-}
-
 function PrimitivePane({ value, onValue }) {
   return (
     <Pane>
-      <Text>{value}</Text>
+      <Text>{JSON.stringify(value)}</Text>
       <DestroyButton onValue={onValue} />
       <SetTypeSection value={value} onValue={onValue} />
     </Pane>
@@ -916,6 +893,7 @@ function PopoverContainer({ children }) {
     </PopoverContext.Provider>
   );
 }
+process.env.REACT_NAV_LOGGING = true;
 
 function usePopover() {
   const target = useRef(null);
@@ -972,7 +950,6 @@ function AddKeySection({ value, onValue }) {
           onSubmit={submit}
         />
         <FormButton title="Add Key" onPress={submit} />
-        <FormButton title="Add Key" onPress={submit} />
         <FormButton
           title="Cancel"
           secondary
@@ -997,13 +974,54 @@ function AddKeySection({ value, onValue }) {
   );
 }
 
+function getType(a) {
+  if (a === null) {
+    return 'null';
+  }
+  if (typeof a !== 'object') {
+    return typeof a;
+  }
+  if (Array.isArray(a)) {
+    return 'array';
+  }
+  return 'object';
+}
+
 function SetTypeSection({ value, onValue }) {
   let [isOpened, setIsOpened] = useState(false);
-  function submit() {}
+  let [nextType, setNextType] = useState(getType(value));
+  function submit() {
+    let nextValue = null;
+    if (nextType === 'boolean') {
+      nextValue = !!value;
+    } else if (nextType === 'string') {
+      nextValue =
+        typeof value === 'object' ? JSON.stringify(value) : String(value);
+    } else if (nextType === 'number') {
+      nextValue = Number(value);
+    } else if (nextType === 'array') {
+      nextValue = [];
+    } else if (nextType === 'object') {
+      nextValue = {};
+    }
+    onValue(nextValue);
+    setIsOpened(false);
+  }
   if (isOpened) {
     return (
       <Form>
-        <OptionField options={[]} onValue={() => {}} value={null} />
+        <OptionField
+          options={[
+            { value: 'null', label: 'Null' },
+            { value: 'array', label: 'Array' },
+            { value: 'number', label: 'Number' },
+            { value: 'string', label: 'String' },
+            { value: 'boolean', label: 'Boolean' },
+            { value: 'object', label: 'Object' },
+          ]}
+          onValue={setNextType}
+          value={nextType}
+        />
         <FormButton title="Set Type" onPress={submit} />
         <FormButton
           title="Cancel"
@@ -1051,18 +1069,23 @@ function ObjectPane({ path, value, onValue, pathContext, doc }) {
   let pathViews = null;
 
   const navigation = useNavigation();
-
   const pathSegments = path && path.split('/');
   const nextPathSegment = pathSegments && pathSegments[0];
   const restOfPath = pathSegments && pathSegments.slice(1).join('/');
   const pathValue = nextPathSegment != null && value[nextPathSegment];
 
-  if (pathValue) {
+  if (pathValue !== undefined) {
     pathViews = (
       <ValuePane
         value={pathValue}
         path={restOfPath}
         doc={doc}
+        onValue={v => {
+          onValue({
+            ...value,
+            [nextPathSegment]: v,
+          });
+        }}
         pathContext={[...pathContext, nextPathSegment]}
       />
     );
@@ -1118,42 +1141,27 @@ function ObjectPane({ path, value, onValue, pathContext, doc }) {
   );
 }
 
-function ValuePane({ value, path, doc, pathContext }) {
-  let presentationValue = value === null ? {} : value;
+function ValuePane({ value, onValue, path, doc, pathContext }) {
   if (value === undefined) {
     return <Text>Loading</Text>;
   }
-  if (isPrimitive(presentationValue)) {
-    return (
-      <PrimitivePane
-        value={value}
-        onValue={v => {
-          doc.put(v);
-        }}
-      />
-    );
+  if (isPrimitive(value)) {
+    return <PrimitivePane value={value} onValue={onValue} />;
   }
-  if (presentationValue.type === 'Folder') {
+  if (value.type === 'Folder') {
     return (
-      <Folder
-        value={presentationValue}
-        path={path}
-        doc={doc}
-        pathContext={pathContext}
-      />
+      <Folder value={value} path={path} doc={doc} pathContext={pathContext} />
     );
   }
 
-  if (typeof presentationValue === 'object') {
+  if (typeof value === 'object') {
     return (
       <ObjectPane
-        value={presentationValue}
+        value={value}
         path={path}
         doc={doc}
         pathContext={pathContext}
-        onValue={v => {
-          doc.put(v);
-        }}
+        onValue={onValue}
       />
     );
   }
@@ -1168,7 +1176,15 @@ function DocValuePane() {
   const doc = cloud.get(name);
   const value = useCloudValue(doc);
 
-  return <ValuePane doc={doc} value={value} path={path} pathContext={[]} />;
+  return (
+    <ValuePane
+      doc={doc}
+      value={value}
+      onValue={v => doc.put(v)}
+      path={path}
+      pathContext={[]}
+    />
+  );
 }
 
 function InfoSection({ text }) {
@@ -1246,7 +1262,7 @@ function DocMetaPane({ name }) {
   const activeDoc = getParam('docName');
 
   return (
-    <Pane>
+    <Pane pageColor="blue">
       <Title title={doc.getName()} />
       {r && <InfoSection text={` ID: ${r.id}`} />}
       <StandaloneButton

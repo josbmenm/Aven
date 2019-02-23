@@ -1,6 +1,6 @@
 import express from 'express';
 import ReactDOMServer from 'react-dom/server';
-import { AppRegistry } from 'react-native';
+import { AppRegistry } from 'react-native-web';
 import React from 'react';
 import startServer from './startServer';
 import startSocketServer from './startSocketServer';

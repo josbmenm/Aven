@@ -57,19 +57,22 @@
     "mime": "^2.3.1",
     "minimist": "^1.2.0",
     "objection": "https://github.com/ericvicenti/objection.js.git",
+    "path": "^0.12.7",
     "path-to-regexp": "^1.7.0",
     "pg": "^7.5.0",
     "pg-format": "^1.0.4",
     "prism-react-renderer": "^0.1.5",
     "query-string": "^6.2.0",
     "react": "16.7.0-alpha.2",
+    "react-art": "^16.8.2",
     "react-dom": "^16.7.0-alpha.2",
     "react-is": "^16.5.2",
     "react-lifecycles-compat": "^3.0.4",
-    "react-native-gesture-handler": "^1.0.0",
-    "react-native-reanimated": "^1.0.0-alpha.11",
+    "react-native-gesture-handler": "^1.0.15",
+    "react-native-reanimated": "^1.0.0-alpha.12",
     "react-native-safe-area-view": "^0.11.0",
     "react-native-screens": "^1.0.0-alpha.17",
+    "react-native-web": "^0.10.0",
     "react-navigation-hooks": "https://github.com/react-navigation/react-navigation-hooks",
     "react-navigation-stack": "https://github.com/react-navigation/react-navigation-stack",
     "react-navigation-transitioner": "https://github.com/react-navigation/react-navigation-transitioner",
@@ -114,7 +117,8 @@
       "js"
     ],
     "modulePathIgnorePatterns": [
-      "<rootDir>/example/"
+      "<rootDir>/example/",
+      "<rootDir>/aven-tools/proto/"
     ],
     "globals": {
       "__DEV__": true,

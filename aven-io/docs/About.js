@@ -14,29 +14,39 @@ function DocPage() {
     <Page>
       <Title>About Aven</Title>
       <Body>
+        <Bold>Aven</Bold> is an emerging framework for building apps on every
+        platform. It includes React Native technologies for the views, React
+        Navigation as the cross-platform navigation library, and Aven Cloud as
+        the data handling framework.
+      </Body>
+      <Body>
         <Bold>Aven Cloud</Bold> is a data-handling framework for web and mobile
         JavaScript applications. It helps keep data up to date across the client
         and server as it changes over time, handles authentication, enforces
         permissions, and computes changes on top of the data.
       </Body>
-      <Body>
-        <Bold>Aven</Bold> is an emerging framework for building React apps on
-        every platform. It includes React Native technologies for the views,
-        React Navigation as the cross-platform navigation library, and Aven
-        Cloud as the data handling framework.
-      </Body>
-      <Body>
-        This project is authored by{' '}
-        <Link url="https://twitter.com/EricVicenti">Eric Vicenti</Link>, and is
-        open to community contribution.
-      </Body>
-      <Section title="Sustainability">
+      <Section title="Development Philosophies and Strategies">
         <Body>
-          The goal is to ensure maintainability of Aven apps for a long period
-          of time.
+          Some important (and poorly organized ideas) on building infrastructure
+          that lasts:
         </Body>
-      </Section>
-      <Section title="Development Philosophies">
+        <SubSection title="Open and Committed">
+          <Body>
+            Aven is liberally open source under the <Bold>Apache 2.0</Bold>{' '}
+            license. We believe that a liberal license is vital for the
+            longevity of our infrastructure. We aim to make all educational
+            materials publicly available.
+          </Body>
+          <Body>
+            We want as many people to share this technology as possible. With
+            the support of a community, we can build robust tools that survive
+            long into the future.
+          </Body>
+          <Body>
+            We pledge to never give up on maintaining this infrastructure, and
+            we hope to see your support in return.
+          </Body>
+        </SubSection>
         <SubSection title="Iteration">
           <Body>
             We have a philosophy of slow and iterative improvements to our
@@ -65,6 +75,12 @@ function DocPage() {
         </SubSection>
         <SubSection title="Universality">
           <Body>
+            Every use-case is valid. We aim to support developers saying "yes"
+            to every product need. We hope to always say yes to questions like
+            "Can you build an iOS app with Push Notifications?", or "Can you
+            program a robot?"
+          </Body>
+          <Body>
             When possible, we share technologies across different environments
             to achieve the same thing. Where possible, we only use one
             programming language. One view framework. One navigation system.
@@ -77,6 +93,15 @@ function DocPage() {
           </Body>
         </SubSection>
       </Section>
+
+      <SubSection title="Who">
+        <Body>
+          Aven is being authored by{' '}
+          <Link url="https://twitter.com/EricVicenti">Eric Vicenti</Link>, and
+          is open to community contribution. The "we" in this document refers to
+          Eric and any other believers.
+        </Body>
+      </SubSection>
     </Page>
   );
 }

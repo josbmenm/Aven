@@ -33,6 +33,7 @@ function HeaderLink({ title, ...props }) {
   return (
     <Link
       {...props}
+      overrideATagCSS={{ display: 'flex' }}
       renderContent={isSelected => (
         <View
           style={{

@@ -206,26 +206,6 @@ describe('eval', () => {
   });
 });
 
-describe('onDocMiss', () => {
-  test('basic doc miss example', async () => {
-    const m = createMemoryDataSource({ domain: 'd' });
-    const missedDocs = [];
-    async function onDocMiss(docName) {
-      missedDocs.push(docName);
-      const value = { yourName: docName };
-      return {
-        value,
-      };
-    }
-    const c = createCloudClient({ dataSource: m, domain: 'd', onDocMiss });
-    const foo = c.get('foo');
-    await foo.fetchValue();
-    const result = foo.getValue();
-    expect(missedDocs.length).toBe(1);
-    expect(result.yourName).toEqual('foo');
-  });
-});
-
 async function justASec() {
   return new Promise(resolve => setTimeout(resolve, 1));
 }

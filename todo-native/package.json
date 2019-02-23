@@ -1,0 +1,14 @@
+{
+  "main": "App.js",
+  "aven": {
+    "env": "reactnative",
+    "srcDependencies": [
+      "aven-cloud-native",
+      "navigation-core",
+      "navigation-native",
+      "navigation-stack"
+    ],
+    "moduleDependencies": [],
+    "envOptions": {}
+  }
+}

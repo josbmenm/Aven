@@ -30,6 +30,25 @@ const matchPathAndParams = (a, b) => {
 
 let currentPathAndParams = getPathAndParamsFromLocation(history.location);
 
+function logNavigation(action, result, prevState) {
+  if (process.env.REACT_NAV_LOGGING) {
+    if (console.group) {
+      console.group('Navigation Dispatch: ');
+      console.log('Action: ', action);
+      console.log('New State: ', result);
+      console.log('Last State: ', prevState);
+      console.groupEnd();
+    } else {
+      console.log('Navigation Dispatch: ', {
+        action,
+        newState: result,
+        lastState: prevState,
+      });
+    }
+    return;
+  }
+}
+
 export default function createBrowserApp(App) {
   const initAction =
     App.router.getActionForPathAndParams(
@@ -103,11 +122,14 @@ export default function createBrowserApp(App) {
       return null;
     };
     _dispatch = action => {
+      const lastState = this.state.nav;
       if (action.type === NavigationActions.URL) {
+        logNavigation(action, null, lastState);
         return this._openUrl(action.url);
       }
-      const lastState = this.statsnav;
       const newState = App.router.getStateForAction(action, lastState);
+      logNavigation(action, newState, lastState);
+
       const dispatchEvents = () =>
         this._actionEventSubscribers.forEach(subscriber =>
           subscriber({

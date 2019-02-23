@@ -3,9 +3,11 @@
   "version": "1.6.0",
   "aven": {
     "srcDependencies": [
+      "utils",
       "aven-cloud-utils"
     ],
     "moduleDependencies": [
+      "path",
       "rxjs",
       "rxjs-compat",
       "json-stable-stringify",

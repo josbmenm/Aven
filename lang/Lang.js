@@ -1,11 +1,10 @@
-
 function getBoundIsStatement(node) {
   if (node.setValue) {
     return node.setValue;
   }
-  return node.setValue = (val) => {
-    node.value = val
-  }
+  return (node.setValue = val => {
+    node.value = val;
+  });
 }
 
 export default function Lang() {
@@ -24,9 +23,8 @@ export default function Lang() {
     const node = getKnowledgeNode(name);
     return {
       ofThe: contextName => {
-
         return {
-          is: getBoundIsStatement(node);
+          is: getBoundIsStatement(node),
         };
       },
       is: value => {
@@ -39,7 +37,7 @@ export default function Lang() {
     // primary mechanism for answering a query..
     is: {
       the: name => {
-        return knowledge[name].value;
+        return getKnowledgeNode(name).value;
       },
     },
   };
