@@ -10,7 +10,7 @@ export const withObservables = withObs;
 export default function createCloudClient({
   dataSource,
   domain,
-  initialSession,
+  initialSession = null,
 }) {
   const _blockValues = {};
 

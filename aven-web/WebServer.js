@@ -99,7 +99,7 @@ export default async function WebServer({
   dataSource,
   context,
   serverListenLocation,
-  extraneousExpressRouting,
+  extraneousExpressRouting = undefined,
 }) {
   const expressApp = express();
   const jsonParser = bodyParser.json();
