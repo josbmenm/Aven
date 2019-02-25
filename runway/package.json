@@ -6,11 +6,13 @@
   "aven": {
     "env": "web",
     "envOptions": {
-      "mainServer": "MainServer.js",
-      "mainClient": "MainClient.js"
+      "mainServer": "MainServer",
+      "mainClient": "MainClient.ts"
     },
     "moduleDependencies": [
-      "uuid"
+      "uuid",
+      "@types/uuid",
+      "@types/node"
     ],
     "srcDependencies": [
       "aven-web",

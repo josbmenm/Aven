@@ -1,9 +1,11 @@
+import App from './App';
+
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createMemoryDataSource from '../aven-cloud/createMemoryDataSource';
 import WebServer from '../aven-web/WebServer';
 
-import App from './App';
+function createGitHubDataSource() {}
 
 const runServer = async () => {
   console.log('☁️ Starting Runway 🛫');
@@ -11,12 +13,13 @@ const runServer = async () => {
   const dataSource = await createMemoryDataSource({
     domain: 'runway.aven.cloud',
   });
+
   const client = createCloudClient({
     dataSource,
     domain: 'runway.aven.cloud',
   });
 
-  const getEnv = c => process.env[c];
+  const getEnv = (c: string) => process.env[c];
   const serverListenLocation = getEnv('PORT');
   const context = new Map();
   context.set(CloudContext, client);

@@ -1,5 +1,5 @@
 import React, { useState, useReducer } from 'react';
-import { View, Text, Animated, Button, TextInput } from 'react-native';
+import { View, Text, Animated, Button, TextInput } from 'react-native-web';
 import useCloudState from '../aven-cloud/useCloudState';
 import useCloudReducer from '../aven-cloud/useCloudReducer';
 import uuid from 'uuid/v1';
@@ -60,7 +60,9 @@ function useTodosTransactional() {
   return useCloudReducer('todosTransactional', reduceStatusDisplayState, []);
 }
 
-function TodoItem({ item }) {
+type Todo = { label: string; key: string };
+
+function TodoItem({ item }: { item: Todo }) {
   const [_, dispatch] = useTodosTransactional();
   return (
     <View>
@@ -83,7 +85,7 @@ function TodoList() {
   if (!todos || todos.length === 0) {
     return <Text>Nothing to do!</Text>;
   }
-  return todos.map(item => <TodoItem item={item} key={item.key} />);
+  return todos.map((item: Todo) => <TodoItem item={item} key={item.key} />);
 }
 
 function AddTodo() {
