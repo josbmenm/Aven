@@ -17,8 +17,12 @@ import {
   black10,
 } from '../components/Styles';
 
-let baseAuthority = window.location.host;
-let baseUseSSL = window.location.protocol !== 'http:';
+let baseAuthority = undefined;
+let baseUseSSL = undefined;
+if (window) {
+  baseAuthority = window.location.host;
+  baseUseSSL = window.location.protocol !== 'http:';
+}
 
 function AdminScreen({ navigation }) {
   return (
