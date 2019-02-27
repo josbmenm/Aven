@@ -5,8 +5,8 @@ import startSQLDataSource from '../aven-cloud-sql/startSQLDataSource';
 // import createMemoryDataSource from '../aven-cloud/createMemoryDataSource';
 import scrapeAirTable from './scrapeAirTable';
 import createCloudClient from '../aven-cloud/createCloudClient';
+import CloudContext from '../aven-cloud/CloudContext';
 import createFSClient from '../aven-cloud-server/createFSClient';
-import OnoCloud from '../ono-cloud/OnoCloud';
 import { getMobileAuthToken } from './Square';
 
 import { hashSecureString } from '../aven-cloud-utils/Crypto';
@@ -94,7 +94,7 @@ const runServer = async () => {
   const fsClient = createFSClient({ client: dataClient });
 
   const context = new Map();
-  context.set(OnoCloud, dataClient);
+  context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
 
   const dispatch = async action => {
     switch (action.type) {

@@ -17,12 +17,16 @@ import {
   black10,
 } from '../components/Styles';
 
+let baseAuthority = window.location.host;
+let baseUseSSL = window.location.protocol !== 'http:';
+
 function AdminScreen({ navigation }) {
   return (
     <Admin
       navigation={navigation}
       defaultSession={{
-        authority: 'localhost:8830',
+        useSSL: baseUseSSL,
+        authority: baseAuthority,
         domain: 'onofood.co',
       }}
     />
@@ -192,14 +196,16 @@ function StatusDisplay({ state }) {
   );
 }
 
-// function KitchenDisplay({ state, config }) {
-//   return (
-//     <View style={{ flex: 1, backgroundColor: 'white' }}>
-//       <StatusDisplayRow title="Restaurant State:" />
-//       <StatusDisplayRow title="Kitchen Systems:" />
-//     </View>
-//   );
-// }
+function KitchenDisplay({ state, config }) {
+  return (
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <StatusDisplayRow title="Restaurant State:" />
+      <Text>{JSON.stringify(state)}</Text>
+      <StatusDisplayRow title="Kitchen Systems:" />
+      <Text>{JSON.stringify(config.subsystems)}</Text>
+    </View>
+  );
+}
 
 function ActionButton({ dispatch, name, type, getParams }) {
   return (
@@ -408,19 +414,19 @@ function StatusDisplayScreen() {
   );
 }
 
-// function Kitchen() {
-//   const [kitchenConfig] = useCloudValue('KitchenConfig');
-//   const [kitchenState] = useCloudValue('KitchenConfig');
+function Kitchen() {
+  const kitchenConfig = useCloudValue('KitchenConfig');
+  const kitchenState = useCloudValue('KitchenState');
 
-//   if (!kitchenConfig) {
-//     return null;
-//   }
-//   return (
-//     <StatusDisplayLayout debugView={null}>
-//       <KitchenDisplay config={kitchenConfig} state={kitchenState} />
-//     </StatusDisplayLayout>
-//   );
-// }
+  if (!kitchenConfig) {
+    return null;
+  }
+  return (
+    <StatusDisplayLayout debugView={null}>
+      <KitchenDisplay config={kitchenConfig} state={kitchenState} />
+    </StatusDisplayLayout>
+  );
+}
 
 const App = createSwitchNavigator({
   Admin: {
@@ -428,7 +434,7 @@ const App = createSwitchNavigator({
     navigationOptions: { title: 'Maui Status' },
   },
   StatusDisplay: StatusDisplayScreen,
-  // Kitchen,
+  Kitchen,
 });
 
 export default App;
