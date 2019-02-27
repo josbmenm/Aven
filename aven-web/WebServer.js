@@ -183,7 +183,6 @@ export default async function WebServer({
 
   expressApp.get('/*', (req, res) => {
     const { path, query } = req;
-
     let navigation = {};
     let title = '';
     let options = {};

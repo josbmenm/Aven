@@ -1048,8 +1048,16 @@ function RowValue({ value }) {
   if (value == null) {
     return <Text>Empty</Text>;
   }
-  if (type !== 'boolean' && type !== 'string' && type !== 'number') {
-    return null;
+  if (Array.isArray(value)) {
+    return <Text>[{value.length}]</Text>;
+  }
+  if (type === 'object') {
+    const keys = Object.keys(value);
+    if (keys.length > 3) {
+      return <Text children={`{${keys.slice(0, 3).join()}...}`} />;
+    } else {
+      return <Text children={`{${keys.join()}}`} />;
+    }
   }
   return <Text>{JSON.stringify(value)}</Text>;
 }
@@ -1262,7 +1270,7 @@ function DocMetaPane({ name }) {
   const activeDoc = getParam('docName');
 
   return (
-    <Pane pageColor="blue">
+    <Pane>
       <Title title={doc.getName()} />
       {r && <InfoSection text={` ID: ${r.id}`} />}
       <StandaloneButton

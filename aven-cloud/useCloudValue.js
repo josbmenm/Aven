@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
+import useCloud from './useCloud';
 
-export default function useCloudValue(cloudValue) {
+export default function useCloudValue(cloudValueDefinition) {
+  let cloudValue = cloudValueDefinition;
+
+  if (typeof cloudValueDefinition === 'string') {
+    cloudValue = useCloud().get(cloudValueDefinition);
+  }
   const [value, setValue] = useState(cloudValue.getValue());
 
   const lastRef = useRef(value);
