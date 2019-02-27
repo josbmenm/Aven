@@ -19,7 +19,7 @@ import {
 
 let baseAuthority = undefined;
 let baseUseSSL = undefined;
-if (window) {
+if (global.window) {
   baseAuthority = window.location.host;
   baseUseSSL = window.location.protocol !== 'http:';
 }
