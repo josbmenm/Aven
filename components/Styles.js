@@ -1,5 +1,75 @@
 import { StyleSheet } from 'react-native';
 
+// Base Fonts
+
+export const fontSmall = {
+  fontSize: 22,
+};
+
+export const fontMedium = {
+  fontSize: 28,
+};
+
+export const fontLarge = {
+  fontSize: 36,
+};
+
+export const primaryFontFace = {
+  fontFamily: 'Maax',
+};
+
+export const proseFontFace = {
+  fontFamily: 'Lora',
+};
+
+export const boldPrimaryFontFace = {
+  fontFamily: 'Maax-Bold',
+};
+
+// -----------
+
+// Colors
+
+export const black8 = '#00000014';
+export const black10 = '#00000020';
+export const monsterra = '#005151';
+export const monsterraLight = '#669797';
+export const monsterra8 = monsterra + '14';
+export const monsterra30 = monsterra + '4C';
+export const monsterra40 = monsterra + '66';
+export const monsterra60 = monsterra + '99';
+export const monsterra70 = monsterra + 'B2';
+export const monsterra80 = monsterra + 'CC';
+
+export const highlightPrimaryColor = monsterra;
+export const mutedPrimaryColor = monsterra60;
+
+// -----------
+
+// Fonts with Colors
+
+export const titleStyle = {
+  color: highlightPrimaryColor,
+  ...boldPrimaryFontFace,
+};
+
+export const genericText = {
+  color: '#111',
+  ...primaryFontFace,
+};
+
+export const descriptionTextStyle = {
+  color: highlightPrimaryColor,
+  ...proseFontFace,
+  fontSize: 18,
+};
+
+export const detailTextStyle = {
+  color: highlightPrimaryColor,
+  ...primaryFontFace,
+  fontSize: 12,
+};
+
 export const titleFontSize = 60;
 export const textInputLargeStyle = {
   fontSize: titleFontSize,
@@ -8,8 +78,15 @@ export const textInputLargeStyle = {
 export const prettyShadow = {
   shadowOffset: { width: 0, height: 0 },
   shadowColor: 'black',
-  shadowOpacity: 0.1, //0.08,
+  shadowOpacity: 0.08,
   shadowRadius: 22,
+};
+
+export const prettyShadowSmall = {
+  shadowOffset: { width: 0, height: 0 },
+  shadowColor: 'black',
+  shadowOpacity: 0.06,
+  shadowRadius: 11,
 };
 
 export const pagePaddingTop = 84;
@@ -27,17 +104,6 @@ export const cardLargeWidth = 340;
 //   shadowRadius: 8,
 // };
 
-export const black8 = '#00000014';
-export const monsterra = '#005151';
-export const monsterra8 = monsterra + '14';
-export const monsterra30 = monsterra + '4C';
-export const monsterra40 = monsterra + '66';
-export const monsterra60 = monsterra + '99';
-export const monsterra70 = monsterra + 'B2';
-export const monsterra80 = monsterra + 'CC';
-
-export const highlightPrimaryColor = monsterra;
-export const mutedPrimaryColor = monsterra60;
 export const splashText = {
   color: highlightPrimaryColor,
   fontSize: 28,
@@ -103,52 +169,6 @@ export const rowSectionInnerStyle = {
   // borderLeftWidth: rowBorderWidth,
   // borderRightWidth: rowBorderWidth,
   // borderColor: hairlineColor,
-};
-
-export const fontSmall = {
-  fontSize: 22,
-};
-
-export const fontMedium = {
-  fontSize: 28,
-};
-
-export const fontLarge = {
-  fontSize: 36,
-};
-
-export const primaryFontFace = {
-  fontFamily: 'Maax',
-};
-
-export const proseFontFace = {
-  fontFamily: 'Lora',
-};
-
-export const boldPrimaryFontFace = {
-  fontFamily: 'Maax-Bold',
-};
-
-export const titleStyle = {
-  color: highlightPrimaryColor,
-  ...boldPrimaryFontFace,
-};
-
-export const genericText = {
-  color: '#111',
-  ...primaryFontFace,
-};
-
-export const descriptionTextStyle = {
-  color: highlightPrimaryColor,
-  ...proseFontFace,
-  fontSize: 18,
-};
-
-export const detailTextStyle = {
-  color: highlightPrimaryColor,
-  ...primaryFontFace,
-  fontSize: 12,
 };
 
 export const buttonTitleStyle = {

@@ -2,6 +2,7 @@ import CloudContext from '../aven-cloud/CloudContext';
 import useCloud from '../aven-cloud/useCloud';
 import mapObject from 'fbjs/lib/mapObject';
 import React, { createContext, useContext, useState, useMemo } from 'react';
+import useCloudValue from '../aven-cloud/useCloudValue';
 import useObservable from '../aven-cloud/useObservable';
 import withObservables from '@nozbe/with-observables';
 import observeNull from '../aven-cloud/observeNull';
@@ -61,14 +62,19 @@ export function OrderContextProvider({ children }) {
       setCurrentOrder(null);
     },
     cancelOrder: () => {
-      guardAsync(
-        currentOrder.transact(lastOrder => {
-          if (lastOrder.isCancelled) {
-            return lastOrder;
-          }
-          return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
-        }),
-      );
+      currentOrder &&
+        guardAsync(
+          currentOrder.transact(lastOrder => {
+            if (lastOrder.isCancelled) {
+              return lastOrder;
+            }
+            return {
+              ...lastOrder,
+              isCancelled: true,
+              cancelledTime: Date.now(),
+            };
+          }),
+        );
     },
     confirmOrder: () => {
       guardAsync(currentOrder.transact(doConfirmOrder));
@@ -92,7 +98,14 @@ export function OrderContextProvider({ children }) {
 }
 
 export function useCompanyConfig() {
-  return useObservable(useMemo(getAirtableData, []));
+  const cloud = useCloud();
+  const theValue = cloud.get('Airtable').expand((folder, doc) => {
+    if (!folder) {
+      return null;
+    }
+    return doc.getBlock(folder.files['db.json']);
+  });
+  return useCloudValue(theValue);
 }
 
 export function displayNameOfMenuItem(menuItem) {
@@ -223,55 +236,64 @@ export function getItemCustomizationSummary(item) {
     return ing.Name.toLowerCase();
   }
   let summaryItems = [];
-  Object.keys(item.customization.ingredients).forEach(categoryName => {
-    const categorySpec = item.menuItem.IngredientCustomization.find(
-      a => a.Name === categoryName,
-    );
-    const categorySize =
-      categorySpec.defaultValue.length + categorySpec['Overflow Limit'];
-    const category = item.customization.ingredients[categoryName];
-    if (categorySize === 1) {
-      const ing = categorySpec.Ingredients.find(i => i.id === category[0]);
-      summaryItems.push('with ' + getIngredientName(ing));
-    } else {
-      const defaultIngCounts = {};
-      const allIngIds = new Set();
-      categorySpec.defaultValue.forEach(ingId => {
-        defaultIngCounts[ingId] = defaultIngCounts[ingId]
-          ? defaultIngCounts[ingId] + 1
-          : 1;
-        allIngIds.add(ingId);
-      });
-      const customIngCounts = {};
-      category.forEach(ingId => {
-        customIngCounts[ingId] = customIngCounts[ingId]
-          ? customIngCounts[ingId] + 1
-          : 1;
-        allIngIds.add(ingId);
-      });
-      allIngIds.forEach(ingId => {
-        const ing = categorySpec.Ingredients.find(i => i.id === ingId);
-        if (!ing) {
-          return;
-        }
-        const defaultCount = defaultIngCounts[ingId] || 0;
-        const customCount = customIngCounts[ingId] || 0;
-        if (customCount === defaultCount + 1) {
-          summaryItems.push(`add ${getIngredientName(ing)}`);
-        } else if (customCount > defaultCount) {
-          summaryItems.push(
-            `add ${customCount - defaultCount} ${getIngredientName(ing)}`,
-          );
-        } else if (customCount === defaultCount - 1) {
-          summaryItems.push(`remove ${getIngredientName(ing)}`);
-        } else if (customCount < defaultCount) {
-          summaryItems.push(
-            `remove ${defaultCount - customCount} ${getIngredientName(ing)}`,
-          );
-        }
-      });
-    }
-  });
+  if (item.customization.benefit === null) {
+    summaryItems.push('with no benefit');
+  }
+  if (item.customization.benefit) {
+    const benefit =
+      item.menuItem.BenefitCustomization[item.customization.benefit];
+    summaryItems.push('with ' + benefit.Name.toLowerCase());
+  }
+  item.customization.ingredients &&
+    Object.keys(item.customization.ingredients).forEach(categoryName => {
+      const categorySpec = item.menuItem.IngredientCustomization.find(
+        a => a.Name === categoryName,
+      );
+      const categorySize =
+        categorySpec.defaultValue.length + categorySpec['Overflow Limit'];
+      const category = item.customization.ingredients[categoryName];
+      if (categorySize === 1) {
+        const ing = categorySpec.Ingredients.find(i => i.id === category[0]);
+        summaryItems.push('with ' + getIngredientName(ing));
+      } else {
+        const defaultIngCounts = {};
+        const allIngIds = new Set();
+        categorySpec.defaultValue.forEach(ingId => {
+          defaultIngCounts[ingId] = defaultIngCounts[ingId]
+            ? defaultIngCounts[ingId] + 1
+            : 1;
+          allIngIds.add(ingId);
+        });
+        const customIngCounts = {};
+        category.forEach(ingId => {
+          customIngCounts[ingId] = customIngCounts[ingId]
+            ? customIngCounts[ingId] + 1
+            : 1;
+          allIngIds.add(ingId);
+        });
+        allIngIds.forEach(ingId => {
+          const ing = categorySpec.Ingredients.find(i => i.id === ingId);
+          if (!ing) {
+            return;
+          }
+          const defaultCount = defaultIngCounts[ingId] || 0;
+          const customCount = customIngCounts[ingId] || 0;
+          if (customCount === defaultCount + 1) {
+            summaryItems.push(`add ${getIngredientName(ing)}`);
+          } else if (customCount > defaultCount) {
+            summaryItems.push(
+              `add ${customCount - defaultCount} ${getIngredientName(ing)}`,
+            );
+          } else if (customCount === defaultCount - 1) {
+            summaryItems.push(`remove ${getIngredientName(ing)}`);
+          } else if (customCount < defaultCount) {
+            summaryItems.push(
+              `remove ${defaultCount - customCount} ${getIngredientName(ing)}`,
+            );
+          }
+        });
+      }
+    });
 
   return summaryItems;
 }
@@ -308,60 +330,54 @@ export function useCurrentOrder() {
 
 export function useOrderItem(orderItemId) {
   let { order } = useOrder();
-  const config = useCompanyConfig();
 
-  async function setItemState(item) {
-    console.log('setItemState', item, orderItemId);
-    await order.transact(lastOrder => {
-      const items = [...lastOrder.items];
-      const itemIndex = items.findIndex(i => i.id === item.id);
-      if (itemIndex === -1) {
-        items.push(item);
-      } else {
-        items[itemIndex] = item;
-      }
-      return {
-        ...lastOrder,
-        items,
-      };
-    });
-    console.log('DONE setItemState', item, orderItemId);
-  }
-  async function removeItem() {
-    await order.transact(lastOrder => {
-      const items = lastOrder.items.filter(i => i.id !== orderItemId);
-      return {
-        ...lastOrder,
-        items,
-      };
-    });
-  }
-  const orderItem = useMemo(
-    () => {
-      const menu = companyConfigToMenu(config);
-      if (!menu) {
-        return null;
-      }
-      const itemMapper = getOrderItemMapper(menu);
-      return (
-        order &&
-        order.map(orderState => {
-          const item =
-            orderState.items &&
-            orderState.items.find(i => i.id === orderItemId);
-          return item && itemMapper(item);
-        })
-      );
-    },
-    [order, orderItemId, config],
-  );
-  return {
-    orderItemId,
-    orderItem,
-    setItemState,
-    removeItem,
-    order,
-  };
+  const menu = useMenu();
+
+  return useMemo(() => {
+    async function setItemState(item) {
+      console.log('setItemState', item, orderItemId);
+      await order.transact(lastOrder => {
+        const items = [...lastOrder.items];
+        const itemIndex = items.findIndex(i => i.id === item.id);
+        if (itemIndex === -1) {
+          items.push(item);
+        } else {
+          items[itemIndex] = item;
+        }
+        return {
+          ...lastOrder,
+          items,
+        };
+      });
+      console.log('DONE setItemState', item, orderItemId);
+    }
+    async function removeItem() {
+      await order.transact(lastOrder => {
+        const items = lastOrder.items.filter(i => i.id !== orderItemId);
+        return {
+          ...lastOrder,
+          items,
+        };
+      });
+    }
+    const itemMapper = menu && getOrderItemMapper(menu);
+    const orderItem =
+      itemMapper &&
+      order &&
+      order.map(orderState => {
+        const item =
+          orderState.items && orderState.items.find(i => i.id === orderItemId);
+        return item && itemMapper(item);
+      });
+
+    return {
+      orderItemId,
+      orderItem,
+      setItemState,
+      removeItem,
+      order,
+    };
+  }, [orderItemId, order, menu]);
 }
 
 export function withKitchen(Component) {
@@ -400,6 +416,13 @@ const sortByField = (obj, fieldName) => {
   sortable.sort((a, b) => a[1][fieldName] - b[1][fieldName]);
   return sortable.map(kVal => kVal[1]);
 };
+
+export function getActiveBenefit(cartItem, menuItem) {
+  if (cartItem && cartItem.customization && cartItem.customization.benefit) {
+    return menuItem.BenefitCustomization[cartItem.customization.benefit];
+  }
+  return menuItem.DefaultBenefit;
+}
 
 function companyConfigToBlendMenu(atData) {
   if (!atData) {
@@ -445,16 +468,14 @@ function companyConfigToBlendMenu(atData) {
     const thisRecipeIngredientIds = thisRecipeIngredients.map(
       ri => ri.Ingredient.id,
     );
-    const defaultFunctionId =
-      Recipe && Recipe.DefaultFunction && Recipe.DefaultFunction[0];
+    const defaultBenefitId =
+      Recipe && Recipe.DefaultBenefit && Recipe.DefaultBenefit[0];
     const Benefits = atData.baseTables['Benefits'];
-    const DefaultFunction = defaultFunctionId
-      ? Benefits[defaultFunctionId]
-      : null;
+    const DefaultBenefit = defaultBenefitId ? Benefits[defaultBenefitId] : null;
     return {
       ...item,
       IngredientCustomization: IngredientCustomization.map(ic => {
-        if (ic.Recipes.indexOf(recipeId) === -1) {
+        if (!ic.Recipes || ic.Recipes.indexOf(recipeId) === -1) {
           return null;
         }
         const defaultValue = ic.Ingredients.filter(
@@ -471,8 +492,8 @@ function companyConfigToBlendMenu(atData) {
         };
       }).filter(ic => !!ic),
       BenefitCustomization: Benefits,
-      DefaultFunction,
-      DefaultFunctionName: DefaultFunction && DefaultFunction.Name,
+      DefaultBenefit,
+      DefaultBenefitName: DefaultBenefit && DefaultBenefit.Name,
       DisplayPrice: formatCurrency(Recipe['Sell Price']),
       Recipe: {
         ...Recipe,
@@ -509,24 +530,18 @@ function companyConfigToFoodMenuItemMapper(foodItemId) {
 
 export function useMenuItem(menuItemId) {
   const config = useCompanyConfig();
-  return useMemo(
-    () => {
-      if (!config) return null;
-      return companyConfigToBlendMenuItemMapper(menuItemId)(config);
-    },
-    [config, menuItemId],
-  );
+  return useMemo(() => {
+    if (!config) return null;
+    return companyConfigToBlendMenuItemMapper(menuItemId)(config);
+  }, [config, menuItemId]);
 }
 
 export function useFoodItem(foodItemId) {
   const config = useCompanyConfig();
-  return useMemo(
-    () => {
-      if (!config) return null;
-      return companyConfigToFoodMenuItemMapper(foodItemId)(config);
-    },
-    [config, foodItemId],
-  );
+  return useMemo(() => {
+    if (!config) return null;
+    return companyConfigToFoodMenuItemMapper(foodItemId)(config);
+  }, [config, foodItemId]);
 }
 
 function companyConfigToMenu(companyConfig) {
@@ -550,7 +565,10 @@ function getAirtableData() {
 
 export function useMenu() {
   const companyConfig = useCompanyConfig();
-  return companyConfigToMenu(companyConfig);
+  const fullMenu = useMemo(() => {
+    return companyConfigToMenu(companyConfig);
+  }, [companyConfig]);
+  return fullMenu;
 }
 
 export function useOrderSummary() {

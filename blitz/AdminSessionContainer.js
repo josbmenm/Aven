@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
-import dataSource from './CloudDataSource';
+import dataSource from './OnoCloud';
 import { AlertIOS } from 'react-native';
 
 export default function AdminSessionContainer({ children }) {

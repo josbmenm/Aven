@@ -26,12 +26,12 @@ export default function OrderConfirmScreen({
     amount: Math.floor(summary.total * 100), // ugh.. we should really be using cents everywhere..
     description: 'Ono Blends',
   };
-  function onPaymentCompleteAndCardRemoved() {
+  function onPaymentComplete() {
     confirmOrder();
     navigation.navigate('Receipt', { orderId: order.getName() });
   }
   const { state } = useCardPaymentCapture(paymentDetails, {
-    onPaymentCompleteAndCardRemoved,
+    onPaymentComplete,
   });
   console.log('----', state);
   useEmptyOrderEscape();

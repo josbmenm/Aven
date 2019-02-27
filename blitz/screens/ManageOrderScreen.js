@@ -3,7 +3,6 @@ import GenericPage from '../components/GenericPage';
 import Hero from '../../components/Hero';
 import { useOrderIdSummary } from '../../ono-cloud/OnoKitchen';
 import { useNavigation } from '../../navigation-hooks/Hooks';
-import OrderSummary from '../../components/OrderSummary';
 
 export default function MangeOrder() {
   const { getParam } = useNavigation();
@@ -11,7 +10,6 @@ export default function MangeOrder() {
   return (
     <GenericPage>
       <Hero title="Manage Order" />
-      <OrderSummary summary={summary} />
     </GenericPage>
   );
 }

@@ -19,7 +19,7 @@ function BlendScreenMemo({ navigation, ...props }) {
   return (
     <BlendPage
       menuItem={menuItem}
-      item={item}
+      item={item || null} // this is to avoid re-rendering when item becomes known as undefined
       foodMenu={menu && menu.food}
       setItemState={setItemState}
       order={order}

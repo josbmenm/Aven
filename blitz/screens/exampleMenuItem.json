@@ -8,7 +8,7 @@
     "Best Gross Margin": 32.99320918677487,
     "Cheapest COGS": 2.010203724396754,
     "Current COGS": 5.057831459753808,
-    "DefaultFunction": ["recTMd8dy2c66I9xk"],
+    "DefaultBenefit": ["recTMd8dy2c66I9xk"],
     "DisplayCalories": 480,
     "Gross Margin (Current)": -68.59438199179358,
     "Ingredient Tags": "Vegetable,Frozen Food,Frozen Food,Vegetable,Fruit,Frozen Food,Liquid,Milk,Non-Dairy,Butter,Dairy,Fruit,Frozen Food,Powder,Skin & Body,Function,Powder,Skin & Body,Function,Skin & Body,Powder,Function,Salt",
@@ -1440,7 +1440,7 @@
       "id": "recl9QIIUTtDuJkWi"
     }
   },
-  "DefaultFunction": {
+  "DefaultBenefit": {
     "Description": "improves hair, skin, ligaments, tendons, nails and joints.",
     "Function Ingredients 2": [
       "rec1cUn7pwQxQizkC",
@@ -1478,6 +1478,6 @@
     "_index": 1,
     "id": "recTMd8dy2c66I9xk"
   },
-  "DefaultFunctionName": "Skin & Body",
+  "DefaultBenefitName": "Skin & Body",
   "DisplayPrice": "$3.00"
 }

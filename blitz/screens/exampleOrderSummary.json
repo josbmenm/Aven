@@ -169,7 +169,7 @@
           "Best Gross Margin": 32.99320918677487,
           "Cheapest COGS": 2.010203724396754,
           "Current COGS": 5.057831459753808,
-          "DefaultFunction": ["recTMd8dy2c66I9xk"],
+          "DefaultBenefit": ["recTMd8dy2c66I9xk"],
           "DisplayCalories": 480,
           "Gross Margin (Current)": -68.59438199179358,
           "Ingredient Tags": "Vegetable,Frozen Food,Frozen Food,Vegetable,Fruit,Frozen Food,Liquid,Milk,Non-Dairy,Butter,Dairy,Fruit,Frozen Food,Powder,Skin & Body,Function,Powder,Skin & Body,Function,Skin & Body,Powder,Function,Salt",
@@ -1649,7 +1649,7 @@
             "id": "recl9QIIUTtDuJkWi"
           }
         },
-        "DefaultFunction": {
+        "DefaultBenefit": {
           "Description": "improves hair, skin, ligaments, tendons, nails and joints.",
           "Function Ingredients 2": [
             "rec1cUn7pwQxQizkC",
@@ -1687,7 +1687,7 @@
           "_index": 1,
           "id": "recTMd8dy2c66I9xk"
         },
-        "DefaultFunctionName": "Skin & Body",
+        "DefaultBenefitName": "Skin & Body",
         "DisplayPrice": "$3.00"
       },
       {
@@ -1700,7 +1700,7 @@
           "Best Gross Margin": 34.750665248637766,
           "Cheapest COGS": 1.9574800425408672,
           "Current COGS": 3.6334948264025146,
-          "DefaultFunction": ["recl9QIIUTtDuJkWi"],
+          "DefaultBenefit": ["recl9QIIUTtDuJkWi"],
           "DisplayCalories": 480,
           "Gross Margin (Current)": -21.116494213417155,
           "Ingredient Tags": "Fruit,Frozen Food,Fruit,Frozen Food,Fruit,Frozen Food,Butter,Dairy,Liquid,Milk,Non-Dairy,Fruit,Frozen Food,Seeds,Digestion,Gut,Powder",
@@ -3054,7 +3054,7 @@
             "id": "recl9QIIUTtDuJkWi"
           }
         },
-        "DefaultFunction": {
+        "DefaultBenefit": {
           "Description": "composed of two strains of ‘good’ bacteria to help with gut health.",
           "Function Ingredients 2": ["recDHBxFbXiTvVQI0", "recKQwU5vfvXbmV2z"],
           "Ingredients": ["receoVi4E2GALTBj8", "rec4lVJUGEAy0N7wF"],
@@ -3090,7 +3090,7 @@
           "_index": 4,
           "id": "recl9QIIUTtDuJkWi"
         },
-        "DefaultFunctionName": "Digestion",
+        "DefaultBenefitName": "Digestion",
         "DisplayPrice": "$3.00"
       },
       {
@@ -3103,7 +3103,7 @@
           "Best Gross Margin": 8.962070229852943,
           "Cheapest COGS": 2.7311378931044117,
           "Current COGS": 6.734541328199463,
-          "DefaultFunction": ["rech4rxFhIlLhHVmk"],
+          "DefaultBenefit": ["rech4rxFhIlLhHVmk"],
           "DisplayCalories": 480,
           "Gross Margin (Current)": -124.48471093998211,
           "Ingredient Tags": "Fruit,Frozen Food,Fruit,Frozen Food,,Butter,Dairy,Fruit,Frozen Food,Nuts,Butter,Liquid,Milk,Non-Dairy,Powder,Salt,Seeds,Fitness,Protein,Powder",
@@ -4651,7 +4651,7 @@
             "id": "recl9QIIUTtDuJkWi"
           }
         },
-        "DefaultFunction": {
+        "DefaultBenefit": {
           "Description": "contains 90% protein and a complete amino acid profile, ideal for building muscle.",
           "Function Ingredients 2": [
             "rec5VMk1rJBskNN9S",
@@ -4690,7 +4690,7 @@
           "_index": 3,
           "id": "rech4rxFhIlLhHVmk"
         },
-        "DefaultFunctionName": "Fitness",
+        "DefaultBenefitName": "Fitness",
         "DisplayPrice": "$3.00"
       },
       {
@@ -4703,7 +4703,7 @@
           "Best Gross Margin": 28.91507143292239,
           "Cheapest COGS": 2.1325478570123284,
           "Current COGS": 4.915879196998504,
-          "DefaultFunction": ["reccH9dwP1awGJZlV"],
+          "DefaultBenefit": ["reccH9dwP1awGJZlV"],
           "DisplayCalories": 480,
           "Gross Margin (Current)": -63.86263989995013,
           "Ingredient Tags": "Fruit,Frozen Food,Frozen Food,Fruit,,Liquid,Milk,Non-Dairy,Fruit,Frozen Food,Powder,Fruit,Immunity,Powder,Seeds,Powder,Skin & Body,Function,",
@@ -5657,7 +5657,7 @@
             "id": "recl9QIIUTtDuJkWi"
           }
         },
-        "DefaultFunction": {
+        "DefaultBenefit": {
           "Description": "elderberries have powerful antioxidant\nproperties.",
           "Function Ingredients 2": ["rec9BjAOKsZlXuClt", "recqmbQdqvT2XmbBt"],
           "Ingredients": ["rec7bxddOEEx4acOj"],
@@ -5692,7 +5692,7 @@
           "_index": 2,
           "id": "reccH9dwP1awGJZlV"
         },
-        "DefaultFunctionName": "Immunity",
+        "DefaultBenefitName": "Immunity",
         "DisplayPrice": "$3.00"
       },
       {
@@ -5705,7 +5705,7 @@
           "Best Gross Margin": -15.010317154703223,
           "Cheapest COGS": 3.4503095146410967,
           "Current COGS": 8.365282506166153,
-          "DefaultFunction": ["recDCiSzzrmzia1df"],
+          "DefaultBenefit": ["recDCiSzzrmzia1df"],
           "DisplayCalories": 470,
           "Gross Margin (Current)": -178.84275020553844,
           "Ingredient Tags": "Fruit,Frozen Food,,Caffeine,Focus,Liquid,Non-Dairy,Function,,Focus,Liquid,Fruit,Frozen Food,Liquid,Milk,Non-Dairy,Powder,Nuts,Butter,Salt,Spice,Powder,Powder,Focus,Powder,Function,Focus,Powder,Function",
@@ -7409,7 +7409,7 @@
             "id": "recl9QIIUTtDuJkWi"
           }
         },
-        "DefaultFunction": {
+        "DefaultBenefit": {
           "Description": "supports stress and mood.",
           "Function Ingredients 2": [
             "reca6PED9GTeGB6yc",
@@ -7451,7 +7451,7 @@
           "_index": 0,
           "id": "recDCiSzzrmzia1df"
         },
-        "DefaultFunctionName": "Focus",
+        "DefaultBenefitName": "Focus",
         "DisplayPrice": "$3.00"
       }
     ]
@@ -7558,7 +7558,7 @@
           "Best Gross Margin": 32.99320918677487,
           "Cheapest COGS": 2.010203724396754,
           "Current COGS": 5.057831459753808,
-          "DefaultFunction": ["recTMd8dy2c66I9xk"],
+          "DefaultBenefit": ["recTMd8dy2c66I9xk"],
           "DisplayCalories": 480,
           "Gross Margin (Current)": -68.59438199179358,
           "Ingredient Tags": "Vegetable,Frozen Food,Frozen Food,Vegetable,Fruit,Frozen Food,Liquid,Milk,Non-Dairy,Butter,Dairy,Fruit,Frozen Food,Powder,Skin & Body,Function,Powder,Skin & Body,Function,Skin & Body,Powder,Function,Salt",
@@ -9038,7 +9038,7 @@
             "id": "recl9QIIUTtDuJkWi"
           }
         },
-        "DefaultFunction": {
+        "DefaultBenefit": {
           "Description": "improves hair, skin, ligaments, tendons, nails and joints.",
           "Function Ingredients 2": [
             "rec1cUn7pwQxQizkC",
@@ -9076,7 +9076,7 @@
           "_index": 1,
           "id": "recTMd8dy2c66I9xk"
         },
-        "DefaultFunctionName": "Skin & Body",
+        "DefaultBenefitName": "Skin & Body",
         "DisplayPrice": "$3.00"
       }
     },
@@ -9111,7 +9111,7 @@
           "Best Gross Margin": 34.750665248637766,
           "Cheapest COGS": 1.9574800425408672,
           "Current COGS": 3.6334948264025146,
-          "DefaultFunction": ["recl9QIIUTtDuJkWi"],
+          "DefaultBenefit": ["recl9QIIUTtDuJkWi"],
           "DisplayCalories": 480,
           "Gross Margin (Current)": -21.116494213417155,
           "Ingredient Tags": "Fruit,Frozen Food,Fruit,Frozen Food,Fruit,Frozen Food,Butter,Dairy,Liquid,Milk,Non-Dairy,Fruit,Frozen Food,Seeds,Digestion,Gut,Powder",
@@ -10465,7 +10465,7 @@
             "id": "recl9QIIUTtDuJkWi"
           }
         },
-        "DefaultFunction": {
+        "DefaultBenefit": {
           "Description": "composed of two strains of ‘good’ bacteria to help with gut health.",
           "Function Ingredients 2": ["recDHBxFbXiTvVQI0", "recKQwU5vfvXbmV2z"],
           "Ingredients": ["receoVi4E2GALTBj8", "rec4lVJUGEAy0N7wF"],
@@ -10501,7 +10501,7 @@
           "_index": 4,
           "id": "recl9QIIUTtDuJkWi"
         },
-        "DefaultFunctionName": "Digestion",
+        "DefaultBenefitName": "Digestion",
         "DisplayPrice": "$3.00"
       }
     }

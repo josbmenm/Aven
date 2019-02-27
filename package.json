@@ -6,14 +6,20 @@
     "deploy": "./node_modules/@aven-cloud/aven/aven-tools/cli.js deploy",
     "start-skynet": "PORT=8840 ./node_modules/@aven-cloud/aven/aven-tools/cli.js start skynet",
     "deploy-skynet": "./node_modules/@aven-cloud/aven/aven-tools/cli.js deploy skynet",
+    "start-status": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start ono-kitchen-status",
     "start-verse": "PORT=8830 ./node_modules/@aven-cloud/aven/aven-tools/cli.js start verse",
     "start-blitz": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start blitz",
     "start-blitz-app": "cd env-blitz-ios && react-native run-ios --simulator=\"iPad Pro (12.9-inch) (3rd generation)\"",
     "open-blitz": "open env-blitz-ios/ios/blitz.xcworkspace",
     "start-portal": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start portal",
-    "clean": "./node_modules/@aven-cloud/aven/aven-tools/cli.js clean"
+    "clean": "./node_modules/@aven-cloud/aven/aven-tools/cli.js clean",
+    "test": "jest"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "babel-jest": "^24.1.0"
+  },
   "dependencies": {
     "@aven-cloud/aven": "https://github.com/AvenCloud/Aven.git#master",
     "@nozbe/with-observables": "^1.0.1",
@@ -30,6 +36,7 @@
     "knex": "^0.15.2",
     "path": "^0.12.7",
     "pg-format": "^1.0.4",
+    "react-native": "^0.58.5",
     "react-native-fast-image": "^5.1.2",
     "react-navigation-hooks": "^1.0.0-alpha.2",
     "react-navigation-stack": "1.0.0-alpha.22",
@@ -45,5 +52,19 @@
   },
   "aven": {
     "extendsSrcModule": "@aven-cloud/aven"
+  },
+  "jest": {
+    "testRegex": "/__tests__/[^/]+-test\\.(js|tsx)?$",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element)"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/",
+      "<rootDir>/env-blitz-ios/",
+      "<rootDir>/node_modules/"
+    ],
+    "globals": {
+      "__DEV__": true
+    }
   }
 }

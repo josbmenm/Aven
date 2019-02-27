@@ -1,1 +1,7 @@
-{}
+{
+  "aven": {
+    "srcDependencies": [
+      "views"
+    ]
+  }
+}

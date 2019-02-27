@@ -4,8 +4,13 @@
   "aven": {
     "env": "dom",
     "srcDependencies": [
+      "components",
       "ono-cloud",
-      "aven-cloud-client"
+      "aven-cloud",
+      "navigation-web",
+      "navigation-native",
+      "navigation-core",
+      "aven-cloud-native"
     ]
   }
 }

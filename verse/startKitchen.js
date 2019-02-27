@@ -35,52 +35,246 @@ const objFromCount = (size, keyMapper, valMapper) => {
 const getExternalTagName = (tagPrefix, subTagName) =>
   tagPrefix == null ? subTagName : `${tagPrefix}.${subTagName}`;
 
-const createSchema = subsystems => {
-  const robotTags = {};
-  Object.keys(subsystems).forEach(subsystemName => {
-    const subsystem = subsystems[subsystemName];
-    Object.keys(subsystem.readTags).forEach(readTagName => {
-      const internalTagName = `${subsystemName}_${readTagName}_READ`;
-      const readTagSpec = subsystem.readTags[readTagName];
-      robotTags[internalTagName] = {
-        subSystem: subsystemName,
-        name: internalTagName,
-        type: readTagSpec.type,
-        tag: getExternalTagName(subsystem.tagPrefix, readTagSpec.subTag),
-        enableOutput: false,
-      };
-    });
-    Object.keys(subsystem.pulseCommands || {}).forEach(pulseCommandName => {
-      const internalTagName = `${subsystemName}_${pulseCommandName}_PULSE`;
-      const pulseCommandSpec = subsystem.pulseCommands[pulseCommandName];
-      robotTags[internalTagName] = {
-        subSystem: subsystemName,
-        name: pulseCommandName,
-        type: 'boolean',
-        tag: getExternalTagName(subsystem.tagPrefix, pulseCommandSpec.subTag),
-        enableOutput: true,
-      };
-    });
-    Object.keys(subsystem.valueCommands || {}).forEach(valueCommandName => {
-      const internalTagName = `${subsystemName}_${valueCommandName}_VALUE`;
-      const valueCommandSpec = subsystem.valueCommands[valueCommandName];
-      robotTags[internalTagName] = {
-        subSystem: subsystemName,
-        name: valueCommandName,
-        type: valueCommandSpec.type,
-        tag: getExternalTagName(subsystem.tagPrefix, valueCommandSpec.subTag),
-        enableOutput: true,
-      };
-    });
-  });
+const genericSystemReadTags = {
+  NoFaults: {
+    type: 'boolean',
+    subTag: 'NoFaults',
+  },
+  NoAlarms: {
+    type: 'boolean',
+    subTag: 'NoAlarms',
+  },
+  Homed: {
+    type: 'boolean',
+    subTag: 'Homed',
+  },
+  PrgStep: {
+    type: 'integer',
+    subTag: 'PrgStep',
+  },
+  WatchDogFrozeAt: {
+    type: 'integer',
+    subTag: 'WatchDogFrozeAt',
+  },
+  Fault0: {
+    type: 'integer',
+    subTag: 'Fault[0]',
+  },
+};
 
+const genericSystemPulseCommands = {
+  Reset: {
+    subTag: 'Cmd.Reset.HmiPb',
+  },
+  Home: {
+    subTag: 'Cmd.Home.HmiPb',
+  },
+};
+const mainSubsystems = {
+  IOSystem: {
+    tagPrefix: null,
+    icon: '🔌',
+    faults: {},
+    readTags: {
+      ...objFromCount(
+        32,
+        i => `PLC_1_Output${i}`,
+        i => ({
+          type: 'boolean',
+          subTag: `Local:1:I.ReadBack.${i}`,
+        }),
+      ),
+      ...objFromCount(
+        32,
+        i => `PLC_2_Input${i}`,
+        i => ({
+          type: 'boolean',
+          subTag: `Local:2:I.Data.${i}`,
+        }),
+      ),
+      ...objFromCount(
+        6,
+        i => `PLC_3_InputA${i}_Value`,
+        i => ({
+          type: 'integer',
+          subTag: `Local:3:I.Ch${i}Data`,
+        }),
+      ),
+      ...objFromCount(
+        6,
+        i => `PLC_3_InputA${i}_Status`,
+        i => ({
+          type: 'boolean',
+          subTag: `Local:3:I.Ch${i}Status`,
+        }),
+      ),
+    },
+  },
+  System: {
+    tagPrefix: '_System',
+    icon: '🤖',
+    faults: {},
+    readTags: {
+      PlcBooting: {
+        type: 'boolean',
+        subTag: 'PlcBooting',
+      },
+    },
+    pulseCommands: {
+      ...genericSystemPulseCommands,
+    },
+  },
+};
+
+export function computeKitchenConfig(cloud) {
+  const configRef = cloud.get('KitchenConfig');
+  cloud
+    .get('Airtable')
+    .observeConnectedValue(['files', 'db.json', 'id'])
+    .subscribe({
+      next: atData => {
+        if (atData == null) {
+          return;
+        }
+        const {
+          KitchenSystems,
+          KitchenSystemTags,
+          KitchenSystemFaults,
+        } = atData.baseTables;
+        if (!KitchenSystems) {
+          return;
+        }
+
+        const subsystems = {
+          ...mainSubsystems,
+        };
+        Object.keys(KitchenSystems).forEach(kitchenSystemId => {
+          const kitchenSystem = KitchenSystems[kitchenSystemId];
+          const tags = Object.values(KitchenSystemTags).filter(tag => {
+            return tag.System[0] === kitchenSystemId;
+          });
+          const systemFaults = Object.values(KitchenSystemFaults).filter(
+            f => f.System[0] === kitchenSystemId,
+          );
+          const faults = systemFaults.map(faultRow => ({
+            description: faultRow.Name,
+            bitIndex: faultRow['Fault Bit'],
+            intIndex: faultRow['Fault Integer'],
+          }));
+          const readTags = {
+            ...genericSystemReadTags,
+          };
+          const pulseCommands = {
+            ...genericSystemPulseCommands,
+          };
+          const valueCommands = {};
+          tags.forEach(tag => {
+            if (tag.Type === 'Command DINT') {
+              valueCommands[tag['Internal Name']] = {
+                type: 'integer',
+                subTag: tag['PLC Sub-Tag'],
+              };
+            } else if (tag.Type === 'Command BOOL') {
+              valueCommands[tag['Internal Name']] = {
+                type: 'boolean',
+                subTag: tag['PLC Sub-Tag'],
+              };
+            } else if (tag.Type === 'Read DINT') {
+              readTags[tag['Internal Name']] = {
+                type: 'integer',
+                subTag: tag['PLC Sub-Tag'],
+              };
+            } else if (tag.Type === 'Read BOOL') {
+              readTags[tag['Internal Name']] = {
+                type: 'boolean',
+                subTag: tag['PLC Sub-Tag'],
+              };
+            } else if (tag.Type === 'Command Pulse BOOL') {
+              pulseCommands[tag['Internal Name']] = {
+                subTag: tag['PLC Sub-Tag'],
+              };
+            } else {
+              throw new Error(`Unexpected tag type "${tag.Type}"`);
+            }
+          });
+          subsystems[kitchenSystem.Name] = {
+            tagPrefix: kitchenSystem['PLC System Name'],
+            icon: kitchenSystem.Icon,
+            readTags,
+            valueCommands,
+            pulseCommands,
+            faults,
+          };
+        });
+
+        const tags = {};
+        Object.keys(subsystems).forEach(subsystemName => {
+          const subsystem = subsystems[subsystemName];
+          Object.keys(subsystem.readTags).forEach(readTagName => {
+            const internalTagName = `${subsystemName}_${readTagName}_READ`;
+            const readTagSpec = subsystem.readTags[readTagName];
+            tags[internalTagName] = {
+              subSystem: subsystemName,
+              name: internalTagName,
+              type: readTagSpec.type,
+              tag: getExternalTagName(subsystem.tagPrefix, readTagSpec.subTag),
+              enableOutput: false,
+            };
+          });
+          Object.keys(subsystem.pulseCommands || {}).forEach(
+            pulseCommandName => {
+              const internalTagName = `${subsystemName}_${pulseCommandName}_PULSE`;
+              const pulseCommandSpec =
+                subsystem.pulseCommands[pulseCommandName];
+              tags[internalTagName] = {
+                subSystem: subsystemName,
+                name: pulseCommandName,
+                type: 'boolean',
+                tag: getExternalTagName(
+                  subsystem.tagPrefix,
+                  pulseCommandSpec.subTag,
+                ),
+                enableOutput: true,
+              };
+            },
+          );
+          Object.keys(subsystem.valueCommands || {}).forEach(
+            valueCommandName => {
+              const internalTagName = `${subsystemName}_${valueCommandName}_VALUE`;
+              const valueCommandSpec =
+                subsystem.valueCommands[valueCommandName];
+              tags[internalTagName] = {
+                subSystem: subsystemName,
+                name: valueCommandName,
+                type: valueCommandSpec.type,
+                tag: getExternalTagName(
+                  subsystem.tagPrefix,
+                  valueCommandSpec.subTag,
+                ),
+                enableOutput: true,
+              };
+            },
+          );
+        });
+
+        configRef
+          .put({ subsystems, tags })
+          .then(() => {})
+          .catch(console.error);
+      },
+      error: console.error,
+      complete: () => {},
+    });
+}
+
+const createSchema = config => {
   const tags = {};
   const allTagsGroup = new TagGroup();
-  Object.keys(robotTags).forEach(tagAlias => {
-    tags[tagAlias] = getTagOfSchema(robotTags[tagAlias]);
+  Object.keys(config.tags).forEach(tagAlias => {
+    tags[tagAlias] = getTagOfSchema(config.tags[tagAlias]);
     allTagsGroup.add(tags[tagAlias]);
   });
-  return { config: { subsystems, tags: robotTags }, tags, allTagsGroup };
+  return { config, tags, allTagsGroup };
 };
 
 const extractActionValues = ({
@@ -143,10 +337,8 @@ export default function startKitchen({ client, plcIP }) {
       return;
     }
     const mainPLC = new Controller();
-    connectingPLC = mainPLC.connect(
-      plcIP,
-      0,
-    );
+    connectingPLC = mainPLC.connect(plcIP, 0);
+
     connectingPLC
       .then(async () => {
         if (hasClosed) {
@@ -174,42 +366,6 @@ export default function startKitchen({ client, plcIP }) {
       throw new Error('PLC not ready!');
     }
     return readyPLC;
-  };
-
-  const genericSystemReadTags = {
-    NoFaults: {
-      type: 'boolean',
-      subTag: 'NoFaults',
-    },
-    NoAlarms: {
-      type: 'boolean',
-      subTag: 'NoAlarms',
-    },
-    Homed: {
-      type: 'boolean',
-      subTag: 'Homed',
-    },
-    PrgStep: {
-      type: 'integer',
-      subTag: 'PrgStep',
-    },
-    WatchDogFrozeAt: {
-      type: 'integer',
-      subTag: 'WatchDogFrozeAt',
-    },
-    Fault0: {
-      type: 'integer',
-      subTag: 'Fault[0]',
-    },
-  };
-
-  const genericSystemPulseCommands = {
-    Reset: {
-      subTag: 'Cmd.Reset.HmiPb',
-    },
-    Home: {
-      subTag: 'Cmd.Home.HmiPb',
-    },
   };
 
   // const subsystems = {
@@ -394,7 +550,19 @@ export default function startKitchen({ client, plcIP }) {
     const readings = {};
 
     const PLC = await getReadyPLC();
-    await PLC.readTagGroup(schema.allTagsGroup);
+
+    await new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error('Error reading tags in time'));
+        readyPLC = null;
+      }, 2000);
+      PLC.readTagGroup(schema.allTagsGroup)
+        .then(results => {
+          clearTimeout(timer);
+          resolve(results);
+        })
+        .catch(reject);
+    });
 
     Object.keys(schema.config.tags).forEach(tagAlias => {
       readings[tagAlias] = {
@@ -424,156 +592,18 @@ export default function startKitchen({ client, plcIP }) {
 
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-  const mainSubsystems = {
-    IOSystem: {
-      tagPrefix: null,
-      icon: '🔌',
-      faults: {},
-      readTags: {
-        ...objFromCount(
-          32,
-          i => `PLC_1_Output${i}`,
-          i => ({
-            type: 'boolean',
-            subTag: `Local:1:I.ReadBack.${i}`,
-          }),
-        ),
-        ...objFromCount(
-          32,
-          i => `PLC_2_Input${i}`,
-          i => ({
-            type: 'boolean',
-            subTag: `Local:2:I.Data.${i}`,
-          }),
-        ),
-        ...objFromCount(
-          6,
-          i => `PLC_3_InputA${i}_Value`,
-          i => ({
-            type: 'integer',
-            subTag: `Local:3:I.Ch${i}Data`,
-          }),
-        ),
-        ...objFromCount(
-          6,
-          i => `PLC_3_InputA${i}_Status`,
-          i => ({
-            type: 'boolean',
-            subTag: `Local:3:I.Ch${i}Status`,
-          }),
-        ),
-      },
-    },
-    System: {
-      tagPrefix: '_System',
-      icon: '🤖',
-      faults: {},
-      readTags: {
-        PlcBooting: {
-          type: 'boolean',
-          subTag: 'PlcBooting',
-        },
-      },
-      pulseCommands: {
-        ...genericSystemPulseCommands,
-      },
-    },
-  };
-  let subsystems = { ...mainSubsystems };
+  let mainRobotSchema = null;
 
-  let mainRobotSchema = createSchema(subsystems);
-
-  let updateCount = 0;
   async function connectKitchenClient() {
-    const configRef = client.get('KitchenConfig');
-    let fff = null;
-    client
-      .get('Airtable')
-      .observeConnectedValue(['files', 'db.json', 'id'])
-      .subscribe({
-        next: atData => {
-          if (atData === fff || atData == null) {
-            // console.log('DUPE AT UPDATE!'); // todo, fix dupe events from observeConnectedValue
-            return;
-          }
-          const {
-            KitchenSystems,
-            KitchenSystemTags,
-            KitchenSystemFaults,
-          } = atData.baseTables;
-
-          subsystems = {
-            ...mainSubsystems,
-          };
-          Object.keys(KitchenSystems).forEach(kitchenSystemId => {
-            const kitchenSystem = KitchenSystems[kitchenSystemId];
-            const tags = Object.values(KitchenSystemTags).filter(tag => {
-              return tag.System[0] === kitchenSystemId;
-            });
-            const systemFaults = Object.values(KitchenSystemFaults).filter(
-              f => f.System[0] === kitchenSystemId,
-            );
-            const faults = systemFaults.map(faultRow => ({
-              description: faultRow.Name,
-              bitIndex: faultRow['Fault Bit'],
-              intIndex: faultRow['Fault Integer'],
-            }));
-            const readTags = {
-              ...genericSystemReadTags,
-            };
-            const pulseCommands = {
-              ...genericSystemPulseCommands,
-            };
-            const valueCommands = {};
-            tags.forEach(tag => {
-              if (tag.Type === 'Command DINT') {
-                valueCommands[tag['Internal Name']] = {
-                  type: 'integer',
-                  subTag: tag['PLC Sub-Tag'],
-                };
-              } else if (tag.Type === 'Command BOOL') {
-                valueCommands[tag['Internal Name']] = {
-                  type: 'boolean',
-                  subTag: tag['PLC Sub-Tag'],
-                };
-              } else if (tag.Type === 'Read DINT') {
-                readTags[tag['Internal Name']] = {
-                  type: 'integer',
-                  subTag: tag['PLC Sub-Tag'],
-                };
-              } else if (tag.Type === 'Read BOOL') {
-                readTags[tag['Internal Name']] = {
-                  type: 'boolean',
-                  subTag: tag['PLC Sub-Tag'],
-                };
-              } else if (tag.Type === 'Command Pulse BOOL') {
-                pulseCommands[tag['Internal Name']] = {
-                  subTag: tag['PLC Sub-Tag'],
-                };
-              } else {
-                throw new Error(`Unexpected tag type "${tag.Type}"`);
-              }
-            });
-            subsystems[kitchenSystem.Name] = {
-              tagPrefix: kitchenSystem['PLC System Name'],
-              icon: kitchenSystem.Icon,
-              readTags,
-              valueCommands,
-              pulseCommands,
-              faults,
-            };
-          });
-
-          mainRobotSchema = createSchema(subsystems);
-
-          configRef
-            .put(mainRobotSchema.config)
-            .then(() => {})
-            .catch(console.error);
-        },
-        error: console.error,
-        complete: () => {},
-      });
+    client.get('KitchenConfig').observeValue.subscribe({
+      // unsub one day
+      next: config => {
+        if (!config) {
+          return;
+        }
+        mainRobotSchema = createSchema(config);
+      },
+    });
 
     const stateRef = client.get('KitchenState');
 
@@ -587,15 +617,19 @@ export default function startKitchen({ client, plcIP }) {
       const lastState = currentState;
       let isPLCConnected = false;
       try {
-        const readings = await readTags(mainRobotSchema, {});
-        isPLCConnected = true;
-        currentState = getTagValues(readings);
-        updateCount++;
+        if (mainRobotSchema) {
+          const readings = await readTags(mainRobotSchema, {});
+          isPLCConnected = true;
+          currentState = getTagValues(readings);
+        }
       } catch (e) {}
-      if (lastState === currentState || shallowEqual(lastState, currentState)) {
-        await delay(500);
-        return;
-      }
+      // if (
+      //   lastState === currentState ||
+      //   shallowEqual(lastState, currentState)
+      // ) {
+      //   await delay(500);
+      //   return;
+      // }
       await stateRef.put({
         ...currentState,
         isPLCConnected,
@@ -621,8 +655,11 @@ export default function startKitchen({ client, plcIP }) {
   }
 
   async function dispatchCommand(action) {
+    if (!mainRobotSchema) {
+      return;
+    }
     await client.get('KitchenLog').transact(log => [...(log || []), action]);
-    const subsystem = subsystems[action.subsystem];
+    const subsystem = mainRobotSchema.config.subsystems[action.subsystem];
     const { immediateOutput, clearPulseOutput } = extractActionValues({
       subSystemConfig: subsystem,
       systemName: action.subsystem,

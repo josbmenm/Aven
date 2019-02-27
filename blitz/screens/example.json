@@ -9,7 +9,7 @@
       "Best Gross Margin": 34.750665248637766,
       "Cheapest COGS": 1.9574800425408672,
       "Current COGS": 3.6334948264025146,
-      "DefaultFunction": ["recl9QIIUTtDuJkWi"],
+      "DefaultBenefit": ["recl9QIIUTtDuJkWi"],
       "DisplayCalories": 480,
       "Gross Margin (Current)": -21.116494213417155,
       "Ingredient Tags": "Fruit,Frozen Food,Fruit,Frozen Food,Fruit,Frozen Food,Butter,Dairy,Liquid,Milk,Non-Dairy,Fruit,Frozen Food,Seeds,Digestion,Gut,Powder",
@@ -1327,7 +1327,7 @@
         "id": "recl9QIIUTtDuJkWi"
       }
     },
-    "DefaultFunction": {
+    "DefaultBenefit": {
       "Description": "composed of two strains of ‘good’ bacteria to help with gut health.",
       "Function Ingredients 2": ["recDHBxFbXiTvVQI0", "recKQwU5vfvXbmV2z"],
       "Ingredients": ["receoVi4E2GALTBj8", "rec4lVJUGEAy0N7wF"],
@@ -1363,7 +1363,7 @@
       "_index": 4,
       "id": "recl9QIIUTtDuJkWi"
     },
-    "DefaultFunctionName": "Digestion",
+    "DefaultBenefitName": "Digestion",
     "DisplayPrice": "$3.00"
   },
   "order": {

@@ -17,7 +17,7 @@ import EmailAuthMethod from '../aven-cloud-auth-email/EmailAuthMethod';
 import RootAuthMethod from '../aven-cloud-auth-root/RootAuthMethod';
 import CloudAuth from '../aven-cloud-auth/CloudAuth';
 
-import startKitchen from './startKitchen';
+import startKitchen, { computeKitchenConfig } from './startKitchen';
 import { getConnectionToken, capturePayment } from './Stripe';
 
 const getEnv = c => process.env[c];
@@ -25,6 +25,18 @@ const getEnv = c => process.env[c];
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
+
+function extractKitchenConfig() {}
+
+function startTestKitchen({ cloud }) {
+  const state = cloud.get('KitchenState');
+
+  function dispatchCommand(action) {
+    const { subsystem, pulse, values } = action;
+  }
+
+  return { dispatchCommand };
+}
 
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨 ' + process.cwd() + '/db');
@@ -131,6 +143,16 @@ const runServer = async () => {
   });
 
   await putPermission({
+    defaultRule: { canWrite: true },
+    name: 'StatusDisplay',
+  });
+
+  await putPermission({
+    defaultRule: { canWrite: true },
+    name: 'StatusDisplay/reducer',
+  });
+
+  await putPermission({
     // todo, offer better auth for kiosk state
     defaultRule: { canWrite: true },
     name: 'Kiosk/Left',
@@ -147,6 +169,12 @@ const runServer = async () => {
     client: cloud,
     plcIP: '192.168.1.122',
   });
+
+  // const kitchen = startTestKitchen({
+  //   cloud,
+  // });
+
+  computeKitchenConfig(cloud);
 
   let restaurantState = null;
   let kitchenState = null;
@@ -364,7 +392,7 @@ const runServer = async () => {
 
   // const avenClient = createCloudClient(networkDataSource);
 
-  // context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
+  context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
   const webService = await WebServer({
     App,
     context,

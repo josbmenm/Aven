@@ -1,268 +1,208 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, LayoutAnimation } from 'react-native';
-import { Client } from '../ono-cloud/OnoCloud';
-import { withObservables } from '../aven-cloud-client/DataClient';
+import React, { useState, useReducer } from 'react';
+import { View, Text, Animated, Button } from 'react-native';
 
-const sectionText = {
-  color: '#222',
-  fontSize: 120,
-};
+import useCloudState from '../aven-cloud/useCloudState';
+import useCloudReducer from '../aven-cloud/useCloudReducer';
+import CloudContext from '../aven-cloud/CloudContext';
+import OnoCloud from './OnoCloud';
 
-const nameText = {
-  fontSize: 100,
-  fontWeight: 'bold',
-  color: '#333',
-};
+import { createSwitchNavigator } from '../navigation-core';
+import { createAppContainer } from '../navigation-native';
+import { monsterra } from '../components/Styles';
 
-const withTruckState = Component => {
-  return withObservables([], () => ({
-    truckState: Client.get('truckState').observeObjectValue,
-  }))(Component);
-};
+const SCREEN_WIDTH = 1080;
+const ASPECT_RATIO = 16 / 9;
 
-const ACTIVE_COLOR = '#FFC0B3';
+function StatusDisplayLayout({ children, backgroundColor, debugView }) {
+  const [scale] = useState(new Animated.Value(1));
+  const [translateY] = useState(new Animated.Value(0));
+  const [translateX] = useState(new Animated.Value(0));
+  return (
+    <View
+      style={{ flex: 1, backgroundColor: '#eee' }}
+      onLayout={e => {
+        let screenH = e.nativeEvent.layout.height;
+        let screenW = e.nativeEvent.layout.width;
+        if (screenW * ASPECT_RATIO > screenH) {
+          const theScale = screenH / (SCREEN_WIDTH * ASPECT_RATIO);
+          const theTranslateX = (screenW - SCREEN_WIDTH) / 2;
+          const theTranslateY = (screenH - SCREEN_WIDTH * ASPECT_RATIO) / 2;
+          scale.setValue(theScale);
+          translateX.setValue(theTranslateX);
+          translateY.setValue(theTranslateY);
+        } else {
+          const theScale = screenW / SCREEN_WIDTH;
+          const theTranslateX = (screenW - SCREEN_WIDTH) / 2;
+          const theTranslateY = (screenH - SCREEN_WIDTH * ASPECT_RATIO) / 2;
+          scale.setValue(theScale);
+          translateX.setValue(theTranslateX);
+          translateY.setValue(theTranslateY);
+        }
+      }}
+    >
+      <Animated.View
+        style={{
+          width: SCREEN_WIDTH,
+          height: SCREEN_WIDTH * ASPECT_RATIO,
+          transform: [{ translateX }, { translateY }, { scale }],
+          backgroundColor: 'red',
+        }}
+      >
+        {children}
+      </Animated.View>
+      {debugView}
+    </View>
+  );
+}
 
-const PickupBay = ({ pickupReadyName }) => {
+function StatusDisplayRow({ title }) {
+  return (
+    <View
+      style={{ backgroundColor: monsterra, height: 100, paddingHorizontal: 20 }}
+    >
+      <Text style={{ fontSize: 62, color: 'white' }}>{title}</Text>
+    </View>
+  );
+}
+
+function OrderRow({ orderName, status, productName }) {
+  return (
+    <View style={{ paddingHorizontal: 20 }}>
+      <Text>{orderName}</Text>
+      <Text>{productName}</Text>
+    </View>
+  );
+}
+
+function PresentationSection() {
+  return (
+    <View style={{ alignSelf: 'stretch', aspectRatio: 1, borderWidth: 1 }} />
+  );
+}
+
+function OrderStatusSection({ orders }) {
+  return (
+    <React.Fragment>
+      <StatusDisplayRow title="orders in progress:" />
+      {orders.map(order => (
+        <OrderRow
+          orderName="Daniel F."
+          productName="Cocunut Coconut Coconut"
+          status={{ blending: true }}
+        />
+      ))}
+    </React.Fragment>
+  );
+}
+
+function PickupCell({ style, state }) {
   return (
     <View
       style={{
+        backgroundColor: 'white',
         flex: 1,
-        justifyContent: 'center',
-        backgroundColor: pickupReadyName ? ACTIVE_COLOR : '#eee',
+        height: 80,
+        ...style,
+      }}
+    />
+  );
+}
 
-        margin: 50,
-        marginBottom: 0,
+function PickupSection({ state }) {
+  return (
+    <React.Fragment>
+      <StatusDisplayRow title="now serving:" />
+      <View
+        style={{
+          overflow: 'hidden',
+          backgroundColor: monsterra,
+          flexDirection: 'row',
+        }}
+      >
+        <PickupCell style={{ marginRight: 10 }} state={state.left} />
+        <PickupCell state={state.right} />
+      </View>
+    </React.Fragment>
+  );
+}
+
+function StatusDisplay({ state }) {
+  return (
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <PresentationSection />
+      <OrderStatusSection orders={state.orders} />
+      <PickupSection state={state.pickup} />
+    </View>
+  );
+}
+
+function StatusDisplayDebug({ displayState, dispatch }) {
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        backgroundColor: 'blue',
+        width: 200,
+        height: 200,
       }}
     >
-      {pickupReadyName && (
-        <React.Fragment>
-          <Text
-            style={{
-              ...sectionText,
-              fontSize: 80,
-              textAlign: 'center',
-              color: 'white',
-            }}
-          >
-            Pickup Ready
-          </Text>
-          <Text style={{ ...nameText, textAlign: 'center', color: 'white' }}>
-            {pickupReadyName}
-          </Text>
-          <Image
-            style={{
-              width: 61,
-              height: 33,
-              tintColor: 'white',
-              alignSelf: 'center',
-              marginTop: 150,
-            }}
-            resizeMode="contain"
-            source={require('./bottom-arrow.png')}
-          />
-        </React.Fragment>
-      )}
+      <Button
+        title="reduce"
+        onPress={() =>
+          dispatch({
+            type: 'PlaceOrder',
+            order: {},
+          })
+        }
+      />
     </View>
+  );
+}
+
+const reduceStatusDisplayState = `
+console.log('onerun')
+  if (!action) {
+    return state;
+  }
+  if (action.type === 'PlaceOrder') {
+    return {
+      ...state,
+      orders: [...(state.orders || []), action.order],
+    };
+  }
+  return state;
+`;
+
+function StatusDisplayScreen() {
+  const [displayState, dispatch] = useCloudReducer(
+    'StatusDisplay',
+    reduceStatusDisplayState,
+    {
+      orders: [],
+      pickup: { left: null, right: null },
+    },
+  );
+
+  if (!displayState) {
+    return null;
+  }
+  return (
+    <StatusDisplayLayout
+      debugView={
+        <StatusDisplayDebug displayState={displayState} dispatch={dispatch} />
+      }
+    >
+      <StatusDisplay state={displayState} />
+    </StatusDisplayLayout>
+  );
+}
+
+const App = () => {
+  return (
+    <CloudContext.Provider value={OnoCloud}>
+      <StatusDisplayScreen />
+    </CloudContext.Provider>
   );
 };
 
-const Pickup = ({ state }) => (
-  <View style={{ flexDirection: 'row', flex: 1 }}>
-    <PickupBay pickupReadyName={state.pickupA} />
-    <PickupBay pickupReadyName={state.pickupB} />
-  </View>
-);
-
-const DECOR_COLOR = '#444';
-
-const QueuedItem = ({ name, isBlending }) => (
-  <View
-    style={{
-      marginLeft: 27,
-      borderLeftWidth: 6,
-      borderLeftColor: DECOR_COLOR,
-      paddingLeft: 57,
-    }}
-  >
-    <View
-      style={{
-        backgroundColor: '#fff',
-        marginTop: 15,
-        paddingVertical: 40,
-        paddingHorizontal: 60,
-      }}
-    >
-      <Text
-        style={{
-          ...nameText,
-        }}
-      >
-        {name}
-      </Text>
-    </View>
-  </View>
-);
-const QueueHeader = ({ title, icon }) => (
-  <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-    <Image source={icon} style={{ tintColor: DECOR_COLOR }} />
-    <View style={{ flex: 1, marginLeft: 30 }}>
-      <Text style={{ fontSize: 50 }}>{title.toUpperCase()}</Text>
-    </View>
-  </View>
-);
-
-const QueueSpace = ({ style }) => (
-  <View
-    style={{
-      marginLeft: 27,
-      borderLeftWidth: 6,
-      borderLeftColor: DECOR_COLOR,
-      paddingLeft: 57,
-      ...style,
-    }}
-  />
-);
-
-class Queue extends React.Component {
-  componentWillUpdate() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  }
-  render() {
-    const { queue } = this.props;
-    return (
-      <View
-        style={{
-          flex: 2,
-          paddingVertical: 15,
-          padding: 50,
-        }}
-      >
-        <View style={{ alignSelf: 'stretch' }}>
-          <Image
-            style={{
-              alignSelf: 'center',
-              maxWidth: 700,
-              marginTop: 180,
-              marginBottom: 180,
-            }}
-            resizeMode="contain"
-            source={require('./ono.png')}
-          />
-        </View>
-        <QueueHeader title="Up Next" icon={require('./bottom-arrow.png')} />
-        <QueueSpace style={{ flex: 1 }} />
-        {queue
-          .slice(1)
-          .reverse()
-          .map(queuedItem => (
-            <QueuedItem {...queuedItem} key={queuedItem.name} />
-          ))}
-        <QueueSpace style={{ height: 60 }} />
-        <QueueHeader title="Blending Now" icon={require('./dot.png')} />
-        <QueuedItem {...queue[0]} key={queue[0].name} isBlending />
-        <QueueSpace style={{ height: 60 }} />
-        <QueueHeader title="Ready for Pickup" icon={require('./dot.png')} />
-      </View>
-    );
-  }
-}
-
-const blendState = {
-  queue: [{ name: 'Lisa D.' }, { name: 'Connor C.' }, { name: 'Margaret B.' }],
-  pickupA: 'Jane D.',
-  pickupB: null,
-};
-
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-class BlendScreenD extends React.Component {
-  state = {
-    step: 0,
-  };
-  async componentDidUpdate(lastProps, lastState) {
-    const { truckState } = this.props;
-    const lastTruckState = lastProps.truckState;
-
-    if (!truckState || !lastTruckState) {
-      return;
-    }
-    if (!truckState.customerQueued && lastTruckState.customerQueued) {
-      this.setState({ step: 0 });
-    }
-    if (!lastTruckState.customerQueued && truckState.customerQueued) {
-      await delay(2000);
-      this.setState({ step: 1 });
-      await delay(2000);
-      this.setState({ step: 2 });
-      await delay(2000);
-      this.setState({ step: 3 });
-      await delay(2000);
-      this.setState({ step: 4 });
-      await delay(2000);
-      this.setState({ step: 5 });
-      await delay(2000);
-      this.setState({ step: 6 });
-    }
-  }
-  render() {
-    const { step } = this.state;
-    const { truckState } = this.props;
-    if (!truckState) {
-      return null;
-    }
-    const { customerQueued, customerName, blendReady } = truckState;
-    const dummyQueue = [
-      { name: 'Jose F.' },
-      { name: 'Lucy M.' },
-      { name: `Jackie L.` },
-    ];
-    const queue = [...dummyQueue];
-    if (customerQueued) {
-      queue.push({ name: customerName });
-    }
-    let pickupA = null;
-    let pickupB = null;
-    if (step >= 1) {
-      pickupA = queue.shift().name; // array mutation, niiice, real nice
-    }
-    if (step >= 2) {
-      pickupB = queue.shift().name; // array mutation, niiice, real nice
-    }
-    if (step >= 3) {
-      pickupA = null;
-      queue.push({ name: 'Bill B.' });
-    }
-    if (step >= 4) {
-      pickupA = queue.shift().name; // array mutation, niiice, real nice
-    }
-    if (step >= 5) {
-      pickupB = null;
-      queue.push({ name: 'Nancy D.' });
-    }
-    if (step >= 6) {
-      pickupA = null;
-    }
-    if (blendReady) {
-      pickupA = queue.shift().name;
-    }
-    return (
-      <View style={{ flex: 1, backgroundColor: '#e8e8e8' }}>
-        <Queue queue={queue} />
-        <Pickup
-          state={{
-            pickupA,
-            pickupB,
-          }}
-        />
-      </View>
-    );
-  }
-}
-
-const BlendScreen = withTruckState(BlendScreenD);
-
-export default class App extends Component {
-  render() {
-    return <BlendScreen />;
-  }
-}
+export default App;
