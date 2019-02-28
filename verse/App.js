@@ -206,7 +206,7 @@ function KitchenDisplay({ state, config }) {
       <StatusDisplayRow title="Restaurant State:" />
       <Text>{JSON.stringify(state)}</Text>
       <StatusDisplayRow title="Kitchen Systems:" />
-      <Text style={{ fontSize: 132, color: 'blue' }}>
+      <Text style={{ fontSize: 132, color: 'red' }}>
         {JSON.stringify(Object.keys(config.subsystems))}
       </Text>
     </View>
