@@ -1,7 +1,7 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { View, Text, Animated, Button } from 'react-native';
 
-import useCloudState from '../aven-cloud/useCloudState';
+import useCloud from '../aven-cloud/useCloud';
 import useCloudReducer from '../aven-cloud/useCloudReducer';
 import useCloudValue from '../aven-cloud/useCloudValue';
 import uuid from 'uuid/v1';
@@ -206,7 +206,9 @@ function KitchenDisplay({ state, config }) {
       <StatusDisplayRow title="Restaurant State:" />
       <Text>{JSON.stringify(state)}</Text>
       <StatusDisplayRow title="Kitchen Systems:" />
-      <Text>{JSON.stringify(config.subsystems)}</Text>
+      <Text style={{ fontSize: 132, color: 'blue' }}>
+        {JSON.stringify(Object.keys(config.subsystems))}
+      </Text>
     </View>
   );
 }
@@ -462,4 +464,29 @@ const App = createSwitchNavigator(
   },
 );
 
-export default App;
+function FullApp(props) {
+  const cloud = useCloud();
+  useEffect(() => {
+    let hasConnectedOnce = cloud.isConnected.getValue();
+    let wasConnected = hasConnectedOnce;
+
+    const subs = cloud.isConnected.subscribe({
+      next: isConnected => {
+        if (isConnected && hasConnectedOnce && !wasConnected) {
+          window.location.reload();
+        }
+        if (isConnected) {
+          hasConnectedOnce = true;
+        }
+        wasConnected = isConnected;
+      },
+    });
+    return () => subs.unsubscribe();
+  }, [cloud]);
+  return <App {...props} />;
+}
+
+FullApp.router = App.router;
+FullApp.navigationOptions = App.navigationOptions;
+
+export default FullApp;
