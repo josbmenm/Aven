@@ -218,7 +218,7 @@ export default async function WebServer({
           display: flex;
           flex-direction: column;
         }
-        ${options.customCSS}
+        ${options.customCSS ? options.customCSS : ''}
         </style>
         ${css}
         ${

@@ -185,5 +185,9 @@ export default function createBrowserNetworkSource(opts) {
     dispatch,
     observeDoc,
     isConnected,
+    config: {
+      authority: opts.authority,
+      useSSL: opts.useSSL,
+    },
   };
 }

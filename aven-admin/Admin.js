@@ -1482,8 +1482,8 @@ function AdminApp({ defaultSession = {}, descriptors }) {
               onClientConfig={setClientConfig}
               onSession={setSessionState}
               defaultSession={{
-                authority: defaultSession.authority || 'localhost:3000',
-                domain: defaultSession.domain || 'test.aven.cloud',
+                authority: defaultSession.authority,
+                domain: defaultSession.domain,
               }}
               navigation={activeDescriptor.navigation}
             />
