@@ -12,7 +12,8 @@ const RESTAURANT_DEV = {
   authority: 'localhost:8830',
 };
 const RESTAURANT_PROD = {
-  authority: 'www.onofood.co',
+  authority: '192.168.1.200:8830',
+  useSSL: false,
 };
 
 // const RESTAURANT_CONFIG = RESTAURANT_DEV;
