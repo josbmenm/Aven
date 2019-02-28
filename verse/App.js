@@ -456,7 +456,7 @@ const App = createSwitchNavigator(
     Kitchen,
   },
   {
-    navigationOptions: {
+    defaultNavigationOptions: {
       customCSS: fontsCSS,
     },
   },

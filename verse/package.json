@@ -5,6 +5,7 @@
   "dependencies": {},
   "aven": {
     "env": "web",
+    "publicAssetDir": "public",
     "envOptions": {
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js",
