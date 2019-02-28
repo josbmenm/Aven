@@ -48,7 +48,7 @@ function StatusDisplayLayout({ children, backgroundColor, debugView }) {
   const [translateX] = useState(new Animated.Value(0));
   return (
     <View
-      style={{ flex: 1, backgroundColor: '#eee' }}
+      style={{ flex: 1, backgroundColor: '#eee', overflow: 'hidden' }}
       onLayout={e => {
         let screenH = e.nativeEvent.layout.height;
         let screenW = e.nativeEvent.layout.width;
@@ -431,14 +431,35 @@ function Kitchen() {
     </StatusDisplayLayout>
   );
 }
+const fontsCSS = `
+@font-face {
+  src: url('/fonts/Maax-Bold.ttf');
+  font-family: Maax-Bold;
+}
+@font-face {
+  src: url('/fonts/Maax.ttf');
+  font-family: Maax;
+}
+@font-face {
+  src: url('/fonts/Lora.ttf');
+  font-family: Lora;
+}
+`;
 
-const App = createSwitchNavigator({
-  Admin: {
-    screen: AdminScreen,
-    navigationOptions: { title: 'Maui Status' },
+const App = createSwitchNavigator(
+  {
+    Admin: {
+      screen: AdminScreen,
+      navigationOptions: { title: 'Maui Status' },
+    },
+    StatusDisplay: StatusDisplayScreen,
+    Kitchen,
   },
-  StatusDisplay: StatusDisplayScreen,
-  Kitchen,
-});
+  {
+    navigationOptions: {
+      customCSS: fontsCSS,
+    },
+  },
+);
 
 export default App;
