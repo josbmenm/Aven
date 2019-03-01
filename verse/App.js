@@ -228,7 +228,7 @@ function ConnectedDot() {
     />
   );
 }
-function KitchenDisplay({ state, config }) {
+function KitchenDisplay({ kitchenState, config, restaurantState }) {
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       <ConnectedDot />
@@ -238,6 +238,7 @@ function KitchenDisplay({ state, config }) {
         title="Fill System"
         subTitle="preparing Mango and Papaya"
       />
+      <StatusDisplayRow subTitle={JSON.stringify(restaurantState)} />
       <StatusDisplayRow title="Blend System" subTitle="3 queued orders" />
       <StatusDisplayRow
         title="Delivery System A"
@@ -250,7 +251,7 @@ function KitchenDisplay({ state, config }) {
           key={subsystemName}
           subsystemName={subsystemName}
           subsystem={config.subsystems[subsystemName]}
-          state={state}
+          state={kitchenState}
         />
       ))}
     </View>
@@ -467,13 +468,18 @@ function StatusDisplayScreen() {
 function Kitchen() {
   const kitchenConfig = useCloudValue('KitchenConfig');
   const kitchenState = useCloudValue('KitchenState');
+  const restaurantState = useCloudValue('RestaurantState');
 
   if (!kitchenConfig) {
     return null;
   }
   return (
     <StatusDisplayLayout debugView={null}>
-      <KitchenDisplay config={kitchenConfig} state={kitchenState} />
+      <KitchenDisplay
+        config={kitchenConfig}
+        kitchenState={kitchenState}
+        restaurantState={restaurantState}
+      />
     </StatusDisplayLayout>
   );
 }
