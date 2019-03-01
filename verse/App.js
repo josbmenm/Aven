@@ -83,7 +83,7 @@ function StatusDisplayLayout({ children, backgroundColor, debugView }) {
   );
 }
 
-function StatusDisplayRow({ title }) {
+function StatusDisplayTitleRow({ title }) {
   return (
     <View
       style={{
@@ -100,7 +100,7 @@ function StatusDisplayRow({ title }) {
   );
 }
 
-function OrderRow({ orderName, status, productName }) {
+function StatusDisplayRow({ title, subTitle, right }) {
   return (
     <View
       style={{
@@ -120,14 +120,20 @@ function OrderRow({ orderName, status, productName }) {
             color: monsterra,
           }}
         >
-          {orderName}
+          {title}
         </Text>
         <Text style={{ ...primaryFontFace, color: monsterra, fontSize: 16 }}>
-          {productName}
+          {subTitle}
         </Text>
       </View>
-      {status}
+      {right}
     </View>
+  );
+}
+
+function OrderRow({ orderName, status, productName }) {
+  return (
+    <StatusDisplayRow title={orderName} subTitle={productName} right={status} />
   );
 }
 
@@ -138,7 +144,7 @@ function PresentationSection() {
 function QueueSection({ prepQueue }) {
   return (
     <React.Fragment>
-      <StatusDisplayRow title="orders in progress:" />
+      <StatusDisplayTitleRow title="orders in progress:" />
       {prepQueue.map(order => (
         <OrderRow
           orderName={order.displayName}
@@ -166,7 +172,7 @@ function PickupCell({ style, state }) {
 function PickupSection({ state }) {
   return (
     <React.Fragment>
-      <StatusDisplayRow title="now serving:" />
+      <StatusDisplayTitleRow title="now serving:" />
       <View
         style={{
           flexDirection: 'row',
@@ -200,15 +206,32 @@ function StatusDisplay({ state }) {
   );
 }
 
+function SubSystemSection({ subsystemName, subsystem, state }) {
+  return <StatusDisplayRow title={`${subsystem.icon}  ${subsystemName}`} />;
+}
 function KitchenDisplay({ state, config }) {
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <StatusDisplayRow title="Restaurant State:" />
-      <Text>{JSON.stringify(state)}</Text>
-      <StatusDisplayRow title="Kitchen Systems:" />
-      <Text style={{ fontSize: 132, color: 'red' }}>
-        {JSON.stringify(Object.keys(config.subsystems))}
-      </Text>
+      <StatusDisplayRow title="Kitchen Status" subTitle="closed" />
+      <StatusDisplayRow title="Order Queue" subTitle="3 queued orders" />
+      <StatusDisplayRow
+        title="Fill System"
+        subTitle="preparing Mango and Papaya"
+      />
+      <StatusDisplayRow title="Blend System" subTitle="3 queued orders" />
+      <StatusDisplayRow
+        title="Delivery System A"
+        subTitle="delivering Mango and Papaya for Daniel F"
+      />
+      <StatusDisplayRow title="Delivery System B" subTitle="ready" />
+      <StatusDisplayTitleRow title="Kitchen Systems:" />
+      {Object.keys(config.subsystems).map(subsystemName => (
+        <SubSystemSection
+          subsystemName={subsystemName}
+          subsystem={config.subsystems[subsystemName]}
+          state={state}
+        />
+      ))}
     </View>
   );
 }
