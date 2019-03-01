@@ -2,6 +2,7 @@ import React, { useState, useEffect, useReducer } from 'react';
 import { View, Text, Animated, Button } from 'react-native';
 
 import useCloud from '../aven-cloud/useCloud';
+import useObservable from '../aven-cloud/useObservable';
 import useCloudReducer from '../aven-cloud/useCloudReducer';
 import useCloudValue from '../aven-cloud/useCloudValue';
 import uuid from 'uuid/v1';
@@ -209,9 +210,28 @@ function StatusDisplay({ state }) {
 function SubSystemSection({ subsystemName, subsystem, state }) {
   return <StatusDisplayRow title={`${subsystem.icon}  ${subsystemName}`} />;
 }
+
+function ConnectedDot() {
+  const cloud = useCloud();
+  const isConnected = useObservable(cloud.isConnected);
+  return (
+    <View
+      style={{
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        position: 'absolute',
+        backgroundColor: isConnected ? 'green' : 'red',
+        top: 25,
+        right: 50,
+      }}
+    />
+  );
+}
 function KitchenDisplay({ state, config }) {
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <ConnectedDot />
       <StatusDisplayRow title="Kitchen Status" subTitle="closed" />
       <StatusDisplayRow title="Order Queue" subTitle="3 queued orders" />
       <StatusDisplayRow
@@ -227,6 +247,7 @@ function KitchenDisplay({ state, config }) {
       <StatusDisplayTitleRow title="Kitchen Systems:" />
       {Object.keys(config.subsystems).map(subsystemName => (
         <SubSystemSection
+          key={subsystemName}
           subsystemName={subsystemName}
           subsystem={config.subsystems[subsystemName]}
           state={state}

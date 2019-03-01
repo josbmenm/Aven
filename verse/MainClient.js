@@ -22,14 +22,14 @@ const RESTAURANT_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
 
 const restaurantSource = createBrowserNetworkSource(RESTAURANT_CONFIG);
 
-const restaurantClient = createCloudClient({
+const cloud = createCloudClient({
   dataSource: restaurantSource,
   domain: 'onofood.co',
 });
 
 const context = new Map();
 
-context.set(CloudContext, restaurantClient);
+context.set(CloudContext, cloud);
 
 export default function startClient() {
   startWebClient(App, context);
