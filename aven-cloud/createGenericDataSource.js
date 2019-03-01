@@ -178,7 +178,10 @@ export default function createGenericDataSource({
     const memoryDoc = getMemoryNode(name, true);
     memoryDoc.id = id;
     if (memoryDoc.behavior) {
-      memoryDoc.behavior.next(_renderDoc(memoryDoc));
+      const newDoc = _renderDoc(memoryDoc);
+      if (newDoc.id !== memoryDoc.behavior.getValue().id) {
+        memoryDoc.behavior.next(newDoc);
+      }
     } else {
       memoryDoc.behavior = new BehaviorSubject(_renderDoc(memoryDoc));
     }
