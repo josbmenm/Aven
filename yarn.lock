@@ -4,7 +4,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#a75163724c858c9f321594c45ac0c6a39f6d6c61"
+  resolved "https://github.com/AvenCloud/Aven.git#35cc0f4cc14d86c06780c92a37cff933351a88cf"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     "@expo/vector-icons" "^8.0.0"
@@ -1048,9 +1048,9 @@
   integrity sha512-FwI9gX75FgVBJ7ywgnq/P7tw+/o1GUbtP0KzbtusLigAOgIgNISRK0ZPl4qertvXSIE8YbsVJueQ90cDt9YYyw==
 
 "@types/node@*":
-  version "11.9.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.9.5.tgz#011eece9d3f839a806b63973e228f85967b79ed3"
-  integrity sha512-vVjM0SVzgaOUpflq4GYBvCpozes8OgIIS5gVXVka+OfK3hvnkC1i93U8WiY2OtNE4XUWyyy/86Kf6e0IHTQw1Q==
+  version "11.9.6"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.9.6.tgz#c632bbcc780a1349673a6e2e9b9dfa8c369d3c74"
+  integrity sha512-4hS2K4gwo9/aXIcoYxCtHpdgd8XUeDmo1siRCAH3RziXB65JlPqUFMtfy9VPj+og7dp3w1TFjGwYga4e0m9GwA==
 
 "@types/range-parser@*":
   version "1.2.3"
@@ -6161,7 +6161,16 @@ react-native-fast-image@^5.1.2:
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-5.2.0.tgz#6730eb06951ea6f9a79abe02a733bc05b7a73412"
   integrity sha512-S+2gmv9HfLc7CGjjnQ3kO/QoZD9BJnjfwWhsJWgjEvaeOPbpHZaXSUkINSqLcHD5KIHcYidu+U2lgXdEv4Jamg==
 
-react-native-gesture-handler@^1.0.15, react-native-gesture-handler@~1.0.14:
+react-native-gesture-handler@^1.0.15:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.1.0.tgz#2a7d545ad2e0ca23adce22b2af441ad360ecccee"
+  integrity sha512-E9IKHpmL+sz/iCYkUriTUjBaQBORWV+oheYPQleADkxjo2sYsQfnlyTz4EQYFONkUwJ6WmfTNkYt2/yc5U4Ziw==
+  dependencies:
+    hoist-non-react-statics "^2.3.1"
+    invariant "^2.2.2"
+    prop-types "^15.5.10"
+
+react-native-gesture-handler@~1.0.14:
   version "1.0.16"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.16.tgz#bee54981575e581857c2298e133ce2ffac240a3e"
   integrity sha512-KhUjDaiGKESfVa/lywuYfdZ2pomPC4q/dRQo18qlSZuRxEiOCxzSo9Q1TV7JK3PpyyMEXpsU04kYSSVypWiSxg==
@@ -6220,9 +6229,9 @@ react-native-web@^0.10.0:
     react-timer-mixin "^0.13.4"
 
 react-native@^0.58.5:
-  version "0.58.5"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.58.5.tgz#672709bafd845e35ab4dd32b8ccccae32d54d552"
-  integrity sha512-wCWjUAtvRK7A1YxnCANAW8/3+x3gh2WUifYqdvKSAJ6wGsftLgvj1JxIaUMQ3mKi0aUeAlHnz0cO21ZPCLgd+g==
+  version "0.58.6"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.58.6.tgz#a6d273cd2f51b0e3b141dad5f19622e0000497b3"
+  integrity sha512-m/7L0gYXS4yHjs+PKmyurh1LLr7/tpobAX8Iv7Dwu4XT1ZcZFeCATn420E9U3nC2XsT54AmRR2Fv7VGgf+M2vQ==
   dependencies:
     "@babel/runtime" "^7.0.0"
     absolute-path "^0.0.0"
@@ -6289,7 +6298,7 @@ react-navigation-stack@1.0.0-alpha.22:
 
 "react-navigation-stack@https://github.com/react-navigation/react-navigation-stack":
   version "1.0.10"
-  resolved "https://github.com/react-navigation/react-navigation-stack#77d95131a05786ec47edcb5affec9b9375e4512c"
+  resolved "https://github.com/react-navigation/react-navigation-stack#75f1f4643b62a359d2d2f3f8b27f53f97e969c37"
 
 react-navigation-transitioner@^1.0.0-alpha.3, "react-navigation-transitioner@https://github.com/react-navigation/react-navigation-transitioner":
   version "1.0.0-alpha.3"
@@ -7465,9 +7474,9 @@ tslint-react@^3.6.0:
     tsutils "^2.13.1"
 
 tslint@^5.11.0:
-  version "5.13.0"
-  resolved "https://registry.yarnpkg.com/tslint/-/tslint-5.13.0.tgz#239a2357c36b620d72d86744754b6fc088a25359"
-  integrity sha512-ECOOQRxXCYnUUePG5h/+Z1Zouobk3KFpIHA9aKBB/nnMxs97S1JJPDGt5J4cGm1y9U9VmVlfboOxA8n1kSNzGw==
+  version "5.13.1"
+  resolved "https://registry.yarnpkg.com/tslint/-/tslint-5.13.1.tgz#fbc0541c425647a33cd9108ce4fd4cd18d7904ed"
+  integrity sha512-fplQqb2miLbcPhyHoMV4FU9PtNRbgmm/zI5d3SZwwmJQM6V0eodju+hplpyfhLWpmwrDNfNYU57uYRb8s0zZoQ==
   dependencies:
     babel-code-frame "^6.22.0"
     builtin-modules "^1.1.1"
