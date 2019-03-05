@@ -1,5 +1,4 @@
 import { Observable, BehaviorSubject } from 'rxjs-compat';
-import observeNull from './observeNull';
 import createCloudBlock from './createCloudBlock';
 import uuid from 'uuid/v1';
 import bindCloudValueFunctions from './bindCloudValueFunctions';
@@ -33,6 +32,11 @@ export function createDocPool({
     if (name[0] === '^') {
       const doc = onGetSelf();
       const evalName = name.slice(1);
+      if (evalName === '') {
+        throw new Error(
+          'Must specify a doc name to evaluate with, when getting a cloud function with the ^ character.'
+        );
+      }
       const evalDoc = cloudClient.get(evalName);
       return doc.eval(evalDoc);
     }
@@ -353,6 +357,7 @@ export default function createCloudDoc({
       id,
       cloudClient,
       blockValueCache,
+      cloudDoc,
     }));
     return o;
   }
@@ -365,6 +370,7 @@ export default function createCloudDoc({
       value,
       cloudClient,
       blockValueCache,
+      cloudDoc,
     });
 
     if (_docBlocks[block.id]) {
@@ -382,6 +388,7 @@ export default function createCloudDoc({
       id,
       cloudClient,
       blockValueCache,
+      cloudDoc,
     });
 
     if (_docBlocks[id]) {
@@ -431,6 +438,75 @@ export default function createCloudDoc({
     }
     const block = _getBlockWithId(id);
     return block.getValue();
+  }
+
+  let overriddenFunction = null;
+
+  function $setOverrideFunction(fn) {
+    overriddenFunction = fn;
+  }
+  function doFunctionThing(
+    pureDataFn,
+    argumentValue,
+    argumentDoc,
+    cloudClient
+  ) {
+    const _functionDependencies = new Set();
+    async function loadDependencies() {
+      await Promise.all(
+        [..._functionDependencies].map(async dep => {
+          await dep.fetchValue();
+        })
+      );
+    }
+    function useValue(cloudValue) {
+      _functionDependencies.add(cloudValue);
+      return cloudValue.getValue();
+    }
+    function computeResult() {
+      return pureDataFn(argumentValue, argumentDoc, cloudClient, useValue);
+    }
+    return {
+      loadDependencies,
+      result: computeResult(),
+      reComputeResult: computeResult,
+    };
+  }
+  function functionGetValue(argumentDoc) {
+    if (overriddenFunction) {
+      const { result } = doFunctionThing(
+        overriddenFunction,
+        argumentDoc.getValue(),
+        argumentDoc,
+        cloudClient
+      );
+      return result;
+    }
+    const block = getBlock();
+    if (!block) {
+      return undefined;
+    }
+    return block.functionGetValue(argumentDoc);
+  }
+
+  async function functionFetchValue(argumentDoc) {
+    if (overriddenFunction) {
+      await argumentDoc.fetchValue();
+      const { loadDependencies, reComputeResult } = doFunctionThing(
+        overriddenFunction,
+        argumentDoc.getValue(),
+        argumentDoc,
+        cloudClient
+      );
+      await loadDependencies();
+      return reComputeResult();
+    }
+    await fetchValue();
+    const block = getBlock();
+    if (!block) {
+      return undefined;
+    }
+    await block.functionFetchValue(argumentDoc);
   }
 
   async function put(value) {
@@ -545,18 +621,38 @@ export default function createCloudDoc({
     }
   }
 
-  const observeValue = observe
-    .map(cloudDocValue => {
-      if (cloudDocValue.value !== undefined) {
-        return observeStatic(cloudDocValue.value);
-      }
+  const observeValue = observe.switchMap(cloudDocValue => {
+    if (cloudDocValue.value !== undefined) {
+      return Observable.of(cloudDocValue.value);
+    }
+    if (!cloudDocValue.id) {
+      return Observable.of(null);
+    }
+    const block = _getBlockWithId(cloudDocValue.id);
+    return block.observeValue;
+  });
+
+  const functionObserveValue = argumentDoc => {
+    if (overriddenFunction) {
+      return argumentDoc.observeValue.flatMap(async argumentValue => {
+        const { loadDependencies, reComputeResult } = doFunctionThing(
+          overriddenFunction,
+          argumentValue,
+          argumentDoc,
+          cloudClient
+        );
+        await loadDependencies();
+        return reComputeResult();
+      });
+    }
+    return observe.switchMap(cloudDocValue => {
       if (!cloudDocValue.id) {
-        return observeNull;
+        return Observable.of(undefined);
       }
       const block = _getBlockWithId(cloudDocValue.id);
-      return block.observeValue;
-    })
-    .switch();
+      return block.functionObserveValue(argumentDoc);
+    });
+  };
 
   function lookupDocBlock(inputVal, lookup) {
     let docValue = inputVal;
@@ -564,7 +660,7 @@ export default function createCloudDoc({
       docValue = docValue && docValue[v];
     });
     if (docValue == null) {
-      return observeNull;
+      return Observable.of(undefined);
     }
     if (typeof docValue !== 'string') {
       throw new Error(`Cannot look up block ID in ${name} on ${lookup.join()}`);
@@ -576,7 +672,7 @@ export default function createCloudDoc({
     return observeValue
       .map(value => {
         if (!value) {
-          return observeNull;
+          return Observable.of(null);
         }
         const connected = lookupDocBlock(value, lookup);
         return connected.observeValue;
@@ -655,6 +751,11 @@ export default function createCloudDoc({
     fetchValue,
     getReference,
     // todo: serialize?
+
+    functionGetValue,
+    functionFetchValue,
+    functionObserveValue,
+    $setOverrideFunction, // I suppose this is an implementation detail of eval data source
   };
 
   bindCloudValueFunctions(cloudDoc, cloudClient);

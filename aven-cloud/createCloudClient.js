@@ -1,5 +1,6 @@
 import { default as withObs } from '@nozbe/with-observables';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
+import mapBehaviorSubject from '../aven-cloud-utils/mapBehaviorSubject';
 import getIdOfValue from '../aven-cloud-utils/getIdOfValue';
 import { BehaviorSubject } from 'rxjs-compat';
 
@@ -11,6 +12,7 @@ export default function createCloudClient({
   dataSource,
   domain,
   initialSession = null,
+  onSession,
 }) {
   const _blockValues = {};
 
@@ -59,6 +61,7 @@ export default function createCloudClient({
     });
     if (created && created.session) {
       session.next(created.session);
+      onSession && onSession(created.session);
     }
     return created;
   }
@@ -73,6 +76,7 @@ export default function createCloudClient({
     });
     if (created && created.session) {
       session.next(created.session);
+      onSession && onSession(created.session);
     }
     return created;
   }
@@ -82,6 +86,7 @@ export default function createCloudClient({
       throw new Error('no session found!');
     }
     session.next(null);
+    onSession && onSession(null);
     await dataSource.dispatch({
       type: 'DestroySession',
       domain,
@@ -147,8 +152,19 @@ export default function createCloudClient({
 
   const dispatch = createDispatcher(actions, sessionDispatch, domain);
 
+  const _lambdas = {};
+
+  const getLambda = name => {
+    return _lambdas[name];
+  };
+  const setLambda = (name, fn) => {
+    _lambdas[name] = fn;
+  };
+
   const cloudClient = {
     ...dataSource,
+    getLambda,
+    setLambda,
     observeSession: session,
     CreateSession,
     CreateAnonymousSession,
@@ -167,6 +183,15 @@ export default function createCloudClient({
     onGetSelf: () => cloudClient,
   });
   cloudClient.get = docs.get;
+
+  cloudClient.observeUserDoc = mapBehaviorSubject(session, value => {
+    if (value && value.accountId) {
+      const doc = docs.get(`@${value.accountId}`);
+      return doc;
+    } else {
+      return null;
+    }
+  });
 
   return cloudClient;
 }

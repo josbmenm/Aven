@@ -192,6 +192,7 @@ describe('eval', () => {
     });
     await dataSource.dispatch({
       type: 'PutDocValue',
+
       domain: 'd',
       name: 'squared',
       value: {

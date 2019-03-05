@@ -15,7 +15,7 @@ export default function useCloudReducer(name, reducer, initialState) {
       lambdaDoc
         .put({
           type: 'LambdaFunction',
-          code: `(a, doc, cloud, opts) => {
+          code: `(a, doc, cloud, useValue) => {
         let state = ${JSON.stringify(initialState)};
         
         if (!a) {

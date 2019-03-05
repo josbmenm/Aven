@@ -13,6 +13,7 @@ export default function createCloudBlock({
   value,
   lastFetchTime, // should be set if this block came from the server..
   cloudClient,
+  cloudDoc,
   blockValueCache,
 }) {
   let observedBlockId = null;
@@ -147,6 +148,76 @@ export default function createCloudBlock({
     state => state.isConnected
   );
 
+  const _functionDependencies = new Set();
+  function useValue(cloudValue) {
+    _functionDependencies.add(cloudValue);
+    return cloudValue.getValue();
+  }
+  let _evaluatedFunction = null;
+
+  function doTheCompute(lambdaValue, argValue, argDoc) {
+    console.log('doing compute', lambdaValue, argValue);
+    if (!_evaluatedFunction) {
+      if (!lambdaValue || lambdaValue.type !== 'LambdaFunction') {
+        return null;
+      }
+
+      _evaluatedFunction = eval(lambdaValue.code);
+    }
+    function computeResult() {
+      // if (typeof lambda !== 'function') {
+      //   return null;
+      // }
+      return _evaluatedFunction(argValue, argDoc, cloudClient, useValue);
+    }
+    async function loadDependencies() {
+      await Promise.all(
+        [..._functionDependencies].map(async dep => {
+          await dep.fetchValue();
+        })
+      );
+    }
+    return {
+      result: computeResult(),
+      loadDependencies,
+      reComputeResult: computeResult,
+    };
+  }
+
+  function functionGetValue(argDoc) {
+    const { result } = doTheCompute(getValue(), argDoc.getValue(), argDoc);
+
+    return result;
+  }
+
+  const functionFetchValue = async argumentDoc => {
+    await argumentDoc.fetchValue();
+    await fetch();
+    const { loadDependencies, reComputeResult } = doTheCompute(
+      getValue(),
+      argumentDoc.getValue(),
+      argumentDoc
+    );
+    await loadDependencies();
+    return reComputeResult();
+  };
+
+  const functionObserveValue = argumentDoc =>
+    observeValue.switchMap(fnValue => {
+      if (fnValue === undefined) {
+        return Observable.of(null);
+      }
+      return argumentDoc.observeValue.flatMap(async argValue => {
+        const { reComputeResult, loadDependencies } = doTheCompute(
+          fnValue,
+          argValue,
+          argumentDoc
+        );
+        await loadDependencies();
+        return reComputeResult();
+      });
+    });
+
   const cloudBlock = {
     isConnected,
     getFullName: () => onGetName(),
@@ -165,6 +236,10 @@ export default function createCloudBlock({
     observeValue,
     getReference,
     serialize,
+
+    functionGetValue,
+    functionFetchValue,
+    functionObserveValue,
   };
 
   bindCloudValueFunctions(cloudBlock, cloudClient);

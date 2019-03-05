@@ -12,7 +12,6 @@ import React, {
   createContext,
 } from 'react';
 import {
-  AsyncStorage,
   Image,
   ScrollView,
   StyleSheet,
@@ -33,52 +32,13 @@ import useCloudSession from '../aven-cloud/useCloudSession';
 import useObservable from '../aven-cloud/useObservable';
 import useCloudValue from '../aven-cloud/useCloudValue';
 import JSONView from '../debug-views/JSONView';
+import useAsyncStorage, { isStateUnloaded } from '../utils/useAsyncStorage';
 const pathJoin = require('path').join;
 
 function useActiveRoute() {
   const state = useNavigationState();
 
   return state.routes[state.index];
-}
-
-const UNLOADED_STATE = {};
-
-function isStateUnloaded(s) {
-  return s === UNLOADED_STATE;
-}
-
-function useAsyncStorage(storageKey, defaultValue) {
-  const unloadedValue = UNLOADED_STATE;
-  const [storageState, setInternalStorageState] = useState(unloadedValue);
-
-  useEffect(
-    () => {
-      AsyncStorage.getItem(storageKey)
-        .then(stored => {
-          if (stored === null) {
-            setInternalStorageState(defaultValue);
-          } else {
-            setInternalStorageState(JSON.parse(stored));
-          }
-        })
-        .catch(console.error);
-    },
-    [storageKey]
-  );
-
-  function setStorageState(newState) {
-    if (isStateUnloaded(storageState)) {
-      throw new Error(
-        'Cannot merge storage state if it has not been loaded yet!'
-      );
-    }
-    setInternalStorageState(newState);
-    AsyncStorage.setItem(storageKey, JSON.stringify(newState)).catch(
-      console.error
-    );
-  }
-
-  return [storageState, setStorageState];
 }
 
 function isPrimitive(v) {

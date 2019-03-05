@@ -8,6 +8,8 @@ export default function NetworkCloudProvider({
   useSSL,
   domain,
   children,
+  session,
+  onSession,
 }) {
   const cloud = useMemo(
     () => {
@@ -18,10 +20,12 @@ export default function NetworkCloudProvider({
       const cloud = createCloudClient({
         dataSource,
         domain,
+        initialSession: session,
+        onSession,
       });
       return cloud;
     },
-    [authority, useSSL, domain]
+    [authority, useSSL, domain, onSession]
   );
   return (
     <CloudContext.Provider value={cloud}>{children}</CloudContext.Provider>

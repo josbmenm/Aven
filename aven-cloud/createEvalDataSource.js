@@ -1,8 +1,17 @@
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import createCloudClient from './createCloudClient';
 
-export default function createEvalDataSource({ dataSource, domain }) {
-  const cloud = createCloudClient({ dataSource, domain });
+export default function createEvalSource({
+  dataSource,
+  domain,
+  evalDocs = {},
+}) {
+  const cloud = createCloudClient({ dataSource, domain, evalDocs });
+
+  Object.keys(evalDocs).map(async evalDocName => {
+    const evalFunction = evalDocs[evalDocName];
+    cloud.get(evalDocName).$setOverrideFunction(evalFunction);
+  });
 
   // async function GetDocValue({ domain, name }) {
   //   console.log('GetDocValue', name);

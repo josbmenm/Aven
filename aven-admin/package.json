@@ -2,6 +2,7 @@
   "name": "aven-admin",
   "aven": {
     "srcDependencies": [
+      "utils",
       "aven-cloud",
       "aven-cloud-browser",
       "debug-views",

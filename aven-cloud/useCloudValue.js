@@ -7,7 +7,7 @@ export default function useCloudValue(cloudValueDefinition) {
   if (typeof cloudValueDefinition === 'string') {
     cloudValue = useCloud().get(cloudValueDefinition);
   }
-  const [value, setValue] = useState(cloudValue.getValue());
+  const [value, setValue] = useState(cloudValue && cloudValue.getValue());
 
   const lastRef = useRef(value);
 
@@ -20,6 +20,9 @@ export default function useCloudValue(cloudValueDefinition) {
 
   useEffect(
     () => {
+      if (!cloudValue) {
+        return () => {};
+      }
       const subscription = cloudValue.observeValue.subscribe(applyValue);
       return () => subscription.unsubscribe();
     },

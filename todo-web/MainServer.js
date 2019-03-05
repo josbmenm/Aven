@@ -4,7 +4,9 @@ import CloudAuth from '../aven-cloud-auth/CloudAuth';
 import createMemoryDataSource from '../aven-cloud/createMemoryDataSource';
 import WebServer from '../aven-web/WebServer';
 import SMSAgent from '../aven-sms-agent-twilio/SMSAgent';
+import EmailAgent from '../aven-email-agent-sendgrid/EmailAgent';
 import SMSAuthMethod from '../aven-cloud-auth-sms/SMSAuthMethod';
+import EmailAuthMethod from '../aven-cloud-auth-email/EmailAuthMethod';
 
 import App from './App';
 
@@ -13,6 +15,17 @@ const runServer = async () => {
 
   const dataSource = await createMemoryDataSource({
     domain: 'todo.aven.cloud',
+  });
+
+  const emailAgent = EmailAgent({
+    defaultFromEmail: 'Aven Todos <support@aven.io>',
+    config: {
+      sendgridAPIKey: process.env.SENDGRID_API_KEY,
+    },
+  });
+
+  const emailAuthMethod = EmailAuthMethod({
+    agent: emailAgent,
   });
 
   const smsAgent = SMSAgent({
@@ -31,7 +44,7 @@ const runServer = async () => {
   });
   const authSource = CloudAuth({
     dataSource,
-    methods: [smsAuthMethod],
+    methods: [smsAuthMethod, emailAuthMethod],
   });
   const client = createCloudClient({
     authSource,

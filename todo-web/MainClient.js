@@ -12,7 +12,7 @@ const networkSource = createBrowserNetworkSource({
 
 const client = createCloudClient({
   dataSource: networkSource,
-  domain: 'example.aven.cloud',
+  domain: 'todo.aven.cloud',
 });
 
 const context = new Map();

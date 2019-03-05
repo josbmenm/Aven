@@ -4,7 +4,7 @@ import {
   useNavigationDidBlurEffect,
   useNavigationWillFocusEffect,
   useNavigationDidFocusEffect,
-} from '../../navigation-hooks/Hooks';
+} from './Hooks';
 
 export default function useFocus({ inputRenderers, onSubmit }) {
   const focused = React.useRef(null);

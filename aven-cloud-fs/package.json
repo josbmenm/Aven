@@ -3,7 +3,13 @@
   "version": "1.1.0",
   "aven": {
     "srcDependencies": [
-      "aven-cloud"
+      "aven-cloud",
+      "aven-cloud-utils"
+    ],
+    "moduleDependencies": [
+      "json-stable-stringify",
+      "fs-extra",
+      "rxjs-compat"
     ]
   },
   "srcChecksum": "0ffede09a99fd3e6c275a691ab80fe5be7b8d34951572909e573906757b1afaf"

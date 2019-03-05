@@ -3,7 +3,9 @@
   "aven": {
     "env": "expo",
     "srcDependencies": [
-      "navigation-core"
+      "aven-cloud-native",
+      "navigation-core",
+      "navigation-native"
     ],
     "moduleDependencies": [
       "@react-navigation/native",

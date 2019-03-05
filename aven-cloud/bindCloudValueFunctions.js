@@ -4,101 +4,8 @@ function flatArray(a) {
   return [].concat.apply([], a);
 }
 
-function computeLambdaResult(
-  argumentValue,
-  lambdaValue,
-  docContext,
-  cloudClient
-) {
-  const evalCode = `({useValue}) => {
-    // console.log = () => {};
-    return ${lambdaValue.code};
-  }`;
-
-  const lambdaContext = eval(evalCode);
-
-  const dependencies = new Set();
-  function useValue(cloudValue) {
-    dependencies.add(cloudValue);
-    return cloudValue.getValue();
-  }
-  const lambda = lambdaContext({ useValue });
-
-  function computeResult() {
-    if (typeof lambda !== 'function') {
-      return null;
-    }
-    return lambda(argumentValue, docContext, cloudClient);
-  }
-
-  return {
-    result: computeResult(),
-    dependencies,
-    reComputeResult: computeResult,
-  };
-}
-
 function filterUndefined() {
   return filter(value => value !== undefined);
-}
-
-async function fetchEvalCache(
-  evalCache,
-  lambdaValue,
-  argumentValue,
-  docContext,
-  cloudClient
-) {
-  let lambdaCache = evalCache.get(lambdaValue);
-  if (!lambdaCache) {
-    lambdaCache = new Map();
-    evalCache.set(lambdaValue, lambdaCache);
-  }
-
-  let result = lambdaCache.get(argumentValue);
-  if (result === undefined) {
-    const { dependencies, reComputeResult } = computeLambdaResult(
-      argumentValue,
-      lambdaValue,
-      docContext,
-      cloudClient
-    );
-
-    await Promise.all(
-      [...dependencies].map(async dep => {
-        await dep.fetchValue();
-      })
-    );
-
-    result = reComputeResult();
-    lambdaCache.set(argumentValue, result);
-  }
-  return result;
-}
-
-function hitEvalCache(
-  evalCache,
-  lambdaValue,
-  argumentValue,
-  docContext,
-  cloudClient
-) {
-  let lambdaCache = evalCache.get(lambdaValue);
-  if (!lambdaCache) {
-    lambdaCache = new Map();
-    evalCache.set(lambdaValue, lambdaCache);
-  }
-  let result = lambdaCache.get(argumentValue);
-  if (result === undefined) {
-    const computed = computeLambdaResult(
-      argumentValue,
-      lambdaValue,
-      docContext,
-      cloudClient
-    );
-    result = computed.result;
-  }
-  return result;
 }
 
 function expandCloudValue(cloudValue, cloudClient, expandFn) {
@@ -190,63 +97,9 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
         `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
       );
     },
-    fetchValue: async () => {
-      await cloudValue.fetchValue();
-      await lambdaDoc.fetchValue();
-      if (lambdaDoc.getValue() == null) {
-        throw new Error(
-          `Cannot compute lambda of empty "${lambdaDoc.getFullName()}" doc`
-        );
-      }
-      const result = await fetchEvalCache(
-        evalCache,
-        lambdaDoc.getValue(),
-        cloudValue.getValue(),
-        cloudValue,
-        cloudClient
-      );
-
-      return result;
-    },
-    observeValue: lambdaDoc.observeValue
-      .distinctUntilChanged()
-      .switchMap(lambdaDocValue => {
-        return cloudValue.observeValue
-          .distinctUntilChanged()
-          .flatMap(async argumentValue => {
-            if (lambdaDocValue == null) {
-              return null;
-            }
-
-            const result = await fetchEvalCache(
-              evalCache,
-              lambdaDocValue,
-              argumentValue,
-              cloudValue,
-              cloudClient
-            );
-
-            return result;
-          });
-      })
-      .pipe(filterUndefined())
-      .distinctUntilChanged(),
-    getValue: () => {
-      const lambdaValue = lambdaDoc.getValue();
-      const argumentValue = cloudValue.getValue();
-      if (!lambdaValue) {
-        return null;
-      }
-      const result = hitEvalCache(
-        evalCache,
-        lambdaValue,
-        argumentValue,
-        cloudValue,
-        cloudClient
-      );
-
-      return result;
-    },
+    fetchValue: () => lambdaDoc.functionFetchValue(cloudValue),
+    observeValue: lambdaDoc.functionObserveValue(cloudValue),
+    getValue: () => lambdaDoc.functionGetValue(cloudValue),
   };
   bindCloudValueFunctions(evaluatedDoc, cloudClient);
   return evaluatedDoc;

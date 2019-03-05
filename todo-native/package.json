@@ -3,8 +3,11 @@
   "aven": {
     "env": "reactnative",
     "srcDependencies": [
+      "views",
+      "utils",
       "aven-cloud-native",
       "navigation-core",
+      "navigation-hooks",
       "navigation-native",
       "navigation-stack"
     ],

@@ -153,7 +153,7 @@ function useTodosTransactional() {
 }
 
 function TodoItem({ item }) {
-  const [_, dispatch] = useTodosTransactional();
+  const [, dispatch] = useTodosTransactional();
   return (
     <View>
       <Text>{item.label}</Text>

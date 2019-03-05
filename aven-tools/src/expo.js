@@ -24,7 +24,7 @@ export default App;`;
     description: 'App description coming soon',
     slug: 'expo-app',
     privacy: 'unlisted',
-    sdkVersion: '30.0.0',
+    sdkVersion: '32.0.0',
     platforms: ['ios', 'android'],
     version: '0.1.0',
     orientation: 'portrait',

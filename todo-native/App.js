@@ -22,6 +22,10 @@ import useCloudValue from '../aven-cloud/useCloudValue';
 import useObservable from '../aven-cloud/useObservable';
 import useCloudReducer from '../aven-cloud/useCloudReducer';
 import Animated, { Easing } from 'react-native-reanimated';
+import { useNavigation } from '../navigation-hooks/Hooks';
+import useFocus from '../navigation-hooks/useFocus';
+import LabelInput from '../views/LabelInput';
+import useAsyncStorage, { isStateUnloaded } from '../utils/useAsyncStorage';
 
 function ConnectedMessage() {
   const cloud = useCloud();
@@ -86,25 +90,56 @@ function Button({ title, onPress }) {
   );
 }
 
-const Home = ({ navigation }) => {
-  // <TodoList />
-
+function LoginButtons() {
+  const { navigate } = useNavigation();
   return (
-    <View style={{ flex: 1, justifyContent: 'center' }}>
-      <ConnectedMessage />
+    <React.Fragment>
       <Button
         title="Log In SMS"
         onPress={() => {
-          navigation.navigate('Login', { provider: 'sms' });
+          navigate('Login', { provider: 'sms' });
         }}
       />
       <Button
         title="Log In Email"
         onPress={() => {
-          navigation.navigate('Login', { provider: 'email' });
+          navigate('Login', { provider: 'email' });
         }}
       />
-      <Button title="Register" />
+    </React.Fragment>
+  );
+}
+
+function AccountSection({ userDoc }) {
+  const { DestroySession } = useCloud();
+  const user = useCloudValue(userDoc);
+  if (!userDoc) {
+    return null;
+  }
+  return (
+    <React.Fragment>
+      <Button
+        title="Logout"
+        onPress={() => {
+          DestroySession();
+        }}
+      />
+      <Button title="Change Username" onPress={() => {}} />
+    </React.Fragment>
+  );
+}
+
+const Home = () => {
+  // <TodoList />
+
+  const { observeUserDoc } = useCloud();
+  const userDoc = useObservable(observeUserDoc);
+  console.log('asdfggzzz' + userDoc);
+  return (
+    <View style={{ flex: 1, justifyContent: 'center' }}>
+      <ConnectedMessage />
+      {userDoc && <AccountSection userDoc={userDoc} />}
+      {!userDoc && <LoginButtons />}
     </View>
   );
 };
@@ -112,10 +147,10 @@ const Home = ({ navigation }) => {
 const StyleContext = React.createContext({
   borderRadius: 4,
   textColor: '#222',
-  primaryFontSize: 14,
+  primaryFontSize: 26,
   borderColor: '#555',
   commonPadding: 15,
-  primaryColor: 'blue',
+  primaryColor: '#448',
   textColorAgainstPrimary: 'white',
 });
 
@@ -173,14 +208,6 @@ function FormButton({ onPress, title }) {
   );
 }
 
-function FormTitle({ children }) {
-  return (
-    <View>
-      <Text style={{ color: 'red', fontSize: 42 }}>{children}</Text>
-    </View>
-  );
-}
-
 function PageForm({ inputs, onSubmit }) {
   const [formState, dispatch] = useReducer(
     (state, action) => {
@@ -196,25 +223,28 @@ function PageForm({ inputs, onSubmit }) {
       inputState: {},
     }
   );
+  const focus = useFocus({
+    onSubmit: () => onSubmit(formState.inputState),
+    inputRenderers: inputs.map(input => props => (
+      <LabelInput
+        label={input.label || input.name}
+        key={input.name}
+        value={formState.inputState[input.name]}
+        onValue={value => {
+          dispatch({
+            type: 'InputValue',
+            name: input.name,
+            value,
+          });
+        }}
+        type={input.type}
+        {...props}
+      />
+    )),
+  });
   return (
-    <View>
-      <FormTitle title="Log In" />
-      {inputs.map(input => {
-        return (
-          <FormInput
-            key={input.name}
-            value={formState.inputState[input.name]}
-            onValue={value => {
-              dispatch({
-                type: 'InputValue',
-                name: input.name,
-                value,
-              });
-            }}
-            type={input.type}
-          />
-        );
-      })}
+    <View style={{ marginHorizontal: 20 }}>
+      {focus.inputs}
       <FormButton
         title="Submit"
         onPress={() => {
@@ -313,38 +343,113 @@ function SliderTest() {
   );
 }
 
-function LoginForm({ onAuthCodeRequired }) {
+function PageTitle({ title }) {
+  return (
+    <View style={{ paddingHorizontal: 20 }}>
+      <Text style={{ fontSize: 42 }}>{title}</Text>
+    </View>
+  );
+}
+
+function getProviderName(provider) {
+  switch (provider) {
+    case 'sms':
+      return 'phone number';
+    case 'email':
+    default:
+      return 'email address';
+  }
+}
+
+function getLoginInputs(provider) {
+  switch (provider) {
+    case 'sms':
+      return [{ name: 'number', type: 'phone' }];
+    case 'email':
+    default:
+      return [{ name: 'email', type: 'email' }];
+  }
+}
+
+function getVerificationInfo(provider, values) {
+  switch (provider) {
+    case 'sms':
+      return { number: values.number };
+    case 'email':
+    default:
+      return { email: values.email };
+  }
+}
+
+function ErrorView({ error }) {
+  return (
+    <View
+      style={{
+        padding: 20,
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: 'red',
+        marginHorizontal: 20,
+        paddingVertical: 10,
+      }}
+    >
+      <Text style={{ color: 'red' }}>{error && error.message}</Text>
+    </View>
+  );
+}
+
+function LoginForm({ onAuthCodeRequired, provider }) {
+  const [formError, setFormError] = useState(null);
   const cloud = useCloud();
+  const providerName = getProviderName(provider);
   return (
     <View style={{ flex: 1, justifyContent: 'center' }}>
+      <PageTitle title={`Log in with ${providerName}`} />
+      {formError && <ErrorView error={formError} />}
       <PageForm
-        inputs={[{ name: 'phone', type: 'phone' }]}
+        inputs={getLoginInputs(provider)}
         onSubmit={values => {
-          onAuthCodeRequired();
-
-          // cloud
-          //   .CreateSession({
-          //     accountId: 'umm',
-          //     verificationResponse: null,
-          //     verificationInfo: { number: values.phone },
-          //   })
-          //   .then(() => {
-          //     onAuthCodeRequired();
-          //   })
-          //   .catch(console.error);
+          // debugger;
+          // provider;
+          // onAuthCodeRequired();
+          const loginQuery = {
+            accountId: null,
+            verificationResponse: null,
+            verificationInfo: getVerificationInfo(provider, values),
+          };
+          cloud
+            .CreateSession(loginQuery)
+            .then(() => {
+              onAuthCodeRequired(loginQuery);
+            })
+            .catch(e => setFormError(e));
         }}
       />
     </View>
   );
 }
 
-function AuthCodeForm() {
+function AuthCodeForm({ authCodeQuery }) {
+  const [formError, setFormError] = useState(null);
   const cloud = useCloud();
+  const { goBack } = useNavigation();
   return (
     <View style={{ flex: 1, justifyContent: 'center' }}>
+      <PageTitle title={`Enter verification code`} />
+      {formError && <ErrorView error={formError} />}
       <PageForm
-        inputs={[{ name: 'authcode', type: 'code' }]}
+        inputs={[{ name: 'authcode', type: 'code', label: 'Code' }]}
         onSubmit={values => {
+          cloud
+            .CreateSession({
+              ...authCodeQuery,
+              verificationResponse: { key: values.authcode },
+            })
+            .then(() => {
+              goBack();
+            })
+            .catch(e => setFormError(e));
+
           console.log(values);
         }}
       />
@@ -353,17 +458,21 @@ function AuthCodeForm() {
 }
 
 function Login() {
-  const [isWaitingForAuthCode, setWaitingForAuthCode] = useState(false);
-  if (isWaitingForAuthCode) {
+  const provider = useNavigation().getParam('provider');
+  const [authCodeQuery, onAuthCodeQuery] = useState(null);
+  if (authCodeQuery) {
     return (
       <Slider childKey="authCode">
-        <AuthCodeForm />
+        <AuthCodeForm authCodeQuery={authCodeQuery} />
       </Slider>
     );
   } else {
     return (
       <Slider childKey="login">
-        <LoginForm onAuthCodeRequired={() => setWaitingForAuthCode(true)} />
+        <LoginForm
+          onAuthCodeRequired={authQuery => onAuthCodeQuery(authQuery)}
+          provider={provider}
+        />
       </Slider>
     );
   }
@@ -377,11 +486,18 @@ const AppNavigator = createStackNavigator(
 const AppNav = createAppContainer(AppNavigator);
 
 function App() {
+  const [session, setSession] = useAsyncStorage('CloudSession', null);
+  console.log('session state', session);
+  if (isStateUnloaded(session)) {
+    return null;
+  }
   return (
     <NetworkCloudProvider
       authority="localhost:3000"
       useSSL={false}
       domain="todo.aven.cloud"
+      session={session}
+      onSession={setSession}
     >
       <AppNav />
     </NetworkCloudProvider>
