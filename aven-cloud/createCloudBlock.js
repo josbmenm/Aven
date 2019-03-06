@@ -156,7 +156,6 @@ export default function createCloudBlock({
   let _evaluatedFunction = null;
 
   function doTheCompute(lambdaValue, argValue, argDoc) {
-    console.log('doing compute', lambdaValue, argValue);
     if (!_evaluatedFunction) {
       if (!lambdaValue || lambdaValue.type !== 'LambdaFunction') {
         return null;
@@ -165,9 +164,6 @@ export default function createCloudBlock({
       _evaluatedFunction = eval(lambdaValue.code);
     }
     function computeResult() {
-      // if (typeof lambda !== 'function') {
-      //   return null;
-      // }
       return _evaluatedFunction(argValue, argDoc, cloudClient, useValue);
     }
     async function loadDependencies() {

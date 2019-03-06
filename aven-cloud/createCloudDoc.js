@@ -6,11 +6,6 @@ import mapBehaviorSubject from '../utils/mapBehaviorSubject';
 
 const pathJoin = require('path').join;
 
-const observeStatic = val =>
-  Observable.create(observer => {
-    observer.next(val);
-  });
-
 function hasDepth(name) {
   return name.match(/\//);
 }
@@ -19,7 +14,7 @@ export function createDocPool({
   blockValueCache,
   domain,
   dataSource,
-  onGetParentName,
+  parentName = new BehaviorSubject(null),
   onGetSelf,
   cloudClient,
 }) {
@@ -74,7 +69,7 @@ export function createDocPool({
         onRename: newName => {
           return move(localName, newName);
         },
-        onGetParentName,
+        parentName,
       });
     }
     if (restOfName) {
@@ -122,7 +117,7 @@ export function createDocPool({
       domain,
       name: localName,
       blockValueCache: blockValueCache,
-      onGetParentName,
+      parentName,
       cloudClient,
       onRename: newName => move(localName, newName),
       isUnposted: true,
@@ -139,7 +134,7 @@ export default function createCloudDoc({
   dataSource,
   name,
   domain,
-  onGetParentName,
+  parentName = new BehaviorSubject(null),
   isUnposted,
   onRename,
   ...opts
@@ -174,7 +169,7 @@ export default function createCloudDoc({
   let postingInProgress = null;
 
   async function doPost(block) {
-    const parent = onGetParentName();
+    const parent = parentName.getValue();
     const puttingFromId = cloudDoc.id;
     setState({
       id: block.id,
@@ -244,17 +239,33 @@ export default function createCloudDoc({
     return name;
   }
 
-  function getFullName() {
-    const name = getName();
-    const parent = onGetParentName();
-    if (parent) {
-      return pathJoin(parent, name);
+  function getParentName(parent, localName) {
+    if (parent === null) {
+      return localName;
     }
-    return name;
+    return `${parent}/${localName}`;
+  }
+
+  const docName = new BehaviorSubject(
+    getParentName(parentName.getValue(), getState().name)
+  );
+
+  parentName.subscribe({
+    next: parent => {
+      docState.subscribe({
+        next: state => {
+          docName.next(getParentName(parent, state.name));
+        },
+      });
+    },
+  });
+
+  function getFullName() {
+    return docName.getValue();
   }
 
   const docs = createDocPool({
-    onGetParentName: getFullName,
+    parentName: docName,
     blockValueCache,
     dataSource,
     domain,
@@ -740,6 +751,7 @@ export default function createCloudDoc({
     getConnectedValue,
     getBlock,
     observe,
+    observeName: docName,
     destroy,
     observeConnectedValue, // todo, document or remove! (why should people use this instead of expand?)
     transact,

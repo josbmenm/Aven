@@ -1,5 +1,6 @@
 import createMemoryDataSource from '../createMemoryDataSource';
 import createCloudDoc from '../createCloudDoc';
+import { BehaviorSubject } from 'rxjs-compat';
 
 function getNull() {
   return null;
@@ -17,6 +18,7 @@ describe('doc generic behavior', () => {
       createCloudDoc({
         dataSource,
         name: 'foo',
+        parentName: new BehaviorSubject(null),
       })
     ).toThrow();
   });
@@ -26,6 +28,7 @@ describe('doc generic behavior', () => {
       createCloudDoc({
         dataSource,
         domain: 'test',
+        parentName: new BehaviorSubject(null),
       })
     ).toThrow();
   });
@@ -37,6 +40,7 @@ describe('doc generic behavior', () => {
         dataSource,
         domain: 'test',
         name: 'foo/bar',
+        parentName: new BehaviorSubject(null),
       })
     ).toThrow();
   });
@@ -49,7 +53,7 @@ describe('doc get', () => {
       dataSource,
       domain: 'test',
       name: 'myDoc',
-      onGetParentName: getNull,
+      parentName: new BehaviorSubject(null),
     });
     const child = doc.get('friend');
     expect(child.getFullName()).toEqual('myDoc/friend');
@@ -61,7 +65,7 @@ describe('doc get', () => {
       dataSource,
       domain: 'test',
       name: 'myDoc',
-      onGetParentName: getNull,
+      parentName: new BehaviorSubject(null),
     });
     const gotDoc = doc.get('');
     expect(gotDoc).toEqual(doc);
@@ -81,7 +85,7 @@ describe('basic doc DataSource interaction', () => {
       dataSource,
       domain: 'test',
       name: 'myDoc',
-      onGetParentName: getNull,
+      parentName: new BehaviorSubject(null),
     });
     expect(doc.getBlock()).toEqual(undefined);
     await doc.fetch();
@@ -94,7 +98,7 @@ describe('basic doc DataSource interaction', () => {
       dataSource,
       domain: 'test',
       name: 'myDoc',
-      onGetParentName: getNull,
+      parentName: new BehaviorSubject(null),
     });
     const { id } = await doc.put({
       foo: 42,
@@ -124,7 +128,7 @@ describe('basic doc DataSource interaction', () => {
       dataSource,
       domain: 'test',
       name: 'myDoc',
-      onGetParentName: getNull,
+      parentName: new BehaviorSubject(null),
     });
     await doc.put({
       foo: 47,
@@ -177,7 +181,7 @@ describe('observing docs', () => {
       dataSource,
       domain: 'test',
       name: 'foo',
-      onGetParentName: getNull,
+      parentName: new BehaviorSubject(null),
     });
     let lastObserved = null;
     const subscription = doc.observe.subscribe({
@@ -237,7 +241,7 @@ describe('observing docs', () => {
       dataSource,
       domain: 'test',
       name: 'foo',
-      onGetParentName: getNull,
+      parentName: new BehaviorSubject(null),
     });
     let lastObserved = undefined;
     const subscription = doc.observeValue.subscribe({
@@ -307,7 +311,7 @@ describe('observing docs', () => {
       dataSource,
       domain: 'test',
       name: 'foo',
-      onGetParentName: getNull,
+      parentName: new BehaviorSubject(null),
     });
     let lastObserved = undefined;
     doc.observeConnectedValue(['the', 'value', 0]).subscribe({
@@ -335,7 +339,7 @@ describe('observing docs', () => {
       dataSource,
       domain: 'test',
       name: 'foo',
-      onGetParentName: getNull,
+      parentName: new BehaviorSubject(null),
     });
     let lastObserved = undefined;
     doc.observeConnectedValue(['the', 'value', 0]).subscribe({
@@ -403,7 +407,7 @@ test('value mapping', async () => {
     dataSource,
     domain: 'test',
     name: 'foo',
-    onGetParentName: getNull,
+    parentName: new BehaviorSubject(null),
     cloudClient: {},
   });
   const mapped = doc.map(o => (typeof o === 'number' ? o * o : null));
@@ -447,14 +451,14 @@ test('value evaluation', async () => {
     dataSource,
     domain: 'test',
     name: 'squared',
-    onGetParentName: getNull,
+    parentName: new BehaviorSubject(null),
     cloudClient: {},
   });
   const doc = createCloudDoc({
     dataSource,
     domain: 'test',
     name: 'foo',
-    onGetParentName: getNull,
+    parentName: new BehaviorSubject(null),
     cloudClient: {
       get: name => {
         if (name === 'squared') {

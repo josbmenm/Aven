@@ -175,7 +175,7 @@ export default function createCloudClient({
   };
 
   const docs = createDocPool({
-    onGetParentName: () => null,
+    parentName: new BehaviorSubject(null),
     blockValueCache: _blockValues,
     dataSource: dataSourceWithSession,
     domain,
