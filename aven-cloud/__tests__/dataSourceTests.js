@@ -450,6 +450,51 @@ export default function testDataSource(startTestDataSource) {
     expect(result.value.docs).toEqual(['mars', 'world']);
   });
 
+  test('implicit parent doc creation with null', async () => {
+    // this test also demonstrates that docs can *exist* and still be empty, with id = null
+    const ds = await startTestDataSource({ domain: 'test' });
+    let result = null;
+
+    await ds.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'hello/world',
+      value: 'foo',
+    });
+    result = await ds.dispatch({
+      type: 'GetDocValue',
+      domain: 'test',
+      name: 'hello',
+    });
+    expect(result.value).toEqual(undefined);
+    expect(result.id).toEqual(null);
+    await ds.dispatch({
+      type: 'DestroyDoc',
+      domain: 'test',
+      name: 'hello/world',
+    });
+    result = await ds.dispatch({
+      type: 'GetDocValue',
+      domain: 'test',
+      name: 'hello',
+    });
+    expect(result.value).toEqual(undefined);
+    expect(result.id).toEqual(null);
+    // parent doc destroying works, and id goes to undefined:
+    await ds.dispatch({
+      type: 'DestroyDoc',
+      domain: 'test',
+      name: 'hello',
+    });
+    result = await ds.dispatch({
+      type: 'GetDocValue',
+      domain: 'test',
+      name: 'hello',
+    });
+    expect(result.value).toEqual(undefined);
+    expect(result.id).toEqual(undefined);
+  });
+
   test('can destroy parent docs and children go away', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const blk = await ds.dispatch({

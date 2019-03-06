@@ -114,7 +114,7 @@ export default function createGenericDataSource({
     let rootTerm = getRootTerm(name);
     let { children, childrenSet } = currentNode;
     if (ensureExistence && !childrenSet.has(rootTerm)) {
-      addChild(currentNode, rootTerm, {});
+      addChild(currentNode, rootTerm, { id: null });
     }
     const childNode = children[rootTerm];
     if (name === rootTerm) {
