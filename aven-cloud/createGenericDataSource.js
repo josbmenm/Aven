@@ -116,7 +116,7 @@ export default function createGenericDataSource({
       childrenSet.add(rootTerm);
       childrenSetBehavior &&
         childrenSetBehavior.next({
-          value: [...childrenSet],
+          value: { docs: [...childrenSet] },
         });
     }
     const childNode = children[rootTerm];
@@ -273,7 +273,9 @@ export default function createGenericDataSource({
 
   function publishChildrenBehavior(memoryDoc) {
     memoryDoc.childrenSetBehavior &&
-      memoryDoc.childrenSetBehavior.next({ value: [...memoryDoc.childrenSet] });
+      memoryDoc.childrenSetBehavior.next({
+        value: { docs: [...memoryDoc.childrenSet] },
+      });
   }
   async function MoveDoc({ domain, from, to }) {
     verifyDomain(domain, dataSourceDomain);
@@ -328,7 +330,7 @@ export default function createGenericDataSource({
       childrenSet.delete(destroyChildName);
     }
     if (childrenSetBehavior) {
-      childrenSetBehavior.next({ value: [...childrenSet] });
+      childrenSetBehavior.next({ value: { docs: [...childrenSet] } });
     }
   }
 
@@ -379,10 +381,11 @@ export default function createGenericDataSource({
 
     const parentMemoryDoc = getMemoryNode(parentName || '', false);
     if (!parentMemoryDoc) {
-      return [];
+      return { docs: [] };
     }
-    const children = [...parentMemoryDoc.childrenSet];
-    return children;
+    return {
+      docs: [...parentMemoryDoc.childrenSet],
+    };
   }
 
   async function ListDomains() {
@@ -409,7 +412,7 @@ export default function createGenericDataSource({
         return memoryDoc.childrenSetBehavior;
       } else {
         memoryDoc.childrenSetBehavior = new BehaviorSubject({
-          value: [...memoryDoc.childrenSet],
+          value: { docs: [...memoryDoc.childrenSet] },
         });
         return memoryDoc.childrenSetBehavior;
       }

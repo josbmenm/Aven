@@ -90,7 +90,7 @@ describe('client doc behavior', () => {
       domain: 'd',
       name: 'foo/_children',
     });
-    expect(docsList.value.length).toEqual(0);
+    expect(docsList.value.docs.length).toEqual(0);
     const postedDoc = doc.post();
     expect(postedDoc.getFullName().match(/^foo\/(.+)$/)).not.toBeNull();
     await postedDoc.put({ some: 'data' });
@@ -99,7 +99,7 @@ describe('client doc behavior', () => {
       domain: 'd',
       name: 'foo/_children',
     });
-    expect(docsList.value.length).toEqual(1);
+    expect(docsList.value.docs.length).toEqual(1);
     const bar = doc.get('bar');
     await bar.put({ woah: 42 });
     docsList = await m.dispatch({
@@ -107,16 +107,16 @@ describe('client doc behavior', () => {
       domain: 'd',
       name: 'foo/_children',
     });
-    expect(docsList.value.length).toEqual(2);
-    expect(docsList.value.indexOf('bar')).not.toEqual(-1);
+    expect(docsList.value.docs.length).toEqual(2);
+    expect(docsList.value.docs.indexOf('bar')).not.toEqual(-1);
     await bar.destroy();
     docsList = await m.dispatch({
       type: 'GetDocValue',
       domain: 'd',
       name: 'foo/_children',
     });
-    expect(docsList.value.length).toEqual(1);
-    expect(docsList.value.indexOf('bar')).toEqual(-1);
+    expect(docsList.value.docs.length).toEqual(1);
+    expect(docsList.value.docs.indexOf('bar')).toEqual(-1);
   });
   test('doc getting', async () => {
     const m = createMemoryDataSource({ domain: 'd' });
