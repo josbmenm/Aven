@@ -858,13 +858,13 @@ export default function testDataSource(startTestDataSource) {
     test('observe doc works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       // note: we run observeDoc before the doc exists to intentionally test that the subscription works on an empty doc
-      const obs = await ds.observeDoc('test', 'foo');
       const blk2 = await ds.dispatch({
         type: 'PutDocValue',
         domain: 'test',
         name: 'foo',
         value: { foo: 'baz' },
       });
+      const obs = await ds.observeDoc('test', 'foo');
       await ds.dispatch({
         type: 'PutDocValue',
         domain: 'test',
@@ -1071,6 +1071,65 @@ export default function testDataSource(startTestDataSource) {
         id: null,
       });
       expect(lastObserved.value.docs).toEqual(['bar', 'baz']);
+    });
+  });
+
+  describe('observing doc children', () => {
+    test('children events subscription', async () => {
+      const ds = await startTestDataSource({ domain: 'test' });
+      await ds.dispatch({
+        type: 'PutDoc',
+        domain: 'test',
+        name: 'foo',
+        id: null,
+      });
+      const obs = await ds.observeDocChildren('test', 'foo');
+      let lastObserved = undefined;
+      obs.subscribe({
+        next: newVal => {
+          lastObserved = newVal;
+        },
+      });
+      await ds.dispatch({
+        type: 'PutDoc',
+        domain: 'test',
+        name: 'foo/bar',
+        id: null,
+      });
+      expect(lastObserved.type).toEqual('AddChildDoc');
+      expect(lastObserved.name).toEqual('bar');
+      await ds.dispatch({
+        type: 'PutDoc',
+        domain: 'test',
+        name: 'foo/baz',
+        id: null,
+      });
+      expect(lastObserved.type).toEqual('AddChildDoc');
+      expect(lastObserved.name).toEqual('baz');
+      await ds.dispatch({
+        type: 'PutDoc',
+        domain: 'test',
+        name: 'foo/baz/boo',
+        id: null,
+      });
+      expect(lastObserved.type).toEqual('AddChildDoc');
+      expect(lastObserved.name).toEqual('baz');
+      await ds.dispatch({
+        type: 'DestroyDoc',
+        domain: 'test',
+        name: 'foo/baz',
+        id: null,
+      });
+      expect(lastObserved.type).toEqual('DestroyChildDoc');
+      expect(lastObserved.name).toEqual('baz');
+      // expect(lastObserved.value.docs).toEqual(['bar']);
+      // await ds.dispatch({
+      //   type: 'PutDoc',
+      //   domain: 'test',
+      //   name: 'foo/baz',
+      //   id: null,
+      // });
+      // expect(lastObserved.value.docs).toEqual(['bar', 'baz']);
     });
   });
 }

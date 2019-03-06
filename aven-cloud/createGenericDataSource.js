@@ -1,4 +1,4 @@
-import { BehaviorSubject } from 'rxjs-compat';
+import { BehaviorSubject, Subject } from 'rxjs-compat';
 import uuid from 'uuid/v1';
 
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
@@ -105,20 +105,16 @@ export default function createGenericDataSource({
     if (!currentNode.childrenSet) {
       currentNode.childrenSet = new Set();
     }
+    if (!currentNode.childrenEvents) {
+      currentNode.childrenEvents = new Subject();
+    }
     if (name === '') {
       return currentNode;
     }
     let rootTerm = getRootTerm(name);
-    let { children, childrenSet, childrenSetBehavior } = currentNode;
-    if (!children[rootTerm]) {
-      children[rootTerm] = {};
-    }
+    let { children, childrenSet } = currentNode;
     if (ensureExistence && !childrenSet.has(rootTerm)) {
-      childrenSet.add(rootTerm);
-      childrenSetBehavior &&
-        childrenSetBehavior.next({
-          value: { docs: [...childrenSet] },
-        });
+      addChild(currentNode, rootTerm, {});
     }
     const childNode = children[rootTerm];
     if (name === rootTerm) {
@@ -278,6 +274,21 @@ export default function createGenericDataSource({
         value: { docs: [...memoryDoc.childrenSet] },
       });
   }
+
+  function destroyChild(node, childName) {
+    node.childrenSet.delete(childName);
+    node.childrenEvents.next({ type: 'DestroyChildDoc', name: childName });
+    delete node.children[childName];
+    publishChildrenBehavior(node); // todo delete all childrenSetBehavior
+  }
+
+  function addChild(node, childName, newDocNode) {
+    node.children[childName] = newDocNode;
+    node.childrenSet.add(childName);
+    node.childrenEvents.next({ type: 'AddChildDoc', name: childName });
+    publishChildrenBehavior(node); // todo delete all childrenSetBehavior
+  }
+
   async function MoveDoc({ domain, from, to }) {
     verifyDomain(domain, dataSourceDomain);
     await commitDocMove(from, to);
@@ -288,12 +299,10 @@ export default function createGenericDataSource({
     const fromParent = getMemoryNode(fromParentName, false);
     const toParent = getMemoryNode(toParentName, true);
     const docToMove = fromParent.children[fromChildName];
-    toParent.children[toChildName] = docToMove;
-    toParent.childrenSet.add(toChildName);
-    publishChildrenBehavior(toParent);
-    delete fromParent.children[fromChildName];
-    fromParent.childrenSet.delete(fromChildName);
-    publishChildrenBehavior(fromParent);
+
+    addChild(toParent, toChildName, docToMove);
+
+    destroyChild(fromParent, fromChildName);
   }
 
   async function PostDoc({ domain, name, id, value }) {
@@ -325,14 +334,8 @@ export default function createGenericDataSource({
     if (!parentMemoryDoc || !parentMemoryDoc.children[destroyChildName]) {
       throw new Error('Cannot destroy doc that does not exist');
     }
-    const { children, childrenSet, childrenSetBehavior } = parentMemoryDoc;
-    delete children[destroyChildName];
-    if (childrenSet) {
-      childrenSet.delete(destroyChildName);
-    }
-    if (childrenSetBehavior) {
-      childrenSetBehavior.next({ value: { docs: [...childrenSet] } });
-    }
+    destroyChild(parentMemoryDoc, destroyChildName);
+    publishChildrenBehavior(parentMemoryDoc);
   }
 
   async function GetBlock({ domain, name, id }) {
@@ -425,7 +428,7 @@ export default function createGenericDataSource({
     verifyDomain(domain, dataSourceDomain);
     const listDocName = getListDocName(name);
     if (typeof listDocName === 'string') {
-      const memoryDoc = getMemoryNode(listDocName, false);
+      const memoryDoc = getMemoryNode(listDocName, true);
       if (memoryDoc.childrenSetBehavior) {
         return memoryDoc.childrenSetBehavior;
       } else {
@@ -444,6 +447,15 @@ export default function createGenericDataSource({
     } else {
       return (memoryDoc.behavior = new BehaviorSubject(_renderDoc(memoryDoc)));
     }
+  };
+
+  const observeDocChildren = async (domain, name) => {
+    verifyDomain(domain, dataSourceDomain);
+    const memoryDoc = getMemoryNode(name, false);
+    if (!memoryDoc) {
+      throw new Error('parent does not exist');
+    }
+    return memoryDoc.childrenEvents;
   };
 
   async function GetDocValue({ domain, name }) {
@@ -479,6 +491,7 @@ export default function createGenericDataSource({
     isConnected,
     close,
     observeDoc,
+    observeDocChildren,
     dispatch: createDispatcher({
       PutDoc,
       PutDocValue,
