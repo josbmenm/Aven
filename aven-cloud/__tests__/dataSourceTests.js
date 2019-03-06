@@ -1,3 +1,5 @@
+import { setMaxListDocs } from '../maxListDocs';
+
 export default function testDataSource(startTestDataSource) {
   test('basic put and get', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
@@ -168,53 +170,119 @@ export default function testDataSource(startTestDataSource) {
       type: 'ListDocs',
       domain: 'test',
     });
-    expect(list.docs).toEqual(['foo', 'bar']);
+    expect(list.docs).toEqual(['bar', 'foo']);
   });
 
-  // test('list docs length limit', async () => {
-  //   const ds = await startTestDataSource({ domain: 'test' });
-  //   let docs = null;
-  //   docs = await ds.dispatch({
-  //     type: 'ListDocs',
-  //     domain: 'test',
-  //   });
-  //   expect(docs).toEqual([]);
+  test('list docs length limit', async () => {
+    const ds = await startTestDataSource({ domain: 'test' });
+    let list = null;
+    list = await ds.dispatch({
+      type: 'ListDocs',
+      domain: 'test',
+    });
+    expect(list.docs).toEqual([]);
+    expect(list.hasMore).toEqual(false);
 
-  //   setMaxChildListLength(10)
+    setMaxListDocs(10);
 
-  //   await Promise.all(Array(10).fill(null).map(async () => {
-  //     await ds.dispatch({
-  //       type: 'PostDocValue',
-  //       domain: 'test',
-  //       name: 'foo',
-  //       value: { foo: 'bar' },
-  //     });
-  //   }));
+    await Promise.all(
+      Array(10)
+        .fill(null)
+        .map(async () => {
+          await ds.dispatch({
+            type: 'PostDoc',
+            domain: 'test',
+            parentName: 'foo',
+            value: { foo: 'bar' },
+          });
+        })
+    );
 
-  //   await ds.dispatch({
-  //     type: 'PostDocValue',
-  //     domain: 'test',
-  //     name: 'foo',
-  //     value: { foo: 'bar' },
-  //   });
-  //   docs = await ds.dispatch({
-  //     type: 'ListDocs',
-  //     domain: 'test',
-  //   });
-  //   expect(docs).toEqual(['foo']);
+    list = await ds.dispatch({
+      type: 'ListDocs',
+      domain: 'test',
+      name: 'foo',
+    });
+    expect(list.docs.length).toEqual(10);
+    expect(list.hasMore).toEqual(false);
 
-  //   await ds.dispatch({
-  //     type: 'PutDoc',
-  //     domain: 'test',
-  //     name: 'bar',
-  //     id: blk.id,
-  //   });
-  //   docs = await ds.dispatch({
-  //     type: 'ListDocs',
-  //     domain: 'test',
-  //   });
-  //   expect(docs).toEqual(['foo', 'bar']);
-  // });
+    await ds.dispatch({
+      type: 'PostDoc',
+      domain: 'test',
+      parentName: 'foo',
+      value: { foo: 'bar' },
+    });
+
+    list = await ds.dispatch({
+      type: 'ListDocs',
+      domain: 'test',
+      name: 'foo',
+    });
+
+    expect(list.docs.length).toEqual(10);
+    expect(list.hasMore).toEqual(true);
+  });
+
+  test('list doc "after" pagination', async () => {
+    const ds = await startTestDataSource({ domain: 'test' });
+    let list = null;
+    list = await ds.dispatch({
+      type: 'ListDocs',
+      domain: 'test',
+      parentName: 'foo',
+    });
+    expect(list.docs).toEqual([]);
+    expect(list.hasMore).toEqual(false);
+
+    setMaxListDocs(2);
+
+    await ds.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo/a',
+      value: { foo: 'bar' },
+    });
+
+    await ds.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo/b',
+      value: { foo: 'bar' },
+    });
+
+    await ds.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo/c',
+      value: { foo: 'bar' },
+    });
+
+    list = await ds.dispatch({
+      type: 'ListDocs',
+      domain: 'test',
+      parentName: 'foo',
+    });
+    expect(list.docs).toEqual(['a', 'b']);
+    expect(list.hasMore).toEqual(true);
+
+    list = await ds.dispatch({
+      type: 'ListDocs',
+      domain: 'test',
+      parentName: 'foo',
+      afterName: 'a',
+    });
+    expect(list.docs).toEqual(['b', 'c']);
+    expect(list.hasMore).toEqual(false);
+
+    list = await ds.dispatch({
+      type: 'ListDocs',
+      domain: 'test',
+      parentName: 'foo',
+      afterName: 'c',
+    });
+    expect(list.docs).toEqual([]);
+    expect(list.hasMore).toEqual(false);
+  });
 
   test('list doc works works with GetValue _children', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
@@ -256,7 +324,7 @@ export default function testDataSource(startTestDataSource) {
       domain: 'test',
       name: '_children',
     });
-    expect(docs.value.docs).toEqual(['foo', 'bar']);
+    expect(docs.value.docs).toEqual(['bar', 'foo']);
 
     await ds.dispatch({
       type: 'DestroyDoc',
@@ -379,7 +447,7 @@ export default function testDataSource(startTestDataSource) {
       domain: 'test',
       name: 'hello/_children',
     });
-    expect(result.value.docs).toEqual(['world', 'mars']);
+    expect(result.value.docs).toEqual(['mars', 'world']);
   });
 
   test('can destroy parent docs and children go away', async () => {
@@ -952,57 +1020,57 @@ export default function testDataSource(startTestDataSource) {
       expect(lastObserved.value.docs).toEqual(['foo', 'baz']);
     });
 
-    // test('observe named doc list works', async () => {
-    //   const ds = await startTestDataSource({ domain: 'test' });
-    //   await ds.dispatch({
-    //     type: 'PutDoc',
-    //     domain: 'test',
-    //     name: 'foo',
-    //     id: null,
-    //   });
-    //   const obs = await ds.observeDoc('test', 'foo/_children');
-    //   let lastObserved = undefined;
-    //   obs.subscribe({
-    //     next: newVal => {
-    //       lastObserved = newVal;
-    //     },
-    //   });
-    //   expect(lastObserved.value.docs).toEqual([]);
-    //   await ds.dispatch({
-    //     type: 'PutDoc',
-    //     domain: 'test',
-    //     name: 'foo/bar',
-    //     id: null,
-    //   });
-    //   expect(lastObserved.value.docs).toEqual(['bar']);
-    //   await ds.dispatch({
-    //     type: 'PutDoc',
-    //     domain: 'test',
-    //     name: 'foo/baz',
-    //     id: null,
-    //   });
-    //   expect(lastObserved.value.docs).toEqual(['bar', 'baz']);
-    //   await ds.dispatch({
-    //     type: 'PutDoc',
-    //     domain: 'test',
-    //     name: 'foo/baz/boo',
-    //     id: null,
-    //   });
-    //   expect(lastObserved.value.docs).toEqual(['bar', 'baz']);
-    //   await ds.dispatch({
-    //     type: 'DestroyDoc',
-    //     domain: 'test',
-    //     name: 'foo/baz',
-    //     id: null,
-    //   });
-    //   expect(lastObserved.value.docs).toEqual(['bar']);
-    //   await ds.dispatch({
-    //     type: 'PutDoc',
-    //     domain: 'test',
-    //     name: 'foo/baz',
-    //     id: null,
-    //   });
-    //   expect(lastObserved.value.docs).toEqual(['bar', 'baz']);
-    // });
+    test('observe named doc list works', async () => {
+      const ds = await startTestDataSource({ domain: 'test' });
+      await ds.dispatch({
+        type: 'PutDoc',
+        domain: 'test',
+        name: 'foo',
+        id: null,
+      });
+      const obs = await ds.observeDoc('test', 'foo/_children');
+      let lastObserved = undefined;
+      obs.subscribe({
+        next: newVal => {
+          lastObserved = newVal;
+        },
+      });
+      expect(lastObserved.value.docs).toEqual([]);
+      await ds.dispatch({
+        type: 'PutDoc',
+        domain: 'test',
+        name: 'foo/bar',
+        id: null,
+      });
+      expect(lastObserved.value.docs).toEqual(['bar']);
+      await ds.dispatch({
+        type: 'PutDoc',
+        domain: 'test',
+        name: 'foo/baz',
+        id: null,
+      });
+      expect(lastObserved.value.docs).toEqual(['bar', 'baz']);
+      await ds.dispatch({
+        type: 'PutDoc',
+        domain: 'test',
+        name: 'foo/baz/boo',
+        id: null,
+      });
+      expect(lastObserved.value.docs).toEqual(['bar', 'baz']);
+      await ds.dispatch({
+        type: 'DestroyDoc',
+        domain: 'test',
+        name: 'foo/baz',
+        id: null,
+      });
+      expect(lastObserved.value.docs).toEqual(['bar']);
+      await ds.dispatch({
+        type: 'PutDoc',
+        domain: 'test',
+        name: 'foo/baz',
+        id: null,
+      });
+      expect(lastObserved.value.docs).toEqual(['bar', 'baz']);
+    });
   });
 }

@@ -4,6 +4,7 @@ import uuid from 'uuid/v1';
 import createDispatcher from '../aven-cloud-utils/createDispatcher';
 import { getListDocName } from '../aven-cloud-utils/MetaDocNames';
 import { getMaxBlockRefCount } from './maxBlockRefCount';
+import { getMaxListDocs } from './maxListDocs';
 
 class IDMatchError extends Error {
   constructor(providedId, computedId) {
@@ -376,15 +377,32 @@ export default function createGenericDataSource({
     return { results };
   }
 
-  async function ListDocs({ domain, parentName }) {
+  async function ListDocs({ domain, parentName, afterName }) {
     verifyDomain(domain, dataSourceDomain);
 
     const parentMemoryDoc = getMemoryNode(parentName || '', false);
     if (!parentMemoryDoc) {
       return { docs: [] };
     }
+    const maxCount = getMaxListDocs();
+    let docs = afterName
+      ? [...parentMemoryDoc.childrenSet, afterName]
+      : [...parentMemoryDoc.childrenSet];
+    let hasMore = parentMemoryDoc.childrenSet.size > maxCount;
+    docs.sort();
+    if (afterName) {
+      const i = docs.lastIndexOf(afterName);
+      if (i === -1) {
+        // umm, we inject this value, so I wouldn't ever expect to see this:
+        throw new Error('wh0t?!');
+      }
+      docs = docs.slice(i + 1);
+      hasMore = docs.length > maxCount;
+    }
+    docs = docs.slice(0, maxCount);
     return {
-      docs: [...parentMemoryDoc.childrenSet],
+      docs,
+      hasMore,
     };
   }
 
