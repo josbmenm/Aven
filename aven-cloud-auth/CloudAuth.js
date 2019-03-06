@@ -479,8 +479,6 @@ export default function CloudAuth({ dataSource, methods }) {
       domain,
       name: `auth/account/${auth.accountId}/session/${auth.sessionId}`,
     });
-
-    return true; // uh
   }
 
   async function DestroyAllSessions({ auth, domain }) {
@@ -494,6 +492,20 @@ export default function CloudAuth({ dataSource, methods }) {
       type: 'DestroyDoc',
       domain,
       name: `auth/account/${auth.accountId}/session`,
+    });
+  }
+
+  async function DestroyAccount({ auth, domain }) {
+    const validated = await VerifySession({ auth, domain });
+
+    if (!validated.accountId || validated.accountId !== auth.accountId) {
+      return false;
+    }
+
+    await dataSource.dispatch({
+      type: 'DestroyDoc',
+      domain,
+      name: `auth/account/${auth.accountId}`,
     });
   }
 
@@ -603,10 +615,11 @@ export default function CloudAuth({ dataSource, methods }) {
     ),
     CreateSession,
     CreateAnonymousSession,
-    DestroySession, // todo, guard
-    DestroyAllSessions, // todo, guard
+    DestroySession,
+    // DestroyAllSessions, // implemented but not tested or used yet
+    // PutAccountId, // implemented but not tested or used yet
+    // DestroyAccount, // implemented but not tested or used yet
     VerifySession,
-    PutAccountId,
     VerifyAuth,
     PutAuthMethod, // todo, guard
     GetPermissions,
