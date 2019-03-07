@@ -70,6 +70,7 @@ function StatusDisplayLayout({ children, backgroundColor, debugView }) {
         }
       }}
     >
+      {debugView}
       <Animated.View
         style={{
           width: SCREEN_WIDTH,
@@ -79,7 +80,6 @@ function StatusDisplayLayout({ children, backgroundColor, debugView }) {
       >
         {children}
       </Animated.View>
-      {debugView}
     </View>
   );
 }
