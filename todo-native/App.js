@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
+  AlertIOS,
 } from 'react-native';
 import React, {
   useReducer,
@@ -110,21 +111,52 @@ function LoginButtons() {
   );
 }
 
+function DebugDoc({ doc }) {
+  const v = useCloudValue(doc);
+  return <Text>{JSON.stringify(v)}</Text>;
+}
+
 function AccountSection({ userDoc }) {
-  const { DestroySession } = useCloud();
+  const { DestroySession, setAccountName } = useCloud();
   const user = useCloudValue(userDoc);
   if (!userDoc) {
     return null;
   }
   return (
     <React.Fragment>
+      <PageTitle title={`Logged in as ${userDoc.getFullName()}`} />
       <Button
         title="Logout"
         onPress={() => {
           DestroySession();
         }}
       />
-      <Button title="Change Username" onPress={() => {}} />
+      <Button
+        title="Change Username"
+        onPress={() => {
+          AlertIOS.prompt('Enter a new username', null, name => {
+            setAccountName(name)
+              .then(() => {
+                console.log('account name set.');
+              })
+              .catch(console.error);
+          });
+        }}
+      />
+      <Button
+        title="Change Display Name"
+        onPress={() => {
+          AlertIOS.prompt('Enter a new display name', null, name => {
+            userDoc
+              .put({ displayName: name })
+              .then(() => {
+                console.log('account name set.');
+              })
+              .catch(console.error);
+          });
+        }}
+      />
+      <DebugDoc doc={userDoc} />
     </React.Fragment>
   );
 }

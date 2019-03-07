@@ -161,6 +161,17 @@ export default function createCloudClient({
     _lambdas[name] = fn;
   };
 
+  async function setAccountName(name) {
+    if (!session.value) {
+      throw new Error('Session is required to set account name.');
+    }
+    const response = await sessionDispatch({
+      type: 'SetAccountName',
+      name,
+    });
+    return response;
+  }
+
   const cloudClient = {
     ...dataSource,
     getLambda,
@@ -172,6 +183,7 @@ export default function createCloudClient({
     dispatch,
     domain,
     destroyDoc,
+    setAccountName,
   };
 
   const docs = createDocPool({

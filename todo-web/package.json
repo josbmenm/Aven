@@ -21,13 +21,17 @@
       "mainClient": "MainClient.js"
     },
     "srcDependencies": [
+      "navigation-core",
+      "aven-admin",
       "aven-web",
       "aven-cloud",
       "aven-cloud-auth",
       "aven-cloud-browser",
       "aven-cloud-server",
+      "aven-cloud-utils",
       "aven-sms-agent-twilio",
       "aven-email-agent-sendgrid",
+      "aven-cloud-auth-root",
       "aven-cloud-auth-sms",
       "aven-cloud-auth-email"
     ]

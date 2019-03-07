@@ -452,8 +452,9 @@ export default function CloudAuth({ dataSource, methods }) {
     }
   }
 
-  async function PutAccountId({ accountId, auth, domain }) {
+  async function SetAccountName({ name, auth, domain }) {
     const validated = await VerifySession({ auth, domain });
+    console.log('setting account name!', { name, auth, domain, validated });
 
     if (!validated.accountId || validated.accountId !== auth.accountId) {
       throw new Error('Invalid authentication!');
@@ -462,7 +463,7 @@ export default function CloudAuth({ dataSource, methods }) {
     await dataSource.dispatch({
       type: 'MoveDoc',
       from: `auth/account/${validated.accountId}`,
-      to: `auth/account/${accountId}`,
+      to: `auth/account/${name}`,
       domain,
     });
   }
@@ -617,10 +618,10 @@ export default function CloudAuth({ dataSource, methods }) {
     CreateAnonymousSession,
     DestroySession,
     // DestroyAllSessions, // implemented but not tested or used yet
-    // PutAccountId, // implemented but not tested or used yet
     // DestroyAccount, // implemented but not tested or used yet
     VerifySession,
     VerifyAuth,
+    SetAccountName,
     PutAuthMethod, // todo, guard
     GetPermissions,
   };
