@@ -6,7 +6,7 @@ import BlockFormRow from './BlockFormRow';
 import BlockFormInput from './BlockFormInput';
 import BlockFormButton from './BlockFormButton';
 import ShortBlockFormPage from './ShortBlockFormPage';
-import useFocus from '../views/useFocus';
+import useFocus from '../navigation-hooks/useFocus';
 
 export default function CollectNamePage({ onSubmit, backBehavior, ...props }) {
   const [firstName, setFirstName] = useState('');

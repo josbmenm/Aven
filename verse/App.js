@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import { View, Text, Animated, Button } from 'react-native';
+import { View, Text, Animated, Button, Image } from 'react-native';
 
 import useCloud from '../aven-cloud/useCloud';
 import useObservable from '../aven-cloud/useObservable';
@@ -112,7 +112,7 @@ function StatusDisplayRow({ title, subTitle, right }) {
         borderBottomColor: black10,
       }}
     >
-      <View>
+      <View style={{ flex: 1 }}>
         <Text
           style={{
             ...boldPrimaryFontFace,
@@ -132,39 +132,139 @@ function StatusDisplayRow({ title, subTitle, right }) {
   );
 }
 
-function OrderRow({ orderName, status, productName }) {
+function ETAText({ queuedIndex }) {
   return (
-    <StatusDisplayRow title={orderName} subTitle={productName} right={status} />
+    <Text
+      style={{
+        ...primaryFontFace,
+        color: monsterra,
+        fontSize: 28,
+        marginTop: 22,
+      }}
+    >
+      {queuedIndex * 2} min
+    </Text>
+  );
+}
+
+function Cup({ isFilled }) {
+  if (isFilled) {
+    return (
+      <Image
+        source={require('./assets/cupFilled.png')}
+        style={{ width: 48, height: 63 }}
+      />
+    );
+  } else {
+    return (
+      <Image
+        source={require('./assets/cupEmpty.png')}
+        style={{ width: 48, height: 63 }}
+      />
+    );
+  }
+}
+
+function OrderRow({ prepSpec, status, queuedIndex }) {
+  let right = null;
+  if (status === 'queued') {
+    right = <ETAText queuedIndex={queuedIndex} />;
+  }
+  if (status === 'filling') {
+    right = <Cup isFilled={false} />;
+  }
+  if (status === 'blending') {
+    right = <Cup isFilled={true} />;
+  }
+  if (status === 'delivering') {
+    right = <Cup isFilled={true} />;
+  }
+  return (
+    <StatusDisplayRow
+      title={prepSpec.displayName}
+      subTitle={prepSpec.recipeName}
+      right={right}
+    />
   );
 }
 
 function PresentationSection() {
-  return <View style={{ flex: 1, alignSelf: 'stretch' }} />;
+  return (
+    <View style={{ height: 840, alignSelf: 'stretch' }}>
+      <Image
+        source={require('./assets/StatusStatic.png')}
+        style={{ flex: 1 }}
+      />
+    </View>
+  );
 }
 
-function QueueSection({ prepQueue }) {
+function QueueSection({ prepQueue, filling, blending, delivering }) {
+  const renderQueue = [
+    ...prepQueue.map((order, orderIndex) => (
+      <OrderRow
+        prepSpec={order}
+        status={'queued'}
+        queuedIndex={prepQueue.length - orderIndex}
+      />
+    )),
+  ];
+  filling && renderQueue.push(<OrderRow prepSpec={filling} status="filling" />);
+  blending &&
+    renderQueue.push(<OrderRow prepSpec={blending} status="blending" />);
+  delivering &&
+    renderQueue.push(<OrderRow prepSpec={delivering} status="delivering" />);
   return (
     <React.Fragment>
       <StatusDisplayTitleRow title="orders in progress:" />
-      {prepQueue.map(order => (
-        <OrderRow
-          orderName={order.displayName}
-          productName={order.recipeName}
-          status={order.inProgress ? null : null}
-        />
-      ))}
+      <View style={{ flex: 1 }}>{renderQueue}</View>
     </React.Fragment>
   );
 }
 
-function PickupCell({ style, state }) {
+function ReadyPickupCell({ state }) {
   return (
     <View
       style={{
-        backgroundColor: 'white',
-        flex: 1,
-        height: 80,
-        ...style,
+        width: '50%',
+        height: 192,
+        flexDirection: 'row',
+        padding: 30,
+        paddingVertical: 50,
+      }}
+    >
+      <View style={{ flex: 1 }}>
+        <Text
+          style={{
+            ...boldPrimaryFontFace,
+            fontSize: 28,
+            paddingTop: 5,
+            color: monsterra,
+          }}
+        >
+          {state.displayName}
+        </Text>
+        <Text style={{ ...primaryFontFace, color: monsterra, fontSize: 16 }}>
+          {state.recipeName}
+        </Text>
+      </View>
+      <Cup isFilled={true} />
+    </View>
+  );
+}
+
+function PickupCell({ state }) {
+  if (state) {
+    return <ReadyPickupCell state={state} />;
+  }
+  return (
+    <View
+      style={{
+        width: '50%',
+        height: 192,
+        flexDirection: 'row',
+        padding: 30,
+        paddingVertical: 50,
       }}
     />
   );
@@ -180,7 +280,7 @@ function PickupSection({ state }) {
           height: 192,
         }}
       >
-        <PickupCell style={{}} state={state.left} />
+        <PickupCell state={state.left} />
         <View style={{ padding: 28 }}>
           <View
             style={{
@@ -201,8 +301,8 @@ function StatusDisplay({ state }) {
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       <PresentationSection />
-      <QueueSection prepQueue={state.prepQueue} />
-      <PickupSection state={state.pickup} />
+      <QueueSection {...state} />
+      <PickupSection state={state.deliveryBays} />
     </View>
   );
 }
@@ -272,6 +372,7 @@ function ActionButton({ dispatch, name, type, getParams }) {
   );
 }
 function StatusDisplayDebug({ displayState, dispatch }) {
+  const cloud = useCloud();
   return (
     <View
       style={{
@@ -280,15 +381,21 @@ function StatusDisplayDebug({ displayState, dispatch }) {
         height: 200,
       }}
     >
+      <Button
+        title={'Reset State'}
+        onPress={() => {
+          cloud.get('RestaurantState').put(initialRestaurantState);
+        }}
+      />
       <ActionButton
         type="PlaceOrder"
         getParams={() => ({
           order: {
-            displayName: 'Daniel F',
+            displayName: window.prompt('person name , last initial'),
             prepQueue: [
               {
                 key: uuid(),
-                recipeName: 'Cocunut suprise',
+                recipeName: window.prompt('recipe name'),
               },
             ],
           },
@@ -296,18 +403,38 @@ function StatusDisplayDebug({ displayState, dispatch }) {
         dispatch={dispatch}
       />
       <ActionButton
-        type="Pickup"
-        name="Pickup 0"
-        params={{ bay: 0 }}
+        type="KitchenPrepStart"
+        getParams={() => {}}
         dispatch={dispatch}
       />
       <ActionButton
-        type="Pickup"
-        name="Pickup 1"
-        params={{ bay: 1 }}
+        type="KitchenBlend"
+        getParams={() => {}}
         dispatch={dispatch}
       />
-      <ActionButton type="BlendOrder" params={{}} dispatch={dispatch} />
+      <ActionButton
+        type="KitchenCompleteBlend"
+        getParams={() => {}}
+        dispatch={dispatch}
+      />
+      <ActionButton
+        type="KitchenDeliver"
+        getParams={() => {
+          return {
+            bay: window.prompt('bay'),
+          };
+        }}
+        dispatch={dispatch}
+      />
+      <ActionButton
+        type="KitchenDeliveryClear"
+        getParams={() => {
+          return {
+            bay: window.prompt('bay'),
+          };
+        }}
+        dispatch={dispatch}
+      />
     </View>
   );
 }
@@ -317,7 +444,6 @@ function StatusDisplayDebug({ displayState, dispatch }) {
 machine fault, machine alarm: {
   time: 456789, // when was this reported
   faultName/alarmName: // text from airtable about what is up
-
 }
 
 machine debug: {
@@ -377,6 +503,7 @@ restaurant state: {
   ],
   filling: {...fill state},
   blending: {...fill state},
+  delivering: {...fill state}
   deliveryBays: {
     A: {...delivery state},
     B: {...delivery state}
@@ -403,7 +530,7 @@ console.log('onerun')
   if (!action) {
     return state;
   }
-  if (action.type === 'KitchenCupStart') {
+  if (action.type === 'KitchenPrepStart') {
 
   }
   if (action.type === 'KitchenFill') {
@@ -441,29 +568,180 @@ console.log('onerun')
   return state;
 `;
 
-function StatusDisplayScreen() {
-  const [displayState, dispatch] = useCloudReducer(
-    'StatusDisplay',
-    reduceStatusDisplayState,
-    {
-      prepQueue: [],
-      pickup: { left: null, right: null },
-    },
-  );
+function reduceRestaurantState(state, action) {
+  if (action.type === 'KitchenPrepStart') {
+    if (state.filling) {
+      throw new Error('Cannot start while already filling!');
+    }
+    return {
+      ...state,
+      prepQueue: state.prepQueue.slice(0, state.prepQueue.length - 1),
+      filling: state.prepQueue[state.prepQueue.length - 1],
+    };
+  }
+  if (action.type === 'KitchenFill') {
+  }
+  if (action.type === 'KitchenBlend') {
+    if (state.blending) {
+      throw new Error('cannot start blending while another meal is blending');
+    }
+    if (!state.filling) {
+      return state;
+    }
+    return {
+      ...state,
+      filling: null,
+      blending: state.filling,
+    };
+  }
+  if (action.type === 'KitchenCompleteBlend') {
+    if (state.delivering) {
+      throw new Error(
+        'cannot start delivering while another meal is delivering',
+      );
+    }
+    if (!state.blending) {
+      return state;
+    }
+    return {
+      ...state,
+      blending: null,
+      delivering: state.blending,
+    };
+  }
+  if (action.type === 'KitchenDeliver') {
+    if (!state.delivering) {
+      throw new Error('cannot deliver without a meal ready for delivery');
+    }
+    const { bay } = action;
+    if (state.deliveryBays[bay] === undefined) {
+      throw new Error(`cannot deliver unknown delivery bay "${bay}"`);
+    }
+    if (state.deliveryBays[bay]) {
+      throw new Error(`cannot deliver to non-empty delivery bay "${bay}"`);
+    }
+    return {
+      ...state,
+      delivering: null,
+      deliveryBays: {
+        ...state.deliveryBays,
+        [bay]: state.delivering,
+      },
+    };
+  }
+  if (action.type === 'KitchenDeliveryClear') {
+    const { bay } = action;
+    if (state.deliveryBays[bay] === undefined) {
+      throw new Error(`cannot deliver unknown delivery bay "${bay}"`);
+    }
+    return {
+      ...state,
+      deliveryBays: {
+        ...state.deliveryBays,
+        [bay]: null,
+      },
+    };
+  }
+  if (action.type === 'PlaceOrder') {
+    const prevPrepQueue = state.prepQueue;
+    const { order } = action;
+    if (!order || !order.prepQueue) {
+      return state;
+    }
+    const newQueued = order.prepQueue.map(meal => ({
+      ...meal,
+      displayName: order.displayName,
+    }));
+    return {
+      ...state,
+      prepQueue: [...newQueued, ...prevPrepQueue],
+    };
+  }
+  if (action.type === 'FillIngredient') {
+    // action.ingredientName
+    // action.ingredientIcon
+    // action.ingredientColor
+  }
+  return state;
+}
+const initialRestaurantState = {
+  prepQueue: [
+    { displayName: 'Lucy V.', recipeName: 'Ginger and Greens', key: 'a' },
+    { displayName: 'Stephen K.', recipeName: 'Mint Cocoa Protein', key: 'b' },
+  ],
+  filling: {
+    displayName: 'Daniel F.',
+    recipeName: 'Coconut Surprise',
+    key: 'b',
+  },
+  blending: null,
+  delivering: null,
+  deliveryBays: { left: null, right: null },
+};
 
-  if (!displayState) {
+function StatusDisplayScreen() {
+  const cloud = useCloud();
+  const restaurant = cloud.get('RestaurantState');
+  const restaurantStateValue = useCloudValue(restaurant);
+  const restaurantState =
+    restaurantStateValue === null
+      ? initialRestaurantState
+      : restaurantStateValue;
+  if (!restaurantState) {
     return null;
   }
+  function dispatch(action) {
+    const state = reduceRestaurantState(restaurantState, action);
+    restaurant.put(state);
+  }
+  console.log('restaurantState', restaurantState);
+  // return null;
+  // const [displayState, dispatch] = React.useReducer(
+  //   reduceRestaurantState,
+  //   initialRestaurantState,
+  // );
+
+  // if (!displayState) {
+  //   return null;
+  // }
+  // console.log('Display State: ', displayState);
   return (
     <StatusDisplayLayout
       debugView={
-        <StatusDisplayDebug displayState={displayState} dispatch={dispatch} />
+        <StatusDisplayDebug
+          displayState={restaurantState}
+          dispatch={dispatch}
+        />
       }
     >
-      <StatusDisplay state={displayState} />
+      <StatusDisplay state={restaurantState} />
     </StatusDisplayLayout>
   );
 }
+
+// function StatusDisplayScreen() {
+//   const [displayState, dispatch] = useCloudReducer(
+//     'StatusDisplay',
+//     reduceStatusDisplayState,
+//     {
+//       prepQueue: [],
+//       pickup: { left: null, right: null },
+//     },
+//   );
+
+//   if (!displayState) {
+//     return null;
+//   }
+//   return (
+//     <StatusDisplayLayout
+//       debugView={
+//         <StatusDisplayDebug displayState={displayState} dispatch={dispatch} />
+//       }
+//     >
+//       <StatusDisplay state={displayState} />
+//     </StatusDisplayLayout>
+//   );
+// }
 
 function Kitchen() {
   const kitchenConfig = useCloudValue('KitchenConfig');
@@ -505,7 +783,8 @@ const App = createSwitchNavigator(
       navigationOptions: { title: 'Maui Status' },
     },
     StatusDisplay: StatusDisplayScreen,
-    Kitchen,
+    Kitchen: StatusDisplayScreen,
+    KitchenStatus: Kitchen,
   },
   {
     defaultNavigationOptions: {

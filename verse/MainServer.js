@@ -139,6 +139,11 @@ const runServer = async () => {
 
   await putPermission({
     defaultRule: { canWrite: true },
+    name: 'RestaurantState',
+  });
+
+  await putPermission({
+    defaultRule: { canWrite: true },
     name: 'PendingOrder',
   });
 
