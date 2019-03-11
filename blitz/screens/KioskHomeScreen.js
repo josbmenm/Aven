@@ -13,7 +13,7 @@ import {
 } from '../../components/Styles';
 
 import { useOrder } from '../../ono-cloud/OnoKitchen';
-import FadeTransition from '../components/FadeTransition';
+import FadeTransition from '../../components/FadeTransition';
 
 export default function KioskHomeScreen({ navigation, ...props }) {
   const { startOrder, resetOrder } = useOrder();

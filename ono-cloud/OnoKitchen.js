@@ -236,13 +236,13 @@ export function getItemCustomizationSummary(item) {
     return ing.Name.toLowerCase();
   }
   let summaryItems = [];
-  if (item.customization.benefit === null) {
-    summaryItems.push('with no benefit');
+  if (item.customization.enhancement === null) {
+    summaryItems.push('with no enhancement');
   }
-  if (item.customization.benefit) {
-    const benefit =
-      item.menuItem.BenefitCustomization[item.customization.benefit];
-    summaryItems.push('with ' + benefit.Name.toLowerCase());
+  if (item.customization.enhancement) {
+    const enhancement =
+      item.menuItem.EnhancementCustomization[item.customization.enhancement];
+    summaryItems.push('with ' + enhancement.Name.toLowerCase());
   }
   item.customization.ingredients &&
     Object.keys(item.customization.ingredients).forEach(categoryName => {
@@ -417,11 +417,17 @@ const sortByField = (obj, fieldName) => {
   return sortable.map(kVal => kVal[1]);
 };
 
-export function getActiveBenefit(cartItem, menuItem) {
-  if (cartItem && cartItem.customization && cartItem.customization.benefit) {
-    return menuItem.BenefitCustomization[cartItem.customization.benefit];
+export function getActiveEnhancement(cartItem, menuItem) {
+  if (
+    cartItem &&
+    cartItem.customization &&
+    cartItem.customization.enhancement
+  ) {
+    return menuItem.EnhancementCustomization[
+      cartItem.customization.enhancement
+    ];
   }
-  return menuItem.DefaultBenefit;
+  return menuItem.DefaultEnhancement;
 }
 
 function companyConfigToBlendMenu(atData) {
@@ -468,15 +474,22 @@ function companyConfigToBlendMenu(atData) {
     const thisRecipeIngredientIds = thisRecipeIngredients.map(
       ri => ri.Ingredient.id,
     );
-    const defaultBenefitId =
-      Recipe && Recipe.DefaultBenefit && Recipe.DefaultBenefit[0];
-    const Benefits = atData.baseTables['Benefits'];
-    const DefaultBenefit = defaultBenefitId ? Benefits[defaultBenefitId] : null;
+    const defaultEnhancementId =
+      Recipe && Recipe.DefaultEnhancement && Recipe.DefaultEnhancement[0];
+    const Enhancements = atData.baseTables['Enhancements'];
+    const DefaultEnhancement = defaultEnhancementId
+      ? Enhancements[defaultEnhancementId]
+      : null;
     return {
       ...item,
       IngredientCustomization: IngredientCustomization.map(ic => {
         if (!ic.Recipes || ic.Recipes.indexOf(recipeId) === -1) {
           return null;
+        }
+        if (!ic.Ingredients) {
+          throw new Error(
+            `No ingredients specified for customization category "${ic.Name}"`,
+          );
         }
         const defaultValue = ic.Ingredients.filter(
           IngredientId => thisRecipeIngredientIds.indexOf(IngredientId) !== -1,
@@ -491,9 +504,9 @@ function companyConfigToBlendMenu(atData) {
           ),
         };
       }).filter(ic => !!ic),
-      BenefitCustomization: Benefits,
-      DefaultBenefit,
-      DefaultBenefitName: DefaultBenefit && DefaultBenefit.Name,
+      EnhancementCustomization: Enhancements,
+      DefaultEnhancement,
+      DefaultEnhancementName: DefaultEnhancement && DefaultEnhancement.Name,
       DisplayPrice: formatCurrency(Recipe['Sell Price']),
       Recipe: {
         ...Recipe,

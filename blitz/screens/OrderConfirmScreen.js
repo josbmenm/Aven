@@ -1,5 +1,5 @@
 import React, { Component, useEffect } from 'react';
-import GenericPage from '../components/GenericPage';
+import GenericPage from '../../components/GenericPage';
 import Hero from '../../components/Hero';
 import Button from '../../components/Button';
 import { Text, View } from 'react-native';
@@ -9,7 +9,7 @@ import { useNavigation } from '../../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
 import Receipt from '../../components/Receipt';
 import { useCardPaymentCapture } from '../CardReader';
-import OrderConfirmPage from '../components/OrderConfirmPage';
+import OrderConfirmPage from '../../components/OrderConfirmPage';
 
 export default function OrderConfirmScreen({
   paymentRequest,

@@ -1,5 +1,5 @@
 import React, { Component, memo } from 'react';
-import GenericPage from '../components/GenericPage';
+import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import Hero from '../../components/Hero';
 import LinkRow from '../../components/LinkRow';

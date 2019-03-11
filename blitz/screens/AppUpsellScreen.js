@@ -1,5 +1,5 @@
 import React from 'react';
-import InputPage from '../components/InputPage';
+import InputPage from '../../components/InputPage';
 import { withRestaurant } from '../../ono-cloud/OnoKitchen';
 
 function AppUpsellWithRestaurant({ navigation, setAppUpsellPhoneNumber }) {

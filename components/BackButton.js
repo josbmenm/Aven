@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import { useNavigation } from '../../navigation-hooks/Hooks';
+import { useNavigation } from '../navigation-hooks/Hooks';
 import { highlightPrimaryColor, boldPrimaryFontFace } from './Styles';
 
 export default function BackButton({ style, backBehavior }) {

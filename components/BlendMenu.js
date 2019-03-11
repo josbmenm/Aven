@@ -5,10 +5,10 @@ import {
   useOrder,
 } from '../ono-cloud/OnoKitchen';
 import uuid from 'uuid/v1';
-import { useNavigation } from '../../navigation-hooks/Hooks';
+import { useNavigation } from '../navigation-hooks/Hooks';
 import { MenuCardCarousel } from '../components/MenuCard';
 import { MenuZone } from '../components/MenuZone';
-import PerformanceDebugging from '../../navigation-transitioner/PerformanceDebugging';
+import PerformanceDebugging from '../navigation-transitioner/PerformanceDebugging';
 
 export default function BlendMenu({ menu, large, title }) {
   const { navigate } = useNavigation();
@@ -22,7 +22,7 @@ export default function BlendMenu({ menu, large, title }) {
           key: item.id,
           title: displayNameOfMenuItem(item),
           price: sellPriceOfMenuItem(item),
-          tag: item.DefaultBenefitName,
+          tag: item.DefaultEnhancementName,
           photo: item.Recipe && item.Recipe['Recipe Image'],
           onPress: () => {
             const currentOrder = order && order.getValue();

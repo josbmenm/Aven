@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableHighlight, Alert } from 'react-native';
 import JSONView from '../../debug-views/JSONView';
-import GenericPage from '../components/GenericPage';
+import GenericPage from '../../components/GenericPage';
 import Hero from '../../components/Hero';
 import Button from '../../components/Button';
 

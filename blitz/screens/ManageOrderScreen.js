@@ -1,5 +1,5 @@
 import React from 'react';
-import GenericPage from '../components/GenericPage';
+import GenericPage from '../../components/GenericPage';
 import Hero from '../../components/Hero';
 import { useOrderIdSummary } from '../../ono-cloud/OnoKitchen';
 import { useNavigation } from '../../navigation-hooks/Hooks';

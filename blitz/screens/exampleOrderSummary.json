@@ -1687,7 +1687,7 @@
           "_index": 1,
           "id": "recTMd8dy2c66I9xk"
         },
-        "DefaultBenefitName": "Skin & Body",
+        "DefaultEnhancementName": "Skin & Body",
         "DisplayPrice": "$3.00"
       },
       {
@@ -3090,7 +3090,7 @@
           "_index": 4,
           "id": "recl9QIIUTtDuJkWi"
         },
-        "DefaultBenefitName": "Digestion",
+        "DefaultEnhancementName": "Digestion",
         "DisplayPrice": "$3.00"
       },
       {
@@ -4690,7 +4690,7 @@
           "_index": 3,
           "id": "rech4rxFhIlLhHVmk"
         },
-        "DefaultBenefitName": "Fitness",
+        "DefaultEnhancementName": "Fitness",
         "DisplayPrice": "$3.00"
       },
       {
@@ -5692,7 +5692,7 @@
           "_index": 2,
           "id": "reccH9dwP1awGJZlV"
         },
-        "DefaultBenefitName": "Immunity",
+        "DefaultEnhancementName": "Immunity",
         "DisplayPrice": "$3.00"
       },
       {
@@ -7451,7 +7451,7 @@
           "_index": 0,
           "id": "recDCiSzzrmzia1df"
         },
-        "DefaultBenefitName": "Focus",
+        "DefaultEnhancementName": "Focus",
         "DisplayPrice": "$3.00"
       }
     ]
@@ -9076,7 +9076,7 @@
           "_index": 1,
           "id": "recTMd8dy2c66I9xk"
         },
-        "DefaultBenefitName": "Skin & Body",
+        "DefaultEnhancementName": "Skin & Body",
         "DisplayPrice": "$3.00"
       }
     },
@@ -10501,7 +10501,7 @@
           "_index": 4,
           "id": "recl9QIIUTtDuJkWi"
         },
-        "DefaultBenefitName": "Digestion",
+        "DefaultEnhancementName": "Digestion",
         "DisplayPrice": "$3.00"
       }
     }

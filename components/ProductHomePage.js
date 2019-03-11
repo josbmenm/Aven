@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
-import GenericPage from '../components/GenericPage';
-import FoodMenu from '../components/FoodMenu';
-import BlendMenu from '../components/BlendMenu';
+import GenericPage from './GenericPage';
+import FoodMenu from './FoodMenu';
+import BlendMenu from './BlendMenu';
 
 function ProductHomePage({ menu, ...props }) {
   let menuViews = null;

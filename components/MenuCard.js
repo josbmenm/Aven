@@ -15,7 +15,7 @@ import {
   cardLargeWidth,
   monsterra70,
 } from './Styles';
-import AirtableImage from '../components/AirtableImage';
+import AirtableImage from './AirtableImage';
 import { formatCurrency } from './Utils';
 import Animated from 'react-native-reanimated';
 

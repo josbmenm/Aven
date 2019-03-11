@@ -1,6 +1,6 @@
 import React from 'react';
 import Tag from '../../components/Tag';
-import GenericPage from '../components/GenericPage';
+import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import LinkRow from '../../components/LinkRow';
 import Hero from '../../components/Hero';

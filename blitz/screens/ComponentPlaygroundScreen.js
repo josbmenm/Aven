@@ -1,20 +1,20 @@
 import React, { useState, memo } from 'react';
 import { View } from 'react-native';
-import FadeTransition from '../components/FadeTransition';
-import GenericPage from '../components/GenericPage';
+import FadeTransition from '../../components/FadeTransition';
+import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import Hero from '../../components/Hero';
 import LinkRow from '../../components/LinkRow';
-import OrderCompletePage from '../components/OrderCompletePage';
-import ReceiptPage from '../components/ReceiptPage';
-import SendReceiptPage from '../components/SendReceiptPage';
-import CollectNamePage from '../components/CollectNamePage';
-import OrderConfirmPage from '../components/OrderConfirmPage';
-import BlendPage from '../components/BlendPage';
-import FoodPage from '../components/FoodPage';
-import ProductHomePage from '../components/ProductHomePage';
+import OrderCompletePage from '../../components/OrderCompletePage';
+import ReceiptPage from '../../components/ReceiptPage';
+import SendReceiptPage from '../../components/SendReceiptPage';
+import CollectNamePage from '../../components/CollectNamePage';
+import OrderConfirmPage from '../../components/OrderConfirmPage';
+import BlendPage from '../../components/BlendPage';
+import FoodPage from '../../components/FoodPage';
+import ProductHomePage from '../../components/ProductHomePage';
 import CartSidebar from '../../components/CartSidebar';
-import CustomizePage from '../components/CustomizePage';
+import CustomizePage from '../../components/CustomizePage';
 import createStackTransitionNavigator from '../../navigation-transitioner/createStackTransitionNavigator';
 
 const menuItem = require('./exampleMenuItem.json');
@@ -123,7 +123,7 @@ const Components = {
   OrderCompletePage: {
     Component: OrderCompletePage,
     exampleProps: {},
-    icon: '🧾',
+    icon: '✅',
   },
 };
 

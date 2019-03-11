@@ -2,7 +2,7 @@ import React from 'react';
 import { KeyboardAvoidingView, View, StyleSheet, Image } from 'react-native';
 import BackButton from './BackButton';
 import { pageBackgroundColor } from './Styles';
-import { useNavigation } from '../../navigation-hooks/Hooks';
+import { useNavigation } from '../navigation-hooks/Hooks';
 import FadeTransition from './FadeTransition';
 
 export default function ShortBlockFormPage({
@@ -17,7 +17,7 @@ export default function ShortBlockFormPage({
       backgroundColor={pageBackgroundColor}
       background={
         <Image
-          source={require('../assets/BgGeneric.png')}
+          source={require('./assets/BgGeneric.png')}
           style={{
             flex: 1,
             width: null,

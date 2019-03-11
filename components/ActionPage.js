@@ -16,7 +16,7 @@ import {
 } from './Styles';
 import { SidebarOverlayContext } from './OrderSidebarPage';
 import BackButton from './BackButton';
-import { useNavigation } from '../../navigation-hooks/Hooks';
+import { useNavigation } from '../navigation-hooks/Hooks';
 import Animated from 'react-native-reanimated';
 import FadeTransition from './FadeTransition';
 
@@ -113,7 +113,7 @@ export default function ActionPage({ children, ...props }) {
       {...props}
       background={
         <Image
-          source={require('../assets/BgGeneric.png')}
+          source={require('./assets/BgGeneric.png')}
           style={{
             flex: 1,
             width: null,

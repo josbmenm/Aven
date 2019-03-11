@@ -2,7 +2,7 @@ import React from 'react';
 import { useOrder } from '../../ono-cloud/OnoKitchen';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
 import { useNavigation } from '../../navigation-hooks/Hooks';
-import OrderCompletePage from '../components/OrderCompletePage';
+import OrderCompletePage from '../../components/OrderCompletePage';
 
 export default function OrderCompleteScreen({ props }) {
   const { navigate } = useNavigation();

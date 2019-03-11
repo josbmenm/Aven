@@ -28,7 +28,7 @@ import {
   getItemCustomizationSummary,
 } from '../ono-cloud/OnoKitchen';
 import { useNavigation } from '../navigation-hooks/Hooks';
-import ListAnimation from '../blitz/components/ListAnimation';
+import ListAnimation from './ListAnimation';
 
 const summaryRowLabelStyle = {
   color: highlightPrimaryColor,

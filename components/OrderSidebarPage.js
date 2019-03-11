@@ -4,7 +4,7 @@ import TextButton from './TextButton';
 import { useOrderSummary, useOrder } from '../ono-cloud/OnoKitchen';
 import CartSidebar from './CartSidebar';
 
-import { useNavigation } from '../../navigation-hooks/Hooks';
+import { useNavigation } from '../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../blitz/useEmptyOrderEscape';
 import {
   prettyShadow,

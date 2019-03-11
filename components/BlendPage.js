@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import ActionPage from '../components/ActionPage';
-import AirtableImage from '../components/AirtableImage';
+import ActionPage from './ActionPage';
+import AirtableImage from './AirtableImage';
 import {
   boldPrimaryFontFace,
   monsterra,
@@ -14,7 +14,7 @@ import { MenuZone, MenuHLayout } from '../components/MenuZone';
 import {
   displayNameOfOrderItem,
   addMenuItemToCartItem,
-  getActiveBenefit,
+  getActiveEnhancement,
 } from '../ono-cloud/OnoKitchen';
 import SmallTitle from './SmallTitle';
 import DetailsSection from './DetailsSection';
@@ -22,7 +22,7 @@ import MainTitle from './MainTitle';
 import DescriptionText from './DescriptionText';
 import DetailText from './DetailText';
 import FoodMenu from './FoodMenu';
-import { BenefitSelector } from './Benefits';
+import { EnhancementSelector } from './Enhancements';
 
 function Ingredient({ ingredient }) {
   return (
@@ -47,13 +47,14 @@ function Ingredient({ ingredient }) {
           ...boldPrimaryFontFace,
         }}
       >
-        {ingredient.Name.toUpperCase()}
+        {ingredient.Name && ingredient.Name.toUpperCase()}
       </Text>
     </View>
   );
 }
 
 function Ingredients({ menuItem }) {
+  debugger;
   return (
     <View
       style={{
@@ -84,7 +85,7 @@ function BlendPageContentPure({ menuItem, item, foodMenu, order }) {
             <MenuCard
               key={menuItem.id}
               title={menuItem['Display Name']}
-              tag={menuItem.DefaultBenefitName}
+              tag={menuItem.DefaultEnhancementName}
               price={menuItem.Recipe['Sell Price']}
               photo={menuItem.Recipe['Recipe Image']}
               onPress={null}
@@ -99,7 +100,9 @@ function BlendPageContentPure({ menuItem, item, foodMenu, order }) {
               {menuItem.Recipe['DisplayCalories']} Calories |{' '}
               {menuItem.Recipe['Nutrition Detail']}
             </DetailText>
-            <BenefitSelector activeBenefit={getActiveBenefit(item, menuItem)} />
+            <EnhancementSelector
+              activeEnhancement={getActiveEnhancement(item, menuItem)}
+            />
             <SmallTitle>Organic Ingredients</SmallTitle>
             <Ingredients menuItem={menuItem} />
           </DetailsSection>

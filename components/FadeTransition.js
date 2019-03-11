@@ -3,7 +3,7 @@ import Animated, { Easing } from 'react-native-reanimated';
 import {
   SharedTransition,
   sharedNavigationOptionsWithConfig,
-} from '../../navigation-transitioner/Shared';
+} from '../navigation-transitioner/Shared';
 import { StyleSheet } from 'react-native';
 const { Value, timing, interpolate } = Animated;
 

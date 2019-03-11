@@ -4,7 +4,7 @@ import BitRow from '../../components/BitRow';
 import IntRow from '../../components/IntRow';
 import Row from '../../components/Row';
 import Button from '../../components/Button';
-import GenericPage from '../components/GenericPage';
+import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import { AlertIOS, Text } from 'react-native';
 

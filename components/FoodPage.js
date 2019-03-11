@@ -70,7 +70,7 @@ export default function FoodPage({
               <MenuCard
                 key={menuItem.id}
                 title={menuItem['Name']}
-                tag={menuItem.DefaultBenefitName}
+                tag={menuItem.DefaultEnhancementName}
                 price={menuItem['Sell Price']}
                 photo={menuItem['Photo']}
                 onPress={null}

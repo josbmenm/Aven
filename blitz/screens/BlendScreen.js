@@ -3,7 +3,7 @@ import { useOrderItem, useMenuItem, useMenu } from '../../ono-cloud/OnoKitchen';
 
 import useObservable from '../../aven-cloud/useObservable';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
-import BlendPage from '../components/BlendPage';
+import BlendPage from '../../components/BlendPage';
 
 function BlendScreenMemo({ navigation, ...props }) {
   const { getParam } = navigation;

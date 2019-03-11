@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import Hero from '../../components/Hero';
 
-import GenericPage from '../components/GenericPage';
+import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import LinkRow from '../../components/LinkRow';
 import Row from '../../components/Row';

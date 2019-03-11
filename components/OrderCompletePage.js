@@ -10,7 +10,7 @@ import BlockFormInput from './BlockFormInput';
 import BlockFormHorizontalRule from './BlockFormHorizontalRule';
 import TextButton from './TextButton';
 import { headerHeight, rightSidebarWidth } from './Styles';
-import { useNavigation } from '../../navigation-hooks/Hooks';
+import { useNavigation } from '../navigation-hooks/Hooks';
 
 export default function OrderCompletePage({ backBehavior, ...props }) {
   const [phoneNumber, setPhoneNumber] = useState('');

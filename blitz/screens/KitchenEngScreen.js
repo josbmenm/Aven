@@ -3,7 +3,7 @@ import Hero from '../../components/Hero';
 import BitRow from '../../components/BitRow';
 import { withNavigation } from '../../navigation-core';
 
-import GenericPage from '../components/GenericPage';
+import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import LinkRow from '../../components/LinkRow';
 import {

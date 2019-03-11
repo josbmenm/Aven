@@ -3,7 +3,7 @@ import {
   sellPriceOfMenuItem,
   displayNameOfMenuItem,
 } from '../ono-cloud/OnoKitchen';
-import { useNavigation } from '../../navigation-hooks/Hooks';
+import { useNavigation } from '../navigation-hooks/Hooks';
 import { MenuCardCarousel } from '../components/MenuCard';
 import { MenuZone } from '../components/MenuZone';
 

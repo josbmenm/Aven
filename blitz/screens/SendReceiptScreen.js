@@ -1,5 +1,5 @@
 import React from 'react';
-import SendReceiptPage from '../components/SendReceiptPage';
+import SendReceiptPage from '../../components/SendReceiptPage';
 import { useOrder } from '../../ono-cloud/OnoKitchen';
 import useCloud from '../../aven-cloud/useCloud';
 import { useNavigation } from '../../navigation-hooks/Hooks';

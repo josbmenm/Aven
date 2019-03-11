@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useOrderItem, useMenuItem } from '../../ono-cloud/OnoKitchen';
 import useObservable from '../../aven-cloud/useObservable';
-import CustomizePage from '../components/CustomizePage';
+import CustomizePage from '../../components/CustomizePage';
 
 export default function CustomizeBlendScreen({ navigation, ...props }) {
   const { getParam } = navigation;
@@ -11,22 +11,16 @@ export default function CustomizeBlendScreen({ navigation, ...props }) {
   let { orderItem, setItemState } = useOrderItem(orderItemId);
   const menuItem = useMenuItem(menuItemId);
   const item = useObservable(orderItem && orderItem.observeValue);
-  const initialCustomization = useMemo(
-    () => {
-      return item && item.customization;
-    },
-    [item],
-  );
+  const initialCustomization = useMemo(() => {
+    return item && item.customization;
+  }, [item]);
   let [customizationState, setCustomization] = useState(null);
-  useEffect(
-    () => {
-      // this is lame but the initial customization arrives asyncronously
-      if (initialCustomization && !customizationState) {
-        setCustomization(initialCustomization);
-      }
-    },
-    [customizationState, initialCustomization],
-  );
+  useEffect(() => {
+    // this is lame but the initial customization arrives asyncronously
+    if (initialCustomization && !customizationState) {
+      setCustomization(initialCustomization);
+    }
+  }, [customizationState, initialCustomization]);
 
   return (
     <CustomizePage

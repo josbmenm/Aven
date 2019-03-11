@@ -47,7 +47,7 @@ import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import OnoCloud from './OnoCloud';
 import AdminSessionContainer from './AdminSessionContainer';
-import OrderSidebarPage from './components/OrderSidebarPage';
+import OrderSidebarPage from '../components/OrderSidebarPage';
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
@@ -145,7 +145,7 @@ class ErrorHandlerContainer extends React.Component {
   }
 }
 
-const NAV_STORAGE_KEY = 'NavigationState2';
+const NAV_STORAGE_KEY = 'NavigationState3';
 const FullApp = () => (
   <CloudContext.Provider value={restaurant}>
     <OrderContextProvider>
@@ -157,8 +157,8 @@ const FullApp = () => (
 );
 
 const PRELOAD_IMAGES = {
-  kioskHomeScreen: require('./assets/BgHome.png'),
-  genericScreen: require('./assets/BgGeneric.png'),
+  kioskHomeScreen: require('../components/assets/BgHome.png'),
+  genericScreen: require('../components/assets/BgGeneric.png'),
 };
 
 async function loadImages(images) {

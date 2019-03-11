@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMenu } from '../../ono-cloud/OnoKitchen';
-import ProductHomePage from '../components/ProductHomePage';
+import ProductHomePage from '../../components/ProductHomePage';
 
 function ProductHomeScreen({ ...props }) {
   const menu = useMenu();

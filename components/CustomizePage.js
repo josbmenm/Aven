@@ -20,9 +20,9 @@ import ActionPage from '../components/ActionPage';
 import TabSectionScrollView from './TabSectionScrollView';
 import ListAnimation from './ListAnimation';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useNavigation } from '../../navigation-hooks/Hooks';
-import { BenefitDetail } from './Benefits';
-import { getActiveBenefit } from '../ono-cloud/OnoKitchen';
+import { useNavigation } from '../navigation-hooks/Hooks';
+import { EnhancementDetail } from './Enhancements';
+import { getactiveEnhancement } from '../ono-cloud/OnoKitchen';
 
 const tagSize = {
   width: 144,
@@ -114,11 +114,11 @@ function SideBySide({ items }) {
   return rows;
 }
 
-function BenefitSection({ section }) {
+function EnhancementSection({ section }) {
   return (
     <View style={{ marginRight: 14, marginBottom: 20 }}>
       <SideBySide
-        items={section.options.map(benefit => (
+        items={section.options.map(enhancement => (
           <TouchableOpacity
             style={{
               marginTop: 16,
@@ -129,10 +129,10 @@ function BenefitSection({ section }) {
               borderRadius: 4,
             }}
             onPress={() => {
-              section.addIngredient(benefit.id);
+              section.addIngredient(enhancement.id);
             }}
           >
-            <BenefitDetail benefit={benefit} key={benefit.id} />
+            <EnhancementDetail enhancement={enhancement} key={enhancement.id} />
           </TouchableOpacity>
         ))}
       />
@@ -141,8 +141,8 @@ function BenefitSection({ section }) {
 }
 
 function CustomizationMainSection({ section }) {
-  if (section.name === 'benefit') {
-    return <BenefitSection section={section} />;
+  if (section.name === 'enhancement') {
+    return <EnhancementSection section={section} />;
   }
   let message = `Choose up to ${section.slotCount} of ${section.displayName}`;
   if (section.slotCount === 1) {
@@ -224,16 +224,16 @@ function CustomizationMainSection({ section }) {
 
 // const MAX_FUNCTIONS = 2;
 
-// function BenefitCustomization({ customization, state, onState, menuItem }) {
+// function EnhancementCustomization({ customization, state, onState, menuItem }) {
 //   return (
 //     <CustomizationSection
 //       title="Blend Function"
 //       subtitle={`Choose ${MAX_FUNCTIONS}`}
 //     >
-//       {Object.keys(menuItem.BenefitCustomization).map(functionId => (
+//       {Object.keys(menuItem.EnhancementCustomization).map(functionId => (
 //         <CustomFunctionPuck
 //           key={functionId}
-//           fn={menuItem.BenefitCustomization[functionId]}
+//           fn={menuItem.EnhancementCustomization[functionId]}
 //           state={state}
 //           onPress={() => {
 //             const wasSelected = state.indexOf(functionId) !== -1;
@@ -259,29 +259,30 @@ function getCustomizationSections(
   if (!menuItem) {
     return [];
   }
-  let activeBenefit = menuItem.DefaultBenefit;
-  if (customizationState && customizationState.benefit !== undefined) {
-    activeBenefit = menuItem.BenefitCustomization[customizationState.benefit];
+  let activeEnhancement = menuItem.DefaultEnhancement;
+  if (customizationState && customizationState.enhancement !== undefined) {
+    activeEnhancement =
+      menuItem.EnhancementCustomization[customizationState.enhancement];
   }
   const sections = [
     {
-      name: 'benefit',
-      displayName: 'Benefit',
+      name: 'enhancement',
+      displayName: 'Enhancement',
       slotCount: 1,
-      options: Object.keys(menuItem.BenefitCustomization).map(
-        id => menuItem.BenefitCustomization[id],
+      options: Object.keys(menuItem.EnhancementCustomization).map(
+        id => menuItem.EnhancementCustomization[id],
       ),
-      selectedIngredients: [activeBenefit],
-      addIngredient: benefitId => {
+      selectedIngredients: [activeEnhancement],
+      addIngredient: enhancementId => {
         setCustomization({
           ...customizationState,
-          benefit: benefitId,
+          enhancement: enhancementId,
         });
       },
       removeIngredient: () => {
         setCustomization({
           ...customizationState,
-          benefit: null,
+          enhancement: null,
         });
       },
     },
@@ -379,7 +380,7 @@ function XButton({ onPress }) {
           marginLeft: 5,
           marginTop: 5,
         }}
-        source={require('../assets/CustomizeCross.png')}
+        source={require('./assets/CustomizeCross.png')}
       />
     </TouchableOpacity>
   );
@@ -459,17 +460,17 @@ function CustomizationSidebar({
                   list={Array(section.slotCount)
                     .fill(0)
                     .map((_, index) => {
-                      if (section.name === 'benefit') {
-                        const benefit = section.selectedIngredients[index];
-                        if (!benefit) {
+                      if (section.name === 'enhancement') {
+                        const enhancement = section.selectedIngredients[index];
+                        if (!enhancement) {
                           return 'add';
                         }
                         return {
                           onRemove: () => {
-                            section.removeIngredient(benefit.id);
+                            section.removeIngredient(enhancement.id);
                           },
-                          image: benefit.Photo,
-                          key: `${benefit.id}-${index}`,
+                          image: enhancement.Photo,
+                          key: `${enhancement.id}-${index}`,
                         };
                       }
                       const ingredient = section.selectedIngredients[index];

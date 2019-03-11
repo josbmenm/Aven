@@ -5,7 +5,7 @@ import Button from './Button';
 import Receipt from './Receipt';
 import { BlurView } from 'react-native-blur';
 import Animated, { Easing } from 'react-native-reanimated';
-import { useNavigation } from '../../navigation-hooks/Hooks';
+import { useNavigation } from '../navigation-hooks/Hooks';
 import FadeTransition from './FadeTransition';
 import { boldPrimaryFontFace } from './Styles';
 
@@ -79,7 +79,7 @@ function AnimateyCreditCard({ ready }) {
           flex: 1,
           resizeMode: 'contain',
         }}
-        source={require('../assets/CreditCard.png')}
+        source={require('./assets/CreditCard.png')}
       />
     </Animated.View>
   );
@@ -100,7 +100,7 @@ function CloseButton() {
       onPress={() => goBack()}
     >
       <Image
-        source={require('../assets/ModalClose.png')}
+        source={require('./assets/ModalClose.png')}
         style={{ width: 50, height: 50 }}
       />
     </TouchableOpacity>
