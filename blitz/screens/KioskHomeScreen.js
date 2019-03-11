@@ -26,7 +26,7 @@ export default function KioskHomeScreen({ navigation, ...props }) {
       navigation={navigation}
       background={
         <Image
-          source={require('../assets/BgHome.png')}
+          source={require('../../components/assets/BgHome.png')}
           style={{
             // flex: 1,
             width: null,
@@ -53,7 +53,7 @@ export default function KioskHomeScreen({ navigation, ...props }) {
               resizeMode: 'contain',
               tintColor: highlightPrimaryColor,
             }}
-            source={require('../assets/OnoBlendsLogo.png')}
+            source={require('../../components/assets/OnoBlendsLogo.png')}
           />
 
           <Text

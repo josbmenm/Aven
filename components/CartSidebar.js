@@ -178,13 +178,13 @@ function CartRow({ itemId, item }) {
             {item.type === 'blend' && (
               <SmallButton
                 title="customize"
-                icon={require('../blitz/assets/EditIcon.png')}
+                icon={require('./assets/EditIcon.png')}
                 onPress={goToItem}
               />
             )}
             <SmallButton
               title="remove"
-              icon={require('../blitz/assets/DeleteIcon.png')}
+              icon={require('./assets/DeleteIcon.png')}
               onPress={removeItem}
             />
           </View>
