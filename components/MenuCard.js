@@ -125,7 +125,7 @@ function CardHeader({ title, price, tag, style }) {
   );
 }
 
-function CardPhoto({ photo, style }) {
+function CardPhoto({ photo, style, isZoomed }) {
   return (
     <Animated.View
       pointerEvents="none"
@@ -139,10 +139,10 @@ function CardPhoto({ photo, style }) {
         image={photo}
         resizeMode={'cover'}
         style={{
-          width: cardLargeWidth * 2,
+          width: isZoomed ? cardLargeWidth * 2 : cardLargeWidth,
           height: cardLargeWidth * cardHeightRatio,
           position: 'absolute',
-          right: -120,
+          right: isZoomed ? -120 : 0,
           top: 0,
         }}
       />
@@ -150,7 +150,15 @@ function CardPhoto({ photo, style }) {
   );
 }
 
-export function MenuCard({ photo, title, price, tag, onPress, style }) {
+export function MenuCard({
+  photo,
+  title,
+  price,
+  tag,
+  onPress,
+  isPhotoZoomed,
+  style,
+}) {
   return (
     <CardContainer
       onPress={onPress}
@@ -163,6 +171,7 @@ export function MenuCard({ photo, title, price, tag, onPress, style }) {
       {photo && (
         <CardPhoto
           photo={photo}
+          isZoomed={isPhotoZoomed}
           style={{
             position: 'absolute',
             width: cardLargeWidth,
@@ -270,7 +279,7 @@ export function MenuCardCarousel({ items, large, style }) {
               ],
             }}
           >
-            <MenuCard {...item} style={{}} />
+            <MenuCard {...item} style={{}} isPhotoZoomed={large} />
           </Animated.View>
         );
       })}

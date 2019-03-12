@@ -54,7 +54,6 @@ function Ingredient({ ingredient }) {
 }
 
 function Ingredients({ menuItem }) {
-  debugger;
   return (
     <View
       style={{
@@ -83,6 +82,7 @@ function BlendPageContentPure({ menuItem, item, foodMenu, order }) {
         <MenuHLayout
           side={
             <MenuCard
+              isPhotoZoomed={true}
               key={menuItem.id}
               title={menuItem['Display Name']}
               tag={menuItem.DefaultEnhancementName}

@@ -68,6 +68,7 @@ export default function FoodPage({
           side={
             menuItem && (
               <MenuCard
+                isPhotoZoomed={false}
                 key={menuItem.id}
                 title={menuItem['Name']}
                 tag={menuItem.DefaultEnhancementName}

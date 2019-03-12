@@ -21,6 +21,7 @@ export default function OrderCompleteScreen({ props }) {
         navigate('AppUpsell');
       }}
       {...props}
+      backBehavior={null}
     />
   );
 }
