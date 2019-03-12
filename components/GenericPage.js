@@ -29,7 +29,11 @@ export default function GenericPage({
         />
       }
     >
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{}}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{}}
+        showsVerticalScrollIndicator={false}
+      >
         {children}
       </ScrollView>
       {afterScrollView}

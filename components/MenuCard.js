@@ -28,7 +28,7 @@ const carouselPaddingLarge = largeHorizontalPadding;
 const carouselPaddingSmall = 32;
 
 const cardsScrollWidth = cardSmallWidth + carouselPaddingSmall;
-const cardBorderRadius = 6;
+const cardBorderRadius = 8;
 const cardShadowRadius = prettyShadowRespectedRadius;
 
 function CardContainer({ children, style, onPress }) {
@@ -44,7 +44,8 @@ function CardContainer({ children, style, onPress }) {
             ...prettyShadow,
             backgroundColor: 'white',
             borderRadius: cardBorderRadius,
-            flex: 1,
+            width: cardLargeWidth,
+            height: cardLargeWidth * cardHeightRatio,
             position: 'relative',
             justifyContent: 'space-between',
           },
@@ -130,16 +131,19 @@ function CardPhoto({ photo, style }) {
       pointerEvents="none"
       style={{
         ...style,
-        alignSelf: 'stretch',
-        resizeMode: 'contain',
-        alignItems: 'stretch',
         borderRadius: cardBorderRadius,
+        overflow: 'hidden',
       }}
     >
       <AirtableImage
         image={photo}
+        resizeMode={'cover'}
         style={{
-          flex: 1,
+          width: cardLargeWidth * 2,
+          height: cardLargeWidth * cardHeightRatio,
+          position: 'absolute',
+          right: -120,
+          top: 0,
         }}
       />
     </Animated.View>
@@ -156,16 +160,17 @@ export function MenuCard({ photo, title, price, tag, onPress, style }) {
         ...style,
       }}
     >
-      <CardHeader title={title} price={price} tag={tag} />
       {photo && (
         <CardPhoto
           photo={photo}
           style={{
+            position: 'absolute',
             width: cardLargeWidth,
-            height: cardLargeWidth * cardHeightRatio - cardHeaderMargin,
+            height: cardLargeWidth * cardHeightRatio,
           }}
         />
       )}
+      <CardHeader title={title} price={price} tag={tag} />
     </CardContainer>
   );
 }
@@ -222,135 +227,51 @@ export function MenuCardCarousel({ items, large, style }) {
           cardsScrollWidth * index, // large card
           cardsScrollWidth * afterIndex, // offscreen left
         ];
-        const growthOffset = (cardMaybeLargeWidth - cardSmallWidth) / 2;
         const cardTranslateX = interpolate(scrollPosition, {
           inputRange,
           outputRange: [
-            growthOffset +
-              carouselPaddingLarge +
-              (growthOffset + carouselPaddingMaybeLarge) -
-              carouselPaddingSmall,
-            growthOffset + carouselPaddingLarge,
-            carouselPaddingSmall,
+            cardMaybeLargeWidth - cardSmallWidth + carouselPaddingMaybeLarge,
+            carouselPaddingMaybeLarge,
+            -30, // for shadow
           ],
           extrapolate: 'clamp',
         });
         const cardScale = interpolate(scrollPosition, {
           inputRange,
-          outputRange: [1, cardMaybeLargeWidth / cardSmallWidth, 1],
-          extrapolate: 'clamp',
-        });
-        const headerTranslateX = interpolate(scrollPosition, {
-          inputRange,
           outputRange: [
-            growthOffset +
-              carouselPaddingLarge +
-              (growthOffset + carouselPaddingMaybeLarge) -
-              carouselPaddingSmall,
-            growthOffset * 2 + carouselPaddingLarge,
-            carouselPaddingSmall,
+            cardSmallWidth / cardLargeWidth,
+            large ? 1 : cardSmallWidth / cardLargeWidth,
+            cardSmallWidth / cardLargeWidth,
           ],
           extrapolate: 'clamp',
         });
         const smallCardTopMargin =
           ((cardMaybeLargeWidth - cardSmallWidth) * cardHeightRatio) / 2;
-        const headerTranslateY = interpolate(scrollPosition, {
-          inputRange,
-          outputRange: [0, -smallCardTopMargin, 0],
-          extrapolate: 'clamp',
-        });
-
-        const photoTranslateX = interpolate(scrollPosition, {
-          inputRange,
-          outputRange: [
-            growthOffset +
-              carouselPaddingLarge +
-              carouselPaddingMaybeLarge -
-              carouselPaddingSmall,
-            carouselPaddingLarge,
-
-            carouselPaddingSmall - growthOffset,
-          ],
-          extrapolate: 'clamp',
-        });
-        const photoTranslateY = interpolate(scrollPosition, {
-          inputRange,
-          outputRange: [0, 0, 0],
-          extrapolate: 'clamp',
-        });
-        const photoScale = interpolate(scrollPosition, {
-          inputRange,
-          outputRange: [
-            cardSmallWidth / cardMaybeLargeWidth,
-            1,
-            cardSmallWidth / cardMaybeLargeWidth,
-          ],
-          extrapolate: 'clamp',
-        });
 
         return (
-          <View
+          <Animated.View
             key={item.key}
             pointerEvents="box-none"
             style={{
               width: cardSmallWidth,
-              height: cardSmallWidth * cardHeightRatio,
+              height:
+                cardSmallWidth * cardHeightRatio +
+                2 * prettyShadowRespectedRadius,
+              paddingVertical: prettyShadowRespectedRadius,
               marginVertical: smallCardTopMargin,
               marginRight: carouselPaddingSmall,
+              transform: [
+                {
+                  translateX: cardTranslateX,
+                },
+                {
+                  scale: cardScale,
+                },
+              ],
             }}
           >
-            <CardContainer
-              onPress={item.onPress}
-              style={{
-                width: cardSmallWidth,
-                height: cardSmallWidth * cardHeightRatio,
-
-                transform: [
-                  {
-                    translateX: cardTranslateX,
-                  },
-                  {
-                    scale: cardScale,
-                  },
-                ],
-              }}
-            />
-
-            {item.photo && (
-              <CardPhoto
-                photo={item.photo}
-                style={{
-                  position: 'absolute',
-                  bottom: -smallCardTopMargin,
-                  left: 0,
-                  width: cardMaybeLargeWidth,
-                  height:
-                    cardMaybeLargeWidth * cardHeightRatio - cardHeaderMargin,
-                  transform: [
-                    {
-                      translateX: photoTranslateX,
-                      translateY: photoTranslateY,
-                    },
-                    { scale: photoScale },
-                  ],
-                }}
-              />
-            )}
-            <CardHeader
-              {...item}
-              style={{
-                position: 'absolute',
-                right: 0,
-                top: 0,
-                transform: [
-                  {
-                    translateX: headerTranslateX,
-                    translateY: headerTranslateY,
-                  },
-                ],
-              }}
-            />
-          </View>
+            <MenuCard {...item} style={{}} />
+          </Animated.View>
         );
       })}
     </Animated.ScrollView>
