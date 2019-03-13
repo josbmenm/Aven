@@ -303,17 +303,22 @@ export function addMenuItemToCartItem({
   orderItemId,
   item,
   itemType,
+  customization = null,
 }) {
   return item
     ? {
         ...item,
         quantity: item.quantity + 1,
+        customization: {
+          ...item.customization,
+          ...customization,
+        },
       }
     : {
         id: orderItemId,
         type: itemType,
         menuItemId: menuItem.id,
-        customization: null,
+        customization,
         quantity: 1,
       };
 }

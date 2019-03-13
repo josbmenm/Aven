@@ -16,6 +16,9 @@ import {
 import Animated from 'react-native-reanimated';
 
 export function EnhancementDetail({ enhancement, chevronRef }) {
+  if (!enhancement || !enhancement.Name) {
+    return null;
+  }
   return (
     <View
       style={{
@@ -78,7 +81,7 @@ function EnhancementSelectorRow({ enhancement, onSelect, onClose }) {
               ...boldPrimaryFontFace,
             }}
           >
-            {enhancement.Name}
+            {enhancement.Name.toUpperCase()}
           </Text>
           <Text style={{ fontSize: 13, color: monsterra, ...proseFontFace }}>
             {enhancement.Description}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import ActionPage from './ActionPage';
 import AirtableImage from './AirtableImage';
@@ -78,11 +78,20 @@ function BlendPageContentPure({
   item,
   foodMenu,
   order,
+  onPendingEnhancement,
 }) {
   console.log('RENDER BLEND PAGEEE');
 
   let menuContent = null;
   if (menuItem && order) {
+    let activeEnhancement = getActiveEnhancement(item, menuItem);
+    let [pendingActiveEnhancement, setPendingActiveEnhancement] = useState(
+      null,
+    );
+    if (!item && pendingActiveEnhancement) {
+      activeEnhancement =
+        menuItem.EnhancementCustomization[pendingActiveEnhancement];
+    }
     menuContent = (
       <MenuZone>
         <MenuHLayout
@@ -107,16 +116,21 @@ function BlendPageContentPure({
               {menuItem.Recipe['Nutrition Detail']}
             </DetailText>
             <EnhancementSelector
-              activeEnhancement={getActiveEnhancement(item, menuItem)}
+              activeEnhancement={activeEnhancement}
               enhancementCustomization={menuItem.EnhancementCustomization}
               onSelect={enhancement => {
-                setItemState({
-                  ...item,
-                  customization: {
-                    ...item.customization,
-                    enhancement,
-                  },
-                });
+                if (item) {
+                  setItemState({
+                    ...item,
+                    customization: {
+                      ...item.customization,
+                      enhancement,
+                    },
+                  });
+                } else {
+                  setPendingActiveEnhancement(enhancement);
+                  onPendingEnhancement && onPendingEnhancement(enhancement);
+                }
               }}
             />
             <SmallTitle>Organic Ingredients</SmallTitle>
@@ -149,6 +163,8 @@ export default function BlendPage({
 }) {
   const { navigate } = navigation;
 
+  const [pendingEnhancement, setPendingEnhancement] = useState(null);
+
   const actions = [
     {
       secondary: true,
@@ -164,12 +180,16 @@ export default function BlendPage({
     {
       title: 'add to cart',
       onPress: () => {
+        console.log('omgwat', pendingEnhancement);
         setItemState(
           addMenuItemToCartItem({
             item: item && item.state,
             orderItemId,
             menuItem,
             itemType: 'blend',
+            customization: pendingEnhancement
+              ? { enhancement: pendingEnhancement }
+              : {},
           }),
         );
       },
@@ -184,6 +204,7 @@ export default function BlendPage({
         foodMenu={foodMenu}
         order={order}
         setItemState={setItemState}
+        onPendingEnhancement={setPendingEnhancement}
       />
     </ActionPage>
   );
