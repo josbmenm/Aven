@@ -72,7 +72,13 @@ function Ingredients({ menuItem }) {
   );
 }
 
-function BlendPageContentPure({ menuItem, item, foodMenu, order }) {
+function BlendPageContentPure({
+  menuItem,
+  setItemState,
+  item,
+  foodMenu,
+  order,
+}) {
   console.log('RENDER BLEND PAGEEE');
 
   let menuContent = null;
@@ -102,6 +108,16 @@ function BlendPageContentPure({ menuItem, item, foodMenu, order }) {
             </DetailText>
             <EnhancementSelector
               activeEnhancement={getActiveEnhancement(item, menuItem)}
+              enhancementCustomization={menuItem.EnhancementCustomization}
+              onSelect={enhancement => {
+                setItemState({
+                  ...item,
+                  customization: {
+                    ...item.customization,
+                    enhancement,
+                  },
+                });
+              }}
             />
             <SmallTitle>Organic Ingredients</SmallTitle>
             <Ingredients menuItem={menuItem} />
@@ -167,6 +183,7 @@ export default function BlendPage({
         menuItem={menuItem}
         foodMenu={foodMenu}
         order={order}
+        setItemState={setItemState}
       />
     </ActionPage>
   );

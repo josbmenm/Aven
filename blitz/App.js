@@ -48,6 +48,7 @@ import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import OnoCloud from './OnoCloud';
 import AdminSessionContainer from './AdminSessionContainer';
 import OrderSidebarPage from '../components/OrderSidebarPage';
+import { PopoverContainer } from '../views/Popover';
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
@@ -147,13 +148,15 @@ class ErrorHandlerContainer extends React.Component {
 
 const NAV_STORAGE_KEY = 'NavigationState3';
 const FullApp = () => (
-  <CloudContext.Provider value={restaurant}>
-    <OrderContextProvider>
-      <ErrorHandlerContainer>
-        <AppContainer persistenceKey={NAV_STORAGE_KEY} />
-      </ErrorHandlerContainer>
-    </OrderContextProvider>
-  </CloudContext.Provider>
+  <PopoverContainer>
+    <CloudContext.Provider value={restaurant}>
+      <OrderContextProvider>
+        <ErrorHandlerContainer>
+          <AppContainer persistenceKey={NAV_STORAGE_KEY} />
+        </ErrorHandlerContainer>
+      </OrderContextProvider>
+    </CloudContext.Provider>
+  </PopoverContainer>
 );
 
 const PRELOAD_IMAGES = {

@@ -1,1289 +1,1128 @@
 {
   "Active in Kiosk": true,
   "Calories": "500",
-  "Display Description": "restores your skin and body with a perfectly zingy blend.",
-  "Display Name": "ginger + greens",
-  "Ingredients - DO NOT USE": "Spinach, Cucumber, Pineapple, Coconut Milk, Yogurt, Pink Himalayan Salt, Dates, Ginger",
+  "Display Description": "we're convinced a tropical vacation can cure virtually any ailment, so by the transitive property, this tropical blend has healing powers as well (but closing your eyes and picturing the ocean helps). ",
+  "Display Name": "papaya + pineapple",
+  "Ingredients - DO NOT USE": "Papaya, Pineapple, Bananas, Yogurt, Coconut Milk, Dates, Chia Seeds",
   "Recipe": {
-    "Best Gross Margin": 32.99320918677487,
-    "Cheapest COGS": 2.010203724396754,
-    "Current COGS": 5.057831459753808,
-    "DefaultBenefit": ["recTMd8dy2c66I9xk"],
+    "DefaultEnhancement": ["recTMd8dy2c66I9xk"],
     "DisplayCalories": 480,
-    "Gross Margin (Current)": -68.59438199179358,
-    "Ingredient Tags": "Vegetable,Frozen Food,Frozen Food,Vegetable,Fruit,Frozen Food,Liquid,Milk,Non-Dairy,Butter,Dairy,Fruit,Frozen Food,Powder,Skin & Body,Function,Powder,Skin & Body,Function,Skin & Body,Powder,Function,Salt",
+    "Ingredient Tags": ",Fruit,Frozen Food,Fruit,Frozen Food,Fruit,Frozen Food,Fruit,Frozen Food,,Seeds",
     "Ingredients": [
       {
-        "85%": 102,
-        "Amount": 120,
-        "COGS": 1.320129102806046,
-        "Cheapest COGS": 0.26540111612621603,
-        "Cheapest price per UOM": [0.0022116759677184667],
+        "85%": 8.5,
+        "Amount": 10,
         "Ingredient": {
-          "250 Orders (Kg)": 6,
-          "250 Orders (m^3)": 0.013173827779139998,
-          "400 Orders (Kg)": 9.6,
-          "400 Orders (m^3)": 0.021078124446624,
-          "As used in recipes": ["recl6ORaqviGY0Z6t"],
-          "Cheapest per UOM": 0.0022116759677184667,
-          "Feeder Type": "Frozen Food",
+          "250 Orders (Kg)": 2.45,
+          "250 Orders (m^3)": 0.0053793130098155,
+          "400 Orders (Kg)": 3.9200000000000004,
+          "400 Orders (m^3)": 0.0086069008157048,
+          "As used in recipes": [
+            "recauRAM56Fw34qYQ",
+            "recxxhmYqcgNwrn15",
+            "rec5cRYtBXzmhw60A",
+            "recSGTl2PVyr6Gdhf",
+            "recdZpRFJSNKWX6rG",
+            "recQMsJzYS6UaYm43"
+          ],
+          "Feeder Type": ["recNUkbMS99k4UelH"],
+          "Feeder Type -OLD": "Liquid",
           "Ingredient Image": [
             {
-              "filename": "organicbabyspinach-600x600.jpg",
-              "id": "attcTaObfW0nc4ioj",
-              "size": 35468,
+              "filename": "Pink Salt Vanilla Coconut.png",
+              "id": "attrxzt72ZeOOpd9H",
+              "size": 399684,
               "thumbnails": {
                 "full": {
-                  "height": 600,
-                  "url": "https://dl.airtable.com/HdOWE1nRluVS9IqrHdkj_full_organicbabyspinach-600x600.jpg",
-                  "width": 600
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/18bfdc2a6734180fd6b89988a79c41a9/7cf6adf2",
+                  "width": 840
                 },
                 "large": {
-                  "height": 512,
-                  "url": "https://dl.airtable.com/UTWI37Y2RqOn2zq2ywO6_large_organicbabyspinach-600x600.jpg",
-                  "width": 512
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/183bca189d1df46e008441e700daf2e8/682f790f",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/bXtdJF3T3iH2ILWpEnKj_small_organicbabyspinach-600x600.jpg",
-                  "width": 36
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/997dcd558bbb0e46ba428c3200fcf385/d50d0445",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/mvnQOT6fRDyrO27zCbCV_organicbabyspinach-600x600.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/349d1ad01dfca419359284442d6180f7/f8cb7347/PinkSaltVanillaCoconut.png"
             }
           ],
-          "Name": "Organic Spinach",
-          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "rec0jdrs5oTn5xaOW",
-            "rec1n6RoqXUd7qZfq",
-            "recO1QwIw4PnxKsEn"
-          ],
-          "Tags": ["Vegetable", "Frozen Food"],
-          "Total Across Menu": 120,
-          "UOM": "g",
-          "_index": 27,
-          "id": "recs26PO84nLJ6Mkt"
+          "Name": " Coconut Milk + Vanilla + Pink Salt",
+          "Recipe Ingredients copy": "Vanilla Coconut Milk",
+          "RecipeCustomization": ["recBFTCL8OFHr9EG0", "recYkttCtHbqlwU2w"],
+          "Supplied Ingredients": "Himalayan Salt, Himalayan Salt",
+          "Total Across Menu": 49,
+          "UOM": ["oz"],
+          "_index": 10,
+          "id": "recMQbVzKifYdJcjk"
         },
-        "Ingredient Tags": ["Vegetable", "Frozen Food"],
-        "Name": "Spinach",
-        "Price per UOM": [0.01100107585671705],
-        "Recipes": ["rec93XzkFZTAIL7xj"],
-        "Supplied Ingredient": ["rec0jdrs5oTn5xaOW"],
-        "UOM": ["g"],
-        "_index": 39,
-        "id": "recl6ORaqviGY0Z6t"
+        "Name": "Vanilla Coconut Milk",
+        "Recipes": ["rec5COvvN0bV19iLF"],
+        "UOM": ["oz"],
+        "_index": 22,
+        "id": "recSGTl2PVyr6Gdhf"
       },
       {
-        "85%": 170,
-        "Amount": 200,
-        "COGS": 0.6714285714285715,
-        "Cheapest COGS": 0.4028571428571428,
-        "Cheapest price per UOM": [0.002014285714285714],
+        "85%": 153,
+        "Amount": 180,
         "Ingredient": {
-          "250 Orders (Kg)": 10,
-          "250 Orders (m^3)": 0.0219563796319,
-          "400 Orders (Kg)": 16,
-          "400 Orders (m^3)": 0.03513020741104,
-          "As used in recipes": ["recL2xE4rOU7O4uJN"],
-          "Cheapest per UOM": 0.002014285714285714,
-          "Feeder Type": "Frozen Food",
+          "250 Orders (Kg)": 9,
+          "250 Orders (m^3)": 0.01976074166871,
+          "400 Orders (Kg)": 14.4,
+          "400 Orders (m^3)": 0.031617186669936,
+          "As used in recipes": ["rec1NUFConynG2HwT"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
           "Ingredient Image": [
             {
-              "filename": "ID-100212649_Fresh-Cucumber-Slice-Isolated-On-White-Background-by-SOMMAI.jpg",
-              "id": "attA9jOwJ5HSMfs6F",
-              "size": 114241,
+              "filename": "Papaya.png",
+              "id": "attOl0UrTtEjHljZ5",
+              "size": 194182,
               "thumbnails": {
                 "full": {
-                  "height": 504,
-                  "url": "https://dl.airtable.com/cfneQdSxQJmqNAMLhspG_full_ID-100212649_Fresh-Cucumber-Slice-Isolated-On-White-Background-by-SOMMAI.jpg",
-                  "width": 600
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/9f244b57ec72e0de4fe77c16e91ef920/74de8c02",
+                  "width": 840
                 },
                 "large": {
-                  "height": 504,
-                  "url": "https://dl.airtable.com/QP5j9eoPQZCq5U1anMnB_large_ID-100212649_Fresh-Cucumber-Slice-Isolated-On-White-Background-by-SOMMAI.jpg",
-                  "width": 600
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/186cae5b6065ce7f79c5847734fd5cb0/2bcb523c",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/sjNrzbnJQo2F6no8InZ4_small_ID-100212649_Fresh-Cucumber-Slice-Isolated-On-White-Background-by-SOMMAI.jpg",
-                  "width": 43
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/c29a4015fd1422b6cdcfd36f43cbe862/99645069",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/KmDVrZBTyG9bko7OqDbr_ID-100212649_Fresh-Cucumber-Slice-Isolated-On-White-Background-by-SOMMAI.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/c0d0a6e756ad3b5978566ddeab5cf890/f5ab32f7/Papaya.png"
             }
           ],
-          "Name": "Organic Cucumber",
+          "Name": " Papaya",
+          "Recipe Ingredients copy": "Papaya",
           "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "recP5ATaLgdPN5tmS",
-            "recZdwU2frvW8GvaA",
-            "recc9bRGiaEjpDXil"
-          ],
-          "Tags": ["Frozen Food", "Vegetable"],
-          "Total Across Menu": 200,
-          "UOM": "g",
-          "_index": 8,
-          "id": "recGRd3CuZCnJUlEK"
-        },
-        "Ingredient Tags": ["Frozen Food", "Vegetable"],
-        "Name": "Cucumber",
-        "Price per UOM": [0.003357142857142857],
-        "Recipes": ["rec93XzkFZTAIL7xj"],
-        "Supplied Ingredient": ["recZdwU2frvW8GvaA"],
-        "UOM": ["g"],
-        "_index": 14,
-        "id": "recL2xE4rOU7O4uJN"
-      },
-      {
-        "85%": 59.5,
-        "Amount": 70,
-        "COGS": 0.29383234272209385,
-        "Cheapest COGS": 0.1762994056332563,
-        "Cheapest price per UOM": [0.002518562937617947],
-        "Ingredient": {
-          "250 Orders (Kg)": 8.5,
-          "250 Orders (m^3)": 0.018662922687115,
-          "400 Orders (Kg)": 13.6,
-          "400 Orders (m^3)": 0.029860676299383996,
-          "As used in recipes": ["recj2kn8MsO37p3uX", "rec9ps3rO3p84skIe"],
-          "Cheapest per UOM": 0.002518562937617947,
-          "Feeder Type": "Frozen Food",
-          "Ingredient Image": [
-            {
-              "filename": "Pineapple-Slices-fragrance__18306.1487002092.350.350.jpg",
-              "id": "att3SFlKJipSXj5b9",
-              "size": 37474,
-              "thumbnails": {
-                "full": {
-                  "height": 350,
-                  "url": "https://dl.airtable.com/qLL6IXI3QUWkl7j8wOfS_full_Pineapple-Slices-fragrance__18306.1487002092.350.350.jpg",
-                  "width": 350
-                },
-                "large": {
-                  "height": 350,
-                  "url": "https://dl.airtable.com/zkMx8546QVddEDMKd1ge_large_Pineapple-Slices-fragrance__18306.1487002092.350.350.jpg",
-                  "width": 350
-                },
-                "small": {
-                  "height": 36,
-                  "url": "https://dl.airtable.com/bRyUaBizRCOPjYP5jjFa_small_Pineapple-Slices-fragrance__18306.1487002092.350.350.jpg",
-                  "width": 36
-                }
-              },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/zP3oRjOJT9KQlBkNJjeh_Pineapple-Slices-fragrance__18306.1487002092.350.350.jpg"
-            }
-          ],
-          "Name": "Organic Pineapple",
-          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "rec3QxHvs3tCGp5CA",
-            "rec8QQHeNALKFUXWs",
-            "recO0dGklKvi0Ve2J"
-          ],
+          "Supplied Ingredients": "Papaya, Papaya, Papaya",
           "Tags": ["Fruit", "Frozen Food"],
-          "Total Across Menu": 170,
-          "UOM": "g",
-          "_index": 18,
+          "Total Across Menu": 180,
+          "UOM": ["g"],
+          "_index": 0,
+          "id": "rec17gjOSmacPTVTk"
+        },
+        "Ingredient Tags": ["Fruit", "Frozen Food"],
+        "Name": "Papaya",
+        "Recipes": ["rec5COvvN0bV19iLF"],
+        "UOM": ["g"],
+        "_index": 0,
+        "id": "rec1NUFConynG2HwT"
+      },
+      {
+        "85%": 76.5,
+        "Amount": 90,
+        "Ingredient": {
+          "250 Orders (Kg)": 15,
+          "250 Orders (m^3)": 0.03293456944785,
+          "400 Orders (Kg)": 24,
+          "400 Orders (m^3)": 0.05269531111655999,
+          "As used in recipes": [
+            "recgc3gAv0JIQkQ0W",
+            "recvuzyJl7sP0V7BO",
+            "recSiIFX4HVApiJt5",
+            "recNHA2MwOUQ3Qh8E"
+          ],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
+          "Ingredient Image": [
+            {
+              "filename": "Pineapple.png",
+              "id": "attUpKrMh3C60lSBQ",
+              "size": 377187,
+              "thumbnails": {
+                "full": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/507fc83f0ea46d313c62af074bcb35d1/539a51ea",
+                  "width": 840
+                },
+                "large": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/9f36b6a1383c29948f101327a81cfa99/88579ddf",
+                  "width": 840
+                },
+                "small": {
+                  "height": 36,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/a967edf2bd6d1ca0d33687bc6d433fb1/5c6bae00",
+                  "width": 63
+                }
+              },
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/e37727fa5cba91d81f5e53a8c4501c29/394a9def/Pineapple.png"
+            }
+          ],
+          "Name": " Pineapple",
+          "Recipe Ingredients copy": "Pineapple",
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Supplied Ingredients": "Pineapple, Pineapple, Pineapple",
+          "Tags": ["Fruit", "Frozen Food"],
+          "Total Across Menu": 300,
+          "UOM": ["g"],
+          "_index": 15,
           "id": "recS107K858dvPtBx"
         },
         "Ingredient Tags": ["Fruit", "Frozen Food"],
         "Name": "Pineapple",
-        "Price per UOM": [0.004197604896029912],
-        "Recipes": ["rec93XzkFZTAIL7xj"],
-        "Supplied Ingredient": ["rec8QQHeNALKFUXWs"],
+        "Recipes": ["rec5COvvN0bV19iLF"],
         "UOM": ["g"],
-        "_index": 35,
-        "id": "recj2kn8MsO37p3uX"
+        "_index": 44,
+        "id": "recvuzyJl7sP0V7BO"
       },
       {
-        "85%": 127.5,
-        "Amount": 150,
-        "COGS": 0.37864591371061973,
-        "Cheapest COGS": 0.32132424537487825,
-        "Cheapest price per UOM": [0.0021421616358325217],
+        "85%": 51,
+        "Amount": 60,
         "Ingredient": {
-          "250 Orders (Kg)": 35,
-          "250 Orders (m^3)": 0.07684732871165,
-          "400 Orders (Kg)": 56,
-          "400 Orders (m^3)": 0.12295572593863999,
+          "250 Orders (Kg)": 30,
+          "250 Orders (m^3)": 0.0658691388957,
+          "400 Orders (Kg)": 48,
+          "400 Orders (m^3)": 0.10539062223311998,
           "As used in recipes": [
-            "recauRAM56Fw34qYQ",
-            "rectVz3HwIzfEp66x",
-            "rec8OXYiTkHCBXDTp",
-            "recXntDjLpH5t9nfT",
-            "reczMubyeCn00BPMW"
+            "rec9qKdVEVwc4HaAi",
+            "recLatiXkimDASNeG",
+            "recCJmZJBP2qQDA6T",
+            "recbsXtFc9So9dqwL",
+            "recZZewtiAa2caRMH"
           ],
-          "Cheapest per UOM": 0.0021421616358325217,
-          "Feeder Type": "Liquid",
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
           "Ingredient Image": [
             {
-              "filename": "8-52909-00342-8_420076_RENDER_UPDATE_1400x1400.jpg",
-              "id": "attHm1vfM4z4KpPj2",
-              "size": 73544,
+              "filename": "Bananas.png",
+              "id": "attiKb1rEJ9lqzalD",
+              "size": 246606,
               "thumbnails": {
                 "full": {
-                  "height": 1200,
-                  "url": "https://dl.airtable.com/up0aLlL3QROqv3CmRRNW_full_8-52909-00342-8_420076_RENDER_UPDATE_1400x1400.jpg",
-                  "width": 1200
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b0508e724323a247a3dd687d824b471d/cf564bee",
+                  "width": 840
                 },
                 "large": {
-                  "height": 512,
-                  "url": "https://dl.airtable.com/BdvuCBu0RkK0llSlleHI_large_8-52909-00342-8_420076_RENDER_UPDATE_1400x1400.jpg",
-                  "width": 512
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/37d26c194326f9ae3b493c0cb026f46b/47184d5e",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/bD9ab1c0T6KYuI4g2ZwA_small_8-52909-00342-8_420076_RENDER_UPDATE_1400x1400.jpg",
-                  "width": 36
-                }
-              },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/GDkjjTnwQHm3IkuzKvaa_8-52909-00342-8_420076_RENDER_UPDATE_1400x1400.jpg"
-            }
-          ],
-          "Name": "Coconut Milk",
-          "RecipeCustomization": ["recBFTCL8OFHr9EG0"],
-          "Supplied Ingredients": ["recv3n9BnnnbigiLH", "recNkwONCl6RyDpWY"],
-          "Tags": ["Liquid", "Milk", "Non-Dairy"],
-          "Total Across Menu": 700,
-          "UOM": "g",
-          "_index": 24,
-          "id": "recfP4bqhZVv07z06"
-        },
-        "Ingredient Tags": ["Liquid", "Milk", "Non-Dairy"],
-        "Name": "Coconut Milk",
-        "Price per UOM": [0.0025243060914041317],
-        "Recipes": ["rec93XzkFZTAIL7xj"],
-        "Supplied Ingredient": ["recNkwONCl6RyDpWY"],
-        "UOM": ["g"],
-        "_index": 6,
-        "id": "rec8OXYiTkHCBXDTp"
-      },
-      {
-        "85%": 93.5,
-        "Amount": 110,
-        "COGS": 0.4833992269139759,
-        "Cheapest COGS": 0.4833992269139759,
-        "Cheapest price per UOM": [0.00439453842649069],
-        "Ingredient": {
-          "250 Orders (Kg)": 21.75,
-          "250 Orders (m^3)": 0.0477551256993825,
-          "400 Orders (Kg)": 34.8,
-          "400 Orders (m^3)": 0.07640820111901199,
-          "As used in recipes": [
-            "recV9BxBvShcWMizZ",
-            "rec6C6LWg8jm7sis9",
-            "recJbjyLu3TH4UrKg"
-          ],
-          "Cheapest per UOM": 0.00439453842649069,
-          "Feeder Type": "Butter",
-          "Ingredient Image": [
-            {
-              "filename": "yogurt.png",
-              "id": "attBAlFYbq4GVmo1X",
-              "size": 14738,
-              "thumbnails": {
-                "full": {
-                  "height": 118,
-                  "url": "https://dl.airtable.com/JhhxrWhQTKCgrbGiCcCz_full_yogurt.png",
-                  "width": 133
-                },
-                "large": {
-                  "height": 118,
-                  "url": "https://dl.airtable.com/U4X7F06OQhmlXefcbi5r_large_yogurt.png",
-                  "width": 133
-                },
-                "small": {
-                  "height": 36,
-                  "url": "https://dl.airtable.com/i2B8DHOvQfqkwC9g3nV3_small_yogurt.png",
-                  "width": 41
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/65389ecd546d3aa818daefd198edf77e/d2f376d9",
+                  "width": 63
                 }
               },
               "type": "image/png",
-              "url": "https://dl.airtable.com/B8i1KFRTPSaGwZWTvGaS_yogurt.png"
+              "url": "https://dl.airtable.com/.attachments/bceeb4adc157266c9269658e7c4ec1cf/db02f836/Bananas.png"
             }
           ],
-          "Name": "Organic Honey Yogurt",
-          "Supplied Ingredients": ["rec5ZKPfMyRZoqCY5", "recnZpp6pPzmjTu73"],
-          "Tags": ["Butter", "Dairy"],
-          "Total Across Menu": 435,
-          "UOM": "g",
-          "_index": 26,
-          "id": "recqW1Mxt7ULIpNwY"
+          "Name": " Banana",
+          "Recipe Ingredients copy": "Bananas, Bananas, Bananas",
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Supplied Ingredients": "Bananas, Bananas, Bananas",
+          "Tags": ["Fruit", "Frozen Food"],
+          "Total Across Menu": 600,
+          "UOM": ["g"],
+          "_index": 1,
+          "id": "rec1dE86v90OECGMV"
         },
-        "Ingredient Tags": ["Butter", "Dairy"],
-        "Name": "Yogurt",
-        "Price per UOM": [0.00439453842649069],
-        "Recipes": ["rec93XzkFZTAIL7xj"],
-        "Supplied Ingredient": ["rec5ZKPfMyRZoqCY5"],
+        "Ingredient Tags": ["Fruit", "Frozen Food"],
+        "Name": "Banana",
+        "Recipes": ["rec5COvvN0bV19iLF"],
         "UOM": ["g"],
-        "_index": 1,
-        "id": "rec6C6LWg8jm7sis9"
+        "_index": 8,
+        "id": "recCJmZJBP2qQDA6T"
       },
       {
-        "85%": 21.25,
-        "Amount": 25,
-        "COGS": 0.48148940723304084,
-        "Cheapest COGS": 0.055115565761814464,
-        "Cheapest price per UOM": [0.0022046226304725785],
+        "85%": 17,
+        "Amount": 20,
         "Ingredient": {
-          "250 Orders (Kg)": 9.75,
-          "250 Orders (m^3)": 0.0214074701411025,
-          "400 Orders (Kg)": 15.6,
-          "400 Orders (m^3)": 0.034251952225764,
+          "250 Orders (Kg)": 5,
+          "250 Orders (m^3)": 0.01097818981595,
+          "400 Orders (Kg)": 8,
+          "400 Orders (m^3)": 0.01756510370552,
           "As used in recipes": [
-            "recMsbTGJLCTn0DyC",
-            "rec6ghGDivB8usxsn",
-            "recrgJt1qHQ7ISMHx",
-            "recnVTYRCWgGnSLIH",
-            "recqQnw7EIbsq2QyV"
+            "recdmbwTvFjeBmvXA",
+            "recmZPUipsjXCLCbp",
+            "recanBFWTcakSaD79",
+            "recj3zdScMIkmnyL4",
+            "recJVUngt27eyLIru"
           ],
-          "Cheapest per UOM": 0.0022046226304725785,
-          "Feeder Type": "Frozen Food",
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
           "Ingredient Image": [
             {
-              "filename": "prana_organic_medjool_dates_dattes_biologiques_vignette_700.jpg",
-              "id": "atttbFRWZJStMrvAd",
-              "size": 47023,
+              "filename": "Dates.png",
+              "id": "attQ18F1PxWWHPJzd",
+              "size": 128818,
               "thumbnails": {
                 "full": {
-                  "height": 700,
-                  "url": "https://dl.airtable.com/7cK6OVZSO7ZTuFWd5fKA_full_prana_organic_medjool_dates_dattes_biologiques_vignette_700.jpg",
-                  "width": 700
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/aae4e124ad8aef94ced1c2d98db07330/05e2f876",
+                  "width": 840
                 },
                 "large": {
-                  "height": 512,
-                  "url": "https://dl.airtable.com/GRfNzyFQSgeLLZXAvceq_large_prana_organic_medjool_dates_dattes_biologiques_vignette_700.jpg",
-                  "width": 512
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/47925f98942484eac08b3d6cc7132d6f/6801e368",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/gyRksmxQVW7jDnhffMoS_small_prana_organic_medjool_dates_dattes_biologiques_vignette_700.jpg",
-                  "width": 36
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/efcc48852e6409d3956050ef1bb4b44d/dbf6c500",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/v1ze1iaLRkaqXxZc1kXP_prana_organic_medjool_dates_dattes_biologiques_vignette_700.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/09cecf5fac1588d3db2ab719c22b5836/be33ead8/Dates.png"
             }
           ],
-          "Name": "Organic Dates",
+          "Name": " Dates",
+          "Recipe Ingredients copy": "Dates",
           "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "recghKR6dhGZKEWcl",
-            "rec0NnU5bkNPYdC34",
-            "recMxkqV138j3cZ94"
-          ],
+          "Supplied Ingredients": "Dates, Dates, Dates",
           "Tags": ["Fruit", "Frozen Food"],
-          "Total Across Menu": 195,
-          "UOM": "g",
-          "_index": 10,
+          "Total Across Menu": 100,
+          "UOM": ["g"],
+          "_index": 9,
           "id": "recJtf3Ud5TBpIG3h"
         },
         "Ingredient Tags": ["Fruit", "Frozen Food"],
         "Name": "Dates",
-        "Price per UOM": [0.019259576289321633],
-        "Recipes": ["rec93XzkFZTAIL7xj"],
-        "Supplied Ingredient": ["rec0NnU5bkNPYdC34"],
-        "UOM": ["g"],
-        "_index": 45,
-        "id": "recrgJt1qHQ7ISMHx"
-      },
-      {
-        "85%": 8.5,
-        "Amount": 10,
-        "COGS": 0.7204712605160585,
-        "Cheapest COGS": 0.26722784514146375,
-        "Cheapest price per UOM": [0.026722784514146374],
-        "Ingredient": {
-          "250 Orders (Kg)": 0.5,
-          "250 Orders (m^3)": 0.001097818981595,
-          "400 Orders (Kg)": 0.8,
-          "400 Orders (m^3)": 0.0017565103705519999,
-          "As used in recipes": ["recYy2xMk4CfqvuSD"],
-          "Cheapest per UOM": 0.026722784514146374,
-          "Feeder Type": "Granule",
-          "Function": ["recDCiSzzrmzia1df"],
-          "Ingredient Image": [
-            {
-              "filename": "Collagen Peptides.jpg",
-              "id": "attWolZtG8jFt8wJ6",
-              "size": 61986,
-              "thumbnails": {
-                "full": {
-                  "height": 600,
-                  "url": "https://dl.airtable.com/8zhzPFswTYySjKdZMzq2_full_Collagen%20Peptides.jpg",
-                  "width": 600
-                },
-                "large": {
-                  "height": 512,
-                  "url": "https://dl.airtable.com/2TtOIQPaTSyv4jObawEQ_large_Collagen%20Peptides.jpg",
-                  "width": 512
-                },
-                "small": {
-                  "height": 36,
-                  "url": "https://dl.airtable.com/WECkwC6PRybWB5Rqn2Rw_small_Collagen%20Peptides.jpg",
-                  "width": 36
-                }
-              },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/xt2Ww6eHTzapG49zIlTI_Collagen%20Peptides.jpg"
-            }
-          ],
-          "Kiosk Menu": "ginger + greens",
-          "Name": "Collagen Peptides",
-          "Recipe Ingredients copy": ["reczBo6sSKHSGN8jR"],
-          "Recipes": "ginger + greens",
-          "Supplied Ingredients": ["recxzObneuOXTzbGK", "recpnJWc0vlqugczG"],
-          "Tags": ["Powder", "Skin & Body", "Function"],
-          "Total Across Menu": 10,
-          "UOM": "g",
-          "_index": 22,
-          "id": "receMWRnBlXKKta4e"
-        },
-        "Ingredient Tags": ["Powder", "Skin & Body", "Function"],
-        "Name": "Collagen Peptides",
-        "Price per UOM": [0.07204712605160585],
-        "Recipes": ["rec93XzkFZTAIL7xj"],
-        "Supplied Ingredient": ["recpnJWc0vlqugczG"],
+        "Recipes": ["rec5COvvN0bV19iLF"],
         "UOM": ["g"],
         "_index": 26,
-        "id": "recYy2xMk4CfqvuSD"
+        "id": "recanBFWTcakSaD79"
       },
       {
-        "85%": 0.85,
-        "Amount": 1,
-        "COGS": 0.0787083201275338,
-        "Cheapest COGS": 0.013888567381515346,
-        "Cheapest price per UOM": [0.013888567381515346],
+        "85%": 104.55,
+        "Amount": 123,
         "Ingredient": {
-          "250 Orders (Kg)": 0.1,
-          "250 Orders (m^3)": 0.00021956379631899998,
-          "400 Orders (Kg)": 0.16,
-          "400 Orders (m^3)": 0.0003513020741104,
-          "As used in recipes": ["recl9jt80U3HbEPvT", "recYtnh0qYjQtrehR"],
-          "Cheapest per UOM": 0.013888567381515346,
-          "Feeder Type": "Granule",
+          "250 Orders (Kg)": 6.15,
+          "250 Orders (m^3)": 0.0135031734736185,
+          "400 Orders (Kg)": 9.84,
+          "400 Orders (m^3)": 0.0216050775577896,
+          "As used in recipes": ["recHMID4OOchF8DWf"],
+          "Feeder Type": ["recFVKkTzlTcHDzZ6"],
+          "Feeder Type -OLD": "Butter",
           "Ingredient Image": [
             {
-              "filename": "ginger.jpg",
-              "id": "attjws5rP3yCVI235",
-              "size": 4030,
+              "filename": "Yogurt.png",
+              "id": "att70SQehSF9bU2vZ",
+              "size": 103584,
               "thumbnails": {
                 "full": {
-                  "height": 225,
-                  "url": "https://dl.airtable.com/e7KMVajUTNKzfV9OSFQq_full_ginger.jpg",
-                  "width": 225
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/4a40ddc07f015ea3d2476423339c3aff/0bb99860",
+                  "width": 840
                 },
                 "large": {
-                  "height": 225,
-                  "url": "https://dl.airtable.com/lWgp8E18RFuS81NF8fWp_large_ginger.jpg",
-                  "width": 225
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e017105fbd1040baf4270fdf42c04a6/bddb4b23",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/FgClAQhCQy635HQmx3q0_small_ginger.jpg",
-                  "width": 36
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/4171e0c2ebe7bd03f42606f9911427ca/01553c6c",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/oKJNNNsnQxm6mXeZhJFt_ginger.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/0b8ecf4803451afb021f3db780983212/be97a56a/Yogurt.png"
             }
           ],
-          "Name": "Organic Ginger",
-          "Supplied Ingredients": ["recn5pmHSQvA8qcTm", "recwz38s9gzS1hEhP"],
-          "Tags": ["Powder", "Skin & Body", "Function"],
-          "Total Across Menu": 2,
-          "UOM": "g",
-          "_index": 33,
-          "id": "recy7vqDhX0XvrBcd"
+          "Kiosk Menu": "cold brew + coconut",
+          "Name": "Yogurt",
+          "Recipe Ingredients copy": "focus - lions mane",
+          "RecipeCustomization": ["rec3JxIRomSIcC8XA"],
+          "Supplied Ingredients": "Lion's Mane, Lion's Mane",
+          "Total Across Menu": 123,
+          "UOM": ["g"],
+          "_index": 17,
+          "id": "recXmmTN2saDHFK4t"
         },
-        "Ingredient Tags": ["Powder", "Skin & Body", "Function"],
-        "Name": "Ginger",
-        "Price per UOM": [0.0787083201275338],
-        "Recipes": ["rec93XzkFZTAIL7xj"],
-        "Supplied Ingredient": ["recwz38s9gzS1hEhP"],
-        "UOM": ["g"],
-        "_index": 40,
-        "id": "recl9jt80U3HbEPvT"
-      },
-      {
-        "85%": 0.85,
-        "Amount": 1,
-        "COGS": 0.5986666666666667,
-        "Cheapest COGS": 0.022046208853757476,
-        "Cheapest price per UOM": [0.022046208853757476],
-        "Ingredient": {
-          "250 Orders (Kg)": 0.05,
-          "250 Orders (m^3)": 0.00010978189815949999,
-          "400 Orders (Kg)": 0.08,
-          "400 Orders (m^3)": 0.0001756510370552,
-          "As used in recipes": ["recDS5u7fVu9jyD1m"],
-          "Cheapest per UOM": 0.022046208853757476,
-          "Feeder Type": "Granule",
-          "Function": ["recDCiSzzrmzia1df"],
-          "Ingredient Image": [
-            {
-              "filename": "Astragalus.jpg",
-              "id": "attX71xq3m7nl0Ofm",
-              "size": 5784,
-              "thumbnails": {
-                "full": {
-                  "height": 225,
-                  "url": "https://dl.airtable.com/CpNoA1LAT1mHXxiP61pO_full_Astragalus.jpg",
-                  "width": 225
-                },
-                "large": {
-                  "height": 225,
-                  "url": "https://dl.airtable.com/eYHVJYeKR2i9eFf4kgj2_large_Astragalus.jpg",
-                  "width": 225
-                },
-                "small": {
-                  "height": 36,
-                  "url": "https://dl.airtable.com/vgi7ONRoSYa1z0YzIDUN_small_Astragalus.jpg",
-                  "width": 36
-                }
-              },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/nJIhBSgwT6SFyolI7AqD_Astragalus.jpg"
-            }
-          ],
-          "Kiosk Menu": "ginger + greens",
-          "Name": "Astragalus",
-          "Recipe Ingredients copy": ["recrwXcSPpGi4Jglu"],
-          "Supplied Ingredients": ["rec1GHxN522ms1Ljp", "recKyjilwqsEdxfDs"],
-          "Tags": ["Skin & Body", "Powder", "Function"],
-          "Total Across Menu": 1,
-          "UOM": "g",
-          "_index": 15,
-          "id": "recQeOwgATMJMs69w"
-        },
-        "Ingredient Tags": ["Skin & Body", "Powder", "Function"],
-        "Name": "Astragalus",
-        "Price per UOM": [0.5986666666666667],
-        "Recipes": ["rec93XzkFZTAIL7xj"],
-        "Supplied Ingredient": ["recKyjilwqsEdxfDs"],
+        "Name": "Yogurt",
+        "Recipes": ["rec5COvvN0bV19iLF"],
         "UOM": ["g"],
         "_index": 10,
-        "id": "recDS5u7fVu9jyD1m"
+        "id": "recHMID4OOchF8DWf"
       },
       {
-        "85%": 0.53125,
-        "Amount": 0.625,
-        "COGS": 0.03106064762920054,
-        "Cheapest COGS": 0.002644400352733686,
-        "Cheapest price per UOM": [0.004231040564373898],
+        "85%": 10.2,
+        "Amount": 12,
         "Ingredient": {
-          "250 Orders (Kg)": 0.14275,
-          "250 Orders (m^3)": 0.00031342731924537245,
-          "400 Orders (Kg)": 0.2284,
-          "400 Orders (m^3)": 0.000501483710792596,
+          "250 Orders (Kg)": 2.4,
+          "250 Orders (m^3)": 0.005269531111656,
+          "400 Orders (Kg)": 3.84,
+          "400 Orders (m^3)": 0.0084312497786496,
           "As used in recipes": [
-            "recdsYTvr5Orb4WVa",
-            "recRGTJo94Tlou6Ng",
-            "rectO4x3Dt9ZDCbRE"
+            "rec6gzB3dUusCrIfF",
+            "recHqzSiGDs91VQFF",
+            "recx3piQZnWenyR32",
+            "recTsWYIg9f0bei1f"
           ],
-          "Cheapest per UOM": 0.004231040564373898,
-          "Feeder Type": "Granule",
+          "Feeder Type": ["recrTO7Xkxgti54Jo"],
+          "Feeder Type -OLD": "Granule",
           "Ingredient Image": [
             {
-              "filename": "Frontier-Pink-Himalayan-Salt-CFR149_3.jpg",
-              "id": "attDsEhnDdFmDqM1g",
-              "size": 334713,
+              "filename": "Chia Seeds.png",
+              "id": "attUfY3pEKnbHuAu7",
+              "size": 153825,
               "thumbnails": {
                 "full": {
-                  "height": 1600,
-                  "url": "https://dl.airtable.com/ZsEWrP3UQvmTuMJRZrYQ_full_Frontier-Pink-Himalayan-Salt-CFR149_3.jpg",
-                  "width": 1600
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/c971bb08478c433ea8aef5df7298a0a3/f8629a86",
+                  "width": 840
                 },
                 "large": {
-                  "height": 512,
-                  "url": "https://dl.airtable.com/LekDED39T5SokHP0BwjA_large_Frontier-Pink-Himalayan-Salt-CFR149_3.jpg",
-                  "width": 512
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/5d764276d6d990598f2db760319988a2/b60ec763",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/kBaYnlrnRfSSbOhRJr2W_small_Frontier-Pink-Himalayan-Salt-CFR149_3.jpg",
-                  "width": 36
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/18e1c04374d63445abd2ad8a73f9128c/ec714bde",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/Z03YYLk4TwK9ARwaQmwN_Frontier-Pink-Himalayan-Salt-CFR149_3.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/3004b5d10133d8ae0eed7f5efca4671a/fe13ac83/ChiaSeeds.png"
             }
           ],
-          "Kitchen System": ["recfcVeqPRuZe5pPS"],
-          "Name": "Pink Himalayan Sea Salt",
-          "Recipe Ingredients copy": [
-            "recCQ9PJtvyUo1w4i",
-            "recHvDTBCSPUXJjSQ",
-            "rec1cUn7pwQxQizkC"
-          ],
-          "Supplied Ingredients": ["recMPy94skDFfw6XH", "recNaF3kmkpf1w14c"],
-          "Tags": ["Salt"],
-          "Total Across Menu": 2.855,
-          "UOM": "g",
-          "_index": 11,
-          "id": "recMQbVzKifYdJcjk"
+          "KitchenIngredients": ["recPYVXkuGNPJr0BJ"],
+          "Name": " Chia Seeds",
+          "Recipe Ingredients copy": "Chia Seeds",
+          "Supplied Ingredients": "Chia Seeds, Chia Seeds",
+          "Tags": ["Seeds"],
+          "Total Across Menu": 48,
+          "UOM": ["g"],
+          "_index": 7,
+          "id": "recGOJ1oby67xemtp"
         },
-        "Ingredient Tags": ["Salt"],
-        "Name": "Pink Himalayan Salt",
-        "Price per UOM": [0.04969703620672086],
-        "Recipes": ["rec93XzkFZTAIL7xj"],
-        "Supplied Ingredient": ["recNaF3kmkpf1w14c"],
+        "Ingredient Tags": ["Seeds"],
+        "Name": "Chia Seeds",
+        "Recipes": ["rec5COvvN0bV19iLF"],
         "UOM": ["g"],
-        "_index": 47,
-        "id": "rectO4x3Dt9ZDCbRE"
+        "_index": 11,
+        "id": "recHqzSiGDs91VQFF"
       }
     ],
-    "Menu": ["rec2oXmg1V5vEvkbj"],
-    "Name": "ginger + greens",
+    "Menu": ["rec3SzrHfP2zJnoaO"],
+    "Name": "papaya + pineapple",
     "Nutrition Detail": "Protein 4g",
     "Recipe Image": [
       {
-        "filename": "Screen Shot 2019-01-04 at 3.16.50 PM.png",
-        "id": "att6Myr8mJYHWYQ5c",
-        "size": 502304,
+        "filename": "papaya + pineapple.png",
+        "id": "attYo1B2BLnQuTwVC",
+        "size": 2536866,
         "thumbnails": {
           "full": {
-            "height": 680,
-            "url": "https://dl.airtable.com/2rAOyrpcQRiHELv9vUT6_full_Screen%20Shot%202019-01-04%20at%203.16.50%20PM.png",
-            "width": 574
+            "height": 1551,
+            "url": "https://dl.airtable.com/.attachmentThumbnails/ef2afe8d76e6b8be0bf50d79323138fb/bf299366",
+            "width": 1098
           },
           "large": {
-            "height": 607,
-            "url": "https://dl.airtable.com/DZc3CQupRpq4TFd7eygt_large_Screen%20Shot%202019-01-04%20at%203.16.50%20PM.png",
+            "height": 723,
+            "url": "https://dl.airtable.com/.attachmentThumbnails/e56369b0cb97633fc5a0b80dc73464c6/92f16d60",
             "width": 512
           },
           "small": {
             "height": 36,
-            "url": "https://dl.airtable.com/AXtvy7rdRNmxAjrCD23Q_small_Screen%20Shot%202019-01-04%20at%203.16.50%20PM.png",
-            "width": 30
+            "url": "https://dl.airtable.com/.attachmentThumbnails/5aa649e66ea681f9893e1f093207342b/d7324f1b",
+            "width": 25
           }
         },
         "type": "image/png",
-        "url": "https://dl.airtable.com/mZWPc0cqSt4aLXF5JMzA_Screen%20Shot%202019-01-04%20at%203.16.50%20PM.png"
+        "url": "https://dl.airtable.com/.attachments/5eb5417614ecdd1ab821f59a0ec95016/2872fe7f/papayapineapple.png"
       }
     ],
-    "RecipeCustomization": ["recBFTCL8OFHr9EG0", "recF7OyaP05uc5A6I"],
-    "Sell Price": 3,
-    "_index": 2,
-    "id": "rec93XzkFZTAIL7xj"
+    "Recipe Ingredients copy": "Papaya, Pineapple, Bananas, Yogurt, Coconut Milk, Dates, Chia Seeds, Probiotic Blend",
+    "RecipeCustomization": [
+      "recBFTCL8OFHr9EG0",
+      "recF7OyaP05uc5A6I",
+      "rec3JxIRomSIcC8XA",
+      "recxAmne0ZXFotmz6"
+    ],
+    "Sell Price": 4.5,
+    "_index": 0,
+    "id": "rec5COvvN0bV19iLF"
   },
   "Tags": [
-    "Vegetable,Frozen Food,Frozen Food,Vegetable,Fruit,Frozen Food,Liquid,Milk,Non-Dairy,Butter,Dairy,Fruit,Frozen Food,Powder,Skin & Body,Function,Powder,Skin & Body,Function,Skin & Body,Powder,Function,Salt"
+    ",Fruit,Frozen Food,Fruit,Frozen Food,Fruit,Frozen Food,Fruit,Frozen Food,,Seeds"
   ],
-  "_index": 0,
-  "id": "rec2oXmg1V5vEvkbj",
+  "_index": 1,
+  "id": "rec3SzrHfP2zJnoaO",
   "IngredientCustomization": [
+    {
+      "Display Name": "Goop",
+      "Ingredients": [
+        {
+          "250 Orders (Kg)": 6.15,
+          "250 Orders (m^3)": 0.0135031734736185,
+          "400 Orders (Kg)": 9.84,
+          "400 Orders (m^3)": 0.0216050775577896,
+          "As used in recipes": ["recHMID4OOchF8DWf"],
+          "Feeder Type": ["recFVKkTzlTcHDzZ6"],
+          "Feeder Type -OLD": "Butter",
+          "Ingredient Image": [
+            {
+              "filename": "Yogurt.png",
+              "id": "att70SQehSF9bU2vZ",
+              "size": 103584,
+              "thumbnails": {
+                "full": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/4a40ddc07f015ea3d2476423339c3aff/0bb99860",
+                  "width": 840
+                },
+                "large": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e017105fbd1040baf4270fdf42c04a6/bddb4b23",
+                  "width": 840
+                },
+                "small": {
+                  "height": 36,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/4171e0c2ebe7bd03f42606f9911427ca/01553c6c",
+                  "width": 63
+                }
+              },
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/0b8ecf4803451afb021f3db780983212/be97a56a/Yogurt.png"
+            }
+          ],
+          "Kiosk Menu": "cold brew + coconut",
+          "Name": "Yogurt",
+          "Recipe Ingredients copy": "focus - lions mane",
+          "RecipeCustomization": ["rec3JxIRomSIcC8XA"],
+          "Supplied Ingredients": "Lion's Mane, Lion's Mane",
+          "Total Across Menu": 123,
+          "UOM": ["g"],
+          "_index": 17,
+          "id": "recXmmTN2saDHFK4t"
+        },
+        {
+          "250 Orders (Kg)": 3.2,
+          "250 Orders (m^3)": 0.0070260414822079995,
+          "400 Orders (Kg)": 5.12,
+          "400 Orders (m^3)": 0.0112416663715328,
+          "As used in recipes": ["rec5865G5KTobQH1A", "rec2jHcNzxvZYKmxx"],
+          "Feeder Type": ["recFVKkTzlTcHDzZ6"],
+          "Feeder Type -OLD": "Butter",
+          "Ingredient Image": [
+            {
+              "filename": "Nut Butter.png",
+              "id": "att6SpCxva7TK8QHe",
+              "size": 354852,
+              "thumbnails": {
+                "full": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/e76688b5c4f47a2926fec6f688f4d711/ea51b2ce",
+                  "width": 840
+                },
+                "large": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/8fb9f17b49175f9b1f07edd061901e5e/a6a9900f",
+                  "width": 840
+                },
+                "small": {
+                  "height": 36,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/f473c9ab20bb6cc0fac5638b17021b69/d4a517a8",
+                  "width": 63
+                }
+              },
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/4a82539e6f8ca5da2306b511f7578c47/0fe86e60/NutButter.png"
+            }
+          ],
+          "Name": "Cashew Butter",
+          "Recipe Ingredients copy": "focus - tumeric",
+          "RecipeCustomization": ["rec3JxIRomSIcC8XA"],
+          "Supplied Ingredients": "Turmeric, Turmeric",
+          "Total Across Menu": 64,
+          "UOM": ["g"],
+          "_index": 5,
+          "id": "rec931A7t8PmNrC8n"
+        }
+      ],
+      "Name": "Goop",
+      "Overflow Limit": 0,
+      "_index": 0,
+      "id": "rec3JxIRomSIcC8XA",
+      "defaultValue": ["recXmmTN2saDHFK4t"],
+      "optionLimit": 1
+    },
     {
       "Display Name": "Beverage Base",
       "Ingredients": [
         {
-          "250 Orders (Kg)": 35,
-          "250 Orders (m^3)": 0.07684732871165,
-          "400 Orders (Kg)": 56,
-          "400 Orders (m^3)": 0.12295572593863999,
+          "250 Orders (Kg)": 2.45,
+          "250 Orders (m^3)": 0.0053793130098155,
+          "400 Orders (Kg)": 3.9200000000000004,
+          "400 Orders (m^3)": 0.0086069008157048,
           "As used in recipes": [
             "recauRAM56Fw34qYQ",
-            "rectVz3HwIzfEp66x",
-            "rec8OXYiTkHCBXDTp",
-            "recXntDjLpH5t9nfT",
-            "reczMubyeCn00BPMW"
+            "recxxhmYqcgNwrn15",
+            "rec5cRYtBXzmhw60A",
+            "recSGTl2PVyr6Gdhf",
+            "recdZpRFJSNKWX6rG",
+            "recQMsJzYS6UaYm43"
           ],
-          "Cheapest per UOM": 0.0021421616358325217,
-          "Feeder Type": "Liquid",
+          "Feeder Type": ["recNUkbMS99k4UelH"],
+          "Feeder Type -OLD": "Liquid",
           "Ingredient Image": [
             {
-              "filename": "8-52909-00342-8_420076_RENDER_UPDATE_1400x1400.jpg",
-              "id": "attHm1vfM4z4KpPj2",
-              "size": 73544,
+              "filename": "Pink Salt Vanilla Coconut.png",
+              "id": "attrxzt72ZeOOpd9H",
+              "size": 399684,
               "thumbnails": {
                 "full": {
-                  "height": 1200,
-                  "url": "https://dl.airtable.com/up0aLlL3QROqv3CmRRNW_full_8-52909-00342-8_420076_RENDER_UPDATE_1400x1400.jpg",
-                  "width": 1200
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/18bfdc2a6734180fd6b89988a79c41a9/7cf6adf2",
+                  "width": 840
                 },
                 "large": {
-                  "height": 512,
-                  "url": "https://dl.airtable.com/BdvuCBu0RkK0llSlleHI_large_8-52909-00342-8_420076_RENDER_UPDATE_1400x1400.jpg",
-                  "width": 512
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/183bca189d1df46e008441e700daf2e8/682f790f",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/bD9ab1c0T6KYuI4g2ZwA_small_8-52909-00342-8_420076_RENDER_UPDATE_1400x1400.jpg",
-                  "width": 36
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/997dcd558bbb0e46ba428c3200fcf385/d50d0445",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/GDkjjTnwQHm3IkuzKvaa_8-52909-00342-8_420076_RENDER_UPDATE_1400x1400.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/349d1ad01dfca419359284442d6180f7/f8cb7347/PinkSaltVanillaCoconut.png"
             }
           ],
-          "Name": "Coconut Milk",
-          "RecipeCustomization": ["recBFTCL8OFHr9EG0"],
-          "Supplied Ingredients": ["recv3n9BnnnbigiLH", "recNkwONCl6RyDpWY"],
-          "Tags": ["Liquid", "Milk", "Non-Dairy"],
-          "Total Across Menu": 700,
-          "UOM": "g",
-          "_index": 24,
-          "id": "recfP4bqhZVv07z06"
+          "Name": " Coconut Milk + Vanilla + Pink Salt",
+          "Recipe Ingredients copy": "Vanilla Coconut Milk",
+          "RecipeCustomization": ["recBFTCL8OFHr9EG0", "recYkttCtHbqlwU2w"],
+          "Supplied Ingredients": "Himalayan Salt, Himalayan Salt",
+          "Total Across Menu": 49,
+          "UOM": ["oz"],
+          "_index": 10,
+          "id": "recMQbVzKifYdJcjk"
         },
         {
           "250 Orders (Kg)": 0,
           "250 Orders (m^3)": 0,
           "400 Orders (Kg)": 0,
           "400 Orders (m^3)": 0,
-          "As used in recipes": ["recs84lJ3lG44BwR9"],
-          "Cheapest per UOM": 0,
-          "Feeder Type": "Liquid",
           "Name": "Water",
-          "RecipeCustomization": ["recBFTCL8OFHr9EG0"],
-          "Supplied Ingredients": ["rec2tkQOji62xY7Eb"],
+          "RecipeCustomization": ["recBFTCL8OFHr9EG0", "recYkttCtHbqlwU2w"],
+          "Supplied Ingredients": "Cordyceps, Cordyceps",
           "Total Across Menu": 0,
-          "UOM": "g",
-          "_index": 17,
-          "id": "recQpwh1QhYX2T1AZ"
-        },
-        {
-          "250 Orders (Kg)": 8,
-          "250 Orders (m^3)": 0.01756510370552,
-          "400 Orders (Kg)": 12.8,
-          "400 Orders (m^3)": 0.028104165928831998,
-          "As used in recipes": ["recX3906FdTijS0TC"],
-          "Cheapest per UOM": 0.011563242337560698,
-          "Feeder Type": "Liquid",
-          "Ingredient Image": [
-            {
-              "filename": "coffee-beans-750-to-850-kg-500x500.jpg",
-              "id": "attbJYPqKhCgldVNG",
-              "size": 31603,
-              "thumbnails": {
-                "full": {
-                  "height": 500,
-                  "url": "https://dl.airtable.com/ToPpiL6aSWGouMtUPYfK_full_coffee-beans-750-to-850-kg-500x500.jpg",
-                  "width": 500
-                },
-                "large": {
-                  "height": 500,
-                  "url": "https://dl.airtable.com/VbDL3c96RJ64yudmnXfw_large_coffee-beans-750-to-850-kg-500x500.jpg",
-                  "width": 500
-                },
-                "small": {
-                  "height": 36,
-                  "url": "https://dl.airtable.com/JnID6q0PRklA1VuddFKc_small_coffee-beans-750-to-850-kg-500x500.jpg",
-                  "width": 36
-                }
-              },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/6DE4OcQ5TsVlIXAUTgDQ_coffee-beans-750-to-850-kg-500x500.jpg"
-            }
-          ],
-          "Name": "Cold Brew Coffee",
-          "PortionCustomization": ["recx6ukS1NMp08VgT"],
-          "RecipeCustomization": ["recBFTCL8OFHr9EG0"],
-          "Recipes": "cold brew + coconut",
-          "Supplied Ingredients": ["recmRDDEacabVPSKE", "rec9whMuS1FWntXiG"],
-          "Tags": ["Caffeine", "Focus", "Liquid", "Non-Dairy", "Function"],
-          "Total Across Menu": 160,
-          "UOM": "g",
-          "_index": 29,
-          "id": "recuAMtiejEnfW0Mt"
+          "_index": 11,
+          "id": "recMtLzlYJGaLnW4h"
         }
       ],
       "Name": "Beverage",
       "Overflow Limit": 0,
       "PortionCustomization": ["recx6ukS1NMp08VgT"],
-      "_index": 0,
+      "_index": 1,
       "id": "recBFTCL8OFHr9EG0",
-      "defaultValue": ["recfP4bqhZVv07z06"],
+      "defaultValue": ["recMQbVzKifYdJcjk"],
       "optionLimit": 1
     },
     {
-      "Display Name": "Fruit and Veggies",
+      "Display Name": "Organic Fruit & Veggies",
       "Ingredients": [
         {
-          "250 Orders (Kg)": 13,
-          "250 Orders (m^3)": 0.028543293521469996,
-          "400 Orders (Kg)": 20.8,
-          "400 Orders (m^3)": 0.045669269634352,
+          "250 Orders (Kg)": 30,
+          "250 Orders (m^3)": 0.0658691388957,
+          "400 Orders (Kg)": 48,
+          "400 Orders (m^3)": 0.10539062223311998,
           "As used in recipes": [
-            "recGWAXVPPeAAJwNL",
-            "recbJhALr9DBJZWUt",
-            "recn8gqGyWrWNPJcS"
+            "rec9qKdVEVwc4HaAi",
+            "recLatiXkimDASNeG",
+            "recCJmZJBP2qQDA6T",
+            "recbsXtFc9So9dqwL",
+            "recZZewtiAa2caRMH"
           ],
-          "Cheapest per UOM": 0.0005158730158730158,
-          "Feeder Type": "Frozen Food",
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
           "Ingredient Image": [
             {
-              "filename": "bananas.jpg",
-              "id": "attCErMaN4GrMDHu9",
-              "size": 11114,
+              "filename": "Bananas.png",
+              "id": "attiKb1rEJ9lqzalD",
+              "size": 246606,
               "thumbnails": {
                 "full": {
-                  "height": 240,
-                  "url": "https://dl.airtable.com/bZJN1nVUTgKuQDIY9EwT_full_bananas.jpg",
-                  "width": 300
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b0508e724323a247a3dd687d824b471d/cf564bee",
+                  "width": 840
                 },
                 "large": {
-                  "height": 240,
-                  "url": "https://dl.airtable.com/tghGelYqTMkkL17zwsGL_large_bananas.jpg",
-                  "width": 300
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/37d26c194326f9ae3b493c0cb026f46b/47184d5e",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/yHfyxtVPRZSSKFfgAGbj_small_bananas.jpg",
-                  "width": 45
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/65389ecd546d3aa818daefd198edf77e/d2f376d9",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/iVlPjwP8TCGSbeEoNmIQ_bananas.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/bceeb4adc157266c9269658e7c4ec1cf/db02f836/Bananas.png"
             }
           ],
-          "Name": "Organic Bananas",
+          "Name": " Banana",
+          "Recipe Ingredients copy": "Bananas, Bananas, Bananas",
           "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "rechQ0zqVwi4MC2Cl",
-            "recv2YqAvnF6jYsDG",
-            "recaCBUixHLgjnUoO"
-          ],
+          "Supplied Ingredients": "Bananas, Bananas, Bananas",
           "Tags": ["Fruit", "Frozen Food"],
-          "Total Across Menu": 260,
-          "UOM": "g",
+          "Total Across Menu": 600,
+          "UOM": ["g"],
           "_index": 1,
           "id": "rec1dE86v90OECGMV"
         },
         {
-          "250 Orders (Kg)": 12.75,
-          "250 Orders (m^3)": 0.027994384030672496,
-          "400 Orders (Kg)": 20.4,
-          "400 Orders (m^3)": 0.044791014449075996,
-          "As used in recipes": ["rectwChMObQoSUPLt", "receXcfRSzBcT6a9o"],
-          "Cheapest per UOM": 0.0028417608776168893,
-          "Feeder Type": "Frozen Food",
+          "250 Orders (Kg)": 2,
+          "250 Orders (m^3)": 0.00439127592638,
+          "400 Orders (Kg)": 3.2,
+          "400 Orders (m^3)": 0.0070260414822079995,
+          "As used in recipes": ["rectL7y9IRE76uyLd"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
           "Ingredient Image": [
             {
-              "filename": "blueberries_commodity-page.png",
-              "id": "att3iRDoydfkRD3Kn",
-              "size": 360228,
+              "filename": "Avocado.png",
+              "id": "attfjNiWgYB5wiDnL",
+              "size": 126705,
               "thumbnails": {
                 "full": {
-                  "height": 600,
-                  "url": "https://dl.airtable.com/NJFBOXryReyOgzoV4kEU_full_blueberries_commodity-page.png",
-                  "width": 600
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/acfae9bd3c6a92ab930bf3b6d9cb9f1b/c8e58435",
+                  "width": 840
                 },
                 "large": {
-                  "height": 512,
-                  "url": "https://dl.airtable.com/eSQ02iR1SpiVMY0CKvlE_large_blueberries_commodity-page.png",
-                  "width": 512
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/396d8afb58cc13ff01eb1f79e2f650e0/775d4029",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/ReVrJdupRli58nNBRkVU_small_blueberries_commodity-page.png",
-                  "width": 36
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/c56abf84783a52a6dd76baa9637004d4/3d292693",
+                  "width": 63
                 }
               },
               "type": "image/png",
-              "url": "https://dl.airtable.com/dnSLvEKFQqmEZst3LRqZ_blueberries_commodity-page.png"
+              "url": "https://dl.airtable.com/.attachments/7c2d8efdfaf4f63349818e2bcc620337/f4fd4bcd/Avocado.png"
             }
           ],
-          "Name": "Organic Blueberries",
+          "Name": " Avocado",
+          "Recipe Ingredients copy": "Blueberries, Blueberries",
           "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "recx4PPopWgq20HFA",
-            "recTPScuoKW6kMShP",
-            "recSmeOhee5MBFFCl"
-          ],
-          "Tags": ["Fruit", "Frozen Food"],
-          "Total Across Menu": 255,
-          "UOM": "g",
-          "_index": 32,
+          "Supplied Ingredients": "Organic Blueberries, Blueberries, Blueberries",
+          "Tags": ["Frozen Food", "Fruit"],
+          "Total Across Menu": 40,
+          "UOM": ["g"],
+          "_index": 25,
           "id": "recv9odwFZKA4RewR"
         },
         {
-          "250 Orders (Kg)": 12,
-          "250 Orders (m^3)": 0.026347655558279996,
-          "400 Orders (Kg)": 19.2,
-          "400 Orders (m^3)": 0.042156248893248,
-          "As used in recipes": ["recoLNC5gsK8OcvLX"],
-          "Cheapest per UOM": 0.002695814741000723,
-          "Feeder Type": "Frozen Food",
+          "250 Orders (Kg)": 9,
+          "250 Orders (m^3)": 0.01976074166871,
+          "400 Orders (Kg)": 14.4,
+          "400 Orders (m^3)": 0.031617186669936,
+          "As used in recipes": ["rec1NUFConynG2HwT"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
           "Ingredient Image": [
             {
-              "filename": "Strawberries-group-done_1024x1024.jpg",
-              "id": "attrSdRrRic3CX6m9",
-              "size": 100621,
+              "filename": "Papaya.png",
+              "id": "attOl0UrTtEjHljZ5",
+              "size": 194182,
               "thumbnails": {
                 "full": {
-                  "height": 1000,
-                  "url": "https://dl.airtable.com/0ovOEkfqRvaQ9OMJxvQC_full_Strawberries-group-done_1024x1024.jpg",
-                  "width": 1000
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/9f244b57ec72e0de4fe77c16e91ef920/74de8c02",
+                  "width": 840
                 },
                 "large": {
-                  "height": 512,
-                  "url": "https://dl.airtable.com/KitTxXvcTvksVak4NcZk_large_Strawberries-group-done_1024x1024.jpg",
-                  "width": 512
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/186cae5b6065ce7f79c5847734fd5cb0/2bcb523c",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/Pfwr3jo2QzSU6w0XBAjf_small_Strawberries-group-done_1024x1024.jpg",
-                  "width": 36
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/c29a4015fd1422b6cdcfd36f43cbe862/99645069",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/BW0so41OS2uFx0JrOBDk_Strawberries-group-done_1024x1024.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/c0d0a6e756ad3b5978566ddeab5cf890/f5ab32f7/Papaya.png"
             }
           ],
-          "Name": "Organic Strawberries",
+          "Name": " Papaya",
+          "Recipe Ingredients copy": "Papaya",
           "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "recxZvwdvPkxsxzV8",
-            "recbNMzToNdV9pOqc",
-            "recnDTKMZIZnfUYML"
-          ],
-          "Tags": ["Frozen Food", "Fruit"],
-          "Total Across Menu": 240,
-          "UOM": "g",
-          "_index": 2,
-          "id": "rec3f3QhVXHDmMVap"
-        },
-        {
-          "250 Orders (Kg)": 10,
-          "250 Orders (m^3)": 0.0219563796319,
-          "400 Orders (Kg)": 16,
-          "400 Orders (m^3)": 0.03513020741104,
-          "As used in recipes": ["recuxEoL9wloJgyHh"],
-          "Cheapest per UOM": 0.0021891907329670314,
-          "Feeder Type": "Frozen Food",
-          "Ingredient Image": [
-            {
-              "filename": "products-papaya-20disco-500x500.jpg",
-              "id": "attI1MR3WRg1da5ih",
-              "size": 46541,
-              "thumbnails": {
-                "full": {
-                  "height": 500,
-                  "url": "https://dl.airtable.com/JuYarDGsT2WQvi3jMAe5_full_products-papaya-20disco-500x500.jpg",
-                  "width": 500
-                },
-                "large": {
-                  "height": 500,
-                  "url": "https://dl.airtable.com/oByFLNoGRFWdxHEHqe0h_large_products-papaya-20disco-500x500.jpg",
-                  "width": 500
-                },
-                "small": {
-                  "height": 36,
-                  "url": "https://dl.airtable.com/s4bgOzeTVeQs7RVOlLe9_small_products-papaya-20disco-500x500.jpg",
-                  "width": 36
-                }
-              },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/lHyXone1QmOO7Wlr4wnC_products-papaya-20disco-500x500.jpg"
-            }
-          ],
-          "Name": "Organic Papaya",
-          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "rec1Mtf58uA9XxH59",
-            "recVFah2JjfTU6xK7",
-            "reckIFYsXwDuI5lNQ"
-          ],
+          "Supplied Ingredients": "Papaya, Papaya, Papaya",
           "Tags": ["Fruit", "Frozen Food"],
-          "Total Across Menu": 200,
-          "UOM": "g",
+          "Total Across Menu": 180,
+          "UOM": ["g"],
           "_index": 0,
           "id": "rec17gjOSmacPTVTk"
         },
         {
-          "250 Orders (Kg)": 10,
-          "250 Orders (m^3)": 0.0219563796319,
-          "400 Orders (Kg)": 16,
-          "400 Orders (m^3)": 0.03513020741104,
-          "As used in recipes": ["recL2xE4rOU7O4uJN"],
-          "Cheapest per UOM": 0.002014285714285714,
-          "Feeder Type": "Frozen Food",
+          "250 Orders (Kg)": 4.5,
+          "250 Orders (m^3)": 0.009880370834355,
+          "400 Orders (Kg)": 7.2,
+          "400 Orders (m^3)": 0.015808593334968,
+          "As used in recipes": ["rech3CwuW1x1eesJW"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
           "Ingredient Image": [
             {
-              "filename": "ID-100212649_Fresh-Cucumber-Slice-Isolated-On-White-Background-by-SOMMAI.jpg",
-              "id": "attA9jOwJ5HSMfs6F",
-              "size": 114241,
+              "filename": "Cucumber.png",
+              "id": "attOiWeqKSFYfO7wG",
+              "size": 349046,
               "thumbnails": {
                 "full": {
-                  "height": 504,
-                  "url": "https://dl.airtable.com/cfneQdSxQJmqNAMLhspG_full_ID-100212649_Fresh-Cucumber-Slice-Isolated-On-White-Background-by-SOMMAI.jpg",
-                  "width": 600
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/bc4c4ea03612ebb0de5ce5e362435e5b/f9d376c7",
+                  "width": 840
                 },
                 "large": {
-                  "height": 504,
-                  "url": "https://dl.airtable.com/QP5j9eoPQZCq5U1anMnB_large_ID-100212649_Fresh-Cucumber-Slice-Isolated-On-White-Background-by-SOMMAI.jpg",
-                  "width": 600
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b1c72dd596404131e0d1267f5be97714/24fec622",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/sjNrzbnJQo2F6no8InZ4_small_ID-100212649_Fresh-Cucumber-Slice-Isolated-On-White-Background-by-SOMMAI.jpg",
-                  "width": 43
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/677a6d7a264809160c01a856da983369/c5ab04af",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/KmDVrZBTyG9bko7OqDbr_ID-100212649_Fresh-Cucumber-Slice-Isolated-On-White-Background-by-SOMMAI.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/2c2db82ce49db44391c8f4b3e9d2b79a/e75eff6b/Cucumber.png"
             }
           ],
-          "Name": "Organic Cucumber",
+          "Name": "Cucumber",
+          "Recipe Ingredients copy": "Cucumber",
           "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "recP5ATaLgdPN5tmS",
-            "recZdwU2frvW8GvaA",
-            "recc9bRGiaEjpDXil"
-          ],
+          "Supplied Ingredients": "English Cucumber, English Cucumber, English Cucumber",
           "Tags": ["Frozen Food", "Vegetable"],
-          "Total Across Menu": 200,
-          "UOM": "g",
+          "Total Across Menu": 90,
+          "UOM": ["g"],
           "_index": 8,
           "id": "recGRd3CuZCnJUlEK"
         },
         {
-          "250 Orders (Kg)": 9.75,
-          "250 Orders (m^3)": 0.0214074701411025,
-          "400 Orders (Kg)": 15.6,
-          "400 Orders (m^3)": 0.034251952225764,
+          "250 Orders (Kg)": 5,
+          "250 Orders (m^3)": 0.01097818981595,
+          "400 Orders (Kg)": 8,
+          "400 Orders (m^3)": 0.01756510370552,
           "As used in recipes": [
-            "recMsbTGJLCTn0DyC",
-            "rec6ghGDivB8usxsn",
-            "recrgJt1qHQ7ISMHx",
-            "recnVTYRCWgGnSLIH",
-            "recqQnw7EIbsq2QyV"
+            "recdmbwTvFjeBmvXA",
+            "recmZPUipsjXCLCbp",
+            "recanBFWTcakSaD79",
+            "recj3zdScMIkmnyL4",
+            "recJVUngt27eyLIru"
           ],
-          "Cheapest per UOM": 0.0022046226304725785,
-          "Feeder Type": "Frozen Food",
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
           "Ingredient Image": [
             {
-              "filename": "prana_organic_medjool_dates_dattes_biologiques_vignette_700.jpg",
-              "id": "atttbFRWZJStMrvAd",
-              "size": 47023,
+              "filename": "Dates.png",
+              "id": "attQ18F1PxWWHPJzd",
+              "size": 128818,
               "thumbnails": {
                 "full": {
-                  "height": 700,
-                  "url": "https://dl.airtable.com/7cK6OVZSO7ZTuFWd5fKA_full_prana_organic_medjool_dates_dattes_biologiques_vignette_700.jpg",
-                  "width": 700
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/aae4e124ad8aef94ced1c2d98db07330/05e2f876",
+                  "width": 840
                 },
                 "large": {
-                  "height": 512,
-                  "url": "https://dl.airtable.com/GRfNzyFQSgeLLZXAvceq_large_prana_organic_medjool_dates_dattes_biologiques_vignette_700.jpg",
-                  "width": 512
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/47925f98942484eac08b3d6cc7132d6f/6801e368",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/gyRksmxQVW7jDnhffMoS_small_prana_organic_medjool_dates_dattes_biologiques_vignette_700.jpg",
-                  "width": 36
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/efcc48852e6409d3956050ef1bb4b44d/dbf6c500",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/v1ze1iaLRkaqXxZc1kXP_prana_organic_medjool_dates_dattes_biologiques_vignette_700.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/09cecf5fac1588d3db2ab719c22b5836/be33ead8/Dates.png"
             }
           ],
-          "Name": "Organic Dates",
+          "Name": " Dates",
+          "Recipe Ingredients copy": "Dates",
           "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "recghKR6dhGZKEWcl",
-            "rec0NnU5bkNPYdC34",
-            "recMxkqV138j3cZ94"
-          ],
+          "Supplied Ingredients": "Dates, Dates, Dates",
           "Tags": ["Fruit", "Frozen Food"],
-          "Total Across Menu": 195,
-          "UOM": "g",
-          "_index": 10,
+          "Total Across Menu": 100,
+          "UOM": ["g"],
+          "_index": 9,
           "id": "recJtf3Ud5TBpIG3h"
         },
         {
-          "250 Orders (Kg)": 8.5,
-          "250 Orders (m^3)": 0.018662922687115,
-          "400 Orders (Kg)": 13.6,
-          "400 Orders (m^3)": 0.029860676299383996,
-          "As used in recipes": ["recj2kn8MsO37p3uX", "rec9ps3rO3p84skIe"],
-          "Cheapest per UOM": 0.002518562937617947,
-          "Feeder Type": "Frozen Food",
+          "250 Orders (Kg)": 15,
+          "250 Orders (m^3)": 0.03293456944785,
+          "400 Orders (Kg)": 24,
+          "400 Orders (m^3)": 0.05269531111655999,
+          "As used in recipes": [
+            "recgc3gAv0JIQkQ0W",
+            "recvuzyJl7sP0V7BO",
+            "recSiIFX4HVApiJt5",
+            "recNHA2MwOUQ3Qh8E"
+          ],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
           "Ingredient Image": [
             {
-              "filename": "Pineapple-Slices-fragrance__18306.1487002092.350.350.jpg",
-              "id": "att3SFlKJipSXj5b9",
-              "size": 37474,
+              "filename": "Pineapple.png",
+              "id": "attUpKrMh3C60lSBQ",
+              "size": 377187,
               "thumbnails": {
                 "full": {
-                  "height": 350,
-                  "url": "https://dl.airtable.com/qLL6IXI3QUWkl7j8wOfS_full_Pineapple-Slices-fragrance__18306.1487002092.350.350.jpg",
-                  "width": 350
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/507fc83f0ea46d313c62af074bcb35d1/539a51ea",
+                  "width": 840
                 },
                 "large": {
-                  "height": 350,
-                  "url": "https://dl.airtable.com/zkMx8546QVddEDMKd1ge_large_Pineapple-Slices-fragrance__18306.1487002092.350.350.jpg",
-                  "width": 350
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/9f36b6a1383c29948f101327a81cfa99/88579ddf",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/bRyUaBizRCOPjYP5jjFa_small_Pineapple-Slices-fragrance__18306.1487002092.350.350.jpg",
-                  "width": 36
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/a967edf2bd6d1ca0d33687bc6d433fb1/5c6bae00",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/zP3oRjOJT9KQlBkNJjeh_Pineapple-Slices-fragrance__18306.1487002092.350.350.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/e37727fa5cba91d81f5e53a8c4501c29/394a9def/Pineapple.png"
             }
           ],
-          "Name": "Organic Pineapple",
+          "Name": " Pineapple",
+          "Recipe Ingredients copy": "Pineapple",
           "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "rec3QxHvs3tCGp5CA",
-            "rec8QQHeNALKFUXWs",
-            "recO0dGklKvi0Ve2J"
-          ],
+          "Supplied Ingredients": "Pineapple, Pineapple, Pineapple",
           "Tags": ["Fruit", "Frozen Food"],
-          "Total Across Menu": 170,
-          "UOM": "g",
-          "_index": 18,
+          "Total Across Menu": 300,
+          "UOM": ["g"],
+          "_index": 15,
           "id": "recS107K858dvPtBx"
         },
         {
-          "250 Orders (Kg)": 7,
-          "250 Orders (m^3)": 0.015369465742329998,
-          "400 Orders (Kg)": 11.2,
-          "400 Orders (m^3)": 0.024591145187727998,
-          "As used in recipes": [
-            "rec74jmWIQnzKB80I",
-            "recYOXQP03IJDXblG",
-            "recdsIYqGGd2htuA8"
-          ],
-          "Cheapest per UOM": 0.005415653918440009,
+          "250 Orders (Kg)": 0.6,
+          "250 Orders (m^3)": 0.001317382777914,
+          "400 Orders (Kg)": 0.96,
+          "400 Orders (m^3)": 0.0021078124446624,
+          "As used in recipes": ["recOmM9rpGr5Nx9tD"],
+          "Feeder Type": ["recrTO7Xkxgti54Jo"],
+          "Feeder Type -OLD": "Granule",
+          "Function": ["recTMd8dy2c66I9xk"],
           "Ingredient Image": [
             {
-              "filename": "coconut-shreds.jpg",
-              "id": "attoFW0eExWM48erS",
-              "size": 15989,
+              "filename": "Collagen.png",
+              "id": "att3xQCMtcBx5DQx0",
+              "size": 115345,
               "thumbnails": {
                 "full": {
-                  "height": 431,
-                  "url": "https://dl.airtable.com/Dij6QN5CRlCg4CUAuQEh_full_coconut-shreds.jpg",
-                  "width": 431
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b32c0bc32d3695edf6a63ab216cdff0a/cb3083f9",
+                  "width": 840
                 },
                 "large": {
-                  "height": 431,
-                  "url": "https://dl.airtable.com/g4rxir1cTBKKj0EoUUTa_large_coconut-shreds.jpg",
-                  "width": 431
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/98fafdcd1617a4ce341937c0f9923766/d2ea517f",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/qtxUtfu5QsCQlfMhKTgh_small_coconut-shreds.jpg",
-                  "width": 36
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/920fd8e988a331cb465b539d664dbcb6/3ca1b911",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/v7COZNHZQrma33n3fXhr_coconut-shreds.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/ae4fc6ed7b7a8cfb8ddebee66b030234/139fbd15/Collagen.png"
             }
           ],
-          "Name": "Organic Coconut Shreds",
+          "Name": "Marine Collagen",
+          "Recipe Ingredients copy": "Marine Collagen Peptides",
           "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": ["reckPbUVEbKezOGSX"],
-          "Total Across Menu": 140,
-          "UOM": "g",
-          "_index": 21,
+          "Supplied Ingredients": "Coconut Shreds",
+          "Tags": ["Skin & Body", "Powder"],
+          "Total Across Menu": 12,
+          "UOM": ["g"],
+          "_index": 18,
           "id": "reccq7OKeeKYI5StS"
         },
         {
-          "250 Orders (Kg)": 6,
-          "250 Orders (m^3)": 0.013173827779139998,
-          "400 Orders (Kg)": 9.6,
-          "400 Orders (m^3)": 0.021078124446624,
-          "As used in recipes": ["recl6ORaqviGY0Z6t"],
-          "Cheapest per UOM": 0.0022116759677184667,
-          "Feeder Type": "Frozen Food",
+          "250 Orders (Kg)": 14.4,
+          "250 Orders (m^3)": 0.031617186669936,
+          "400 Orders (Kg)": 23.04,
+          "400 Orders (m^3)": 0.050587498671897595,
+          "As used in recipes": ["recCaqEn1YQPAumD4", "recNwqkodZlG68THg"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
           "Ingredient Image": [
             {
-              "filename": "organicbabyspinach-600x600.jpg",
-              "id": "attcTaObfW0nc4ioj",
-              "size": 35468,
+              "filename": "Mint + Spinach.png",
+              "id": "attyv2FlYKtLnFz5q",
+              "size": 166033,
               "thumbnails": {
                 "full": {
-                  "height": 600,
-                  "url": "https://dl.airtable.com/HdOWE1nRluVS9IqrHdkj_full_organicbabyspinach-600x600.jpg",
-                  "width": 600
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/d106ccddedbd32ab2eb1b25037aaddde/fb431f63",
+                  "width": 840
                 },
                 "large": {
-                  "height": 512,
-                  "url": "https://dl.airtable.com/UTWI37Y2RqOn2zq2ywO6_large_organicbabyspinach-600x600.jpg",
-                  "width": 512
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/1984a54338756fb21f655554d4309070/deb8ec60",
+                  "width": 840
                 },
                 "small": {
                   "height": 36,
-                  "url": "https://dl.airtable.com/bXtdJF3T3iH2ILWpEnKj_small_organicbabyspinach-600x600.jpg",
-                  "width": 36
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/2c72848bc400d095b384ecc3156e8d15/16ee9f33",
+                  "width": 63
                 }
               },
-              "type": "image/jpeg",
-              "url": "https://dl.airtable.com/mvnQOT6fRDyrO27zCbCV_organicbabyspinach-600x600.jpg"
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/7a0f68e82836a2d63ad7b40b27d54f6d/df1cbc5d/MintSpinach.png"
             }
           ],
-          "Name": "Organic Spinach",
+          "Name": "Spinach + Mint",
+          "Recipe Ingredients copy": "Spinach + Mint",
           "RecipeCustomization": ["recF7OyaP05uc5A6I"],
-          "Supplied Ingredients": [
-            "rec0jdrs5oTn5xaOW",
-            "rec1n6RoqXUd7qZfq",
-            "recO1QwIw4PnxKsEn"
-          ],
+          "Supplied Ingredients": "Spinach, Spinach, Spinach",
           "Tags": ["Vegetable", "Frozen Food"],
-          "Total Across Menu": 120,
-          "UOM": "g",
-          "_index": 27,
+          "Total Across Menu": 288,
+          "UOM": ["g"],
+          "_index": 23,
           "id": "recs26PO84nLJ6Mkt"
         }
       ],
       "Name": "Frozen",
       "Overflow Limit": 0,
-      "_index": 1,
+      "_index": 3,
       "id": "recF7OyaP05uc5A6I",
       "defaultValue": [
-        "recGRd3CuZCnJUlEK",
+        "rec1dE86v90OECGMV",
+        "rec17gjOSmacPTVTk",
         "recJtf3Ud5TBpIG3h",
-        "recS107K858dvPtBx",
-        "recs26PO84nLJ6Mkt"
+        "recS107K858dvPtBx"
       ],
       "optionLimit": 4
+    },
+    {
+      "Display Name": "Protein",
+      "Ingredients": [
+        {
+          "250 Orders (Kg)": 1,
+          "250 Orders (m^3)": 0.00219563796319,
+          "400 Orders (Kg)": 1.6,
+          "400 Orders (m^3)": 0.0035130207411039997,
+          "As used in recipes": ["recc8VS31Jf5EGxEV"],
+          "Feeder Type": ["reczsNYBgCPs3lmIE"],
+          "Feeder Type -OLD": "Powder Augar",
+          "Function": ["rech4rxFhIlLhHVmk"],
+          "Ingredient Image": [
+            {
+              "filename": "Protein.png",
+              "id": "attFiWyHKjMi2uDoD",
+              "size": 150757,
+              "thumbnails": {
+                "full": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/33a55cbfbfd042bbf6fe3820a57a0b0e/f8b5efca",
+                  "width": 840
+                },
+                "large": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/d9681fa9112d9294686589bffda524a0/38c37cfc",
+                  "width": 840
+                },
+                "small": {
+                  "height": 36,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b2a99fa2b69a008878ded8468c0a6f2b/8ae9be8a",
+                  "width": 63
+                }
+              },
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/3e31d453eb4d94dc9f09e434e96fee54/58680dd8/Protein.png"
+            }
+          ],
+          "Kiosk Menu": "blueberry + banana",
+          "Name": " Hemp Protein",
+          "Recipe Ingredients copy": "Protein",
+          "RecipeCustomization": ["recxAmne0ZXFotmz6"],
+          "Supplied Ingredients": "Protein",
+          "Tags": ["Fitness", "Protein", "Powder"],
+          "Total Across Menu": 20,
+          "UOM": ["g"],
+          "_index": 3,
+          "id": "rec4lVJUGEAy0N7wF"
+        },
+        {
+          "250 Orders (Kg)": 0,
+          "250 Orders (m^3)": 0,
+          "400 Orders (Kg)": 0,
+          "400 Orders (m^3)": 0,
+          "Feeder Type": ["recrTO7Xkxgti54Jo"],
+          "Feeder Type -OLD": "Granule",
+          "Kiosk Menu": "mango + papaya",
+          "Name": "Matcha",
+          "Recipe Ingredients copy": "Probiotic Blend",
+          "RecipeCustomization": ["recxAmne0ZXFotmz6"],
+          "Supplied Ingredients": "Probiotic Blend",
+          "Tags": ["Digestion", "Gut", "Powder"],
+          "Total Across Menu": 0,
+          "UOM": ["g"],
+          "_index": 12,
+          "id": "recPBFX5WmNEyUkXh"
+        }
+      ],
+      "Name": "Protein",
+      "_index": 5,
+      "id": "recxAmne0ZXFotmz6",
+      "defaultValue": [],
+      "optionLimit": null
     }
   ],
-  "BenefitCustomization": {
+  "EnhancementCustomization": {
     "recDCiSzzrmzia1df": {
       "Description": "supports stress and mood.",
-      "Function Ingredients 2": [
-        "reca6PED9GTeGB6yc",
-        "recto92FonT1fuI2x",
-        "recR9Mcym9diywnZK",
-        "recDgOm5ZvMKRvEDa",
-        "recHvDTBCSPUXJjSQ"
-      ],
-      "Ingredients": ["receMWRnBlXKKta4e", "recQeOwgATMJMs69w"],
+      "Function Ingredients 2": "focus - tumeric, focus - cacao, focus - rhodiola, focus - lions mane, focus - sea salt",
+      "Ingredients": ["rec7bxddOEEx4acOj"],
       "Name": "Focus",
       "Photo": [
         {
-          "filename": "Rhodiola.jpg",
-          "id": "attXp88vC0JP9WnJx",
-          "size": 9579,
+          "filename": "Focus.png",
+          "id": "attUWLbLzlzPqbYt9",
+          "size": 172831,
           "thumbnails": {
             "full": {
-              "height": 225,
-              "url": "https://dl.airtable.com/ntoIx7zsSOyezmwI9yZh_full_Rhodiola.jpg",
-              "width": 225
+              "height": 480,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/4f802b4c9b78354a49e452fe2d8135e7/8a813df5",
+              "width": 840
             },
             "large": {
-              "height": 225,
-              "url": "https://dl.airtable.com/UXurj4TTmaSjfHCEJBAw_large_Rhodiola.jpg",
-              "width": 225
+              "height": 480,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/0f6430e13705a136fb91b6755a75c3f5/9b1ba875",
+              "width": 840
             },
             "small": {
               "height": 36,
-              "url": "https://dl.airtable.com/C3iFJoxbT5GCpzRm8EjN_small_Rhodiola.jpg",
-              "width": 36
+              "url": "https://dl.airtable.com/.attachmentThumbnails/59fe9694a8a4cf4669ee112684b64ad7/b1e17cbb",
+              "width": 63
             }
           },
-          "type": "image/jpeg",
-          "url": "https://dl.airtable.com/czsZZUgTTGqU6BwMTjhp_Rhodiola.jpg"
+          "type": "image/png",
+          "url": "https://dl.airtable.com/.attachments/8508c2f0a4c87834b560a07db2d40f7f/55ee6411/Focus.png"
         }
       ],
       "Recipes": "Skin & Body",
@@ -1293,71 +1132,68 @@
     },
     "recTMd8dy2c66I9xk": {
       "Description": "improves hair, skin, ligaments, tendons, nails and joints.",
-      "Function Ingredients 2": [
-        "rec1cUn7pwQxQizkC",
-        "reczBo6sSKHSGN8jR",
-        "recrwXcSPpGi4Jglu"
-      ],
+      "Function Ingredients 2": "skin - sea salt, skin - collagen, skin - astragalus",
+      "Ingredients": ["reccq7OKeeKYI5StS"],
       "Name": "Skin & Body",
       "Photo": [
         {
-          "filename": "Astragalus.jpg",
-          "id": "atthkQC29R1VN4ov9",
-          "size": 5784,
+          "filename": "Collagen.png",
+          "id": "attPV5ZyFhk5nizBv",
+          "size": 115345,
           "thumbnails": {
             "full": {
-              "height": 225,
-              "url": "https://dl.airtable.com/vuJAaJQrR7K9OY53EuWV_full_Astragalus.jpg",
-              "width": 225
+              "height": 480,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/232d6e374215c9dc36e3a65829e6434b/b3f32759",
+              "width": 840
             },
             "large": {
-              "height": 225,
-              "url": "https://dl.airtable.com/7Aw4ZULIRpyYvM4QzH2T_large_Astragalus.jpg",
-              "width": 225
+              "height": 480,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/bfe8e63eac1bb0aa1bd93c724bd96903/b1084435",
+              "width": 840
             },
             "small": {
               "height": 36,
-              "url": "https://dl.airtable.com/HJVqrfJHTiOMde9V6MlH_small_Astragalus.jpg",
-              "width": 36
+              "url": "https://dl.airtable.com/.attachmentThumbnails/1f17a4dfd38f524fdee128cc227c4311/0a262c98",
+              "width": 63
             }
           },
-          "type": "image/jpeg",
-          "url": "https://dl.airtable.com/Z0hJ11j8Q2Wtzm0TePex_Astragalus.jpg"
+          "type": "image/png",
+          "url": "https://dl.airtable.com/.attachments/dc6ba4e6fff2c1af4fb25cc198d6dde4/aa0c1e9f/Collagen.png"
         }
       ],
-      "Recipes 2": ["rec93XzkFZTAIL7xj"],
+      "Recipes 2": ["rec5COvvN0bV19iLF"],
       "_index": 1,
       "id": "recTMd8dy2c66I9xk"
     },
     "reccH9dwP1awGJZlV": {
-      "Description": "elderberries have powerful antioxidant\nproperties.",
-      "Function Ingredients 2": ["rec9BjAOKsZlXuClt", "recqmbQdqvT2XmbBt"],
-      "Ingredients": ["rec7bxddOEEx4acOj"],
+      "Description": "elderberries have powerful antioxidant properties.",
+      "Function Ingredients 2": "immunity - acai, immunity - chia",
+      "Ingredients": ["receoVi4E2GALTBj8"],
       "Name": "Immunity",
       "Photo": [
         {
-          "filename": "elderberry_powder_grande.jpg",
-          "id": "attuMHrAg4ENLowP7",
-          "size": 34654,
+          "filename": "Immunity.png",
+          "id": "att8u4AKXM2MggWeZ",
+          "size": 570864,
           "thumbnails": {
             "full": {
-              "height": 433,
-              "url": "https://dl.airtable.com/QiR5GhDaTf6JJoKYjTgO_full_elderberry_powder_grande.jpg",
-              "width": 600
+              "height": 480,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/78b856ff21418faf94002b94c6c07440/dfd5a758",
+              "width": 840
             },
             "large": {
-              "height": 433,
-              "url": "https://dl.airtable.com/umAjep5RxSf6IWsVi8Dg_large_elderberry_powder_grande.jpg",
-              "width": 600
+              "height": 480,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/00dee4382fe98b259a788b4fb2c45c1c/07626f34",
+              "width": 840
             },
             "small": {
               "height": 36,
-              "url": "https://dl.airtable.com/YkIelIzZQNaAMqpjbYdG_small_elderberry_powder_grande.jpg",
-              "width": 50
+              "url": "https://dl.airtable.com/.attachmentThumbnails/36b2a17fdf645df163e94f93c1b43b21/cfe3b169",
+              "width": 63
             }
           },
-          "type": "image/jpeg",
-          "url": "https://dl.airtable.com/XEDzKxWS3GQ90CE8FgK0_elderberry_powder_grande.jpg"
+          "type": "image/png",
+          "url": "https://dl.airtable.com/.attachments/bb2a336626c87ec9fe3f5feeb9ae0ad1/868046c7/Immunity.png"
         }
       ],
       "Recipes 2": ["recbKBSzWKFJv0Cop"],
@@ -1366,37 +1202,33 @@
     },
     "rech4rxFhIlLhHVmk": {
       "Description": "contains 90% protein and a complete amino acid profile, ideal for building muscle.",
-      "Function Ingredients 2": [
-        "rec5VMk1rJBskNN9S",
-        "recwyoDYltXTWIPZP",
-        "recCQ9PJtvyUo1w4i"
-      ],
-      "Ingredients": ["recPBFX5WmNEyUkXh"],
+      "Function Ingredients 2": "fitness - vanilla, fitness - chia, fitness - sea salt",
+      "Ingredients": ["rec4lVJUGEAy0N7wF"],
       "Name": "Fitness",
       "Photo": [
         {
-          "filename": "protein.jpg",
-          "id": "attzkW03k7If9JYPG",
-          "size": 96849,
+          "filename": "Protein_clipped_rev_1.png",
+          "id": "attcBWytBEayicMC0",
+          "size": 125813,
           "thumbnails": {
             "full": {
-              "height": 1024,
-              "url": "https://dl.airtable.com/JPkhcZEQ5yG4mvmLhsvc_full_protein.jpg",
-              "width": 1024
+              "height": 480,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/13baaf16deaf503756c7b10a7223910e/cf46bccb",
+              "width": 840
             },
             "large": {
-              "height": 512,
-              "url": "https://dl.airtable.com/UIhaBFDURXyKfujhrJHT_large_protein.jpg",
-              "width": 512
+              "height": 480,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/06cbb1367334399af7d5f5fb356b4df4/76df5ff5",
+              "width": 840
             },
             "small": {
               "height": 36,
-              "url": "https://dl.airtable.com/Tko1cVrqRC2kX2SfdXle_small_protein.jpg",
-              "width": 36
+              "url": "https://dl.airtable.com/.attachmentThumbnails/9dc0ef0d61f2c9a0ed0478bba198eaff/216227b3",
+              "width": 63
             }
           },
-          "type": "image/jpeg",
-          "url": "https://dl.airtable.com/iEb1qz22SUCl67A1FgBv_protein.jpg"
+          "type": "image/png",
+          "url": "https://dl.airtable.com/.attachments/23718e83c59ab24145e9e4b696243ec6/90848782/Protein_clipped_rev_1.png"
         }
       ],
       "Recipes 2": ["rec7tonLJn3hO5XfK"],
@@ -1405,79 +1237,76 @@
     },
     "recl9QIIUTtDuJkWi": {
       "Description": "composed of two strains of ‘good’ bacteria to help with gut health.",
-      "Function Ingredients 2": ["recDHBxFbXiTvVQI0", "recKQwU5vfvXbmV2z"],
-      "Ingredients": ["receoVi4E2GALTBj8", "rec4lVJUGEAy0N7wF"],
+      "Function Ingredients 2": "digestion - probiotics, digestion - chia",
+      "Ingredients": ["recCD2HSPMg4FfJpY"],
       "Name": "Digestion",
       "Photo": [
         {
-          "filename": "Probiotics.jpg",
-          "id": "attbiAg9oVg6RBnnu",
-          "size": 102065,
+          "filename": "Probiotics_clipped_rev_1.png",
+          "id": "attoHuDGsZClLBKaK",
+          "size": 102873,
           "thumbnails": {
             "full": {
-              "height": 1024,
-              "url": "https://dl.airtable.com/zA1rSslTJOKJpOxJTEV5_full_Probiotics.jpg",
-              "width": 1024
+              "height": 480,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/6d870d8b21c9cc19346387237ef7f787/514abf73",
+              "width": 840
             },
             "large": {
-              "height": 512,
-              "url": "https://dl.airtable.com/HaezGL5dQFu0DBJBXyFe_large_Probiotics.jpg",
-              "width": 512
+              "height": 480,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/9216f2be9b7917b732d25eb3ed08cc43/8d0493ae",
+              "width": 840
             },
             "small": {
               "height": 36,
-              "url": "https://dl.airtable.com/EF1YFXLR6SxrFCTsO3Et_small_Probiotics.jpg",
-              "width": 36
+              "url": "https://dl.airtable.com/.attachmentThumbnails/b3289b1f6d200e92b7af7b91213d6f1b/ca3ddfe3",
+              "width": 63
             }
           },
-          "type": "image/jpeg",
-          "url": "https://dl.airtable.com/YkLGWdV8RSOWfw3J1TZr_Probiotics.jpg"
+          "type": "image/png",
+          "url": "https://dl.airtable.com/.attachments/6dc5503682ef906fb1c10eb8e2400629/b092d451/Probiotics_clipped_rev_1.png"
         }
       ],
       "Recipes": "Fitness",
-      "Recipes 2": ["rec5COvvN0bV19iLF"],
+      "Recipes 2": ["rec93XzkFZTAIL7xj"],
       "_index": 4,
       "id": "recl9QIIUTtDuJkWi"
     }
   },
-  "DefaultBenefit": {
+  "DefaultEnhancement": {
     "Description": "improves hair, skin, ligaments, tendons, nails and joints.",
-    "Function Ingredients 2": [
-      "rec1cUn7pwQxQizkC",
-      "reczBo6sSKHSGN8jR",
-      "recrwXcSPpGi4Jglu"
-    ],
+    "Function Ingredients 2": "skin - sea salt, skin - collagen, skin - astragalus",
+    "Ingredients": ["reccq7OKeeKYI5StS"],
     "Name": "Skin & Body",
     "Photo": [
       {
-        "filename": "Astragalus.jpg",
-        "id": "atthkQC29R1VN4ov9",
-        "size": 5784,
+        "filename": "Collagen.png",
+        "id": "attPV5ZyFhk5nizBv",
+        "size": 115345,
         "thumbnails": {
           "full": {
-            "height": 225,
-            "url": "https://dl.airtable.com/vuJAaJQrR7K9OY53EuWV_full_Astragalus.jpg",
-            "width": 225
+            "height": 480,
+            "url": "https://dl.airtable.com/.attachmentThumbnails/232d6e374215c9dc36e3a65829e6434b/b3f32759",
+            "width": 840
           },
           "large": {
-            "height": 225,
-            "url": "https://dl.airtable.com/7Aw4ZULIRpyYvM4QzH2T_large_Astragalus.jpg",
-            "width": 225
+            "height": 480,
+            "url": "https://dl.airtable.com/.attachmentThumbnails/bfe8e63eac1bb0aa1bd93c724bd96903/b1084435",
+            "width": 840
           },
           "small": {
             "height": 36,
-            "url": "https://dl.airtable.com/HJVqrfJHTiOMde9V6MlH_small_Astragalus.jpg",
-            "width": 36
+            "url": "https://dl.airtable.com/.attachmentThumbnails/1f17a4dfd38f524fdee128cc227c4311/0a262c98",
+            "width": 63
           }
         },
-        "type": "image/jpeg",
-        "url": "https://dl.airtable.com/Z0hJ11j8Q2Wtzm0TePex_Astragalus.jpg"
+        "type": "image/png",
+        "url": "https://dl.airtable.com/.attachments/dc6ba4e6fff2c1af4fb25cc198d6dde4/aa0c1e9f/Collagen.png"
       }
     ],
-    "Recipes 2": ["rec93XzkFZTAIL7xj"],
+    "Recipes 2": ["rec5COvvN0bV19iLF"],
     "_index": 1,
     "id": "recTMd8dy2c66I9xk"
   },
   "DefaultEnhancementName": "Skin & Body",
-  "DisplayPrice": "$3.00"
+  "DisplayPrice": "$4.50"
 }

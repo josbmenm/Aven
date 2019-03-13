@@ -3,6 +3,7 @@
   "aven": {
     "env": "env-blitz-ios",
     "srcDependencies": [
+      "views",
       "debug-views",
       "ono-cloud",
       "aven-cloud-native",

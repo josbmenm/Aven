@@ -408,14 +408,14 @@ export function withKitchen(Component) {
   );
 }
 
-const sortByField = (obj, fieldName) => {
+export function sortByField(obj, fieldName) {
   var sortable = [];
   for (var row in obj) {
     sortable.push([row, obj[row]]);
   }
   sortable.sort((a, b) => a[1][fieldName] - b[1][fieldName]);
   return sortable.map(kVal => kVal[1]);
-};
+}
 
 export function getActiveEnhancement(cartItem, menuItem) {
   if (
