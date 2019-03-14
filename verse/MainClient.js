@@ -12,7 +12,7 @@ const RESTAURANT_DEV = {
   authority: 'localhost:8830',
 };
 const RESTAURANT_PROD = {
-  authority: '192.168.1.200:8830',
+  authority: 'restaurant0.maui.onofood.co:8830',
   useSSL: false,
 };
 
