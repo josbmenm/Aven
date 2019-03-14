@@ -125,6 +125,7 @@ function CartRow({ itemId, item }) {
   if (!item || !item.menuItem) {
     return null;
   }
+
   function goToItem() {
     if (item.type === 'blend') {
       navigate({
@@ -144,6 +145,16 @@ function CartRow({ itemId, item }) {
         key: `food-item-${item.menuItem.id}`,
       });
     }
+  }
+  function customizeItem() {
+    navigate({
+      routeName: 'CustomizeBlend',
+      key: `Customize-${itemId}`,
+      params: {
+        orderItemId: itemId,
+        menuItemId: item.menuItem.id,
+      },
+    });
   }
   return (
     <TouchableWithoutFeedback onPress={goToItem}>
@@ -169,7 +180,13 @@ function CartRow({ itemId, item }) {
           {getItemCustomizationSummary(item).map((summaryItem, index) => (
             <Text
               key={index}
-              style={{ color: monsterra, ...primaryFontFace, marginBottom: 8 }}
+              style={{
+                color: monsterra,
+                ...primaryFontFace,
+                marginBottom: 8,
+                lineHeight: 12,
+                fontSize: 13,
+              }}
             >
               - {summaryItem}
             </Text>
@@ -179,7 +196,7 @@ function CartRow({ itemId, item }) {
               <SmallButton
                 title="customize"
                 icon={require('./assets/EditIcon.png')}
-                onPress={goToItem}
+                onPress={customizeItem}
               />
             )}
             <SmallButton

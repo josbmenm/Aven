@@ -580,7 +580,7 @@ export default function CustomizePage({
   ...props
 }) {
   let customizeContent = null;
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   if (menuItem) {
     customizeContent = (
       <Customization
@@ -609,7 +609,14 @@ export default function CustomizePage({
               quantity: 1,
             };
         setCartItem(nextItem);
-        goBack();
+        navigate({
+          routeName: 'Blend',
+          params: {
+            orderItemId,
+            menuItemId: menuItem.id,
+          },
+          key: `blend-item-${orderItemId}`,
+        });
       },
     },
     {

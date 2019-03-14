@@ -80,8 +80,6 @@ function BlendPageContentPure({
   order,
   onPendingEnhancement,
 }) {
-  console.log('RENDER BLEND PAGEEE');
-
   let menuContent = null;
   if (menuItem && order) {
     let activeEnhancement = getActiveEnhancement(item, menuItem);
@@ -180,7 +178,6 @@ export default function BlendPage({
     {
       title: 'add to cart',
       onPress: () => {
-        console.log('omgwat', pendingEnhancement);
         setItemState(
           addMenuItemToCartItem({
             item: item && item.state,

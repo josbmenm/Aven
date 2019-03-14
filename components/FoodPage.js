@@ -30,7 +30,15 @@ function FoodDetails({ orderItem, menuItem }) {
           style={{ width: 120, height: 120 }}
           resizeMode="contain"
         />
-        <Text style={{ ...proseFontFace, color: monsterra, fontSize: 16 }}>
+        <Text
+          style={{
+            ...proseFontFace,
+            marginHorizontal: 25,
+            color: monsterra,
+            fontSize: 16,
+            alignSelf: 'center',
+          }}
+        >
           {menuItem['Brand Description']}
         </Text>
       </View>

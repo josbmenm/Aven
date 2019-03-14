@@ -29,9 +29,14 @@ export default function BlendMenu({ menu, large, title }) {
             const currentItems = currentOrder && currentOrder.items;
             const currentItem =
               currentItems &&
-              currentItems.find(i => {
-                return i.customization == null && i.menuItemId === item.id;
-              });
+              currentItems
+                .filter(i => i.menuItemId === item.id)
+                .find(
+                  i =>
+                    i.customization == null ||
+                    i.customization.ingredients == null,
+                );
+
             const orderItemId = (currentItem && currentItem.id) || uuid();
             console.log('navigate', {
               orderItemId,

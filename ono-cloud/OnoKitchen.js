@@ -116,6 +116,9 @@ export function displayNameOfMenuItem(menuItem) {
 }
 
 export function displayNameOfOrderItem(orderItem, menuItem) {
+  if (!menuItem) {
+    return 'unknown product';
+  }
   if (!orderItem) {
     return displayNameOfMenuItem(menuItem);
   }
@@ -233,7 +236,7 @@ export function getItemCustomizationSummary(item) {
     return [];
   }
   function getIngredientName(ing) {
-    return ing.Name.toLowerCase();
+    return ing.Name.toLowerCase().trim();
   }
   let summaryItems = [];
   if (item.customization.enhancement === null) {
@@ -254,7 +257,15 @@ export function getItemCustomizationSummary(item) {
       const category = item.customization.ingredients[categoryName];
       if (categorySize === 1) {
         const ing = categorySpec.Ingredients.find(i => i.id === category[0]);
-        summaryItems.push('with ' + getIngredientName(ing));
+        if (ing) {
+          summaryItems.push(`with ${getIngredientName(ing)}`);
+        } else {
+          const defaultIngId = categorySpec.defaultValue[0];
+          const defaultIng = categorySpec.Ingredients.find(
+            i => i.id === defaultIngId,
+          );
+          summaryItems.push(`remove ${getIngredientName(defaultIng)}`);
+        }
       } else {
         const defaultIngCounts = {};
         const allIngIds = new Set();
@@ -423,6 +434,13 @@ export function sortByField(obj, fieldName) {
 }
 
 export function getActiveEnhancement(cartItem, menuItem) {
+  if (
+    cartItem &&
+    cartItem.customization &&
+    cartItem.customization.enhancement === null
+  ) {
+    return null;
+  }
   if (
     cartItem &&
     cartItem.customization &&

@@ -13,7 +13,7 @@ import {
   prettyShadow,
   boldPrimaryFontFace,
 } from './Styles';
-import Animated from 'react-native-reanimated';
+import Animated, { Easing } from 'react-native-reanimated';
 
 export function EnhancementDetail({ enhancement, chevronRef }) {
   if (!enhancement || !enhancement.Name) {
@@ -30,6 +30,7 @@ export function EnhancementDetail({ enhancement, chevronRef }) {
       <AirtableImage
         image={enhancement.Photo}
         style={{ width: 36, height: 36, marginRight: 12 }}
+        tintColor={monsterra}
       />
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row' }}>
@@ -71,7 +72,8 @@ function EnhancementSelectorRow({ enhancement, onSelect, onClose }) {
       <View style={{ flexDirection: 'row', padding: 12 }}>
         <AirtableImage
           image={enhancement.Photo}
-          style={{ width: 24, height: 24, marginRight: 20 }}
+          style={{ width: 24, height: 24, margin: 3, marginRight: 20 }}
+          tintColor={monsterra}
         />
         <View style={{ flex: 1 }}>
           <Text
@@ -172,6 +174,7 @@ export function EnhancementSelector({
         </Animated.View>
       );
     },
+    { duration: 300, easing: Easing.quad },
   );
   if (!activeEnhancement) {
     return <Text>No enhancement</Text>;

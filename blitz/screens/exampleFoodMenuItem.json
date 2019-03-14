@@ -1,63 +1,63 @@
 {
   "Active in Kiosk": true,
-  "Brand Description": "Milk Bar is a dessert empire and lifestyle brand, called “one of the most exciting bakeries in the country” by Bon Appétit magazine. Founded by award-winning pastry chef Christina Tosi, Milk Bar opened its doors in NYC’s East Village in 2008, and quickly became a cult sensation. With wildly popular storefronts in New York, Washington, D.C., Toronto, Las Vegas and most recently, Los Angeles, Milk Bar is known for its familiar yet unexpected desserts including Crack Pie®, the Compost Cookie®, “naked” layer cakes with unfrosted sides, and Cereal Milk Soft Serve, among other playful and craveable treats.",
+  "Brand Description": "Milk Bar is a dessert empire and lifestyle brand, called “one of the most exciting bakeries in the country” by Bon Appétit magazine.",
   "Brand Name": "Milkbar",
   "Brand Photo": [
     {
-      "filename": "MilkBar.png",
-      "id": "atttFl7g05liXoOhx",
-      "size": 27267,
+      "filename": "MilkBarLogo.png",
+      "id": "attGAnEgc40UjkloO",
+      "size": 19712,
       "thumbnails": {
         "full": {
           "height": 200,
-          "url": "https://dl.airtable.com/CN9CiNvFRua2q2aUHmjg_full_MilkBar.png",
-          "width": 369
+          "url": "https://dl.airtable.com/.attachmentThumbnails/3ed12495ffe0593b99a2b6b017731a89/cc140937",
+          "width": 200
         },
         "large": {
           "height": 200,
-          "url": "https://dl.airtable.com/NHa8g77YR3CBdHxcufnK_large_MilkBar.png",
-          "width": 369
+          "url": "https://dl.airtable.com/.attachmentThumbnails/1f3b5c41ec3d061df53d5a9dca05b05d/e7b2bd50",
+          "width": 200
         },
         "small": {
           "height": 36,
-          "url": "https://dl.airtable.com/aO2PApaxQaqU5Io12Sdc_small_MilkBar.png",
-          "width": 66
+          "url": "https://dl.airtable.com/.attachmentThumbnails/7da73e886ef6962b1cd1df2035beb4c8/0ef68ef5",
+          "width": 36
         }
       },
       "type": "image/png",
-      "url": "https://dl.airtable.com/7MaatKIBTple31IbLGNg_MilkBar.png"
+      "url": "https://dl.airtable.com/.attachments/c8304da2b1c3ab39a2f94b3b0bcfa0ec/cb550ac0/MilkBarLogo.png"
     }
   ],
-  "Display Description": "Milk Bar everything bagel bread filled with scallion cream cheese and bacon.",
-  "Name": "Bagel Bomb",
+  "Display Description": "Milk Bar's Sriracha cream cheese, sandwiched between an organic baked egg omelet, folded inside steamed dough, topped with cheddar cheese and spanish onion!",
+  "Name": "Egg & Cheddar Bomb",
   "Nutrition Info": "250 cal.",
   "Photo": [
     {
-      "filename": "bagel-bomb.jpg",
-      "id": "att4ueQvcwsCAxSqW",
-      "size": 36300,
+      "filename": "Egg & Cheese Bomb.png",
+      "id": "atthgLzBtzsOta3Uc",
+      "size": 362638,
       "thumbnails": {
         "full": {
-          "height": 800,
-          "url": "https://dl.airtable.com/Bm7rggwAReGWBqaowg6F_full_bagel-bomb.jpg",
-          "width": 800
+          "height": 1000,
+          "url": "https://dl.airtable.com/.attachmentThumbnails/d6c611431475c0f1453e3fa36a30ae63/58246dad",
+          "width": 680
         },
         "large": {
-          "height": 512,
-          "url": "https://dl.airtable.com/OwqwRlGtSjSgJk5xBfgm_large_bagel-bomb.jpg",
+          "height": 753,
+          "url": "https://dl.airtable.com/.attachmentThumbnails/714add4019f82ef6f03d0d28911a8a2a/b4bc8ce3",
           "width": 512
         },
         "small": {
           "height": 36,
-          "url": "https://dl.airtable.com/k6btGGYwTUaeqTaSugcd_small_bagel-bomb.jpg",
-          "width": 36
+          "url": "https://dl.airtable.com/.attachmentThumbnails/9d0ed9498141c25d52b8d125cee3f8e1/8019bd0f",
+          "width": 24
         }
       },
-      "type": "image/jpeg",
-      "url": "https://dl.airtable.com/LW46NanjRw6dxzoqu43z_bagel-bomb.jpg"
+      "type": "image/png",
+      "url": "https://dl.airtable.com/.attachments/7e6a45ee95afaa3731d0dfd285292047/964e19d7/EggCheeseBomb.png"
     }
   ],
-  "Sell Price": 2,
-  "_index": 0,
-  "id": "rec2gyolDloHLyDEC"
+  "Sell Price": 4,
+  "_index": 1,
+  "id": "recLhp1A1haH5BoSm"
 }

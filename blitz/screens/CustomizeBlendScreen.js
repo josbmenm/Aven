@@ -29,6 +29,7 @@ export default function CustomizeBlendScreen({ navigation, ...props }) {
       menuItem={menuItem}
       cartItem={item}
       setCartItem={setItemState}
+      orderItemId={orderItemId}
       navigation={navigation}
       {...props}
     />

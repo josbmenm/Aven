@@ -12,7 +12,7 @@ export function setHostConfig(config) {
   authority = config.authority;
 }
 
-const AirtableImage = ({ image, style, resizeMode }) => {
+const AirtableImage = ({ image, style, resizeMode, tintColor }) => {
   const origUrl = image && image[0] && image[0].url;
   const ext = path.extname(origUrl);
   const imageURI = `${
@@ -20,7 +20,14 @@ const AirtableImage = ({ image, style, resizeMode }) => {
   }://${authority}/_/onofood.co/Airtable/files/${md5(
     origUrl,
   ).toString()}${ext}`;
-  return <Image style={style} imageURI={imageURI} resizeMode={resizeMode} />;
+  return (
+    <Image
+      style={style}
+      imageURI={imageURI}
+      resizeMode={resizeMode}
+      tintColor={tintColor}
+    />
+  );
 };
 
 export default AirtableImage;
