@@ -182,7 +182,7 @@ loadImages(PRELOAD_IMAGES).then(results => {
   console.log('images preloaded!');
 });
 
-const ENABLE_DEV_OVERLAY = true;
+const ENABLE_DEV_OVERLAY = false;
 
 function withDevOverlay(FullApp) {
   if (__DEV__ && ENABLE_DEV_OVERLAY) {

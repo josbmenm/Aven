@@ -93,6 +93,8 @@ export default async function scrapeAirTable(fsClient) {
     'Recipe Ingredients',
     'Ingredients',
     'Enhancements',
+    'Benefits',
+    'Dietary',
     'KitchenSystems',
     'KitchenSystemTags',
     'KitchenSystemFaults',

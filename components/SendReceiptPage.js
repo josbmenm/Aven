@@ -19,14 +19,13 @@ import useFocus from '../navigation-hooks/useFocus';
 export default function SendReceiptPage({
   onSubmit,
   backBehavior,
-  type,
+  type, // sms || email
   ...props
 }) {
   const [contactValue, setValue] = useState(null);
-  const [lastName, setLastName] = useState(null);
 
   function handleSubmit() {
-    onSubmit({ contactValue, lastName });
+    onSubmit({ value, type });
   }
 
   const inputRenderers = [

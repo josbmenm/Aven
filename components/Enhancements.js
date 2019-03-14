@@ -28,7 +28,7 @@ export function EnhancementDetail({ enhancement, chevronRef }) {
       }}
     >
       <AirtableImage
-        image={enhancement.Photo}
+        image={enhancement.Icon}
         style={{ width: 36, height: 36, marginRight: 12 }}
         tintColor={monsterra}
       />
@@ -71,7 +71,7 @@ function EnhancementSelectorRow({ enhancement, onSelect, onClose }) {
     >
       <View style={{ flexDirection: 'row', padding: 12 }}>
         <AirtableImage
-          image={enhancement.Photo}
+          image={enhancement.Icon}
           style={{ width: 24, height: 24, margin: 3, marginRight: 20 }}
           tintColor={monsterra}
         />

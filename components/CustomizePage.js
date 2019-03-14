@@ -118,8 +118,9 @@ function EnhancementSection({ section }) {
   return (
     <View style={{ marginRight: 14, marginBottom: 20 }}>
       <SideBySide
-        items={section.options.map(enhancement => (
+        items={section.options.map((enhancement, index) => (
           <TouchableOpacity
+            key={index}
             style={{
               marginTop: 16,
               marginRight: 16,

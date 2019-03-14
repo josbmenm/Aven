@@ -11,10 +11,10 @@ export default function ReceiptScreen({ props }) {
   return (
     <ReceiptPage
       onSms={() => {
-        navigate('SendReciept', { type: 'sms' });
+        navigate('SendReceipt', { type: 'sms' });
       }}
       onEmail={() => {
-        navigate('SendReciept', { type: 'email' });
+        navigate('SendReceipt', { type: 'email' });
       }}
       onNoReceipt={() => {
         resetOrder();

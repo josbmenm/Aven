@@ -53,7 +53,19 @@ function Ingredient({ ingredient }) {
   );
 }
 
-function Ingredients({ menuItem }) {
+function getSelectedIngredients(menuItem, cartItem) {
+  if (
+    !cartItem ||
+    !cartItem.customization ||
+    !cartItem.customization.ingredients
+  ) {
+    return menuItem.Recipe.Ingredients;
+  }
+  // todo, calculate real current ingredients
+  return [];
+}
+
+function Ingredients({ menuItem, cartItem }) {
   return (
     <View
       style={{
@@ -65,7 +77,7 @@ function Ingredients({ menuItem }) {
         width: 600,
       }}
     >
-      {menuItem.Recipe.Ingredients.map(i => (
+      {getSelectedIngredients(menuItem, cartItem).map(i => (
         <Ingredient ingredient={i.Ingredient} key={i.id} />
       ))}
     </View>
@@ -132,7 +144,7 @@ function BlendPageContentPure({
               }}
             />
             <SmallTitle>Organic Ingredients</SmallTitle>
-            <Ingredients menuItem={menuItem} />
+            <Ingredients menuItem={menuItem} cartItem={item} />
           </DetailsSection>
         </MenuHLayout>
       </MenuZone>
