@@ -202,9 +202,14 @@ export default function createNativeNetworkSource(opts) {
     return getDomainDocObserver(domain, name, auth).observable;
   }
 
+  async function observeDocChildren(domain, name, auth) {
+    return getDocChildrenObserver(domain, name, auth).observable;
+  }
+
   return {
     dispatch,
     observeDoc,
+    observeDocChildren,
     isConnected,
   };
 }

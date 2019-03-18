@@ -195,6 +195,7 @@ export default function createCloudClient({
     onGetSelf: () => cloudClient,
   });
   cloudClient.get = docs.get;
+  cloudClient.observeDocChildren = docs.observeDocChildren;
 
   cloudClient.observeUserDoc = mapBehaviorSubject(session, value => {
     if (value && value.accountId) {

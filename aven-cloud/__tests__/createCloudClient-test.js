@@ -1,5 +1,6 @@
 import createMemoryDataSource from '../createMemoryDataSource';
 import createCloudClient from '../createCloudClient';
+import { setMaxListDocs } from '../maxListDocs';
 
 import dataSourceTests from './dataSourceTests';
 
@@ -75,6 +76,96 @@ describe('client doc behavior', () => {
     const r0 = c.get('foo');
     const r1 = c.get('foo');
     expect(r0).toBe(r1);
+  });
+
+  test('doc lists', async () => {
+    const m = createMemoryDataSource({ domain: 'd' });
+    const c = createCloudClient({ dataSource: m, domain: 'd' });
+    await c.get('foo').put({});
+    await c.get('bar').put({});
+    let lastObserved = null;
+    c.observeDocChildren.subscribe({
+      next: val => {
+        lastObserved = val;
+      },
+    });
+    await justASec();
+    expect(lastObserved.length).toBe(2);
+    expect(lastObserved[0].getFullName()).toBe('bar');
+  });
+
+  test('doc paginated lists', async () => {
+    setMaxListDocs(2);
+    const m = createMemoryDataSource({ domain: 'd' });
+    const c = createCloudClient({ dataSource: m, domain: 'd' });
+    await c.get('foo').put({});
+    await c.get('bar').put({});
+    await c.get('baz').put({});
+
+    let lastObserved = null;
+    c.observeDocChildren.subscribe({
+      next: val => {
+        lastObserved = val;
+      },
+    });
+    await justASec();
+    expect(lastObserved.length).toBe(3);
+    expect(lastObserved[2].getFullName()).toBe('foo');
+  });
+
+  test('doc list subscriptions, unsubscrbie, resubscribe', async () => {
+    const m = createMemoryDataSource({ domain: 'd' });
+    const c = createCloudClient({ dataSource: m, domain: 'd' });
+    await c.get('foo').put({});
+    await c.get('bar').put({});
+    let lastObserved = null;
+    let subs = c.observeDocChildren.subscribe({
+      next: val => {
+        lastObserved = val;
+      },
+    });
+    await justASec();
+    expect(lastObserved.length).toBe(2);
+    await m.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      value: 'whatever',
+      name: 'baz',
+    });
+    await justASec();
+    expect(lastObserved.length).toBe(3);
+    await m.dispatch({
+      type: 'DestroyDoc',
+      domain: 'd',
+      name: 'baz',
+    });
+    await justASec();
+    expect(lastObserved.length).toBe(2);
+
+    await m.dispatch({
+      type: 'DestroyDoc',
+      domain: 'd',
+      name: 'foo',
+    });
+    await justASec();
+    expect(lastObserved.length).toBe(1);
+    subs.unsubscribe();
+    await m.dispatch({
+      type: 'DestroyDoc',
+      domain: 'd',
+      name: 'bar',
+    });
+
+    await justASec();
+    expect(lastObserved.length).toBe(1);
+    lastObserved = null;
+    subs = c.observeDocChildren.subscribe({
+      next: val => {
+        lastObserved = val;
+      },
+    });
+    await justASec();
+    expect(lastObserved.length).toBe(0);
   });
 
   test('doc posting', async () => {

@@ -35,7 +35,8 @@ export default function useCloudReducer(name, reducer, initialState) {
           setIsReady(true);
         })
         .catch(e => {
-          throw new Error('error on uploaded lambda');
+          // if this fails, we can still reduce locally. not too big of a deal..?
+          setIsReady(true);
         });
     },
     [reducer, name]

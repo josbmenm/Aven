@@ -21,6 +21,11 @@ export function createDocPool({
   const _docs = {};
 
   function get(name) {
+    if (typeof name !== 'string') {
+      throw new Error(
+        `Expected a string to be passed to docs.get(). Instead got "${name}"`
+      );
+    }
     if (name === '') {
       return onGetSelf();
     }
@@ -126,7 +131,74 @@ export function createDocPool({
     return postedDoc;
   }
 
-  return { get, move, post };
+  const observeDocChildren = parentName
+    .switchMap(parentDocName => {
+      return new Observable(observer => {
+        let docNames = [];
+        let hasMore = true;
+        let lastDocSeen = null;
+        let upstreamSubs = null;
+
+        async function doLoad() {
+          if (!upstreamSubs) {
+            upstreamSubs = (await dataSource.observeDocChildren(
+              domain,
+              parentDocName
+            )).subscribe(childEvt => {
+              if (childEvt.type === 'AddChildDoc') {
+                // see if this belongs at end of list. We can avoid sorting
+                const last = docNames[docNames.length - 1];
+                if (last && childEvt.name > last) {
+                  docNames = [...docNames, childEvt.name];
+                } else {
+                  // we need to sort
+                  docNames = [...docNames, childEvt.name].sort();
+                }
+                observer.next(docNames);
+              } else if (childEvt.type === 'DestroyChildDoc') {
+                if (docNames.indexOf(childEvt.name) !== -1) {
+                  docNames = docNames.filter(name => name !== childEvt.name);
+                  observer.next(docNames);
+                }
+              } else {
+                throw new Error(`Unrecognized child doc event: ${childEvt}`);
+              }
+            });
+          }
+          const result = await dataSource.dispatch({
+            type: 'ListDocs',
+            parentName: parentDocName,
+            afterName: lastDocSeen,
+            domain,
+          });
+          lastDocSeen = result.docs[result.docs.length - 1];
+          docNames = [...docNames, ...result.docs];
+          hasMore = result.hasMore;
+          observer.next(docNames);
+        }
+        async function doFullLoad() {
+          await doLoad();
+          if (hasMore && lastDocSeen) {
+            return await doFullLoad();
+          }
+        }
+        doFullLoad()
+          .then(() => {})
+          .catch(console.error);
+
+        return () => {
+          if (upstreamSubs) {
+            upstreamSubs.unsubscribe();
+          }
+        };
+      });
+    })
+    // this is a shared observable of all doc names. Array<string>
+    .map(docNames => docNames.map(get))
+    // this is now hydrated to real children doc objects Array<CloudDoc>
+    .share();
+
+  return { get, move, post, observeDocChildren };
 }
 
 export default function createCloudDoc({
@@ -627,8 +699,10 @@ export default function createCloudDoc({
         puttingFromId: null,
         id: lastId,
       });
-      console.error(e);
-      throw new Error(`Failed to putBlockId "${block.id}" to "${name}"!`);
+
+      throw new Error(
+        `Failed to putBlockId "${block.id}" to "${name}". ${e.message}`
+      );
     }
   }
 
@@ -738,6 +812,7 @@ export default function createCloudDoc({
 
     get: docs.get,
     post: docs.post,
+    observeDocChildren: docs.observeDocChildren,
     getState,
     getId,
     getName,

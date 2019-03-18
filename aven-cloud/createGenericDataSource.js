@@ -206,6 +206,9 @@ export default function createGenericDataSource({
     if (value === undefined) {
       throw new Error('Must provide value to PutDocValue');
     }
+    if (name == null) {
+      throw new Error('Must provide a name to PutDocValue');
+    }
     const memoryDoc = getMemoryNode(name, true);
     if (
       typeof value === 'object' &&
