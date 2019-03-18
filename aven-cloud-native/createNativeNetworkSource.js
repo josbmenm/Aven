@@ -203,7 +203,7 @@ export default function createNativeNetworkSource(opts) {
   }
 
   async function observeDocChildren(domain, name, auth) {
-    return getDocChildrenObserver(domain, name, auth).observable;
+    // return getDocChildrenObserver(domain, name, auth).observable;
   }
 
   return {
