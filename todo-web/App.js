@@ -14,9 +14,24 @@ function Home() {
   );
 }
 
+function AdminScreen(props) {
+  return (
+    <Admin
+      {...props}
+      defaultSession={{
+        authority: 'localhost:3000',
+        useSSL: false,
+        domain: 'todo.aven.cloud',
+      }}
+    />
+  );
+}
+AdminScreen.navigationOptions = Admin.navigationOptions;
+AdminScreen.router = Admin.router;
+
 const App = createSwitchNavigator({
   Home,
-  Admin,
+  Admin: AdminScreen,
 });
 
 export default App;

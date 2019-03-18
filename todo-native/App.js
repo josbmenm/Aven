@@ -27,6 +27,7 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 import useFocus from '../navigation-hooks/useFocus';
 import LabelInput from '../views/LabelInput';
 import useAsyncStorage, { isStateUnloaded } from '../utils/useAsyncStorage';
+import uuid from 'uuid/v1';
 
 function ConnectedMessage() {
   const cloud = useCloud();
@@ -56,30 +57,88 @@ const todoReducer = `
   return state;
 `;
 
-function TodoList() {
-  const [state, dispatch] = useCloudReducer('Todos', todoReducer, []);
-  if (!state) {
-    return null;
-  }
+function TodoItem({ item }) {
+  return <Text>{item.label}</Text>;
+}
 
+function AddTodo() {
+  const cloud = useCloud();
+  const todosDoc = cloud.get('Todos');
+  const todos = useCloudValue(todosDoc);
+  const [newTodoText, setNewTodoText] = useState('');
+  return (
+    <TextInput
+      style={{
+        width: 400,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+      }}
+      onSubmitEditing={() => {
+        todosDoc
+          .put([...(todos || []), { label: newTodoText, key: uuid() }])
+          .then(() => {
+            console.log(todosDoc.getValue());
+          })
+          .catch(console.error);
+        setNewTodoText('');
+      }}
+      onChangeText={setNewTodoText}
+      value={newTodoText}
+    />
+  );
+}
+
+function TodoList() {
+  const cloud = useCloud();
+  const todosDoc = cloud.get('Todos');
+  const todos = useCloudValue(todosDoc);
+  if (!todos || todos.length === 0) {
+    return <Text>Nothing to do!</Text>;
+  }
+  return todos.map(item => <TodoItem item={item} key={item.key} />);
+}
+
+function ResetButton() {
+  const cloud = useCloud();
+  const todosDoc = cloud.get('Todos');
+  return <Text onPress={() => todosDoc.put([])}>Reset All Todos</Text>;
+}
+
+function Todos() {
   return (
     <View>
-      {state.map(item => {
-        return (
-          <View key={item.key}>
-            <Text>{item.title}</Text>
-          </View>
-        );
-      })}
-      <Button
-        onPress={() => {
-          dispatch({ type: 'AddTodo', todo: { title: 'asdf', key: 'foo' } });
-        }}
-        title="new todo"
-      />
+      <TodoList />
+      <AddTodo />
+      <ResetButton />
     </View>
   );
 }
+
+// function TodoList() {
+//   const [state, dispatch] = useCloudReducer('Todos', todoReducer, []);
+//   if (!state) {
+//     return null;
+//   }
+
+//   return (
+//     <View>
+//       {state.map(item => {
+//         return (
+//           <View key={item.key}>
+//             <Text>{item.title}</Text>
+//           </View>
+//         );
+//       })}
+//       <Button
+//         onPress={() => {
+//           dispatch({ type: 'AddTodo', todo: { title: 'asdf', key: 'foo' } });
+//         }}
+//         title="new todo"
+//       />
+//     </View>
+//   );
+// }
 
 function Button({ title, onPress }) {
   return (
@@ -131,39 +190,13 @@ function AccountSection({ userDoc }) {
           DestroySession();
         }}
       />
-      <Button
-        title="Change Username"
-        onPress={() => {
-          AlertIOS.prompt('Enter a new username', null, name => {
-            setAccountName(name)
-              .then(() => {
-                console.log('account name set.');
-              })
-              .catch(console.error);
-          });
-        }}
-      />
-      <Button
-        title="Change Display Name"
-        onPress={() => {
-          AlertIOS.prompt('Enter a new display name', null, name => {
-            userDoc
-              .put({ displayName: name })
-              .then(() => {
-                console.log('account name set.');
-              })
-              .catch(console.error);
-          });
-        }}
-      />
-      <DebugDoc doc={userDoc} />
+
+      <Todos />
     </React.Fragment>
   );
 }
 
 const Home = () => {
-  // <TodoList />
-
   const { observeUserDoc } = useCloud();
   const userDoc = useObservable(observeUserDoc);
   console.log('asdfggzzz' + userDoc);
@@ -253,7 +286,7 @@ function PageForm({ inputs, onSubmit }) {
     },
     {
       inputState: {},
-    }
+    },
   );
   const focus = useFocus({
     onSubmit: () => onSubmit(formState.inputState),
@@ -309,7 +342,7 @@ function Slider({ children, childKey }) {
       }
       lastChildren.current[childKey] = children;
     },
-    [children, childKey, settledChildKey]
+    [children, childKey, settledChildKey],
   );
 
   let prevChildren = null;
@@ -512,7 +545,7 @@ function Login() {
 
 const AppNavigator = createStackNavigator(
   { Home, Login },
-  { headerMode: 'none' }
+  { headerMode: 'none' },
 );
 
 const AppNav = createAppContainer(AppNavigator);

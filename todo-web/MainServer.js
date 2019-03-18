@@ -53,6 +53,26 @@ const runServer = async () => {
     dataSource,
     methods: [smsAuthMethod, emailAuthMethod, rootAuthMethod],
   });
+
+  async function putPermission({ name, defaultRule }) {
+    await authSource.dispatch({
+      domain: 'todo.aven.cloud',
+      type: 'PutPermissionRules',
+      auth: {
+        accountId: 'root',
+        verificationInfo: {},
+        verificationResponse: { password: 'pw' },
+      },
+      defaultRule,
+      name,
+    });
+  }
+
+  await putPermission({
+    defaultRule: { canRead: true, canWrite: true },
+    name: 'Todos',
+  });
+
   const client = createCloudClient({
     authSource,
     domain: 'todo.aven.cloud',
