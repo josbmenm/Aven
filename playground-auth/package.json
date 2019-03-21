@@ -20,7 +20,7 @@
       "aven-email-agent-sendgrid",
       "aven-sms-agent-twilio",
       "aven-cloud-browser",
-      "aven-cloud-server"
+      "cloud-server"
     ]
   }
 }

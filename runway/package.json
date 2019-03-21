@@ -17,7 +17,7 @@
       "aven-cloud",
       "aven-cloud-browser",
       "aven-cloud-native",
-      "aven-cloud-server"
+      "cloud-server"
     ]
   }
 }

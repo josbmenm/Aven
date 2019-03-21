@@ -1,0 +1,12 @@
+{
+  "aven": {
+    "srcDependencies": [],
+    "moduleDependencies": [
+      "fs-extra",
+      "rxjs-compat",
+      "reconnecting-websocket",
+      "ws",
+      "node-fetch"
+    ]
+  }
+}

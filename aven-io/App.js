@@ -18,6 +18,16 @@ import useCloudValue from '../aven-cloud/useCloudValue';
 import useCloudReducer from '../aven-cloud/useCloudReducer';
 import Link from '../navigation-web/Link';
 import uuid from 'uuid/v1';
+import Konva from 'konva';
+
+import {
+  Stage,
+  Layer,
+  Rect,
+  Text as KonvaText,
+  Circle,
+  Line,
+} from 'react-konva';
 
 process.env.REACT_NAV_LOGGING = true;
 
@@ -205,9 +215,32 @@ function AddTodo() {
 function Home() {
   return (
     <View style={{ flex: 1 }}>
-      <Text style={{ fontSize: 42 }}>My Todos:</Text>
-      <TodoList />
-      <AddTodo />
+      <Text style={{ fontSize: 42 }}>Preview Only</Text>
+      <Stage width={600} height={600}>
+        <Layer>
+          <KonvaText text="Some text on canvas" fontSize={15} />
+          <Rect
+            x={20}
+            y={50}
+            width={100}
+            height={100}
+            fill="red"
+            shadowBlur={10}
+          />
+          <Circle x={200} y={100} radius={50} fill="green" />
+          <Line
+            x={20}
+            y={200}
+            points={[0, 150, 100, 0, 100, 100]}
+            tension={0.8}
+            closed
+            stroke="black"
+            fillLinearGradientStartPoint={{ x: -50, y: -50 }}
+            fillLinearGradientEndPoint={{ x: 50, y: 50 }}
+            fillLinearGradientColorStops={[0, 'red', 1, 'yellow']}
+          />
+        </Layer>
+      </Stage>
     </View>
   );
 }

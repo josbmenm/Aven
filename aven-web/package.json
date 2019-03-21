@@ -1,12 +1,10 @@
 {
   "name": "@aven-cloud/web",
   "version": "1.7.0",
-  "dependencies": {
-    "fs-extra": "^7.0.0"
-  },
   "aven": {
     "publicAssetDir": "publicAssets",
     "srcDependencies": [
+      "cloud-server",
       "navigation-core",
       "navigation-web",
       "utils"

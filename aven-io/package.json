@@ -6,7 +6,9 @@
     "publicAssetDir": "public",
     "env": "web",
     "moduleDependencies": [
-      "prism-react-renderer"
+      "prism-react-renderer",
+      "konva",
+      "react-konva"
     ],
     "envOptions": {
       "mainServer": "MainServer.js",
@@ -19,7 +21,7 @@
       "aven-cloud",
       "aven-cloud-fs",
       "aven-cloud-browser",
-      "aven-cloud-server",
+      "cloud-server",
       "navigation-web",
       "navigation-core",
       "navigation-hooks"

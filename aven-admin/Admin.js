@@ -616,9 +616,8 @@ function LinkRow({
 function DocsList({ parent, activeDoc }) {
   const cloud = useCloud();
   const { navigate } = useNavigation();
-  const docsListName = parent ? `${parent}/_children` : '_children';
-  const docNames = useObservable(cloud.get(docsListName).observeValue);
-  const docs = docNames && docNames.map(cloud.get);
+  const listParent = parent ? cloud.get(parent) : cloud;
+  const docs = useObservable(listParent.observeDocChildren);
   if (!docs) {
     return null;
   }

@@ -1,7 +1,7 @@
 {
   "aven": {
     "srcDependencies": [
-      "aven-cloud-server",
+      "cloud-server",
       "aven-cloud-utils"
     ],
     "moduleDependencies": [

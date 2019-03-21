@@ -418,11 +418,13 @@ export default function createGenericDataSource({
 
   async function CollectGarbage() {}
 
-  const GetStatus = () => ({
-    ready: true,
-    connected: true,
-    migrated: true,
-  });
+  async function GetStatus() {
+    return {
+      ready: true,
+      connected: true,
+      migrated: true,
+    };
+  }
 
   const close = () => {
     docState = null;

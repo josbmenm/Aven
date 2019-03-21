@@ -24,7 +24,7 @@
       "aven-web",
       "aven-cloud",
       "aven-cloud-browser",
-      "aven-cloud-server"
+      "cloud-server"
     ]
   }
 }
