@@ -6,6 +6,9 @@
       "rxjs-compat",
       "crypto-js",
       "reconnecting-websocket"
+    ],
+    "srcDependencies": [
+      "cloud-network"
     ]
   },
   "srcChecksum": "a255d48bac28b072bc5457d8b8364d89eaa076669fada552fbec6ee3cb0f410d"

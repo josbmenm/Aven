@@ -1,6 +1,8 @@
 {
   "aven": {
-    "srcDependencies": [],
+    "srcDependencies": [
+      "cloud-network"
+    ],
     "moduleDependencies": [
       "fs-extra",
       "rxjs-compat",
