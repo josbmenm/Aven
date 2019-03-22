@@ -5,9 +5,9 @@ import createMemoryDataSource from '../aven-cloud/createMemoryDataSource';
 import WebServer from '../aven-web/WebServer';
 import SMSAgent from '../aven-sms-agent-twilio/SMSAgent';
 import EmailAgent from '../aven-email-agent-sendgrid/EmailAgent';
-import SMSAuthMethod from '../cloud-auth-sms/SMSAuthMethod';
-import EmailAuthMethod from '../cloud-auth-email/EmailAuthMethod';
-import RootAuthMethod from '../cloud-auth-root/RootAuthMethod';
+import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
+import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
+import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import { hashSecureString } from '../aven-cloud-utils/Crypto';
 
 import App from './App';
@@ -26,7 +26,7 @@ const runServer = async () => {
     },
   });
 
-  const emailAuthMethod = EmailAuthMethod({
+  const emailAuthProvider = EmailAuthProvider({
     agent: emailAgent,
   });
 
@@ -38,7 +38,7 @@ const runServer = async () => {
     },
   });
 
-  const smsAuthMethod = SMSAuthMethod({
+  const smsAuthProvider = SMSAuthProvider({
     agent: smsAgent,
     getMessage: (authCode, verifyInfo, accountId) => {
       return `Todos App Auth Code: ${authCode}`;
@@ -46,12 +46,12 @@ const runServer = async () => {
   });
 
   // UNSAFE, TESTING ONLY! DELETE ME BEFORE PRODUCTION!
-  const rootAuthMethod = RootAuthMethod({
+  const rootAuthProvider = RootAuthProvider({
     rootPasswordHash: await hashSecureString('pw'),
   });
   const authSource = CloudAuth({
     dataSource,
-    methods: [smsAuthMethod, emailAuthMethod, rootAuthMethod],
+    methods: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
   async function putPermission({ name, defaultRule }) {

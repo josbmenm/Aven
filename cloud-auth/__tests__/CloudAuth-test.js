@@ -1,6 +1,6 @@
 import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
 import CloudAuth from '../CloudAuth';
-import RootAuthMethod from '../../cloud-auth-root/RootAuthMethod';
+import RootAuthProvider from '../../cloud-auth-root/RootAuthProvider';
 
 import { hashSecureString } from '../../aven-cloud-utils/Crypto';
 
@@ -9,11 +9,11 @@ describe('Cloud auth sessions', () => {
     const dataSource = createMemoryDataSource({ domain: 'test' });
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
-    const rootMethod = RootAuthMethod({
+    const rootProvider = RootAuthProvider({
       rootPasswordHash,
     });
 
-    const authDataSource = CloudAuth({ dataSource, methods: [rootMethod] });
+    const authDataSource = CloudAuth({ dataSource, providers: [rootProvider] });
 
     const { session } = await authDataSource.dispatch({
       type: 'CreateSession',
@@ -41,7 +41,7 @@ describe('Cloud auth sessions', () => {
   test('no authentication gets empty permissions at root', async () => {
     const dataSource = createMemoryDataSource({ domain: 'test' });
 
-    const authDataSource = CloudAuth({ dataSource, methods: [] });
+    const authDataSource = CloudAuth({ dataSource, providers: [] });
 
     const noAuthRootPermissions = await authDataSource.dispatch({
       type: 'GetPermissions',
@@ -61,11 +61,11 @@ describe('Cloud auth sessions', () => {
 
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
-    const rootMethod = RootAuthMethod({
+    const rootProvider = RootAuthProvider({
       rootPasswordHash,
     });
 
-    const authDataSource = CloudAuth({ dataSource, methods: [rootMethod] });
+    const authDataSource = CloudAuth({ dataSource, providers: [rootProvider] });
 
     const { session } = await authDataSource.dispatch({
       type: 'CreateSession',
@@ -95,11 +95,11 @@ describe('Cloud auth sessions', () => {
 
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
-    const rootMethod = RootAuthMethod({
+    const rootProvider = RootAuthProvider({
       rootPasswordHash,
     });
 
-    const authDataSource = CloudAuth({ dataSource, methods: [rootMethod] });
+    const authDataSource = CloudAuth({ dataSource, providers: [rootProvider] });
 
     const { session } = await authDataSource.dispatch({
       type: 'CreateSession',
@@ -133,7 +133,7 @@ describe('Cloud auth sessions', () => {
   test('gets anon authentication', async () => {
     const dataSource = createMemoryDataSource({ domain: 'test' });
 
-    const authDataSource = CloudAuth({ dataSource, methods: [] });
+    const authDataSource = CloudAuth({ dataSource, providers: [] });
 
     const { session } = await authDataSource.dispatch({
       type: 'CreateAnonymousSession',

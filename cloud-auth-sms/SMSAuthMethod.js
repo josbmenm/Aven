@@ -1,11 +1,11 @@
-import createMessageAuthMethod from '../cloud-auth-message/createMessageAuthMethod';
+import createMessageAuthProvider from '../cloud-auth-message/createMessageAuthProvider';
 
 function defaultGetMessage(verifyCode) {
   return `Your code is ${verifyCode}`;
 }
 
-export default function SMSAuthMethod({ agent, getMessage }) {
-  const authMethodName = 'sms';
+export default function SMSAuthProvider({ agent, getMessage }) {
+  const authProviderName = 'sms';
   function identifyInfo(verificationInfo) {
     if (!verificationInfo || !verificationInfo.number) {
       return null;
@@ -22,8 +22,8 @@ export default function SMSAuthMethod({ agent, getMessage }) {
     });
   }
 
-  return createMessageAuthMethod({
-    authMethodName,
+  return createMessageAuthProvider({
+    authProviderName,
     sendVerification,
     identifyInfo,
   });

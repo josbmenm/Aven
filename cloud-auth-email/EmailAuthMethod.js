@@ -1,4 +1,4 @@
-import createMessageAuthMethod from '../cloud-auth-message/createMessageAuthMethod';
+import createMessageAuthProvider from '../cloud-auth-message/createMessageAuthProvider';
 
 function defaultGetMessage(verifyCode) {
   return {
@@ -7,8 +7,8 @@ function defaultGetMessage(verifyCode) {
   };
 }
 
-export default function EmailAuthMethod({ agent, getMessage }) {
-  const authMethodName = 'email';
+export default function EmailAuthProvider({ agent, getMessage }) {
+  const AuthProviderName = 'email';
   function identifyInfo(verificationInfo) {
     if (!verificationInfo || !verificationInfo.email) {
       return null;
@@ -27,8 +27,8 @@ export default function EmailAuthMethod({ agent, getMessage }) {
     });
   }
 
-  return createMessageAuthMethod({
-    authMethodName,
+  return createMessageAuthProvider({
+    AuthProviderName,
     sendVerification,
     identifyInfo,
   });

@@ -1,6 +1,6 @@
 import { compareSecureString } from '../aven-cloud-utils/Crypto';
 
-export default function RootAuthMethod({ rootPasswordHash }) {
+export default function RootAuthProvider({ rootPasswordHash }) {
   function canVerify(verificationInfo, accountId) {
     if (verificationInfo.type === 'root') {
       return true;
@@ -11,13 +11,13 @@ export default function RootAuthMethod({ rootPasswordHash }) {
     return false;
   }
 
-  async function getMethodId() {
+  async function getProviderId() {
     return 'auth-root';
   }
 
-  async function requestVerification({ verificationInfo, methodState }) {
+  async function requestVerification({ verificationInfo, providerState }) {
     return {
-      ...methodState,
+      ...providerState,
       verificationChallenge: {
         message: 'Provide Password', // this isn't really used..
       },
@@ -26,7 +26,7 @@ export default function RootAuthMethod({ rootPasswordHash }) {
   }
 
   async function performVerification({
-    methodState,
+    providerState,
     verificationResponse,
     accountId,
   }) {
@@ -36,7 +36,7 @@ export default function RootAuthMethod({ rootPasswordHash }) {
     const { password } = verificationResponse;
     if (!password) {
       throw new Error(
-        'no password provided in verificationResponse of performVerification'
+        'no password provided in verificationResponse of performVerification',
       );
     }
     const isValid = await compareSecureString(password, rootPasswordHash);
@@ -44,7 +44,7 @@ export default function RootAuthMethod({ rootPasswordHash }) {
       throw new Error('Invalid auth verification');
     }
     return {
-      ...methodState,
+      ...providerState,
     };
   }
 
@@ -53,6 +53,6 @@ export default function RootAuthMethod({ rootPasswordHash }) {
     canVerify,
     requestVerification,
     performVerification,
-    getMethodId,
+    getProviderId,
   };
 }

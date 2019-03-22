@@ -1,6 +1,6 @@
-import EmailAuthMethod from '../cloud-auth-email/EmailAuthMethod';
-import RootAuthMethod from '../cloud-auth-root/RootAuthMethod';
-import SMSAuthMethod from '../cloud-auth-sms/SMSAuthMethod';
+import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
+import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
+import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import CloudAuth from '../cloud-auth/CloudAuth';
 import { hashSecureString } from '../aven-cloud-utils/Crypto';
 import CloudContext from '../aven-cloud/CloudContext';
@@ -44,30 +44,30 @@ const runServer = async () => {
       },
     });
 
-  const smsAuthMethod =
+  const smsAuthProvider =
     smsAgent &&
-    SMSAuthMethod({
+    SMSAuthProvider({
       agent: smsAgent,
     });
 
   const rootPasswordHash = await hashSecureString('hello');
 
-  const rootAuthMethod = RootAuthMethod({
+  const rootAuthProvider = RootAuthProvider({
     rootPasswordHash,
   });
 
-  const emailAuthMethod =
+  const emailAuthProvider =
     emailAgent &&
-    EmailAuthMethod({
+    EmailAuthProvider({
       agent: emailAgent,
     });
 
-  const methods = [];
-  if (smsAuthMethod) methods.push(smsAuthMethod);
-  if (emailAuthMethod) methods.push(emailAuthMethod);
-  if (rootAuthMethod) methods.push(rootAuthMethod);
+  const providers = [];
+  if (smsAuthProvider) providers.push(smsAuthProvider);
+  if (emailAuthProvider) providers.push(emailAuthProvider);
+  if (rootAuthProvider) providers.push(rootAuthProvider);
 
-  const authenticatedDataSource = CloudAuth({ dataSource, methods });
+  const authenticatedDataSource = CloudAuth({ dataSource, providers });
 
   const serverListenLocation = getEnv('PORT');
   const context = new Map();

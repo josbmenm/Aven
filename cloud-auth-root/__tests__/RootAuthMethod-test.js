@@ -1,20 +1,20 @@
 import { hashSecureString } from '../../aven-cloud-utils/Crypto';
-import RootAuthMethod from '../RootAuthMethod';
+import RootAuthProvider from '../RootAuthProvider';
 
-describe('Auth method behavior', () => {
+describe('Auth provider behavior', () => {
   test('Auth Verification', async () => {
     const password = 'secret, foo';
 
     const rootPasswordHash = await hashSecureString(password);
 
-    const method = RootAuthMethod({ rootPasswordHash });
+    const provider = RootAuthProvider({ rootPasswordHash });
 
     const verificationInfo = { type: 'root' };
 
-    const verified = await method.performVerification({
+    const verified = await provider.performVerification({
       accountId: 'root',
       verificationInfo,
-      methodState: undefined,
+      providerState: undefined,
       verificationResponse: { password },
     });
 

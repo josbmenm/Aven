@@ -18,11 +18,11 @@
 
 - only the current session will move over
 
-## PutAuthMethod(auth, authInfo, challengeResponse?)
+## PutAuthProvider(auth, authInfo, challengeResponse?)
 
 - optionally run twice, first time without challengeResponse
 
-## DestroyAuthMethod(auth, authInfo)
+## DestroyAuthProvider(auth, authInfo)
 
 ## DestroyAccount(auth)
 
@@ -49,7 +49,7 @@ AuthInfo
 - type
   ...typed auth method info
 
-AuthMethodState
+AuthProviderState
 
 - type
   ...typed auth method state
@@ -78,7 +78,7 @@ CanAdmin: '1111',
 
 UserAccount
 
-- primaryAuthMethod: method id
+- primaryAuthProvider: method id
 
 Session
 

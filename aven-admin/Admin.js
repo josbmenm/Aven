@@ -438,7 +438,7 @@ function LoginInfo({ mode, ...props }) {
   }
 }
 
-function AuthMethodInput({
+function AuthProviderInput({
   onSubmit,
   verificationChallenge,
   loginInfo,
@@ -502,7 +502,7 @@ function LoginForm({ onSession, onClientConfig }) {
         }}
       />
       {isWorking && <Text>One moment..</Text>}
-      <AuthMethodInput
+      <AuthProviderInput
         onLoginInfo={setLoginInfo}
         loginInfo={loginInfo}
         verificationChallenge={verificationChallenge}
@@ -1259,7 +1259,7 @@ function AccountPane() {
         onPress={() => {
           // cloud
           //   .dispatch({
-          //     type: 'PutAuthMethod',
+          //     type: 'PutAuthProvider',
           //     verificationInfo: {
           //       email: 'eric@onofood.co',
           //     },

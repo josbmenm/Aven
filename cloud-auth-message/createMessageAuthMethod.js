@@ -1,7 +1,7 @@
 import { checksum, genAuthCode } from '../aven-cloud-utils/Crypto';
 
-export default function createMessageAuthMethod({
-  authMethodName,
+export default function createMessageAuthProvider({
+  AuthProviderName,
   sendVerification,
   identifyInfo,
 }) {
@@ -12,15 +12,15 @@ export default function createMessageAuthMethod({
     return true;
   }
 
-  async function getMethodId(verificationInfo) {
-    return `${authMethodName}-${await checksum(
-      identifyInfo(verificationInfo)
+  async function getProviderId(verificationInfo) {
+    return `${AuthProviderName}-${await checksum(
+      identifyInfo(verificationInfo),
     )}`;
   }
 
   async function requestVerification({
     verificationInfo,
-    methodState,
+    providerState,
     accountId,
   }) {
     const verificationKey = await genAuthCode();
@@ -29,7 +29,7 @@ export default function createMessageAuthMethod({
     await sendVerification(verificationInfo, verificationKey, accountId);
 
     return {
-      ...methodState,
+      ...providerState,
       verificationKey,
       verificationSendTime: Date.now(),
       verificationChallenge: {
@@ -39,17 +39,17 @@ export default function createMessageAuthMethod({
     };
   }
 
-  async function performVerification({ methodState, verificationResponse }) {
-    if (!methodState || !methodState.verificationKey) {
+  async function performVerification({ providerState, verificationResponse }) {
+    if (!providerState || !providerState.verificationKey) {
       throw new Error('Invalid auth verification');
     }
     // todo check expiry time
 
-    if (verificationResponse.key !== methodState.verificationKey) {
+    if (verificationResponse.key !== providerState.verificationKey) {
       throw new Error('Invalid auth verification');
     }
     return {
-      ...methodState,
+      ...providerState,
       verificationSendTime: null,
       lastVerificationTime: Date.now(),
       verificationKey: null,
@@ -57,10 +57,10 @@ export default function createMessageAuthMethod({
   }
 
   return {
-    name: authMethodName,
+    name: AuthProviderName,
     canVerify,
     requestVerification,
     performVerification,
-    getMethodId,
+    getProviderId,
   };
 }

@@ -40,7 +40,7 @@ async function getDocValue(dataSource, domain, name) {
   return o.value;
 }
 
-export default function CloudAuth({ dataSource, methods }) {
+export default function CloudAuth({ dataSource, providers }) {
   async function VerifyAuth({ auth, domain }) {
     if (!auth) {
       return {};
@@ -50,7 +50,7 @@ export default function CloudAuth({ dataSource, methods }) {
     }
 
     if (auth.accountId) {
-      const v = await VerifyAuthMethod({
+      const v = await VerifyAuthProvider({
         verificationInfo: auth.verificationInfo,
         domain,
         accountId: auth.accountId,
@@ -59,15 +59,15 @@ export default function CloudAuth({ dataSource, methods }) {
 
       if (
         !v.accountId ||
-        !v.verifiedMethodId ||
-        !v.verifiedMethodName ||
+        !v.verifiedProviderId ||
+        !v.verifiedProviderName ||
         v.accountId !== auth.accountId
       ) {
         throw new Error('Cannot validate authentication');
       }
       return {
         accountId: v.accountId,
-        method: v.verifiedMethodName,
+        provider: v.verifiedProviderName,
       };
     }
 
@@ -83,7 +83,7 @@ export default function CloudAuth({ dataSource, methods }) {
     const savedSession = await getDocValue(
       dataSource,
       domain,
-      `auth/account/${accountId}/session/${sessionId}`
+      `auth/account/${accountId}/session/${sessionId}`,
     );
 
     if (!savedSession || savedSession.token !== token) {
@@ -93,28 +93,34 @@ export default function CloudAuth({ dataSource, methods }) {
     return { ...savedSession, accountId };
   }
 
-  async function GetAccountIdForAuthMethod({ methodId, domain, accountId }) {
-    const methodAccountLookupName = `auth/method/${methodId}`;
+  async function GetAccountIdForAuthProvider({
+    providerId,
+    domain,
+    accountId,
+  }) {
+    const providerAccountLookupName = `auth/provider/${providerId}`;
     const accountLookup = await getDocValue(
       dataSource,
       domain,
-      methodAccountLookupName
+      providerAccountLookupName,
     );
     if (accountLookup) {
       if (accountId && accountId !== accountLookup.accountId) {
-        throw new Error('Auth method in use by another account!');
+        throw new Error(
+          'Provided auth identity is already in use by another account.',
+        );
       }
       return accountLookup.accountId;
     }
-    let newAuthMethodAccountId = accountId;
-    if (!newAuthMethodAccountId) {
-      newAuthMethodAccountId = await CreateAnonymousAccount({ domain });
+    let newAuthProviderAccountId = accountId;
+    if (!newAuthProviderAccountId) {
+      newAuthProviderAccountId = await CreateAnonymousAccount({ domain });
     }
-    await writeDocValue(dataSource, domain, methodAccountLookupName, {
-      accountId: newAuthMethodAccountId,
+    await writeDocValue(dataSource, domain, providerAccountLookupName, {
+      accountId: newAuthProviderAccountId,
       creationTime: Date.now(),
     });
-    return newAuthMethodAccountId;
+    return newAuthProviderAccountId;
   }
 
   async function CreateVerificationRequest({
@@ -122,49 +128,51 @@ export default function CloudAuth({ dataSource, methods }) {
     accountId,
     verificationInfo,
   }) {
-    let methodsToValidate = [...methods];
+    let providersToValidate = [...providers];
 
     let validatedAccountId = null;
 
-    while (methodsToValidate.length && !validatedAccountId) {
-      const methodToValidate = methodsToValidate[0];
-      methodsToValidate = methodsToValidate.slice(1);
-      if (methodToValidate.canVerify(verificationInfo, accountId)) {
-        const methodId = await methodToValidate.getMethodId(verificationInfo);
+    while (providersToValidate.length && !validatedAccountId) {
+      const providerToValidate = providersToValidate[0];
+      providersToValidate = providersToValidate.slice(1);
+      if (providerToValidate.canVerify(verificationInfo, accountId)) {
+        const providerId = await providerToValidate.getProviderId(
+          verificationInfo,
+        );
 
-        const authenticatingAccountId = await GetAccountIdForAuthMethod({
-          methodId,
+        const authenticatingAccountId = await GetAccountIdForAuthProvider({
+          providerId,
           accountId,
           domain,
         });
 
-        const methodStateDocName = `auth/account/${authenticatingAccountId}/method/${methodId}`;
+        const providerStateDocName = `auth/account/${authenticatingAccountId}/provider/${providerId}`;
 
-        const methodState = await getDocValue(
+        const providerState = await getDocValue(
           dataSource,
           domain,
-          methodStateDocName
+          providerStateDocName,
         );
 
-        const requestedVerification = await methodToValidate.requestVerification(
-          { verificationInfo, methodState }
+        const requestedVerification = await providerToValidate.requestVerification(
+          { verificationInfo, providerState },
         );
 
         await writeDocValue(
           dataSource,
           domain,
-          methodStateDocName,
-          requestedVerification
+          providerStateDocName,
+          requestedVerification,
         );
         return {
           verificationChallenge: requestedVerification.verificationChallenge,
-          methodId,
+          providerId,
         };
       }
     }
-    throw new Error('No auth method matches this info and account!');
+    throw new Error('No auth provider matches this info and account!');
   }
-  async function PutAuthMethod({
+  async function PutAuthProvider({
     domain,
     auth,
     verificationInfo,
@@ -180,25 +188,25 @@ export default function CloudAuth({ dataSource, methods }) {
       throw new Error('not authenticated');
     }
 
-    const authMethodVerification = await VerifyAuthMethod({
+    const authProviderVerification = await VerifyAuthProvider({
       accountId: verifiedSession.accountId,
       domain,
       verificationInfo,
       verificationResponse,
     });
     if (
-      !authMethodVerification.accountId ||
-      !authMethodVerification.verifiedMethodId ||
-      !authMethodVerification.verifiedMethodName ||
-      authMethodVerification.accountId !== verifiedSession.accountId
+      !authProviderVerification.accountId ||
+      !authProviderVerification.verifiedProviderId ||
+      !authProviderVerification.verifiedProviderName ||
+      authProviderVerification.accountId !== verifiedSession.accountId
     ) {
-      return authMethodVerification;
+      return authProviderVerification;
     }
 
-    return authMethodVerification;
+    return authProviderVerification;
   }
 
-  async function VerifyAuthMethod({
+  async function VerifyAuthProvider({
     domain,
     verificationInfo,
     verificationResponse,
@@ -209,62 +217,64 @@ export default function CloudAuth({ dataSource, methods }) {
       return CreateVerificationRequest({ domain, accountId, verificationInfo });
     }
 
-    let methodsToValidate = [...methods];
+    let providersToValidate = [...providers];
 
-    let verifiedMethodId = null;
-    let verifiedMethodName = null;
+    let verifiedProviderId = null;
+    let verifiedProviderName = null;
     let verifiedAccountId = null;
 
-    while (methodsToValidate.length && !verifiedMethodId) {
-      const methodToValidate = methodsToValidate[0];
-      methodsToValidate = methodsToValidate.slice(1);
-      if (!methodToValidate.canVerify(verificationInfo, accountId)) {
+    while (providersToValidate.length && !verifiedProviderId) {
+      const providerToValidate = providersToValidate[0];
+      providersToValidate = providersToValidate.slice(1);
+      if (!providerToValidate.canVerify(verificationInfo, accountId)) {
         continue;
       }
-      const methodId = await methodToValidate.getMethodId(verificationInfo);
+      const providerId = await providerToValidate.getProviderId(
+        verificationInfo,
+      );
 
-      authenticatingAccountId = await GetAccountIdForAuthMethod({
+      authenticatingAccountId = await GetAccountIdForAuthProvider({
         domain,
-        methodId,
+        providerId,
         accountId,
       });
 
-      const methodStateDocName = `auth/account/${authenticatingAccountId}/method/${methodId}`;
-      const methodState = await getDocValue(
+      const providerStateDocName = `auth/account/${authenticatingAccountId}/provider/${providerId}`;
+      const providerState = await getDocValue(
         dataSource,
         domain,
-        methodStateDocName
+        providerStateDocName,
       );
 
-      let nextMethodState = methodState;
+      let nextproviderState = providerState;
 
-      nextMethodState = await methodToValidate.performVerification({
+      nextproviderState = await providerToValidate.performVerification({
         accountId: authenticatingAccountId,
         verificationInfo,
-        methodState,
+        providerState,
         verificationResponse,
       });
-      verifiedMethodId = methodId;
-      verifiedMethodName = methodToValidate.name;
+      verifiedProviderId = providerId;
+      verifiedProviderName = providerToValidate.name;
       verifiedAccountId = authenticatingAccountId;
 
-      if (nextMethodState !== methodState) {
+      if (nextproviderState !== providerState) {
         await writeDocValue(
           dataSource,
           domain,
-          methodStateDocName,
-          nextMethodState
+          providerStateDocName,
+          nextproviderState,
         );
       }
     }
 
-    if (!verifiedMethodId || !verifiedMethodName) {
-      throw new Error('Cannot verify auth method');
+    if (!verifiedProviderId || !verifiedProviderName) {
+      throw new Error('Cannot verify auth provider');
     }
 
     return {
-      verifiedMethodName,
-      verifiedMethodId,
+      verifiedProviderName,
+      verifiedProviderId,
       accountId: verifiedAccountId,
     };
   }
@@ -275,7 +285,7 @@ export default function CloudAuth({ dataSource, methods }) {
     verificationInfo,
     verificationResponse,
   }) {
-    const verification = await VerifyAuthMethod({
+    const verification = await VerifyAuthProvider({
       domain,
       accountId,
       verificationInfo,
@@ -283,8 +293,8 @@ export default function CloudAuth({ dataSource, methods }) {
     });
     if (
       !verification.accountId ||
-      !verification.verifiedMethodId ||
-      !verification.verifiedMethodName ||
+      !verification.verifiedProviderId ||
+      !verification.verifiedProviderName ||
       (accountId && verification.accountId !== accountId)
     ) {
       return verification;
@@ -295,15 +305,15 @@ export default function CloudAuth({ dataSource, methods }) {
       timeCreated: Date.now(),
       accountId: verification.accountId,
       sessionId,
-      methodId: verification.verifiedMethodId,
+      providerId: verification.verifiedProviderId,
       token,
-      method: verification.verifiedMethodName,
+      provider: verification.verifiedProviderName,
     };
     await writeDocValue(
       dataSource,
       domain,
       `auth/account/${verification.accountId}/session/${sessionId}`,
-      session
+      session,
     );
     return {
       session,
@@ -319,7 +329,7 @@ export default function CloudAuth({ dataSource, methods }) {
       dataSource,
       domain,
       `auth/account/${accountId}`,
-      account
+      account,
     );
     return accountId;
   }
@@ -331,7 +341,7 @@ export default function CloudAuth({ dataSource, methods }) {
 
     const session = {
       timeCreated: Date.now(),
-      methodId: 'anonymous',
+      providerId: 'anonymous',
       accountId,
       sessionId,
       token,
@@ -341,7 +351,7 @@ export default function CloudAuth({ dataSource, methods }) {
       dataSource,
       domain,
       `auth/account/${accountId}/session/${sessionId}`,
-      session
+      session,
     );
 
     return { session };
@@ -390,14 +400,14 @@ export default function CloudAuth({ dataSource, methods }) {
     const validatedAuth = await VerifyAuth({ auth, domain });
 
     const isRootAccount =
-      validatedAuth.method === 'root' && validatedAuth.accountId === 'root';
+      validatedAuth.provider === 'root' && validatedAuth.accountId === 'root';
 
     const permissionBlocks = await Promise.all(
       pathApartName(name)
         .map(nameToAuthDocName)
         .map(async docName => {
           return await getDocValue(dataSource, domain, docName);
-        })
+        }),
     );
 
     let owner = null;
@@ -575,7 +585,7 @@ export default function CloudAuth({ dataSource, methods }) {
         throw new Error(
           `Insufficient permissions for "${actionType}" on ${
             action.name
-          }. Requires "${permissionLevel}"`
+          }. Requires "${permissionLevel}"`,
         );
       }
       const result = await dispatch(action);
@@ -607,12 +617,12 @@ export default function CloudAuth({ dataSource, methods }) {
     PutPermissionRules: guardAction(
       PutPermissionRules,
       'PutPermissionRules',
-      'canAdmin'
+      'canAdmin',
     ),
     GetPermissionRules: guardAction(
       GetPermissionRules,
       'GetPermissionRules',
-      'canAdmin'
+      'canAdmin',
     ),
     CreateSession,
     CreateAnonymousSession,
@@ -622,7 +632,7 @@ export default function CloudAuth({ dataSource, methods }) {
     VerifySession,
     VerifyAuth,
     SetAccountName,
-    PutAuthMethod, // todo, guard
+    PutAuthProvider, // todo, guard
     GetPermissions,
   };
 

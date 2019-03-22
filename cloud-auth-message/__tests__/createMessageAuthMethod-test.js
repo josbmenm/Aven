@@ -1,6 +1,6 @@
 import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
 import CloudAuth from '../../cloud-auth/CloudAuth';
-import createMessageAuthMethod from '../createMessageAuthMethod';
+import createMessageAuthProvider from '../createMessageAuthProvider';
 
 describe('Auth messaging behavior', () => {
   test('Auth message flow', async () => {
@@ -8,7 +8,7 @@ describe('Auth messaging behavior', () => {
       domain: 'test',
     });
 
-    const authMethodName = 'example-method';
+    const authProviderName = 'example-method';
 
     function identifyInfo(verificationInfo) {
       if (!verificationInfo || !verificationInfo.address) {
@@ -19,8 +19,8 @@ describe('Auth messaging behavior', () => {
 
     const sendVerification = jest.fn();
 
-    const method = createMessageAuthMethod({
-      authMethodName,
+    const method = createMessageAuthProvider({
+      authProviderName,
       sendVerification,
       identifyInfo,
     });
@@ -60,7 +60,7 @@ describe('Auth messaging behavior', () => {
   test('anon account can add auth method', async () => {
     const dataSource = createMemoryDataSource({ domain: 'test' });
 
-    const authMethodName = 'example-method';
+    const authProviderName = 'example-method';
 
     function identifyInfo(verificationInfo) {
       if (!verificationInfo || !verificationInfo.address) {
@@ -71,8 +71,8 @@ describe('Auth messaging behavior', () => {
 
     const sendVerification = jest.fn();
 
-    const method = createMessageAuthMethod({
-      authMethodName,
+    const method = createMessageAuthProvider({
+      authProviderName,
       sendVerification,
       identifyInfo,
     });
@@ -87,7 +87,7 @@ describe('Auth messaging behavior', () => {
     const address = 'great';
 
     await authDataSource.dispatch({
-      type: 'PutAuthMethod',
+      type: 'PutAuthProvider',
       domain: 'test',
       auth: session,
       verificationInfo: { address, context: 'heyo!' },
@@ -97,7 +97,7 @@ describe('Auth messaging behavior', () => {
     expect(sendVerification.mock.calls[0][1].length).toEqual(6);
 
     const authFinalResp = await authDataSource.dispatch({
-      type: 'PutAuthMethod',
+      type: 'PutAuthProvider',
       domain: 'test',
       auth: session,
       verificationInfo: { address },
