@@ -6,9 +6,9 @@ exports.up = function(knex) {
     })
     .createTable('blocks', table => {
       table.string('id');
-      table.text('value');
+      table.json('value');
       table.integer('size');
-      table.unique('id');
+      table.unique('id', 'blockIdentity');
     })
     .createTable('docs', table => {
       table.increments('docId');
@@ -22,7 +22,12 @@ exports.up = function(knex) {
         .string('currentBlock')
         .references('id')
         .inTable('blocks');
-      table.unique(['domainName', 'name']);
+      table
+        .integer('parentId')
+        .references('docId')
+        .inTable('docs')
+        .onDelete('cascade');
+      table.unique(['name', 'domainName', 'parentId'], 'docIdentity'); // parentId can be a special id for top leel docs
     })
     .createTable('doc_ownership', table => {
       table

@@ -8,8 +8,7 @@
       "@types/knex",
       "pg-format",
       "pg",
-      "knex",
-      "objection"
+      "knex"
     ]
   }
 }
