@@ -17,8 +17,8 @@
       "cloud-auth-email",
       "cloud-auth-root",
       "cloud-utils",
-      "aven-email-agent-sendgrid",
-      "aven-sms-agent-twilio",
+      "email-agent-sendgrid",
+      "sms-agent-twilio",
       "cloud-browser",
       "cloud-server"
     ]

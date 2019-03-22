@@ -6,8 +6,8 @@ import { hashSecureString } from '../cloud-utils/Crypto';
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createMemoryDataSource from '../aven-cloud/createMemoryDataSource';
-import EmailAgent from '../aven-email-agent-sendgrid/EmailAgent';
-import SMSAgent from '../aven-sms-agent-twilio/SMSAgent';
+import EmailAgent from '../email-agent-sendgrid/EmailAgent';
+import SMSAgent from '../sms-agent-twilio/SMSAgent';
 import WebServer from '../aven-web/WebServer';
 
 import App from './App';
