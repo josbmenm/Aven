@@ -1,4 +1,4 @@
-import startSQLDataSource from '../startSQLDataSource';
+import startPostgresDataSource from '../startPostgresDataSource';
 import Knex from 'knex';
 import dataSourceTests from './dataSourceTests';
 const pathJoin = require('path').join;
@@ -20,14 +20,14 @@ beforeAll(async () => {
 });
 
 async function startTestDataSource(options) {
-  const sqlDataSource = await startSQLDataSource({
+  const pgDataSource = await startPostgresDataSource({
     config: DB_CONFIG,
     domains: ['test'],
     ...options,
   });
   return {
     testPatienceMS: 1500,
-    ...sqlDataSource,
+    ...pgDataSource,
   };
 }
 

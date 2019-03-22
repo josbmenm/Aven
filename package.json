@@ -11,7 +11,7 @@
     "clean": "node ./aven-tools/cli.js clean",
     "import-vendor": "node ./aven-tools/importVendorCode.js",
     "test": "jest",
-    "test-sql": "cd aven-cloud-sql; ./test.sh startSQLDataSource"
+    "test-sql": "cd cloud-postgres; ./test.sh startPostgresDataSource"
   },
   "devDependencies": {
     "babel-jest": "^23.6.0",
@@ -106,7 +106,7 @@
       "jest-setup.js"
     ],
     "testPathIgnorePatterns": [
-      "aven-cloud-sql/"
+      "cloud-postgres/"
     ],
     "transformIgnorePatterns": [
       "node_modules/(?!(jest-)?react-native|react-clone-referenced-element)"
