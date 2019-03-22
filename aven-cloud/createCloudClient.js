@@ -1,7 +1,7 @@
 import { default as withObs } from '@nozbe/with-observables';
-import createDispatcher from '../aven-cloud-utils/createDispatcher';
-import mapBehaviorSubject from '../aven-cloud-utils/mapBehaviorSubject';
-import getIdOfValue from '../aven-cloud-utils/getIdOfValue';
+import createDispatcher from '../cloud-utils/createDispatcher';
+import mapBehaviorSubject from '../cloud-utils/mapBehaviorSubject';
+import getIdOfValue from '../cloud-utils/getIdOfValue';
 import { BehaviorSubject } from 'rxjs-compat';
 
 import { createDocPool } from './createCloudDoc';

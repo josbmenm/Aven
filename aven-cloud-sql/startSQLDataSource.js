@@ -1,8 +1,8 @@
 import Knex from 'knex';
 import { BehaviorSubject, Observable } from 'rxjs-compat';
-import createDispatcher from '../aven-cloud-utils/createDispatcher';
+import createDispatcher from '../cloud-utils/createDispatcher';
 import uuid from 'uuid/v1';
-import getIdOfValue from '../aven-cloud-utils/getIdOfValue';
+import getIdOfValue from '../cloud-utils/getIdOfValue';
 import { getMaxListDocs } from '../aven-cloud/maxListDocs';
 import { getMaxBlockRefCount } from '../aven-cloud/maxBlockRefCount';
 const pgFormat = require('pg-format');

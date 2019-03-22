@@ -28,7 +28,7 @@
       "cloud-auth",
       "aven-cloud-browser",
       "cloud-server",
-      "aven-cloud-utils",
+      "cloud-utils",
       "aven-sms-agent-twilio",
       "aven-email-agent-sendgrid",
       "cloud-auth-root",

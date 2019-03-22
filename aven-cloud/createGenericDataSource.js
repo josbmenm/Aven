@@ -1,8 +1,8 @@
 import { BehaviorSubject, Subject } from 'rxjs-compat';
 import uuid from 'uuid/v1';
 
-import createDispatcher from '../aven-cloud-utils/createDispatcher';
-import { getListDocName } from '../aven-cloud-utils/MetaDocNames';
+import createDispatcher from '../cloud-utils/createDispatcher';
+import { getListDocName } from '../cloud-utils/MetaDocNames';
 import { getMaxBlockRefCount } from './maxBlockRefCount';
 import { getMaxListDocs } from './maxListDocs';
 

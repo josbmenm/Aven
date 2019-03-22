@@ -4,7 +4,7 @@
   "aven": {
     "srcDependencies": [
       "aven-cloud",
-      "aven-cloud-utils"
+      "cloud-utils"
     ],
     "moduleDependencies": [
       "json-stable-stringify",

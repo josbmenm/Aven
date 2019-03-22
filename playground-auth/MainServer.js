@@ -2,7 +2,7 @@ import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import CloudAuth from '../cloud-auth/CloudAuth';
-import { hashSecureString } from '../aven-cloud-utils/Crypto';
+import { hashSecureString } from '../cloud-utils/Crypto';
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import createMemoryDataSource from '../aven-cloud/createMemoryDataSource';

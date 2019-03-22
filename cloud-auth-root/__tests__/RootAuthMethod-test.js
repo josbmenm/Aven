@@ -1,4 +1,4 @@
-import { hashSecureString } from '../../aven-cloud-utils/Crypto';
+import { hashSecureString } from '../../cloud-utils/Crypto';
 import RootAuthProvider from '../RootAuthProvider';
 
 describe('Auth provider behavior', () => {

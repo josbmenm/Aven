@@ -8,7 +8,7 @@ import EmailAgent from '../aven-email-agent-sendgrid/EmailAgent';
 import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
-import { hashSecureString } from '../aven-cloud-utils/Crypto';
+import { hashSecureString } from '../cloud-utils/Crypto';
 
 import App from './App';
 

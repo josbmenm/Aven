@@ -1,6 +1,6 @@
-import { uuid, checksum } from '../aven-cloud-utils/Crypto';
-import createDispatcher from '../aven-cloud-utils/createDispatcher';
-import { getAuthDocName } from '../aven-cloud-utils/MetaDocNames';
+import { uuid, checksum } from '../cloud-utils/Crypto';
+import createDispatcher from '../cloud-utils/createDispatcher';
+import { getAuthDocName } from '../cloud-utils/MetaDocNames';
 
 function thanksVeryMuch(dispatch) {
   return async action => {

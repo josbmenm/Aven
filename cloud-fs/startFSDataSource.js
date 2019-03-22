@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs-compat';
 import createGenericDataSource from '../aven-cloud/createGenericDataSource';
-import getIdOfValue from '../aven-cloud-utils/getIdOfValue';
+import getIdOfValue from '../cloud-utils/getIdOfValue';
 
 const fs = require('fs-extra');
 const stringify = require('json-stable-stringify');

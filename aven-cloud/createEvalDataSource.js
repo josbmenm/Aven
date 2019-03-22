@@ -1,4 +1,4 @@
-import createDispatcher from '../aven-cloud-utils/createDispatcher';
+import createDispatcher from '../cloud-utils/createDispatcher';
 import createCloudClient from './createCloudClient';
 
 export default function createEvalSource({

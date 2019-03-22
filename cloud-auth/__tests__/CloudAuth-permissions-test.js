@@ -2,7 +2,7 @@ import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
 import CloudAuth from '../CloudAuth';
 import RootAuthProvider from '../../cloud-auth-root/RootAuthProvider';
 
-import { hashSecureString } from '../../aven-cloud-utils/Crypto';
+import { hashSecureString } from '../../cloud-utils/Crypto';
 
 async function establishPermissionsTestData() {
   const dataSource = createMemoryDataSource({ domain: 'test' });
