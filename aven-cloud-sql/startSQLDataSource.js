@@ -131,7 +131,6 @@ export default async function startSQLDataSource({ config, domains }) {
         { parentId: parentContext.id, domain, name: localName }
       );
       id = creationResult.rows[0].docId;
-    } else {
     }
     return {
       domain,
