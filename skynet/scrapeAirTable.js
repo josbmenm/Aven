@@ -75,7 +75,11 @@ export default async function scrapeAirTable(fsClient) {
           const cellValue = row[fieldName];
           if (Array.isArray(cellValue)) {
             cellValue.forEach(cellValueItem => {
-              if (typeof cellValueItem === 'object' && cellValueItem.url) {
+              if (
+                cellValueItem &&
+                typeof cellValueItem === 'object' &&
+                cellValueItem.url
+              ) {
                 fileURLs.add(cellValueItem.url);
               }
             });

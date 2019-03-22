@@ -33,7 +33,7 @@
       "aven-sms-agent-twilio",
       "aven-admin",
       "aven-cloud",
-      "aven-cloud-server",
+      "cloud-server",
       "aven-cloud-sql"
     ],
     "moduleDependencies": [

@@ -6,7 +6,7 @@ import startSQLDataSource from '../aven-cloud-sql/startSQLDataSource';
 import scrapeAirTable from './scrapeAirTable';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import CloudContext from '../aven-cloud/CloudContext';
-import createFSClient from '../aven-cloud-server/createFSClient';
+import createFSClient from '../cloud-server/createFSClient';
 import { getMobileAuthToken } from './Square';
 
 import { hashSecureString } from '../aven-cloud-utils/Crypto';

@@ -28,7 +28,7 @@
       "aven-web",
       "aven-admin",
       "aven-cloud",
-      "aven-cloud-server",
+      "cloud-server",
       "aven-cloud-browser",
       "aven-cloud-fs",
       "aven-cloud-sql",
