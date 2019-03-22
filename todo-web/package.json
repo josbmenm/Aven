@@ -25,15 +25,15 @@
       "aven-admin",
       "aven-web",
       "aven-cloud",
-      "aven-cloud-auth",
+      "cloud-auth",
       "aven-cloud-browser",
       "cloud-server",
       "aven-cloud-utils",
       "aven-sms-agent-twilio",
       "aven-email-agent-sendgrid",
-      "aven-cloud-auth-root",
-      "aven-cloud-auth-sms",
-      "aven-cloud-auth-email"
+      "cloud-auth-root",
+      "cloud-auth-sms",
+      "cloud-auth-email"
     ]
   }
 }

@@ -1,4 +1,4 @@
-import createMessageAuthMethod from '../aven-cloud-auth-message/createMessageAuthMethod';
+import createMessageAuthMethod from '../cloud-auth-message/createMessageAuthMethod';
 
 function defaultGetMessage(verifyCode) {
   return {

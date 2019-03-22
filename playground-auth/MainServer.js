@@ -1,7 +1,7 @@
-import EmailAuthMethod from '../aven-cloud-auth-email/EmailAuthMethod';
-import RootAuthMethod from '../aven-cloud-auth-root/RootAuthMethod';
-import SMSAuthMethod from '../aven-cloud-auth-sms/SMSAuthMethod';
-import CloudAuth from '../aven-cloud-auth/CloudAuth';
+import EmailAuthMethod from '../cloud-auth-email/EmailAuthMethod';
+import RootAuthMethod from '../cloud-auth-root/RootAuthMethod';
+import SMSAuthMethod from '../cloud-auth-sms/SMSAuthMethod';
+import CloudAuth from '../cloud-auth/CloudAuth';
 import { hashSecureString } from '../aven-cloud-utils/Crypto';
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';

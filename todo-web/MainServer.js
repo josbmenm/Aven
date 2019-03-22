@@ -1,13 +1,13 @@
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
-import CloudAuth from '../aven-cloud-auth/CloudAuth';
+import CloudAuth from '../cloud-auth/CloudAuth';
 import createMemoryDataSource from '../aven-cloud/createMemoryDataSource';
 import WebServer from '../aven-web/WebServer';
 import SMSAgent from '../aven-sms-agent-twilio/SMSAgent';
 import EmailAgent from '../aven-email-agent-sendgrid/EmailAgent';
-import SMSAuthMethod from '../aven-cloud-auth-sms/SMSAuthMethod';
-import EmailAuthMethod from '../aven-cloud-auth-email/EmailAuthMethod';
-import RootAuthMethod from '../aven-cloud-auth-root/RootAuthMethod';
+import SMSAuthMethod from '../cloud-auth-sms/SMSAuthMethod';
+import EmailAuthMethod from '../cloud-auth-email/EmailAuthMethod';
+import RootAuthMethod from '../cloud-auth-root/RootAuthMethod';
 import { hashSecureString } from '../aven-cloud-utils/Crypto';
 
 import App from './App';

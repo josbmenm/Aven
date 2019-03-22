@@ -1,6 +1,6 @@
 import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
 import CloudAuth from '../CloudAuth';
-import RootAuthMethod from '../../aven-cloud-auth-root/RootAuthMethod';
+import RootAuthMethod from '../../cloud-auth-root/RootAuthMethod';
 
 import { hashSecureString } from '../../aven-cloud-utils/Crypto';
 

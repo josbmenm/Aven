@@ -1,5 +1,5 @@
 import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
-import CloudAuth from '../../aven-cloud-auth/CloudAuth';
+import CloudAuth from '../../cloud-auth/CloudAuth';
 import createMessageAuthMethod from '../createMessageAuthMethod';
 
 describe('Auth messaging behavior', () => {
