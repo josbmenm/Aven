@@ -5,7 +5,7 @@
     "srcDependencies": [
       "views",
       "utils",
-      "aven-cloud-native",
+      "cloud-native",
       "navigation-core",
       "navigation-hooks",
       "navigation-native",

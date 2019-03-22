@@ -19,7 +19,7 @@
       "cloud-utils",
       "aven-email-agent-sendgrid",
       "aven-sms-agent-twilio",
-      "aven-cloud-browser",
+      "cloud-browser",
       "cloud-server"
     ]
   }

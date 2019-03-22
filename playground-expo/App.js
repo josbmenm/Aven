@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 
 import createAppContainer from '../navigation-native/createAppContainer';
 import createSwitchNavigator from '../navigation-core/navigators/createSwitchNavigator';
-import NetworkCloudProvider from '../aven-cloud-native/createNativeNetworkSource';
+import NetworkCloudProvider from '../cloud-native/createNativeNetworkSource';
 import useCloud from '../aven-cloud/useCloud';
 import useCloudValue from '../aven-cloud/useCloudValue';
 import useObservable from '../aven-cloud/useObservable';

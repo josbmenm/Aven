@@ -20,7 +20,7 @@
       "aven-web",
       "aven-cloud",
       "cloud-fs",
-      "aven-cloud-browser",
+      "cloud-browser",
       "cloud-server",
       "navigation-web",
       "navigation-core",

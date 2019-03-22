@@ -17,7 +17,7 @@ import React, {
 
 import createAppContainer from '../navigation-native/createAppContainer';
 import createStackNavigator from '../navigation-stack/navigators/createStackNavigator';
-import NetworkCloudProvider from '../aven-cloud-native/NetworkCloudProvider';
+import NetworkCloudProvider from '../cloud-native/NetworkCloudProvider';
 import useCloud from '../aven-cloud/useCloud';
 import useCloudValue from '../aven-cloud/useCloudValue';
 import useObservable from '../aven-cloud/useObservable';
@@ -286,7 +286,7 @@ function PageForm({ inputs, onSubmit }) {
     },
     {
       inputState: {},
-    }
+    },
   );
   const focus = useFocus({
     onSubmit: () => onSubmit(formState.inputState),
@@ -342,7 +342,7 @@ function Slider({ children, childKey }) {
       }
       lastChildren.current[childKey] = children;
     },
-    [children, childKey, settledChildKey]
+    [children, childKey, settledChildKey],
   );
 
   let prevChildren = null;
@@ -545,7 +545,7 @@ function Login() {
 
 const AppNavigator = createStackNavigator(
   { Home, Login },
-  { headerMode: 'none' }
+  { headerMode: 'none' },
 );
 
 const AppNav = createAppContainer(AppNavigator);

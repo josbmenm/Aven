@@ -23,7 +23,7 @@
     "srcDependencies": [
       "aven-web",
       "aven-cloud",
-      "aven-cloud-browser",
+      "cloud-browser",
       "cloud-server"
     ]
   }

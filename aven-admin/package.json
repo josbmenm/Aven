@@ -4,7 +4,7 @@
     "srcDependencies": [
       "utils",
       "aven-cloud",
-      "aven-cloud-browser",
+      "cloud-browser",
       "debug-views",
       "navigation-core",
       "navigation-hooks"

@@ -3,7 +3,7 @@
   "aven": {
     "env": "expo",
     "srcDependencies": [
-      "aven-cloud-native",
+      "cloud-native",
       "navigation-core",
       "navigation-native"
     ],

@@ -24,7 +24,7 @@ import {
 } from 'react-native';
 import { useNavigation, useNavigationState } from '../navigation-hooks/Hooks';
 
-import createBrowserNetworkSource from '../aven-cloud-browser/createBrowserNetworkSource';
+import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
 import CloudContext from '../aven-cloud/CloudContext';
 import createCloudClient from '../aven-cloud/createCloudClient';
 import useCloud from '../aven-cloud/useCloud';
