@@ -15,7 +15,8 @@
       "mime",
       "body-parser",
       "react-native-web",
-      "react-art"
+      "react-art",
+      "express"
     ]
   },
   "srcChecksum": "a883594167eb13bb962d1eefe24c934499df7d778db25dcf9e0b665acc7f1777"
