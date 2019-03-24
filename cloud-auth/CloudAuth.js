@@ -83,7 +83,7 @@ export default function CloudAuth({ dataSource, providers }) {
     const savedSession = await getDocValue(
       dataSource,
       domain,
-      `auth/account/${accountId}/session/${sessionId}`,
+      `auth/account/${accountId}/session/${sessionId}`
     );
 
     if (!savedSession || savedSession.token !== token) {
@@ -102,12 +102,12 @@ export default function CloudAuth({ dataSource, providers }) {
     const accountLookup = await getDocValue(
       dataSource,
       domain,
-      providerAccountLookupName,
+      providerAccountLookupName
     );
     if (accountLookup) {
       if (accountId && accountId !== accountLookup.accountId) {
         throw new Error(
-          'Provided auth identity is already in use by another account.',
+          'Provided auth identity is already in use by another account.'
         );
       }
       return accountLookup.accountId;
@@ -137,7 +137,7 @@ export default function CloudAuth({ dataSource, providers }) {
       providersToValidate = providersToValidate.slice(1);
       if (providerToValidate.canVerify(verificationInfo, accountId)) {
         const providerId = await providerToValidate.getProviderId(
-          verificationInfo,
+          verificationInfo
         );
 
         const authenticatingAccountId = await GetAccountIdForAuthProvider({
@@ -151,18 +151,18 @@ export default function CloudAuth({ dataSource, providers }) {
         const providerState = await getDocValue(
           dataSource,
           domain,
-          providerStateDocName,
+          providerStateDocName
         );
 
         const requestedVerification = await providerToValidate.requestVerification(
-          { verificationInfo, providerState },
+          { verificationInfo, providerState }
         );
 
         await writeDocValue(
           dataSource,
           domain,
           providerStateDocName,
-          requestedVerification,
+          requestedVerification
         );
         return {
           verificationChallenge: requestedVerification.verificationChallenge,
@@ -230,7 +230,7 @@ export default function CloudAuth({ dataSource, providers }) {
         continue;
       }
       const providerId = await providerToValidate.getProviderId(
-        verificationInfo,
+        verificationInfo
       );
 
       authenticatingAccountId = await GetAccountIdForAuthProvider({
@@ -243,7 +243,7 @@ export default function CloudAuth({ dataSource, providers }) {
       const providerState = await getDocValue(
         dataSource,
         domain,
-        providerStateDocName,
+        providerStateDocName
       );
 
       let nextproviderState = providerState;
@@ -263,7 +263,7 @@ export default function CloudAuth({ dataSource, providers }) {
           dataSource,
           domain,
           providerStateDocName,
-          nextproviderState,
+          nextproviderState
         );
       }
     }
@@ -313,7 +313,7 @@ export default function CloudAuth({ dataSource, providers }) {
       dataSource,
       domain,
       `auth/account/${verification.accountId}/session/${sessionId}`,
-      session,
+      session
     );
     return {
       session,
@@ -329,7 +329,7 @@ export default function CloudAuth({ dataSource, providers }) {
       dataSource,
       domain,
       `auth/account/${accountId}`,
-      account,
+      account
     );
     return accountId;
   }
@@ -351,7 +351,7 @@ export default function CloudAuth({ dataSource, providers }) {
       dataSource,
       domain,
       `auth/account/${accountId}/session/${sessionId}`,
-      session,
+      session
     );
 
     return { session };
@@ -407,7 +407,7 @@ export default function CloudAuth({ dataSource, providers }) {
         .map(nameToAuthDocName)
         .map(async docName => {
           return await getDocValue(dataSource, domain, docName);
-        }),
+        })
     );
 
     let owner = null;
@@ -585,7 +585,7 @@ export default function CloudAuth({ dataSource, providers }) {
         throw new Error(
           `Insufficient permissions for "${actionType}" on ${
             action.name
-          }. Requires "${permissionLevel}"`,
+          }. Requires "${permissionLevel}"`
         );
       }
       const result = await dispatch(action);
@@ -617,12 +617,12 @@ export default function CloudAuth({ dataSource, providers }) {
     PutPermissionRules: guardAction(
       PutPermissionRules,
       'PutPermissionRules',
-      'canAdmin',
+      'canAdmin'
     ),
     GetPermissionRules: guardAction(
       GetPermissionRules,
       'GetPermissionRules',
-      'canAdmin',
+      'canAdmin'
     ),
     CreateSession,
     CreateAnonymousSession,

@@ -1,7 +1,7 @@
 import { checksum, genAuthCode } from '../cloud-utils/Crypto';
 
 export default function createMessageAuthProvider({
-  AuthProviderName,
+  authProviderName,
   sendVerification,
   identifyInfo,
 }) {
@@ -13,8 +13,8 @@ export default function createMessageAuthProvider({
   }
 
   async function getProviderId(verificationInfo) {
-    return `${AuthProviderName}-${await checksum(
-      identifyInfo(verificationInfo),
+    return `${authProviderName}-${await checksum(
+      identifyInfo(verificationInfo)
     )}`;
   }
 
@@ -57,7 +57,7 @@ export default function createMessageAuthProvider({
   }
 
   return {
-    name: AuthProviderName,
+    name: authProviderName,
     canVerify,
     requestVerification,
     performVerification,

@@ -51,7 +51,7 @@ const runServer = async () => {
   });
   const authSource = CloudAuth({
     dataSource,
-    methods: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
+    providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
   async function putPermission({ name, defaultRule }) {

@@ -8,7 +8,7 @@ describe('Auth messaging behavior', () => {
       domain: 'test',
     });
 
-    const authProviderName = 'example-method';
+    const authProviderName = 'example-provider';
 
     function identifyInfo(verificationInfo) {
       if (!verificationInfo || !verificationInfo.address) {
@@ -19,13 +19,13 @@ describe('Auth messaging behavior', () => {
 
     const sendVerification = jest.fn();
 
-    const method = createMessageAuthProvider({
+    const provider = createMessageAuthProvider({
       authProviderName,
       sendVerification,
       identifyInfo,
     });
 
-    const authDataSource = CloudAuth({ dataSource, methods: [method] });
+    const authDataSource = CloudAuth({ dataSource, providers: [provider] });
 
     await authDataSource.dispatch({
       type: 'CreateSession',
@@ -57,10 +57,10 @@ describe('Auth messaging behavior', () => {
     expect(typeof createSessionResp.session.sessionId).toEqual('string');
   });
 
-  test('anon account can add auth method', async () => {
+  test('anon account can add auth provider', async () => {
     const dataSource = createMemoryDataSource({ domain: 'test' });
 
-    const authProviderName = 'example-method';
+    const authProviderName = 'example-provider';
 
     function identifyInfo(verificationInfo) {
       if (!verificationInfo || !verificationInfo.address) {
@@ -71,13 +71,13 @@ describe('Auth messaging behavior', () => {
 
     const sendVerification = jest.fn();
 
-    const method = createMessageAuthProvider({
+    const provider = createMessageAuthProvider({
       authProviderName,
       sendVerification,
       identifyInfo,
     });
 
-    const authDataSource = CloudAuth({ dataSource, methods: [method] });
+    const authDataSource = CloudAuth({ dataSource, providers: [provider] });
 
     const { session } = await authDataSource.dispatch({
       type: 'CreateAnonymousSession',
@@ -105,7 +105,7 @@ describe('Auth messaging behavior', () => {
         key: sendVerification.mock.calls[0][1],
       },
     });
-    expect(typeof authFinalResp.verifiedMethodId).toEqual('string');
+    expect(typeof authFinalResp.verifiedProviderId).toEqual('string');
     await authDataSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
