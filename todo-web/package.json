@@ -24,7 +24,7 @@
       "navigation-core",
       "aven-admin",
       "aven-web",
-      "aven-cloud",
+      "cloud-core",
       "cloud-auth",
       "cloud-browser",
       "cloud-server",

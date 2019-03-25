@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import useCloud from '../aven-cloud/useCloud';
-import useObservable from '../aven-cloud/useObservable';
+import useCloud from '../cloud-core/useCloud';
+import useObservable from '../cloud-core/useObservable';
 
 export default function App() {
   const cloud = useCloud();

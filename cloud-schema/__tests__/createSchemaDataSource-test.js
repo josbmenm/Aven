@@ -1,5 +1,5 @@
 import createSchemaDataSource from '../createSchemaDataSource';
-import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
+import createMemoryDataSource from '../../cloud-core/createMemoryDataSource';
 
 describe('schema validation on memory data source', () => {
   test.skip('basic validation', async () => {

@@ -1,4 +1,4 @@
-import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
+import createMemoryDataSource from '../../cloud-core/createMemoryDataSource';
 import CloudAuth from '../../cloud-auth/CloudAuth';
 import createMessageAuthProvider from '../createMessageAuthProvider';
 

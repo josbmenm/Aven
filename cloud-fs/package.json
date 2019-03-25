@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "aven": {
     "srcDependencies": [
-      "aven-cloud",
+      "cloud-core",
       "cloud-utils"
     ],
     "moduleDependencies": [

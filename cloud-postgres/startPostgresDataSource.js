@@ -3,8 +3,8 @@ import { BehaviorSubject, Observable } from 'rxjs-compat';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import uuid from 'uuid/v1';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
-import { getMaxListDocs } from '../aven-cloud/maxListDocs';
-import { getMaxBlockRefCount } from '../aven-cloud/maxBlockRefCount';
+import { getMaxListDocs } from '../cloud-core/maxListDocs';
+import { getMaxBlockRefCount } from '../cloud-core/maxBlockRefCount';
 const pgFormat = require('pg-format');
 
 const { Client } = require('pg');

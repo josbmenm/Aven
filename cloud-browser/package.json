@@ -8,7 +8,7 @@
       "reconnecting-websocket"
     ],
     "srcDependencies": [
-      "aven-cloud",
+      "cloud-core",
       "cloud-network"
     ]
   },

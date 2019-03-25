@@ -1,5 +1,5 @@
 import createFSDataSource from '../startFSDataSource';
-import dataSourceTests from '../../aven-cloud/__tests__/dataSourceTests';
+import dataSourceTests from '../../cloud-core/__tests__/dataSourceTests';
 import uuid from 'uuid/v1';
 
 const pathJoin = require('path').join;

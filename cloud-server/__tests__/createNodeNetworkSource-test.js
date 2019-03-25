@@ -1,5 +1,5 @@
-import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
-import dataSourceTests from '../../aven-cloud/__tests__/dataSourceTests';
+import createMemoryDataSource from '../../cloud-core/createMemoryDataSource';
+import dataSourceTests from '../../cloud-core/__tests__/dataSourceTests';
 import createNodeNetworkSource from '../createNodeNetworkSource';
 import startSourceServer from '../startSourceServer';
 

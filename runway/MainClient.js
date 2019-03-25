@@ -1,8 +1,8 @@
 import App from './App';
 
 import startWebClient from '../aven-web/WebClient';
-import CloudContext from '../aven-cloud/CloudContext';
-import createCloudClient from '../aven-cloud/createCloudClient';
+import CloudContext from '../cloud-core/CloudContext';
+import createCloudClient from '../cloud-core/createCloudClient';
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
 
 const networkSource = createBrowserNetworkSource({

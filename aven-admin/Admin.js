@@ -25,12 +25,12 @@ import {
 import { useNavigation, useNavigationState } from '../navigation-hooks/Hooks';
 
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
-import CloudContext from '../aven-cloud/CloudContext';
-import createCloudClient from '../aven-cloud/createCloudClient';
-import useCloud from '../aven-cloud/useCloud';
-import useCloudSession from '../aven-cloud/useCloudSession';
-import useObservable from '../aven-cloud/useObservable';
-import useCloudValue from '../aven-cloud/useCloudValue';
+import CloudContext from '../cloud-core/CloudContext';
+import createCloudClient from '../cloud-core/createCloudClient';
+import useCloud from '../cloud-core/useCloud';
+import useCloudSession from '../cloud-core/useCloudSession';
+import useObservable from '../cloud-core/useObservable';
+import useCloudValue from '../cloud-core/useCloudValue';
 import ErrorContainer from '../cloud-react/ErrorContainer';
 import JSONView from '../debug-views/JSONView';
 import useAsyncStorage, { isStateUnloaded } from '../utils/useAsyncStorage';

@@ -18,10 +18,10 @@ import React, {
 import createAppContainer from '../navigation-native/createAppContainer';
 import createStackNavigator from '../navigation-stack/navigators/createStackNavigator';
 import NetworkCloudProvider from '../cloud-native/NetworkCloudProvider';
-import useCloud from '../aven-cloud/useCloud';
-import useCloudValue from '../aven-cloud/useCloudValue';
-import useObservable from '../aven-cloud/useObservable';
-import useCloudReducer from '../aven-cloud/useCloudReducer';
+import useCloud from '../cloud-core/useCloud';
+import useCloudValue from '../cloud-core/useCloudValue';
+import useObservable from '../cloud-core/useObservable';
+import useCloudReducer from '../cloud-core/useCloudReducer';
 import Animated, { Easing } from 'react-native-reanimated';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import useFocus from '../navigation-hooks/useFocus';

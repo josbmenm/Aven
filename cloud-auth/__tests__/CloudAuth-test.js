@@ -1,4 +1,4 @@
-import createMemoryDataSource from '../../aven-cloud/createMemoryDataSource';
+import createMemoryDataSource from '../../cloud-core/createMemoryDataSource';
 import CloudAuth from '../CloudAuth';
 import RootAuthProvider from '../../cloud-auth-root/RootAuthProvider';
 
@@ -117,17 +117,14 @@ describe('Cloud auth sessions', () => {
       domain: 'test',
     });
 
-    const rootPermissionsAfterLogout = await authDataSource.dispatch({
-      type: 'GetPermissions',
-      auth: session,
-      domain: 'test',
-      name: null,
-    });
-
-    expect(rootPermissionsAfterLogout.canRead).toEqual(false);
-    expect(rootPermissionsAfterLogout.canPost).toEqual(false);
-    expect(rootPermissionsAfterLogout.canWrite).toEqual(false);
-    expect(rootPermissionsAfterLogout.canAdmin).toEqual(false);
+    await expect(
+      authDataSource.dispatch({
+        type: 'GetPermissions',
+        auth: session,
+        domain: 'test',
+        name: null,
+      })
+    ).rejects.toThrow();
   });
 
   test('gets anon authentication', async () => {

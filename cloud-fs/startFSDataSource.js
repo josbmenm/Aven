@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs-compat';
-import createGenericDataSource from '../aven-cloud/createGenericDataSource';
+import createGenericDataSource from '../cloud-core/createGenericDataSource';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 
 const fs = require('fs-extra');

@@ -1,7 +1,7 @@
 import React, { useState, useReducer } from 'react';
 import { View, Text, Animated, Button, TextInput } from 'react-native';
-import useCloudState from '../aven-cloud/useCloudState';
-import useCloudReducer from '../aven-cloud/useCloudReducer';
+import useCloudState from '../cloud-core/useCloudState';
+import useCloudReducer from '../cloud-core/useCloudReducer';
 import uuid from 'uuid/v1';
 
 // function TodoItem({ item }) {

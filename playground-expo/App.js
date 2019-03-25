@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import createAppContainer from '../navigation-native/createAppContainer';
 import createSwitchNavigator from '../navigation-core/navigators/createSwitchNavigator';
 import NetworkCloudProvider from '../cloud-native/createNativeNetworkSource';
-import useCloud from '../aven-cloud/useCloud';
-import useCloudValue from '../aven-cloud/useCloudValue';
-import useObservable from '../aven-cloud/useObservable';
+import useCloud from '../cloud-core/useCloud';
+import useCloudValue from '../cloud-core/useCloudValue';
+import useObservable from '../cloud-core/useObservable';
 
 function ConnectedMessage() {
   const cloud = useCloud();

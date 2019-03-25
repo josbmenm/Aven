@@ -1,9 +1,9 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import useCloud from '../aven-cloud/useCloud';
+import useCloud from '../cloud-core/useCloud';
 import Admin from '../aven-admin/Admin';
 import createSwitchNavigator from '../navigation-core/navigators/createSwitchNavigator';
-import useObservable from '../aven-cloud/useObservable';
+import useObservable from '../cloud-core/useObservable';
 
 function Home() {
   const cloud = useCloud();

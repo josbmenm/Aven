@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import createCloudClient from '../aven-cloud/createCloudClient';
+import createCloudClient from '../cloud-core/createCloudClient';
 import createNativeNetworkSource from './createNativeNetworkSource';
-import CloudContext from '../aven-cloud/CloudContext';
+import CloudContext from '../cloud-core/CloudContext';
 
 export default function NetworkCloudProvider({
   authority,

@@ -2,7 +2,7 @@
   "aven": {
     "srcDependencies": [
       "cloud-network",
-      "aven-cloud"
+      "cloud-core"
     ],
     "moduleDependencies": [
       "reconnecting-websocket"

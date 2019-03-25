@@ -1,4 +1,4 @@
-import { setMaxListDocs } from '../../aven-cloud/maxListDocs';
+import { setMaxListDocs } from '../../cloud-core/maxListDocs';
 
 async function justASec(ds) {
   const duration = ds.testPatienceMS || 1;

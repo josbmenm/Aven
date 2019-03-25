@@ -11,7 +11,7 @@
     "srcDependencies": [
       "aven-web",
       "aven-admin",
-      "aven-cloud",
+      "cloud-core",
       "cloud-auth",
       "cloud-auth-sms",
       "cloud-auth-email",
