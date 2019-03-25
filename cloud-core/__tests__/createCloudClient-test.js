@@ -2,7 +2,7 @@ import createMemoryStorageSource from '../createMemoryStorageSource';
 import createCloudClient from '../createCloudClient';
 import { setMaxListDocs } from '../maxListDocs';
 
-import dataSourceTests from './dataSourceTests';
+import sourceTests from './sourceTests';
 
 describe('create client generic behavior', () => {
   test('passes arbitrary actions to dispatch', () => {
@@ -496,5 +496,5 @@ describe.skip('client behaves as data source', async () => {
     return client;
   }
 
-  dataSourceTests(startTestDataSource);
+  sourceTests(startTestDataSource);
 });

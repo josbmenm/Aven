@@ -1,5 +1,5 @@
 import startFSStorageSource from '../startFSStorageSource';
-import dataSourceTests from '../../cloud-core/__tests__/dataSourceTests';
+import sourceTests from '../../cloud-core/__tests__/sourceTests';
 import uuid from 'uuid/v1';
 
 const pathJoin = require('path').join;
@@ -18,7 +18,7 @@ async function startTestDataSource(options = {}) {
 }
 
 describe('fs data source tests', () => {
-  dataSourceTests(startTestDataSource);
+  sourceTests(startTestDataSource);
 });
 
 describe('basic fs source setup', () => {
@@ -27,14 +27,14 @@ describe('basic fs source setup', () => {
     expect(
       startFSStorageSource({
         dataDir,
-      })
+      }),
     ).rejects.toThrow();
   });
   test('throws when starting without a data directory', () => {
     expect(
       startFSStorageSource({
         domain: 'test',
-      })
+      }),
     ).rejects.toThrow();
   });
 });

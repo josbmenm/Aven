@@ -1,6 +1,6 @@
 import startPostgresDataSource from '../startPostgresDataSource';
 import Knex from 'knex';
-import dataSourceTests from './dataSourceTests';
+import sourceTests from './sourceTests';
 const pathJoin = require('path').join;
 
 const DB_CONFIG = {
@@ -42,5 +42,5 @@ describe('basic data source setup', () => {
     DELETE FROM domains;`);
     await knex.destroy();
   });
-  dataSourceTests(startTestDataSource);
+  sourceTests(startTestDataSource);
 });

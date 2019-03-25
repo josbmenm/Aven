@@ -1,5 +1,5 @@
 import createMemoryStorageSource from '../../cloud-core/createMemoryStorageSource';
-import dataSourceTests from '../../cloud-core/__tests__/dataSourceTests';
+import sourceTests from '../../cloud-core/__tests__/sourceTests';
 import createNodeNetworkSource from '../createNodeNetworkSource';
 import startSourceServer from '../startSourceServer';
 
@@ -35,5 +35,5 @@ async function startTestDataSource(options = {}) {
 }
 
 describe('memory data source tests through network', () => {
-  dataSourceTests(startTestDataSource);
+  sourceTests(startTestDataSource);
 });

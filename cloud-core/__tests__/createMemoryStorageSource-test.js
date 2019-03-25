@@ -1,5 +1,5 @@
 import createMemoryStorageSource from '../createMemoryStorageSource';
-import dataSourceTests from './dataSourceTests';
+import sourceTests from './sourceTests';
 
 beforeAll(async () => {});
 
@@ -9,7 +9,7 @@ async function startTestDataSource(options = {}) {
 }
 
 describe('memory data source tests', () => {
-  dataSourceTests(startTestDataSource);
+  sourceTests(startTestDataSource);
 });
 
 describe('basic data source setup', () => {
