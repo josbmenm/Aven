@@ -8,8 +8,8 @@ function DocPage() {
       <Body>
         The <Link routeName="API-createCloudClient">cloud client</Link> provides
         an in-memory representation of a domain's data within a{' '}
-        <Link routeName="Spec-DataSource">data source</Link>. The client allows
-        you to observe and optimistically change data within the source.
+        <Link routeName="Spec-Source">data source</Link>. The client allows you
+        to observe and optimistically change data within the source.
       </Body>
       <Body>It requires a data source or a network source upon creation:</Body>
       <Snippet

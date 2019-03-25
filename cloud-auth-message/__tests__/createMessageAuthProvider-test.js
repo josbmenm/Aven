@@ -25,9 +25,9 @@ describe('Auth messaging behavior', () => {
       identifyInfo,
     });
 
-    const authDataSource = CloudAuth({ dataSource, providers: [provider] });
+    const protectedSource = CloudAuth({ dataSource, providers: [provider] });
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
       verificationInfo: {
@@ -40,7 +40,7 @@ describe('Auth messaging behavior', () => {
     expect(sendVerification.mock.calls[0][0].address).toEqual('foobar');
     expect(sendVerification.mock.calls[0][1].length).toEqual(6);
 
-    const createSessionResp = await authDataSource.dispatch({
+    const createSessionResp = await protectedSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
       verificationInfo: {
@@ -77,16 +77,16 @@ describe('Auth messaging behavior', () => {
       identifyInfo,
     });
 
-    const authDataSource = CloudAuth({ dataSource, providers: [provider] });
+    const protectedSource = CloudAuth({ dataSource, providers: [provider] });
 
-    const { session } = await authDataSource.dispatch({
+    const { session } = await protectedSource.dispatch({
       type: 'CreateAnonymousSession',
       domain: 'test',
     });
 
     const address = 'great';
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutAuthProvider',
       domain: 'test',
       auth: session,
@@ -96,7 +96,7 @@ describe('Auth messaging behavior', () => {
     expect(sendVerification.mock.calls[0][0].context).toEqual('heyo!');
     expect(sendVerification.mock.calls[0][1].length).toEqual(6);
 
-    const authFinalResp = await authDataSource.dispatch({
+    const authFinalResp = await protectedSource.dispatch({
       type: 'PutAuthProvider',
       domain: 'test',
       auth: session,
@@ -106,17 +106,17 @@ describe('Auth messaging behavior', () => {
       },
     });
     expect(typeof authFinalResp.verifiedProviderId).toEqual('string');
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
       verificationInfo: { address },
     });
     expect(sendVerification.mock.calls[1][1].length).toEqual(6);
     expect(sendVerification.mock.calls[1][1]).not.toEqual(
-      sendVerification.mock.calls[0][1]
+      sendVerification.mock.calls[0][1],
     );
 
-    const newSessionCreation = await authDataSource.dispatch({
+    const newSessionCreation = await protectedSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
       verificationInfo: { address },

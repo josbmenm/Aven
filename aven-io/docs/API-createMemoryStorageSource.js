@@ -23,7 +23,7 @@ const dataSource = createMemoryStorageSource({
       </Body>
       <Body>
         The memory data source conforms to{' '}
-        <Link routeName="Spec-DataSource">the data source API</Link>.
+        <Link routeName="Spec-Source">the data source API</Link>.
       </Body>
     </Page>
   );

@@ -13,19 +13,19 @@ async function establishPermissionsTestData() {
     rootPasswordHash,
   });
 
-  const authDataSource = CloudAuth({ dataSource, providers: [rootProvider] });
+  const protectedSource = CloudAuth({ dataSource, providers: [rootProvider] });
 
-  const anonSessionCreated = await authDataSource.dispatch({
+  const anonSessionCreated = await protectedSource.dispatch({
     type: 'CreateAnonymousSession',
     domain: 'test',
   });
   const anonSession = anonSessionCreated.session;
-  const anonSession2Created = await authDataSource.dispatch({
+  const anonSession2Created = await protectedSource.dispatch({
     type: 'CreateAnonymousSession',
     domain: 'test',
   });
   const anonSession2 = anonSession2Created.session;
-  const rootSessionCreated = await authDataSource.dispatch({
+  const rootSessionCreated = await protectedSource.dispatch({
     type: 'CreateSession',
     domain: 'test',
     verificationInfo: {
@@ -36,14 +36,14 @@ async function establishPermissionsTestData() {
   });
   const rootSession = rootSessionCreated.session;
 
-  const barBlock = await authDataSource.dispatch({
+  const barBlock = await protectedSource.dispatch({
     type: 'PutDocValue',
     auth: rootSession,
     domain: 'test',
     name: 'something',
     value: { foo: 'baz' },
   });
-  const fooBlock = await authDataSource.dispatch({
+  const fooBlock = await protectedSource.dispatch({
     type: 'PutDocValue',
     auth: rootSession,
     domain: 'test',
@@ -54,7 +54,7 @@ async function establishPermissionsTestData() {
   return {
     fooBlock,
     barBlock,
-    authDataSource,
+    protectedSource,
     rootSession,
     anonSession,
     anonSession2,
@@ -71,9 +71,12 @@ describe('Cloud auth Permissions', () => {
       rootPasswordHash,
     });
 
-    const authDataSource = CloudAuth({ dataSource, providers: [rootProvider] });
+    const protectedSource = CloudAuth({
+      dataSource,
+      providers: [rootProvider],
+    });
 
-    const { session } = await authDataSource.dispatch({
+    const { session } = await protectedSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
       verificationInfo: {
@@ -83,7 +86,7 @@ describe('Cloud auth Permissions', () => {
       verificationResponse: { password },
     });
 
-    const rootPermissions = await authDataSource.dispatch({
+    const rootPermissions = await protectedSource.dispatch({
       type: 'GetPermissions',
       auth: session,
       domain: 'test',
@@ -96,15 +99,15 @@ describe('Cloud auth Permissions', () => {
     expect(rootPermissions.canAdmin).toEqual(true);
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'PutDoc',
         auth: null,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutDoc',
       auth: session,
       domain: 'test',
@@ -119,21 +122,21 @@ describe('Cloud auth Permissions', () => {
       barBlock,
       rootSession,
       anonSession,
-      authDataSource,
+      protectedSource,
     } = await establishPermissionsTestData();
 
     let result = null;
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'GetDoc',
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -143,7 +146,7 @@ describe('Cloud auth Permissions', () => {
       },
     });
 
-    result = await authDataSource.dispatch({
+    result = await protectedSource.dispatch({
       type: 'GetDoc',
       auth: anonSession,
       domain: 'test',
@@ -151,7 +154,7 @@ describe('Cloud auth Permissions', () => {
     });
     expect(result.id).toEqual(fooBlock.id);
 
-    result = await authDataSource.dispatch({
+    result = await protectedSource.dispatch({
       type: 'GetBlock',
       auth: anonSession,
       domain: 'test',
@@ -167,21 +170,21 @@ describe('Cloud auth Permissions', () => {
       barBlock,
       rootSession,
       anonSession,
-      authDataSource,
+      protectedSource,
     } = await establishPermissionsTestData();
 
     let result = null;
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'GetDoc',
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -194,7 +197,7 @@ describe('Cloud auth Permissions', () => {
       },
     });
 
-    result = await authDataSource.dispatch({
+    result = await protectedSource.dispatch({
       type: 'GetDoc',
       auth: anonSession,
       domain: 'test',
@@ -202,7 +205,7 @@ describe('Cloud auth Permissions', () => {
     });
     expect(result.id).toEqual(fooBlock.id);
 
-    result = await authDataSource.dispatch({
+    result = await protectedSource.dispatch({
       type: 'GetBlock',
       auth: anonSession,
       domain: 'test',
@@ -211,11 +214,11 @@ describe('Cloud auth Permissions', () => {
     });
     expect(result.value.foo).toEqual('bar');
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'GetDoc',
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
   });
 
@@ -223,22 +226,22 @@ describe('Cloud auth Permissions', () => {
     const {
       rootSession,
       anonSession,
-      authDataSource,
+      protectedSource,
     } = await establishPermissionsTestData();
 
     let result = null;
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'PostDoc',
         auth: anonSession,
         domain: 'test',
         name: 'something',
         value: { foo: 'bar' },
-      })
+      }),
     ).rejects.toThrow();
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -248,7 +251,7 @@ describe('Cloud auth Permissions', () => {
       },
     });
 
-    const postResult = await authDataSource.dispatch({
+    const postResult = await protectedSource.dispatch({
       type: 'PostDoc',
       auth: anonSession,
       domain: 'test',
@@ -262,9 +265,9 @@ describe('Cloud auth Permissions', () => {
     const {
       rootSession,
       anonSession,
-      authDataSource,
+      protectedSource,
     } = await establishPermissionsTestData();
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -273,7 +276,7 @@ describe('Cloud auth Permissions', () => {
         canPost: true,
       },
     });
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -282,7 +285,7 @@ describe('Cloud auth Permissions', () => {
         canWrite: true,
       },
     });
-    const p1 = await authDataSource.dispatch({
+    const p1 = await protectedSource.dispatch({
       type: 'GetPermissions',
       auth: anonSession,
       domain: 'test',
@@ -295,7 +298,7 @@ describe('Cloud auth Permissions', () => {
       canAdmin: false,
       owner: null,
     });
-    const p2 = await authDataSource.dispatch({
+    const p2 = await protectedSource.dispatch({
       type: 'GetPermissions',
       auth: anonSession,
       domain: 'test',
@@ -314,12 +317,12 @@ describe('Cloud auth Permissions', () => {
     const {
       rootSession,
       anonSession,
-      authDataSource,
+      protectedSource,
     } = await establishPermissionsTestData();
 
     let result = null;
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -329,7 +332,7 @@ describe('Cloud auth Permissions', () => {
       },
     });
 
-    const postResult = await authDataSource.dispatch({
+    const postResult = await protectedSource.dispatch({
       type: 'PostDoc',
       auth: anonSession,
       domain: 'test',
@@ -337,7 +340,7 @@ describe('Cloud auth Permissions', () => {
       value: { foo: 'bar' },
     });
 
-    const perms = await authDataSource.dispatch({
+    const perms = await protectedSource.dispatch({
       type: 'GetPermissions',
       auth: anonSession,
       domain: 'test',
@@ -350,7 +353,7 @@ describe('Cloud auth Permissions', () => {
       canAdmin: true,
       owner: anonSession.accountId,
     });
-    const childPerms = await authDataSource.dispatch({
+    const childPerms = await protectedSource.dispatch({
       type: 'GetPermissions',
       auth: anonSession,
       domain: 'test',
@@ -370,21 +373,21 @@ describe('Cloud auth Permissions', () => {
       barBlock,
       rootSession,
       anonSession,
-      authDataSource,
+      protectedSource,
     } = await establishPermissionsTestData();
 
     let result = null;
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'GetDoc',
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -398,23 +401,23 @@ describe('Cloud auth Permissions', () => {
     });
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'GetDoc',
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'PutDoc',
         domain: 'test',
         name: 'something',
         id: barBlock.id,
-      })
+      }),
     ).rejects.toThrow();
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutDoc',
       auth: anonSession,
       domain: 'test',
@@ -422,7 +425,7 @@ describe('Cloud auth Permissions', () => {
       id: barBlock.id,
     });
 
-    result = await authDataSource.dispatch({
+    result = await protectedSource.dispatch({
       type: 'GetDoc',
       auth: anonSession,
       domain: 'test',
@@ -438,23 +441,23 @@ describe('Cloud auth Permissions', () => {
       rootSession,
       anonSession,
       anonSession2,
-      authDataSource,
+      protectedSource,
     } = await establishPermissionsTestData();
 
     let result = null;
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'PutPermissionRules',
         auth: anonSession,
         domain: 'test',
         name: 'something',
         defaultRule: {},
         accountRules: {},
-      })
+      }),
     ).rejects.toThrow();
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -468,15 +471,15 @@ describe('Cloud auth Permissions', () => {
     });
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'GetDoc',
         auth: anonSession2,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: anonSession,
       domain: 'test',
@@ -492,7 +495,7 @@ describe('Cloud auth Permissions', () => {
       },
     });
 
-    result = await authDataSource.dispatch({
+    result = await protectedSource.dispatch({
       type: 'GetDoc',
       auth: anonSession2,
       domain: 'test',
@@ -508,21 +511,21 @@ describe('Cloud auth Permissions', () => {
       rootSession,
       anonSession,
       anonSession2,
-      authDataSource,
+      protectedSource,
     } = await establishPermissionsTestData();
 
     let result = null;
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'GetPermissionRules',
         auth: anonSession,
         domain: 'test',
         name: 'something',
-      })
+      }),
     ).rejects.toThrow();
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -537,7 +540,7 @@ describe('Cloud auth Permissions', () => {
       },
     });
 
-    result = await authDataSource.dispatch({
+    result = await protectedSource.dispatch({
       type: 'GetPermissionRules',
       auth: anonSession,
       domain: 'test',
@@ -554,21 +557,21 @@ describe('Cloud auth Permissions', () => {
       rootSession,
       anonSession,
       anonSession2,
-      authDataSource,
+      protectedSource,
     } = await establishPermissionsTestData();
 
     let result = null;
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'GetDocValue',
         auth: anonSession,
         domain: 'test',
         name: 'something/_auth',
-      })
+      }),
     ).rejects.toThrow();
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -583,7 +586,7 @@ describe('Cloud auth Permissions', () => {
       },
     });
 
-    result = await authDataSource.dispatch({
+    result = await protectedSource.dispatch({
       type: 'GetDocValue',
       auth: anonSession,
       domain: 'test',
@@ -607,21 +610,21 @@ describe('Cloud auth Permissions', () => {
       rootSession,
       anonSession,
       anonSession2,
-      authDataSource,
+      protectedSource,
     } = await establishPermissionsTestData();
 
     let result = null;
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'GetDocValue',
         auth: anonSession,
         domain: 'test',
         name: '_auth',
-      })
+      }),
     ).rejects.toThrow();
 
-    result = await authDataSource.dispatch({
+    result = await protectedSource.dispatch({
       type: 'GetDocValue',
       auth: rootSession,
       domain: 'test',
@@ -630,7 +633,7 @@ describe('Cloud auth Permissions', () => {
 
     expect(result.value).toEqual(undefined);
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -641,7 +644,7 @@ describe('Cloud auth Permissions', () => {
       accountRules: {},
     });
 
-    result = await authDataSource.dispatch({
+    result = await protectedSource.dispatch({
       type: 'GetDocValue',
       auth: rootSession,
       domain: 'test',
@@ -652,7 +655,7 @@ describe('Cloud auth Permissions', () => {
       canRead: true,
     });
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'PutPermissionRules',
       auth: rootSession,
       domain: 'test',
@@ -663,7 +666,7 @@ describe('Cloud auth Permissions', () => {
       accountRules: {},
     });
 
-    result = await authDataSource.dispatch({
+    result = await protectedSource.dispatch({
       type: 'GetDocValue',
       auth: rootSession,
       domain: 'test',

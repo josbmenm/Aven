@@ -4,15 +4,15 @@ import { Title, Body, Page, Link, SubSection, Section } from '../DocViews';
 function DocPage() {
   return (
     <Page>
-      <Title>Spec - AuthDataSource</Title>
+      <Title>Spec - ProtectedSource</Title>
       <Body>
         A strict extension of{' '}
-        <Link routeName="Spec-DataSource">the data source API</Link>. Used to
+        <Link routeName="Spec-Source">the data source API</Link>. Used to
         provide network-safe access to the database.
       </Body>
       <Body>
         Generally an authenticated data source will be created by
-        `createAuthDataSource`, but network sources can proxy an auth source on
+        `createProtectedSource`, but network sources can proxy an auth source on
         the server.
       </Body>
       <Section title="Additional Actions">
@@ -36,7 +36,7 @@ function DocPage() {
 }
 
 DocPage.navigationOptions = {
-  title: 'Spec - AuthDataSource',
+  title: 'Spec - ProtectedSource',
 };
 DocPage.path = 'spec-auth-data-source';
 

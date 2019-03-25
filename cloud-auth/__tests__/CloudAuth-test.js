@@ -13,9 +13,12 @@ describe('Cloud auth sessions', () => {
       rootPasswordHash,
     });
 
-    const authDataSource = CloudAuth({ dataSource, providers: [rootProvider] });
+    const protectedSource = CloudAuth({
+      dataSource,
+      providers: [rootProvider],
+    });
 
-    const { session } = await authDataSource.dispatch({
+    const { session } = await protectedSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
       verificationInfo: {
@@ -29,7 +32,7 @@ describe('Cloud auth sessions', () => {
     expect(typeof session.sessionId).toEqual('string');
     expect(typeof session.accountId).toEqual('string');
 
-    const v = await authDataSource.dispatch({
+    const v = await protectedSource.dispatch({
       type: 'VerifySession',
       auth: session,
       domain: 'test',
@@ -41,9 +44,9 @@ describe('Cloud auth sessions', () => {
   test('no authentication gets empty permissions at root', async () => {
     const dataSource = createMemoryStorageSource({ domain: 'test' });
 
-    const authDataSource = CloudAuth({ dataSource, providers: [] });
+    const protectedSource = CloudAuth({ dataSource, providers: [] });
 
-    const noAuthRootPermissions = await authDataSource.dispatch({
+    const noAuthRootPermissions = await protectedSource.dispatch({
       type: 'GetPermissions',
       auth: null,
       domain: 'test',
@@ -65,9 +68,12 @@ describe('Cloud auth sessions', () => {
       rootPasswordHash,
     });
 
-    const authDataSource = CloudAuth({ dataSource, providers: [rootProvider] });
+    const protectedSource = CloudAuth({
+      dataSource,
+      providers: [rootProvider],
+    });
 
-    const { session } = await authDataSource.dispatch({
+    const { session } = await protectedSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
       verificationInfo: {
@@ -77,7 +83,7 @@ describe('Cloud auth sessions', () => {
       verificationResponse: { password },
     });
 
-    const rootPermissions = await authDataSource.dispatch({
+    const rootPermissions = await protectedSource.dispatch({
       type: 'GetPermissions',
       auth: session,
       domain: 'test',
@@ -99,9 +105,12 @@ describe('Cloud auth sessions', () => {
       rootPasswordHash,
     });
 
-    const authDataSource = CloudAuth({ dataSource, providers: [rootProvider] });
+    const protectedSource = CloudAuth({
+      dataSource,
+      providers: [rootProvider],
+    });
 
-    const { session } = await authDataSource.dispatch({
+    const { session } = await protectedSource.dispatch({
       type: 'CreateSession',
       domain: 'test',
       verificationInfo: {
@@ -111,28 +120,28 @@ describe('Cloud auth sessions', () => {
       verificationResponse: { password },
     });
 
-    await authDataSource.dispatch({
+    await protectedSource.dispatch({
       type: 'DestroySession',
       auth: session,
       domain: 'test',
     });
 
     await expect(
-      authDataSource.dispatch({
+      protectedSource.dispatch({
         type: 'GetPermissions',
         auth: session,
         domain: 'test',
         name: null,
-      })
+      }),
     ).rejects.toThrow();
   });
 
   test('gets anon authentication', async () => {
     const dataSource = createMemoryStorageSource({ domain: 'test' });
 
-    const authDataSource = CloudAuth({ dataSource, providers: [] });
+    const protectedSource = CloudAuth({ dataSource, providers: [] });
 
-    const { session } = await authDataSource.dispatch({
+    const { session } = await protectedSource.dispatch({
       type: 'CreateAnonymousSession',
       domain: 'test',
     });

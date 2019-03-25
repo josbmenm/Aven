@@ -4,14 +4,14 @@ import { Title, Body, Page } from '../DocViews';
 function DocPage() {
   return (
     <Page>
-      <Title>API - createAuthDataSource</Title>
+      <Title>API - createProtectedSource</Title>
       <Body>Coming Soon.</Body>
     </Page>
   );
 }
 
 DocPage.navigationOptions = {
-  title: 'API - createAuthDataSource',
+  title: 'API - createProtectedSource',
 };
 DocPage.path = 'api-create-auth-data-source';
 

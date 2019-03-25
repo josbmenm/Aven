@@ -259,7 +259,7 @@ const DocsRouter = SwitchRouter({
     .default,
   'API-createEmailAuthProvider': require('./docs/API-createEmailAuthProvider')
     .default,
-  'API-createAuthDataSource': require('./docs/API-createAuthDataSource')
+  'API-createProtectedSource': require('./docs/API-createProtectedSource')
     .default,
   'API-createMemoryStorageSource': require('./docs/API-createMemoryStorageSource')
     .default,
@@ -381,7 +381,7 @@ function Sidebar() {
             title="API: createNativeNetworkSource"
             routeName="API-createNativeNetworkSource"
           />
-          <SidebarLink title="SPEC: Data Source" routeName="Spec-DataSource" />
+          <SidebarLink title="SPEC: Data Source" routeName="Spec-Source" />
         </SidebarSection>
         <SidebarSection title="Cloud Client">
           <SidebarLink
@@ -402,8 +402,8 @@ function Sidebar() {
           <SidebarLink title="Auth and Auth Methods" routeName="AuthIntro" />
           <SidebarLink title="Doc Permissions" routeName="DocPermissions" />
           <SidebarLink
-            title="API: createAuthDataSource"
-            routeName="API-createAuthDataSource"
+            title="API: createProtectedSource"
+            routeName="API-createProtectedSource"
           />
           <SidebarLink
             title="API: createEmailAuthProvider"
@@ -415,7 +415,7 @@ function Sidebar() {
           />
           <SidebarLink
             title="Spec: Auth Data Source"
-            routeName="Spec-AuthDataSource"
+            routeName="Spec-ProtectedSource"
           />
           <SidebarLink
             title="Spec: Auth Provider"

@@ -16,22 +16,23 @@ function DocPage() {
       <Title>Data and Network Sources</Title>
       <Body>
         A <Bold>data source</Bold> is an object that conforms to the{' '}
-        <Link routeName="Spec-DataSource">DataSource interface</Link>. It allows
-        you to save data to it, retrieve data, and watch for changes. It is
-        usually backed by some sort of database: Postgres, the file system, or
-        storage on the browser and React Native.
+        <Link routeName="Spec-Source">Source interface</Link>. It allows you to
+        save data to it, retrieve data, and watch for changes. It is usually
+        backed by some sort of database: Postgres, the file system, or storage
+        on the browser and React Native.
       </Body>
       <Body>
         A <Bold>network source</Bold> is another data source, proxied over a
         network interface. It has the same{' '}
-        <Link routeName="Spec-DataSource">DataSource interface</Link>, and it
-        also will correctly pass-through the behavior of a{' '}
-        <Link routeName="Spec-AuthDataSource">AuthDataSource interface</Link>.
+        <Link routeName="Spec-Source">DataSource interface</Link>, and it also
+        will correctly pass-through the behavior of a{' '}
+        <Link routeName="Spec-ProtectedSource">Protected Source interface</Link>
+        .
       </Body>
-      <Section title="Data Source Interface">
+      <Section title="Source Interface">
         <Body>
           The{' '}
-          <Link routeName="Spec-DataSource">
+          <Link routeName="Spec-Source">
             detailed interface is specified here
           </Link>
           , but a data source basically provides two features:

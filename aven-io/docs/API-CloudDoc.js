@@ -18,8 +18,8 @@ function DocPage() {
         Cloud docs are named client-side references to data. They support
         transactions and provide high-level functionality for observing and
         mutating data on the client, which will by syncronized to the upstream{' '}
-        <Link routeName="Spec-DataSource">data source</Link>. Each doc lives in
-        the domain specified by the cloud client.
+        <Link routeName="Spec-Source">data source</Link>. Each doc lives in the
+        domain specified by the cloud client.
       </Body>
       <Section title="Usage">
         <Body>
