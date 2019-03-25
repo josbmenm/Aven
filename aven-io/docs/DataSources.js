@@ -61,7 +61,7 @@ function DocPage() {
             - for testing and ephemeral storage
           </ListItem>
           <ListItem>
-            <Link routeName="API-startFSDataSource">FSDataSource</Link>-
+            <Link routeName="API-startFSStorageSource">FSDataSource</Link>-
             file-system storage for a single node.js process
           </ListItem>
           <ListItem>

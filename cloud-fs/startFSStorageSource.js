@@ -86,7 +86,7 @@ async function moveFSDoc(dataDir, prevName, newName) {
   await fs.move(sourcePath, destPath);
 }
 
-export default async function startFSDataSource(opts = {}) {
+export default async function startFSStorageSource(opts = {}) {
   const dataSourceDomain = opts.domain;
   let dataDir = opts.dataDir;
 
