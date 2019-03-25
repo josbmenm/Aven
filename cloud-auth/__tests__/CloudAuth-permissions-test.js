@@ -1,11 +1,11 @@
-import createMemoryDataSource from '../../cloud-core/createMemoryDataSource';
+import createMemoryStorageSource from '../../cloud-core/createMemoryStorageSource';
 import CloudAuth from '../CloudAuth';
 import RootAuthProvider from '../../cloud-auth-root/RootAuthProvider';
 
 import { hashSecureString } from '../../cloud-utils/Crypto';
 
 async function establishPermissionsTestData() {
-  const dataSource = createMemoryDataSource({ domain: 'test' });
+  const dataSource = createMemoryStorageSource({ domain: 'test' });
 
   const password = 'secret, foo';
   const rootPasswordHash = await hashSecureString(password);
@@ -63,7 +63,7 @@ async function establishPermissionsTestData() {
 
 describe('Cloud auth Permissions', () => {
   test('permissions are roughly respected', async () => {
-    const dataSource = createMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryStorageSource({ domain: 'test' });
 
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);

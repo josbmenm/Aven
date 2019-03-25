@@ -1,4 +1,4 @@
-import createMemoryDataSource from '../createMemoryDataSource';
+import createMemoryStorageSource from '../createMemoryStorageSource';
 import createCloudBlock from '../createCloudBlock';
 
 describe('object generic behavior', () => {
@@ -34,7 +34,7 @@ describe('object generic behavior', () => {
 
 describe('basic object DataSource interaction', () => {
   test('fetches blocks', async () => {
-    const m = createMemoryDataSource({ domain: 'test' });
+    const m = createMemoryStorageSource({ domain: 'test' });
     const { id } = await m.dispatch({
       type: 'PutDocValue',
       domain: 'test',
@@ -54,7 +54,7 @@ describe('basic object DataSource interaction', () => {
     expect(c.getValue().foo).toEqual('bar');
   });
   test('fetches null objects', async () => {
-    const m = createMemoryDataSource({ domain: 'test' });
+    const m = createMemoryStorageSource({ domain: 'test' });
     const { id } = await m.dispatch({
       type: 'PutDocValue',
       domain: 'test',
@@ -77,7 +77,7 @@ describe('basic object DataSource interaction', () => {
 
 describe('observing', () => {
   test('observe obj', async () => {
-    const m = createMemoryDataSource({ domain: 'test' });
+    const m = createMemoryStorageSource({ domain: 'test' });
     const obj1 = await m.dispatch({
       type: 'PutDocValue',
       domain: 'test',
@@ -102,7 +102,7 @@ describe('observing', () => {
     expect(lastObserved.value.foo).toEqual('bar');
   });
   test('observe value', async () => {
-    const m = createMemoryDataSource({ domain: 'test' });
+    const m = createMemoryStorageSource({ domain: 'test' });
     const obj1 = await m.dispatch({
       type: 'PutDocValue',
       domain: 'test',

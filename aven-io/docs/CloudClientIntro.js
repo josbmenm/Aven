@@ -14,10 +14,10 @@ function DocPage() {
       <Body>It requires a data source or a network source upon creation:</Body>
       <Snippet
         code={`
-import createMemoryDataSource from "@aven-cloud/cloud/createMemoryDataSource";
+import createMemoryStorageSource from "@aven-cloud/cloud/createMemoryStorageSource";
 import createCloudClient from "@aven-cloud/cloud/createCloudClient";
 
-const dataSource = createMemoryDataSource({
+const dataSource = createMemoryStorageSource({
   domain: 'mydomain',
 });
 

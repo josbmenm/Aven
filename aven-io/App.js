@@ -261,7 +261,7 @@ const DocsRouter = SwitchRouter({
     .default,
   'API-createAuthDataSource': require('./docs/API-createAuthDataSource')
     .default,
-  'API-createMemoryDataSource': require('./docs/API-createMemoryDataSource')
+  'API-createMemoryStorageSource': require('./docs/API-createMemoryStorageSource')
     .default,
   'API-startFSDataSource': require('./docs/API-startFSDataSource').default,
   'API-startPostgresDataSource': require('./docs/API-startPostgresDataSource')
@@ -357,8 +357,8 @@ function Sidebar() {
         <SidebarSection title="Data & Network Sources">
           <SidebarLink title="Intro to Data Sources" routeName="DataSources" />
           <SidebarLink
-            title="API: createMemoryDataSource"
-            routeName="API-createMemoryDataSource"
+            title="API: createMemoryStorageSource"
+            routeName="API-createMemoryStorageSource"
           />
           <SidebarLink
             title="API: startFSDataSource"

@@ -1,4 +1,4 @@
-import createMemoryDataSource from '../../cloud-core/createMemoryDataSource';
+import createMemoryStorageSource from '../../cloud-core/createMemoryStorageSource';
 import CloudAuth from '../CloudAuth';
 import RootAuthProvider from '../../cloud-auth-root/RootAuthProvider';
 
@@ -6,7 +6,7 @@ import { hashSecureString } from '../../cloud-utils/Crypto';
 
 describe('Cloud auth sessions', () => {
   test('gets root authentication', async () => {
-    const dataSource = createMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryStorageSource({ domain: 'test' });
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
     const rootProvider = RootAuthProvider({
@@ -39,7 +39,7 @@ describe('Cloud auth sessions', () => {
   });
 
   test('no authentication gets empty permissions at root', async () => {
-    const dataSource = createMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryStorageSource({ domain: 'test' });
 
     const authDataSource = CloudAuth({ dataSource, providers: [] });
 
@@ -57,7 +57,7 @@ describe('Cloud auth sessions', () => {
   });
 
   test('root authentication gets full permissions of domain', async () => {
-    const dataSource = createMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryStorageSource({ domain: 'test' });
 
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
@@ -91,7 +91,7 @@ describe('Cloud auth sessions', () => {
   });
 
   test('log out via destroy session', async () => {
-    const dataSource = createMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryStorageSource({ domain: 'test' });
 
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
@@ -128,7 +128,7 @@ describe('Cloud auth sessions', () => {
   });
 
   test('gets anon authentication', async () => {
-    const dataSource = createMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryStorageSource({ domain: 'test' });
 
     const authDataSource = CloudAuth({ dataSource, providers: [] });
 

@@ -1,4 +1,4 @@
-import createMemoryDataSource from '../../cloud-core/createMemoryDataSource';
+import createMemoryStorageSource from '../../cloud-core/createMemoryStorageSource';
 import dataSourceTests from '../../cloud-core/__tests__/dataSourceTests';
 import createNodeNetworkSource from '../createNodeNetworkSource';
 import startSourceServer from '../startSourceServer';
@@ -10,7 +10,7 @@ let portOffset = 0;
 jest.setTimeout(10000);
 
 async function startTestDataSource(options = {}) {
-  const ds = createMemoryDataSource({ domain: 'test', ...options });
+  const ds = createMemoryStorageSource({ domain: 'test', ...options });
   portOffset += 1;
   let port = 9900 + portOffset;
   const server = await startSourceServer({

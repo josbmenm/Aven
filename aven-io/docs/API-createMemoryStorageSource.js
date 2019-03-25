@@ -4,16 +4,16 @@ import { Title, Body, Page, Link, Snippet } from '../DocViews';
 function DocPage() {
   return (
     <Page>
-      <Title>API - createMemoryDataSource</Title>
+      <Title>API - createMemoryStorageSource</Title>
       <Body>
         A memory data source is created on a per-domain basis. It will only save
         data for the single domain:
       </Body>
       <Snippet
         code={`
-import createMemoryDataSource from "@aven-cloud/cloud/createMemoryDataSource";
+import createMemoryStorageSource from "@aven-cloud/cloud/createMemoryStorageSource";
 
-const dataSource = createMemoryDataSource({
+const dataSource = createMemoryStorageSource({
   domain: 'mydomain',
 });`}
       />
@@ -30,7 +30,7 @@ const dataSource = createMemoryDataSource({
 }
 
 DocPage.navigationOptions = {
-  title: 'API - createMemoryDataSource',
+  title: 'API - createMemoryStorageSource',
 };
 DocPage.path = 'api-create-memory-data-source';
 

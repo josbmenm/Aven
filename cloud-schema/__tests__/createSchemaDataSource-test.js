@@ -1,9 +1,9 @@
 import createSchemaDataSource from '../createSchemaDataSource';
-import createMemoryDataSource from '../../cloud-core/createMemoryDataSource';
+import createMemoryStorageSource from '../../cloud-core/createMemoryStorageSource';
 
 describe('schema validation on memory data source', () => {
   test.skip('basic validation', async () => {
-    const dataSource = createMemoryDataSource({
+    const dataSource = createMemoryStorageSource({
       domain: 'test',
     });
     const schemaDs = createSchemaDataSource({ dataSource });

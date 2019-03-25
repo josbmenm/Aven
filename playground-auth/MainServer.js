@@ -5,7 +5,7 @@ import CloudAuth from '../cloud-auth/CloudAuth';
 import { hashSecureString } from '../cloud-utils/Crypto';
 import CloudContext from '../cloud-core/CloudContext';
 import createCloudClient from '../cloud-core/createCloudClient';
-import createMemoryDataSource from '../cloud-core/createMemoryDataSource';
+import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
 import WebServer from '../aven-web/WebServer';
@@ -17,7 +17,7 @@ const getEnv = c => process.env[c];
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');
 
-  const dataSource = await createMemoryDataSource({
+  const dataSource = await createMemoryStorageSource({
     domain: 'example.aven.cloud',
   });
   const client = createCloudClient({

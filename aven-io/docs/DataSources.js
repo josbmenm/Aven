@@ -55,7 +55,9 @@ function DocPage() {
         </Body>
         <List>
           <ListItem>
-            <Link routeName="API-createMemoryDataSource">MemoryDataSource</Link>
+            <Link routeName="API-createMemoryStorageSource">
+              MemoryDataSource
+            </Link>
             - for testing and ephemeral storage
           </ListItem>
           <ListItem>

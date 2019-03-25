@@ -1,10 +1,10 @@
-import createMemoryDataSource from '../../cloud-core/createMemoryDataSource';
+import createMemoryStorageSource from '../../cloud-core/createMemoryStorageSource';
 import CloudAuth from '../../cloud-auth/CloudAuth';
 import createMessageAuthProvider from '../createMessageAuthProvider';
 
 describe('Auth messaging behavior', () => {
   test('Auth message flow', async () => {
-    const dataSource = createMemoryDataSource({
+    const dataSource = createMemoryStorageSource({
       domain: 'test',
     });
 
@@ -58,7 +58,7 @@ describe('Auth messaging behavior', () => {
   });
 
   test('anon account can add auth provider', async () => {
-    const dataSource = createMemoryDataSource({ domain: 'test' });
+    const dataSource = createMemoryStorageSource({ domain: 'test' });
 
     const authProviderName = 'example-provider';
 

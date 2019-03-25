@@ -1,6 +1,6 @@
 import CloudContext from '../cloud-core/CloudContext';
 import createCloudClient from '../cloud-core/createCloudClient';
-import createMemoryDataSource from '../cloud-core/createMemoryDataSource';
+import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
 import WebServer from '../aven-web/WebServer';
 
 import App from './App';
@@ -8,7 +8,7 @@ import App from './App';
 const runServer = async () => {
   console.log('☁️ Starting Runway 🛫');
 
-  const dataSource = await createMemoryDataSource({
+  const dataSource = await createMemoryStorageSource({
     domain: 'runway.aven.cloud',
   });
   const client = createCloudClient({

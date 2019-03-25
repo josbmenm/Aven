@@ -1,7 +1,7 @@
 import CloudContext from '../cloud-core/CloudContext';
 import createCloudClient from '../cloud-core/createCloudClient';
 import CloudAuth from '../cloud-auth/CloudAuth';
-import createMemoryDataSource from '../cloud-core/createMemoryDataSource';
+import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
 import WebServer from '../aven-web/WebServer';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
@@ -15,7 +15,7 @@ import App from './App';
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');
 
-  const dataSource = await createMemoryDataSource({
+  const dataSource = await createMemoryStorageSource({
     domain: 'todo.aven.cloud',
   });
 
