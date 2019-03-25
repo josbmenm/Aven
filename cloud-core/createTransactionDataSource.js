@@ -1,9 +1,9 @@
-export default function createTransactionDataSource(dataSource) {
+export default function createTransactionDataSource(source) {
   async function TransactDoc({ domain, name, value }) {
     if (typeof value !== 'object' || value.type !== 'TransactionValue') {
       throw new Error('');
     }
-    return await dataSource.dispatch({
+    return await source.dispatch({
       type: 'PutDocValue',
       name: name,
       domain: domain,
@@ -19,12 +19,12 @@ export default function createTransactionDataSource(dataSource) {
     if (action.type === 'TransactDoc') {
       return await TransactDoc(action);
     }
-    const result = await dataSource.dispatch(action);
+    const result = await source.dispatch(action);
     return result;
   }
 
   return {
-    ...dataSource,
+    ...source,
     dispatch,
   };
 }

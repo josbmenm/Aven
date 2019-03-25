@@ -6,7 +6,7 @@ import { hashSecureString } from '../../cloud-utils/Crypto';
 
 describe('Cloud auth sessions', () => {
   test('gets root authentication', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
     const rootProvider = RootAuthProvider({
@@ -14,7 +14,7 @@ describe('Cloud auth sessions', () => {
     });
 
     const protectedSource = CloudAuth({
-      dataSource,
+      source,
       providers: [rootProvider],
     });
 
@@ -42,9 +42,9 @@ describe('Cloud auth sessions', () => {
   });
 
   test('no authentication gets empty permissions at root', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
 
-    const protectedSource = CloudAuth({ dataSource, providers: [] });
+    const protectedSource = CloudAuth({ source, providers: [] });
 
     const noAuthRootPermissions = await protectedSource.dispatch({
       type: 'GetPermissions',
@@ -60,7 +60,7 @@ describe('Cloud auth sessions', () => {
   });
 
   test('root authentication gets full permissions of domain', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
 
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
@@ -69,7 +69,7 @@ describe('Cloud auth sessions', () => {
     });
 
     const protectedSource = CloudAuth({
-      dataSource,
+      source,
       providers: [rootProvider],
     });
 
@@ -97,7 +97,7 @@ describe('Cloud auth sessions', () => {
   });
 
   test('log out via destroy session', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
 
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
@@ -106,7 +106,7 @@ describe('Cloud auth sessions', () => {
     });
 
     const protectedSource = CloudAuth({
-      dataSource,
+      source,
       providers: [rootProvider],
     });
 
@@ -137,9 +137,9 @@ describe('Cloud auth sessions', () => {
   });
 
   test('gets anon authentication', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
 
-    const protectedSource = CloudAuth({ dataSource, providers: [] });
+    const protectedSource = CloudAuth({ source, providers: [] });
 
     const { session } = await protectedSource.dispatch({
       type: 'CreateAnonymousSession',

@@ -15,7 +15,7 @@ import App from './App';
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');
 
-  const dataSource = await createMemoryStorageSource({
+  const source = await createMemoryStorageSource({
     domain: 'todo.aven.cloud',
   });
 
@@ -50,7 +50,7 @@ const runServer = async () => {
     rootPasswordHash: await hashSecureString('pw'),
   });
   const authSource = CloudAuth({
-    dataSource,
+    source,
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
@@ -85,7 +85,7 @@ const runServer = async () => {
   const webService = await WebServer({
     App,
     context,
-    dataSource: authSource,
+    source: authSource,
     serverListenLocation,
   });
   console.log('☁️️ Web Ready 🕸');
@@ -93,7 +93,7 @@ const runServer = async () => {
   return {
     close: async () => {
       await webService.close();
-      await dataSource.close();
+      await source.close();
     },
   };
 };

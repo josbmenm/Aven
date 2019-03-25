@@ -10,8 +10,8 @@ function thanksVeryMuch(dispatch) {
     return resp;
   };
 }
-async function writeDocValue(dataSource, domain, name, value) {
-  await thanksVeryMuch(dataSource.dispatch)({
+async function writeDocValue(source, domain, name, value) {
+  await thanksVeryMuch(source.dispatch)({
     type: 'PutDocValue',
     domain,
     value,
@@ -19,8 +19,8 @@ async function writeDocValue(dataSource, domain, name, value) {
   });
 }
 
-async function getDocValue(dataSource, domain, name) {
-  const r = await thanksVeryMuch(dataSource.dispatch)({
+async function getDocValue(source, domain, name) {
+  const r = await thanksVeryMuch(source.dispatch)({
     domain,
     type: 'GetDoc',
     name,
@@ -29,7 +29,7 @@ async function getDocValue(dataSource, domain, name) {
     return null;
   }
 
-  const o = await thanksVeryMuch(dataSource.dispatch)({
+  const o = await thanksVeryMuch(source.dispatch)({
     type: 'GetBlock',
     name,
     domain,
@@ -41,7 +41,7 @@ async function getDocValue(dataSource, domain, name) {
   return o.value;
 }
 
-export default function CloudAuth({ dataSource, providers }) {
+export default function CloudAuth({ source, providers }) {
   async function VerifyAuth({ auth, domain }) {
     if (!auth) {
       return {};
@@ -82,9 +82,9 @@ export default function CloudAuth({ dataSource, providers }) {
     const { accountId, sessionId, token } = auth;
 
     const savedSession = await getDocValue(
-      dataSource,
+      source,
       domain,
-      `auth/account/${accountId}/session/${sessionId}`
+      `auth/account/${accountId}/session/${sessionId}`,
     );
 
     if (!savedSession || savedSession.token !== token) {
@@ -101,16 +101,16 @@ export default function CloudAuth({ dataSource, providers }) {
   }) {
     const providerAccountLookupName = `auth/provider/${providerId}`;
     const accountLookup = await getDocValue(
-      dataSource,
+      source,
       domain,
-      providerAccountLookupName
+      providerAccountLookupName,
     );
     if (accountLookup) {
       if (accountId && accountId !== accountLookup.accountId) {
         throw new Err(
           'Provided auth identity is already in use by another account.',
           'IdentityTaken',
-          {}
+          {},
         );
       }
       return accountLookup.accountId;
@@ -119,7 +119,7 @@ export default function CloudAuth({ dataSource, providers }) {
     if (!newAuthProviderAccountId) {
       newAuthProviderAccountId = await CreateAnonymousAccount({ domain });
     }
-    await writeDocValue(dataSource, domain, providerAccountLookupName, {
+    await writeDocValue(source, domain, providerAccountLookupName, {
       accountId: newAuthProviderAccountId,
       creationTime: Date.now(),
     });
@@ -140,7 +140,7 @@ export default function CloudAuth({ dataSource, providers }) {
       providersToValidate = providersToValidate.slice(1);
       if (providerToValidate.canVerify(verificationInfo, accountId)) {
         const providerId = await providerToValidate.getProviderId(
-          verificationInfo
+          verificationInfo,
         );
 
         const authenticatingAccountId = await GetAccountIdForAuthProvider({
@@ -152,20 +152,20 @@ export default function CloudAuth({ dataSource, providers }) {
         const providerStateDocName = `auth/account/${authenticatingAccountId}/provider/${providerId}`;
 
         const providerState = await getDocValue(
-          dataSource,
+          source,
           domain,
-          providerStateDocName
+          providerStateDocName,
         );
 
         const requestedVerification = await providerToValidate.requestVerification(
-          { verificationInfo, providerState }
+          { verificationInfo, providerState },
         );
 
         await writeDocValue(
-          dataSource,
+          source,
           domain,
           providerStateDocName,
-          requestedVerification
+          requestedVerification,
         );
         return {
           verificationChallenge: requestedVerification.verificationChallenge,
@@ -233,7 +233,7 @@ export default function CloudAuth({ dataSource, providers }) {
         continue;
       }
       const providerId = await providerToValidate.getProviderId(
-        verificationInfo
+        verificationInfo,
       );
 
       authenticatingAccountId = await GetAccountIdForAuthProvider({
@@ -244,9 +244,9 @@ export default function CloudAuth({ dataSource, providers }) {
 
       const providerStateDocName = `auth/account/${authenticatingAccountId}/provider/${providerId}`;
       const providerState = await getDocValue(
-        dataSource,
+        source,
         domain,
-        providerStateDocName
+        providerStateDocName,
       );
 
       let nextproviderState = providerState;
@@ -263,10 +263,10 @@ export default function CloudAuth({ dataSource, providers }) {
 
       if (nextproviderState !== providerState) {
         await writeDocValue(
-          dataSource,
+          source,
           domain,
           providerStateDocName,
-          nextproviderState
+          nextproviderState,
         );
       }
     }
@@ -313,10 +313,10 @@ export default function CloudAuth({ dataSource, providers }) {
       provider: verification.verifiedProviderName,
     };
     await writeDocValue(
-      dataSource,
+      source,
       domain,
       `auth/account/${verification.accountId}/session/${sessionId}`,
-      session
+      session,
     );
     return {
       session,
@@ -328,12 +328,7 @@ export default function CloudAuth({ dataSource, providers }) {
     const account = {
       timeCreated: Date.now(),
     };
-    await writeDocValue(
-      dataSource,
-      domain,
-      `auth/account/${accountId}`,
-      account
-    );
+    await writeDocValue(source, domain, `auth/account/${accountId}`, account);
     return accountId;
   }
 
@@ -351,10 +346,10 @@ export default function CloudAuth({ dataSource, providers }) {
     };
 
     await writeDocValue(
-      dataSource,
+      source,
       domain,
       `auth/account/${accountId}/session/${sessionId}`,
-      session
+      session,
     );
 
     return { session };
@@ -409,8 +404,8 @@ export default function CloudAuth({ dataSource, providers }) {
       pathApartName(name)
         .map(nameToAuthDocName)
         .map(async docName => {
-          return await getDocValue(dataSource, domain, docName);
-        })
+          return await getDocValue(source, domain, docName);
+        }),
     );
 
     let owner = null;
@@ -472,7 +467,7 @@ export default function CloudAuth({ dataSource, providers }) {
       throw new Err('Invalid authentication!', 'InvalidAuth');
     }
 
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'MoveDoc',
       from: `auth/account/${validated.accountId}`,
       to: `auth/account/${name}`,
@@ -487,7 +482,7 @@ export default function CloudAuth({ dataSource, providers }) {
       return false;
     }
 
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'DestroyDoc',
       domain,
       name: `auth/account/${auth.accountId}/session/${auth.sessionId}`,
@@ -501,7 +496,7 @@ export default function CloudAuth({ dataSource, providers }) {
       return false;
     }
 
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'DestroyDoc',
       domain,
       name: `auth/account/${auth.accountId}/session`,
@@ -515,7 +510,7 @@ export default function CloudAuth({ dataSource, providers }) {
       return false;
     }
 
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'DestroyDoc',
       domain,
       name: `auth/account/${auth.accountId}`,
@@ -531,7 +526,7 @@ export default function CloudAuth({ dataSource, providers }) {
   }) {
     const authDocName = name ? `${name}/_auth` : '_auth';
 
-    const lastPermissions = await getDocValue(dataSource, domain, authDocName);
+    const lastPermissions = await getDocValue(source, domain, authDocName);
     const lastDefaultRule =
       (lastPermissions && lastPermissions.defaultRule) || Rules.empty;
     const lastAccountRules =
@@ -547,12 +542,12 @@ export default function CloudAuth({ dataSource, providers }) {
       lastWriteTime: Date.now(),
     };
 
-    await writeDocValue(dataSource, domain, authDocName, permissions);
+    await writeDocValue(source, domain, authDocName, permissions);
   }
 
   async function GetPermissionRules({ domain, name }) {
     const authDocName = `${name}/_auth`;
-    const lastPermissions = await getDocValue(dataSource, domain, authDocName);
+    const lastPermissions = await getDocValue(source, domain, authDocName);
     return lastPermissions;
   }
 
@@ -588,13 +583,13 @@ export default function CloudAuth({ dataSource, providers }) {
           `Insufficient permissions for "${actionType}" on ${
             action.name
           }. Requires "${permissionLevel}"`,
-          'InsufficientPermissions'
+          'InsufficientPermissions',
         );
       }
       const result = await dispatch(action);
       if (action.type === 'PostDoc' && result) {
         const authDocName = `${result.name}/_auth`;
-        await writeDocValue(dataSource, action.domain, authDocName, {
+        await writeDocValue(source, action.domain, authDocName, {
           owner: action.auth.accountId,
         });
       }
@@ -603,16 +598,16 @@ export default function CloudAuth({ dataSource, providers }) {
   }
 
   readActions.forEach(aName => {
-    guardedActions[aName] = guardAction(dataSource.dispatch, aName, 'canRead');
+    guardedActions[aName] = guardAction(source.dispatch, aName, 'canRead');
   });
   postActions.forEach(aName => {
-    guardedActions[aName] = guardAction(dataSource.dispatch, aName, 'canPost');
+    guardedActions[aName] = guardAction(source.dispatch, aName, 'canPost');
   });
   writeActions.forEach(aName => {
-    guardedActions[aName] = guardAction(dataSource.dispatch, aName, 'canWrite');
+    guardedActions[aName] = guardAction(source.dispatch, aName, 'canWrite');
   });
   adminActions.forEach(aName => {
-    guardedActions[aName] = guardAction(dataSource.dispatch, aName, 'canAdmin');
+    guardedActions[aName] = guardAction(source.dispatch, aName, 'canAdmin');
   });
 
   const actions = {
@@ -620,12 +615,12 @@ export default function CloudAuth({ dataSource, providers }) {
     PutPermissionRules: guardAction(
       PutPermissionRules,
       'PutPermissionRules',
-      'canAdmin'
+      'canAdmin',
     ),
     GetPermissionRules: guardAction(
       GetPermissionRules,
       'GetPermissionRules',
-      'canAdmin'
+      'canAdmin',
     ),
     CreateSession,
     CreateAnonymousSession,
@@ -639,16 +634,16 @@ export default function CloudAuth({ dataSource, providers }) {
     GetPermissions,
   };
 
-  const dispatch = createDispatcher(actions, dataSource.dispatch);
+  const dispatch = createDispatcher(actions, source.dispatch);
   async function observeDoc(domain, name, auth) {
     const permissions = await GetPermissions({ name, auth, domain });
     if (!permissions.canRead) {
       throw new Err('Not authorized to subscribe here');
     }
-    return await dataSource.observeDoc(domain, name);
+    return await source.observeDoc(domain, name);
   }
   return {
-    ...dataSource,
+    ...source,
     observeDoc,
     dispatch,
     close: () => {},

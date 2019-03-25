@@ -736,7 +736,7 @@ function Folder({ value, path, doc, pathContext }) {
       }
       return doc.getBlock(file.id);
     },
-    [file]
+    [file],
   );
   const objValue = useObservable(obj && obj.observeValue);
 
@@ -1264,7 +1264,7 @@ const DocPaneNavigator = createNavigator(
   }),
   {
     explicitParams: true,
-  }
+  },
 );
 
 function DocPane({ navigation }) {
@@ -1297,7 +1297,7 @@ const MainPaneNavigator = createNavigator(
   }),
   {
     explicitParams: true,
-  }
+  },
 );
 
 function MainPane({ onClientConfig, onSession, navigation }) {
@@ -1343,12 +1343,12 @@ function ErrorPage({ error, errorInfo, onRetry }) {
 function AdminApp({ defaultSession = {}, descriptors }) {
   let [sessionState, setSessionState] = useAsyncStorage(
     'AvenSessionState',
-    null
+    null,
   );
 
   let [clientConfig, setClientConfig] = useAsyncStorage(
     'AvenClientConfig',
-    null
+    null,
   );
 
   let client = useMemo(
@@ -1361,19 +1361,19 @@ function AdminApp({ defaultSession = {}, descriptors }) {
         return null;
       }
       const { authority, useSSL, domain } = clientConfig;
-      const dataSource = createBrowserNetworkSource({
+      const source = createBrowserNetworkSource({
         authority,
         useSSL,
       });
       const client = createCloudClient({
         initialSession: sessionState,
-        dataSource,
+        source,
         domain,
       });
 
       return client;
     },
-    [clientConfig, isStateUnloaded(sessionState)]
+    [clientConfig, isStateUnloaded(sessionState)],
   );
 
   const activeRoute = useActiveRoute();
@@ -1397,7 +1397,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
         navigate('Login');
       }
     },
-    [activeRoute, sessionState, clientConfig, client]
+    [activeRoute, sessionState, clientConfig, client],
   );
 
   const activeDescriptor = descriptors[activeRoute.key];
@@ -1475,7 +1475,7 @@ const router = SwitchRouter(
   },
   {
     explicitParams: true,
-  }
+  },
 );
 
 export default createNavigator(AdminApp, router, {});

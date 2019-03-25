@@ -5,7 +5,7 @@ import RootAuthProvider from '../../cloud-auth-root/RootAuthProvider';
 import { hashSecureString } from '../../cloud-utils/Crypto';
 
 async function establishPermissionsTestData() {
-  const dataSource = createMemoryStorageSource({ domain: 'test' });
+  const source = createMemoryStorageSource({ domain: 'test' });
 
   const password = 'secret, foo';
   const rootPasswordHash = await hashSecureString(password);
@@ -13,7 +13,7 @@ async function establishPermissionsTestData() {
     rootPasswordHash,
   });
 
-  const protectedSource = CloudAuth({ dataSource, providers: [rootProvider] });
+  const protectedSource = CloudAuth({ source, providers: [rootProvider] });
 
   const anonSessionCreated = await protectedSource.dispatch({
     type: 'CreateAnonymousSession',
@@ -63,7 +63,7 @@ async function establishPermissionsTestData() {
 
 describe('Cloud auth Permissions', () => {
   test('permissions are roughly respected', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
 
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
@@ -72,7 +72,7 @@ describe('Cloud auth Permissions', () => {
     });
 
     const protectedSource = CloudAuth({
-      dataSource,
+      source,
       providers: [rootProvider],
     });
 

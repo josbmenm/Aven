@@ -17,12 +17,12 @@ function DocPage() {
 import createMemoryStorageSource from "@aven-cloud/cloud/createMemoryStorageSource";
 import createCloudClient from "@aven-cloud/cloud/createCloudClient";
 
-const dataSource = createMemoryStorageSource({
+const source = createMemoryStorageSource({
   domain: 'mydomain',
 });
 
 const client = createCloudClient({
-  dataSource,
+  source,
   domain: 'mydomain',
 });
 `}

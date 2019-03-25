@@ -9,7 +9,7 @@ import { createDocPool } from './createCloudDoc';
 export const withObservables = withObs;
 
 export default function createCloudClient({
-  dataSource,
+  source,
   domain,
   initialSession = null,
   onSession,
@@ -23,7 +23,7 @@ export default function createCloudClient({
   const session = new BehaviorSubject(initialSession || null);
 
   async function sessionDispatch(action) {
-    return await dataSource.dispatch({
+    return await source.dispatch({
       ...action,
       domain,
       auth: session.value,
@@ -31,11 +31,11 @@ export default function createCloudClient({
   }
 
   async function sessionObserveDoc(domain, name) {
-    return await dataSource.observeDoc(domain, name, session.value);
+    return await source.observeDoc(domain, name, session.value);
   }
 
-  const dataSourceWithSession = {
-    ...dataSource,
+  const sourceWithSession = {
+    ...source,
     observeDoc: sessionObserveDoc,
     dispatch: sessionDispatch,
   };
@@ -52,7 +52,7 @@ export default function createCloudClient({
     if (session.value) {
       throw new Error('session already is set!');
     }
-    const created = await dataSource.dispatch({
+    const created = await source.dispatch({
       type: 'CreateSession',
       domain,
       accountId,
@@ -70,7 +70,7 @@ export default function createCloudClient({
     if (session.value) {
       throw new Error('session already is set!');
     }
-    const created = await dataSource.dispatch({
+    const created = await source.dispatch({
       type: 'CreateAnonymousSession',
       domain,
     });
@@ -87,7 +87,7 @@ export default function createCloudClient({
     }
     session.next(null);
     onSession && onSession(null);
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'DestroySession',
       domain,
       auth: session.value,
@@ -96,7 +96,7 @@ export default function createCloudClient({
 
   async function GetBlock({ domain: actionDomain, name, id }) {
     const defaultAction = () =>
-      dataSource.dispatch({
+      source.dispatch({
         type: 'GetBlock',
         domain: actionDomain,
         name,
@@ -112,7 +112,7 @@ export default function createCloudClient({
 
   async function GetDoc({ domain: actionDomain, name }) {
     const defaultAction = () =>
-      dataSource.dispatch({
+      source.dispatch({
         type: 'GetDoc',
         actionDomain,
         name,
@@ -126,7 +126,7 @@ export default function createCloudClient({
   }
   async function GetDocValue({ domain: actionDomain, name }) {
     const defaultAction = () =>
-      dataSource.dispatch({
+      source.dispatch({
         type: 'GetDocValue',
         domain: actionDomain,
         name,
@@ -173,7 +173,7 @@ export default function createCloudClient({
   }
 
   const cloudClient = {
-    ...dataSource,
+    ...source,
     getLambda,
     setLambda,
     observeSession: session,
@@ -189,7 +189,7 @@ export default function createCloudClient({
   const docs = createDocPool({
     parentName: new BehaviorSubject(null),
     blockValueCache: _blockValues,
-    dataSource: dataSourceWithSession,
+    source: sourceWithSession,
     domain,
     cloudClient,
     onGetSelf: () => cloudClient,

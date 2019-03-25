@@ -3,11 +3,11 @@ import createMemoryStorageSource from '../../cloud-core/createMemoryStorageSourc
 
 describe('schema validation on memory data source', () => {
   test.skip('basic validation', async () => {
-    const dataSource = createMemoryStorageSource({
+    const source = createMemoryStorageSource({
       domain: 'test',
     });
-    const schemaDs = createSchemaDataSource({ dataSource });
-    await dataSource.dispatch({
+    const schemaDs = createSchemaDataSource({ source });
+    await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo/_schema',
@@ -38,7 +38,7 @@ describe('schema validation on memory data source', () => {
         domain: 'test',
         name: 'foo',
         value: { invalid: 'person' },
-      })
+      }),
     ).rejects.toThrow();
 
     await schemaDs.dispatch({

@@ -103,7 +103,7 @@ window.addEventListener('error', function(evt) {
 
 export default async function WebServer({
   App,
-  dataSource,
+  source,
   context,
   serverListenLocation,
   expressRouting = undefined,
@@ -115,7 +115,7 @@ export default async function WebServer({
       res.header('Access-Control-Allow-Origin', '*');
       res.header(
         'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept'
+        'Origin, X-Requested-With, Content-Type, Accept',
       );
       next();
     });
@@ -155,7 +155,7 @@ export default async function WebServer({
         domain,
         docName,
         refPath,
-        dispatch: dataSource.dispatch,
+        dispatch: source.dispatch,
       })
         .then(responder => {
           responder(res);
@@ -218,12 +218,12 @@ export default async function WebServer({
           <div id="root">${html}</div>
           ${options.customHTML || ''}
       </body>
-  </html>`
+  </html>`,
       );
     });
   }
   return await startSourceServer({
-    dataSource,
+    source,
     listenLocation: serverListenLocation,
     expressRouting: doExpressRouting,
     fallbackExpressRouting: doFallbackExpressRouting,

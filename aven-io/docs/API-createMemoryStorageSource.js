@@ -6,14 +6,14 @@ function DocPage() {
     <Page>
       <Title>API - createMemoryStorageSource</Title>
       <Body>
-        A memory data source is created on a per-domain basis. It will only save
-        data for the single domain:
+        A memory storage source is created on a per-domain basis. It will only
+        save data for the single domain:
       </Body>
       <Snippet
         code={`
 import createMemoryStorageSource from "@aven-cloud/cloud/createMemoryStorageSource";
 
-const dataSource = createMemoryStorageSource({
+const source = createMemoryStorageSource({
   domain: 'mydomain',
 });`}
       />
@@ -22,8 +22,8 @@ const dataSource = createMemoryStorageSource({
         testing or ephemeral data.
       </Body>
       <Body>
-        The memory data source conforms to{' '}
-        <Link routeName="Spec-Source">the data source API</Link>.
+        The memory storage source conforms to{' '}
+        <Link routeName="Spec-Source">the source API</Link>.
       </Body>
     </Page>
   );

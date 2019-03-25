@@ -6,7 +6,7 @@ describe('object generic behavior', () => {
     const obj = createCloudBlock({
       domain: 'test',
       onGetName: () => 'foo',
-      dataSource: {},
+      source: {},
       id: 'asdf1234',
       dispatch: () => {},
     });
@@ -18,7 +18,7 @@ describe('object generic behavior', () => {
         domain: 'test',
         onGetName: () => 'foo',
         dispatch: () => {},
-      })
+      }),
     ).toThrow();
   });
   test('handles creation with value', () => {

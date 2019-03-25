@@ -3,11 +3,11 @@ import createGenericDataSource from './createGenericDataSource';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 
 export default function createMemoryStorageSource(opts = {}) {
-  const dataSourceDomain = opts.domain;
+  const primaryDomain = opts.domain;
 
-  if (!dataSourceDomain) {
+  if (!primaryDomain) {
     throw new Error(
-      'Cannot start a memory data source without specifying a domain'
+      'Cannot start a memory storage source without specifying a domain',
     );
   }
 
@@ -55,7 +55,7 @@ export default function createMemoryStorageSource(opts = {}) {
   return createGenericDataSource({
     id: opts.id,
 
-    domain: dataSourceDomain,
+    domain: primaryDomain,
     docState,
 
     getBlock,

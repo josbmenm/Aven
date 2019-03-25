@@ -11,7 +11,7 @@ const networkSource = createBrowserNetworkSource({
 });
 
 const cloud = createCloudClient({
-  dataSource: networkSource,
+  source: networkSource,
   domain: 'runway.aven.cloud',
 });
 

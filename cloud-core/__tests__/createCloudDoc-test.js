@@ -7,50 +7,50 @@ function getNull() {
 }
 describe('doc generic behavior', () => {
   test('handles creation', () => {
-    const dataSource = createMemoryStorageSource({ domain: 'foo' });
-    const doc = createCloudDoc({ dataSource, domain: 'foo', name: 'bar' });
+    const source = createMemoryStorageSource({ domain: 'foo' });
+    const doc = createCloudDoc({ source, domain: 'foo', name: 'bar' });
     expect(doc.getName()).toBe('bar');
     expect(doc.domain).toBe('foo');
   });
   test('fails on creation without domain', () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
     expect(() =>
       createCloudDoc({
-        dataSource,
+        source,
         name: 'foo',
         parentName: new BehaviorSubject(null),
-      })
+      }),
     ).toThrow();
   });
   test('fails on creation without name', () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
     expect(() =>
       createCloudDoc({
-        dataSource,
+        source,
         domain: 'test',
         parentName: new BehaviorSubject(null),
-      })
+      }),
     ).toThrow();
   });
 
   test('fails on creation for name with slash', () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
     expect(() =>
       createCloudDoc({
-        dataSource,
+        source,
         domain: 'test',
         name: 'foo/bar',
         parentName: new BehaviorSubject(null),
-      })
+      }),
     ).toThrow();
   });
 });
 
 describe('doc get', () => {
   test('handles get of child', () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
     const doc = createCloudDoc({
-      dataSource,
+      source,
       domain: 'test',
       name: 'myDoc',
       parentName: new BehaviorSubject(null),
@@ -60,9 +60,9 @@ describe('doc get', () => {
     expect(child.domain).toEqual('test');
   });
   test('handles get of self', () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
     const doc = createCloudDoc({
-      dataSource,
+      source,
       domain: 'test',
       name: 'myDoc',
       parentName: new BehaviorSubject(null),
@@ -72,17 +72,17 @@ describe('doc get', () => {
   });
 });
 
-describe('basic doc DataSource interaction', () => {
+describe('basic doc source interaction', () => {
   test('fetches docs', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
-    const { id } = await dataSource.dispatch({
+    const source = createMemoryStorageSource({ domain: 'test' });
+    const { id } = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'myDoc',
       value: { foo: 'bar' },
     });
     const doc = createCloudDoc({
-      dataSource,
+      source,
       domain: 'test',
       name: 'myDoc',
       parentName: new BehaviorSubject(null),
@@ -93,9 +93,9 @@ describe('basic doc DataSource interaction', () => {
   });
 
   test('doc can putId of old put id', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
     const doc = createCloudDoc({
-      dataSource,
+      source,
       domain: 'test',
       name: 'myDoc',
       parentName: new BehaviorSubject(null),
@@ -107,13 +107,13 @@ describe('basic doc DataSource interaction', () => {
       foo: 47,
     });
     await doc.putId(id);
-    const docResult = await dataSource.dispatch({
+    const docResult = await source.dispatch({
       type: 'GetDoc',
       domain: 'test',
       name: 'myDoc',
     });
     expect(docResult.id).toEqual(id);
-    const result = await dataSource.dispatch({
+    const result = await source.dispatch({
       type: 'GetBlock',
       domain: 'test',
       name: 'myDoc',
@@ -123,9 +123,9 @@ describe('basic doc DataSource interaction', () => {
   });
 
   test('puts blocks', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
     const doc = createCloudDoc({
-      dataSource,
+      source,
       domain: 'test',
       name: 'myDoc',
       parentName: new BehaviorSubject(null),
@@ -133,12 +133,12 @@ describe('basic doc DataSource interaction', () => {
     await doc.put({
       foo: 47,
     });
-    const { id } = await dataSource.dispatch({
+    const { id } = await source.dispatch({
       type: 'GetDoc',
       domain: 'test',
       name: 'myDoc',
     });
-    const result = await dataSource.dispatch({
+    const result = await source.dispatch({
       type: 'GetBlock',
       domain: 'test',
       name: 'myDoc',
@@ -152,33 +152,33 @@ const waitForSync_TODO_REMOVE_THIS = () =>
 
 describe('observing docs', () => {
   test('observe doc works', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
-    const obj1 = await dataSource.dispatch({
+    const source = createMemoryStorageSource({ domain: 'test' });
+    const obj1 = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
-    const obj2 = await dataSource.dispatch({
+    const obj2 = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'baz' },
     });
-    const obj3 = await dataSource.dispatch({
+    const obj3 = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'qux' },
     });
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj1.id,
     });
     const doc = createCloudDoc({
-      dataSource,
+      source,
       domain: 'test',
       name: 'foo',
       parentName: new BehaviorSubject(null),
@@ -193,7 +193,7 @@ describe('observing docs', () => {
     await doc.fetch();
     expect(lastObserved.id).toEqual(obj1.id);
 
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'PutDoc',
       domain: 'test',
       name: 'foo',
@@ -202,7 +202,7 @@ describe('observing docs', () => {
     expect(lastObserved.id).toEqual(obj2.id);
 
     subscription.unsubscribe();
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'PutDoc',
       domain: 'test',
       name: 'foo',
@@ -212,33 +212,33 @@ describe('observing docs', () => {
   });
 
   test('observe value', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
-    const obj1 = await dataSource.dispatch({
+    const source = createMemoryStorageSource({ domain: 'test' });
+    const obj1 = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
-    const obj2 = await dataSource.dispatch({
+    const obj2 = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'baz' },
     });
-    const obj3 = await dataSource.dispatch({
+    const obj3 = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'qux' },
     });
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj1.id,
     });
     const doc = createCloudDoc({
-      dataSource,
+      source,
       domain: 'test',
       name: 'foo',
       parentName: new BehaviorSubject(null),
@@ -254,7 +254,7 @@ describe('observing docs', () => {
     await doc.fetchValue();
     expect(lastObserved.foo).toEqual('bar');
 
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'PutDoc',
       domain: 'test',
       name: 'foo',
@@ -264,7 +264,7 @@ describe('observing docs', () => {
     expect(lastObserved.foo).toEqual('baz');
 
     subscription.unsubscribe();
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'PutDoc',
       domain: 'test',
       name: 'foo',
@@ -276,39 +276,39 @@ describe('observing docs', () => {
   });
 
   test('observe connected value', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
-    const obj1a = await dataSource.dispatch({
+    const source = createMemoryStorageSource({ domain: 'test' });
+    const obj1a = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
-    const obj1 = await dataSource.dispatch({
+    const obj1 = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { the: { value: [obj1a.id] } },
     });
-    const obj2a = await dataSource.dispatch({
+    const obj2a = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'baz' },
     });
-    const obj2 = await dataSource.dispatch({
+    const obj2 = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { the: { value: [obj2a.id] } },
     });
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'PutDoc',
       domain: 'test',
       name: 'foo',
       id: obj1.id,
     });
     const doc = createCloudDoc({
-      dataSource,
+      source,
       domain: 'test',
       name: 'foo',
       parentName: new BehaviorSubject(null),
@@ -322,7 +322,7 @@ describe('observing docs', () => {
     expect(lastObserved).toEqual(null);
     await doc.fetchConnectedValue(['the', 'value', 0]);
     expect(lastObserved.foo).toEqual('bar');
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'PutDoc',
       domain: 'test',
       name: 'foo',
@@ -333,10 +333,10 @@ describe('observing docs', () => {
   });
 
   test.skip('observe connected value before creation', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
 
     const doc = createCloudDoc({
-      dataSource,
+      source,
       domain: 'test',
       name: 'foo',
       parentName: new BehaviorSubject(null),
@@ -347,31 +347,31 @@ describe('observing docs', () => {
         lastObserved = v;
       },
     });
-    const obj1a = await dataSource.dispatch({
+    const obj1a = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
     });
-    const obj1 = await dataSource.dispatch({
+    const obj1 = await source.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: { the: { value: [obj1a.id] } },
     });
-    // const obj2a = await dataSource.dispatch({
+    // const obj2a = await source.dispatch({
     //   type: 'PutDocValue',
     //   domain: 'test',
     //   name: 'foo',
     //   value: { foo: 'baz' },
     // });
-    // const obj2 = await dataSource.dispatch({
+    // const obj2 = await source.dispatch({
     //   type: 'PutDocValue',
     //   domain: 'test',
     //   name: 'foo',
     //   value: { the: { value: [obj2a.id] } },
     // });
-    await dataSource.dispatch({
+    await source.dispatch({
       type: 'PutDoc',
       domain: 'test',
       name: 'foo',
@@ -380,7 +380,7 @@ describe('observing docs', () => {
     expect(lastObserved).toEqual(null);
     await doc.fetchConnectedValue(['the', 'value', 0]);
     expect(lastObserved.foo).toEqual('bar');
-    // await dataSource.dispatch({
+    // await source.dispatch({
     //   type: "PutDoc",
     //   domain: "test",
     //   name: "foo",
@@ -396,15 +396,15 @@ async function justASec() {
 }
 
 test('value mapping', async () => {
-  const dataSource = createMemoryStorageSource({ domain: 'test' });
-  await dataSource.dispatch({
+  const source = createMemoryStorageSource({ domain: 'test' });
+  await source.dispatch({
     type: 'PutDocValue',
     domain: 'test',
     name: 'foo',
     value: 2,
   });
   const doc = createCloudDoc({
-    dataSource,
+    source,
     domain: 'test',
     name: 'foo',
     parentName: new BehaviorSubject(null),
@@ -420,7 +420,7 @@ test('value mapping', async () => {
   expect(lastObserved).toEqual(null);
   await mapped.fetchValue();
   expect(lastObserved).toEqual(4);
-  await dataSource.dispatch({
+  await source.dispatch({
     type: 'PutDocValue',
     domain: 'test',
     name: 'foo',
@@ -431,14 +431,14 @@ test('value mapping', async () => {
 });
 
 test('value evaluation', async () => {
-  const dataSource = createMemoryStorageSource({ domain: 'test' });
-  await dataSource.dispatch({
+  const source = createMemoryStorageSource({ domain: 'test' });
+  await source.dispatch({
     type: 'PutDocValue',
     domain: 'test',
     name: 'foo',
     value: 2,
   });
-  await dataSource.dispatch({
+  await source.dispatch({
     type: 'PutDocValue',
     domain: 'test',
     name: 'squared',
@@ -448,14 +448,14 @@ test('value evaluation', async () => {
     },
   });
   const squaredDoc = createCloudDoc({
-    dataSource,
+    source,
     domain: 'test',
     name: 'squared',
     parentName: new BehaviorSubject(null),
     cloudClient: {},
   });
   const doc = createCloudDoc({
-    dataSource,
+    source,
     domain: 'test',
     name: 'foo',
     parentName: new BehaviorSubject(null),
@@ -478,7 +478,7 @@ test('value evaluation', async () => {
   expect(lastObserved).toEqual(undefined);
   await evald.fetchValue();
   expect(lastObserved).toEqual(4);
-  await dataSource.dispatch({
+  await source.dispatch({
     type: 'PutDocValue',
     domain: 'test',
     name: 'foo',

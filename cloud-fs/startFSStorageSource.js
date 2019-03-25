@@ -23,7 +23,7 @@ async function readFSDoc(dataDir, name) {
       }
       children[child] = await readFSDoc(dataDir, pathJoin(name, child));
       childrenSet.add(child);
-    })
+    }),
   );
   return {
     children,
@@ -87,18 +87,18 @@ async function moveFSDoc(dataDir, prevName, newName) {
 }
 
 export default async function startFSStorageSource(opts = {}) {
-  const dataSourceDomain = opts.domain;
+  const sourceDomain = opts.domain;
   let dataDir = opts.dataDir;
 
   if (!dataDir) {
     throw new Error(
-      'Cannot start a FS data source without specifying a dataDir to store data files'
+      'Cannot start a FS data source without specifying a dataDir to store data files',
     );
   }
 
-  if (!dataSourceDomain) {
+  if (!sourceDomain) {
     throw new Error(
-      'Cannot start a FS data source without specifying a domain'
+      'Cannot start a FS data source without specifying a domain',
     );
   }
 
@@ -147,7 +147,7 @@ export default async function startFSStorageSource(opts = {}) {
   return createGenericDataSource({
     id: opts.id,
 
-    domain: dataSourceDomain,
+    domain: sourceDomain,
     docState,
 
     getBlock,

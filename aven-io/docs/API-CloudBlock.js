@@ -30,7 +30,7 @@ function DocPage() {
           code={`
 import createCloudClient from "@aven-cloud/cloud/createCloudClient";
 
-const cloud = createCloudClient({ dataSource });
+const cloud = createCloudClient({ source });
 const doc = cloud.get("MyDocName");
 
 const block = doc.getBlock(); // gets the current block referenced by the doc

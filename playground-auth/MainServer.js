@@ -17,11 +17,11 @@ const getEnv = c => process.env[c];
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');
 
-  const dataSource = await createMemoryStorageSource({
+  const storageSource = await createMemoryStorageSource({
     domain: 'example.aven.cloud',
   });
   const client = createCloudClient({
-    dataSource,
+    source: storageSource,
     domain: 'example.aven.cloud',
   });
 
@@ -67,7 +67,10 @@ const runServer = async () => {
   if (emailAuthProvider) providers.push(emailAuthProvider);
   if (rootAuthProvider) providers.push(rootAuthProvider);
 
-  const authenticatedDataSource = CloudAuth({ dataSource, providers });
+  const authenticatedDataSource = CloudAuth({
+    source: storageSource,
+    providers,
+  });
 
   const serverListenLocation = getEnv('PORT');
   const context = new Map();
@@ -75,7 +78,7 @@ const runServer = async () => {
   const webService = await WebServer({
     App,
     context,
-    dataSource: authenticatedDataSource,
+    source: authenticatedDataSource,
     serverListenLocation,
   });
   console.log('☁️️ Web Ready 🕸');
@@ -84,7 +87,7 @@ const runServer = async () => {
     close: async () => {
       await webService.close();
       await authenticatedDataSource.close();
-      await dataSource.close();
+      await storageSource.close();
       if (emailAgent) await emailAgent.close();
       if (smsAgent) await smsAgent.close();
     },

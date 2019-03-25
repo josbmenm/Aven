@@ -4,7 +4,7 @@ import createMessageAuthProvider from '../createMessageAuthProvider';
 
 describe('Auth messaging behavior', () => {
   test('Auth message flow', async () => {
-    const dataSource = createMemoryStorageSource({
+    const source = createMemoryStorageSource({
       domain: 'test',
     });
 
@@ -25,7 +25,7 @@ describe('Auth messaging behavior', () => {
       identifyInfo,
     });
 
-    const protectedSource = CloudAuth({ dataSource, providers: [provider] });
+    const protectedSource = CloudAuth({ source, providers: [provider] });
 
     await protectedSource.dispatch({
       type: 'CreateSession',
@@ -58,7 +58,7 @@ describe('Auth messaging behavior', () => {
   });
 
   test('anon account can add auth provider', async () => {
-    const dataSource = createMemoryStorageSource({ domain: 'test' });
+    const source = createMemoryStorageSource({ domain: 'test' });
 
     const authProviderName = 'example-provider';
 
@@ -77,7 +77,7 @@ describe('Auth messaging behavior', () => {
       identifyInfo,
     });
 
-    const protectedSource = CloudAuth({ dataSource, providers: [provider] });
+    const protectedSource = CloudAuth({ source, providers: [provider] });
 
     const { session } = await protectedSource.dispatch({
       type: 'CreateAnonymousSession',

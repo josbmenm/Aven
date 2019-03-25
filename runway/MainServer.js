@@ -8,11 +8,11 @@ import App from './App';
 const runServer = async () => {
   console.log('☁️ Starting Runway 🛫');
 
-  const dataSource = await createMemoryStorageSource({
+  const source = await createMemoryStorageSource({
     domain: 'runway.aven.cloud',
   });
   const client = createCloudClient({
-    dataSource,
+    source,
     domain: 'runway.aven.cloud',
   });
 
@@ -23,7 +23,7 @@ const runServer = async () => {
   const webService = await WebServer({
     App,
     context,
-    dataSource,
+    source,
     serverListenLocation,
   });
   console.log('☁️️ Web Ready 🕸');
@@ -31,7 +31,7 @@ const runServer = async () => {
   return {
     close: async () => {
       await webService.close();
-      await dataSource.close();
+      await source.close();
     },
   };
 };

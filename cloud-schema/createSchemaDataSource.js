@@ -1,5 +1,5 @@
 const Ajv = require('ajv');
 
-export default function createSchemaDataSource({ dataSource }) {
-  return dataSource;
+export default function createSchemaDataSource({ source }) {
+  return source;
 }

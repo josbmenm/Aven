@@ -8,23 +8,19 @@ import CloudContext from '../cloud-core/CloudContext';
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');
 
-  // const dataSource = await startFSStorageSource({
+  // const source = await startFSStorageSource({
   //   domain: 'example.aven.cloud',
   //   dataDir: process.cwd() + '/db',
   // });
 
-  const dataSource = await createMemoryStorageSource({
+  const source = await createMemoryStorageSource({
     domain: 'example.aven.cloud',
   });
 
   const cloud = createCloudClient({
-    dataSource,
+    source,
     domain: 'example.aven.cloud',
   });
-
-  // const authenticatedDataSource = authenticatedDataSource({
-  //   dataSource
-  // })
 
   const getEnv = c => process.env[c];
   const serverListenLocation = getEnv('PORT');
@@ -33,7 +29,7 @@ const runServer = async () => {
   const webService = await WebServer({
     App,
     context,
-    dataSource,
+    source,
     serverListenLocation,
   });
   console.log('☁️️ Web Ready 🕸');
@@ -41,7 +37,7 @@ const runServer = async () => {
   return {
     close: async () => {
       await webService.close();
-      await dataSource.close();
+      await source.close();
     },
   };
 };

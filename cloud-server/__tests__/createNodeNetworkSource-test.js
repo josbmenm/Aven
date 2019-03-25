@@ -14,7 +14,7 @@ async function startTestDataSource(options = {}) {
   portOffset += 1;
   let port = 9900 + portOffset;
   const server = await startSourceServer({
-    dataSource: ds,
+    source: ds,
     listenLocation: port,
     quiet: true,
   });

@@ -23,7 +23,7 @@ function DocPage() {
       </Body>
       <Section title="Usage">
         <Snippet
-          code={`const dataSource = createNativeNetworkSource({
+          code={`const source = createNativeNetworkSource({
   authority: 'my.server.dev',
   useSSL: true,
 });

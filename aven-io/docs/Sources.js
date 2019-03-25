@@ -15,7 +15,7 @@ function DocPage() {
     <Page>
       <Title>Data and Network Sources</Title>
       <Body>
-        A <Bold>data source</Bold> is an object that conforms to the{' '}
+        A <Bold>Source</Bold> is an object that conforms to the{' '}
         <Link routeName="Spec-Source">Source interface</Link>. It allows you to
         save data to it, retrieve data, and watch for changes. It is usually
         backed by some sort of database: Postgres, the file system, or storage

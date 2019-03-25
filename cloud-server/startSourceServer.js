@@ -8,7 +8,7 @@ const WebSocket = require('ws');
 const IS_DEV = process.env.NODE_ENV !== 'production';
 
 export default async function startSourceServer({
-  dataSource,
+  source,
   listenLocation,
   expressRouting = undefined,
   fallbackExpressRouting = undefined,
@@ -20,7 +20,7 @@ export default async function startSourceServer({
   expressRouting && expressRouting(expressApp);
 
   expressApp.post('/dispatch', jsonParser, (req, res) => {
-    dataSource
+    source
       .dispatch(req.body)
       .then(result => {
         if (result === undefined) {
@@ -35,7 +35,7 @@ export default async function startSourceServer({
             message: String(err),
             type: err.type,
             detail: err.detail,
-          })
+          }),
         );
       });
   });
@@ -48,7 +48,7 @@ export default async function startSourceServer({
 
   await startServer(httpServer, listenLocation);
 
-  const wsServer = await startSocketServer(wss, dataSource);
+  const wsServer = await startSocketServer(wss, source);
 
   !quiet && console.log('Listening on ' + listenLocation);
   !quiet && IS_DEV && console.log(`http://localhost:${listenLocation}`);
