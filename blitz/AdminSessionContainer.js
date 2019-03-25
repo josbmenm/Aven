@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import CloudContext from '../aven-cloud/CloudContext';
-import createCloudClient from '../aven-cloud/createCloudClient';
-import dataSource from './OnoCloud';
+import CloudContext from '../cloud-core/CloudContext';
+import createCloudClient from '../cloud-core/createCloudClient';
+import source from './OnoCloud';
 import { AlertIOS } from 'react-native';
 
 export default function AdminSessionContainer({ children }) {
@@ -9,7 +9,7 @@ export default function AdminSessionContainer({ children }) {
   useEffect(() => {
     if (!cloud) {
       const newCloud = createCloudClient({
-        dataSource,
+        source,
         domain: 'onofood.co',
       });
       AlertIOS.prompt('Login', 'Root password', password => {

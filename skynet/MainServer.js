@@ -1,21 +1,21 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
-import startSQLDataSource from '../aven-cloud-sql/startSQLDataSource';
-// import createMemoryDataSource from '../aven-cloud/createMemoryDataSource';
+import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
+// import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
 import scrapeAirTable from './scrapeAirTable';
-import createCloudClient from '../aven-cloud/createCloudClient';
-import CloudContext from '../aven-cloud/CloudContext';
+import createCloudClient from '../cloud-core/createCloudClient';
+import CloudContext from '../cloud-core/CloudContext';
 import createFSClient from '../cloud-server/createFSClient';
 import { getMobileAuthToken } from './Square';
 
-import { hashSecureString } from '../aven-cloud-utils/Crypto';
-import EmailAgent from '../aven-email-agent-sendgrid/EmailAgent';
-import SMSAgent from '../aven-sms-agent-twilio/SMSAgent';
-import SMSAuthMethod from '../aven-cloud-auth-sms/SMSAuthMethod';
-import EmailAuthMethod from '../aven-cloud-auth-email/EmailAuthMethod';
-import RootAuthMethod from '../aven-cloud-auth-root/RootAuthMethod';
-import CloudAuth from '../aven-cloud-auth/CloudAuth';
+import { hashSecureString } from '../cloud-utils/Crypto';
+import EmailAgent from '../email-agent-sendgrid/EmailAgent';
+import SMSAgent from '../sms-agent-twilio/SMSAgent';
+import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
+import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
+import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
+import CloudAuth from '../cloud-auth/CloudAuth';
 
 const getEnv = c => process.env[c];
 
@@ -35,7 +35,7 @@ const runServer = async () => {
     host: getEnv('SQL_HOST'),
   };
 
-  const dataSource = await startSQLDataSource({
+  const source = await startPostgresStorageSource({
     config: {
       client: 'pg', // must have pg in the dependencies of this module.
       connection: pgConfig,
@@ -57,7 +57,7 @@ const runServer = async () => {
     },
   });
 
-  const smsAuthMethod = SMSAuthMethod({
+  const smsAuthProvider = SMSAuthProvider({
     agent: smsAgent,
     getMessage: (authCode, verifyInfo, accountId) => {
       if (verifyInfo.context === 'AppUpsell') {
@@ -67,7 +67,7 @@ const runServer = async () => {
     },
   });
 
-  const emailAuthMethod = EmailAuthMethod({
+  const emailAuthProvider = EmailAuthProvider({
     agent: emailAgent,
     getMessage: async (authCode, verifyInfo, accountId) => {
       const subject = 'Welcome to Ono Blends';
@@ -78,20 +78,20 @@ const runServer = async () => {
     },
   });
 
-  const rootAuthMethod = RootAuthMethod({
+  const rootAuthProvider = RootAuthProvider({
     rootPasswordHash: await hashSecureString(ONO_ROOT_PASSWORD),
   });
-  const authenticatedDataSource = CloudAuth({
-    dataSource,
-    methods: [smsAuthMethod, emailAuthMethod, rootAuthMethod],
+  const protectedSource = CloudAuth({
+    source,
+    providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
-  const dataClient = createCloudClient({
-    dataSource,
+  const cloud = createCloudClient({
+    source,
     domain,
   });
 
-  const fsClient = createFSClient({ client: dataClient });
+  const fsClient = createFSClient({ client: cloud });
 
   const context = new Map();
   context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
@@ -105,7 +105,7 @@ const runServer = async () => {
       case 'Debug':
         return { message: 'The cake is a lie.' };
       default:
-        return await authenticatedDataSource.dispatch(action);
+        return await protectedSource.dispatch(action);
     }
   };
 
@@ -114,8 +114,8 @@ const runServer = async () => {
     context,
     mainDomain: domain,
     App,
-    dataSource: {
-      ...authenticatedDataSource,
+    source: {
+      ...protectedSource,
       dispatch,
     },
     serverListenLocation,
@@ -124,8 +124,8 @@ const runServer = async () => {
 
   return {
     close: async () => {
-      await authenticatedDataSource.close();
-      await dataSource.close();
+      await protectedSource.close();
+      await source.close();
       await webService.close();
     },
   };

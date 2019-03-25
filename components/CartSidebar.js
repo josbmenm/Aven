@@ -19,7 +19,7 @@ import {
   monsterra,
 } from './Styles';
 import { formatCurrency } from './Utils';
-import useObservable from '../aven-cloud/useObservable';
+import useObservable from '../cloud-core/useObservable';
 import Button from './Button';
 import {
   useOrderItem,

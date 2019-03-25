@@ -4,7 +4,7 @@ import Hero from '../../components/Hero';
 import Button from '../../components/Button';
 import { Text, View } from 'react-native';
 import { useOrder, useOrderSummary } from '../../ono-cloud/OnoKitchen';
-import useObservable from '../../aven-cloud/useObservable';
+import useObservable from '../../cloud-core/useObservable';
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
 import Receipt from '../../components/Receipt';

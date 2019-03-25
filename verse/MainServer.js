@@ -1,21 +1,21 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
-import startFSDataSource from '../aven-cloud-fs/startFSDataSource';
+import startFSStorageSource from '../cloud-fs/startFSStorageSource';
 // import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
-import createCloudClient from '../aven-cloud/createCloudClient';
+import createCloudClient from '../cloud-core/createCloudClient';
 import createFSClient from '../cloud-server/createFSClient';
-import CloudContext from '../aven-cloud/CloudContext';
+import CloudContext from '../cloud-core/CloudContext';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import scrapeAirTable from '../skynet/scrapeAirTable';
 import { getMobileAuthToken } from '../skynet/Square';
 
-import { hashSecureString } from '../aven-cloud-utils/Crypto';
-import EmailAgent from '../aven-email-agent-sendgrid/EmailAgent';
-import SMSAgent from '../aven-sms-agent-twilio/SMSAgent';
-import SMSAuthMethod from '../aven-cloud-auth-sms/SMSAuthMethod';
-import EmailAuthMethod from '../aven-cloud-auth-email/EmailAuthMethod';
-import RootAuthMethod from '../aven-cloud-auth-root/RootAuthMethod';
-import CloudAuth from '../aven-cloud-auth/CloudAuth';
+import { hashSecureString } from '../cloud-utils/Crypto';
+import EmailAgent from '../email-agent-sendgrid/EmailAgent';
+import SMSAgent from '../sms-agent-twilio/SMSAgent';
+import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
+import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
+import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
+import CloudAuth from '../cloud-auth/CloudAuth';
 
 import startKitchen, { computeKitchenConfig } from './startKitchen';
 import { getConnectionToken, capturePayment } from './Stripe';
@@ -41,19 +41,19 @@ function startTestKitchen({ cloud }) {
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨 ' + process.cwd() + '/db');
 
-  // const dataSource = await startSQLDataSource({
+  // const storageSource = await startPostgresStorageSource({
   //   client: 'sqlite3', // must have sqlite3 in the dependencies of this module.
   //   connection: {
   //     filename: 'cloud.sqlite',
   //   },
   // });
-  const dataSource = await startFSDataSource({
+  const storageSource = await startFSStorageSource({
     domain: 'onofood.co',
     dataDir: process.cwd() + '/db',
   });
 
   const cloud = createCloudClient({
-    dataSource: dataSource,
+    source: storageSource,
     domain: 'onofood.co',
   });
 
@@ -72,7 +72,7 @@ const runServer = async () => {
     },
   });
 
-  const smsAuthMethod = SMSAuthMethod({
+  const smsAuthProvider = SMSAuthProvider({
     agent: smsAgent,
     getMessage: (authCode, verifyInfo, accountId) => {
       if (verifyInfo.context === 'AppUpsell') {
@@ -82,7 +82,7 @@ const runServer = async () => {
     },
   });
 
-  const emailAuthMethod = EmailAuthMethod({
+  const emailAuthProvider = EmailAuthProvider({
     agent: emailAgent,
     getMessage: async (authCode, verifyInfo, accountId) => {
       const subject = 'Welcome to Ono Blends';
@@ -93,12 +93,12 @@ const runServer = async () => {
     },
   });
 
-  const rootAuthMethod = RootAuthMethod({
+  const rootAuthProvider = RootAuthProvider({
     rootPasswordHash: await hashSecureString(ROOT_PASSWORD),
   });
-  const authenticatedDataSource = CloudAuth({
-    dataSource,
-    methods: [smsAuthMethod, emailAuthMethod, rootAuthMethod],
+  const protectedSource = CloudAuth({
+    source: storageSource,
+    providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
   const rootAuth = {
@@ -108,7 +108,7 @@ const runServer = async () => {
   };
 
   async function putPermission({ name, defaultRule }) {
-    await authenticatedDataSource.dispatch({
+    await protectedSource.dispatch({
       domain: 'onofood.co',
       type: 'PutPermissionRules',
       auth: rootAuth,
@@ -381,7 +381,7 @@ const runServer = async () => {
       case 'StripeCapturePayment':
         return capturePayment(action);
       default:
-        return await authenticatedDataSource.dispatch(action);
+        return await protectedSource.dispatch(action);
     }
   };
 
@@ -395,14 +395,12 @@ const runServer = async () => {
 
   const context = new Map();
 
-  // const avenClient = createCloudClient(networkDataSource);
-
   context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
   const webService = await WebServer({
     App,
     context,
-    dataSource: {
-      ...authenticatedDataSource,
+    source: {
+      ...protectedSource,
       dispatch,
     },
     serverListenLocation,
@@ -411,8 +409,8 @@ const runServer = async () => {
 
   return {
     close: async () => {
-      await authenticatedDataSource.close();
-      await dataSource.close();
+      await protectedSource.close();
+      await storageSource.close();
       await webService.close();
       await kitchen.close();
       console.log('😵 Server Closed');

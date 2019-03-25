@@ -13,7 +13,7 @@
           "client": "sqlite3",
           "useNullAsDefault": true,
           "migrations": {
-            "directory": "src/sync/aven-cloud-sql/migrations"
+            "directory": "src/sync/cloud-postgres/migrations"
           },
           "connection": {
             "filename": "cloud.sqlite"
@@ -24,17 +24,17 @@
     "srcDependencies": [
       "aven-web",
       "ono-cloud",
-      "aven-cloud-auth",
-      "aven-cloud-auth-email",
-      "aven-cloud-auth-sms",
-      "aven-cloud-auth-root",
-      "aven-cloud-utils",
-      "aven-email-agent-sendgrid",
-      "aven-sms-agent-twilio",
+      "cloud-auth",
+      "cloud-auth-email",
+      "cloud-auth-sms",
+      "cloud-auth-root",
+      "cloud-utils",
+      "email-agent-sendgrid",
+      "sms-agent-twilio",
       "aven-admin",
-      "aven-cloud",
+      "cloud-core",
       "cloud-server",
-      "aven-cloud-sql"
+      "cloud-postgres"
     ],
     "moduleDependencies": [
       "sqlite3",

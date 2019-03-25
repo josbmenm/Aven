@@ -6,14 +6,13 @@
       "views",
       "debug-views",
       "ono-cloud",
-      "aven-cloud-native",
+      "cloud-native",
       "components",
       "navigation-core",
       "navigation-native",
       "navigation-stack",
       "navigation-transitioner",
-      "navigation-hooks",
-      "aven-navigation-fade-navigator"
+      "navigation-hooks"
     ],
     "moduleDependencies": [
       "path",

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { NativeModules, NativeEventEmitter } from 'react-native';
-import useCloud from '../aven-cloud/useCloud';
+import useCloud from '../cloud-core/useCloud';
 import { BehaviorSubject, Subject } from 'rxjs';
 import {
   debounceTime,
@@ -9,7 +9,7 @@ import {
   publishBehavior,
   refCount,
 } from 'rxjs/operators';
-import useObservable from '../aven-cloud/useObservable';
+import useObservable from '../cloud-core/useObservable';
 
 const CardReaderManager = NativeModules.CardReaderManager;
 

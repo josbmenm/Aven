@@ -1,4 +1,4 @@
-import createNativeNetworkSource from '../aven-cloud-native/createNativeNetworkSource';
+import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 
 const IS_DEV = process.env.NODE_ENV !== 'production';
 
@@ -18,6 +18,6 @@ const RESTAURANT_PROD = {
 
 const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
 
-const dataSource = createNativeNetworkSource(HOST_CONFIG);
+const source = createNativeNetworkSource(HOST_CONFIG);
 
-export default dataSource;
+export default source;

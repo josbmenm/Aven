@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFoodItem, useOrderItem, useMenu } from '../../ono-cloud/OnoKitchen';
 import FoodPage from '../../components/FoodPage';
-import useObservable from '../../aven-cloud/useObservable';
+import useObservable from '../../cloud-core/useObservable';
 import { useNavigation } from '../../navigation-hooks/Hooks';
 
 export default function FoodScreen({ ...props }) {

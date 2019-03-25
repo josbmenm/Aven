@@ -1,11 +1,11 @@
-import CloudContext from '../aven-cloud/CloudContext';
-import useCloud from '../aven-cloud/useCloud';
+import CloudContext from '../cloud-core/CloudContext';
+import useCloud from '../cloud-core/useCloud';
 import mapObject from 'fbjs/lib/mapObject';
 import React, { createContext, useContext, useState, useMemo } from 'react';
-import useCloudValue from '../aven-cloud/useCloudValue';
-import useObservable from '../aven-cloud/useObservable';
+import useCloudValue from '../cloud-core/useCloudValue';
+import useObservable from '../cloud-core/useObservable';
 import withObservables from '@nozbe/with-observables';
-import observeNull from '../aven-cloud/observeNull';
+import observeNull from '../cloud-core/observeNull';
 import { formatCurrency } from '../components/Utils';
 const OrderContext = createContext(null);
 
@@ -640,7 +640,7 @@ export function withRestaurant(Component) {
           setAppUpsellPhoneNumber={number => {
             restaurant
               .dispatch({
-                type: 'PutAuthMethod',
+                type: 'PutAuthProvider',
                 verificationInfo: { number, context: 'AppUpsell' },
               })
               .catch(console.error);

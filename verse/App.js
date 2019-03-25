@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { View, Text, Animated, Button, Image } from 'react-native';
 
-import useCloud from '../aven-cloud/useCloud';
-import useObservable from '../aven-cloud/useObservable';
-import useCloudReducer from '../aven-cloud/useCloudReducer';
-import useCloudValue from '../aven-cloud/useCloudValue';
+import useCloud from '../cloud-core/useCloud';
+import useObservable from '../cloud-core/useObservable';
+import useCloudReducer from '../cloud-core/useCloudReducer';
+import useCloudValue from '../cloud-core/useCloudValue';
 import uuid from 'uuid/v1';
 
 import Admin from '../aven-admin/Admin';

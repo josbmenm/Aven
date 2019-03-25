@@ -41,8 +41,8 @@ import createStackTransitionNavigator from '../navigation-transitioner/createSta
 import Transitioner from '../navigation-transitioner/Transitioner';
 import LinearGradient from 'react-native-linear-gradient';
 
-import CloudContext from '../aven-cloud/CloudContext';
-import createCloudClient from '../aven-cloud/createCloudClient';
+import CloudContext from '../cloud-core/CloudContext';
+import createCloudClient from '../cloud-core/createCloudClient';
 import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import OnoCloud from './OnoCloud';
@@ -126,12 +126,12 @@ const App = createStackTransitionNavigator({
 const AppContainer = createAppContainer(App);
 
 const restaurant = createCloudClient({
-  dataSource: OnoCloud,
+  source: OnoCloud,
   domain: 'onofood.co',
 });
 
 restaurant
-  .CreateAnonymousSession()
+  .createAnonymousSession()
   .then(() => {})
   .catch(console.error);
 

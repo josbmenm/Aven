@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { useOrder } from '../ono-cloud/OnoKitchen';
-import useObservable from '../aven-cloud/useObservable';
+import useObservable from '../cloud-core/useObservable';
 import { StackActions, NavigationActions } from '../navigation-core';
 
 process.env.REACT_NAV_LOGGING = true;

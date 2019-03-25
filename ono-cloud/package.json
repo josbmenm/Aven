@@ -1,7 +1,7 @@
 {
   "aven": {
     "srcDependencies": [
-      "aven-cloud"
+      "cloud-core"
     ],
     "moduleDependencies": [
       "@nozbe/with-observables",

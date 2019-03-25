@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { useOrderItem, useMenuItem, useMenu } from '../../ono-cloud/OnoKitchen';
 
-import useObservable from '../../aven-cloud/useObservable';
+import useObservable from '../../cloud-core/useObservable';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
 import BlendPage from '../../components/BlendPage';
 

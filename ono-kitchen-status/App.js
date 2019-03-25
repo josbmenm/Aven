@@ -1,9 +1,9 @@
 import React, { useState, useReducer } from 'react';
 import { View, Text, Animated, Button } from 'react-native';
 
-import useCloudState from '../aven-cloud/useCloudState';
-import useCloudReducer from '../aven-cloud/useCloudReducer';
-import CloudContext from '../aven-cloud/CloudContext';
+import useCloudState from '../cloud-core/useCloudState';
+import useCloudReducer from '../cloud-core/useCloudReducer';
+import CloudContext from '../cloud-core/CloudContext';
 import OnoCloud from './OnoCloud';
 
 import { createSwitchNavigator } from '../navigation-core';

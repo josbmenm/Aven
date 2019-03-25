@@ -1,5 +1,5 @@
 import { setHostConfig } from '../components/AirtableImage';
-import createNativeNetworkSource from '../aven-cloud-native/createNativeNetworkSource';
+import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 
 const IS_DEV = process.env.NODE_ENV !== 'production';
 
@@ -19,6 +19,6 @@ const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
 
 setHostConfig(HOST_CONFIG);
 
-const dataSource = createNativeNetworkSource(HOST_CONFIG);
+const source = createNativeNetworkSource(HOST_CONFIG);
 
-export default dataSource;
+export default source;

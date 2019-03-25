@@ -5,7 +5,7 @@ import Hero from '../../components/Hero';
 import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import LinkRow from '../../components/LinkRow';
-import useCloud from '../../aven-cloud/useCloud';
+import useCloud from '../../cloud-core/useCloud';
 import useKioskName from '../useKioskName';
 import codePush from 'react-native-code-push';
 

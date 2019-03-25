@@ -6,11 +6,11 @@
     "srcDependencies": [
       "components",
       "ono-cloud",
-      "aven-cloud",
+      "cloud-core",
       "navigation-web",
       "navigation-native",
       "navigation-core",
-      "aven-cloud-native"
+      "cloud-native"
     ]
   }
 }

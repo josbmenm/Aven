@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useOrderItem, useMenuItem } from '../../ono-cloud/OnoKitchen';
-import useObservable from '../../aven-cloud/useObservable';
+import useObservable from '../../cloud-core/useObservable';
 import CustomizePage from '../../components/CustomizePage';
 
 export default function CustomizeBlendScreen({ navigation, ...props }) {
