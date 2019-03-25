@@ -125,7 +125,7 @@ export default function startSourceSocketServer(wss, dataSource) {
   return {
     close: () => {
       for (let connection in connections) {
-        connection.close();
+        connection && connection.close && connection.close();
       }
     },
   };

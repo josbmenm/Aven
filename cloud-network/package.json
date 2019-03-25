@@ -1,6 +1,8 @@
 {
   "aven": {
-    "srcDependencies": [],
+    "srcDependencies": [
+      "utils"
+    ],
     "moduleDependencies": [
       "rxjs-compat",
       "reconnecting-websocket"

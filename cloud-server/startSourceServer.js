@@ -33,8 +33,8 @@ export default async function startSourceServer({
         res.status(500).send(
           JSON.stringify({
             message: String(err),
-            code: err.code,
-            params: err.params,
+            type: err.type,
+            detail: err.detail,
           })
         );
       });

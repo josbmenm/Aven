@@ -44,7 +44,7 @@ export default function createCloudClient({
     await doc.destroy();
   }
 
-  async function CreateSession({
+  async function createSession({
     verificationInfo,
     verificationResponse,
     accountId,
@@ -66,7 +66,7 @@ export default function createCloudClient({
     return created;
   }
 
-  async function CreateAnonymousSession() {
+  async function createAnonymousSession() {
     if (session.value) {
       throw new Error('session already is set!');
     }
@@ -81,7 +81,7 @@ export default function createCloudClient({
     return created;
   }
 
-  async function DestroySession() {
+  async function destroySession() {
     if (!session.value) {
       throw new Error('no session found!');
     }
@@ -142,9 +142,9 @@ export default function createCloudClient({
   }
 
   const actions = {
-    CreateSession,
-    CreateAnonymousSession,
-    DestroySession,
+    CreateSession: createSession,
+    CreateAnonymousSession: createAnonymousSession,
+    DestroySession: destroySession,
     GetBlock,
     GetDoc,
     GetDocValue,
@@ -177,9 +177,9 @@ export default function createCloudClient({
     getLambda,
     setLambda,
     observeSession: session,
-    CreateSession,
-    CreateAnonymousSession,
-    DestroySession,
+    createSession,
+    createAnonymousSession,
+    destroySession,
     dispatch,
     domain,
     destroyDoc,

@@ -31,8 +31,10 @@ import useCloud from '../aven-cloud/useCloud';
 import useCloudSession from '../aven-cloud/useCloudSession';
 import useObservable from '../aven-cloud/useObservable';
 import useCloudValue from '../aven-cloud/useCloudValue';
+import ErrorContainer from '../cloud-react/ErrorContainer';
 import JSONView from '../debug-views/JSONView';
 import useAsyncStorage, { isStateUnloaded } from '../utils/useAsyncStorage';
+import { TouchableHighlight } from 'react-native-web';
 const pathJoin = require('path').join;
 
 function useActiveRoute() {
@@ -479,7 +481,7 @@ function LoginForm({ onSession, onClientConfig }) {
   const cloud = useCloud();
   async function doLogin() {
     setIsWorking(true);
-    const resp = await cloud.CreateSession({
+    const resp = await cloud.createSession({
       accountId: loginInfo.accountId,
       verificationResponse: loginInfo.verificationResponse,
       verificationInfo: loginInfo.verificationInfo,
@@ -687,7 +689,7 @@ function AddDocSection({ parent }) {
 }
 
 function DocsPane({ onClientConfig, onSession }) {
-  const { domain } = useCloud();
+  const { domain, destroySession } = useCloud();
   const { navigate, state } = useNavigation();
   const docRoute =
     state.routes && state.routes.find(r => r.routeName === 'Doc');
@@ -705,10 +707,10 @@ function DocsPane({ onClientConfig, onSession }) {
       />
       <DocsList parent={null} activeDoc={activeDoc} />
       <AddDocSection parent={null} />
-      <TestPopoverButton />
       <StandaloneButton
         title="Log out"
         onPress={() => {
+          destroySession();
           onClientConfig(null);
           onSession(null);
           navigate('Login');
@@ -866,31 +868,6 @@ function usePopover() {
   return { openPopover, target };
 }
 
-function TestPopoverButton() {
-  let { openPopover } = usePopover();
-  let viewRef = useRef(null);
-  return (
-    <View ref={viewRef}>
-      <FormButton
-        title="Test Popover"
-        onPress={async () => {
-          const location = await new Promise(resolve =>
-            viewRef.current.measure((x, y, width, height, pageX, pageY) => {
-              console.log('hiho', location);
-              resolve({ x, y, width, height, pageX, pageY });
-            })
-          );
-          openPopover(
-            <View style={{ backgroundColor: 'white', padding: 30 }}>
-              <Text>Hello, World!</Text>
-            </View>,
-            location
-          );
-        }}
-      />
-    </View>
-  );
-}
 function AddKeySection({ value, onValue }) {
   let [isOpened, setIsOpened] = useState(false);
   let [keyName, setKeyName] = useState('');
@@ -922,7 +899,6 @@ function AddKeySection({ value, onValue }) {
   }
   return (
     <React.Fragment>
-      <TestPopoverButton />
       <StandaloneButton
         title="Add Key"
         onPress={() => {
@@ -1352,6 +1328,18 @@ function BackgroundView({ children }) {
   );
 }
 
+function ErrorPage({ error, errorInfo, onRetry }) {
+  return (
+    <View>
+      <Text>Whoops! {error.message}</Text>
+      <Text>{errorInfo}</Text>
+      <TouchableHighlight onPress={onRetry}>
+        <Text>Try again</Text>
+      </TouchableHighlight>
+    </View>
+  );
+}
+
 function AdminApp({ defaultSession = {}, descriptors }) {
   let [sessionState, setSessionState] = useAsyncStorage(
     'AvenSessionState',
@@ -1373,7 +1361,6 @@ function AdminApp({ defaultSession = {}, descriptors }) {
         return null;
       }
       const { authority, useSSL, domain } = clientConfig;
-      console.log('duuuuuude', clientConfig, sessionState);
       const dataSource = createBrowserNetworkSource({
         authority,
         useSSL,
@@ -1421,34 +1408,50 @@ function AdminApp({ defaultSession = {}, descriptors }) {
     return <Text>Wait..</Text>;
   }
 
+  function handleCatch(e, i, onRetry) {
+    if (e.type === 'SessionInvalid') {
+      client.destroySession();
+      setSessionState(null);
+      onRetry();
+    }
+    console.log('bad news:', e);
+  }
+
   return (
     <PopoverContainer>
-      <CloudContext.Provider value={client}>
-        <NavigationContext.Provider value={activeDescriptor.navigation}>
-          <ScrollView
-            horizontal
-            style={{
-              ...StyleSheet.absoluteFillObject,
-            }}
-            contentContainerStyle={{
-              minWidth: '100%',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <ScreenComponent
-              onClientConfig={setClientConfig}
-              onSession={setSessionState}
-              defaultSession={{
-                authority: defaultSession.authority,
-                domain: defaultSession.domain,
+      <ErrorContainer
+        onCatch={handleCatch}
+        renderError={({ onRetry, error }) => (
+          <ErrorPage onRetry={onRetry} error={error} />
+        )}
+      >
+        <CloudContext.Provider value={client}>
+          <NavigationContext.Provider value={activeDescriptor.navigation}>
+            <ScrollView
+              horizontal
+              style={{
+                ...StyleSheet.absoluteFillObject,
               }}
-              navigation={activeDescriptor.navigation}
-            />
-          </ScrollView>
-        </NavigationContext.Provider>
-      </CloudContext.Provider>
+              contentContainerStyle={{
+                minWidth: '100%',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <ScreenComponent
+                onClientConfig={setClientConfig}
+                onSession={setSessionState}
+                defaultSession={{
+                  authority: defaultSession.authority,
+                  domain: defaultSession.domain,
+                }}
+                navigation={activeDescriptor.navigation}
+              />
+            </ScrollView>
+          </NavigationContext.Provider>
+        </CloudContext.Provider>
+      </ErrorContainer>
     </PopoverContainer>
   );
 }

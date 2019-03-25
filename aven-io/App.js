@@ -281,9 +281,9 @@ const DocsRouter = SwitchRouter({
   Roadmap: require('./docs/Roadmap').default,
   Contributors: require('./docs/Contributors').default,
   DocPermissions: require('./docs/DocPermissions').default,
-  'Spec-AuthDataSource': require('./docs/Spec-AuthDataSource').default,
+  'Spec-ProtectedSource': require('./docs/Spec-ProtectedSource').default,
   'Spec-AuthProvider': require('./docs/Spec-AuthProvider').default,
-  'Spec-DataSource': require('./docs/Spec-DataSource').default,
+  'Spec-Source': require('./docs/Spec-Source').default,
 });
 
 function SidebarSection({ title, children }) {

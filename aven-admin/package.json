@@ -3,6 +3,7 @@
   "aven": {
     "srcDependencies": [
       "utils",
+      "cloud-react",
       "aven-cloud",
       "cloud-browser",
       "debug-views",

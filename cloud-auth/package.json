@@ -1,5 +1,8 @@
 {
   "aven": {
-    "srcDependencies": ["cloud-utils"]
+    "srcDependencies": [
+      "cloud-utils",
+      "utils"
+    ]
   }
 }

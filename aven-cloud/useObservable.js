@@ -7,6 +7,13 @@ export default function useObservable(observable) {
     isObservable ? observable.value : observable
   );
 
+  const [error, setError] = useState(null);
+
+  if (error) {
+    throw error;
+    // This component is basically broken at this point.. A parent is responsible for catching the error and re-mounting us.
+  }
+
   const lastRef = useRef(value);
 
   function applyValue(newValue) {
@@ -19,7 +26,7 @@ export default function useObservable(observable) {
   useEffect(
     () => {
       if (isObservable) {
-        const subscription = observable.subscribe(applyValue);
+        const subscription = observable.subscribe(applyValue, setError);
         return () => subscription.unsubscribe();
       }
     },

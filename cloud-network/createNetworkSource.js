@@ -1,5 +1,6 @@
 import { Observable, BehaviorSubject, Subject } from 'rxjs-compat';
 import ReconnectingWebSocket from 'reconnecting-websocket';
+import Err from '../utils/Err';
 
 let idIndex = 0;
 const idBase = Date.now();
@@ -45,13 +46,13 @@ export default function createNetworkSource(opts) {
       }
       log('📣', action);
       log('🚨', result);
-      throw new Error(result.message);
+      throw new Err(result.message, result.type, result.detail);
     }
     let result = await res.text();
     try {
       result = result.length ? JSON.parse(result) : null;
     } catch (e) {
-      throw new Error('Expecting JSON but could not parse: ' + result);
+      throw new Err('Expecting JSON but could not parse: ' + result);
     }
     log('📣', action);
     log('💨', result);
@@ -92,7 +93,7 @@ export default function createNetworkSource(opts) {
 
   function connectWS() {
     if (ws) {
-      throw new Error('ws already here!');
+      throw new Err('ws already here!');
     }
     ws = new ReconnectingWebSocket(wsEndpoint, [], {
       // debug: true,

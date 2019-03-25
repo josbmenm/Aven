@@ -165,16 +165,21 @@ export function createDocPool({
               }
             });
           }
-          const result = await dataSource.dispatch({
-            type: 'ListDocs',
-            parentName: parentDocName,
-            afterName: lastDocSeen,
-            domain,
-          });
-          lastDocSeen = result.docs[result.docs.length - 1];
-          docNames = [...docNames, ...result.docs];
-          hasMore = result.hasMore;
-          observer.next(docNames);
+          let result = null;
+          try {
+            result = await dataSource.dispatch({
+              type: 'ListDocs',
+              parentName: parentDocName,
+              afterName: lastDocSeen,
+              domain,
+            });
+            lastDocSeen = result.docs[result.docs.length - 1];
+            docNames = [...docNames, ...result.docs];
+            hasMore = result.hasMore;
+            observer.next(docNames);
+          } catch (e) {
+            observer.error(e);
+          }
         }
         async function doFullLoad() {
           await doLoad();

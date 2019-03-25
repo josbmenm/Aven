@@ -1,6 +1,7 @@
 import { uuid, checksum } from '../cloud-utils/Crypto';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import { getAuthDocName } from '../cloud-utils/MetaDocNames';
+import Err from '../utils/Err';
 
 function thanksVeryMuch(dispatch) {
   return async action => {
@@ -63,7 +64,7 @@ export default function CloudAuth({ dataSource, providers }) {
         !v.verifiedProviderName ||
         v.accountId !== auth.accountId
       ) {
-        throw new Error('Cannot validate authentication');
+        throw new Err('Cannot validate authentication', 'AuthInvalid', {});
       }
       return {
         accountId: v.accountId,
@@ -75,8 +76,8 @@ export default function CloudAuth({ dataSource, providers }) {
   }
 
   async function VerifySession({ auth, domain }) {
-    if (!auth) {
-      return { accountId: null };
+    if (!auth || !auth.sessionId) {
+      return {};
     }
     const { accountId, sessionId, token } = auth;
 
@@ -87,7 +88,7 @@ export default function CloudAuth({ dataSource, providers }) {
     );
 
     if (!savedSession || savedSession.token !== token) {
-      return { accountId: null };
+      throw new Err('Cannot validate session', 'SessionInvalid', {});
     }
 
     return { ...savedSession, accountId };
@@ -106,8 +107,10 @@ export default function CloudAuth({ dataSource, providers }) {
     );
     if (accountLookup) {
       if (accountId && accountId !== accountLookup.accountId) {
-        throw new Error(
-          'Provided auth identity is already in use by another account.'
+        throw new Err(
+          'Provided auth identity is already in use by another account.',
+          'IdentityTaken',
+          {}
         );
       }
       return accountLookup.accountId;
@@ -170,7 +173,7 @@ export default function CloudAuth({ dataSource, providers }) {
         };
       }
     }
-    throw new Error('No auth provider matches this info and account!');
+    throw new Err('No auth provider matches this info and account!');
   }
   async function PutAuthProvider({
     domain,
@@ -185,7 +188,7 @@ export default function CloudAuth({ dataSource, providers }) {
       !verifiedSession.accountId ||
       verifiedSession.accountId !== auth.accountId
     ) {
-      throw new Error('not authenticated');
+      throw new Err('not authenticated');
     }
 
     const authProviderVerification = await VerifyAuthProvider({
@@ -268,8 +271,8 @@ export default function CloudAuth({ dataSource, providers }) {
       }
     }
 
-    if (!verifiedProviderId || !verifiedProviderName) {
-      throw new Error('Cannot verify auth provider');
+    if (!verifiedProviderId) {
+      throw new Err('Provided authentication is invalid', 'InvalidAuth');
     }
 
     return {
@@ -464,10 +467,9 @@ export default function CloudAuth({ dataSource, providers }) {
 
   async function SetAccountName({ name, auth, domain }) {
     const validated = await VerifySession({ auth, domain });
-    console.log('setting account name!', { name, auth, domain, validated });
 
     if (!validated.accountId || validated.accountId !== auth.accountId) {
-      throw new Error('Invalid authentication!');
+      throw new Err('Invalid authentication!', 'InvalidAuth');
     }
 
     await dataSource.dispatch({
@@ -582,10 +584,11 @@ export default function CloudAuth({ dataSource, providers }) {
         !p[permissionLevel] ||
         (realPermissionLevelRequired && !p[realPermissionLevelRequired])
       ) {
-        throw new Error(
+        throw new Err(
           `Insufficient permissions for "${actionType}" on ${
             action.name
-          }. Requires "${permissionLevel}"`
+          }. Requires "${permissionLevel}"`,
+          'InsufficientPermissions'
         );
       }
       const result = await dispatch(action);
@@ -640,7 +643,7 @@ export default function CloudAuth({ dataSource, providers }) {
   async function observeDoc(domain, name, auth) {
     const permissions = await GetPermissions({ name, auth, domain });
     if (!permissions.canRead) {
-      throw new Error('Not authorized to subscribe here');
+      throw new Err('Not authorized to subscribe here');
     }
     return await dataSource.observeDoc(domain, name);
   }

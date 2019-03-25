@@ -89,6 +89,18 @@ async function webDataInterface({ domain, docName, dispatch, refPath }) {
   });
 }
 
+const devErrorSupresser = `
+<script>
+// catch errors for suppression before the React dev tools can
+window.addEventListener('error', function(evt) {
+  if (evt.error.suppressInDevTools) {
+    evt.stopImmediatePropagation();
+    evt.preventDefault();
+  }
+});
+</script>
+`;
+
 export default async function WebServer({
   App,
   dataSource,
@@ -151,7 +163,7 @@ export default async function WebServer({
         .catch(e => {
           res.status(500);
           console.error(e);
-          res.send(e);
+          res.send(JSON.stringify(e.toJSON()));
         });
     });
 
@@ -194,6 +206,7 @@ export default async function WebServer({
           }
           ${options.customCSS ? options.customCSS : ''}
           </style>
+          ${isProd ? '' : devErrorSupresser}
           ${css}
           ${
             isProd
