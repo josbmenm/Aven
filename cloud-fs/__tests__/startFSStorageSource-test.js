@@ -1,4 +1,4 @@
-import createFSDataSource from '../startFSDataSource';
+import startFSStorageSource from '../startFSStorageSource';
 import dataSourceTests from '../../cloud-core/__tests__/dataSourceTests';
 import uuid from 'uuid/v1';
 
@@ -10,7 +10,7 @@ beforeAll(async () => {});
 
 async function startTestDataSource(options = {}) {
   const dataDir = pathJoin(TMP_DIR, uuid());
-  return createFSDataSource({
+  return startFSStorageSource({
     domain: 'test',
     dataDir,
     ...options,
@@ -25,14 +25,14 @@ describe('basic fs source setup', () => {
   test('throws when starting without a domain', () => {
     const dataDir = pathJoin(TMP_DIR, uuid());
     expect(
-      createFSDataSource({
+      startFSStorageSource({
         dataDir,
       })
     ).rejects.toThrow();
   });
   test('throws when starting without a data directory', () => {
     expect(
-      createFSDataSource({
+      startFSStorageSource({
         domain: 'test',
       })
     ).rejects.toThrow();
