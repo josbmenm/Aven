@@ -265,7 +265,7 @@ const DocsRouter = SwitchRouter({
     .default,
   'API-startFSStorageSource': require('./docs/API-startFSStorageSource')
     .default,
-  'API-startPostgresDataSource': require('./docs/API-startPostgresDataSource')
+  'API-startPostgresStorageSource': require('./docs/API-startPostgresStorageSource')
     .default,
   'API-createBrowserNetworkSource': require('./docs/API-createBrowserNetworkSource')
     .default,
@@ -366,8 +366,8 @@ function Sidebar() {
             routeName="API-startFSStorageSource"
           />
           <SidebarLink
-            title="API: startPostgresDataSource"
-            routeName="API-startPostgresDataSource"
+            title="API: startPostgresStorageSource"
+            routeName="API-startPostgresStorageSource"
           />
           <SidebarLink
             title="API: createBrowserNetworkSource"

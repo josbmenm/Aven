@@ -65,7 +65,7 @@ function DocPage() {
             file-system storage for a single node.js process
           </ListItem>
           <ListItem>
-            <Link routeName="API-startPostgresDataSource">
+            <Link routeName="API-startPostgresStorageSource">
               PostgresDataSource
             </Link>
             - for several node.js processes in front of PostgreSQL

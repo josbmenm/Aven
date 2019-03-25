@@ -11,7 +11,7 @@
     "clean": "node ./aven-tools/cli.js clean",
     "import-vendor": "node ./aven-tools/importVendorCode.js",
     "test": "jest",
-    "test-sql": "cd cloud-postgres; ./test.sh startPostgresDataSource"
+    "test-sql": "cd cloud-postgres; ./test.sh startPostgresStorageSource"
   },
   "devDependencies": {
     "babel-jest": "^23.6.0",

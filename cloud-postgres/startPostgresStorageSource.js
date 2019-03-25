@@ -12,7 +12,7 @@ const { Client } = require('pg');
 const stringify = require('json-stable-stringify');
 const pathJoin = require('path').join;
 
-export default async function startPostgresDataSource({ config, domains }) {
+export default async function startPostgresStorageSource({ config, domains }) {
   const id = uuid();
 
   const TOP_PARENT_ID = 0; // hacky approach to handle top-level parents and still enforce uniqueness properly on the docs table.
