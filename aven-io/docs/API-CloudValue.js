@@ -20,7 +20,7 @@ function DocPage() {
           <Link routeName="API-CloudDoc">doc</Link> (value that changes)
         </ListItem>
         <ListItem>
-          <Link routeName="API-CloudBlock">block</Link> (staic value which may
+          <Link routeName="API-CloudBlock">block</Link> (static value which may
           be loaded asyncronously)
         </ListItem>
         <ListItem>A value derived from blocks and docs.</ListItem>

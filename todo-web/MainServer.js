@@ -74,7 +74,7 @@ const runServer = async () => {
   });
 
   const client = createCloudClient({
-    authSource,
+    source: authSource,
     domain: 'todo.aven.cloud',
   });
 

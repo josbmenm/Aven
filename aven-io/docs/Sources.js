@@ -35,7 +35,7 @@ function DocPage() {
           <Link routeName="Spec-Source">
             detailed interface is specified here
           </Link>
-          , but a data source basically provides two features:
+          , but a source essentially provides three interfaces:
         </Body>
         <List>
           <ListItem>
@@ -44,8 +44,12 @@ function DocPage() {
             mutations.
           </ListItem>
           <ListItem>
-            <Bold>observeDoc(domain, name): Observable</Bold> - allows you to
-            subscribe to document changes
+            <Bold>observeDoc(domain, name): BehaviorSubject</Bold> - allows you
+            to subscribe to document changes
+          </ListItem>
+          <ListItem>
+            <Bold>observeDocChildren(domain, name): Subject</Bold> - allows you
+            to subscribe to new or deleted Docs, under a certain doc or domain
           </ListItem>
         </List>
       </Section>

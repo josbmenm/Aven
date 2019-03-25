@@ -12,7 +12,7 @@ import {
 function DocPage() {
   return (
     <Page>
-      <Title>Observables</Title>
+      <Title>Observables with Cloud and React</Title>
       <Body>
         Aven Cloud uses RxJS under the hood, and enables you to use a standard
         pattern for observing data in your database.
@@ -23,8 +23,28 @@ function DocPage() {
           RxJS Observables
         </Link>{' '}
         such as .observeValue. These are special because they cause the doc to
-        fetch and observe the required data, until the subscription is removed.
+        observe the required data from the Source, until the subscription is
+        removed.
       </Body>
+      <SubSection title="Subjects">
+        <Body>
+          A Subject is a stream of events/updates that you can subscribe to.
+          Unlike a bare observable, several subscribers can share the same
+          stream of events.
+        </Body>
+        <Snippet
+          code={`const message = new Subject();
+message.subscribe(m => console.log(\`Hello \${m}\`));
+message.subscribe(m => console.log(\`Goodbye \${m}\`));
+
+message.next('World');
+
+// Will log:
+Hello World
+Goodbye World
+        `}
+        />
+      </SubSection>
       <SubSection title="Behavior Subjects">
         <Body>
           Behavior subjects are RxJS observables that also have the current

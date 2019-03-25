@@ -6,8 +6,8 @@ function DocPage() {
     <Page>
       <Title>API - createMemoryStorageSource</Title>
       <Body>
-        A memory storage source is created on a per-domain basis. It will only
-        save data for the single domain:
+        A memory storage source is is used for testing and ephemeral data. It
+        will only save data for a single domain:
       </Body>
       <Snippet
         code={`
@@ -18,11 +18,7 @@ const source = createMemoryStorageSource({
 });`}
       />
       <Body>
-        Creates an in-memory storage for some data. Particularly useful for
-        testing or ephemeral data.
-      </Body>
-      <Body>
-        The memory storage source conforms to{' '}
+        The resulting memory storage source conforms to{' '}
         <Link routeName="Spec-Source">the source API</Link>.
       </Body>
     </Page>

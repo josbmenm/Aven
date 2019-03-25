@@ -12,7 +12,11 @@ export function Link({ children, ...props }) {
 }
 
 export function Title({ children }) {
-  return <Text style={{ fontSize: 42, marginBottom: 30 }}>{children}</Text>;
+  return (
+    <Text style={{ fontSize: 42, marginBottom: 30, color: '#486B7A' }}>
+      {children}
+    </Text>
+  );
 }
 
 export function Bold({ children }) {
@@ -21,7 +25,13 @@ export function Bold({ children }) {
 
 export function Body({ children }) {
   return (
-    <Text style={{ fontSize: baseFontSize, paddingVertical: 10 }}>
+    <Text
+      style={{
+        fontSize: baseFontSize,
+        paddingVertical: 10,
+        lineHeight: baseFontSize + 7,
+      }}
+    >
       {children}
     </Text>
   );
@@ -59,11 +69,20 @@ export function Snippet({ code }) {
   );
 }
 
-function createSectionWithSizes(sizes) {
+function createSection(opts) {
   function Section({ title, children }) {
     return (
-      <View style={{ marginVertical: 10 }}>
-        <Text style={{ fontSize: sizes.title }}>{title}</Text>
+      <View
+        style={{
+          paddingTop: 10,
+          marginVertical: 10,
+          borderColor: '#aaa',
+          borderTopWidth: opts.hasLine ? 1 : 0,
+        }}
+      >
+        <Text style={{ fontSize: opts.titleSize, color: '#486B7A' }}>
+          {title}
+        </Text>
         {children}
       </View>
     );
@@ -71,10 +90,11 @@ function createSectionWithSizes(sizes) {
   return Section;
 }
 
-export const Section = createSectionWithSizes({ title: 32 });
-export const SubSection = createSectionWithSizes({ title: 26 });
+export const Section = createSection({ titleSize: 32, hasLine: true });
+export const SubSection = createSection({ titleSize: 26 });
 
 export function ListItem({ children }) {
+  console.log(React.Children.count(children));
   return (
     <View style={{}}>
       <Text style={{ flex: 1, paddingHorizontal: 20, paddingVertical: 5 }}>

@@ -73,20 +73,38 @@ function Header() {
         flexDirection: 'row',
       }}
     >
-      <Image
-        source={require('./assets/AvenLogo.svg')}
-        style={{
-          marginHorizontal: 20,
-          alignSelf: 'center',
-          width: 452 / 3,
-          height: 100 / 3,
-        }}
-      />
+      <Link
+        routeName="Home"
+        overrideATagCSS={{ display: 'flex', flexGrow: 1, alignSelf: 'stretch' }}
+      >
+        <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
+          <Image
+            source={require('./assets/AvenLogo.svg')}
+            style={{
+              marginHorizontal: 20,
+              alignSelf: 'center',
+              width: 452 / 3,
+              height: 100 / 3,
+            }}
+          />
+          <Text
+            style={{
+              color: '#486B7ACC',
+              fontSize: 36,
+              alignSelf: 'center',
+              fontFamily: 'Arial Rounded MT Bold',
+            }}
+          >
+            Cloud
+          </Text>
+        </View>
+      </Link>
       <View style={{ flex: 1 }} />
       <HeaderLink title="Home" routeName="Home" />
       <HeaderLink title="Docs" routeName="Docs" />
       <HeaderLink title="About" routeName="About" />
       <HeaderLink title="Github" url="https://github.com/AvenCloud/Aven" />
+      <HeaderLink title="Twitter" url="https://twitter.com/Aven_Cloud" />
     </View>
   );
 }
@@ -351,7 +369,10 @@ function Sidebar() {
       <View style={{}}>
         <SidebarSection title="Getting Started">
           <SidebarLink title="Quick Start" routeName="QuickStart" />
-          <SidebarLink title="1. Data Sources" routeName="Tutorial1" />
+          <SidebarLink
+            title="1. Creating Sources and Clients"
+            routeName="Tutorial1"
+          />
           <SidebarLink title="2. Connect React" routeName="Tutorial2" />
           <SidebarLink title="3. Authentication" routeName="Tutorial3" />
         </SidebarSection>
@@ -388,7 +409,10 @@ function Sidebar() {
             title="Introduce Cloud Client"
             routeName="CloudClientIntro"
           />
-          <SidebarLink title="Using observables" routeName="ObservableUsage" />
+          <SidebarLink
+            title="Observables with Cloud and React"
+            routeName="ObservableUsage"
+          />
           <SidebarLink title="Cloud React Hooks" routeName="CloudReactHooks" />
           <SidebarLink
             title="API: createCloudClient"
@@ -457,6 +481,10 @@ const AppRouter = SwitchRouter({
     navigationOptions: {
       title: 'Aven',
     },
+  },
+  About: {
+    screen: require('./docs/About').default,
+    path: 'about',
   },
   Docs: {
     screen: Docs,

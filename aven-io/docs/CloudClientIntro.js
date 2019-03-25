@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title, Body, Page, Link, Snippet } from '../DocViews';
+import { Title, Body, Page, Link, Snippet, Section } from '../DocViews';
 
 function DocPage() {
   return (
@@ -8,10 +8,10 @@ function DocPage() {
       <Body>
         The <Link routeName="API-createCloudClient">cloud client</Link> provides
         an in-memory representation of a domain's data within a{' '}
-        <Link routeName="Spec-Source">data source</Link>. The client allows you
-        to observe and optimistically change data within the source.
+        <Link routeName="Spec-Source">source</Link>. The client helps you
+        observe and optimistically change data within the source.
       </Body>
-      <Body>It requires a data source or a network source upon creation:</Body>
+      <Body>It requires a source upon creation:</Body>
       <Snippet
         code={`
 import createMemoryStorageSource from "@aven-cloud/cloud/createMemoryStorageSource";
@@ -21,12 +21,19 @@ const source = createMemoryStorageSource({
   domain: 'mydomain',
 });
 
-const client = createCloudClient({
+const cloud = createCloudClient({
   source,
   domain: 'mydomain',
 });
 `}
       />
+      <Body>
+        Because the client is the primary interface to our storage, we tend call
+        it "cloud"
+      </Body>
+      <Section title="Getting Docs">
+        <Body>You can call `.get` on a client to access docs within it:</Body>
+      </Section>
     </Page>
   );
 }

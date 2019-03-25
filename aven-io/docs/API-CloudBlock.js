@@ -17,7 +17,7 @@ function DocPage() {
         Cloud blocks represent immutable values in the database. The value
         cannot be changed, but a cloud block may exist in the client before the
         data has been loaded. Blocks may also exist in the client before they
-        have been published to the data source.
+        have been published to the source.
       </Body>
       <Section title="Usage">
         <Body>
@@ -86,8 +86,8 @@ const block = doc.getBlock(blockRef);
         </SubSection>
         <SubSection title="async fetch()">
           <Body>
-            Command a fetch of the value of the block from the data source, if
-            it has not already been fetched.
+            Command a fetch of the value of the block from the source, if it has
+            not already been fetched.
           </Body>
         </SubSection>
         <SubSection title="async fetchValue()">
@@ -96,7 +96,7 @@ const block = doc.getBlock(blockRef);
         <SubSection title="async publish()">
           <Body>
             Todo! This method does not exist yet, but it should publish the doc
-            to the data source if it has not already been published.
+            to the source if it has not already been published.
           </Body>
         </SubSection>
       </Section>

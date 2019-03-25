@@ -7,6 +7,11 @@ function DocPage() {
       <Title>Roadmap</Title>
       <Section title="Ideas">
         <List>
+          <ListItem>TypeScript definitions, and porting code to TS</ListItem>
+          <ListItem>
+            <ListItem>TypeScript definitions, and porting to TS</ListItem>
+            <ListItem>TypeScript definitions, and porting to TS</ListItem>
+          </ListItem>
           <ListItem>
             synthetic data source: combine multiple data sources based on names
             and domains

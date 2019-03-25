@@ -14,13 +14,14 @@ function DocPage() {
     <Page>
       <Title>API - createNativeNetworkSource</Title>
       <Body>
-        This module is used inside React Native apps to connect to a data source
-        or auth source on a remote server.
+        This module is used inside React Native apps to connect to a Source on a
+        remote server.
       </Body>
       <Body>
-        You can use this module *as* an auth source or data source, and it will
-        proxy the behavior of the remote source.
+        You can use this module as a Protected Source or a Source. It will proxy
+        the actual behavior of the remote Source, "Protected" or not.
       </Body>
+
       <Section title="Usage">
         <Snippet
           code={`const source = createNativeNetworkSource({
