@@ -716,7 +716,7 @@ export default function createCloudDoc({
       return Observable.of(cloudDocValue.value);
     }
     if (!cloudDocValue.id) {
-      return Observable.of(null);
+      return Observable.of(undefined);
     }
     const block = _getBlockWithId(cloudDocValue.id);
     return block.observeValue;

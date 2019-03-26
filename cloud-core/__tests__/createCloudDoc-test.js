@@ -250,7 +250,7 @@ describe('observing docs', () => {
       },
     });
 
-    expect(lastObserved).toEqual(null);
+    expect(lastObserved).toEqual(undefined);
     await doc.fetchValue();
     expect(lastObserved.foo).toEqual('bar');
 
