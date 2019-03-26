@@ -1,5 +1,15 @@
 import React from 'react';
-import { Title, Body, Page, Link, Snippet, Section } from '../DocViews';
+import {
+  Title,
+  Body,
+  Page,
+  Link,
+  Snippet,
+  Section,
+  SubSection,
+  ListItem,
+  List,
+} from '../DocViews';
 
 function DocPage() {
   return (
@@ -31,8 +41,24 @@ const cloud = createCloudClient({
         Because the client is the primary interface to our storage, we tend call
         it "cloud"
       </Body>
-      <Section title="Getting Docs">
+      <SubSection title="Getting Docs">
         <Body>You can call `.get` on a client to access docs within it:</Body>
+        <Snippet
+          code={`const foo = cloud.get('foo');
+
+// Access the doc named "bar" under the parent doc "foo":
+const fooBar = cloud.get('foo/bar');`}
+        />
+        <Body>You can also call `.get` on the doc, to access a child:</Body>
+        <Snippet
+          code={`const alsoFooBar = foo.get('foo');
+// fooBar === alsoFooBar`}
+        />
+      </SubSection>
+      <Section title="API">
+        <List>
+          <ListItem>a</ListItem>
+        </List>
       </Section>
     </Page>
   );

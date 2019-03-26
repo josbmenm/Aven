@@ -13,6 +13,6 @@ function DocPage() {
 DocPage.navigationOptions = {
   title: 'API - createProtectedSource',
 };
-DocPage.path = 'api-create-auth-data-source';
+DocPage.path = 'api-create-protected-source';
 
 export default DocPage;

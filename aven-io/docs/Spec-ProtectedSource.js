@@ -38,6 +38,6 @@ function DocPage() {
 DocPage.navigationOptions = {
   title: 'Spec - ProtectedSource',
 };
-DocPage.path = 'spec-auth-data-source';
+DocPage.path = 'spec-protected-source';
 
 export default DocPage;

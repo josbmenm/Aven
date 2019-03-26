@@ -1,15 +1,9 @@
 {
-  "name": "web-playground",
+  "name": "todo-app",
   "version": "0.1.0",
   "private": true,
   "aven": {
-    "env": "web",
-    "envOptions": {
-      "mainServer": "MainServer.js",
-      "mainClient": "MainClient.js"
-    },
     "srcDependencies": [
-      "todo-app",
       "navigation-core",
       "aven-admin",
       "aven-web",

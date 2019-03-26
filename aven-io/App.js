@@ -279,6 +279,7 @@ const DocsRouter = SwitchRouter({
     .default,
   'API-createProtectedSource': require('./docs/API-createProtectedSource')
     .default,
+  'API-startSourceServer': require('./docs/API-startSourceServer').default,
   'API-createMemoryStorageSource': require('./docs/API-createMemoryStorageSource')
     .default,
   'API-startFSStorageSource': require('./docs/API-startFSStorageSource')
@@ -391,6 +392,10 @@ function Sidebar() {
             routeName="API-startPostgresStorageSource"
           />
           <SidebarLink
+            title="API: startSourceServer"
+            routeName="API-startSourceServer"
+          />
+          <SidebarLink
             title="API: createBrowserNetworkSource"
             routeName="API-createBrowserNetworkSource"
           />
@@ -406,7 +411,7 @@ function Sidebar() {
         </SidebarSection>
         <SidebarSection title="Cloud Client">
           <SidebarLink
-            title="Introduce Cloud Client"
+            title="Intro to Cloud Client"
             routeName="CloudClientIntro"
           />
           <SidebarLink

@@ -13,6 +13,6 @@ function DocPage() {
 DocPage.navigationOptions = {
   title: 'API - startPostgresStorageSource',
 };
-DocPage.path = 'api-create-postgres-data-source';
+DocPage.path = 'api-create-postgres-storage-source';
 
 export default DocPage;

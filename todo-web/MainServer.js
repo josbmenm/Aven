@@ -1,7 +1,7 @@
 import CloudContext from '../cloud-core/CloudContext';
 import createCloudClient from '../cloud-core/createCloudClient';
 import CloudAuth from '../cloud-auth/CloudAuth';
-import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
+import startFSStorageSource from '../cloud-fs/startFSStorageSource';
 import WebServer from '../aven-web/WebServer';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
@@ -15,8 +15,9 @@ import App from './App';
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');
 
-  const source = await createMemoryStorageSource({
-    domain: 'todo.aven.cloud',
+  const source = await startFSStorageSource({
+    domain: 'todo.aven.io',
+    dataDir: './db',
   });
 
   const emailAgent = EmailAgent({
@@ -49,14 +50,14 @@ const runServer = async () => {
   const rootAuthProvider = RootAuthProvider({
     rootPasswordHash: await hashSecureString('pw'),
   });
-  const authSource = CloudAuth({
+  const protectedSource = CloudAuth({
     source,
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
   async function putPermission({ name, defaultRule }) {
-    await authSource.dispatch({
-      domain: 'todo.aven.cloud',
+    await protectedSource.dispatch({
+      domain: 'todo.aven.io',
       type: 'PutPermissionRules',
       auth: {
         accountId: 'root',
@@ -74,8 +75,8 @@ const runServer = async () => {
   });
 
   const client = createCloudClient({
-    source: authSource,
-    domain: 'todo.aven.cloud',
+    source: protectedSource,
+    domain: 'todo.aven.io',
   });
 
   const getEnv = c => process.env[c];
@@ -85,7 +86,8 @@ const runServer = async () => {
   const webService = await WebServer({
     App,
     context,
-    source: authSource,
+    source,
+    // source: protectedSource,
     serverListenLocation,
   });
   console.log('☁️️ Web Ready 🕸');

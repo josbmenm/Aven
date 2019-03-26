@@ -1,18 +1,7 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import useCloud from '../cloud-core/useCloud';
 import Admin from '../aven-admin/Admin';
 import createSwitchNavigator from '../navigation-core/navigators/createSwitchNavigator';
-import useObservable from '../cloud-core/useObservable';
-
-function Home() {
-  const cloud = useCloud();
-  return (
-    <View style={{ flex: 1 }}>
-      <Text onPress={() => {}}>Hello</Text>
-    </View>
-  );
-}
+import AppRoutes from '../todo-app/AppRoutes';
 
 function AdminScreen(props) {
   return (
@@ -21,7 +10,7 @@ function AdminScreen(props) {
       defaultSession={{
         authority: 'localhost:3000',
         useSSL: false,
-        domain: 'todo.aven.cloud',
+        domain: 'todo.aven.io',
       }}
     />
   );
@@ -30,7 +19,7 @@ AdminScreen.navigationOptions = Admin.navigationOptions;
 AdminScreen.router = Admin.router;
 
 const App = createSwitchNavigator({
-  Home,
+  ...AppRoutes,
   Admin: AdminScreen,
 });
 

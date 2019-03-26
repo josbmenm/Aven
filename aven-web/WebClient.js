@@ -7,6 +7,8 @@ import { createBrowserApp } from '../navigation-web';
 
 const emptyMap = new Map();
 
+// welcome to the file that does the app's react-native-web and react-navigation jiggery pokery, so that most of the code below can be platform-agnostic
+
 export default function startWebClient(App, context = emptyMap) {
   const AppWithNavigation = App.router ? createBrowserApp(App) : App;
 

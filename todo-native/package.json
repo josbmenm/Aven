@@ -1,10 +1,11 @@
 {
-  "main": "App.js",
+  "main": "MainApp.js",
   "aven": {
     "env": "reactnative",
     "srcDependencies": [
       "views",
       "utils",
+      "todo-app",
       "cloud-native",
       "navigation-core",
       "navigation-hooks",

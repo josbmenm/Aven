@@ -4,30 +4,26 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
-  AlertIOS,
 } from 'react-native';
 import React, {
   useReducer,
   useContext,
   useState,
   useEffect,
-  useMemo,
   useRef,
 } from 'react';
 
 import createAppContainer from '../navigation-native/createAppContainer';
 import createStackNavigator from '../navigation-stack/navigators/createStackNavigator';
-import NetworkCloudProvider from '../cloud-native/NetworkCloudProvider';
 import useCloud from '../cloud-core/useCloud';
 import useCloudValue from '../cloud-core/useCloudValue';
 import useObservable from '../cloud-core/useObservable';
-import useCloudReducer from '../cloud-core/useCloudReducer';
 import Animated, { Easing } from 'react-native-reanimated';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import useFocus from '../navigation-hooks/useFocus';
 import LabelInput from '../views/LabelInput';
-import useAsyncStorage, { isStateUnloaded } from '../utils/useAsyncStorage';
 import uuid from 'uuid/v1';
+import AppRoutes from '../todo-app/AppRoutes';
 
 function ConnectedMessage() {
   const cloud = useCloud();
@@ -286,7 +282,7 @@ function PageForm({ inputs, onSubmit }) {
     },
     {
       inputState: {},
-    }
+    },
   );
   const focus = useFocus({
     onSubmit: () => onSubmit(formState.inputState),
@@ -342,7 +338,7 @@ function Slider({ children, childKey }) {
       }
       lastChildren.current[childKey] = children;
     },
-    [children, childKey, settledChildKey]
+    [children, childKey, settledChildKey],
   );
 
   let prevChildren = null;
@@ -544,29 +540,10 @@ function Login() {
 }
 
 const AppNavigator = createStackNavigator(
-  { Home, Login },
-  { headerMode: 'none' }
+  { ...AppRoutes, Login },
+  { headerMode: 'none' },
 );
 
 const AppNav = createAppContainer(AppNavigator);
 
-function App() {
-  const [session, setSession] = useAsyncStorage('CloudSession', null);
-  console.log('session state', session);
-  if (isStateUnloaded(session)) {
-    return null;
-  }
-  return (
-    <NetworkCloudProvider
-      authority="localhost:3000"
-      useSSL={false}
-      domain="todo.aven.cloud"
-      session={session}
-      onSession={setSession}
-    >
-      <AppNav />
-    </NetworkCloudProvider>
-  );
-}
-
-export default App;
+export default AppNav;

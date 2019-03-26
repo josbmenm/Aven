@@ -28,6 +28,6 @@ const source = createMemoryStorageSource({
 DocPage.navigationOptions = {
   title: 'API - createMemoryStorageSource',
 };
-DocPage.path = 'api-create-memory-data-source';
+DocPage.path = 'api-create-memory-storage-source';
 
 export default DocPage;

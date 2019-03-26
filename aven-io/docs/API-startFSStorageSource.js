@@ -14,6 +14,6 @@ function DocPage() {
 DocPage.navigationOptions = {
   title: 'API - startFSStorageSource',
 };
-DocPage.path = 'api-start-fs-data-source';
+DocPage.path = 'api-start-fs-storage-source';
 
 export default DocPage;
