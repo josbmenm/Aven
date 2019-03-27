@@ -6,8 +6,8 @@ import createCloudClient from '../cloud-core/createCloudClient';
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
 
 const networkSource = createBrowserNetworkSource({
-  authority: 'localhost:3000',
-  useSSL: false,
+  authority: null, // this means to inherit from the server
+  useSSL: null,
 });
 
 const client = createCloudClient({

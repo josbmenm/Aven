@@ -7,6 +7,7 @@ import {
   Section,
   List,
   ListItem,
+  SubSection,
 } from '../DocViews';
 
 function DocPage() {
@@ -41,8 +42,21 @@ function DocPage() {
             protocols
           </ListItem>
         </List>
-        <Body />
       </Section>
+      <SubSection title="Implicit Options">
+        <Body>
+          If you pass `null` in for the authority or useSSL, the network client
+          will infer this from the browser's current location.
+        </Body>
+        <Snippet
+          code={`const source = createBrowserNetworkSource({
+  authority: null,
+  useSSL: null,
+});
+// The browser will attempt to connect to the server it was loaded from
+      `}
+        />
+      </SubSection>
     </Page>
   );
 }
