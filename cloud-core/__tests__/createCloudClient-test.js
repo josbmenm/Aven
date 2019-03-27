@@ -298,8 +298,8 @@ describe('eval', () => {
   });
 });
 
-async function justASec() {
-  return new Promise(resolve => setTimeout(resolve, 1));
+async function justASec(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms || 2));
 }
 
 function spyOnSource(ds) {
@@ -360,6 +360,135 @@ describe('cache behavior', () => {
     await doc.fetchValue();
 
     expect(m._observedActionCounts.GetDoc || 0).toEqual(0);
+  });
+});
+
+describe('eval/lambda behavior', () => {
+  test('basic eval', async () => {
+    const source = createMemoryStorageSource({ domain: 'd' });
+    const c = createCloudClient({ source, domain: 'd' });
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'foo',
+      value: 2,
+    });
+    c.setLambda('squared', v => v * v);
+    const s = c.get('foo^squared');
+    await s.fetchValue();
+    expect(s.getValue()).toBe(4);
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'foo',
+      value: 3,
+    });
+    await s.fetchValue();
+    expect(s.getValue()).toBe(9);
+  });
+  test('basic eval, observed', async () => {
+    const source = createMemoryStorageSource({ domain: 'd' });
+    const c = createCloudClient({ source, domain: 'd' });
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'foo',
+      value: 2,
+    });
+    c.setLambda('squared', v => v * v);
+    const s = c.get('foo^squared');
+    let lastObserved = undefined;
+    s.observeValue.subscribe({
+      next: newVal => {
+        lastObserved = newVal;
+      },
+    });
+    await justASec();
+    expect(lastObserved).toBe(4);
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'foo',
+      value: 3,
+    });
+    await justASec();
+    expect(lastObserved).toBe(9);
+  });
+  test('basic multi-doc eval', async () => {
+    const source = createMemoryStorageSource({ domain: 'd' });
+    const c = createCloudClient({ source, domain: 'd' });
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'foo',
+      value: 2,
+    });
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'bar',
+      value: 3,
+    });
+    c.setLambda('byBar', (v, d, c, useValue) => v * useValue(c.get('bar')));
+    const s = c.get('foo^byBar');
+    await s.fetchValue();
+    expect(s.getValue()).toBe(6);
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'foo',
+      value: 3,
+    });
+    await s.fetchValue();
+    expect(s.getValue()).toBe(9);
+  });
+
+  test('recursive multi-doc eval', async () => {
+    const source = createMemoryStorageSource({ domain: 'd' });
+    const c = createCloudClient({ source, domain: 'd' });
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { add: 'a' },
+    });
+    await source.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { add: 'b' },
+    });
+    c.setLambda('fooReducer', (docState, doc, cloud, useValue) => {
+      let state = [];
+      if (!docState) {
+        return state;
+      }
+      let action = docState;
+      if (docState.on && docState.on.id) {
+        const ancestorName =
+          doc.getFullName() + '#' + docState.on.id + '^fooReducer';
+        state = useValue(cloud.get(ancestorName)) || [];
+        action = docState.value;
+      }
+      if (action.add) {
+        return [...state, action.add];
+      }
+      if (action.remove) {
+        return state.filter(v => v !== action.remove);
+      }
+      return state;
+    });
+    const s = c.get('fooActions^fooReducer');
+    await s.fetchValue();
+    expect(s.getValue()).toEqual(['a', 'b']);
+    await source.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { remove: 'a' },
+    });
+    await s.fetchValue();
+    expect(s.getValue()).toEqual(['b']);
   });
 });
 

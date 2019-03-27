@@ -198,8 +198,8 @@ export default function createCloudBlock({
     return reComputeResult();
   };
 
-  const functionObserveValue = argumentDoc =>
-    observeValue.switchMap(fnValue => {
+  const functionObserveValue = argumentDoc => {
+    return observeValue.switchMap(fnValue => {
       if (fnValue === undefined) {
         return Observable.of(null);
       }
@@ -213,6 +213,7 @@ export default function createCloudBlock({
         return reComputeResult();
       });
     });
+  };
 
   const cloudBlock = {
     isConnected,

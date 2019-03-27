@@ -152,13 +152,8 @@ export default function createCloudClient({
 
   const dispatch = createDispatcher(actions, sessionDispatch, domain);
 
-  const _lambdas = {};
-
-  const getLambda = name => {
-    return _lambdas[name];
-  };
   const setLambda = (name, fn) => {
-    _lambdas[name] = fn;
+    docs.get(name).$setOverrideFunction(fn);
   };
 
   async function setAccountName(name) {
@@ -174,7 +169,6 @@ export default function createCloudClient({
 
   const cloudClient = {
     ...source,
-    getLambda,
     setLambda,
     observeSession: session,
     createSession,
