@@ -132,7 +132,7 @@ describe('Cloud auth sessions', () => {
         auth: session,
         domain: 'test',
         name: null,
-      }),
+      })
     ).rejects.toThrow();
   });
 

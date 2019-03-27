@@ -7,13 +7,28 @@ import InnerLink from '../navigation-web/Link';
 
 const baseFontSize = 16;
 
-export function Link({ children, ...props }) {
-  return <InnerLink {...props}>{children}</InnerLink>;
+export function Link({ children, style, ...props }) {
+  return (
+    <InnerLink
+      overrideATagCSS={{ color: mainShade }}
+      style={[style]}
+      {...props}
+    >
+      {children}
+    </InnerLink>
+  );
 }
 
 export function Title({ children }) {
   return (
-    <Text style={{ fontSize: 42, marginBottom: 30, color: '#486B7A' }}>
+    <Text
+      style={{
+        fontSize: 42,
+        marginBottom: 30,
+        color: mainShade,
+        fontFamily: titleFontFamily,
+      }}
+    >
       {children}
     </Text>
   );
@@ -37,10 +52,17 @@ export function Body({ children }) {
   );
 }
 
+export const mainShade = '#485B8F';
+export const mainShade50 = mainShade + '88';
+export const mainShadeLight = mainShade + 'DD';
+export const mainShadeUltralight = mainShade + 'BB';
+export const mainShadeTint = mainShade + '11';
+export const titleFontFamily = 'Arial Rounded MT Bold';
+
 export function Page({ children }) {
   return (
     <ScrollView style={{ flex: 1 }}>
-      <View style={{ flex: 1, padding: 40 }}>{children}</View>
+      <View style={{ flex: 1, padding: 50 }}>{children}</View>
     </ScrollView>
   );
 }
@@ -80,7 +102,7 @@ function createSection(opts) {
           borderTopWidth: opts.hasLine ? 1 : 0,
         }}
       >
-        <Text style={{ fontSize: opts.titleSize, color: '#486B7A' }}>
+        <Text style={{ fontSize: opts.titleSize, color: mainShadeUltralight }}>
           {title}
         </Text>
         {children}
@@ -89,6 +111,14 @@ function createSection(opts) {
   }
   return Section;
 }
+
+export const shadowStyle = {
+  shadowOffset: { width: 0, height: 0 },
+  shadowColor: 'black',
+  shadowOpacity: 0.06,
+  shadowRadius: 11,
+};
+export const shadowBorderColor = '#d8d8d8';
 
 export const Section = createSection({ titleSize: 32, hasLine: true });
 export const SubSection = createSection({ titleSize: 26 });

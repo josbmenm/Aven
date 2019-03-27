@@ -7,7 +7,7 @@ export default function createMemoryStorageSource(opts = {}) {
 
   if (!primaryDomain) {
     throw new Error(
-      'Cannot start a memory storage source without specifying a domain',
+      'Cannot start a memory storage source without specifying a domain'
     );
   }
 

@@ -14,16 +14,16 @@ function DocPage() {
     <Page>
       <Title>About Aven</Title>
       <Body>
-        <Bold>Aven</Bold> is an emerging framework for building apps on every
+        <Body>
+          <Bold>Aven Cloud</Bold> is a data-handling framework for web and
+          mobile JavaScript applications. It helps keep data up to date across
+          the client and server as it changes over time, handles authentication,
+          enforces permissions, and computes changes on top of the data.
+        </Body>
+        <Bold>Aven</Bold> is an unreleased framework for building apps on every
         platform. It includes React Native technologies for the views and
         environments, React Navigation as the cross-platform navigation library,
         and Aven Cloud as the data handling framework.
-      </Body>
-      <Body>
-        <Bold>Aven Cloud</Bold> is a data-handling framework for web and mobile
-        JavaScript applications. It helps keep data up to date across the client
-        and server as it changes over time, handles authentication, enforces
-        permissions, and computes changes on top of the data.
       </Body>
       <Section title="Development Philosophies and Strategies">
         <Body>
@@ -88,8 +88,9 @@ function DocPage() {
           </Body>
           <Body>
             To mitigate against shortcomings in our abstractions, we install{' '}
-            <Bold>escape hatches</Bold> that give us access to underlying APIs,
-            which can be used when coming across.
+            <Bold>escape hatches</Bold> that give us access to underlying APIs.
+            We see what use-cases force people to escape, and use that to inform
+            new and revised abstractions.
           </Body>
         </SubSection>
         <SubSection title="Universality">
@@ -97,7 +98,8 @@ function DocPage() {
             Every use-case is valid. We aim to support developers saying "yes"
             to every product need. We hope to always say yes to questions like
             "Can you build an iOS app with Push Notifications?", or "Can you
-            program a robot?"
+            program a robot?". When new use-cases emerge, we want to be ready
+            for them, without tearing down our existing infrastructure.
           </Body>
           <Body>
             When possible, we share technologies across different environments
@@ -107,8 +109,8 @@ function DocPage() {
           <Body>
             <Bold>Aim to minimize conceptual overlaps.</Bold> By focusing on a
             small set of tools, we can make our skills more portable on
-            different environments. Where possible, we avoid tools that lock us
-            down to a single environment.
+            different environments. Avoid tools that lock us down to a single
+            environment.
           </Body>
         </SubSection>
       </Section>

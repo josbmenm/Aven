@@ -35,7 +35,7 @@ export default async function startSourceServer({
             message: String(err),
             type: err.type,
             detail: err.detail,
-          }),
+          })
         );
       });
   });

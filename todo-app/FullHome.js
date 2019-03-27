@@ -39,11 +39,11 @@ function InputTodo() {
 function TodoList() {
   const todos = useCloudValue('TodoActions');
   return <Title>{JSON.stringify(todos)}</Title>;
-  console.log('rendering list with todos:', todos);
-  if (!todos || !todos.tasks) {
-    return null;
-  }
-  return todos.tasks.map(task => <TaskRow key={task.id} task={task} />);
+  // console.log('rendering list with todos:', todos);
+  // if (!todos || !todos.tasks) {
+  //   return null;
+  // }
+  // return todos.tasks.map(task => <TaskRow key={task.id} task={task} />);
 }
 
 function Title({ children }) {

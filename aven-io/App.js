@@ -19,6 +19,14 @@ import useCloudReducer from '../cloud-core/useCloudReducer';
 import Link from '../navigation-web/Link';
 import uuid from 'uuid/v1';
 import Konva from 'konva';
+import {
+  mainShade,
+  mainShadeLight,
+  titleFontFamily,
+  mainShadeTint,
+  shadowBorderColor,
+  shadowStyle,
+} from './DocViews';
 
 import {
   Stage,
@@ -31,15 +39,7 @@ import {
 
 process.env.REACT_NAV_LOGGING = true;
 
-const shadow = {
-  shadowOffset: { width: 0, height: 0 },
-  shadowColor: 'black',
-  shadowOpacity: 0.06,
-  shadowRadius: 11,
-};
-const shadowBorderColor = '#d8d8d8';
-
-function HeaderLink({ title, ...props }) {
+function HeaderLink({ title, icon, ...props }) {
   return (
     <Link
       {...props}
@@ -47,14 +47,24 @@ function HeaderLink({ title, ...props }) {
       renderContent={isSelected => (
         <View
           style={{
-            backgroundColor: isSelected ? '#ddf' : '#fff',
+            backgroundColor: isSelected ? mainShadeTint : '#fff',
             alignSelf: 'stretch',
-            padding: 20,
+            padding: 10,
+            paddingHorizontal: 20,
+            justifyContent: 'center',
           }}
         >
-          <Text style={{ fontSize: 22, color: isSelected ? 'black' : '#222' }}>
-            {title}
-          </Text>
+          {title && (
+            <Text
+              style={{
+                fontSize: 22,
+                color: isSelected ? mainShade : '#2c2c2c',
+              }}
+            >
+              {title}
+            </Text>
+          )}
+          {icon && <Image source={icon} style={{ width: 36, height: 36 }} />}
         </View>
       )}
     />
@@ -68,7 +78,7 @@ function Header() {
         zIndex: 100,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
-        ...shadow,
+        ...shadowStyle,
         height: 70,
         flexDirection: 'row',
       }}
@@ -89,10 +99,10 @@ function Header() {
           />
           <Text
             style={{
-              color: '#486B7ACC',
+              color: mainShade,
               fontSize: 36,
               alignSelf: 'center',
-              fontFamily: 'Arial Rounded MT Bold',
+              fontFamily: titleFontFamily,
             }}
           >
             Cloud
@@ -100,11 +110,16 @@ function Header() {
         </View>
       </Link>
       <View style={{ flex: 1 }} />
-      <HeaderLink title="Home" routeName="Home" />
       <HeaderLink title="Docs" routeName="Docs" />
       <HeaderLink title="About" routeName="About" />
-      <HeaderLink title="Github" url="https://github.com/AvenCloud/Aven" />
-      <HeaderLink title="Twitter" url="https://twitter.com/Aven_Cloud" />
+      <HeaderLink
+        url="https://github.com/AvenCloud/Aven"
+        icon={require('./assets/Github.png')}
+      />
+      <HeaderLink
+        url="https://twitter.com/Aven_Cloud"
+        icon={require('./assets/Twitter.png')}
+      />
     </View>
   );
 }
@@ -232,6 +247,70 @@ function AddTodo() {
 
 function Home() {
   return (
+    <ScrollView style={{ flex: 1 }}>
+      <View style={{ alignItems: 'center' }}>
+        <Image
+          style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+          resizeMode="cover"
+          source={require('./assets/cloudGlamour.png')}
+        />
+        <View
+          style={{
+            flex: 1,
+            alignSelf: 'stretch',
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+              width: 600,
+              alignSelf: 'center',
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 36,
+                margin: 50,
+                fontFamily: titleFontFamily,
+                color: mainShade,
+              }}
+            >
+              Introducing Aven Cloud
+            </Text>
+            <Text style={{ fontSize: 32, margin: 50, color: mainShadeLight }}>
+              A Full-Stack Database Framework for JS Apps
+            </Text>
+            <View
+              style={{
+                marginVertical: 80,
+                backgroundColor: 'white',
+                padding: 50,
+                minHeight: 200,
+                alignSelf: 'stretch',
+                ...shadowStyle,
+              }}
+            />
+          </View>
+        </View>
+      </View>
+      <View style={{}}>
+        <Text style={{ fontSize: 36, margin: 50 }}>Hello World</Text>
+      </View>
+      <View style={{}}>
+        <Image
+          style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+          resizeMode="cover"
+          source={require('./assets/cloudGlamour.png')}
+        />
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 36, margin: 50 }}>Hello World</Text>
+        </View>
+      </View>
+    </ScrollView>
+  );
+}
+function OldHome() {
+  return (
     <View style={{ flex: 1 }}>
       <Text style={{ fontSize: 42 }}>Preview Only</Text>
       <Stage width={600} height={600}>
@@ -297,7 +376,6 @@ const DocsRouter = SwitchRouter({
   Sources: require('./docs/Sources').default,
   CloudClientIntro: require('./docs/CloudClientIntro').default,
   AuthIntro: require('./docs/AuthIntro').default,
-  About: require('./docs/About').default,
   Roadmap: require('./docs/Roadmap').default,
   Contributors: require('./docs/Contributors').default,
   DocPermissions: require('./docs/DocPermissions').default,
@@ -307,18 +385,38 @@ const DocsRouter = SwitchRouter({
 });
 
 function SidebarSection({ title, children }) {
+  const marginHeight = 50;
+  const marginOffset = 150;
   return (
     <View
       style={{
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
+        // borderBottomWidth: 1,
+        // borderBottomColor: '#ddd',
         paddingBottom: 20,
       }}
     >
+      <View
+        style={{
+          alignSelf: 'stretch',
+          height: marginHeight,
+          overflow: 'hidden',
+        }}
+      >
+        <Image
+          resizeMode="cover"
+          style={{
+            height: marginOffset,
+            top: marginHeight - marginOffset,
+            alignSelf: 'stretch',
+          }}
+          source={require('./assets/cloudGlamour.png')}
+        />
+      </View>
       <Text
         style={{
-          color: '#111',
-          fontSize: 30,
+          color: mainShadeLight,
+          fontFamily: titleFontFamily,
+          fontSize: 28,
           paddingTop: 20,
           paddingBottom: 10,
           paddingHorizontal: 20,
@@ -337,15 +435,15 @@ function SidebarLink({ title, routeName }) {
       renderContent={isActive => (
         <View
           style={{
-            backgroundColor: isActive ? '#fff' : undefined,
+            backgroundColor: isActive ? mainShade : undefined,
             paddingHorizontal: 20,
             paddingVertical: 8,
           }}
         >
           <Text
             style={{
-              color: isActive ? '#007' : '#333',
-              fontSize: 16,
+              color: isActive ? 'white' : '#2c2c2c',
+              fontSize: 17,
             }}
           >
             {title}
@@ -362,12 +460,12 @@ function Sidebar() {
         flex: 1,
         maxWidth: 360,
         backgroundColor: '#f8f8f8',
-        ...shadow,
+        ...shadowStyle,
         borderRightColor: shadowBorderColor,
         borderRightWidth: StyleSheet.hairlineWidth,
       }}
     >
-      <View style={{}}>
+      <View style={{ marginTop: 0 }}>
         <SidebarSection title="Getting Started">
           <SidebarLink title="Quick Start" routeName="QuickStart" />
           <SidebarLink

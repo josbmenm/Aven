@@ -282,7 +282,7 @@ function PageForm({ inputs, onSubmit }) {
     },
     {
       inputState: {},
-    },
+    }
   );
   const focus = useFocus({
     onSubmit: () => onSubmit(formState.inputState),
@@ -338,7 +338,7 @@ function Slider({ children, childKey }) {
       }
       lastChildren.current[childKey] = children;
     },
-    [children, childKey, settledChildKey],
+    [children, childKey, settledChildKey]
   );
 
   let prevChildren = null;
@@ -541,7 +541,7 @@ function Login() {
 
 const AppNavigator = createStackNavigator(
   { ...AppRoutes, Login },
-  { headerMode: 'none' },
+  { headerMode: 'none' }
 );
 
 const AppNav = createAppContainer(AppNavigator);
