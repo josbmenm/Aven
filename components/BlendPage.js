@@ -30,19 +30,24 @@ function Ingredient({ ingredient }) {
       style={{
         alignItems: 'center',
         marginRight: 20,
-        width: 100,
+        marginBottom: 30,
+        width: 180,
       }}
     >
       <AirtableImage
         image={ingredient['Ingredient Image']}
-        style={{ width: 100, height: 80 }}
+        style={{
+          //width: 100, height: 80
+          width: 180,
+          height: 120,
+        }}
       />
       <Text
         style={{
           marginTop: 4,
           marginBottom: 11,
           textAlign: 'center',
-          fontSize: 10,
+          fontSize: 12,
           color: monsterra,
           ...boldPrimaryFontFace,
         }}
@@ -59,13 +64,16 @@ function getSelectedIngredients(menuItem, cartItem) {
     !cartItem.customization ||
     !cartItem.customization.ingredients
   ) {
-    return menuItem.Recipe.Ingredients;
+    return menuItem.Recipe.Ingredients.map(
+      recipeIngredient => recipeIngredient.Ingredient,
+    );
   }
+  const ings = cartItem.customization.ingredients;
   // todo, calculate real current ingredients
   return [];
 }
 
-function Ingredients({ menuItem, cartItem }) {
+function Ingredients({ selectedIngredients }) {
   return (
     <View
       style={{
@@ -77,8 +85,8 @@ function Ingredients({ menuItem, cartItem }) {
         width: 600,
       }}
     >
-      {getSelectedIngredients(menuItem, cartItem).map(i => (
-        <Ingredient ingredient={i.Ingredient} key={i.id} />
+      {selectedIngredients.map(i => (
+        <Ingredient ingredient={i} key={i.id} />
       ))}
     </View>
   );
@@ -100,8 +108,29 @@ function BlendPageContentPure({
     );
     if (!item && pendingActiveEnhancement) {
       activeEnhancement =
-        menuItem.EnhancementCustomization[pendingActiveEnhancement];
+        menuItem.BenefitCustomization[pendingActiveEnhancement];
     }
+    const selectedIngredients = getSelectedIngredients(menuItem, item);
+    const selectedIngredientIds = selectedIngredients.map(i => i.id);
+    const benefits = Object.keys(menuItem.tables.Benefits)
+      .map(benefitId => {
+        const benefit = menuItem.tables.Benefits[benefitId];
+        if (
+          menuItem.DefaultBenefitEnhancement &&
+          menuItem.DefaultBenefitEnhancement.id === benefitId
+        ) {
+          return benefit;
+        }
+        const benefitingIngredients = benefit.Ingredients.filter(
+          ingId => selectedIngredientIds.indexOf(ingId) !== -1,
+        );
+        if (benefitingIngredients.length > 0) {
+          return benefit;
+        }
+        return null;
+      })
+      .filter(Boolean);
+
     menuContent = (
       <MenuZone>
         <MenuHLayout
@@ -120,31 +149,35 @@ function BlendPageContentPure({
         >
           <DetailsSection>
             <MainTitle>{displayNameOfOrderItem(item, menuItem)}</MainTitle>
+            <View style={{ flexDirection: 'row' }}>
+              {benefits.map(b => (
+                <View style={{ paddingVertical: 20, paddingRight: 20 }}>
+                  <AirtableImage
+                    image={b['Icon']}
+                    style={{
+                      width: 75,
+                      height: 75,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      ...boldPrimaryFontFace,
+                      color: monsterra,
+                      alignSelf: 'center',
+                    }}
+                  >
+                    {b.Name}
+                  </Text>
+                </View>
+              ))}
+            </View>
             <DescriptionText>{menuItem['Display Description']}</DescriptionText>
             <DetailText>
               {menuItem.Recipe['DisplayCalories']} Calories |{' '}
               {menuItem.Recipe['Nutrition Detail']}
             </DetailText>
-            <EnhancementSelector
-              activeEnhancement={activeEnhancement}
-              enhancementCustomization={menuItem.EnhancementCustomization}
-              onSelect={enhancement => {
-                if (item) {
-                  setItemState({
-                    ...item,
-                    customization: {
-                      ...item.customization,
-                      enhancement,
-                    },
-                  });
-                } else {
-                  setPendingActiveEnhancement(enhancement);
-                  onPendingEnhancement && onPendingEnhancement(enhancement);
-                }
-              }}
-            />
-            <SmallTitle>Organic Ingredients</SmallTitle>
-            <Ingredients menuItem={menuItem} cartItem={item} />
+            <SmallTitle>organic ingredients</SmallTitle>
+            <Ingredients selectedIngredients={selectedIngredients} />
           </DetailsSection>
         </MenuHLayout>
       </MenuZone>

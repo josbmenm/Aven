@@ -244,7 +244,7 @@ export function getItemCustomizationSummary(item) {
   }
   if (item.customization.enhancement) {
     const enhancement =
-      item.menuItem.EnhancementCustomization[item.customization.enhancement];
+      item.menuItem.BenefitCustomization[item.customization.enhancement];
     summaryItems.push('with ' + enhancement.Name.toLowerCase());
   }
   item.customization.ingredients &&
@@ -446,11 +446,9 @@ export function getActiveEnhancement(cartItem, menuItem) {
     cartItem.customization &&
     cartItem.customization.enhancement
   ) {
-    return menuItem.EnhancementCustomization[
-      cartItem.customization.enhancement
-    ];
+    return menuItem.tables.Benefits[cartItem.customization.enhancement];
   }
-  return menuItem.DefaultEnhancement;
+  return menuItem.DefaultBenefitEnhancement;
 }
 
 function companyConfigToBlendMenu(atData) {
@@ -499,10 +497,13 @@ function companyConfigToBlendMenu(atData) {
     );
     const defaultEnhancementId =
       Recipe && Recipe.DefaultEnhancement && Recipe.DefaultEnhancement[0];
-    const Enhancements = atData.baseTables['Enhancements'];
-    const DefaultEnhancement = defaultEnhancementId
-      ? Enhancements[defaultEnhancementId]
+    const Benefits = atData.baseTables['Benefits'];
+    const DefaultBenefitEnhancement = defaultEnhancementId
+      ? Benefits[defaultEnhancementId]
       : null;
+    if (defaultEnhancementId && !DefaultBenefitEnhancement) {
+      debugger;
+    }
     return {
       ...item,
       IngredientCustomization: IngredientCustomization.map(ic => {
@@ -527,9 +528,11 @@ function companyConfigToBlendMenu(atData) {
           ),
         };
       }).filter(ic => !!ic),
-      EnhancementCustomization: Enhancements,
-      DefaultEnhancement,
-      DefaultEnhancementName: DefaultEnhancement && DefaultEnhancement.Name,
+      tables: atData.baseTables,
+      BenefitCustomization: Benefits,
+      DefaultBenefitEnhancement,
+      DefaultBenefitEnhancementName:
+        DefaultBenefitEnhancement && DefaultBenefitEnhancement.Name,
       DisplayPrice: formatCurrency(Recipe['Sell Price']),
       Recipe: {
         ...Recipe,

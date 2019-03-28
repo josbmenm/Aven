@@ -2,27 +2,21 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import AirtableImage from './AirtableImage';
 import {
-  pageBackgroundColor,
   prettyShadow,
   prettyShadowSmall,
-  menuZoneTopInset,
   titleStyle,
   monsterra40,
   monsterra60,
   proseFontFace,
   monsterra,
   primaryFontFace,
-  boldPrimaryFontFace,
-  black8,
 } from './Styles';
 import { MenuZone, MenuHLayout } from './MenuZone';
 import ActionPage from '../components/ActionPage';
 import TabSectionScrollView from './TabSectionScrollView';
 import ListAnimation from './ListAnimation';
-import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { EnhancementDetail } from './Enhancements';
-import { getactiveEnhancement } from '../ono-cloud/OnoKitchen';
 
 const tagSize = {
   width: 144,
@@ -225,16 +219,16 @@ function CustomizationMainSection({ section }) {
 
 // const MAX_FUNCTIONS = 2;
 
-// function EnhancementCustomization({ customization, state, onState, menuItem }) {
+// function BenefitCustomization({ customization, state, onState, menuItem }) {
 //   return (
 //     <CustomizationSection
 //       title="Blend Function"
 //       subtitle={`Choose ${MAX_FUNCTIONS}`}
 //     >
-//       {Object.keys(menuItem.EnhancementCustomization).map(functionId => (
+//       {Object.keys(menuItem.BenefitCustomization).map(functionId => (
 //         <CustomFunctionPuck
 //           key={functionId}
-//           fn={menuItem.EnhancementCustomization[functionId]}
+//           fn={menuItem.BenefitCustomization[functionId]}
 //           state={state}
 //           onPress={() => {
 //             const wasSelected = state.indexOf(functionId) !== -1;
@@ -263,15 +257,15 @@ function getCustomizationSections(
   let activeEnhancement = menuItem.DefaultEnhancement;
   if (customizationState && customizationState.enhancement !== undefined) {
     activeEnhancement =
-      menuItem.EnhancementCustomization[customizationState.enhancement];
+      menuItem.BenefitCustomization[customizationState.enhancement];
   }
   const sections = [
     {
       name: 'enhancement',
       displayName: 'Enhancement',
       slotCount: 1,
-      options: Object.keys(menuItem.EnhancementCustomization).map(
-        id => menuItem.EnhancementCustomization[id],
+      options: Object.keys(menuItem.BenefitCustomization).map(
+        id => menuItem.BenefitCustomization[id],
       ),
       selectedIngredients: [activeEnhancement],
       addIngredient: enhancementId => {
