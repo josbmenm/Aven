@@ -1,47 +1,29 @@
-import { useEffect, useMemo, useState } from 'react';
-
 import useCloud from './useCloud';
 import useObservable from './useObservable';
 
-export default function useCloudReducer(name, reducer, initialState) {
+export default function useCloudReducer(
+  actionDocName,
+  reducerName,
+  reducerFn,
+  initialState,
+) {
   const cloud = useCloud();
-  const doc = cloud.get(name);
-  const lambdaName = `${name}/reducer`;
-  const resultDoc = cloud.get(`${name}^${lambdaName}`);
-  const [isReady, setIsReady] = useState(false);
-  useEffect(
-    () => {
-      const lambdaDoc = cloud.get(`${name}/reducer`);
-      lambdaDoc
-        .put({
-          type: 'LambdaFunction',
-          code: `(a, doc, cloud, useValue) => {
-        let state = ${JSON.stringify(initialState)};
-        
-        if (!a) {
-          return state;
-        }
-        if (a.on && a.on.id) {
-          const ancestorName = doc.getFullName() + '#' + a.on.id + '^${lambdaName}';
-          state = useValue(cloud.get(ancestorName)) || [];
-        }
-        
-        const action = a.value;
-
-        ${reducer}
-      }`,
-        })
-        .then(() => {
-          setIsReady(true);
-        })
-        .catch(e => {
-          // if this fails, we can still reduce locally. not too big of a deal..?
-          setIsReady(true);
-        });
-    },
-    [reducer, name]
-  );
-  let value = useObservable(isReady && resultDoc.observeValue);
-
-  return [value, doc.putTransaction];
+  const actionsDoc = cloud.get(actionDocName);
+  cloud.setLambda(reducerName, (docState, doc, cloud, useValue) => {
+    let state = initialState;
+    if (docState === undefined) {
+      return state;
+    }
+    let action = docState.value;
+    if (docState.on && docState.on.id) {
+      const ancestorName = `${doc.getFullName()}#${
+        docState.on.id
+      }^${reducerName}`;
+      state = useValue(cloud.get(ancestorName));
+    }
+    return reducerFn(state, action);
+  });
+  const todosReduced = actionsDoc.get(`^${reducerName}`);
+  const todos = useObservable(todosReduced.observeValue);
+  return [todos, actionsDoc.putTransaction];
 }

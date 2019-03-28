@@ -1,40 +1,14 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 import uuid from 'uuid/v4';
 
 import useCloud from '../cloud-core/useCloud';
-import useCloudValue from '../cloud-core/useCloudValue';
+import useCloudReducer from '../cloud-core/useCloudReducer';
 
 import Screen from './components/Screen';
 import TextInput from './components/TextInput';
 import TaskRow from './components/TaskRow';
 
-function useTodoActions() {
-  const cloud = useCloud();
-  const actionsDoc = cloud.get('TodoActions');
-  const actions = {};
-  ['AddTask', 'SetTaskCompletion', 'RemoveTask'].forEach(actionName => {
-    actions[actionName] = params =>
-      actionsDoc.putTransaction({ type: actionName, params });
-  });
-  return actions;
-}
-
-function InputTodo() {
-  const [draftTitle, setDraftTitle] = React.useState('');
-  const { AddTask } = useTodoActions();
-  return (
-    <TextInput
-      value={draftTitle}
-      onChangeText={setDraftTitle}
-      placeholder="Add new task.."
-      onSubmitEditing={() => {
-        AddTask({ title: draftTitle, id: uuid(), isComplete: false });
-        setDraftTitle('');
-      }}
-    />
-  );
-}
 function TaskReducer(state, action) {
   if (action.type === 'AddTask') {
     return [...state, action.params];
@@ -52,33 +26,54 @@ function TaskReducer(state, action) {
   }
   return state;
 }
-function TodoList() {
+
+function useTaskActions() {
   const cloud = useCloud();
-  cloud.setLambda('TodoReducer', (docState, doc, cloud, useValue) => {
-    console.log('heyyooo', docState, doc.getFullName());
-    let state = [];
-    if (docState === undefined) {
-      return state;
-    }
-    let action = docState;
-    if (docState.on && docState.on.id) {
-      const ancestorName =
-        doc.getFullName() + '#' + docState.on.id + '^TodoReducer';
-      console.log('using ' + ancestorName);
-      state = useValue(cloud.get(ancestorName));
-      action = docState.value;
-    }
-    console.log('heyyo22', state, action);
-    return TaskReducer(state, action);
-  });
-  const todos = useCloudValue('TodoActions^TodoReducer');
-  return todos.map(task => <TaskRow key={task.id} task={task} />);
-  // return null;
-  // console.log('rendering list with todos:', todos);
-  // if (!todos || !todos.tasks) {
-  //   return null;
-  // }
-  // return
+  const actionsDoc = cloud.get('TaskActions');
+  const dispatch = actionsDoc.putTransaction;
+  return {
+    addTask: params => dispatch({ type: 'AddTask', params }),
+    removeTask: id => dispatch({ type: 'RemoveTask', id }),
+    setTaskCompletion: (id, isComplete) =>
+      dispatch({ type: 'SetTaskCompletion', id, isComplete }),
+  };
+}
+function useTasks() {
+  const [tasks] = useCloudReducer(
+    'TaskActions',
+    'TaskReducer',
+    TaskReducer,
+    [],
+  );
+  return {
+    tasks,
+    ...useTaskActions(),
+  };
+}
+function InputTodo() {
+  const [draftTitle, setDraftTitle] = React.useState('');
+  const { addTask } = useTasks();
+  return (
+    <TextInput
+      value={draftTitle}
+      onChangeText={setDraftTitle}
+      placeholder="Add new task.."
+      onSubmitEditing={() => {
+        addTask({ title: draftTitle, id: uuid(), isComplete: false });
+        setDraftTitle('');
+      }}
+    />
+  );
+}
+
+function TaskList() {
+  const { tasks, removeTask } = useTasks();
+  if (!tasks) {
+    return null;
+  }
+  return tasks.map(task => (
+    <TaskRow key={task.id} task={task} onRemove={() => removeTask(task.id)} />
+  ));
 }
 
 function Title({ children }) {
@@ -91,7 +86,7 @@ export default function Home() {
   return (
     <Screen>
       <Title>Simple Todos</Title>
-      <TodoList />
+      <TaskList />
       <InputTodo />
     </Screen>
   );

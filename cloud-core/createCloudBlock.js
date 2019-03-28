@@ -31,7 +31,7 @@ export default function createCloudBlock({
   }
   if (id && observedBlockId && id !== observedBlockId) {
     throw new Error(
-      'id and value were both provided to createCloudBlock, but the id does not match the value!'
+      'id and value were both provided to createCloudBlock, but the id does not match the value!',
     );
   }
 
@@ -54,7 +54,7 @@ export default function createCloudBlock({
   function getReference() {
     if (!blockId) {
       throw new Error(
-        'Cannot getReference of an incomplete block without a value or id'
+        'Cannot getReference of an incomplete block without a value or id',
       );
     }
     return { type: 'BlockReference', id: blockId };
@@ -154,7 +154,7 @@ export default function createCloudBlock({
 
   const isConnected = mapBehaviorSubject(
     blockState,
-    state => state.isConnected
+    state => state.isConnected,
   );
 
   const _functionDependencies = new Set();
@@ -179,7 +179,7 @@ export default function createCloudBlock({
       await Promise.all(
         [..._functionDependencies].map(async dep => {
           await dep.fetchValue();
-        })
+        }),
       );
     }
     return {
@@ -201,7 +201,7 @@ export default function createCloudBlock({
     const { loadDependencies, reComputeResult } = doTheCompute(
       getValue(),
       argumentDoc.getValue(),
-      argumentDoc
+      argumentDoc,
     );
     await loadDependencies();
     return reComputeResult();
@@ -216,7 +216,7 @@ export default function createCloudBlock({
         const { reComputeResult, loadDependencies } = doTheCompute(
           fnValue,
           argValue,
-          argumentDoc
+          argumentDoc,
         );
         await loadDependencies();
         return reComputeResult();
@@ -226,6 +226,7 @@ export default function createCloudBlock({
 
   const cloudBlock = {
     isConnected,
+    getIsConnected: isConnected.getValue,
     getFullName: () => onGetName(),
     getId: () => blockId,
     id: blockId,
