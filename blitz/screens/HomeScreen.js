@@ -5,6 +5,13 @@ import Hero from '../../components/Hero';
 import LinkRow from '../../components/LinkRow';
 
 export default function HomeScreenMemo({ navigation, ...props }) {
+  //   <LinkRow
+  //   onPress={() => {
+  //     navigation.navigate({ routeName: 'HostHome' });
+  //   }}
+  //   icon="📋"
+  //   title="Vehicle Host Panel"
+  // />
   return (
     <GenericPage hideBackButton navigation={navigation} {...props}>
       <Hero title="Maui Development" icon="🍹" />
@@ -23,13 +30,7 @@ export default function HomeScreenMemo({ navigation, ...props }) {
           icon="🛠"
           title="Kitchen Engineering"
         />
-        <LinkRow
-          onPress={() => {
-            navigation.navigate({ routeName: 'HostHome' });
-          }}
-          icon="📋"
-          title="Vehicle Host Panel"
-        />
+
         <LinkRow
           onPress={() => {
             navigation.navigate({ routeName: 'KioskHome' });

@@ -3,10 +3,11 @@ import Hero from '../../components/Hero';
 import BitRow from '../../components/BitRow';
 import IntRow from '../../components/IntRow';
 import Row from '../../components/Row';
+import ButtonRow from '../../components/ButtonRow';
 import Button from '../../components/Button';
 import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
-import { AlertIOS, Text } from 'react-native';
+import { AlertIOS, View, ScrollView, Text } from 'react-native';
 
 import { withKitchen, getSubsystem } from '../../ono-cloud/OnoKitchen';
 
@@ -52,80 +53,95 @@ function Subsystem({ systemId, kitchenState, kitchenConfig, kitchenCommand }) {
   return (
     <React.Fragment>
       <Hero title={`${system.icon} ${system.name}`} />
-      {faults && (
-        <RowSection>
-          {faults.length ? (
-            faults.map(fault => <Row key={fault} title={fault} />)
-          ) : (
-            <Row title="No Faults" />
+      <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
+        <ScrollView style={{ flex: 1 }}>
+          <RowSection>
+            {pulseCommands.length > 0 &&
+              pulseCommands.map(pulseCommand => (
+                <ButtonRow title={`${pulseCommand} Action`}>
+                  <Button
+                    key={'params'}
+                    title={'params'}
+                    secondary
+                    onPress={() => {}}
+                  />
+                  <Button
+                    key={pulseCommand}
+                    title={`do ${pulseCommand}`}
+                    onPress={() => {
+                      kitchenCommand(systemId, [pulseCommand], {}).catch(
+                        console.error,
+                      );
+                    }}
+                  />
+                </ButtonRow>
+              ))}
+          </RowSection>
+          <RowSection>
+            {valueCommands.length > 0 && (
+              <Row title="Command Values">
+                {valueCommands.map(valueCommand => (
+                  <Button
+                    key={valueCommand}
+                    title={`set ${valueCommand} = ${
+                      system.valueCommands[valueCommand].value
+                    }`}
+                    onPress={() => {
+                      AlertIOS.prompt(
+                        'Enter new value for ' + valueCommand,
+                        null,
+                        value => {
+                          kitchenCommand(systemId, [], {
+                            [valueCommand]: Number(value),
+                          }).catch(console.error);
+                        },
+                        'plain-text',
+                        String(system.valueCommands[valueCommand].value),
+                        'numeric',
+                      );
+                    }}
+                  />
+                ))}
+              </Row>
+            )}
+          </RowSection>
+        </ScrollView>
+        <ScrollView style={{ flex: 1 }}>
+          {faults && (
+            <RowSection>
+              {faults.length ? (
+                faults.map(fault => <Row key={fault} title={fault} />)
+              ) : (
+                <Row title="No Faults" />
+              )}
+            </RowSection>
           )}
-        </RowSection>
-      )}
-      <RowSection>
-        {pulseCommands.length > 0 && (
-          <Row title="Pulses">
-            {pulseCommands.map(pulseCommand => (
-              <Button
-                key={pulseCommand}
-                title={pulseCommand}
-                onPress={() => {
-                  kitchenCommand(systemId, [pulseCommand], {}).catch(
-                    console.error,
-                  );
-                }}
-              />
-            ))}
-          </Row>
-        )}
-        {valueCommands.length > 0 && (
-          <Row title="Command Values">
-            {valueCommands.map(valueCommand => (
-              <Button
-                key={valueCommand}
-                title={`Set ${valueCommand} = ${
-                  system.valueCommands[valueCommand].value
-                }`}
-                onPress={() => {
-                  AlertIOS.prompt(
-                    'Enter new value for ' + valueCommand,
-                    null,
-                    value => {
-                      kitchenCommand(systemId, [], {
-                        [valueCommand]: Number(value),
-                      }).catch(console.error);
-                    },
-                    'plain-text',
-                    String(system.valueCommands[valueCommand].value),
-                    'numeric',
-                  );
-                }}
-              />
-            ))}
-          </Row>
-        )}
-        {Object.keys(system.reads).map(readName => {
-          const r = system.reads[readName];
-          if (r.type === 'integer') {
-            return (
-              <IntRow
-                key={readName}
-                title={readName}
-                value={system.reads[readName].value}
-              />
-            );
-          } else if (r.type === 'boolean') {
-            return (
-              <BitRow
-                key={readName}
-                title={readName}
-                value={system.reads[readName].value}
-              />
-            );
-          } else {
-            throw new Error('unknown type');
-          }
-        })}
-      </RowSection>
+          <RowSection>
+            {Object.keys(system.reads).map(readName => {
+              const r = system.reads[readName];
+              if (r.type === 'integer') {
+                return (
+                  <IntRow
+                    key={readName}
+                    title={readName}
+                    value={system.reads[readName].value}
+                  />
+                );
+              } else if (r.type === 'boolean') {
+                return (
+                  <BitRow
+                    key={readName}
+                    title={readName}
+                    value={system.reads[readName].value}
+                  />
+                );
+              } else {
+                throw new Error('unknown type');
+              }
+            })}
+          </RowSection>
+        </ScrollView>
+      </View>
     </React.Fragment>
   );
 }
@@ -136,7 +152,7 @@ export default class KitchenEngSubScreen extends Component {
   static navigationOptions = GenericPage.navigationOptions;
   render() {
     return (
-      <GenericPage {...this.props}>
+      <GenericPage {...this.props} disableScrollView={true}>
         <SubsystemWithKitchen
           systemId={this.props.navigation.getParam('system')}
         />

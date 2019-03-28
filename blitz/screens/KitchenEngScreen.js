@@ -5,6 +5,7 @@ import { withNavigation } from '../../navigation-core';
 
 import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
+import { View, ScrollView, Text } from 'react-native';
 import LinkRow from '../../components/LinkRow';
 import {
   getSubsystemOverview,
@@ -57,17 +58,34 @@ const Subsystems = withNavigation(
   }),
 );
 
+function LogView() {
+  return (
+    <ScrollView style={{ flex: 1 }}>
+      <Text>Logs</Text>
+      <Text>Logs</Text>
+      <Text>Logs</Text>
+      <Text>Logs</Text>
+      <Text>Logs</Text>
+    </ScrollView>
+  );
+}
+
 export default class KitchenEngScreen extends Component {
   static navigationOptions = GenericPage.navigationOptions;
   render() {
     return (
-      <GenericPage {...this.props}>
+      <GenericPage {...this.props} disableScrollView={true}>
         <Hero title="Kitchen Engineering" icon="🛠" />
-        <RowSection>
-          <PLCConnectedRow />
-          <IsConnectedRow />
-        </RowSection>
-        <Subsystems />
+        <View style={{ flexDirection: 'row', flex: 1 }}>
+          <LogView />
+          <ScrollView style={{ flex: 1 }}>
+            <RowSection>
+              <PLCConnectedRow />
+              <IsConnectedRow />
+            </RowSection>
+            <Subsystems />
+          </ScrollView>
+        </View>
       </GenericPage>
     );
   }

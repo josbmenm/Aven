@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, Image } from 'react-native';
+import { ScrollView, View, Image } from 'react-native';
 import { pageBackgroundColor } from './Styles';
 import BackButton from './BackButton';
 import { useNavigation } from '../navigation-hooks/Hooks';
@@ -10,6 +10,7 @@ export default function GenericPage({
   children,
   afterScrollView,
   hideBackButton,
+  disableScrollView,
   ...props
 }) {
   const { goBack } = useNavigation();
@@ -17,25 +18,20 @@ export default function GenericPage({
     <FadeTransition
       {...props}
       background={
-        <Image
-          source={require('./assets/BgGeneric.png')}
-          style={{
-            flex: 1,
-            width: null,
-            height: null,
-            resizeMode: 'contain',
-            ...StyleSheet.absoluteFillObject,
-          }}
-        />
+        <View style={{ flex: 1, backgroundColor: pageBackgroundColor }} />
       }
     >
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{}}
-        showsVerticalScrollIndicator={false}
-      >
-        {children}
-      </ScrollView>
+      {disableScrollView ? (
+        children
+      ) : (
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{}}
+          showsVerticalScrollIndicator={false}
+        >
+          {children}
+        </ScrollView>
+      )}
       {afterScrollView}
       {!hideBackButton && (
         <BackButton

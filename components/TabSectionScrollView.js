@@ -72,13 +72,13 @@ export default function TabSectionScrollView({
       setSectionMeasurements(sectionMeasurements);
     }
   }
-  useEffect(() => {
-    if (sectionMeasurements[activeSection.name] != null && scrollRef.current) {
-      scrollRef.current
-        .getScrollResponder()
-        .scrollTo({ y: sectionMeasurements[activeSection.name].y });
-    }
-  }, [activeSection, sectionMeasurements]);
+  // useEffect(() => {
+  //   if (sectionMeasurements[activeSection.name] != null && scrollRef.current) {
+  //     scrollRef.current
+  //       .getScrollResponder()
+  //       .scrollTo({ y: sectionMeasurements[activeSection.name].y });
+  //   }
+  // }, [activeSection, sectionMeasurements]);
   return (
     <React.Fragment>
       <View
@@ -103,6 +103,14 @@ export default function TabSectionScrollView({
           <TabBarButton
             key={section.title}
             onPress={() => {
+              if (
+                sectionMeasurements[section.name] != null &&
+                scrollRef.current
+              ) {
+                scrollRef.current
+                  .getScrollResponder()
+                  .scrollTo({ y: sectionMeasurements[section.name].y });
+              }
               onActiveSection({ name: section.name });
             }}
             title={section.title}
@@ -142,9 +150,13 @@ export default function TabSectionScrollView({
           closestSection && onActiveSection({ name: closestSection.name });
         }}
       >
-        {sections.map(section => (
+        {sections.map((section, sectionIndex) => (
           <React.Fragment key={section.name}>
-            <Text style={{ fontSize: 24, ...titleStyle }}>{section.title}</Text>
+            {sectionIndex !== 0 && (
+              <Text style={{ fontSize: 24, ...titleStyle }}>
+                {section.title}
+              </Text>
+            )}
             <View
               style={{}}
               onLayout={e => {
