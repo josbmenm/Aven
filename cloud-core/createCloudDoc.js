@@ -555,6 +555,7 @@ export default function createCloudDoc({
       return pureDataFn(argumentValue, argumentDoc, cloudClient, useValue);
     }
     return {
+      depCount: _functionDependencies.size,
       loadDependencies,
       result: computeResult(),
       reComputeResult: computeResult,
@@ -722,19 +723,28 @@ export default function createCloudDoc({
     return block.observeValue;
   });
 
+  const overriddenFunctionResults = new Map();
+
   const functionObserveValue = argumentDoc => {
     if (overriddenFunction) {
-      return argumentDoc.observeValue.flatMap(async argumentValue => {
-        const { loadDependencies, reComputeResult } = doFunctionThing(
-          overriddenFunction,
-          argumentValue,
-          argumentDoc,
-          cloudClient
-        );
-        await loadDependencies();
-        const result = reComputeResult();
-        return result;
-      });
+      if (overriddenFunctionResults.has(argumentDoc)) {
+        return overriddenFunctionResults.get(argumentDoc);
+      }
+      const resultObservable = argumentDoc.observeValue
+        .flatMap(async argumentValue => {
+          const { loadDependencies, reComputeResult } = doFunctionThing(
+            overriddenFunction,
+            argumentValue,
+            argumentDoc,
+            cloudClient
+          );
+          await loadDependencies();
+          const result = reComputeResult();
+          return result;
+        })
+        .share();
+      overriddenFunctionResults.set(argumentDoc, resultObservable);
+      return resultObservable;
     }
     return observe.switchMap(cloudDocValue => {
       if (!cloudDocValue.id) {

@@ -294,7 +294,21 @@ function Home() {
         </View>
       </View>
       <View style={{}}>
-        <Text style={{ fontSize: 36, margin: 50 }}>Hello World</Text>
+        <Text style={{ fontSize: 36, margin: 50 }}>
+          Store Data - To PostgreSQL or the File System
+        </Text>
+        <Text style={{ fontSize: 36, margin: 50 }}>
+          Serve and Recieve Data - Over HTTP + WebSockets
+        </Text>
+        <Text style={{ fontSize: 36, margin: 50 }}>
+          Protect Data - With Authentication and Permission APIs
+        </Text>
+        <Text style={{ fontSize: 36, margin: 50 }}>
+          Connect App - Use a client and utilities for React
+        </Text>
+        <Text style={{ fontSize: 36, margin: 50 }}>
+          Compute Data - Save pure functions to compute and cache
+        </Text>
       </View>
       <View style={{}}>
         <Image
@@ -303,7 +317,21 @@ function Home() {
           source={require('./assets/cloudGlamour.png')}
         />
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 36, margin: 50 }}>Hello World</Text>
+          <Text style={{ fontSize: 36, margin: 50 }}>
+            About Aven - What we believe, and who "we" are
+          </Text>
+          <Text style={{ fontSize: 36, margin: 50 }}>
+            Liberal Open Source - Licensed under Apache 2
+          </Text>
+          <Text style={{ fontSize: 36, margin: 50 }}>
+            Documentation - Constantly under improvement
+          </Text>
+          <Text style={{ fontSize: 36, margin: 50 }}>
+            Contributors - Help Wanted!
+          </Text>
+          <Text style={{ fontSize: 36, margin: 50 }}>
+            Compute Data - Save pure functions to compute and cache
+          </Text>
         </View>
       </View>
     </ScrollView>

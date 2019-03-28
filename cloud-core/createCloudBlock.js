@@ -119,24 +119,33 @@ export default function createCloudBlock({
       return val !== undefined;
     });
 
+  let fetchInProgress = null;
   async function fetch() {
     if (getValue() !== undefined) {
       return;
     }
-    const result = await dispatch({
-      type: 'GetBlock',
-      id,
-      domain,
-      name: onGetName(),
-    });
-    if (!result || result.value === undefined) {
-      throw new Error(`Error fetching block "${id}" from remote!`);
+    if (fetchInProgress) {
+      // There is only one chunk of remote data. If we are currently fetching on behalf of a previous request, we should just wait for it to finish, rather than starting another simultaneous request
+      return await fetchInProgress;
     }
-    setState({
-      value: result.value,
-      lastFetchTime: Date.now(),
-      isConnected: true,
-    });
+    fetchInProgress = (async () => {
+      const result = await dispatch({
+        type: 'GetBlock',
+        id,
+        domain,
+        name: onGetName(),
+      });
+      if (!result || result.value === undefined) {
+        throw new Error(`Error fetching block "${id}" from remote!`);
+      }
+      fetchInProgress = null;
+      setState({
+        value: result.value,
+        lastFetchTime: Date.now(),
+        isConnected: true,
+      });
+    })();
+    return await fetchInProgress;
   }
 
   async function fetchValue() {

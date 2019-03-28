@@ -35,15 +35,50 @@ function InputTodo() {
     />
   );
 }
-
+function TaskReducer(state, action) {
+  if (action.type === 'AddTask') {
+    return [...state, action.params];
+  } else if (action.type === 'SetTaskCompletion') {
+    const taskIndex = state.findIndex(t => t.id === action.id);
+    if (taskIndex === -1) {
+      return state;
+    }
+    const newState = [...state];
+    const oldTask = state[taskIndex];
+    newState[taskIndex] = { ...oldTask, isComplete: action.isComplete };
+    return newState;
+  } else if (action.type === 'RemoveTask') {
+    return state.filter(t => t.id !== action.id);
+  }
+  return state;
+}
 function TodoList() {
-  const todos = useCloudValue('TodoActions');
-  return <Title>{JSON.stringify(todos)}</Title>;
+  const cloud = useCloud();
+  cloud.setLambda('TodoReducer', (docState, doc, cloud, useValue) => {
+    console.log('heyyooo', docState, doc.getFullName());
+    let state = [];
+    if (docState === undefined) {
+      return state;
+    }
+    let action = docState;
+    if (docState.on && docState.on.id) {
+      const ancestorName =
+        doc.getFullName() + '#' + docState.on.id + '^TodoReducer';
+      console.log('using ' + ancestorName);
+      state = useValue(cloud.get(ancestorName));
+      action = docState.value;
+    }
+    console.log('heyyo22', state, action);
+    return TaskReducer(state, action);
+  });
+  const todos = useCloudValue('TodoActions^TodoReducer');
+  return todos.map(task => <TaskRow key={task.id} task={task} />);
+  // return null;
   // console.log('rendering list with todos:', todos);
   // if (!todos || !todos.tasks) {
   //   return null;
   // }
-  // return todos.tasks.map(task => <TaskRow key={task.id} task={task} />);
+  // return
 }
 
 function Title({ children }) {

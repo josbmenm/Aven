@@ -395,7 +395,9 @@ describe('eval/lambda behavior', () => {
       name: 'foo',
       value: 2,
     });
-    c.setLambda('squared', v => v * v);
+    c.setLambda('squared', v => {
+      return v * v;
+    });
     const s = c.get('foo^squared');
     let lastObserved = undefined;
     s.observeValue.subscribe({
@@ -443,7 +445,7 @@ describe('eval/lambda behavior', () => {
     expect(s.getValue()).toBe(9);
   });
 
-  test('recursive multi-doc eval', async () => {
+  test('recursive reducer eval', async () => {
     const source = createMemoryStorageSource({ domain: 'd' });
     const c = createCloudClient({ source, domain: 'd' });
     await source.dispatch({
@@ -489,6 +491,69 @@ describe('eval/lambda behavior', () => {
     });
     await s.fetchValue();
     expect(s.getValue()).toEqual(['b']);
+  });
+
+  test('observe recursive reducer eval', async () => {
+    const source = createMemoryStorageSource({ domain: 'd' });
+    const c = createCloudClient({ source, domain: 'd' });
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { add: 'a' },
+    });
+    await source.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { add: 'b' },
+    });
+    c.setLambda('fooReducer', (docState, doc, cloud, useValue) => {
+      let state = [];
+      if (!docState) {
+        return state;
+      }
+      let action = docState;
+      if (docState.on && docState.on.id) {
+        const ancestorName =
+          doc.getFullName() + '#' + docState.on.id + '^fooReducer';
+        state = useValue(cloud.get(ancestorName)) || [];
+        action = docState.value;
+      }
+      if (action.add) {
+        return [...state, action.add];
+      }
+      if (action.remove) {
+        return state.filter(v => v !== action.remove);
+      }
+      return state;
+    });
+    const s = c.get('fooActions^fooReducer');
+    let lastObserved = null;
+    const subs = s.observeValue.subscribe({
+      next: v => {
+        lastObserved = v;
+      },
+    });
+    await justASec();
+    expect(lastObserved.length).toBe(2);
+    await source.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { remove: 'a' },
+    });
+    await justASec();
+    expect(lastObserved.length).toBe(1);
+    subs.unsubscribe();
+    await source.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { remove: 'b' },
+    });
+    await justASec();
+    expect(lastObserved.length).toBe(1);
   });
 });
 

@@ -87,21 +87,30 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
 }
 
 function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
-  const evaluatedDoc = {
-    type: 'EvaluatedDoc',
-    getFullName: () => {
-      return cloudValue.getFullName() + '__evalby_' + lambdaDoc.getFullName();
-    },
-    get: toGet => {
-      throw new Error(
-        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
-      );
-    },
-    fetchValue: () => lambdaDoc.functionFetchValue(cloudValue),
-    observeValue: lambdaDoc.functionObserveValue(cloudValue),
-    getValue: () => lambdaDoc.functionGetValue(cloudValue),
-  };
-  bindCloudValueFunctions(evaluatedDoc, cloudClient);
+  let lambdaCache = evalCache.get(lambdaDoc);
+  if (!lambdaCache) {
+    lambdaCache = new Map();
+    evalCache.set(lambdaDoc, lambdaCache);
+  }
+  let evaluatedDoc = evalCache.get(cloudValue);
+  if (!evaluatedDoc) {
+    evaluatedDoc = {
+      type: 'EvaluatedDoc',
+      getFullName: () => {
+        return cloudValue.getFullName() + '__evalby_' + lambdaDoc.getFullName();
+      },
+      get: toGet => {
+        throw new Error(
+          `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
+        );
+      },
+      fetchValue: () => lambdaDoc.functionFetchValue(cloudValue),
+      observeValue: lambdaDoc.functionObserveValue(cloudValue),
+      getValue: () => lambdaDoc.functionGetValue(cloudValue),
+    };
+    bindCloudValueFunctions(evaluatedDoc, cloudClient);
+    evalCache.set(cloudValue, evaluatedDoc);
+  }
   return evaluatedDoc;
 }
 
