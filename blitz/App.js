@@ -3,15 +3,9 @@ if (__DEV__) {
 }
 
 import React, { Component } from 'react';
-import {
-  View,
-  StatusBar,
-  Image,
-  Button,
-  AsyncStorage,
-  Alert,
-} from 'react-native';
+import { View, Text, StatusBar, Image, AsyncStorage } from 'react-native';
 import { createAppContainer } from '../navigation-native';
+import { useNavigation } from '../navigation-hooks/Hooks';
 import { createNavigator, StackRouter } from '../navigation-core';
 import codePush from 'react-native-code-push';
 
@@ -29,6 +23,7 @@ import FoodScreen from './screens/FoodScreen';
 import DebugStateScreen from './screens/DebugStateScreen';
 import PaymentDebugScreen from './screens/PaymentDebugScreen';
 
+import Button from '../components/Button';
 import OrderConfirmScreen from './screens/OrderConfirmScreen';
 import ManageOrderScreen from './screens/ManageOrderScreen';
 import ManageOrdersScreen from './screens/ManageOrdersScreen';
@@ -43,12 +38,14 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import CloudContext from '../cloud-core/CloudContext';
 import createCloudClient from '../cloud-core/createCloudClient';
+import ErrorContainer from '../cloud-react/ErrorContainer';
 import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import OnoCloud from './OnoCloud';
 import AdminSessionContainer from './AdminSessionContainer';
 import OrderSidebarPage from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
@@ -125,39 +122,44 @@ const App = createStackTransitionNavigator({
 
 const AppContainer = createAppContainer(App);
 
-const restaurant = createCloudClient({
+const cloud = createCloudClient({
   source: OnoCloud,
   domain: 'onofood.co',
 });
 
-restaurant
-  .createAnonymousSession()
-  .then(() => {})
-  .catch(console.error);
-
-class ErrorHandlerContainer extends React.Component {
-  componentDidCatch(e) {
-    Alert.alert(e.code || 'Error', e.message);
-    return true;
-  }
-  render() {
-    const { children } = this.props;
-    return children;
-  }
+function RetryButton({ onRetry }) {
+  return <Button title="Try again.." onPress={onRetry} />;
 }
 
-const NAV_STORAGE_KEY = 'NavigationState3';
-const FullApp = () => (
-  <PopoverContainer>
-    <CloudContext.Provider value={restaurant}>
-      <OrderContextProvider>
-        <ErrorHandlerContainer>
-          <AppContainer persistenceKey={NAV_STORAGE_KEY} />
-        </ErrorHandlerContainer>
-      </OrderContextProvider>
-    </CloudContext.Provider>
-  </PopoverContainer>
-);
+function renderAppError({ error, errorInfo, onRetry }) {
+  return (
+    <View style={{ flex: 1 }}>
+      <Text>O, no!</Text>
+      <Text>{error.message}</Text>
+      <RetryButton onRetry={onRetry} />
+    </View>
+  );
+}
+
+const NAV_STORAGE_KEY = 'NavigationState';
+function FullApp() {
+  return (
+    <PopoverContainer>
+      <CloudContext.Provider value={cloud}>
+        <ErrorContainer
+          renderError={renderAppError}
+          onCatch={async () => {
+            await AsyncStorage.removeItem(NAV_STORAGE_KEY);
+          }}
+        >
+          <OrderContextProvider>
+            <AppContainer persistenceKey={NAV_STORAGE_KEY} />
+          </OrderContextProvider>
+        </ErrorContainer>
+      </CloudContext.Provider>
+    </PopoverContainer>
+  );
+}
 
 const PRELOAD_IMAGES = {
   kioskHomeScreen: require('../components/assets/BgHome.png'),
@@ -204,14 +206,12 @@ function withDevOverlay(FullApp) {
           >
             <Button
               title="refresh"
-              color="#000000"
               onPress={() => {
                 codePush.restartApp();
               }}
             />
             <Button
               title="clear nav"
-              color="#880000"
               onPress={() => {
                 AsyncStorage.removeItem(NAV_STORAGE_KEY);
               }}

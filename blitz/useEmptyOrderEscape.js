@@ -9,17 +9,15 @@ process.env.REACT_NAV_LOGGING = true;
 export default function useEmptyOrderEscape() {
   const { dispatch, dangerouslyGetParent } = useNavigation();
   const { order } = useOrder();
+
   const orderValue = useObservable(order && order.observeValue);
-  useEffect(
-    () => {
-      if (orderValue === null) {
-        dispatch(
-          NavigationActions.back({
-            key: dangerouslyGetParent().state.key,
-          }),
-        );
-      }
-    },
-    [orderValue],
-  );
+  useEffect(() => {
+    if (orderValue === null) {
+      dispatch(
+        NavigationActions.back({
+          key: dangerouslyGetParent().state.key,
+        }),
+      );
+    }
+  }, [orderValue]);
 }

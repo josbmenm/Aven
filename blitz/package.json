@@ -6,6 +6,7 @@
       "views",
       "debug-views",
       "ono-cloud",
+      "cloud-react",
       "cloud-native",
       "components",
       "navigation-core",

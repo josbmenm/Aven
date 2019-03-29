@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useReducer, useEffect } from 'react';
 import Hero from '../../components/Hero';
 import BitRow from '../../components/BitRow';
 import { withNavigation } from '../../navigation-core';
@@ -12,6 +12,8 @@ import {
   withKitchen,
   withRestaurant,
 } from '../../ono-cloud/OnoKitchen';
+import useCloud from '../../cloud-core/useCloud';
+
 import withObservables from '@nozbe/with-observables';
 
 const IsConnectedWithState = ({ isConnected }) => (
@@ -59,13 +61,34 @@ const Subsystems = withNavigation(
 );
 
 function LogView() {
+  const [logs, dispatchLogs] = useReducer((state, action) => {
+    if (action.event) {
+      return [...state, action.event];
+    }
+    if (action.clear) {
+      return [];
+    }
+    return state;
+  }, []);
+  const cloud = useCloud();
+  const kitchenState = cloud.get('KitchenState');
+  useEffect(() => {
+    cloud.isConnected.subscribe(isConn => {
+      dispatchLogs({
+        event: {
+          message: isConn ? 'Connected to Server' : 'Disconnected from Server',
+        },
+      });
+    });
+    kitchenState.observeValue.subscribe(kitchenState => {
+      console.log('yyyyyy', kitchenState);
+    });
+  }, [cloud.isConnected, kitchenState]);
   return (
     <ScrollView style={{ flex: 1 }}>
-      <Text>Logs</Text>
-      <Text>Logs</Text>
-      <Text>Logs</Text>
-      <Text>Logs</Text>
-      <Text>Logs</Text>
+      {logs.map(log => (
+        <Text>{log.message}</Text>
+      ))}
     </ScrollView>
   );
 }

@@ -1,7 +1,13 @@
 import CloudContext from '../cloud-core/CloudContext';
 import useCloud from '../cloud-core/useCloud';
 import mapObject from 'fbjs/lib/mapObject';
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useEffect,
+} from 'react';
 import useCloudValue from '../cloud-core/useCloudValue';
 import useObservable from '../cloud-core/useObservable';
 import withObservables from '@nozbe/with-observables';
@@ -34,16 +40,20 @@ export function OrderContextProvider({ children }) {
   if (asyncError) {
     setAsyncError(null);
     throw asyncError;
-    // alert(asyncError);
   }
 
   function guardAsync(promise) {
-    promise
+    return promise
       .then(() => {})
       .catch(e => {
         setAsyncError(e);
       });
   }
+
+  useEffect(() => {
+    guardAsync(cloud.createAnonymousSession());
+  }, []);
+
   let orderContext = {
     order: currentOrder,
     setOrderName: name => {
@@ -79,16 +89,18 @@ export function OrderContextProvider({ children }) {
     confirmOrder: () => {
       guardAsync(currentOrder.transact(doConfirmOrder));
     },
-    startOrder: () => {
-      const order = cloud.get('Orders').post();
-      setCurrentOrder(order);
+    startOrder: () =>
       guardAsync(
-        order.put({
-          startTime: Date.now(),
-          items: [],
-        }),
-      );
-    },
+        (async () => {
+          const order = cloud.get('Orders').post();
+          setCurrentOrder(order);
+
+          await order.put({
+            startTime: Date.now(),
+            items: [],
+          });
+        })(),
+      ),
   };
   return (
     <OrderContext.Provider value={orderContext}>
