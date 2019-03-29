@@ -16,6 +16,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Animated, { Easing } from 'react-native-reanimated';
 
@@ -24,6 +25,49 @@ import { prettyShadow, genericText } from '../../components/Styles';
 
 import useFocus from '../../navigation-hooks/useFocus';
 import BlockFormInput from '../../components/BlockFormInput';
+
+function KeyboardPopover({ children, onClose }) {
+  return (
+    <View
+      style={{
+        ...StyleSheet.absoluteFillObject,
+        flex: 1,
+        alignItems: 'center',
+      }}
+    >
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            backgroundColor: '#0004',
+          }}
+        />
+      </TouchableWithoutFeedback>
+      <KeyboardAvoidingView behavior="padding" enabled>
+        <View
+          style={{
+            flex: 1,
+            width: 400,
+            justifyContent: 'center',
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: 'white',
+              alignSelf: 'stretch',
+              ...prettyShadow,
+              borderRadius: 10,
+              width: 400,
+              minHeight: 200,
+            }}
+          >
+            {children}
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </View>
+  );
+}
 
 function SystemActionForm({
   pulse,
@@ -99,47 +143,21 @@ function SystemActionForm({
   );
 }
 function SetParamsButton({ pulse, system, kitchenCommand, systemId }) {
-  console.log('pulse', pulse);
   if (!pulse.params) {
     return null;
   }
   const { onPopover } = usePopover(
     ({ onClose, popoverOpenValue }) => {
       return (
-        <View
-          style={{
-            ...StyleSheet.absoluteFillObject,
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <TouchableWithoutFeedback onPress={onClose}>
-            <View
-              style={{
-                ...StyleSheet.absoluteFillObject,
-                backgroundColor: '#0004',
-              }}
-            />
-          </TouchableWithoutFeedback>
-          <View
-            style={{
-              backgroundColor: 'white',
-              ...prettyShadow,
-              borderRadius: 10,
-              width: 400,
-              minHeight: 200,
-            }}
-          >
-            <SystemActionForm
-              pulse={pulse}
-              onClose={onClose}
-              system={system}
-              kitchenCommand={kitchenCommand}
-              systemId={systemId}
-            />
-          </View>
-        </View>
+        <KeyboardPopover onClose={onClose}>
+          <SystemActionForm
+            pulse={pulse}
+            onClose={onClose}
+            system={system}
+            kitchenCommand={kitchenCommand}
+            systemId={systemId}
+          />
+        </KeyboardPopover>
       );
     },
     { easing: Easing.linear, duration: 1 },
@@ -192,40 +210,15 @@ function SetValueButton({ val, system, kitchenCommand, systemId }) {
   const { onPopover } = usePopover(
     ({ onClose, popoverOpenValue }) => {
       return (
-        <View
-          style={{
-            ...StyleSheet.absoluteFillObject,
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <TouchableWithoutFeedback onPress={onClose}>
-            <View
-              style={{
-                ...StyleSheet.absoluteFillObject,
-                backgroundColor: '#0004',
-              }}
-            />
-          </TouchableWithoutFeedback>
-          <View
-            style={{
-              backgroundColor: 'white',
-              ...prettyShadow,
-              borderRadius: 10,
-              width: 400,
-              minHeight: 200,
-            }}
-          >
-            <SetValueForm
-              val={val}
-              system={system}
-              kitchenCommand={kitchenCommand}
-              systemId={systemId}
-              onClose={onClose}
-            />
-          </View>
-        </View>
+        <KeyboardPopover onClose={onClose}>
+          <SetValueForm
+            val={val}
+            system={system}
+            kitchenCommand={kitchenCommand}
+            systemId={systemId}
+            onClose={onClose}
+          />
+        </KeyboardPopover>
       );
     },
     { easing: Easing.linear, duration: 1 },
