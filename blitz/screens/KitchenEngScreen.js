@@ -50,9 +50,10 @@ const Subsystems = withNavigation(
               });
             }}
             icon={system.icon}
-            title={`${system.name} ${
+            title={system.name}
+            rightIcon={
               system.noFaults === null ? '' : system.noFaults ? '👍' : '🚨'
-            }`}
+            }
           />
         ))}
       </RowSection>
@@ -86,9 +87,11 @@ function LogView() {
   }, [cloud.isConnected, kitchenState]);
   return (
     <ScrollView style={{ flex: 1 }}>
-      {logs.map(log => (
-        <Text>{log.message}</Text>
-      ))}
+      <View style={{ padding: 40 }}>
+        {logs.map(log => (
+          <Text style={{ fontSize: 28 }}>{log.message}</Text>
+        ))}
+      </View>
     </ScrollView>
   );
 }

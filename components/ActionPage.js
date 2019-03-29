@@ -112,16 +112,7 @@ export default function ActionPage({ children, ...props }) {
     <FadeTransition
       {...props}
       background={
-        <Image
-          source={require('./assets/BgGeneric.png')}
-          style={{
-            flex: 1,
-            width: null,
-            height: null,
-            resizeMode: 'contain',
-            ...StyleSheet.absoluteFillObject,
-          }}
-        />
+        <View style={{ flex: 1, backgroundColor: pageBackgroundColor }} />
       }
     >
       <ActionPageWithNavigation

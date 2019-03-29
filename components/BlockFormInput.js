@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text } from 'react-native';
-import {
-  textInputContainerStyle,
-  textInputLabelStyle,
-  textInputStyle,
-} from './Styles';
+import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
 import Animated, { Easing } from 'react-native-reanimated';
 
 const textInputFontSize = 26;
@@ -30,6 +26,8 @@ function BlockFormInputWithRef(
   let enablesReturnKeyAutomatically = true;
   if (mode === 'phone') {
     keyboardType = 'phone-pad';
+  } else if (mode === 'number') {
+    keyboardType = 'number-pad';
   } else if (mode === 'email') {
     keyboardType = 'email-address';
   } else if (mode === 'name') {
@@ -41,7 +39,10 @@ function BlockFormInputWithRef(
         flex: 1,
         marginHorizontal: 10,
         borderWidth: 1,
-        ...textInputContainerStyle,
+        borderRadius: 4,
+        paddingTop: 15,
+        borderColor: monsterra60,
+        borderWidth: 3,
       }}
     >
       <Animated.Text

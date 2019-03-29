@@ -159,6 +159,7 @@ export const linkRowIconTextStyle = {
 };
 export const linkRowTitleTextStyle = {
   ...primaryFontFace,
+  flex: 1,
   color: monsterra80,
   paddingLeft: 30,
   fontSize: 42,
@@ -201,13 +202,6 @@ export const textInputStyle = {
   paddingHorizontal: textInputHorizPadding,
   ...boldPrimaryFontFace,
   color: highlightPrimaryColor,
-};
-
-export const textInputContainerStyle = {
-  borderRadius: 4,
-  paddingTop: 15,
-  borderColor: monsterra60,
-  borderWidth: 3,
 };
 
 export const textInputLabelStyle = {

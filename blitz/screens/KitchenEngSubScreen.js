@@ -7,9 +7,231 @@ import ButtonRow from '../../components/ButtonRow';
 import Button from '../../components/Button';
 import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
-import { AlertIOS, View, ScrollView, Text } from 'react-native';
+import { usePopover } from '../../views/Popover';
+import {
+  AlertIOS,
+  View,
+  ScrollView,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+} from 'react-native';
+import Animated, { Easing } from 'react-native-reanimated';
 
 import { withKitchen, getSubsystem } from '../../ono-cloud/OnoKitchen';
+import { prettyShadow, genericText } from '../../components/Styles';
+
+import useFocus from '../../navigation-hooks/useFocus';
+import BlockFormInput from '../../components/BlockFormInput';
+
+function SystemActionForm({
+  pulse,
+  system,
+  kitchenCommand,
+  onClose,
+  systemId,
+}) {
+  const initialValues = {};
+  pulse.params.forEach(paramName => {
+    console.log('trol', paramName, system.valueCommands[paramName].value);
+    const v = system.valueCommands[paramName].value;
+    initialValues[paramName] = v === null ? null : v.toString();
+  });
+  const [draftValues, dispatch] = React.useReducer((values, action) => {
+    if (action.set) {
+      return { ...values, [action.set]: action.value };
+    }
+    return values;
+  }, initialValues);
+
+  function handleSubmit() {
+    debugger;
+  }
+
+  const inputRenderers = pulse.params.map(paramName => inputProps => {
+    return (
+      <View style={{ flexDirection: 'row', marginVertical: 10 }}>
+        <BlockFormInput
+          {...inputProps}
+          label={paramName}
+          mode="number"
+          onValue={value => {
+            dispatch({ set: paramName, value });
+          }}
+          value={draftValues[paramName]}
+        />
+      </View>
+    );
+  });
+
+  const { inputs } = useFocus({
+    onSubmit: handleSubmit,
+    inputRenderers,
+  });
+
+  return (
+    <React.Fragment>
+      {inputs}
+      <Button
+        onPress={() => {
+          const vals = {};
+          Object.keys(draftValues).forEach(valName => {
+            vals[valName] = Number(draftValues[valName]);
+          });
+          kitchenCommand(systemId, [], vals);
+          onClose();
+        }}
+        title="save"
+        secondary
+      />
+      <Button
+        onPress={() => {
+          const vals = {};
+          Object.keys(draftValues).forEach(valName => {
+            vals[valName] = Number(draftValues[valName]);
+          });
+          kitchenCommand(systemId, [pulse.name], vals);
+        }}
+        title={`do ${pulse.name}`}
+      />
+    </React.Fragment>
+  );
+}
+function SetParamsButton({ pulse, system, kitchenCommand, systemId }) {
+  console.log('pulse', pulse);
+  if (!pulse.params) {
+    return null;
+  }
+  const { onPopover } = usePopover(
+    ({ onClose, popoverOpenValue }) => {
+      return (
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <TouchableWithoutFeedback onPress={onClose}>
+            <View
+              style={{
+                ...StyleSheet.absoluteFillObject,
+                backgroundColor: '#0004',
+              }}
+            />
+          </TouchableWithoutFeedback>
+          <View
+            style={{
+              backgroundColor: 'white',
+              ...prettyShadow,
+              borderRadius: 10,
+              width: 400,
+              minHeight: 200,
+            }}
+          >
+            <SystemActionForm
+              pulse={pulse}
+              onClose={onClose}
+              system={system}
+              kitchenCommand={kitchenCommand}
+              systemId={systemId}
+            />
+          </View>
+        </View>
+      );
+    },
+    { easing: Easing.linear, duration: 1 },
+  );
+  return <Button title="params" secondary onPress={onPopover} />;
+}
+function SetValueForm({ val, system, kitchenCommand, systemId, onClose }) {
+  const [draftValue, setDraftValue] = React.useState(val.value.toString());
+
+  function handleSubmit() {
+    debugger;
+  }
+
+  const inputRenderers = [
+    inputProps => (
+      <View style={{ flexDirection: 'row', marginVertical: 10 }}>
+        <BlockFormInput
+          {...inputProps}
+          label={val.name}
+          mode="number"
+          onValue={setDraftValue}
+          value={draftValue}
+        />
+      </View>
+    ),
+  ];
+
+  const { inputs } = useFocus({
+    onSubmit: handleSubmit,
+    inputRenderers,
+  });
+
+  return (
+    <React.Fragment>
+      {inputs}
+      <Button
+        onPress={() => {
+          kitchenCommand(systemId, [], {
+            [val.name]: draftValue,
+          });
+          onClose();
+        }}
+        title="save"
+        secondary
+      />
+    </React.Fragment>
+  );
+}
+function SetValueButton({ val, system, kitchenCommand, systemId }) {
+  const { onPopover } = usePopover(
+    ({ onClose, popoverOpenValue }) => {
+      return (
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <TouchableWithoutFeedback onPress={onClose}>
+            <View
+              style={{
+                ...StyleSheet.absoluteFillObject,
+                backgroundColor: '#0004',
+              }}
+            />
+          </TouchableWithoutFeedback>
+          <View
+            style={{
+              backgroundColor: 'white',
+              ...prettyShadow,
+              borderRadius: 10,
+              width: 400,
+              minHeight: 200,
+            }}
+          >
+            <SetValueForm
+              val={val}
+              system={system}
+              kitchenCommand={kitchenCommand}
+              systemId={systemId}
+              onClose={onClose}
+            />
+          </View>
+        </View>
+      );
+    },
+    { easing: Easing.linear, duration: 1 },
+  );
+  return <Button title="set" secondary onPress={onPopover} />;
+}
 
 function Subsystem({ systemId, kitchenState, kitchenConfig, kitchenCommand }) {
   const system = getSubsystem(systemId, kitchenConfig, kitchenState);
@@ -57,51 +279,111 @@ function Subsystem({ systemId, kitchenState, kitchenConfig, kitchenCommand }) {
         <ScrollView style={{ flex: 1 }}>
           <RowSection>
             {pulseCommands.length > 0 &&
-              pulseCommands.map(pulseCommand => (
-                <ButtonRow title={`${pulseCommand} Action`}>
-                  <Button
-                    key={'params'}
-                    title={'params'}
-                    secondary
-                    onPress={() => {}}
-                  />
-                  <Button
-                    key={pulseCommand}
-                    title={`do ${pulseCommand}`}
-                    onPress={() => {
-                      kitchenCommand(systemId, [pulseCommand], {}).catch(
-                        console.error,
-                      );
-                    }}
-                  />
-                </ButtonRow>
-              ))}
+              pulseCommands.map(pulseCommandName => {
+                const pulse = system.pulseCommands[pulseCommandName];
+                return (
+                  <ButtonRow title={`${pulseCommandName} Action`}>
+                    <SetParamsButton
+                      pulse={pulse}
+                      kitchenCommand={kitchenCommand}
+                      system={system}
+                      systemId={systemId}
+                    />
+                    <Button
+                      key={pulseCommandName}
+                      title={`do ${pulseCommandName}`}
+                      onPress={() => {
+                        kitchenCommand(systemId, [pulseCommandName], {}).catch(
+                          console.error,
+                        );
+                      }}
+                    />
+                  </ButtonRow>
+                );
+              })}
           </RowSection>
           <RowSection>
             {valueCommands.length > 0 && (
               <Row title="Command Values">
-                {valueCommands.map(valueCommand => (
-                  <Button
-                    key={valueCommand}
-                    title={`set ${valueCommand} = ${
-                      system.valueCommands[valueCommand].value
-                    }`}
-                    onPress={() => {
-                      AlertIOS.prompt(
-                        'Enter new value for ' + valueCommand,
-                        null,
-                        value => {
-                          kitchenCommand(systemId, [], {
-                            [valueCommand]: Number(value),
-                          }).catch(console.error);
-                        },
-                        'plain-text',
-                        String(system.valueCommands[valueCommand].value),
-                        'numeric',
+                <View style={{ flex: 1 }}>
+                  {valueCommands.map(valueCommand => {
+                    const val = system.valueCommands[valueCommand];
+                    if (val.type === 'boolean') {
+                      return (
+                        <View
+                          style={{
+                            // alignSelf: 'stretch',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                          }}
+                          key={valueCommand}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 32,
+                              ...genericText,
+                            }}
+                          >
+                            {valueCommand}
+                          </Text>
+                          <Text
+                            style={{
+                              marginHorizontal: 10,
+                              fontSize: 42,
+                              ...genericText,
+                              color: '#414',
+                            }}
+                          >
+                            {val.value ? 'True' : 'False'}
+                          </Text>
+                          <Button
+                            title={val.value ? 'set OFF' : 'set ON'}
+                            onPress={() => {
+                              kitchenCommand(systemId, [], {
+                                [valueCommand]: !val.value,
+                              });
+                            }}
+                          />
+                        </View>
                       );
-                    }}
-                  />
-                ))}
+                    }
+                    return (
+                      <View
+                        style={{
+                          // alignSelf: 'stretch',
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}
+                        key={valueCommand}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 32,
+                            ...genericText,
+                          }}
+                        >
+                          {valueCommand}
+                        </Text>
+                        <Text
+                          style={{
+                            marginHorizontal: 10,
+                            fontSize: 42,
+                            ...genericText,
+                            color: '#414',
+                          }}
+                        >
+                          {val.value}
+                        </Text>
+                        <SetValueButton
+                          system={system}
+                          systemId={systemId}
+                          val={val}
+                          kitchenCommand={kitchenCommand}
+                        />
+                      </View>
+                    );
+                  })}
+                </View>
               </Row>
             )}
           </RowSection>

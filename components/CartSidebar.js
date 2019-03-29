@@ -77,6 +77,7 @@ function SmallButton({ icon, onPress }) {
   return (
     <TouchableOpacity
       onPress={onPress}
+      hitSlop={{ left: 20, top: 20, right: 20, bottom: 20 }}
       style={{
         borderWidth: 1,
         borderRadius: 4,

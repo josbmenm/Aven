@@ -171,27 +171,39 @@ export function computeKitchenConfig(cloud) {
           tags.forEach(tag => {
             if (tag.Type === 'Command DINT') {
               valueCommands[tag['Internal Name']] = {
+                name: tag['Internal Name'],
                 type: 'integer',
                 subTag: tag['PLC Sub-Tag'],
               };
             } else if (tag.Type === 'Command BOOL') {
               valueCommands[tag['Internal Name']] = {
+                name: tag['Internal Name'],
                 type: 'boolean',
                 subTag: tag['PLC Sub-Tag'],
               };
             } else if (tag.Type === 'Read DINT') {
               readTags[tag['Internal Name']] = {
+                name: tag['Internal Name'],
                 type: 'integer',
                 subTag: tag['PLC Sub-Tag'],
               };
             } else if (tag.Type === 'Read BOOL') {
               readTags[tag['Internal Name']] = {
+                name: tag['Internal Name'],
                 type: 'boolean',
                 subTag: tag['PLC Sub-Tag'],
               };
             } else if (tag.Type === 'Command Pulse BOOL') {
               pulseCommands[tag['Internal Name']] = {
                 subTag: tag['PLC Sub-Tag'],
+                name: tag['Internal Name'],
+                params:
+                  tag['PulseParameterTags'] &&
+                  tag['PulseParameterTags']
+                    .map(atId => {
+                      return tags.find(t => t.id === atId);
+                    })
+                    .map(tag => tag['Internal Name']),
               };
             } else {
               throw new Error(`Unexpected tag type "${tag.Type}"`);
