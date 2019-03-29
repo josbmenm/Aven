@@ -1,6 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import Animated, { Easing } from 'react-native-reanimated';
+import { useNavigation } from '../navigation-hooks/Hooks';
+import NavigationContext from '../navigation-core/views/NavigationContext';
 
 const PopoverContext = React.createContext(null);
 
@@ -10,7 +12,7 @@ export function PopoverTarget({ renderContent, renderPopover, timing }) {
     const location = await new Promise(resolve =>
       viewRef.current.measure((x, y, width, height, pageX, pageY) => {
         resolve({ x, y, width, height, pageX, pageY });
-      })
+      }),
     );
     ctx.openPopover(renderPopover(), location, timing);
   }
@@ -20,16 +22,26 @@ export function PopoverTarget({ renderContent, renderPopover, timing }) {
 
 export function useTargetPopover(renderPopover, timing) {
   const ctx = useContext(PopoverContext);
+  const navigation = useNavigation();
   const targetRef = React.createRef();
   async function onPopover() {
     const location = await new Promise(resolve =>
       targetRef.current.measure((x, y, width, height, pageX, pageY) => {
         resolve({ x, y, width, height, pageX, pageY });
-      })
+      }),
     );
-    ctx.openPopover(renderPopover, location, timing);
+    ctx.openPopover(renderPopover, location, timing, navigation);
   }
   return { targetRef, onPopover };
+}
+
+export function usePopover(renderPopover, timing) {
+  const ctx = useContext(PopoverContext);
+  const navigation = useNavigation();
+  async function onPopover() {
+    ctx.openPopover(renderPopover, null, timing, navigation);
+  }
+  return { onPopover };
 }
 
 const defaultTiming = {
@@ -50,15 +62,17 @@ export function PopoverContainer({ children }) {
       setPopover(null);
     });
   }
-  function openPopover(renderPopover, location, timing) {
+  function openPopover(renderPopover, location, timing, navigation) {
     setConfiguredTiming(timing);
     setPopover(
-      renderPopover({
-        onClose: closePopover,
-        location,
-        containerLayout,
-        popoverOpenValue,
-      })
+      <NavigationContext.Provider value={navigation}>
+        {renderPopover({
+          onClose: closePopover,
+          location,
+          containerLayout,
+          popoverOpenValue,
+        })}
+      </NavigationContext.Provider>,
     );
     Animated.timing(popoverOpenValue, {
       toValue: new Animated.Value(1),
