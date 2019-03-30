@@ -35,7 +35,7 @@ const objFromCount = (size, keyMapper, valMapper) => {
 const getExternalTagName = (tagPrefix, subTagName) =>
   tagPrefix == null ? subTagName : `${tagPrefix}.${subTagName}`;
 
-const genericSystemReadTags = {
+const sequencerSystemReadTags = {
   NoFaults: {
     type: 'boolean',
     subTag: 'NoFaults',
@@ -62,7 +62,7 @@ const genericSystemReadTags = {
   },
 };
 
-const genericSystemPulseCommands = {
+const sequencerSystemPulseCommands = {
   Reset: {
     subTag: 'Cmd.Reset.HmiPb',
   },
@@ -121,7 +121,7 @@ const mainSubsystems = {
       },
     },
     pulseCommands: {
-      ...genericSystemPulseCommands,
+      ...sequencerSystemPulseCommands,
     },
   },
 };
@@ -162,10 +162,11 @@ export function computeKitchenConfig(cloud) {
             intIndex: faultRow['Fault Integer'],
           }));
           const readTags = {
-            ...genericSystemReadTags,
+            ...((kitchenSystem.HasSequencer && sequencerSystemReadTags) || {}),
           };
           const pulseCommands = {
-            ...genericSystemPulseCommands,
+            ...((kitchenSystem.HasSequencer && sequencerSystemPulseCommands) ||
+              {}),
           };
           const valueCommands = {};
           tags.forEach(tag => {
@@ -429,14 +430,14 @@ export default function startKitchen({ client, plcIP }) {
   //       },
   //     },
   //     pulseCommands: {
-  //       ...genericSystemPulseCommands,
+  //       ...sequencerSystemPulseCommands,
   //     },
   //   },
   //   Granule: {
   //     tagPrefix: '_Granule',
   //     icon: '🍚',
   //     readTags: {
-  //       ...genericSystemReadTags,
+  //       ...sequencerSystemReadTags,
   //       SlotToDispense: {
   //         subTag: 'SlotToDispense',
   //         type: 'integer',
@@ -451,7 +452,7 @@ export default function startKitchen({ client, plcIP }) {
   //       },
   //     },
   //     pulseCommands: {
-  //       ...genericSystemPulseCommands,
+  //       ...sequencerSystemPulseCommands,
   //       DispenseAmount: {
   //         subTag: 'Cmd.DispenseAmount.HmiPb',
   //       },
@@ -467,7 +468,7 @@ export default function startKitchen({ client, plcIP }) {
   //     tagPrefix: '_Piston',
   //     icon: '💩',
   //     readTags: {
-  //       ...genericSystemReadTags,
+  //       ...sequencerSystemReadTags,
   //       DispenseCountGoal: {
   //         subTag: 'DispenseCountGoal',
   //         type: 'integer',
@@ -478,7 +479,7 @@ export default function startKitchen({ client, plcIP }) {
   //       },
   //     },
   //     pulseCommands: {
-  //       ...genericSystemPulseCommands,
+  //       ...sequencerSystemPulseCommands,
   //       DispenseAmount: {
   //         subTag: 'Cmd.DispenseAmount.HmiPb',
   //       },
@@ -494,14 +495,14 @@ export default function startKitchen({ client, plcIP }) {
   //     tagPrefix: '_FillSystem',
   //     icon: '🥙',
   //     readTags: {
-  //       ...genericSystemReadTags,
+  //       ...sequencerSystemReadTags,
   //       Homed: {
   //         subTag: 'Homed',
   //         type: 'boolean',
   //       },
   //     },
   //     pulseCommands: {
-  //       ...genericSystemPulseCommands,
+  //       ...sequencerSystemPulseCommands,
   //       PositionAndDispenseAmount: {
   //         subTag: 'Cmd.PositionAndDispenseAmount.HmiPb',
   //       },
@@ -521,7 +522,7 @@ export default function startKitchen({ client, plcIP }) {
   //     tagPrefix: '_FillPositioner',
   //     icon: '↔️',
   //     readTags: {
-  //       ...genericSystemReadTags,
+  //       ...sequencerSystemReadTags,
   //       Homed: {
   //         subTag: 'Homed',
   //         type: 'boolean',
@@ -544,7 +545,7 @@ export default function startKitchen({ client, plcIP }) {
   //       },
   //     },
   //     pulseCommands: {
-  //       ...genericSystemPulseCommands,
+  //       ...sequencerSystemPulseCommands,
   //       GoToPosition: {
   //         subTag: 'Cmd.GoToPosition.HmiPb',
   //       },
