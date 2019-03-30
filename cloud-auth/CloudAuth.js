@@ -638,7 +638,11 @@ export default function CloudAuth({ source, providers }) {
   async function observeDoc(domain, name, auth) {
     const permissions = await GetPermissions({ name, auth, domain });
     if (!permissions.canRead) {
-      throw new Err('Not authorized to subscribe here');
+      throw new Err('Not authorized to subscribe here', 'InvalidAuth', {
+        name,
+        domain,
+        authId: auth.id,
+      });
     }
     return await source.observeDoc(domain, name);
   }

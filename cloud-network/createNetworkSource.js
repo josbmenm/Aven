@@ -28,14 +28,19 @@ export default function createNetworkSource(opts) {
   let wsClientId = null;
 
   async function dispatch(action) {
-    const res = await opts.fetchFn(httpEndpoint, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(action),
-    });
+    let res = null;
+    try {
+      res = await opts.fetchFn(httpEndpoint, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(action),
+      });
+    } catch (e) {
+      throw new Err('Server Connection Error', 'NetworkConnection', {});
+    }
 
     if (res.status >= 400) {
       let result = await res.text();
@@ -111,11 +116,11 @@ export default function createNetworkSource(opts) {
       // actually we're going to wait for the server to say hello with ClientId
     };
     ws.onclose = () => {
-      isConnected.next(false);
+      if (isConnected.getValue()) isConnected.next(false);
       ws = null;
     };
     ws.onerror = () => {
-      isConnected.next(false);
+      if (isConnected.getValue()) isConnected.next(false);
       ws = null;
     };
     ws.onmessage = msg => {
@@ -125,7 +130,7 @@ export default function createNetworkSource(opts) {
       switch (evt.type) {
         case 'ClientId': {
           wsClientId = evt.clientId;
-          isConnected.next(true);
+          if (!isConnected.getValue()) isConnected.next(true);
           socketSendIfConnected({
             type: 'Subscribe',
             subscriptions: Object.keys(subscriptions).map(subsId => {
