@@ -11,12 +11,16 @@ export default function useObservable(observable) {
 
   if (error) {
     throw error;
-    // This component is basically broken at this point.. A parent is responsible for catching the error and re-mounting us.
+    // This component is basically broken at this point, because error will be thrown here until:
+    // - A parent is responsible for catching the error and re-mounting us. OR
+    // - The observable input changes and the effect clears the error
   }
 
   const lastRef = useRef(value);
 
   function applyValue(newValue) {
+    // We use this lastRef to ensure that we will only setValue when the value has actually changed.
+    // This is a good idea because some observables will re-emit identical values, and we'd rather not waste a render
     if (lastRef.current !== newValue) {
       lastRef.current = newValue;
       setValue(newValue);
@@ -25,6 +29,9 @@ export default function useObservable(observable) {
 
   useEffect(
     () => {
+      if (error) {
+        setError(null);
+      }
       if (isObservable) {
         const subscription = observable.subscribe(applyValue, setError);
         return () => subscription.unsubscribe();
