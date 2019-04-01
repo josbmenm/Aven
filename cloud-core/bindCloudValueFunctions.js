@@ -1,5 +1,9 @@
 import { filter } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+import SHA1 from 'crypto-js/sha1';
+import { stringify } from 'querystring';
+
+const JSONStringify = require('json-stable-stringify');
 
 function flatArray(a) {
   return [].concat.apply([], a);
@@ -63,8 +67,15 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
     return [];
   }
   const isConnected = new BehaviorSubject(false);
+  const getValue = () => {
+    const o = cloudValue.getValue();
+    const expandSpec = expandFn(o, cloudValue);
+    const expanded = doExpansion(expandSpec);
+    return expanded;
+  };
   const expanded = {
     isConnected,
+    getId: () => SHA1(JSONStringify(getValue())).toString(),
     getIsConnected: isConnected.getValue,
     type: 'ExpandedDoc',
     getFullName: () => {
@@ -95,12 +106,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
       })
       .pipe(filterUndefined())
       .distinctUntilChanged(),
-    getValue: () => {
-      const o = cloudValue.getValue();
-      const expandSpec = expandFn(o, cloudValue);
-      const expanded = doExpansion(expandSpec);
-      return expanded;
-    },
+    getValue,
   };
   bindCloudValueFunctions(expanded, cloudClient);
   return expanded;
@@ -115,9 +121,11 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
   let evaluatedDoc = evalCache.get(cloudValue);
   if (!evaluatedDoc) {
     const isConnected = new BehaviorSubject(false);
+    const getValue = () => lambdaDoc.functionGetValue(cloudValue);
     // creating a synthetic doc that can be observed and fetched.
     evaluatedDoc = {
       isConnected,
+      getId: () => SHA1(JSONStringify(getValue())).toString(),
       getIsConnected: isConnected.getValue,
       type: 'EvaluatedDoc',
       getFullName: () => {
@@ -135,7 +143,7 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
         // effectively, this is the only way for an eval doc to be connected
         isConnected.next(isConn)
       ),
-      getValue: () => lambdaDoc.functionGetValue(cloudValue),
+      getValue,
     };
     bindCloudValueFunctions(evaluatedDoc, cloudClient);
     evalCache.set(cloudValue, evaluatedDoc);
@@ -148,6 +156,7 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
     isConnected: cloudValue.isConnected,
     getIsConnected: cloudValue.isConnected.getValue,
     type: 'MappedDoc',
+    getId: () => SHA1(stringify(mapFn(cloudValue.getValue()))).toString(),
     getFullName: () => {
       return cloudValue.getFullName() + '__mapped';
     },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title, Body, Page } from '../DocViews';
+import { Title, Body, Page, SubSection, Snippet } from '../DocViews';
 
 function DocPage() {
   return (
@@ -13,6 +13,28 @@ function DocPage() {
         You are also encouraged to create additional projects to compliment or
         compete with Aven Cloud components.
       </Body>
+      <SubSection title="Getting Started - Run Docs">
+        <Snippet
+          code={`git clone Aven
+cd Aven
+yarn
+yarn start aven-io`}
+        />
+      </SubSection>
+      <SubSection title="Getting Started - Run Todo app">
+        <Body>First, start the web version</Body>
+        <Snippet
+          code={`git clone Aven
+cd Aven
+yarn
+yarn start todo-web`}
+        />
+        <Body>Simultaneously, start up the react native app..</Body>
+        <Snippet
+          code={`
+yarn start todo-native`}
+        />
+      </SubSection>
     </Page>
   );
 }

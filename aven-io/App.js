@@ -330,7 +330,7 @@ function Home() {
             Contributors - Help Wanted!
           </Text>
           <Text style={{ fontSize: 36, margin: 50 }}>
-            Compute Data - Save pure functions to compute and cache
+            Compute Data - Use pure functions to compute and cache
           </Text>
         </View>
       </View>
@@ -376,6 +376,7 @@ const DocsRouter = SwitchRouter({
   Tutorial1: require('./docs/1-Data-Sources').default,
   Tutorial2: require('./docs/2-Connect-React').default,
   Tutorial3: require('./docs/3-Authentication').default,
+  ToolsEnvs: require('./docs/ToolsEnvironments').default,
   'API-createCloudClient': require('./docs/API-createCloudClient').default,
   'API-CloudBlock': require('./docs/API-CloudBlock').default,
   'API-CloudDoc': require('./docs/API-CloudDoc').default,
@@ -579,6 +580,7 @@ function Sidebar() {
         </SidebarSection>
         <SidebarSection title="Advanced" />
         <SidebarSection title="Community">
+          <SidebarLink title="Tooling and Environments" routeName="ToolsEnvs" />
           <SidebarLink title="About Aven" routeName="About" />
           <SidebarLink title="Roadmap" routeName="Roadmap" />
           <SidebarLink title="Contributors" routeName="Contributors" />

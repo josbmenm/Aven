@@ -142,7 +142,7 @@ export default function createCloudClient({
     const doc = docs.get(name);
     await doc.fetchValue();
     const value = doc.getValue();
-    const id = doc.getId();
+    const id = await doc.getId();
     return { value, id };
   }
 

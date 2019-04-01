@@ -21,11 +21,51 @@ const runServer = async () => {
     dataDir: './db',
   });
 
+  function createReducerLambda(reducerName, initialState, reducerFn) {
+    return (docState, doc, cloud, useValue) => {
+      let state = initialState;
+      if (docState === undefined) {
+        return state;
+      }
+      let action = docState.value;
+      if (docState.on && docState.on.id) {
+        const ancestorName = `${doc.getFullName()}#${
+          docState.on.id
+        }^${reducerName}`;
+        state = useValue(cloud.get(ancestorName));
+      }
+      return reducerFn(state, action);
+    };
+  }
+
+  function TaskReducer(state, action) {
+    if (action.type === 'AddTask') {
+      return [...state, action.params];
+    } else if (action.type === 'SetTaskCompletion') {
+      const taskIndex = state.findIndex(t => t.id === action.id);
+      if (taskIndex === -1) {
+        return state;
+      }
+      const newState = [...state];
+      const oldTask = state[taskIndex];
+      newState[taskIndex] = { ...oldTask, isComplete: action.isComplete };
+      return newState;
+    } else if (action.type === 'RemoveTask') {
+      return state.filter(t => t.id !== action.id);
+    }
+    return state;
+  }
+
   const evalDocs = {
-    TaskReducer: a => [{ id: 'z', title: 'Coming Soon' }],
+    // TaskReducer: a => [{ id: 'z', title: 'Coming Soon' }],
+    TaskReducer: createReducerLambda('TaskReducer', [], TaskReducer),
   };
 
-  const source = createEvalSource({ source, domain: 'todo.aven.io', evalDocs });
+  const source = createEvalSource({
+    source: storageSource,
+    domain: 'todo.aven.io',
+    evalDocs,
+  });
 
   const emailAgent = EmailAgent({
     defaultFromEmail: 'Aven Todos <support@aven.io>',

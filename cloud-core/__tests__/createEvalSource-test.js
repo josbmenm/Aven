@@ -3,7 +3,7 @@ import createEvalSource from '../createEvalSource';
 
 beforeAll(async () => {});
 
-describe.skip('interpreted data sources', () => {
+describe('interpreted data sources', () => {
   test('basic interpreted value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
     const evalSource = createEvalSource({
@@ -203,7 +203,6 @@ describe.skip('interpreted data sources', () => {
       domain: 'test',
       name: 'foo^squared',
     });
-    console.log(docResult);
     expect(initialId).not.toEqual(docResult.id);
     let blockResult = await interpretedSource.dispatch({
       type: 'GetBlock',
@@ -212,6 +211,100 @@ describe.skip('interpreted data sources', () => {
       id: docResult.id,
     });
     expect(blockResult.value).toBe(9);
+  });
+
+  test('static reduced value', async () => {
+    const storageSource = createMemoryStorageSource({ domain: 'test' });
+    const interpretedSource = createEvalSource({
+      source: storageSource,
+      domain: 'test',
+      evalDocs: {
+        listValue: (docState, doc, cloud, useValue) => {
+          let state = [];
+          if (docState === undefined) {
+            return state;
+          }
+          const action = docState.value;
+          if (docState.on && docState.on.id) {
+            const ancestorName = `${doc.getFullName()}#${
+              docState.on.id
+            }^listValue`;
+            state = useValue(cloud.get(ancestorName));
+          }
+
+          if (action.add) {
+            return [...state, action.add];
+          }
+          if (action.remove) {
+            return state.filter(s => s !== action.remove);
+          }
+          return state;
+        },
+      },
+    });
+
+    await interpretedSource.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'test',
+      name: 'mylist',
+      value: { add: 'a' },
+    });
+
+    await interpretedSource.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'test',
+      name: 'mylist',
+      value: { add: 'b' },
+    });
+
+    await interpretedSource.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'test',
+      name: 'mylist',
+      value: { add: 'c' },
+    });
+
+    await interpretedSource.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'test',
+      name: 'mylist',
+      value: { remove: 'b' },
+    });
+
+    const result0 = await interpretedSource.dispatch({
+      type: 'GetDocValue',
+      name: 'mylist^listValue',
+      domain: 'test',
+    });
+
+    expect(result0.value).toEqual(['a', 'c']);
+    await interpretedSource.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'test',
+      name: 'mylist',
+      value: { remove: 'a' },
+    });
+    const result1 = await interpretedSource.dispatch({
+      type: 'GetDocValue',
+      name: 'mylist^listValue',
+      domain: 'test',
+    });
+    expect(result1.value).toEqual(['c']);
+    expect(result1.id).not.toEqual(result0.id);
+
+    await interpretedSource.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'test',
+      name: 'mylist',
+      value: { remove: 'a' },
+    });
+    const result2 = await interpretedSource.dispatch({
+      type: 'GetDocValue',
+      name: 'mylist^listValue',
+      domain: 'test',
+    });
+    expect(result2.value).toEqual(['c']);
+    expect(result2.id).toEqual(result1.id);
   });
 
   test.skip('interpteted reduced value', async () => {
@@ -255,17 +348,28 @@ describe.skip('interpreted data sources', () => {
       name: 'listValue',
       value: {
         type: 'LambdaFunction',
-        code: `(a, doc, cloud, useValue) => {
+        code: `(docState, doc, cloud, useValue) => {
+          console.log('======', doc.getFullName(), docState);
+
           let state = [];
-          if (!a) {
-            return [];
+          if (docState === undefined) {
+            return state;
           }
-          if (a.on && a.on.id) {
-            const ancestorName = doc.getFullName() + '#' + a.on.id + '^listValue';
-            state = useValue(cloud.get(ancestorName)) || [];
+          const action = docState.value;
+          if (docState.on && docState.on.id) {
+            const ancestorName = \`\${doc.getFullName()}#\${
+              docState.on.id
+            }^listValue\`;
+            state = useValue(cloud.get(ancestorName));
           }
 
-          const action = a.value;
+          if (!cloud.i) { cloud.i = 1; }
+          cloud.i++;
+          if (cloud.i>10) {
+          throw 'its over';
+          }
+
+          console.log('Doing Reduce!', action, state, doc.getFullName());
 
           if (action.add) {
             return [...state, action.add];
@@ -278,11 +382,11 @@ describe.skip('interpreted data sources', () => {
       },
     });
 
-    // const result = await interpretedSource.dispatch({
-    //   type: 'GetDocValue',
-    //   name: 'mylist^listValue',
-    //   domain: 'test',
-    // });
+    const result = await interpretedSource.dispatch({
+      type: 'GetDocValue',
+      name: 'mylist^listValue',
+      domain: 'test',
+    });
 
     // expect(result.value).toEqual(['a', 'c']);
   });
