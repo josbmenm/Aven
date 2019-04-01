@@ -107,6 +107,7 @@ export default function createCloudClient({
     }
     const doc = docs.get(name);
     const block = doc.getBlock(id);
+    await block.fetchValue();
     return block && block.serialize();
   }
 
@@ -122,7 +123,11 @@ export default function createCloudClient({
     }
     const doc = docs.get(name);
     const value = await doc.fetchValue();
-    return { id: getIdOfValue(value), domain, name };
+    return {
+      id: value === undefined ? undefined : getIdOfValue(value),
+      domain,
+      name,
+    };
   }
   async function GetDocValue({ domain: actionDomain, name }) {
     const defaultAction = () =>
@@ -137,7 +142,7 @@ export default function createCloudClient({
     const doc = docs.get(name);
     await doc.fetchValue();
     const value = doc.getValue();
-    const id = getIdOfValue(value);
+    const id = doc.getId();
     return { value, id };
   }
 
@@ -189,7 +194,19 @@ export default function createCloudClient({
     onGetSelf: () => cloudClient,
   });
   cloudClient.get = docs.get;
-  cloudClient.observeDocChildren = docs.observeDocChildren;
+  cloudClient.observeDocChildren = source.observeDocChildren;
+
+  cloudClient.observeChildren = docs.observeChildren;
+  // cloudClient.observeChildren = (observeDomain, name) => {
+  //   if (observeDomain !== undefined && observeDomain !== domain) {
+  //     throw new Error('Cannot observe different domain on a client');
+  //   }
+  //   let listener = docs.observeDocChildren;
+  //   if (name != null) {
+  //     listener = docs.get(name).observeDocChildren;
+  //   }
+  //   return listener;
+  // };
 
   cloudClient.observeUserDoc = mapBehaviorSubject(session, value => {
     if (value && value.accountId) {

@@ -27,7 +27,7 @@ describe('client doc behavior', () => {
     const m = createMemoryStorageSource({ domain: 'd' });
     const c = createCloudClient({ source: m, domain: 'd' });
     const doc = c.get('foo');
-    expect(doc.getState().id).toBe(null);
+    expect(doc.getState().id).toBe(undefined);
     expect(doc.getName()).toBe('foo');
     await doc.fetch();
     const first = await m.dispatch({
@@ -84,7 +84,7 @@ describe('client doc behavior', () => {
     await c.get('foo').put({});
     await c.get('bar').put({});
     let lastObserved = null;
-    c.observeDocChildren.subscribe({
+    c.observeChildren.subscribe({
       next: val => {
         lastObserved = val;
       },
@@ -103,7 +103,7 @@ describe('client doc behavior', () => {
     await c.get('baz').put({});
 
     let lastObserved = null;
-    c.observeDocChildren.subscribe({
+    c.observeChildren.subscribe({
       next: val => {
         lastObserved = val;
       },
@@ -119,7 +119,7 @@ describe('client doc behavior', () => {
     await c.get('foo').put({});
     await c.get('bar').put({});
     let lastObserved = null;
-    let subs = c.observeDocChildren.subscribe({
+    let subs = c.observeChildren.subscribe({
       next: val => {
         lastObserved = val;
       },
@@ -159,7 +159,7 @@ describe('client doc behavior', () => {
     await justASec();
     expect(lastObserved.length).toBe(1);
     lastObserved = null;
-    subs = c.observeDocChildren.subscribe({
+    subs = c.observeChildren.subscribe({
       next: val => {
         lastObserved = val;
       },
@@ -680,7 +680,7 @@ describe('client doc map', () => {
   });
 });
 
-describe.skip('client behaves as data source', async () => {
+describe('client behaves as data source', async () => {
   async function startTestSource(options = {}) {
     const source = createMemoryStorageSource({
       domain: 'test',

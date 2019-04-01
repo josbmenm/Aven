@@ -65,13 +65,14 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
   const isConnected = new BehaviorSubject(false);
   const expanded = {
     isConnected,
+    getIsConnected: isConnected.getValue,
     type: 'ExpandedDoc',
     getFullName: () => {
       return cloudValue.getFullName() + '__expanded';
     },
     get: toGet => {
       throw new Error(
-        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`,
+        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
       );
     },
     fetchValue: async () => {
@@ -117,14 +118,14 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
     // creating a synthetic doc that can be observed and fetched.
     evaluatedDoc = {
       isConnected,
-      getIsConnected: isConnected.next(true),
+      getIsConnected: isConnected.getValue,
       type: 'EvaluatedDoc',
       getFullName: () => {
         return cloudValue.getFullName() + '__evalby_' + lambdaDoc.getFullName();
       },
       get: toGet => {
         throw new Error(
-          `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`,
+          `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
         );
       },
       // the actual loading and computation is performed by the lambda doc, which may refer to the cloud block lambda.
@@ -132,7 +133,7 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
       fetchValue: () => lambdaDoc.functionFetchValue(cloudValue),
       observeValue: lambdaDoc.functionObserveValue(cloudValue, isConn =>
         // effectively, this is the only way for an eval doc to be connected
-        isConnected.next(isConn),
+        isConnected.next(isConn)
       ),
       getValue: () => lambdaDoc.functionGetValue(cloudValue),
     };
@@ -145,13 +146,14 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
 function mapCloudValue(cloudValue, cloudClient, mapFn) {
   const mapped = {
     isConnected: cloudValue.isConnected,
+    getIsConnected: cloudValue.isConnected.getValue,
     type: 'MappedDoc',
     getFullName: () => {
       return cloudValue.getFullName() + '__mapped';
     },
     get: toGet => {
       throw new Error(
-        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been mapped.`,
+        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been mapped.`
       );
     },
     fetchValue: cloudValue.fetchValue,

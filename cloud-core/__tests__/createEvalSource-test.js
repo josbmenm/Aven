@@ -1,24 +1,24 @@
 import createMemoryStorageSource from '../createMemoryStorageSource';
-import createEvalDataSource from '../createEvalDataSource';
+import createEvalSource from '../createEvalSource';
 
 beforeAll(async () => {});
 
-describe('interpreted data sources', () => {
+describe.skip('interpreted data sources', () => {
   test('basic interpreted value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
-    const interpretedSource = createEvalDataSource({
+    const evalSource = createEvalSource({
       source: storageSource,
       domain: 'test',
     });
 
-    await interpretedSource.dispatch({
+    await evalSource.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'foo',
       value: 2,
     });
 
-    await interpretedSource.dispatch({
+    await evalSource.dispatch({
       type: 'PutDocValue',
       domain: 'test',
       name: 'squared',
@@ -28,7 +28,7 @@ describe('interpreted data sources', () => {
       },
     });
 
-    const result = await interpretedSource.dispatch({
+    const result = await evalSource.dispatch({
       type: 'GetDocValue',
       domain: 'test',
       name: 'foo^squared',
@@ -39,7 +39,7 @@ describe('interpreted data sources', () => {
 
   test('twice interpreted value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
-    const interpretedSource = createEvalDataSource({
+    const interpretedSource = createEvalSource({
       source: storageSource,
       domain: 'test',
     });
@@ -75,7 +75,7 @@ describe('interpreted data sources', () => {
   test('computations for specific blocks', async () => {
     // fix by allowing eval on cloud blocks!
     const storageSource = createMemoryStorageSource({ domain: 'test' });
-    const interpretedSource = createEvalDataSource({
+    const interpretedSource = createEvalSource({
       source: storageSource,
       domain: 'test',
     });
@@ -112,7 +112,7 @@ describe('interpreted data sources', () => {
 
   test('expanding interpreted value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
-    const interpretedSource = createEvalDataSource({
+    const interpretedSource = createEvalSource({
       source: storageSource,
       domain: 'test',
     });
@@ -165,7 +165,7 @@ describe('interpreted data sources', () => {
 
   test.skip('getdoc works with block fetch', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
-    const interpretedSource = createEvalDataSource({
+    const interpretedSource = createEvalSource({
       source: storageSource,
       domain: 'test',
     });
@@ -216,7 +216,7 @@ describe('interpreted data sources', () => {
 
   test.skip('interpteted reduced value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
-    const interpretedSource = createEvalDataSource({
+    const interpretedSource = createEvalSource({
       source: storageSource,
       domain: 'test',
     });
@@ -289,7 +289,7 @@ describe('interpreted data sources', () => {
 
   test('basic evalDocs static function value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
-    const interpretedSource = createEvalDataSource({
+    const interpretedSource = createEvalSource({
       source: storageSource,
       domain: 'test',
       evalDocs: {

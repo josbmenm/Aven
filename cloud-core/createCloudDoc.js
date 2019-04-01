@@ -129,7 +129,7 @@ export function createDocPool({
     return postedDoc;
   }
 
-  const observeDocChildren = parentName
+  const observeChildren = parentName
     .switchMap(parentDocName => {
       return new Observable(observer => {
         let docNames = [];
@@ -201,7 +201,7 @@ export function createDocPool({
     // this is now hydrated to real children doc objects Array<CloudDoc>
     .share();
 
-  return { get, move, post, observeDocChildren };
+  return { get, move, post, observeChildren };
 }
 
 export default function createCloudDoc({
@@ -234,7 +234,7 @@ export default function createCloudDoc({
 
   const docState = new BehaviorSubject({
     name,
-    id: null,
+    id: undefined,
     isConnected: false,
     lastSyncTime: null,
     isDestroyed: false,

@@ -5,7 +5,7 @@ export default function useCloudReducer(
   actionDocName,
   reducerName,
   reducerFn,
-  initialState,
+  initialState
 ) {
   const cloud = useCloud();
   const actionsDoc = cloud.get(actionDocName);

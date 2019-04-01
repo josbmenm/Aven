@@ -43,7 +43,7 @@ function useTasks() {
     'TaskActions',
     'TaskReducer',
     TaskReducer,
-    [],
+    []
   );
   return {
     tasks,

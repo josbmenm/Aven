@@ -189,7 +189,7 @@ describe('observing docs', () => {
         lastObserved = e;
       },
     });
-    expect(lastObserved.id).toEqual(null);
+    expect(lastObserved.id).toEqual(undefined);
     await doc.fetch();
     expect(lastObserved.id).toEqual(obj1.id);
 

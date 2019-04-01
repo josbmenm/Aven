@@ -1,4 +1,5 @@
 import CloudContext from '../cloud-core/CloudContext';
+import createEvalSource from '../cloud-core/createEvalSource';
 import createCloudClient from '../cloud-core/createCloudClient';
 import CloudAuth from '../cloud-auth/CloudAuth';
 import startFSStorageSource from '../cloud-fs/startFSStorageSource';
@@ -15,10 +16,16 @@ import App from './App';
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');
 
-  const source = await startFSStorageSource({
+  const storageSource = await startFSStorageSource({
     domain: 'todo.aven.io',
     dataDir: './db',
   });
+
+  const evalDocs = {
+    TaskReducer: a => [{ id: 'z', title: 'Coming Soon' }],
+  };
+
+  const source = createEvalSource({ source, domain: 'todo.aven.io', evalDocs });
 
   const emailAgent = EmailAgent({
     defaultFromEmail: 'Aven Todos <support@aven.io>',

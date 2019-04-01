@@ -223,6 +223,7 @@ export class Transitioner extends React.Component {
       navState,
       descriptors,
     } = this.state;
+    console.log('TRANS RENDER', this.state);
     const { navigation, navigationConfig } = this.props;
     const mainRouteKeys = navState.routes.map(r => r.key);
     let routeKeys = mainRouteKeys;
@@ -230,6 +231,7 @@ export class Transitioner extends React.Component {
     if (transitionRouteKey) {
       if (transitioningFromState) {
         const prevRouteKeys = transitioningFromState.routes.map(r => r.key);
+        console.log(navState.index, transitioningFromState.routes.length);
         // While transitioning, our main nav state is navState. But we also need to render screens from the last state, preserving the order
         routeKeys = interleaveArrays(prevRouteKeys, mainRouteKeys);
       }
