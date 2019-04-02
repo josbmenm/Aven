@@ -195,28 +195,28 @@ export default function createCloudBlock({
     return result;
   }
 
-  const functionFetchValue = async argumentDoc => {
-    await argumentDoc.fetchValue();
+  const functionFetchValue = async argumentValue => {
+    await argumentValue.fetchValue();
     await fetch();
     const { loadDependencies, reComputeResult } = doTheCompute(
       getValue(),
-      argumentDoc.getValue(),
-      argumentDoc
+      argumentValue.getValue(),
+      argumentValue
     );
     await loadDependencies();
     return reComputeResult();
   };
 
-  const functionObserveValue = argumentDoc => {
+  const functionObserveValue = argumentValue => {
     return observeValue.switchMap(fnValue => {
       if (fnValue === undefined) {
         return Observable.of(null);
       }
-      return argumentDoc.observeValue.flatMap(async argValue => {
+      return argumentValue.observeValue.flatMap(async argValue => {
         const { reComputeResult, loadDependencies } = doTheCompute(
           fnValue,
           argValue,
-          argumentDoc
+          argumentValue
         );
         await loadDependencies();
         return reComputeResult();
@@ -225,6 +225,7 @@ export default function createCloudBlock({
   };
 
   const cloudBlock = {
+    type: 'Block',
     isConnected,
     getIsConnected: isConnected.getValue,
     getFullName: () => onGetName(),

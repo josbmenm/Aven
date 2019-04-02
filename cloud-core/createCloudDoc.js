@@ -142,26 +142,31 @@ export function createDocPool({
             upstreamSubs = (await source.observeDocChildren(
               domain,
               parentDocName
-            )).subscribe(childEvt => {
-              if (childEvt.type === 'AddChildDoc') {
-                // see if this belongs at end of list. We can avoid sorting
-                const last = docNames[docNames.length - 1];
-                if (last && childEvt.name > last) {
-                  docNames = [...docNames, childEvt.name];
-                } else {
-                  // we need to sort
-                  docNames = [...docNames, childEvt.name].sort();
-                }
-                observer.next(docNames);
-              } else if (childEvt.type === 'DestroyChildDoc') {
-                if (docNames.indexOf(childEvt.name) !== -1) {
-                  docNames = docNames.filter(name => name !== childEvt.name);
+            )).subscribe(
+              childEvt => {
+                if (childEvt.type === 'AddChildDoc') {
+                  // see if this belongs at end of list. We can avoid sorting
+                  const last = docNames[docNames.length - 1];
+                  if (last && childEvt.name > last) {
+                    docNames = [...docNames, childEvt.name];
+                  } else {
+                    // we need to sort
+                    docNames = [...docNames, childEvt.name].sort();
+                  }
                   observer.next(docNames);
+                } else if (childEvt.type === 'DestroyChildDoc') {
+                  if (docNames.indexOf(childEvt.name) !== -1) {
+                    docNames = docNames.filter(name => name !== childEvt.name);
+                    observer.next(docNames);
+                  }
+                } else {
+                  throw new Error(`Unrecognized child doc event: ${childEvt}`);
                 }
-              } else {
-                throw new Error(`Unrecognized child doc event: ${childEvt}`);
+              },
+              error => {
+                observer.error(error);
               }
-            });
+            );
           }
           let result = null;
           try {
@@ -531,12 +536,7 @@ export default function createCloudDoc({
   function $setOverrideFunction(fn) {
     overriddenFunction = fn;
   }
-  function doFunctionThing(
-    pureDataFn,
-    argumentValue,
-    argumentDoc,
-    cloudClient
-  ) {
+  function runLambda(pureDataFn, argumentValue, argumentDoc, cloudClient) {
     const dependencies = new Set();
     async function loadDependencies() {
       await Promise.all(
@@ -563,7 +563,7 @@ export default function createCloudDoc({
   }
   function functionGetValue(argumentDoc) {
     if (overriddenFunction) {
-      const { result } = doFunctionThing(
+      const { result } = runLambda(
         overriddenFunction,
         argumentDoc.getValue(),
         argumentDoc,
@@ -578,10 +578,17 @@ export default function createCloudDoc({
     return block.functionGetValue(argumentDoc);
   }
 
+  let isLambdaRemote = false; // will be set to true if the server has this lambda installed
+
+  function markRemoteLambda(isRemote) {
+    // this whole thing is a workaround for properly uploading lambdas at build time, and embedding the references into the client
+    isLambdaRemote = isRemote;
+  }
+
   async function functionFetchValue(argumentDoc) {
     if (overriddenFunction) {
       await argumentDoc.fetchValue();
-      const { loadDependencies, reComputeResult } = doFunctionThing(
+      const { loadDependencies, reComputeResult } = runLambda(
         overriddenFunction,
         argumentDoc.getValue(),
         argumentDoc,
@@ -716,8 +723,11 @@ export default function createCloudDoc({
     if (cloudDocValue.value !== undefined) {
       return Observable.of(cloudDocValue.value);
     }
-    if (!cloudDocValue.id) {
+    if (!cloudDocValue.isConnected) {
       return Observable.of(undefined);
+    }
+    if (!cloudDocValue.id) {
+      return Observable.of(null);
     }
     const block = _getBlockWithId(cloudDocValue.id);
     return block.observeValue;
@@ -730,13 +740,36 @@ export default function createCloudDoc({
       if (overriddenFunctionResults.has(argumentDoc)) {
         return overriddenFunctionResults.get(argumentDoc);
       }
+      const isArgumentReady = argumentDoc.getIsConnected();
+      const isStatic = argumentDoc.type === 'Block';
+      if (isLambdaRemote && !isArgumentReady && isStatic) {
+        const currentId = argumentDoc.getId();
+        const valueDocName = argumentDoc.getFullName();
+        const valueName = currentId
+          ? `${valueDocName}#${currentId}`
+          : valueDocName;
+        const behavior = new BehaviorSubject(undefined);
+        source
+          .dispatch({
+            type: 'GetDocValue',
+            domain,
+            name: `${valueName}^${getFullName()}`,
+          })
+          .then(res => {
+            behavior.next(res.value);
+          })
+          .catch(console.error);
+        overriddenFunctionResults.set(argumentDoc, behavior);
+
+        return behavior;
+      }
       const resultObservable = argumentDoc.observeValue
         .flatMap(async argumentValue => {
           const {
             loadDependencies,
             reComputeResult,
             getIsConnected,
-          } = doFunctionThing(
+          } = runLambda(
             overriddenFunction,
             argumentValue,
             argumentDoc,
@@ -830,6 +863,7 @@ export default function createCloudDoc({
   const isConnected = mapBehaviorSubject(docState, state => state.isConnected);
 
   const cloudDoc = {
+    type: 'Doc',
     $setName, // implementation detail of doc moving..?
 
     get: docs.get,
@@ -866,6 +900,7 @@ export default function createCloudDoc({
     functionFetchValue,
     functionObserveValue,
     $setOverrideFunction, // I suppose this is an implementation detail of eval data source
+    markRemoteLambda, // maybe rename this..
   };
 
   bindCloudValueFunctions(cloudDoc, cloudClient);

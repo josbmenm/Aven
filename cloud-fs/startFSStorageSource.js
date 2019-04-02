@@ -1,5 +1,6 @@
 import { BehaviorSubject } from 'rxjs-compat';
 import createGenericDataSource from '../cloud-core/createGenericDataSource';
+import Err from '../utils/Err';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 
 const fs = require('fs-extra');
@@ -7,40 +8,58 @@ const stringify = require('json-stable-stringify');
 const pathJoin = require('path').join;
 
 async function readFSDoc(dataDir, name) {
-  const docsDir = pathJoin(dataDir, 'docs');
-  const docPath = pathJoin(docsDir, name);
-  const childList = await fs.readdir(docPath);
-  const children = {};
-  const childrenSet = new Set();
-  let id = undefined;
-  await Promise.all(
-    childList.map(async child => {
-      if (child === '__document.json') {
-        const docFile = await fs.readFile(pathJoin(docPath, '__document.json'));
-        const docData = JSON.parse(docFile);
-        id = docData.id;
-        return;
-      }
-      children[child] = await readFSDoc(dataDir, pathJoin(name, child));
-      childrenSet.add(child);
-    })
-  );
-  return {
-    children,
-    childrenSet,
-    id,
-  };
+  try {
+    const docsDir = pathJoin(dataDir, 'docs');
+    const docPath = pathJoin(docsDir, name);
+    const childList = await fs.readdir(docPath);
+    const children = {};
+    const childrenSet = new Set();
+    let id = undefined;
+    await Promise.all(
+      childList.map(async child => {
+        if (child === '__document.json') {
+          const docFile = await fs.readFile(
+            pathJoin(docPath, '__document.json')
+          );
+          const docData = JSON.parse(docFile);
+          id = docData.id;
+          return;
+        }
+        children[child] = await readFSDoc(dataDir, pathJoin(name, child));
+        childrenSet.add(child);
+      })
+    );
+    return {
+      children,
+      childrenSet,
+      id,
+    };
+  } catch (e) {
+    throw new Err('FS Error in readFSDoc', 'FSStorageReadError', {
+      dataDir,
+      name,
+      error: e,
+    });
+  }
 }
 
 async function writeFSBlock(dataDir, value) {
-  const blocksDir = pathJoin(dataDir, 'blocks');
-  const blockData = stringify(value);
-  const id = getIdOfValue(value);
-  const blockPath = pathJoin(blocksDir, id);
-  if (!(await fs.exists(blockPath))) {
-    await fs.writeFile(blockPath, blockData);
+  try {
+    const blocksDir = pathJoin(dataDir, 'blocks');
+    const blockData = stringify(value);
+    const id = getIdOfValue(value);
+    const blockPath = pathJoin(blocksDir, id);
+    if (!(await fs.exists(blockPath))) {
+      await fs.writeFile(blockPath, blockData);
+    }
+    return { id };
+  } catch (e) {
+    throw new Err('FS Error in writeFSBlock', 'FSStorageWriteBlockError', {
+      dataDir,
+      value,
+      error: e,
+    });
   }
-  return { id };
 }
 
 async function readFSBlock(dataDir, id) {
@@ -61,16 +80,32 @@ async function hasFSBlock(dataDir, id) {
 }
 
 async function readFSBlockList(dataDir) {
-  const blocksDir = pathJoin(dataDir, 'blocks');
-  return await fs.readdir(blocksDir);
+  try {
+    const blocksDir = pathJoin(dataDir, 'blocks');
+    return await fs.readdir(blocksDir);
+  } catch (e) {
+    throw new Err('FS Error in readFSBlockList', 'FSReadBlockList', {
+      dataDir,
+      error: e,
+    });
+  }
 }
 
 async function writeFSDoc(dataDir, name, id) {
-  const docsDir = pathJoin(dataDir, 'docs');
-  const docPath = pathJoin(docsDir, name);
-  await fs.mkdirp(docPath);
-  const docFilePath = pathJoin(docPath, '__document.json');
-  await fs.writeFile(docFilePath, JSON.stringify({ id }));
+  try {
+    const docsDir = pathJoin(dataDir, 'docs');
+    const docPath = pathJoin(docsDir, name);
+    await fs.mkdirp(docPath);
+    const docFilePath = pathJoin(docPath, '__document.json');
+    await fs.writeFile(docFilePath, JSON.stringify({ id }));
+  } catch (e) {
+    throw new Err('FS Error in writeFSDoc', 'FSWriteDoc', {
+      dataDir,
+      name,
+      id,
+      error: e,
+    });
+  }
 }
 
 async function destroyFSDoc(dataDir, name) {

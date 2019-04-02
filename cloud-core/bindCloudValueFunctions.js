@@ -12,23 +12,24 @@ function flatArray(a) {
 function filterUndefined() {
   return filter(value => value !== undefined);
 }
-function behaviorAnd(a, b) {
-  const out = new BehaviorSubject(a.getValue() && b.getValue());
-  a.subscribe({
-    next: a => {
-      out.next(a && b.getValue());
-    },
-  });
-  b.subscribe({
-    next: b => {
-      out.next(a.getValue() && b);
-    },
-  });
-  return out;
-}
+// function behaviorAnd(a, b) {
+//   const out = new BehaviorSubject(a.getValue() && b.getValue());
+//   a.subscribe({
+//     next: a => {
+//       out.next(a && b.getValue());
+//     },
+//   });
+//   b.subscribe({
+//     next: b => {
+//       out.next(a.getValue() && b);
+//     },
+//   });
+//   return out;
+// }
 
 function expandCloudValue(cloudValue, cloudClient, expandFn) {
   function isCloudValue(o) {
+    // if it looks and quacks like a duck..
     return (
       o != null &&
       typeof o === 'object' &&
@@ -96,6 +97,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
       .distinctUntilChanged()
       .pipe(filterUndefined())
       .mergeMap(async o => {
+        console.log('meeerge map', o);
         isConnected.next(false);
         const expandSpec = expandFn(o, cloudValue);
         const cloudValues = collectCloudValues(expandSpec);
@@ -155,7 +157,7 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
   const mapped = {
     isConnected: cloudValue.isConnected,
     getIsConnected: cloudValue.isConnected.getValue,
-    type: 'MappedDoc',
+    type: cloudValue.type + '-Mapped',
     getId: () => SHA1(stringify(mapFn(cloudValue.getValue()))).toString(),
     getFullName: () => {
       return cloudValue.getFullName() + '__mapped';

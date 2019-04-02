@@ -73,7 +73,6 @@ const runServer = async () => {
       sendgridAPIKey: process.env.SENDGRID_API_KEY,
     },
   });
-
   const emailAuthProvider = EmailAuthProvider({
     agent: emailAgent,
   });
@@ -85,7 +84,6 @@ const runServer = async () => {
       authToken: process.env.TWILIO_AUTH_TOKEN,
     },
   });
-
   const smsAuthProvider = SMSAuthProvider({
     agent: smsAgent,
     getMessage: (authCode, verifyInfo, accountId) => {
@@ -97,6 +95,7 @@ const runServer = async () => {
   const rootAuthProvider = RootAuthProvider({
     rootPasswordHash: await hashSecureString('pw'),
   });
+
   const protectedSource = CloudAuth({
     source,
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
@@ -121,6 +120,14 @@ const runServer = async () => {
     name: 'Todos',
   });
 
+  await putPermission({
+    defaultRule: { canRead: true, canWrite: true },
+    name: 'TaskActions',
+  });
+  await putPermission({
+    defaultRule: { canRead: true },
+    name: 'TaskActions^TaskReducer',
+  });
   const client = createCloudClient({
     source: protectedSource,
     domain: 'todo.aven.io',
@@ -133,8 +140,8 @@ const runServer = async () => {
   const webService = await WebServer({
     App,
     context,
-    source,
-    // source: protectedSource,
+    // source,
+    source: protectedSource,
     serverListenLocation,
   });
   console.log('☁️️ Web Ready 🕸');

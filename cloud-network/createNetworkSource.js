@@ -148,6 +148,16 @@ export default function createNetworkSource(opts) {
             subscriptions[id].observer.next(value);
           return;
         }
+        case 'SubscriptionError': {
+          const { id, error } = evt;
+          const observer = subscriptions[id] && subscriptions[id].observer;
+          if (!observer) {
+            return;
+          }
+          console.log('dude!', typeof observer.error, error);
+          observer.error(new Err(error.message, error.type, error.detail));
+          return;
+        }
         default: {
           wsMessages.next(evt);
           !quiet && log('Unknown ws event:', evt);

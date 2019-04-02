@@ -27,13 +27,21 @@ export default function useObservable(observable) {
     }
   }
 
+  function applyError(error) {
+    console.log('yeah went there');
+    setError(error);
+  }
+
   useEffect(
     () => {
       if (error) {
         setError(null);
       }
       if (isObservable) {
-        const subscription = observable.subscribe(applyValue, setError);
+        const subscription = observable.subscribe({
+          next: applyValue,
+          error: applyError,
+        });
         return () => subscription.unsubscribe();
       }
     },

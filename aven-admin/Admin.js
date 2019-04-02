@@ -3,16 +3,8 @@ import {
   NavigationContext,
   SwitchRouter,
 } from '../navigation-core';
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useContext,
-  createContext,
-} from 'react';
+import React, { useEffect, useMemo, useState, createContext } from 'react';
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Switch,
@@ -32,7 +24,6 @@ import useCloudSession from '../cloud-core/useCloudSession';
 import useObservable from '../cloud-core/useObservable';
 import useCloudValue from '../cloud-core/useCloudValue';
 import ErrorContainer from '../cloud-react/ErrorContainer';
-import JSONView from '../debug-views/JSONView';
 import useAsyncStorage, { isStateUnloaded } from '../utils/useAsyncStorage';
 import { TouchableHighlight } from 'react-native-web';
 const pathJoin = require('path').join;
@@ -89,7 +80,7 @@ function Title({ title, style }) {
 
 const Styles = {
   inputHeight: 50,
-  highlightColor: '#027C6F',
+  highlightColor: '#025C7F',
   labelColor: '#222',
   rowBorderColor: '#ccc',
 };
@@ -222,7 +213,6 @@ function ConnectionForm({ onClientConfig, defaultSession }) {
   const [domain, setDomain] = useState(defaultSession.domain);
   const [useSSL, setUseSSL] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const { navigate } = useNavigation();
   if (isConnecting) {
     return <Text>One moment..</Text>;
   }
@@ -268,20 +258,20 @@ function Pane({ children, pageColor }) {
   );
 }
 
-function LargePane({ children }) {
-  return (
-    <ScrollView
-      style={{
-        flex: 4,
-        backgroundColor: '#f0f0f0',
-        borderRightWidth: StyleSheet.hairlineWidth,
-        borderRightColor: '#aaa',
-      }}
-    >
-      {children}
-    </ScrollView>
-  );
-}
+// function LargePane({ children }) {
+//   return (
+//     <ScrollView
+//       style={{
+//         flex: 4,
+//         backgroundColor: '#f0f0f0',
+//         borderRightWidth: StyleSheet.hairlineWidth,
+//         borderRightColor: '#aaa',
+//       }}
+//     >
+//       {children}
+//     </ScrollView>
+//   );
+// }
 
 function EmailLoginInfo({
   loginInfo,
@@ -619,7 +609,7 @@ function DocsList({ parent, activeDoc }) {
   const cloud = useCloud();
   const { navigate } = useNavigation();
   const listParent = parent ? cloud.get(parent) : cloud;
-  const docs = useObservable(listParent.observeDocChildren);
+  const docs = useObservable(listParent.observeChildren);
   if (!docs) {
     return null;
   }
@@ -780,13 +770,8 @@ function Folder({ value, path, doc, pathContext }) {
 process.env.REACT_NAV_LOGGING = true;
 
 function useParam(paramName) {
-  const { getParam, dangerouslyGetParent } = useNavigation();
-  let parent = dangerouslyGetParent();
+  const { getParam } = useNavigation();
   let val = getParam(paramName);
-  // while (val === undefined && parent && parent.getParam) {
-  //   val = parent.getParam(paramName);
-  //   parent = parent.dangerouslyGetParent();
-  // }
   return val;
 }
 
@@ -855,18 +840,6 @@ function PopoverContainer({ children }) {
   );
 }
 process.env.REACT_NAV_LOGGING = true;
-
-function usePopover() {
-  const target = useRef(null);
-  const context = useContext(PopoverContext);
-  function openPopover(view, location) {
-    if (!context) {
-      throw new Error('no popover context!');
-    }
-    context.openPopover(view, location);
-  }
-  return { openPopover, target };
-}
 
 function AddKeySection({ value, onValue }) {
   let [isOpened, setIsOpened] = useState(false);
@@ -1040,7 +1013,7 @@ function ObjectPane({ path, value, onValue, pathContext, doc }) {
       <LinkRow
         key={index}
         tintColor="red"
-        isSelected={nextPathSegment == index}
+        isSelected={nextPathSegment === index}
         title={`#${index}`}
         onPress={() => {
           const nextPath = [...pathContext, String(index)].join('/');
@@ -1118,7 +1091,9 @@ function DocValuePane() {
 
   const doc = cloud.get(name);
   const value = useCloudValue(doc);
-
+  if (value === null) {
+    return null;
+  }
   return (
     <ValuePane
       doc={doc}
@@ -1314,19 +1289,6 @@ function MainPane({ onClientConfig, onSession, navigation }) {
   );
 }
 MainPane.router = MainPaneNavigator.router;
-
-function BackgroundView({ children }) {
-  return (
-    <View style={{ flex: 1 }}>
-      <Image
-        style={{ flex: 1 }}
-        resizeMode="repeat"
-        source={require('./BgTexture.png')}
-      />
-      {children}
-    </View>
-  );
-}
 
 function ErrorPage({ error, errorInfo, onRetry }) {
   return (

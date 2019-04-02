@@ -6,7 +6,7 @@ import Err from '../utils/Err';
 function thanksVeryMuch(dispatch) {
   return async action => {
     const resp = await dispatch(action);
-    // console.log("thanks ", action, "very much", resp);
+    // console.log('thanks ', action, 'very much', resp);
     return resp;
   };
 }
@@ -389,8 +389,27 @@ export default function CloudAuth({ source, providers }) {
     });
   }
 
+  function stripDocId(name) {
+    const index = name.indexOf('#');
+    if (index === -1) {
+      return name;
+    }
+    return name.slice(0, index);
+  }
+
   function nameToAuthDocName(name) {
-    const docName = `${name}/_auth`;
+    if (!name) {
+      return '_auth';
+    }
+    if (name.endsWith('_auth')) {
+      return name;
+    }
+    const lambdaNameParts = name.split('^');
+    const primaryName = stripDocId(lambdaNameParts[0]);
+    const lambdaNames = lambdaNameParts.slice(1).map(stripDocId);
+    const docName = `${primaryName}/_auth${
+      lambdaNames.length ? `_${lambdaNames.join('_')}` : ''
+    }`;
     return docName;
   }
 
@@ -524,7 +543,7 @@ export default function CloudAuth({ source, providers }) {
     accountRules,
     defaultRule,
   }) {
-    const authDocName = name ? `${name}/_auth` : '_auth';
+    const authDocName = nameToAuthDocName(name);
 
     const lastPermissions = await getDocValue(source, domain, authDocName);
     const lastDefaultRule =
@@ -546,7 +565,7 @@ export default function CloudAuth({ source, providers }) {
   }
 
   async function GetPermissionRules({ domain, name }) {
-    const authDocName = `${name}/_auth`;
+    const authDocName = nameToAuthDocName(name);
     const lastPermissions = await getDocValue(source, domain, authDocName);
     return lastPermissions;
   }
@@ -588,7 +607,7 @@ export default function CloudAuth({ source, providers }) {
       }
       const result = await dispatch(action);
       if (action.type === 'PostDoc' && result) {
-        const authDocName = `${result.name}/_auth`;
+        const authDocName = nameToAuthDocName(result.name);
         await writeDocValue(source, action.domain, authDocName, {
           owner: action.auth.accountId,
         });
@@ -641,7 +660,7 @@ export default function CloudAuth({ source, providers }) {
       throw new Err('Not authorized to subscribe here', 'InvalidAuth', {
         name,
         domain,
-        authId: auth.id,
+        authId: auth && auth.id,
       });
     }
     return await source.observeDoc(domain, name);

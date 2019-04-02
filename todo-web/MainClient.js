@@ -15,6 +15,8 @@ const client = createCloudClient({
   domain: 'todo.aven.io',
 });
 
+client.get('TaskReducer').markRemoteLambda(true);
+
 const context = new Map();
 
 context.set(CloudContext, client);

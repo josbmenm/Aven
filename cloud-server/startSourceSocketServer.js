@@ -66,6 +66,13 @@ export default function startSourceSocketServer(wss, source) {
                   'Trying to subscribe to a doc and the children of a doc at the same time. Use seperate subscriptions instead.'
                 );
               }
+              function sendError(error) {
+                sendMessage({
+                  type: 'SubscriptionError',
+                  id: subscriptionId,
+                  error,
+                });
+              }
               function sendUpdate(value) {
                 sendMessage({
                   type: 'SubscriptionNext',
@@ -78,16 +85,18 @@ export default function startSourceSocketServer(wss, source) {
                 complete: () => {
                   console.log('== complate');
                 },
-                error: () => {
-                  console.log('== error');
-                },
+                error: sendError,
               };
               if (doc) {
-                subs[subscriptionId] = (await source.observeDoc(
-                  domain,
-                  doc,
-                  auth
-                )).subscribe(observer);
+                try {
+                  subs[subscriptionId] = (await source.observeDoc(
+                    domain,
+                    doc,
+                    auth
+                  )).subscribe(observer);
+                } catch (e) {
+                  observer.error(e);
+                }
               } else if (docChildren !== undefined) {
                 subs[subscriptionId] = (await source.observeDocChildren(
                   domain,

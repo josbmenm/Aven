@@ -11,7 +11,7 @@ export default function useCloudReducer(
   const actionsDoc = cloud.get(actionDocName);
   cloud.setLambda(reducerName, (docState, doc, cloud, useValue) => {
     let state = initialState;
-    if (docState === undefined) {
+    if (docState === undefined || docState === null) {
       return state;
     }
     let action = docState.value;

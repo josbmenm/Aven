@@ -404,6 +404,8 @@ const DocsRouter = SwitchRouter({
   CloudReactHooks: require('./docs/CloudReactHooks').default,
   Sources: require('./docs/Sources').default,
   CloudClientIntro: require('./docs/CloudClientIntro').default,
+  CloudSchema: require('./docs/CloudSchema').default,
+  GarbageCollection: require('./docs/GarbageCollection').default,
   AuthIntro: require('./docs/AuthIntro').default,
   Roadmap: require('./docs/Roadmap').default,
   Contributors: require('./docs/Contributors').default,
@@ -578,7 +580,13 @@ function Sidebar() {
             routeName="Spec-AuthProvider"
           />
         </SidebarSection>
-        <SidebarSection title="Advanced" />
+        <SidebarSection title="Advanced">
+          <SidebarLink title="Schemas" routeName="CloudSchema" />
+          <SidebarLink
+            title="Garbage Collection"
+            routeName="GarbageCollection"
+          />
+        </SidebarSection>
         <SidebarSection title="Community">
           <SidebarLink title="Tooling and Environments" routeName="ToolsEnvs" />
           <SidebarLink title="About Aven" routeName="About" />
