@@ -1,5 +1,10 @@
 {
+  "name": "@aven-cloud/sms-agent-twilio",
+  "version": "1.1.0",
   "aven": {
-    "moduleDependencies": ["twilio"]
-  }
+    "moduleDependencies": [
+      "twilio"
+    ]
+  },
+  "srcChecksum": "7126c7ae015964236e1dbb5694df11ec58a0379d6529c198369dc1fda4214691"
 }

@@ -81,6 +81,7 @@ function Header() {
         ...shadowStyle,
         height: 70,
         flexDirection: 'row',
+        paddingHorizontal: 35,
       }}
     >
       <Link
@@ -111,6 +112,7 @@ function Header() {
       </Link>
       <View style={{ flex: 1 }} />
       <HeaderLink title="Docs" routeName="Docs" />
+      <HeaderLink title="Blog" routeName="AvenWhatWhy" />
       <HeaderLink title="About" routeName="About" />
       <HeaderLink
         url="https://github.com/AvenCloud/Aven"
@@ -311,7 +313,7 @@ function Home() {
                 ...shadowStyle,
               }}
             >
-              <video autoPlay muted loop width="855" height="640">
+              <video autoPlay muted playsInline loop width="855" height="640">
                 <source src="/Intro.mov" />
               </video>
             </View>
@@ -496,7 +498,7 @@ function SidebarLink({ title, routeName }) {
     />
   );
 }
-function Sidebar() {
+function SidebarContainer({ children }) {
   return (
     <ScrollView
       style={{
@@ -508,125 +510,151 @@ function Sidebar() {
         borderRightWidth: StyleSheet.hairlineWidth,
       }}
     >
-      <View style={{ marginTop: 0 }}>
-        <SidebarSection title="Getting Started">
-          <SidebarLink title="Quick Start" routeName="QuickStart" />
-          <SidebarLink
-            title="1. Creating Sources and Clients"
-            routeName="Tutorial1"
-          />
-          <SidebarLink title="2. Connect React" routeName="Tutorial2" />
-          <SidebarLink title="3. Authentication" routeName="Tutorial3" />
-        </SidebarSection>
-        <SidebarSection title="Data & Network Sources">
-          <SidebarLink title="Intro to Sources" routeName="Sources" />
-          <SidebarLink
-            title="API: createMemoryStorageSource"
-            routeName="API-createMemoryStorageSource"
-          />
-          <SidebarLink
-            title="API: startFSStorageSource"
-            routeName="API-startFSStorageSource"
-          />
-          <SidebarLink
-            title="API: startPostgresStorageSource"
-            routeName="API-startPostgresStorageSource"
-          />
-          <SidebarLink
-            title="API: startSourceServer"
-            routeName="API-startSourceServer"
-          />
-          <SidebarLink
-            title="API: createBrowserNetworkSource"
-            routeName="API-createBrowserNetworkSource"
-          />
-          <SidebarLink
-            title="API: createNodeNetworkSource"
-            routeName="API-createNodeNetworkSource"
-          />
-          <SidebarLink
-            title="API: createNativeNetworkSource"
-            routeName="API-createNativeNetworkSource"
-          />
-          <SidebarLink title="Spec: Source" routeName="Spec-Source" />
-        </SidebarSection>
-        <SidebarSection title="Cloud Client">
-          <SidebarLink
-            title="Intro to Cloud Client"
-            routeName="CloudClientIntro"
-          />
-          <SidebarLink
-            title="Observables with Cloud and React"
-            routeName="ObservableUsage"
-          />
-          <SidebarLink title="Cloud React Hooks" routeName="CloudReactHooks" />
-          <SidebarLink
-            title="API: createCloudClient"
-            routeName="API-createCloudClient"
-          />
-          <SidebarLink title="API: Client Value" routeName="API-CloudValue" />
-          <SidebarLink title="API: Client Doc" routeName="API-CloudDoc" />
-          <SidebarLink title="API: Client Block" routeName="API-CloudBlock" />
-        </SidebarSection>
-        <SidebarSection title="Auth & Permissions">
-          <SidebarLink title="Auth and Auth Methods" routeName="AuthIntro" />
-          <SidebarLink title="Doc Permissions" routeName="DocPermissions" />
-          <SidebarLink
-            title="API: createProtectedSource"
-            routeName="API-createProtectedSource"
-          />
-          <SidebarLink
-            title="API: createEmailAuthProvider"
-            routeName="API-createEmailAuthProvider"
-          />
-          <SidebarLink
-            title="API: createSMSAuthProvider"
-            routeName="API-createSMSAuthProvider"
-          />
-          <SidebarLink
-            title="Spec: Auth Source"
-            routeName="Spec-ProtectedSource"
-          />
-          <SidebarLink
-            title="Spec: Auth Provider"
-            routeName="Spec-AuthProvider"
-          />
-        </SidebarSection>
-        <SidebarSection title="Advanced">
-          <SidebarLink title="Schemas" routeName="CloudSchema" />
-          <SidebarLink
-            title="Garbage Collection"
-            routeName="GarbageCollection"
-          />
-        </SidebarSection>
-        <SidebarSection title="Community">
-          <SidebarLink title="Tooling and Environments" routeName="ToolsEnvs" />
-          <SidebarLink title="About Aven" routeName="About" />
-          <SidebarLink title="Roadmap" routeName="Roadmap" />
-          <SidebarLink title="Contributors" routeName="Contributors" />
-        </SidebarSection>
-      </View>
+      <View style={{ marginTop: 0 }}>{children}</View>
     </ScrollView>
   );
 }
-
-function SidebarView({ navigation, descriptors }) {
-  const { state } = navigation;
-  const route = state.routes[state.index];
-  const descriptor = descriptors[route.key];
+function BlogSidebar() {
   return (
-    <View style={{ flex: 1, flexDirection: 'row' }}>
-      <Sidebar descriptors={descriptors} navigation={navigation} />
-      <SceneView
-        component={descriptor.getComponent()}
-        navigation={descriptor.navigation}
-      />
-    </View>
+    <SidebarContainer>
+      <SidebarSection title="Recent Posts">
+        <SidebarLink
+          title="April 4, 2019 - Aven, What? Why?"
+          routeName="AvenWhatWhy"
+        />
+      </SidebarSection>
+    </SidebarContainer>
   );
 }
 
-const Docs = createNavigator(SidebarView, DocsRouter, {});
+function DocsSidebar() {
+  return (
+    <SidebarContainer>
+      <SidebarSection title="Getting Started">
+        <SidebarLink title="Quick Start" routeName="QuickStart" />
+        <SidebarLink
+          title="1. Creating Sources and Clients"
+          routeName="Tutorial1"
+        />
+        <SidebarLink title="2. Connect React" routeName="Tutorial2" />
+        <SidebarLink title="3. Authentication" routeName="Tutorial3" />
+      </SidebarSection>
+      <SidebarSection title="Data & Network Sources">
+        <SidebarLink title="Intro to Sources" routeName="Sources" />
+        <SidebarLink
+          title="API: createMemoryStorageSource"
+          routeName="API-createMemoryStorageSource"
+        />
+        <SidebarLink
+          title="API: startFSStorageSource"
+          routeName="API-startFSStorageSource"
+        />
+        <SidebarLink
+          title="API: startPostgresStorageSource"
+          routeName="API-startPostgresStorageSource"
+        />
+        <SidebarLink
+          title="API: startSourceServer"
+          routeName="API-startSourceServer"
+        />
+        <SidebarLink
+          title="API: createBrowserNetworkSource"
+          routeName="API-createBrowserNetworkSource"
+        />
+        <SidebarLink
+          title="API: createNodeNetworkSource"
+          routeName="API-createNodeNetworkSource"
+        />
+        <SidebarLink
+          title="API: createNativeNetworkSource"
+          routeName="API-createNativeNetworkSource"
+        />
+        <SidebarLink title="Spec: Source" routeName="Spec-Source" />
+      </SidebarSection>
+      <SidebarSection title="Cloud Client">
+        <SidebarLink
+          title="Intro to Cloud Client"
+          routeName="CloudClientIntro"
+        />
+        <SidebarLink
+          title="Observables with Cloud and React"
+          routeName="ObservableUsage"
+        />
+        <SidebarLink title="Cloud React Hooks" routeName="CloudReactHooks" />
+        <SidebarLink
+          title="API: createCloudClient"
+          routeName="API-createCloudClient"
+        />
+        <SidebarLink title="API: Client Value" routeName="API-CloudValue" />
+        <SidebarLink title="API: Client Doc" routeName="API-CloudDoc" />
+        <SidebarLink title="API: Client Block" routeName="API-CloudBlock" />
+      </SidebarSection>
+      <SidebarSection title="Auth & Permissions">
+        <SidebarLink title="Auth and Auth Methods" routeName="AuthIntro" />
+        <SidebarLink title="Doc Permissions" routeName="DocPermissions" />
+        <SidebarLink
+          title="API: createProtectedSource"
+          routeName="API-createProtectedSource"
+        />
+        <SidebarLink
+          title="API: createEmailAuthProvider"
+          routeName="API-createEmailAuthProvider"
+        />
+        <SidebarLink
+          title="API: createSMSAuthProvider"
+          routeName="API-createSMSAuthProvider"
+        />
+        <SidebarLink
+          title="Spec: Auth Source"
+          routeName="Spec-ProtectedSource"
+        />
+        <SidebarLink
+          title="Spec: Auth Provider"
+          routeName="Spec-AuthProvider"
+        />
+      </SidebarSection>
+      <SidebarSection title="Advanced">
+        <SidebarLink title="Schemas" routeName="CloudSchema" />
+        <SidebarLink title="Garbage Collection" routeName="GarbageCollection" />
+      </SidebarSection>
+      <SidebarSection title="Community">
+        <SidebarLink title="Tooling and Environments" routeName="ToolsEnvs" />
+        <SidebarLink title="About Aven" routeName="About" />
+        <SidebarLink title="Roadmap" routeName="Roadmap" />
+        <SidebarLink title="Contributors" routeName="Contributors" />
+      </SidebarSection>
+    </SidebarContainer>
+  );
+}
 
+const createSidebarView = Sidebar => {
+  function SidebarView({ navigation, descriptors }) {
+    const { state } = navigation;
+    const route = state.routes[state.index];
+    const descriptor = descriptors[route.key];
+    return (
+      <View style={{ flex: 1, flexDirection: 'row' }}>
+        <Sidebar descriptors={descriptors} navigation={navigation} />
+        <SceneView
+          component={descriptor.getComponent()}
+          navigation={descriptor.navigation}
+        />
+      </View>
+    );
+  }
+  return SidebarView;
+};
+
+const DocsSidebarContainer = createSidebarView(DocsSidebar);
+const BlogSidebarContainer = createSidebarView(BlogSidebar);
+
+const Docs = createNavigator(DocsSidebarContainer, DocsRouter, {});
+
+const BlogRouter = SwitchRouter({
+  AvenWhatWhy: require('./docs/2019-04-AvenWhatWhy').default,
+});
+
+const Blog = createNavigator(BlogSidebarContainer, BlogRouter, {});
 const AppRouter = SwitchRouter({
   Home: {
     screen: Home,
@@ -638,6 +666,16 @@ const AppRouter = SwitchRouter({
   About: {
     screen: require('./docs/About').default,
     path: 'about',
+  },
+  Blog: {
+    screen: Blog,
+    path: 'blog',
+    params: {},
+    navigationOptions: ({ navigation, screenProps }) => ({
+      title:
+        getActiveChildNavigationOptions(navigation, screenProps).title +
+        ' - Aven Blog',
+    }),
   },
   Docs: {
     screen: Docs,

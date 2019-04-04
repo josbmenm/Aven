@@ -1,4 +1,6 @@
 {
+  "name": "@aven-cloud/cloud-network",
+  "version": "1.2.0",
   "aven": {
     "srcDependencies": [
       "utils"
@@ -7,5 +9,6 @@
       "rxjs-compat",
       "reconnecting-websocket"
     ]
-  }
+  },
+  "srcChecksum": "92944d8b2c54d825f9cf968712258d84b3f8fd0f067961ede0b66715ba056efc"
 }

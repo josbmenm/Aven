@@ -9,7 +9,7 @@ import Screen from './components/Screen';
 import TextInput from './components/TextInput';
 import TaskRow from './components/TaskRow';
 
-function TaskReducer(state, action) {
+export function TaskReducer(state, action) {
   if (action.type === 'AddTask') {
     return [...state, action.params];
   } else if (action.type === 'SetTaskCompletion') {
@@ -27,7 +27,7 @@ function TaskReducer(state, action) {
   return state;
 }
 
-function useTaskActions() {
+function getTaskActions() {
   const cloud = useCloud();
   const actionsDoc = cloud.get('TaskActions');
   const dispatch = actionsDoc.putTransaction;
@@ -39,7 +39,8 @@ function useTaskActions() {
   };
 }
 function useTasks() {
-  const [tasks] = useCloudReducer(
+  // const [tasks, dispatch] = React.useReducer(TaskReducer, []);
+  const [tasks, dispatch] = useCloudReducer(
     'TaskActions',
     'TaskReducer',
     TaskReducer,
@@ -47,7 +48,7 @@ function useTasks() {
   );
   return {
     tasks,
-    ...useTaskActions(),
+    ...getTaskActions(dispatch),
   };
 }
 function InputTodo() {
@@ -85,7 +86,7 @@ function Title({ children }) {
 export default function Home() {
   return (
     <Screen>
-      <Title>Simple Todos</Title>
+      <Title>Reduced Todos</Title>
       <TaskList />
       <InputTodo />
     </Screen>

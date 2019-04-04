@@ -11,43 +11,31 @@ import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import { hashSecureString } from '../cloud-utils/Crypto';
 import { createReducerLambda } from '../cloud-core/useCloudReducer';
+import { TaskReducer } from '../todo-app/FullHome';
 
 import App from './App';
 
+const getEnv = c => process.env[c];
+
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');
+
+  // const storageSource = await startPostgresStorageSource({
+  //   config: 'postgresql://postgres:aven-test-password@localhost:5432/postgres',
+  //   domains: ['todo.aven.io'],
+  // })
 
   const storageSource = await startFSStorageSource({
     domain: 'todo.aven.io',
     dataDir: './db',
   });
 
-  function TaskReducer(state, action) {
-    if (action.type === 'AddTask') {
-      return [...state, action.params];
-    } else if (action.type === 'SetTaskCompletion') {
-      const taskIndex = state.findIndex(t => t.id === action.id);
-      if (taskIndex === -1) {
-        return state;
-      }
-      const newState = [...state];
-      const oldTask = state[taskIndex];
-      newState[taskIndex] = { ...oldTask, isComplete: action.isComplete };
-      return newState;
-    } else if (action.type === 'RemoveTask') {
-      return state.filter(t => t.id !== action.id);
-    }
-    return state;
-  }
-
-  const evalDocs = {
-    TaskReducer: createReducerLambda('TaskReducer', TaskReducer, []),
-  };
-
   const source = createEvalSource({
     source: storageSource,
     domain: 'todo.aven.io',
-    evalDocs,
+    evalDocs: {
+      TaskReducer: createReducerLambda('TaskReducer', TaskReducer, []),
+    },
   });
 
   const emailAgent = EmailAgent({
@@ -116,17 +104,19 @@ const runServer = async () => {
     domain: 'todo.aven.io',
   });
 
-  const getEnv = c => process.env[c];
-  const serverListenLocation = getEnv('PORT');
   const context = new Map();
+
   context.set(CloudContext, client);
+
   const webService = await WebServer({
     App,
     context,
     // source,
     source: protectedSource,
-    serverListenLocation,
+    serverListenLocation: getEnv('PORT'),
+    assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
   });
+
   console.log('☁️️ Web Ready 🕸');
 
   return {

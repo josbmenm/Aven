@@ -1,6 +1,6 @@
 {
   "name": "@aven-cloud/cloud",
-  "version": "1.6.0",
+  "version": "1.9.0",
   "aven": {
     "srcDependencies": [
       "utils",
@@ -15,5 +15,5 @@
       "@nozbe/with-observables"
     ]
   },
-  "srcChecksum": "fa3f5e0cf912947e149325377af84cbe60f6cac08c565416f0dc2c0bca8952bd"
+  "srcChecksum": "a2f8793520c50663535de99ce53fe7672c62e8554b617eb57b3b672802724eab"
 }

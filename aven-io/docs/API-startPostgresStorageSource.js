@@ -15,14 +15,17 @@ function DocPage() {
     <Page>
       <Title>API - startPostgresStorageSource</Title>
       <Body>
-        This module is used to save data into a running postgres server.
+        This module is used to save data into a running postgres server. Because
+        all source-of-truth is delegated to Postgres, it will be safe to run
+        several node servers pointing to the same postgres DB. (this is not the
+        case with the FS storage source)
       </Body>
       <Snippet
         code={`
 import startPostgresStorageSource from "@aven-cloud/cloud-fs/startPostgresStorageSource";
 
 const source = await startPostgresStorageSource({
-  config: DB_CONFIG,
+  config: 'postgresql://postgres:aven-test-password@localhost:5432/postgres',
   domains: ['test.aven.io'],
 });`}
       />
@@ -33,7 +36,9 @@ const source = await startPostgresStorageSource({
       <SubSection title="Options">
         <List>
           <ListItem>`domains` - what domains are we saving data for</ListItem>
-          <ListItem>`config` - the postgres connection info</ListItem>
+          <ListItem>
+            `config` - the postgres connection info, as passed to knex
+          </ListItem>
         </List>
       </SubSection>
     </Page>

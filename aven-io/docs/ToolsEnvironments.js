@@ -22,13 +22,7 @@ function DocPage() {
         We need a JS development environment that allows us to do the following
         *within one repo*:
       </Body>
-      <Body>
-        Aven Tools is unabashedly opinionated. But it needs significant
-        improvements in order to meet its goals, and contributions are
-        especially wanted in this area. This document attempts to describe the
-        current state of the tooling, but we have a long way to go on quality
-        and documentation. Please jump in the issues!
-      </Body>
+
       <List>
         <ListItem>
           Build apps that are packaged with different bundlers. Eg. Metro for
@@ -40,6 +34,13 @@ function DocPage() {
           Enable private repos that extend the open source monorepo.
         </ListItem>
       </List>
+      <Body>
+        Aven Tools, like Aven itself, is unabashedly opinionated. But it needs
+        significant improvements in order to meet its goals, and contributions
+        are especially wanted in this area. This document attempts to describe
+        the current state of the tooling, but we have a long way to go on
+        quality and documentation. Please jump in the issues!
+      </Body>
       <Body>Aven Tools is an incomplete attempt to accomplish these goals</Body>
       <Section title="Concepts">
         <SubSection title="Packages/Apps">

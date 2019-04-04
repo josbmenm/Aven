@@ -13,8 +13,6 @@ const mime = require('mime');
 
 const isProd = process.env.NODE_ENV === 'production';
 
-const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
-
 const sendNotFound = res => {
   res.status(404);
   res.send('Not found');
@@ -107,6 +105,7 @@ export default async function WebServer({
   context,
   serverListenLocation,
   expressRouting = undefined,
+  assets,
 }) {
   function doExpressRouting(app) {
     process.env.ENFORCE_HTTPS && app.use(yes());
@@ -196,7 +195,9 @@ export default async function WebServer({
           <meta http-equiv="X-UA-Compatible" content="IE=edge" />
           <meta charSet='utf-8' />
           <title>${title}</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1">
+          ${
+            /*<meta name="viewport" content="width=device-width, initial-scale=1">*/ ''
+          }
           <style id="root-stylesheet">
           html, body, #root {
             width: 100%;

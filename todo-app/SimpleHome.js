@@ -35,15 +35,15 @@ function InputTodo() {
 
 function TodoList() {
   const todos = useCloudValue('Todos');
-  console.log('valueeeee', todos);
   if (todos === undefined) {
-    return <Text>Loading..</Text>;
+    return <Text>...</Text>;
   }
-  console.log('rendering list with todos:', todos);
   if (!todos || !todos.tasks) {
     return null;
   }
-  return todos.tasks.map(task => <TaskRow key={task.id} task={task} />);
+  return todos.tasks.map(task => (
+    <TaskRow key={task.id} task={task} onRemove={() => {}} />
+  ));
 }
 
 function Title({ children }) {

@@ -5,6 +5,7 @@
     "start": "node ./aven-tools/cli.js start",
     "build": "node ./aven-tools/cli.js build",
     "deploy": "node ./aven-tools/cli.js deploy",
+    "publish": "node ./aven-tools/cli.js publish",
     "lint": "eslint .",
     "tlint": "tslint --project tsconfig.json",
     "format": "eslint . --fix",

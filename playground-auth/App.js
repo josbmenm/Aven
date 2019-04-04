@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Admin from '../aven-admin/Admin';
+import Admin from '../admin/Admin';
 
 function App({ navigation }) {
   return (

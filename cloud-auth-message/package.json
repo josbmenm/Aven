@@ -1,5 +1,10 @@
 {
+  "name": "@aven-cloud/cloud-auth-message",
+  "version": "1.1.0",
   "aven": {
-    "srcDependencies": ["cloud-utils"]
-  }
+    "srcDependencies": [
+      "cloud-utils"
+    ]
+  },
+  "srcChecksum": "57460950aeb6a4c8443630233a7871495c7a46a735c2fce0e3cd707e82d9afa1"
 }

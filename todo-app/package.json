@@ -5,7 +5,7 @@
   "aven": {
     "srcDependencies": [
       "navigation-core",
-      "aven-admin",
+      "admin",
       "aven-web",
       "cloud-core",
       "cloud-fs",

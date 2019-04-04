@@ -57,7 +57,22 @@ const fooBar = cloud.get('foo/bar');`}
       </SubSection>
       <Section title="API">
         <List>
-          <ListItem>a</ListItem>
+          <ListItem>
+            <Link routeName="API-createCloudClient">Cloud Client</Link> - The
+            entry point for the client API
+          </ListItem>
+          <ListItem>
+            <Link routeName="API-CloudDoc">Cloud Doc</Link> - The mutable
+            client-side entity
+          </ListItem>
+          <ListItem>
+            <Link routeName="API-CloudBlock">Cloud Block</Link> - The immutable
+            client-side entity
+          </ListItem>
+          <ListItem>
+            <Link routeName="API-CloudValue">Cloud Values</Link> - Additional
+            methods available on Docs and Clients
+          </ListItem>
         </List>
       </Section>
     </Page>

@@ -1,6 +1,6 @@
 {
   "name": "@aven-cloud/cloud-fs",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "aven": {
     "srcDependencies": [
       "utils",
@@ -13,5 +13,5 @@
       "rxjs-compat"
     ]
   },
-  "srcChecksum": "0ffede09a99fd3e6c275a691ab80fe5be7b8d34951572909e573906757b1afaf"
+  "srcChecksum": "0ae27aaab93b65f3817eaba2df4f734bfaf81e832c472048ad01be8040e06141"
 }

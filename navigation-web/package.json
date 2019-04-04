@@ -1,6 +1,6 @@
 {
   "name": "@aven-cloud/navigation-web",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "aven": {
     "srcDependencies": [
       "navigation-core"
@@ -10,5 +10,5 @@
       "query-string"
     ]
   },
-  "srcChecksum": "678a6d208312fe4c381b1dcc59a2a293b6681a12320a8c02b063177a58ada80f"
+  "srcChecksum": "05cc8c9ea20e033f4243a606f973c32a81abdc2516bbafc6b75d62a3c59125ac"
 }

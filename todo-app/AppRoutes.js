@@ -8,20 +8,12 @@ const FullAppRoutes = {
     screen: FullHome,
     path: '',
   },
-  Task: {
-    screen: Task,
-    path: 'task/:taskId',
-  },
 };
 
 const SimpleAppRoutes = {
   Home: {
     screen: SimpleHome,
     path: '',
-  },
-  Task: {
-    screen: Task,
-    path: 'task/:taskId',
   },
 };
 

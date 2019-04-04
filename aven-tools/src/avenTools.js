@@ -641,6 +641,7 @@ async function doPublish(packageName, localParentDeps = []) {
     if (!dryRun) {
       await spawn('npm', ['publish', '--access', 'public'], {
         cwd: buildDir,
+        env: process.env,
         stdio: 'inherit',
       });
 

@@ -1,6 +1,6 @@
 {
   "name": "@aven-cloud/web",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "aven": {
     "publicAssetDir": "publicAssets",
     "srcDependencies": [
@@ -19,5 +19,5 @@
       "express"
     ]
   },
-  "srcChecksum": "a883594167eb13bb962d1eefe24c934499df7d778db25dcf9e0b665acc7f1777"
+  "srcChecksum": "abcbef703e70937972044df41470d98e083542edb54e0fd04602bb6af31687a2"
 }

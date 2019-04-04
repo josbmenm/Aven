@@ -1,7 +1,9 @@
 {
-  "name": "react-navigation-hooks",
+  "name": "@aven-cloud/navigation-hooks",
+  "version": "1.1.0",
   "aven": {
     "srcDependencies": [],
     "moduleDependencies": []
-  }
+  },
+  "srcChecksum": "97fd765cf431f8facaa6daae7030837cf7a2dd95add079fc7fab94d65670774d"
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import Admin from '../aven-admin/Admin';
+import Admin from '../admin/Admin';
 import createSwitchNavigator from '../navigation-core/navigators/createSwitchNavigator';
 import AppRoutes from '../todo-app/AppRoutes';
 

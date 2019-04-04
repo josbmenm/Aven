@@ -25,6 +25,7 @@ const runServer = async () => {
     context,
     source,
     serverListenLocation,
+    assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
   });
   console.log('☁️️ Web Ready 🕸');
 

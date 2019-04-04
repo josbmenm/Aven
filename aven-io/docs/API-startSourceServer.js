@@ -18,15 +18,14 @@ function DocPage() {
         Publish a Source or or a Protected Source over HTTP and WebSockets.
       </Body>
       <Snippet
-        code={`
-        import startSourceServer from '@aven-cloud/cloud-server/startSourceServer';
-        const source = await start*Source(...)
+        code={`import startSourceServer from '@aven-cloud/cloud-server/startSourceServer';
+const source = await start*Source(...)
 
-        await startSourceServer({
-          source,
-          listenLocation: 8888
-        });
-        // Source is now hosted on localhost:8888
+await startSourceServer({
+  source,
+  listenLocation: 8888
+});
+// Source is now hosted on localhost:8888
 });`}
       />
       <Body>
@@ -52,25 +51,23 @@ function DocPage() {
       </SubSection>
       <SubSection title="Example with a web app">
         <Snippet
-          code={`
+          code={`import 
 
-        import 
+const server = await startSourceServer({
+  source,
+  listenLocation: serverListenLocation,
+  expressRouting: doExpressRouting,
+  fallbackExpressRouting: doFallbackExpressRouting,
+});
 
-        const server = await startSourceServer({
-          source,
-          listenLocation: serverListenLocation,
-          expressRouting: doExpressRouting,
-          fallbackExpressRouting: doFallbackExpressRouting,
-        });
 
-        
-        startSourceServer({
-          source,
-          listenLocation,
-          expressRouting = undefined,
-          fallbackExpressRouting = undefined,
-          quiet = false,
-        })
+startSourceServer({
+  source,
+  listenLocation,
+  expressRouting = undefined,
+  fallbackExpressRouting = undefined,
+  quiet = false,
+})
 });`}
         />
       </SubSection>

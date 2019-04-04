@@ -61,8 +61,10 @@ export const titleFontFamily = 'Arial Rounded MT Bold';
 
 export function Page({ children }) {
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <View style={{ flex: 1, padding: 50 }}>{children}</View>
+    <ScrollView style={{ flex: 1 }} directionalLockEnabled={false}>
+      <View style={{ flex: 1, padding: 50, maxWidth: 1200, minWidth: 800 }}>
+        {children}
+      </View>
     </ScrollView>
   );
 }

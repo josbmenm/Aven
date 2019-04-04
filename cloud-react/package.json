@@ -1,7 +1,9 @@
 {
-  "name": "cloud-react",
+  "name": "@aven-cloud/cloud-react",
+  "version": "1.1.0",
   "aven": {
     "moduleDependencies": [],
     "srcDependencies": []
-  }
+  },
+  "srcChecksum": "5a99a793a614d86068393d8d6f1d321d80ab7e10c30a2da462fc85baf519a783"
 }
