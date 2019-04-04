@@ -81,7 +81,7 @@ function Header() {
         ...shadowStyle,
         height: 70,
         flexDirection: 'row',
-        paddingHorizontal: 35,
+        paddingHorizontal: 30,
       }}
     >
       <Link

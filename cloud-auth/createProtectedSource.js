@@ -41,7 +41,7 @@ async function getDocValue(source, domain, name) {
   return o.value;
 }
 
-export default function CloudAuth({ source, providers }) {
+export default function createProtectedSource({ source, providers }) {
   async function VerifyAuth({ auth, domain }) {
     if (!auth) {
       return {};

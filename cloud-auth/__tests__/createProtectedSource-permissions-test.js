@@ -1,5 +1,5 @@
 import createMemoryStorageSource from '../../cloud-core/createMemoryStorageSource';
-import CloudAuth from '../CloudAuth';
+import createProtectedSource from '../createProtectedSource';
 import RootAuthProvider from '../../cloud-auth-root/RootAuthProvider';
 
 import { hashSecureString } from '../../cloud-utils/Crypto';
@@ -13,7 +13,10 @@ async function establishPermissionsTestData() {
     rootPasswordHash,
   });
 
-  const protectedSource = CloudAuth({ source, providers: [rootProvider] });
+  const protectedSource = createProtectedSource({
+    source,
+    providers: [rootProvider],
+  });
 
   const anonSessionCreated = await protectedSource.dispatch({
     type: 'CreateAnonymousSession',
@@ -71,7 +74,7 @@ describe('Cloud auth Permissions', () => {
       rootPasswordHash,
     });
 
-    const protectedSource = CloudAuth({
+    const protectedSource = createProtectedSource({
       source,
       providers: [rootProvider],
     });

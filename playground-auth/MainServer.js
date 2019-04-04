@@ -1,7 +1,7 @@
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
-import CloudAuth from '../cloud-auth/CloudAuth';
+import createProtectedSource from '../cloud-auth/createProtectedSource';
 import { hashSecureString } from '../cloud-utils/Crypto';
 import CloudContext from '../cloud-core/CloudContext';
 import createCloudClient from '../cloud-core/createCloudClient';
@@ -67,7 +67,7 @@ const runServer = async () => {
   if (emailAuthProvider) providers.push(emailAuthProvider);
   if (rootAuthProvider) providers.push(rootAuthProvider);
 
-  const authenticatedDataSource = CloudAuth({
+  const authenticatedDataSource = createProtectedSource({
     source: storageSource,
     providers,
   });

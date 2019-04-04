@@ -1,7 +1,7 @@
 import CloudContext from '../cloud-core/CloudContext';
 import createEvalSource from '../cloud-core/createEvalSource';
 import createCloudClient from '../cloud-core/createCloudClient';
-import CloudAuth from '../cloud-auth/CloudAuth';
+import createProtectedSource from '../cloud-auth/createProtectedSource';
 import startFSStorageSource from '../cloud-fs/startFSStorageSource';
 import WebServer from '../aven-web/WebServer';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
@@ -20,16 +20,33 @@ const getEnv = c => process.env[c];
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');
 
-  // const storageSource = await startPostgresStorageSource({
-  //   config: 'postgresql://postgres:aven-test-password@localhost:5432/postgres',
-  //   domains: ['todo.aven.io'],
-  // })
+  // #0
 
   const storageSource = await startFSStorageSource({
     domain: 'todo.aven.io',
     dataDir: './db',
   });
+  // const storageSource = await startPostgresStorageSource({
+  //   config: 'postgresql://postgres:aven-test-password@localhost:5432/postgres',
+  //   domains: ['todo.aven.io'],
+  // })
 
+  // #1
+  // // To serve on port 8888:
+
+  // await startSourceServer({
+  //   source: storageSource,
+  //   listenLocation: 8888
+  // });
+
+  // // To get source proxy from the client:
+
+  // const source = createBrowserNetworkSource({
+  //   authority: 'my.server.dev',
+  //   useSSL: true,
+  // });
+
+  // #5
   const source = createEvalSource({
     source: storageSource,
     domain: 'todo.aven.io',
@@ -38,6 +55,7 @@ const runServer = async () => {
     },
   });
 
+  // #3
   const emailAgent = EmailAgent({
     defaultFromEmail: 'Aven Todos <support@aven.io>',
     config: {
@@ -67,7 +85,7 @@ const runServer = async () => {
     rootPasswordHash: await hashSecureString('pw'),
   });
 
-  const protectedSource = CloudAuth({
+  const protectedSource = createProtectedSource({
     source,
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
@@ -90,7 +108,10 @@ const runServer = async () => {
     defaultRule: { canRead: true, canWrite: true },
     name: 'Todos',
   });
-
+  await putPermission({
+    defaultRule: { canRead: true, canWrite: true },
+    name: 'Message',
+  });
   await putPermission({
     defaultRule: { canRead: true, canWrite: true },
     name: 'TaskActions',
@@ -99,11 +120,14 @@ const runServer = async () => {
     defaultRule: { canRead: true },
     name: 'TaskActions^TaskReducer',
   });
+
+  // #2
   const client = createCloudClient({
     source: protectedSource,
     domain: 'todo.aven.io',
   });
 
+  // #4
   const context = new Map();
 
   context.set(CloudContext, client);
@@ -111,7 +135,6 @@ const runServer = async () => {
   const webService = await WebServer({
     App,
     context,
-    // source,
     source: protectedSource,
     serverListenLocation: getEnv('PORT'),
     assets: require(process.env.RAZZLE_ASSETS_MANIFEST),

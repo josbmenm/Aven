@@ -1,5 +1,5 @@
 import createMemoryStorageSource from '../../cloud-core/createMemoryStorageSource';
-import CloudAuth from '../../cloud-auth/CloudAuth';
+import createProtectedSource from '../../cloud-auth/createProtectedSource';
 import createMessageAuthProvider from '../createMessageAuthProvider';
 
 describe('Auth messaging behavior', () => {
@@ -25,7 +25,10 @@ describe('Auth messaging behavior', () => {
       identifyInfo,
     });
 
-    const protectedSource = CloudAuth({ source, providers: [provider] });
+    const protectedSource = createProtectedSource({
+      source,
+      providers: [provider],
+    });
 
     await protectedSource.dispatch({
       type: 'CreateSession',
@@ -77,7 +80,10 @@ describe('Auth messaging behavior', () => {
       identifyInfo,
     });
 
-    const protectedSource = CloudAuth({ source, providers: [provider] });
+    const protectedSource = createProtectedSource({
+      source,
+      providers: [provider],
+    });
 
     const { session } = await protectedSource.dispatch({
       type: 'CreateAnonymousSession',

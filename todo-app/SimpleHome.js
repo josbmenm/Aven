@@ -4,6 +4,7 @@ import uuid from 'uuid/v4';
 
 import useCloud from '../cloud-core/useCloud';
 import useCloudValue from '../cloud-core/useCloudValue';
+import useCloudState from '../cloud-core/useCloudState';
 
 import Screen from './components/Screen';
 import TextInput from './components/TextInput';
@@ -34,7 +35,9 @@ function InputTodo() {
 }
 
 function TodoList() {
-  const todos = useCloudValue('Todos');
+  const cloud = useCloud();
+  const todoDoc = cloud.get('Todos');
+  const todos = useCloudValue(todoDoc) || [];
   if (todos === undefined) {
     return <Text>...</Text>;
   }
@@ -42,7 +45,17 @@ function TodoList() {
     return null;
   }
   return todos.tasks.map(task => (
-    <TaskRow key={task.id} task={task} onRemove={() => {}} />
+    <TaskRow
+      key={task.id}
+      task={task}
+      onRemove={() => {
+        todoDoc
+          .put({
+            tasks: todos.tasks.filter(t => t.id !== task.id),
+          })
+          .catch(console.error);
+      }}
+    />
   ));
 }
 

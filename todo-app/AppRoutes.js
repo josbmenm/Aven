@@ -21,10 +21,6 @@ const HelloWorldRoutes = {
   Home: HelloWorld,
 };
 
-let AppRoutes = HelloWorldRoutes;
-
-AppRoutes = SimpleAppRoutes;
-
-AppRoutes = FullAppRoutes;
-
-export default AppRoutes;
+// export default HelloWorldRoutes;
+export default SimpleAppRoutes;
+// export default FullAppRoutes;

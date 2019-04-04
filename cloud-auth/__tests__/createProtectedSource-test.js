@@ -1,5 +1,5 @@
 import createMemoryStorageSource from '../../cloud-core/createMemoryStorageSource';
-import CloudAuth from '../CloudAuth';
+import createProtectedSource from '../createProtectedSource';
 import RootAuthProvider from '../../cloud-auth-root/RootAuthProvider';
 
 import { hashSecureString } from '../../cloud-utils/Crypto';
@@ -13,7 +13,7 @@ describe('Cloud auth sessions', () => {
       rootPasswordHash,
     });
 
-    const protectedSource = CloudAuth({
+    const protectedSource = createProtectedSource({
       source,
       providers: [rootProvider],
     });
@@ -44,7 +44,7 @@ describe('Cloud auth sessions', () => {
   test('no authentication gets empty permissions at root', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
 
-    const protectedSource = CloudAuth({ source, providers: [] });
+    const protectedSource = createProtectedSource({ source, providers: [] });
 
     const noAuthRootPermissions = await protectedSource.dispatch({
       type: 'GetPermissions',
@@ -68,7 +68,7 @@ describe('Cloud auth sessions', () => {
       rootPasswordHash,
     });
 
-    const protectedSource = CloudAuth({
+    const protectedSource = createProtectedSource({
       source,
       providers: [rootProvider],
     });
@@ -105,7 +105,7 @@ describe('Cloud auth sessions', () => {
       rootPasswordHash,
     });
 
-    const protectedSource = CloudAuth({
+    const protectedSource = createProtectedSource({
       source,
       providers: [rootProvider],
     });
@@ -139,7 +139,7 @@ describe('Cloud auth sessions', () => {
   test('gets anon authentication', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
 
-    const protectedSource = CloudAuth({ source, providers: [] });
+    const protectedSource = createProtectedSource({ source, providers: [] });
 
     const { session } = await protectedSource.dispatch({
       type: 'CreateAnonymousSession',

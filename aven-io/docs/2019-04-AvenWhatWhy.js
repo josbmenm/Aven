@@ -14,8 +14,8 @@ function DocPage() {
     <Page>
       <Title>Aven: What? Why?</Title>
       <Body>
-        Today's launch is incredibly important to me. My mission, and Aven's
-        mission, is to empower the world to build great apps and websites.
+        My mission is to empower the world to build great apps and websites.
+        Today we launch Aven Cloud, the first big step on that journey.
       </Body>
       <Body>
         If we can lower the barrier of building software, we can inspire more
@@ -103,8 +103,8 @@ function DocPage() {
           Hopefully this explains why today's launch of Aven Cloud is so
           meaningful to me. To get more people building great apps, we need a
           simple and complete framework- that's Aven. Today we sketch out a big
-          missing chunk of that framework, to store and syncronize data- that's
-          Aven Cloud.
+          missing chunk of that framework, to store, syncronize, and calculate
+          your app's data- that's Aven Cloud.
         </Body>
       </SubSection>
       <Body>Sincerely,</Body>
