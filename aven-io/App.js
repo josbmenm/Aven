@@ -58,7 +58,7 @@ function HeaderLink({ title, icon, ...props }) {
             <Text
               style={{
                 fontSize: 22,
-                color: isSelected ? mainShade : '#2c2c2c',
+                color: isSelected ? mainShade : '#082B48',
               }}
             >
               {title}
@@ -244,6 +244,40 @@ function AddTodo() {
     />
   );
 }
+function InfoBlurb({ icon, title, subtitle, link }) {
+  return (
+    <Link {...link}>
+      <View
+        style={{
+          marginHorizontal: 20,
+          alignItems: 'center',
+        }}
+      >
+        <Text
+          style={{
+            fontFamily: titleFontFamily,
+            color: '#082B48',
+            fontSize: 28,
+            textAlign: 'center',
+          }}
+        >
+          {title}
+        </Text>
+        <Text style={{ fontSize: 90, marginVertical: 25 }}>{icon}</Text>
+        <Text
+          style={{
+            textAlign: 'center',
+            fontFamily: titleFontFamily,
+            color: mainShadeLight,
+            fontSize: 22,
+          }}
+        >
+          {subtitle}
+        </Text>
+      </View>
+    </Link>
+  );
+}
 
 function Home() {
   return (
@@ -263,23 +297,10 @@ function Home() {
           <View
             style={{
               flex: 1,
-              width: 600,
+              width: 955,
               alignSelf: 'center',
             }}
           >
-            <Text
-              style={{
-                fontSize: 36,
-                margin: 50,
-                fontFamily: titleFontFamily,
-                color: mainShade,
-              }}
-            >
-              Introducing Aven Cloud
-            </Text>
-            <Text style={{ fontSize: 32, margin: 50, color: mainShadeLight }}>
-              A Full-Stack Database Framework for JS Apps
-            </Text>
             <View
               style={{
                 marginVertical: 80,
@@ -289,50 +310,42 @@ function Home() {
                 alignSelf: 'stretch',
                 ...shadowStyle,
               }}
-            />
+            >
+              <video autoPlay muted loop width="855" height="640">
+                <source src="/Intro.mov" />
+              </video>
+            </View>
           </View>
         </View>
       </View>
-      <View style={{}}>
-        <Text style={{ fontSize: 36, margin: 50 }}>
-          Store Data - To PostgreSQL or the File System
-        </Text>
-        <Text style={{ fontSize: 36, margin: 50 }}>
-          Serve and Recieve Data - Over HTTP + WebSockets
-        </Text>
-        <Text style={{ fontSize: 36, margin: 50 }}>
-          Protect Data - With Authentication and Permission APIs
-        </Text>
-        <Text style={{ fontSize: 36, margin: 50 }}>
-          Connect App - Use a client and utilities for React
-        </Text>
-        <Text style={{ fontSize: 36, margin: 50 }}>
-          Compute Data - Save pure functions to compute and cache
-        </Text>
-      </View>
-      <View style={{}}>
-        <Image
-          style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
-          resizeMode="cover"
-          source={require('./assets/cloudGlamour.png')}
+      <View
+        style={{
+          alignSelf: 'stretch',
+          flexDirection: 'row',
+          padding: 50,
+          justifyContent: 'center',
+        }}
+      >
+        <InfoBlurb
+          icon="🦋"
+          title="Open Source"
+          subtitle="Under liberal Apache 2"
+          link={{
+            url: 'https://github.com/AvenCloud/Aven/blob/master/LICENSE',
+          }}
         />
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 36, margin: 50 }}>
-            About Aven - What we believe, and who "we" are
-          </Text>
-          <Text style={{ fontSize: 36, margin: 50 }}>
-            Liberal Open Source - Licensed under Apache 2
-          </Text>
-          <Text style={{ fontSize: 36, margin: 50 }}>
-            Documentation - Constantly under improvement
-          </Text>
-          <Text style={{ fontSize: 36, margin: 50 }}>
-            Contributors - Help Wanted!
-          </Text>
-          <Text style={{ fontSize: 36, margin: 50 }}>
-            Compute Data - Use pure functions to compute and cache
-          </Text>
-        </View>
+        <InfoBlurb
+          icon="📈"
+          title="Documentation"
+          subtitle="Under constant improvement"
+          link={{ routeName: 'Docs' }}
+        />
+        <InfoBlurb
+          icon="🥰"
+          title="Contributors"
+          subtitle="Help is always appreciated"
+          link={{ routeName: 'Contributors' }}
+        />
       </View>
     </ScrollView>
   );
@@ -371,7 +384,6 @@ function OldHome() {
 }
 
 const DocsRouter = SwitchRouter({
-  DocsOverview: require('./docs/Aven-Overview').default,
   QuickStart: require('./docs/QuickStart').default,
   Tutorial1: require('./docs/1-Data-Sources').default,
   Tutorial2: require('./docs/2-Connect-React').default,
@@ -536,7 +548,7 @@ function Sidebar() {
             title="API: createNativeNetworkSource"
             routeName="API-createNativeNetworkSource"
           />
-          <SidebarLink title="SPEC: Data Source" routeName="Spec-Source" />
+          <SidebarLink title="Spec: Source" routeName="Spec-Source" />
         </SidebarSection>
         <SidebarSection title="Cloud Client">
           <SidebarLink
@@ -572,7 +584,7 @@ function Sidebar() {
             routeName="API-createSMSAuthProvider"
           />
           <SidebarLink
-            title="Spec: Auth Data Source"
+            title="Spec: Auth Source"
             routeName="Spec-ProtectedSource"
           />
           <SidebarLink

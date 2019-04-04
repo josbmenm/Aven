@@ -4,8 +4,15 @@ import { Title, Body, Page } from '../DocViews';
 function DocPage() {
   return (
     <Page>
-      <Title>DocPermissions</Title>
-      <Body>Coming Soon.</Body>
+      <Title>Doc Permissions</Title>
+      <Body>
+        Restrict access to docs (and linked blocks), according to the
+        authenticated user.
+      </Body>
+      <Body>
+        A given request may be unauthenticated, anonymously authenticated, or
+        authenticated via a provider.
+      </Body>
     </Page>
   );
 }

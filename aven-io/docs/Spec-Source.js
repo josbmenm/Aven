@@ -57,7 +57,7 @@ function DocPage() {
           </ListItem>
         </List>
       </Section>
-      <Section title="Concept - Docs and Blocks">
+      <Section title="Concept - Docs and Blocks" id="DocsBlocks">
         <Body>
           <Bold>Blocks</Bold> are immutable chunks of JSON data. All data is
           saved in blocks, which are identified by a checksum so that any party
@@ -167,6 +167,13 @@ const result = await source.dispatch({
             disallowed in a Protected Source because the ownership of all data
             should known. Generally you should use PutDocValue to write data.
           </Body>
+          <Body>
+            A block is a chunk of data that is not necessarily associated with
+            any single domain or doc. As such, a garbage collection mechanism
+            should be deleting unreferenced blocks beyond a certain age. So, you
+            should generally not expect a block to stick around inside a source
+            unless you quickly refer a doc to it.
+          </Body>
           <Snippet
             code={`
 const result = await source.dispatch({
@@ -183,39 +190,81 @@ const result = await source.dispatch({
             Effectively it performs a PutBlock for a chunk of data, then does a
             PutDoc to refer to the new Block.
           </Body>
-          <Body>Upload a block and set a doc to the new block ID</Body>
+          <Body>
+            You can also upload embedded blocks that will be de-referenced by
+            the source and uploaded seperately:
+          </Body>
+          <Snippet
+            code={`
+const result = await source.dispatch({
+  type: 'PutDocValue',
+  domain: 'main',
+  name: 'People',
+  value: {
+    personA: { type: 'BlockReference', value: { firstName: 'A' }},
+    personB: { type: 'BlockReference', value: { firstName: 'B' }},
+  }
+});
+
+// The following blocks will now be uploaded:
+// Block#A = { firstName: 'A' }
+// Block#B = { firstName: 'B' }
+// Block#C = {
+//   personA: { type: 'BlockReference', id: 'Block#A' },
+//   personB: { type: 'BlockReference', id: 'Block#B' },
+// }
+
+// And, the "People" doc has been updated to point to Block#C 
+          `}
+          />
+          <Body>
+            PutDocValue is also able to enforce the order of doc writes, by
+            uploading a special block that refers to the doc's currently active
+            block:
+          </Body>
+          <Snippet
+            code={`
+const result = await source.dispatch({
+  type: 'PutDocValue',
+  domain: 'main',
+  name: 'Message',
+  value: {
+    type: 'TransactionValue',
+    on: { type: 'BlockReference', id: '#lastBlockId' },
+    value: "NewValue",
+  }
+});
+
+// The above will only succeed if the "Message" doc currently refers to the #lastBlockId block
+          `}
+          />
         </SubSection>
         <SubSection title="PutTransactionValue">
           <Body>
             This action is similar to PutDocValue, because it saves a new Block
             and changes a Doc to refer to it as the current value. But in this
             case, the actual saved value is a "TransactionValue", whose ID
-            refers to the current value of the doc.
+            refers to the previous active block.
           </Body>
           <Snippet
             code={`
+// Pretend the 'TodoEvents' doc currently refers to the #lastAction block..
+
 const result = await source.dispatch({
   type: 'PutTransactionValue',
   domain: 'main',
   name: 'TodoEvents',
   value: { type: 'TaskCompleted', id: 2 }
 });
-// result may be { id: 'abc' }
-`}
-          />
-          <Body>
-            The value of the `abc` Block would be of the following format:
-          </Body>
-          <Snippet
-            code={`
-{
-  "type": "TransactionValue",
-  "on": {
-    "type": "BlockReference",
-    "id": "xyz", // This was the current id, at the time the transaction happend
-  },
-  "value":  { type: "TaskCompleted", id: 2 }
-}
+
+// A block like this will be uploaded and referred to by "TodoEvents":
+// Block#newAction = {
+//   type: 'TransactionValue',
+//   on: { type: 'BlockReference', id: '#lastAction' },
+//   value: { type: 'TaskCompleted', id: 2 }
+// }
+
+// The result may be { id: '#newAction' }
 `}
           />
           <Body>
@@ -225,7 +274,7 @@ const result = await source.dispatch({
           </Body>
         </SubSection>
         <SubSection title="PostDoc">
-          <Body>Create a child doc with new name</Body>
+          <Body>Create a child doc with a new unique name</Body>
         </SubSection>
         <SubSection title="GetBlock">
           <Body>Get a chunk of data</Body>

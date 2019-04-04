@@ -3,6 +3,7 @@ import createCloudClient from '../createCloudClient';
 import { setMaxListDocs } from '../maxListDocs';
 
 import sourceTests from './sourceTests';
+import createEvalSource from '../createEvalSource';
 
 describe('create client generic behavior', () => {
   test('passes arbitrary actions to dispatch', () => {
@@ -288,7 +289,7 @@ describe('eval', () => {
       name: 'squared',
       value: {
         type: 'LambdaFunction',
-        code: 'a => a * a',
+        code: '({value}) => value * value',
       },
     });
     const s = c.get('foo^squared');
@@ -373,7 +374,9 @@ describe('eval/lambda behavior', () => {
       name: 'foo',
       value: 2,
     });
-    c.setLambda('squared', v => v * v);
+    c.setLambda('squared', ({ value }) => {
+      return value * value;
+    });
     const s = c.get('foo^squared');
     await s.fetchValue();
     expect(s.getValue()).toBe(4);
@@ -395,8 +398,8 @@ describe('eval/lambda behavior', () => {
       name: 'foo',
       value: 2,
     });
-    c.setLambda('squared', v => {
-      return v * v;
+    c.setLambda('squared', ({ value }) => {
+      return value * value;
     });
     const s = c.get('foo^squared');
     let lastObserved = undefined;
@@ -431,7 +434,10 @@ describe('eval/lambda behavior', () => {
       name: 'bar',
       value: 3,
     });
-    c.setLambda('byBar', (v, d, c, useValue) => v * useValue(c.get('bar')));
+    c.setLambda(
+      'byBar',
+      ({ value }, d, cloud, useValue) => value * useValue(cloud.get('bar'))
+    );
     const s = c.get('foo^byBar');
     await s.fetchValue();
     expect(s.getValue()).toBe(6);
@@ -460,17 +466,17 @@ describe('eval/lambda behavior', () => {
       name: 'fooActions',
       value: { add: 'b' },
     });
-    c.setLambda('fooReducer', (docState, doc, cloud, useValue) => {
+    c.setLambda('fooReducer', ({ value }, doc, cloud, useValue) => {
       let state = [];
-      if (!docState) {
+      if (!value) {
         return state;
       }
-      let action = docState;
-      if (docState.on && docState.on.id) {
+      let action = value;
+      if (value.on && value.on.id) {
         const ancestorName =
-          doc.getFullName() + '#' + docState.on.id + '^fooReducer';
+          doc.getFullName() + '#' + value.on.id + '^fooReducer';
         state = useValue(cloud.get(ancestorName)) || [];
-        action = docState.value;
+        action = value.value;
       }
       if (action.add) {
         return [...state, action.add];
@@ -508,17 +514,17 @@ describe('eval/lambda behavior', () => {
       name: 'fooActions',
       value: { add: 'b' },
     });
-    c.setLambda('fooReducer', (docState, doc, cloud, useValue) => {
+    c.setLambda('fooReducer', ({ value }, doc, cloud, useValue) => {
       let state = [];
-      if (!docState) {
+      if (!value) {
         return state;
       }
-      let action = docState;
-      if (docState.on && docState.on.id) {
+      let action = value;
+      if (value.on && value.on.id) {
         const ancestorName =
-          doc.getFullName() + '#' + docState.on.id + '^fooReducer';
+          doc.getFullName() + '#' + value.on.id + '^fooReducer';
         state = useValue(cloud.get(ancestorName)) || [];
-        action = docState.value;
+        action = value.value;
       }
       if (action.add) {
         return [...state, action.add];

@@ -1,5 +1,14 @@
 import React from 'react';
-import { Title, Body, Page, Section } from '../DocViews';
+import {
+  Title,
+  Body,
+  Page,
+  Section,
+  SubSection,
+  List,
+  ListItem,
+  Link,
+} from '../DocViews';
 
 function DocPage() {
   return (
@@ -14,23 +23,50 @@ function DocPage() {
         predict authentication failures, or to ensure permissions of client
         data..
       </Body>
-      <Section title="Auth Source API">
+      <SubSection title="Authentication">
         <Body>
-          The API of an auth source is nearly identical to a data source. All
-          actions can be passed with an 'auth' object alongside. Without correct
-          authentication, the auth source will block most or all of the data
-          source actions. Additional actions are provided to authenticate and
-          set doc permissions.{' '}
+          The first goal is authentication, to identify the user. A protected
+          source can be created with several authentication providers. So far,
+          we have built the following:
+        </Body>
+        <List>
+          <ListItem>Email Auth Provider</ListItem>
+          <ListItem>SMS Auth Provider</ListItem>
+          <ListItem>Root Password</ListItem>
+        </List>
+        <Body>
+          You can create your own authentication mechanisms (or help us
+          implement missing ones like password and OAuth), by creating a custom{' '}
+          <Link routeName="Spec-AuthProvider">Auth Provider</Link>
+        </Body>
+      </SubSection>
+      <SubSection title="Permissions">
+        <Body>
+          Once a user is authenticated, you can apply permissions to grant or
+          limit access. By default, no access is granted to docs, other than the
+          docs owned by a user.
+        </Body>
+      </SubSection>
+      <Section title="Protected Source API">
+        <Body>
+          The{' '}
+          <Link routeName="Spec-ProtectedSource">
+            API of a Protected Source
+          </Link>{' '}
+          is nearly identical to a Source. All actions can be passed with an
+          'auth' object alongside. Without correct authentication, the Protected
+          Source will block most or all of the Source actions. Additional
+          actions are provided to authenticate and set doc permissions.
         </Body>
         <Body>
           Subscription is also augmented to support authentication.. when
-          subscribing, the auth source requires an additional auth argument, and
-          the permissions will be checked to ensure that a client can only
-          subscribe to docs they are allowed to get.
+          subscribing, the auth source requires an additional 3rd auth argument.
+          The permissions will be checked to ensure that a client can only
+          subscribe to docs they are allowed to read.
         </Body>
         <Body>
-          Network sources are responsible for proxying the auth API as well as
-          the data source API
+          Network Sources are responsible for proxying the Protected Source API
+          as well as the Source API
         </Body>
       </Section>
     </Page>

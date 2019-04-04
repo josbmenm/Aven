@@ -1,5 +1,5 @@
 import React from 'react';
-import { Title, Body, Page, SubSection, Snippet } from '../DocViews';
+import { Title, Body, Page, SubSection, Snippet, Link } from '../DocViews';
 
 function DocPage() {
   return (
@@ -13,6 +13,29 @@ function DocPage() {
         You are also encouraged to create additional projects to compliment or
         compete with Aven Cloud components.
       </Body>
+      <Body>
+        Contributors are invited to read and take part in the philosophies{' '}
+        <Link routeName="About">described in the About page</Link>
+      </Body>
+
+      <SubSection title="Discussion">
+        <Body>
+          Feel free to use{' '}
+          <Link url="https://github.com/AvenCloud/Aven/issues">
+            the GitHub issues
+          </Link>{' '}
+          as a discussion board for any aspect of the project. We may close
+          inactive and unproductive discussions.
+        </Body>
+      </SubSection>
+      <SubSection title="Filing Bugs">
+        <Body>
+          The best way to submit a bug issue is to write a failing test that
+          demonstrates what behavior you expect to see. This will help clairify
+          what you "expect()", and will be useful for us to debug the problem
+          and prevent future regressions.
+        </Body>
+      </SubSection>
       <SubSection title="Getting Started - Run Docs">
         <Snippet
           code={`git clone Aven

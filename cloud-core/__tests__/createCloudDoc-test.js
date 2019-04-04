@@ -444,7 +444,7 @@ test('value evaluation', async () => {
     name: 'squared',
     value: {
       type: 'LambdaFunction',
-      code: 'a => a * a',
+      code: '({value}) => value * value',
     },
   });
   const squaredDoc = createCloudDoc({

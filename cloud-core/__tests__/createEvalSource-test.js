@@ -1,7 +1,13 @@
 import createMemoryStorageSource from '../createMemoryStorageSource';
 import createEvalSource from '../createEvalSource';
+import createCloudClient from '../../cloud-core/createCloudClient';
 
 beforeAll(async () => {});
+
+async function justASec(patienceMS) {
+  const duration = patienceMS || 100;
+  return new Promise(resolve => setTimeout(resolve, duration));
+}
 
 describe('interpreted data sources', () => {
   test('basic interpreted value', async () => {
@@ -24,7 +30,7 @@ describe('interpreted data sources', () => {
       name: 'squared',
       value: {
         type: 'LambdaFunction',
-        code: 'a => a * a',
+        code: '({value}) => value * value',
       },
     });
 
@@ -57,8 +63,8 @@ describe('interpreted data sources', () => {
       name: 'squared',
       value: {
         type: 'LambdaFunction',
-        code: `(a) => {
-        return a * a;
+        code: `({value}) => {
+        return value * value;
       }`,
       },
     });
@@ -98,7 +104,7 @@ describe('interpreted data sources', () => {
       name: 'squared',
       value: {
         type: 'LambdaFunction',
-        code: 'a => a * a',
+        code: '({value}) => value * value',
       },
     });
     const result = await interpretedSource.dispatch({
@@ -219,15 +225,15 @@ describe('interpreted data sources', () => {
       source: storageSource,
       domain: 'test',
       evalDocs: {
-        listValue: (docState, doc, cloud, useValue) => {
+        listValue: ({ value }, doc, cloud, useValue) => {
           let state = [];
-          if (docState === undefined) {
+          if (value === undefined) {
             return state;
           }
-          const action = docState.value;
-          if (docState.on && docState.on.id) {
+          const action = value.value;
+          if (value.on && value.on.id) {
             const ancestorName = `${doc.getFullName()}#${
-              docState.on.id
+              value.on.id
             }^listValue`;
             state = useValue(cloud.get(ancestorName));
           }
@@ -307,7 +313,7 @@ describe('interpreted data sources', () => {
     expect(result2.id).toEqual(result1.id);
   });
 
-  test.skip('interpteted reduced value', async () => {
+  test('interpteted reduced value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
     const interpretedSource = createEvalSource({
       source: storageSource,
@@ -348,28 +354,18 @@ describe('interpreted data sources', () => {
       name: 'listValue',
       value: {
         type: 'LambdaFunction',
-        code: `(docState, doc, cloud, useValue) => {
-          console.log('======', doc.getFullName(), docState);
-
+        code: `({value}, doc, cloud, useValue) => {
           let state = [];
-          if (docState === undefined) {
+          if (value === undefined) {
             return state;
           }
-          const action = docState.value;
-          if (docState.on && docState.on.id) {
+          const action = value.value;
+          if (value.on && value.on.id) {
             const ancestorName = \`\${doc.getFullName()}#\${
-              docState.on.id
+              value.on.id
             }^listValue\`;
             state = useValue(cloud.get(ancestorName));
           }
-
-          if (!cloud.i) { cloud.i = 1; }
-          cloud.i++;
-          if (cloud.i>10) {
-          throw 'its over';
-          }
-
-          console.log('Doing Reduce!', action, state, doc.getFullName());
 
           if (action.add) {
             return [...state, action.add];
@@ -388,7 +384,7 @@ describe('interpreted data sources', () => {
       domain: 'test',
     });
 
-    // expect(result.value).toEqual(['a', 'c']);
+    expect(result.value).toEqual(['a', 'c']);
   });
 
   test('basic evalDocs static function value', async () => {
@@ -397,8 +393,8 @@ describe('interpreted data sources', () => {
       source: storageSource,
       domain: 'test',
       evalDocs: {
-        squared: a => {
-          return a * a;
+        squared: ({ value }) => {
+          return value * value;
         },
       },
     });
@@ -432,5 +428,142 @@ describe('interpreted data sources', () => {
     });
 
     expect(result.value).toBe(9);
+  });
+});
+
+describe('remote eval', () => {
+  test('reducer remote eval', async () => {
+    const source = createMemoryStorageSource({ domain: 'd' });
+    const cloudReducer = ({ value, id }, doc, cloud, useValue) => {
+      let state = [];
+      if (!value) {
+        return { state };
+      }
+      let action = value;
+      if (value.on && value.on.id) {
+        const ancestorName =
+          doc.getFullName() + '#' + value.on.id + '^fooReducer';
+        const prevValue = useValue(cloud.get(ancestorName)) || [];
+        state = prevValue.state;
+        action = value.value;
+      }
+      if (action.add) {
+        return {
+          lastActionId: id,
+          state: [...state, action.add],
+        };
+      }
+      if (action.remove) {
+        return {
+          lastActionId: id,
+          state: state.filter(v => v !== action.remove),
+        };
+      }
+      return state;
+    };
+    const evalSource = createEvalSource({
+      source,
+      domain: 'd',
+      evalDocs: {
+        fooReducer: cloudReducer,
+      },
+    });
+    const c = createCloudClient({ source: evalSource, domain: 'd' });
+    c.izDebugz = true;
+    c.get('fooReducer').markRemoteLambda(true);
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { add: 'a' },
+    });
+    await source.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { add: 'b' },
+    });
+    c.setLambda('fooReducer', cloudReducer);
+    const s = c.get('fooActions^fooReducer');
+    await s.fetchValue();
+    expect(s.getValue().state).toEqual(['a', 'b']);
+    await source.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { remove: 'a' },
+    });
+    await s.fetchValue();
+    expect(s.getValue().state).toEqual(['b']);
+  });
+  test('reducer remote eval subscription', async () => {
+    const source = createMemoryStorageSource({ domain: 'd' });
+    const cloudReducer = ({ value, id }, doc, cloud, useValue) => {
+      let state = [];
+      if (!value) {
+        return { state };
+      }
+      let action = value;
+      if (value.on && value.on.id) {
+        const ancestorName =
+          doc.getFullName() + '#' + value.on.id + '^fooReducer';
+        const prevValue = useValue(cloud.get(ancestorName)) || [];
+        state = prevValue.state;
+        action = value.value;
+      }
+      if (action.add) {
+        return {
+          lastActionId: id,
+          state: [...state, action.add],
+        };
+      }
+      if (action.remove) {
+        return {
+          lastActionId: id,
+          state: state.filter(v => v !== action.remove),
+        };
+      }
+      return state;
+    };
+    const evalSource = createEvalSource({
+      source,
+      domain: 'd',
+      evalDocs: {
+        fooReducer: cloudReducer,
+      },
+    });
+    const c = createCloudClient({ source: evalSource, domain: 'd' });
+    c.izDebugz = true;
+    c.get('fooReducer').markRemoteLambda(true);
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { add: 'a' },
+    });
+    await source.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { add: 'b' },
+    });
+    c.setLambda('fooReducer', cloudReducer);
+    const s = c.get('fooActions^fooReducer');
+    let lastObserved = null;
+    s.observeValue.subscribe({
+      next: val => {
+        lastObserved = val;
+      },
+    });
+    await justASec();
+    expect(lastObserved.state).toEqual(['a', 'b']);
+    await source.dispatch({
+      type: 'PutTransactionValue',
+      domain: 'd',
+      name: 'fooActions',
+      value: { remove: 'a' },
+    });
+    await justASec();
+    expect(lastObserved.state).toEqual(['b']);
   });
 });

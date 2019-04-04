@@ -142,8 +142,9 @@ export default function createCloudClient({
     const doc = docs.get(name);
     await doc.fetchValue();
     const value = doc.getValue();
+    const context = doc.getContext();
     const id = await doc.getId();
-    return { value, id };
+    return { value, id, context };
   }
 
   const actions = {
@@ -197,16 +198,6 @@ export default function createCloudClient({
   cloudClient.observeDocChildren = source.observeDocChildren;
 
   cloudClient.observeChildren = docs.observeChildren;
-  // cloudClient.observeChildren = (observeDomain, name) => {
-  //   if (observeDomain !== undefined && observeDomain !== domain) {
-  //     throw new Error('Cannot observe different domain on a client');
-  //   }
-  //   let listener = docs.observeDocChildren;
-  //   if (name != null) {
-  //     listener = docs.get(name).observeDocChildren;
-  //   }
-  //   return listener;
-  // };
 
   cloudClient.observeUserDoc = mapBehaviorSubject(session, value => {
     if (value && value.accountId) {

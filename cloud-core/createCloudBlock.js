@@ -2,6 +2,8 @@ import { Observable, BehaviorSubject } from 'rxjs-compat';
 import SHA1 from 'crypto-js/sha1';
 import bindCloudValueFunctions from './bindCloudValueFunctions';
 import mapBehaviorSubject from '../utils/mapBehaviorSubject';
+import runLambda from './runLambda';
+import getIdOfValue from '../cloud-utils/getIdOfValue';
 
 const JSONStringify = require('json-stable-stringify');
 
@@ -119,6 +121,14 @@ export default function createCloudBlock({
       return val !== undefined;
     });
 
+  const observeValueAndId = observe
+    .map(state => {
+      return { value: state.value, getId: () => id };
+    })
+    .filter(({ value }) => {
+      return value !== undefined;
+    });
+
   let fetchInProgress = null;
   async function fetch() {
     if (getValue() !== undefined) {
@@ -157,40 +167,29 @@ export default function createCloudBlock({
     state => state.isConnected
   );
 
-  const _functionDependencies = new Set();
-  function useValue(cloudValue) {
-    _functionDependencies.add(cloudValue);
-    return cloudValue.getValue();
-  }
   let _evaluatedFunction = null;
 
-  function doTheCompute(lambdaValue, argValue, argDoc) {
+  function runEvalLambda(lambdaValue, argValue, argId, argDoc) {
+    // careful! Only run this once lambdaValue (this block's value) is known, because the result of the eval will be cached and the fn will never change. This should be fine because we are in an immutable block.
+
     if (!_evaluatedFunction) {
       if (!lambdaValue || lambdaValue.type !== 'LambdaFunction') {
-        return null;
+        throw new Error(
+          'Cannot eval this block because it is not loaded or is not of type "LambdaFunction"'
+        );
       }
-
       _evaluatedFunction = eval(lambdaValue.code);
     }
-    function computeResult() {
-      return _evaluatedFunction(argValue, argDoc, cloudClient, useValue);
-    }
-    async function loadDependencies() {
-      await Promise.all(
-        [..._functionDependencies].map(async dep => {
-          await dep.fetchValue();
-        })
-      );
-    }
-    return {
-      result: computeResult(),
-      loadDependencies,
-      reComputeResult: computeResult,
-    };
+    return runLambda(_evaluatedFunction, argValue, argId, argDoc, cloudClient);
   }
 
   function functionGetValue(argDoc) {
-    const { result } = doTheCompute(getValue(), argDoc.getValue(), argDoc);
+    const { result } = runEvalLambda(
+      getValue(),
+      argDoc.getValue(),
+      argDoc.getId(),
+      argDoc
+    );
 
     return result;
   }
@@ -198,36 +197,59 @@ export default function createCloudBlock({
   const functionFetchValue = async argumentValue => {
     await argumentValue.fetchValue();
     await fetch();
-    const { loadDependencies, reComputeResult } = doTheCompute(
+    const { loadDependencies, reComputeResult } = runEvalLambda(
       getValue(),
       argumentValue.getValue(),
+      argumentValue.getId(),
       argumentValue
     );
     await loadDependencies();
     return reComputeResult();
   };
 
-  const functionObserveValue = argumentValue => {
+  const functionObserveValue = (argumentDoc, includeId, onIsConnected) => {
     return observeValue.switchMap(fnValue => {
       if (fnValue === undefined) {
         return Observable.of(null);
       }
-      return argumentValue.observeValue.flatMap(async argValue => {
-        const { reComputeResult, loadDependencies } = doTheCompute(
-          fnValue,
-          argValue,
-          argumentValue
-        );
-        await loadDependencies();
-        return reComputeResult();
-      });
+      return argumentDoc.observeValueAndId
+        .filter(({ value }) => value !== undefined)
+        .flatMap(async ({ getId, value }) => {
+          const argumentId = getId();
+          const {
+            reComputeResult,
+            loadDependencies,
+            getIsConnected,
+          } = runEvalLambda(fnValue, value, argumentId, argumentDoc);
+          onIsConnected(getIsConnected());
+          await loadDependencies();
+          onIsConnected(getIsConnected());
+          const result = reComputeResult();
+          if (includeId) {
+            return {
+              value: result,
+              getId: () => getIdOfValue(result),
+              context: {
+                type: 'LambdaResult',
+                lambda: {
+                  type: 'LambdaReference',
+                  name: onGetName(),
+                  id: blockId,
+                },
+                argument: { type: 'BlockReference', id: argumentId },
+              },
+            };
+          } else {
+            return result;
+          }
+        });
     });
   };
 
   const cloudBlock = {
     type: 'Block',
     isConnected,
-    getIsConnected: isConnected.getValue,
+    getIsConnected: () => isConnected.getValue(),
     getFullName: () => onGetName(),
     getId: () => blockId,
     id: blockId,
@@ -242,12 +264,15 @@ export default function createCloudBlock({
     getState,
     observe,
     observeValue,
+    observeValueAndId,
     getReference,
     serialize,
 
     functionGetValue,
     functionFetchValue,
     functionObserveValue,
+
+    getContext: () => 'what',
   };
 
   bindCloudValueFunctions(cloudBlock, cloudClient);

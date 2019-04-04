@@ -92,9 +92,10 @@ export function Snippet({ code }) {
 }
 
 function createSection(opts) {
-  function Section({ title, children }) {
+  function Section({ title, children, id }) {
     return (
       <View
+        nativeId={id}
         style={{
           paddingTop: 10,
           marginVertical: 10,

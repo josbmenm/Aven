@@ -3,6 +3,8 @@ import createCloudBlock from './createCloudBlock';
 import uuid from 'uuid/v1';
 import bindCloudValueFunctions from './bindCloudValueFunctions';
 import mapBehaviorSubject from '../utils/mapBehaviorSubject';
+import runLambda from './runLambda';
+import getIdOfValue from '../cloud-utils/getIdOfValue';
 
 function hasDepth(name) {
   return name.match(/\//);
@@ -131,7 +133,7 @@ export function createDocPool({
 
   const observeChildren = parentName
     .switchMap(parentDocName => {
-      return new Observable(observer => {
+      return Observable.create(observer => {
         let docNames = [];
         let hasMore = true;
         let lastDocSeen = null;
@@ -381,6 +383,9 @@ export default function createCloudDoc({
   }
 
   async function fetchValue() {
+    if (overriddenFunction) {
+      return;
+    }
     if (getFullName().length > 255) {
       throw new Error('Name is too long. Probably a recursive loop');
     }
@@ -520,6 +525,9 @@ export default function createCloudDoc({
   }
 
   function getValue() {
+    if (overriddenFunction) {
+      return undefined;
+    }
     const { id, value } = docState.value;
     if (value) {
       return value;
@@ -531,41 +539,41 @@ export default function createCloudDoc({
     return block.getValue();
   }
 
+  function getContext() {
+    const { id, value, name } = docState.getValue();
+    // if (value) {
+    //   return value;
+    // }
+    // if (!id) {
+    //   return undefined;
+    // }
+    // const block = _getBlockWithId(id);
+    // return block.getValue();
+
+    return {
+      name: getFullName(),
+      id,
+    };
+  }
+
   let overriddenFunction = null;
+  let overriddenFunctionCache = {};
 
   function $setOverrideFunction(fn) {
     overriddenFunction = fn;
+    overriddenFunctionCache = {};
   }
-  function runLambda(pureDataFn, argumentValue, argumentDoc, cloudClient) {
-    const dependencies = new Set();
-    async function loadDependencies() {
-      await Promise.all(
-        [...dependencies].map(async dep => {
-          await dep.fetchValue();
-        })
-      );
-    }
-    function useValue(cloudValue) {
-      dependencies.add(cloudValue);
-      return cloudValue.getValue();
-    }
-    function computeResult() {
-      return pureDataFn(argumentValue, argumentDoc, cloudClient, useValue);
-    }
-    return {
-      getIsConnected: () =>
-        ![...dependencies].find(dep => !dep.getIsConnected()),
-      dependencies,
-      loadDependencies,
-      result: computeResult(),
-      reComputeResult: computeResult,
-    };
-  }
+
   function functionGetValue(argumentDoc) {
     if (overriddenFunction) {
+      const argId = argumentDoc.getId();
+      if (overriddenFunctionCache[argId] !== undefined) {
+        return overriddenFunctionCache[argId];
+      }
       const { result } = runLambda(
         overriddenFunction,
         argumentDoc.getValue(),
+        argId,
         argumentDoc,
         cloudClient
       );
@@ -586,21 +594,65 @@ export default function createCloudDoc({
   }
 
   async function functionFetchValue(argumentDoc) {
+    const isArgumentReady = argumentDoc.getIsConnected();
+    const currentId = argumentDoc.getId();
+    if (isLambdaRemote && !isArgumentReady) {
+      const valueDocName = argumentDoc.getFullName();
+      const valueName = currentId
+        ? `${valueDocName}#${currentId}`
+        : valueDocName;
+      const queryName = `${valueName}^${getFullName()}`;
+      const res = await source.dispatch({
+        type: 'GetDocValue',
+        domain,
+        name: queryName,
+      });
+      if (res.context && res.context.type === 'EvaluatedDoc') {
+        if (
+          res.context.argument.type === 'BlockReference' &&
+          argumentDoc.getId() !== res.context.argument.id
+        ) {
+          const argId = res.context.argument.id;
+          argumentDoc.$setState({
+            id: argId,
+            lastSyncTime: Date.now(),
+          });
+          if (overriddenFunction && overriddenFunctionCache) {
+            overriddenFunctionCache[argId] = res.value;
+            return;
+          }
+        }
+      }
+    }
+
+    if (
+      isArgumentReady &&
+      overriddenFunction &&
+      overriddenFunctionCache[currentId] !== undefined
+    ) {
+      return;
+    }
     if (overriddenFunction) {
       await argumentDoc.fetchValue();
+      const argId = argumentDoc.getId();
+      if (overriddenFunctionCache[argId] !== undefined) {
+        return;
+      }
       const { loadDependencies, reComputeResult } = runLambda(
         overriddenFunction,
         argumentDoc.getValue(),
+        argId,
         argumentDoc,
         cloudClient
       );
       await loadDependencies();
-      return reComputeResult();
+      overriddenFunctionCache[argId] = reComputeResult();
+      return;
     }
     await fetchValue();
     const block = getBlock();
     if (!block) {
-      return undefined;
+      return;
     }
     await block.functionFetchValue(argumentDoc);
   }
@@ -721,6 +773,7 @@ export default function createCloudDoc({
 
   const observeValue = observe.switchMap(cloudDocValue => {
     if (cloudDocValue.value !== undefined) {
+      // ugh, what is this.. ? looks like we override the value someplace, when the doc's value is usually defined by the value of the connected block with id of docState.id
       return Observable.of(cloudDocValue.value);
     }
     if (!cloudDocValue.isConnected) {
@@ -733,55 +786,106 @@ export default function createCloudDoc({
     return block.observeValue;
   });
 
+  const observeValueAndId = observe.switchMap(cloudDocValue => {
+    if (!cloudDocValue.isConnected) {
+      return Observable.of({ getId: () => undefined, value: undefined });
+    }
+    if (!cloudDocValue.id) {
+      const falseyId = cloudDocValue.id;
+      return Observable.of({ getId: () => falseyId, value: undefined });
+    }
+    const block = _getBlockWithId(cloudDocValue.id);
+    return block.observeValueAndId;
+  });
+
   const overriddenFunctionResults = new Map();
 
-  const functionObserveValue = (argumentDoc, onIsConnected) => {
+  const functionObserveValue = (argumentDoc, includeId, onIsConnected) => {
     if (overriddenFunction) {
       if (overriddenFunctionResults.has(argumentDoc)) {
         return overriddenFunctionResults.get(argumentDoc);
       }
-      const isArgumentReady = argumentDoc.getIsConnected();
-      const isStatic = argumentDoc.type === 'Block';
-      if (isLambdaRemote && !isArgumentReady && isStatic) {
-        const currentId = argumentDoc.getId();
-        const valueDocName = argumentDoc.getFullName();
-        const valueName = currentId
-          ? `${valueDocName}#${currentId}`
-          : valueDocName;
-        const behavior = new BehaviorSubject(undefined);
-        source
-          .dispatch({
-            type: 'GetDocValue',
-            domain,
-            name: `${valueName}^${getFullName()}`,
-          })
-          .then(res => {
-            behavior.next(res.value);
-          })
-          .catch(console.error);
-        overriddenFunctionResults.set(argumentDoc, behavior);
+      const observeComputed = argumentDoc.observeValueAndId
+        .filter(({ value }) => value !== undefined)
+        .flatMap(async ({ value, getId }) => {
+          const argumentId = getId();
+          let result = overriddenFunctionCache[argumentId];
+          if (result === undefined) {
+            const {
+              loadDependencies,
+              reComputeResult,
+              getIsConnected,
+            } = runLambda(
+              overriddenFunction,
+              value,
+              argumentId,
+              argumentDoc,
+              cloudClient
+            );
+            onIsConnected(getIsConnected());
+            await loadDependencies();
+            onIsConnected(getIsConnected());
+            result = overriddenFunctionCache[argumentId] = reComputeResult();
+          }
 
-        return behavior;
-      }
-      const resultObservable = argumentDoc.observeValue
-        .flatMap(async argumentValue => {
-          const {
-            loadDependencies,
-            reComputeResult,
-            getIsConnected,
-          } = runLambda(
-            overriddenFunction,
-            argumentValue,
-            argumentDoc,
-            cloudClient
-          );
-          onIsConnected(getIsConnected());
-          await loadDependencies();
-          onIsConnected(getIsConnected());
-          const result = reComputeResult();
-          return result;
+          if (includeId) {
+            return {
+              value: result,
+              argument: { type: 'BlockReference', id: argumentId },
+              getId: () => getIdOfValue(result),
+            };
+          } else {
+            return result;
+          }
         })
         .share();
+      let resultObservable = observeComputed;
+      if (isLambdaRemote) {
+        resultObservable = Observable.create(observer => {
+          const isArgumentReady = argumentDoc.getIsConnected();
+          if (isLambdaRemote && !isArgumentReady) {
+            const currentId = argumentDoc.getId();
+            const valueDocName = argumentDoc.getFullName();
+            const valueName = currentId
+              ? `${valueDocName}#${currentId}`
+              : valueDocName;
+            source
+              .dispatch({
+                type: 'GetDocValue',
+                domain,
+                name: `${valueName}^${getFullName()}`,
+              })
+              .then(res => {
+                if (
+                  res.context.argument.type === 'BlockReference' &&
+                  argumentDoc.getId() !== res.context.argument.id
+                ) {
+                  const argId = res.context.argument.id;
+                  argumentDoc.$setState({
+                    id: argId,
+                    lastSyncTime: Date.now(),
+                  });
+                  if (overriddenFunction && overriddenFunctionCache) {
+                    overriddenFunctionCache[argId] = res.value;
+                    observer.next(res.value);
+                  }
+                }
+              })
+              .catch(err => observer.error(err));
+          }
+
+          const subs = observeComputed.subscribe({
+            // do not pass observer.next in directly.. it fails for some reason
+            next: val => observer.next(val),
+            error: err => observer.error(err),
+            complete: () => observer.complete(),
+          });
+          return () => {
+            subs.unsubscribe();
+          };
+        }).share();
+      }
+
       overriddenFunctionResults.set(argumentDoc, resultObservable);
       return resultObservable;
     }
@@ -790,7 +894,7 @@ export default function createCloudDoc({
         return Observable.of(undefined);
       }
       const block = _getBlockWithId(cloudDocValue.id);
-      return block.functionObserveValue(argumentDoc);
+      return block.functionObserveValue(argumentDoc, includeId, onIsConnected);
     });
   };
 
@@ -865,6 +969,7 @@ export default function createCloudDoc({
   const cloudDoc = {
     type: 'Doc',
     $setName, // implementation detail of doc moving..?
+    $setState: setState, // dangerous to use this, but important for others to tell the doc what it is
 
     get: docs.get,
     post: docs.post,
@@ -890,10 +995,12 @@ export default function createCloudDoc({
     // cloud value APIs:
     getValue,
     observeValue,
+    observeValueAndId,
     isConnected,
     getIsConnected: isConnected.getValue,
     fetchValue,
     getReference,
+    getContext,
     // todo: serialize?
 
     functionGetValue,

@@ -10,6 +10,7 @@ import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import { hashSecureString } from '../cloud-utils/Crypto';
+import { createReducerLambda } from '../cloud-core/useCloudReducer';
 
 import App from './App';
 
@@ -20,23 +21,6 @@ const runServer = async () => {
     domain: 'todo.aven.io',
     dataDir: './db',
   });
-
-  function createReducerLambda(reducerName, initialState, reducerFn) {
-    return (docState, doc, cloud, useValue) => {
-      let state = initialState;
-      if (docState === undefined) {
-        return state;
-      }
-      let action = docState.value;
-      if (docState.on && docState.on.id) {
-        const ancestorName = `${doc.getFullName()}#${
-          docState.on.id
-        }^${reducerName}`;
-        state = useValue(cloud.get(ancestorName));
-      }
-      return reducerFn(state, action);
-    };
-  }
 
   function TaskReducer(state, action) {
     if (action.type === 'AddTask') {
@@ -57,8 +41,7 @@ const runServer = async () => {
   }
 
   const evalDocs = {
-    // TaskReducer: a => [{ id: 'z', title: 'Coming Soon' }],
-    TaskReducer: createReducerLambda('TaskReducer', [], TaskReducer),
+    TaskReducer: createReducerLambda('TaskReducer', TaskReducer, []),
   };
 
   const source = createEvalSource({

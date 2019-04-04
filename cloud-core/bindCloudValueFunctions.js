@@ -1,9 +1,7 @@
 import { filter } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import SHA1 from 'crypto-js/sha1';
-import { stringify } from 'querystring';
-
-const JSONStringify = require('json-stable-stringify');
+import getIdOfValue from '../cloud-utils/getIdOfValue';
 
 function flatArray(a) {
   return [].concat.apply([], a);
@@ -76,7 +74,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
   };
   const expanded = {
     isConnected,
-    getId: () => SHA1(JSONStringify(getValue())).toString(),
+    getId: () => getIdOfValue(getValue()),
     getIsConnected: isConnected.getValue,
     type: 'ExpandedDoc',
     getFullName: () => {
@@ -93,11 +91,16 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
       const cloudValues = collectCloudValues(expandSpec);
       await Promise.all(cloudValues.map(v => v.fetchValue()));
     },
+    getContext: () => {
+      return {
+        type: 'ExpandedDoc',
+        // todo
+      };
+    },
     observeValue: cloudValue.observeValue
       .distinctUntilChanged()
       .pipe(filterUndefined())
       .mergeMap(async o => {
-        console.log('meeerge map', o);
         isConnected.next(false);
         const expandSpec = expandFn(o, cloudValue);
         const cloudValues = collectCloudValues(expandSpec);
@@ -108,6 +111,11 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
       })
       .pipe(filterUndefined())
       .distinctUntilChanged(),
+    observeValueAndId: new Observable(() => {
+      throw new Error(
+        'sorry, observeValueAndId is not supported for expand right now. Use observeValue or lambda functions instead.'
+      );
+    }),
     getValue,
   };
   bindCloudValueFunctions(expanded, cloudClient);
@@ -124,12 +132,23 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
   if (!evaluatedDoc) {
     const isConnected = new BehaviorSubject(false);
     const getValue = () => lambdaDoc.functionGetValue(cloudValue);
+    const handleFnConnectivity = isConn => {
+      // effectively, this is the only way for an eval doc to be connected
+      isConnected.next(isConn);
+    };
     // creating a synthetic doc that can be observed and fetched.
     evaluatedDoc = {
       isConnected,
-      getId: () => SHA1(JSONStringify(getValue())).toString(),
+      getId: () => getIdOfValue(getValue()),
       getIsConnected: isConnected.getValue,
       type: 'EvaluatedDoc',
+      getContext: () => {
+        return {
+          type: 'EvaluatedDoc',
+          argument: { type: 'BlockReference', id: cloudValue.getId() },
+          lambda: { type: 'LambdaReference', name: lambdaDoc.getFullName() },
+        };
+      },
       getFullName: () => {
         return cloudValue.getFullName() + '__evalby_' + lambdaDoc.getFullName();
       },
@@ -141,9 +160,15 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
       // the actual loading and computation is performed by the lambda doc, which may refer to the cloud block lambda.
       // the doc function/lambda may have been overridden via setLambda and $setOverrideFunction
       fetchValue: () => lambdaDoc.functionFetchValue(cloudValue),
-      observeValue: lambdaDoc.functionObserveValue(cloudValue, isConn =>
-        // effectively, this is the only way for an eval doc to be connected
-        isConnected.next(isConn)
+      observeValue: lambdaDoc.functionObserveValue(
+        cloudValue,
+        false,
+        handleFnConnectivity
+      ),
+      observeValueAndId: lambdaDoc.functionObserveValue(
+        cloudValue,
+        true,
+        handleFnConnectivity
       ),
       getValue,
     };
@@ -158,9 +183,14 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
     isConnected: cloudValue.isConnected,
     getIsConnected: cloudValue.isConnected.getValue,
     type: cloudValue.type + '-Mapped',
-    getId: () => SHA1(stringify(mapFn(cloudValue.getValue()))).toString(),
+    getId: () => getIdOfValue(mapFn(cloudValue.getValue())),
     getFullName: () => {
       return cloudValue.getFullName() + '__mapped';
+    },
+    getContext: () => {
+      return {
+        type: 'MappedDoc',
+      };
     },
     get: toGet => {
       throw new Error(
@@ -171,6 +201,12 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
     observeValue: cloudValue.observeValue.distinctUntilChanged().map(data => {
       return mapFn(data);
     }),
+    observeValueAndId: cloudValue.observeValueAndId
+      .distinctUntilChanged()
+      .map(data => {
+        const value = mapFn(data);
+        return { value, getId: () => getIdOfValue(value) };
+      }),
     // distinctUntilChanged(),
     getValue: () => {
       return mapFn(cloudValue.getValue());
