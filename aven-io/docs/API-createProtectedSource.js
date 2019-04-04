@@ -1,5 +1,14 @@
 import React from 'react';
-import { Title, Body, Page, ListItem } from '../DocViews';
+import {
+  Title,
+  Body,
+  Page,
+  ListItem,
+  Link,
+  List,
+  Bold,
+  Snippet,
+} from '../DocViews';
 
 function DocPage() {
   return (

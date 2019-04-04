@@ -22,5 +22,5 @@ const HelloWorldRoutes = {
 };
 
 // export default HelloWorldRoutes;
-export default SimpleAppRoutes;
-// export default FullAppRoutes;
+// export default SimpleAppRoutes;
+export default FullAppRoutes;

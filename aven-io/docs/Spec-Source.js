@@ -275,6 +275,26 @@ const result = await source.dispatch({
         </SubSection>
         <SubSection title="PostDoc">
           <Body>Create a child doc with a new unique name</Body>
+          <Snippet
+            code={`
+// Pretend the 'TodoEvents' doc currently refers to the #lastAction block..
+
+const result = await source.dispatch({
+  type: 'PostDoc',
+  domain: 'main',
+  name: 'Products',
+  value: { name: 'Tablet' }
+});
+
+// a new Doc will be uploaded at "Products/ABC" where ABC is a unique id provided by the server
+
+// return value:
+// {
+//   name: 'Products/ABC',
+//   id: '#checksum'
+// }
+`}
+          />
         </SubSection>
         <SubSection title="GetBlock">
           <Body>Get a chunk of data</Body>
@@ -306,9 +326,20 @@ const result = await source.dispatch({
             List doc names, or specify a parent name to list children doc names.
             There is no recursive listing.
           </Body>
+          <Body>
+            Provide 'parentName' to list children docs under a parent doc
+          </Body>
+          <Body>
+            Provide 'afterName' to list all children after a particular name.
+            This is how children are paginated.
+          </Body>
         </SubSection>
         <SubSection title="DestroyDoc">
           <Body>Destroy a doc and any children docs</Body>
+          <Body>
+            Blocks will not be deleted as an immediate result, but they should
+            be garbage collected later
+          </Body>
         </SubSection>
         <SubSection title="DestroyBlock">
           <Body>Request the Source to forget about a Block.</Body>

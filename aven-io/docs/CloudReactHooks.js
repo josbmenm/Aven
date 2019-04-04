@@ -76,8 +76,42 @@ function DocPage() {
         />
       </Section>
 
+      <Section title="useCloudState" id="useCloudState">
+        <Body>
+          Like React's "useState" hook, except the state is saved on the source.
+        </Body>
+        <Snippet
+          code={`const [state, setState] = useCloudState('StateName', {});`}
+        />
+        <Body>Provide the doc name and initial state to `useCloudState`</Body>
+      </Section>
       <Section title="useCloudReducer" id="useCloudReducer">
-        <Body>Coming Soon.</Body>
+        <Body>
+          Like React's "useReducer" hook, except the reducer may also run on the
+          back-end.
+        </Body>
+        <Snippet
+          code={`const [tasks, dispatch] = useCloudReducer(
+  'TaskActions', // Name of the action chain doc
+  'TaskReducer', // Name of the reducer (which should match on the server)
+  TaskReducer, // regular reducer
+  [] // initial state
+);`}
+        />
+        <Body>
+          To configure the server, you currently need to set up an eval source
+          with the same reducer:
+        </Body>
+        <Snippet
+          code={`
+          const source = createEvalSource({
+            source: storageSource,
+            domain: 'todo.aven.io',
+            evalDocs: {
+              TaskReducer: createReducerLambda('TaskReducer', TaskReducer, []),
+            },
+          });`}
+        />
       </Section>
     </Page>
   );

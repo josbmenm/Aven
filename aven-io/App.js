@@ -392,6 +392,7 @@ const DocsRouter = SwitchRouter({
   Tutorial3: require('./docs/3-Authentication').default,
   ToolsEnvs: require('./docs/ToolsEnvironments').default,
   'API-createCloudClient': require('./docs/API-createCloudClient').default,
+  'API-createEvalSource': require('./docs/API-createEvalSource').default,
   'API-CloudBlock': require('./docs/API-CloudBlock').default,
   'API-CloudDoc': require('./docs/API-CloudDoc').default,
   'API-CloudValue': require('./docs/API-CloudValue').default,
@@ -568,6 +569,10 @@ function DocsSidebar() {
         <SidebarLink
           title="API: createNativeNetworkSource"
           routeName="API-createNativeNetworkSource"
+        />
+        <SidebarLink
+          title="API: createEvalSource"
+          routeName="API-createEvalSource"
         />
         <SidebarLink title="Spec: Source" routeName="Spec-Source" />
       </SidebarSection>

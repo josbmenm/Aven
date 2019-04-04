@@ -5,7 +5,10 @@ function DocPage() {
   return (
     <Page>
       <Title>Tutorial 3 - Authentication</Title>
-      <Body>Hello, world!</Body>
+      <Body>
+        Coming soon. TLDR: use createProtectedSource, set up auth providers, and
+        use authentication APIs on the client.
+      </Body>
     </Page>
   );
 }
