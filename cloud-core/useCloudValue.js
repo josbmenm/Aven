@@ -32,22 +32,19 @@ export default function useCloudValue(cloudValueDefinition) {
     setError(error);
   }
 
-  useEffect(
-    () => {
-      if (!cloudValue) {
-        return () => {};
-      }
-      if (error) {
-        setError(null);
-      }
-      const subscription = cloudValue.observeValue.subscribe(
-        applyValue,
-        applyError
-      );
-      return () => subscription.unsubscribe();
-    },
-    [cloudValue]
-  );
+  useEffect(() => {
+    if (!cloudValue) {
+      return () => {};
+    }
+    if (error) {
+      setError(null);
+    }
+    const subscription = cloudValue.observeValue.subscribe(
+      applyValue,
+      applyError
+    );
+    return () => subscription.unsubscribe();
+  }, [cloudValue]);
 
   return value;
 }

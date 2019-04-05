@@ -11,22 +11,19 @@ export default function NetworkCloudProvider({
   session,
   onSession,
 }) {
-  const cloud = useMemo(
-    () => {
-      const source = createNativeNetworkSource({
-        authority,
-        useSSL,
-      });
-      const cloud = createCloudClient({
-        source,
-        domain,
-        initialSession: session,
-        onSession,
-      });
-      return cloud;
-    },
-    [authority, useSSL, domain, onSession]
-  );
+  const cloud = useMemo(() => {
+    const source = createNativeNetworkSource({
+      authority,
+      useSSL,
+    });
+    const cloud = createCloudClient({
+      source,
+      domain,
+      initialSession: session,
+      onSession,
+    });
+    return cloud;
+  }, [authority, useSSL, domain, onSession]);
   return (
     <CloudContext.Provider value={cloud}>{children}</CloudContext.Provider>
   );
