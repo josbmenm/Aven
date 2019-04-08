@@ -319,28 +319,28 @@ export default function testDataSource(startTestDataSource) {
     });
     expect(docs.docs).toEqual(['foo']);
 
-    // await ds.dispatch({
-    //   type: 'PutDoc',
-    //   domain: 'test',
-    //   name: 'bar',
-    //   id: blk.id,
-    // });
-    // docs = await ds.dispatch({
-    //   type: 'ListDocs',
-    //   domain: 'test',
-    // });
-    // expect(docs.docs).toEqual(['bar', 'foo']);
+    await ds.dispatch({
+      type: 'PutDoc',
+      domain: 'test',
+      name: 'bar',
+      id: blk.id,
+    });
+    docs = await ds.dispatch({
+      type: 'ListDocs',
+      domain: 'test',
+    });
+    expect(docs.docs).toEqual(['bar', 'foo']);
 
-    // await ds.dispatch({
-    //   type: 'DestroyDoc',
-    //   domain: 'test',
-    //   name: 'foo',
-    // });
-    // docs = await ds.dispatch({
-    //   type: 'ListDocs',
-    //   domain: 'test',
-    // });
-    // expect(docs.docs).toEqual(['bar']);
+    await ds.dispatch({
+      type: 'DestroyDoc',
+      domain: 'test',
+      name: 'foo',
+    });
+    docs = await ds.dispatch({
+      type: 'ListDocs',
+      domain: 'test',
+    });
+    expect(docs.docs).toEqual(['bar']);
     await ds.close();
   });
 
@@ -952,39 +952,38 @@ export default function testDataSource(startTestDataSource) {
     });
 
     test('observe cleanup works', async () => {
-      const ds = await startTestDataSource({ domain: 'test' });
+      const ds = await startTestDataSource({ domain: 'test-d' });
       const blk1 = await ds.dispatch({
         type: 'PutDocValue',
-        domain: 'test',
+        domain: 'test-d',
         name: 'foo',
         value: { foo: 'bar' },
       });
       const blk2 = await ds.dispatch({
         type: 'PutDocValue',
-        domain: 'test',
+        domain: 'test-d',
         name: 'foo',
         value: { foo: 'baz' },
       });
-      await ds.dispatch({
-        type: 'PutDoc',
-        domain: 'test',
-        name: 'foo',
-        id: blk1.id,
-      });
-      const obs = await ds.observeDoc('test', 'foo');
+      const obs = await ds.observeDoc('test-d', 'foo');
       let lastObserved = undefined;
       const subs = obs.subscribe({
         next: newVal => {
           lastObserved = newVal;
         },
       });
-      await justASec(ds);
+      await ds.dispatch({
+        type: 'PutDoc',
+        domain: 'test-d',
+        name: 'foo',
+        id: blk1.id,
+      });
       await justASec(ds);
       expect(lastObserved.id).toEqual(blk1.id);
       subs.unsubscribe();
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-d',
         name: 'foo',
         id: blk2.id,
       });
@@ -994,35 +993,30 @@ export default function testDataSource(startTestDataSource) {
     });
 
     test('observe same doc multiple times', async () => {
-      const ds = await startTestDataSource({ domain: 'test' });
+      const ds = await startTestDataSource({ domain: 'test-obs' });
       const blk1 = await ds.dispatch({
         type: 'PutDocValue',
-        domain: 'test',
+        domain: 'test-obs',
         name: 'foo',
         value: { foo: 'bar' },
       });
       const blk2 = await ds.dispatch({
         type: 'PutDocValue',
-        domain: 'test',
+        domain: 'test-obs',
         name: 'foo',
         value: { foo: 'baz' },
       });
       const blk3 = await ds.dispatch({
         type: 'PutDocValue',
-        domain: 'test',
+        domain: 'test-obs',
         name: 'foo',
         value: { foo: 42 },
       });
-      await ds.dispatch({
-        type: 'PutDoc',
-        domain: 'test',
-        name: 'foo',
-        id: blk1.id,
-      });
-      const obs1 = await ds.observeDoc('test', 'foo');
-      const obs2 = await ds.observeDoc('test', 'foo');
+      const obs1 = await ds.observeDoc('test-obs', 'foo');
+      const obs2 = await ds.observeDoc('test-obs', 'foo');
       let lastObserved1 = undefined;
       let lastObserved2 = undefined;
+
       const subs1 = obs1.subscribe({
         next: newVal => {
           lastObserved1 = newVal;
@@ -1033,13 +1027,20 @@ export default function testDataSource(startTestDataSource) {
           lastObserved2 = newVal;
         },
       });
+
+      await ds.dispatch({
+        type: 'PutDoc',
+        domain: 'test-obs',
+        name: 'foo',
+        id: blk1.id,
+      });
       await justASec(ds);
       expect(lastObserved1.id).toEqual(blk1.id);
       expect(lastObserved2.id).toEqual(blk1.id);
 
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-obs',
         name: 'foo',
         id: blk2.id,
       });
@@ -1050,7 +1051,7 @@ export default function testDataSource(startTestDataSource) {
       subs1.unsubscribe();
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-obs',
         name: 'foo',
         id: blk3.id,
       });
@@ -1064,14 +1065,14 @@ export default function testDataSource(startTestDataSource) {
 
   describe('observing doc children', () => {
     test('children events subscription', async () => {
-      const ds = await startTestDataSource({ domain: 'test' });
+      const ds = await startTestDataSource({ domain: 'test-a' });
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-a',
         name: 'foo',
         id: null,
       });
-      const obs = await ds.observeDocChildren('test', 'foo');
+      const obs = await ds.observeDocChildren('test-a', 'foo');
       let lastObserved = undefined;
       obs.subscribe({
         next: newVal => {
@@ -1081,7 +1082,7 @@ export default function testDataSource(startTestDataSource) {
       await justASec(ds);
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-a',
         name: 'foo/bar',
         id: null,
       });
@@ -1090,7 +1091,7 @@ export default function testDataSource(startTestDataSource) {
       expect(lastObserved.name).toEqual('bar');
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-a',
         name: 'foo/baz',
         id: null,
       });
@@ -1099,7 +1100,7 @@ export default function testDataSource(startTestDataSource) {
       expect(lastObserved.name).toEqual('baz');
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-a',
         name: 'foo/baz/boo',
         id: null,
       });
@@ -1108,7 +1109,7 @@ export default function testDataSource(startTestDataSource) {
       expect(lastObserved.name).toEqual('baz');
       await ds.dispatch({
         type: 'DestroyDoc',
-        domain: 'test',
+        domain: 'test-a',
         name: 'foo/baz',
         id: null,
       });
@@ -1117,7 +1118,7 @@ export default function testDataSource(startTestDataSource) {
       expect(lastObserved.name).toEqual('baz');
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-a',
         name: 'foo/baz',
         id: null,
       });
@@ -1128,8 +1129,8 @@ export default function testDataSource(startTestDataSource) {
     });
 
     test('observe root doc list works', async () => {
-      const ds = await startTestDataSource({ domain: 'test' });
-      const obs = await ds.observeDocChildren('test', null);
+      const ds = await startTestDataSource({ domain: 'test-b' });
+      const obs = await ds.observeDocChildren('test-b', null);
       let lastObserved = undefined;
       obs.subscribe({
         next: newVal => {
@@ -1139,7 +1140,7 @@ export default function testDataSource(startTestDataSource) {
       await justASec(ds);
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-b',
         name: 'foo',
         id: null,
       });
@@ -1147,7 +1148,7 @@ export default function testDataSource(startTestDataSource) {
       expect(lastObserved).toMatchObject({ name: 'foo', type: 'AddChildDoc' });
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-b',
         name: 'foo/bar',
         id: null,
       });
@@ -1155,7 +1156,7 @@ export default function testDataSource(startTestDataSource) {
       expect(lastObserved).toMatchObject({ name: 'foo', type: 'AddChildDoc' });
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-b',
         name: 'baz',
         id: null,
       });
@@ -1165,14 +1166,14 @@ export default function testDataSource(startTestDataSource) {
     });
 
     test('observe named doc list works', async () => {
-      const ds = await startTestDataSource({ domain: 'test' });
+      const ds = await startTestDataSource({ domain: 'test-c' });
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-c',
         name: 'foo',
         id: null,
       });
-      const obs = await ds.observeDocChildren('test', 'foo');
+      const obs = await ds.observeDocChildren('test-c', 'foo');
       let lastObserved = undefined;
       obs.subscribe({
         next: newVal => {
@@ -1183,7 +1184,7 @@ export default function testDataSource(startTestDataSource) {
       expect(lastObserved).toEqual(undefined);
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-c',
         name: 'foo/bar',
         id: null,
       });
@@ -1191,7 +1192,7 @@ export default function testDataSource(startTestDataSource) {
       expect(lastObserved).toMatchObject({ name: 'bar', type: 'AddChildDoc' });
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-c',
         name: 'foo/baz',
         id: null,
       });
@@ -1199,7 +1200,7 @@ export default function testDataSource(startTestDataSource) {
       expect(lastObserved).toMatchObject({ name: 'baz', type: 'AddChildDoc' });
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-c',
         name: 'foo/baz/boo',
         id: null,
       });
@@ -1207,7 +1208,7 @@ export default function testDataSource(startTestDataSource) {
       expect(lastObserved).toMatchObject({ name: 'baz', type: 'AddChildDoc' });
       await ds.dispatch({
         type: 'DestroyDoc',
-        domain: 'test',
+        domain: 'test-c',
         name: 'foo/baz',
         id: null,
       });
@@ -1218,7 +1219,7 @@ export default function testDataSource(startTestDataSource) {
       });
       await ds.dispatch({
         type: 'PutDoc',
-        domain: 'test',
+        domain: 'test-c',
         name: 'foo/baz',
         id: null,
       });

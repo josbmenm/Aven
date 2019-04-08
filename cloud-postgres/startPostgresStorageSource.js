@@ -607,7 +607,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
   function getCachedObervable(args, getChannelId) {
     const channelId = getChannelId(...args);
     if (observingChannels[channelId]) {
-      return observingChannels[channelId];
+      return observingChannels[channelId].observable;
     }
     const obs = {
       observable: new Observable(observer => {

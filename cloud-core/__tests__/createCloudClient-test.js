@@ -686,13 +686,13 @@ describe('client doc map', () => {
   });
 });
 
-describe('client behaves as data source', async () => {
-  async function startTestSource(options = {}) {
+describe('client behaves as source', async () => {
+  async function startTestSource(options = { domain: 'test' }) {
     const source = createMemoryStorageSource({
-      domain: 'test',
+      domain: options.domain,
       ...options,
     });
-    const client = createCloudClient({ source, domain: 'test' });
+    const client = createCloudClient({ source, domain: options.domain });
     return client;
   }
 

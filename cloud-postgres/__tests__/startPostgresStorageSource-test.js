@@ -22,7 +22,7 @@ beforeAll(async () => {
 async function startTestDataSource(options) {
   const pgDataSource = await startPostgresStorageSource({
     config: DB_CONFIG,
-    domains: ['test'],
+    domains: [options.domain],
     ...options,
   });
   return {
