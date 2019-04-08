@@ -990,6 +990,7 @@ export default function createCloudDoc({
     observeName: docName,
     destroy,
     observeConnectedValue, // todo, document or remove! (why should people use this instead of expand?)
+    observeChildren: docs.observeChildren,
     transact,
 
     // cloud value APIs:
