@@ -27,7 +27,7 @@ exports.up = function(knex) {
         .references('docId')
         .inTable('docs')
         .onDelete('cascade');
-      table.unique(['name', 'domainName', 'parentId'], 'docIdentity'); // parentId can be a special id for top leel docs
+      table.unique(['name', 'domainName', 'parentId'], 'docIdentity'); // parentId can be a special id for top level docs
     })
     .createTable('doc_ownership', table => {
       table

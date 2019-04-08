@@ -23,6 +23,8 @@ export default async function startPostgresStorageSource({ config, domains }) {
 
   const pgClient = new Client(config.connection);
 
+  let handleClose = () => {};
+
   pgClient.connect(function(err, client, done) {
     if (err) {
       console.error(err);
@@ -39,6 +41,18 @@ export default async function startPostgresStorageSource({ config, domains }) {
         console.error('undeliverable pg notification!', msg);
       }
     });
+
+    // call the existing closer, if by any chance it actually does anything
+    handleClose();
+    handleClose = () => {
+      // sadly this is needed to clean up the notification subscription, knex.destroy doesn't do it for us..
+      client
+        .end()
+        .then(() => {
+          // console.log('disconnected!');
+        })
+        .catch(console.error);
+    };
   });
 
   const knex = Knex({
@@ -75,6 +89,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function getContext(domain, docName, forceExistence) {
+    let didCreate = false;
     const docNameParts = docName.split('/');
     const lastName = docNameParts[0];
     if (lastName === docName) {
@@ -93,8 +108,13 @@ export default async function startPostgresStorageSource({ config, domains }) {
           { parentId: TOP_PARENT_ID, domain, name: docName }
         );
         id = creationResult.rows[0].docId;
+        didCreate = true;
+      }
+      if (didCreate) {
+        notifyDocCreation(domain, docName);
       }
       return {
+        didCreate,
         domain,
         name: docName,
         localName: docName,
@@ -130,7 +150,11 @@ export default async function startPostgresStorageSource({ config, domains }) {
         `INSERT INTO docs ("name", "domainName", "parentId", "currentBlock") VALUES (:name, :domain, :parentId, NULL) RETURNING "docId";`,
         { parentId: parentContext.id, domain, name: localName }
       );
+      didCreate = true;
       id = creationResult.rows[0].docId;
+    }
+    if (didCreate) {
+      notifyDocCreation(domain, docName);
     }
     return {
       domain,
@@ -139,6 +163,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       id,
       parent: parentContext,
       parentId: (parentContext && parentContext.id) || null,
+      didCreate,
     };
   }
 
@@ -212,6 +237,38 @@ export default async function startPostgresStorageSource({ config, domains }) {
     return parentId == null ? TOP_PARENT_ID : parentId;
   }
 
+  async function notifyDocCreation(domain, docName) {
+    const parentSlashIndex = docName.lastIndexOf('/');
+    const parent =
+      parentSlashIndex === -1 ? null : docName.slice(0, parentSlashIndex);
+    const localName =
+      parentSlashIndex === -1 ? docName : docName.slice(parentSlashIndex + 1);
+    const channelId = getChildrenChannel(domain, parent);
+    const payload = JSON.stringify({
+      type: 'AddChildDoc',
+      name: localName,
+      domain,
+    });
+    // todo: avoid injection attack probably, with bad channel id?
+    await knex.raw(`NOTIFY "${channelId}", ${pgFormat.literal(payload)}`);
+  }
+
+  async function notifyDocDestroy(domain, docName) {
+    const parentSlashIndex = docName.lastIndexOf('/');
+    const parent =
+      parentSlashIndex === -1 ? null : docName.slice(0, parentSlashIndex);
+    const localName =
+      parentSlashIndex === -1 ? docName : docName.slice(parentSlashIndex + 1);
+    const channelId = getChildrenChannel(domain, parent);
+    const payload = JSON.stringify({
+      type: 'DestroyChildDoc',
+      name: localName,
+      domain,
+    });
+    // todo: avoid injection attack probably, with bad channel id?
+    await knex.raw(`NOTIFY "${channelId}", ${pgFormat.literal(payload)}`);
+  }
+
   async function notifyDocWrite(domain, docName, currentBlockId) {
     const channelId = getDocChannel(domain, docName);
     const payload = JSON.stringify({ id: currentBlockId });
@@ -221,7 +278,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
 
   async function writeDoc(domain, parentId, name, currentBlock) {
     const internalParentId = getInternalParentId(parentId);
-    await knex.raw(
+    const writeResult = await knex.raw(
       `INSERT INTO docs ("name", "domainName", "currentBlock", "parentId") VALUES (:name, :domain, :currentBlock, :parentId)
           ON CONFLICT ON CONSTRAINT "docIdentity" DO UPDATE SET "currentBlock" = :currentBlock
           RETURNING "docId";`,
@@ -317,26 +374,6 @@ export default async function startPostgresStorageSource({ config, domains }) {
       value = block.value;
     }
     return { domain, name, id: doc.id, value };
-    // return await knex
-    //   .select('*')
-    //   .from('docs')
-    //   .where('name', '=', name)
-    //   .andWhere('domainName', '=', domain)
-    //   .first()
-    //   .then(async function(doc) {
-    //     const id = doc.currentBlock;
-    //     // todo, join in postgres..
-    //     const block = await GetBlock({ domain, name, id });
-    //     if (!doc) {
-    //       return {};
-    //     }
-    //     const renderedDoc = { ...doc, ...block };
-    //     _announceDoc(domain, name, renderedDoc);
-    //     return renderedDoc;
-    //   })
-    //   .catch(function(error) {
-    //     console.error(error);
-    //   });
   }
 
   async function GetDocValues({ domain, names }) {
@@ -363,31 +400,6 @@ export default async function startPostgresStorageSource({ config, domains }) {
       name,
       domain,
     };
-
-    // let getNames = await getChildName(name);
-    // let childName = getNames.pop();
-    // return await knex
-    //   .select('*')
-    //   .from('docs')
-    //   .where('name', '=', childName)
-    //   .andWhere('domainName', '=', domain)
-    //   .first()
-    //   .then(async function(doc) {
-    //     if (!doc) {
-    //       return {};
-    //     }
-    //     const renderedDoc = {
-    //       domain,
-    //       name: childName,
-    //       id: doc.currentBlock,
-    //     };
-    //     //_announceDoc(domain, name, renderedDoc);
-    //     _announceDoc(domain, childName, renderedDoc);
-    //     return renderedDoc;
-    //   })
-    //   .catch(function(error) {
-    //     console.error(error);
-    //   });
   }
 
   async function GetDocs({ names, domain }) {
@@ -429,78 +441,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     } else {
       throw new Error('Must post with id or value, even if id is null');
     }
-
-    // try {
-    //   const randomName = uuid();
-    //   let childBlockId, parentName;
-    //   let parentValues = await getParent(name);
-    //   parentName = parentValues.parentName;
-    //   //Get Parent Doc
-    //   let parentDoc = await GetDocValue({ domain, name: parentName });
-    //   if (!parentDoc) {
-    //     parentDoc = await PutDocValue({ domain, value, name: parentName });
-    //     let id = parentDoc.id;
-    //     parentDoc = await PutDoc({ domain, name: parentName, id });
-    //   }
-
-    //   //checks for Block
-    //   if (!value && blockId) {
-    //     let block = await GetBlock({ domain, name, blockId });
-    //     if (block) {
-    //       childBlockId = block.id;
-    //     } else {
-    //       throw Error('Block Id does not match');
-    //     }
-    //   } else if (value && !blockId) {
-    //     let block = await PutBlock({ value });
-    //     childBlockId = block.id;
-    //   } else if (value && blockId) {
-    //     if (blockId == getIdOfValue(value)) {
-    //       childBlockId = blockId;
-    //     } else {
-    //       throw Error('Block Id does not match');
-    //     }
-    //   }
-    //   //Insert Child Doc with new name
-    //   return await knex
-    //     .insert({
-    //       domainName: domain,
-    //       name: randomName,
-    //       currentBlock: childBlockId,
-    //       parentId: parentDoc.docId,
-    //     })
-    //     .into('docs')
-    //     .returning('*')
-    //     .then(function(res) {
-    //       res = res.shift();
-    //       let resName = [...parentValues.nameArray, res.name].join('/');
-    //       return { id: parentDoc.currentBlock, name: resName, domain };
-    //     })
-    //     .catch(function(error) {
-    //       console.error('Post Doc Error: ', error);
-    //     });
-    // } catch (err) {
-    //   console.log(err);
-    // }
   }
-
-  // async function PutBlock({ id }) {
-  //   const blockData = stringify(value);
-  //   const id = getIdOfValue(value);
-  //   return await knex
-  //     .raw(
-  //       `
-  //     SELECT COUNT FROM blocks WHERE id = :id
-  //   `,
-  //       { id },
-  //     )
-  //     .then(function(res) {
-  //       return res.shift();
-  //     })
-  //     .catch(function(error) {
-  //       console.error(error);
-  //     });
-  // }
 
   async function GetBlock({ domain, name, id }) {
     return await knex
@@ -591,10 +532,17 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function DestroyDoc({ domain, name }) {
-    return await knex('docs')
-      .where('name', '=', name)
-      .where('domainName', '=', domain)
-      .del();
+    const ctx = await getContext(domain, name, false);
+    if (!ctx.id) {
+      return; // it is already deleted, or missing? consider throwing an error
+    }
+    await knex.raw(
+      `
+    DELETE FROM docs WHERE "docId" = :docId
+  `,
+      { docId: ctx.id }
+    );
+    notifyDocDestroy(domain, name);
   }
 
   async function CollectGarbage() {}
@@ -602,6 +550,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
   async function close() {
     isConnected.next(false);
     await knex.destroy();
+    handleClose();
   }
 
   function getCachedObervable(args, getChannelId) {
@@ -615,7 +564,9 @@ export default async function startPostgresStorageSource({ config, domains }) {
         pgClient &&
           pgClient
             .query(`LISTEN "${channelId}"`)
-            .then(resp => {})
+            .then(resp => {
+              // console.log('did listen to channel', channelId);
+            })
             .catch(console.error);
         return () => {
           pgClient

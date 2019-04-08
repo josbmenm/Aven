@@ -76,11 +76,11 @@ workflows:
       - test-js:
           requires:
             - install-dependencies
-      # - test-sql:
-      #     requires:
-      #       - install-dependencies
+      - test-sql:
+          requires:
+            - install-dependencies
       - deploy:
           requires:
             - lint
             - test-js
-            # - test-sql
+            - test-sql

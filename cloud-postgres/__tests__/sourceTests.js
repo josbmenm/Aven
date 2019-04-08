@@ -765,6 +765,7 @@ export default function testDataSource(startTestDataSource) {
         type: 'GetStatus',
       });
       expect(typeof status.ready).toEqual('boolean');
+      await justASec(ds); // necessary for cleanup to work for some reason. Postgres tests will time out if not for this..
       await ds.close();
     });
   });
