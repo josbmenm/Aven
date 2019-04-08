@@ -3,9 +3,9 @@ import useObservable from './useObservable';
 
 export default function useCloudContext() {
   const cloud = useCloud();
+  const session = useObservable(cloud && cloud.observeSession);
   if (!cloud) {
     return null;
   }
-  const session = useObservable(cloud.observeSession);
   return session;
 }
