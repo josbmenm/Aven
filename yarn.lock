@@ -2837,11 +2837,6 @@ doctrine@^2.1.0:
   dependencies:
     esutils "^2.0.2"
 
-dom-walk@^0.1.0:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/dom-walk/-/dom-walk-0.1.1.tgz#672226dc74c8f799ad35307df936aba11acd6018"
-  integrity sha1-ZyIm3HTI95mtNTB9+TaroRrNYBg=
-
 domexception@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/domexception/-/domexception-1.0.1.tgz#937442644ca6a31261ef36e3ec677fe805582c90"
@@ -7718,24 +7713,15 @@ react-native-gesture-handler@^1.0.0:
     invariant "^2.2.2"
     prop-types "^15.5.10"
 
-react-native-gesture-handler@^1.0.15:
-  version "1.0.15"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.15.tgz#7e0d0a457820a3c9325a3d492daaed14400508a6"
-  integrity sha512-BePn+YOKcspHb1xPkUdJs+H6jiaECrT2c98txADBYWHwuUeundE+uUJG0r3FQLFvM2MoGeiJeD96sePzk+WSvQ==
-  dependencies:
-    hoist-non-react-statics "^2.3.1"
-    invariant "^2.2.2"
-    prop-types "^15.5.10"
+react-native-reanimated@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-1.0.0.tgz#d4e356e852ec55611de565d8791542eeb25a45ae"
+  integrity sha512-jfg+lYZ2QeeV+JMibjXwHoLDZIRVwZT2qdvDDmbAsMmxRNGI95evMPXKWa3BqkzWLb2SlZ2T/MBSGrqt/CiCAQ==
 
 react-native-reanimated@^1.0.0-alpha.10:
   version "1.0.0-alpha.11"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-1.0.0-alpha.11.tgz#b78c839bae878d149561b56a3c750414957ea86d"
   integrity sha512-lDakjY8CXmZiSN71hyc276b3d7M9mKV9ZyYw4W/rTnnJbgBFaqdIxSHq4S4LxSbVqpAoQMfUJqPTE0BKbAz7Aw==
-
-react-native-reanimated@^1.0.0-alpha.12:
-  version "1.0.0-alpha.12"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-1.0.0-alpha.12.tgz#535c84a9e87c919417aee0fa68f360b3bb9556b0"
-  integrity sha512-jZDPxz8IjpoZ7VAW5X6WJhemmpuLkX6Y9lxKuHJAXls1EwRYkyXIPwvSG34umeqqYSE8Hl3A5TS4pfLORoqm/A==
 
 react-native-safe-area-view@^0.11.0:
   version "0.11.0"

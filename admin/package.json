@@ -4,6 +4,7 @@
   "aven": {
     "srcDependencies": [
       "utils",
+      "views",
       "cloud-react",
       "cloud-core",
       "cloud-browser",

@@ -827,7 +827,7 @@ function Folder({ value, path, doc, pathContext }) {
       }
       return doc.getBlock(file.id);
     },
-    [file],
+    [file]
   );
   const objValue = useObservable(obj && obj.observeValue);
 
@@ -1331,7 +1331,7 @@ function TargetedPopoverScreen({
             width: width,
             top: location.y + location.height,
             right: Math.ceil(
-              containerLayout.width - location.width - location.x,
+              containerLayout.width - location.width - location.x
             ),
             // left: 100,
             backgroundColor: 'white',
@@ -1411,7 +1411,7 @@ const DocPaneNavigator = createNavigator(
   }),
   {
     explicitParams: true,
-  },
+  }
 );
 
 function DocPane({ navigation }) {
@@ -1444,7 +1444,7 @@ const MainPaneNavigator = createNavigator(
   }),
   {
     explicitParams: true,
-  },
+  }
 );
 
 function MainPane({ onClientConfig, onSession, navigation }) {
@@ -1509,7 +1509,7 @@ function AuthHeaderLink({ loggedInId }) {
     {
       duration: 200,
       easing: Easing.out(Easing.quad),
-    },
+    }
   );
   return (
     <HeaderLink onPress={onPopover} viewRef={targetRef}>
@@ -1532,12 +1532,12 @@ function AuthHeaderLink({ loggedInId }) {
 function AdminApp({ defaultSession = {}, descriptors }) {
   let [sessionState, setSessionState] = useAsyncStorage(
     'AvenSessionState',
-    null,
+    null
   );
 
   let [clientConfig, setClientConfig] = useAsyncStorage(
     'AvenClientConfig',
-    null,
+    null
   );
 
   let client = useMemo(
@@ -1562,7 +1562,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
       return client;
     },
-    [clientConfig, isStateUnloaded(sessionState)],
+    [clientConfig, isStateUnloaded(sessionState)]
   );
 
   const activeRoute = useActiveRoute();
@@ -1586,7 +1586,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
         navigate('Login');
       }
     },
-    [activeRoute, sessionState, clientConfig, client],
+    [activeRoute, sessionState, clientConfig, client]
   );
 
   const activeDescriptor = descriptors[activeRoute.key];
@@ -1685,7 +1685,7 @@ const router = SwitchRouter(
   },
   {
     explicitParams: true,
-  },
+  }
 );
 
 export default createNavigator(AdminApp, router, {});

@@ -28,7 +28,6 @@ export default function useObservable(observable) {
   }
 
   function applyError(error) {
-    console.log('yeah went there');
     setError(error);
   }
 

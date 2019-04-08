@@ -20,33 +20,11 @@ const getEnv = c => process.env[c];
 const runServer = async () => {
   console.log('☁️ Starting Cloud 💨');
 
-  // #0
-
   const storageSource = await startFSStorageSource({
     domain: 'todo.aven.io',
     dataDir: './db',
   });
-  // const storageSource = await startPostgresStorageSource({
-  //   config: 'postgresql://postgres:aven-test-password@localhost:5432/postgres',
-  //   domains: ['todo.aven.io'],
-  // })
 
-  // #1
-  // // To serve on port 8888:
-
-  // await startSourceServer({
-  //   source: storageSource,
-  //   listenLocation: 8888
-  // });
-
-  // // To get source proxy from the client:
-
-  // const source = createBrowserNetworkSource({
-  //   authority: 'my.server.dev',
-  //   useSSL: true,
-  // });
-
-  // #5
   const source = createEvalSource({
     source: storageSource,
     domain: 'todo.aven.io',
@@ -55,7 +33,6 @@ const runServer = async () => {
     },
   });
 
-  // #3
   const emailAgent =
     process.env.SENDGRID_API_KEY &&
     EmailAgent({
@@ -131,13 +108,11 @@ const runServer = async () => {
     name: 'TaskActions^TaskReducer',
   });
 
-  // #2
   const client = createCloudClient({
     source: protectedSource,
     domain: 'todo.aven.io',
   });
 
-  // #4
   const context = new Map();
 
   context.set(CloudContext, client);

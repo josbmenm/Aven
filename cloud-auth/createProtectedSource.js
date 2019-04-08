@@ -602,7 +602,7 @@ export default function createProtectedSource({ source, providers }) {
           `Insufficient permissions for "${actionType}" on ${
             action.name
           }. Requires "${permissionLevel}"`,
-          'InsufficientPermissions'
+          'NoPermission'
         );
       }
       const result = await dispatch(action);

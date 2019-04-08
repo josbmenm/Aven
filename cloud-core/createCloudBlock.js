@@ -65,7 +65,7 @@ export default function createCloudBlock({
   function serialize() {
     const value = getState().value;
     if (value == null) {
-      throw new Error('Cannot serialize a block without a value');
+      return null;
     }
     return { value, id: blockId };
   }

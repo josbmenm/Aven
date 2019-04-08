@@ -1,6 +1,11 @@
-import React, { useContext, useState } from 'react';
-import { View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
-import Animated, { Easing } from 'react-native-reanimated';
+import React, { useContext, useState, useRef } from 'react';
+import {
+  View,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  Animated,
+  Easing,
+} from 'react-native';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import NavigationContext from '../navigation-core/views/NavigationContext';
 
@@ -45,38 +50,38 @@ export function usePopover(renderPopover, timing) {
 }
 
 const defaultTiming = {
-  duration: 1000,
+  duration: 3000,
   easing: Easing.linear,
 };
 
 export function PopoverContainer({ children }) {
-  let [configuredTiming, setConfiguredTiming] = useState(null);
-  let [popoverOpenValue] = useState(new Animated.Value(0));
+  let timingConfig = useRef(defaultTiming);
+  let [openValue] = useState(new Animated.Value(0));
   let [popover, setPopover] = useState(null);
   let [containerLayout, setContainerLayout] = useState(null);
   function closePopover() {
-    Animated.timing(popoverOpenValue, {
-      toValue: new Animated.Value(0),
-      ...(configuredTiming || defaultTiming),
+    Animated.timing(openValue, {
+      toValue: 0,
+      ...(timingConfig.current || defaultTiming),
     }).start(() => {
       setPopover(null);
     });
   }
   function openPopover(renderPopover, location, timing, navigation) {
-    setConfiguredTiming(timing);
+    timingConfig.current = timing;
     setPopover(
       <NavigationContext.Provider value={navigation}>
         {renderPopover({
           onClose: closePopover,
           location,
           containerLayout,
-          popoverOpenValue,
+          openValue,
         })}
       </NavigationContext.Provider>
     );
-    Animated.timing(popoverOpenValue, {
-      toValue: new Animated.Value(1),
-      ...(timing || defaultTiming),
+    Animated.timing(openValue, {
+      toValue: 1,
+      ...(timingConfig.current || defaultTiming),
     }).start(() => {});
   }
 
@@ -96,7 +101,7 @@ export function PopoverContainer({ children }) {
             <Animated.View
               style={{
                 backgroundColor: '#fff4',
-                opacity: popoverOpenValue,
+                opacity: openValue,
                 ...StyleSheet.absoluteFillObject,
               }}
             />

@@ -154,7 +154,6 @@ export default function createNetworkSource(opts) {
           if (!observer) {
             return;
           }
-          console.log('dude!', typeof observer.error, error);
           observer.error(new Err(error.message, error.type, error.detail));
           return;
         }
