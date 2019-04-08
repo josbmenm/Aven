@@ -15,7 +15,7 @@ import SMSAgent from '../sms-agent-twilio/SMSAgent';
 import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
-import CloudAuth from '../cloud-auth/CloudAuth';
+import createProtectedSource from '../cloud-auth/createProtectedSource';
 
 import startKitchen, { computeKitchenConfig } from './startKitchen';
 import { getConnectionToken, capturePayment } from './Stripe';
@@ -96,7 +96,7 @@ const runServer = async () => {
   const rootAuthProvider = RootAuthProvider({
     rootPasswordHash: await hashSecureString(ROOT_PASSWORD),
   });
-  const protectedSource = CloudAuth({
+  const protectedSource = createProtectedSource({
     source: storageSource,
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
@@ -404,6 +404,7 @@ const runServer = async () => {
       dispatch,
     },
     serverListenLocation,
+    assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
   });
   console.log('☁️️ Web Ready 🕸');
 

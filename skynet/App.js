@@ -9,7 +9,7 @@ import {
   Image,
 } from 'react-native';
 import { createSwitchNavigator } from '../navigation-core';
-import Admin from '../aven-admin/Admin';
+import Admin from '../admin/Admin';
 
 const colors = {
   bg: '#FFF3EB',

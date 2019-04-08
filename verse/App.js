@@ -7,7 +7,7 @@ import useCloudReducer from '../cloud-core/useCloudReducer';
 import useCloudValue from '../cloud-core/useCloudValue';
 import uuid from 'uuid/v1';
 
-import Admin from '../aven-admin/Admin';
+import Admin from '../admin/Admin';
 
 import { createSwitchNavigator } from '../navigation-core';
 import {

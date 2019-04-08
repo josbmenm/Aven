@@ -14,7 +14,7 @@ export default function AdminSessionContainer({ children }) {
       });
       AlertIOS.prompt('Login', 'Root password', password => {
         newCloud
-          .CreateSession({
+          .createSession({
             accountId: 'root',
             verificationResponse: { password },
             verificationInfo: { type: 'root' },

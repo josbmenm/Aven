@@ -26,7 +26,7 @@
     },
     "srcDependencies": [
       "aven-web",
-      "aven-admin",
+      "admin",
       "cloud-core",
       "cloud-server",
       "cloud-browser",

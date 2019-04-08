@@ -31,7 +31,7 @@
       "cloud-utils",
       "email-agent-sendgrid",
       "sms-agent-twilio",
-      "aven-admin",
+      "admin",
       "cloud-core",
       "cloud-server",
       "cloud-postgres"
