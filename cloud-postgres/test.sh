@@ -19,7 +19,7 @@ run_jest() {
   if [[ -n "$NODE_ARGS" ]]; then
     NODE_EXECUTABLE="$NODE_EXECUTABLE $NODE_ARGS"
   fi
-  $NODE_EXECUTABLE ../node_modules/.bin/jest "$@" --detectOpenHandles --runInBand --testPathIgnorePatterns=/dist
+  $NODE_EXECUTABLE ../node_modules/.bin/jest "$@" --runInBand --testPathIgnorePatterns=/dist
 }
 
 echo  "Initializing Docker containers.."
