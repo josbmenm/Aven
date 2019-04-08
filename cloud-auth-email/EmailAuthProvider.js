@@ -8,7 +8,7 @@ function defaultGetMessage(verifyCode) {
 }
 
 export default function EmailAuthProvider({ agent, getMessage }) {
-  const AuthProviderName = 'email';
+  const authProviderName = 'email';
   function identifyInfo(verificationInfo) {
     if (!verificationInfo || !verificationInfo.email) {
       return null;
@@ -28,7 +28,7 @@ export default function EmailAuthProvider({ agent, getMessage }) {
   }
 
   return createMessageAuthProvider({
-    AuthProviderName,
+    authProviderName,
     sendVerification,
     identifyInfo,
   });
