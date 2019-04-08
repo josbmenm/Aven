@@ -146,13 +146,19 @@ const GoogleAnalyticsTag = `
 </script>
 `;
 
+let authority = '';
+let useSSL = true;
+if (global.window) {
+  authority = global.window.location.host;
+  useSSL = global.window.location.protocol.indexOf('s') !== -1;
+}
 function SkynetAdmin(props) {
   return (
     <Admin
       defaultSession={{
-        authority: 'localhost:8840',
+        authority,
+        useSSL,
         domain: 'onofood.co',
-        useSSL: false,
       }}
       {...props}
     />
