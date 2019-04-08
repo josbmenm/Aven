@@ -338,8 +338,8 @@ function Home() {
         />
         <InfoBlurb
           icon="📈"
-          title="Documentation"
-          subtitle="Under constant improvement"
+          title="Docs (and Blocks!)"
+          subtitle="Documentation is a work in progress.."
           link={{ routeName: 'Docs' }}
         />
         <InfoBlurb
@@ -430,7 +430,7 @@ const DocsRouter = SwitchRouter({
   'Spec-Source': require('./docs/Spec-Source').default,
 });
 
-function SidebarSection({ title, children }) {
+function SidebarSection({ title, children, index = 0 }) {
   const marginHeight = 50;
   const marginOffset = 150;
   return (
@@ -452,7 +452,7 @@ function SidebarSection({ title, children }) {
           resizeMode="cover"
           style={{
             height: marginOffset,
-            top: marginHeight - marginOffset,
+            top: marginHeight - marginOffset + index * 20,
             alignSelf: 'stretch',
           }}
           source={require('./assets/cloudGlamour.png')}
@@ -531,7 +531,7 @@ function BlogSidebar() {
 function DocsSidebar() {
   return (
     <SidebarContainer>
-      <SidebarSection title="Getting Started">
+      <SidebarSection title="Getting Started" index={0}>
         <SidebarLink title="Quick Start" routeName="QuickStart" />
         <SidebarLink
           title="1. Creating Sources and Clients"
@@ -540,7 +540,7 @@ function DocsSidebar() {
         <SidebarLink title="2. Connect React" routeName="Tutorial2" />
         <SidebarLink title="3. Authentication" routeName="Tutorial3" />
       </SidebarSection>
-      <SidebarSection title="Data & Network Sources">
+      <SidebarSection title="Data & Network Sources" index={1}>
         <SidebarLink title="Intro to Sources" routeName="Sources" />
         <SidebarLink
           title="API: createMemoryStorageSource"
@@ -576,7 +576,7 @@ function DocsSidebar() {
         />
         <SidebarLink title="Spec: Source" routeName="Spec-Source" />
       </SidebarSection>
-      <SidebarSection title="Cloud Client">
+      <SidebarSection title="Cloud Client" index={2}>
         <SidebarLink
           title="Intro to Cloud Client"
           routeName="CloudClientIntro"
@@ -594,7 +594,7 @@ function DocsSidebar() {
         <SidebarLink title="API: Client Doc" routeName="API-CloudDoc" />
         <SidebarLink title="API: Client Block" routeName="API-CloudBlock" />
       </SidebarSection>
-      <SidebarSection title="Auth & Permissions">
+      <SidebarSection title="Auth & Permissions" index={3}>
         <SidebarLink title="Auth and Auth Methods" routeName="AuthIntro" />
         <SidebarLink title="Doc Permissions" routeName="DocPermissions" />
         <SidebarLink
@@ -618,7 +618,7 @@ function DocsSidebar() {
           routeName="Spec-AuthProvider"
         />
       </SidebarSection>
-      <SidebarSection title="Advanced">
+      <SidebarSection title="Advanced" index={4}>
         <SidebarLink title="Schemas" routeName="CloudSchema" />
         <SidebarLink title="Garbage Collection" routeName="GarbageCollection" />
       </SidebarSection>

@@ -3,8 +3,15 @@ import {
   NavigationContext,
   SwitchRouter,
 } from '../navigation-core';
-import React, { useEffect, useMemo, useState, createContext } from 'react';
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+  createContext,
+  useContext,
+} from 'react';
 import {
+  Image,
   ScrollView,
   StyleSheet,
   Switch,
@@ -12,6 +19,8 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Easing,
+  TouchableHighlight,
   View,
 } from 'react-native';
 import { useNavigation, useNavigationState } from '../navigation-hooks/Hooks';
@@ -24,8 +33,27 @@ import useCloudSession from '../cloud-core/useCloudSession';
 import useObservable from '../cloud-core/useObservable';
 import useCloudValue from '../cloud-core/useCloudValue';
 import ErrorContainer from '../cloud-react/ErrorContainer';
+import Animated from '../views/Animated';
 import useAsyncStorage, { isStateUnloaded } from '../utils/useAsyncStorage';
-import { TouchableHighlight } from 'react-native-web';
+import {
+  usePopover,
+  PopoverContainer,
+  useTargetPopover,
+} from '../views/Popover';
+
+const prettyShadow = {
+  shadowOffset: { width: 0, height: 0 },
+  shadowColor: 'black',
+  shadowOpacity: 0.1,
+  shadowRadius: 22,
+};
+const prettyShadowSmall = {
+  shadowOffset: { width: 0, height: 0 },
+  shadowColor: 'black',
+  shadowOpacity: 0.06,
+  shadowRadius: 11,
+};
+
 const pathJoin = require('path').join;
 
 function useActiveRoute() {
@@ -79,20 +107,33 @@ function Title({ title, style }) {
 }
 
 const Styles = {
+  headerBackground: '#E5E9ED',
+  headerBorder: '#CCC',
+  headerLinkColor: '#D0D8DF',
+  headerFontSize: 24,
   inputHeight: 50,
   highlightColor: '#025C7F',
   labelColor: '#222',
+  rowTextColor: '#222',
   rowBorderColor: '#ccc',
+  rowBackgroundColor: 'white',
+  rowBackgroundHoverColor: '#eaecff',
 };
 
+const StyleContext = createContext(Styles);
+function useStyles() {
+  return useContext(StyleContext);
+}
+
 function Button({ onPress, title, style, secondary }) {
+  const styles = useStyles();
   return (
     <TouchableOpacity onPress={onPress}>
       <View
         style={{
-          backgroundColor: secondary ? '#ccc' : Styles.highlightColor,
-          height: Styles.inputHeight,
-          borderRadius: Styles.inputHeight / 2,
+          backgroundColor: secondary ? '#ccc' : styles.highlightColor,
+          height: styles.inputHeight,
+          borderRadius: styles.inputHeight / 2,
           paddingHorizontal: 25,
           paddingVertical: 7,
           ...style,
@@ -208,49 +249,13 @@ function Form({ children }) {
   );
 }
 
-function ConnectionForm({ onClientConfig, defaultSession }) {
-  const [authority, setAuthority] = useState(defaultSession.authority);
-  const [domain, setDomain] = useState(defaultSession.domain);
-  const [useSSL, setUseSSL] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
-  if (isConnecting) {
-    return <Text>One moment..</Text>;
-  }
-  function connect() {
-    setIsConnecting(true);
-    onClientConfig({
-      authority,
-      useSSL,
-      domain,
-    });
-  }
-  return (
-    <Form>
-      <InputField
-        value={authority}
-        onValue={setAuthority}
-        name="Authority"
-        onSubmit={connect}
-      />
-      <InputField
-        value={domain}
-        onValue={setDomain}
-        name="Domain"
-        onSubmit={connect}
-      />
-      <BooleanField value={useSSL} onValue={setUseSSL} name="Use HTTPS" />
-      <FormButton title="Connect" onPress={connect} />
-    </Form>
-  );
-}
-
 function Pane({ children, pageColor }) {
   return (
     <ScrollView
       style={{
         backgroundColor: pageColor || '#fff',
-        marginHorizontal: 10,
         width: 300,
+        ...prettyShadow,
       }}
     >
       {children}
@@ -463,14 +468,27 @@ function AuthProviderInput({
   );
 }
 
-function LoginForm({ onSession, onClientConfig }) {
+function LoginForm({ onSession, onClientConfig, defaultSession }) {
   const [isWorking, setIsWorking] = useState(false);
   const [loginInfo, setLoginInfo] = useState(null);
   const [verificationChallenge, setVerificationChallenge] = useState(null);
   const { navigate } = useNavigation();
   const cloud = useCloud();
+
+  const [authority, setAuthority] = useState(defaultSession.authority);
+  const [domain, setDomain] = useState(defaultSession.domain);
+  const [useSSL, setUseSSL] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  if (isConnecting) {
+    return <Text>One moment..</Text>;
+  }
   async function doLogin() {
     setIsWorking(true);
+    onClientConfig({
+      authority,
+      useSSL,
+      domain,
+    });
     const resp = await cloud.createSession({
       accountId: loginInfo.accountId,
       verificationResponse: loginInfo.verificationResponse,
@@ -482,31 +500,37 @@ function LoginForm({ onSession, onClientConfig }) {
     }
     if (resp.session) {
       onSession(resp.session);
-      navigate('Home');
     }
   }
   return (
     <Form>
-      <FormButton
-        title="Edit Connection"
-        onPress={() => {
-          onClientConfig(null);
-        }}
-      />
       {isWorking && <Text>One moment..</Text>}
+      <InputField
+        value={authority}
+        onValue={setAuthority}
+        name="Authority"
+        onSubmit={doLogin}
+      />
+      <InputField
+        value={domain}
+        onValue={setDomain}
+        name="Domain"
+        onSubmit={doLogin}
+      />
+      <BooleanField value={useSSL} onValue={setUseSSL} name="Use HTTPS" />
+
       <AuthProviderInput
         onLoginInfo={setLoginInfo}
         loginInfo={loginInfo}
         verificationChallenge={verificationChallenge}
         onSubmit={doLogin}
       />
-      {!!loginInfo && <FormButton title="Login" onPress={doLogin} />}
+      <FormButton title="Login" onPress={doLogin} />
     </Form>
   );
 }
 
 function LoginPane({ onClientConfig, onSession, defaultSession }) {
-  const cloud = useCloud();
   const session = useCloudSession();
   if (session) {
     return (
@@ -515,29 +539,14 @@ function LoginPane({ onClientConfig, onSession, defaultSession }) {
       </Pane>
     );
   }
-  if (cloud) {
-    return (
-      <Pane>
-        <Hero title="Login" />
-        <View>
-          <LoginForm
-            onSession={onSession}
-            onClientConfig={onClientConfig}
-            defaultSession={defaultSession}
-          />
-        </View>
-      </Pane>
-    );
-  }
   return (
     <Pane>
-      <Hero title="Connect" />
-      <View>
-        <ConnectionForm
-          onClientConfig={onClientConfig}
-          defaultSession={defaultSession}
-        />
-      </View>
+      <Hero title="Login" />
+      <LoginForm
+        onSession={onSession}
+        onClientConfig={onClientConfig}
+        defaultSession={defaultSession}
+      />
     </Pane>
   );
 }
@@ -546,6 +555,7 @@ function RowSection({ children }) {
   return (
     <View
       style={{
+        marginBottom: 20,
         borderTopWidth: StyleSheet.hairlineWidth,
         borderTopColor: Styles.rowBorderColor,
       }}
@@ -555,12 +565,17 @@ function RowSection({ children }) {
   );
 }
 
-function Row({ children, isSelected }) {
+function Row({ children, isSelected, isHovered }) {
+  const styles = useStyles();
   return (
     <View
       style={{
         padding: 15,
-        backgroundColor: isSelected ? '#96F3E9' : 'white',
+        backgroundColor: isSelected
+          ? styles.highlightColor
+          : isHovered
+          ? styles.rowBackgroundHoverColor
+          : styles.rowBackgroundColor,
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderBottomColor: Styles.rowBorderColor,
         justifyContent: 'space-between',
@@ -578,23 +593,24 @@ function LinkRow({
   tintColor = 'black',
   children,
 }) {
-  const [isHighlighted, setIsHighlighted] = useState(false);
+  const styles = useStyles();
+  const [isHovered, setIsHovered] = useState(false);
   return (
     <TouchableOpacity
       onPress={onPress}
       onMouseEnter={() => {
-        setIsHighlighted(true);
+        setIsHovered(true);
       }}
       onMouseLeave={() => {
-        setIsHighlighted(false);
+        setIsHovered(false);
       }}
     >
-      <Row isSelected={isSelected}>
+      <Row isSelected={isSelected} isHovered={isHovered}>
         <Text
           style={{
             fontSize: 16,
-            opacity: isHighlighted ? 1 : 0.8,
-            color: tintColor,
+            opacity: isHovered ? 1 : 0.8,
+            color: isSelected ? styles.rowBackgroundColor : styles.rowTextColor,
           }}
         >
           {title}
@@ -605,7 +621,50 @@ function LinkRow({
   );
 }
 
-function DocsList({ parent, activeDoc }) {
+function TextInputRow({ placeholder, value, onValue, onSubmit }) {
+  const styles = useStyles();
+  return (
+    <View
+      style={{
+        backgroundColor: styles.rowBackgroundColor,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: styles.rowBorderColor,
+      }}
+    >
+      <TextInput
+        style={{
+          fontSize: 16,
+          padding: 15,
+          color: styles.rowTextColor,
+        }}
+        value={value}
+        onChangeText={onValue}
+        onSubmitEditing={onSubmit}
+        placeholder={placeholder}
+      />
+    </View>
+  );
+}
+
+function PermissionFallbackContainer({ children, renderPermissionError }) {
+  if (!renderPermissionError) {
+    renderPermissionError = () => <Text>No permission!</Text>;
+  }
+  return (
+    <ErrorContainer
+      renderError={() => {
+        return renderPermissionError();
+      }}
+      canCatchError={e => {
+        return e.type === 'NoPermission';
+      }}
+    >
+      {children}
+    </ErrorContainer>
+  );
+}
+
+function DocsListWithPermission({ parent, activeDoc }) {
   const cloud = useCloud();
   const { navigate } = useNavigation();
   const listParent = parent ? cloud.get(parent) : cloud;
@@ -637,42 +696,85 @@ function DocsList({ parent, activeDoc }) {
   );
 }
 
+function DocsList(props) {
+  return (
+    <PermissionFallbackContainer>
+      <DocsListWithPermission {...props} />
+    </PermissionFallbackContainer>
+  );
+}
+
+// function AddDocSection({ parent }) {
+//   const cloud = useCloud();
+//   let [isOpened, setIsOpened] = useState(false);
+//   let [newDocName, setNewDocName] = useState('');
+//   function submit() {
+//     const newDocFullName = parent ? `${parent}/${newDocName}` : newDocName;
+//     cloud.get(newDocFullName).put(null);
+//     setIsOpened(false);
+//     setNewDocName('');
+//   }
+//   if (isOpened) {
+//     return (
+//       <Form>
+//         <InputField
+//           value={newDocName}
+//           onValue={setNewDocName}
+//           name="New Doc Name"
+//           onSubmit={submit}
+//         />
+//         <FormButton title="Create Doc" onPress={submit} />
+//         <FormButton
+//           title="Cancel"
+//           secondary
+//           onPress={() => {
+//             setIsOpened(false);
+//             setNewDocName('');
+//           }}
+//         />
+//       </Form>
+//     );
+//   }
+//   return (
+//     <StandaloneButton
+//       title="Create Doc"
+//       onPress={() => {
+//         setIsOpened(true);
+//       }}
+//     />
+//   );
+// }
+
 function AddDocSection({ parent }) {
   const cloud = useCloud();
-  let [isOpened, setIsOpened] = useState(false);
   let [newDocName, setNewDocName] = useState('');
   function submit() {
     const newDocFullName = parent ? `${parent}/${newDocName}` : newDocName;
     cloud.get(newDocFullName).put(null);
-    setIsOpened(false);
     setNewDocName('');
   }
-  if (isOpened) {
-    return (
-      <Form>
-        <InputField
-          value={newDocName}
-          onValue={setNewDocName}
-          name="New Doc Name"
-          onSubmit={submit}
-        />
-        <FormButton title="Create Doc" onPress={submit} />
-        <FormButton
-          title="Cancel"
-          secondary
-          onPress={() => {
-            setIsOpened(false);
-            setNewDocName('');
-          }}
-        />
-      </Form>
-    );
-  }
+  return (
+    <RowSection>
+      <TextInputRow
+        placeholder="New Doc.."
+        value={newDocName}
+        onValue={setNewDocName}
+        onSubmit={submit}
+      />
+    </RowSection>
+  );
+}
+
+function LogoutButton() {
+  const { destroySession } = useCloud();
+  debugger;
+  const { navigate } = useNavigation();
   return (
     <StandaloneButton
-      title="Create Doc"
+      title="Log out"
       onPress={() => {
-        setIsOpened(true);
+        destroySession();
+        navigate('Login');
       }}
     />
   );
@@ -687,25 +789,24 @@ function DocsPane({ onClientConfig, onSession }) {
   return (
     <Pane>
       <Title title={domain} />
-      <LinkRow
-        key="my-account"
-        title="My Account"
-        isSelected={false}
-        onPress={() => {
-          navigate('Account');
-        }}
-      />
+      <RowSection>
+        <LinkRow
+          title="Users"
+          isSelected={false}
+          onPress={() => {
+            navigate('Account');
+          }}
+        />
+        <LinkRow
+          title="Data Types"
+          isSelected={false}
+          onPress={() => {
+            navigate('Account');
+          }}
+        />
+      </RowSection>
       <DocsList parent={null} activeDoc={activeDoc} />
       <AddDocSection parent={null} />
-      <StandaloneButton
-        title="Log out"
-        onPress={() => {
-          destroySession();
-          onClientConfig(null);
-          onSession(null);
-          navigate('Login');
-        }}
-      />
     </Pane>
   );
 }
@@ -726,13 +827,13 @@ function Folder({ value, path, doc, pathContext }) {
       }
       return doc.getBlock(file.id);
     },
-    [file]
+    [file],
   );
   const objValue = useObservable(obj && obj.observeValue);
 
   if (objValue) {
     pathViews = (
-      <ValuePane
+      <ValueView
         value={objValue}
         onValue={v => doc.put(v)}
         path={restOfPath}
@@ -775,13 +876,13 @@ function useParam(paramName) {
   return val;
 }
 
-function PrimitivePane({ value, onValue }) {
+function PrimitiveView({ value, onValue }) {
   return (
-    <Pane>
+    <React.Fragment>
       <Text>{JSON.stringify(value)}</Text>
       <DestroyButton onValue={onValue} />
       <SetTypeSection value={value} onValue={onValue} />
-    </Pane>
+    </React.Fragment>
   );
 }
 
@@ -811,34 +912,6 @@ function PopoverOverlay({ children, location, onClose }) {
   );
 }
 
-function PopoverContainer({ children }) {
-  let [popover, setPopover] = useState(null);
-  let [popoverLocation, setLocation] = useState({});
-  let popoverContext = {
-    openPopover: (popover, location) => {
-      setLocation(location || {});
-      setPopover(popover);
-    },
-  };
-
-  return (
-    <PopoverContext.Provider value={popoverContext}>
-      <View style={{ flex: 1 }}>
-        {children}
-        {popover && (
-          <PopoverOverlay
-            location={popoverLocation}
-            onClose={() => {
-              setPopover(null);
-            }}
-          >
-            {popover}
-          </PopoverOverlay>
-        )}
-      </View>
-    </PopoverContext.Provider>
-  );
-}
 process.env.REACT_NAV_LOGGING = true;
 
 function AddKeySection({ value, onValue }) {
@@ -981,7 +1054,7 @@ function DestroyButton({ onValue }) {
   );
 }
 
-function ObjectPane({ path, value, onValue, pathContext, doc }) {
+function ObjectView({ path, value, onValue, pathContext, doc }) {
   let pathViews = null;
 
   const navigation = useNavigation();
@@ -992,7 +1065,7 @@ function ObjectPane({ path, value, onValue, pathContext, doc }) {
 
   if (pathValue !== undefined) {
     pathViews = (
-      <ValuePane
+      <ValueView
         value={pathValue}
         path={restOfPath}
         doc={doc}
@@ -1045,24 +1118,22 @@ function ObjectPane({ path, value, onValue, pathContext, doc }) {
   }
   return (
     <React.Fragment>
-      <Pane>
-        <RowSection>{rows}</RowSection>
+      <RowSection>{rows}</RowSection>
 
-        <DestroyButton onValue={onValue} />
-        <SetTypeSection value={value} onValue={onValue} />
-        <AddKeySection value={value} onValue={onValue} />
-      </Pane>
+      <DestroyButton onValue={onValue} />
+      <SetTypeSection value={value} onValue={onValue} />
+      <AddKeySection value={value} onValue={onValue} />
       {pathViews}
     </React.Fragment>
   );
 }
 
-function ValuePane({ value, onValue, path, doc, pathContext }) {
+function ValueView({ value, onValue, path, doc, pathContext }) {
   if (value === undefined) {
     return <Text>Loading</Text>;
   }
   if (isPrimitive(value)) {
-    return <PrimitivePane value={value} onValue={onValue} />;
+    return <PrimitiveView value={value} onValue={onValue} />;
   }
   if (value.type === 'Folder') {
     return (
@@ -1072,7 +1143,7 @@ function ValuePane({ value, onValue, path, doc, pathContext }) {
 
   if (typeof value === 'object') {
     return (
-      <ObjectPane
+      <ObjectView
         value={value}
         path={path}
         doc={doc}
@@ -1095,13 +1166,15 @@ function DocValuePane() {
     return null;
   }
   return (
-    <ValuePane
-      doc={doc}
-      value={value}
-      onValue={v => doc.put(v)}
-      path={path}
-      pathContext={[]}
-    />
+    <Pane>
+      <ValueView
+        doc={doc}
+        value={value}
+        onValue={v => doc.put(v)}
+        path={path}
+        pathContext={[]}
+      />
+    </Pane>
   );
 }
 
@@ -1197,14 +1270,113 @@ function DocMetaPane({ name }) {
   );
 }
 
+function PopoverScreen(props) {
+  return (
+    <TouchableWithoutFeedback onPress={() => props.onClose()}>
+      <Animated.View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          opacity: props.openValue,
+          backgroundColor: '#0006',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Animated.View
+          style={{
+            backgroundColor: 'white',
+            padding: 50,
+            opacity: props.openValue.interpolate({
+              inputRange: [0.7, 1],
+              outputRange: [0, 1],
+            }),
+            transform: [
+              {
+                translateY: props.openValue.interpolate({
+                  inputRange: [0.5, 1],
+                  outputRange: [75, 0],
+                }),
+              },
+            ],
+          }}
+        >
+          {props.children}
+        </Animated.View>
+      </Animated.View>
+    </TouchableWithoutFeedback>
+  );
+}
+
+function TargetedPopoverScreen({
+  location,
+  onClose,
+  containerLayout,
+  width,
+  openValue,
+  children,
+}) {
+  console.log('FFZZZ', location, containerLayout);
+  return (
+    <TouchableWithoutFeedback onPress={() => onClose()}>
+      <Animated.View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          opacity: openValue,
+          backgroundColor: '#0006',
+        }}
+      >
+        <Animated.View
+          style={{
+            position: 'absolute',
+            width: width,
+            top: location.y + location.height,
+            right: Math.ceil(
+              containerLayout.width - location.width - location.x,
+            ),
+            // left: 100,
+            backgroundColor: 'white',
+            padding: 50,
+            opacity: openValue.interpolate({
+              inputRange: [0.7, 1],
+              outputRange: [0, 1],
+            }),
+            transform: [
+              {
+                translateY: openValue.interpolate({
+                  inputRange: [0.5, 1],
+                  outputRange: [75, 0],
+                }),
+              },
+            ],
+          }}
+        >
+          {children}
+        </Animated.View>
+      </Animated.View>
+    </TouchableWithoutFeedback>
+  );
+}
+
+function SetUsernamePopover(props) {
+  return (
+    <PopoverScreen {...props}>
+      <Text>Set your username</Text>
+    </PopoverScreen>
+  );
+}
+
 function AccountPane() {
   const cloud = useCloud();
+  const { onPopover } = usePopover(props => <SetUsernamePopover {...props} />, {
+    duration: 200,
+    easing: Easing.out(Easing.quad),
+  });
   const session = useObservable(cloud.observeSession);
   return (
     <Pane>
       <Title title={'My account'} />
       {session && <InfoSection text={session.accountId} />}
-      <StandaloneButton title="Set Username" onPress={() => {}} />
+      <StandaloneButton title="Set Username" onPress={onPopover} />
       <StandaloneButton
         title="Add Email Address"
         onPress={() => {
@@ -1239,7 +1411,7 @@ const DocPaneNavigator = createNavigator(
   }),
   {
     explicitParams: true,
-  }
+  },
 );
 
 function DocPane({ navigation }) {
@@ -1272,7 +1444,7 @@ const MainPaneNavigator = createNavigator(
   }),
   {
     explicitParams: true,
-  }
+  },
 );
 
 function MainPane({ onClientConfig, onSession, navigation }) {
@@ -1281,6 +1453,7 @@ function MainPane({ onClientConfig, onSession, navigation }) {
       style={{
         flexDirection: 'row',
         flex: 1,
+        justifyContent: 'flex-start',
       }}
     >
       <DocsPane onClientConfig={onClientConfig} onSession={onSession} />
@@ -1302,15 +1475,69 @@ function ErrorPage({ error, errorInfo, onRetry }) {
   );
 }
 
+function HeaderLink({ children, onPress, viewRef }) {
+  const styles = useStyles();
+  return (
+    <TouchableOpacity
+      ref={viewRef}
+      onPress={onPress}
+      style={{
+        backgroundColor: styles.headerLinkColor,
+        flexDirection: 'row',
+        alignSelf: 'stretch',
+        alignItems: 'center',
+      }}
+    >
+      {children}
+    </TouchableOpacity>
+  );
+}
+
+function AccountPopover(props) {
+  return (
+    <TargetedPopoverScreen {...props} width={400}>
+      <Text>Your account</Text>
+      <LogoutButton />
+    </TargetedPopoverScreen>
+  );
+}
+
+function AuthHeaderLink({ loggedInId }) {
+  const styles = useStyles();
+  const { onPopover, targetRef } = useTargetPopover(
+    props => <AccountPopover {...props} />,
+    {
+      duration: 200,
+      easing: Easing.out(Easing.quad),
+    },
+  );
+  return (
+    <HeaderLink onPress={onPopover} viewRef={targetRef}>
+      <Text style={{ marginHorizontal: 20, fontSize: styles.headerFontSize }}>
+        {loggedInId}
+      </Text>
+      <View
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          backgroundColor: 'green',
+          marginRight: 20,
+        }}
+      />
+    </HeaderLink>
+  );
+}
+
 function AdminApp({ defaultSession = {}, descriptors }) {
   let [sessionState, setSessionState] = useAsyncStorage(
     'AvenSessionState',
-    null
+    null,
   );
 
   let [clientConfig, setClientConfig] = useAsyncStorage(
     'AvenClientConfig',
-    null
+    null,
   );
 
   let client = useMemo(
@@ -1335,7 +1562,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
       return client;
     },
-    [clientConfig, isStateUnloaded(sessionState)]
+    [clientConfig, isStateUnloaded(sessionState)],
   );
 
   const activeRoute = useActiveRoute();
@@ -1359,7 +1586,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
         navigate('Login');
       }
     },
-    [activeRoute, sessionState, clientConfig, client]
+    [activeRoute, sessionState, clientConfig, client],
   );
 
   const activeDescriptor = descriptors[activeRoute.key];
@@ -1376,11 +1603,33 @@ function AdminApp({ defaultSession = {}, descriptors }) {
       setSessionState(null);
       onRetry();
     }
-    console.log('bad news:', e);
   }
+
+  const styles = useStyles();
+
+  const loggedInId = sessionState && sessionState.accountId;
 
   return (
     <PopoverContainer>
+      <View
+        style={{
+          alignSelf: 'stretch',
+          backgroundColor: styles.headerBackground,
+          borderBottomWidth: 1,
+          borderBottomColor: styles.headerBorder,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          height: 60,
+        }}
+      >
+        <View style={{}}>
+          <Image
+            source={require('./assets/AvenLogo.svg')}
+            style={{ width: 150, height: 33, margin: 13 }}
+          />
+        </View>
+        {loggedInId && <AuthHeaderLink loggedInId={loggedInId} />}
+      </View>
       <ErrorContainer
         onCatch={handleCatch}
         renderError={({ onRetry, error }) => (
@@ -1392,13 +1641,12 @@ function AdminApp({ defaultSession = {}, descriptors }) {
             <ScrollView
               horizontal
               style={{
-                ...StyleSheet.absoluteFillObject,
+                flex: 1,
               }}
               contentContainerStyle={{
                 minWidth: '100%',
                 flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
+                alignItems: 'flex-start',
               }}
             >
               <ScreenComponent
@@ -1437,7 +1685,7 @@ const router = SwitchRouter(
   },
   {
     explicitParams: true,
-  }
+  },
 );
 
 export default createNavigator(AdminApp, router, {});
