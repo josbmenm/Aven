@@ -664,13 +664,22 @@ function PermissionFallbackContainer({ children, renderPermissionError }) {
   );
 }
 
+function LoadingIndicator() {
+  return <Text>Loading..</Text>;
+}
+
 function DocsListWithPermission({ parent, activeDoc }) {
   const cloud = useCloud();
   const { navigate } = useNavigation();
   const listParent = parent ? cloud.get(parent) : cloud;
   const docs = useObservable(listParent.observeChildren);
   if (!docs) {
-    return null;
+    return <LoadingIndicator />;
+  }
+  if (docs.length === 0) {
+    <RowSection>
+      <Text>0 Children Docs</Text>
+    </RowSection>;
   }
   return (
     <RowSection>
