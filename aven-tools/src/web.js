@@ -2,6 +2,9 @@ const fs = require('fs-extra');
 const pathJoin = require('path').join;
 const spawn = require('@expo/spawn-async');
 const yaml = require('js-yaml');
+const Migrator = require('knex/lib/migrate/Migrator').default;
+const Knex = require('knex');
+const pg = require('pg');
 
 const protoPath = pathJoin(__dirname, '../proto/web');
 
@@ -110,9 +113,9 @@ const deploy = async ({ appName, appPkg, location, srcDir }) => {
     appPkg.aven.envOptions &&
     appPkg.aven.envOptions.deployEnv === 'Heroku'
   ) {
-    const spawnInBuildDir = async (cmd, args) => {
+    const spawnInBuildDir = async (cmd, args, stdio = 'inherit') => {
       console.log('⌨️  ' + cmd + ' ' + args.join(' '));
-      return await spawn(cmd, args, { cwd: location, stdio: 'inherit' });
+      return await spawn(cmd, args, { cwd: location, stdio });
     };
     await spawnInBuildDir('git', ['init']);
     await spawnInBuildDir('git', ['add', '.']);
@@ -127,6 +130,29 @@ const deploy = async ({ appName, appPkg, location, srcDir }) => {
       appName;
     const HEROKU_API_KEY = process.env.HEROKU_API_KEY;
     await spawnInBuildDir('heroku', ['git:remote', '--app', herokuAppName]);
+    const conn = await spawnInBuildDir(
+      'heroku',
+      ['pg:credentials:url', 'DATABASE'],
+      'pipe',
+    );
+    const connLines = conn.stdout.split('\n');
+    const connDelimIndex = connLines.indexOf('Connection URL:');
+    const connURL = connLines[connDelimIndex + 1].trim();
+    const migrationsDir = pathJoin(
+      location,
+      'src/sync/cloud-postgres/migrations',
+    );
+    pg.defaults.ssl = true; // https://github.com/tgriesser/knex/issues/852
+    const knex = new Knex({
+      connection: connURL,
+      client: 'pg',
+    });
+    const migrator = new Migrator(knex);
+    const migrateResult = await migrator.latest({
+      directory: migrationsDir,
+    });
+    knex.destroy();
+    console.log('Migrated to db version ' + migrateResult[0]);
     await spawnInBuildDir('git', [
       'push',
       '-f',

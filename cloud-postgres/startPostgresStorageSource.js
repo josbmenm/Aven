@@ -5,6 +5,8 @@ import uuid from 'uuid/v1';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 import { getMaxListDocs } from '../cloud-core/maxListDocs';
 import { getMaxBlockRefCount } from '../cloud-core/maxBlockRefCount';
+import Err from '../utils/Err';
+
 const pgFormat = require('pg-format');
 
 const { Client } = require('pg');
@@ -13,6 +15,12 @@ const stringify = require('json-stable-stringify');
 const pathJoin = require('path').join;
 
 export default async function startPostgresStorageSource({ config, domains }) {
+  if (!domains || !domains.length) {
+    throw new Err(
+      'Domains must be specified when creating a postgres storage source',
+      'DomainConfiguration'
+    );
+  }
   const id = uuid();
 
   const TOP_PARENT_ID = 0; // hacky approach to handle top-level parents and still enforce uniqueness properly on the docs table.
