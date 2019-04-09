@@ -4,7 +4,7 @@
   "private": true,
   "aven": {
     "publicAssetDir": "public",
-    "env": "web",
+    "env": "razzle",
     "moduleDependencies": [
       "prism-react-renderer",
       "konva",

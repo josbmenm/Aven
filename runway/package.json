@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {},
   "aven": {
-    "env": "web",
+    "env": "razzle",
     "envOptions": {
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js"

@@ -15,7 +15,7 @@
     "yes-https": "^0.0.4"
   },
   "aven": {
-    "env": "web",
+    "env": "razzle",
     "envOptions": {
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js"

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "aven": {
-    "env": "web",
+    "env": "razzle",
     "envOptions": {
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js"
