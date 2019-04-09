@@ -204,7 +204,7 @@ const getAllPublicAssetDirs = async (srcDir, packageName, globePkg) => {
 const globeEnvs = {
   dom: require('./dom'),
   expo: require('./expo'),
-  web: require('./web'),
+  razzle: require('./razzle'),
   reactnative: require('./reactnative'),
 };
 
