@@ -1,0 +1,13 @@
+{
+  "name": "@aven-cloud/cloud-utils",
+  "version": "1.7.0",
+  "aven": {
+    "moduleDependencies": [
+      "bcrypt",
+      "rxjs-compat",
+      "json-stable-stringify",
+      "crypto-js"
+    ]
+  },
+  "srcChecksum": "43fa5e630282471cffb5489f5de9b7afe164edfb5dcac4772cacc3b7e41469ff"
+}

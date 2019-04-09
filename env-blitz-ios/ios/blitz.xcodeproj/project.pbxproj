@@ -45,8 +45,6 @@
 		A961FDD821CAAFCF00D6A1D5 /* CardReaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A961FDD721CAAFCF00D6A1D5 /* CardReaderManager.swift */; };
 		A961FDDA21CAB1FF00D6A1D5 /* CardReaderManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = A961FDD921CAB1FF00D6A1D5 /* CardReaderManagerBridge.m */; };
 		A9A1FD7621E0150D00F69635 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = A9A1FD4B21E0150D00F69635 /* fonts */; };
-		A9A437F5219A24250023BB51 /* SquareReaderSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9A437F4219A24250023BB51 /* SquareReaderSDK.framework */; };
-		A9A437F6219A24250023BB51 /* SquareReaderSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A9A437F4219A24250023BB51 /* SquareReaderSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A9B2D3152200C5AC005C2D64 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9B2D2E52200C59C005C2D64 /* libBVLinearGradient.a */; };
 		A9E55107219A3A5F0023801A /* ReactNativeEventEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = A9E55101219A3A5F0023801A /* ReactNativeEventEmitter.m */; };
 		A9E55109219A3A5F0023801A /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E55103219A3A5F0023801A /* EventEmitter.swift */; };
@@ -403,20 +401,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		A9AD8E79219A20A300563CD5 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				A9A437F6219A24250023BB51 /* SquareReaderSDK.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
@@ -454,7 +438,6 @@
 		A961FDD721CAAFCF00D6A1D5 /* CardReaderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardReaderManager.swift; sourceTree = "<group>"; };
 		A961FDD921CAB1FF00D6A1D5 /* CardReaderManagerBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CardReaderManagerBridge.m; sourceTree = "<group>"; };
 		A9A1FD4B21E0150D00F69635 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
-		A9A437F4219A24250023BB51 /* SquareReaderSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SquareReaderSDK.framework; sourceTree = "<group>"; };
 		A9B2D2DF2200C59C005C2D64 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
 		A9E550D6219A3A5E0023801A /* blitz-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "blitz-Bridging-Header.h"; sourceTree = "<group>"; };
 		A9E55101219A3A5F0023801A /* ReactNativeEventEmitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativeEventEmitter.m; sourceTree = "<group>"; };
@@ -500,7 +483,6 @@
 				B20ED8520AF14F61BDB14818 /* libCodePush.a in Frameworks */,
 				874614646B8442FF9E31D722 /* libz.tbd in Frameworks */,
 				509FCE392CFF43D8A77C6421 /* libRNGestureHandler.a in Frameworks */,
-				A9A437F5219A24250023BB51 /* SquareReaderSDK.framework in Frameworks */,
 				3FB6F5197A1241BB95E2E0F0 /* libRNReanimated.a in Frameworks */,
 				C537CFFFA4664460BDF4B348 /* libRNScreens.a in Frameworks */,
 				FB7CD0BF79677A3DAD976E79 /* Pods_blitz.framework in Frameworks */,
@@ -722,7 +704,6 @@
 			isa = PBXGroup;
 			children = (
 				A9A1FD4B21E0150D00F69635 /* fonts */,
-				A9A437F4219A24250023BB51 /* SquareReaderSDK.framework */,
 				13B07FAE1A68108700A75B9A /* blitz */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* blitzTests */,
@@ -1461,23 +1442,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-blitz/Pods-blitz-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
-		};
-		A9AD8E7A219A20C300563CD5 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "FRAMEWORKS=\"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\"${FRAMEWORKS}/SquareReaderSDK.framework/setup\"\n";
 		};
 		B8BFF1C9FD5326D2AC5931EE /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

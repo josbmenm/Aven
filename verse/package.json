@@ -4,7 +4,7 @@
   "main": "index.js",
   "dependencies": {},
   "aven": {
-    "env": "web",
+    "env": "razzle",
     "publicAssetDir": "public",
     "envOptions": {
       "mainServer": "MainServer.js",

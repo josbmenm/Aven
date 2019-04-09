@@ -1,0 +1,12 @@
+{
+  "aven": {
+    "srcDependencies": [
+      "cloud-core"
+    ],
+    "moduleDependencies": [
+      "@nozbe/with-observables",
+      "rxjs",
+      "fbjs"
+    ]
+  }
+}

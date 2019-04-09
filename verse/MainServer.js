@@ -1,6 +1,6 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
-import startFSStorageSource from '../cloud-fs/startFSStorageSource';
+import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
 // import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import createCloudClient from '../cloud-core/createCloudClient';
 import createFSClient from '../cloud-server/createFSClient';
@@ -41,15 +41,20 @@ function startTestKitchen({ cloud }) {
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨 ' + process.cwd() + '/db');
 
-  // const storageSource = await startPostgresStorageSource({
-  //   client: 'sqlite3', // must have sqlite3 in the dependencies of this module.
-  //   connection: {
-  //     filename: 'cloud.sqlite',
-  //   },
-  // });
-  const storageSource = await startFSStorageSource({
-    domain: 'onofood.co',
-    dataDir: process.cwd() + '/db',
+  const pgConfig = {
+    ssl: true,
+    user: getEnv('SQL_USER'),
+    password: getEnv('SQL_PASSWORD'),
+    database: getEnv('SQL_DATABASE'),
+    host: getEnv('SQL_HOST'),
+  };
+
+  const storageSource = await startPostgresStorageSource({
+    domains: ['onofood.co'],
+    config: {
+      client: 'pg',
+      connection: pgConfig,
+    },
   });
 
   const cloud = createCloudClient({

@@ -1,0 +1,515 @@
+{
+  "Active in Kiosk": true,
+  "Calories": "9999",
+  "Display Description": "functionally enhanced benefits",
+  "Display Name": "eric test blend",
+  "Recipe": {
+    "Ingredient Tags": "Frozen Food,Fruit,Frozen Food,Vegetable,",
+    "Ingredients": [
+      {
+        "85%": 1048.8999999999999,
+        "Amount": 1234,
+        "Dispense Amount": 2,
+        "Ingredient": {
+          "250 Orders (Kg)": 63.7,
+          "250 Orders (m^3)": 0.139862138255203,
+          "400 Orders (Kg)": 101.92,
+          "400 Orders (m^3)": 0.22377942120832478,
+          "As used in recipes": ["rectL7y9IRE76uyLd", "recnvOtMyXvNCLXDs"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
+          "Ingredient Image": [
+            {
+              "filename": "Avocado.png",
+              "id": "attfjNiWgYB5wiDnL",
+              "size": 126705,
+              "thumbnails": {
+                "full": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/acfae9bd3c6a92ab930bf3b6d9cb9f1b/c8e58435",
+                  "width": 840
+                },
+                "large": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/396d8afb58cc13ff01eb1f79e2f650e0/775d4029",
+                  "width": 840
+                },
+                "small": {
+                  "height": 36,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/c56abf84783a52a6dd76baa9637004d4/3d292693",
+                  "width": 63
+                }
+              },
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/7c2d8efdfaf4f63349818e2bcc620337/f4fd4bcd/Avocado.png"
+            }
+          ],
+          "Name": " Avocado",
+          "Recipe Ingredients copy": "Blueberries, Blueberries",
+          "RecipeCustomization": ["recF7OyaP05uc5A6I", "recksMf98oW0zY79B"],
+          "Supplied Ingredients": "Organic Blueberries, Blueberries, Blueberries",
+          "Tags": ["Frozen Food", "Fruit"],
+          "Total Across Menu": 1274,
+          "UOM": ["g"],
+          "_index": 29,
+          "id": "recv9odwFZKA4RewR"
+        },
+        "Ingredient Tags": ["Frozen Food", "Fruit"],
+        "Name": " Avo",
+        "Recipes": ["recUBsTvrOh3GShok"],
+        "UOM": ["g"],
+        "_index": 39,
+        "id": "recnvOtMyXvNCLXDs"
+      },
+      {
+        "85%": 104.55,
+        "Amount": 123,
+        "Dispense Amount": 1,
+        "Ingredient": {
+          "250 Orders (Kg)": 10.65,
+          "250 Orders (m^3)": 0.0233835443079735,
+          "400 Orders (Kg)": 17.04,
+          "400 Orders (m^3)": 0.03741367089275759,
+          "As used in recipes": ["rech3CwuW1x1eesJW", "recrz3dKOIKycEhhN"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
+          "Ingredient Image": [
+            {
+              "filename": "Cucumber.png",
+              "id": "attOiWeqKSFYfO7wG",
+              "size": 349046,
+              "thumbnails": {
+                "full": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/bc4c4ea03612ebb0de5ce5e362435e5b/f9d376c7",
+                  "width": 840
+                },
+                "large": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b1c72dd596404131e0d1267f5be97714/24fec622",
+                  "width": 840
+                },
+                "small": {
+                  "height": 36,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/677a6d7a264809160c01a856da983369/c5ab04af",
+                  "width": 63
+                }
+              },
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/2c2db82ce49db44391c8f4b3e9d2b79a/e75eff6b/Cucumber.png"
+            }
+          ],
+          "Name": "Cucumber",
+          "Recipe Ingredients copy": "Cucumber",
+          "RecipeCustomization": ["recF7OyaP05uc5A6I", "recksMf98oW0zY79B"],
+          "Supplied Ingredients": "English Cucumber, English Cucumber, English Cucumber",
+          "Tags": ["Frozen Food", "Vegetable"],
+          "Total Across Menu": 213,
+          "UOM": ["g"],
+          "_index": 8,
+          "id": "recGRd3CuZCnJUlEK"
+        },
+        "Ingredient Tags": ["Frozen Food", "Vegetable"],
+        "Name": "Cucumber",
+        "Recipes": ["recUBsTvrOh3GShok"],
+        "UOM": ["g"],
+        "_index": 41,
+        "id": "recrz3dKOIKycEhhN"
+      },
+      {
+        "85%": 104.55,
+        "Amount": 123,
+        "Dispense Amount": 1,
+        "Ingredient": {
+          "250 Orders (Kg)": 8.6,
+          "250 Orders (m^3)": 0.018882486483433998,
+          "400 Orders (Kg)": 13.76,
+          "400 Orders (m^3)": 0.030211978373494396,
+          "As used in recipes": [
+            "recauRAM56Fw34qYQ",
+            "recxxhmYqcgNwrn15",
+            "rec5cRYtBXzmhw60A",
+            "recSGTl2PVyr6Gdhf",
+            "recdZpRFJSNKWX6rG",
+            "recQMsJzYS6UaYm43",
+            "rec9LhqOlKK5lu7vP"
+          ],
+          "Feeder Type": ["recNUkbMS99k4UelH"],
+          "Feeder Type -OLD": "Liquid",
+          "Ingredient Image": [
+            {
+              "filename": "Milk.png",
+              "id": "attJIoIZuNqpEUEFp",
+              "size": 137873,
+              "thumbnails": {
+                "full": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/1a8b12068a2cb088be1969ef5b4aacab/b713bd37",
+                  "width": 840
+                },
+                "large": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b9d3cfe33ac6a94f7dbac145d278ad89/5f472d98",
+                  "width": 840
+                },
+                "small": {
+                  "height": 36,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/ab1d57432f0e864bc992b4e2b03dd22a/2a5943d2",
+                  "width": 63
+                }
+              },
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/be31b655eff71f73ab0e41724d652561/80a91953/Milk.png"
+            }
+          ],
+          "Name": " Vanilla Coconut Milk",
+          "Recipe Ingredients copy": "Vanilla Coconut Milk",
+          "RecipeCustomization": ["recBFTCL8OFHr9EG0", "recYkttCtHbqlwU2w"],
+          "Supplied Ingredients": "Himalayan Salt, Himalayan Salt",
+          "Total Across Menu": 172,
+          "UOM": ["oz"],
+          "_index": 10,
+          "id": "recMQbVzKifYdJcjk"
+        },
+        "Name": "Milk",
+        "Recipes": ["recUBsTvrOh3GShok"],
+        "UOM": ["oz"],
+        "_index": 7,
+        "id": "rec9LhqOlKK5lu7vP"
+      }
+    ],
+    "Menu": ["recfGT2MZWqE2XFVx"],
+    "Name": "Eric Dev Test",
+    "RecipeCustomization": ["recksMf98oW0zY79B"],
+    "_index": 3,
+    "id": "recUBsTvrOh3GShok"
+  },
+  "Tags": ["Frozen Food,Fruit,Frozen Food,Vegetable,"],
+  "_index": 6,
+  "id": "recfGT2MZWqE2XFVx",
+  "IngredientCustomization": [
+    {
+      "Display Name": "Organic Fruit & Veggies",
+      "Ingredients": [
+        {
+          "250 Orders (Kg)": 63.7,
+          "250 Orders (m^3)": 0.139862138255203,
+          "400 Orders (Kg)": 101.92,
+          "400 Orders (m^3)": 0.22377942120832478,
+          "As used in recipes": ["rectL7y9IRE76uyLd", "recnvOtMyXvNCLXDs"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
+          "Ingredient Image": [
+            {
+              "filename": "Avocado.png",
+              "id": "attfjNiWgYB5wiDnL",
+              "size": 126705,
+              "thumbnails": {
+                "full": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/acfae9bd3c6a92ab930bf3b6d9cb9f1b/c8e58435",
+                  "width": 840
+                },
+                "large": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/396d8afb58cc13ff01eb1f79e2f650e0/775d4029",
+                  "width": 840
+                },
+                "small": {
+                  "height": 36,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/c56abf84783a52a6dd76baa9637004d4/3d292693",
+                  "width": 63
+                }
+              },
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/7c2d8efdfaf4f63349818e2bcc620337/f4fd4bcd/Avocado.png"
+            }
+          ],
+          "Name": " Avocado",
+          "Recipe Ingredients copy": "Blueberries, Blueberries",
+          "RecipeCustomization": ["recF7OyaP05uc5A6I", "recksMf98oW0zY79B"],
+          "Supplied Ingredients": "Organic Blueberries, Blueberries, Blueberries",
+          "Tags": ["Frozen Food", "Fruit"],
+          "Total Across Menu": 1274,
+          "UOM": ["g"],
+          "_index": 29,
+          "id": "recv9odwFZKA4RewR"
+        },
+        {
+          "250 Orders (Kg)": 10.65,
+          "250 Orders (m^3)": 0.0233835443079735,
+          "400 Orders (Kg)": 17.04,
+          "400 Orders (m^3)": 0.03741367089275759,
+          "As used in recipes": ["rech3CwuW1x1eesJW", "recrz3dKOIKycEhhN"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
+          "Ingredient Image": [
+            {
+              "filename": "Cucumber.png",
+              "id": "attOiWeqKSFYfO7wG",
+              "size": 349046,
+              "thumbnails": {
+                "full": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/bc4c4ea03612ebb0de5ce5e362435e5b/f9d376c7",
+                  "width": 840
+                },
+                "large": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b1c72dd596404131e0d1267f5be97714/24fec622",
+                  "width": 840
+                },
+                "small": {
+                  "height": 36,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/677a6d7a264809160c01a856da983369/c5ab04af",
+                  "width": 63
+                }
+              },
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/2c2db82ce49db44391c8f4b3e9d2b79a/e75eff6b/Cucumber.png"
+            }
+          ],
+          "Name": "Cucumber",
+          "Recipe Ingredients copy": "Cucumber",
+          "RecipeCustomization": ["recF7OyaP05uc5A6I", "recksMf98oW0zY79B"],
+          "Supplied Ingredients": "English Cucumber, English Cucumber, English Cucumber",
+          "Tags": ["Frozen Food", "Vegetable"],
+          "Total Across Menu": 213,
+          "UOM": ["g"],
+          "_index": 8,
+          "id": "recGRd3CuZCnJUlEK"
+        },
+        {
+          "250 Orders (Kg)": 7,
+          "250 Orders (m^3)": 0.015369465742329998,
+          "400 Orders (Kg)": 11.2,
+          "400 Orders (m^3)": 0.024591145187727998,
+          "As used in recipes": ["rec7Apn9DX2rUxMnX"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Feeder Type -OLD": "Frozen Food",
+          "Ingredient Image": [
+            {
+              "filename": "Mango.png",
+              "id": "attCijhkcNgudzTs8",
+              "size": 144654,
+              "thumbnails": {
+                "full": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/e5b8090c47bfe920c12b4d6e1d5ed0f2/e8c4373f",
+                  "width": 840
+                },
+                "large": {
+                  "height": 480,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/49536f38b16abc164ad29bdb97916594/416160af",
+                  "width": 840
+                },
+                "small": {
+                  "height": 36,
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/604babe33b14f797451351761b807b67/507e7ca6",
+                  "width": 63
+                }
+              },
+              "type": "image/png",
+              "url": "https://dl.airtable.com/.attachments/fc1bd1350ef622bae9f24b914c4d88e2/07d689be/Mango.png"
+            }
+          ],
+          "Name": "Mango",
+          "RecipeCustomization": ["recksMf98oW0zY79B"],
+          "Supplied Ingredients": "Coconut Chunks, Coconut Chunks",
+          "Tags": ["Frozen Food", "Fruit"],
+          "Total Across Menu": 140,
+          "UOM": ["g"],
+          "_index": 14,
+          "id": "recQkaEbJ9gAfRG1m"
+        }
+      ],
+      "Name": "AvoCumberSwap",
+      "_index": 5,
+      "id": "recksMf98oW0zY79B",
+      "defaultValue": ["recv9odwFZKA4RewR", "recGRd3CuZCnJUlEK"],
+      "optionLimit": null
+    }
+  ],
+  "BenefitCustomization": {
+    "recDCiSzzrmzia1df": {
+      "Description": "Enhances cogintive performance, and reduces anixety.",
+      "Function Ingredients 2": "focus - tumeric, focus - cacao, focus - rhodiola, focus - lions mane, focus - sea salt",
+      "Ingredients": ["rec7bxddOEEx4acOj"],
+      "Name": "Focus",
+      "Photo": [
+        {
+          "filename": "Focus Icon.png",
+          "id": "attGJrc130VzjTHy1",
+          "size": 3317,
+          "thumbnails": {
+            "full": {
+              "height": 150,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/ee2aedfd2f3a83db41768af771ef60f9/36f77178",
+              "width": 150
+            },
+            "large": {
+              "height": 150,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/d31c0261587e085b335093f92d627101/b4884233",
+              "width": 150
+            },
+            "small": {
+              "height": 36,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/74f5228af268bc1667ac975d793df8a3/9d7360f3",
+              "width": 36
+            }
+          },
+          "type": "image/png",
+          "url": "https://dl.airtable.com/.attachments/2e4d89d84778babf0772da5b44d6ab43/ed1f0c6b/FocusIcon.png"
+        }
+      ],
+      "Recipes": "Skin & Body",
+      "Recipes 2": ["recxMOxeukIvl4XOo"],
+      "_index": 0,
+      "id": "recDCiSzzrmzia1df"
+    },
+    "recTMd8dy2c66I9xk": {
+      "Description": "Improves hair, skin, ligaments, tendons, nails and joints.",
+      "Function Ingredients 2": "skin - sea salt, skin - collagen, skin - astragalus",
+      "Ingredients": ["reccq7OKeeKYI5StS"],
+      "Name": "Skin & Body",
+      "Photo": [
+        {
+          "filename": "Skin & Body Icon.png",
+          "id": "attHBHdSwNWWsN3Rz",
+          "size": 5478,
+          "thumbnails": {
+            "full": {
+              "height": 150,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/18f25fa62bfccc69db981cdc55856e54/c9cfd40a",
+              "width": 150
+            },
+            "large": {
+              "height": 150,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/b542c48c50a674434a1b6dc4c337d6ea/1773e2a1",
+              "width": 150
+            },
+            "small": {
+              "height": 36,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/d14bce646c091a67fb91bd92edb03a25/33eb0449",
+              "width": 36
+            }
+          },
+          "type": "image/png",
+          "url": "https://dl.airtable.com/.attachments/b42b1b22275b770f6e94c1cd3581ce29/0bfa5098/SkinBodyIcon.png"
+        }
+      ],
+      "Recipes 2": ["rec5COvvN0bV19iLF"],
+      "_index": 1,
+      "id": "recTMd8dy2c66I9xk"
+    },
+    "reccH9dwP1awGJZlV": {
+      "Description": "Elderberries have powerful antioxidant properties.",
+      "Function Ingredients 2": "immunity - acai, immunity - chia",
+      "Ingredients": ["receoVi4E2GALTBj8"],
+      "Name": "Immunity",
+      "Photo": [
+        {
+          "filename": "Immunity Icon.png",
+          "id": "attKJy0GsnNsEjNsh",
+          "size": 5704,
+          "thumbnails": {
+            "full": {
+              "height": 150,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/daa21875c0a075bf0c8fd60e93ab8099/c108442a",
+              "width": 150
+            },
+            "large": {
+              "height": 150,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/11025799c0daad4736925be058bc9f82/7c18767b",
+              "width": 150
+            },
+            "small": {
+              "height": 36,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/74d57417b68d38af14610f731ddc7e57/6c5536de",
+              "width": 36
+            }
+          },
+          "type": "image/png",
+          "url": "https://dl.airtable.com/.attachments/91a14dbae592117ff5f6b4a3e08be4d9/0db56d4c/ImmunityIcon.png"
+        }
+      ],
+      "Recipes 2": ["recbKBSzWKFJv0Cop"],
+      "_index": 2,
+      "id": "reccH9dwP1awGJZlV"
+    },
+    "rech4rxFhIlLhHVmk": {
+      "Description": "Contains 90% protein and a complete amino acid profile, ideal for building muscle.",
+      "Function Ingredients 2": "fitness - vanilla, fitness - chia, fitness - sea salt",
+      "Ingredients": ["rec4lVJUGEAy0N7wF"],
+      "Name": "Fitness",
+      "Photo": [
+        {
+          "filename": "Fitness Icon.png",
+          "id": "attkJzFtw0qcWpO0Z",
+          "size": 4962,
+          "thumbnails": {
+            "full": {
+              "height": 150,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/074cf331a24848a90b72ab3fe6a277c8/0651670c",
+              "width": 150
+            },
+            "large": {
+              "height": 150,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/d7c91ece00dd3a72d2d38cdda8e7d9b4/fe272c60",
+              "width": 150
+            },
+            "small": {
+              "height": 36,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/d2ff258c42771699a21f64f3edefab29/f17938ae",
+              "width": 36
+            }
+          },
+          "type": "image/png",
+          "url": "https://dl.airtable.com/.attachments/b31f20565d12c1beab79002424b1a2f3/724e7fac/FitnessIcon.png"
+        }
+      ],
+      "Recipes 2": ["rec7tonLJn3hO5XfK"],
+      "_index": 3,
+      "id": "rech4rxFhIlLhHVmk"
+    },
+    "recl9QIIUTtDuJkWi": {
+      "Description": "Composed of two strains of ‘good’ bacteria to help with gut health.",
+      "Function Ingredients 2": "digestion - probiotics, digestion - chia",
+      "Ingredients": ["recCD2HSPMg4FfJpY"],
+      "Name": "Digestion",
+      "Photo": [
+        {
+          "filename": "Digestion Icon.png",
+          "id": "attgXMycZx8yrlz0x",
+          "size": 2806,
+          "thumbnails": {
+            "full": {
+              "height": 150,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/e0591ea45e847c9bc68d3447984204aa/cb5514b9",
+              "width": 150
+            },
+            "large": {
+              "height": 150,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/8e9e0bab5861fb91cce92b2721b1123d/309610ba",
+              "width": 150
+            },
+            "small": {
+              "height": 36,
+              "url": "https://dl.airtable.com/.attachmentThumbnails/3d71da123a945e5e3df53876710e3178/2e1d0767",
+              "width": 36
+            }
+          },
+          "type": "image/png",
+          "url": "https://dl.airtable.com/.attachments/731acee749e9a897f78789f23b30bf00/9e8766dd/DigestionIcon.png"
+        }
+      ],
+      "Recipes": "Fitness",
+      "Recipes 2": ["rec93XzkFZTAIL7xj"],
+      "_index": 4,
+      "id": "recl9QIIUTtDuJkWi"
+    }
+  },
+  "DefaultEnhancement": null,
+  "DefaultEnhancementName": null,
+  "DisplayPrice": "$NaN"
+}
