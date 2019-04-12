@@ -6,7 +6,7 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "aven:build": "echo Build.",
-    "aven:deploy": "npx appcenter codepush release-react -a OnoFoodCo/Blitz -d Production",
+    "aven:deploy": "npx appcenter codepush release-react -a OnoFoodCo/Blitz -d Production --plist-file ios/kiosk/Info.plist",
     "aven:start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {

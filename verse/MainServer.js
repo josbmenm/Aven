@@ -256,9 +256,9 @@ const runServer = async () => {
     });
     await delay(550);
   }
-  const actions = async function kitchenAction(action) {
+  async function kitchenAction(action) {
     console.log('kitchenAction', action);
-  };
+  }
 
   async function applySideEffects(restaurantState, kitchenState) {
     if (!restaurantState || !kitchenState) {
