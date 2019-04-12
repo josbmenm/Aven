@@ -8,14 +8,18 @@ import CloudContext from '../cloud-core/CloudContext';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import scrapeAirTable from '../skynet/scrapeAirTable';
 import { getMobileAuthToken } from '../skynet/Square';
+import { createReducerLambda } from '../cloud-core/useCloudReducer';
 
 import { hashSecureString } from '../cloud-utils/Crypto';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
 import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
+import createEvalSource from '../cloud-core/createEvalSource';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
+
+import RestaurantReducer from '../logic/RestaurantReducer';
 
 import startKitchen, { computeKitchenConfig } from './startKitchen';
 import { getConnectionToken, capturePayment } from './Stripe';
@@ -26,23 +30,11 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
-function extractKitchenConfig() {}
-
-function startTestKitchen({ cloud }) {
-  const state = cloud.get('KitchenState');
-
-  function dispatchCommand(action) {
-    const { subsystem, pulse, values } = action;
-  }
-
-  return { dispatchCommand };
-}
-
 const runServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨 ' + process.cwd() + '/db');
 
   const pgConfig = {
-    ssl: true,
+    ssl: !!getEnv('SQL_USE_SSL'),
     user: getEnv('SQL_USER'),
     password: getEnv('SQL_PASSWORD'),
     database: getEnv('SQL_DATABASE'),
@@ -101,8 +93,21 @@ const runServer = async () => {
   const rootAuthProvider = RootAuthProvider({
     rootPasswordHash: await hashSecureString(ROOT_PASSWORD),
   });
-  const protectedSource = createProtectedSource({
+
+  const evalSource = createEvalSource({
     source: storageSource,
+    domain: 'onofood.co',
+    evalDocs: {
+      RestaurantReducer: createReducerLambda(
+        'RestaurantReducer',
+        RestaurantReducer,
+        {},
+      ),
+    },
+  });
+
+  const protectedSource = createProtectedSource({
+    source: evalSource,
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
@@ -128,8 +133,18 @@ const runServer = async () => {
   });
 
   await putPermission({
+    defaultRule: { canWrite: true, canRead: true },
+    name: 'RestaurantActions',
+  });
+
+  await putPermission({
+    defaultRule: { canWrite: true, canRead: true },
+    name: 'RestaurantReducer',
+  });
+
+  await putPermission({
     defaultRule: { canRead: true },
-    name: 'KitchenConfig',
+    name: 'RestaurantActions^RestaurantReducer',
   });
 
   await putPermission({
@@ -144,7 +159,7 @@ const runServer = async () => {
 
   await putPermission({
     defaultRule: { canWrite: true },
-    name: 'RestaurantState',
+    name: 'Restaurant',
   });
 
   await putPermission({
@@ -174,6 +189,8 @@ const runServer = async () => {
   });
 
   const fsClient = createFSClient({ client: cloud });
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  computeKitchenConfig(cloud);
 
   const kitchen = startKitchen({
     client: cloud,
@@ -183,8 +200,6 @@ const runServer = async () => {
   // const kitchen = startTestKitchen({
   //   cloud,
   // });
-
-  computeKitchenConfig(cloud);
 
   let restaurantState = null;
   let kitchenState = null;
@@ -241,6 +256,10 @@ const runServer = async () => {
     });
     await delay(550);
   }
+  const actions = async function kitchenAction(action) {
+    console.log('kitchenAction', action);
+  };
+
   async function applySideEffects(restaurantState, kitchenState) {
     if (!restaurantState || !kitchenState) {
       return;
@@ -374,9 +393,11 @@ const runServer = async () => {
 
   const dispatch = async action => {
     switch (action.type) {
-      case 'KitchenCommand':
+      case 'KitchenCommand': // low level thing
         // subsystem (eg 'IOSystem'), pulse (eg ['home']), values (eg: foo: 123)
         return await kitchen.dispatchCommand(action);
+      case 'KitchenAction':
+        return await kitchenAction(action);
       case 'UpdateAirtable':
         return await scrapeAirTable(fsClient);
       case 'GetSquareMobileAuthToken':

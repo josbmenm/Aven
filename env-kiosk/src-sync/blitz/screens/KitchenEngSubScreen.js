@@ -7,6 +7,7 @@ import ButtonRow from '../../components/ButtonRow';
 import Button from '../../components/Button';
 import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
+import KeyboardPopover from '../../components/KeyboardPopover';
 import { usePopover } from '../../views/Popover';
 import {
   AlertIOS,
@@ -25,49 +26,6 @@ import { prettyShadow, genericText } from '../../components/Styles';
 
 import useFocus from '../../navigation-hooks/useFocus';
 import BlockFormInput from '../../components/BlockFormInput';
-
-function KeyboardPopover({ children, onClose }) {
-  return (
-    <View
-      style={{
-        ...StyleSheet.absoluteFillObject,
-        flex: 1,
-        alignItems: 'center',
-      }}
-    >
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View
-          style={{
-            ...StyleSheet.absoluteFillObject,
-            backgroundColor: '#0004',
-          }}
-        />
-      </TouchableWithoutFeedback>
-      <KeyboardAvoidingView behavior="padding" enabled>
-        <View
-          style={{
-            flex: 1,
-            width: 400,
-            justifyContent: 'center',
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: 'white',
-              alignSelf: 'stretch',
-              ...prettyShadow,
-              borderRadius: 10,
-              width: 400,
-              minHeight: 200,
-            }}
-          >
-            {children}
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
-  );
-}
 
 function SystemActionForm({
   pulse,

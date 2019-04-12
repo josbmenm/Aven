@@ -151,7 +151,10 @@ function BlendPageContentPure({
             <MainTitle>{displayNameOfOrderItem(item, menuItem)}</MainTitle>
             <View style={{ flexDirection: 'row' }}>
               {benefits.map(b => (
-                <View style={{ paddingVertical: 20, paddingRight: 20 }}>
+                <View
+                  key={b.id}
+                  style={{ paddingVertical: 20, paddingRight: 20 }}
+                >
                   <AirtableImage
                     image={b['Icon']}
                     style={{

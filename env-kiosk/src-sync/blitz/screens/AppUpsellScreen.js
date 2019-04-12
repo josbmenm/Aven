@@ -1,8 +1,7 @@
 import React from 'react';
 import InputPage from '../../components/InputPage';
-import { withRestaurant } from '../../ono-cloud/OnoKitchen';
 
-function AppUpsellWithRestaurant({ navigation, setAppUpsellPhoneNumber }) {
+function AppUpsell({ navigation, setAppUpsellPhoneNumber }) {
   return (
     <InputPage
       {...this.props}
@@ -15,6 +14,5 @@ function AppUpsellWithRestaurant({ navigation, setAppUpsellPhoneNumber }) {
     />
   );
 }
-const AppUpsell = withRestaurant(AppUpsellWithRestaurant);
 
 export default AppUpsell;

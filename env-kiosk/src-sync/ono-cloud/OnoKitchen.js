@@ -65,13 +65,17 @@ export function OrderContextProvider({ children }) {
       );
     },
     resetOrder: () => {
+      console.log('RESET ORDER!');
       if (!currentOrder) {
         return;
       }
+      console.log('oRderrr', currentOrder.getFullName());
       guardAsync(currentOrder.transact(doCancelOrderIfNotConfirmed));
       setCurrentOrder(null);
     },
     cancelOrder: () => {
+      console.log('CANCEL ORDER!');
+      console.log('oRderrr', currentOrder && currentOrder.getFullName());
       currentOrder &&
         guardAsync(
           currentOrder.transact(lastOrder => {
@@ -87,17 +91,26 @@ export function OrderContextProvider({ children }) {
         );
     },
     confirmOrder: () => {
+      console.log('CONFIRM ORDER!');
       guardAsync(currentOrder.transact(doConfirmOrder));
     },
     startOrder: () =>
       guardAsync(
         (async () => {
+          console.log('START ORDER!');
           const order = cloud.get('Orders').post();
           setCurrentOrder(order);
+          console.log('POST ORDER!', order.getFullName());
 
           await order.put({
             startTime: Date.now(),
             items: [],
+          });
+          console.log('posted order!', order.getFullName());
+          order.observeValue.subscribe({
+            next: oo => {
+              console.log('Lol ok, order changed!', oo);
+            },
           });
         })(),
       ),
@@ -635,37 +648,6 @@ export function useOrderIdSummary(orderId) {
   const orderState = useObservable(order ? order.observeValue : observeNull);
   const companyConfig = useCompanyConfig();
   return getOrderSummary(orderState, companyConfig);
-}
-
-export function withRestaurant(Component) {
-  const ComponentWithObservedState = withObservables(
-    ['restaurant'],
-    ({ restaurant }) => {
-      return { restaurant };
-    },
-  )(Component);
-
-  return props => (
-    <CloudContext.Consumer>
-      {restaurant => (
-        <ComponentWithObservedState
-          restaurantClient={restaurant}
-          cloud={restaurant}
-          restaurant={restaurant.get('Restaurant').observeValue}
-          setAppUpsellPhoneNumber={number => {
-            restaurant
-              .dispatch({
-                type: 'PutAuthProvider',
-                verificationInfo: { number, context: 'AppUpsell' },
-              })
-              .catch(console.error);
-          }}
-          dispatch={restaurant.dispatch}
-          {...props}
-        />
-      )}
-    </CloudContext.Consumer>
-  );
 }
 
 export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {

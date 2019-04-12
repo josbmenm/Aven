@@ -25,6 +25,7 @@
       }
     },
     "srcDependencies": [
+      "logic",
       "aven-web",
       "admin",
       "cloud-core",

@@ -636,18 +636,16 @@ export default function startKitchen({ client, plcIP }) {
           currentState = getTagValues(readings);
         }
       } catch (e) {}
-      // if (
-      //   lastState === currentState ||
-      //   shallowEqual(lastState, currentState)
-      // ) {
-      //   await delay(500);
-      //   return;
-      // }
+      if (shallowEqual(lastState, currentState)) {
+        // the state doesn't appear to be changing. cool off and wait a 1/4 sec..
+        await delay(250);
+        return;
+      }
       await stateRef.put({
         ...currentState,
         isPLCConnected,
       });
-      await delay(200);
+      await delay(15); // give js ~15ms to respond to this change.
     };
     const updateTagsForever = () => {
       if (hasClosed) {

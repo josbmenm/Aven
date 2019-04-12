@@ -7,26 +7,15 @@ import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import { View, ScrollView, Text } from 'react-native';
 import LinkRow from '../../components/LinkRow';
-import {
-  getSubsystemOverview,
-  withKitchen,
-  withRestaurant,
-} from '../../ono-cloud/OnoKitchen';
+import { getSubsystemOverview, withKitchen } from '../../ono-cloud/OnoKitchen';
 import useCloud from '../../cloud-core/useCloud';
+import useObservable from '../../cloud-core/useObservable';
 
-import withObservables from '@nozbe/with-observables';
-
-const IsConnectedWithState = ({ isConnected }) => (
-  <BitRow title="Server Connected" value={isConnected} />
-);
-
-const IsConnected = withObservables(['isConnected'], ({ isConnected }) => ({
-  isConnected,
-}))(IsConnectedWithState);
-
-const IsConnectedRow = withRestaurant(({ restaurantClient }) => (
-  <IsConnected isConnected={restaurantClient.isConnected} />
-));
+function IsConnectedRow() {
+  const cloud = useCloud();
+  const isConnected = useObservable(cloud.isConnected);
+  return <BitRow title="Server Connected" value={isConnected} />;
+}
 
 const PLCConnectedRow = withKitchen(({ kitchenState }) => (
   <BitRow
@@ -81,9 +70,9 @@ function LogView() {
         },
       });
     });
-    kitchenState.observeValue.subscribe(kitchenState => {
-      console.log('yyyyyy', kitchenState);
-    });
+    // kitchenState.observeValue.subscribe(kitchenState => {
+    //   console.log('yyyyyy', kitchenState);
+    // });
   }, [cloud.isConnected, kitchenState]);
   return (
     <ScrollView style={{ flex: 1 }}>

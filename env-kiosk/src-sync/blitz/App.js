@@ -22,6 +22,7 @@ import CustomizeBlendScreen from './screens/CustomizeBlendScreen';
 import FoodScreen from './screens/FoodScreen';
 import DebugStateScreen from './screens/DebugStateScreen';
 import PaymentDebugScreen from './screens/PaymentDebugScreen';
+import SequencingDebugScreen from './screens/SequencingDebugScreen';
 
 import Button from '../components/Button';
 import OrderConfirmScreen from './screens/OrderConfirmScreen';
@@ -115,6 +116,7 @@ const App = createStackTransitionNavigator({
   SendReceipt: SendReceiptScreen,
   Receipt: ReceiptScreen,
   PaymentDebug: PaymentDebugScreen,
+  SequencingDebug: SequencingDebugScreen,
   AppUpsell: AppUpsellScreen,
   Host: HostNavigator,
   OrderNavigator,

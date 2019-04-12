@@ -38,6 +38,13 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
       <RowSection>
         <LinkRow
           onPress={() => {
+            navigation.navigate({ routeName: 'SequencingDebug' });
+          }}
+          title="Kitchen Sequencer"
+          icon="🧭"
+        />
+        <LinkRow
+          onPress={() => {
             navigation.navigate({ routeName: 'PaymentDebug' });
           }}
           icon="💸"

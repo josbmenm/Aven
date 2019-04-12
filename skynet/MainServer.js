@@ -38,7 +38,7 @@ const runServer = async () => {
   const source = await startPostgresStorageSource({
     domains: [domain],
     config: {
-      client: 'pg', // must have pg in the dependencies of this module.
+      client: 'pg',
       connection: pgConfig,
     },
   });

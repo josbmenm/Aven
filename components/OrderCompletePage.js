@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import BlockForm from './BlockForm';
 import BlockFormTitle from './BlockFormTitle';
@@ -15,6 +15,12 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 export default function OrderCompletePage({ backBehavior, ...props }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const { navigate } = useNavigation();
+  useEffect(() => {
+    console.log('did mount OrderCompletePage');
+    return () => {
+      console.log('un mount OrderCompletePage');
+    };
+  }, []);
   return (
     <ShortBlockFormPage backBehavior={backBehavior} {...props}>
       <BlockForm>

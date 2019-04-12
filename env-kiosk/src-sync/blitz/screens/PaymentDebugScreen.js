@@ -4,8 +4,13 @@ import JSONView from '../../debug-views/JSONView';
 import GenericPage from '../../components/GenericPage';
 import Hero from '../../components/Hero';
 import Button from '../../components/Button';
-
-import { useCardReader, useCardPaymentCapture } from '../CardReader';
+import {
+  CardReaderLog,
+  useCardReader,
+  useCardPaymentCapture,
+  disconnectReader,
+  clearReaderLog,
+} from '../CardReader';
 import useObservable from '../../cloud-core/useObservable';
 import RowSection from '../../components/RowSection';
 import TextRow from '../../components/TextRow';
@@ -85,6 +90,16 @@ function UseCardExample() {
         }}
       />
       <Button
+        title="Disconnect Reader"
+        onPress={() => {
+          disconnectReader()
+            .then(() => {
+              alert('Disconnected');
+            })
+            .catch(e => console.error(e));
+        }}
+      />
+      <Button
         title="Cancel Payment"
         onPress={() => {
           cancelPayment()
@@ -115,6 +130,21 @@ function UseCardExample() {
   );
 }
 
+function ReaderEvents() {
+  const log = useObservable(CardReaderLog);
+  return (
+    <React.Fragment>
+      <Text style={{ fontSize: 42 }}>Events</Text>
+      <RowSection>
+        {log.map(evt => {
+          return <TextRow key={evt.event + evt.time} text={evt.event} />;
+        })}
+      </RowSection>
+      <Button onPress={clearReaderLog} title="Clear Log" />
+    </React.Fragment>
+  );
+}
+
 export default function PaymentDebugScreen(props) {
   const [isShowingFullExample, setFullExample] = useState(false);
   const [isShowingUseCard, setUseCard] = useState(false);
@@ -137,6 +167,8 @@ export default function PaymentDebugScreen(props) {
           }}
         />
         {isShowingUseCard && <UseCardExample />}
+
+        <ReaderEvents />
       </RowSection>
     </GenericPage>
   );

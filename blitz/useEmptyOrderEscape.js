@@ -4,8 +4,6 @@ import { useOrder } from '../ono-cloud/OnoKitchen';
 import useObservable from '../cloud-core/useObservable';
 import { StackActions, NavigationActions } from '../navigation-core';
 
-process.env.REACT_NAV_LOGGING = true;
-
 export default function useEmptyOrderEscape() {
   const { dispatch, dangerouslyGetParent } = useNavigation();
   const { order } = useOrder();
