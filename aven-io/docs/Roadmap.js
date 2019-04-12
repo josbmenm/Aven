@@ -17,7 +17,6 @@ function DocPage() {
           </ListItem>
           <ListItem>cache configuration of a DataSource</ListItem>
           <ListItem>switch from sha1 to better hash algo</ListItem>
-          <ListItem>switch from uuid/v1 to better id like KUID</ListItem>
         </List>
       </Section>
     </Page>

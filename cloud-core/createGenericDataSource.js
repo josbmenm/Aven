@@ -1,5 +1,5 @@
 import { BehaviorSubject, Subject } from 'rxjs-compat';
-import uuid from 'uuid/v1';
+import kuid from 'kuid';
 
 import createDispatcher from '../cloud-utils/createDispatcher';
 import { getListDocName } from '../cloud-utils/MetaDocNames';
@@ -85,7 +85,7 @@ export default function createGenericDataSource({
   domain: sourceDomain,
   id,
 }) {
-  const sourceId = id || uuid();
+  const sourceId = id || kuid();
 
   if (!docState) {
     throw new Error('Cannot create a data source without a state object');
@@ -317,7 +317,7 @@ export default function createGenericDataSource({
     if (domain === undefined) {
       throw new Error('Invalid use. ', { domain, name, id });
     }
-    const postedName = name ? pathJoin(name, uuid()) : uuid();
+    const postedName = name ? pathJoin(name, kuid()) : kuid();
     if (value !== undefined) {
       const { id } = await _putBlock(value);
       await _putDoc(postedName, id);

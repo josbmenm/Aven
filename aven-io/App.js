@@ -17,7 +17,7 @@ import useCloud from '../cloud-core/useCloud';
 import useCloudValue from '../cloud-core/useCloudValue';
 import useCloudReducer from '../cloud-core/useCloudReducer';
 import Link from '../navigation-web/Link';
-import uuid from 'uuid/v1';
+import kuid from 'kuid';
 import Konva from 'konva';
 import {
   mainShade,
@@ -169,7 +169,7 @@ const AppView = ({ navigation, descriptors }) => {
 //         borderRadius: 5,
 //       }}
 //       onSubmitEditing={() => {
-//         todosDoc.put([...(todos || []), { label: newTodoText, key: uuid() }]);
+//         todosDoc.put([...(todos || []), { label: newTodoText, key: kuid() }]);
 //       }}
 //       onChangeText={setNewTodoText}
 //       value={newTodoText}
@@ -238,7 +238,7 @@ function AddTodo() {
         setNewTodoText('');
         dispatch({
           type: 'AddTodo',
-          todo: { label: newTodoText, key: uuid() },
+          todo: { label: newTodoText, key: kuid() },
         });
       }}
       onChangeText={setNewTodoText}

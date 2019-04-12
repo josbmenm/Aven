@@ -1,7 +1,7 @@
 import Knex from 'knex';
 import { BehaviorSubject, Observable } from 'rxjs-compat';
 import createDispatcher from '../cloud-utils/createDispatcher';
-import uuid from 'uuid/v1';
+import kuid from 'kuid';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 import { getMaxListDocs } from '../cloud-core/maxListDocs';
 import { getMaxBlockRefCount } from '../cloud-core/maxBlockRefCount';
@@ -21,7 +21,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       'DomainConfiguration'
     );
   }
-  const id = uuid();
+  const id = kuid();
 
   const TOP_PARENT_ID = 0; // hacky approach to handle top-level parents and still enforce uniqueness properly on the docs table.
 
@@ -482,7 +482,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function PostDoc({ domain, name, value, id }) {
-    const postedName = name ? pathJoin(name, uuid()) : uuid();
+    const postedName = name ? pathJoin(name, kuid()) : kuid();
 
     if (value) {
       return await PutDocValue({ domain, value, name: postedName, id });

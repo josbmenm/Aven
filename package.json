@@ -57,6 +57,7 @@
     "json-stable-stringify": "^1.0.1",
     "knex": "^0.16.3",
     "konva": "^3.2.1",
+    "kuid": "^2.1.4",
     "mime": "^2.3.1",
     "minimist": "^1.2.0",
     "node-fetch": "^2.3.0",
@@ -92,7 +93,6 @@
     "tslint-config-prettier": "^1.17.0",
     "tslint-react": "^3.6.0",
     "twilio": "^3.24.0",
-    "uuid": "^3.3.2",
     "websocket": "^1.0.28",
     "ws": "^6.0.0",
     "yes-https": "^0.0.4"

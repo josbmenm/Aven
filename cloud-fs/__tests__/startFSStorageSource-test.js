@@ -1,6 +1,6 @@
 import startFSStorageSource from '../startFSStorageSource';
 import sourceTests from '../../cloud-core/__tests__/sourceTests';
-import uuid from 'uuid/v1';
+import kuid from 'kuid';
 
 const pathJoin = require('path').join;
 
@@ -9,7 +9,7 @@ const TMP_DIR = require('os').tmpdir();
 beforeAll(async () => {});
 
 async function startTestDataSource(options = {}) {
-  const dataDir = pathJoin(TMP_DIR, uuid());
+  const dataDir = pathJoin(TMP_DIR, kuid());
   return startFSStorageSource({
     domain: 'test',
     dataDir,
@@ -23,7 +23,7 @@ describe('fs data source tests', () => {
 
 describe('basic fs source setup', () => {
   test('throws when starting without a domain', () => {
-    const dataDir = pathJoin(TMP_DIR, uuid());
+    const dataDir = pathJoin(TMP_DIR, kuid());
     expect(
       startFSStorageSource({
         dataDir,
@@ -41,7 +41,7 @@ describe('basic fs source setup', () => {
 
 describe('persistence', () => {
   test('doc persistence', async () => {
-    const dataDir = pathJoin(TMP_DIR, uuid());
+    const dataDir = pathJoin(TMP_DIR, kuid());
 
     const ds1 = await startTestDataSource({ dataDir });
     const putResult = await ds1.dispatch({

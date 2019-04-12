@@ -5919,6 +5919,11 @@ konva@^3.2.1:
     rollup-plugin-sourcemaps "^0.4.2"
     rollup-plugin-typescript2 "^0.20.1"
 
+kuid@^2.1.4:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/kuid/-/kuid-2.1.4.tgz#eb500298f5efc64556d28463a7441af69da497d5"
+  integrity sha512-jbgfHWhf0Ksgq2N6fj8cFMavXzFgPdhyBNnd5aYJxVVeBNQQBoenBj5AE5WJ0RdmtQZz71indq3B5Ugna+z9NQ==
+
 lazystream@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/lazystream/-/lazystream-1.0.0.tgz#f6995fe0f820392f61396be89462407bb77168e4"

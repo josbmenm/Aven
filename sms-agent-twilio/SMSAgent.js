@@ -1,9 +1,9 @@
-const uuid = require('uuid/v1');
+const kuid = require('kuid');
 const Twilio = require('twilio');
 
 export default function SMSAgent({ config, defaultFromNumber, name }) {
   const { accountSid, authToken } = config;
-  name = name || `sms-twilio-${uuid()}`;
+  name = name || `sms-twilio-${kuid()}`;
 
   const t = Twilio(accountSid, authToken);
 

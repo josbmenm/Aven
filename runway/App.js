@@ -2,7 +2,7 @@ import React, { useState, useReducer } from 'react';
 import { View, Text, Animated, Button, TextInput } from 'react-native';
 import useCloudState from '../cloud-core/useCloudState';
 import useCloudReducer from '../cloud-core/useCloudReducer';
-import uuid from 'uuid/v1';
+import kuid from 'kuid';
 
 // function TodoItem({ item }) {
 //   return <Text>{item.label}</Text>;
@@ -32,7 +32,7 @@ import uuid from 'uuid/v1';
 //         borderRadius: 5,
 //       }}
 //       onSubmitEditing={() => {
-//         todosDoc.put([...(todos || []), { label: newTodoText, key: uuid() }]);
+//         todosDoc.put([...(todos || []), { label: newTodoText, key: kuid() }]);
 //       }}
 //       onChangeText={setNewTodoText}
 //       value={newTodoText}
@@ -101,7 +101,7 @@ function AddTodo() {
         setNewTodoText('');
         dispatch({
           type: 'AddTodo',
-          todo: { label: newTodoText, key: uuid() },
+          todo: { label: newTodoText, key: kuid() },
         });
       }}
       onChangeText={setNewTodoText}

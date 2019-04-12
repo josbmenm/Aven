@@ -1,4 +1,4 @@
-import uuid from 'uuid/v1';
+import kuid from 'kuid';
 
 const WebSocket = require('ws');
 
@@ -12,7 +12,7 @@ export default function startSourceSocketServer(wss, source) {
       }
     };
 
-    const clientId = uuid();
+    const clientId = kuid();
     sendMessage({ type: 'ClientId', clientId });
 
     const subs = {};
