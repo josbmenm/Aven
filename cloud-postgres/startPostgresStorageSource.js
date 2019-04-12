@@ -179,13 +179,38 @@ export default async function startPostgresStorageSource({ config, domains }) {
     const blockData = stringify(value);
     const size = blockData.length;
     const id = getIdOfValue(value);
-    await knex.raw(
-      `
+    const storedValue = { value, refs };
+    if (id === undefined) {
+      throw new Error('Bad ID!');
+    }
+    if (storedValue === undefined) {
+      throw new Error('Bad Stored Value');
+    }
+    if (size === undefined) {
+      throw new Error('Bad Size');
+    }
+    const commitArguments = { value: JSON.stringify(storedValue), size, id };
+    const doQuery = async () => {
+      await knex.raw(
+        `
     INSERT INTO blocks ("id","value","size") VALUES (:id, :value, :size)
     ON CONFLICT ON CONSTRAINT "blockIdentity" DO NOTHING
     `,
-      { value: { value, refs }, size, id }
-    );
+        commitArguments
+      );
+    };
+    try {
+      await doQuery();
+    } catch (e) {
+      if (e.message.indexOf('Undefined binding(s)') === -1) {
+        throw e;
+      }
+      console.log('Retrying...!', commitArguments);
+      await new Promise(resolve => {
+        setTimeout(resolve, 1000 + Math.floor(Math.random() * 2000));
+      });
+      await doQuery();
+    }
     return { id, size };
   }
 
@@ -284,20 +309,23 @@ export default async function startPostgresStorageSource({ config, domains }) {
     await knex.raw(`NOTIFY "${channelId}", ${pgFormat.literal(payload)}`);
   }
 
-  async function writeDoc(domain, parentId, name, currentBlock) {
+  async function writeDoc(domain, parentId, name, currentBlockId) {
     const internalParentId = getInternalParentId(parentId);
     const writeResult = await knex.raw(
-      `INSERT INTO docs ("name", "domainName", "currentBlock", "parentId") VALUES (:name, :domain, :currentBlock, :parentId)
-          ON CONFLICT ON CONSTRAINT "docIdentity" DO UPDATE SET "currentBlock" = :currentBlock
-          RETURNING "docId";`,
+      `INSERT INTO docs ("name", "domainName", "currentBlock", "parentId") VALUES (:name, :domain, :current, :parentId)
+          ON CONFLICT ON CONSTRAINT "docIdentity" DO UPDATE SET "prevBlock" = docs."currentBlock", "currentBlock" = :current
+          RETURNING "docId", "currentBlock", "prevBlock";`,
       {
         name,
         domain,
-        currentBlock,
+        current: currentBlockId,
         parentId: internalParentId,
       }
     );
-    await notifyDocWrite(domain, name, currentBlock);
+    const resultRow = writeResult.rows[0];
+    if (resultRow.prevBlock !== currentBlockId) {
+      await notifyDocWrite(domain, name, currentBlockId);
+    }
   }
 
   async function writeDocTransaction(
@@ -308,17 +336,31 @@ export default async function startPostgresStorageSource({ config, domains }) {
     prevCurrentBlock
   ) {
     const internalParentId = getInternalParentId(parentId);
-    const resp = await knex.raw(
-      `UPDATE docs SET "currentBlock" = :currentBlock WHERE "name" = :name AND "domainName" = :domain AND "parentId" = :parentId AND "currentBlock" = :prevCurrentBlock RETURNING "currentBlock";
+    let resp = null;
+    if (prevCurrentBlock === null) {
+      resp = await knex.raw(
+        `UPDATE docs SET "currentBlock" = :currentBlock WHERE "name" = :name AND "domainName" = :domain AND "parentId" = :parentId AND "currentBlock" IS NULL RETURNING "currentBlock";
     `,
-      {
-        name,
-        domain,
-        currentBlock,
-        parentId: internalParentId,
-        prevCurrentBlock,
-      }
-    );
+        {
+          name,
+          domain,
+          currentBlock,
+          parentId: internalParentId,
+        }
+      );
+    } else {
+      resp = await knex.raw(
+        `UPDATE docs SET "currentBlock" = :currentBlock WHERE "name" = :name AND "domainName" = :domain AND "parentId" = :parentId AND "currentBlock" = :prevCurrentBlock RETURNING "currentBlock";
+      `,
+        {
+          name,
+          domain,
+          currentBlock,
+          parentId: internalParentId,
+          prevCurrentBlock,
+        }
+      );
+    }
     if (!resp.rows.length) {
       throw new Error('Could not perform this transaction!');
     }
@@ -462,6 +504,13 @@ export default async function startPostgresStorageSource({ config, domains }) {
         if (!block) {
           return { id };
         }
+        // let parsedValue = undefined;
+        // try {
+        //   parsedValue = JSON.parse(block.value.value);
+        // } catch (e) {
+        //   console.error('Cannot parse JSON value from block: ', block);
+        //   throw e;
+        // }
         return {
           id: block.id,
           value: block.value.value,
@@ -596,8 +645,41 @@ export default async function startPostgresStorageSource({ config, domains }) {
     return `doc-children-${domain}-${name}`;
   }
 
-  async function observeDoc(...args) {
-    return getCachedObervable(args, getDocChannel);
+  async function observeDoc(domain, name) {
+    const channelId = getDocChannel(domain, name);
+
+    if (observingChannels[channelId]) {
+      return observingChannels[channelId].observable;
+    }
+    const obs = {
+      observable: new Observable(observer => {
+        GetDoc({ name, domain })
+          .then(docState => {
+            observer.next({ id: docState.id });
+          })
+          .catch(observer.error);
+
+        obs.observer = observer;
+        pgClient &&
+          pgClient
+            .query(`LISTEN "${channelId}"`)
+            .then(resp => {
+              // console.log('did listen to channel', channelId);
+            })
+            .catch(console.error);
+        return () => {
+          pgClient
+            .query(`UNLISTEN "${channelId}"`)
+            .then(resp => {})
+            .catch(console.error);
+          delete obs.observer;
+        };
+      })
+        .multicast(() => new BehaviorSubject(undefined))
+        .refCount(),
+    };
+    observingChannels[channelId] = obs;
+    return obs.observable;
   }
   async function observeDocChildren(...args) {
     return getCachedObervable(args, getChildrenChannel);

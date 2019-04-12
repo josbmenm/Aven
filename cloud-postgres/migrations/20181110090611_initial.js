@@ -23,6 +23,10 @@ exports.up = function(knex) {
         .references('id')
         .inTable('blocks');
       table
+        .string('prevBlock')
+        .references('id')
+        .inTable('blocks');
+      table
         .integer('parentId')
         .references('docId')
         .inTable('docs')

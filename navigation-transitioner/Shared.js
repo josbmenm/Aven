@@ -64,6 +64,8 @@ const defaultTimingConfig = {
   easing: Easing.out(Easing.cubic),
   duration: 600,
 };
+const N0 = new Animated.Value(0);
+const N1 = new Animated.Value(1);
 
 const runSharedTransition = timingConfig => async (
   transition,
@@ -118,20 +120,29 @@ const runSharedTransition = timingConfig => async (
     );
     setLayoutOnKey(transition.fromLayouts, sharedElId, fromLayouts[index]);
   });
+
   const destValue = toState.routes.find(
     r => r.key === transition.transitionRouteKey
   )
-    ? 1
-    : 0;
+    ? N1
+    : N0;
 
+  if (destValue === N0) {
+    // ugh this is a miserable "fix"
+    return;
+  }
   await new Promise(resolve => {
     // animated bug here. this doesn't work:
     timing(transition.progress, {
       ...defaultTimingConfig,
       ...(timingConfig || {}),
       toValue: destValue,
-      useNativeDriver: true,
-    }).start(resolve);
+    }).start(
+      () => {
+        resolve();
+      },
+      () => {}
+    );
   });
 };
 

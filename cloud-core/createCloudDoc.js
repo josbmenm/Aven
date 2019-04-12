@@ -206,7 +206,8 @@ export function createDocPool({
     // this is a shared observable of all doc names. Array<string>
     .map(docNames => docNames.map(get))
     // this is now hydrated to real children doc objects Array<CloudDoc>
-    .share();
+    .multicast(() => new BehaviorSubject(undefined))
+    .refCount();
 
   return { get, move, post, observeChildren };
 }
@@ -332,14 +333,20 @@ export default function createCloudDoc({
     getParentName(parentName.getValue(), getState().name)
   );
 
+  const updateName = () => {
+    const state = docState.getValue();
+    const parent = parentName.getValue();
+    const newName = getParentName(parent, state.name);
+    if (docName.getValue() !== newName) {
+      docName.next(newName);
+    }
+  };
+
   parentName.subscribe({
-    next: parent => {
-      docState.subscribe({
-        next: state => {
-          docName.next(getParentName(parent, state.name));
-        },
-      });
-    },
+    next: updateName,
+  });
+  docState.subscribe({
+    next: updateName,
   });
 
   function getFullName() {
@@ -429,19 +436,22 @@ export default function createCloudDoc({
             lastSyncTime: Date.now(),
             value: upstreamDoc.value,
           });
-          observer.next(docState.value);
         },
       });
     });
 
+    const stateSubscription = docState.subscribe({
+      next: val => {
+        observer.next(val);
+      },
+    });
     return () => {
-      setState({ isConnected: false });
-      upstreamSubscription && upstreamSubscription.unsubscribe();
+      stateSubscription.unsubscribe();
+      upstreamSubscription.unsubscribe();
     };
   })
     .multicast(() => new BehaviorSubject(docState.value))
     .refCount();
-
   function _getBlockWithId(id) {
     if (_docBlocks[id]) {
       return _docBlocks[id];
@@ -659,6 +669,7 @@ export default function createCloudDoc({
 
   async function put(value) {
     const block = _getBlockWithValue(value);
+    console.log('helloooo', block.id, value, getFullName());
     await putBlock(block);
     return { id: block.id };
   }
@@ -730,11 +741,11 @@ export default function createCloudDoc({
 
     const state = getState();
     if (state.puttingFromId) {
-      console.log(
-        `Warning.. putBlock of "${name}" while another put from ${
-          state.puttingFromId
-        } is in progress`
-      );
+      // console.log(
+      //   `Warning.. putBlock of "${name}" while another put from ${
+      //     state.puttingFromId
+      //   } is in progress`,
+      // );
     }
     const lastId = state.id;
     setState({
@@ -745,13 +756,18 @@ export default function createCloudDoc({
       if (block.getIsPublished()) {
         await putId(block.id);
       } else {
-        await source.dispatch({
-          type: 'PutDocValue',
-          domain,
-          name: getFullName(),
-          id: block.id,
-          value: block.getValue(),
-        });
+        try {
+          await source.dispatch({
+            type: 'PutDocValue',
+            domain,
+            name: getFullName(),
+            id: block.id,
+            value: block.getValue(),
+          });
+        } catch (e) {
+          console.error('failed to putdocvalue', e.details);
+          console.error(e);
+        }
         block.setPutTime();
       }
 

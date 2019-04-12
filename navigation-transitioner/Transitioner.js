@@ -223,11 +223,9 @@ export class Transitioner extends React.Component {
       navState,
       descriptors,
     } = this.state;
-    console.log('TRANS RENDER', this.state);
     const { navigation, navigationConfig } = this.props;
     const mainRouteKeys = navState.routes.map(r => r.key);
     let routeKeys = mainRouteKeys;
-
     if (transitionRouteKey) {
       if (transitioningFromState) {
         const prevRouteKeys = transitioningFromState.routes.map(r => r.key);
