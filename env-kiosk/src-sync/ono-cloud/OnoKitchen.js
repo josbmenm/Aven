@@ -51,7 +51,7 @@ export function OrderContextProvider({ children }) {
   }
 
   useEffect(() => {
-    guardAsync(cloud.createAnonymousSession());
+    guardAsync(cloud.establishAnonymousSession());
   }, []);
 
   let orderContext = {

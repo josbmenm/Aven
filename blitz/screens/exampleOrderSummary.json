@@ -6,61 +6,6 @@
     "startTime": 1547575132386,
     "items": [
       {
-        "id": "food-recLhp1A1haH5BoSm",
-        "type": "food",
-        "menuItemId": "recLhp1A1haH5BoSm",
-        "quantity": 2
-      },
-
-      {
-        "id": "food-recLhp125BoSm",
-        "type": "food",
-        "menuItemId": "recLhp1A1haH5BoSm",
-        "quantity": 2
-      },
-
-      {
-        "id": "food-recLhp1A1H5BoSm",
-        "type": "food",
-        "menuItemId": "recLhp1A1haH5BoSm",
-        "quantity": 2
-      },
-
-      {
-        "id": "food-aBoSm",
-        "type": "food",
-        "menuItemId": "recLhp1A1haH5BoSm",
-        "quantity": 2
-      },
-
-      {
-        "id": "food-recLhp1A1ha4oSm",
-        "type": "food",
-        "menuItemId": "recLhp1A1haH5BoSm",
-        "quantity": 2
-      },
-
-      {
-        "id": "food-recLhp1A1125BoSm",
-        "type": "food",
-        "menuItemId": "recLhp1A1haH5BoSm",
-        "quantity": 2
-      },
-
-      {
-        "id": "food-re234haH5BoSm",
-        "type": "food",
-        "menuItemId": "recLhp1A1haH5BoSm",
-        "quantity": 2
-      },
-      {
-        "id": "3e8cdc60-18ef-11e9-a6a1-cf6f1ae3f765",
-        "type": "blend",
-        "menuItemId": "rec2oXmg1V5vEvkbj",
-        "customization": null,
-        "quantity": 1
-      },
-      {
         "id": "446152b0-18ef-11e9-a6a1-cf6f1ae3f765",
         "type": "blend",
         "menuItemId": "rec3SzrHfP2zJnoaO",

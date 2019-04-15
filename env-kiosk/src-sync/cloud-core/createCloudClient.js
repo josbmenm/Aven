@@ -81,6 +81,13 @@ export default function createCloudClient({
     return created;
   }
 
+  async function establishAnonymousSession() {
+    if (session.value) {
+      return;
+    }
+    return await createAnonymousSession();
+  }
+
   async function destroySession() {
     if (!session.value) {
       throw new Error('no session found!');
@@ -179,6 +186,7 @@ export default function createCloudClient({
     observeSession: session,
     createSession,
     createAnonymousSession,
+    establishAnonymousSession,
     destroySession,
     dispatch,
     domain,
