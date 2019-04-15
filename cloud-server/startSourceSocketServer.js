@@ -70,7 +70,11 @@ export default function startSourceSocketServer(wss, source) {
                 sendMessage({
                   type: 'SubscriptionError',
                   id: subscriptionId,
-                  error,
+                  error: {
+                    message: error.message,
+                    type: error.type,
+                    detail: error.detail,
+                  },
                 });
               }
               function sendUpdate(value) {
