@@ -483,6 +483,7 @@ function companyConfigToBlendMenu(atData) {
   const Recipes = atData.baseTables['Recipes'];
   const MenuItemsUnordered = atData.baseTables['KioskBlendMenu'];
   const RecipeIngredients = atData.baseTables['Recipe Ingredients'];
+  const Dietary = atData.baseTables['Dietary'];
   const Ingredients = atData.baseTables['Ingredients'];
 
   const IngredientCustomization = Object.keys(
@@ -555,6 +556,7 @@ function companyConfigToBlendMenu(atData) {
       }).filter(ic => !!ic),
       tables: atData.baseTables,
       BenefitCustomization: Benefits,
+      Dietary,
       DefaultBenefitEnhancement,
       DefaultBenefitEnhancementName:
         DefaultBenefitEnhancement && DefaultBenefitEnhancement.Name,

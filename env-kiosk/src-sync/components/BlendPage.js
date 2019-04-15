@@ -135,6 +135,25 @@ function BlendPageContentPure({
     const detailText = `${menuItem.Recipe['DisplayCalories']} Calories | ${
       menuItem.Recipe['Nutrition Detail']
     }`;
+    const dietary = Object.keys(menuItem.Dietary)
+      .map(dId => menuItem.Dietary[dId])
+      .filter(diet => {
+        if (diet['Applies To All Ingredients']) {
+          return true;
+        }
+        if (!diet.Ingredients) {
+          return false;
+        }
+        if (
+          selectedIngredientIds.find(
+            ingId => diet.Ingredients.indexOf(ingId) === -1,
+          )
+        ) {
+          return false;
+        }
+        return true;
+      });
+    console.log('dietary', dietary);
     menuContent = (
       <MenuZone>
         <MenuHLayout
@@ -189,12 +208,21 @@ function BlendPageContentPure({
             <View
               style={{
                 marginTop: 27,
-                height: 32,
-                width: 32,
-                borderRadius: 16,
-                backgroundColor: 'black',
+                flexDirection: 'row',
               }}
-            />
+            >
+              {dietary.map(d => (
+                <AirtableImage
+                  image={d.Icon}
+                  style={{
+                    width: 32,
+                    marginRight: 8,
+                    height: 32,
+                  }}
+                  tintColor={monsterra}
+                />
+              ))}
+            </View>
             <SmallTitle>organic ingredients</SmallTitle>
             <Ingredients selectedIngredients={selectedIngredients} />
           </DetailsSection>
