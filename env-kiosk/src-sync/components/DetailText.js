@@ -7,7 +7,7 @@ export default function DetailText({ children }) {
     <Text
       style={{
         ...detailTextStyle,
-        marginTop: 16,
+        marginTop: 50,
       }}
     >
       {children}

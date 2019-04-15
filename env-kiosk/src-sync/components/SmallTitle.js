@@ -7,7 +7,7 @@ export default function SmallTitle({ children }) {
     <Text
       style={{
         fontSize: 24,
-        marginTop: 24,
+        marginTop: 24 + 44,
         ...titleStyle,
       }}
     >

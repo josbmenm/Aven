@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import { ScrollView, View, Image } from 'react-native';
 import { pageBackgroundColor } from './Styles';
 import BackButton from './BackButton';
+import GenericPage from './GenericPage';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import Hero from './Hero';
 
 import FadeTransition from './FadeTransition';
 
-export default function GenericPage({
+export default function TwoPanePage({
   children,
   hideBackButton,
   disableScrollView,
   side,
+  afterSide,
   title,
   icon,
   ...props
@@ -34,6 +36,7 @@ export default function GenericPage({
           >
             {side}
           </ScrollView>
+          {afterSide}
         </View>
         <View style={{ flex: 1 }}>
           {disableScrollView ? (
@@ -59,4 +62,4 @@ export default function GenericPage({
     </FadeTransition>
   );
 }
-GenericPage.navigationOptions = FadeTransition.navigationOptions;
+TwoPanePage.navigationOptions = FadeTransition.navigationOptions;

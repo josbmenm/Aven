@@ -9,7 +9,7 @@ import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import scrapeAirTable from '../skynet/scrapeAirTable';
 import { getMobileAuthToken } from '../skynet/Square';
 import { createReducerLambda } from '../cloud-core/useCloudReducer';
-
+import KitchenCommands from '../logic/KitchenCommands';
 import { hashSecureString } from '../cloud-utils/Crypto';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
@@ -47,11 +47,6 @@ const runServer = async () => {
       client: 'pg',
       connection: pgConfig,
     },
-  });
-
-  const cloud = createCloudClient({
-    source: storageSource,
-    domain: 'onofood.co',
   });
 
   const emailAgent = EmailAgent({
@@ -94,15 +89,30 @@ const runServer = async () => {
     rootPasswordHash: await hashSecureString(ROOT_PASSWORD),
   });
 
+  function RestaurantSequencer() {
+    return {
+      hello: 'world',
+    };
+  }
+
   const evalSource = createEvalSource({
     source: storageSource,
     domain: 'onofood.co',
     evalDocs: {
+      RestaurantSequencer,
       RestaurantReducer: createReducerLambda(
         'RestaurantReducer',
         RestaurantReducer,
         {},
       ),
+    },
+  });
+
+  const cloud = createCloudClient({
+    source: evalSource,
+    domain: 'onofood.co',
+    evalDocs: {
+      RestaurantSequencer,
     },
   });
 
@@ -149,7 +159,17 @@ const runServer = async () => {
 
   await putPermission({
     defaultRule: { canRead: true },
+    name: 'RestaurantSequencer',
+  });
+
+  await putPermission({
+    defaultRule: { canRead: true },
     name: 'KitchenState',
+  });
+
+  await putPermission({
+    defaultRule: { canRead: true, canTransact: true },
+    name: 'KitchenLog',
   });
 
   await putPermission({
@@ -256,8 +276,29 @@ const runServer = async () => {
     });
     await delay(550);
   }
+
   async function kitchenAction(action) {
-    console.log('kitchenAction', action);
+    const commandType = KitchenCommands[action.command];
+    if (!commandType) {
+      throw new Error(`Unknown kitchen command "${action.command}"`);
+    }
+    const { valueParamNames, pulse, subsystem } = commandType;
+    const values = { ...commandType.values };
+    valueParamNames &&
+      Object.keys(valueParamNames).forEach(valueCommandName => {
+        const provided =
+          action.params && action.params[valueParamNames[valueCommandName]];
+        if (provided != null) {
+          values[valueCommandName] = provided;
+        }
+      });
+    const kitchenAction = {
+      type: 'KitchenCommand',
+      subsystem,
+      pulse,
+      values,
+    };
+    kitchen.dispatchCommand(kitchenAction);
   }
 
   async function applySideEffects(restaurantState, kitchenState) {
@@ -364,6 +405,7 @@ const runServer = async () => {
       newKitchenState !== effectedKitchenState
     ) {
       effectInProgress = true;
+      // console.log('gogogo', { newRestaurantState, newKitchenState });
       applySideEffects(newRestaurantState, newKitchenState)
         .then(() => {})
         .catch(e => {
@@ -384,8 +426,9 @@ const runServer = async () => {
       runSideEffects();
     },
   });
-  cloud.get('Restaurant').observeValue.subscribe({
+  cloud.get('RestaurantActions').observeValue.subscribe({
     next: v => {
+      console.log('restaurant action', v);
       restaurantState = v;
       runSideEffects();
     },

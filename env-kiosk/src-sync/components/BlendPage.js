@@ -11,6 +11,7 @@ import {
 } from './Styles';
 import { MenuCard } from '../components/MenuCard';
 import { MenuZone, MenuHLayout } from '../components/MenuZone';
+import { formatCurrency } from './Utils';
 import {
   displayNameOfOrderItem,
   addMenuItemToCartItem,
@@ -82,6 +83,7 @@ function Ingredients({ selectedIngredients }) {
         flexWrap: 'wrap',
         flexDirection: 'row',
         alignItems: 'center',
+        marginBottom: 68,
         width: 600,
       }}
     >
@@ -130,7 +132,9 @@ function BlendPageContentPure({
         return null;
       })
       .filter(Boolean);
-
+    const detailText = `${menuItem.Recipe['DisplayCalories']} Calories | ${
+      menuItem.Recipe['Nutrition Detail']
+    }`;
     menuContent = (
       <MenuZone>
         <MenuHLayout
@@ -148,12 +152,18 @@ function BlendPageContentPure({
           }
         >
           <DetailsSection>
-            <MainTitle>{displayNameOfOrderItem(item, menuItem)}</MainTitle>
+            <MainTitle subtitle={formatCurrency(menuItem.Recipe['Sell Price'])}>
+              {displayNameOfOrderItem(item, menuItem)}
+            </MainTitle>
             <View style={{ flexDirection: 'row' }}>
               {benefits.map(b => (
                 <View
                   key={b.id}
-                  style={{ paddingVertical: 20, paddingRight: 20 }}
+                  style={{
+                    paddingVertical: 2,
+                    paddingRight: 12,
+                    alignItems: 'center',
+                  }}
                 >
                   <AirtableImage
                     image={b['Icon']}
@@ -169,16 +179,22 @@ function BlendPageContentPure({
                       alignSelf: 'center',
                     }}
                   >
-                    {b.Name}
+                    {b.Name.toUpperCase()}
                   </Text>
                 </View>
               ))}
             </View>
             <DescriptionText>{menuItem['Display Description']}</DescriptionText>
-            <DetailText>
-              {menuItem.Recipe['DisplayCalories']} Calories |{' '}
-              {menuItem.Recipe['Nutrition Detail']}
-            </DetailText>
+            <DetailText>{detailText}</DetailText>
+            <View
+              style={{
+                marginTop: 27,
+                height: 32,
+                width: 32,
+                borderRadius: 16,
+                backgroundColor: 'black',
+              }}
+            />
             <SmallTitle>organic ingredients</SmallTitle>
             <Ingredients selectedIngredients={selectedIngredients} />
           </DetailsSection>

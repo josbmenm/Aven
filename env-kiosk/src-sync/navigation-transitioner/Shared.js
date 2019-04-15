@@ -87,7 +87,6 @@ const runSharedTransition = timingConfig => async (
   const sharedElementIds = Object.keys(fromSharedElements).filter(
     i => Object.keys(toSharedElements).indexOf(i) !== -1
   );
-  console.log('hehehy');
   const fromLayouts = await Promise.all(
     sharedElementIds.map(async id => {
       const element = fromSharedElements[id];
@@ -134,19 +133,15 @@ const runSharedTransition = timingConfig => async (
   }
   await new Promise(resolve => {
     // animated bug here. this doesn't work:
-    console.log('rawrrr', { defaultTimingConfig, timingConfig, destValue });
     timing(transition.progress, {
       ...defaultTimingConfig,
       ...(timingConfig || {}),
       toValue: destValue,
     }).start(
       () => {
-        console.log('dunnneee');
         resolve();
       },
-      () => {
-        console.log('huh');
-      }
+      () => {}
     );
   });
 };

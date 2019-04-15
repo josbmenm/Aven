@@ -35,6 +35,7 @@ export const black10 = '#00000020';
 export const monsterra = '#005151';
 export const monsterraLight = '#669797';
 export const monsterra8 = monsterra + '14';
+export const monsterra10 = monsterra + '20';
 export const monsterra30 = monsterra + '4C';
 export const monsterra40 = monsterra + '66';
 export const monsterra60 = monsterra + '99';
@@ -95,7 +96,7 @@ export const menuZoneTopInset = 160;
 export const menuZonePaddingBottom = 116;
 export const largeHorizontalPadding = 60;
 export const midPageHorizPadding = 30; // the page is responsible for the additional 30, because of shadow
-export const rightSidebarWidth = 250;
+export const rightSidebarWidth = 280;
 export const cardLargeWidth = 340;
 // export const prettyExtraShadow = {
 //   shadowOffset: { width: 0, height: 0 },

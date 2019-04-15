@@ -13,6 +13,7 @@ import {
   headerHeight,
   rightSidebarWidth,
   monsterra30,
+  monsterra10,
   black8,
   primaryFontFace,
   boldPrimaryFontFace,
@@ -41,7 +42,7 @@ const summaryRowCurrencyStyle = {
 };
 const cartRowCurrencyStyle = {
   marginTop: 20,
-  marginBottom: 10,
+  marginBottom: 5,
   color: highlightPrimaryColor,
   fontSize: 12,
   ...primaryFontFace,
@@ -61,6 +62,7 @@ function SummaryRow({ label, amount, emphasize }) {
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingRight: 20,
+        marginTop: 9,
       }}
     >
       <View style={{}}>
@@ -77,7 +79,7 @@ function SmallButton({ icon, onPress }) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      hitSlop={{ left: 20, top: 20, right: 20, bottom: 20 }}
+      hitSlop={{ left: 5, top: 5, right: 20, bottom: 20 }}
       style={{
         borderWidth: 1,
         borderRadius: 4,
@@ -161,7 +163,7 @@ function CartRow({ itemId, item }) {
     <TouchableWithoutFeedback onPress={goToItem}>
       <View
         style={{
-          paddingRight: 20,
+          paddingRight: 12,
           flexDirection: 'row',
           justifyContent: 'space-between',
           flex: 1,
@@ -192,7 +194,9 @@ function CartRow({ itemId, item }) {
               - {summaryItem}
             </Text>
           ))}
-          <View style={{ flexDirection: 'row', marginBottom: 20 }}>
+          <View
+            style={{ flexDirection: 'row', marginBottom: 20, marginTop: 4 }}
+          >
             {item.type === 'blend' && (
               <SmallButton
                 title="customize"
@@ -268,9 +272,10 @@ export default function Cart({ summary }) {
             <CartRow key={item.id} item={item} itemId={item.id} />
           )}
         />
-        <View style={{ height: 80 }} />
-        <SummaryRow label="taxes" amount={summary.tax} />
-        <SummaryRow label="total" amount={summary.total} emphasize />
+        <View style={{ marginTop: 9, marginBottom: 4 }}>
+          <SummaryRow label="taxes" amount={summary.tax} />
+          <SummaryRow label="total" amount={summary.total} emphasize />
+        </View>
       </View>
       <Button
         title="checkout"

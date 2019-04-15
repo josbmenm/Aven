@@ -1,6 +1,6 @@
 import { Observable, BehaviorSubject } from 'rxjs-compat';
 import createCloudBlock from './createCloudBlock';
-import uuid from 'uuid/v1';
+import kuid from 'kuid';
 import bindCloudValueFunctions from './bindCloudValueFunctions';
 import mapBehaviorSubject from '../utils/mapBehaviorSubject';
 import runLambda from './runLambda';
@@ -116,7 +116,7 @@ export function createDocPool({
   }
 
   function post() {
-    const localName = uuid();
+    const localName = kuid();
     const postedDoc = createCloudDoc({
       source,
       domain,
@@ -288,7 +288,6 @@ export default function createCloudDoc({
     } finally {
       postingInProgress = null;
     }
-    console.log('posting result', result);
     if (result.name) {
       const resultingChildName = result.name.slice(parent.length + 1);
       onRename(resultingChildName);
@@ -421,16 +420,6 @@ export default function createCloudDoc({
     }
     return getValue();
   }
-  // const observe = Observable.create(observer => {
-
-  //   return () => {
-  //     setState({ isConnected: false });
-  //     upstreamSubscription && upstreamSubscription.unsubscribe();
-  //   };
-  // })
-  //   .multicast(() => new BehaviorSubject(docState.value))
-  //   .refCount();
-
   const observe = Observable.create(observer => {
     // todo, re-observe when name changes!!
     let upstreamSubscription = null;
@@ -680,7 +669,6 @@ export default function createCloudDoc({
 
   async function put(value) {
     const block = _getBlockWithValue(value);
-    console.log('helloooo', block.id, value, getFullName());
     await putBlock(block);
     return { id: block.id };
   }

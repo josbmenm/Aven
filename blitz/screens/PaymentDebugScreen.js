@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableHighlight, Alert } from 'react-native';
 import JSONView from '../../debug-views/JSONView';
-import GenericPage from '../../components/GenericPage';
+import TwoPanePage from '../../components/TwoPanePage';
 import Hero from '../../components/Hero';
 import Button from '../../components/Button';
 import {
@@ -149,7 +149,7 @@ export default function PaymentDebugScreen(props) {
   const [isShowingFullExample, setFullExample] = useState(false);
   const [isShowingUseCard, setUseCard] = useState(false);
   return (
-    <GenericPage {...props}>
+    <TwoPanePage {...props} side={<ReaderEvents />}>
       <Hero title="Card Reader Debugging" icon="💸" />
       <RowSection>
         <Button
@@ -167,11 +167,9 @@ export default function PaymentDebugScreen(props) {
           }}
         />
         {isShowingUseCard && <UseCardExample />}
-
-        <ReaderEvents />
       </RowSection>
-    </GenericPage>
+    </TwoPanePage>
   );
 }
 
-PaymentDebugScreen.navigationOptions = GenericPage.navigationOptions;
+PaymentDebugScreen.navigationOptions = TwoPanePage.navigationOptions;

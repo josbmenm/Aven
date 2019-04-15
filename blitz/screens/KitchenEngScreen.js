@@ -62,12 +62,11 @@ function LogView() {
   }, []);
   const cloud = useCloud();
   const kitchenState = cloud.get('KitchenState');
+  const performLog = event => dispatchLogs({ event });
   useEffect(() => {
     cloud.isConnected.subscribe(isConn => {
-      dispatchLogs({
-        event: {
-          message: isConn ? 'Connected to Server' : 'Disconnected from Server',
-        },
+      performLog({
+        message: isConn ? 'Connected to Server' : 'Disconnected from Server',
       });
     });
     // kitchenState.observeValue.subscribe(kitchenState => {
@@ -95,6 +94,15 @@ export default class KitchenEngScreen extends Component {
           <LogView />
           <ScrollView style={{ flex: 1 }}>
             <RowSection>
+              <LinkRow
+                onPress={() => {
+                  this.props.navigation.navigate({
+                    routeName: 'SequencingDebug',
+                  });
+                }}
+                icon={'🧭'}
+                title={'App Sequencer'}
+              />
               <PLCConnectedRow />
               <IsConnectedRow />
             </RowSection>

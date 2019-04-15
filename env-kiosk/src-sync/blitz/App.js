@@ -3,7 +3,14 @@ if (__DEV__) {
 }
 
 import React, { Component } from 'react';
-import { View, Text, StatusBar, Image, AsyncStorage } from 'react-native';
+import {
+  View,
+  Text,
+  StatusBar,
+  Image,
+  AsyncStorage,
+  YellowBox,
+} from 'react-native';
 import { createAppContainer } from '../navigation-native';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { createNavigator, StackRouter } from '../navigation-core';
@@ -47,6 +54,8 @@ import AdminSessionContainer from './AdminSessionContainer';
 import OrderSidebarPage from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
+YellowBox.ignoreWarnings(['Async Storage has been']);
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 

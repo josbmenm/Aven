@@ -4,7 +4,7 @@ import Err from '../utils/Err';
 
 let idIndex = 0;
 const idBase = Date.now();
-function uuid() {
+function getClientId() {
   idIndex += 1;
   return idBase + idIndex;
 }
@@ -76,7 +76,7 @@ export default function createNetworkSource(opts) {
 
   function subscribe(subsSpec) {
     return new Observable(observer => {
-      const id = uuid();
+      const id = getClientId();
       const finalSpec = { ...subsSpec, id };
       socketSendIfConnected({
         type: 'Subscribe',

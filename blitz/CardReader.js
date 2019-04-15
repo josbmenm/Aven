@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { NativeModules, NativeEventEmitter } from 'react-native';
 import useCloud from '../cloud-core/useCloud';
 import { BehaviorSubject, Subject } from 'rxjs';
+import OnoCloud from './OnoCloud';
 import {
   debounceTime,
   map,
@@ -16,8 +17,6 @@ const CardReaderManager = NativeModules.CardReaderManager;
 const AppEmitter = new NativeEventEmitter(
   NativeModules.ReactNativeEventEmitter,
 );
-
-let cloudDispatch = null;
 
 export const readerErrors = new Subject();
 export const readerState = new BehaviorSubject({
@@ -78,12 +77,7 @@ AppEmitter.addListener('CardReaderLog', e => {
 });
 
 AppEmitter.addListener('CardReaderTokenRequested', () => {
-  if (!cloudDispatch) {
-    throw new Error(
-      'Cannot handle Card Reader Token without dispatcher! Please useCardReader',
-    );
-  }
-  cloudDispatch({
+  OnoCloud.dispatch({
     type: 'StripeGetConnectionToken',
   })
     .then(result => {
@@ -155,12 +149,7 @@ async function getPayment(amount, description) {
 AppEmitter.addListener('CardReaderPaymentReadyForCapture', request => {
   const paymentIntentId = request.paymentIntentId;
 
-  if (!cloudDispatch) {
-    throw new Error(
-      'Cannot handle Card Reader Token without dispatcher! Please useCardReader',
-    );
-  }
-  cloudDispatch({
+  OnoCloud.dispatch({
     type: 'StripeCapturePayment',
     paymentIntentId,
   })
@@ -253,11 +242,10 @@ export function useCardPaymentCapture(
   const [hasCompletedPayment, setHasCompletedPayment] = useState(false);
   const [hasCompleted, setHasCompleted] = useState(false);
   const [declinedWithMessage, setHasDeclinedWithMessage] = useState(null);
+  const { status } = currentReaderState;
   useEffect(() => {
-    cloudDispatch = dispatch; // terrible hack to give card reader access to our *contextual* dispatch, with existing authority, domain and auth
-    const { status, errorStep, errorCode } = currentReaderState;
     console.log('========= reader effect', currentReaderState);
-    if (currentReaderState.status === undefined) return;
+    if (status === undefined) return;
     if (!amount || !description) return;
     if (hasCompleted) {
       // everything is complete
@@ -305,52 +293,55 @@ export function useCardPaymentCapture(
         });
     }
     if (hasRequestedPayment) {
-      if (errorStep === 'confirmPaymentIntent' && errorCode === 103) {
+      if (
+        currentReaderState.errorStep === 'confirmPaymentIntent' &&
+        currentReaderState.errorCode === 103
+      ) {
         console.log('====== retry condition!!');
         doRequestPayment();
         return;
       }
 
       // not hasCompleted or hasCompletedPayment yet
-      return () => {
-        cancelPayment()
-          .then(() => {
-            console.log('===== CANCELLED current PAYMENT!!!!');
-          })
-          .catch(e => {
-            console.error('===== JS CANCEL payment failure', e);
-          });
-      };
+      return;
+      // return () => {
+      //   cancelPayment()
+      //     .then(() => {
+      //       console.log('===== CANCELLED current PAYMENT!!!!');
+      //     })
+      //     .catch(e => {
+      //       console.error('===== JS CANCEL payment failure', e);
+      //     });
+      // };
     }
 
-    if (currentReaderState.status === 'Unknown') {
+    if (status === 'Unknown') {
       prepareReader()
         .then(() => {})
         .catch(e => {
           console.error('===== JS reador prep failure', e);
         });
-    } else if (currentReaderState.status === 'Ready') {
+    } else if (status === 'Ready') {
       doRequestPayment();
-    } else if (currentReaderState.status === 'CollectingPaymentMethod') {
+    } else if (status === 'CollectingPaymentMethod') {
       cancelPayment()
         .then(() => {})
         .catch(e => {
           console.error('===== JS reador cancel failure', e);
         });
-    } else if (currentReaderState.status === 'NotReady') {
+    } else if (status === 'NotReady') {
       // wait (should do timeout probably)
     } else {
-      throw new Error('Unexpected reader status ' + currentReaderState.status);
+      throw new Error('Unexpected reader status ' + status);
     }
 
     return;
   }, [
+    status,
     dispatch,
     amount,
     description,
-    !hasRequestedPayment &&
-      (currentReaderState.status === undefined ||
-        currentReaderState.status === 'Ready'),
+    !hasRequestedPayment && (status === undefined || status === 'Ready'),
   ]);
 
   return {
@@ -364,10 +355,6 @@ export function useCardPaymentCapture(
 }
 
 export function useCardReader() {
-  const { dispatch } = useCloud();
-  useEffect(() => {
-    cloudDispatch = dispatch; // terrible hack to give card reader access to our *contextual* dispatch, with existing authority, domain and auth
-  }, [dispatch]);
   return {
     readerIsReady,
     readerHasCardInserted,

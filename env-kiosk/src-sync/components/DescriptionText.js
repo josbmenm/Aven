@@ -6,7 +6,7 @@ export default function DescriptionText({ children }) {
   return (
     <Text
       style={{
-        marginTop: 2,
+        marginTop: 24,
         ...descriptionTextStyle,
       }}
     >

@@ -1,7 +1,12 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '../navigation-hooks/Hooks';
-import { highlightPrimaryColor, boldPrimaryFontFace } from './Styles';
+import {
+  highlightPrimaryColor,
+  boldPrimaryFontFace,
+  fontSmall,
+  monsterra40,
+} from './Styles';
 
 export default function BackButton({ style, backBehavior }) {
   const { goBack } = useNavigation();
@@ -12,8 +17,9 @@ export default function BackButton({ style, backBehavior }) {
         width: 84,
         height: 36,
         position: 'absolute',
-        top: 16,
-        left: 28,
+        top: 26,
+        left: 32,
+        flexDirection: 'row',
         ...style,
       }}
       hitSlop={{
@@ -24,16 +30,22 @@ export default function BackButton({ style, backBehavior }) {
       }}
       onPress={backBehavior || goBack}
     >
+      <Image
+        style={{ width: 12, height: 20, tintColor: monsterra40 }}
+        source={require('./assets/BackChevron.png')}
+      />
       <Text
         style={{
-          fontSize: 18,
+          ...fontSmall,
           color: highlightPrimaryColor,
           ...boldPrimaryFontFace,
           lineHeight: 19,
           textAlign: 'center',
+          marginLeft: 12,
+          marginTop: 2,
         }}
       >
-        ‹ Back
+        back
       </Text>
     </TouchableOpacity>
   );

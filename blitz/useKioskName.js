@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AsyncStorage } from 'react-native';
-import uuid from 'uuid/v1';
+import kuid from 'kuid';
 
 const UNLOADED_STATE = {};
 
@@ -13,20 +13,17 @@ function useAsyncStorage(storageKey, defaultValue) {
   const unloadedValue = UNLOADED_STATE;
   const [storageState, setInternalStorageState] = useState(unloadedValue);
 
-  useEffect(
-    () => {
-      AsyncStorage.getItem(storageKey)
-        .then(stored => {
-          if (stored === null) {
-            setInternalStorageState(defaultValue);
-          } else {
-            setInternalStorageState(JSON.parse(stored));
-          }
-        })
-        .catch(console.error);
-    },
-    [storageKey],
-  );
+  useEffect(() => {
+    AsyncStorage.getItem(storageKey)
+      .then(stored => {
+        if (stored === null) {
+          setInternalStorageState(defaultValue);
+        } else {
+          setInternalStorageState(JSON.parse(stored));
+        }
+      })
+      .catch(console.error);
+  }, [storageKey]);
 
   function setStorageState(newState) {
     if (isStateUnloaded(storageState)) {
@@ -44,7 +41,7 @@ function useAsyncStorage(storageKey, defaultValue) {
 }
 
 export default function useKioskName() {
-  let [name, setName] = useAsyncStorage('KioskName', uuid());
+  let [name, setName] = useAsyncStorage('KioskName', kuid());
 
   return [name, setName];
 }

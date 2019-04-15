@@ -4,7 +4,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#bc9dd72807cbb600da0c0389e43a696bc0e6969c"
+  resolved "https://github.com/AvenCloud/Aven.git#8df440cba06d28a4ff7cf082864bd00b2a0bad74"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     "@expo/vector-icons" "^8.0.0"
@@ -34,6 +34,7 @@
     json-stable-stringify "^1.0.1"
     knex "^0.16.3"
     konva "^3.2.1"
+    kuid "^2.1.4"
     mime "^2.3.1"
     minimist "^1.2.0"
     node-fetch "^2.3.0"
@@ -69,7 +70,6 @@
     tslint-config-prettier "^1.17.0"
     tslint-react "^3.6.0"
     twilio "^3.24.0"
-    uuid "^3.3.2"
     websocket "^1.0.28"
     ws "^6.0.0"
     yes-https "^0.0.4"
@@ -1006,9 +1006,9 @@
     rxjs "^6.4.0"
 
 "@react-navigation/core@^3.0.0-alpha.10":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.3.0.tgz#a8fa76e1c2a0da588da3d94ec9ea0956b7df753e"
-  integrity sha512-jCtvNnJu6CBctIvaGzL82xedWG0IQv+URwZfKQSkoUgiFViSsUhoDWHgnoRXAlWvR8Js7au3hrC/Cwshwhi9/w==
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.3.1.tgz#14021eff792a6e27ee407c867d454b25507efdf2"
+  integrity sha512-pvvnUPUe4Pf5hJ8+fAsRsuNaBT8kcxmBJkd9SsFA7aftvEnAIXL9mEanMJyhtUAw2s6nipqu4E+Mw1ToPhW6oA==
   dependencies:
     hoist-non-react-statics "^2.5.5"
     path-to-regexp "^1.7.0"
@@ -1027,8 +1027,8 @@
     react-lifecycles-compat "^3.0.4"
 
 "@react-navigation/native@^3.0.0-alpha.5", "@react-navigation/native@https://github.com/react-navigation/react-navigation-native.git":
-  version "3.3.0"
-  resolved "https://github.com/react-navigation/react-navigation-native.git#9c04ee979449aa0367a739563c08303b284a6a1d"
+  version "3.4.1"
+  resolved "https://github.com/react-navigation/react-navigation-native.git#a52a18cad62740780402ffa77d3dac83d57d2145"
   dependencies:
     hoist-non-react-statics "^3.0.1"
     react-native-safe-area-view "^0.13.0"
@@ -1245,9 +1245,9 @@ accepts@~1.3.3, accepts@~1.3.5:
     negotiator "0.6.1"
 
 acorn-globals@^4.1.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/acorn-globals/-/acorn-globals-4.3.0.tgz#e3b6f8da3c1552a95ae627571f7dd6923bb54103"
-  integrity sha512-hMtHj3s5RnuhvHPowpBYvJVj3rAar82JiDQHvGs1zO0l10ocX/xEdBShNHTJaboucJUsScghp74pH3s7EnHHQw==
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/acorn-globals/-/acorn-globals-4.3.1.tgz#deb149c59276657ebd40ba2ba849ddd529763ccf"
+  integrity sha512-gJSiKY8dBIjV/0jagZIFBdVMtfQyA5QHCvAT48H2q8REQoW8Fs5AOjqBql1LgSXgrMWdevcE+8cdZ33NtVbIBA==
   dependencies:
     acorn "^6.0.1"
     acorn-walk "^6.0.1"
@@ -2115,9 +2115,9 @@ camelize@1.0.0:
   integrity sha1-FkpUg+Yw+kMh5a8HAg5TGDGyYJs=
 
 caniuse-lite@^1.0.30000955:
-  version "1.0.30000957"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000957.tgz#fb1026bf184d7d62c685205358c3b24b9e29f7b3"
-  integrity sha512-8wxNrjAzyiHcLXN/iunskqQnJquQQ6VX8JHfW5kLgAPRSiSuKZiNfmIkP5j7jgyXqAQBSoXyJxfnbCFS0ThSiQ==
+  version "1.0.30000959"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000959.tgz#215d3455866da874179c6170202f0cc64f961cfd"
+  integrity sha512-6BvqmS0VLmY4sJCz6AbIJRQfcns8McDxi424y+3kmtisJeA9/5qslP+K8sqremDau7UU4WSsqdRP032JrqZY8Q==
 
 capture-exit@^1.2.0:
   version "1.2.0"
@@ -2281,9 +2281,9 @@ commondir@^1.0.1:
   integrity sha1-3dgA2gxmEnOTzKWVDqloo6rxJTs=
 
 component-emitter@^1.2.0, component-emitter@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.2.1.tgz#137918d6d78283f7df7a6b7c5a63e140e69425e6"
-  integrity sha1-E3kY1teCg/ffemt8WmPhQOaUJeY=
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.3.0.tgz#16e4070fba8ae29b679f2215853ee181ab2eabc0"
+  integrity sha512-Rd3se6QB+sO1TwqZjscQrurpEPIfO0/yYnSin6Q/rD3mOutHvUrCAhJub3r90uNb+SESBuE0QYoB90YdfatsRg==
 
 compressible@~2.0.16:
   version "2.0.16"
@@ -2686,6 +2686,11 @@ doctrine@0.7.2:
   dependencies:
     esutils "^1.1.6"
     isarray "0.0.1"
+
+dom-walk@^0.1.0:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/dom-walk/-/dom-walk-0.1.1.tgz#672226dc74c8f799ad35307df936aba11acd6018"
+  integrity sha1-ZyIm3HTI95mtNTB9+TaroRrNYBg=
 
 domexception@^1.0.1:
   version "1.0.1"
@@ -3515,9 +3520,9 @@ gud@^1.0.0:
   integrity sha512-zGEOVKFM5sVPPrYs7J5/hYEw2Pof8KCyOwyhG8sAF26mCAeUFAcYPu1mwB7hhpIP29zOIBaDqwuHdLp0jvZXjw==
 
 handlebars@^4.0.3:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.1.1.tgz#6e4e41c18ebe7719ae4d38e5aca3d32fa3dd23d3"
-  integrity sha512-3Zhi6C0euYZL5sM0Zcy7lInLXKQ+YLcF/olbN010mzGQ4XVm50JeyBnMqofHh696GrciGruC7kCcApPDJvVgwA==
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.1.2.tgz#b6b37c1ced0306b221e094fc7aca3ec23b131b67"
+  integrity sha512-nvfrjqvt9xQ8Z/w0ijewdD/vvWDTOweBUm96NTr66Wfvo1mJenBLwcYmPs3TIBP5ruzYGD7Hx/DaM9RmhroGPw==
   dependencies:
     neo-async "^2.6.0"
     optimist "^0.6.1"
@@ -4931,6 +4936,11 @@ konva@^3.2.1:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/konva/-/konva-3.2.4.tgz#ca6f19d41f0870a2505cdf0de56facb888e30dc8"
   integrity sha512-ej5Jj7OmqecjxJQn1p9twUZkesIIJrc3aJi9B3Wp7apg+IOzxuIL9Ynbzoj9j7F0uxqT+IExntnF8FYizPqUBQ==
+
+kuid@^2.1.4:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/kuid/-/kuid-2.1.4.tgz#eb500298f5efc64556d28463a7441af69da497d5"
+  integrity sha512-jbgfHWhf0Ksgq2N6fj8cFMavXzFgPdhyBNnd5aYJxVVeBNQQBoenBj5AE5WJ0RdmtQZz71indq3B5Ugna+z9NQ==
 
 lcid@^1.0.0:
   version "1.0.0"
@@ -6649,8 +6659,8 @@ react-navigation-stack@1.0.0-alpha.22:
   integrity sha512-Bqc4LVr+kX8bYPms2Fhwgr6KUQSXesWzR7JdX/bemZKeXsDLRI+/ZBv+HEYhyzcnJktx4KgZHadfz4jy6Q6B1Q==
 
 "react-navigation-stack@https://github.com/react-navigation/react-navigation-stack":
-  version "1.2.0"
-  resolved "https://github.com/react-navigation/react-navigation-stack#67caa79b953fe216c2efa67e92b4c011d423aed2"
+  version "1.3.0"
+  resolved "https://github.com/react-navigation/react-navigation-stack#478c354248f2aedfc304a1c4b479c3df359d3868"
 
 react-navigation-transitioner@^1.0.0-alpha.3, "react-navigation-transitioner@https://github.com/react-navigation/react-navigation-transitioner":
   version "1.0.0-alpha.3"
@@ -7935,9 +7945,9 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   integrity sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=
 
 twilio@^3.24.0:
-  version "3.30.0"
-  resolved "https://registry.yarnpkg.com/twilio/-/twilio-3.30.0.tgz#8ed3a756ccd9199e979dafc97f973c4321833793"
-  integrity sha512-K9ilUIWDLxXeMxouxY5yVdWDphBXkBZmUJk3X7gRVw9HWCTiy0NWTigadPsZGr1s2ZDBj/HFdn4dbjjFqwefQg==
+  version "3.30.1"
+  resolved "https://registry.yarnpkg.com/twilio/-/twilio-3.30.1.tgz#f30ab824e8b1c9ed7f90d719b8d2cd967952c4e1"
+  integrity sha512-4QUcQXe1ktDy1koNIuPcV6/dapTmg/wDOsflEwNim+cwH8JdvfiBHo3GvFuOdIWzy89wV0fkGKc0/BylSj3oaQ==
   dependencies:
     "@types/express" "^4.11.1"
     deprecate "1.0.0"

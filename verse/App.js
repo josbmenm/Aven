@@ -5,7 +5,7 @@ import useCloud from '../cloud-core/useCloud';
 import useObservable from '../cloud-core/useObservable';
 import useCloudReducer from '../cloud-core/useCloudReducer';
 import useCloudValue from '../cloud-core/useCloudValue';
-import uuid from 'uuid/v1';
+import kuid from 'kuid';
 
 import Admin from '../admin/Admin';
 
@@ -394,7 +394,7 @@ function StatusDisplayDebug({ displayState, dispatch }) {
             displayName: window.prompt('person name , last initial'),
             prepQueue: [
               {
-                key: uuid(),
+                key: kuid(),
                 recipeName: window.prompt('recipe name'),
               },
             ],

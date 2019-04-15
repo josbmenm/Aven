@@ -4266,6 +4266,11 @@ kleur@^2.0.1:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-2.0.2.tgz#b704f4944d95e255d038f0cb05fb8a602c55a300"
   integrity sha512-77XF9iTllATmG9lSlIv0qdQ2BQ/h9t0bJllHlbvsQ0zUWfU7Yi0S8L5JXzPZgkefIiajLmBJJ4BsMJmqcf7oxQ==
 
+kuid@^2.1.4:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/kuid/-/kuid-2.1.4.tgz#eb500298f5efc64556d28463a7441af69da497d5"
+  integrity sha512-jbgfHWhf0Ksgq2N6fj8cFMavXzFgPdhyBNnd5aYJxVVeBNQQBoenBj5AE5WJ0RdmtQZz71indq3B5Ugna+z9NQ==
+
 latest-version@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/latest-version/-/latest-version-3.1.0.tgz#a205383fea322b33b5ae3b18abee0dc2f356ee15"
