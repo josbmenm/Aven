@@ -335,7 +335,7 @@ export default function createProtectedSource({ source, providers }) {
   async function CreateAnonymousSession({ domain }) {
     const accountId = await CreateAnonymousAccount({ domain });
     const sessionId = uuid();
-    const token = uuid();
+    const token = await checksum(uuid());
 
     const session = {
       timeCreated: Date.now(),
@@ -358,26 +358,35 @@ export default function createProtectedSource({ source, providers }) {
   const Permissions = {
     none: {
       canRead: false,
-      canWrite: false,
+      canTransact: false,
       canPost: false,
+      canWrite: false,
       canAdmin: false,
     },
     admin: {
       canRead: true,
-      canWrite: true,
+      canTransact: true,
       canPost: true,
+      canWrite: true,
       canAdmin: true,
     },
   };
   const Rules = {
     empty: {
       canRead: null,
-      canWrite: null,
+      canTransact: null,
       canPost: null,
+      canWrite: null,
       canAdmin: null,
     },
   };
-  const PermissionNames = ['canRead', 'canWrite', 'canPost', 'canAdmin'];
+  const PermissionNames = [
+    'canRead',
+    'canTransact',
+    'canPost',
+    'canWrite',
+    'canAdmin',
+  ];
 
   function pathApartName(name) {
     if (!name) {
@@ -657,7 +666,7 @@ export default function createProtectedSource({ source, providers }) {
   async function observeDoc(domain, name, auth) {
     const permissions = await GetPermissions({ name, auth, domain });
     if (!permissions.canRead) {
-      throw new Err('Not authorized to subscribe here', 'InvalidAuth', {
+      throw new Err('Not authorized to subscribe here', 'NoPermission', {
         name,
         domain,
         authId: auth && auth.id,
