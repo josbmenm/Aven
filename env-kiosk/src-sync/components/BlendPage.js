@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import ActionPage from './ActionPage';
 import AirtableImage from './AirtableImage';
 import {
@@ -8,6 +8,7 @@ import {
   prettyShadow,
   titleStyle,
   proseFontFace,
+  largeHorizontalPadding,
 } from './Styles';
 import { MenuCard } from '../components/MenuCard';
 import { MenuZone, MenuHLayout } from '../components/MenuZone';
@@ -24,6 +25,39 @@ import DescriptionText from './DescriptionText';
 import DetailText from './DetailText';
 import FoodMenu from './FoodMenu';
 import { EnhancementSelector } from './Enhancements';
+
+function BackgroundLayout({ children, background }) {
+  return (
+    <View
+      style={{
+        paddingTop: 160,
+        alignSelf: 'stretch',
+      }}
+    >
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: 1366,
+          height: 1024,
+        }}
+      >
+        {background}
+      </View>
+      {children}
+
+      <View
+        style={{
+          height: 1,
+          alignSelf: 'stretch',
+          marginHorizontal: largeHorizontalPadding,
+          backgroundColor: '#00000014',
+        }}
+      />
+    </View>
+  );
+}
 
 function Ingredient({ ingredient }) {
   return (
@@ -153,22 +187,28 @@ function BlendPageContentPure({
         }
         return true;
       });
-    console.log('dietary', dietary);
+    // console.log('LOG FOR exampleMenuItem.json", JSON.stringify(menuItem));
     menuContent = (
-      <MenuZone>
+      <BackgroundLayout
+        background={
+          <AirtableImage
+            image={menuItem.Recipe.SplashImage}
+            style={{ flex: 1 }}
+          />
+        }
+      >
         <MenuHLayout
-          side={
-            <MenuCard
-              isPhotoZoomed={true}
-              key={menuItem.id}
-              title={menuItem['Display Name']}
-              tag={menuItem.DefaultEnhancementName}
-              price={menuItem.Recipe['Sell Price']}
-              photo={menuItem.Recipe['Recipe Image']}
-              onPress={null}
-              style={{ marginBottom: 116 }}
-            />
-          }
+          side={null}
+          //   <MenuCard
+          //     isPhotoZoomed={true}
+          //     key={menuItem.id}
+          //     title={menuItem['Display Name']}
+          //     tag={menuItem.DefaultEnhancementName}
+          //     price={menuItem.Recipe['Sell Price']}
+          //     photo={menuItem.Recipe['Recipe Image']}
+          //     onPress={null}
+          //     style={{ marginBottom: 116 }}
+          //   />
         >
           <DetailsSection>
             <MainTitle subtitle={formatCurrency(menuItem.Recipe['Sell Price'])}>
@@ -186,6 +226,7 @@ function BlendPageContentPure({
                 >
                   <AirtableImage
                     image={b['Icon']}
+                    tintColor={monsterra}
                     style={{
                       width: 75,
                       height: 75,
@@ -227,13 +268,13 @@ function BlendPageContentPure({
             <Ingredients selectedIngredients={selectedIngredients} />
           </DetailsSection>
         </MenuHLayout>
-      </MenuZone>
+      </BackgroundLayout>
     );
   }
 
   return (
     <React.Fragment>
-      <View style={{ flex: 1, flexDirection: 'row' }}>{menuContent}</View>
+      {menuContent}
       {foodMenu && <FoodMenu foodMenu={foodMenu} />}
     </React.Fragment>
   );

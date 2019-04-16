@@ -530,6 +530,26 @@ function companyConfigToBlendMenu(atData) {
     if (defaultEnhancementId && !DefaultBenefitEnhancement) {
       debugger;
     }
+
+    const ItemBenefits = Object.keys(Benefits)
+      .map(benefitId => {
+        const benefit = Benefits[benefitId];
+        if (
+          DefaultBenefitEnhancement &&
+          DefaultBenefitEnhancement.id === benefitId
+        ) {
+          return benefit;
+        }
+        const benefitingIngredients = benefit.Ingredients.filter(
+          ingId => thisRecipeIngredientIds.indexOf(ingId) !== -1,
+        );
+        if (benefitingIngredients.length > 0) {
+          return benefit;
+        }
+        return null;
+      })
+      .filter(Boolean);
+
     return {
       ...item,
       IngredientCustomization: IngredientCustomization.map(ic => {
@@ -557,6 +577,7 @@ function companyConfigToBlendMenu(atData) {
       tables: atData.baseTables,
       BenefitCustomization: Benefits,
       Dietary,
+      Benefits: ItemBenefits,
       DefaultBenefitEnhancement,
       DefaultBenefitEnhancementName:
         DefaultBenefitEnhancement && DefaultBenefitEnhancement.Name,

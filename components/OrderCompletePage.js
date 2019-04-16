@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import BlockForm from './BlockForm';
 import BlockFormTitle from './BlockFormTitle';
@@ -10,15 +10,38 @@ import BlockFormInput from './BlockFormInput';
 import BlockFormHorizontalRule from './BlockFormHorizontalRule';
 import TextButton from './TextButton';
 import { headerHeight, rightSidebarWidth } from './Styles';
-import { useNavigation } from '../navigation-hooks/Hooks';
+import {
+  useNavigation,
+  useNavigationWillBlurEffect,
+} from '../navigation-hooks/Hooks';
 
 export default function OrderCompletePage({ backBehavior, ...props }) {
-  const [phoneNumber, setPhoneNumber] = useState('');
   const { navigate } = useNavigation();
+  let [countdown, setCountdown] = useState(10);
+  let countRef = useRef({
+    count: 10,
+  });
+  useNavigationWillBlurEffect(() => {
+    countRef.current = -1;
+    clearTimeout(countRef.current.timout);
+  });
   useEffect(() => {
-    console.log('did mount OrderCompletePage');
+    function doCount() {
+      let count = countRef.current.count;
+      if (count === 0) {
+        navigate('KioskHome');
+        return;
+      } else if (count > 0) {
+        const nextCount = count - 1;
+        countRef.current.count = nextCount;
+        setCountdown(nextCount);
+        countRef.current.timeout = setTimeout(doCount, 1000);
+      }
+    }
+    countRef.current.timeout = setTimeout(doCount, 1000);
     return () => {
-      console.log('un mount OrderCompletePage');
+      countRef.current.count = -1;
+      clearTimeout(countRef.current.timout);
     };
   }, []);
   return (
@@ -26,19 +49,6 @@ export default function OrderCompletePage({ backBehavior, ...props }) {
       <BlockForm>
         <BlockFormMessage message="Your order is on its way!" />
         <BlockFormTitle title="mahalo! enjoy your blend." />
-        <BlockFormHorizontalRule />
-        <BlockFormMessage message="Next time, skip the line and order ahead with our mobile app" />
-        <BlockFormRow>
-          <BlockFormInput
-            mode="phone"
-            label="phone number"
-            value={phoneNumber}
-            onValue={setPhoneNumber}
-          />
-        </BlockFormRow>
-        <BlockFormRow>
-          <BlockFormButton title="text me a link" onPress={() => {}} />
-        </BlockFormRow>
       </BlockForm>
       <View
         style={{
@@ -53,7 +63,7 @@ export default function OrderCompletePage({ backBehavior, ...props }) {
         pointerEvents="box-none"
       >
         <TextButton
-          title="done"
+          title={`done (${countdown})`}
           onLongPress={() => {
             navigate('Home');
           }}
@@ -65,5 +75,19 @@ export default function OrderCompletePage({ backBehavior, ...props }) {
     </ShortBlockFormPage>
   );
 }
+
+// <BlockFormHorizontalRule />
+// <BlockFormMessage message="Next time, skip the line and order ahead with our mobile app" />
+// <BlockFormRow>
+//   <BlockFormInput
+//     mode="phone"
+//     label="phone number"
+//     value={phoneNumber}
+//     onValue={setPhoneNumber}
+//   />
+// </BlockFormRow>
+// <BlockFormRow>
+//   <BlockFormButton title="text me a link" onPress={() => {}} />
+// </BlockFormRow>
 
 OrderCompletePage.navigationOptions = ShortBlockFormPage.navigationOptions;

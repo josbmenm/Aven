@@ -22,6 +22,7 @@ export default function BlendMenu({ menu, large, title }) {
           key: item.id,
           title: displayNameOfMenuItem(item),
           price: sellPriceOfMenuItem(item),
+          benefits: item.Benefits,
           tag: item.DefaultEnhancementName,
           photo: item.Recipe && item.Recipe['Recipe Image'],
           onPress: () => {

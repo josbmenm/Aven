@@ -85,7 +85,6 @@ function SideSpacer() {
   return (
     <View
       style={{
-        flex: 1,
         marginTop: 16,
         marginRight: 16,
         padding: 12,
@@ -96,10 +95,18 @@ function SideSpacer() {
 function SideBySide({ items }) {
   const rows = [];
   for (let i = 0; i <= Math.ceil(items.length / 2) - 1; i++) {
+    const key = i;
     const itemA = items[i * 2];
-    const itemB = items[i * 2 + 1] || <SideSpacer />;
+    const itemB = items[i * 2 + 1] || null;
     rows.push(
-      <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignSelf: 'stretch',
+          justifyContent: 'flex-start',
+        }}
+        key={key}
+      >
         {itemA}
         {itemB}
       </View>,
@@ -108,29 +115,97 @@ function SideBySide({ items }) {
   return rows;
 }
 
+function CustomizationPuck({ isActive, children, onPress }) {
+  return (
+    <TouchableOpacity
+      style={{
+        marginTop: 16,
+        marginRight: 16,
+        width: 290, // tonight we dine in hell
+        ...prettyShadowSmall,
+        backgroundColor: 'white',
+        borderRadius: 4,
+      }}
+      onPress={onPress}
+    >
+      {children}
+    </TouchableOpacity>
+  );
+}
+
 function EnhancementSection({ section }) {
   return (
     <View style={{ marginRight: 14, marginBottom: 20 }}>
       <SideBySide
         items={section.options.map((enhancement, index) => (
-          <TouchableOpacity
+          <CustomizationPuck
             key={index}
-            style={{
-              marginTop: 16,
-              marginRight: 16,
-              flex: 1,
-              ...prettyShadowSmall,
-              backgroundColor: 'white',
-              borderRadius: 4,
-            }}
             onPress={() => {
               section.addIngredient(enhancement.id);
             }}
           >
             <EnhancementDetail enhancement={enhancement} key={enhancement.id} />
-          </TouchableOpacity>
+          </CustomizationPuck>
         ))}
       />
+    </View>
+  );
+}
+
+function StepperSection({ section }) {
+  let message = `Choose up to ${section.slotCount} of ${section.displayName}`;
+
+  return (
+    <View style={{ paddingBottom: 60 }}>
+      {message && (
+        <Text
+          style={{
+            fontSize: 20,
+            paddingTop: 6,
+            color: monsterra60,
+            ...proseFontFace,
+          }}
+        >
+          {message}
+        </Text>
+      )}
+      <View
+        style={{
+          paddingVertical: 15,
+          flexWrap: 'wrap',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+      >
+        {section.options.map(option => (
+          <View
+            key={option.key}
+            style={{
+              borderRadius: 4,
+              marginRight: 16,
+              marginBottom: 16,
+              alignItems: 'center',
+              ...tagSize,
+              backgroundColor: 'white',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignSelf: 'center',
+            }}
+          >
+            {option.image && (
+              <View style={{ overflow: 'hidden', flex: 1 }}>
+                <AirtableImage
+                  image={option.image}
+                  resizeMode="contain"
+                  style={{
+                    flex: 1,
+                  }}
+                />
+              </View>
+            )}
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
@@ -138,6 +213,9 @@ function EnhancementSection({ section }) {
 function CustomizationMainSection({ section }) {
   if (section.name === 'enhancement') {
     return <EnhancementSection section={section} />;
+  }
+  if (section.slotCount > 1) {
+    return <StepperSection section={section} />;
   }
   let message = `Choose up to ${section.slotCount} of ${section.displayName}`;
   if (section.slotCount === 1) {
@@ -166,12 +244,44 @@ function CustomizationMainSection({ section }) {
         }}
       >
         {section.options.map(option => (
-          <IngredientTag
-            style={{ marginRight: 16, marginBottom: 16 }}
-            key={option.key}
-            image={option.image}
-            onPress={option.onSelect}
-          />
+          <CustomizationPuck key={option.key} onPress={option.onSelect}>
+            <View
+              style={{
+                flexDirection: 'row',
+                minHeight: 72,
+                borderRadius: 4,
+                overflow: 'hidden',
+              }}
+            >
+              <AirtableImage
+                image={option.image}
+                resizeMode="contain"
+                style={{
+                  position: 'absolute',
+                  left: -35,
+                  width: 142,
+                  height: 72,
+                }}
+              />
+              <View
+                style={{
+                  flex: 1,
+                  marginLeft: 60,
+                  marginTop: 8,
+                  paddingHorizontal: 10,
+                }}
+              >
+                <Text style={{ ...titleStyle, fontSize: 12 }}>
+                  {option.name.toUpperCase()}
+                </Text>
+                <Text
+                  style={{ ...proseFontFace, fontSize: 13, color: monsterra }}
+                >
+                  {option.description}
+                </Text>
+              </View>
+            </View>
+          </CustomizationPuck>
         ))}
       </View>
     </View>
@@ -317,6 +427,8 @@ function getCustomizationSections(
         displayName: customSpec['Display Name'],
         options: customSpec.Ingredients.map(ingredient => ({
           key: ingredient.id,
+          name: ingredient.Name,
+          description: ingredient.Description,
           image: ingredient['Ingredient Image'],
           onSelect: () => {
             if (slotCount === 1) {

@@ -72,6 +72,7 @@ export default function TabSectionScrollView({
       setSectionMeasurements(sectionMeasurements);
     }
   }
+  const meta = useRef({});
   // useEffect(() => {
   //   if (sectionMeasurements[activeSection.name] != null && scrollRef.current) {
   //     scrollRef.current
@@ -107,6 +108,10 @@ export default function TabSectionScrollView({
                 sectionMeasurements[section.name] != null &&
                 scrollRef.current
               ) {
+                meta.current.isScrollingTo = true;
+                setTimeout(() => {
+                  meta.current.isScrollingTo = false;
+                }, 500);
                 scrollRef.current
                   .getScrollResponder()
                   .scrollTo({ y: sectionMeasurements[section.name].y });
@@ -126,8 +131,9 @@ export default function TabSectionScrollView({
         onLayout={e => {
           setScrollViewLayout(e.nativeEvent.layout);
         }}
-        onScrollEndDrag={e => {
-          const destOffsetY = e.nativeEvent.targetContentOffset.y;
+        scrollEventThrottle={90}
+        onScroll={e => {
+          const offsetY = e.nativeEvent.contentOffset.y;
           let closestSection = null;
           Object.keys(sectionMeasurements)
             .map(name => {
@@ -135,7 +141,7 @@ export default function TabSectionScrollView({
                 name,
                 distance:
                   sectionMeasurements[name] &&
-                  Math.abs(sectionMeasurements[name].y - destOffsetY),
+                  Math.abs(sectionMeasurements[name].y - offsetY),
               };
             })
             .forEach(calculation => {
@@ -147,7 +153,9 @@ export default function TabSectionScrollView({
                 closestSection = calculation;
               }
             });
-          closestSection && onActiveSection({ name: closestSection.name });
+          if (!meta.current.isScrollingTo) {
+            closestSection && onActiveSection({ name: closestSection.name });
+          }
         }}
       >
         {sections.map((section, sectionIndex) => (

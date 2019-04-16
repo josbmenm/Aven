@@ -14,6 +14,7 @@ import {
   titleStyle,
   cardLargeWidth,
   monsterra70,
+  monsterra,
 } from './Styles';
 import AirtableImage from './AirtableImage';
 import { formatCurrency } from './Utils';
@@ -58,30 +59,7 @@ function CardContainer({ children, style, onPress }) {
   );
 }
 
-function Tag({ label }) {
-  return (
-    <View
-      style={{
-        backgroundColor: monsterra70,
-        padding: 2,
-        borderRadius: 4,
-        paddingHorizontal: 20,
-      }}
-    >
-      <Text
-        style={{
-          ...boldPrimaryFontFace,
-          color: 'white',
-          fontSize: 11,
-        }}
-      >
-        {label.toUpperCase()}
-      </Text>
-    </View>
-  );
-}
-
-function CardHeader({ title, price, tag, style }) {
+function CardHeader({ title, price, style, benefits }) {
   return (
     <Animated.View
       pointerEvents="none"
@@ -94,7 +72,17 @@ function CardHeader({ title, price, tag, style }) {
         ...style,
       }}
     >
-      {tag && <Tag label={tag} />}
+      {price && (
+        <Text
+          style={{
+            fontSize: 16,
+            ...boldPrimaryFontFace,
+            color: mutedPrimaryColor,
+          }}
+        >
+          {formatCurrency(price)}
+        </Text>
+      )}
       {title && (
         <Text
           style={{
@@ -110,16 +98,32 @@ function CardHeader({ title, price, tag, style }) {
           {title}
         </Text>
       )}
-      {price && (
-        <Text
-          style={{
-            fontSize: 16,
-            ...boldPrimaryFontFace,
-            color: mutedPrimaryColor,
-          }}
-        >
-          {formatCurrency(price)}
-        </Text>
+      {benefits && (
+        <View style={{ flexDirection: 'row', marginTop: 8 }}>
+          {benefits.map(b => (
+            <View
+              style={{
+                borderRadius: 14,
+                height: 28,
+                width: 28,
+                borderWidth: 1,
+                marginLeft: 6,
+                borderColor: monsterra,
+              }}
+            >
+              <AirtableImage
+                image={b.Icon}
+                style={{
+                  height: 30,
+                  width: 30,
+                  left: -1,
+                  top: -1,
+                }}
+                tintColor={monsterra}
+              />
+            </View>
+          ))}
+        </View>
       )}
     </Animated.View>
   );
@@ -139,11 +143,11 @@ function CardPhoto({ photo, style, isZoomed }) {
         image={photo}
         resizeMode={'cover'}
         style={{
-          width: isZoomed ? cardLargeWidth * 2 : cardLargeWidth,
+          width: isZoomed ? 400 : cardLargeWidth,
           height: cardLargeWidth * cardHeightRatio,
           position: 'absolute',
-          right: isZoomed ? -120 : 0,
-          top: 0,
+          right: isZoomed ? 30 : 0,
+          top: isZoomed ? 30 : 0,
         }}
       />
     </Animated.View>
@@ -155,6 +159,7 @@ export function MenuCard({
   title,
   price,
   tag,
+  benefits,
   onPress,
   isPhotoZoomed,
   style,
@@ -179,7 +184,7 @@ export function MenuCard({
           }}
         />
       )}
-      <CardHeader title={title} price={price} tag={tag} />
+      <CardHeader title={title} price={price} tag={tag} benefits={benefits} />
     </CardContainer>
   );
 }
@@ -256,7 +261,6 @@ export function MenuCardCarousel({ items, large, style }) {
         });
         const smallCardTopMargin =
           ((cardMaybeLargeWidth - cardSmallWidth) * cardHeightRatio) / 2;
-
         return (
           <Animated.View
             key={item.key}
