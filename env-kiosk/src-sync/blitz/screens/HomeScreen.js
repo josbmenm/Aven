@@ -15,6 +15,14 @@ export default function HomeScreenMemo({ navigation, ...props }) {
   //   icon="📋"
   //   title="Vehicle Host Panel"
   // />
+  let [updateMetadata, setUpdateMetadata] = React.useState(null);
+  React.useEffect(() => {
+    codePush
+      .getUpdateMetadata()
+      .then(m => setUpdateMetadata(m))
+      .catch(console.error);
+    return () => {};
+  }, []);
   return (
     <GenericPage hideBackButton navigation={navigation} {...props}>
       <Hero title="Maui Development" icon="🍹" />
@@ -48,7 +56,7 @@ export default function HomeScreenMemo({ navigation, ...props }) {
           icon="⚙️"
           title="Settings"
         />
-        <Text>{JSON.stringify(codePush.getUpdateMetadata())}</Text>
+        <Text>{JSON.stringify(updateMetadata)}</Text>
       </RowSection>
     </GenericPage>
   );

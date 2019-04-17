@@ -23,7 +23,7 @@
 	<key>CFBundleVersion</key>
 	<string>2</string>
 	<key>CodePushDeploymentKey</key>
-	<string>fcbff580-2407-4baf-9c56-1f3a49d8d828</string>
+	<string>VtoT-iEfykogiriAIOlvE55G6r0eBJvTELwT7</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -43,7 +43,7 @@
 	<string>Card reader requires Bluetooth to connect.
 </string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Card reader requires location.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Card reader requires access to the microphone.</string>
 	<key>UIAppFonts</key>
