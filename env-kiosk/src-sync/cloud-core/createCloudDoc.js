@@ -23,7 +23,7 @@ export function createDocPool({
   function get(name) {
     if (typeof name !== 'string') {
       throw new Error(
-        `Expected a string to be passed to docs.get(). Instead got "${name}"`
+        `Expected a string to be passed to docs.get(). Instead got "${name}"`,
       );
     }
     if (name === '') {
@@ -34,7 +34,7 @@ export function createDocPool({
       const evalName = name.slice(1);
       if (evalName === '') {
         throw new Error(
-          'Must specify a doc name to evaluate with, when getting a cloud function with the ^ character.'
+          'Must specify a doc name to evaluate with, when getting a cloud function with the ^ character.',
         );
       }
       const evalDoc = cloudClient.get(evalName);
@@ -49,9 +49,10 @@ export function createDocPool({
       firstEvalTermIndex === -1 ? name : name.slice(0, firstEvalTermIndex);
     const docIdTerms = docNameWithBlockId.split('#');
     const blockId = docIdTerms[1];
+
     if (docIdTerms.length !== 1 && docIdTerms.length !== 2) {
       throw new Error(
-        `Cannot get doc "${docNameWithBlockId}" because the blockId specifier ("#") is defined more than once.`
+        `Cannot get doc "${docNameWithBlockId}" because the blockId specifier ("#") is defined more than once.`,
       );
     }
     const fullName = docIdTerms[0];
@@ -64,6 +65,7 @@ export function createDocPool({
       restOfName = fullName.slice(localName.length + 1);
     }
     returningCloudValue = _docs[localName];
+
     if (!returningCloudValue) {
       returningCloudValue = _docs[localName] = createCloudDoc({
         source,
@@ -87,6 +89,20 @@ export function createDocPool({
     if (evalTerms) {
       evalTerms.forEach(evalTerm => {
         const evalDoc = get(evalTerm);
+
+        console.log('GETTING ' + name, {
+          blockId,
+          docIdTerms,
+          name,
+          docNameWithBlockId,
+          fullName,
+          localName,
+          returningCloudValue: !!returningCloudValue,
+          evalTerms,
+          firstEvalTermIndex,
+          evalTerm,
+        });
+
         returningCloudValue = returningCloudValue.eval(evalDoc);
       });
     }
@@ -96,18 +112,18 @@ export function createDocPool({
   function move(fromName, toName) {
     if (hasDepth(fromName)) {
       throw new Error(
-        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`
+        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`,
       );
     }
     if (hasDepth(toName)) {
       throw new Error(
-        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`
+        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`,
       );
     }
     const doc = _docs[fromName];
     if (!doc) {
       throw new Error(
-        `Cannot move "${fromName}" to "${toName}" because it does not exist`
+        `Cannot move "${fromName}" to "${toName}" because it does not exist`,
       );
     }
     _docs[toName] = doc;
@@ -143,7 +159,7 @@ export function createDocPool({
           if (!upstreamSubs) {
             upstreamSubs = (await source.observeDocChildren(
               domain,
-              parentDocName
+              parentDocName,
             )).subscribe(
               childEvt => {
                 if (childEvt.type === 'AddChildDoc') {
@@ -167,7 +183,7 @@ export function createDocPool({
               },
               error => {
                 observer.error(error);
-              }
+              },
             );
           }
           let result = null;
@@ -233,7 +249,7 @@ export default function createCloudDoc({
   }
   if (name.match(/\//)) {
     throw new Error(
-      `doc name ${name} must not contain slashes. Instead, pass a parent`
+      `doc name ${name} must not contain slashes. Instead, pass a parent`,
     );
   }
   if (!domain) {
@@ -330,7 +346,7 @@ export default function createCloudDoc({
   }
 
   const docName = new BehaviorSubject(
-    getParentName(parentName.getValue(), getState().name)
+    getParentName(parentName.getValue(), getState().name),
   );
 
   const updateName = () => {
@@ -516,7 +532,7 @@ export default function createCloudDoc({
       throw new Error(
         `Bad reference type "${
           requestedId.type
-        }" for getBlock! Expected "BlockReference".`
+        }" for getBlock! Expected "BlockReference".`,
       );
     }
     const queryId =
@@ -570,12 +586,15 @@ export default function createCloudDoc({
   let overriddenFunctionCache = {};
 
   function $setOverrideFunction(fn) {
+    console.log('$setOverrideFunction', getFullName(), !!fn);
     overriddenFunction = fn;
     overriddenFunctionCache = {};
   }
 
   function functionGetValue(argumentDoc) {
+    console.log('DOC FN GET VALUE');
     if (overriddenFunction) {
+      console.log('--a');
       const argId = argumentDoc.getId();
       if (overriddenFunctionCache[argId] !== undefined) {
         return overriddenFunctionCache[argId];
@@ -585,14 +604,16 @@ export default function createCloudDoc({
         argumentDoc.getValue(),
         argId,
         argumentDoc,
-        cloudClient
+        cloudClient,
       );
       return result;
     }
+    console.log('--b');
     const block = getBlock();
     if (!block) {
       return undefined;
     }
+    console.log('--c');
     return block.functionGetValue(argumentDoc);
   }
 
@@ -606,6 +627,13 @@ export default function createCloudDoc({
   async function functionFetchValue(argumentDoc) {
     const isArgumentReady = argumentDoc.getIsConnected();
     const currentId = argumentDoc.getId();
+    console.log('function fetch value', {
+      name: getFullName(),
+      isLambdaRemote,
+      isArgumentReady,
+      overriddenFunction: !!overriddenFunction,
+      hasCache: !!overriddenFunctionCache[currentId],
+    });
     if (isLambdaRemote && !isArgumentReady) {
       const valueDocName = argumentDoc.getFullName();
       const valueName = currentId
@@ -618,6 +646,7 @@ export default function createCloudDoc({
         name: queryName,
       });
       if (res.context && res.context.type === 'EvaluatedDoc') {
+        console.log('HI!!', res.context, res);
         if (
           res.context.argument.type === 'BlockReference' &&
           argumentDoc.getId() !== res.context.argument.id
@@ -629,6 +658,7 @@ export default function createCloudDoc({
           });
           if (overriddenFunction && overriddenFunctionCache) {
             overriddenFunctionCache[argId] = res.value;
+            console.log('ho!!');
             return;
           }
         }
@@ -640,12 +670,15 @@ export default function createCloudDoc({
       overriddenFunction &&
       overriddenFunctionCache[currentId] !== undefined
     ) {
+      console.log('heee!!');
       return;
     }
     if (overriddenFunction) {
       await argumentDoc.fetchValue();
       const argId = argumentDoc.getId();
       if (overriddenFunctionCache[argId] !== undefined) {
+        console.log('haaa!!');
+
         return;
       }
       const { loadDependencies, reComputeResult } = runLambda(
@@ -653,17 +686,20 @@ export default function createCloudDoc({
         argumentDoc.getValue(),
         argId,
         argumentDoc,
-        cloudClient
+        cloudClient,
       );
       await loadDependencies();
       overriddenFunctionCache[argId] = reComputeResult();
+      console.log('overridden computed!!', reComputeResult());
       return;
     }
     await fetchValue();
     const block = getBlock();
     if (!block) {
+      console.log('BAAAILEOUTT');
       return;
     }
+    console.log('block.functionFetchValue');
     await block.functionFetchValue(argumentDoc);
   }
 
@@ -702,7 +738,7 @@ export default function createCloudDoc({
       console.warn(
         `Expected to put block id "${expectedBlock.id}", but actually put id "${
           result.id
-        }"`
+        }"`,
       );
     }
     return result;
@@ -781,7 +817,7 @@ export default function createCloudDoc({
       });
 
       throw new Error(
-        `Failed to putBlockId "${block.id}" to "${name}". ${e.message}`
+        `Failed to putBlockId "${block.id}" to "${name}". ${e.message}`,
       );
     }
   }
@@ -802,13 +838,15 @@ export default function createCloudDoc({
   });
 
   const observeValueAndId = observe.switchMap(cloudDocValue => {
+    console.log('hehyyyy observeValueAndId im ', getFullName());
     if (!cloudDocValue.isConnected) {
       return Observable.of({ getId: () => undefined, value: undefined });
     }
     if (!cloudDocValue.id) {
       const falseyId = cloudDocValue.id;
-      return Observable.of({ getId: () => falseyId, value: undefined });
+      return Observable.of({ getId: () => null, value: undefined });
     }
+    console.log('returning block! id', cloudDocValue.id);
     const block = _getBlockWithId(cloudDocValue.id);
     return block.observeValueAndId;
   });
@@ -816,13 +854,22 @@ export default function createCloudDoc({
   const overriddenFunctionResults = new Map();
 
   const functionObserveValue = (argumentDoc, includeId, onIsConnected) => {
+    console.log(
+      'yaaaarrrrrrrr',
+      getFullName(),
+      argumentDoc.getFullName(),
+      !!overriddenFunction,
+    );
     if (overriddenFunction) {
+      console.log('hey');
       if (overriddenFunctionResults.has(argumentDoc)) {
+        console.log('ff');
         return overriddenFunctionResults.get(argumentDoc);
       }
       const observeComputed = argumentDoc.observeValueAndId
         .filter(({ value }) => value !== undefined)
         .flatMap(async ({ value, getId }) => {
+          console.log('hoooo', value);
           const argumentId = getId();
           let result = overriddenFunctionCache[argumentId];
           if (result === undefined) {
@@ -835,7 +882,7 @@ export default function createCloudDoc({
               value,
               argumentId,
               argumentDoc,
-              cloudClient
+              cloudClient,
             );
             onIsConnected(getIsConnected());
             await loadDependencies();
@@ -904,7 +951,9 @@ export default function createCloudDoc({
       overriddenFunctionResults.set(argumentDoc, resultObservable);
       return resultObservable;
     }
+    console.log('then...');
     return observe.switchMap(cloudDocValue => {
+      console.log('clouddocvalueeeee', cloudDocValue);
       if (!cloudDocValue.id) {
         return Observable.of(undefined);
       }

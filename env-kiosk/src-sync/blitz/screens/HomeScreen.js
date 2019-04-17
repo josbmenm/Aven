@@ -1,8 +1,11 @@
 import React, { Component, memo } from 'react';
+import { Text } from 'react-native';
 import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import Hero from '../../components/Hero';
 import LinkRow from '../../components/LinkRow';
+
+import codePush from 'react-native-code-push';
 
 export default function HomeScreenMemo({ navigation, ...props }) {
   //   <LinkRow
@@ -45,6 +48,7 @@ export default function HomeScreenMemo({ navigation, ...props }) {
           icon="⚙️"
           title="Settings"
         />
+        <Text>{JSON.stringify(codePush.getUpdateMetadata())}</Text>
       </RowSection>
     </GenericPage>
   );

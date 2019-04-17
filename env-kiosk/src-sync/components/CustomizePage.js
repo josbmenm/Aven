@@ -291,7 +291,7 @@ function CustomizationMainSection({ section }) {
 // function CustomIngredientPuck({ ingredient, onPress }) {
 //   return (
 //     <IngredientTag
-//       image={ingredient['Ingredient Image']}
+//       image={ingredient['Image']}
 //       onPress={onPress}
 //     />
 //   );
@@ -429,7 +429,7 @@ function getCustomizationSections(
           key: ingredient.id,
           name: ingredient.Name,
           description: ingredient.Description,
-          image: ingredient['Ingredient Image'],
+          image: ingredient['Image'],
           onSelect: () => {
             if (slotCount === 1) {
               setIngredientCustomization([ingredient.id]);
@@ -592,7 +592,7 @@ function CustomizationSidebar({
                         onRemove: () => {
                           section.removeIngredient(ingredient.id);
                         },
-                        image: ingredient['Ingredient Image'],
+                        image: ingredient['Image'],
                         key: `${ingredient.id}-${index}`,
                       };
                     })}

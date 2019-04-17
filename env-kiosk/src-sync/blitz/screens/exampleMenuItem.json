@@ -51,7 +51,7 @@
           "Benefits": ["recFlyZ68FePHBGbI"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["oz"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attJIoIZuNqpEUEFp",
               "url": "https://dl.airtable.com/.attachments/be31b655eff71f73ab0e41724d652561/80a91953/Milk.png",
@@ -77,7 +77,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -140,7 +140,7 @@
           "Benefits": ["recSFSa4PUFyryQ3L"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attiKb1rEJ9lqzalD",
               "url": "https://dl.airtable.com/.attachments/bceeb4adc157266c9269658e7c4ec1cf/db02f836/Bananas.png",
@@ -166,7 +166,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -227,7 +227,7 @@
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "Benefits 2": ["recSFSa4PUFyryQ3L"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "att6gs7y15LHYaFbA",
               "url": "https://dl.airtable.com/.attachments/42268b6116ae66574923da6c09c17a08/161d1634/Protein.png",
@@ -253,7 +253,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -310,7 +310,7 @@
           "Benefits": ["recSFSa4PUFyryQ3L"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attI7MYav9IXrtxjH",
               "url": "https://dl.airtable.com/.attachments/2f410c4b75f935ebeee56641c04848c0/7ea3225e/NutButter.png",
@@ -336,7 +336,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -393,7 +393,7 @@
           "Benefits": ["recd3ha5AvHU1h8yW"],
           "Dietary": ["recmfnXpiKD1mQgaC"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "atthuneD4STYl1ye1",
               "url": "https://dl.airtable.com/.attachments/23e9064a2359cd3632fafd4b4646f540/b0565c9c/CacaoNibs.png",
@@ -419,7 +419,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -476,7 +476,7 @@
           "Benefits": ["recaqqM3Jq8P8Owk8"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attyv2FlYKtLnFz5q",
               "url": "https://dl.airtable.com/.attachments/7a0f68e82836a2d63ad7b40b27d54f6d/df1cbc5d/MintSpinach.png",
@@ -502,7 +502,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -623,7 +623,7 @@
           "Benefits": ["recSFSa4PUFyryQ3L"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attI7MYav9IXrtxjH",
               "url": "https://dl.airtable.com/.attachments/2f410c4b75f935ebeee56641c04848c0/7ea3225e/NutButter.png",
@@ -649,7 +649,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -713,7 +713,7 @@
           "Benefits": ["recFlyZ68FePHBGbI"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["oz"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attJIoIZuNqpEUEFp",
               "url": "https://dl.airtable.com/.attachments/be31b655eff71f73ab0e41724d652561/80a91953/Milk.png",
@@ -739,7 +739,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -785,7 +785,7 @@
           "Benefits": ["recd3ha5AvHU1h8yW"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["oz"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "atttEGm2VS82dEywu",
               "url": "https://dl.airtable.com/.attachments/51efa8b2c9c2251c67966a12207ac0e2/68dfd8ca/ColdBrew.png",
@@ -811,7 +811,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -876,7 +876,7 @@
           "Benefits": ["recSFSa4PUFyryQ3L"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attiKb1rEJ9lqzalD",
               "url": "https://dl.airtable.com/.attachments/bceeb4adc157266c9269658e7c4ec1cf/db02f836/Bananas.png",
@@ -902,7 +902,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -949,7 +949,7 @@
           "Benefits": ["recSFSa4PUFyryQ3L"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attfjNiWgYB5wiDnL",
               "url": "https://dl.airtable.com/.attachments/7c2d8efdfaf4f63349818e2bcc620337/f4fd4bcd/Avocado.png",
@@ -975,7 +975,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -1022,7 +1022,7 @@
           "Benefits": ["rechXQIhjW1a1dsXn"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attOl0UrTtEjHljZ5",
               "url": "https://dl.airtable.com/.attachments/c0d0a6e756ad3b5978566ddeab5cf890/f5ab32f7/Papaya.png",
@@ -1048,7 +1048,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -1095,7 +1095,7 @@
           "Benefits": ["rechXQIhjW1a1dsXn"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attETOgMkFhRcKYLR",
               "url": "https://dl.airtable.com/.attachments/42df3f26f4439de4159fe2bf334b6907/36695870/Cucumber.png",
@@ -1121,7 +1121,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -1174,7 +1174,7 @@
           "Benefits": ["rechXQIhjW1a1dsXn"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attQ18F1PxWWHPJzd",
               "url": "https://dl.airtable.com/.attachments/09cecf5fac1588d3db2ab719c22b5836/be33ead8/Dates.png",
@@ -1200,7 +1200,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -1251,7 +1251,7 @@
           "Feeder Type": ["recb7veA9oFOyuD4q"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attLw4MfMzkVyRI1U",
               "url": "https://dl.airtable.com/.attachments/d87a0d871b99a5f2bc4999950beafc86/bca18e1a/Pineapple.png",
@@ -1277,7 +1277,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -1324,7 +1324,7 @@
           "Benefits": ["recaqqM3Jq8P8Owk8"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attyv2FlYKtLnFz5q",
               "url": "https://dl.airtable.com/.attachments/7a0f68e82836a2d63ad7b40b27d54f6d/df1cbc5d/MintSpinach.png",
@@ -1350,7 +1350,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -1407,7 +1407,7 @@
           "Benefits": ["rechXQIhjW1a1dsXn"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attCijhkcNgudzTs8",
               "url": "https://dl.airtable.com/.attachments/fc1bd1350ef622bae9f24b914c4d88e2/07d689be/Mango.png",
@@ -1433,7 +1433,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -1480,7 +1480,7 @@
           "Benefits": ["recaqqM3Jq8P8Owk8"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "att7ViONwtmgb3JcM",
               "url": "https://dl.airtable.com/.attachments/8879dcafa62e4ba2ac5633d085728f82/b7226d57/Ginger.png",
@@ -1506,7 +1506,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -1569,7 +1569,7 @@
           "Benefits": ["rechXQIhjW1a1dsXn"],
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "attUfY3pEKnbHuAu7",
               "url": "https://dl.airtable.com/.attachments/3004b5d10133d8ae0eed7f5efca4671a/fe13ac83/ChiaSeeds.png",
@@ -1595,7 +1595,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -1642,7 +1642,7 @@
           "Benefits": ["recd3ha5AvHU1h8yW"],
           "Dietary": ["recmfnXpiKD1mQgaC"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "atthuneD4STYl1ye1",
               "url": "https://dl.airtable.com/.attachments/23e9064a2359cd3632fafd4b4646f540/b0565c9c/CacaoNibs.png",
@@ -1668,7 +1668,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -1729,7 +1729,7 @@
           "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
           "Benefits 2": ["recSFSa4PUFyryQ3L"],
           "UOM": ["g"],
-          "Ingredient Image": [
+          "Image": [
             {
               "id": "att6gs7y15LHYaFbA",
               "url": "https://dl.airtable.com/.attachments/42268b6116ae66574923da6c09c17a08/161d1634/Protein.png",
@@ -1755,7 +1755,7 @@
               }
             }
           ],
-          "Ingredient Icon": [
+          "Icon": [
             {
               "id": "attTnD2OeQ4KgmPYl",
               "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5058,7 +5058,7 @@
         "Benefits": ["rechXQIhjW1a1dsXn"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attOl0UrTtEjHljZ5",
             "url": "https://dl.airtable.com/.attachments/c0d0a6e756ad3b5978566ddeab5cf890/f5ab32f7/Papaya.png",
@@ -5084,7 +5084,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5137,7 +5137,7 @@
         "Benefits": ["recSFSa4PUFyryQ3L"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attiKb1rEJ9lqzalD",
             "url": "https://dl.airtable.com/.attachments/bceeb4adc157266c9269658e7c4ec1cf/db02f836/Bananas.png",
@@ -5163,7 +5163,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5209,7 +5209,7 @@
         "Benefits": ["recaqqM3Jq8P8Owk8"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "att9Y8S9PvRoKwoik",
             "url": "https://dl.airtable.com/.attachments/75b6d522f1ca2c937c9d093f1ca0fa49/310a51a8/DragonFruit.png",
@@ -5235,7 +5235,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5285,7 +5285,7 @@
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "Benefits 2": ["recSFSa4PUFyryQ3L"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "att6gs7y15LHYaFbA",
             "url": "https://dl.airtable.com/.attachments/42268b6116ae66574923da6c09c17a08/161d1634/Protein.png",
@@ -5311,7 +5311,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5360,7 +5360,7 @@
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "Benefits 2": ["recd3ha5AvHU1h8yW"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attsaWNYDKuplPJSo",
             "url": "https://dl.airtable.com/.attachments/b9510146d5892f86024b5a4b981032ad/54736d5a/Focus.png",
@@ -5386,7 +5386,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5432,7 +5432,7 @@
         "Benefits": ["recSFSa4PUFyryQ3L"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attI7MYav9IXrtxjH",
             "url": "https://dl.airtable.com/.attachments/2f410c4b75f935ebeee56641c04848c0/7ea3225e/NutButter.png",
@@ -5458,7 +5458,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5506,7 +5506,7 @@
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "Benefits 2": ["rechXQIhjW1a1dsXn"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "att7eEP9gSWvXNwOs",
             "url": "https://dl.airtable.com/.attachments/3a0ebed69f44efdb8f88466a5f232747/44abfcf9/Probiotics.png",
@@ -5532,7 +5532,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5585,7 +5585,7 @@
         "Benefits": ["rechXQIhjW1a1dsXn"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attUfY3pEKnbHuAu7",
             "url": "https://dl.airtable.com/.attachments/3004b5d10133d8ae0eed7f5efca4671a/fe13ac83/ChiaSeeds.png",
@@ -5611,7 +5611,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5658,7 +5658,7 @@
         "Benefits": ["rechXQIhjW1a1dsXn"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attETOgMkFhRcKYLR",
             "url": "https://dl.airtable.com/.attachments/42df3f26f4439de4159fe2bf334b6907/36695870/Cucumber.png",
@@ -5684,7 +5684,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5737,7 +5737,7 @@
         "Benefits": ["rechXQIhjW1a1dsXn"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attQ18F1PxWWHPJzd",
             "url": "https://dl.airtable.com/.attachments/09cecf5fac1588d3db2ab719c22b5836/be33ead8/Dates.png",
@@ -5763,7 +5763,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5816,7 +5816,7 @@
         "Benefits": ["recFlyZ68FePHBGbI"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["oz"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attJIoIZuNqpEUEFp",
             "url": "https://dl.airtable.com/.attachments/be31b655eff71f73ab0e41724d652561/80a91953/Milk.png",
@@ -5842,7 +5842,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5889,7 +5889,7 @@
         "Benefits": ["recd3ha5AvHU1h8yW"],
         "Dietary": ["recmfnXpiKD1mQgaC"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "atthuneD4STYl1ye1",
             "url": "https://dl.airtable.com/.attachments/23e9064a2359cd3632fafd4b4646f540/b0565c9c/CacaoNibs.png",
@@ -5915,7 +5915,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -5961,7 +5961,7 @@
         "Benefits": ["rechXQIhjW1a1dsXn"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attCijhkcNgudzTs8",
             "url": "https://dl.airtable.com/.attachments/fc1bd1350ef622bae9f24b914c4d88e2/07d689be/Mango.png",
@@ -5987,7 +5987,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -6038,7 +6038,7 @@
         "Feeder Type": ["recb7veA9oFOyuD4q"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attLw4MfMzkVyRI1U",
             "url": "https://dl.airtable.com/.attachments/d87a0d871b99a5f2bc4999950beafc86/bca18e1a/Pineapple.png",
@@ -6064,7 +6064,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -6111,7 +6111,7 @@
         "Benefits": ["recaqqM3Jq8P8Owk8"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "att7ViONwtmgb3JcM",
             "url": "https://dl.airtable.com/.attachments/8879dcafa62e4ba2ac5633d085728f82/b7226d57/Ginger.png",
@@ -6137,7 +6137,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -6184,7 +6184,7 @@
         "Benefits": ["recSFSa4PUFyryQ3L"],
         "Dietary": ["recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "att53o2YCmLERZww7",
             "url": "https://dl.airtable.com/.attachments/2515f6674e0011e4c008d602c7e11e46/64669f76/Yogurt.png",
@@ -6210,7 +6210,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -6258,7 +6258,7 @@
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "Benefits 2": ["recFlyZ68FePHBGbI"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "att9o6kFHwqInuqXo",
             "url": "https://dl.airtable.com/.attachments/fa88cc02d3383ae0db6c2f304f949906/61641deb/Collagen.png",
@@ -6284,7 +6284,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -6332,7 +6332,7 @@
         "Benefits": ["recaqqM3Jq8P8Owk8"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "att41l0FaTZMwaCTG",
             "url": "https://dl.airtable.com/.attachments/02aed4876391889a20a314e80dad8e4e/a965724b/Test-Ingredient.png",
@@ -6358,7 +6358,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -6406,7 +6406,7 @@
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "Benefits 2": ["recaqqM3Jq8P8Owk8"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attaklJp2fTWRY3y1",
             "url": "https://dl.airtable.com/.attachments/3bfc2cdd2837e4b314b75f343e354834/e244bd79/Immunity.png",
@@ -6432,7 +6432,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -6477,7 +6477,7 @@
         "Benefits": ["recaqqM3Jq8P8Owk8"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attH2KZSRID6YEsfT",
             "url": "https://dl.airtable.com/.attachments/24d903f895b4263c9c74d51edb3c0ae3/c5fac059/Lemons.png",
@@ -6503,7 +6503,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -6550,7 +6550,7 @@
         "Benefits": ["recaqqM3Jq8P8Owk8"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attyv2FlYKtLnFz5q",
             "url": "https://dl.airtable.com/.attachments/7a0f68e82836a2d63ad7b40b27d54f6d/df1cbc5d/MintSpinach.png",
@@ -6576,7 +6576,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -6623,7 +6623,7 @@
         "Benefits": ["recSFSa4PUFyryQ3L"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["g"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "attfjNiWgYB5wiDnL",
             "url": "https://dl.airtable.com/.attachments/7c2d8efdfaf4f63349818e2bcc620337/f4fd4bcd/Avocado.png",
@@ -6649,7 +6649,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
@@ -6695,7 +6695,7 @@
         "Benefits": ["recd3ha5AvHU1h8yW"],
         "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
         "UOM": ["oz"],
-        "Ingredient Image": [
+        "Image": [
           {
             "id": "atttEGm2VS82dEywu",
             "url": "https://dl.airtable.com/.attachments/51efa8b2c9c2251c67966a12207ac0e2/68dfd8ca/ColdBrew.png",
@@ -6721,7 +6721,7 @@
             }
           }
         ],
-        "Ingredient Icon": [
+        "Icon": [
           {
             "id": "attTnD2OeQ4KgmPYl",
             "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",

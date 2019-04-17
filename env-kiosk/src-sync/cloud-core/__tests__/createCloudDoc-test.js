@@ -19,7 +19,7 @@ describe('doc generic behavior', () => {
         source,
         name: 'foo',
         parentName: new BehaviorSubject(null),
-      })
+      }),
     ).toThrow();
   });
   test('fails on creation without name', () => {
@@ -29,7 +29,7 @@ describe('doc generic behavior', () => {
         source,
         domain: 'test',
         parentName: new BehaviorSubject(null),
-      })
+      }),
     ).toThrow();
   });
 
@@ -41,7 +41,7 @@ describe('doc generic behavior', () => {
         domain: 'test',
         name: 'foo/bar',
         parentName: new BehaviorSubject(null),
-      })
+      }),
     ).toThrow();
   });
 });
@@ -430,7 +430,7 @@ test('value mapping', async () => {
   expect(lastObserved).toEqual(9);
 });
 
-test('value evaluation', async () => {
+test.only('value evaluation', async () => {
   const source = createMemoryStorageSource({ domain: 'test' });
   await source.dispatch({
     type: 'PutDocValue',
@@ -470,19 +470,28 @@ test('value evaluation', async () => {
   });
   const evald = doc.get('^squared');
   let lastObserved = undefined;
-  evald.observeValue.subscribe({
+  const sub = evald.observeValue.subscribe({
     next: v => {
       lastObserved = v;
     },
   });
   expect(lastObserved).toEqual(undefined);
-  await evald.fetchValue();
+  await justASec();
   expect(lastObserved).toEqual(4);
   await source.dispatch({
     type: 'PutDocValue',
     domain: 'test',
     name: 'foo',
     value: 3,
+  });
+  await justASec();
+  expect(lastObserved).toEqual(9);
+  sub.unsubscribe();
+  await source.dispatch({
+    type: 'PutDocValue',
+    domain: 'test',
+    name: 'foo',
+    value: 4,
   });
   await justASec();
   expect(lastObserved).toEqual(9);

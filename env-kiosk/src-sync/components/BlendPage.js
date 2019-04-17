@@ -70,7 +70,7 @@ function Ingredient({ ingredient }) {
       }}
     >
       <AirtableImage
-        image={ingredient['Ingredient Image']}
+        image={ingredient['Image']}
         style={{
           //width: 100, height: 80
           width: 180,

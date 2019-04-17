@@ -328,6 +328,7 @@ class PLCConnectionError extends Error {
 }
 
 export default function startKitchen({ client, plcIP }) {
+  console.log('startKitchen!!!!');
   let readyPLC = null;
   let connectingPLC = null;
   let readyHandlers = new Set();
@@ -354,6 +355,7 @@ export default function startKitchen({ client, plcIP }) {
 
     connectingPLC
       .then(async () => {
+        connectingPLC = null;
         if (hasClosed) {
           mainPLC.destroy();
           return;
@@ -365,9 +367,8 @@ export default function startKitchen({ client, plcIP }) {
         Array.from(readyHandlers).forEach(h => h());
       })
       .catch(err => {
+        console.error('PLC Connection Error', err);
         readyPLC = null;
-      })
-      .finally(() => {
         connectingPLC = null;
       });
   }
@@ -566,6 +567,7 @@ export default function startKitchen({ client, plcIP }) {
 
     await new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
+        console.error('Tag read timeout after 2 seconds');
         reject(new Error('Error reading tags in time'));
         readyPLC = null;
       }, 2000);
@@ -686,6 +688,7 @@ export default function startKitchen({ client, plcIP }) {
   function close() {
     // clearInterval(debugInterval);
     readyPLC && readyPLC.destroy();
+    console.log('Cloooooooose kitchen!');
     readyPLC = null;
     hasClosed = true;
   }

@@ -31,7 +31,7 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
 const runServer = async () => {
-  console.log('☁️ Starting Restaurant Server 💨 ' + process.cwd() + '/db');
+  console.log('☁️ Starting Restaurant Server 💨 ');
 
   const pgConfig = {
     ssl: !!getEnv('SQL_USE_SSL'),
@@ -426,9 +426,12 @@ const runServer = async () => {
       runSideEffects();
     },
   });
-  cloud.get('RestaurantActions').observeValue.subscribe({
+  (await evalSource.observeDoc(
+    'onofood.co',
+    'KitchenActions^KitchenReducer',
+  )).subscribe({
     next: v => {
-      console.log('restaurant action', v);
+      console.log('restaurant state', v);
       restaurantState = v;
       runSideEffects();
     },
