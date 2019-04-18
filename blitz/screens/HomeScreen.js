@@ -1,11 +1,8 @@
-import React, { Component, memo } from 'react';
-import { Text } from 'react-native';
+import React from 'react';
 import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import Hero from '../../components/Hero';
 import LinkRow from '../../components/LinkRow';
-
-import codePush from 'react-native-code-push';
 
 export default function HomeScreenMemo({ navigation, ...props }) {
   //   <LinkRow
@@ -15,17 +12,7 @@ export default function HomeScreenMemo({ navigation, ...props }) {
   //   icon="📋"
   //   title="Vehicle Host Panel"
   // />
-  let [updateMetadata, setUpdateMetadata] = React.useState(null);
-  React.useEffect(() => {
-    codePush
-      .getUpdateMetadata()
-      .then(m => {
-        console.log('huh', m);
-        setUpdateMetadata(m);
-      })
-      .catch(console.error);
-    return () => {};
-  }, []);
+
   return (
     <GenericPage hideBackButton navigation={navigation} {...props}>
       <Hero title="Maui Development" icon="🍹" />
@@ -59,12 +46,11 @@ export default function HomeScreenMemo({ navigation, ...props }) {
           icon="⚙️"
           title="Settings"
         />
-        <Text>{JSON.stringify(updateMetadata)}</Text>
       </RowSection>
     </GenericPage>
   );
 }
 
-const HomeScreen = memo(HomeScreenMemo);
+const HomeScreen = React.memo(HomeScreenMemo);
 
 HomeScreen.navigationOptions = GenericPage.navigationOptions;
