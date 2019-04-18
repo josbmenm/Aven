@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { prettyShadow } from './Styles';
 
-export default function KeyboardPopover({ children, onClose }) {
+export default function KeyboardPopover({ children, onClose, wide }) {
   return (
     <View
       style={{
@@ -28,7 +28,7 @@ export default function KeyboardPopover({ children, onClose }) {
         <View
           style={{
             flex: 1,
-            width: 400,
+            // width: 400,
             justifyContent: 'center',
           }}
         >
@@ -38,7 +38,7 @@ export default function KeyboardPopover({ children, onClose }) {
               alignSelf: 'stretch',
               ...prettyShadow,
               borderRadius: 10,
-              width: 400,
+              // width: wide ? 636 : 400,
               minHeight: 200,
             }}
           >

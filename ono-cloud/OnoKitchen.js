@@ -578,6 +578,7 @@ function companyConfigToBlendMenu(atData) {
       BenefitCustomization: Benefits,
       Dietary,
       Benefits: ItemBenefits,
+      DefaultEnhancementId: defaultEnhancementId,
       DefaultBenefitEnhancement,
       DefaultBenefitEnhancementName:
         DefaultBenefitEnhancement && DefaultBenefitEnhancement.Name,

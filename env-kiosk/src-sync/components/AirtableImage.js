@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from './Image';
+import Image, { loadImages } from './Image';
 
 const md5 = require('crypto-js/md5');
 const path = require('path');
@@ -29,5 +29,19 @@ const AirtableImage = ({ image, style, resizeMode, tintColor }) => {
     />
   );
 };
+
+export async function preloadImages(images) {
+  const imageSources = images.map(image => {
+    const origUrl = image && image[0] && image[0].url;
+    const ext = path.extname(origUrl);
+    const uri = `${
+      useSSL ? 'https' : 'http'
+    }://${authority}/_/onofood.co/Airtable/files/${md5(
+      origUrl,
+    ).toString()}${ext}`;
+    return { uri };
+  });
+  await loadImages(imageSources);
+}
 
 export default AirtableImage;

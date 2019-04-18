@@ -102,6 +102,7 @@ function CardHeader({ title, price, style, benefits }) {
         <View style={{ flexDirection: 'row', marginTop: 8 }}>
           {benefits.map(b => (
             <View
+              key={b.id}
               style={{
                 borderRadius: 14,
                 height: 28,

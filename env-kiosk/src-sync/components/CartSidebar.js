@@ -13,14 +13,15 @@ import {
   headerHeight,
   rightSidebarWidth,
   monsterra30,
-  monsterra10,
   black8,
   primaryFontFace,
   boldPrimaryFontFace,
   monsterra,
+  titleStyle,
+  monsterra80,
+  monsterra5,
 } from './Styles';
 import { formatCurrency } from './Utils';
-import useObservable from '../cloud-core/useObservable';
 import Button from './Button';
 import {
   useOrderItem,
@@ -28,8 +29,17 @@ import {
   displayNameOfOrderItem,
   getItemCustomizationSummary,
 } from '../ono-cloud/OnoKitchen';
+import { usePopover } from '../views/Popover';
+import KeyboardPopover from './KeyboardPopover';
+import BlockFormTitle from './BlockFormTitle';
+import BlockFormMessage from './BlockFormMessage';
+import BlockFormInput from './BlockFormInput';
+import BlockFormButton from './BlockFormButton';
+import BlockFormRow from './BlockFormRow';
 import { useNavigation } from '../navigation-hooks/Hooks';
+import { Easing } from 'react-native-reanimated';
 import ListAnimation from './ListAnimation';
+import useFocus from '../navigation-hooks/useFocus';
 
 const summaryRowLabelStyle = {
   color: highlightPrimaryColor,
@@ -255,6 +265,79 @@ function CartRow({ itemId, item }) {
   );
 }
 
+function PromoCodeForm({ onClose }) {
+  const [promoCode, setPromoCode] = React.useState('');
+  const inputRenderers = [
+    inputProps => (
+      <BlockFormInput
+        label="promo code"
+        mode="code"
+        onValue={setPromoCode}
+        value={promoCode}
+        upperCase
+        {...inputProps}
+      />
+    ),
+  ];
+
+  function handleSubmit() {}
+  const { inputs } = useFocus({
+    onSubmit: handleSubmit,
+    inputRenderers,
+  });
+  return (
+    <View style={{ padding: 40 }}>
+      <BlockFormMessage message="You’ve got a code? Lucky you!." />
+      <BlockFormTitle title="whats your promo code?" />
+      <BlockFormRow>{inputs}</BlockFormRow>
+      <BlockFormRow>
+        <BlockFormButton title="cancel" secondary onPress={onClose} />
+        <BlockFormButton title="add code" onPress={handleSubmit} />
+      </BlockFormRow>
+    </View>
+  );
+}
+
+function usePromoPopover() {
+  const { onPopover } = usePopover(
+    ({ onClose, popoverOpenValue }) => {
+      return (
+        <KeyboardPopover onClose={onClose}>
+          <PromoCodeForm onClose={onClose} />
+        </KeyboardPopover>
+      );
+    },
+    { easing: Easing.linear, duration: 100 },
+  );
+  return onPopover;
+}
+
+function PromoCode() {
+  const onPopover = usePromoPopover();
+  return (
+    <TouchableOpacity
+      onPress={onPopover}
+      style={{
+        backgroundColor: monsterra5,
+        paddingTop: 16,
+        height: 45,
+        margin: 16,
+        borderRadius: 4,
+      }}
+    >
+      <Text
+        style={{
+          ...titleStyle,
+          color: monsterra80,
+          textAlign: 'center',
+        }}
+      >
+        add promo code
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
 export default function Cart({ summary }) {
   const { navigate } = useNavigation();
   if (!summary) {
@@ -277,6 +360,7 @@ export default function Cart({ summary }) {
           <SummaryRow label="total" amount={summary.total} emphasize />
         </View>
       </View>
+      <PromoCode />
       <Button
         title="checkout"
         style={{ margin: 20 }}

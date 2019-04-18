@@ -62,6 +62,8 @@ export function MenuHLayout({ side, children }) {
   );
 }
 
+const SHOW_BOTTOM_LINE = false; // disabled while food is disabled
+
 export function MenuZone({ title, children, small }) {
   const TitleComponent = small ? TitleSmall : TitleLarge;
   return (
@@ -83,14 +85,16 @@ export function MenuZone({ title, children, small }) {
         </View>
       )}
       {children}
-      <View
-        style={{
-          height: 1,
-          alignSelf: 'stretch',
-          marginHorizontal: largeHorizontalPadding,
-          backgroundColor: '#00000014',
-        }}
-      />
+      {SHOW_BOTTOM_LINE && (
+        <View
+          style={{
+            height: 1,
+            alignSelf: 'stretch',
+            marginHorizontal: largeHorizontalPadding,
+            backgroundColor: '#00000014',
+          }}
+        />
+      )}
     </View>
   );
 }

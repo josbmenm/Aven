@@ -254,6 +254,7 @@ function BlendPageContentPure({
             >
               {dietary.map(d => (
                 <AirtableImage
+                  key={d.id}
                   image={d.Icon}
                   style={{
                     width: 32,

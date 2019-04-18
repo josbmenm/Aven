@@ -6,7 +6,7 @@ import Animated, { Easing } from 'react-native-reanimated';
 const textInputFontSize = 26;
 
 function BlockFormInputWithRef(
-  { value, onValue, label, mode, onSubmit, onFocus, onBlur },
+  { value, onValue, label, mode, onSubmit, onFocus, onBlur, upperCase },
   ref,
 ) {
   const desiredPlaceholderOpen = value ? 0 : 1;
@@ -21,7 +21,7 @@ function BlockFormInputWithRef(
     }).start();
   }, [desiredPlaceholderOpen]);
   const autoCorrect = false;
-  let autoComplete = null;
+  let autoCapitalize = null;
   let keyboardType = 'default';
   let enablesReturnKeyAutomatically = true;
   if (mode === 'phone') {
@@ -31,7 +31,9 @@ function BlockFormInputWithRef(
   } else if (mode === 'email') {
     keyboardType = 'email-address';
   } else if (mode === 'name') {
-    autoComplete = 'words';
+    autoCapitalize = 'words';
+  } else if (mode === 'code') {
+    autoCapitalize = 'characters';
   }
   return (
     <View
@@ -72,7 +74,7 @@ function BlockFormInputWithRef(
         keyboardAppearance="dark"
         keyboardType={keyboardType}
         autoCorrect={autoCorrect}
-        autoCapitalize={autoComplete}
+        autoCapitalize={autoCapitalize}
         ref={ref}
         value={value}
         onFocus={onFocus}

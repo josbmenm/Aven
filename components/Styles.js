@@ -29,11 +29,11 @@ export const boldPrimaryFontFace = {
 // -----------
 
 // Colors
-
 export const black8 = '#00000014';
 export const black10 = '#00000020';
 export const monsterra = '#005151';
 export const monsterraLight = '#669797';
+export const monsterra5 = monsterra + '10';
 export const monsterra8 = monsterra + '14';
 export const monsterra10 = monsterra + '20';
 export const monsterra30 = monsterra + '4C';

@@ -168,6 +168,11 @@ const runServer = async () => {
   });
 
   await putPermission({
+    defaultRule: { canRead: true },
+    name: 'KitchenConfig',
+  });
+
+  await putPermission({
     defaultRule: { canRead: true, canTransact: true },
     name: 'KitchenLog',
   });
@@ -426,16 +431,15 @@ const runServer = async () => {
       runSideEffects();
     },
   });
-  (await evalSource.observeDoc(
-    'onofood.co',
-    'KitchenActions^KitchenReducer',
-  )).subscribe({
-    next: v => {
-      console.log('restaurant state', v);
-      restaurantState = v;
-      runSideEffects();
-    },
-  });
+  // evalSource
+  //   .observeDoc('onofood.co', 'KitchenActions^KitchenReducer')
+  //   .subscribe({
+  //     next: v => {
+  //       console.log('restaurant state', v);
+  //       restaurantState = v;
+  //       runSideEffects();
+  //     },
+  //   });
 
   const dispatch = async action => {
     switch (action.type) {
@@ -457,11 +461,11 @@ const runServer = async () => {
     }
   };
 
-  scrapeAirTable(fsClient)
-    .then(() => {
-      console.log('Airtable Updated');
-    })
-    .catch(console.error);
+  // scrapeAirTable(fsClient)
+  //   .then(() => {
+  //     console.log('Airtable Updated');
+  //   })
+  //   .catch(console.error);
 
   const serverListenLocation = getEnv('PORT');
 

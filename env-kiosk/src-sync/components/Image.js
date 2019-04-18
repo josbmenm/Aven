@@ -28,4 +28,6 @@ const OnoImage = ({ imageURI, style, resizeMode, tintColor }) => {
   );
 };
 
+export const loadImages = FastImage.preload;
+
 export default OnoImage;

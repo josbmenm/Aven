@@ -10,6 +10,7 @@ export default function ReceiptScreen({ props }) {
   useEmptyOrderEscape();
   return (
     <ReceiptPage
+      hideBackButton={true}
       onSms={() => {
         navigate('SendReceipt', { type: 'sms' });
       }}

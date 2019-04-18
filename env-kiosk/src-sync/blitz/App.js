@@ -3,14 +3,7 @@ if (__DEV__) {
 }
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StatusBar,
-  Image,
-  AsyncStorage,
-  YellowBox,
-} from 'react-native';
+import { View, Text, StatusBar, AsyncStorage, YellowBox } from 'react-native';
 import { createAppContainer } from '../navigation-native';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { createNavigator, StackRouter } from '../navigation-core';
@@ -43,7 +36,7 @@ import AppUpsellScreen from './screens/AppUpsellScreen';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
 import Transitioner from '../navigation-transitioner/Transitioner';
 import LinearGradient from 'react-native-linear-gradient';
-
+import { loadImages } from '../components/Image';
 import CloudContext from '../cloud-core/CloudContext';
 import createCloudClient from '../cloud-core/createCloudClient';
 import ErrorContainer from '../cloud-react/ErrorContainer';
@@ -172,28 +165,18 @@ function FullApp() {
   );
 }
 
-const PRELOAD_IMAGES = {
-  kioskHomeScreen: require('../components/assets/BgHome.png'),
-  genericScreen: require('../components/assets/BgGeneric.png'),
-};
+const PRELOAD_IMAGES = [
+  require('../components/assets/BgHome.png'),
+  require('../components/assets/BgGeneric.png'),
+];
 
-async function loadImages(images) {
-  // thanks to https://github.com/DylanVann/react-native-fast-image/issues/160#issuecomment-373938649
-  return Promise.all(
-    Object.keys(images).map(i => {
-      let img = {
-        ...Image.resolveAssetSource(images[i]),
-        cache: 'force-cache',
-      };
-
-      return Image.prefetch(img);
-    }),
-  );
-}
-
-loadImages(PRELOAD_IMAGES).then(results => {
-  console.log('images preloaded!');
-});
+// loadImages(PRELOAD_IMAGES)
+//   .then(results => {
+//     console.log('images preloaded!');
+//   })
+//   .catch(err => {
+//     console.error('Error preloading the images!', err);
+//   });
 
 const ENABLE_DEV_OVERLAY = false;
 

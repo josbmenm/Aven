@@ -33,7 +33,7 @@ function TextButton({ title, onPress, style }) {
   );
 }
 
-function IngredientTag({ image, onPress, onRemove, inlineStyle, style }) {
+function IngredientTag({ children, onPress, onRemove, inlineStyle, style }) {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -64,17 +64,7 @@ function IngredientTag({ image, onPress, onRemove, inlineStyle, style }) {
             alignSelf: 'center',
           }}
         >
-          {image && (
-            <View style={{ overflow: 'hidden', flex: 1 }}>
-              <AirtableImage
-                image={image}
-                resizeMode="contain"
-                style={{
-                  flex: 1,
-                }}
-              />
-            </View>
-          )}
+          {children}
         </View>
         {onRemove && <XButton onPress={onRemove} />}
       </View>
@@ -125,6 +115,8 @@ function CustomizationPuck({ isActive, children, onPress }) {
         ...prettyShadowSmall,
         backgroundColor: 'white',
         borderRadius: 4,
+        borderWidth: isActive ? 3 : 0,
+        borderColor: monsterra,
       }}
       onPress={onPress}
     >
@@ -140,6 +132,9 @@ function EnhancementSection({ section }) {
         items={section.options.map((enhancement, index) => (
           <CustomizationPuck
             key={index}
+            isActive={
+              section.selectedIngredients.indexOf(enhancement.id) !== -1
+            }
             onPress={() => {
               section.addIngredient(enhancement.id);
             }}
@@ -364,30 +359,45 @@ function getCustomizationSections(
   if (!menuItem) {
     return [];
   }
-  let activeEnhancement = menuItem.DefaultEnhancement;
-  if (customizationState && customizationState.enhancement !== undefined) {
-    activeEnhancement =
-      menuItem.BenefitCustomization[customizationState.enhancement];
+  let activeEnhancementIds = [menuItem.DefaultEnhancementId];
+  if (customizationState && customizationState.enhancements !== undefined) {
+    activeEnhancementIds = customizationState.enhancements;
   }
+  const activeEnhancements = activeEnhancementIds.map(
+    eId => menuItem.BenefitCustomization[eId],
+  );
+  console.log(activeEnhancementIds);
+
   const sections = [
     {
       name: 'enhancement',
-      displayName: 'Enhancement',
-      slotCount: 1,
+      displayName: 'Benefit',
+      slotCount: 2,
       options: Object.keys(menuItem.BenefitCustomization).map(
         id => menuItem.BenefitCustomization[id],
       ),
-      selectedIngredients: [activeEnhancement],
+      selectedIngredients: activeEnhancements,
       addIngredient: enhancementId => {
+        let nextEnhancements = null;
+        if (activeEnhancementIds.indexOf(enhancementId === -1)) {
+          nextEnhancements = activeEnhancementIds.filter(
+            eId => eId !== enhancementId,
+          );
+        } else {
+          nextEnhancements = [...(activeEnhancementIds || []), enhancementId];
+        }
+        console.log('setting enhancements', nextEnhancements);
         setCustomization({
           ...customizationState,
-          enhancement: enhancementId,
+          enhancements: nextEnhancements,
         });
       },
-      removeIngredient: () => {
+      removeIngredient: enhancementId => {
         setCustomization({
           ...customizationState,
-          enhancement: null,
+          enhancements: activeEnhancementIds.filter(
+            eId => eId !== enhancementId,
+          ),
         });
       },
     },
@@ -570,13 +580,22 @@ function CustomizationSidebar({
                       if (section.name === 'enhancement') {
                         const enhancement = section.selectedIngredients[index];
                         if (!enhancement) {
-                          return 'add';
+                          if (index === 0) {
+                            return 'add';
+                          } else {
+                            return null;
+                          }
                         }
                         return {
                           onRemove: () => {
                             section.removeIngredient(enhancement.id);
                           },
-                          image: enhancement.Photo,
+                          // enhancement.Icon
+                          children: (
+                            <View>
+                              <Text>{enhancement.Name}</Text>
+                            </View>
+                          ),
                           key: `${enhancement.id}-${index}`,
                         };
                       }
@@ -588,11 +607,22 @@ function CustomizationSidebar({
                         section.selectedIngredients.filter(
                           i => i.id === ingredient.id,
                         ).length > 1;
+
                       return {
                         onRemove: () => {
                           section.removeIngredient(ingredient.id);
                         },
-                        image: ingredient['Image'],
+                        children: (
+                          <View style={{ overflow: 'hidden', flex: 1 }}>
+                            <AirtableImage
+                              image={ingredient['Image']}
+                              resizeMode="contain"
+                              style={{
+                                flex: 1,
+                              }}
+                            />
+                          </View>
+                        ),
                         key: `${ingredient.id}-${index}`,
                       };
                     })}
@@ -606,15 +636,19 @@ function CustomizationSidebar({
                         />
                       );
                     }
-                    return (
-                      <IngredientTag
-                        key={item.key}
-                        onRemove={item.onRemove}
-                        image={item.image}
-                        inlineStyle
-                        style={{ marginRight: 12, marginBottom: 12 }}
-                      />
-                    );
+                    if (item) {
+                      return (
+                        <IngredientTag
+                          key={item.key}
+                          onRemove={item.onRemove}
+                          style={{ marginRight: 12, marginBottom: 12 }}
+                          inlineStyle
+                        >
+                          {item.children}
+                        </IngredientTag>
+                      );
+                    }
+                    return null;
                   }}
                 />
               </View>
