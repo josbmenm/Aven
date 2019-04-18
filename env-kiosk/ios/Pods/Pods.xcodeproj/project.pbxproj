@@ -12,6 +12,16 @@
 		E2ED326A825939850CA5F02E758FE969 /* Pods-kiosk-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3001B9021D7529FBE627FDA5CD27CA49 /* Pods-kiosk-dummy.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A90C13E622680E2D00453561 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A90C13E122680E2D00453561 /* FastImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A287971D1DE0C0A60081BDFA;
+			remoteInfo = FastImage;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		1685A1D7320DC84FB226689F98ED2722 /* Pods-kiosk-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-kiosk-frameworks.sh"; sourceTree = "<group>"; };
 		3001B9021D7529FBE627FDA5CD27CA49 /* Pods-kiosk-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-kiosk-dummy.m"; sourceTree = "<group>"; };
@@ -20,11 +30,12 @@
 		5A16F4CFC63FAC439D7A04994F579A03 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		608D52343C0CA0D4840AFD3F5C49B872 /* Pods-kiosk.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-kiosk.modulemap"; sourceTree = "<group>"; };
 		64DBD6AC7C9C076EE54C451292011299 /* Pods-kiosk-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-kiosk-umbrella.h"; sourceTree = "<group>"; };
-		6727770FD839B21F2843B7E68B4510B7 /* Pods_kiosk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_kiosk.framework; path = "Pods-kiosk.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6727770FD839B21F2843B7E68B4510B7 /* Pods_kiosk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_kiosk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		680C2331A3F499335DFD822A5AF4C5D0 /* StripeTerminal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StripeTerminal.framework; path = Carthage/Build/iOS/StripeTerminal.framework; sourceTree = "<group>"; };
 		72611B0EB5AD650020E06EBBBC7DA78B /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7616E95B4D01DBC8D5A24763AB62A356 /* Pods-kiosk-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-kiosk-acknowledgements.plist"; sourceTree = "<group>"; };
-		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		A90C13E122680E2D00453561 /* FastImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FastImage.xcodeproj; path = "../../node_modules/react-native-fast-image/ios/FastImage.xcodeproj"; sourceTree = "<group>"; };
 		EB32CF3BF681B62077E98AC7446BCF9C /* Pods-kiosk-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-kiosk-resources.sh"; sourceTree = "<group>"; };
 		FC70AF6F800D4486E2218EE14F8702D3 /* Pods-kiosk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-kiosk.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,6 +81,7 @@
 		61E7BAF9788C77A1583486503AE98848 /* Targets Support Files */ = {
 			isa = PBXGroup;
 			children = (
+				A90C13E122680E2D00453561 /* FastImage.xcodeproj */,
 				53169DFE6C30B70D6373121AF6AA7F3D /* Pods-kiosk */,
 			);
 			name = "Targets Support Files";
@@ -90,6 +102,14 @@
 			isa = PBXGroup;
 			children = (
 				6727770FD839B21F2843B7E68B4510B7 /* Pods_kiosk.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A90C13E222680E2D00453561 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A90C13E722680E2D00453561 /* libFastImage.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,7 +135,6 @@
 			children = (
 				DF502873460651B4B6DB47BF99787E14 /* Frameworks */,
 			);
-			name = StripeTerminal;
 			path = StripeTerminal;
 			sourceTree = "<group>";
 		};
@@ -173,17 +192,34 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
 			productRefGroup = 9AFDAFF9637A272BA2686C993FA272F3 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = A90C13E222680E2D00453561 /* Products */;
+					ProjectRef = A90C13E122680E2D00453561 /* FastImage.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				A8F8AD7E6B1FFEB2341A86CF73EBD029 /* Pods-kiosk */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		A90C13E722680E2D00453561 /* libFastImage.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFastImage.a;
+			remoteRef = A90C13E622680E2D00453561 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		9926B0A73467B2B11491275C28066F01 /* Resources */ = {

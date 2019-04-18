@@ -8,6 +8,7 @@ import { MenuCardCarousel } from '../components/MenuCard';
 import { MenuZone } from '../components/MenuZone';
 
 export default function FoodMenu({ foodMenu }) {
+  return null; // no food until july
   const { navigate } = useNavigation();
   return (
     <MenuZone small title="add a snack">

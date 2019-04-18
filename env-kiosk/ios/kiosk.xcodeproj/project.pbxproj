@@ -29,6 +29,7 @@
 		59208F0B45DB494DAA49EB91 /* libRNReanimated.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 66419AF31B3042FEBD34E21C /* libRNReanimated.a */; };
 		61E89438797749ED9A42DCBA /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 71324B7D500B4A248A984E69 /* libBVLinearGradient.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		A90C13EE22680E3800453561 /* libFastImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A90C13ED22680E3300453561 /* libFastImage.a */; };
 		A936447A225CCC09005AD792 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = A9364479225CCC09005AD792 /* fonts */; };
 		A97AFE08225CD9C800C2CB54 /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97AFE02225CD9C700C2CB54 /* EventEmitter.swift */; };
 		A97AFE09225CD9C800C2CB54 /* CardReaderManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = A97AFE03225CD9C800C2CB54 /* CardReaderManagerBridge.m */; };
@@ -274,6 +275,13 @@
 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
 			remoteInfo = RCTText;
 		};
+		A90C13EC22680E3300453561 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A90C13E822680E3200453561 /* FastImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A287971D1DE0C0A60081BDFA;
+			remoteInfo = FastImage;
+		};
 		A936444F225CCA36005AD792 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
@@ -420,6 +428,7 @@
 		929AD87596CC46789224A707 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
 		9C9E58B5F8024F13BFD80CDF /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
 		A50D9A5E151211EB6ED03926 /* Pods_kiosk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_kiosk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A90C13E822680E3200453561 /* FastImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FastImage.xcodeproj; path = "../node_modules/react-native-fast-image/ios/FastImage.xcodeproj"; sourceTree = "<group>"; };
 		A9364479225CCC09005AD792 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = ../fonts; sourceTree = "<group>"; };
 		A97AFE02225CD9C700C2CB54 /* EventEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EventEmitter.swift; path = src/EventEmitter.swift; sourceTree = "<group>"; };
 		A97AFE03225CD9C800C2CB54 /* CardReaderManagerBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CardReaderManagerBridge.m; path = src/CardReaderManagerBridge.m; sourceTree = "<group>"; };
@@ -448,6 +457,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A90C13EE22680E3800453561 /* libFastImage.a in Frameworks */,
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */,
@@ -675,6 +685,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				A90C13E822680E3200453561 /* FastImage.xcodeproj */,
 				13B07FAE1A68108700A75B9A /* kiosk */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* kioskTests */,
@@ -693,6 +704,14 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* kiosk.app */,
 				00E356EE1AD99517003FC87E /* kioskTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A90C13E922680E3200453561 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A90C13ED22680E3300453561 /* libFastImage.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -853,6 +872,10 @@
 				{
 					ProductGroup = A936445B225CCA38005AD792 /* Products */;
 					ProjectRef = 60D6CCB72BF24C8BBA210B4E /* CodePush.xcodeproj */;
+				},
+				{
+					ProductGroup = A90C13E922680E3200453561 /* Products */;
+					ProjectRef = A90C13E822680E3200453561 /* FastImage.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
@@ -1150,6 +1173,13 @@
 			fileType = archive.ar;
 			path = libRCTText.a;
 			remoteRef = 832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A90C13ED22680E3300453561 /* libFastImage.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFastImage.a;
+			remoteRef = A90C13EC22680E3300453561 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		A9364450225CCA36005AD792 /* libjsi.a */ = {
