@@ -12,10 +12,13 @@ import {
   monsterra40,
   prettyShadow,
   boldPrimaryFontFace,
+  monsterraBlack,
+  primaryFontFace,
 } from './Styles';
 import Animated, { Easing } from 'react-native-reanimated';
+import { formatCurrency } from './Utils';
 
-export function EnhancementDetail({ enhancement, chevronRef }) {
+export function EnhancementDetail({ enhancement, price, chevronRef }) {
   if (!enhancement || !enhancement.Name) {
     return null;
   }
@@ -29,10 +32,17 @@ export function EnhancementDetail({ enhancement, chevronRef }) {
     >
       <AirtableImage
         image={enhancement.Icon}
-        style={{ width: 36, height: 36, marginRight: 12 }}
+        style={{
+          width: 50,
+          height: 50,
+          left: 16,
+          top: 16,
+          resizeMode: 'contain',
+          position: 'absolute',
+        }}
         tintColor={monsterra}
       />
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, marginLeft: 70, paddingHorizontal: 10 }}>
         <View style={{ flexDirection: 'row' }}>
           <Text style={{ ...titleStyle, fontSize: 12 }}>
             {enhancement.Name.toUpperCase()}
@@ -49,6 +59,18 @@ export function EnhancementDetail({ enhancement, chevronRef }) {
               }}
               source={require('./assets/RightChevronSmall.png')}
             />
+          )}
+          {!!price && (
+            <Text
+              style={{
+                color: monsterraBlack,
+                ...primaryFontFace,
+                fontSize: 12,
+                marginLeft: 6,
+              }}
+            >
+              {formatCurrency(price)}
+            </Text>
           )}
         </View>
         <Text style={{ ...proseFontFace, fontSize: 13, color: monsterra }}>

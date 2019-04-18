@@ -9,7 +9,10 @@ import {
   monsterra60,
   proseFontFace,
   monsterra,
+  boldPrimaryFontFace,
   primaryFontFace,
+  monsterraBlack,
+  monsterra50,
 } from './Styles';
 import { MenuZone, MenuHLayout } from './MenuZone';
 import ActionPage from '../components/ActionPage';
@@ -115,8 +118,8 @@ function CustomizationPuck({ isActive, children, onPress }) {
         ...prettyShadowSmall,
         backgroundColor: 'white',
         borderRadius: 4,
-        borderWidth: isActive ? 3 : 0,
-        borderColor: monsterra,
+        borderWidth: 3,
+        borderColor: isActive ? monsterra : 'white',
       }}
       onPress={onPress}
     >
@@ -132,14 +135,20 @@ function EnhancementSection({ section }) {
         items={section.options.map((enhancement, index) => (
           <CustomizationPuck
             key={index}
-            isActive={
-              section.selectedIngredients.indexOf(enhancement.id) !== -1
-            }
+            isActive={section.selectedIds.indexOf(enhancement.id) !== -1}
             onPress={() => {
               section.addIngredient(enhancement.id);
             }}
           >
-            <EnhancementDetail enhancement={enhancement} key={enhancement.id} />
+            <EnhancementDetail
+              enhancement={enhancement}
+              key={enhancement.id}
+              price={
+                section.selectedIds.length &&
+                section.selectedIds[0] !== enhancement.id &&
+                0.5
+              }
+            />
           </CustomizationPuck>
         ))}
       />
@@ -147,11 +156,33 @@ function EnhancementSection({ section }) {
   );
 }
 
+function StepperButton({ onPress, icon }) {
+  return (
+    <TouchableOpacity
+      style={{
+        borderWidth: 1,
+        height: 26,
+        width: 26,
+        borderRadius: 13,
+        borderColor: monsterra50,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+      onPress={onPress}
+    >
+      <Image
+        source={icon}
+        style={{ width: 11, height: 11, resizeMode: 'contain' }}
+      />
+    </TouchableOpacity>
+  );
+}
+
 function StepperSection({ section }) {
   let message = `Choose up to ${section.slotCount} of ${section.displayName}`;
 
   return (
-    <View style={{ paddingBottom: 60 }}>
+    <View style={{ paddingBottom: 60, overflow: 'visible' }}>
       {message && (
         <Text
           style={{
@@ -167,37 +198,79 @@ function StepperSection({ section }) {
       <View
         style={{
           paddingVertical: 15,
-          flexWrap: 'wrap',
-          flexDirection: 'row',
-          alignItems: 'center',
+          alignItems: 'stretch',
+          paddingRight: 20,
         }}
       >
         {section.options.map(option => (
           <View
             key={option.key}
             style={{
+              ...prettyShadowSmall,
               borderRadius: 4,
-              marginRight: 16,
+              minHeight: 72,
               marginBottom: 16,
-              alignItems: 'center',
-              ...tagSize,
               backgroundColor: 'white',
               flexDirection: 'row',
-              justifyContent: 'center',
-              alignSelf: 'center',
+              alignSelf: 'stretch',
             }}
           >
             {option.image && (
-              <View style={{ overflow: 'hidden', flex: 1 }}>
-                <AirtableImage
-                  image={option.image}
-                  resizeMode="contain"
-                  style={{
-                    flex: 1,
-                  }}
-                />
-              </View>
+              <AirtableImage
+                image={option.image}
+                resizeMode="contain"
+                style={{
+                  position: 'absolute',
+                  width: 142,
+                  height: 72,
+                  left: -35,
+                }}
+              />
             )}
+            <View
+              style={{
+                flex: 1,
+                marginLeft: 70,
+                marginTop: 8,
+                paddingHorizontal: 10,
+              }}
+            >
+              <Text style={{ ...titleStyle, fontSize: 12 }}>
+                {option.name.toUpperCase()}
+              </Text>
+              <Text
+                style={{ ...proseFontFace, fontSize: 13, color: monsterra }}
+              >
+                {option.description}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginRight: 16,
+              }}
+            >
+              <StepperButton
+                onPress={() => {}}
+                icon={require('./assets/MinusIcon.png')}
+              />
+              <Text
+                style={{
+                  width: 33,
+                  textAlign: 'center',
+                  ...primaryFontFace,
+                  fontSize: 16,
+                  color: monsterraBlack,
+                }}
+              >
+                1
+              </Text>
+              <StepperButton
+                onPress={() => {}}
+                icon={require('./assets/PlusIcon.png')}
+              />
+            </View>
           </View>
         ))}
       </View>
@@ -261,7 +334,7 @@ function CustomizationMainSection({ section }) {
               <View
                 style={{
                   flex: 1,
-                  marginLeft: 60,
+                  marginLeft: 70,
                   marginTop: 8,
                   paddingHorizontal: 10,
                 }}
@@ -377,16 +450,19 @@ function getCustomizationSections(
         id => menuItem.BenefitCustomization[id],
       ),
       selectedIngredients: activeEnhancements,
+      selectedIds: activeEnhancementIds,
       addIngredient: enhancementId => {
         let nextEnhancements = null;
-        if (activeEnhancementIds.indexOf(enhancementId === -1)) {
+        if (activeEnhancementIds.indexOf(enhancementId) !== -1) {
           nextEnhancements = activeEnhancementIds.filter(
             eId => eId !== enhancementId,
           );
-        } else {
+        } else if (activeEnhancementIds.length < 2) {
           nextEnhancements = [...(activeEnhancementIds || []), enhancementId];
         }
-        console.log('setting enhancements', nextEnhancements);
+        if (!nextEnhancements) {
+          return;
+        }
         setCustomization({
           ...customizationState,
           enhancements: nextEnhancements,
@@ -534,7 +610,7 @@ function CustomizationSidebar({
   setCustomization,
   customizationState,
   menuItem,
-  onAddToSection,
+  onScrollToSection,
 }) {
   const sections = getCustomizationSections(
     menuItem,
@@ -592,8 +668,21 @@ function CustomizationSidebar({
                           },
                           // enhancement.Icon
                           children: (
-                            <View>
-                              <Text>{enhancement.Name}</Text>
+                            <View style={{ alignItems: 'center' }}>
+                              <AirtableImage
+                                image={enhancement.Icon}
+                                style={{ width: 50, height: 50 }}
+                                tintColor={monsterra}
+                              />
+                              <Text
+                                style={{
+                                  color: monsterra,
+                                  ...boldPrimaryFontFace,
+                                  fontSize: 12,
+                                }}
+                              >
+                                {enhancement.Name.toUpperCase()}
+                              </Text>
                             </View>
                           ),
                           key: `${enhancement.id}-${index}`,
@@ -632,7 +721,7 @@ function CustomizationSidebar({
                         <AddItem
                           key={index}
                           style={{ marginRight: 12, marginBottom: 12 }}
-                          onPress={() => onAddToSection(section)}
+                          onPress={() => onScrollToSection(section)}
                         />
                       );
                     }
@@ -685,7 +774,9 @@ function Customization({ menuItem, setCustomization, customizationState }) {
             menuItem={menuItem}
             setCustomization={setCustomization}
             customizationState={customizationState}
-            onAddToSection={section => setActiveSection({ name: section.name })}
+            onScrollToSection={section =>
+              setActiveSection({ name: section.name })
+            }
           />
         }
       >

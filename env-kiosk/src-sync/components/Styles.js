@@ -33,15 +33,16 @@ export const black8 = '#00000014';
 export const black10 = '#00000020';
 export const monsterra = '#005151';
 export const monsterraLight = '#669797';
-export const monsterra5 = monsterra + '10';
+export const monsterra5 = monsterra + '0D';
 export const monsterra8 = monsterra + '14';
 export const monsterra10 = monsterra + '20';
 export const monsterra30 = monsterra + '4C';
 export const monsterra40 = monsterra + '66';
+export const monsterra50 = monsterra + '80';
 export const monsterra60 = monsterra + '99';
 export const monsterra70 = monsterra + 'B2';
 export const monsterra80 = monsterra + 'CC';
-
+export const monsterraBlack = '#005151';
 export const highlightPrimaryColor = monsterra;
 export const mutedPrimaryColor = monsterra60;
 
