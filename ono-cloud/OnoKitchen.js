@@ -170,12 +170,22 @@ function getOrderItemMapper(menu) {
       item.type === 'blend'
         ? menu.blends.find(i => i.id === item.menuItemId)
         : menu.food.find(i => i.id === item.menuItemId);
-    const sellPrice = sellPriceOfMenuItem(menuItem);
+    const recipeBasePrice = sellPriceOfMenuItem(menuItem);
+    let sellPrice = recipeBasePrice;
+    if (
+      item.customization &&
+      item.customization.enhancements &&
+      item.customization.enhancements.length > 1
+    ) {
+      const extraEnhancementCount = item.customization.enhancements.length - 1;
+      sellPrice += extraEnhancementCount * 0.5;
+    }
     const itemPrice = sellPrice * item.quantity;
     return {
       ...item,
       state: item,
       itemPrice,
+      recipeBasePrice,
       sellPrice,
       menuItem,
     };
@@ -191,7 +201,9 @@ function getOrderSummary(orderState, companyConfig) {
     return null;
   }
   const items = orderState.items.map(getOrderItemMapper(menu));
-  const subTotal = items.reduce((acc, item) => acc + item.itemPrice, 0);
+  const subTotal = items.reduce((acc, item) => {
+    return acc + item.itemPrice;
+  }, 0);
   const tax = subTotal * TAX_RATE;
   const total = subTotal + tax;
   const { isConfirmed, isCancelled, orderId } = orderState;
@@ -264,13 +276,23 @@ export function getItemCustomizationSummary(item) {
     return ing.Name.toLowerCase().trim();
   }
   let summaryItems = [];
-  if (item.customization.enhancement === null) {
+  if (item.customization.enhancements === null) {
     summaryItems.push('with no enhancement');
   }
-  if (item.customization.enhancement) {
-    const enhancement =
-      item.menuItem.BenefitCustomization[item.customization.enhancement];
-    summaryItems.push('with ' + enhancement.Name.toLowerCase());
+  if (
+    item.customization.enhancements &&
+    item.customization.enhancements.length
+  ) {
+    const enhancementId = item.customization.enhancements[0];
+    const enhancement = item.menuItem.BenefitCustomization[enhancementId];
+    const isDifferentFromDefaultEnhancement =
+      item.menuItem.DefaultEnhancementId !== enhancementId;
+    isDifferentFromDefaultEnhancement &&
+      summaryItems.push('with ' + enhancement.Name.toLowerCase());
+    const extraEnhancement =
+      item.menuItem.BenefitCustomization[item.customization.enhancements[1]];
+    extraEnhancement &&
+      summaryItems.push(`add ${extraEnhancement.Name.toLowerCase()} ($.50)`);
   }
   item.customization.ingredients &&
     Object.keys(item.customization.ingredients).forEach(categoryName => {

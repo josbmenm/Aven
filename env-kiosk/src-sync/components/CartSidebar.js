@@ -183,7 +183,7 @@ function CartRow({ itemId, item }) {
       >
         <View style={{ flex: 1 }}>
           <Text style={cartRowCurrencyStyle}>
-            {formatCurrency(sellPriceOfMenuItem(item.menuItem))}
+            {formatCurrency(item.itemPrice)}
           </Text>
           <View style={{}}>
             <Text style={cartRowTitleStyle}>
@@ -322,6 +322,7 @@ function PromoCode() {
         paddingTop: 16,
         height: 45,
         margin: 16,
+        marginLeft: 0,
         borderRadius: 4,
       }}
     >
@@ -356,11 +357,11 @@ export default function Cart({ summary }) {
           )}
         />
         <View style={{ marginTop: 9, marginBottom: 4 }}>
+          <PromoCode />
           <SummaryRow label="taxes" amount={summary.tax} />
           <SummaryRow label="total" amount={summary.total} emphasize />
         </View>
       </View>
-      <PromoCode />
       <Button
         title="checkout"
         style={{ margin: 20 }}

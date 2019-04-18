@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import GenericPage from './GenericPage';
+import { Image, StyleSheet } from 'react-native';
 import FoodMenu from './FoodMenu';
 import BlendMenu from './BlendMenu';
 import loadImages from '../components/Image';
@@ -27,7 +28,22 @@ function ProductHomePage({ menu, ...props }) {
     );
   }
   return (
-    <GenericPage hideBackButton={true} {...props}>
+    <GenericPage
+      background={
+        <Image
+          source={require('./assets/BgMenu.png')}
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            width: 1366,
+            height: 1024,
+            resizeMode: 'contain',
+          }}
+          resizeMode="contain"
+        />
+      }
+      hideBackButton={true}
+      {...props}
+    >
       {menuViews}
     </GenericPage>
   );

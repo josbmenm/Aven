@@ -37,7 +37,7 @@ export default class FadeTransition extends React.Component {
     return (
       <SharedTransition
         style={{
-          flex: 1,
+          ...StyleSheet.absoluteFillObject,
         }}
         {...this.props}
         ref={transitionRef}

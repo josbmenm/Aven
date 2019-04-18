@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import Animated, { Easing } from 'react-native-reanimated';
 import { TransitionContext } from './Transitioner';
 
@@ -71,7 +72,7 @@ const runSharedTransition = timingConfig => async (
   transition,
   transitionScreenRefs,
   fromState,
-  toState
+  toState,
 ) => {
   // By now, everything is already rendered. This is our opportunity to measure shared
   // elements and set those measurements into Animated values so that the pre-rendered
@@ -85,19 +86,19 @@ const runSharedTransition = timingConfig => async (
   const toSharedElements =
     (transitionScreen && transitionScreen.sharedElements) || {};
   const sharedElementIds = Object.keys(fromSharedElements).filter(
-    i => Object.keys(toSharedElements).indexOf(i) !== -1
+    i => Object.keys(toSharedElements).indexOf(i) !== -1,
   );
   const fromLayouts = await Promise.all(
     sharedElementIds.map(async id => {
       const element = fromSharedElements[id];
       return await measureEl(element);
-    })
+    }),
   ); // todo, collapse these into one parallel promise.all:
   const transitionLayouts = await Promise.all(
     sharedElementIds.map(async id => {
       const element = toSharedElements[id];
       return await measureEl(element);
-    })
+    }),
   );
 
   async function getScreenLayout(screen) {
@@ -116,13 +117,13 @@ const runSharedTransition = timingConfig => async (
     setLayoutOnKey(
       transition.transitionLayouts,
       sharedElId,
-      transitionLayouts[index]
+      transitionLayouts[index],
     );
     setLayoutOnKey(transition.fromLayouts, sharedElId, fromLayouts[index]);
   });
 
   const destValue = toState.routes.find(
-    r => r.key === transition.transitionRouteKey
+    r => r.key === transition.transitionRouteKey,
   )
     ? N1
     : N0;
@@ -141,7 +142,7 @@ const runSharedTransition = timingConfig => async (
       () => {
         resolve();
       },
-      () => {}
+      () => {},
     );
   });
 };
@@ -230,7 +231,8 @@ export class SharedTransition extends React.Component {
           ref={this._screenEl}
           style={[
             {
-              flex: 1,
+              // flex: 1,
+              ...StyleSheet.absoluteFillObject,
             },
             style,
           ]}
@@ -301,9 +303,9 @@ const getTransitionElementStyle = (transitionContext, screenContext, id) => {
         0,
         sub(
           add(fromOffset, divide(fromScale, 2)),
-          add(toOffset, divide(toScale, 2))
+          add(toOffset, divide(toScale, 2)),
         ),
-        0
+        0,
       );
     } else if (isFromScreen) {
       return doInterpolate(
@@ -311,8 +313,8 @@ const getTransitionElementStyle = (transitionContext, screenContext, id) => {
         0,
         sub(
           add(toOffset, divide(toScale, 2)),
-          add(fromOffset, divide(fromScale, 2))
-        )
+          add(fromOffset, divide(fromScale, 2)),
+        ),
       );
     } else {
       return doInterpolate(0, 0, 0);
@@ -325,7 +327,7 @@ const getTransitionElementStyle = (transitionContext, screenContext, id) => {
     cond(
       isMeasured,
       interpolateTranslate(toOffset, fromOffset, toScale, fromScale),
-      0
+      0,
     );
 
   return {
@@ -335,7 +337,7 @@ const getTransitionElementStyle = (transitionContext, screenContext, id) => {
           transitionLayout.x,
           fromLayout.x,
           transitionLayout.w,
-          fromLayout.w
+          fromLayout.w,
         ),
       },
       {
@@ -343,7 +345,7 @@ const getTransitionElementStyle = (transitionContext, screenContext, id) => {
           transitionLayout.y,
           fromLayout.y,
           transitionLayout.h,
-          fromLayout.h
+          fromLayout.h,
         ),
       },
       {
@@ -384,7 +386,7 @@ class SharedViewWithContext extends React.Component {
           getTransitionElementStyle(
             transitionContext,
             sharedScreenContext,
-            sharedElId
+            sharedElId,
           ),
         ]}
         ref={r => setSharedElement(sharedElId, r)}
@@ -441,7 +443,7 @@ class SharedTextWithContext extends React.Component {
           getTransitionElementStyle(
             transitionContext,
             sharedScreenContext,
-            sharedElId
+            sharedElId,
           ),
           { alignSelf: 'center' },
         ]}
