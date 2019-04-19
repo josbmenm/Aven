@@ -9,7 +9,14 @@ export default function EmailAgent({ config, defaultFromEmail, name }) {
   sg.setApiKey(sendgridAPIKey);
 
   const actions = {
-    SendEmail: async ({ to, subject, message, from, fromName }) => {
+    SendEmail: async ({
+      to,
+      subject,
+      message,
+      messageHTML,
+      from,
+      fromName,
+    }) => {
       const finalFromEmail = from ? `${fromName} <${from}>` : defaultFromEmail;
 
       await sg.send({
@@ -17,7 +24,7 @@ export default function EmailAgent({ config, defaultFromEmail, name }) {
         from: finalFromEmail,
         subject,
         text: message,
-        // html: '<strong>coming soon</strong>',
+        html: messageHTML,
       });
     },
   };
