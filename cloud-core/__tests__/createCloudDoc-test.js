@@ -470,19 +470,28 @@ test('value evaluation', async () => {
   });
   const evald = doc.get('^squared');
   let lastObserved = undefined;
-  evald.observeValue.subscribe({
+  const sub = evald.observeValue.subscribe({
     next: v => {
       lastObserved = v;
     },
   });
   expect(lastObserved).toEqual(undefined);
-  await evald.fetchValue();
+  await justASec();
   expect(lastObserved).toEqual(4);
   await source.dispatch({
     type: 'PutDocValue',
     domain: 'test',
     name: 'foo',
     value: 3,
+  });
+  await justASec();
+  expect(lastObserved).toEqual(9);
+  sub.unsubscribe();
+  await source.dispatch({
+    type: 'PutDocValue',
+    domain: 'test',
+    name: 'foo',
+    value: 4,
   });
   await justASec();
   expect(lastObserved).toEqual(9);

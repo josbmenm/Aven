@@ -131,7 +131,9 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
   let evaluatedDoc = evalCache.get(cloudValue);
   if (!evaluatedDoc) {
     const isConnected = new BehaviorSubject(false);
-    const getValue = () => lambdaDoc.functionGetValue(cloudValue);
+    const getValue = () => {
+      return lambdaDoc.functionGetValue(cloudValue);
+    };
     const handleFnConnectivity = isConn => {
       // effectively, this is the only way for an eval doc to be connected
       isConnected.next(isConn);

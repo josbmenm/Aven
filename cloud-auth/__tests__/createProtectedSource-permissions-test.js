@@ -354,6 +354,7 @@ describe('Cloud auth Permissions', () => {
       canWrite: true,
       canPost: true,
       canAdmin: true,
+      canTransact: true,
       owner: anonSession.accountId,
     });
     const childPerms = await protectedSource.dispatch({
@@ -367,6 +368,7 @@ describe('Cloud auth Permissions', () => {
       canWrite: true,
       canPost: true,
       canAdmin: true,
+      canTransact: true,
       owner: anonSession.accountId,
     });
   });
