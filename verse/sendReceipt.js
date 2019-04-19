@@ -82,6 +82,5 @@ export default async function sendReceipt({ smsAgent, emailAgent, action }) {
   if (action.contact.type === 'email') {
     return await sendEmailReceipt(emailAgent, action);
   }
-  console.log(html);
   return;
 }
