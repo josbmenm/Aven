@@ -174,6 +174,11 @@ const runServer = async () => {
 
   await putPermission({
     defaultRule: { canRead: true, canTransact: true },
+    name: 'KitchenActions',
+  });
+
+  await putPermission({
+    defaultRule: { canRead: true, canTransact: true },
     name: 'KitchenLog',
   });
 

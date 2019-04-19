@@ -106,7 +106,11 @@ export function OrderContextProvider({ children }) {
                 ' ' +
                 orderValue.orderName.lastName,
               blendName: 'mint chip greens + protein',
-              fills,
+              fills: [
+                { system: 5, slot: 0, amount: 1 },
+                { system: 3, slot: 0, amount: 2 },
+                { system: 3, slot: 2, amount: 3 },
+              ],
             },
           });
         })(),
