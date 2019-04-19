@@ -22,7 +22,7 @@ async function blockResponse({
   domain,
   docName,
   dispatch,
-  refPath,
+  docPath,
   blockId,
   blockName,
 }) {
@@ -35,7 +35,7 @@ async function blockResponse({
   if (!block) {
     return sendNotFound;
   }
-  if (refPath === '/' || refPath === '') {
+  if (docPath === '/' || docPath === '') {
     if (!block.value || !block.value.data) {
       // should be checking for some type here, rather than looking at "data"..
       return res => {
@@ -51,10 +51,10 @@ async function blockResponse({
   if (!block.value || !block.value.files) {
     return sendNotFound;
   }
-  const pathParts = refPath.split('/');
+  const pathParts = docPath.split('/');
   const pathTermName = pathParts[1];
   if (block.value.files[pathTermName]) {
-    const childRefPath = `/${pathParts.slice(2).join('/')}`;
+    const childDocPath = `/${pathParts.slice(2).join('/')}`;
     const childId = block.value.files[pathTermName].id;
     return await blockResponse({
       domain,
@@ -62,19 +62,19 @@ async function blockResponse({
       dispatch,
       blockName: pathTermName,
       blockId: childId,
-      refPath: childRefPath,
+      docPath: childDocPath,
     });
   }
   return sendNotFound;
 }
 
-async function webDataInterface({ domain, docName, dispatch, refPath }) {
-  const ref = await dispatch({
+async function webDataInterface({ domain, docName, dispatch, docPath }) {
+  const doc = await dispatch({
     type: 'GetDoc',
     domain,
     name: docName,
   });
-  if (!ref || !ref.id) {
+  if (!doc || !doc.id) {
     return sendNotFound;
   }
   return await blockResponse({
@@ -82,8 +82,8 @@ async function webDataInterface({ domain, docName, dispatch, refPath }) {
     docName,
     dispatch,
     blockName: docName,
-    blockId: ref.id,
-    refPath,
+    blockId: doc.id,
+    docPath,
   });
 }
 
@@ -145,15 +145,15 @@ export default async function WebServer({
   function doFallbackExpressRouting(app) {
     expressRouting && expressRouting(app);
 
-    app.get('/_/:domain/:ref*', (req, res) => {
-      const docName = req.params.ref;
+    app.get('/_/:domain/:docName*', (req, res) => {
+      const docName = req.params.docName;
       const domain = req.params.domain;
-      const refPath = req.params['0'];
+      const docPath = req.params['0'];
 
       webDataInterface({
         domain,
         docName,
-        refPath,
+        docPath,
         dispatch: source.dispatch,
       })
         .then(responder => {
