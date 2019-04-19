@@ -18,7 +18,7 @@ import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import createEvalSource from '../cloud-core/createEvalSource';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
-
+import sendReceipt from './sendReceipt';
 import RestaurantReducer from '../logic/RestaurantReducer';
 
 import startKitchen, { computeKitchenConfig } from './startKitchen';
@@ -431,21 +431,21 @@ const runServer = async () => {
       runSideEffects();
     },
   });
-  // evalSource
-  //   .observeDoc('onofood.co', 'KitchenActions^KitchenReducer')
-  //   .subscribe({
-  //     next: v => {
-  //       console.log('restaurant state', v);
-  //       restaurantState = v;
-  //       runSideEffects();
-  //     },
-  //   });
+  cloud.get('RestaurantActions^RestaurantReducer').observeValue.subscribe({
+    next: v => {
+      console.log('restaurant state', v);
+      restaurantState = v;
+      runSideEffects();
+    },
+  });
 
   const dispatch = async action => {
     switch (action.type) {
       case 'KitchenCommand': // low level thing
         // subsystem (eg 'IOSystem'), pulse (eg ['home']), values (eg: foo: 123)
         return await kitchen.dispatchCommand(action);
+      case 'SendReceipt':
+        return await sendReceipt({ smsAgent, emailAgent, action });
       case 'KitchenAction':
         return await kitchenAction(action);
       case 'UpdateAirtable':

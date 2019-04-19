@@ -82,7 +82,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
     },
     get: toGet => {
       throw new Error(
-        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`,
+        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
       );
     },
     fetchValue: async () => {
@@ -113,7 +113,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
       .distinctUntilChanged(),
     observeValueAndId: new Observable(() => {
       throw new Error(
-        'sorry, observeValueAndId is not supported for expand right now. Use observeValue or lambda functions instead.',
+        'sorry, observeValueAndId is not supported for expand right now. Use observeValue or lambda functions instead.'
       );
     }),
     getValue,
@@ -123,7 +123,6 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
 }
 
 function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
-  console.log('evalCloudVaaaluuue', cloudValue.getFullName());
   let lambdaCache = evalCache.get(lambdaDoc);
   if (!lambdaCache) {
     lambdaCache = new Map();
@@ -131,10 +130,8 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
   }
   let evaluatedDoc = evalCache.get(cloudValue);
   if (!evaluatedDoc) {
-    console.log('creating new eval cloud value', lambdaDoc.getFullName());
     const isConnected = new BehaviorSubject(false);
     const getValue = () => {
-      console.log('wellllll', lambdaDoc.functionGetValue(cloudValue));
       return lambdaDoc.functionGetValue(cloudValue);
     };
     const handleFnConnectivity = isConn => {
@@ -159,7 +156,7 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
       },
       get: toGet => {
         throw new Error(
-          `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`,
+          `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
         );
       },
       // the actual loading and computation is performed by the lambda doc, which may refer to the cloud block lambda.
@@ -168,12 +165,12 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
       observeValue: lambdaDoc.functionObserveValue(
         cloudValue,
         false,
-        handleFnConnectivity,
+        handleFnConnectivity
       ),
       observeValueAndId: lambdaDoc.functionObserveValue(
         cloudValue,
         true,
-        handleFnConnectivity,
+        handleFnConnectivity
       ),
       getValue,
     };
@@ -199,7 +196,7 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
     },
     get: toGet => {
       throw new Error(
-        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been mapped.`,
+        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been mapped.`
       );
     },
     fetchValue: cloudValue.fetchValue,

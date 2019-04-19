@@ -8,21 +8,15 @@ import BlockFormButton from './BlockFormButton';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import useFocus from '../navigation-hooks/useFocus';
 
-// function FocusProvider() {
-
-// }
-
-// function useFocus() {
-//   return {}
-// }
-
 export default function SendReceiptPage({
   onSubmit,
   backBehavior,
+  isProgressing,
+  error,
   type, // sms || email
   ...props
 }) {
-  const [contactValue, setValue] = useState(null);
+  const [value, setValue] = useState(null);
 
   function handleSubmit() {
     onSubmit({ value, type });
@@ -34,7 +28,7 @@ export default function SendReceiptPage({
         label={type === 'sms' ? 'phone number' : 'email address'}
         mode={type === 'sms' ? 'phone' : 'email'}
         onValue={setValue}
-        value={contactValue}
+        value={value}
         {...inputProps}
       />
     ),
@@ -52,6 +46,8 @@ export default function SendReceiptPage({
     <ShortBlockFormPage backBehavior={backBehavior} {...props}>
       <BlockForm>
         <BlockFormMessage message="We just need to know..." />
+        {error && <BlockFormTitle title="Uh oh! Try again please." />}
+        {isProgressing && <BlockFormTitle title="wait for it" />}
         <BlockFormTitle title={title} />
         <BlockFormRow>{inputs}</BlockFormRow>
         <BlockFormRow>

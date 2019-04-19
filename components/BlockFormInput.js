@@ -29,6 +29,7 @@ function BlockFormInputWithRef(
   } else if (mode === 'number') {
     keyboardType = 'number-pad';
   } else if (mode === 'email') {
+    autoCapitalize = 'none';
     keyboardType = 'email-address';
   } else if (mode === 'name') {
     autoCapitalize = 'words';

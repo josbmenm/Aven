@@ -217,6 +217,8 @@ export function computeKitchenConfig(cloud) {
             valueCommands,
             pulseCommands,
             faults,
+            hasSequencer: kitchenSystem.HasSequencer,
+            name: kitchenSystem.Name,
           };
         });
 

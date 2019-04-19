@@ -128,9 +128,22 @@ function CustomizationPuck({ isActive, children, onPress }) {
   );
 }
 
+function Subtitle({ children, style }) {
+  return (
+    <Text
+      style={{ ...proseFontFace, fontSize: 20, color: monsterra60, ...style }}
+    >
+      {children}
+    </Text>
+  );
+}
+
 function EnhancementSection({ section }) {
   return (
     <View style={{ marginRight: 14, marginBottom: 20 }}>
+      <Subtitle>
+        Enhancements for fitness, immunity, focus, digestion, and skin & body
+      </Subtitle>
       <SideBySide
         items={section.options.map((enhancement, index) => (
           <CustomizationPuck
@@ -183,18 +196,7 @@ function StepperSection({ section }) {
 
   return (
     <View style={{ paddingBottom: 60, overflow: 'visible' }}>
-      {message && (
-        <Text
-          style={{
-            fontSize: 20,
-            paddingTop: 6,
-            color: monsterra60,
-            ...proseFontFace,
-          }}
-        >
-          {message}
-        </Text>
-      )}
+      {message && <Subtitle style={{ paddingTop: 6 }}>{message}</Subtitle>}
       <View
         style={{
           paddingVertical: 15,

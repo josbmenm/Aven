@@ -399,6 +399,14 @@ function RestaurantStateList({ restaurantState, dispatch }) {
 function StatusPuck({ status }) {
   let statusColor = null;
   switch (status) {
+    case 'fault': {
+      statusColor = '#a33';
+      break;
+    }
+    case 'alarm': {
+      statusColor = 'yellow';
+      break;
+    }
     case 'ready': {
       statusColor = '#2a4';
       break;
@@ -425,10 +433,18 @@ function StatusPuck({ status }) {
 function ControlPanel({ restaurantState, restaurantDispatch }) {
   const isConnected = useObservable(OnoCloud.isConnected);
   const kitchenState = useCloudValue('KitchenState');
+  const kitchenConfig = useCloudValue('KitchenConfig');
   const isPLCConnected = React.useMemo(
     () => kitchenState && kitchenState.isPLCConnected,
     [kitchenState],
   );
+  const sequencerNames =
+    kitchenConfig &&
+    Object.keys(kitchenConfig.subsystems)
+      .map(k => kitchenConfig.subsystems[k])
+      .filter(subsystem => subsystem.hasSequencer)
+      .map(s => s.name);
+  console.log(kitchenState, kitchenConfig, sequencerNames);
   const errorHandler = useAsyncError();
   let status = 'ready';
   let message = 'Ready and Idle';
@@ -440,6 +456,18 @@ function ControlPanel({ restaurantState, restaurantDispatch }) {
   } else if (!isPLCConnected) {
     status = 'disconnected';
     message = 'Server disconnected from machine..';
+  } else {
+    sequencerNames &&
+      sequencerNames.forEach(systemName => {
+        if (kitchenState[`${systemName}_NoFaults_READ`] === false) {
+          if (status !== 'fault') {
+            status = 'fault';
+            message = `Faulted. ${systemName}`;
+          } else {
+            message += `, ${systemName}`;
+          }
+        }
+      });
   }
   return (
     <View
@@ -453,14 +481,14 @@ function ControlPanel({ restaurantState, restaurantDispatch }) {
     >
       <StatusPuck status={status} />
 
-      <View style={{ flex: 1 }}>
-        {message && <Text>{message}</Text>}
+      <View style={{ flex: 1, padding: 16 }}>
+        {message && <Text style={{ fontSize: 32 }}>{message}</Text>}
         {subMessage && <Text>{subMessage}</Text>}
       </View>
       <View style={{ flexDirection: 'row' }}>
         {restaurantState && (
           <View style={{}}>
-            <Text>
+            <Text style={{ textAlign: 'center', paddingTop: 8 }}>
               {restaurantState.isAutoRunning ? 'Auto: Running' : 'Auto: Paused'}
             </Text>
             <Button
@@ -497,7 +525,7 @@ function TransactionHistoryView({ value }) {
 
 function SequencerLeftPane({ restaurantState, dispatch }) {
   const cloud = useCloud();
-  return <TransactionHistoryView value={cloud.get('KitchenEvents')} />;
+  return <TransactionHistoryView value={cloud.get('KitchenLog')} />;
 }
 
 function useAsyncError() {

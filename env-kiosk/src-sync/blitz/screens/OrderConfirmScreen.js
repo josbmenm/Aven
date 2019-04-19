@@ -33,7 +33,6 @@ export default function OrderConfirmScreen({
   const { state } = useCardPaymentCapture(paymentDetails, {
     onPaymentComplete,
   });
-  console.log('----', state);
   useEmptyOrderEscape();
   return (
     <OrderConfirmPage

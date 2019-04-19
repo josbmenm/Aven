@@ -33,7 +33,7 @@ export default function createCloudBlock({
   }
   if (id && observedBlockId && id !== observedBlockId) {
     throw new Error(
-      'id and value were both provided to createCloudBlock, but the id does not match the value!',
+      'id and value were both provided to createCloudBlock, but the id does not match the value!'
     );
   }
 
@@ -56,7 +56,7 @@ export default function createCloudBlock({
   function getReference() {
     if (!blockId) {
       throw new Error(
-        'Cannot getReference of an incomplete block without a value or id',
+        'Cannot getReference of an incomplete block without a value or id'
       );
     }
     return { type: 'BlockReference', id: blockId };
@@ -123,7 +123,6 @@ export default function createCloudBlock({
 
   const observeValueAndId = observe
     .map(state => {
-      console.log('bhahaaa', onGetName(), state);
       return { value: state.value, getId: () => id };
     })
     .filter(({ value }) => {
@@ -165,7 +164,7 @@ export default function createCloudBlock({
 
   const isConnected = mapBehaviorSubject(
     blockState,
-    state => state.isConnected,
+    state => state.isConnected
   );
 
   let _evaluatedFunction = null;
@@ -176,7 +175,7 @@ export default function createCloudBlock({
     if (!_evaluatedFunction) {
       if (!lambdaValue || lambdaValue.type !== 'LambdaFunction') {
         throw new Error(
-          'Cannot eval this block because it is not loaded or is not of type "LambdaFunction"',
+          'Cannot eval this block because it is not loaded or is not of type "LambdaFunction"'
         );
       }
       _evaluatedFunction = eval(lambdaValue.code);
@@ -185,36 +184,30 @@ export default function createCloudBlock({
   }
 
   function functionGetValue(argDoc) {
-    console.log('BLOCK functionGetValue', argDoc.getValue());
     const { result } = runEvalLambda(
       getValue(),
       argDoc.getValue(),
       argDoc.getId(),
-      argDoc,
+      argDoc
     );
-    console.log('999999', result);
 
     return result;
   }
 
   const functionFetchValue = async argumentValue => {
-    console.log('wheyhoooo fetch argument');
     await argumentValue.fetchValue();
     await fetch();
-    console.log('00000-- ' + JSON.stringify(argumentValue.getValue()));
     const { loadDependencies, reComputeResult } = runEvalLambda(
       getValue(),
       argumentValue.getValue(),
       argumentValue.getId(),
-      argumentValue,
+      argumentValue
     );
-    console.log('functionFetchValue', reComputeResult());
     await loadDependencies();
     return reComputeResult();
   };
 
   const functionObserveValue = (argumentDoc, includeId, onIsConnected) => {
-    console.log('block functionObserveValue');
     return observeValue.switchMap(fnValue => {
       if (fnValue === undefined) {
         return Observable.of(null);
@@ -222,7 +215,6 @@ export default function createCloudBlock({
       return argumentDoc.observeValueAndId
         .filter(({ value }) => value !== undefined)
         .flatMap(async ({ getId, value }) => {
-          console.log('block functionObserveValue haz val', value);
           const argumentId = getId();
           const {
             reComputeResult,

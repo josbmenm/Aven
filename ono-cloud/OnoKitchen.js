@@ -34,6 +34,7 @@ function doConfirmOrder(lastOrder) {
 
 export function OrderContextProvider({ children }) {
   let cloud = useContext(CloudContext);
+  const kitchenActions = cloud.get('KitchenActions');
   let [currentOrder, setCurrentOrder] = useState(null);
   let [asyncError, setAsyncError] = useState(null);
 
@@ -92,7 +93,24 @@ export function OrderContextProvider({ children }) {
     },
     confirmOrder: () => {
       console.log('CONFIRM ORDER!');
-      guardAsync(currentOrder.transact(doConfirmOrder));
+      guardAsync(
+        (async () => {
+          await currentOrder.transact(doConfirmOrder);
+          const orderValue = currentOrder.getValue();
+          await kitchenActions.putTransaction({
+            type: 'PlaceOrder',
+            order: {
+              id: currentOrder.getName(),
+              name:
+                orderValue.orderName.firstName +
+                ' ' +
+                orderValue.orderName.lastName,
+              blendName: 'mint chip greens + protein',
+              fills,
+            },
+          });
+        })(),
+      );
     },
     startOrder: () =>
       guardAsync(
@@ -530,6 +548,10 @@ function companyConfigToBlendMenu(atData) {
   const ActiveItemsWithRecipe = ActiveMenuItems.map(item => {
     const recipeId = item.Recipe[0];
     const Recipe = Recipes && item.Recipe && Recipes[recipeId];
+    if (!Recipe || !Recipe.Ingredients) {
+      console.warn('Invalid recipe!', Recipe);
+      return null;
+    }
     const thisRecipeIngredients = Recipe.Ingredients.map(RecipeIngredientId => {
       const ri = RecipeIngredients[RecipeIngredientId];
       if (!ri || !ri.Ingredient) {
@@ -610,7 +632,7 @@ function companyConfigToBlendMenu(atData) {
         Ingredients: thisRecipeIngredients,
       },
     };
-  });
+  }).filter(Boolean);
   return ActiveItemsWithRecipe;
 }
 

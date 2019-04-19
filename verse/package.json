@@ -38,6 +38,8 @@
       "skynet"
     ],
     "moduleDependencies": [
+      "mjml-react",
+      "mjml",
       "stripe",
       "sqlite3",
       "fbjs",

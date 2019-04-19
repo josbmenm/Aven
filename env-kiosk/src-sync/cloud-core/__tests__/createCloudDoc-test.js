@@ -19,7 +19,7 @@ describe('doc generic behavior', () => {
         source,
         name: 'foo',
         parentName: new BehaviorSubject(null),
-      }),
+      })
     ).toThrow();
   });
   test('fails on creation without name', () => {
@@ -29,7 +29,7 @@ describe('doc generic behavior', () => {
         source,
         domain: 'test',
         parentName: new BehaviorSubject(null),
-      }),
+      })
     ).toThrow();
   });
 
@@ -41,7 +41,7 @@ describe('doc generic behavior', () => {
         domain: 'test',
         name: 'foo/bar',
         parentName: new BehaviorSubject(null),
-      }),
+      })
     ).toThrow();
   });
 });
@@ -430,7 +430,7 @@ test('value mapping', async () => {
   expect(lastObserved).toEqual(9);
 });
 
-test.only('value evaluation', async () => {
+test('value evaluation', async () => {
   const source = createMemoryStorageSource({ domain: 'test' });
   await source.dispatch({
     type: 'PutDocValue',
