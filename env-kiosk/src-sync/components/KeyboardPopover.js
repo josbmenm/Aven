@@ -40,6 +40,7 @@ export default function KeyboardPopover({ children, onClose, wide }) {
               borderRadius: 10,
               // width: wide ? 636 : 400,
               minHeight: 200,
+              minWidth: 300,
             }}
           >
             {children}

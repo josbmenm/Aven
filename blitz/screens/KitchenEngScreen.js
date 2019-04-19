@@ -10,6 +10,7 @@ import LinkRow from '../../components/LinkRow';
 import { getSubsystemOverview, withKitchen } from '../../ono-cloud/OnoKitchen';
 import useCloud from '../../cloud-core/useCloud';
 import useObservable from '../../cloud-core/useObservable';
+import KitchenHistory from '../../components/KitchenHistory';
 
 function IsConnectedRow() {
   const cloud = useCloud();
@@ -75,6 +76,7 @@ function LogView() {
   }, [cloud.isConnected, kitchenState]);
   return (
     <ScrollView style={{ flex: 1 }}>
+      <KitchenHistory />
       <View style={{ padding: 40 }}>
         {logs.map(log => (
           <Text style={{ fontSize: 28 }}>{log.message}</Text>

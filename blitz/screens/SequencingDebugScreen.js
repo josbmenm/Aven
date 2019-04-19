@@ -12,6 +12,7 @@ import useCloudValue from '../../cloud-core/useCloudValue';
 import Button from '../../components/Button';
 import { Easing } from 'react-native-reanimated';
 import KitchenCommands from '../../logic/KitchenCommands';
+import KitchenHistory from '../../components/KitchenHistory';
 import {
   CardReaderLog,
   useCardReader,
@@ -518,16 +519,6 @@ function ControlPanel({ restaurantState, restaurantDispatch }) {
   );
 }
 
-function TransactionHistoryView({ value }) {
-  const txValue = useObservable(value.observeValue);
-  return <Text>{JSON.stringify(txValue)}</Text>;
-}
-
-function SequencerLeftPane({ restaurantState, dispatch }) {
-  const cloud = useCloud();
-  return <TransactionHistoryView value={cloud.get('KitchenLog')} />;
-}
-
 function useAsyncError() {
   const [error, setError] = useState(null);
   if (error) {
@@ -639,10 +630,7 @@ export default function SequencingDebugScreen(props) {
         />
       }
       side={
-        <SequencerLeftPane
-          restaurantState={restaurantState}
-          dispatch={dispatch}
-        />
+        <KitchenHistory restaurantState={restaurantState} dispatch={dispatch} />
       }
     >
       <OrderQueue restaurantState={restaurantState} dispatch={dispatch} />

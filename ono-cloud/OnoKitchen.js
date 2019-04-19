@@ -34,7 +34,7 @@ function doConfirmOrder(lastOrder) {
 
 export function OrderContextProvider({ children }) {
   let cloud = useContext(CloudContext);
-  const kitchenActions = cloud.get('KitchenActions');
+  const restaurantActions = cloud.get('RestaurantActions');
   let [currentOrder, setCurrentOrder] = useState(null);
   let [asyncError, setAsyncError] = useState(null);
 
@@ -97,7 +97,7 @@ export function OrderContextProvider({ children }) {
         (async () => {
           await currentOrder.transact(doConfirmOrder);
           const orderValue = currentOrder.getValue();
-          await kitchenActions.putTransaction({
+          await restaurantActions.putTransaction({
             type: 'PlaceOrder',
             order: {
               id: currentOrder.getName(),
