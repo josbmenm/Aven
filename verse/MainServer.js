@@ -23,6 +23,7 @@ import RestaurantReducer from '../logic/RestaurantReducer';
 
 import startKitchen, { computeKitchenConfig } from './startKitchen';
 import { getConnectionToken, capturePayment } from './Stripe';
+import { computeNextStep } from '../logic/KitchenSequence';
 
 const COUNT_MAX = 2147483640; // near the maximum unsigned dint
 
@@ -227,9 +228,6 @@ const runServer = async () => {
   //   cloud,
   // });
 
-  // let restaurantState = null;
-  // let kitchenState = null;
-
   // function evaluateKitchenState(kitchenState) {
   //   const isFillSystemReady =
   //     kitchenState.FillSystem_PrgStep_READ === 0 &&
@@ -285,6 +283,8 @@ const runServer = async () => {
 
   async function kitchenAction(action) {
     const commandType = KitchenCommands[action.command];
+    console.log('Kitchen Action:', action.command, action.params);
+
     if (!commandType) {
       throw new Error(`Unknown kitchen command "${action.command}"`);
     }
@@ -449,21 +449,72 @@ const runServer = async () => {
   //   }
   // }
 
-  // cloud.get('KitchenState').observeValue.subscribe({
-  //   next: v => {
-  //     kitchenState = v;
-  //     runSideEffects();
-  //   },
-  // });
+  let restaurantState = null;
+  let kitchenState = null;
+  let kitchenConfig = null;
+  let currentStepPromise = null;
+
+  function handleStateUpdates() {
+    if (
+      !restaurantState ||
+      !kitchenState ||
+      !kitchenConfig ||
+      !restaurantState.isAutoRunning ||
+      currentStepPromise
+    ) {
+      return;
+    }
+    const nextStep = computeNextStep(
+      restaurantState,
+      kitchenConfig,
+      kitchenState,
+    );
+    if (!nextStep) {
+      return;
+    }
+    console.log('Next Step:', nextStep.description);
+    currentStepPromise = nextStep.perform(cloud, kitchenAction);
+
+    currentStepPromise
+      .then(() => {
+        currentStepPromise = null;
+        console.log(`Done with ${nextStep.description}`);
+        setTimeout(() => {
+          handleStateUpdates();
+        }, 32);
+      })
+      .catch(e => {
+        currentStepPromise = null;
+        console.error(
+          `Failed to perform Kitchen Action: ${
+            nextStep.description
+          }. JS is basically faulted now??`,
+          e,
+        );
+      });
+  }
+
+  cloud.get('KitchenState').observeValue.subscribe({
+    next: state => {
+      kitchenState = state;
+      handleStateUpdates();
+    },
+  });
+
+  cloud.get('KitchenConfig').observeValue.subscribe({
+    next: state => {
+      kitchenConfig = state;
+      handleStateUpdates();
+    },
+  });
 
   (await evalSource.observeDoc(
     'onofood.co',
     'RestaurantActions^RestaurantReducer',
   )).subscribe({
-    next: v => {
-      console.log('restaurant state', v);
-      // restaurantState = v;
-      // runSideEffects();
+    next: update => {
+      restaurantState = update.value;
+      handleStateUpdates();
     },
   });
 

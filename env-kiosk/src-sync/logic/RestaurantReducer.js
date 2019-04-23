@@ -30,18 +30,26 @@ function RestaurantReducer(state = {}, action) {
       if (!state.fill) {
         return state;
       }
+      let queue = state.queue;
+      if (state.fill.order) {
+        queue = [state.fill.order, ...state.queue];
+      }
       return {
         ...state,
         fill: null,
-        queue: [state.fill.order, ...state.queue],
+        queue,
       };
     }
     case 'DidFill': {
       if (!state.fill) {
         return state;
       }
-      let completedFill = {};
-      const fillsRemaining = state.fill.fillsRemaining.filter(fill => {
+      let completedFill = {
+        system: action.system,
+        amount: action.amount,
+        slot: action.slot,
+      };
+      let fillsRemaining = (state.fill.fillsRemaining || []).filter(fill => {
         const isTheFill =
           action.system === fill.system &&
           action.amount === fill.amount &&
@@ -55,7 +63,7 @@ function RestaurantReducer(state = {}, action) {
         ...state,
         fill: {
           ...state.fill,
-          fillsCompleted: [...state.fill.fillsCompleted, completedFill],
+          fillsCompleted: [...(state.fill.fillsCompleted || []), completedFill],
           fillsRemaining,
         },
       };

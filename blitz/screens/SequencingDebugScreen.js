@@ -297,6 +297,15 @@ function AdHocOrderRow() {
 }
 
 function OrderInfoText({ orderState }) {
+  if (!orderState) {
+    return (
+      <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
+        <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
+          Unknown Order
+        </Text>
+      </View>
+    );
+  }
   return (
     <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
       <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
@@ -337,7 +346,7 @@ function OrderQueue({ restaurantState, dispatch }) {
   return (
     <RowSection title="Order Queue">
       {restaurantState.queue &&
-        restaurantState.queue.map(orderState => (
+        restaurantState.queue.filter(Boolean).map(orderState => (
           <OrderQueueRow
             key={orderState.id}
             orderState={orderState}

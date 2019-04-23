@@ -91,6 +91,7 @@ const SEQUENCER_STEPS = [
     getRestaurantStateIntent: restaurantState => {
       if (
         !restaurantState.fill ||
+        !restaurantState.fill.fillsRemaining ||
         restaurantState.fill.fillsRemaining.length === 0
       ) {
         return null;
@@ -121,6 +122,7 @@ const SEQUENCER_STEPS = [
     getRestaurantStateIntent: restaurantState => {
       if (
         !restaurantState.fill ||
+        !restaurantState.fill.fillsRemaining ||
         restaurantState.fill.fillsRemaining.length !== 0
       ) {
         return null;
@@ -142,6 +144,9 @@ const SEQUENCER_STEPS = [
 ];
 
 export function computeNextStep(restaurantState, kitchenConfig, kitchenState) {
+  if (!restaurantState || !kitchenConfig || !kitchenState) {
+    return null;
+  }
   const { isFaulted, isRunning } = checkKitchenState(
     kitchenState,
     kitchenConfig,
@@ -171,7 +176,7 @@ export function computeNextStep(restaurantState, kitchenConfig, kitchenState) {
           const successRestaurantAction = getSuccessRestaurantAction(intent);
           const resp = await onKitchenAction(kitchenAction);
 
-          cloud
+          await cloud
             .get('RestaurantActions')
             .putTransaction(successRestaurantAction);
           return resp;
