@@ -1,31 +1,37 @@
 import React from 'react';
 import { Text } from 'react-native';
-import uuid from 'uuid/v4';
+import kuid from 'kuid';
 
 import useCloud from '../cloud-core/useCloud';
-import useCloudReducer from '../cloud-core/useCloudReducer';
+import useCloudReducer, {
+  defineCloudReducer,
+} from '../cloud-core/useCloudReducer';
 
 import Screen from './components/Screen';
 import TextInput from './components/TextInput';
 import TaskRow from './components/TaskRow';
 
-export function TaskReducer(state, action) {
-  if (action.type === 'AddTask') {
-    return [...state, action.params];
-  } else if (action.type === 'SetTaskCompletion') {
-    const taskIndex = state.findIndex(t => t.id === action.id);
-    if (taskIndex === -1) {
-      return state;
+export const TaskReducer = defineCloudReducer(
+  'TaskReducer',
+  (state, action) => {
+    if (action.type === 'AddTask') {
+      return [...state, action.params];
+    } else if (action.type === 'SetTaskCompletion') {
+      const taskIndex = state.findIndex(t => t.id === action.id);
+      if (taskIndex === -1) {
+        return state;
+      }
+      const newState = [...state];
+      const oldTask = state[taskIndex];
+      newState[taskIndex] = { ...oldTask, isComplete: action.isComplete };
+      return newState;
+    } else if (action.type === 'RemoveTask') {
+      return state.filter(t => t.id !== action.id);
     }
-    const newState = [...state];
-    const oldTask = state[taskIndex];
-    newState[taskIndex] = { ...oldTask, isComplete: action.isComplete };
-    return newState;
-  } else if (action.type === 'RemoveTask') {
-    return state.filter(t => t.id !== action.id);
-  }
-  return state;
-}
+    return state;
+  },
+  []
+);
 
 function getTaskActions() {
   const cloud = useCloud();
@@ -40,12 +46,7 @@ function getTaskActions() {
 }
 function useTasks() {
   // const [tasks, dispatch] = React.useReducer(TaskReducer, []);
-  const [tasks, dispatch] = useCloudReducer(
-    'TaskActions',
-    'TaskReducer',
-    TaskReducer,
-    []
-  );
+  const [tasks, dispatch] = useCloudReducer('TaskActions', TaskReducer);
   return {
     tasks,
     ...getTaskActions(dispatch),
@@ -60,7 +61,7 @@ function InputTodo() {
       onChangeText={setDraftTitle}
       placeholder="Add new task.."
       onSubmitEditing={() => {
-        addTask({ title: draftTitle, id: uuid(), isComplete: false });
+        addTask({ title: draftTitle, id: kuid(), isComplete: false });
         setDraftTitle('');
       }}
     />

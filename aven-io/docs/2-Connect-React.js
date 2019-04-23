@@ -119,12 +119,33 @@ function MyMessage() {
           server for the initial load.
         </Body>
         <Snippet
-          code={`useCloudReducer(
-    'TaskActions', // name of the state doc, which refers to the block chain of actions
-    'TaskReducer', // name of the reducer, for delegation to the server
-    (state, action) => { return newState }, // reducer function
-    [] // initial state
-  );`}
+          code={`import useCloudReducer, {
+  defineCloudReducer,
+} from '@aven-cloud/cloud/useCloudReducer';
+
+export const TaskReducer = defineCloudReducer(
+  'TaskReducer', // name, as referenced on client+server
+  (state, action) => ..., // reducer function
+  [], // initial state
+);
+
+// in your app:
+function TaskList() {
+  const [tasks, dispatch] = useCloudReducer('TaskActions', TaskReducer);
+  ...
+  // tasks is the current output of the reducer
+  // dispatch allows you to send actions
+}
+
+// on the server, set up an eval source that will handle the execution
+const source = createEvalSource({
+  source: storageSource,
+  functions: [ TaskReducer ]
+});
+
+// finally, configure the client to delegate the initial fetch to the server:
+cloud.get('TaskReducer').markRemoteLambda(true);
+`}
         />
         <Body>
           Note! This API may change, because it currently is somewhat clumsy.

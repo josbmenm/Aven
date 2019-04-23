@@ -91,26 +91,49 @@ function DocPage() {
           back-end.
         </Body>
         <Snippet
-          code={`const [tasks, dispatch] = useCloudReducer(
-  'TaskActions', // Name of the action chain doc
-  'TaskReducer', // Name of the reducer (which should match on the server)
-  TaskReducer, // regular reducer
-  [] // initial state
-);`}
+          code={`import useCloudReducer, {
+  defineCloudReducer,
+} from '@aven-cloud/cloud/useCloudReducer';
+
+export const TaskReducer = defineCloudReducer(
+  'TaskReducer', // name, as referenced on client+server
+  (state, action) => ..., // reducer function
+  [], // initial state
+);
+
+// in your app:
+function TaskList() {
+  const [tasks, dispatch] = useCloudReducer('TaskActions', TaskReducer);
+  ...
+  // tasks is the current output of the reducer
+  // dispatch allows you to send actions
+}
+
+// on the server, set up an eval source that will handle the execution
+const source = createEvalSource({
+  source: storageSource,
+  functions: [ TaskReducer ]
+});
+
+// finally, configure the client to delegate the initial fetch to the server:
+cloud.get('TaskReducer').markRemoteLambda(true);
+
+`}
         />
         <Body>
           To configure the server, you currently need to set up an eval source
           with the same reducer:
         </Body>
         <Snippet
-          code={`
-          const source = createEvalSource({
-            source: storageSource,
-            domain: 'todo.aven.io',
-            evalDocs: {
-              TaskReducer: createReducerLambda('TaskReducer', TaskReducer, []),
-            },
-          });`}
+          code={`// on the server, set up an eval source that will handle the execution
+const source = createEvalSource({
+  source: storageSource,
+  functions: [ TaskReducer ]
+});
+
+// finally, configure the client to delegate the initial fetch to the server:
+cloud.get('TaskReducer').markRemoteLambda(true);
+`}
         />
       </Section>
     </Page>

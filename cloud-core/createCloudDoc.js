@@ -570,7 +570,22 @@ export default function createCloudDoc({
   let overriddenFunctionCache = {};
 
   function $setOverrideFunction(fn) {
+    if (fn === overriddenFunction) {
+      return;
+    }
     overriddenFunction = fn;
+    overriddenFunctionCache = {};
+  }
+
+  function _defineCloudFunction(cloudFn) {
+    if (overriddenFunction) {
+      if (cloudFn.fn === overriddenFunction) {
+        return;
+      } else {
+        throw new Error('Cannot define multiple functions of the same name!');
+      }
+    }
+    overriddenFunction = cloudFn.fn;
     overriddenFunctionCache = {};
   }
 
@@ -674,8 +689,12 @@ export default function createCloudDoc({
   }
 
   async function putTransaction(value) {
-    const prevId = getId();
     await fetch();
+    const prevId = getId();
+    if (!prevId) {
+      const s = getState();
+      debugger;
+    }
     const expectedTransactionValue = {
       type: 'TransactionValue',
       on: {
@@ -815,7 +834,7 @@ export default function createCloudDoc({
 
   const overriddenFunctionResults = new Map();
 
-  const functionObserveValue = (argumentDoc, includeId, onIsConnected) => {
+  const functionObserveValueAndId = (argumentDoc, onIsConnected) => {
     if (overriddenFunction) {
       if (overriddenFunctionResults.has(argumentDoc)) {
         return overriddenFunctionResults.get(argumentDoc);
@@ -842,19 +861,15 @@ export default function createCloudDoc({
             onIsConnected(getIsConnected());
             result = overriddenFunctionCache[argumentId] = reComputeResult();
           }
-
-          if (includeId) {
-            return {
-              value: result,
-              argument: { type: 'BlockReference', id: argumentId },
-              getId: () => getIdOfValue(result),
-            };
-          } else {
-            return result;
-          }
+          return {
+            value: result,
+            argument: { type: 'BlockReference', id: argumentId },
+            getId: () => getIdOfValue(result),
+          };
         })
         .share();
       let resultObservable = observeComputed;
+      let clientComputeSubscription = null;
       if (isLambdaRemote) {
         resultObservable = Observable.create(observer => {
           const isArgumentReady = argumentDoc.getIsConnected();
@@ -882,21 +897,26 @@ export default function createCloudDoc({
                   });
                   if (overriddenFunction && overriddenFunctionCache) {
                     overriddenFunctionCache[argId] = res.value;
-                    observer.next(res.value);
+                    observer.next({
+                      value: res.value,
+                      getId: () => res.id,
+                    });
                   }
                 }
+                clientComputeSubscription = observeComputed.subscribe({
+                  next: val => {
+                    observer.next(val);
+                  },
+                  error: err => observer.error(err),
+                  complete: () => observer.complete(),
+                });
               })
               .catch(err => observer.error(err));
           }
 
-          const subs = observeComputed.subscribe({
-            // do not pass observer.next in directly.. it fails for some reason
-            next: val => observer.next(val),
-            error: err => observer.error(err),
-            complete: () => observer.complete(),
-          });
           return () => {
-            subs.unsubscribe();
+            clientComputeSubscription &&
+              clientComputeSubscription.unsubscribe();
           };
         }).share();
       }
@@ -909,7 +929,13 @@ export default function createCloudDoc({
         return Observable.of(undefined);
       }
       const block = _getBlockWithId(cloudDocValue.id);
-      return block.functionObserveValue(argumentDoc, includeId, onIsConnected);
+      return block.functionObserveValueAndId(argumentDoc, onIsConnected);
+    });
+  };
+
+  const functionObserveValue = (argumentDoc, onIsConnected) => {
+    return functionObserveValueAndId(argumentDoc, onIsConnected).map(d => {
+      return d && d.value;
     });
   };
 
@@ -1022,6 +1048,8 @@ export default function createCloudDoc({
     functionGetValue,
     functionFetchValue,
     functionObserveValue,
+    functionObserveValueAndId,
+    _defineCloudFunction,
     $setOverrideFunction, // I suppose this is an implementation detail of eval data source
     markRemoteLambda, // maybe rename this..
   };

@@ -16,9 +16,7 @@ import createEvalSource from "@aven-cloud/cloud/createEvalSource";
 const source = createEvalSource({
   source: storageSource,
   domain: 'todo.aven.io',
-  evalDocs: {
-    TaskReducer: createReducerLambda('TaskReducer', TaskReducer, []),
-  },
+  functions: [ TaskReducer ], // functions defined with defineCloudFunction
 });`}
       />
       <Body>

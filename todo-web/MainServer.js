@@ -10,7 +10,6 @@ import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import { hashSecureString } from '../cloud-utils/Crypto';
-import { createReducerLambda } from '../cloud-core/useCloudReducer';
 import { TaskReducer } from '../todo-app/FullHome';
 
 import App from './App';
@@ -28,9 +27,7 @@ const runServer = async () => {
   const source = createEvalSource({
     source: storageSource,
     domain: 'todo.aven.io',
-    evalDocs: {
-      TaskReducer: createReducerLambda('TaskReducer', TaskReducer, []),
-    },
+    functions: [TaskReducer],
   });
 
   const emailAgent =
@@ -112,6 +109,15 @@ const runServer = async () => {
     source: protectedSource,
     domain: 'todo.aven.io',
   });
+
+  // (await source.observeDoc(
+  //   'todo.aven.io',
+  //   'TaskActions^TaskReducer',
+  // )).subscribe({
+  //   next: v => {
+  //     console.log('observed actions', v);
+  //   },
+  // });
 
   const context = new Map();
 
