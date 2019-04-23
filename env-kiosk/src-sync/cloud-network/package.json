@@ -6,6 +6,7 @@
       "utils"
     ],
     "moduleDependencies": [
+      "xstream",
       "rxjs-compat",
       "reconnecting-websocket"
     ]

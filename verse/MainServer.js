@@ -24,6 +24,18 @@ import RestaurantReducer from '../logic/RestaurantReducer';
 import startKitchen, { computeKitchenConfig } from './startKitchen';
 import { getConnectionToken, capturePayment } from './Stripe';
 
+const COUNT_MAX = 2147483640; // near the maximum unsigned dint
+
+let tagCounter = Math.floor(Math.random() * COUNT_MAX);
+
+function getFreshTag() {
+  tagCounter += 1;
+  if (tagCounter > COUNT_MAX) {
+    tagCounter = 0;
+  }
+  return tagCounter;
+}
+
 const getEnv = c => process.env[c];
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -89,31 +101,15 @@ const runServer = async () => {
     rootPasswordHash: await hashSecureString(ROOT_PASSWORD),
   });
 
-  function RestaurantSequencer() {
-    return {
-      hello: 'world',
-    };
-  }
-
   const evalSource = createEvalSource({
     source: storageSource,
     domain: 'onofood.co',
-    evalDocs: {
-      RestaurantSequencer,
-      RestaurantReducer: createReducerLambda(
-        'RestaurantReducer',
-        RestaurantReducer,
-        {},
-      ),
-    },
+    functions: [RestaurantReducer],
   });
 
   const cloud = createCloudClient({
     source: evalSource,
     domain: 'onofood.co',
-    evalDocs: {
-      RestaurantSequencer,
-    },
   });
 
   const protectedSource = createProtectedSource({
@@ -231,61 +227,61 @@ const runServer = async () => {
   //   cloud,
   // });
 
-  let restaurantState = null;
-  let kitchenState = null;
+  // let restaurantState = null;
+  // let kitchenState = null;
 
-  function evaluateKitchenState(kitchenState) {
-    const isFillSystemReady =
-      kitchenState.FillSystem_PrgStep_READ === 0 &&
-      kitchenState.FillSystem_NoFaults_READ &&
-      kitchenState.FillSystem_Homed_READ;
-    const isReadyToGoToPosition =
-      kitchenState.FillPositioner_GoToPositionReady_READ;
-    const isReadyToFill =
-      isReadyToGoToPosition &&
-      kitchenState.FillSystem_PositionAndDispenseAmountReady_READ;
-    return {
-      isFillSystemReady,
-      isReadyToGoToPosition,
-      isReadyToFill,
-      isReadyToStartOrder: isReadyToFill,
-      isReadyToDeliver: isReadyToFill,
-    };
-  }
-  const restaurant = cloud.get('Restaurant');
+  // function evaluateKitchenState(kitchenState) {
+  //   const isFillSystemReady =
+  //     kitchenState.FillSystem_PrgStep_READ === 0 &&
+  //     kitchenState.FillSystem_NoFaults_READ &&
+  //     kitchenState.FillSystem_Homed_READ;
+  //   const isReadyToGoToPosition =
+  //     kitchenState.FillPositioner_GoToPositionReady_READ;
+  //   const isReadyToFill =
+  //     isReadyToGoToPosition &&
+  //     kitchenState.FillSystem_PositionAndDispenseAmountReady_READ;
+  //   return {
+  //     isFillSystemReady,
+  //     isReadyToGoToPosition,
+  //     isReadyToFill,
+  //     isReadyToStartOrder: isReadyToFill,
+  //     isReadyToDeliver: isReadyToFill,
+  //   };
+  // }
+  // const restaurant = cloud.get('Restaurant');
 
-  async function runFill({ amount, system, slot }) {
-    await kitchen.dispatchCommand({
-      subsystem: 'FillSystem',
-      pulse: ['PositionAndDispenseAmount'],
-      values: {
-        DispenseAmount: amount,
-        DispenseSystem: system,
-        SlotToDispense: slot,
-      },
-    });
-    await delay(250);
-  }
-  async function startOrder() {
-    await kitchen.dispatchCommand({
-      subsystem: 'FillPositioner',
-      pulse: ['GoToPosition'],
-      values: {
-        PositionDest: 1,
-      },
-    });
-    await delay(2550);
-  }
-  async function runDeliver() {
-    await kitchen.dispatchCommand({
-      subsystem: 'FillPositioner',
-      pulse: ['GoToPosition'],
-      values: {
-        PositionDest: 45500,
-      },
-    });
-    await delay(550);
-  }
+  // async function runFill({ amount, system, slot }) {
+  //   await kitchen.dispatchCommand({
+  //     subsystem: 'FillSystem',
+  //     pulse: ['PositionAndDispenseAmount'],
+  //     values: {
+  //       DispenseAmount: amount,
+  //       DispenseSystem: system,
+  //       SlotToDispense: slot,
+  //     },
+  //   });
+  //   await delay(250);
+  // }
+  // async function startOrder() {
+  //   await kitchen.dispatchCommand({
+  //     subsystem: 'FillPositioner',
+  //     pulse: ['GoToPosition'],
+  //     values: {
+  //       PositionDest: 1,
+  //     },
+  //   });
+  //   await delay(2550);
+  // }
+  // async function runDeliver() {
+  //   await kitchen.dispatchCommand({
+  //     subsystem: 'FillPositioner',
+  //     pulse: ['GoToPosition'],
+  //     values: {
+  //       PositionDest: 45500,
+  //     },
+  //   });
+  //   await delay(550);
+  // }
 
   async function kitchenAction(action) {
     const commandType = KitchenCommands[action.command];
@@ -302,145 +298,172 @@ const runServer = async () => {
           values[valueCommandName] = provided;
         }
       });
-    const kitchenAction = {
+    const tag = getFreshTag();
+    const command = {
+      tag,
       type: 'KitchenCommand',
       subsystem,
       pulse,
       values,
     };
-    kitchen.dispatchCommand(kitchenAction);
+    kitchen.dispatchCommand(command);
+    await new Promise((resolve, reject) => {
+      let sub = cloud.get('KitchenState').observeValue.subscribe({
+        next: state => {
+          if (!state) {
+            return;
+          }
+          const isSystemIdle = state[`${subsystem}_PrgStep_READ`] === 0;
+          const isTagReceived = state[`${subsystem}_TagOut_READ`] === tag;
+          if (isSystemIdle && isTagReceived) {
+            resolve();
+            sub && sub.unsubscribe();
+          }
+        },
+        error: reject,
+      });
+      setTimeout(() => {
+        sub && sub.unsubscribe();
+        reject(new Error('Timeout waiting for kitchen state..'));
+      }, 15000);
+    });
+    return command;
   }
 
-  async function applySideEffects(restaurantState, kitchenState) {
-    if (!restaurantState || !kitchenState) {
-      return;
-    }
-    const {
-      isReadyToFill,
-      isReadyToStartOrder,
-      isReadyToDeliver,
-    } = evaluateKitchenState(kitchenState);
+  // async function applySideEffects(restaurantState, kitchenState) {
+  //   if (!restaurantState || !kitchenState) {
+  //     return;
+  //   }
+  //   const {
+  //     isReadyToFill,
+  //     isReadyToStartOrder,
+  //     isReadyToDeliver,
+  //   } = evaluateKitchenState(kitchenState);
 
-    const queuedOrders = restaurantState.queuedOrders || [];
+  //   const queuedOrders = restaurantState.queuedOrders || [];
 
-    if (
-      isReadyToStartOrder &&
-      queuedOrders.length &&
-      restaurantState.fillingOrder == null
-    ) {
-      const order = queuedOrders[0];
-      const nextState = {
-        ...restaurantState,
-        queuedOrders: queuedOrders.slice(1),
-        fills: [
-          {
-            amount: 2,
-            system: 1,
-            slot: 0,
-          },
-          {
-            amount: 2,
-            system: 0,
-            slot: 0,
-          },
-        ],
-        fillingOrder: order,
-      };
-      await restaurant.put(nextState);
-      console.log('starting order!');
-      await startOrder();
-      return;
-    }
+  //   if (
+  //     isReadyToStartOrder &&
+  //     queuedOrders.length &&
+  //     restaurantState.fillingOrder == null
+  //   ) {
+  //     const order = queuedOrders[0];
+  //     const nextState = {
+  //       ...restaurantState,
+  //       queuedOrders: queuedOrders.slice(1),
+  //       fills: [
+  //         {
+  //           amount: 2,
+  //           system: 1,
+  //           slot: 0,
+  //         },
+  //         {
+  //           amount: 2,
+  //           system: 0,
+  //           slot: 0,
+  //         },
+  //       ],
+  //       fillingOrder: order,
+  //     };
+  //     await restaurant.put(nextState);
+  //     console.log('starting order!');
+  //     await startOrder();
+  //     return;
+  //   }
 
-    if (
-      restaurantState.fillingOrder &&
-      isReadyToFill &&
-      restaurantState.fills.length
-    ) {
-      const fillToRun = restaurantState.fills[0];
-      await restaurant.put({
-        ...restaurantState,
-        fills: restaurantState.fills.slice(1),
-      });
-      console.log('filling ' + fillToRun.system);
-      await runFill(fillToRun);
-      return;
-    }
+  //   if (
+  //     restaurantState.fillingOrder &&
+  //     isReadyToFill &&
+  //     restaurantState.fills.length
+  //   ) {
+  //     const fillToRun = restaurantState.fills[0];
+  //     await restaurant.put({
+  //       ...restaurantState,
+  //       fills: restaurantState.fills.slice(1),
+  //     });
+  //     console.log('filling ' + fillToRun.system);
+  //     await runFill(fillToRun);
+  //     return;
+  //   }
 
-    if (
-      restaurantState.fillingOrder &&
-      !restaurantState.fills.length &&
-      restaurantState.deliveringOrder == null &&
-      isReadyToDeliver
-    ) {
-      await restaurant.put({
-        ...restaurantState,
-        fills: [],
-        fillingOrder: null,
-        deliveringOrder: restaurantState.fillingOrder,
-      });
-      console.log('delivering ');
-      await runDeliver();
-      return;
-    }
+  //   if (
+  //     restaurantState.fillingOrder &&
+  //     !restaurantState.fills.length &&
+  //     restaurantState.deliveringOrder == null &&
+  //     isReadyToDeliver
+  //   ) {
+  //     await restaurant.put({
+  //       ...restaurantState,
+  //       fills: [],
+  //       fillingOrder: null,
+  //       deliveringOrder: restaurantState.fillingOrder,
+  //     });
+  //     console.log('delivering ');
+  //     await runDeliver();
+  //     return;
+  //   }
 
-    if (restaurantState.deliveringOrder && isReadyToDeliver) {
-      // fills are complete, move on. right now that means we are done
-      console.log('order complete!');
-      await restaurant.put({
-        ...restaurantState,
-        fills: [],
-        deliveringOrder: null,
-        completeOrders: [
-          ...(restaurantState.completeOrders || []),
-          restaurantState.deliveringOrder,
-        ],
-      });
-      return;
-    }
-  }
+  //   if (restaurantState.deliveringOrder && isReadyToDeliver) {
+  //     // fills are complete, move on. right now that means we are done
+  //     console.log('order complete!');
+  //     await restaurant.put({
+  //       ...restaurantState,
+  //       fills: [],
+  //       deliveringOrder: null,
+  //       completeOrders: [
+  //         ...(restaurantState.completeOrders || []),
+  //         restaurantState.deliveringOrder,
+  //       ],
+  //     });
+  //     return;
+  //   }
+  // }
 
-  let effectedRestaurantState = undefined;
-  let effectedKitchenState = undefined;
-  let effectInProgress = null;
+  // let effectedRestaurantState = undefined;
+  // let effectedKitchenState = undefined;
+  // let effectInProgress = null;
 
-  function runSideEffects() {
-    if (effectInProgress) {
-      return;
-    }
-    const newRestaurantState = restaurantState;
-    const newKitchenState = kitchenState;
-    if (
-      newRestaurantState !== effectedRestaurantState ||
-      newKitchenState !== effectedKitchenState
-    ) {
-      effectInProgress = true;
-      // console.log('gogogo', { newRestaurantState, newKitchenState });
-      applySideEffects(newRestaurantState, newKitchenState)
-        .then(() => {})
-        .catch(e => {
-          console.error(e);
-        })
-        .finally(() => {
-          effectedRestaurantState = newRestaurantState;
-          effectedKitchenState = newKitchenState;
-          effectInProgress = false;
-          runSideEffects();
-        });
-    }
-  }
+  // function runSideEffects() {
+  //   if (effectInProgress) {
+  //     return;
+  //   }
+  //   const newRestaurantState = restaurantState;
+  //   const newKitchenState = kitchenState;
+  //   if (
+  //     newRestaurantState !== effectedRestaurantState ||
+  //     newKitchenState !== effectedKitchenState
+  //   ) {
+  //     effectInProgress = true;
+  //     // console.log('gogogo', { newRestaurantState, newKitchenState });
+  //     applySideEffects(newRestaurantState, newKitchenState)
+  //       .then(() => {})
+  //       .catch(e => {
+  //         console.error(e);
+  //       })
+  //       .finally(() => {
+  //         effectedRestaurantState = newRestaurantState;
+  //         effectedKitchenState = newKitchenState;
+  //         effectInProgress = false;
+  //         runSideEffects();
+  //       });
+  //   }
+  // }
 
-  cloud.get('KitchenState').observeValue.subscribe({
-    next: v => {
-      kitchenState = v;
-      runSideEffects();
-    },
-  });
-  cloud.get('RestaurantActions^RestaurantReducer').observeValue.subscribe({
+  // cloud.get('KitchenState').observeValue.subscribe({
+  //   next: v => {
+  //     kitchenState = v;
+  //     runSideEffects();
+  //   },
+  // });
+
+  (await evalSource.observeDoc(
+    'onofood.co',
+    'RestaurantActions^RestaurantReducer',
+  )).subscribe({
     next: v => {
       console.log('restaurant state', v);
-      restaurantState = v;
-      runSideEffects();
+      // restaurantState = v;
+      // runSideEffects();
     },
   });
 

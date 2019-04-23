@@ -1,5 +1,6 @@
 import createMemoryStorageSource from '../createMemoryStorageSource';
 import createEvalSource from '../createEvalSource';
+import defineCloudFunction from '../defineCloudFunction';
 import createCloudClient from '../../cloud-core/createCloudClient';
 
 beforeAll(async () => {});
@@ -221,32 +222,32 @@ describe('interpreted data sources', () => {
 
   test('static reduced value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
+    const listValue = defineCloudFunction(
+      'listValue',
+      ({ value }, doc, cloud, useValue) => {
+        let state = [];
+        if (value === undefined) {
+          return state;
+        }
+        const action = value.value;
+        if (value.on && value.on.id) {
+          const ancestorName = `${doc.getFullName()}#${value.on.id}^listValue`;
+          state = useValue(cloud.get(ancestorName));
+        }
+
+        if (action.add) {
+          return [...state, action.add];
+        }
+        if (action.remove) {
+          return state.filter(s => s !== action.remove);
+        }
+        return state;
+      }
+    );
     const interpretedSource = createEvalSource({
       source: storageSource,
       domain: 'test',
-      evalDocs: {
-        listValue: ({ value }, doc, cloud, useValue) => {
-          let state = [];
-          if (value === undefined) {
-            return state;
-          }
-          const action = value.value;
-          if (value.on && value.on.id) {
-            const ancestorName = `${doc.getFullName()}#${
-              value.on.id
-            }^listValue`;
-            state = useValue(cloud.get(ancestorName));
-          }
-
-          if (action.add) {
-            return [...state, action.add];
-          }
-          if (action.remove) {
-            return state.filter(s => s !== action.remove);
-          }
-          return state;
-        },
-      },
+      functions: [listValue],
     });
 
     await interpretedSource.dispatch({
@@ -389,14 +390,15 @@ describe('interpreted data sources', () => {
 
   test('basic evalDocs static function value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
+
+    const squared = defineCloudFunction('squared', ({ value }) => {
+      return value * value;
+    });
+
     const interpretedSource = createEvalSource({
       source: storageSource,
       domain: 'test',
-      evalDocs: {
-        squared: ({ value }) => {
-          return value * value;
-        },
-      },
+      functions: [squared],
     });
 
     await interpretedSource.dispatch({
@@ -464,9 +466,6 @@ describe('remote eval', () => {
     const evalSource = createEvalSource({
       source,
       domain: 'd',
-      evalDocs: {
-        fooReducer: cloudReducer,
-      },
     });
     const c = createCloudClient({ source: evalSource, domain: 'd' });
     c.izDebugz = true;
@@ -528,9 +527,6 @@ describe('remote eval', () => {
     const evalSource = createEvalSource({
       source,
       domain: 'd',
-      evalDocs: {
-        fooReducer: cloudReducer,
-      },
     });
     const c = createCloudClient({ source: evalSource, domain: 'd' });
     c.izDebugz = true;

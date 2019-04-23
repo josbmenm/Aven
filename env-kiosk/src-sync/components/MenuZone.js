@@ -11,13 +11,13 @@ import {
 } from './Styles';
 
 const titleLargeStyle = {
-  fontSize: 52,
+  fontSize: 36,
   ...titleStyle,
   marginLeft: largeHorizontalPadding,
   lineHeight: 49,
 };
 const titleSmallStyle = {
-  fontSize: 42,
+  fontSize: 36,
   ...titleStyle,
   lineHeight: 40,
   marginLeft: largeHorizontalPadding,
@@ -78,7 +78,7 @@ export function MenuZone({ title, children, small }) {
           style={{
             position: 'absolute',
             left: 0,
-            top: 73,
+            top: 158,
           }}
         >
           <TitleComponent title={title} />

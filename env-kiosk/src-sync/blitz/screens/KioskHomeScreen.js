@@ -60,7 +60,7 @@ export default function KioskHomeScreen({ navigation, ...props }) {
             style={{
               ...splashText,
               textAlign: 'center',
-              marginVertical: 80,
+              marginVertical: 40,
             }}
           >
             tap to start your order

@@ -18,13 +18,19 @@ import {
 import Animated, { Easing } from 'react-native-reanimated';
 import { formatCurrency } from './Utils';
 
-export function EnhancementDetail({ enhancement, price, chevronRef }) {
+export function EnhancementDetail({
+  enhancement,
+  price,
+  chevronRef,
+  disabled,
+}) {
   if (!enhancement || !enhancement.Name) {
     return null;
   }
   return (
     <View
       style={{
+        opacity: disabled ? 0.5 : 1,
         flex: 1,
         flexDirection: 'row',
         padding: 12,

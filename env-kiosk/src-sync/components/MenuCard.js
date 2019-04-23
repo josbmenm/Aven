@@ -65,8 +65,7 @@ function CardHeader({ title, price, style, benefits }) {
       pointerEvents="none"
       style={{
         alignItems: 'flex-end',
-        maxWidth: cardSmallWidth,
-        alignSelf: 'flex-end',
+        alignSelf: 'stretch',
         paddingTop: 20,
         paddingHorizontal: 20,
         ...style,
@@ -215,11 +214,13 @@ export function MenuCardCarousel({ items, large, style }) {
         position: 'relative',
         marginTop: -largeShadowRadius,
         ...style,
+        height: 700,
       }}
       contentInset={{ left: 0 }}
       contentContainerStyle={{
         paddingRight: scrollWidth - cardSmallWidth - carouselPaddingSmall, // makes sure we can scroll to the last item and not past
         paddingVertical: largeShadowRadius,
+        justifyContent: 'center',
       }}
       scrollEventThrottle={1}
       onScroll={Animated.event(

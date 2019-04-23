@@ -30,8 +30,8 @@ export default function createCloudClient({
     });
   }
 
-  async function sessionObserveDoc(domain, name) {
-    return await source.observeDoc(domain, name, session.value);
+  async function sessionObserveDoc(obsDomain, name) {
+    return await source.observeDoc(obsDomain, name, session.value);
   }
 
   const sourceWithSession = {
@@ -165,9 +165,19 @@ export default function createCloudClient({
 
   const dispatch = createDispatcher(actions, sessionDispatch, domain);
 
+  // #deprecate-old-lambda
   const setLambda = (name, fn) => {
     docs.get(name).$setOverrideFunction(fn);
   };
+
+  function lazyDefineCloudFunction(cloudFn) {
+    if (cloudFn.type !== 'CloudFunction') {
+      throw new Error(
+        'Invalid function provided to lazyDefineCloudFunction. Create it with defineCloudFunction'
+      );
+    }
+    docs.get(cloudFn.name)._defineCloudFunction(cloudFn);
+  }
 
   async function setAccountName(name) {
     if (!session.value) {
@@ -180,8 +190,31 @@ export default function createCloudClient({
     return response;
   }
 
+  async function internalObserveDoc(obsDomain, name, auth) {
+    if (obsDomain !== domain) {
+      return await source.observeDoc(obsDomain, name, session.value);
+    }
+
+    const doc = docs.get(name);
+    return doc.observeValueAndId.map(r => {
+      return { id: r.getId(), value: r.value };
+    });
+  }
+
+  async function internalObserveDocChildren(obsDomain, name, auth) {
+    if (obsDomain !== domain) {
+      return await source.observeDocChildren(obsDomain, name, session.value);
+    }
+
+    throw new Error('Not ready for this!');
+    // const doc = docs.get(name);
+    // return doc.observeChildren;
+  }
+
   const cloudClient = {
     ...source,
+    observeDoc: internalObserveDoc,
+    observeDocChildren: internalObserveDocChildren,
     setLambda,
     observeSession: session,
     createSession,
@@ -192,6 +225,7 @@ export default function createCloudClient({
     domain,
     destroyDoc,
     setAccountName,
+    lazyDefineCloudFunction,
   };
 
   const docs = createDocPool({

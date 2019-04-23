@@ -233,7 +233,10 @@ function Subsystem({ systemId, kitchenState, kitchenConfig, kitchenCommand }) {
               pulseCommands.map(pulseCommandName => {
                 const pulse = system.pulseCommands[pulseCommandName];
                 return (
-                  <ButtonRow title={`${pulseCommandName} Action`}>
+                  <ButtonRow
+                    title={`${pulseCommandName} Action`}
+                    key={pulseCommandName}
+                  >
                     <SetParamsButton
                       pulse={pulse}
                       kitchenCommand={kitchenCommand}

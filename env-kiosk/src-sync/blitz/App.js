@@ -48,7 +48,11 @@ import OrderSidebarPage from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-YellowBox.ignoreWarnings(['Async Storage has been']);
+YellowBox.ignoreWarnings([
+  'Async Storage has been',
+  'with an invalid bridge',
+  'CardReaderLog',
+]);
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
@@ -145,7 +149,7 @@ function renderAppError({ error, errorInfo, onRetry }) {
   );
 }
 
-const NAV_STORAGE_KEY = 'NavigationState';
+const NAV_STORAGE_KEY = 'NavigationState-Neu1o';
 function FullApp() {
   return (
     <PopoverContainer>

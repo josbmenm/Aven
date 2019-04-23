@@ -1,6 +1,7 @@
-import { Observable, BehaviorSubject, Subject } from 'rxjs-compat';
+import { Observable, BehaviorSubject } from 'rxjs-compat';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import Err from '../utils/Err';
+import xs from 'xstream';
 
 let idIndex = 0;
 const idBase = Date.now();
@@ -21,8 +22,26 @@ export default function createNetworkSource(opts) {
   const wsEndpoint = `${opts.useSSL === false ? 'ws' : 'wss'}://${
     opts.authority
   }`;
+  let isCurrentlyConnected = false;
+  let updateIsConnected = null;
+  const isConnected$ = xs.createWithMemory({
+    start: listener => {
+      listener.next(isCurrentlyConnected);
+      updateIsConnected = listener.next;
+    },
+    stop: () => {
+      updateIsConnected = null;
+    },
+  });
+
+  //  #legacy
   const isConnected = new BehaviorSubject(false);
-  const wsMessages = new Subject();
+  function setConnectionState(isConn) {
+    isCurrentlyConnected = isConn;
+    updateIsConnected && updateIsConnected(isConn);
+    //  #legacy
+    isConnected.getValue() !== isConn && isConnected.next(isConn);
+  }
 
   let ws = null;
   let wsClientId = null;
@@ -74,6 +93,30 @@ export default function createNetworkSource(opts) {
 
   const subscriptions = {};
 
+  function subscribeStream(subsSpec) {
+    let id = getClientId();
+    return xs.create({
+      start: listener => {
+        const finalSpec = { ...subsSpec, id };
+        socketSendIfConnected({
+          type: 'Subscribe',
+          subscriptions: [finalSpec],
+        });
+        subscriptions[id] = {
+          spec: finalSpec,
+          observer: listener,
+        };
+      },
+      stop: () => {
+        socketSendIfConnected({
+          type: 'Unsubscribe',
+          subscriptionIds: [id],
+        });
+        delete subscriptions[id];
+      },
+    });
+  }
+
   function subscribe(subsSpec) {
     return new Observable(observer => {
       const id = getClientId();
@@ -116,11 +159,11 @@ export default function createNetworkSource(opts) {
       // actually we're going to wait for the server to say hello with ClientId
     };
     ws.onclose = () => {
-      if (isConnected.getValue()) isConnected.next(false);
+      setConnectionState(false);
       ws = null;
     };
     ws.onerror = () => {
-      if (isConnected.getValue()) isConnected.next(false);
+      setConnectionState(false);
       ws = null;
     };
     ws.onmessage = msg => {
@@ -130,7 +173,7 @@ export default function createNetworkSource(opts) {
       switch (evt.type) {
         case 'ClientId': {
           wsClientId = evt.clientId;
-          if (!isConnected.getValue()) isConnected.next(true);
+          setConnectionState(true);
           socketSendIfConnected({
             type: 'Subscribe',
             subscriptions: Object.keys(subscriptions).map(subsId => {
@@ -158,7 +201,6 @@ export default function createNetworkSource(opts) {
           return;
         }
         default: {
-          wsMessages.next(evt);
           !quiet && log('Unknown ws event:', evt);
           return;
         }
@@ -168,19 +210,37 @@ export default function createNetworkSource(opts) {
 
   connectWS();
 
+  //  #legacy
   async function observeDoc(domain, name, auth) {
     return subscribe({ domain, auth, doc: name });
   }
 
+  //  #legacy
   async function observeDocChildren(domain, name, auth) {
     return subscribe({ domain, auth, docChildren: name });
   }
 
+  async function observeDoc$(domain, name, auth) {
+    return subscribeStream({ domain, auth, doc: name });
+  }
+
+  async function observeDocChildren$(domain, name, auth) {
+    return subscribeStream({ domain, auth, docChildren: name });
+  }
+
   return {
     dispatch,
+
+    //  #legacy
     observeDoc,
+    //  #legacy
     observeDocChildren,
+    //  #legacy
     isConnected,
+    // new stream API:
+    observeDoc$,
+    observeDocChildren$,
+    isConnected$,
     close: () => {
       ws && ws.close();
       ws = null;

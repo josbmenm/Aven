@@ -1,12 +1,17 @@
 import createDispatcher from '../cloud-utils/createDispatcher';
 import createCloudClient from './createCloudClient';
 
-export default function createEvalSource({ source, domain, evalDocs = {} }) {
-  const cloud = createCloudClient({ source, domain, evalDocs });
+export default function createEvalSource({ source, domain, functions = [] }) {
+  const cloud = createCloudClient({ source, domain, functions });
 
-  Object.keys(evalDocs).map(async evalDocName => {
-    const evalFunction = evalDocs[evalDocName];
-    cloud.get(evalDocName).$setOverrideFunction(evalFunction);
+  functions.map(async cloudFn => {
+    if (cloudFn.type !== 'CloudFunction') {
+      throw new Error(
+        'Invalid CloudFunction provided to createEvalSource functions'
+      );
+    }
+
+    cloud.get(cloudFn.name)._defineCloudFunction(cloudFn);
   });
 
   return cloud;

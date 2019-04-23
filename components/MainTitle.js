@@ -7,8 +7,9 @@ export default function MainTitle({ children, subtitle }) {
     <View style={{ flexDirection: 'row' }}>
       <Text
         style={{
-          fontSize: 36,
           ...titleStyle,
+          fontSize: 36,
+          letterSpacing: 0,
         }}
       >
         {children}

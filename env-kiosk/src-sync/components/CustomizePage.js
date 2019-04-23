@@ -13,8 +13,11 @@ import {
   primaryFontFace,
   monsterraBlack,
   monsterra50,
+  largeHorizontalPadding,
+  rightSidebarWidth,
+  midPageHorizPadding,
 } from './Styles';
-import { MenuZone, MenuHLayout } from './MenuZone';
+import { MenuZone } from './MenuZone';
 import ActionPage from '../components/ActionPage';
 import TabSectionScrollView from './TabSectionScrollView';
 import ListAnimation from './ListAnimation';
@@ -22,14 +25,45 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 import { EnhancementDetail } from './Enhancements';
 
 const tagSize = {
-  width: 144,
-  height: 80,
+  width: 100,
+  height: 76,
 };
+
+export function MenuHLayout({ side, children }) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: 'row',
+        paddingLeft: largeHorizontalPadding,
+        marginRight: rightSidebarWidth + midPageHorizPadding,
+      }}
+    >
+      <View
+        style={{
+          marginRight: midPageHorizPadding,
+          width: 248,
+        }}
+      >
+        {side}
+      </View>
+      <View
+        style={{
+          flex: 1,
+          minWidth: 100,
+          alignSelf: 'stretch',
+        }}
+      >
+        {children}
+      </View>
+    </View>
+  );
+}
 
 function TextButton({ title, onPress, style }) {
   return (
     <TouchableOpacity onPress={onPress} style={style}>
-      <Text style={{ fontSize: 18, color: monsterra, ...primaryFontFace }}>
+      <Text style={{ fontSize: 16, color: monsterra, ...primaryFontFace }}>
         {title}
       </Text>
     </TouchableOpacity>
@@ -108,7 +142,24 @@ function SideBySide({ items }) {
   return rows;
 }
 
-function CustomizationPuck({ isActive, children, onPress }) {
+function CustomizationPuck({ isActive, children, onPress, disabled }) {
+  if (disabled) {
+    return (
+      <View
+        style={{
+          marginTop: 16,
+          marginRight: 16,
+          width: 290, // tonight we dine in hell
+          backgroundColor: 'white',
+          borderRadius: 4,
+          borderWidth: 3,
+          borderColor: isActive ? monsterra : 'white',
+        }}
+      >
+        {children}
+      </View>
+    );
+  }
   return (
     <TouchableOpacity
       style={{
@@ -121,7 +172,7 @@ function CustomizationPuck({ isActive, children, onPress }) {
         borderWidth: 3,
         borderColor: isActive ? monsterra : 'white',
       }}
-      onPress={onPress}
+      onPress={disabled ? undefined : onPress}
     >
       {children}
     </TouchableOpacity>
@@ -145,25 +196,31 @@ function EnhancementSection({ section }) {
         Enhancements for fitness, immunity, focus, digestion, and skin & body
       </Subtitle>
       <SideBySide
-        items={section.options.map((enhancement, index) => (
-          <CustomizationPuck
-            key={index}
-            isActive={section.selectedIds.indexOf(enhancement.id) !== -1}
-            onPress={() => {
-              section.addIngredient(enhancement.id);
-            }}
-          >
-            <EnhancementDetail
-              enhancement={enhancement}
-              key={enhancement.id}
-              price={
-                section.selectedIds.length &&
-                section.selectedIds[0] !== enhancement.id &&
-                0.5
-              }
-            />
-          </CustomizationPuck>
-        ))}
+        items={section.options.map((enhancement, index) => {
+          const isActive = section.selectedIds.indexOf(enhancement.id) !== -1;
+          const disabled = !isActive && section.selectedIds.length === 2;
+          return (
+            <CustomizationPuck
+              key={index}
+              isActive={isActive}
+              disabled={disabled}
+              onPress={() => {
+                section.addIngredient(enhancement.id);
+              }}
+            >
+              <EnhancementDetail
+                enhancement={enhancement}
+                key={enhancement.id}
+                disabled={disabled}
+                price={
+                  section.selectedIds.length &&
+                  section.selectedIds[0] !== enhancement.id &&
+                  0.5
+                }
+              />
+            </CustomizationPuck>
+          );
+        })}
       />
     </View>
   );
@@ -192,7 +249,7 @@ function StepperButton({ onPress, icon }) {
 }
 
 function StepperSection({ section }) {
-  let message = `Choose up to ${section.slotCount} of ${section.displayName}`;
+  let message = section.message;
 
   return (
     <View style={{ paddingBottom: 60, overflow: 'visible' }}>
@@ -287,10 +344,7 @@ function CustomizationMainSection({ section }) {
   if (section.slotCount > 1) {
     return <StepperSection section={section} />;
   }
-  let message = `Choose up to ${section.slotCount} of ${section.displayName}`;
-  if (section.slotCount === 1) {
-    message = `Choose a ${section.displayName}`;
-  }
+  let message = section.description;
   return (
     <View style={{ paddingBottom: 60 }}>
       {message && (
@@ -446,7 +500,7 @@ function getCustomizationSections(
   const sections = [
     {
       name: 'enhancement',
-      displayName: 'Benefit',
+      displayName: 'benefit',
       slotCount: 2,
       options: Object.keys(menuItem.BenefitCustomization).map(
         id => menuItem.BenefitCustomization[id],
@@ -481,6 +535,7 @@ function getCustomizationSections(
     },
     ...menuItem.IngredientCustomization.map(customSpec => {
       const name = customSpec['Name'];
+      const description = customSpec['Description'];
       const customIngredientsByCustomizationCategory =
         (customizationState && customizationState.ingredients) || {};
       const customIngredients = customIngredientsByCustomizationCategory[name];
@@ -512,7 +567,8 @@ function getCustomizationSections(
 
       return {
         name,
-        displayName: customSpec['Display Name'],
+        description,
+        displayName: customSpec['Display Name'].toLowerCase(),
         options: customSpec.Ingredients.map(ingredient => ({
           key: ingredient.id,
           name: ingredient.Name,
@@ -587,7 +643,7 @@ function AddItem({ onPress, style }) {
       style={{
         ...tagSize,
         borderRadius: 4,
-        backgroundColor: '#ddd',
+        backgroundColor: '#f7f7f7',
         justifyContent: 'center',
         ...style,
       }}
@@ -597,6 +653,7 @@ function AddItem({ onPress, style }) {
         style={{
           fontSize: 26,
           lineHeight: 24,
+          top: 2,
           textAlign: 'center',
           color: monsterra60,
           ...primaryFontFace,
@@ -624,7 +681,9 @@ function CustomizationSidebar({
       style={{
         backgroundColor: 'white',
         borderRadius: 4,
-        paddingVertical: 14,
+        paddingTop: 14,
+        paddingBottom: 8,
+        width: 248,
         ...prettyShadow,
       }}
     >
@@ -635,7 +694,7 @@ function CustomizationSidebar({
               <Text
                 style={{
                   ...titleStyle,
-                  paddingLeft: 20,
+                  paddingLeft: 16,
                   marginBottom: 4,
                   marginTop: 6,
                   fontSize: 16,
@@ -648,7 +707,7 @@ function CustomizationSidebar({
                   flexWrap: 'wrap',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  paddingLeft: 20,
+                  paddingLeft: 16,
                 }}
               >
                 <ListAnimation
@@ -722,7 +781,7 @@ function CustomizationSidebar({
                       return (
                         <AddItem
                           key={index}
-                          style={{ marginRight: 12, marginBottom: 12 }}
+                          style={{ marginRight: 16, marginBottom: 16 }}
                           onPress={() => onScrollToSection(section)}
                         />
                       );
@@ -732,7 +791,7 @@ function CustomizationSidebar({
                         <IngredientTag
                           key={item.key}
                           onRemove={item.onRemove}
-                          style={{ marginRight: 12, marginBottom: 12 }}
+                          style={{ marginRight: 16, marginBottom: 16 }}
                           inlineStyle
                         >
                           {item.children}
@@ -748,7 +807,7 @@ function CustomizationSidebar({
         })}
       </View>
       <TextButton
-        style={{ position: 'absolute', right: 20, top: 14 }}
+        style={{ position: 'absolute', right: 20, top: 21 }}
         onPress={() => {
           setCustomization(null);
         }}

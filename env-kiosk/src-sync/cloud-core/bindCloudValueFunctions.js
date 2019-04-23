@@ -1,6 +1,5 @@
 import { filter } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
-import SHA1 from 'crypto-js/sha1';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 
 function flatArray(a) {
@@ -10,20 +9,6 @@ function flatArray(a) {
 function filterUndefined() {
   return filter(value => value !== undefined);
 }
-// function behaviorAnd(a, b) {
-//   const out = new BehaviorSubject(a.getValue() && b.getValue());
-//   a.subscribe({
-//     next: a => {
-//       out.next(a && b.getValue());
-//     },
-//   });
-//   b.subscribe({
-//     next: b => {
-//       out.next(a.getValue() && b);
-//     },
-//   });
-//   return out;
-// }
 
 function expandCloudValue(cloudValue, cloudClient, expandFn) {
   function isCloudValue(o) {
@@ -164,12 +149,10 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
       fetchValue: () => lambdaDoc.functionFetchValue(cloudValue),
       observeValue: lambdaDoc.functionObserveValue(
         cloudValue,
-        false,
         handleFnConnectivity
       ),
-      observeValueAndId: lambdaDoc.functionObserveValue(
+      observeValueAndId: lambdaDoc.functionObserveValueAndId(
         cloudValue,
-        true,
         handleFnConnectivity
       ),
       getValue,

@@ -124,7 +124,7 @@ export default function Receipt({ summary }) {
       {summary.items.map(item => (
         <ReceiptRow
           label={displayNameOfOrderItem(item, item.menuItem)}
-          amount={sellPriceOfMenuItem(item.menuItem)}
+          amount={item.itemPrice}
           quantity={item.quantity}
           key={item.id}
           summary={getItemCustomizationSummary(item)}

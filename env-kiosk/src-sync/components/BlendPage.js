@@ -30,7 +30,7 @@ function BackgroundLayout({ children, background }) {
   return (
     <View
       style={{
-        paddingTop: 160,
+        paddingTop: 184,
         alignSelf: 'stretch',
       }}
     >
@@ -83,8 +83,7 @@ function Ingredient({ ingredient }) {
           marginBottom: 11,
           textAlign: 'center',
           fontSize: 12,
-          color: monsterra,
-          ...boldPrimaryFontFace,
+          ...titleStyle,
         }}
       >
         {ingredient.Name && ingredient.Name.toUpperCase()}
@@ -220,7 +219,7 @@ function BlendPageContentPure({
                   key={b.id}
                   style={{
                     paddingVertical: 2,
-                    paddingRight: 12,
+                    paddingRight: 16,
                     alignItems: 'center',
                   }}
                 >
@@ -228,8 +227,8 @@ function BlendPageContentPure({
                     image={b['Icon']}
                     tintColor={monsterra}
                     style={{
-                      width: 75,
-                      height: 75,
+                      width: 64,
+                      height: 64,
                     }}
                   />
                   <Text
@@ -237,6 +236,8 @@ function BlendPageContentPure({
                       ...boldPrimaryFontFace,
                       color: monsterra,
                       alignSelf: 'center',
+                      letterSpacing: 0.5,
+                      fontSize: 12,
                     }}
                   >
                     {b.Name.toUpperCase()}

@@ -31,9 +31,17 @@ import Row from '../../components/Row';
 import BlockFormInput from '../../components/BlockFormInput';
 
 import { usePopover } from '../../views/Popover';
-import { rowStyle, prettyShadow } from '../../components/Styles';
+import {
+  rowStyle,
+  prettyShadow,
+  titleStyle,
+  proseFontFace,
+  primaryFontFace,
+  monsterra80,
+} from '../../components/Styles';
 import KeyboardPopover from '../../components/KeyboardPopover';
 import RestaurantReducer from '../../logic/RestaurantReducer';
+import { computeNextStep } from '../../logic/KitchenSequence';
 import useFocus from '../../navigation-hooks/useFocus';
 import kuid from 'kuid';
 
@@ -46,7 +54,11 @@ function ObservableJSONRow({ value, title }) {
   const currentValue = useObservable(value);
   return <TextRow text={JSON.stringify(currentValue)} title={title} />;
 }
-
+function Subtitle({ title }) {
+  return (
+    <Text style={{ ...titleStyle, opacity: 0.8, fontSize: 20 }}>{title}</Text>
+  );
+}
 function AddFillForm({ onSubmit }) {
   const [system, setSystem] = useState(0);
   const [amount, setAmount] = useState(0);
@@ -196,7 +208,6 @@ function AdHocOrderRow() {
   const [orderBlendName, setOrderBlendName] = useState('Mango and Tumeric');
 
   const [fills, setFills] = useState([
-    { system: 5, slot: 0, amount: 1 },
     { system: 3, slot: 0, amount: 2 },
     { system: 3, slot: 2, amount: 3 },
   ]);
@@ -218,6 +229,7 @@ function AdHocOrderRow() {
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View style={{ flex: 1 }}>
+            <Subtitle title="Order Info" />
             <OrderInfoText
               orderState={{ name: orderName, blendName: orderBlendName }}
             />
@@ -225,6 +237,7 @@ function AdHocOrderRow() {
           </View>
           <View style={{ flex: 1 }}>
             <View style={{ flex: 1, padding: 0 }}>
+              <Subtitle title="Fills" />
               {fills.map((fill, fillIndex) => (
                 <View key={fillIndex} style={{ flexDirection: 'row' }}>
                   <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -286,8 +299,10 @@ function AdHocOrderRow() {
 function OrderInfoText({ orderState }) {
   return (
     <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
-      <Text style={{ fontSize: 32 }}>{orderState.name}</Text>
-      <Text style={{ fontSize: 24, color: '#333' }}>
+      <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
+        {orderState.name}
+      </Text>
+      <Text style={{ fontSize: 24, ...primaryFontFace, color: '#282828' }}>
         {orderState.blendName}
       </Text>
     </View>
@@ -335,7 +350,7 @@ function OrderQueue({ restaurantState, dispatch }) {
   );
 }
 
-function BayInfo({ bayState, name }) {
+function BayInfo({ bayState, name, dispatch, bayId }) {
   let content = <Text style={{ fontSize: 24 }}>Empty</Text>;
   if (bayState) {
     content = (
@@ -349,7 +364,13 @@ function BayInfo({ bayState, name }) {
     <View style={{ flex: 1 }}>
       <Text>{name}</Text>
       {content}
-      <Button title="Clear" onPress={() => {}} disabled />
+      <Button
+        title="Clear"
+        onPress={() => {
+          dispatch({ type: 'ClearDeliveryBay', bayId });
+        }}
+        disabled={!bayState}
+      />
     </View>
   );
 }
@@ -359,14 +380,62 @@ function DeliveryBayRow({ restaurantState, dispatch }) {
     <Row title={`Delivery Bays`}>
       <BayInfo
         bayState={restaurantState.deliveryA}
+        bayId="deliveryA"
         name="Left"
         dispatch={dispatch}
       />
       <BayInfo
         bayState={restaurantState.deliveryB}
+        bayId="deliveryB"
         name="Right"
         dispatch={dispatch}
       />
+    </Row>
+  );
+}
+
+function FillsDisplay({ state }) {
+  return (
+    <View style={{ flexDirection: 'row' }}>
+      <View style={{ flex: 1 }}>
+        <Subtitle title="Remaining Fills" />
+        {state.fillsRemaining &&
+          state.fillsRemaining.map((fill, i) => (
+            <Text key={i}>{JSON.stringify(fill)}</Text>
+          ))}
+      </View>
+      <View style={{ flex: 1 }}>
+        <Subtitle title="Completed Fills" />
+        {state.fillsCompleted &&
+          state.fillsCompleted.map((fill, i) => (
+            <Text key={i}>{JSON.stringify(fill)}</Text>
+          ))}
+      </View>
+    </View>
+  );
+}
+
+function FillRow({ restaurantState, dispatch }) {
+  // return <Text>{JSON.stringify(fillState)}</Text>;
+  const hasFill = !!restaurantState.fill;
+  const order = hasFill && restaurantState.fill.order;
+  return (
+    <Row title="Fill System">
+      <View style={{ flex: 1 }}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flex: 1 }}>
+            {order && <OrderInfoText orderState={order} />}
+          </View>
+          <Button
+            disabled={!hasFill}
+            title="Drop"
+            onPress={() => {
+              dispatch({ type: 'RequestFillDrop' });
+            }}
+          />
+        </View>
+        {restaurantState.fill && <FillsDisplay state={restaurantState.fill} />}
+      </View>
     </Row>
   );
 }
@@ -377,19 +446,15 @@ function RestaurantStateList({ restaurantState, dispatch }) {
   }
   return (
     <RowSection>
-      <Row title="Fill System">
-        {restaurantState.filling && (
-          <OrderState orderState={restaurantState.filling} />
-        )}
-      </Row>
+      <FillRow restaurantState={restaurantState} dispatch={dispatch} />
       <Row title="Blend System">
         {restaurantState.blending && (
-          <OrderState orderState={restaurantState.blending} />
+          <OrderState orderState={restaurantState.blend} />
         )}
       </Row>
       <Row title="Dispense System">
         {restaurantState.delivering && (
-          <OrderState orderState={restaurantState.delivering} />
+          <OrderState orderState={restaurantState.delivery} />
         )}
       </Row>
       <DeliveryBayRow restaurantState={restaurantState} dispatch={dispatch} />
@@ -432,6 +497,7 @@ function StatusPuck({ status }) {
 }
 
 function ControlPanel({ restaurantState, restaurantDispatch }) {
+  const cloud = useCloud();
   const isConnected = useObservable(OnoCloud.isConnected);
   const kitchenState = useCloudValue('KitchenState');
   const kitchenConfig = useCloudValue('KitchenConfig');
@@ -445,15 +511,17 @@ function ControlPanel({ restaurantState, restaurantDispatch }) {
       .map(k => kitchenConfig.subsystems[k])
       .filter(subsystem => subsystem.hasSequencer)
       .map(s => s.name);
-  console.log(kitchenState, kitchenConfig, sequencerNames);
   const errorHandler = useAsyncError();
   let status = 'ready';
   let message = 'Ready and Idle';
   let subMessage = null;
-
+  let isRunning = false;
   if (!isConnected) {
     status = 'disconnected';
     message = 'App disconnected from server..';
+  } else if (!kitchenState) {
+    status = 'disconnected';
+    message = 'Loading state of kitchen..';
   } else if (!isPLCConnected) {
     status = 'disconnected';
     message = 'Server disconnected from machine..';
@@ -469,6 +537,34 @@ function ControlPanel({ restaurantState, restaurantDispatch }) {
           }
         }
       });
+  }
+  if (status === 'ready') {
+    sequencerNames &&
+      sequencerNames.forEach(systemName => {
+        if (kitchenState[`${systemName}_PrgStep_READ`] !== 0) {
+          if (!isRunning) {
+            isRunning = true;
+            message = `Running ${systemName}`;
+          } else {
+            message += `, ${systemName}`;
+          }
+        }
+      });
+  }
+
+  let nextStep = null;
+  if (restaurantState && !restaurantState.isAutoRunning) {
+    nextStep = computeNextStep(restaurantState, kitchenConfig, kitchenState);
+    if (nextStep) {
+      subMessage = 'Next Step: ' + nextStep.description;
+    }
+  }
+
+  async function handleKitchenAction(action) {
+    await cloud.dispatch({
+      ...action,
+      type: 'KitchenAction',
+    });
   }
   return (
     <View
@@ -506,7 +602,16 @@ function ControlPanel({ restaurantState, restaurantDispatch }) {
           </View>
         )}
         {restaurantState && !restaurantState.isAutoRunning && (
-          <Button title="Step" onPress={() => {}} secondary />
+          <Button
+            title="Step"
+            disabled={!nextStep}
+            onPress={() => {
+              nextStep.perform(cloud, handleKitchenAction).then(resp => {
+                console.log('ACTION RESP', resp);
+              });
+            }}
+            secondary
+          />
         )}
         <Button
           title="STOP"
@@ -614,9 +719,7 @@ function ManualActionsSection() {
 export default function SequencingDebugScreen(props) {
   const [restaurantState, dispatch] = useCloudReducer(
     'RestaurantActions',
-    'RestaurantReducer',
     RestaurantReducer,
-    {},
   );
   return (
     <TwoPanePage
@@ -642,6 +745,13 @@ export default function SequencingDebugScreen(props) {
         <AdHocOrderRow />
       </RowSection>
       <ManualActionsSection />
+      <Button
+        secondary
+        title="Wipe Restaurant State"
+        onPress={() => {
+          dispatch({ type: 'WipeState' });
+        }}
+      />
     </TwoPanePage>
   );
 }

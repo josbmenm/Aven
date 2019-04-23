@@ -9,7 +9,7 @@ function TransactionHistory({ value }) {
   return (
     <View style={{ ...prettyShadow, backgroundColor: 'white' }}>
       {txValue &&
-        txValue.map(tx => {
+        txValue.map((tx, index) => {
           let logLine = `${tx.type} - `;
           if (tx.subsystem) {
             logLine += `${tx.subsystem} - `;
@@ -22,7 +22,11 @@ function TransactionHistory({ value }) {
               .map(k => `${k}:${tx.values[k]}`)
               .join()}`;
           }
-          return <Text style={{ padding: 8 }}>{logLine}</Text>;
+          return (
+            <Text style={{ padding: 8 }} key={index}>
+              {logLine}
+            </Text>
+          );
         })}
     </View>
   );

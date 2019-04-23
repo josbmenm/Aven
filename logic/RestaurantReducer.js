@@ -1,5 +1,10 @@
-export default function RestaurantReducer(state = {}, action) {
+import defineCloudReducer from '../cloud-core/defineCloudReducer';
+
+function RestaurantReducer(state = {}, action) {
   switch (action.type) {
+    case 'WipeState': {
+      return {};
+    }
     case 'PlaceOrder': {
       return {
         ...state,
@@ -11,6 +16,87 @@ export default function RestaurantReducer(state = {}, action) {
         ...state,
         queue: (state.queue || []).filter(order => order.id !== action.id),
       };
+    }
+    case 'RequestFillDrop': {
+      if (!state.fill) {
+        return state;
+      }
+      return {
+        ...state,
+        fill: { ...state.fill, requestDrop: true },
+      };
+    }
+    case 'DroppedFill': {
+      if (!state.fill) {
+        return state;
+      }
+      return {
+        ...state,
+        fill: null,
+        queue: [state.fill.order, ...state.queue],
+      };
+    }
+    case 'DidFill': {
+      if (!state.fill) {
+        return state;
+      }
+      let completedFill = {};
+      const fillsRemaining = state.fill.fillsRemaining.filter(fill => {
+        const isTheFill =
+          action.system === fill.system &&
+          action.amount === fill.amount &&
+          action.slot === fill.slot;
+        if (isTheFill) {
+          completedFill = fill;
+        }
+        return !isTheFill;
+      });
+      return {
+        ...state,
+        fill: {
+          ...state.fill,
+          fillsCompleted: [...state.fill.fillsCompleted, completedFill],
+          fillsRemaining,
+        },
+      };
+    }
+    case 'StartedOrder': {
+      if (!state.queue || !state.queue.length) {
+        return {
+          ...state,
+          fill: {},
+        };
+      }
+      const topOrder = state.queue[0];
+      return {
+        ...state,
+        fill: {
+          order: topOrder,
+          fillsRemaining: topOrder.fills,
+          fillsCompleted: [],
+        },
+        queue: state.queue.slice(1),
+      };
+    }
+    case 'DeliveredToBlender': {
+      if (!state.fill) {
+        return state;
+      }
+      const fillingState = state.fill;
+      return {
+        ...state,
+        fill: null,
+        deliveryA: fillingState,
+      };
+    }
+    case 'ClearDeliveryBay': {
+      if (action.bayId === 'deliveryA') {
+        return { ...state, deliveryA: null };
+      }
+      if (action.bayId === 'deliveryB') {
+        return { ...state, deliveryB: null };
+      }
+      return state;
     }
     case 'StartAutorun': {
       return {
@@ -29,3 +115,11 @@ export default function RestaurantReducer(state = {}, action) {
     }
   }
 }
+
+const CloudRestaurantReducer = defineCloudReducer(
+  'RestaurantReducer',
+  RestaurantReducer,
+  {},
+);
+
+export default CloudRestaurantReducer;

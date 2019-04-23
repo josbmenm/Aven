@@ -52,6 +52,7 @@ export const mutedPrimaryColor = monsterra60;
 
 export const titleStyle = {
   color: highlightPrimaryColor,
+  letterSpacing: 0.5,
   ...boldPrimaryFontFace,
 };
 
@@ -69,7 +70,7 @@ export const descriptionTextStyle = {
 export const detailTextStyle = {
   color: highlightPrimaryColor,
   ...primaryFontFace,
-  fontSize: 12,
+  fontSize: 13,
 };
 
 export const titleFontSize = 60;
@@ -95,7 +96,7 @@ export const pagePaddingTop = 84;
 
 export const menuZoneTopInset = 160;
 export const menuZonePaddingBottom = 116;
-export const largeHorizontalPadding = 60;
+export const largeHorizontalPadding = 57;
 export const midPageHorizPadding = 30; // the page is responsible for the additional 30, because of shadow
 export const rightSidebarWidth = 280;
 export const cardLargeWidth = 340;

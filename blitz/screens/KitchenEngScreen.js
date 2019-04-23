@@ -70,16 +70,15 @@ function LogView() {
         message: isConn ? 'Connected to Server' : 'Disconnected from Server',
       });
     });
-    // kitchenState.observeValue.subscribe(kitchenState => {
-    //   console.log('yyyyyy', kitchenState);
-    // });
   }, [cloud.isConnected, kitchenState]);
   return (
     <ScrollView style={{ flex: 1 }}>
       <KitchenHistory />
       <View style={{ padding: 40 }}>
-        {logs.map(log => (
-          <Text style={{ fontSize: 28 }}>{log.message}</Text>
+        {logs.map((log, index) => (
+          <Text style={{ fontSize: 28 }} key={index}>
+            {log.message}
+          </Text>
         ))}
       </View>
     </ScrollView>

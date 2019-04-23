@@ -123,7 +123,7 @@ export default function createCloudBlock({
 
   const observeValueAndId = observe
     .map(state => {
-      return { value: state.value, getId: () => id };
+      return { value: state.value, getId: () => blockId };
     })
     .filter(({ value }) => {
       return value !== undefined;
@@ -141,7 +141,7 @@ export default function createCloudBlock({
     fetchInProgress = (async () => {
       const result = await dispatch({
         type: 'GetBlock',
-        id,
+        id: blockId,
         domain,
         name: onGetName(),
       });
@@ -207,7 +207,7 @@ export default function createCloudBlock({
     return reComputeResult();
   };
 
-  const functionObserveValue = (argumentDoc, includeId, onIsConnected) => {
+  const functionObserveValueAndId = (argumentDoc, onIsConnected) => {
     return observeValue.switchMap(fnValue => {
       if (fnValue === undefined) {
         return Observable.of(null);
@@ -225,23 +225,19 @@ export default function createCloudBlock({
           await loadDependencies();
           onIsConnected(getIsConnected());
           const result = reComputeResult();
-          if (includeId) {
-            return {
-              value: result,
-              getId: () => getIdOfValue(result),
-              context: {
-                type: 'LambdaResult',
-                lambda: {
-                  type: 'LambdaReference',
-                  name: onGetName(),
-                  id: blockId,
-                },
-                argument: { type: 'BlockReference', id: argumentId },
+          return {
+            value: result,
+            getId: () => getIdOfValue(result),
+            context: {
+              type: 'LambdaResult',
+              lambda: {
+                type: 'LambdaReference',
+                name: onGetName(),
+                id: blockId,
               },
-            };
-          } else {
-            return result;
-          }
+              argument: { type: 'BlockReference', id: argumentId },
+            },
+          };
         });
     });
   };
@@ -270,7 +266,7 @@ export default function createCloudBlock({
 
     functionGetValue,
     functionFetchValue,
-    functionObserveValue,
+    functionObserveValueAndId,
 
     getContext: () => 'what',
   };

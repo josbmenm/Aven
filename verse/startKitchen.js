@@ -40,6 +40,10 @@ const sequencerSystemReadTags = {
     type: 'boolean',
     subTag: 'NoFaults',
   },
+  TagOut: {
+    type: 'integer',
+    subTag: 'Crumb.TagOut',
+  },
   NoAlarms: {
     type: 'boolean',
     subTag: 'NoAlarms',
@@ -68,6 +72,12 @@ const sequencerSystemPulseCommands = {
   },
   Home: {
     subTag: 'Cmd.Home.HmiPb',
+  },
+};
+const sequencerSystemValueCommands = {
+  TagIn: {
+    type: 'integer',
+    subTag: 'Crumb.TagIn',
   },
 };
 const mainSubsystems = {
@@ -168,7 +178,10 @@ export function computeKitchenConfig(cloud) {
             ...((kitchenSystem.HasSequencer && sequencerSystemPulseCommands) ||
               {}),
           };
-          const valueCommands = {};
+          const valueCommands = {
+            ...((kitchenSystem.HasSequencer && sequencerSystemValueCommands) ||
+              {}),
+          };
           tags.forEach(tag => {
             if (tag.Type === 'Command DINT') {
               valueCommands[tag['Internal Name']] = {
@@ -297,11 +310,14 @@ const extractActionValues = ({
   pulse,
   values,
   systemName,
+  tag,
 }) => {
   const pulseCommands = subSystemConfig.pulseCommands || {};
   const valueCommands = subSystemConfig.valueCommands || {};
   const immediateOutput = {};
   const clearPulseOutput = {};
+
+  // pulses
   pulse.forEach(pulseName => {
     const pulseSpec = pulseCommands[pulseName];
     if (!pulseSpec) {
@@ -311,6 +327,8 @@ const extractActionValues = ({
     immediateOutput[internalTagName] = true;
     clearPulseOutput[internalTagName] = false;
   });
+
+  // values
   Object.keys(values).forEach(valueName => {
     const valueSpec = valueCommands[valueName];
     if (!valueSpec) {
@@ -319,6 +337,12 @@ const extractActionValues = ({
     const internalTagName = `${systemName}_${valueName}_VALUE`;
     immediateOutput[internalTagName] = values[valueName];
   });
+
+  // tag
+  if (tag != null) {
+    immediateOutput[`${systemName}_TagIn_VALUE`] = tag;
+  }
+
   return { immediateOutput, clearPulseOutput };
 };
 
@@ -330,7 +354,6 @@ class PLCConnectionError extends Error {
 }
 
 export default function startKitchen({ client, plcIP }) {
-  console.log('startKitchen!!!!');
   let readyPLC = null;
   let connectingPLC = null;
   let readyHandlers = new Set();
@@ -680,6 +703,7 @@ export default function startKitchen({ client, plcIP }) {
       systemName: action.subsystem,
       pulse: action.pulse,
       values: action.values,
+      tag: action.tag,
     });
     await writeTags(mainRobotSchema, immediateOutput);
     await delay(500);
@@ -690,7 +714,6 @@ export default function startKitchen({ client, plcIP }) {
   function close() {
     // clearInterval(debugInterval);
     readyPLC && readyPLC.destroy();
-    console.log('Cloooooooose kitchen!');
     readyPLC = null;
     hasClosed = true;
   }
