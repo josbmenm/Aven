@@ -13,8 +13,8 @@ import {
   prettyShadowRespectedRadius,
   titleStyle,
   cardLargeWidth,
-  monsterra70,
   monsterra,
+  monsterra70,
 } from './Styles';
 import AirtableImage from './AirtableImage';
 import { formatCurrency } from './Utils';
@@ -31,6 +31,33 @@ const carouselPaddingSmall = 32;
 const cardsScrollWidth = cardSmallWidth + carouselPaddingSmall;
 const cardBorderRadius = 8;
 const cardShadowRadius = prettyShadowRespectedRadius;
+
+export function Tag({ tag }) {
+  if (!tag) {
+    return null;
+  }
+  return (
+    <View
+      style={{
+        backgroundColor: monsterra70,
+        borderRadius: 4,
+        paddingVertical: 4,
+        paddingHorizontal: 16,
+      }}
+    >
+      <Text
+        style={{
+          color: 'white',
+          ...boldPrimaryFontFace,
+          letterSpacing: 2,
+          fontSize: 12,
+        }}
+      >
+        {tag.toUpperCase()}
+      </Text>
+    </View>
+  );
+}
 
 function CardContainer({ children, style, onPress }) {
   return (
@@ -59,7 +86,7 @@ function CardContainer({ children, style, onPress }) {
   );
 }
 
-function CardHeader({ title, price, style, benefits }) {
+function CardHeader({ title, price, style, benefits, tag }) {
   return (
     <Animated.View
       pointerEvents="none"
@@ -96,6 +123,11 @@ function CardHeader({ title, price, style, benefits }) {
         >
           {title}
         </Text>
+      )}
+      {tag && (
+        <View style={{ marginTop: 5 }}>
+          <Tag tag={tag} />
+        </View>
       )}
       {benefits && (
         <View style={{ flexDirection: 'row', marginTop: 8 }}>
@@ -184,7 +216,7 @@ export function MenuCard({
           }}
         />
       )}
-      <CardHeader title={title} price={price} tag={tag} benefits={benefits} />
+      <CardHeader title={title} price={price} tag={tag} />
     </CardContainer>
   );
 }
@@ -285,7 +317,12 @@ export function MenuCardCarousel({ items, large, style }) {
               ],
             }}
           >
-            <MenuCard {...item} style={{}} isPhotoZoomed={large} />
+            <MenuCard
+              {...item}
+              style={{}}
+              isPhotoZoomed={large}
+              tag={'Fitness'}
+            />
           </Animated.View>
         );
       })}

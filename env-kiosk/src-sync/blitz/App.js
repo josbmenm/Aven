@@ -156,7 +156,7 @@ function renderAppError({ error, errorInfo, onRetry }) {
   );
 }
 
-const NAV_STORAGE_KEY = 'NavigationState-Neu1o';
+const NAV_STORAGE_KEY = 'NavigationState-N3e2u1o';
 function FullApp() {
   return (
     <PopoverContainer>

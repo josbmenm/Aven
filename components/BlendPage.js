@@ -10,7 +10,7 @@ import {
   proseFontFace,
   largeHorizontalPadding,
 } from './Styles';
-import { MenuCard } from '../components/MenuCard';
+import { MenuCard, Tag } from '../components/MenuCard';
 import { MenuZone, MenuHLayout } from '../components/MenuZone';
 import { formatCurrency } from './Utils';
 import {
@@ -26,21 +26,26 @@ import DetailText from './DetailText';
 import FoodMenu from './FoodMenu';
 import { EnhancementSelector } from './Enhancements';
 
-function BackgroundLayout({ children, background }) {
+function BackgroundLayout({ children, background, photoHasMargin }) {
   return (
     <View
       style={{
         paddingTop: 184,
         alignSelf: 'stretch',
+        borderWidth: 1,
       }}
     >
       <View
         style={{
           position: 'absolute',
-          top: 0,
+          top: photoHasMargin ? -256 : null,
           left: 0,
           width: 1366,
           height: 1024,
+          borderWidth: 1,
+          borderColor: 'blue',
+          overflow: 'visible',
+          flexDirection: 'row',
         }}
       >
         {background}
@@ -189,10 +194,11 @@ function BlendPageContentPure({
     // console.log('LOG FOR exampleMenuItem.json", JSON.stringify(menuItem));
     menuContent = (
       <BackgroundLayout
+        photoHasMargin
         background={
           <AirtableImage
             image={menuItem.Recipe.SplashImage}
-            style={{ flex: 1 }}
+            style={{ flex: 1, aspectRatio: 2732 / 2560 }}
           />
         }
       >
@@ -210,6 +216,9 @@ function BlendPageContentPure({
           //   />
         >
           <DetailsSection>
+            <View style={{ alignSelf: 'flex-start', marginBottom: 5 }}>
+              <Tag tag="Fitness" />
+            </View>
             <MainTitle subtitle={formatCurrency(menuItem.Recipe['Sell Price'])}>
               {displayNameOfOrderItem(item, menuItem)}
             </MainTitle>
