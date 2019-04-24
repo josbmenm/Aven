@@ -4,7 +4,7 @@ import useObservable from './useObservable';
 export default function useCloudReducer(
   actionDocName,
   cloudReducer,
-  remote = true,
+  remote = true
 ) {
   const cloud = useCloud();
   if (remote) {
@@ -14,7 +14,7 @@ export default function useCloudReducer(
   const actionsDoc = cloud.get(actionDocName);
   if (cloudReducer.type !== 'CloudFunction') {
     throw new Error(
-      'Invalid reducer provided to useCloudReducer. Create it with defineCloudReducer',
+      'Invalid reducer provided to useCloudReducer. Create it with defineCloudReducer'
     );
   }
   cloud.lazyDefineCloudFunction(cloudReducer);

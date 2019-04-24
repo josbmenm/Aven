@@ -78,6 +78,9 @@ export default function startSourceSocketServer(wss, source) {
                 });
               }
               function sendUpdate(value) {
+                if (value.id === undefined) {
+                  return;
+                }
                 sendMessage({
                   type: 'SubscriptionNext',
                   id: subscriptionId,
