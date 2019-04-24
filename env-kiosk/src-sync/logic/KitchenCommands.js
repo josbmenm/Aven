@@ -10,7 +10,7 @@ const KitchenCommands = {
     values: {
       DispenseAmount: 1,
       DispenseSystem: 5,
-      SlotToDispense: 1,
+      SlotToDispense: 0,
     },
     checkReady: kitchenState => {
       if (!kitchenState) {

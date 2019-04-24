@@ -64,6 +64,18 @@ const sequencerSystemReadTags = {
     type: 'integer',
     subTag: 'Fault[0]',
   },
+  Fault1: {
+    type: 'integer',
+    subTag: 'Fault[1]',
+  },
+  Fault2: {
+    type: 'integer',
+    subTag: 'Fault[2]',
+  },
+  Fault3: {
+    type: 'integer',
+    subTag: 'Fault[3]',
+  },
 };
 
 const sequencerSystemPulseCommands = {

@@ -32,6 +32,40 @@ function doConfirmOrder(lastOrder) {
   return { ...lastOrder, isConfirmed: true, confirmedTime: Date.now() };
 }
 
+export function getSubsystemFaults(system) {
+  let faults = null;
+  if (system.reads.NoFaults && system.reads.NoFaults.value !== true) {
+    // system has faulting behavior
+    faults = [];
+    const faulted = Array(4)
+      .fill(0)
+      .map((_, faultIntIndex) => {
+        return system.reads[`Fault${faultIntIndex}`].value
+          .toString(2)
+          .split('')
+          .reverse()
+          .map(v => v === '1');
+      });
+    if (faulted[0][0]) {
+      faults.push(
+        'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
+      );
+    }
+    system.faults &&
+      system.faults.forEach(f => {
+        const isFaulted = faulted[f.intIndex][f.bitIndex];
+        if (isFaulted) {
+          faults.push(f.description);
+        }
+      });
+  }
+  if (faults && !faults.length) {
+    faults.push('Unknown Fault');
+  }
+  console.log('has faults', faults);
+  return faults;
+}
+
 export function OrderContextProvider({ children }) {
   let cloud = useContext(CloudContext);
   const restaurantActions = cloud.get('RestaurantActions');

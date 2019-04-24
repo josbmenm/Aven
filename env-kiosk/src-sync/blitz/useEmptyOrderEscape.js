@@ -10,6 +10,7 @@ export default function useEmptyOrderEscape() {
 
   const orderValue = useObservable(order && order.observeValue);
   useEffect(() => {
+    console.log('haz orderValue', orderValue);
     if (orderValue === null) {
       dispatch(
         NavigationActions.back({

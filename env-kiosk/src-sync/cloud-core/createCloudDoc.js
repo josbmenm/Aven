@@ -691,10 +691,6 @@ export default function createCloudDoc({
   async function putTransaction(value) {
     await fetch();
     const prevId = getId();
-    if (!prevId) {
-      const s = getState();
-      debugger;
-    }
     const expectedTransactionValue = {
       type: 'TransactionValue',
       on: {

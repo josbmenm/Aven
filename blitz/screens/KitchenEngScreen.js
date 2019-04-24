@@ -1,9 +1,7 @@
 import React, { Component, useReducer, useEffect } from 'react';
-import Hero from '../../components/Hero';
 import BitRow from '../../components/BitRow';
 import { withNavigation } from '../../navigation-core';
 
-import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import { View, ScrollView, Text } from 'react-native';
 import LinkRow from '../../components/LinkRow';
@@ -11,19 +9,10 @@ import { getSubsystemOverview, withKitchen } from '../../ono-cloud/OnoKitchen';
 import useCloud from '../../cloud-core/useCloud';
 import useObservable from '../../cloud-core/useObservable';
 import KitchenHistory from '../../components/KitchenHistory';
-
-function IsConnectedRow() {
-  const cloud = useCloud();
-  const isConnected = useObservable(cloud.isConnected);
-  return <BitRow title="Server Connected" value={isConnected} />;
-}
-
-const PLCConnectedRow = withKitchen(({ kitchenState }) => (
-  <BitRow
-    title="PLC Connected"
-    value={kitchenState && kitchenState.isPLCConnected}
-  />
-));
+import ControlPanel from './ControlPanel';
+import TwoPanePage from '../../components/TwoPanePage';
+import useCloudReducer from '../../cloud-core/useCloudReducer';
+import RestaurantReducer from '../../logic/RestaurantReducer';
 
 const Subsystems = withNavigation(
   withKitchen(({ navigation, kitchenState, kitchenConfig }) => {
@@ -85,32 +74,43 @@ function LogView() {
   );
 }
 
+function Panel() {
+  const [restaurantState, dispatch] = useCloudReducer(
+    'RestaurantActions',
+    RestaurantReducer,
+  );
+  return (
+    <ControlPanel
+      restaurantState={restaurantState}
+      restaurantDispatch={dispatch}
+    />
+  );
+}
+
 export default class KitchenEngScreen extends Component {
-  static navigationOptions = GenericPage.navigationOptions;
+  static navigationOptions = TwoPanePage.navigationOptions;
   render() {
     return (
-      <GenericPage {...this.props} disableScrollView={true}>
-        <Hero title="Kitchen Engineering" icon="🛠" />
-        <View style={{ flexDirection: 'row', flex: 1 }}>
-          <LogView />
-          <ScrollView style={{ flex: 1 }}>
-            <RowSection>
-              <LinkRow
-                onPress={() => {
-                  this.props.navigation.navigate({
-                    routeName: 'SequencingDebug',
-                  });
-                }}
-                icon={'🧭'}
-                title={'App Sequencer'}
-              />
-              <PLCConnectedRow />
-              <IsConnectedRow />
-            </RowSection>
-            <Subsystems />
-          </ScrollView>
-        </View>
-      </GenericPage>
+      <TwoPanePage
+        {...this.props}
+        title="Kitchen Engineering"
+        icon="🛠"
+        side={<LogView />}
+        afterSide={<Panel />}
+      >
+        <RowSection>
+          <LinkRow
+            onPress={() => {
+              this.props.navigation.navigate({
+                routeName: 'SequencingDebug',
+              });
+            }}
+            icon={'📋'}
+            title={'Kitchen Manager'}
+          />
+        </RowSection>
+        <Subsystems />
+      </TwoPanePage>
     );
   }
 }

@@ -154,6 +154,23 @@ export default function createCloudClient({
     return { value, id, context };
   }
 
+  async function PutDocValue({ domain: actionDomain, name, value }) {
+    const defaultAction = () =>
+      source.dispatch({
+        type: 'PutDocValue',
+        domain: actionDomain,
+        name,
+        value,
+      });
+    if (actionDomain !== domain) {
+      return await defaultAction();
+    }
+    const doc = docs.get(name);
+    await doc.put(value);
+    const id = await doc.getId();
+    return { id, name, domain };
+  }
+
   const actions = {
     CreateSession: createSession,
     CreateAnonymousSession: createAnonymousSession,
@@ -161,6 +178,7 @@ export default function createCloudClient({
     GetBlock,
     GetDoc,
     GetDocValue,
+    PutDocValue,
   };
 
   const dispatch = createDispatcher(actions, sessionDispatch, domain);

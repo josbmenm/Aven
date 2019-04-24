@@ -3,7 +3,14 @@ if (__DEV__) {
 }
 
 import React, { Component } from 'react';
-import { View, Text, StatusBar, AsyncStorage, YellowBox } from 'react-native';
+import {
+  View,
+  Text,
+  StatusBar,
+  AsyncStorage,
+  ScrollView,
+  YellowBox,
+} from 'react-native';
 import { createAppContainer } from '../navigation-native';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { createNavigator, StackRouter } from '../navigation-core';
@@ -141,11 +148,11 @@ function RetryButton({ onRetry }) {
 
 function renderAppError({ error, errorInfo, onRetry }) {
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }}>
       <Text>O, no!</Text>
       <Text>{error.message}</Text>
       <RetryButton onRetry={onRetry} />
-    </View>
+    </ScrollView>
   );
 }
 
