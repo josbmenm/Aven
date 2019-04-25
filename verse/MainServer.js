@@ -518,6 +518,43 @@ const runServer = async () => {
     },
   });
 
+  async function placeOrder({ orderId }) {
+    console.log('placing order..', orderId);
+
+    const orderResult = await cloud.dispatch({
+      type: 'GetDocValue',
+      name: `Orders/${orderId}`,
+      domain: 'onofood.co',
+    });
+
+    const at = cloud.get('Airtable').expand((folder, doc) => {
+      if (!folder) {
+        return null;
+      }
+      return doc.getBlock(folder.files['db.json']);
+    });
+    await at.fetchValue();
+    const config = at.getValue();
+    // const order = orderResult.value;
+
+    console.log('current order is ', orderResult.items, config);
+    // await cloud.get('RestaurantActions').putTransaction({
+    //   type: 'PlaceOrder',
+    //   order: {
+    //     id: currentOrder.getName(),
+    //     name:
+    //       orderValue.orderName.firstName + ' ' + orderValue.orderName.lastName,
+    //     blendName: 'mint chip greens + protein',
+    //     fills: [
+    //       { system: 5, slot: 0, amount: 1 },
+    //       { system: 3, slot: 0, amount: 2 },
+    //       { system: 3, slot: 2, amount: 3 },
+    //     ],
+    //   },
+    // });
+    return {};
+  }
+
   const dispatch = async action => {
     switch (action.type) {
       case 'KitchenCommand': // low level thing
@@ -535,6 +572,8 @@ const runServer = async () => {
         return getConnectionToken(action);
       case 'StripeCapturePayment':
         return capturePayment(action);
+      case 'PlaceOrder':
+        return placeOrder(action);
       default:
         return await protectedSource.dispatch(action);
     }

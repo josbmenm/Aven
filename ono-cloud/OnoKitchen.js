@@ -62,7 +62,6 @@ export function getSubsystemFaults(system) {
   if (faults && !faults.length) {
     faults.push('Unknown Fault');
   }
-  console.log('has faults', faults);
   return faults;
 }
 
@@ -130,22 +129,9 @@ export function OrderContextProvider({ children }) {
       guardAsync(
         (async () => {
           await currentOrder.transact(doConfirmOrder);
-          const orderValue = currentOrder.getValue();
-          await restaurantActions.putTransaction({
+          await cloud.dispatch({
             type: 'PlaceOrder',
-            order: {
-              id: currentOrder.getName(),
-              name:
-                orderValue.orderName.firstName +
-                ' ' +
-                orderValue.orderName.lastName,
-              blendName: 'mint chip greens + protein',
-              fills: [
-                { system: 5, slot: 0, amount: 1 },
-                { system: 3, slot: 0, amount: 2 },
-                { system: 3, slot: 2, amount: 3 },
-              ],
-            },
+            orderId: currentOrder.getName(),
           });
         })(),
       );
