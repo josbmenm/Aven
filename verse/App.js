@@ -166,19 +166,42 @@ function Cup({ isFilled }) {
   }
 }
 
+function IngredientFillingCup({ fillLevel, currentFill }) {
+  return (
+    <View style={{ flexDirection: 'row' }}>
+      {currentFill && (
+        <Text>{currentFill.name || JSON.stringify(currentFill)}</Text>
+      )}
+      <AnimatedCup fillLevel={fillLevel} />
+    </View>
+  );
+}
+
 function OrderRow({ prepSpec, status, queuedIndex }) {
   let right = null;
   if (status === 'queued') {
     right = <ETAText queuedIndex={queuedIndex} />;
   }
   if (status === 'filling') {
-    right = <Cup isFilled={false} />;
+    let fillLevel = 0;
+    let currentFill = null;
+    if (status.fillsCompleted && status.fillsRemaining) {
+      const remaining = status.fillsRemaining.length;
+      const completed = status.fillsCompleted.length;
+      fillLevel = completed / (completed + remaining);
+      if (status.fillsRemaining[0]) {
+        currentFill = status.fillsRemaining[0];
+      }
+    }
+    right = (
+      <IngredientFillingCup currentFill={currentFill} fillLevel={fillLevel} />
+    );
   }
   if (status === 'blending') {
-    right = <Cup isFilled={true} />;
+    right = <AnimatedCup fillLevel={1} />;
   }
   if (status === 'delivering') {
-    right = <Cup isFilled={true} />;
+    right = <AnimatedCup fillLevel={1} />;
   }
   return (
     <StatusDisplayRow
@@ -213,17 +236,21 @@ function QueueSection({ queue, fill, blend, delivery }) {
   ];
   fill &&
     renderQueue.push(
-      <OrderRow key={fill.order.id} prepSpec={fill} status="filling" />,
+      <OrderRow key={fill.order.id} prepSpec={fill.order} status="filling" />,
     );
   blend &&
     renderQueue.push(
-      <OrderRow key={blend.order.id} prepSpec={blend} status="blending" />,
+      <OrderRow
+        key={blend.order.id}
+        prepSpec={blend.order}
+        status="blending"
+      />,
     );
   delivery &&
     renderQueue.push(
       <OrderRow
         key={delivery.order.id}
-        prepSpec={delivery}
+        prepSpec={delivery.order}
         status="delivering"
       />,
     );
@@ -310,7 +337,73 @@ function PickupSection({ deliveryA, deliveryB }) {
   );
 }
 
+const ANIM_INC = 0.01;
+
+function AnimatedCup({ fillLevel }) {
+  let [shownFillLevel, setShownFillLevel] = React.useState(fillLevel);
+  let zz = React.useRef({ animationFrame: null, ff: fillLevel });
+  React.useEffect(() => {
+    window.cancelAnimationFrame(zz.current.animationFrame);
+    function performUpdate() {
+      let n = null;
+      let lastFillLevel = zz.current.ff;
+      if (fillLevel > lastFillLevel) {
+        n = Math.min(fillLevel, lastFillLevel + ANIM_INC);
+      } else if (fillLevel < lastFillLevel) {
+        n = Math.max(fillLevel, lastFillLevel - ANIM_INC);
+      }
+      if (n === null) {
+        return;
+      }
+      zz.current.ff = n;
+      setShownFillLevel(n);
+      zz.current.animationFrame = window.requestAnimationFrame(performUpdate);
+    }
+    zz.current.animationFrame = window.requestAnimationFrame(performUpdate);
+  }, [fillLevel]);
+  return (
+    <View style={{ width: 49, height: 64 }}>
+      <div
+        style={{
+          width: 49,
+          height: 64,
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          WebkitMaskImage: `url(${require('./assets/CupFill.svg')})`,
+          WebkitMaskPosition: `center -${Math.floor(shownFillLevel * 100) +
+            2}%`,
+          WebkitMaskRepeat: 'no-repeat',
+          maskMode: 'alpha',
+        }}
+      >
+        <Image
+          source={require('./assets/CupFill.svg')}
+          style={{
+            width: 49,
+            height: 64,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }}
+        />
+      </div>
+      <Image
+        source={require('./assets/CupOutline.svg')}
+        style={{ width: 49, height: 64, position: 'absolute', top: 0, left: 0 }}
+      />
+    </View>
+  );
+}
+
 function StatusDisplay({ state }) {
+  // const [fillLevel, setFillLevel] = React.useState(0);
+  // React.useEffect(() => {
+  //   setInterval(() => {
+  //     setFillLevel(Math.random());
+  //   }, 5000);
+  // }, []);
+  // return <AnimatedCup fillLevel={fillLevel} />;
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       <PresentationSection />

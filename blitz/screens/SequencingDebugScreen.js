@@ -211,8 +211,8 @@ function AdHocOrderRow() {
   const [orderBlendName, setOrderBlendName] = useState('Mango and Tumeric');
 
   const [fills, setFills] = useState([
-    { system: 3, slot: 0, amount: 2 },
-    { system: 3, slot: 2, amount: 3 },
+    { system: 3, slot: 0, amount: 2, name: 'Yummy' },
+    { system: 3, slot: 2, amount: 3, name: 'Food' },
   ]);
 
   const openOrderInfo = useOrderInfoPopover({
