@@ -24,6 +24,11 @@ import RestaurantReducer from '../logic/RestaurantReducer';
 import startKitchen, { computeKitchenConfig } from './startKitchen';
 import { getConnectionToken, capturePayment } from './Stripe';
 import { computeNextStep } from '../logic/KitchenSequence';
+import {
+  companyConfigToBlendMenu,
+  getOrderSummary,
+  displayNameOfOrderItem,
+} from '../logic/configLogic';
 
 const COUNT_MAX = 2147483640; // near the maximum unsigned dint
 
@@ -534,24 +539,30 @@ const runServer = async () => {
       return doc.getBlock(folder.files['db.json']);
     });
     await at.fetchValue();
-    const config = at.getValue();
-    // const order = orderResult.value;
+    // const blends = companyConfigToBlendMenu(at.getValue());
+    const order = orderResult.value;
+    const summary = getOrderSummary(order, at.getValue());
+    await summary.items
+      .filter(i => i.type === 'blend')
+      .map(async item => {
+        console.log('ITEM!', item);
 
-    console.log('current order is ', orderResult.items, config);
-    // await cloud.get('RestaurantActions').putTransaction({
-    //   type: 'PlaceOrder',
-    //   order: {
-    //     id: currentOrder.getName(),
-    //     name:
-    //       orderValue.orderName.firstName + ' ' + orderValue.orderName.lastName,
-    //     blendName: 'mint chip greens + protein',
-    //     fills: [
-    //       { system: 5, slot: 0, amount: 1 },
-    //       { system: 3, slot: 0, amount: 2 },
-    //       { system: 3, slot: 2, amount: 3 },
-    //     ],
-    //   },
-    // });
+        await cloud.get('RestaurantActions').putTransaction({
+          type: 'PlaceOrder',
+          order: {
+            id: orderId,
+            name: order.orderName.firstName + ' ' + order.orderName.lastName,
+            blendName: displayNameOfOrderItem(item, item.menuItem),
+            fills: [
+              { system: 3, slot: 0, amount: 2 },
+              { system: 3, slot: 1, amount: 3 },
+              { system: 0, slot: 0, amount: 1 },
+            ],
+          },
+        });
+      });
+    // console.log('current order is ', JSON.stringify(summary.items, null, 2));
+
     return {};
   }
 

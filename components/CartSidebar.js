@@ -21,7 +21,7 @@ import {
   monsterra80,
   monsterra5,
 } from './Styles';
-import { formatCurrency } from './Utils';
+import formatCurrency from '../utils/formatCurrency';
 import Button from './Button';
 import {
   useOrderItem,

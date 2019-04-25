@@ -16,7 +16,7 @@ import {
   primaryFontFace,
 } from './Styles';
 import Animated, { Easing } from 'react-native-reanimated';
-import { formatCurrency } from './Utils';
+import formatCurrency from '../utils/formatCurrency';
 
 export function EnhancementDetail({
   enhancement,

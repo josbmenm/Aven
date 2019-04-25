@@ -6,7 +6,7 @@ import {
   getItemCustomizationSummary,
 } from '../ono-cloud/OnoKitchen';
 import { titleStyle, boldPrimaryFontFace, primaryFontFace } from './Styles';
-import { formatCurrency } from './Utils';
+import formatCurrency from '../utils/formatCurrency';
 
 const receiptTextStyle = {
   color: 'white',

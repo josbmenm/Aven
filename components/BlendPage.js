@@ -12,7 +12,7 @@ import {
 } from './Styles';
 import { MenuCard, Tag } from '../components/MenuCard';
 import { MenuZone, MenuHLayout } from '../components/MenuZone';
-import { formatCurrency } from './Utils';
+import formatCurrency from '../utils/formatCurrency';
 import {
   displayNameOfOrderItem,
   addMenuItemToCartItem,

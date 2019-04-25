@@ -17,7 +17,7 @@ import {
   monsterra70,
 } from './Styles';
 import AirtableImage from './AirtableImage';
-import { formatCurrency } from './Utils';
+import formatCurrency from '../utils/formatCurrency';
 import Animated from 'react-native-reanimated';
 
 const { interpolate, multiply, add } = Animated;
