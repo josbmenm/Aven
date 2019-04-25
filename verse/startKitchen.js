@@ -637,7 +637,7 @@ export default function startKitchen({ client, plcIP }) {
       tag.value = values[tagAlias];
       outputGroup.add(tag);
     });
-
+    console.log('Kitchen Write Tags', values);
     const PLC = await getReadyPLC();
     await PLC.writeTagGroup(outputGroup);
   };
