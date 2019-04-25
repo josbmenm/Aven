@@ -681,29 +681,23 @@ const initialRestaurantState = {
 
 function StatusDisplayScreen() {
   const cloud = useCloud();
-  const restaurant = cloud.get('RestaurantState');
-  const restaurantStateValue = useCloudValue(restaurant);
-  const restaurantState =
-    restaurantStateValue === null
-      ? initialRestaurantState
-      : restaurantStateValue;
-  if (!restaurantState) {
-    return null;
-  }
-  function dispatch(action) {
-    const state = reduceRestaurantState(restaurantState, action);
-    restaurant.put(state);
-  }
-  console.log('restaurantState', restaurantState);
+  const restaurantState = useCloudValue('RestaurantActions^RestaurantReducer');
+  const restaurantActions = cloud.get('RestaurantActions');
+  const dispatch = restaurantActions.putTransaction;
+  // function dispatch(action) {
+  //   const state = reduceRestaurantState(restaurantState, action);
+  //   restaurant.put(state);
+  // }
+  // console.log('restaurantState', restaurantState);
   // return null;
   // const [displayState, dispatch] = React.useReducer(
   //   reduceRestaurantState,
   //   initialRestaurantState,
   // );
 
-  // if (!displayState) {
-  //   return null;
-  // }
+  if (!restaurantState) {
+    return null;
+  }
   // console.log('Display State: ', displayState);
   return (
     <StatusDisplayLayout

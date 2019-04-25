@@ -224,10 +224,13 @@ const runServer = async () => {
   await new Promise(resolve => setTimeout(resolve, 3000));
   computeKitchenConfig(cloud);
 
-  const kitchen = startKitchen({
-    client: cloud,
-    plcIP: '192.168.1.122',
-  });
+  let kitchen = null;
+  if (!process.env.DISABLE_ONO_KITCHEN) {
+    kitchen = startKitchen({
+      client: cloud,
+      plcIP: '192.168.1.122',
+    });
+  }
 
   // const kitchen = startTestKitchen({
   //   cloud,
@@ -286,7 +289,22 @@ const runServer = async () => {
   //   await delay(550);
   // }
 
+  let lastT = null;
+  function logBehavior(msg) {
+    const t = Date.now();
+    let outMsg = `${t} `;
+    if (lastT) {
+      const deltaT = t - lastT;
+      outMsg += `(${deltaT} ms since last) `;
+    }
+    outMsg += ' - ' + msg;
+    console.log(outMsg);
+  }
+
   async function kitchenAction(action) {
+    if (!kitchen) {
+      throw new Error('No kitchen right now');
+    }
     const commandType = KitchenCommands[action.command];
     console.log('Kitchen Action:', action.command, action.params);
 
@@ -313,13 +331,23 @@ const runServer = async () => {
     };
     kitchen.dispatchCommand(command);
     await new Promise((resolve, reject) => {
+      let isSystemIdle = null;
+      let isTagReceived = null;
+      let currentTag = null;
+      let noFaults = true;
       let sub = cloud.get('KitchenState').observeValue.subscribe({
         next: state => {
           if (!state) {
             return;
           }
-          const isSystemIdle = state[`${subsystem}_PrgStep_READ`] === 0;
-          const isTagReceived = state[`${subsystem}_TagOut_READ`] === tag;
+          noFaults = state[`${subsystem}_NoFaults_READ`];
+          currentTag = state[`${subsystem}_TagOut_READ`];
+          isSystemIdle = state[`${subsystem}_PrgStep_READ`] === 0;
+          isTagReceived = currentTag === tag;
+          if (noFaults === false) {
+            reject(new Error(`System "${subsystem}" has faulted`));
+            return;
+          }
           if (isSystemIdle && isTagReceived) {
             resolve();
             sub && sub.unsubscribe();
@@ -329,8 +357,18 @@ const runServer = async () => {
       });
       setTimeout(() => {
         sub && sub.unsubscribe();
-        reject(new Error('Timeout waiting for kitchen state..'));
-      }, 15000);
+        if (!isSystemIdle) {
+          return reject(new Error(`System "${subsystem}" is not idle!`));
+        }
+        if (!isTagReceived) {
+          return reject(
+            new Error(
+              `Current TagOut of "${subsystem}" is "${currentTag}" but we expected "${tag}"!`,
+            ),
+          );
+        }
+        reject(new Error('Unknown timeout waiting for kitchen state..'));
+      }, 30000);
     });
     return command;
   }
@@ -461,6 +499,7 @@ const runServer = async () => {
 
   function handleStateUpdates() {
     if (
+      !kitchen ||
       !restaurantState ||
       !kitchenState ||
       !kitchenConfig ||
@@ -568,9 +607,14 @@ const runServer = async () => {
 
   const dispatch = async action => {
     switch (action.type) {
-      case 'KitchenCommand': // low level thing
+      case 'KitchenCommand': {
+        // low level thing
+        if (!kitchen) {
+          throw new Error('no kitchen');
+        }
         // subsystem (eg 'IOSystem'), pulse (eg ['home']), values (eg: foo: 123)
         return await kitchen.dispatchCommand(action);
+      }
       case 'SendReceipt':
         return await sendReceipt({ smsAgent, emailAgent, action });
       case 'KitchenAction':
@@ -618,7 +662,7 @@ const runServer = async () => {
       await protectedSource.close();
       await storageSource.close();
       await webService.close();
-      await kitchen.close();
+      kitchen && (await kitchen.close());
       console.log('😵 Server Closed');
     },
   };
