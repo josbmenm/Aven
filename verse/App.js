@@ -17,6 +17,7 @@ import {
   primaryFontFace,
   black10,
 } from '../components/Styles';
+import RestaurantReducer from '../logic/RestaurantReducer';
 
 let baseAuthority = undefined;
 let baseUseSSL = undefined;
@@ -181,8 +182,8 @@ function OrderRow({ prepSpec, status, queuedIndex }) {
   }
   return (
     <StatusDisplayRow
-      title={prepSpec.displayName}
-      subTitle={prepSpec.recipeName}
+      title={prepSpec.name}
+      subTitle={prepSpec.blendName}
       right={right}
     />
   );
@@ -199,21 +200,33 @@ function PresentationSection() {
   );
 }
 
-function QueueSection({ prepQueue, filling, blending, delivering }) {
+function QueueSection({ queue, fill, blend, delivery }) {
   const renderQueue = [
-    ...prepQueue.map((order, orderIndex) => (
+    ...queue.map((order, orderIndex) => (
       <OrderRow
+        key={order.id}
         prepSpec={order}
         status={'queued'}
-        queuedIndex={prepQueue.length - orderIndex}
+        queuedIndex={queue.length - orderIndex}
       />
     )),
   ];
-  filling && renderQueue.push(<OrderRow prepSpec={filling} status="filling" />);
-  blending &&
-    renderQueue.push(<OrderRow prepSpec={blending} status="blending" />);
-  delivering &&
-    renderQueue.push(<OrderRow prepSpec={delivering} status="delivering" />);
+  fill &&
+    renderQueue.push(
+      <OrderRow key={fill.order.id} prepSpec={fill} status="filling" />,
+    );
+  blend &&
+    renderQueue.push(
+      <OrderRow key={blend.order.id} prepSpec={blend} status="blending" />,
+    );
+  delivery &&
+    renderQueue.push(
+      <OrderRow
+        key={delivery.order.id}
+        prepSpec={delivery}
+        status="delivering"
+      />,
+    );
   return (
     <React.Fragment>
       <StatusDisplayTitleRow title="orders in progress:" />
@@ -242,10 +255,10 @@ function ReadyPickupCell({ state }) {
             color: monsterra,
           }}
         >
-          {state.displayName}
+          {state.name}
         </Text>
         <Text style={{ ...primaryFontFace, color: monsterra, fontSize: 16 }}>
-          {state.recipeName}
+          {state.blendName}
         </Text>
       </View>
       <Cup isFilled={true} />
@@ -270,7 +283,7 @@ function PickupCell({ state }) {
   );
 }
 
-function PickupSection({ state }) {
+function PickupSection({ deliveryA, deliveryB }) {
   return (
     <React.Fragment>
       <StatusDisplayTitleRow title="now serving:" />
@@ -280,7 +293,7 @@ function PickupSection({ state }) {
           height: 192,
         }}
       >
-        <PickupCell state={state.left} />
+        <PickupCell state={deliveryA} />
         <View style={{ padding: 28 }}>
           <View
             style={{
@@ -291,7 +304,7 @@ function PickupSection({ state }) {
             }}
           />
         </View>
-        <PickupCell state={state.right} />
+        <PickupCell state={deliveryB} />
       </View>
     </React.Fragment>
   );
@@ -302,7 +315,7 @@ function StatusDisplay({ state }) {
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       <PresentationSection />
       <QueueSection {...state} />
-      <PickupSection state={state.deliveryBays} />
+      <PickupSection {...state} />
     </View>
   );
 }
@@ -365,14 +378,13 @@ function ActionButton({ dispatch, name, type, getParams }) {
       onPress={() =>
         dispatch({
           type,
-          ...getParams(),
+          ...(getParams && getParams()),
         })
       }
     />
   );
 }
 function StatusDisplayDebug({ displayState, dispatch }) {
-  const cloud = useCloud();
   return (
     <View
       style={{
@@ -381,12 +393,7 @@ function StatusDisplayDebug({ displayState, dispatch }) {
         height: 200,
       }}
     >
-      <Button
-        title={'Reset State'}
-        onPress={() => {
-          cloud.get('RestaurantState').put(initialRestaurantState);
-        }}
-      />
+      <ActionButton type="WipeState" dispatch={dispatch} />
       <ActionButton
         type="PlaceOrder"
         getParams={() => ({
@@ -402,21 +409,9 @@ function StatusDisplayDebug({ displayState, dispatch }) {
         })}
         dispatch={dispatch}
       />
-      <ActionButton
-        type="KitchenPrepStart"
-        getParams={() => {}}
-        dispatch={dispatch}
-      />
-      <ActionButton
-        type="KitchenBlend"
-        getParams={() => {}}
-        dispatch={dispatch}
-      />
-      <ActionButton
-        type="KitchenCompleteBlend"
-        getParams={() => {}}
-        dispatch={dispatch}
-      />
+      <ActionButton type="KitchenPrepStart" dispatch={dispatch} />
+      <ActionButton type="KitchenBlend" dispatch={dispatch} />
+      <ActionButton type="KitchenCompleteBlend" dispatch={dispatch} />
       <ActionButton
         type="KitchenDeliver"
         getParams={() => {
@@ -439,266 +434,14 @@ function StatusDisplayDebug({ displayState, dispatch }) {
   );
 }
 
-/*
-
-machine fault, machine alarm: {
-  time: 456789, // when was this reported
-  faultName/alarmName: // text from airtable about what is up
-}
-
-machine debug: {
-  alarms: [{...machine alarm}]
-  faults: [{...machine fault}]
-}
-
-fill spec: {
-  systemId: 1, // refers to Airtable "KitchenSystems" "FillSystemID"
-  slotNumber: 1, // refers to Airtable "KitchenIngredients" "Slot Number"
-  amount: 123, // quantity to command to the PLC
-}
-
-prep spec: {
-  orderName: 'Daniel F',
-  menuItemName: 'Mango & Papaya',
-  menuItemColor: '#123456',
-  requestedFills: [
-    {...fill spec}
-  ]
-}
-
-fill result: {
-  ...fill spec
-  startTime: 456789, // 
-  completeTime: 456789, //
-}
-
-fill state: {
-  ... prep spec,
-  prepStartTime: 56789, // timestamp of when the cup started
-  cupLandTime: 56789, // timestamp of when the cup was recieved for filling
-  currentFill: {...fill result}, // the fill that is currently happening. null if not filling
-  queuedFills: [{...fill spec}],
-  completedFills: [{...fill result}],
-}
-
-blend state: {
-  ... prep spec,
-  prepStartTime: 56789, // timestamp of when the cup started
-  cupLandTime: 56789, // timestamp of when the cup was recieved for filling
-  fillCompleteTime: 56789,
-  blendStartTime: 56789,
-  blendCompleteTime: 56789,
-  deliverTime: 56789,
-  completedFills: [{...fill result}],
-}
-
-delivery state: {
-  ... blend state
-}
-
-restaurant state: {
-  prepQueue: [
-    {...prep spec}
-    // bottom of list is "next up"
-  ],
-  filling: {...fill state},
-  blending: {...fill state},
-  delivering: {...fill state}
-  deliveryBays: {
-    A: {...delivery state},
-    B: {...delivery state}
-  },
-  status: (
-    || "open" - currently working or ready
-    || "closed" - turned off or something
-    || "faulted" - kitchen is faulted.
-    // maybe also "loading" "unloading" "filling" "travel" "debug"
-  ),
-  faultSystem: "", // "filling", "blending", "delivery"
-  faultDeliverySystem: "", // name of faulted delivery bay. null when delivery bay not faulted.
-  dispenserState: [// indexed by system id
-    [// indexed by slot id
-      {ingredientId, estimatedLevel, lastFillTime, lastFillLevel}
-    ]
-  ]
-}
-
-*/
-
-const reduceStatusDisplayState = `
-console.log('onerun')
-  if (!action) {
-    return state;
-  }
-  if (action.type === 'KitchenPrepStart') {
-
-  }
-  if (action.type === 'KitchenFill') {
-
-  }
-  if (action.type === 'KitchenBlend') {
-
-  }
-  if (action.type === 'KitchenDeliver') {
-    return {
-
-    }
-  }
-  if (action.type === 'PlaceOrder') {
-    const prevPrepQueue = state && state.prepQueue || [];
-    const { order } = action;
-    if (!order || !order.prepQueue) {
-      return state;
-    }
-    const newQueued = order.prepQueue.map(meal => ({
-      ...meal,
-      displayName: order.displayName
-    }));
-    return {
-      ...state,
-      prepQueue: [...prevPrepQueue, ...newQueued],
-    };
-  }
-  if (action.type === 'FillIngredient') {
-    
-    action.ingredientName
-    action.ingredientIcon
-    action.ingredientColor
-  }
-  return state;
-`;
-
-function reduceRestaurantState(state, action) {
-  if (action.type === 'KitchenPrepStart') {
-    if (state.filling) {
-      throw new Error('Cannot start while already filling!');
-    }
-    return {
-      ...state,
-      prepQueue: state.prepQueue.slice(0, state.prepQueue.length - 1),
-      filling: state.prepQueue[state.prepQueue.length - 1],
-    };
-  }
-  if (action.type === 'KitchenFill') {
-  }
-  if (action.type === 'KitchenBlend') {
-    if (state.blending) {
-      throw new Error('cannot start blending while another meal is blending');
-    }
-    if (!state.filling) {
-      return state;
-    }
-    return {
-      ...state,
-      filling: null,
-      blending: state.filling,
-    };
-  }
-  if (action.type === 'KitchenCompleteBlend') {
-    if (state.delivering) {
-      throw new Error(
-        'cannot start delivering while another meal is delivering',
-      );
-    }
-    if (!state.blending) {
-      return state;
-    }
-    return {
-      ...state,
-      blending: null,
-      delivering: state.blending,
-    };
-  }
-  if (action.type === 'KitchenDeliver') {
-    if (!state.delivering) {
-      throw new Error('cannot deliver without a meal ready for delivery');
-    }
-    const { bay } = action;
-    if (state.deliveryBays[bay] === undefined) {
-      throw new Error(`cannot deliver unknown delivery bay "${bay}"`);
-    }
-    if (state.deliveryBays[bay]) {
-      throw new Error(`cannot deliver to non-empty delivery bay "${bay}"`);
-    }
-    return {
-      ...state,
-      delivering: null,
-      deliveryBays: {
-        ...state.deliveryBays,
-        [bay]: state.delivering,
-      },
-    };
-  }
-  if (action.type === 'KitchenDeliveryClear') {
-    const { bay } = action;
-    if (state.deliveryBays[bay] === undefined) {
-      throw new Error(`cannot deliver unknown delivery bay "${bay}"`);
-    }
-    return {
-      ...state,
-      deliveryBays: {
-        ...state.deliveryBays,
-        [bay]: null,
-      },
-    };
-  }
-  if (action.type === 'PlaceOrder') {
-    const prevPrepQueue = state.prepQueue;
-    const { order } = action;
-    if (!order || !order.prepQueue) {
-      return state;
-    }
-    const newQueued = order.prepQueue.map(meal => ({
-      ...meal,
-      displayName: order.displayName,
-    }));
-    return {
-      ...state,
-      prepQueue: [...newQueued, ...prevPrepQueue],
-    };
-  }
-  if (action.type === 'FillIngredient') {
-    // action.ingredientName
-    // action.ingredientIcon
-    // action.ingredientColor
-  }
-  return state;
-}
-const initialRestaurantState = {
-  prepQueue: [
-    { displayName: 'Lucy V.', recipeName: 'Ginger and Greens', key: 'a' },
-    { displayName: 'Stephen K.', recipeName: 'Mint Cocoa Protein', key: 'b' },
-  ],
-  filling: {
-    displayName: 'Daniel F.',
-    recipeName: 'Coconut Surprise',
-    key: 'b',
-  },
-  blending: null,
-  delivering: null,
-  deliveryBays: { left: null, right: null },
-};
-
 function StatusDisplayScreen() {
-  const cloud = useCloud();
-  const restaurantState = useCloudValue('RestaurantActions^RestaurantReducer');
-  const restaurantActions = cloud.get('RestaurantActions');
-  const dispatch = restaurantActions.putTransaction;
-  // function dispatch(action) {
-  //   const state = reduceRestaurantState(restaurantState, action);
-  //   restaurant.put(state);
-  // }
-  // console.log('restaurantState', restaurantState);
-  // return null;
-  // const [displayState, dispatch] = React.useReducer(
-  //   reduceRestaurantState,
-  //   initialRestaurantState,
-  // );
-
+  const [restaurantState, dispatch] = useCloudReducer(
+    'RestaurantActions',
+    RestaurantReducer,
+  );
   if (!restaurantState) {
     return null;
   }
-  // console.log('Display State: ', displayState);
   return (
     <StatusDisplayLayout
       debugView={

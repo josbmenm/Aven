@@ -306,7 +306,6 @@ const runServer = async () => {
       throw new Error('No kitchen right now');
     }
     const commandType = KitchenCommands[action.command];
-    console.log('Kitchen Action:', action.command, action.params);
 
     if (!commandType) {
       throw new Error(`Unknown kitchen command "${action.command}"`);
@@ -322,6 +321,8 @@ const runServer = async () => {
         }
       });
     const tag = getFreshTag();
+    logBehavior(`Start Action ${tag} : ${JSON.stringify(action)}`);
+
     const command = {
       tag,
       type: 'KitchenCommand',
@@ -349,6 +350,7 @@ const runServer = async () => {
             return;
           }
           if (isSystemIdle && isTagReceived) {
+            logBehavior(`Done with ${tag}`);
             resolve();
             sub && sub.unsubscribe();
           }

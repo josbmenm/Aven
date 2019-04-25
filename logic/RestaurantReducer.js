@@ -1,6 +1,6 @@
 import defineCloudReducer from '../cloud-core/defineCloudReducer';
 
-function RestaurantReducer(state = {}, action) {
+function RestaurantReducerFn(state = {}, action) {
   switch (action.type) {
     case 'WipeState': {
       return {};
@@ -124,10 +124,10 @@ function RestaurantReducer(state = {}, action) {
   }
 }
 
-const CloudRestaurantReducer = defineCloudReducer(
+const RestaurantReducer = defineCloudReducer(
   'RestaurantReducer',
-  RestaurantReducer,
+  RestaurantReducerFn,
   {},
 );
 
-export default CloudRestaurantReducer;
+export default RestaurantReducer;
