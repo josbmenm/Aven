@@ -863,7 +863,7 @@ export default function createCloudDoc({
             getId: () => getIdOfValue(result),
           };
         })
-        .share();
+        .shareReplay(1);
       let resultObservable = observeComputed;
       let clientComputeSubscription = null;
       if (isLambdaRemote) {
@@ -914,7 +914,7 @@ export default function createCloudDoc({
             clientComputeSubscription &&
               clientComputeSubscription.unsubscribe();
           };
-        }).share();
+        }).shareReplay(1);
       }
 
       overriddenFunctionResults.set(argumentDoc, resultObservable);

@@ -113,54 +113,55 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
     lambdaCache = new Map();
     evalCache.set(lambdaDoc, lambdaCache);
   }
-  let evaluatedDoc = evalCache.get(cloudValue);
-  if (!evaluatedDoc) {
-    const isConnected = new BehaviorSubject(false);
-    const getValue = () => {
-      return lambdaDoc.functionGetValue(cloudValue);
-    };
-    const handleFnConnectivity = isConn => {
-      // effectively, this is the only way for an eval doc to be connected
-      isConnected.next(isConn);
-    };
-    // creating a synthetic doc that can be observed and fetched.
-    evaluatedDoc = {
-      isConnected,
-      getId: () => getIdOfValue(getValue()),
-      getIsConnected: isConnected.getValue,
-      type: 'EvaluatedDoc',
-      getContext: () => {
-        return {
-          type: 'EvaluatedDoc',
-          argument: { type: 'BlockReference', id: cloudValue.getId() },
-          lambda: { type: 'LambdaReference', name: lambdaDoc.getFullName() },
-        };
-      },
-      getFullName: () => {
-        return cloudValue.getFullName() + '__evalby_' + lambdaDoc.getFullName();
-      },
-      get: toGet => {
-        throw new Error(
-          `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
-        );
-      },
-      // the actual loading and computation is performed by the lambda doc, which may refer to the cloud block lambda.
-      // the doc function/lambda may have been overridden via setLambda and $setOverrideFunction
-      fetchValue: () => lambdaDoc.functionFetchValue(cloudValue),
-      observeValue: lambdaDoc.functionObserveValue(
-        cloudValue,
-        handleFnConnectivity
-      ),
-      observeValueAndId: lambdaDoc.functionObserveValueAndId(
-        cloudValue,
-        handleFnConnectivity
-      ),
-      getValue,
-    };
-    bindCloudValueFunctions(evaluatedDoc, cloudClient);
-    evalCache.set(cloudValue, evaluatedDoc);
+  const cachedResult = lambdaCache.get(cloudValue);
+  if (cachedResult) {
+    return cachedResult;
   }
-  return evaluatedDoc;
+  const isConnected = new BehaviorSubject(false);
+  const getValue = () => {
+    return lambdaDoc.functionGetValue(cloudValue);
+  };
+  const handleFnConnectivity = isConn => {
+    // effectively, this is the only way for an eval doc to be connected
+    isConnected.next(isConn);
+  };
+  // creating a synthetic doc that can be observed and fetched.
+  const evalDoc = {
+    isConnected,
+    getId: () => getIdOfValue(getValue()),
+    getIsConnected: isConnected.getValue,
+    type: 'EvaluatedDoc',
+    getContext: () => {
+      return {
+        type: 'EvaluatedDoc',
+        argument: { type: 'BlockReference', id: cloudValue.getId() },
+        lambda: { type: 'LambdaReference', name: lambdaDoc.getFullName() },
+      };
+    },
+    getFullName: () => {
+      return cloudValue.getFullName() + '__evalby_' + lambdaDoc.getFullName();
+    },
+    get: toGet => {
+      throw new Error(
+        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
+      );
+    },
+    // the actual loading and computation is performed by the lambda doc, which may refer to the cloud block lambda.
+    // the doc function/lambda may have been overridden via setLambda and $setOverrideFunction
+    fetchValue: () => lambdaDoc.functionFetchValue(cloudValue),
+    observeValue: lambdaDoc.functionObserveValue(
+      cloudValue,
+      handleFnConnectivity
+    ),
+    observeValueAndId: lambdaDoc.functionObserveValueAndId(
+      cloudValue,
+      handleFnConnectivity
+    ),
+    getValue,
+  };
+  bindCloudValueFunctions(evalDoc, cloudClient);
+  lambdaCache.set(cloudValue, evalDoc);
+  return evalDoc;
 }
 
 function mapCloudValue(cloudValue, cloudClient, mapFn) {
