@@ -88,6 +88,7 @@ class ActionPageWithNavigation extends React.Component {
                 secondary={action.secondary}
                 title={action.title}
                 onPress={action.onPress}
+                onLongPress={action.onLongPress}
                 style={{ flex: 1, maxWidth: 488 }}
               />
             ))}

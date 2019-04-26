@@ -32,7 +32,6 @@ function BackgroundLayout({ children, background, photoHasMargin }) {
       style={{
         paddingTop: 184,
         alignSelf: 'stretch',
-        borderWidth: 1,
       }}
     >
       <View
@@ -42,8 +41,6 @@ function BackgroundLayout({ children, background, photoHasMargin }) {
           left: 0,
           width: 1366,
           height: 1024,
-          borderWidth: 1,
-          borderColor: 'blue',
           overflow: 'visible',
           flexDirection: 'row',
         }}
@@ -140,6 +137,7 @@ function BlendPageContentPure({
   order,
   onPendingEnhancement,
 }) {
+  console.log(JSON.stringify(menuItem));
   let menuContent = null;
   if (menuItem && order) {
     let activeEnhancement = getActiveEnhancement(item, menuItem);
@@ -217,7 +215,7 @@ function BlendPageContentPure({
         >
           <DetailsSection>
             <View style={{ alignSelf: 'flex-start', marginBottom: 5 }}>
-              <Tag tag="Fitness" />
+              <Tag tag={menuItem.DefaultBenefitEnhancementName} />
             </View>
             <MainTitle subtitle={formatCurrency(menuItem.Recipe['Sell Price'])}>
               {displayNameOfOrderItem(item, menuItem)}

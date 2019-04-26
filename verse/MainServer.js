@@ -42,6 +42,19 @@ function getFreshTag() {
   return tagCounter;
 }
 
+let lastT = null;
+function logBehavior(msg) {
+  const t = Date.now();
+  let outMsg = `${t} `;
+  if (lastT) {
+    const deltaT = t - lastT;
+    outMsg += `(${deltaT} ms since last) `;
+  }
+  outMsg += ' - ' + msg;
+  lastT = t;
+  console.log(outMsg);
+}
+
 const getEnv = c => process.env[c];
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -227,21 +240,10 @@ const runServer = async () => {
   let kitchen = null;
   if (!process.env.DISABLE_ONO_KITCHEN) {
     kitchen = startKitchen({
+      logBehavior,
       client: cloud,
       plcIP: '192.168.1.122',
     });
-  }
-
-  let lastT = null;
-  function logBehavior(msg) {
-    const t = Date.now();
-    let outMsg = `${t} `;
-    if (lastT) {
-      const deltaT = t - lastT;
-      outMsg += `(${deltaT} ms since last) `;
-    }
-    outMsg += ' - ' + msg;
-    console.log(outMsg);
   }
 
   async function kitchenAction(action) {
@@ -288,7 +290,7 @@ const runServer = async () => {
           currentTag = state[`${subsystem}_TagOut_READ`];
           isSystemIdle = state[`${subsystem}_PrgStep_READ`] === 0;
           isTagReceived = currentTag === tag;
-          if (noFaults === false) {
+          if (isSystemIdle && noFaults === false) {
             reject(new Error(`System "${subsystem}" has faulted`));
             return;
           }
@@ -303,12 +305,12 @@ const runServer = async () => {
       setTimeout(() => {
         sub && sub.unsubscribe();
         if (!isSystemIdle) {
-          return reject(new Error(`System "${subsystem}" is not idle!`));
+          return reject(new Error(`After 30sec, "${subsystem}" is not idle!`));
         }
         if (!isTagReceived) {
           return reject(
             new Error(
-              `Current TagOut of "${subsystem}" is "${currentTag}" but we expected "${tag}"!`,
+              `After 30sec, TagOut of "${subsystem}" is "${currentTag}" but we expected "${tag}"!`,
             ),
           );
         }
@@ -323,6 +325,7 @@ const runServer = async () => {
   let kitchenConfig = null;
   let currentStepPromise = null;
 
+  let kitchenStateAtLastStepStart = null;
   function handleStateUpdates() {
     if (
       !kitchen ||
@@ -342,7 +345,14 @@ const runServer = async () => {
     if (!nextStep) {
       return;
     }
+    if (kitchenStateAtLastStepStart === kitchenState) {
+      console.error(
+        'Woah! We are attempting to perform a new kitchen action, but the current state is the same as it was before the previous action!',
+      );
+      return;
+    }
     console.log('Next Step:', nextStep.description);
+    kitchenStateAtLastStepStart = kitchenState;
     currentStepPromise = nextStep.perform(cloud, kitchenAction);
 
     currentStepPromise
@@ -351,7 +361,7 @@ const runServer = async () => {
         console.log(`Done with ${nextStep.description}`);
         setTimeout(() => {
           handleStateUpdates();
-        }, 32);
+        }, 150);
       })
       .catch(e => {
         currentStepPromise = null;

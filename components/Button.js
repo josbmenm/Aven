@@ -7,12 +7,20 @@ import {
   secondaryButtonTitleStyle,
 } from './Styles';
 
-const Button = ({ onPress, title, style, secondary, disabled }) => {
+const Button = ({
+  onPress,
+  onLongPress,
+  title,
+  style,
+  secondary,
+  disabled,
+}) => {
   const viewStyle = secondary ? secondaryButtonStyle : buttonStyle;
   const titleStyle = secondary ? secondaryButtonTitleStyle : buttonTitleStyle;
   return (
     <TouchableOpacity
       onPress={onPress}
+      onLongPress={onLongPress}
       disabled={disabled}
       style={{
         flexDirection: 'row',

@@ -505,6 +505,7 @@ export function useOrderSummary() {
   const currentOrder = useCurrentOrder();
   const companyConfig = useCompanyConfig();
   const summary = getOrderSummary(currentOrder, companyConfig);
+  console.log('ORDEER SUMMARY', JSON.stringify(summary));
   return summary;
 }
 

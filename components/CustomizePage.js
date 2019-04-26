@@ -149,7 +149,7 @@ function CustomizationPuck({ isActive, children, onPress, disabled }) {
         style={{
           marginTop: 16,
           marginRight: 16,
-          width: 290, // tonight we dine in hell
+          width: 320, // tonight we dine in hell
           backgroundColor: 'white',
           borderRadius: 4,
           borderWidth: 3,
@@ -292,15 +292,12 @@ function StepperSection({ section }) {
                 marginLeft: 70,
                 marginTop: 8,
                 paddingHorizontal: 10,
+                alignSelf: 'stretch',
+                justifyContent: 'center',
               }}
             >
               <Text style={{ ...titleStyle, fontSize: 12 }}>
                 {option.name.toUpperCase()}
-              </Text>
-              <Text
-                style={{ ...proseFontFace, fontSize: 13, color: monsterra }}
-              >
-                {option.description}
               </Text>
             </View>
             <View
@@ -915,6 +912,9 @@ export default function CustomizePage({
     {
       secondary: true,
       title: 'cancel',
+      onLongPress: () => {
+        alert(JSON.stringify({}));
+      },
       onPress: () => {
         goBack();
       },

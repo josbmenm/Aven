@@ -85,13 +85,6 @@ export function companyConfigToBlendMenu(atData) {
       ...customCategory,
     };
   });
-  //   Ingredient.CustomizationCategory &&
-  //     Ingredient.CustomizationCategory.forEach(categoryName => {
-  //       const c =
-  //         Customization[categoryName] || (Customization[categoryName] = []);
-  //       c.push(Ingredient);
-  //     });
-  // });
 
   const MenuItems = sortByField(MenuItemsUnordered, '_index');
   const ActiveMenuItems = MenuItems.filter(i => i['Active in Kiosk']);

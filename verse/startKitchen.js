@@ -328,6 +328,7 @@ const extractActionValues = ({
   const valueCommands = subSystemConfig.valueCommands || {};
   const immediateOutput = {};
   const clearPulseOutput = {};
+  let tagOutput = null;
 
   // pulses
   pulse.forEach(pulseName => {
@@ -352,10 +353,12 @@ const extractActionValues = ({
 
   // tag
   if (tag != null) {
-    immediateOutput[`${systemName}_TagIn_VALUE`] = tag;
+    tagOutput = {};
+    tagOutput[`${systemName}_TagIn_VALUE`] = tag;
+    // immediateOutput[`${systemName}_TagIn_VALUE`] = tag;
   }
 
-  return { immediateOutput, clearPulseOutput };
+  return { immediateOutput, clearPulseOutput, tagOutput };
 };
 
 class PLCConnectionError extends Error {
@@ -365,7 +368,7 @@ class PLCConnectionError extends Error {
   code = 'PLC_Connection';
 }
 
-export default function startKitchen({ client, plcIP }) {
+export default function startKitchen({ client, plcIP, logBehavior }) {
   let readyPLC = null;
   let connectingPLC = null;
   let readyHandlers = new Set();
@@ -397,7 +400,7 @@ export default function startKitchen({ client, plcIP }) {
           mainPLC.destroy();
           return;
         }
-        console.log(
+        logBehavior(
           'PLC Connected. (' + mainPLC.properties.name + ' at ' + plcIP + ')',
         );
         readyPLC = mainPLC;
@@ -637,7 +640,7 @@ export default function startKitchen({ client, plcIP }) {
       tag.value = values[tagAlias];
       outputGroup.add(tag);
     });
-    console.log('Kitchen Write Tags', values);
+    logBehavior('Kitchen Write Tags ' + JSON.stringify(values));
     const PLC = await getReadyPLC();
     await PLC.writeTagGroup(outputGroup);
   };
@@ -708,19 +711,22 @@ export default function startKitchen({ client, plcIP }) {
     if (!mainRobotSchema) {
       return;
     }
-    await client.get('KitchenLog').transact(log => [...(log || []), action]);
     const subsystem = mainRobotSchema.config.subsystems[action.subsystem];
-    const { immediateOutput, clearPulseOutput } = extractActionValues({
+    const {
+      immediateOutput,
+      clearPulseOutput,
+      tagOutput,
+    } = extractActionValues({
       subSystemConfig: subsystem,
       systemName: action.subsystem,
       pulse: action.pulse,
       values: action.values,
       tag: action.tag,
     });
+    tagOutput && (await writeTags(mainRobotSchema, tagOutput));
     await writeTags(mainRobotSchema, immediateOutput);
-    await delay(500);
     await writeTags(mainRobotSchema, clearPulseOutput);
-    return { ...immediateOutput, ...clearPulseOutput };
+    return { ...immediateOutput, ...clearPulseOutput, ...(tagOutput || {}) };
   }
 
   function close() {

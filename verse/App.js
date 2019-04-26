@@ -177,20 +177,20 @@ function IngredientFillingCup({ fillLevel, currentFill }) {
   );
 }
 
-function OrderRow({ prepSpec, status, queuedIndex }) {
+function OrderRow({ prepSpec, status, fill, queuedIndex }) {
   let right = null;
   if (status === 'queued') {
     right = <ETAText queuedIndex={queuedIndex} />;
   }
-  if (status === 'filling') {
+  if (status === 'filling' && fill) {
     let fillLevel = 0;
     let currentFill = null;
-    if (status.fillsCompleted && status.fillsRemaining) {
-      const remaining = status.fillsRemaining.length;
-      const completed = status.fillsCompleted.length;
+    if (fill.fillsCompleted && fill.fillsRemaining) {
+      const remaining = fill.fillsRemaining.length;
+      const completed = fill.fillsCompleted.length;
       fillLevel = completed / (completed + remaining);
-      if (status.fillsRemaining[0]) {
-        currentFill = status.fillsRemaining[0];
+      if (fill.fillsRemaining[0]) {
+        currentFill = fill.fillsRemaining[0];
       }
     }
     right = (
@@ -236,7 +236,12 @@ function QueueSection({ queue, fill, blend, delivery }) {
   ];
   fill &&
     renderQueue.push(
-      <OrderRow key={fill.order.id} prepSpec={fill.order} status="filling" />,
+      <OrderRow
+        key={fill.order.id}
+        prepSpec={fill.order}
+        fill={fill}
+        status="filling"
+      />,
     );
   blend &&
     renderQueue.push(
@@ -282,13 +287,13 @@ function ReadyPickupCell({ state }) {
             color: monsterra,
           }}
         >
-          {state.name}
+          {state.order.name}
         </Text>
         <Text style={{ ...primaryFontFace, color: monsterra, fontSize: 16 }}>
-          {state.blendName}
+          {state.order.blendName}
         </Text>
       </View>
-      <Cup isFilled={true} />
+      <AnimatedCup fillLevel={1} />
     </View>
   );
 }
@@ -371,7 +376,8 @@ function AnimatedCup({ fillLevel }) {
           left: 0,
           top: 0,
           WebkitMaskImage: `url(${require('./assets/CupFill.svg')})`,
-          WebkitMaskPosition: `center -${Math.floor(shownFillLevel * 100) +
+          WebkitMaskPosition: `center -${100 -
+            Math.floor(shownFillLevel * 100) +
             2}%`,
           WebkitMaskRepeat: 'no-repeat',
           maskMode: 'alpha',

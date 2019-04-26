@@ -317,12 +317,7 @@ export function MenuCardCarousel({ items, large, style }) {
               ],
             }}
           >
-            <MenuCard
-              {...item}
-              style={{}}
-              isPhotoZoomed={large}
-              tag={'Fitness'}
-            />
+            <MenuCard {...item} style={{}} isPhotoZoomed={large} />
           </Animated.View>
         );
       })}

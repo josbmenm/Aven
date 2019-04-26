@@ -23,7 +23,7 @@ export default function BlendMenu({ menu, large, title }) {
           title: displayNameOfMenuItem(item),
           price: sellPriceOfMenuItem(item),
           benefits: item.Benefits,
-          tag: item.DefaultEnhancementName,
+          tag: item.DefaultBenefitEnhancementName,
           photo: item.Recipe && item.Recipe['Recipe Image'],
           onPress: () => {
             const currentOrder = order && order.getValue();
