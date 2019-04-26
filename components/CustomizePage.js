@@ -492,7 +492,6 @@ function getCustomizationSections(
   const activeEnhancements = activeEnhancementIds.map(
     eId => menuItem.BenefitCustomization[eId],
   );
-  console.log(activeEnhancementIds);
 
   const sections = [
     {
@@ -885,7 +884,6 @@ export default function CustomizePage({
     {
       title: isSave ? 'save' : 'add to cart',
       onPress: () => {
-        console.log('waaah', isSave, cartItem, customizationState);
         const nextItem = isSave
           ? {
               ...cartItem.state,

@@ -40,9 +40,9 @@ const sequencerSystemReadTags = {
     type: 'boolean',
     subTag: 'NoFaults',
   },
-  TagOut: {
+  ActionIdOut: {
     type: 'integer',
-    subTag: 'Crumb.TagOut',
+    subTag: 'Crumb.ActionIdOut',
   },
   NoAlarms: {
     type: 'boolean',
@@ -87,9 +87,9 @@ const sequencerSystemPulseCommands = {
   },
 };
 const sequencerSystemValueCommands = {
-  TagIn: {
+  ActionIdIn: {
     type: 'integer',
-    subTag: 'Crumb.TagIn',
+    subTag: 'Crumb.ActionIdIn',
   },
 };
 const mainSubsystems = {
@@ -98,38 +98,38 @@ const mainSubsystems = {
     icon: '🔌',
     faults: {},
     readTags: {
-      ...objFromCount(
-        32,
-        i => `PLC_1_Output${i}`,
-        i => ({
-          type: 'boolean',
-          subTag: `Local:1:I.ReadBack.${i}`,
-        }),
-      ),
-      ...objFromCount(
-        32,
-        i => `PLC_2_Input${i}`,
-        i => ({
-          type: 'boolean',
-          subTag: `Local:2:I.Data.${i}`,
-        }),
-      ),
-      ...objFromCount(
-        6,
-        i => `PLC_3_InputA${i}_Value`,
-        i => ({
-          type: 'integer',
-          subTag: `Local:3:I.Ch${i}Data`,
-        }),
-      ),
-      ...objFromCount(
-        6,
-        i => `PLC_3_InputA${i}_Status`,
-        i => ({
-          type: 'boolean',
-          subTag: `Local:3:I.Ch${i}Status`,
-        }),
-      ),
+      // ...objFromCount(
+      //   32,
+      //   i => `PLC_1_Output${i}`,
+      //   i => ({
+      //     type: 'boolean',
+      //     subTag: `Local:1:I.ReadBack.${i}`,
+      //   }),
+      // ),
+      // ...objFromCount(
+      //   32,
+      //   i => `PLC_2_Input${i}`,
+      //   i => ({
+      //     type: 'boolean',
+      //     subTag: `Local:2:I.Data.${i}`,
+      //   }),
+      // ),
+      // ...objFromCount(
+      //   6,
+      //   i => `PLC_3_InputA${i}_Value`,
+      //   i => ({
+      //     type: 'integer',
+      //     subTag: `Local:3:I.Ch${i}Data`,
+      //   }),
+      // ),
+      // ...objFromCount(
+      //   6,
+      //   i => `PLC_3_InputA${i}_Status`,
+      //   i => ({
+      //     type: 'boolean',
+      //     subTag: `Local:3:I.Ch${i}Status`,
+      //   }),
+      // ),
     },
   },
   System: {
@@ -142,9 +142,7 @@ const mainSubsystems = {
         subTag: 'PlcBooting',
       },
     },
-    pulseCommands: {
-      ...sequencerSystemPulseCommands,
-    },
+    pulseCommands: {},
   },
 };
 
@@ -354,8 +352,8 @@ const extractActionValues = ({
   // tag
   if (tag != null) {
     tagOutput = {};
-    tagOutput[`${systemName}_TagIn_VALUE`] = tag;
-    // immediateOutput[`${systemName}_TagIn_VALUE`] = tag;
+    tagOutput[`${systemName}_ActionIdIn_VALUE`] = tag;
+    // immediateOutput[`${systemName}_ActionIdIn_VALUE`] = tag;
   }
 
   return { immediateOutput, clearPulseOutput, tagOutput };

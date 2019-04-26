@@ -117,7 +117,7 @@ function StepperButton({ onPress, disabled, isDown }) {
       onPress={onPress}
       disabled={disabled}
       style={{ opacity: buttonOpacity }}
-      hitSlop={{ left: 40, right: 40, top: 40, bottom: 40 }}
+      hitSlop={{ left: 60, right: 60, top: 60, bottom: 60 }}
     >
       <Image
         source={require('./Up.png')}

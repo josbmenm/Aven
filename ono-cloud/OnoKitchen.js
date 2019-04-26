@@ -20,12 +20,14 @@ import {
   sellPriceOfMenuItem as getSellPriceOfMenuItem,
   displayNameOfMenuItem as getDisplayNameOfMenuItem,
   displayNameOfOrderItem as getDisplayNameOfOrderItem,
+  getSelectedIngredients as doGetSelectedIngredients,
   getOrderSummary,
   companyConfigToMenu,
 } from '../logic/configLogic';
 const OrderContext = createContext(null);
 
 export const sortByField = getSortedByField;
+export const getSelectedIngredients = doGetSelectedIngredients;
 
 function doCancelOrderIfNotConfirmed(lastOrder) {
   if (lastOrder.isConfirmed) {
@@ -46,12 +48,16 @@ function doConfirmOrder(lastOrder) {
 
 export function getSubsystemFaults(system) {
   let faults = null;
+
   if (system.reads.NoFaults && system.reads.NoFaults.value !== true) {
     // system has faulting behavior
     faults = [];
     const faulted = Array(4)
       .fill(0)
       .map((_, faultIntIndex) => {
+        if (!system.reads[`Fault${faultIntIndex}`]) {
+          return Array(16).fill(0);
+        }
         return system.reads[`Fault${faultIntIndex}`].value
           .toString(2)
           .split('')
@@ -59,6 +65,7 @@ export function getSubsystemFaults(system) {
           .map(v => v === '1');
       });
     if (faulted[0][0]) {
+      og('zoom', system.reads.WatchDogFrozeAt);
       faults.push(
         'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
       );
@@ -111,17 +118,13 @@ export function OrderContextProvider({ children }) {
       );
     },
     resetOrder: () => {
-      console.log('RESET ORDER!');
       if (!currentOrder) {
         return;
       }
-      console.log('oRderrr', currentOrder.getFullName());
       guardAsync(currentOrder.transact(doCancelOrderIfNotConfirmed));
       setCurrentOrder(null);
     },
     cancelOrder: () => {
-      console.log('CANCEL ORDER!');
-      console.log('oRderrr', currentOrder && currentOrder.getFullName());
       currentOrder &&
         guardAsync(
           currentOrder.transact(lastOrder => {
@@ -137,7 +140,6 @@ export function OrderContextProvider({ children }) {
         );
     },
     confirmOrder: () => {
-      console.log('CONFIRM ORDER!');
       guardAsync(
         (async () => {
           await currentOrder.transact(doConfirmOrder);
@@ -151,21 +153,17 @@ export function OrderContextProvider({ children }) {
     startOrder: () =>
       guardAsync(
         (async () => {
-          console.log('START ORDER!');
           const order = cloud.get('Orders').post();
           setCurrentOrder(order);
-          console.log('POST ORDER!', order.getFullName());
-
           await order.put({
             startTime: Date.now(),
             items: [],
           });
-          console.log('posted order!', order.getFullName());
-          order.observeValue.subscribe({
-            next: oo => {
-              console.log('Lol ok, order changed!', oo);
-            },
-          });
+          // order.observeValue.subscribe({
+          //   next: oo => {
+          //     console.log('Lol ok, order changed!', oo);
+          //   },
+          // });
         })(),
       ),
   };
@@ -362,7 +360,6 @@ export function useOrderItem(orderItemId) {
 
   return useMemo(() => {
     async function setItemState(item) {
-      console.log('setItemState', item, orderItemId);
       await order.transact(lastOrder => {
         const items = [...lastOrder.items];
         const itemIndex = items.findIndex(i => i.id === item.id);
@@ -376,7 +373,6 @@ export function useOrderItem(orderItemId) {
           items,
         };
       });
-      console.log('DONE setItemState', item, orderItemId);
     }
     async function removeItem() {
       await order.transact(lastOrder => {
@@ -448,7 +444,7 @@ export function getActiveEnhancement(cartItem, menuItem) {
     cartItem.customization &&
     cartItem.customization.enhancement
   ) {
-    return menuItem.tables.Benefits[cartItem.customization.enhancement];
+    return menuItem.AllBenefits[cartItem.customization.enhancement];
   }
   return menuItem.DefaultBenefitEnhancement;
 }
@@ -505,7 +501,6 @@ export function useOrderSummary() {
   const currentOrder = useCurrentOrder();
   const companyConfig = useCompanyConfig();
   const summary = getOrderSummary(currentOrder, companyConfig);
-  console.log('ORDEER SUMMARY', JSON.stringify(summary));
   return summary;
 }
 

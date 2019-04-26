@@ -17,6 +17,7 @@ import {
   displayNameOfOrderItem,
   addMenuItemToCartItem,
   getActiveEnhancement,
+  getSelectedIngredients,
 } from '../ono-cloud/OnoKitchen';
 import SmallTitle from './SmallTitle';
 import DetailsSection from './DetailsSection';
@@ -94,21 +95,6 @@ function Ingredient({ ingredient }) {
   );
 }
 
-function getSelectedIngredients(menuItem, cartItem) {
-  if (
-    !cartItem ||
-    !cartItem.customization ||
-    !cartItem.customization.ingredients
-  ) {
-    return menuItem.Recipe.Ingredients.map(
-      recipeIngredient => recipeIngredient.Ingredient,
-    );
-  }
-  const ings = cartItem.customization.ingredients;
-  // todo, calculate real current ingredients
-  return [];
-}
-
 function Ingredients({ selectedIngredients }) {
   return (
     <View
@@ -135,24 +121,14 @@ function BlendPageContentPure({
   item,
   foodMenu,
   order,
-  onPendingEnhancement,
 }) {
-  console.log(JSON.stringify(menuItem));
   let menuContent = null;
   if (menuItem && order) {
-    let activeEnhancement = getActiveEnhancement(item, menuItem);
-    let [pendingActiveEnhancement, setPendingActiveEnhancement] = useState(
-      null,
-    );
-    if (!item && pendingActiveEnhancement) {
-      activeEnhancement =
-        menuItem.BenefitCustomization[pendingActiveEnhancement];
-    }
     const selectedIngredients = getSelectedIngredients(menuItem, item);
     const selectedIngredientIds = selectedIngredients.map(i => i.id);
-    const benefits = Object.keys(menuItem.tables.Benefits)
+    const benefits = Object.keys(menuItem.AllBenefits)
       .map(benefitId => {
-        const benefit = menuItem.tables.Benefits[benefitId];
+        const benefit = menuItem.AllBenefits[benefitId];
         if (
           menuItem.DefaultBenefitEnhancement &&
           menuItem.DefaultBenefitEnhancement.id === benefitId
@@ -303,8 +279,6 @@ export default function BlendPage({
 }) {
   const { navigate } = navigation;
 
-  const [pendingEnhancement, setPendingEnhancement] = useState(null);
-
   const actions = [
     {
       secondary: true,
@@ -326,9 +300,7 @@ export default function BlendPage({
             orderItemId,
             menuItem,
             itemType: 'blend',
-            customization: pendingEnhancement
-              ? { enhancement: pendingEnhancement }
-              : {},
+            customization: null,
           }),
         );
       },
@@ -343,7 +315,6 @@ export default function BlendPage({
         foodMenu={foodMenu}
         order={order}
         setItemState={setItemState}
-        onPendingEnhancement={setPendingEnhancement}
       />
     </ActionPage>
   );

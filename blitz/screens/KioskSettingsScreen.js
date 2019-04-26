@@ -61,10 +61,10 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
       <RowSection>
         <LinkRow
           onPress={() => {
-            navigation.navigate({ routeName: 'SequencingDebug' });
+            navigation.navigate({ routeName: 'ComponentPlayground' });
           }}
-          title="Kitchen Sequencer"
-          icon="🧭"
+          icon="🧱"
+          title="Component Playground"
         />
         <LinkRow
           onPress={() => {

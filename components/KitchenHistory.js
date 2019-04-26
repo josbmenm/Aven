@@ -33,6 +33,7 @@ function TransactionHistory({ value }) {
 }
 
 export default function KitchenHistory({ restaurantState, dispatch }) {
+  return null;
   const cloud = useCloud();
   return <TransactionHistory value={cloud.get('KitchenLog')} />;
 }

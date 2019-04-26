@@ -1,11 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import BlockForm from './BlockForm';
-import BlockFormTitle from './BlockFormTitle';
-import BlockFormMessage from './BlockFormMessage';
 import BlockFormRow from './BlockFormRow';
 import BlockFormButton from './BlockFormButton';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import BlockFormInput from './BlockFormInput';
 import BlockFormHorizontalRule from './BlockFormHorizontalRule';
 import TextButton from './TextButton';
@@ -14,6 +12,37 @@ import {
   useNavigation,
   useNavigationWillBlurEffect,
 } from '../navigation-hooks/Hooks';
+
+import { blockFormMessageTextStyle } from './Styles';
+import { blockFormTitleTextStyle } from './Styles';
+
+function PageMessage({ message }) {
+  return (
+    <Text
+      style={{
+        marginHorizontal: 10,
+        ...blockFormMessageTextStyle,
+        textAlign: 'center',
+      }}
+    >
+      {message}
+    </Text>
+  );
+}
+
+function PageTitle({ title }) {
+  return (
+    <Text
+      style={{
+        marginHorizontal: 10,
+        ...blockFormTitleTextStyle,
+        textAlign: 'center',
+      }}
+    >
+      {title}
+    </Text>
+  );
+}
 
 export default function OrderCompletePage({ backBehavior, ...props }) {
   const { navigate } = useNavigation();
@@ -46,10 +75,15 @@ export default function OrderCompletePage({ backBehavior, ...props }) {
   }, []);
   return (
     <ShortBlockFormPage backBehavior={backBehavior} {...props}>
-      <BlockForm>
-        <BlockFormMessage message="Your order is on its way!" />
-        <BlockFormTitle title="mahalo! enjoy your blend." />
-      </BlockForm>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+        }}
+      >
+        <PageMessage message="Your order is on its way!" />
+        <PageTitle title="mahalo! enjoy your blend." />
+      </View>
       <View
         style={{
           position: 'absolute',

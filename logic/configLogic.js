@@ -17,7 +17,7 @@ export function displayNameOfOrderItem(orderItem, menuItem) {
   }
   const { customization } = orderItem;
   const name = menuItem['Display Name'] || menuItem['Name'];
-  if (customization && customization.ingredients) {
+  if (customization) {
     return `custom ${name}`;
   }
   return name;
@@ -70,11 +70,11 @@ export function companyConfigToBlendMenu(atData) {
   if (!atData) {
     return null;
   }
-  const Recipes = atData.baseTables['Recipes'];
-  const MenuItemsUnordered = atData.baseTables['KioskBlendMenu'];
-  const RecipeIngredients = atData.baseTables['Recipe Ingredients'];
-  const Dietary = atData.baseTables['Dietary'];
-  const Ingredients = atData.baseTables['Ingredients'];
+  const Recipes = atData.baseTables.Recipes;
+  const MenuItemsUnordered = atData.baseTables.KioskBlendMenu;
+  const RecipeIngredients = atData.baseTables.RecipeIngredients;
+  const Dietary = atData.baseTables.Dietary;
+  const Ingredients = atData.baseTables.Ingredients;
 
   const IngredientCustomization = Object.keys(
     atData.baseTables['IngredientCustomization'],
@@ -114,10 +114,10 @@ export function companyConfigToBlendMenu(atData) {
     const DefaultBenefitEnhancement = defaultEnhancementId
       ? Benefits[defaultEnhancementId]
       : null;
-    if (defaultEnhancementId && !DefaultBenefitEnhancement) {
-      debugger;
-    }
-
+    const DefaultBenefitEnhancementIngredient =
+      DefaultBenefitEnhancement &&
+      DefaultBenefitEnhancement['Enhancement Ingredient'] &&
+      Ingredients[DefaultBenefitEnhancement['Enhancement Ingredient'][0]];
     const ItemBenefits = Object.keys(Benefits)
       .map(benefitId => {
         const benefit = Benefits[benefitId];
@@ -161,12 +161,16 @@ export function companyConfigToBlendMenu(atData) {
           ),
         };
       }).filter(ic => !!ic),
-      tables: atData.baseTables,
+      AllBenefits: mapObject(atData.baseTables.Benefits, b => ({
+        ...b,
+        EnhancementIngredient: Ingredients[b['Enhancement Ingredient']],
+      })),
       BenefitCustomization: Benefits,
       Dietary,
       Benefits: ItemBenefits,
       DefaultEnhancementId: defaultEnhancementId,
       DefaultBenefitEnhancement,
+      DefaultBenefitEnhancementIngredient,
       DefaultBenefitEnhancementName:
         DefaultBenefitEnhancement && DefaultBenefitEnhancement.Name,
       DisplayPrice: formatCurrency(Recipe['Sell Price']),
@@ -231,4 +235,65 @@ export function getOrderSummary(orderState, companyConfig) {
     total,
     taxRate: TAX_RATE,
   };
+}
+
+export function getSelectedIngredients(menuItem, cartItem) {
+  const customIngredients =
+    cartItem && cartItem.customization && cartItem.customization.ingredients;
+  const customEnhancements =
+    cartItem && cartItem.customization && cartItem.customization.enhancements;
+  let outputIngredients = [];
+  console.log(cartItem && cartItem.customization);
+  if (customEnhancements) {
+    //uh
+    debugger;
+    outputIngredients = [...outputIngredients];
+    // ...customEnhancements.map(ingId => {
+
+    // })
+  } else {
+    outputIngredients = [
+      ...outputIngredients,
+      {
+        ...menuItem.DefaultBenefitEnhancementIngredient,
+        amount: 1,
+      },
+    ];
+  }
+  if (customIngredients) {
+    //uh
+    debugger;
+  } else {
+    outputIngredients = [
+      ...outputIngredients,
+      ...menuItem.Recipe.Ingredients.map(
+        recipeIngredient => recipeIngredient.Ingredient,
+      ),
+    ];
+  }
+  return outputIngredients;
+  // if (
+  //   !cartItem ||
+  //   !cartItem.customization ||
+  //   !cartItem.customization.ingredients
+  // ) {
+  //   let defaultBenefitIngredients = [];
+  //   if (
+  //     menuItem.DefaultBenefitEnhancementIngredient &&
+  //     menuItem.DefaultBenefitEnhancementIngredient
+  //   ) {
+  //     defaultBenefitIngredients = [
+  //       menuItem.DefaultBenefitEnhancementIngredient,
+  //     ];
+  //   }
+  //   return [
+  //     ...defaultBenefitIngredients,
+  //     ...menuItem.Recipe.Ingredients.map(
+  //       recipeIngredient => recipeIngredient.Ingredient,
+  //     ),
+  //   ];
+  // }
+  // const ings = cartItem.customization.ingredients;
+  // // todo, calculate real current ingredients
+  // return [];
 }

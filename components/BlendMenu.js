@@ -32,11 +32,7 @@ export default function BlendMenu({ menu, large, title }) {
               currentItems &&
               currentItems
                 .filter(i => i.menuItemId === item.id)
-                .find(
-                  i =>
-                    i.customization == null ||
-                    i.customization.ingredients == null,
-                );
+                .find(i => i.customization == null);
 
             const orderItemId = (currentItem && currentItem.id) || kuid();
             PerformanceDebugging.markTransitionStart(

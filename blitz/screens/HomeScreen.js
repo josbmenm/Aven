@@ -3,6 +3,7 @@ import GenericPage from '../../components/GenericPage';
 import RowSection from '../../components/RowSection';
 import Hero from '../../components/Hero';
 import LinkRow from '../../components/LinkRow';
+import { Image, View } from 'react-native';
 
 export default function HomeScreenMemo({ navigation, ...props }) {
   //   <LinkRow
@@ -15,14 +16,31 @@ export default function HomeScreenMemo({ navigation, ...props }) {
 
   return (
     <GenericPage hideBackButton navigation={navigation} {...props}>
-      <Hero title="Maui Development" icon="🍹" />
+      <Image
+        source={require('../../components/assets/OnoLogo.png')}
+        style={{
+          alignSelf: 'center',
+          width: 400,
+          height: 400,
+          marginVertical: 50,
+        }}
+      />
       <RowSection>
         <LinkRow
           onPress={() => {
-            navigation.navigate({ routeName: 'ComponentPlayground' });
+            navigation.navigate({ routeName: 'KioskHome' });
           }}
-          icon="🧱"
-          title="Component Playground"
+          icon="🖥"
+          title="Kiosk Home"
+        />
+        <LinkRow
+          onPress={() => {
+            navigation.navigate({
+              routeName: 'SequencingDebug',
+            });
+          }}
+          icon={'📋'}
+          title={'Kitchen Manager'}
         />
         <LinkRow
           onPress={() => {
@@ -30,14 +48,6 @@ export default function HomeScreenMemo({ navigation, ...props }) {
           }}
           icon="🛠"
           title="Kitchen Engineering"
-        />
-
-        <LinkRow
-          onPress={() => {
-            navigation.navigate({ routeName: 'KioskHome' });
-          }}
-          icon="🖥"
-          title="Kiosk Home"
         />
         <LinkRow
           onPress={() => {

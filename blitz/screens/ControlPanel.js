@@ -54,12 +54,12 @@ function FaultRow({ fault }) {
         navigate('KitchenEngSub', { system: fault.systemName });
       }}
     >
-      <View style={{ backgroundColor: '#900', padding: 16 }}>
+      <View style={{ backgroundColor: '#900', padding: 6 }}>
         <Text
           style={{
             ...titleStyle,
             color: 'white',
-            fontSize: 28,
+            fontSize: 22,
             textAlign: 'center',
           }}
         >

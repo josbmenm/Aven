@@ -28,6 +28,7 @@ import {
   companyConfigToBlendMenu,
   getOrderSummary,
   displayNameOfOrderItem,
+  getSelectedIngredients,
 } from '../logic/configLogic';
 
 const COUNT_MAX = 2147483640; // near the maximum unsigned dint
@@ -287,7 +288,7 @@ const runServer = async () => {
             return;
           }
           noFaults = state[`${subsystem}_NoFaults_READ`];
-          currentTag = state[`${subsystem}_TagOut_READ`];
+          currentTag = state[`${subsystem}_ActionIdOut_READ`];
           isSystemIdle = state[`${subsystem}_PrgStep_READ`] === 0;
           isTagReceived = currentTag === tag;
           if (isSystemIdle && noFaults === false) {
@@ -310,7 +311,7 @@ const runServer = async () => {
         if (!isTagReceived) {
           return reject(
             new Error(
-              `After 30sec, TagOut of "${subsystem}" is "${currentTag}" but we expected "${tag}"!`,
+              `After 30sec, ActionIdOut of "${subsystem}" is "${currentTag}" but we expected "${tag}"!`,
             ),
           );
         }
@@ -414,29 +415,81 @@ const runServer = async () => {
       return doc.getBlock(folder.files['db.json']);
     });
     await at.fetchValue();
-    // const blends = companyConfigToBlendMenu(at.getValue());
+    const companyConfig = at.getValue();
+    const blends = companyConfigToBlendMenu(at.getValue());
     const order = orderResult.value;
-    const summary = getOrderSummary(order, at.getValue());
-    await summary.items
-      .filter(i => i.type === 'blend')
-      .map(async item => {
-        console.log('ITEM!', item);
+    const summary = getOrderSummary(order, companyConfig);
+    await summary.items.reduce(async (last, item, index) => {
+      await last;
+      if (item.type !== 'blend') {
+        return;
+      }
+      const { menuItemId } = item;
+      const menuItem = blends.find(b => b.id === menuItemId);
+      const ings = getSelectedIngredients(menuItem, item);
 
-        await cloud.get('RestaurantActions').putTransaction({
-          type: 'PlaceOrder',
-          order: {
-            id: orderId,
-            name: order.orderName.firstName + ' ' + order.orderName.lastName,
-            blendName: displayNameOfOrderItem(item, item.menuItem),
-            fills: [
-              { system: 3, slot: 0, amount: 2 },
-              { system: 3, slot: 1, amount: 3 },
-              { system: 0, slot: 0, amount: 1 },
-            ],
-          },
+      const KitchenSlots = companyConfig.baseTables.KitchenSlots;
+      const KitchenSystems = companyConfig.baseTables.KitchenSystems;
+      const requestedFills = ings.map(ing => {
+        const kitchenSlotId = Object.keys(KitchenSlots).find(slotId => {
+          const slot = KitchenSlots[slotId];
+          return slot.Ingredient && ing.id === slot.Ingredient[0];
         });
+        const kitchenSlot = kitchenSlotId && KitchenSlots[kitchenSlotId];
+        if (!kitchenSlot) {
+          return {
+            ingredientId: ing.id,
+            ingredientName: ing.Name,
+            invalid: 'NoSlot',
+          };
+        }
+        const kitchenSystemId =
+          kitchenSlot.KitchenSystem && kitchenSlot.KitchenSystem[0];
+        const kitchenSystem =
+          kitchenSystemId && KitchenSystems[kitchenSystemId];
+        if (!kitchenSystem) {
+          return {
+            ingredientId: ing.id,
+            ingredientName: ing.Name,
+            slotId: kitchenSlotId,
+            invalid: 'NoSystem',
+          };
+        }
+        return {
+          ingredientId: ing.id,
+          ingredientName: ing.Name,
+          slotId: kitchenSlotId,
+          systemId: kitchenSystemId,
+          slot: kitchenSlot.Slot,
+          system: kitchenSystem.FillSystemID,
+          invalid: null,
+        };
+
+        return { kitchenSlot, slotId: kitchenSlotId };
       });
-    // console.log('current order is ', JSON.stringify(summary.items, null, 2));
+      const orderName =
+        order.orderName.firstName + ' ' + order.orderName.lastName;
+      const blendName = displayNameOfOrderItem(item, item.menuItem);
+      console.log('ORDERING ITEM!', {
+        requestedFills,
+        orderName,
+        blendName,
+      });
+
+      // await cloud.get('RestaurantActions').putTransaction({
+      //   type: 'PlaceOrder',
+      //   order: {
+      //     id: orderId,
+      //     name: ,
+      //     blendName: ,
+      //     fills: [
+      //       { system: 3, slot: 0, amount: 2 },
+      //       { system: 3, slot: 1, amount: 3 },
+      //       { system: 0, slot: 0, amount: 1 },
+      //     ],
+      //   },
+      // });
+    }, Promise.resolve());
 
     return {};
   }
