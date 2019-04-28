@@ -6,13 +6,13 @@ const KitchenCommands = {
   },
   GetCup: {
     subsystem: 'FillSystem',
-    pulse: ['GetCup'],
+    pulse: ['PickUpNewCup'],
     values: {},
     checkReady: kitchenState => {
       if (!kitchenState) {
         return false;
       }
-      return kitchenState.FillSystem_GetCupReady_READ;
+      return kitchenState.FillSystem_PickUpNewCupReady_READ;
     },
   },
   DropCup: {
