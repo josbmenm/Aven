@@ -416,7 +416,7 @@ const runServer = async () => {
     });
     await at.fetchValue();
     const companyConfig = at.getValue();
-    const blends = companyConfigToBlendMenu(at.getValue());
+    const blends = companyConfigToBlendMenu(companyConfig);
     const order = orderResult.value;
     const summary = getOrderSummary(order, companyConfig);
     await summary.items.reduce(async (last, item, index) => {
@@ -426,7 +426,7 @@ const runServer = async () => {
       }
       const { menuItemId } = item;
       const menuItem = blends.find(b => b.id === menuItemId);
-      const ings = getSelectedIngredients(menuItem, item);
+      const ings = getSelectedIngredients(menuItem, item, companyConfig);
 
       const KitchenSlots = companyConfig.baseTables.KitchenSlots;
       const KitchenSystems = companyConfig.baseTables.KitchenSystems;

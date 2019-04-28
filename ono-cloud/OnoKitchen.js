@@ -27,7 +27,11 @@ import {
 const OrderContext = createContext(null);
 
 export const sortByField = getSortedByField;
+
 export const getSelectedIngredients = doGetSelectedIngredients;
+export const displayNameOfMenuItem = getDisplayNameOfMenuItem;
+export const displayNameOfOrderItem = getDisplayNameOfOrderItem;
+export const sellPriceOfMenuItem = getSellPriceOfMenuItem;
 
 function doCancelOrderIfNotConfirmed(lastOrder) {
   if (lastOrder.isConfirmed) {
@@ -185,9 +189,11 @@ export function useCompanyConfig() {
   return useCloudValue(theValue);
 }
 
-export const displayNameOfMenuItem = getDisplayNameOfMenuItem;
-export const displayNameOfOrderItem = getDisplayNameOfOrderItem;
-export const sellPriceOfMenuItem = getSellPriceOfMenuItem;
+export function useSelectedIngredients(menuItem, item) {
+  const companyConfig = useCompanyConfig();
+
+  return getSelectedIngredients(menuItem, item, companyConfig);
+}
 
 function getAllOrders() {
   let cloud = useCloud();

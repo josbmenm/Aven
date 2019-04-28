@@ -6,17 +6,13 @@ const KitchenCommands = {
   },
   GetCup: {
     subsystem: 'FillSystem',
-    pulse: ['PositionAndDispenseAmount'],
-    values: {
-      DispenseAmount: 1,
-      DispenseSystem: 5,
-      SlotToDispense: 0,
-    },
+    pulse: ['GetCup'],
+    values: {},
     checkReady: kitchenState => {
       if (!kitchenState) {
         return false;
       }
-      return kitchenState.FillSystem_PositionAndDispenseAmountReady_READ;
+      return kitchenState.FillSystem_GetCupReady_READ;
     },
   },
   DropCup: {

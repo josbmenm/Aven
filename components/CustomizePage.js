@@ -261,74 +261,79 @@ function StepperSection({ section }) {
           paddingRight: 20,
         }}
       >
-        {section.options.map(option => (
-          <View
-            key={option.key}
-            style={{
-              ...prettyShadowSmall,
-              borderRadius: 4,
-              minHeight: 72,
-              marginBottom: 16,
-              backgroundColor: 'white',
-              flexDirection: 'row',
-              alignSelf: 'stretch',
-            }}
-          >
-            {option.image && (
-              <AirtableImage
-                image={option.image}
-                resizeMode="contain"
-                style={{
-                  position: 'absolute',
-                  width: 142,
-                  height: 72,
-                  left: -35,
-                }}
-              />
-            )}
+        {section.options.map(option => {
+          // section.selectedIngredients...count..(i => i.id === option.key);
+          debugger;
+          const qty = 1;
+          return (
             <View
+              key={option.key}
               style={{
-                flex: 1,
-                marginLeft: 70,
-                marginTop: 8,
-                paddingHorizontal: 10,
-                alignSelf: 'stretch',
-                justifyContent: 'center',
-              }}
-            >
-              <Text style={{ ...titleStyle, fontSize: 12 }}>
-                {option.name.toUpperCase()}
-              </Text>
-            </View>
-            <View
-              style={{
+                ...prettyShadowSmall,
+                borderRadius: 4,
+                minHeight: 72,
+                marginBottom: 16,
+                backgroundColor: 'white',
                 flexDirection: 'row',
-                alignItems: 'center',
-                marginRight: 16,
+                alignSelf: 'stretch',
               }}
             >
-              <StepperButton
-                onPress={() => {}}
-                icon={require('./assets/MinusIcon.png')}
-              />
-              <Text
+              {option.image && (
+                <AirtableImage
+                  image={option.image}
+                  resizeMode="contain"
+                  style={{
+                    position: 'absolute',
+                    width: 142,
+                    height: 72,
+                    left: -35,
+                  }}
+                />
+              )}
+              <View
                 style={{
-                  width: 33,
-                  textAlign: 'center',
-                  ...primaryFontFace,
-                  fontSize: 16,
-                  color: monsterraBlack,
+                  flex: 1,
+                  marginLeft: 70,
+                  marginTop: 8,
+                  paddingHorizontal: 10,
+                  alignSelf: 'stretch',
+                  justifyContent: 'center',
                 }}
               >
-                1
-              </Text>
-              <StepperButton
-                onPress={() => {}}
-                icon={require('./assets/PlusIcon.png')}
-              />
+                <Text style={{ ...titleStyle, fontSize: 12 }}>
+                  {option.name.toUpperCase()}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginRight: 16,
+                }}
+              >
+                <StepperButton
+                  onPress={() => {}}
+                  icon={require('./assets/MinusIcon.png')}
+                />
+                <Text
+                  style={{
+                    width: 33,
+                    textAlign: 'center',
+                    ...primaryFontFace,
+                    fontSize: 16,
+                    color: monsterraBlack,
+                  }}
+                >
+                  {qty}
+                </Text>
+                <StepperButton
+                  onPress={() => {}}
+                  icon={require('./assets/PlusIcon.png')}
+                />
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </View>
     </View>
   );

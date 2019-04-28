@@ -56,6 +56,7 @@ import { PopoverContainer } from '../views/Popover';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 YellowBox.ignoreWarnings([
+  'background tab',
   'Async Storage has been',
   'with an invalid bridge',
   'CardReaderLog',

@@ -2,6 +2,14 @@ import formatCurrency from '../utils/formatCurrency';
 
 export const TAX_RATE = 0.09;
 
+function mapObject(inObj, mapper) {
+  const out = {};
+  Object.keys(inObj).forEach(k => {
+    out[k] = mapper(inObj[k]);
+  });
+  return out;
+}
+
 export function displayNameOfMenuItem(menuItem) {
   if (!menuItem) {
     return 'Unknown';
@@ -237,20 +245,33 @@ export function getOrderSummary(orderState, companyConfig) {
   };
 }
 
-export function getSelectedIngredients(menuItem, cartItem) {
+export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
+  if (!menuItem || !menuItem.Recipe) {
+    return [];
+  }
+  const allIngredients =
+    companyConfig &&
+    companyConfig.baseTables &&
+    companyConfig.baseTables.Ingredients;
+  const customizationCategories =
+    companyConfig &&
+    companyConfig.baseTables &&
+    companyConfig.baseTables.IngredientCustomization;
   const customIngredients =
     cartItem && cartItem.customization && cartItem.customization.ingredients;
   const customEnhancements =
     cartItem && cartItem.customization && cartItem.customization.enhancements;
   let outputIngredients = [];
-  console.log(cartItem && cartItem.customization);
   if (customEnhancements) {
-    //uh
-    debugger;
-    outputIngredients = [...outputIngredients];
-    // ...customEnhancements.map(ingId => {
-
-    // })
+    outputIngredients = [
+      ...outputIngredients,
+      ...customEnhancements.map(enhId => {
+        return {
+          ...menuItem.AllBenefits[enhId].EnhancementIngredient,
+          amount: 1,
+        };
+      }),
+    ];
   } else {
     outputIngredients = [
       ...outputIngredients,
@@ -261,8 +282,33 @@ export function getSelectedIngredients(menuItem, cartItem) {
     ];
   }
   if (customIngredients) {
-    //uh
-    debugger;
+    const origIngredients = menuItem.Recipe.Ingredients.map(
+      recipeIngredient => recipeIngredient.Ingredient,
+    );
+    let customizedIngredientSet = [...origIngredients];
+    Object.keys(customIngredients).forEach(customCategoryName => {
+      const categoryIngredientIds = customIngredients[customCategoryName];
+      const category = Object.keys(customizationCategories)
+        .map(id => customizationCategories[id])
+        .find(c => c.Name === customCategoryName);
+      const ingredientIdCounts = {};
+      categoryIngredientIds.forEach(ingId => {
+        if (ingredientCounts[ingId] == null) {
+          ingredientCounts[ingId] = 0;
+        }
+        ingredientCounts[ingId] += 1;
+      });
+      customizedIngredientSet = [
+        ...customizedIngredientSet.filter(
+          i => category.Ingredients.indexOf(i.id) === -1,
+        ),
+        ...Object.keys(ingredientIdCounts).map(ingId => ({
+          ...allIngredients[ingId],
+          amount: ingredientIdCounts[ingId],
+        })),
+      ];
+    });
+    outputIngredients = [...outputIngredients, ...customizedIngredientSet];
   } else {
     outputIngredients = [
       ...outputIngredients,
@@ -272,28 +318,4 @@ export function getSelectedIngredients(menuItem, cartItem) {
     ];
   }
   return outputIngredients;
-  // if (
-  //   !cartItem ||
-  //   !cartItem.customization ||
-  //   !cartItem.customization.ingredients
-  // ) {
-  //   let defaultBenefitIngredients = [];
-  //   if (
-  //     menuItem.DefaultBenefitEnhancementIngredient &&
-  //     menuItem.DefaultBenefitEnhancementIngredient
-  //   ) {
-  //     defaultBenefitIngredients = [
-  //       menuItem.DefaultBenefitEnhancementIngredient,
-  //     ];
-  //   }
-  //   return [
-  //     ...defaultBenefitIngredients,
-  //     ...menuItem.Recipe.Ingredients.map(
-  //       recipeIngredient => recipeIngredient.Ingredient,
-  //     ),
-  //   ];
-  // }
-  // const ings = cartItem.customization.ingredients;
-  // // todo, calculate real current ingredients
-  // return [];
 }

@@ -721,8 +721,8 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
       values: action.values,
       tag: action.tag,
     });
-    tagOutput && (await writeTags(mainRobotSchema, tagOutput));
     await writeTags(mainRobotSchema, immediateOutput);
+    tagOutput && (await writeTags(mainRobotSchema, tagOutput));
     await writeTags(mainRobotSchema, clearPulseOutput);
     return { ...immediateOutput, ...clearPulseOutput, ...(tagOutput || {}) };
   }

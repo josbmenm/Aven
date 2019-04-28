@@ -18,6 +18,8 @@ import {
   addMenuItemToCartItem,
   getActiveEnhancement,
   getSelectedIngredients,
+  useCompanyConfig,
+  useSelectedIngredients,
 } from '../ono-cloud/OnoKitchen';
 import SmallTitle from './SmallTitle';
 import DetailsSection from './DetailsSection';
@@ -122,146 +124,124 @@ function BlendPageContentPure({
   foodMenu,
   order,
 }) {
-  let menuContent = null;
-  if (menuItem && order) {
-    const selectedIngredients = getSelectedIngredients(menuItem, item);
-    const selectedIngredientIds = selectedIngredients.map(i => i.id);
-    const benefits = Object.keys(menuItem.AllBenefits)
-      .map(benefitId => {
-        const benefit = menuItem.AllBenefits[benefitId];
-        if (
-          menuItem.DefaultBenefitEnhancement &&
-          menuItem.DefaultBenefitEnhancement.id === benefitId
-        ) {
-          return benefit;
-        }
-        const benefitingIngredients = benefit.Ingredients.filter(
-          ingId => selectedIngredientIds.indexOf(ingId) !== -1,
-        );
-        if (benefitingIngredients.length > 0) {
-          return benefit;
-        }
-        return null;
-      })
-      .filter(Boolean);
-    const detailText = `${menuItem.Recipe['DisplayCalories']} Calories | ${
-      menuItem.Recipe['Nutrition Detail']
-    }`;
-    const dietary = Object.keys(menuItem.Dietary)
-      .map(dId => menuItem.Dietary[dId])
-      .filter(diet => {
-        if (diet['Applies To All Ingredients']) {
-          return true;
-        }
-        if (!diet.Ingredients) {
-          return false;
-        }
-        if (
-          selectedIngredientIds.find(
-            ingId => diet.Ingredients.indexOf(ingId) === -1,
-          )
-        ) {
-          return false;
-        }
+  const selectedIngredients = useSelectedIngredients(menuItem, item);
+  const selectedIngredientIds = selectedIngredients.map(i => i.id);
+  const benefits = Object.keys(menuItem.AllBenefits)
+    .map(benefitId => {
+      const benefit = menuItem.AllBenefits[benefitId];
+      if (
+        menuItem.DefaultBenefitEnhancement &&
+        menuItem.DefaultBenefitEnhancement.id === benefitId
+      ) {
+        return benefit;
+      }
+      const benefitingIngredients = benefit.Ingredients.filter(
+        ingId => selectedIngredientIds.indexOf(ingId) !== -1,
+      );
+      if (benefitingIngredients.length > 0) {
+        return benefit;
+      }
+      return null;
+    })
+    .filter(Boolean);
+  const detailText = `${menuItem.Recipe['DisplayCalories']} Calories | ${
+    menuItem.Recipe['Nutrition Detail']
+  }`;
+  const dietaryInfos = Object.keys(menuItem.Dietary)
+    .map(dId => menuItem.Dietary[dId])
+    .filter(diet => {
+      if (diet['Applies To All Ingredients']) {
         return true;
-      });
-    // console.log('LOG FOR exampleMenuItem.json", JSON.stringify(menuItem));
-    menuContent = (
-      <BackgroundLayout
-        photoHasMargin
-        background={
-          <AirtableImage
-            image={menuItem.Recipe.SplashImage}
-            style={{ flex: 1, aspectRatio: 2732 / 2560 }}
-          />
-        }
-      >
-        <MenuHLayout
-          side={null}
-          //   <MenuCard
-          //     isPhotoZoomed={true}
-          //     key={menuItem.id}
-          //     title={menuItem['Display Name']}
-          //     tag={menuItem.DefaultEnhancementName}
-          //     price={menuItem.Recipe['Sell Price']}
-          //     photo={menuItem.Recipe['Recipe Image']}
-          //     onPress={null}
-          //     style={{ marginBottom: 116 }}
-          //   />
-        >
-          <DetailsSection>
-            <View style={{ alignSelf: 'flex-start', marginBottom: 5 }}>
-              <Tag tag={menuItem.DefaultBenefitEnhancementName} />
-            </View>
-            <MainTitle subtitle={formatCurrency(menuItem.Recipe['Sell Price'])}>
-              {displayNameOfOrderItem(item, menuItem)}
-            </MainTitle>
-            <View style={{ flexDirection: 'row' }}>
-              {benefits.map(b => (
-                <View
-                  key={b.id}
-                  style={{
-                    paddingVertical: 2,
-                    paddingRight: 16,
-                    alignItems: 'center',
-                  }}
-                >
-                  <AirtableImage
-                    image={b['Icon']}
-                    tintColor={monsterra}
-                    style={{
-                      width: 64,
-                      height: 64,
-                    }}
-                  />
-                  <Text
-                    style={{
-                      ...boldPrimaryFontFace,
-                      color: monsterra,
-                      alignSelf: 'center',
-                      letterSpacing: 0.5,
-                      fontSize: 12,
-                    }}
-                  >
-                    {b.Name.toUpperCase()}
-                  </Text>
-                </View>
-              ))}
-            </View>
-            <DescriptionText>{menuItem['Display Description']}</DescriptionText>
-            <DetailText>{detailText}</DetailText>
-            <View
-              style={{
-                marginTop: 27,
-                flexDirection: 'row',
-              }}
-            >
-              {dietary.map(d => (
-                <AirtableImage
-                  key={d.id}
-                  image={d.Icon}
-                  style={{
-                    width: 32,
-                    marginRight: 8,
-                    height: 32,
-                  }}
-                  tintColor={monsterra}
-                />
-              ))}
-            </View>
-            <SmallTitle>organic ingredients</SmallTitle>
-            <Ingredients selectedIngredients={selectedIngredients} />
-          </DetailsSection>
-        </MenuHLayout>
-      </BackgroundLayout>
-    );
-  }
+      }
+      if (!diet.Ingredients) {
+        return false;
+      }
+      if (
+        selectedIngredientIds.find(
+          ingId => diet.Ingredients.indexOf(ingId) === -1,
+        )
+      ) {
+        return false;
+      }
+      return true;
+    });
 
   return (
-    <React.Fragment>
-      {menuContent}
-      {foodMenu && <FoodMenu foodMenu={foodMenu} />}
-    </React.Fragment>
+    <BackgroundLayout
+      photoHasMargin
+      background={
+        <AirtableImage
+          image={menuItem.Recipe.SplashImage}
+          style={{ flex: 1, aspectRatio: 2732 / 2560 }}
+        />
+      }
+    >
+      <MenuHLayout side={null}>
+        <DetailsSection>
+          <View style={{ alignSelf: 'flex-start', marginBottom: 5 }}>
+            <Tag tag={menuItem.DefaultBenefitEnhancementName} />
+          </View>
+          <MainTitle subtitle={formatCurrency(menuItem.Recipe['Sell Price'])}>
+            {displayNameOfOrderItem(item, menuItem)}
+          </MainTitle>
+          <View style={{ flexDirection: 'row' }}>
+            {benefits.map(b => (
+              <View
+                key={b.id}
+                style={{
+                  paddingVertical: 2,
+                  paddingRight: 16,
+                  alignItems: 'center',
+                }}
+              >
+                <AirtableImage
+                  image={b['Icon']}
+                  tintColor={monsterra}
+                  style={{
+                    width: 64,
+                    height: 64,
+                  }}
+                />
+                <Text
+                  style={{
+                    ...boldPrimaryFontFace,
+                    color: monsterra,
+                    alignSelf: 'center',
+                    letterSpacing: 0.5,
+                    fontSize: 12,
+                  }}
+                >
+                  {b.Name.toUpperCase()}
+                </Text>
+              </View>
+            ))}
+          </View>
+          <DescriptionText>{menuItem['Display Description']}</DescriptionText>
+          <DetailText>{detailText}</DetailText>
+          <View
+            style={{
+              marginTop: 27,
+              flexDirection: 'row',
+            }}
+          >
+            {dietaryInfos.map(d => (
+              <AirtableImage
+                key={d.id}
+                image={d.Icon}
+                style={{
+                  width: 32,
+                  marginRight: 8,
+                  height: 32,
+                }}
+                tintColor={monsterra}
+              />
+            ))}
+          </View>
+          <SmallTitle>organic ingredients</SmallTitle>
+          <Ingredients selectedIngredients={selectedIngredients} />
+        </DetailsSection>
+      </MenuHLayout>
+    </BackgroundLayout>
   );
 }
 
