@@ -69,7 +69,6 @@ export function getSubsystemFaults(system) {
           .map(v => v === '1');
       });
     if (faulted[0][0]) {
-      og('zoom', system.reads.WatchDogFrozeAt);
       faults.push(
         'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
       );
