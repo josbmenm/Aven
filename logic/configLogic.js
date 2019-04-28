@@ -293,10 +293,10 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
         .find(c => c.Name === customCategoryName);
       const ingredientIdCounts = {};
       categoryIngredientIds.forEach(ingId => {
-        if (ingredientCounts[ingId] == null) {
-          ingredientCounts[ingId] = 0;
+        if (ingredientIdCounts[ingId] == null) {
+          ingredientIdCounts[ingId] = 0;
         }
-        ingredientCounts[ingId] += 1;
+        ingredientIdCounts[ingId] += 1;
       });
       customizedIngredientSet = [
         ...customizedIngredientSet.filter(
