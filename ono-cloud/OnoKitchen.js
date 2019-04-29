@@ -447,7 +447,10 @@ export function getActiveEnhancement(cartItem, menuItem) {
   if (
     cartItem &&
     cartItem.customization &&
-    cartItem.customization.enhancement
+    cartItem.customization.enhancement &&
+    menuItem &&
+    menuItem.AllBenefits &&
+    menuItem.AllBenefits[cartItem.customization.enhancement]
   ) {
     return menuItem.AllBenefits[cartItem.customization.enhancement];
   }

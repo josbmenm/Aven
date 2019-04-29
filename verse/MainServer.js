@@ -291,14 +291,15 @@ const runServer = async () => {
           currentTag = state[`${subsystem}_ActionIdOut_READ`];
           isSystemIdle = state[`${subsystem}_PrgStep_READ`] === 0;
           isTagReceived = currentTag === tag;
-          if (isSystemIdle && noFaults === false) {
-            reject(new Error(`System "${subsystem}" has faulted`));
-            return;
-          }
+
           if (isSystemIdle && isTagReceived) {
-            logBehavior(`Done with ${tag}`);
-            resolve();
+            logBehavior(`${noFaults ? 'Done with' : 'FAULTED on'} ${tag}`);
             sub && sub.unsubscribe();
+            if (noFaults === false) {
+              reject(new Error(`System "${subsystem}" has faulted`));
+            } else {
+              resolve();
+            }
           }
         },
         error: reject,
@@ -426,11 +427,15 @@ const runServer = async () => {
       }
       const { menuItemId } = item;
       const menuItem = blends.find(b => b.id === menuItemId);
-      const ings = getSelectedIngredients(menuItem, item, companyConfig);
+      const { ingredients } = getSelectedIngredients(
+        menuItem,
+        item,
+        companyConfig,
+      );
 
       const KitchenSlots = companyConfig.baseTables.KitchenSlots;
       const KitchenSystems = companyConfig.baseTables.KitchenSystems;
-      const requestedFills = ings.map(ing => {
+      const requestedFills = ingredients.map(ing => {
         const kitchenSlotId = Object.keys(KitchenSlots).find(slotId => {
           const slot = KitchenSlots[slotId];
           return slot.Ingredient && ing.id === slot.Ingredient[0];

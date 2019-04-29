@@ -156,9 +156,21 @@ export function companyConfigToBlendMenu(atData) {
             `No ingredients specified for customization category "${ic.Name}"`,
           );
         }
-        const defaultValue = ic.Ingredients.filter(
-          IngredientId => thisRecipeIngredientIds.indexOf(IngredientId) !== -1,
-        );
+        let defaultValue = [];
+        thisRecipeIngredients.forEach(ri => {
+          const ing = ri.Ingredient;
+          if (
+            ing &&
+            ing.id &&
+            ri.DispenseCount &&
+            ic.Ingredients.indexOf(ing.id) !== -1
+          ) {
+            defaultValue = [
+              ...defaultValue,
+              ...Array(ri.DispenseCount).fill(ing.id),
+            ];
+          }
+        });
         return {
           ...ic,
           Recipes: undefined,
@@ -261,36 +273,58 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
     cartItem && cartItem.customization && cartItem.customization.ingredients;
   const customEnhancements =
     cartItem && cartItem.customization && cartItem.customization.enhancements;
-  let outputIngredients = [];
+  let origRecipeVolume = menuItem.Recipe.Ingredients.reduce((acc, rI) => {
+    return acc + rI.DispenseCount * rI.Ingredient['ShotSize(ml)'];
+  }, 0);
+  const invalidReasons = [];
+  let enhancementIngredients = [
+    {
+      ...menuItem.DefaultBenefitEnhancementIngredient,
+      amountVolumeRatio:
+        menuItem.DefaultBenefitEnhancementIngredient['ShotSize(ml)'],
+      amount: 1,
+    },
+  ];
+  let standardIngredients = menuItem.Recipe.Ingredients.map(
+    recipeIngredient => {
+      return {
+        ...recipeIngredient.Ingredient,
+        amount: recipeIngredient.DispenseCount,
+        amountVolumeRatio: recipeIngredient.Ingredient['ShotSize(ml)'],
+      };
+    },
+  );
   if (customEnhancements) {
-    outputIngredients = [
-      ...outputIngredients,
-      ...customEnhancements.map(enhId => {
-        return {
-          ...menuItem.AllBenefits[enhId].EnhancementIngredient,
-          amount: 1,
-        };
-      }),
-    ];
-  } else {
-    outputIngredients = [
-      ...outputIngredients,
-      {
-        ...menuItem.DefaultBenefitEnhancementIngredient,
+    enhancementIngredients = customEnhancements.map(enhId => {
+      return {
+        ...menuItem.AllBenefits[enhId].EnhancementIngredient,
+        amountVolumeRatio:
+          menuItem.AllBenefits[enhId].EnhancementIngredient['ShotSize(ml)'],
         amount: 1,
-      },
-    ];
+      };
+    });
   }
   if (customIngredients) {
-    const origIngredients = menuItem.Recipe.Ingredients.map(
-      recipeIngredient => recipeIngredient.Ingredient,
-    );
-    let customizedIngredientSet = [...origIngredients];
     Object.keys(customIngredients).forEach(customCategoryName => {
       const categoryIngredientIds = customIngredients[customCategoryName];
       const category = Object.keys(customizationCategories)
         .map(id => customizationCategories[id])
         .find(c => c.Name === customCategoryName);
+      const dispensesInOrigRecipe = menuItem.Recipe.Ingredients.reduce(
+        (dispenseCount, recipeIngredient) => {
+          const ingredient = recipeIngredient.Ingredient;
+          if (category.Ingredients.indexOf(ingredient.id) !== -1) {
+            return dispenseCount + recipeIngredient.DispenseCount;
+          }
+          return dispenseCount;
+        },
+        0,
+      );
+      const minDispenses = Math.max(
+        0,
+        dispensesInOrigRecipe - (category['Underflow Limit'] || 0),
+      );
+      console.log('minDispenses', customCategoryName, minDispenses);
       const ingredientIdCounts = {};
       categoryIngredientIds.forEach(ingId => {
         if (ingredientIdCounts[ingId] == null) {
@@ -298,24 +332,38 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
         }
         ingredientIdCounts[ingId] += 1;
       });
-      customizedIngredientSet = [
-        ...customizedIngredientSet.filter(
+      standardIngredients = [
+        ...standardIngredients.filter(
           i => category.Ingredients.indexOf(i.id) === -1,
         ),
-        ...Object.keys(ingredientIdCounts).map(ingId => ({
-          ...allIngredients[ingId],
-          amount: ingredientIdCounts[ingId],
-        })),
+        ...Object.keys(ingredientIdCounts).map(ingId => {
+          const ingredient = allIngredients[ingId];
+          return {
+            ...allIngredients[ingId],
+            amount: ingredientIdCounts[ingId],
+            amountVolumeRatio: ingredient['ShotSize(ml)'],
+          };
+        }),
       ];
     });
-    outputIngredients = [...outputIngredients, ...customizedIngredientSet];
-  } else {
-    outputIngredients = [
-      ...outputIngredients,
-      ...menuItem.Recipe.Ingredients.map(
-        recipeIngredient => recipeIngredient.Ingredient,
-      ),
-    ];
   }
-  return outputIngredients;
+
+  function getVol(ings) {
+    return ings.reduce((vol, ing) => {
+      return vol + ing.amount * ing.amountVolumeRatio;
+    }, 0);
+  }
+  const enhancementsVolume = getVol(enhancementIngredients);
+  const ingredientsVolume = getVol(standardIngredients);
+  const finalVolume = ingredientsVolume + enhancementsVolume;
+  const outputIngredients = [...enhancementIngredients, ...standardIngredients];
+  return {
+    enhancementIngredients,
+    standardIngredients,
+    ingredients: outputIngredients,
+    origRecipeVolume,
+    finalVolume,
+    enhancementsVolume,
+    ingredientsVolume,
+  };
 }

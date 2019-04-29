@@ -51,10 +51,7 @@ const SEQUENCER_STEPS = [
       return null;
     },
     getKitchenStateReady: (kitchenState, intent) => {
-      return (
-        !!kitchenState &&
-        kitchenState.FillSystem_PositionAndDispenseAmountReady_READ
-      );
+      return !!kitchenState && kitchenState.FillSystem_PickUpNewCupReady_READ;
     },
     getKitchenCommand: intent => ({
       command: 'GetCup',

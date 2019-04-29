@@ -23,6 +23,8 @@ import TabSectionScrollView from './TabSectionScrollView';
 import ListAnimation from './ListAnimation';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { EnhancementDetail } from './Enhancements';
+import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
+import { getSelectedIngredients } from '../logic/configLogic';
 
 const tagSize = {
   width: 100,
@@ -142,15 +144,22 @@ function SideBySide({ items }) {
   return rows;
 }
 
-function CustomizationPuck({ isActive, children, onPress, disabled }) {
+function CustomizationPuck({
+  isActive,
+  children,
+  onPress,
+  disabled,
+  isSingleOption,
+}) {
   if (disabled) {
     return (
       <View
         style={{
           marginTop: 16,
           marginRight: 16,
-          width: 320, // tonight we dine in hell
           backgroundColor: 'white',
+          flex: 1,
+          alignSelf: 'stretch',
           borderRadius: 4,
           borderWidth: 3,
           borderColor: isActive ? monsterra : 'white',
@@ -165,7 +174,8 @@ function CustomizationPuck({ isActive, children, onPress, disabled }) {
       style={{
         marginTop: 16,
         marginRight: 16,
-        width: 290, // tonight we dine in hell
+        flex: 1,
+        alignSelf: 'stretch',
         ...prettyShadowSmall,
         backgroundColor: 'white',
         borderRadius: 4,
@@ -175,6 +185,39 @@ function CustomizationPuck({ isActive, children, onPress, disabled }) {
       onPress={disabled ? undefined : onPress}
     >
       {children}
+      {isActive && (
+        <View
+          style={{
+            justifyContent: 'center',
+            top: 6,
+            right: 8,
+            bottom: 6,
+            position: 'absolute',
+            width: 27,
+          }}
+        >
+          {isSingleOption ? (
+            <View
+              style={{
+                width: 26,
+                height: 26,
+                borderRadius: 13,
+                backgroundColor: 'monsterra',
+              }}
+            />
+          ) : (
+            <Image
+              source={require('./assets/CheckMark.png')}
+              style={{
+                width: 27,
+                height: 27,
+                resizeMode: 'contain',
+                bottom: 3,
+              }}
+            />
+          )}
+        </View>
+      )}
     </TouchableOpacity>
   );
 }
@@ -195,45 +238,45 @@ function EnhancementSection({ section }) {
       <Subtitle>
         Enhancements for fitness, immunity, focus, digestion, and skin & body
       </Subtitle>
-      <SideBySide
-        items={section.options.map((enhancement, index) => {
-          const isActive = section.selectedIds.indexOf(enhancement.id) !== -1;
-          const disabled = !isActive && section.selectedIds.length === 2;
-          return (
-            <CustomizationPuck
-              key={index}
-              isActive={isActive}
+      {section.options.map((enhancement, index) => {
+        const isActive = section.selectedIds.indexOf(enhancement.id) !== -1;
+        const disabled = !isActive && section.selectedIds.length === 2;
+        return (
+          <CustomizationPuck
+            key={index}
+            isActive={isActive}
+            disabled={disabled}
+            onPress={() => {
+              section.addIngredient(enhancement.id);
+            }}
+          >
+            <EnhancementDetail
+              enhancement={enhancement}
+              key={enhancement.id}
               disabled={disabled}
-              onPress={() => {
-                section.addIngredient(enhancement.id);
-              }}
-            >
-              <EnhancementDetail
-                enhancement={enhancement}
-                key={enhancement.id}
-                disabled={disabled}
-                price={
-                  section.selectedIds.length &&
-                  section.selectedIds[0] !== enhancement.id &&
-                  0.5
-                }
-              />
-            </CustomizationPuck>
-          );
-        })}
-      />
+              price={
+                section.selectedIds.length &&
+                section.selectedIds[0] !== enhancement.id &&
+                0.5
+              }
+            />
+          </CustomizationPuck>
+        );
+      })}
     </View>
   );
 }
 
-function StepperButton({ onPress, icon }) {
+function StepperButton({ onPress, icon, disabled }) {
   return (
     <TouchableOpacity
+      disabled={disabled}
       style={{
         borderWidth: 1,
         height: 26,
         width: 26,
         borderRadius: 13,
+        opacity: disabled ? 0.6 : 1,
         borderColor: monsterra50,
         justifyContent: 'center',
         alignItems: 'center',
@@ -249,11 +292,9 @@ function StepperButton({ onPress, icon }) {
 }
 
 function StepperSection({ section }) {
-  let message = section.message;
-
   return (
     <View style={{ paddingBottom: 60, overflow: 'visible' }}>
-      {message && <Subtitle style={{ paddingTop: 6 }}>{message}</Subtitle>}
+      <SectionDescription message={section.description} />
       <View
         style={{
           paddingVertical: 15,
@@ -262,9 +303,9 @@ function StepperSection({ section }) {
         }}
       >
         {section.options.map(option => {
-          // section.selectedIngredients...count..(i => i.id === option.key);
-          debugger;
-          const qty = 1;
+          const qty = section.selectedIngredients.filter(
+            i => i.id === option.key,
+          ).length;
           return (
             <View
               key={option.key}
@@ -312,7 +353,10 @@ function StepperSection({ section }) {
                 }}
               >
                 <StepperButton
-                  onPress={() => {}}
+                  disabled={qty === 0}
+                  onPress={() => {
+                    section.removeIngredient(option.key);
+                  }}
                   icon={require('./assets/MinusIcon.png')}
                 />
                 <Text
@@ -327,7 +371,12 @@ function StepperSection({ section }) {
                   {qty}
                 </Text>
                 <StepperButton
-                  onPress={() => {}}
+                  disabled={
+                    section.selectedIngredients.length >= section.slotCount
+                  }
+                  onPress={() => {
+                    section.addIngredient(option.key);
+                  }}
                   icon={require('./assets/PlusIcon.png')}
                 />
               </View>
@@ -339,38 +388,50 @@ function StepperSection({ section }) {
   );
 }
 
+function SectionDescription({ message }) {
+  if (!message) {
+    return null;
+  }
+  return (
+    <Text
+      style={{
+        fontSize: 20,
+        paddingTop: 6,
+        color: monsterra60,
+        ...proseFontFace,
+      }}
+    >
+      {message}
+    </Text>
+  );
+}
+
 function CustomizationMainSection({ section }) {
   if (section.name === 'enhancement') {
     return <EnhancementSection section={section} />;
   }
-  if (section.slotCount > 1) {
+  if (section.name !== 'Beverage') {
+    // hardcoding, great..
     return <StepperSection section={section} />;
   }
-  let message = section.description;
   return (
     <View style={{ paddingBottom: 60 }}>
-      {message && (
-        <Text
-          style={{
-            fontSize: 20,
-            paddingTop: 6,
-            color: monsterra60,
-            ...proseFontFace,
-          }}
-        >
-          {message}
-        </Text>
-      )}
+      <SectionDescription message={section.description} />
       <View
         style={{
           paddingVertical: 15,
-          flexWrap: 'wrap',
-          flexDirection: 'row',
           alignItems: 'center',
         }}
       >
         {section.options.map(option => (
-          <CustomizationPuck key={option.key} onPress={option.onSelect}>
+          <CustomizationPuck
+            isSingleOption={section.name === 'Beverage'}
+            key={option.key}
+            onPress={option.onSelect}
+            isActive={section.selectedIngredients.find(
+              i => i.id === option.key,
+            )}
+          >
             <View
               style={{
                 flexDirection: 'row',
@@ -393,17 +454,12 @@ function CustomizationMainSection({ section }) {
                 style={{
                   flex: 1,
                   marginLeft: 70,
-                  marginTop: 8,
                   paddingHorizontal: 10,
+                  justifyContent: 'center',
                 }}
               >
                 <Text style={{ ...titleStyle, fontSize: 12 }}>
                   {option.name.toUpperCase()}
-                </Text>
-                <Text
-                  style={{ ...proseFontFace, fontSize: 13, color: monsterra }}
-                >
-                  {option.description}
                 </Text>
               </View>
             </View>
@@ -413,74 +469,6 @@ function CustomizationMainSection({ section }) {
     </View>
   );
 }
-
-// function CustomIngredientPuck({ ingredient, onPress }) {
-//   return (
-//     <IngredientTag
-//       image={ingredient['Image']}
-//       onPress={onPress}
-//     />
-//   );
-// }
-
-// function IngredientCustomization({ customization, state, onState }) {
-//   return (
-//     <CustomizationSection
-//       title={customization['Display Name']}
-//       subtitle={`Choose ${customization.optionLimit}`}
-//     >
-//       {customization.Ingredients.map((Ingredient, i) => (
-//         <CustomIngredientPuck
-//           ingredient={Ingredient}
-//           key={i}
-//           onPress={() => {
-//             if (state.filter(i => i === Ingredient.id).length) {
-//               onState(state.filter(i => i !== Ingredient.id));
-//               return;
-//             }
-//             if (state.length < customization.optionLimit) {
-//               onState([...state, Ingredient.id]);
-//               return;
-//             }
-//           }}
-//         />
-//       ))}
-//     </CustomizationSection>
-//   );
-// }
-
-// function CustomFunctionPuck({ fn, onPress, state }) {
-//   return <IngredientTag image={fn['Photo']} onPress={onPress} />;
-// }
-
-// const MAX_FUNCTIONS = 2;
-
-// function BenefitCustomization({ customization, state, onState, menuItem }) {
-//   return (
-//     <CustomizationSection
-//       title="Blend Function"
-//       subtitle={`Choose ${MAX_FUNCTIONS}`}
-//     >
-//       {Object.keys(menuItem.BenefitCustomization).map(functionId => (
-//         <CustomFunctionPuck
-//           key={functionId}
-//           fn={menuItem.BenefitCustomization[functionId]}
-//           state={state}
-//           onPress={() => {
-//             const wasSelected = state.indexOf(functionId) !== -1;
-//             if (wasSelected) {
-//               onState(state.filter(f => f !== functionId));
-//               return;
-//             }
-//             if (state.length < MAX_FUNCTIONS) {
-//               onState([...state, functionId]);
-//             }
-//           }}
-//         />
-//       ))}
-//     </CustomizationSection>
-//   );
-// }
 
 function getCustomizationSections(
   menuItem,
@@ -541,8 +529,11 @@ function getCustomizationSections(
         (customizationState && customizationState.ingredients) || {};
       const customIngredients = customIngredientsByCustomizationCategory[name];
       const selectedIngredients = customIngredients || customSpec.defaultValue;
+      // console.log('wheyo!!!', name, customSpec.defaultValue.length, customSpec);
       const slotCount =
         customSpec.defaultValue.length + (customSpec['Overflow Limit'] || 0);
+      const slotCountMin =
+        customSpec.defaultValue.length - (customSpec['Underflow Limit'] || 0);
       function setIngredientCustomization(ingredientIds) {
         setCustomization({
           ...customizationState,
@@ -576,6 +567,10 @@ function getCustomizationSections(
           description: ingredient.Description,
           image: ingredient['Image'],
           onSelect: () => {
+            if (name === 'Beverage') {
+              setIngredientCustomization(Array(slotCount).fill(ingredient.id));
+              return;
+            }
             if (slotCount === 1) {
               setIngredientCustomization([ingredient.id]);
               return;
@@ -591,9 +586,15 @@ function getCustomizationSections(
         removeIngredient,
         addIngredient,
         selectedIngredients: selectedIngredients.map(ingredientId => {
-          return customSpec.Ingredients.find(i => i.id === ingredientId);
+          const ing = customSpec.Ingredients.find(i => i.id === ingredientId);
+          if (!ing) {
+            console.log('you!!', name, ingredientId, customSpec.Ingredients);
+            throw new Error('Bad bad bad');
+          }
+          return ing;
         }),
         slotCount,
+        slotCountMin,
       };
     }),
   ];
@@ -712,7 +713,9 @@ function CustomizationSidebar({
                 }}
               >
                 <ListAnimation
-                  list={Array(section.slotCount)
+                  list={Array(
+                    section.name === 'Beverage' ? 1 : section.slotCount,
+                  )
                     .fill(0)
                     .map((_, index) => {
                       if (section.name === 'enhancement') {
@@ -754,17 +757,24 @@ function CustomizationSidebar({
                       if (!ingredient) {
                         return 'add';
                       }
-                      const hasMany =
-                        section.selectedIngredients.filter(
-                          i => i.id === ingredient.id,
-                        ).length > 1;
+                      const ingCount = section.selectedIngredients.filter(
+                        i => i && i.id === ingredient.id,
+                      ).length;
 
                       return {
-                        onRemove: () => {
-                          section.removeIngredient(ingredient.id);
-                        },
+                        onRemove:
+                          section.name !== 'Beverage'
+                            ? () => {
+                                section.removeIngredient(ingredient.id);
+                              }
+                            : null,
                         children: (
-                          <View style={{ overflow: 'hidden', flex: 1 }}>
+                          <View
+                            style={{
+                              overflow: 'hidden',
+                              flex: 1,
+                            }}
+                          >
                             <AirtableImage
                               image={ingredient['Image']}
                               resizeMode="contain"
@@ -874,6 +884,7 @@ export default function CustomizePage({
   ...props
 }) {
   let customizeContent = null;
+  const companyConfig = useCompanyConfig();
   const { goBack, navigate } = useNavigation();
   if (menuItem) {
     customizeContent = (
@@ -916,7 +927,22 @@ export default function CustomizePage({
       secondary: true,
       title: 'cancel',
       onLongPress: () => {
-        alert(JSON.stringify({}));
+        const results = getSelectedIngredients(
+          menuItem,
+          { customization: customizationState },
+          companyConfig,
+        );
+        console.log(results);
+        alert(`
+${results.ingredients
+  .map(ing => `${ing.Name} (${ing.amount} x ${ing.amountVolumeRatio}ml)`)
+  .join('\n')}
+
+Ingredients: ${results.ingredientsVolume}ml
+Enhancements: ${results.enhancementsVolume}ml
+===
+Final Volume: ${results.finalVolume}ml
+(Original Recipe: ${results.origRecipeVolume}ml)`);
       },
       onPress: () => {
         goBack();

@@ -42,7 +42,7 @@ export function EnhancementDetail({
           width: 50,
           height: 50,
           left: 16,
-          top: 16,
+          top: 4,
           resizeMode: 'contain',
           position: 'absolute',
         }}

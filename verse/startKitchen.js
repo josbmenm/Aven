@@ -326,7 +326,7 @@ const extractActionValues = ({
   const valueCommands = subSystemConfig.valueCommands || {};
   const immediateOutput = {};
   const clearPulseOutput = {};
-  let tagOutput = null;
+  let tagOutput = {};
 
   // pulses
   pulse.forEach(pulseName => {
@@ -346,12 +346,12 @@ const extractActionValues = ({
       throw new Error('Invalid value name: ' + valueName);
     }
     const internalTagName = `${systemName}_${valueName}_VALUE`;
-    immediateOutput[internalTagName] = values[valueName];
+    // immediateOutput[internalTagName] = values[valueName];
+    tagOutput[internalTagName] = values[valueName];
   });
 
   // tag
   if (tag != null) {
-    tagOutput = {};
     tagOutput[`${systemName}_ActionIdIn_VALUE`] = tag;
     // immediateOutput[`${systemName}_ActionIdIn_VALUE`] = tag;
   }
@@ -721,8 +721,9 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
       values: action.values,
       tag: action.tag,
     });
+    await writeTags(mainRobotSchema, tagOutput);
     await writeTags(mainRobotSchema, immediateOutput);
-    tagOutput && (await writeTags(mainRobotSchema, tagOutput));
+    await delay(300);
     await writeTags(mainRobotSchema, clearPulseOutput);
     return { ...immediateOutput, ...clearPulseOutput, ...(tagOutput || {}) };
   }

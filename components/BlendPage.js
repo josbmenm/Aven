@@ -124,9 +124,12 @@ function BlendPageContentPure({
   foodMenu,
   order,
 }) {
-  const selectedIngredients = useSelectedIngredients(menuItem, item);
-  const selectedIngredientIds = selectedIngredients.map(i => i.id);
-  const benefits = Object.keys(menuItem.AllBenefits)
+  const { ingredients } = useSelectedIngredients(menuItem, item);
+  if (!ingredients) {
+    return null;
+  }
+  const selectedIngredientIds = ingredients.map(i => i.id);
+  const benefits = (menuItem ? Object.keys(menuItem.AllBenefits) : [])
     .map(benefitId => {
       const benefit = menuItem.AllBenefits[benefitId];
       if (
@@ -144,27 +147,31 @@ function BlendPageContentPure({
       return null;
     })
     .filter(Boolean);
-  const detailText = `${menuItem.Recipe['DisplayCalories']} Calories | ${
-    menuItem.Recipe['Nutrition Detail']
-  }`;
-  const dietaryInfos = Object.keys(menuItem.Dietary)
-    .map(dId => menuItem.Dietary[dId])
-    .filter(diet => {
-      if (diet['Applies To All Ingredients']) {
+  const detailText =
+    menuItem &&
+    `${menuItem.Recipe['DisplayCalories']} Calories | ${
+      menuItem.Recipe['Nutrition Detail']
+    }`;
+  const dietaryInfos =
+    menuItem &&
+    Object.keys(menuItem.Dietary)
+      .map(dId => menuItem.Dietary[dId])
+      .filter(diet => {
+        if (diet['Applies To All Ingredients']) {
+          return true;
+        }
+        if (!diet.Ingredients) {
+          return false;
+        }
+        if (
+          selectedIngredientIds.find(
+            ingId => diet.Ingredients.indexOf(ingId) === -1,
+          )
+        ) {
+          return false;
+        }
         return true;
-      }
-      if (!diet.Ingredients) {
-        return false;
-      }
-      if (
-        selectedIngredientIds.find(
-          ingId => diet.Ingredients.indexOf(ingId) === -1,
-        )
-      ) {
-        return false;
-      }
-      return true;
-    });
+      });
 
   return (
     <BackgroundLayout
@@ -224,21 +231,22 @@ function BlendPageContentPure({
               flexDirection: 'row',
             }}
           >
-            {dietaryInfos.map(d => (
-              <AirtableImage
-                key={d.id}
-                image={d.Icon}
-                style={{
-                  width: 32,
-                  marginRight: 8,
-                  height: 32,
-                }}
-                tintColor={monsterra}
-              />
-            ))}
+            {dietaryInfos &&
+              dietaryInfos.map(d => (
+                <AirtableImage
+                  key={d.id}
+                  image={d.Icon}
+                  style={{
+                    width: 32,
+                    marginRight: 8,
+                    height: 32,
+                  }}
+                  tintColor={monsterra}
+                />
+              ))}
           </View>
           <SmallTitle>organic ingredients</SmallTitle>
-          <Ingredients selectedIngredients={selectedIngredients} />
+          <Ingredients selectedIngredients={ingredients} />
         </DetailsSection>
       </MenuHLayout>
     </BackgroundLayout>

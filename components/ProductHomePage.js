@@ -7,7 +7,6 @@ import loadImages from '../components/Image';
 import { preloadImages } from '../components/AirtableImage';
 
 function ProductHomePage({ menu, ...props }) {
-  console.log(JSON.stringify(menu));
   React.useEffect(() => {
     if (!menu) {
       return;
