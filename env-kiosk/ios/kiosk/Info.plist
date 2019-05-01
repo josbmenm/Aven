@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>POS Dev</string>
+	<string>Control</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -23,7 +23,7 @@
 	<key>CFBundleVersion</key>
 	<string>2</string>
 	<key>CodePushDeploymentKey</key>
-	<string>VtoT-iEfykogiriAIOlvE55G6r0eBJvTELwT7</string>
+	<string>_3pcIaFvPpBPLkUNdCILthOOP-fqry0UbYIiN</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

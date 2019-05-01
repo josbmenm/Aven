@@ -4,7 +4,10 @@
     "env": "env-kiosk",
     "envOptions": {
       "bundleId": "co.onofood.blitz",
-      "displayName": "Kiosk"
+      "displayName": "Kiosk",
+      "codePushKey": "VtoT-iEfykogiriAIOlvE55G6r0eBJvTELwT7",
+      "codePushApp": "OnoFoodCo/Blitz",
+      "codePushChannel": "Production"
     },
     "srcDependencies": [
       "views",

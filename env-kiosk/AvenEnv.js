@@ -23,10 +23,22 @@ module.exports = {
     ]);
   },
   applyPackage: async ({ location, appName, srcDir, distPkg, appPkg }) => {
-    console.log('APPLYING PACKAGE!!', location);
-    const { bundleId, displayName } = appPkg.aven.envOptions;
+    const {
+      bundleId,
+      displayName,
+      codePushKey,
+      codePushChannel,
+      codePushApp,
+    } = appPkg.aven.envOptions;
     const distPkgPath = pathJoin(location, 'package.json');
-    await fs.writeFile(distPkgPath, JSON.stringify(distPkg, null, 2));
+    let outDistPkg = {
+      ...distPkg,
+      scripts: {
+        ...distPkg.scripts,
+        'aven:deploy': `npx appcenter codepush release-react -a ${codePushApp} -d ${codePushChannel} --plist-file ios/kiosk/Info.plist`,
+      },
+    };
+    await fs.writeFile(distPkgPath, JSON.stringify(outDistPkg, null, 2));
 
     const xprojPath = `${location}/ios/kiosk.xcodeproj/project.pbxproj`;
     const xprojData = fs.readFileSync(xprojPath, { encoding: 'utf8' });
@@ -38,11 +50,17 @@ module.exports = {
 
     const infoPath = `${location}/ios/kiosk/Info.plist`;
     const infoData = fs.readFileSync(infoPath, { encoding: 'utf8' });
-    const infoOut = infoData.replace(
-      /<key>CFBundleDisplayName<\/key>\n	<string>.*<\/string>/,
-      `<key>CFBundleDisplayName</key>
+    const infoOut = infoData
+      .replace(
+        /<key>CFBundleDisplayName<\/key>\n	<string>.*<\/string>/,
+        `<key>CFBundleDisplayName</key>
 	<string>${displayName}</string>`,
-    );
+      )
+      .replace(
+        /<key>CodePushDeploymentKey<\/key>\n	<string>.*<\/string>/,
+        `<key>CodePushDeploymentKey</key>
+	<string>${codePushKey}</string>`,
+      );
     await fs.writeFile(infoPath, infoOut);
 
     await fs.writeFile(

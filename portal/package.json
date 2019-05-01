@@ -1,42 +1,19 @@
 {
   "main": "App.js",
   "aven": {
-    "env": "expo",
+    "env": "env-kiosk",
+    "envOptions": {
+      "bundleId": "co.onofood.portal",
+      "displayName": "Control",
+      "codePushKey": "_3pcIaFvPpBPLkUNdCILthOOP-fqry0UbYIiN",
+      "codePushApp": "OnoFoodCo/Portal",
+      "codePushChannel": "Production"
+    },
     "srcDependencies": [
       "navigation-core",
       "navigation-native",
       "navigation-stack"
     ],
-    "moduleDependencies": [],
-    "envOptions": {
-      "app": {
-        "name": "portal",
-        "description": "This project is really great.",
-        "slug": "portal",
-        "privacy": "unlisted",
-        "sdkVersion": "31.0.0",
-        "platforms": [
-          "ios",
-          "android"
-        ],
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "icon": "./src-sync/portal/assets/icon.png",
-        "splash": {
-          "image": "./src-sync/portal/assets/splash.png",
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        },
-        "updates": {
-          "fallbackToCacheTimeout": 0
-        },
-        "assetBundlePatterns": [
-          "**/*"
-        ],
-        "ios": {
-          "supportsTablet": true
-        }
-      }
-    }
+    "moduleDependencies": []
   }
 }
