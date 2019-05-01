@@ -8,7 +8,7 @@
     "test": "razzle test --env=jsdom"
   },
   "engines": {
-    "node": ">=8.0"
+    "node": "11.x"
   },
   "dependencies": {
     "babel-plugin-react-native-web": "^0.11.2",
