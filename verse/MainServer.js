@@ -7,7 +7,6 @@ import createFSClient from '../cloud-server/createFSClient';
 import CloudContext from '../cloud-core/CloudContext';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import scrapeAirTable from '../skynet/scrapeAirTable';
-import { getMobileAuthToken } from '../skynet/Square';
 import { createReducerLambda } from '../cloud-core/useCloudReducer';
 import KitchenCommands from '../logic/KitchenCommands';
 import { hashSecureString } from '../cloud-utils/Crypto';
@@ -515,8 +514,6 @@ const runServer = async () => {
         return await kitchenAction(action);
       case 'UpdateAirtable':
         return await scrapeAirTable(fsClient);
-      case 'GetSquareMobileAuthToken':
-        return getMobileAuthToken(action);
       case 'StripeGetConnectionToken':
         return getConnectionToken(action);
       case 'StripeCapturePayment':

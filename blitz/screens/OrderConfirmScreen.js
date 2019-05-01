@@ -8,7 +8,7 @@ import useObservable from '../../cloud-core/useObservable';
 import { useNavigation } from '../../navigation-hooks/Hooks';
 import useEmptyOrderEscape from '../useEmptyOrderEscape';
 import Receipt from '../../components/Receipt';
-import { useCardPaymentCapture } from '../CardReader';
+import { useCardPaymentCapture } from '../../card-reader/CardReader';
 import OrderConfirmPage from '../../components/OrderConfirmPage';
 
 export default function OrderConfirmScreen({

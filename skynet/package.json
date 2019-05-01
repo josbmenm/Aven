@@ -22,6 +22,7 @@
       }
     },
     "srcDependencies": [
+      "stripe-server",
       "aven-web",
       "ono-cloud",
       "cloud-auth",

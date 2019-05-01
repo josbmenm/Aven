@@ -7,7 +7,8 @@ import scrapeAirTable from './scrapeAirTable';
 import createCloudClient from '../cloud-core/createCloudClient';
 import CloudContext from '../cloud-core/CloudContext';
 import createFSClient from '../cloud-server/createFSClient';
-import { getMobileAuthToken } from './Square';
+
+import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
 
 import { hashSecureString } from '../cloud-utils/Crypto';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
@@ -82,6 +83,7 @@ const runServer = async () => {
   const rootAuthProvider = RootAuthProvider({
     rootPasswordHash: await hashSecureString(ONO_ROOT_PASSWORD),
   });
+
   const protectedSource = createProtectedSource({
     source,
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
@@ -97,14 +99,35 @@ const runServer = async () => {
   const context = new Map();
   context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
 
+  const rootAuth = {
+    accountId: 'root',
+    verificationInfo: {},
+    verificationResponse: { password: ONO_ROOT_PASSWORD },
+  };
+
+  async function putPermission({ name, defaultRule }) {
+    await protectedSource.dispatch({
+      domain: 'onofood.co',
+      type: 'PutPermissionRules',
+      auth: rootAuth,
+      defaultRule,
+      name,
+    });
+  }
+
+  await putPermission({
+    defaultRule: { canPost: true },
+    name: 'Orders',
+  });
+
   const dispatch = async action => {
     switch (action.type) {
-      case 'GetSquareMobileAuthToken':
-        return await getMobileAuthToken(action);
+      case 'StripeGetConnectionToken':
+        return getConnectionToken(action);
+      case 'StripeCapturePayment':
+        return capturePayment(action);
       case 'UpdateAirtable':
         return await scrapeAirTable(fsClient);
-      case 'Debug':
-        return { message: 'The cake is a lie.' };
       default:
         return await protectedSource.dispatch(action);
     }

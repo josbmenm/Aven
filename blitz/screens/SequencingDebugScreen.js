@@ -13,14 +13,6 @@ import Button from '../../components/Button';
 import { Easing } from 'react-native-reanimated';
 import KitchenCommands from '../../logic/KitchenCommands';
 import KitchenHistory from '../../components/KitchenHistory';
-import {
-  CardReaderLog,
-  useCardReader,
-  useCardPaymentCapture,
-  disconnectReader,
-  clearReaderLog,
-} from '../CardReader';
-import OnoCloud from '../OnoCloud';
 import useCloud from '../../cloud-core/useCloud';
 import useCloudReducer from '../../cloud-core/useCloudReducer';
 import useObservable from '../../cloud-core/useObservable';
