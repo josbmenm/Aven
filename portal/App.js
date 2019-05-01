@@ -38,6 +38,24 @@ const AppNavigator = createStackNavigator(
 );
 const App = createAppContainer(AppNavigator);
 
+let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
+
+const isProduction = process.env.NODE_ENV !== 'development';
+
+isProduction &&
+  setInterval(() => {
+    codePush
+      .sync({
+        updateDialog: false,
+        installMode: codePush.InstallMode.IMMEDIATE,
+      })
+      .then(() => {})
+      .catch(e => {
+        console.error('Code update check failed');
+        console.error(e);
+      });
+  }, 10000);
+
 const AutoUpdatingApp = codePush(codePushOptions)(App);
 
 export default AutoUpdatingApp;
