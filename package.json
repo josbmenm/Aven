@@ -10,7 +10,7 @@
     "start-verse": "PORT=8830 ./node_modules/@aven-cloud/aven/aven-tools/cli.js start verse",
     "start-blitz": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start blitz",
     "start-blitz-app": "cd env-blitz-ios && react-native run-ios --simulator=\"iPad Pro (12.9-inch) (3rd generation)\"",
-    "open-blitz": "open env-kiosk/ios/kiosk.xcworkspace",
+    "open-xcode": "open env-kiosk/ios/kiosk.xcworkspace",
     "start-portal": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start portal",
     "clean": "./node_modules/@aven-cloud/aven/aven-tools/cli.js clean",
     "test": "jest"
