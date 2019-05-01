@@ -615,7 +615,7 @@ export default function createProtectedSource({ source, providers }) {
         );
       }
       const result = await dispatch(action);
-      if (action.type === 'PostDoc' && result) {
+      if (action.type === 'PostDoc' && result && action.auth) {
         const authDocName = nameToAuthDocName(result.name);
         await writeDocValue(source, action.domain, authDocName, {
           owner: action.auth.accountId,
