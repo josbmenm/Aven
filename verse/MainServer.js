@@ -22,7 +22,7 @@ import sendReceipt from './sendReceipt';
 import RestaurantReducer from '../logic/RestaurantReducer';
 
 import startKitchen, { computeKitchenConfig } from './startKitchen';
-import { getConnectionToken, capturePayment } from './Stripe';
+import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
 import { computeNextStep } from '../logic/KitchenSequence';
 import {
   companyConfigToBlendMenu,

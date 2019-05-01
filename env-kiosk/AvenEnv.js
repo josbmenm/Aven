@@ -23,8 +23,27 @@ module.exports = {
     ]);
   },
   applyPackage: async ({ location, appName, srcDir, distPkg, appPkg }) => {
+    console.log('APPLYING PACKAGE!!', location);
+    const { bundleId, displayName } = appPkg.aven.envOptions;
     const distPkgPath = pathJoin(location, 'package.json');
     await fs.writeFile(distPkgPath, JSON.stringify(distPkg, null, 2));
+
+    const xprojPath = `${location}/ios/kiosk.xcodeproj/project.pbxproj`;
+    const xprojData = fs.readFileSync(xprojPath, { encoding: 'utf8' });
+    const xprojOut = xprojData.replace(
+      /PRODUCT_BUNDLE_IDENTIFIER = .*;/g,
+      `PRODUCT_BUNDLE_IDENTIFIER = ${bundleId};`,
+    );
+    await fs.writeFile(xprojPath, xprojOut);
+
+    const infoPath = `${location}/ios/kiosk/Info.plist`;
+    const infoData = fs.readFileSync(infoPath, { encoding: 'utf8' });
+    const infoOut = infoData.replace(
+      /<key>CFBundleDisplayName<\/key>\n	<string>.*<\/string>/,
+      `<key>CFBundleDisplayName</key>
+	<string>${displayName}</string>`,
+    );
+    await fs.writeFile(infoPath, infoOut);
 
     await fs.writeFile(
       pathJoin(location, 'index.js'),

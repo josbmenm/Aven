@@ -3,8 +3,8 @@
   "aven": {
     "env": "env-kiosk",
     "envOptions": {
-      "bundleId": "co.onofood.blitz",
-      "displayName": "Kiosk"
+      "bundleId": "co.onofood.posdev",
+      "displayName": "POS Dev"
     },
     "srcDependencies": [
       "views",

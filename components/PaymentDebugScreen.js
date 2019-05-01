@@ -7,9 +7,8 @@ import {
   ScrollView,
   AlertIOS,
 } from 'react-native';
-import JSONView from '../../debug-views/JSONView';
-import Hero from '../../components/Hero';
-import Button from '../../components/Button';
+import JSONView from './JSONView';
+import Button from './Button';
 import {
   CardReaderLog,
   useCardReader,
@@ -17,14 +16,14 @@ import {
   useCardReaderConnectionManager,
   disconnectReader,
   clearReaderLog,
-} from '../CardReader';
-import useObservable from '../../cloud-core/useObservable';
-import RowSection from '../../components/RowSection';
-import TextRow from '../../components/TextRow';
-import TwoPanePage from '../../components/TwoPanePage';
-import Row from '../../components/Row';
-import BitRow from '../../components/BitRow';
-import { rowStyle, rowTitleStyle } from '../../components/Styles';
+} from '../card-reader/CardReader';
+import useObservable from '../cloud-core/useObservable';
+import RowSection from './RowSection';
+import TextRow from './TextRow';
+import TwoPanePage from './TwoPanePage';
+import Row from './Row';
+import BitRow from './BitRow';
+import { rowStyle, rowTitleStyle } from './Styles';
 
 function ObservableBitRow({ value, title }) {
   // const currentValue = useObservable(value);

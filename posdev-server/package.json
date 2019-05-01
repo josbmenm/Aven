@@ -1,33 +1,16 @@
 {
-  "name": "verse",
+  "name": "posdev-server",
   "version": "1.0.0",
-  "main": "index.js",
-  "dependencies": {},
   "aven": {
     "env": "razzle",
-    "publicAssetDir": "public",
     "envOptions": {
       "mainServer": "MainServer.js",
-      "mainClient": "MainClient.js",
-      "deployEnv": "Script",
-      "deployScript": "deploy.sh",
-      "knexFile": {
-        "development": {
-          "client": "sqlite3",
-          "useNullAsDefault": true,
-          "migrations": {
-            "directory": "src/sync/cloud-postgres/migrations"
-          },
-          "connection": {
-            "filename": "cloud.sqlite"
-          }
-        }
-      }
+      "mainClient": "MainClient.js"
     },
     "srcDependencies": [
+      "stripe-server",
       "logic",
       "aven-web",
-      "stripe-server",
       "admin",
       "cloud-core",
       "cloud-server",
@@ -41,6 +24,7 @@
     "moduleDependencies": [
       "mjml-react",
       "mjml",
+      "stripe",
       "sqlite3",
       "fbjs",
       "ws",

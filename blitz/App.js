@@ -28,7 +28,7 @@ import BlendScreen from './screens/BlendScreen';
 import CustomizeBlendScreen from './screens/CustomizeBlendScreen';
 import FoodScreen from './screens/FoodScreen';
 import DebugStateScreen from './screens/DebugStateScreen';
-import PaymentDebugScreen from './screens/PaymentDebugScreen';
+import PaymentDebugScreen from '../components/PaymentDebugScreen';
 import SequencingDebugScreen from './screens/SequencingDebugScreen';
 
 import Button from '../components/Button';
@@ -54,6 +54,7 @@ import AdminSessionContainer from './AdminSessionContainer';
 import OrderSidebarPage from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { registerDispatcher } from '../card-reader/CardReader';
 
 YellowBox.ignoreWarnings([
   'background tab',
@@ -61,6 +62,8 @@ YellowBox.ignoreWarnings([
   'with an invalid bridge',
   'CardReaderLog',
 ]);
+
+registerDispatcher(OnoCloud.dispatch);
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 

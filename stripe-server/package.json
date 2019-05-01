@@ -1,0 +1,8 @@
+{
+  "aven": {
+    "srcDependencies": [],
+    "moduleDependencies": [
+      "stripe"
+    ]
+  }
+}

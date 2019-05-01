@@ -1,7 +1,8 @@
 {
   "aven": {
     "srcDependencies": [
-      "views"
+      "views",
+      "cloud-core"
     ]
   }
 }

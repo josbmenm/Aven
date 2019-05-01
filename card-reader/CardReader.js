@@ -4,14 +4,29 @@ import StripeTerminal, {
   useStripeTerminalCreatePayment,
   useStripeTerminalConnectionManager,
 } from './terminal';
-import OnoCloud from './OnoCloud';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 const USE_SIMULATOR = false;
 
+let dispatch = null;
+
+export function registerDispatcher(dispatcher) {
+  if (dispatch) {
+    throw new Error('Dispatcher is already registered');
+  }
+  dispatch = dispatcher;
+}
+
+function getDispatcher() {
+  if (!dispatch) {
+    throw new Error('Dispatcher has not been registered with CardReader');
+  }
+  return dispatch;
+}
+
 StripeTerminal.initialize({
   fetchConnectionToken: () => {
-    return OnoCloud.dispatch({ type: 'StripeGetConnectionToken' }).then(
+    return getDispatcher()({ type: 'StripeGetConnectionToken' }).then(
       result => result.secret,
     );
   },
@@ -67,7 +82,7 @@ async function cancelPayment() {
 }
 
 async function capturePayment(paymentIntentId) {
-  return OnoCloud.dispatch({
+  return getDispatcher()({
     type: 'StripeCapturePayment',
     paymentIntentId,
   });
