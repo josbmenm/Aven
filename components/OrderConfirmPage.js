@@ -175,7 +175,7 @@ export default function OrderConfirmPage({
   }
 
   if (!message) {
-    message = 'hmm..';
+    // message = 'hmm..';
   }
 
   return (

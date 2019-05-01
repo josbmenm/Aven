@@ -169,6 +169,66 @@ function CustomizationPuck({
       </View>
     );
   }
+  let accessory = null;
+  if (isSingleOption) {
+    accessory = (
+      <View
+        style={{
+          justifyContent: 'center',
+          top: 6,
+          right: 8,
+          bottom: 6,
+          position: 'absolute',
+          width: 27,
+        }}
+      >
+        <View
+          style={{
+            width: 18,
+            height: 18,
+            borderRadius: 13,
+            borderColor: monsterra,
+            borderWidth: 2,
+          }}
+        >
+          {isActive && (
+            <View
+              style={{
+                backgroundColor: monsterra,
+                width: 10,
+                borderRadius: 6,
+                height: 10,
+                margin: 2,
+              }}
+            />
+          )}
+        </View>
+      </View>
+    );
+  } else if (isActive) {
+    accessory = (
+      <View
+        style={{
+          justifyContent: 'center',
+          top: 6,
+          right: 8,
+          bottom: 6,
+          position: 'absolute',
+          width: 27,
+        }}
+      >
+        <Image
+          source={require('./assets/CheckMark.png')}
+          style={{
+            width: 27,
+            height: 27,
+            resizeMode: 'contain',
+            bottom: 3,
+          }}
+        />
+      </View>
+    );
+  }
   return (
     <TouchableOpacity
       style={{
@@ -185,39 +245,7 @@ function CustomizationPuck({
       onPress={disabled ? undefined : onPress}
     >
       {children}
-      {isActive && (
-        <View
-          style={{
-            justifyContent: 'center',
-            top: 6,
-            right: 8,
-            bottom: 6,
-            position: 'absolute',
-            width: 27,
-          }}
-        >
-          {isSingleOption ? (
-            <View
-              style={{
-                width: 26,
-                height: 26,
-                borderRadius: 13,
-                backgroundColor: 'monsterra',
-              }}
-            />
-          ) : (
-            <Image
-              source={require('./assets/CheckMark.png')}
-              style={{
-                width: 27,
-                height: 27,
-                resizeMode: 'contain',
-                bottom: 3,
-              }}
-            />
-          )}
-        </View>
-      )}
+      {accessory}
     </TouchableOpacity>
   );
 }
@@ -870,10 +898,6 @@ function Customization({ menuItem, setCustomization, customizationState }) {
   );
 }
 
-// <ScrollView>
-
-// </ScrollView>
-
 export default function CustomizePage({
   menuItem,
   customizationState,
@@ -912,6 +936,7 @@ export default function CustomizePage({
               customization: customizationState,
               quantity: 1,
             };
+        console.log('owahhahaha', nextItem);
         setCartItem(nextItem);
         navigate({
           routeName: 'Blend',

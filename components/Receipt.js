@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import {
   sellPriceOfMenuItem,
   displayNameOfOrderItem,
@@ -117,19 +117,23 @@ export default function Receipt({ summary }) {
     return null;
   }
   return (
-    <View style={{ padding: 30, width: 520, alignSelf: 'center' }}>
+    <View
+      style={{ padding: 30, width: 520, paddingTop: 100, alignSelf: 'center' }}
+    >
       <SummarySubTitle title={getOrderName(summary)} />
       <SummaryTitle title="order summary" />
       <HorizontalRule />
-      {summary.items.map(item => (
-        <ReceiptRow
-          label={displayNameOfOrderItem(item, item.menuItem)}
-          amount={item.itemPrice}
-          quantity={item.quantity}
-          key={item.id}
-          summary={getItemCustomizationSummary(item)}
-        />
-      ))}
+      <ScrollView style={{ height: 320 }}>
+        {summary.items.map(item => (
+          <ReceiptRow
+            label={displayNameOfOrderItem(item, item.menuItem)}
+            amount={item.itemPrice}
+            quantity={item.quantity}
+            key={item.id}
+            summary={getItemCustomizationSummary(item)}
+          />
+        ))}
+      </ScrollView>
       <HorizontalRule />
       <RollupRow
         label="Tax"

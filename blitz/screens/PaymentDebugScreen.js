@@ -1,68 +1,139 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableHighlight, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableHighlight,
+  Alert,
+  ScrollView,
+  AlertIOS,
+} from 'react-native';
 import JSONView from '../../debug-views/JSONView';
-import TwoPanePage from '../../components/TwoPanePage';
 import Hero from '../../components/Hero';
 import Button from '../../components/Button';
 import {
   CardReaderLog,
   useCardReader,
   useCardPaymentCapture,
+  useCardReaderConnectionManager,
   disconnectReader,
   clearReaderLog,
 } from '../CardReader';
 import useObservable from '../../cloud-core/useObservable';
 import RowSection from '../../components/RowSection';
 import TextRow from '../../components/TextRow';
+import TwoPanePage from '../../components/TwoPanePage';
+import Row from '../../components/Row';
 import BitRow from '../../components/BitRow';
-import { rowStyle } from '../../components/Styles';
+import { rowStyle, rowTitleStyle } from '../../components/Styles';
 
 function ObservableBitRow({ value, title }) {
-  const currentValue = useObservable(value);
-  return <BitRow value={currentValue} title={title} />;
+  // const currentValue = useObservable(value);
+  return <BitRow value={value} title={title} />;
 }
 
 function ObservableJSONRow({ value, title }) {
-  const currentValue = useObservable(value);
-  return <TextRow text={JSON.stringify(currentValue)} title={title} />;
+  // const currentValue = useObservable(value);
+  return <TextRow text={JSON.stringify(value)} title={title} />;
+}
+
+function PaymentManagerScreen() {
+  const {
+    managerConnectionStatus, // connected | connecting | disconnected | scanning
+    readersAvailable,
+    connectedReader,
+    persistedReaderSerialNumber,
+    connectReader,
+    disconnectReader,
+    discoverReaders,
+  } = useCardReaderConnectionManager();
+
+  return (
+    <React.Fragment>
+      <TextRow
+        title="Manager connection status"
+        text={managerConnectionStatus}
+      />
+      <TextRow title="Persisted reader" text={persistedReaderSerialNumber} />
+      <RowSection>
+        {readersAvailable.map(
+          ({
+            serialNumber,
+            batteryLevel,
+            deviceType,
+            deviceSoftwareVersion,
+          }) => {
+            return (
+              <Row key={serialNumber}>
+                <Text
+                  style={{ flex: 1, alignSelf: 'center', fontSize: 18 }}
+                >{`${serialNumber} | ${deviceType ||
+                  'unknown type'} | ${deviceSoftwareVersion ||
+                  'unknown version'} (${(
+                  batteryLevel * 100
+                ).toFixed()}%)`}</Text>
+                <Button
+                  title={
+                    connectedReader &&
+                    connectedReader.serialNumber === serialNumber
+                      ? 'Connected'
+                      : 'Connect'
+                  }
+                  onPress={() => connectReader(serialNumber)}
+                />
+              </Row>
+            );
+          },
+        )}
+      </RowSection>
+      <Button title="Discover readers" onPress={() => discoverReaders()} />
+      <Button title="Disconnect reader" onPress={() => disconnectReader()} />
+    </React.Fragment>
+  );
 }
 
 function FullPaymentExample() {
   const {
-    stateMessage,
-    hasRequestedPayment,
-    hasCompleted,
-    hasCompletedPayment,
-    declinedWithMessage,
+    paymentSuccessful,
+    paymentCompleted,
+    paymentErrorMessage,
+    displayMessage,
     state,
-  } = useCardPaymentCapture(
-    {
-      amount: 123,
-      description: 'Full workflow payment',
+  } = useCardPaymentCapture({
+    amount: 1155,
+    description: 'Full workflow payment',
+    onCompletion: result => {
+      Alert.alert('Money received and card removed!', JSON.stringify(result));
     },
-    result => {
-      Alert.alert('Money recieved!', JSON.stringify(result));
+    onFailure: err => {
+      Alert.alert('Failed to create payment!', JSON.stringify(err));
     },
-  );
+  });
+
   return (
-    <View style={{ ...rowStyle }}>
-      <JSONView
-        data={{
-          state,
-          hasRequestedPayment,
-          stateMessage,
-          hasCompleted,
-          hasCompletedPayment,
-          declinedWithMessage,
-        }}
-      />
-    </View>
+    <React.Fragment>
+      <ObservableBitRow title="Payment successful" value={paymentSuccessful} />
+      <ObservableBitRow title="Payment completed" value={paymentCompleted} />
+      <View style={{ ...rowStyle }}>
+        <JSONView
+          data={{
+            displayMessage,
+            paymentErrorMessage,
+            state: {
+              ...state,
+              capturedPaymentIntent: JSON.stringify(
+                state.capturedPaymentIntent,
+              ),
+            },
+          }}
+        />
+      </View>
+    </React.Fragment>
   );
 }
 
 function UseCardExample() {
   const {
-    getPayment,
+    collectPayment,
     cancelPayment,
     prepareReader,
     readerState,
@@ -70,6 +141,7 @@ function UseCardExample() {
     readerIsReady,
     readerHasCardInserted,
   } = useCardReader();
+
   return (
     <React.Fragment>
       <ObservableBitRow title="Reader is Ready" value={readerIsReady} />
@@ -78,7 +150,6 @@ function UseCardExample() {
         value={readerHasCardInserted}
       />
       <ObservableJSONRow title="State" value={readerState} />
-      <ObservableJSONRow title="Status" value={readerStatus} />
       <Button
         title="Prepare Reader"
         onPress={() => {
@@ -113,17 +184,55 @@ function UseCardExample() {
       <Button
         title="Take $1.11"
         onPress={() => {
-          getPayment(111, 'Hello Stripe in my App!')
-            .then(() => {
-              console.log('==== JS THANKS FOR YOUR MONEY');
+          collectPayment({
+            amount: 111,
+            description: 'Hello Stripe in my App!',
+            currency: 'usd',
+          })
+            .then(intent => {
+              console.log('==== JS THANKS FOR YOUR MONEY', intent);
             })
             .catch(e => {
-              if (e.code === 20) {
-                // payment was cancelled manually
+              if (e.code === 102) {
+                console.log('==== payment cancelled manually', e);
                 return;
               }
               console.error(e);
             });
+        }}
+      />
+
+      <Button
+        title="Take custom amount"
+        onPress={() => {
+          AlertIOS.prompt(
+            'Enter an amount to collect.',
+            'Last 2 digits\n=============\n' +
+              '00  Payment is approved.\n' +
+              '01  Payment is declined with a call_issuer code.\n' +
+              '05  Payment is declined with a generic_decline code.\n' +
+              '55  Payment is declined with an incorrect_pin code.\n' +
+              '65  Payment is declined with a withdrawal_count_limit_exceeded code.\n' +
+              '75  Payment is declined with a pin_try_exceeded code.',
+            text => {
+              collectPayment({
+                amount: +text,
+                description: 'Custom payment test',
+                currency: 'usd',
+              })
+                .then(intent => {
+                  Alert.alert('Got yo money!', JSON.stringify(intent));
+                })
+                .catch(e => {
+                  if (e.code === 102) {
+                    Alert.alert('Sad, you canceled :(', JSON.stringify(e));
+                    return;
+                  }
+
+                  Alert.alert('Failed to get yo money', JSON.stringify(e));
+                });
+            },
+          );
         }}
       />
     </React.Fragment>
@@ -134,7 +243,7 @@ function ReaderEvents() {
   const log = useObservable(CardReaderLog);
   return (
     <React.Fragment>
-      <Text style={{ fontSize: 42 }}>Events</Text>
+      <Text style={{ ...rowStyle, ...rowTitleStyle }}>Events</Text>
       <RowSection>
         {log.map(evt => {
           return <TextRow key={evt.event + evt.time} text={evt.event} />;
@@ -146,12 +255,20 @@ function ReaderEvents() {
 }
 
 export default function PaymentDebugScreen(props) {
+  const [isShowingManager, setManager] = useState(false);
   const [isShowingFullExample, setFullExample] = useState(false);
   const [isShowingUseCard, setUseCard] = useState(false);
   return (
-    <TwoPanePage {...props} side={<ReaderEvents />}>
-      <Hero title="Card Reader Debugging" icon="💸" />
+    <TwoPanePage title="Card Reader Debugging" icon="💸">
       <RowSection>
+        <Button
+          title="Test useCardReaderConnectionManager"
+          onPress={() => {
+            setManager(!isShowingManager);
+          }}
+        />
+        {isShowingManager && <PaymentManagerScreen />}
+
         <Button
           title="Test useCardPaymentCapture"
           onPress={() => {
@@ -167,6 +284,8 @@ export default function PaymentDebugScreen(props) {
           }}
         />
         {isShowingUseCard && <UseCardExample />}
+
+        <ReaderEvents />
       </RowSection>
     </TwoPanePage>
   );

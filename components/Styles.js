@@ -45,7 +45,7 @@ export const monsterra80 = monsterra + 'CC';
 export const monsterraBlack = '#005151';
 export const highlightPrimaryColor = monsterra;
 export const mutedPrimaryColor = monsterra60;
-
+export const pinkColor = '#F8C1B8';
 // -----------
 
 // Fonts with Colors

@@ -31,11 +31,7 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		A90C13EE22680E3800453561 /* libFastImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A90C13ED22680E3300453561 /* libFastImage.a */; };
 		A936447A225CCC09005AD792 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = A9364479225CCC09005AD792 /* fonts */; };
-		A97AFE08225CD9C800C2CB54 /* EventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97AFE02225CD9C700C2CB54 /* EventEmitter.swift */; };
-		A97AFE09225CD9C800C2CB54 /* CardReaderManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = A97AFE03225CD9C800C2CB54 /* CardReaderManagerBridge.m */; };
-		A97AFE0A225CD9C800C2CB54 /* CardReaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97AFE04225CD9C800C2CB54 /* CardReaderManager.swift */; };
-		A97AFE0B225CD9C800C2CB54 /* ReactNativeEventEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = A97AFE05225CD9C800C2CB54 /* ReactNativeEventEmitter.m */; };
-		A97AFE0C225CD9C800C2CB54 /* ReactNativeEventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97AFE06225CD9C800C2CB54 /* ReactNativeEventEmitter.swift */; };
+		A9EBCC752278B60000BF530C /* RNStripeTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = A9EBCC742278B60000BF530C /* RNStripeTerminal.m */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		B8248F9C1C154A069EF53FC0 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FC7DDCA88D54F5F873F01DB /* libz.tbd */; };
 		EC30690DDEDA4AD9ABE0E414 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01718A8F1DBF4D848C11EFE2 /* libCodePush.a */; };
@@ -430,12 +426,8 @@
 		A50D9A5E151211EB6ED03926 /* Pods_kiosk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_kiosk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A90C13E822680E3200453561 /* FastImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FastImage.xcodeproj; path = "../node_modules/react-native-fast-image/ios/FastImage.xcodeproj"; sourceTree = "<group>"; };
 		A9364479225CCC09005AD792 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = ../fonts; sourceTree = "<group>"; };
-		A97AFE02225CD9C700C2CB54 /* EventEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EventEmitter.swift; path = src/EventEmitter.swift; sourceTree = "<group>"; };
-		A97AFE03225CD9C800C2CB54 /* CardReaderManagerBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CardReaderManagerBridge.m; path = src/CardReaderManagerBridge.m; sourceTree = "<group>"; };
-		A97AFE04225CD9C800C2CB54 /* CardReaderManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CardReaderManager.swift; path = src/CardReaderManager.swift; sourceTree = "<group>"; };
-		A97AFE05225CD9C800C2CB54 /* ReactNativeEventEmitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ReactNativeEventEmitter.m; path = src/ReactNativeEventEmitter.m; sourceTree = "<group>"; };
-		A97AFE06225CD9C800C2CB54 /* ReactNativeEventEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReactNativeEventEmitter.swift; path = src/ReactNativeEventEmitter.swift; sourceTree = "<group>"; };
-		A97AFE07225CD9C800C2CB54 /* kiosk-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "kiosk-Bridging-Header.h"; path = "src/kiosk-Bridging-Header.h"; sourceTree = "<group>"; };
+		A9EBCC742278B60000BF530C /* RNStripeTerminal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNStripeTerminal.m; path = src/RNStripeTerminal.m; sourceTree = "<group>"; };
+		A9EBCCA62278B61C00BF530C /* RNStripeTerminal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RNStripeTerminal.h; path = src/RNStripeTerminal.h; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		B667F5EB784CC6F79E88F17B /* libPods-kioskTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kioskTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B69F755BD44C41E280B31254 /* libRNGestureHandler.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNGestureHandler.a; sourceTree = "<group>"; };
@@ -576,12 +568,6 @@
 		13B07FAE1A68108700A75B9A /* kiosk */ = {
 			isa = PBXGroup;
 			children = (
-				A97AFE04225CD9C800C2CB54 /* CardReaderManager.swift */,
-				A97AFE03225CD9C800C2CB54 /* CardReaderManagerBridge.m */,
-				A97AFE02225CD9C700C2CB54 /* EventEmitter.swift */,
-				A97AFE07225CD9C800C2CB54 /* kiosk-Bridging-Header.h */,
-				A97AFE05225CD9C800C2CB54 /* ReactNativeEventEmitter.m */,
-				A97AFE06225CD9C800C2CB54 /* ReactNativeEventEmitter.swift */,
 				A9364479225CCC09005AD792 /* fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -590,6 +576,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				A9EBCC742278B60000BF530C /* RNStripeTerminal.m */,
+				A9EBCCA62278B61C00BF530C /* RNStripeTerminal.h */,
 			);
 			name = kiosk;
 			sourceTree = "<group>";
@@ -1385,12 +1373,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A97AFE0B225CD9C800C2CB54 /* ReactNativeEventEmitter.m in Sources */,
-				A97AFE0C225CD9C800C2CB54 /* ReactNativeEventEmitter.swift in Sources */,
+				A9EBCC752278B60000BF530C /* RNStripeTerminal.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
-				A97AFE09225CD9C800C2CB54 /* CardReaderManagerBridge.m in Sources */,
-				A97AFE0A225CD9C800C2CB54 /* CardReaderManager.swift in Sources */,
-				A97AFE08225CD9C800C2CB54 /* EventEmitter.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1421,7 +1405,6 @@
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1462,7 +1445,6 @@
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				HEADER_SEARCH_PATHS = (

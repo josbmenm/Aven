@@ -1,66 +1,21 @@
-import { useEffect, useState, useRef } from 'react';
-import { NativeModules, NativeEventEmitter } from 'react-native';
-import useCloud from '../cloud-core/useCloud';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { useState, useEffect } from 'react';
+import StripeTerminal, {
+  useStripeTerminalState,
+  useStripeTerminalCreatePayment,
+  useStripeTerminalConnectionManager,
+} from './terminal';
 import OnoCloud from './OnoCloud';
-import {
-  debounceTime,
-  map,
-  distinctUntilChanged,
-  publishBehavior,
-  refCount,
-} from 'rxjs/operators';
-import useObservable from '../cloud-core/useObservable';
+import { BehaviorSubject, Subject } from 'rxjs';
 
-const CardReaderManager = NativeModules.CardReaderManager;
+const USE_SIMULATOR = false;
 
-const AppEmitter = new NativeEventEmitter(
-  NativeModules.ReactNativeEventEmitter,
-);
-
-export const readerErrors = new Subject();
-export const readerState = new BehaviorSubject({
-  status: 'Unknown',
+StripeTerminal.initialize({
+  fetchConnectionToken: () => {
+    return OnoCloud.dispatch({ type: 'StripeGetConnectionToken' }).then(
+      result => result.secret,
+    );
+  },
 });
-
-const paymentRejectersByIntentId = {};
-const paymentResolversByIntentId = {};
-
-function setReaderState(updates) {
-  const values = {
-    ...readerState.value,
-    ...updates,
-  };
-  if (
-    values.errorStep === 'confirmPaymentIntent' &&
-    paymentRejectersByIntentId[values.errorPaymentIntentId]
-  ) {
-    paymentRejectersByIntentId[values.errorPaymentIntentId]({
-      code: values.errorCode,
-      declineCode: values.errorDeclineCode,
-      paymentIntentId: values.errorPaymentIntentId,
-    });
-  }
-  console.log(values);
-  const isRemovingCard =
-    readerState.value.promptType !== 'RemoveCard' &&
-    values.promptType === 'RemoveCard';
-  readerState.next({
-    promptType:
-      values.status === 'CollectingPaymentMethod' ? null : values.promptType,
-    promptMessage:
-      values.status === 'CollectingPaymentMethod' ? null : values.promptMessage,
-    ...values,
-    isCollecting:
-      values.status === 'CollectingPaymentMethod' ||
-      (values.status === 'Ready' && readerState.value.isCollecting),
-    isCardInserted: values.isCardInserted,
-    message:
-      values.inputOptionsMessage ||
-      values.promptMessage ||
-      values.statusMessage,
-  });
-}
 
 export const CardReaderLog = new BehaviorSubject([]);
 
@@ -68,301 +23,152 @@ export function clearReaderLog() {
   CardReaderLog.next([]);
 }
 
-AppEmitter.addListener('CardReaderLog', e => {
+function addCardReaderLogEvent(e) {
   const lastRecentLogs = CardReaderLog.getValue();
   CardReaderLog.next([
     { event: e, time: Date.now() },
     ...lastRecentLogs.slice(0, 50),
   ]);
+}
+
+StripeTerminal.addLogListener(addCardReaderLogEvent);
+
+const stripeTerminalService = StripeTerminal.startService({
+  policy: 'persist-manual',
+  deviceType: USE_SIMULATOR
+    ? StripeTerminal.DeviceTypeReaderSimulator
+    : StripeTerminal.DeviceTypeChipper2X,
 });
 
-AppEmitter.addListener('CardReaderTokenRequested', () => {
-  OnoCloud.dispatch({
-    type: 'StripeGetConnectionToken',
-  })
-    .then(result => {
-      CardReaderManager.provideConnectionToken(result.secret);
-    })
-    .catch(e => {
-      console.log('==== ! JS dispatch error in StripeGetConnectionToken! ', e);
-      console.error(e);
-    });
+stripeTerminalService.addListener('persistedReaderNotFound', readers => {
+  addCardReaderLogEvent(
+    `[StripeTerminalService] persistedReaderNotFound, found readers: ${readers
+      .map(r => r.serialNumber)
+      .join(', ')}`,
+  );
+});
+
+stripeTerminalService.addListener('connectionError', e => {
+  addCardReaderLogEvent(
+    `[StripeTerminalService] connectionError, error: ${JSON.stringify(e)}`,
+  );
+});
+
+stripeTerminalService.addListener('log', message => {
+  addCardReaderLogEvent(`[StripeTerminalService] ${message}`);
 });
 
 export async function disconnectReader() {
-  return await new Promise((resolve, reject) => {
-    CardReaderManager.disconnectReader((error, result) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve(result);
-    });
-  });
-}
-
-async function startPayment(amount, description) {
-  return await new Promise((resolve, reject) => {
-    CardReaderManager.getPayment(amount, description, (error, result) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve(result);
-    });
-  });
+  return stripeTerminalService.disconnect();
 }
 
 async function cancelPayment() {
-  await new Promise((resolve, reject) => {
-    CardReaderManager.cancelPayment(error => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve();
-    });
-  });
+  return StripeTerminal.abortCreatePayment();
 }
 
-async function getPayment(amount, description) {
-  const { paymentIntentId } = await startPayment(amount, description);
-
-  await new Promise((resolve, reject) => {
-    function clearHandlers() {
-      delete paymentRejectersByIntentId[paymentIntentId];
-      delete paymentResolversByIntentId[paymentIntentId];
-    }
-    paymentRejectersByIntentId[paymentIntentId] = err => {
-      clearHandlers();
-      reject(err);
-    };
-    paymentResolversByIntentId[paymentIntentId] = result => {
-      clearHandlers();
-      resolve(result, paymentIntentId);
-    };
-  });
-
-  return paymentIntentId;
-}
-
-AppEmitter.addListener('CardReaderPaymentReadyForCapture', request => {
-  const paymentIntentId = request.paymentIntentId;
-
-  OnoCloud.dispatch({
+async function capturePayment(paymentIntentId) {
+  return OnoCloud.dispatch({
     type: 'StripeCapturePayment',
     paymentIntentId,
-  })
-    .then(result => {
-      paymentResolversByIntentId[paymentIntentId] &&
-        paymentResolversByIntentId[paymentIntentId](result);
-    })
-    .catch(e => {
-      console.error('==== ! JS dispatch error in StripeCapturePayment! ', e);
-      readerErrors.next(e);
-      paymentRejectersByIntentId[paymentIntentId] &&
-        paymentRejectersByIntentId[paymentIntentId](e);
-    });
-});
-
-AppEmitter.addListener('CardReaderError', evt => {
-  readerErrors.next(evt);
-
-  console.error('==== ! JS CardReaderError ' + JSON.stringify(evt));
-});
-
-let lastInsertStateUpdate = null;
-
-AppEmitter.addListener('CardInsertState', updates => {
-  clearTimeout(lastInsertStateUpdate);
-  lastInsertStateUpdate = setTimeout(() => {
-    setReaderState({ isCardInserted: updates.isCardInserted });
-  }, 300);
-});
-
-AppEmitter.addListener('CardReaderState', evt => {
-  setReaderState(evt);
-});
-
-async function prepareReader() {
-  await new Promise((resolve, reject) => {
-    CardReaderManager.prepareReader(error => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve();
-    });
   });
 }
 
-function stateMap(mapper) {
-  return (
-    readerState
-      .pipe(map(mapper))
-      .pipe(distinctUntilChanged())
-      // .pipe(debounceTime(500))
-      .multicast(() => new BehaviorSubject(mapper(readerState.value)))
-      .refCount()
+async function prepareReader() {
+  return stripeTerminalService.connect();
+}
+
+async function collectPayment(state, options) {
+  if (state.paymentStatus !== StripeTerminal.PaymentStatusReady) {
+    throw new Error(
+      `Could not 'collectPayment' since Terminal is not ready (status: ${
+        state.paymentStatus
+      }).`,
+    );
+  }
+
+  return StripeTerminal.createPayment(options).then(intent =>
+    capturePayment(intent.stripeId),
   );
 }
 
-const readerIsReady = stateMap(
-  s => s.status === 'Ready' || s.status === 'CollectingPaymentMethod',
-);
+export function useCardPaymentCapture({ onCompletion, onFailure, ...request }) {
+  const [capturedPaymentIntent, setCapturedPaymentIntent] = useState(null);
+  const [paymentSuccessful, setPaymentSuccessful] = useState(false);
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
+  const [paymentErrorMessage, setPaymentErrorMessage] = useState(null);
 
-const readerHasCardInserted = stateMap(s => s.isCardInserted);
+  const handleError = function(e) {
+    onFailure(e);
+    setPaymentErrorMessage(e.error || e.message || e);
+    setPaymentCompleted(true);
+  };
 
-const readerPrompt = stateMap(s => {
-  if (s.promptMessage) {
-    return s.promptMessage;
-  }
-  return 'Wait for reader';
-});
+  const handleCompletion = function(intent) {
+    setPaymentCompleted(true);
+    onCompletion(intent);
+  };
 
-const readerStatus = stateMap(s => s.status).pipe(debounceTime(250));
+  const {
+    connectionStatus,
+    connectedReader,
+    paymentStatus,
+    cardInserted,
+    readerInputOptions,
+    readerInputPrompt,
+    readerError,
+  } = (state = useStripeTerminalCreatePayment({
+    amount: request.amount,
+    description: request.description,
+    currency: 'usd',
+    autoRetry: true,
+    onCapture: intent => capturePayment(intent.stripeId),
+    onSuccess: intent => {
+      setPaymentSuccessful(true);
+      setCapturedPaymentIntent(intent);
+    },
+    onFailure: handleError,
+  }));
 
-const stateMessage = stateMap(s => {
-  if (s.promptMessage) {
-    return s.promptMessage;
-  }
-  return s.status || 'Who knows..';
-});
-
-export function useCardPaymentCapture(
-  request,
-  { onPaymentComplete, onPaymentCompleteAndCardRemoved },
-) {
-  const amount = request && request.amount;
-  const description = request && request.description;
-  const { dispatch } = useCloud();
-  const currentReaderState = useObservable(readerState);
-  const checkoutState = useRef({});
-  const [hasRequestedPayment, setHasRequestedPayment] = useState(false);
-  const [hasCompletedPayment, setHasCompletedPayment] = useState(false);
-  const [hasCompleted, setHasCompleted] = useState(false);
-  const [declinedWithMessage, setHasDeclinedWithMessage] = useState(null);
-  const { status } = currentReaderState;
+  // Wait for capture + card removed before firing payment success.
   useEffect(() => {
-    console.log('========= reader effect', currentReaderState);
-    if (status === undefined) return;
-    if (!amount || !description) return;
-    if (hasCompleted) {
-      // everything is complete
-      return;
+    if (capturedPaymentIntent && !paymentCompleted && !cardInserted) {
+      handleCompletion(capturedPaymentIntent);
     }
-    if (hasCompletedPayment) {
-      console.log('======= zooom', currentReaderState.isCardInserted);
-      // not hasCompleted yet
-      if (!currentReaderState.isCardInserted) {
-        onPaymentCompleteAndCardRemoved && onPaymentCompleteAndCardRemoved();
-        setHasCompleted(true);
-      }
-      return;
-    }
-    function doRequestPayment() {
-      if (checkoutState.current.currentPaymentPromise) {
-        return;
-      }
-      if (!hasRequestedPayment) {
-        setHasRequestedPayment(true);
-      }
-      if (declinedWithMessage) {
-        setHasDeclinedWithMessage(null);
-      }
-      console.log('===== iz requesting payment');
-      checkoutState.current.currentPaymentPromise = getPayment(
-        amount,
-        description,
-      );
-      checkoutState.current.currentPaymentPromise
-        .then(result => {
-          console.log('===== getPaymentresuslltl', result);
-          onPaymentComplete && onPaymentComplete();
-          setHasCompletedPayment(true);
-        })
-        .catch(e => {
-          if (e.code === 103) {
-            setHasDeclinedWithMessage(`Declined with code "${e.declineCode}"`);
-          } else {
-            console.error('===== JS reador payment failure', e);
-          }
-        })
-        .finally(() => {
-          checkoutState.current.currentPaymentPromise = null;
-        });
-    }
-    if (hasRequestedPayment) {
-      if (
-        currentReaderState.errorStep === 'confirmPaymentIntent' &&
-        currentReaderState.errorCode === 103
-      ) {
-        console.log('====== retry condition!!');
-        doRequestPayment();
-        return;
-      }
-
-      // not hasCompleted or hasCompletedPayment yet
-      return;
-      // return () => {
-      //   cancelPayment()
-      //     .then(() => {
-      //       console.log('===== CANCELLED current PAYMENT!!!!');
-      //     })
-      //     .catch(e => {
-      //       console.error('===== JS CANCEL payment failure', e);
-      //     });
-      // };
-    }
-
-    if (status === 'Unknown') {
-      prepareReader()
-        .then(() => {})
-        .catch(e => {
-          console.error('===== JS reador prep failure', e);
-        });
-    } else if (status === 'Ready') {
-      doRequestPayment();
-    } else if (status === 'CollectingPaymentMethod') {
-      cancelPayment()
-        .then(() => {})
-        .catch(e => {
-          console.error('===== JS reador cancel failure', e);
-        });
-    } else if (status === 'NotReady') {
-      // wait (should do timeout probably)
-    } else {
-      throw new Error('Unexpected reader status ' + status);
-    }
-
-    return;
-  }, [
-    status,
-    dispatch,
-    amount,
-    description,
-    !hasRequestedPayment && (status === undefined || status === 'Ready'),
-  ]);
+  });
 
   return {
-    hasRequestedPayment,
-    hasCompleted,
-    hasCompletedPayment,
-    declinedWithMessage,
-    message: JSON.stringify(currentReaderState),
-    state: currentReaderState,
+    paymentSuccessful,
+    paymentCompleted,
+    paymentErrorMessage: paymentErrorMessage || readerError,
+    displayMessage: readerInputPrompt || readerInputOptions,
+    state: {
+      ...state,
+      capturedPaymentIntent,
+    },
   };
 }
 
 export function useCardReader() {
+  const {
+    connectionStatus,
+    connectedReader,
+    paymentStatus,
+    cardInserted,
+  } = (state = useStripeTerminalState());
+
   return {
-    readerIsReady,
-    readerHasCardInserted,
-    readerStatus,
-    readerState,
-    readerPrompt,
+    readerIsReady:
+      connectionStatus !== StripeTerminal.ConnectionStatusNotConnected,
+    readerHasCardInserted: cardInserted,
+    readerState: state,
     cancelPayment: cancelPayment,
-    getPayment,
-    prepareReader,
+    collectPayment: collectPayment.bind(null, state),
+    prepareReader: prepareReader.bind(null, state),
   };
+}
+
+export function useCardReaderConnectionManager() {
+  return useStripeTerminalConnectionManager({
+    service: stripeTerminalService,
+  });
 }

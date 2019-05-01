@@ -14,10 +14,10 @@ export default function CustomizeBlendScreen({ navigation, ...props }) {
   const initialCustomization = useMemo(() => {
     return item && item.customization;
   }, [item]);
-  let [customizationState, setCustomization] = useState(null);
+  let [customizationState, setCustomization] = useState(undefined);
   useEffect(() => {
     // this is lame but the initial customization arrives asyncronously
-    if (initialCustomization && !customizationState) {
+    if (initialCustomization && customizationState === undefined) {
       setCustomization(initialCustomization);
     }
   }, [customizationState, initialCustomization]);

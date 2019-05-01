@@ -3,11 +3,11 @@ import ShortBlockFormPage from './ShortBlockFormPage';
 import BlockForm from './BlockForm';
 import BlockFormRow from './BlockFormRow';
 import BlockFormButton from './BlockFormButton';
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import BlockFormInput from './BlockFormInput';
 import BlockFormHorizontalRule from './BlockFormHorizontalRule';
 import TextButton from './TextButton';
-import { headerHeight, rightSidebarWidth } from './Styles';
+import { headerHeight, rightSidebarWidth, pinkColor } from './Styles';
 import {
   useNavigation,
   useNavigationWillBlurEffect,
@@ -83,6 +83,16 @@ export default function OrderCompletePage({ backBehavior, ...props }) {
       >
         <PageMessage message="Your order is on its way!" />
         <PageTitle title="mahalo! enjoy your blend." />
+        <Image
+          style={{
+            tintColor: pinkColor,
+            width: 200,
+            height: 200,
+            marginVertical: 30,
+            alignSelf: 'center',
+          }}
+          source={require('./assets/Shaka.png')}
+        />
       </View>
       <View
         style={{
