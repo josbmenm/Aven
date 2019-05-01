@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 const currency = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',

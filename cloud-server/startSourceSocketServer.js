@@ -78,7 +78,7 @@ export default function startSourceSocketServer(wss, source) {
                 });
               }
               function sendUpdate(value) {
-                if (value.id === undefined) {
+                if (!value || value.id === undefined) {
                   return;
                 }
                 sendMessage({

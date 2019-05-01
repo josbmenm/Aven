@@ -24,7 +24,7 @@ export default function createNetworkSource(opts) {
   }`;
   let isCurrentlyConnected = false;
   let updateIsConnected = null;
-  const isConnected$ = xs.createWithMemory({
+  const isConnectedStream = xs.createWithMemory({
     start: listener => {
       listener.next(isCurrentlyConnected);
       updateIsConnected = listener.next;
@@ -118,8 +118,8 @@ export default function createNetworkSource(opts) {
   }
 
   function subscribe(subsSpec) {
+    const id = getClientId();
     return new Observable(observer => {
-      const id = getClientId();
       const finalSpec = { ...subsSpec, id };
       socketSendIfConnected({
         type: 'Subscribe',
@@ -220,11 +220,11 @@ export default function createNetworkSource(opts) {
     return subscribe({ domain, auth, docChildren: name });
   }
 
-  async function observeDoc$(domain, name, auth) {
+  function getDocStream(domain, name, auth) {
     return subscribeStream({ domain, auth, doc: name });
   }
 
-  async function observeDocChildren$(domain, name, auth) {
+  function getDocChildrenEventStream(domain, name, auth) {
     return subscribeStream({ domain, auth, docChildren: name });
   }
 
@@ -238,9 +238,10 @@ export default function createNetworkSource(opts) {
     //  #legacy
     isConnected,
     // new stream API:
-    observeDoc$,
-    observeDocChildren$,
-    isConnected$,
+    getDocStream,
+    getDocChildrenEventStream,
+    isConnectedStream,
+
     close: () => {
       ws && ws.close();
       ws = null;

@@ -41,7 +41,9 @@ export default function useObservable(observable) {
           next: applyValue,
           error: applyError,
         });
-        return () => subscription.unsubscribe();
+        return () => {
+          subscription && subscription.unsubscribe();
+        };
       }
     },
     [observable]

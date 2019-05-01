@@ -80,7 +80,7 @@ export default function createCloudBlock({
       },
     });
     return () => {
-      upstreamSubscription.unsubscribe();
+      upstreamSubscription && upstreamSubscription.unsubscribe();
     };
   })
     .multicast(() => new BehaviorSubject(blockState.value))

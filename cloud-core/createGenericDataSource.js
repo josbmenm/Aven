@@ -1,4 +1,5 @@
 import { BehaviorSubject, Subject } from 'rxjs-compat';
+import xs from 'xstream';
 import kuid from 'kuid';
 
 import createDispatcher from '../cloud-utils/createDispatcher';
@@ -81,6 +82,7 @@ export default function createGenericDataSource({
   commitDocDestroy,
   commitDocMove,
   isConnected,
+  isConnectedStream,
   docState,
   domain: sourceDomain,
   id,
@@ -431,18 +433,18 @@ export default function createGenericDataSource({
   };
   const observeDoc = async (domain, name) => {
     verifyDomain(domain, sourceDomain);
-    const listDocName = getListDocName(name);
-    if (typeof listDocName === 'string') {
-      const memoryDoc = getMemoryNode(listDocName, true);
-      if (memoryDoc.childrenSetBehavior) {
-        return memoryDoc.childrenSetBehavior;
-      } else {
-        memoryDoc.childrenSetBehavior = new BehaviorSubject({
-          value: { docs: [...memoryDoc.childrenSet] },
-        });
-        return memoryDoc.childrenSetBehavior;
-      }
-    }
+    // const listDocName = getListDocName(name);
+    // if (typeof listDocName === 'string') {
+    //   const memoryDoc = getMemoryNode(listDocName, true);
+    //   if (memoryDoc.childrenSetBehavior) {
+    //     return memoryDoc.childrenSetBehavior;
+    //   } else {
+    //     memoryDoc.childrenSetBehavior = new BehaviorSubject({
+    //       value: { docs: [...memoryDoc.childrenSet] },
+    //     });
+    //     return memoryDoc.childrenSetBehavior;
+    //   }
+    // }
     const memoryDoc = getMemoryNode(name, false);
     if (memoryDoc === null) {
       throw new Error(`Cannot observe nonexistent doc "${name}"`);
@@ -463,14 +465,36 @@ export default function createGenericDataSource({
     return memoryDoc.childrenEvents;
   };
 
+  function getDocStream(domain, name, auth) {
+    // verifyDomain(domain, sourceDomain);
+    // const memoryDoc = getMemoryNode(name, false);
+    // if (memoryDoc === null) {
+    //   throw new Error(`Cannot stream nonexistent doc "${name}"`);
+    // }
+    // if (memoryDoc && memoryDoc.stream) {
+    //   return memoryDoc.stream;
+    // } else {
+    //   return (memoryDoc.stream = new BehaviorSubject(_renderDoc(memoryDoc)));
+    // }
+  }
+
+  function getDocChildrenEventStream(domain, name, auth) {
+    // verifyDomain(domain, sourceDomain);
+    // const memoryDoc = getMemoryNode(name, false);
+    // if (!memoryDoc) {
+    //   throw new Error('parent does not exist');
+    // }
+    // return memoryDoc.childrenEventsStream;
+  }
+
   async function GetDocValue({ domain, name }) {
     verifyDomain(domain, sourceDomain);
 
-    const listDocName = getListDocName(name);
-    if (typeof listDocName === 'string') {
-      const docNames = await ListDocs({ domain, parentName: listDocName });
-      return { id: undefined, value: docNames };
-    }
+    // const listDocName = getListDocName(name);
+    // if (typeof listDocName === 'string') {
+    //   const docNames = await ListDocs({ domain, parentName: listDocName });
+    //   return { id: undefined, value: docNames };
+    // }
     const doc = await GetDoc({ domain, name });
     const id = doc && doc.id;
     if (!id) {
@@ -497,6 +521,9 @@ export default function createGenericDataSource({
     close,
     observeDoc,
     observeDocChildren,
+    getDocStream,
+    getDocChildrenEventStream,
+    isConnectedStream,
     dispatch: createDispatcher({
       PutDoc,
       PutDocValue,

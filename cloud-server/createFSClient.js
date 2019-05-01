@@ -14,6 +14,7 @@ export default function createFSClient({ client }) {
       };
     }
     const { id } = await writeTemporary(block);
+    console.log('did put file', filePath);
     return id;
   }
 
@@ -36,6 +37,8 @@ export default function createFSClient({ client }) {
     });
     const folderObj = { files, type: 'Folder' };
     const { id } = await writeTemporary(folderObj);
+    console.log('did upload folder', folderPath);
+
     return id;
   }
 
@@ -48,6 +51,7 @@ export default function createFSClient({ client }) {
     });
     uploadPointDoc.destroy();
     await doc.putId(id);
+    console.log('did put folder', folderPath);
     return { id, name };
   }
 
