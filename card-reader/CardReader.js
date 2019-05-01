@@ -27,7 +27,9 @@ function getDispatcher() {
 StripeTerminal.initialize({
   fetchConnectionToken: () => {
     return getDispatcher()({ type: 'StripeGetConnectionToken' }).then(
-      result => result.secret,
+      result => {
+        return result.secret;
+      },
     );
   },
 });

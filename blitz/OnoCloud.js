@@ -17,7 +17,7 @@ const RESTAURANT_PROD = {
   authority: 'www.onofood.co',
 };
 
-const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
+const HOST_CONFIG = false ? RESTAURANT_DEV : RESTAURANT_PROD;
 
 setHostConfig(HOST_CONFIG);
 
