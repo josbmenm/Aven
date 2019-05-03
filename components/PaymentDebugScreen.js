@@ -98,7 +98,7 @@ function FullPaymentExample() {
     displayMessage,
     state,
   } = useCardPaymentCapture({
-    amount: 1155,
+    amount: 123,
     description: 'Full workflow payment',
     onCompletion: result => {
       Alert.alert('Money received and card removed!', JSON.stringify(result));

@@ -43,7 +43,11 @@ export default function createHooks(StripeTerminal) {
       paymentStatus,
       readerInputOptions,
       readerInputPrompt,
-      cardInserted
+      cardInserted,
+      clearReaderInputState: () => {
+        setReaderInputOptions(null);
+        setReaderInputPrompt(null);
+      }
     };
   }
 
@@ -54,24 +58,25 @@ export default function createHooks(StripeTerminal) {
       paymentStatus,
       cardInserted,
       readerInputOptions,
-      readerInputPrompt
+      readerInputPrompt,
+      clearReaderInputState
     } = state = useStripeTerminalState();
 
     const [hasCreatedPayment, setHasCreatedPayment] = useState(false);
     const [isCaptured, setIsCaptured] = useState(false);
     const [isCompleted, setIsCompleted] = useState(false);
     const [readerError, setReaderError] = useState(null);
+    const [hasRetried, setHasRetried] = useState(false);
 
     useEffect(() => {
-      // FIXME DEBUG REMOVE
-      // alert(`~~~~ create payment status=${paymentStatus}, wants=${
-      //   StripeTerminal.PaymentStatusReady}, hascreated=${hasCreatedPayment}`);
 
-      if (paymentStatus === StripeTerminal.PaymentStatusReady && !hasCreatedPayment) {
-        alert(`~~~~ creating new payment=${paymentStatus}, wants=${
-          StripeTerminal.PaymentStatusReady}, hascreated=${hasCreatedPayment}`);
+      if (paymentStatus !== StripeTerminal.PaymentStatusNotReady &&
+          (!hasCreatedPayment || (readerError && !hasRetried && !cardInserted))) {
 
         setHasCreatedPayment(true);
+        if (readerError) {
+          setHasRetried(true);
+        }
 
         StripeTerminal.createPayment(options)
           .then(intent => {
@@ -85,9 +90,13 @@ export default function createHooks(StripeTerminal) {
           })
           .catch(({ error }) => {
             if (autoRetry) {
-              setReaderError(error);
               StripeTerminal.abortCreatePayment()
-                .then(() => setHasCreatedPayment(false));
+                .then(() => {
+                  clearReaderInputState();
+                  setHasRetried(false);
+                  setReaderError(error);
+                })
+                .catch(e => onFailure(e));
               return;
             }
 
@@ -95,7 +104,7 @@ export default function createHooks(StripeTerminal) {
           })
           .finally(() => setIsCompleted(true));
       }
-    }, [paymentStatus, hasCreatedPayment]);
+    }, [paymentStatus, hasCreatedPayment, readerError, hasRetried, cardInserted]);
 
     // Cleanup: abort if unmounted midway through payment intent creation process.
     useEffect(() => {
