@@ -173,7 +173,7 @@ const runServer = async () => {
   return {
     close: async () => {
       await protectedSource.close();
-      await source.close();
+      await evalSource.close();
       await webService.close();
     },
   };
