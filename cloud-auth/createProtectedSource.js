@@ -468,6 +468,13 @@ export default function createProtectedSource({ source, providers }) {
       return { ...Permissions.admin, owner };
     }
 
+    if (
+      validatedAuth.accountId &&
+      name.match(new RegExp(`^@${validatedAuth.accountId}\/`))
+    ) {
+      interpretedRule.canRead = true;
+    }
+
     const finalPermissions = {
       owner,
       canRead:
