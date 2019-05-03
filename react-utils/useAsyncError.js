@@ -6,7 +6,7 @@ export default function useAsyncError() {
     throw error;
   }
   function handler(promise) {
-    promise.then().catch(error => {
+    return promise.catch(error => {
       setError(error);
     });
   }
