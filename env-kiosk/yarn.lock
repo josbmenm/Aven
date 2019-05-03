@@ -1913,6 +1913,11 @@ cssstyle@^1.0.0:
   dependencies:
     cssom "0.3.x"
 
+cuid@^2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/cuid/-/cuid-2.1.6.tgz#dc3a20b5a7497d36d32c0bf8a2997524c9c796c4"
+  integrity sha512-ZFp7PS6cSYMJNch9fc3tyHdE4T8TDo3Y5qAxb0KSA9mpiYDo7z9ql1CznFuuzxea9STVIDy0tJWm2lYiX2ZU1Q==
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -4265,11 +4270,6 @@ kleur@^2.0.1:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-2.0.2.tgz#b704f4944d95e255d038f0cb05fb8a602c55a300"
   integrity sha512-77XF9iTllATmG9lSlIv0qdQ2BQ/h9t0bJllHlbvsQ0zUWfU7Yi0S8L5JXzPZgkefIiajLmBJJ4BsMJmqcf7oxQ==
-
-kuid@^2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/kuid/-/kuid-2.1.4.tgz#eb500298f5efc64556d28463a7441af69da497d5"
-  integrity sha512-jbgfHWhf0Ksgq2N6fj8cFMavXzFgPdhyBNnd5aYJxVVeBNQQBoenBj5AE5WJ0RdmtQZz71indq3B5Ugna+z9NQ==
 
 latest-version@^3.0.0:
   version "3.1.0"

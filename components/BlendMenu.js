@@ -4,7 +4,7 @@ import {
   displayNameOfMenuItem,
   useOrder,
 } from '../ono-cloud/OnoKitchen';
-import kuid from 'kuid';
+import cuid from 'cuid';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { MenuCardCarousel } from '../components/MenuCard';
 import { MenuZone } from '../components/MenuZone';
@@ -34,7 +34,7 @@ export default function BlendMenu({ menu, large, title }) {
                 .filter(i => i.menuItemId === item.id)
                 .find(i => i.customization == null);
 
-            const orderItemId = (currentItem && currentItem.id) || kuid();
+            const orderItemId = (currentItem && currentItem.id) || cuid();
             PerformanceDebugging.markTransitionStart(
               `blend-item-${orderItemId}`,
             );

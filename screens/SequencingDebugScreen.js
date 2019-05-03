@@ -36,7 +36,7 @@ import { computeNextStep } from '../logic/KitchenSequence';
 import useFocus from '../navigation-hooks/useFocus';
 import useAsyncError from '../react-utils/useAsyncError';
 import ControlPanel from './ControlPanel';
-import kuid from 'kuid';
+import cuid from 'cuid';
 
 function ObservableBitRow({ value, title }) {
   const currentValue = useObservable(value);
@@ -272,7 +272,7 @@ function AdHocOrderRow() {
             restaurantDispatch({
               type: 'PlaceOrder',
               order: {
-                id: kuid(),
+                id: cuid(),
                 name: orderName,
                 blendName: orderBlendName,
                 fills,

@@ -27,7 +27,7 @@
       "navigation-hooks"
     ],
     "moduleDependencies": [
-      "kuid",
+      "cuid",
       "path"
     ]
   }

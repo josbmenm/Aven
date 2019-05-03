@@ -23,7 +23,7 @@
       "navigation-hooks"
     ],
     "moduleDependencies": [
-      "kuid",
+      "cuid",
       "path",
       "@nozbe/with-observables"
     ]

@@ -29,6 +29,9 @@ import KioskSettingsScreen from '../screens/KioskSettingsScreen';
 import KioskHomeScreen from '../screens/KioskHomeScreen';
 import BlendScreen from '../screens/BlendScreen';
 import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
+import FeedbackScreen from '../screens/FeedbackScreen';
+import FeedbackCompleteScreen from '../screens/FeedbackCompleteScreen';
+import FeedbackHomeScreen from '../screens/FeedbackHomeScreen';
 import FoodScreen from '../screens/FoodScreen';
 import DebugStateScreen from '../screens/DebugStateScreen';
 import PaymentDebugScreen from '../components/PaymentDebugScreen';
@@ -57,7 +60,7 @@ import OrderSidebarPage from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { registerDispatcher } from '../card-reader/CardReader';
-import kuid from 'kuid';
+import cuid from 'cuid';
 import { setHostConfig } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import useAsyncStorage, {
@@ -133,7 +136,7 @@ const OrderNavigator = createStackTransitionNavigator(
   },
 );
 
-const App = createStackTransitionNavigator({
+const KioskAppNavigator = createStackTransitionNavigator({
   // Home: HomeScreen,
   // ComponentPlayground: ComponentPlaygroundScreen,
   // KitchenEng: KitchenEngScreen,
@@ -155,7 +158,17 @@ const App = createStackTransitionNavigator({
   OrderNavigator,
 });
 
-const AppContainer = createAppContainer(App);
+process.env.REACT_NAV_LOGGING = true;
+
+const KioskAppContainer = createAppContainer(KioskAppNavigator);
+
+const FeedbackAppNavigator = createStackTransitionNavigator({
+  FeedbackHome: FeedbackHomeScreen,
+  Feedback: FeedbackScreen,
+  FeedbackComplete: FeedbackCompleteScreen,
+});
+
+const FeedbackAppContainer = createAppContainer(FeedbackAppNavigator);
 
 function RetryButton({ onRetry }) {
   return <Button title="Try again.." onPress={onRetry} />;
@@ -200,14 +213,18 @@ function KioskApp() {
   return (
     <PopoverContainer>
       <OrderContextProvider>
-        <AppContainer />
+        <KioskAppContainer />
       </OrderContextProvider>
     </PopoverContainer>
   );
 }
 
 function FeedbackApp() {
-  return <View style={{ flex: 1, backgroundColor: 'blue' }} />;
+  return (
+    <PopoverContainer>
+      <FeedbackAppContainer />
+    </PopoverContainer>
+  );
 }
 
 function WaitingPage({ title }) {
