@@ -1,8 +1,8 @@
 import React from 'react';
-import { useOrder } from '../../ono-cloud/OnoKitchen';
-import useEmptyOrderEscape from '../useEmptyOrderEscape';
-import { useNavigation } from '../../navigation-hooks/Hooks';
-import ReceiptPage from '../../components/ReceiptPage';
+import { useOrder } from '../ono-cloud/OnoKitchen';
+import useEmptyOrderEscape from './useEmptyOrderEscape';
+import { useNavigation } from '../navigation-hooks/Hooks';
+import ReceiptPage from '../components/ReceiptPage';
 
 export default function ReceiptScreen({ props }) {
   const { navigate } = useNavigation();

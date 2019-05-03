@@ -5,7 +5,6 @@ import { useOrderSummary, useOrder } from '../ono-cloud/OnoKitchen';
 import CartSidebar from './CartSidebar';
 
 import { useNavigation } from '../navigation-hooks/Hooks';
-import useEmptyOrderEscape from '../blitz/useEmptyOrderEscape';
 import {
   prettyShadow,
   rightSidebarWidth,
@@ -23,7 +22,6 @@ export default function OrderSidebarPage({ children, ...props }) {
   const { navigate } = useNavigation();
   const summary = useOrderSummary();
   const { cancelOrder } = useOrder();
-  useEmptyOrderEscape();
   const [openProgress] = useState(new Animated.Value(0));
   const shouldBeOpen = !!summary && summary.items && summary.items.length >= 1;
   useEffect(() => {

@@ -10,10 +10,10 @@ import {
   genericPageStyle,
   splashText,
   highlightPrimaryColor,
-} from '../../components/Styles';
+} from '../components/Styles';
 
-import { useOrder } from '../../ono-cloud/OnoKitchen';
-import FadeTransition from '../../components/FadeTransition';
+import { useOrder } from '../ono-cloud/OnoKitchen';
+import FadeTransition from '../components/FadeTransition';
 
 export default function KioskHomeScreen({ navigation, ...props }) {
   const { startOrder, resetOrder } = useOrder();
@@ -26,7 +26,7 @@ export default function KioskHomeScreen({ navigation, ...props }) {
       navigation={navigation}
       background={
         <Image
-          source={require('../../components/assets/BgHome.png')}
+          source={require('../components/assets/BgHome.png')}
           style={{
             // flex: 1,
             width: null,
@@ -53,7 +53,7 @@ export default function KioskHomeScreen({ navigation, ...props }) {
               resizeMode: 'contain',
               tintColor: highlightPrimaryColor,
             }}
-            source={require('../../components/assets/OnoBlendsLogo.png')}
+            source={require('../components/assets/OnoBlendsLogo.png')}
           />
 
           <Text

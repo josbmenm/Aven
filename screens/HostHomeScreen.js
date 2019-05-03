@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
-import Hero from '../../components/Hero';
+import Hero from '../components/Hero';
 
-import GenericPage from '../../components/GenericPage';
-import RowSection from '../../components/RowSection';
-import LinkRow from '../../components/LinkRow';
-import Row from '../../components/Row';
-import Button from '../../components/Button';
-import { useNavigation } from '../../navigation-hooks/Hooks';
+import GenericPage from '../components/GenericPage';
+import RowSection from '../components/RowSection';
+import LinkRow from '../components/LinkRow';
+import Row from '../components/Row';
+import Button from '../components/Button';
+import { useNavigation } from '../navigation-hooks/Hooks';
 
-import useCloud from '../../cloud-core/useCloud';
-import useObservable from '../../cloud-core/useObservable';
+import useCloud from '../cloud-core/useCloud';
+import useObservable from '../cloud-core/useObservable';
 
 function getDocs(cloud, name) {
   const refList = cloud.get(`${name}/_children`);

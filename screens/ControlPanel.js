@@ -1,16 +1,15 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import useCloudValue from '../../cloud-core/useCloudValue';
-import Button from '../../components/Button';
-import OnoCloud from '../OnoCloud';
-import useCloud from '../../cloud-core/useCloud';
-import useObservable from '../../cloud-core/useObservable';
-import { useNavigation } from '../../navigation-hooks/Hooks';
-import { prettyShadow, titleStyle } from '../../components/Styles';
-import { computeNextStep } from '../../logic/KitchenSequence';
-import { getSubsystem, getSubsystemFaults } from '../../ono-cloud/OnoKitchen';
+import useCloudValue from '../cloud-core/useCloudValue';
+import Button from '../components/Button';
+import useCloud from '../cloud-core/useCloud';
+import useObservable from '../cloud-core/useObservable';
+import { useNavigation } from '../navigation-hooks/Hooks';
+import { prettyShadow, titleStyle } from '../components/Styles';
+import { computeNextStep } from '../logic/KitchenSequence';
+import { getSubsystem, getSubsystemFaults } from '../ono-cloud/OnoKitchen';
 
-import useAsyncError from '../../react-utils/useAsyncError';
+import useAsyncError from '../react-utils/useAsyncError';
 
 function StatusPuck({ status }) {
   let statusColor = null;
@@ -72,7 +71,7 @@ function FaultRow({ fault }) {
 
 export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   const cloud = useCloud();
-  const isConnected = useObservable(OnoCloud.isConnected);
+  const isConnected = useObservable(cloud.isConnected);
   const kitchenState = useCloudValue('KitchenState');
   const kitchenConfig = useCloudValue('KitchenConfig');
   const isPLCConnected = React.useMemo(

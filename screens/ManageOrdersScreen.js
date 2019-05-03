@@ -1,12 +1,12 @@
 import React from 'react';
-import Tag from '../../components/Tag';
-import GenericPage from '../../components/GenericPage';
-import RowSection from '../../components/RowSection';
-import LinkRow from '../../components/LinkRow';
-import Hero from '../../components/Hero';
-import Button from '../../components/Button';
-import { useOrders } from '../../ono-cloud/OnoKitchen';
-import { useNavigation } from '../../navigation-hooks/Hooks';
+import Tag from '../components/Tag';
+import GenericPage from '../components/GenericPage';
+import RowSection from '../components/RowSection';
+import LinkRow from '../components/LinkRow';
+import Hero from '../components/Hero';
+import Button from '../components/Button';
+import { useOrders } from '../ono-cloud/OnoKitchen';
+import { useNavigation } from '../navigation-hooks/Hooks';
 
 function PendingStateTag() {
   return <Tag title="Pending" color="#4358A9" />;

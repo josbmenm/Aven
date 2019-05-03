@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import Hero from '../../components/Hero';
-import BitRow from '../../components/BitRow';
-import IntRow from '../../components/IntRow';
-import Row from '../../components/Row';
-import ButtonRow from '../../components/ButtonRow';
-import Button from '../../components/Button';
-import GenericPage from '../../components/GenericPage';
-import RowSection from '../../components/RowSection';
-import KeyboardPopover from '../../components/KeyboardPopover';
-import { usePopover } from '../../views/Popover';
+import Hero from '../components/Hero';
+import BitRow from '../components/BitRow';
+import IntRow from '../components/IntRow';
+import Row from '../components/Row';
+import ButtonRow from '../components/ButtonRow';
+import Button from '../components/Button';
+import GenericPage from '../components/GenericPage';
+import RowSection from '../components/RowSection';
+import KeyboardPopover from '../components/KeyboardPopover';
+import { usePopover } from '../views/Popover';
 import {
   AlertIOS,
   View,
@@ -25,15 +25,15 @@ import {
   withKitchen,
   getSubsystem,
   getSubsystemFaults,
-} from '../../ono-cloud/OnoKitchen';
+} from '../ono-cloud/OnoKitchen';
 import {
   prettyShadow,
   genericText,
   boldPrimaryFontFace,
-} from '../../components/Styles';
+} from '../components/Styles';
 
-import useFocus from '../../navigation-hooks/useFocus';
-import BlockFormInput from '../../components/BlockFormInput';
+import useFocus from '../navigation-hooks/useFocus';
+import BlockFormInput from '../components/BlockFormInput';
 
 function SystemActionForm({
   pulse,

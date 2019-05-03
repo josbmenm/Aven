@@ -12,8 +12,23 @@
     "srcDependencies": [
       "navigation-core",
       "navigation-native",
-      "navigation-stack"
+      "navigation-stack",
+      "views",
+      "logic",
+      "screens",
+      "debug-views",
+      "ono-cloud",
+      "cloud-react",
+      "cloud-native",
+      "react-utils",
+      "components",
+      "card-reader",
+      "navigation-transitioner",
+      "navigation-hooks"
     ],
-    "moduleDependencies": []
+    "moduleDependencies": [
+      "kuid",
+      "path"
+    ]
   }
 }

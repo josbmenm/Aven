@@ -1,18 +1,17 @@
 import React, { Component, useReducer, useEffect } from 'react';
-import BitRow from '../../components/BitRow';
-import { withNavigation } from '../../navigation-core';
+import BitRow from '../components/BitRow';
+import { withNavigation } from '../navigation-core';
 
-import RowSection from '../../components/RowSection';
+import RowSection from '../components/RowSection';
 import { View, ScrollView, Text } from 'react-native';
-import LinkRow from '../../components/LinkRow';
-import { getSubsystemOverview, withKitchen } from '../../ono-cloud/OnoKitchen';
-import useCloud from '../../cloud-core/useCloud';
-import useObservable from '../../cloud-core/useObservable';
-import KitchenHistory from '../../components/KitchenHistory';
+import LinkRow from '../components/LinkRow';
+import { getSubsystemOverview, withKitchen } from '../ono-cloud/OnoKitchen';
+import useCloud from '../cloud-core/useCloud';
+import KitchenHistory from '../components/KitchenHistory';
 import ControlPanel from './ControlPanel';
-import TwoPanePage from '../../components/TwoPanePage';
-import useCloudReducer from '../../cloud-core/useCloudReducer';
-import RestaurantReducer from '../../logic/RestaurantReducer';
+import TwoPanePage from '../components/TwoPanePage';
+import useCloudReducer from '../cloud-core/useCloudReducer';
+import RestaurantReducer from '../logic/RestaurantReducer';
 
 const Subsystems = withNavigation(
   withKitchen(({ navigation, kitchenState, kitchenConfig }) => {

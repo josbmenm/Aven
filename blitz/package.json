@@ -12,6 +12,7 @@
     "srcDependencies": [
       "views",
       "logic",
+      "screens",
       "debug-views",
       "ono-cloud",
       "cloud-react",
@@ -27,8 +28,7 @@
     ],
     "moduleDependencies": [
       "kuid",
-      "path",
-      "@nozbe/with-observables"
+      "path"
     ]
   }
 }
