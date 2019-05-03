@@ -174,13 +174,15 @@ export default function createNetworkSource(opts) {
         case 'ClientId': {
           wsClientId = evt.clientId;
           setConnectionState(true);
-          socketSendIfConnected({
-            type: 'Subscribe',
-            subscriptions: Object.keys(subscriptions).map(subsId => {
-              const { spec } = subscriptions[subsId];
-              return spec;
-            }),
-          });
+          const subscriptionIds = Object.keys(subscriptions);
+          subscriptionIds.length &&
+            socketSendIfConnected({
+              type: 'Subscribe',
+              subscriptions: subscriptionIds.map(subsId => {
+                const { spec } = subscriptions[subsId];
+                return spec;
+              }),
+            });
           !quiet && log('Socket connected with client id: ', wsClientId);
           return;
         }
