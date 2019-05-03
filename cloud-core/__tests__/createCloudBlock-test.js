@@ -18,7 +18,7 @@ describe('object generic behavior', () => {
         domain: 'test',
         onGetName: () => 'foo',
         dispatch: () => {},
-      })
+      }),
     ).toThrow();
   });
   test('handles creation with value', () => {

@@ -36,7 +36,7 @@ export default function RootAuthProvider({ rootPasswordHash }) {
     const { password } = verificationResponse;
     if (!password) {
       throw new Error(
-        'no password provided in verificationResponse of performVerification'
+        'no password provided in verificationResponse of performVerification',
       );
     }
     const isValid = await compareSecureString(password, rootPasswordHash);

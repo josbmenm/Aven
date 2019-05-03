@@ -68,7 +68,7 @@ function getChildNavigation(navigation, childKey, getCurrentParentNavigation) {
   } else {
     const childSubscriber = getChildEventSubscriber(
       navigation.addListener,
-      childKey
+      childKey,
     );
 
     children[childKey] = {

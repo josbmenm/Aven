@@ -33,7 +33,7 @@ export default function createCloudBlock({
   }
   if (id && observedBlockId && id !== observedBlockId) {
     throw new Error(
-      'id and value were both provided to createCloudBlock, but the id does not match the value!'
+      'id and value were both provided to createCloudBlock, but the id does not match the value!',
     );
   }
 
@@ -56,7 +56,7 @@ export default function createCloudBlock({
   function getReference() {
     if (!blockId) {
       throw new Error(
-        'Cannot getReference of an incomplete block without a value or id'
+        'Cannot getReference of an incomplete block without a value or id',
       );
     }
     return { type: 'BlockReference', id: blockId };
@@ -164,7 +164,7 @@ export default function createCloudBlock({
 
   const isConnected = mapBehaviorSubject(
     blockState,
-    state => state.isConnected
+    state => state.isConnected,
   );
 
   let _evaluatedFunction = null;
@@ -175,7 +175,7 @@ export default function createCloudBlock({
     if (!_evaluatedFunction) {
       if (!lambdaValue || lambdaValue.type !== 'LambdaFunction') {
         throw new Error(
-          'Cannot eval this block because it is not loaded or is not of type "LambdaFunction"'
+          'Cannot eval this block because it is not loaded or is not of type "LambdaFunction"',
         );
       }
       _evaluatedFunction = eval(lambdaValue.code);
@@ -188,7 +188,7 @@ export default function createCloudBlock({
       getValue(),
       argDoc.getValue(),
       argDoc.getId(),
-      argDoc
+      argDoc,
     );
 
     return result;
@@ -201,7 +201,7 @@ export default function createCloudBlock({
       getValue(),
       argumentValue.getValue(),
       argumentValue.getId(),
-      argumentValue
+      argumentValue,
     );
     await loadDependencies();
     return reComputeResult();

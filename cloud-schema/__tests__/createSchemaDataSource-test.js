@@ -38,7 +38,7 @@ describe('schema validation on memory data source', () => {
         domain: 'test',
         name: 'foo',
         value: { invalid: 'person' },
-      })
+      }),
     ).rejects.toThrow();
 
     await schemaDs.dispatch({

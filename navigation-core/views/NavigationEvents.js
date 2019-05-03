@@ -25,7 +25,7 @@ class NavigationEvents extends React.Component {
         (...args) => {
           const propListener = this.getPropListener(eventName);
           return propListener && propListener(...args);
-        }
+        },
       );
     });
   }

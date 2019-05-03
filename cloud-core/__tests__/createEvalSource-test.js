@@ -242,7 +242,7 @@ describe('interpreted data sources', () => {
           return state.filter(s => s !== action.remove);
         }
         return state;
-      }
+      },
     );
     const interpretedSource = createEvalSource({
       source: storageSource,

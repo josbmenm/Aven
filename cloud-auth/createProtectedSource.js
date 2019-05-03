@@ -84,7 +84,7 @@ export default function createProtectedSource({ source, providers }) {
     const savedSession = await getDocValue(
       source,
       domain,
-      `auth/account/${accountId}/session/${sessionId}`
+      `auth/account/${accountId}/session/${sessionId}`,
     );
 
     if (!savedSession || savedSession.token !== token) {
@@ -103,14 +103,14 @@ export default function createProtectedSource({ source, providers }) {
     const accountLookup = await getDocValue(
       source,
       domain,
-      providerAccountLookupName
+      providerAccountLookupName,
     );
     if (accountLookup) {
       if (accountId && accountId !== accountLookup.accountId) {
         throw new Err(
           'Provided auth identity is already in use by another account.',
           'IdentityTaken',
-          {}
+          {},
         );
       }
       return accountLookup.accountId;
@@ -140,7 +140,7 @@ export default function createProtectedSource({ source, providers }) {
       providersToValidate = providersToValidate.slice(1);
       if (providerToValidate.canVerify(verificationInfo, accountId)) {
         const providerId = await providerToValidate.getProviderId(
-          verificationInfo
+          verificationInfo,
         );
 
         const authenticatingAccountId = await GetAccountIdForAuthProvider({
@@ -154,18 +154,18 @@ export default function createProtectedSource({ source, providers }) {
         const providerState = await getDocValue(
           source,
           domain,
-          providerStateDocName
+          providerStateDocName,
         );
 
         const requestedVerification = await providerToValidate.requestVerification(
-          { verificationInfo, providerState }
+          { verificationInfo, providerState },
         );
 
         await writeDocValue(
           source,
           domain,
           providerStateDocName,
-          requestedVerification
+          requestedVerification,
         );
         return {
           verificationChallenge: requestedVerification.verificationChallenge,
@@ -233,7 +233,7 @@ export default function createProtectedSource({ source, providers }) {
         continue;
       }
       const providerId = await providerToValidate.getProviderId(
-        verificationInfo
+        verificationInfo,
       );
 
       authenticatingAccountId = await GetAccountIdForAuthProvider({
@@ -246,7 +246,7 @@ export default function createProtectedSource({ source, providers }) {
       const providerState = await getDocValue(
         source,
         domain,
-        providerStateDocName
+        providerStateDocName,
       );
 
       let nextproviderState = providerState;
@@ -266,7 +266,7 @@ export default function createProtectedSource({ source, providers }) {
           source,
           domain,
           providerStateDocName,
-          nextproviderState
+          nextproviderState,
         );
       }
     }
@@ -316,7 +316,7 @@ export default function createProtectedSource({ source, providers }) {
       source,
       domain,
       `auth/account/${verification.accountId}/session/${sessionId}`,
-      session
+      session,
     );
     return {
       session,
@@ -349,7 +349,7 @@ export default function createProtectedSource({ source, providers }) {
       source,
       domain,
       `auth/account/${accountId}/session/${sessionId}`,
-      session
+      session,
     );
 
     return { session };
@@ -433,7 +433,7 @@ export default function createProtectedSource({ source, providers }) {
         .map(nameToAuthDocName)
         .map(async docName => {
           return await getDocValue(source, domain, docName);
-        })
+        }),
     );
 
     let owner = null;
@@ -611,7 +611,7 @@ export default function createProtectedSource({ source, providers }) {
           `Insufficient permissions for "${actionType}" on ${
             action.name
           }. Requires "${permissionLevel}"`,
-          'NoPermission'
+          'NoPermission',
         );
       }
       const result = await dispatch(action);
@@ -643,12 +643,12 @@ export default function createProtectedSource({ source, providers }) {
     PutPermissionRules: guardAction(
       PutPermissionRules,
       'PutPermissionRules',
-      'canAdmin'
+      'canAdmin',
     ),
     GetPermissionRules: guardAction(
       GetPermissionRules,
       'GetPermissionRules',
-      'canAdmin'
+      'canAdmin',
     ),
     CreateSession,
     CreateAnonymousSession,

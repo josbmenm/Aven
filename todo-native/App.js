@@ -4,7 +4,7 @@ import AppRoutes from '../todo-app/AppRoutes';
 
 const AppNavigator = createStackNavigator(
   { ...AppRoutes },
-  { headerMode: 'none' }
+  { headerMode: 'none' },
 );
 
 const AppNav = createAppContainer(AppNavigator);

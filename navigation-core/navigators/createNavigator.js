@@ -17,13 +17,13 @@ function createNavigator(NavigatorView, router, navigationConfig) {
       const { navigation, screenProps } = nextProps;
       invariant(
         navigation != null,
-        'The navigation prop is missing for this navigator. In react-navigation 3 you must set up your app container directly. More info: https://reactnavigation.org/docs/en/app-containers.html'
+        'The navigation prop is missing for this navigator. In react-navigation 3 you must set up your app container directly. More info: https://reactnavigation.org/docs/en/app-containers.html',
       );
       const { state } = navigation;
       const { routes } = state;
       if (typeof routes === 'undefined') {
         throw new TypeError(
-          'No "routes" found in navigation state. Did you try to pass the navigation prop of a React component to a Navigator child? See https://reactnavigation.org/docs/en/custom-navigators.html#navigator-navigation-prop'
+          'No "routes" found in navigation state. Did you try to pass the navigation prop of a React component to a Navigator child? See https://reactnavigation.org/docs/en/custom-navigators.html#navigator-navigation-prop',
         );
       }
 
@@ -41,7 +41,7 @@ function createNavigator(NavigatorView, router, navigationConfig) {
         }
         const getComponent = router.getComponentForRouteName.bind(
           null,
-          route.routeName
+          route.routeName,
         );
         const childNavigation = navigation.getChildNavigation(route.key);
         const options = router.getScreenOptions(childNavigation, screenProps);

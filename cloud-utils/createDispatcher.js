@@ -1,7 +1,7 @@
 export default function createDispatcher(
   actions,
   fallbackDispatch,
-  filterDomain
+  filterDomain,
 ) {
   function dispatch(action) {
     if (filterDomain && fallbackDispatch && action.domain !== filterDomain) {

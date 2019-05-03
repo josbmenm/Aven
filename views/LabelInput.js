@@ -6,19 +6,22 @@ const textInputFontSize = 26;
 
 function RefLabelInput(
   { value, onValue, label, mode, onSubmit, onFocus, onBlur },
-  ref
+  ref,
 ) {
   const desiredPlaceholderOpen = value ? 0 : 1;
   const [placeholderOpenProgress] = useState(
-    new Animated.Value(desiredPlaceholderOpen)
+    new Animated.Value(desiredPlaceholderOpen),
   );
-  useEffect(() => {
-    Animated.timing(placeholderOpenProgress, {
-      toValue: desiredPlaceholderOpen,
-      duration: 500,
-      easing: Easing.out(Easing.cubic),
-    }).start();
-  }, [desiredPlaceholderOpen]);
+  useEffect(
+    () => {
+      Animated.timing(placeholderOpenProgress, {
+        toValue: desiredPlaceholderOpen,
+        duration: 500,
+        easing: Easing.out(Easing.cubic),
+      }).start();
+    },
+    [desiredPlaceholderOpen],
+  );
   const autoCorrect = false;
   let autoComplete = null;
   let keyboardType = 'default';

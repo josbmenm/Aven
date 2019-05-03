@@ -3,7 +3,7 @@ import { NavigationActions, getNavigation } from '../navigation-core';
 export default function handleServerRequest(
   Router,
   pathWithLeadingSlash,
-  query
+  query,
 ) {
   const path = pathWithLeadingSlash.slice(1);
 
@@ -28,7 +28,7 @@ export default function handleServerRequest(
     () => {},
     actionSubscribers,
     () => ({}),
-    getCurrentNavigation
+    getCurrentNavigation,
   );
 
   // Get title from active screen options

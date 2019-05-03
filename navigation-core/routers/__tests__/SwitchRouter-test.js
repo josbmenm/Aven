@@ -11,14 +11,14 @@ describe('SwitchRouter', () => {
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     const state2 = router.getStateForAction(
       { type: NavigationActions.NAVIGATE, routeName: 'A2' },
-      state
+      state,
     );
     expect(state2.routes[0].index).toEqual(1);
     expect(state2.routes[0].routes.length).toEqual(2);
 
     const state3 = router.getStateForAction(
       { type: NavigationActions.NAVIGATE, routeName: 'B' },
-      state2
+      state2,
     );
 
     expect(state3.routes[0].index).toEqual(0);
@@ -30,14 +30,14 @@ describe('SwitchRouter', () => {
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     const state2 = router.getStateForAction(
       { type: NavigationActions.NAVIGATE, routeName: 'A2' },
-      state
+      state,
     );
     expect(state2.routes[0].index).toEqual(1);
     expect(state2.routes[0].routes.length).toEqual(2);
 
     const state3 = router.getStateForAction(
       { type: NavigationActions.NAVIGATE, routeName: 'B' },
-      state2
+      state2,
     );
 
     expect(state3.routes[0].index).toEqual(1);
@@ -49,13 +49,13 @@ describe('SwitchRouter', () => {
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     const state2 = router.getStateForAction(
       { type: NavigationActions.NAVIGATE, routeName: 'B' },
-      state
+      state,
     );
     expect(state2.index).toEqual(1);
 
     const state3 = router.getStateForAction(
       { type: NavigationActions.BACK },
-      state2
+      state2,
     );
 
     expect(state3.index).toEqual(1);
@@ -66,13 +66,13 @@ describe('SwitchRouter', () => {
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     const state2 = router.getStateForAction(
       { type: NavigationActions.NAVIGATE, routeName: 'B' },
-      state
+      state,
     );
     expect(state2.index).toEqual(1);
 
     const state3 = router.getStateForAction(
       { type: NavigationActions.BACK },
-      state2
+      state2,
     );
 
     expect(state3.index).toEqual(0);
@@ -87,7 +87,7 @@ describe('SwitchRouter', () => {
         routeName: 'B',
         action: { type: NavigationActions.NAVIGATE, routeName: 'B2' },
       },
-      state
+      state,
     );
     const subState = state2.routes[state2.index];
     const activeGrandChildRoute = subState.routes[subState.index];
@@ -117,7 +117,7 @@ describe('SwitchRouter', () => {
         },
         {
           explicitParams: true,
-        }
+        },
       );
     }).toThrow();
   });
@@ -146,7 +146,7 @@ describe('SwitchRouter', () => {
       },
       {
         explicitParams: true,
-      }
+      },
     );
 
     const action = router.getActionForPathAndParams('a/foovalue/a1/namevalue', {
@@ -179,7 +179,7 @@ describe('SwitchRouter', () => {
       },
       {
         explicitParams: true,
-      }
+      },
     );
     const initState = router.getStateForAction({});
     const initRoute = initState.routes[initState.index];
@@ -197,7 +197,7 @@ describe('SwitchRouter', () => {
         type: NavigationActions.SET_PARAMS,
         key: initRoute.key,
         params: { badParam: 'not ok' },
-      })
+      }),
     ).toThrow();
   });
 
@@ -232,7 +232,7 @@ describe('SwitchRouter', () => {
         },
         {
           explicitParams: true,
-        }
+        },
       );
     }).toThrow();
   });
@@ -261,7 +261,7 @@ describe('SwitchRouter', () => {
       },
       {
         explicitParams: true,
-      }
+      },
     );
     const s1 = router.getStateForAction(
       {
@@ -269,7 +269,7 @@ describe('SwitchRouter', () => {
         routeName: 'A',
         params: { name: 'Lucy' },
       },
-      null
+      null,
     );
     const activeRoute = s1.routes[s1.index];
     expect(activeRoute.routeName).toEqual('A');
@@ -312,7 +312,7 @@ describe('SwitchRouter', () => {
       },
       {
         explicitParams: true,
-      }
+      },
     );
     const s1 = router.getStateForAction(
       {
@@ -325,7 +325,7 @@ describe('SwitchRouter', () => {
           params: { age: 123 },
         },
       },
-      null
+      null,
     );
     const activeRoute = s1.routes[s1.index];
     expect(activeRoute.routeName).toEqual('A');
@@ -348,7 +348,7 @@ describe('SwitchRouter', () => {
         params: { foo: 'bar' },
         action: { type: NavigationActions.NAVIGATE, routeName: 'B2' },
       },
-      state
+      state,
     );
     const subState = state2.routes[state2.index];
     const activeGrandChildRoute = subState.routes[subState.index];
@@ -377,7 +377,7 @@ describe('SwitchRouter', () => {
       },
       {
         initialRouteName: 'OtherNestedSwitch',
-      }
+      },
     );
 
     const state = router.getStateForAction({ type: NavigationActions.INIT });
@@ -388,7 +388,7 @@ describe('SwitchRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Bar',
       },
-      state
+      state,
     );
     expect(state2.routes[state2.index].routeName).toEqual('Bar');
 
@@ -397,14 +397,14 @@ describe('SwitchRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'NestedSwitch',
       },
-      state2
+      state2,
     );
     const state4 = router.getStateForAction(
       {
         type: NavigationActions.NAVIGATE,
         routeName: 'Bar',
       },
-      state3
+      state3,
     );
     let activeState4 = state4.routes[state4.index];
     expect(activeState4.routeName).toEqual('NestedSwitch');
@@ -427,7 +427,7 @@ describe('SwitchRouter', () => {
       },
       {
         initialRouteName: 'Login',
-      }
+      },
     );
 
     const state = router.getStateForAction({ type: NavigationActions.INIT });
@@ -438,7 +438,7 @@ describe('SwitchRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Home',
       },
-      state
+      state,
     );
     expect(state2.routes[state2.index].routeName).toEqual('Home');
   });
@@ -473,7 +473,7 @@ const getExampleRouter = (config = {}) => {
     {
       initialRouteName: 'A',
       ...config,
-    }
+    },
   );
 
   return router;

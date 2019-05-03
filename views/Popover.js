@@ -17,7 +17,7 @@ export function PopoverTarget({ renderContent, renderPopover, timing }) {
     const location = await new Promise(resolve =>
       viewRef.current.measure((x, y, width, height, pageX, pageY) => {
         resolve({ x, y, width, height, pageX, pageY });
-      })
+      }),
     );
     ctx.openPopover(renderPopover(), location, timing);
   }
@@ -33,7 +33,7 @@ export function useTargetPopover(renderPopover, timing) {
     const location = await new Promise(resolve =>
       targetRef.current.measure((x, y, width, height, pageX, pageY) => {
         resolve({ x, y, width, height, pageX, pageY });
-      })
+      }),
     );
     ctx.openPopover(renderPopover, location, timing, navigation);
   }
@@ -77,7 +77,7 @@ export function PopoverContainer({ children }) {
           containerLayout,
           openValue,
         })}
-      </NavigationContext.Provider>
+      </NavigationContext.Provider>,
     );
     Animated.timing(openValue, {
       toValue: 1,

@@ -30,7 +30,7 @@ export const TaskReducer = defineCloudReducer(
     }
     return state;
   },
-  []
+  [],
 );
 
 function getTaskActions() {

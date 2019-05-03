@@ -41,7 +41,7 @@ const StateUtils = {
     invariant(
       StateUtils.indexOf(state, route.key) === -1,
       'should not push route with duplicated key %s',
-      route.key
+      route.key,
     );
 
     const routes = state.routes.slice();
@@ -154,7 +154,7 @@ const StateUtils = {
       !!state.routes[index],
       'invalid index %s for replacing route %s',
       index,
-      route.key
+      route.key,
     );
 
     if (state.routes[index] === route && index === state.index) {
@@ -179,7 +179,7 @@ const StateUtils = {
   reset(state, routes, index) {
     invariant(
       routes.length && Array.isArray(routes),
-      'invalid routes to replace'
+      'invalid routes to replace',
     );
 
     const nextIndex = index === undefined ? routes.length - 1 : index;

@@ -63,7 +63,7 @@ export default function ScenesReducer(
   scenes,
   nextState,
   prevState,
-  descriptors
+  descriptors,
 ) {
   // Always update the descriptors
   // This is a workaround for https://github.com/react-navigation/react-navigation/issues/4271
@@ -97,7 +97,7 @@ export default function ScenesReducer(
   let nextRoutes = nextState.routes;
   if (nextRoutes.length > nextState.index + 1) {
     console.warn(
-      'StackRouter provided invalid state, index should always be the top route'
+      'StackRouter provided invalid state, index should always be the top route',
     );
     nextRoutes = nextState.routes.slice(0, nextState.index + 1);
   }
@@ -118,7 +118,7 @@ export default function ScenesReducer(
     invariant(
       !nextKeys.has(key),
       `navigation.state.routes[${index}].key "${key}" conflicts with ` +
-        'another route!'
+        'another route!',
     );
     nextKeys.add(key);
 
@@ -134,7 +134,7 @@ export default function ScenesReducer(
     let prevRoutes = prevState.routes;
     if (prevRoutes.length > prevState.index + 1) {
       console.warn(
-        'StackRouter provided invalid state, index should always be the top route'
+        'StackRouter provided invalid state, index should always be the top route',
       );
       prevRoutes = prevRoutes.slice(0, prevState.index + 1);
     }
@@ -204,7 +204,7 @@ export default function ScenesReducer(
   invariant(
     activeScenesCount === 1,
     'there should always be only one scene active, not %s.',
-    activeScenesCount
+    activeScenesCount,
   );
 
   if (nextScenes.length !== scenes.length) {
@@ -213,7 +213,7 @@ export default function ScenesReducer(
 
   if (
     nextScenes.some(
-      (scene, index) => !areScenesShallowEqual(scenes[index], scene)
+      (scene, index) => !areScenesShallowEqual(scenes[index], scene),
     )
   ) {
     return nextScenes;

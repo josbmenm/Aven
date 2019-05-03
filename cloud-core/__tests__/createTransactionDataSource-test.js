@@ -32,7 +32,7 @@ test('TransactDoc action', async () => {
       value: {
         name: 'changed',
       },
-    })
+    }),
   ).rejects.toThrow();
 
   await expect(
@@ -48,7 +48,7 @@ test('TransactDoc action', async () => {
           name: 'changed',
         },
       },
-    })
+    }),
   ).rejects.toThrow();
 
   // failed transaction with bad "on" block reference
@@ -64,7 +64,7 @@ test('TransactDoc action', async () => {
           name: 'changed',
         },
       },
-    })
+    }),
   ).rejects.toThrow();
 
   const result = await ts.dispatch({

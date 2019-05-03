@@ -24,7 +24,7 @@ export default (screenOptions, route) => {
         '({ navigation }) => ({',
         '    title: navigation.state...',
         '})',
-      ].join('\n')
+      ].join('\n'),
     );
   }
 
@@ -45,7 +45,7 @@ export default (screenOptions, route) => {
         '({ navigation }) => ({',
         `    ${deprecatedKey}Key: navigation.state...`,
         '})',
-      ].join('\n')
+      ].join('\n'),
     );
   }
 
@@ -60,7 +60,7 @@ export default (screenOptions, route) => {
         '{',
         `    ${deprecatedKey}: {`,
         ...Object.keys(screenOptions[deprecatedKey]).map(
-          key => `        ${key}: ...,`
+          key => `        ${key}: ...,`,
         ),
         '    },',
         '}',
@@ -69,10 +69,10 @@ export default (screenOptions, route) => {
         '{',
         ...Object.keys(screenOptions[deprecatedKey]).map(
           key =>
-            `    ${deprecatedKey + key[0].toUpperCase() + key.slice(1)}: ...,`
+            `    ${deprecatedKey + key[0].toUpperCase() + key.slice(1)}: ...,`,
         ),
         '}',
-      ].join('\n')
+      ].join('\n'),
     );
   }
 };

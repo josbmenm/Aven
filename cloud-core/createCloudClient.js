@@ -191,7 +191,7 @@ export default function createCloudClient({
   function lazyDefineCloudFunction(cloudFn) {
     if (cloudFn.type !== 'CloudFunction') {
       throw new Error(
-        'Invalid function provided to lazyDefineCloudFunction. Create it with defineCloudFunction'
+        'Invalid function provided to lazyDefineCloudFunction. Create it with defineCloudFunction',
       );
     }
     docs.get(cloudFn.name)._defineCloudFunction(cloudFn);

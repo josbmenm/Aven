@@ -44,7 +44,7 @@ export function PopoverContainer({ children }) {
           containerLayout,
           openValue,
         })}
-      </NavigationContext.Provider>
+      </NavigationContext.Provider>,
     );
     Animated.timing(openValue, {
       toValue: new Animated.Value(1),

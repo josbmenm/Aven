@@ -28,7 +28,7 @@ const getTitleOffsets = (
   layoutPreset,
   forceBackTitle,
   hasLeftComponent,
-  hasRightComponent
+  hasRightComponent,
 ) => {
   if (layoutPreset === 'left') {
     // Maybe at some point we should do something different if the back title is
@@ -99,7 +99,7 @@ class Header extends React.PureComponent {
       throw new Error(
         `Invalid title for route "${
           scene.route.routeName
-        }" - title must be string or null, instead it was of type ${typeof options.title}`
+        }" - title must be string or null, instead it was of type ${typeof options.title}`,
       );
     }
 
@@ -193,7 +193,7 @@ class Header extends React.PureComponent {
 
     const backButtonTitle = this._getBackButtonTitleString(props.scene);
     const truncatedBackButtonTitle = this._getTruncatedBackButtonTitle(
-      props.scene
+      props.scene,
     );
     const width = this.state.widths[props.scene.key]
       ? (this.props.layout.initWidth - this.state.widths[props.scene.key]) / 2
@@ -225,12 +225,12 @@ class Header extends React.PureComponent {
   _renderModularLeftComponent = (
     props,
     ButtonContainerComponent,
-    LabelContainerComponent
+    LabelContainerComponent,
   ) => {
     const { options, navigation } = props.scene.descriptor;
     const backButtonTitle = this._getBackButtonTitleString(props.scene);
     const truncatedBackButtonTitle = this._getTruncatedBackButtonTitle(
-      props.scene
+      props.scene,
     );
     const width = this.state.widths[props.scene.key]
       ? (this.props.layout.initWidth - this.state.widths[props.scene.key]) / 2
@@ -287,7 +287,7 @@ class Header extends React.PureComponent {
         { ...props, style },
         'left',
         this._renderLeftComponent,
-        this.props.leftInterpolator
+        this.props.leftInterpolator,
       );
     } else {
       return this._renderModularSubView(
@@ -295,7 +295,7 @@ class Header extends React.PureComponent {
         'left',
         this._renderModularLeftComponent,
         this.props.leftLabelInterpolator,
-        this.props.leftButtonInterpolator
+        this.props.leftButtonInterpolator,
       );
     }
   }
@@ -308,7 +308,7 @@ class Header extends React.PureComponent {
         layoutPreset,
         false,
         options.hasLeftComponent,
-        options.hasRightComponent
+        options.hasRightComponent,
       ),
       options.headerTitleContainerStyle,
     ];
@@ -319,7 +319,7 @@ class Header extends React.PureComponent {
       this._renderTitleComponent,
       transitionPreset === 'uikit'
         ? this.props.titleFromLeftInterpolator
-        : this.props.titleInterpolator
+        : this.props.titleInterpolator,
     );
   }
 
@@ -335,7 +335,7 @@ class Header extends React.PureComponent {
       { ...props, style },
       'right',
       this._renderRightComponent,
-      this.props.rightInterpolator
+      this.props.rightInterpolator,
     );
   }
 
@@ -357,7 +357,7 @@ class Header extends React.PureComponent {
       { ...props, style: StyleSheet.absoluteFill },
       'background',
       () => options.headerBackground,
-      this.props.backgroundInterpolator
+      this.props.backgroundInterpolator,
     );
   }
 
@@ -366,7 +366,7 @@ class Header extends React.PureComponent {
     name,
     renderer,
     labelStyleInterpolator,
-    buttonStyleInterpolator
+    buttonStyleInterpolator,
   ) {
     const { scene } = props;
     const { index, isStale, key } = scene;
@@ -631,11 +631,11 @@ class Header extends React.PureComponent {
 function warnIfHeaderStyleDefined(value, styleProp) {
   if (styleProp === 'position' && value === 'absolute') {
     console.warn(
-      "position: 'absolute' is not supported on headerStyle. If you would like to render content under the header, use the headerTransparent navigationOption."
+      "position: 'absolute' is not supported on headerStyle. If you would like to render content under the header, use the headerTransparent navigationOption.",
     );
   } else if (value !== undefined) {
     console.warn(
-      `${styleProp} was given a value of ${value}, this has no effect on headerStyle.`
+      `${styleProp} was given a value of ${value}, this has no effect on headerStyle.`,
     );
   }
 }

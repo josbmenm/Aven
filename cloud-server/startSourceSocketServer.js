@@ -58,12 +58,12 @@ export default function startSourceSocketServer(wss, source) {
               } = subscription;
               if (!subscriptionId) {
                 throw new Error(
-                  'Can not subscribe without providing an id of the subscription.'
+                  'Can not subscribe without providing an id of the subscription.',
                 );
               }
               if (doc !== undefined && docChildren !== undefined) {
                 throw new Error(
-                  'Trying to subscribe to a doc and the children of a doc at the same time. Use seperate subscriptions instead.'
+                  'Trying to subscribe to a doc and the children of a doc at the same time. Use seperate subscriptions instead.',
                 );
               }
               function sendError(error) {
@@ -99,7 +99,7 @@ export default function startSourceSocketServer(wss, source) {
                   subs[subscriptionId] = (await source.observeDoc(
                     domain,
                     doc,
-                    auth
+                    auth,
                   )).subscribe(observer);
                 } catch (e) {
                   observer.error(e);
@@ -108,14 +108,14 @@ export default function startSourceSocketServer(wss, source) {
                 subs[subscriptionId] = (await source.observeDocChildren(
                   domain,
                   docChildren,
-                  auth
+                  auth,
                 )).subscribe(observer);
               } else {
                 throw new Error(
-                  'Invalid subscription, should contain doc or docChildren'
+                  'Invalid subscription, should contain doc or docChildren',
                 );
               }
-            })
+            }),
           );
           return;
         }

@@ -54,7 +54,7 @@ describe('NavigationContainer', () => {
     },
     {
       initialRouteName: 'foo',
-    }
+    },
   );
   const NavigationContainer = createAppContainer(Stack);
 
@@ -80,8 +80,8 @@ describe('NavigationContainer', () => {
       jest.runOnlyPendingTimers();
       expect(
         navigationContainer.dispatch(
-          NavigationActions.navigate({ routeName: 'bar' })
-        )
+          NavigationActions.navigate({ routeName: 'bar' }),
+        ),
       ).toEqual(true);
     });
 
@@ -91,7 +91,7 @@ describe('NavigationContainer', () => {
         .getInstance();
       jest.runOnlyPendingTimers();
       expect(navigationContainer.dispatch(NavigationActions.back())).toEqual(
-        false
+        false,
       );
     });
 
@@ -102,8 +102,8 @@ describe('NavigationContainer', () => {
 
       expect(
         navigationContainer.dispatch(
-          NavigationActions.navigate({ routeName: 'bar' })
-        )
+          NavigationActions.navigate({ routeName: 'bar' }),
+        ),
       ).toEqual(true);
 
       // Fake the passing of a tick
@@ -120,14 +120,14 @@ describe('NavigationContainer', () => {
         .create(<NavigationContainer />)
         .getInstance();
       const initialState = JSON.parse(
-        JSON.stringify(navigationContainer.state.nav)
+        JSON.stringify(navigationContainer.state.nav),
       );
 
       // First dispatch
       expect(
         navigationContainer.dispatch(
-          NavigationActions.navigate({ routeName: 'bar' })
-        )
+          NavigationActions.navigate({ routeName: 'bar' }),
+        ),
       ).toEqual(true);
 
       // Make sure that the test runner has NOT synchronously applied setState before the tick
@@ -136,8 +136,8 @@ describe('NavigationContainer', () => {
       // Second dispatch
       expect(
         navigationContainer.dispatch(
-          NavigationActions.navigate({ routeName: 'baz' })
-        )
+          NavigationActions.navigate({ routeName: 'baz' }),
+        ),
       ).toEqual(true);
 
       // Fake the passing of a tick
@@ -158,14 +158,14 @@ describe('NavigationContainer', () => {
         .create(<NavigationContainer />)
         .getInstance();
       const initialState = JSON.parse(
-        JSON.stringify(navigationContainer.state.nav)
+        JSON.stringify(navigationContainer.state.nav),
       );
 
       // First dispatch
       expect(
         navigationContainer.dispatch(
-          NavigationActions.navigate({ routeName: 'bar' })
-        )
+          NavigationActions.navigate({ routeName: 'bar' }),
+        ),
       ).toEqual(true);
 
       // Make sure that the test runner has NOT synchronously applied setState before the tick
@@ -174,29 +174,29 @@ describe('NavigationContainer', () => {
       // Second dispatch
       expect(
         navigationContainer.dispatch(
-          NavigationActions.navigate({ routeName: 'baz' })
-        )
+          NavigationActions.navigate({ routeName: 'baz' }),
+        ),
       ).toEqual(true);
 
       // Third dispatch
       expect(
         navigationContainer.dispatch(
-          NavigationActions.navigate({ routeName: 'car' })
-        )
+          NavigationActions.navigate({ routeName: 'car' }),
+        ),
       ).toEqual(true);
 
       // Fourth dispatch
       expect(
         navigationContainer.dispatch(
-          NavigationActions.navigate({ routeName: 'dog' })
-        )
+          NavigationActions.navigate({ routeName: 'dog' }),
+        ),
       ).toEqual(true);
 
       // Fifth dispatch
       expect(
         navigationContainer.dispatch(
-          NavigationActions.navigate({ routeName: 'elk' })
-        )
+          NavigationActions.navigate({ routeName: 'elk' }),
+        ),
       ).toEqual(true);
 
       // Fake the passing of a tick
@@ -258,13 +258,13 @@ describe('NavigationContainer', () => {
         const ChildNavigator = createAppContainer(
           createStackNavigator({
             Child: BlankScreen,
-          })
+          }),
         );
 
         const RootStack = createAppContainer(
           createStackNavigator({
             Root: RootScreen,
-          })
+          }),
         );
 
         renderer.create(<RootStack />).toJSON();

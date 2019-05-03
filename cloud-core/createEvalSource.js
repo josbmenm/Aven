@@ -7,7 +7,7 @@ export default function createEvalSource({ source, domain, functions = [] }) {
   functions.map(async cloudFn => {
     if (cloudFn.type !== 'CloudFunction') {
       throw new Error(
-        'Invalid CloudFunction provided to createEvalSource functions'
+        'Invalid CloudFunction provided to createEvalSource functions',
       );
     }
 

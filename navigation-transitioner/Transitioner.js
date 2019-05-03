@@ -61,7 +61,7 @@ const getStateForNavChange = (props, state) => {
   }
   const transitionRouteKey = getTransitionOwnerRouteKey(
     state.navState,
-    nextNavState
+    nextNavState,
   );
   const descriptor =
     props.descriptors[transitionRouteKey] ||
@@ -145,13 +145,13 @@ export class Transitioner extends React.Component {
       transition,
       this._transitionRefs,
       transitioningFromState,
-      navState
+      navState,
     );
     navigation.dispatch(
       StackActions.completeTransition({
         key: navigation.state.key,
         toChildKey: navState.routes[navState.index].key,
-      })
+      }),
     );
 
     // after async animator, this.props may have changed. re-check it now:
@@ -194,7 +194,7 @@ export class Transitioner extends React.Component {
         () => {},
         e => {
           console.error('Error running transition:', e);
-        }
+        },
       );
     }
     if (lastState.transitionRouteKey && !this.state.transitionRouteKey) {
@@ -207,7 +207,7 @@ export class Transitioner extends React.Component {
       const { navState, transitionFromState, transitions } = this.state;
       const defaultTransitionKey = getTransitionOwnerRouteKey(
         navState,
-        transitionFromState
+        transitionFromState,
       );
       const key = transitionRouteKey || defaultTransitionKey;
       return transitions[key];

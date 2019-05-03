@@ -8,7 +8,7 @@ export default function getNavigation(
   dispatch,
   actionSubscribers,
   getScreenProps,
-  getCurrentNavigation
+  getCurrentNavigation,
 ) {
   const actions = router.getActionCreators(state, null);
 

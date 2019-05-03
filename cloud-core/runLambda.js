@@ -3,14 +3,14 @@ export default function runLambda(
   argumentValue,
   argumentId,
   argumentDoc,
-  cloudClient
+  cloudClient,
 ) {
   const dependencies = new Set();
   async function loadDependencies() {
     await Promise.all(
       [...dependencies].map(async dep => {
         await dep.fetchValue();
-      })
+      }),
     );
   }
   function useValue(cloudValue) {
@@ -22,7 +22,7 @@ export default function runLambda(
       { value: argumentValue, id: argumentId },
       argumentDoc,
       cloudClient,
-      useValue
+      useValue,
     );
   }
   return {

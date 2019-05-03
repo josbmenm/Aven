@@ -100,7 +100,7 @@ export default (routeConfigs, config = {}) => {
   if (initialRouteIndex === -1) {
     throw new Error(
       `Invalid initialRouteName '${initialRouteName}'.` +
-        `Should be one of ${order.map(n => `"${n}"`).join(', ')}`
+        `Should be one of ${order.map(n => `"${n}"`).join(', ')}`,
     );
   }
 
@@ -202,7 +202,7 @@ export default (routeConfigs, config = {}) => {
       if (activeChildRouter) {
         const activeChildState = activeChildRouter.getStateForAction(
           action,
-          activeChildLastState
+          activeChildLastState,
         );
         if (!activeChildState && inputState) {
           return null;
@@ -263,14 +263,14 @@ export default (routeConfigs, config = {}) => {
           if (childRouter) {
             newChildState = applyInheritedParams(
               newChildState,
-              childRouter.routesInheritParams
+              childRouter.routesInheritParams,
             );
           }
 
           if (action.action && childRouter) {
             const childStateUpdate = childRouter.getStateForAction(
               action.action,
-              newChildState
+              newChildState,
             );
             if (childStateUpdate) {
               newChildState = childStateUpdate;
@@ -302,21 +302,22 @@ export default (routeConfigs, config = {}) => {
         if (lastRoute) {
           if (config.explicitParams) {
             const blockedParamNames = Object.keys(action.params).filter(
-              paramName => !routeNamedParams[lastRoute.routeName].has(paramName)
+              paramName =>
+                !routeNamedParams[lastRoute.routeName].has(paramName),
             );
             if (blockedParamNames.length) {
               throw new Error(
                 `Cannot set the ${blockedParamNames
                   .map(n => `"${n}"`)
                   .join(
-                    ','
+                    ',',
                   )} param(s) of this route because explicit params are enabled. Only the ${Array.from(
-                  routeNamedParams[lastRoute.routeName]
+                  routeNamedParams[lastRoute.routeName],
                 )
                   .map(n => `"${n}"`)
                   .join(',')} params are allowed for the "${
                   lastRoute.routeName
-                }" route.`
+                }" route.`,
               );
             }
           }
@@ -395,7 +396,7 @@ export default (routeConfigs, config = {}) => {
       invariant(
         routeName,
         `There is no route defined for index ${state.index}. Check that
-        that you passed in a navigation state with a valid tab/screen index.`
+        that you passed in a navigation state with a valid tab/screen index.`,
       );
       const childRouter = childRouters[routeName];
       if (childRouter) {
@@ -419,7 +420,7 @@ export default (routeConfigs, config = {}) => {
 
     getScreenOptions: createConfigGetter(
       routeConfigs,
-      config.defaultNavigationOptions
+      config.defaultNavigationOptions,
     ),
   };
 };

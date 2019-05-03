@@ -104,7 +104,7 @@ class StackViewLayout extends React.Component {
     } else {
       this.gestureSwitch = Animated.add(
         1,
-        Animated.multiply(-1, this.positionSwitch)
+        Animated.multiply(-1, this.positionSwitch),
       );
     }
     this.gestureEvent = Animated.event(
@@ -118,7 +118,7 @@ class StackViewLayout extends React.Component {
       ],
       {
         useNativeDriver: USE_NATIVE_DRIVER,
-      }
+      },
     );
 
     this.state = {
@@ -137,7 +137,7 @@ class StackViewLayout extends React.Component {
 
     if (__DEV__ && typeof header === 'string') {
       throw new Error(
-        `Invalid header value: "${header}". The header option must be a valid React component or null, not a string.`
+        `Invalid header value: "${header}". The header option must be a valid React component or null, not a string.`,
       );
     }
 
@@ -225,7 +225,7 @@ class StackViewLayout extends React.Component {
           NavigationActions.back({
             key: backFromScene.route.key,
             immediate: true,
-          })
+          }),
         );
         navigation.dispatch(StackActions.completeTransition());
       }
@@ -501,7 +501,7 @@ class StackViewLayout extends React.Component {
     if (this._isMotionInverted()) {
       this.gesturePosition = Animated.add(
         index,
-        Animated.divide(this.gestureX, this.props.transitionProps.layout.width)
+        Animated.divide(this.gestureX, this.props.transitionProps.layout.width),
       ).interpolate({
         inputRange: [index - 1, index],
         outputRange: [index - 1, index],
@@ -514,9 +514,9 @@ class StackViewLayout extends React.Component {
           -1,
           Animated.divide(
             this.gestureX,
-            this.props.transitionProps.layout.width
-          )
-        )
+            this.props.transitionProps.layout.width,
+          ),
+        ),
       ).interpolate({
         inputRange: [index - 1, index],
         outputRange: [index - 1, index],
@@ -531,7 +531,10 @@ class StackViewLayout extends React.Component {
     if (this._isMotionInverted()) {
       this.gesturePosition = Animated.add(
         index,
-        Animated.divide(this.gestureY, this.props.transitionProps.layout.height)
+        Animated.divide(
+          this.gestureY,
+          this.props.transitionProps.layout.height,
+        ),
       ).interpolate({
         inputRange: [index - 1, index],
         outputRange: [index - 1, index],
@@ -544,9 +547,9 @@ class StackViewLayout extends React.Component {
           -1,
           Animated.divide(
             this.gestureY,
-            this.props.transitionProps.layout.height
-          )
-        )
+            this.props.transitionProps.layout.height,
+          ),
+        ),
       ).interpolate({
         inputRange: [index - 1, index],
         outputRange: [index - 1, index],
@@ -673,7 +676,7 @@ class StackViewLayout extends React.Component {
     if (headerBackgroundTransitionPreset) {
       if (
         HEADER_BACKGROUND_TRANSITION_PRESET.includes(
-          headerBackgroundTransitionPreset
+          headerBackgroundTransitionPreset,
         )
       ) {
         if (headerBackgroundTransitionPreset === 'fade') {
@@ -686,8 +689,8 @@ class StackViewLayout extends React.Component {
       } else if (__DEV__) {
         console.error(
           `Invalid configuration applied for headerBackgroundTransitionPreset - expected one of ${HEADER_BACKGROUND_TRANSITION_PRESET.join(
-            ', '
-          )} but received ${JSON.stringify(headerBackgroundTransitionPreset)}`
+            ', ',
+          )} but received ${JSON.stringify(headerBackgroundTransitionPreset)}`,
         );
       }
     }
@@ -705,7 +708,7 @@ class StackViewLayout extends React.Component {
           Platform.OS === 'ios'
         ) {
           console.warn(
-            `headerTransitionPreset with the value 'uikit' is incompatible with headerLayoutPreset 'left'`
+            `headerTransitionPreset with the value 'uikit' is incompatible with headerLayoutPreset 'left'`,
           );
         }
       }
@@ -716,8 +719,8 @@ class StackViewLayout extends React.Component {
       if (__DEV__) {
         console.error(
           `Invalid configuration applied for headerLayoutPreset - expected one of ${HEADER_LAYOUT_PRESET.join(
-            ', '
-          )} but received ${JSON.stringify(headerLayoutPreset)}`
+            ', ',
+          )} but received ${JSON.stringify(headerLayoutPreset)}`,
         );
       }
     }
@@ -745,8 +748,8 @@ class StackViewLayout extends React.Component {
       if (__DEV__) {
         console.error(
           `Invalid configuration applied for headerTransitionPreset - expected one of ${HEADER_TRANSITION_PRESET.join(
-            ', '
-          )} but received ${JSON.stringify(headerTransitionPreset)}`
+            ', ',
+          )} but received ${JSON.stringify(headerTransitionPreset)}`,
         );
       }
     }
@@ -806,7 +809,7 @@ class StackViewLayout extends React.Component {
         position: this.position,
       },
       this.props.lastTransitionProps,
-      this._isModal()
+      this._isModal(),
     );
   }
 
@@ -815,9 +818,9 @@ class StackViewLayout extends React.Component {
       this.position = Animated.add(
         Animated.multiply(
           this.props.transitionProps.position,
-          this.positionSwitch
+          this.positionSwitch,
         ),
-        Animated.multiply(this.gesturePosition, this.gestureSwitch)
+        Animated.multiply(this.gesturePosition, this.gestureSwitch),
       );
     } else {
       this.position = this.props.transitionProps.position;

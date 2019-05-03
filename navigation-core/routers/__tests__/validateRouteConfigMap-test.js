@@ -18,13 +18,13 @@ describe('validateRouteConfigMap', () => {
       Home: undefined,
     };
     expect(() =>
-      validateRouteConfigMap(invalidMap)
+      validateRouteConfigMap(invalidMap),
     ).toThrowErrorMatchingSnapshot();
   });
   test('Fails on empty config', () => {
     const invalidMap = {};
     expect(() =>
-      validateRouteConfigMap(invalidMap)
+      validateRouteConfigMap(invalidMap),
     ).toThrowErrorMatchingSnapshot();
   });
   test('Fails on bad object', () => {
@@ -34,7 +34,7 @@ describe('validateRouteConfigMap', () => {
       },
     };
     expect(() =>
-      validateRouteConfigMap(invalidMap)
+      validateRouteConfigMap(invalidMap),
     ).toThrowErrorMatchingSnapshot();
   });
   test('Fails if both screen and getScreen are defined', () => {
@@ -45,7 +45,7 @@ describe('validateRouteConfigMap', () => {
       },
     };
     expect(() =>
-      validateRouteConfigMap(invalidMap)
+      validateRouteConfigMap(invalidMap),
     ).toThrowErrorMatchingSnapshot();
   });
   test('Succeeds on a valid config', () => {
