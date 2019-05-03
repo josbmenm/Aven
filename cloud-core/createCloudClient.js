@@ -92,13 +92,13 @@ export default function createCloudClient({
     if (!session.value) {
       throw new Error('no session found!');
     }
-    session.next(null);
-    onSession && onSession(null);
     await source.dispatch({
       type: 'DestroySession',
       domain,
       auth: session.value,
     });
+    session.next(null);
+    onSession && onSession(null);
   }
 
   async function GetBlock({ domain: actionDomain, name, id }) {
