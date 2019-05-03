@@ -22,7 +22,7 @@ export default function createNavigationAwareScrollable(Component: any) {
                 scrollableNode.scrollTo({ y: 0 });
               }
             }
-          }
+          },
         );
       }
 
@@ -56,7 +56,7 @@ export default function createNavigationAwareScrollable(Component: any) {
           />
         );
       }
-    }
+    },
   );
 
   class NavigationAwareScrollable extends React.PureComponent<any> {

@@ -19,52 +19,64 @@ export function useNavigationKey() {
 
 export function useNavigationDidFocusEffect(handleDidFocus) {
   const navigation = useNavigation();
-  useEffect(() => {
-    const { key } = navigation.state;
-    const parentState = navigation.dangerouslyGetParent().state;
-    const isFocused = parentState.routes[parentState.index].key === key;
-    const { isTransitioning } = parentState;
-    if (isFocused && !isTransitioning) {
-      handleDidFocus();
-    }
-    const subsDF = navigation.addListener('didFocus', handleDidFocus);
-    return () => {
-      subsDF.remove();
-    };
-  }, [navigation.addListener]);
+  useEffect(
+    () => {
+      const { key } = navigation.state;
+      const parentState = navigation.dangerouslyGetParent().state;
+      const isFocused = parentState.routes[parentState.index].key === key;
+      const { isTransitioning } = parentState;
+      if (isFocused && !isTransitioning) {
+        handleDidFocus();
+      }
+      const subsDF = navigation.addListener('didFocus', handleDidFocus);
+      return () => {
+        subsDF.remove();
+      };
+    },
+    [navigation.addListener],
+  );
 }
 
 export function useNavigationWillFocusEffect(handleWillFocus) {
   const navigation = useNavigation();
-  useEffect(() => {
-    if (navigation.isFocused()) {
-      handleWillFocus();
-    }
-    const subsWF = navigation.addListener('willFocus', handleWillFocus);
-    return () => {
-      subsWF.remove();
-    };
-  }, [navigation.addListener]);
+  useEffect(
+    () => {
+      if (navigation.isFocused()) {
+        handleWillFocus();
+      }
+      const subsWF = navigation.addListener('willFocus', handleWillFocus);
+      return () => {
+        subsWF.remove();
+      };
+    },
+    [navigation.addListener],
+  );
 }
 
 export function useNavigationWillBlurEffect(handleWillBlur) {
   const navigation = useNavigation();
-  useEffect(() => {
-    const subsWB = navigation.addListener('willBlur', handleWillBlur);
-    return () => {
-      subsWB.remove();
-    };
-  }, [navigation.addListener]);
+  useEffect(
+    () => {
+      const subsWB = navigation.addListener('willBlur', handleWillBlur);
+      return () => {
+        subsWB.remove();
+      };
+    },
+    [navigation.addListener],
+  );
 }
 
 export function useNavigationDidBlurEffect(handleDidBlur) {
   const navigation = useNavigation();
-  useEffect(() => {
-    const subsDB = navigation.addListener('didBlur', handleDidBlur);
-    return () => {
-      subsDB.remove();
-    };
-  }, [navigation.addListener]);
+  useEffect(
+    () => {
+      const subsDB = navigation.addListener('didBlur', handleDidBlur);
+      return () => {
+        subsDB.remove();
+      };
+    },
+    [navigation.addListener],
+  );
 }
 
 export function useNavigationEvents(handleEvt) {
@@ -90,7 +102,7 @@ export function useNavigationEvents(handleEvt) {
     // seems to cause troubles
     // undefined,
     // [navigation.state.key]
-    [navigation.addListener]
+    [navigation.addListener],
   );
 }
 

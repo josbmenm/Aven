@@ -97,7 +97,7 @@ describe('StackRouter', () => {
           { key: 'b', routeName: 'bar' },
           { key: 'c', routeName: 'foo' },
         ],
-      })
+      }),
     ).toBe(FooScreen);
     expect(
       router.getComponentForState({
@@ -107,7 +107,7 @@ describe('StackRouter', () => {
           { key: 'a', routeName: 'foo' },
           { key: 'b', routeName: 'bar' },
         ],
-      })
+      }),
     ).toBe(BarScreen);
   });
 
@@ -132,7 +132,7 @@ describe('StackRouter', () => {
           { key: 'b', routeName: 'bar' },
           { key: 'c', routeName: 'foo' },
         ],
-      })
+      }),
     ).toBe(FooScreen);
     expect(
       router.getComponentForState({
@@ -142,7 +142,7 @@ describe('StackRouter', () => {
           { key: 'a', routeName: 'foo' },
           { key: 'b', routeName: 'bar' },
         ],
-      })
+      }),
     ).toBe(BarScreen);
   });
 
@@ -227,7 +227,7 @@ describe('StackRouter', () => {
       TestStackRouter.getActionForPathAndParams('people/foo', {
         code: 'test',
         foo: 'bar',
-      })
+      }),
     ).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'person',
@@ -244,7 +244,7 @@ describe('StackRouter', () => {
       TestStackRouter.getActionForPathAndParams('people/foo', {
         code: '',
         foo: 'bar',
-      })
+      }),
     ).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'person',
@@ -371,7 +371,7 @@ describe('StackRouter', () => {
     });
     const pushedState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'qux' }),
-      initState
+      initState,
     );
     expect(pushedState.index).toEqual(1);
     expect(pushedState.routes[1].index).toEqual(1);
@@ -395,14 +395,14 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Bar',
       },
-      state
+      state,
     );
     const state3 = router.getStateForAction(
       {
         type: StackActions.PUSH,
         routeName: 'Bad',
       },
-      state2
+      state2,
     );
     expect(state3 && state3.index).toEqual(2);
     expect(state3 && state3.routes.length).toEqual(3);
@@ -426,13 +426,13 @@ describe('StackRouter', () => {
         routeName: 'Bar',
         key: 'StackRouterRoot',
       },
-      state
+      state,
     );
     const state3 = router.getStateForAction(
       {
         type: StackActions.POP,
       },
-      state2
+      state2,
     );
     expect(state3 && state3.index).toEqual(0);
   });
@@ -485,14 +485,14 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Bar',
       },
-      state
+      state,
     );
 
     const state3 = router.getStateForAction(
       {
         type: StackActions.POP_TO_TOP,
       },
-      state2
+      state2,
     );
     expect(state3 && state3.index).toEqual(0);
   });
@@ -513,7 +513,7 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Bar',
       },
-      state
+      state,
     );
 
     const state3 = router.getStateForAction(
@@ -521,7 +521,7 @@ describe('StackRouter', () => {
         type: StackActions.POP_TO_TOP,
         key: state2.key,
       },
-      state2
+      state2,
     );
     expect(state3 && state3.index).toEqual(0);
   });
@@ -549,7 +549,7 @@ describe('StackRouter', () => {
 
     const poppedState2 = TestRouter.getStateForAction(
       StackActions.pop({ n: 2, immediate: true }),
-      state
+      state,
     );
     expect(poppedState2.routes.length).toBe(2);
     expect(poppedState2.index).toBe(1);
@@ -557,7 +557,7 @@ describe('StackRouter', () => {
 
     const poppedState3 = TestRouter.getStateForAction(
       StackActions.pop({ n: 5 }),
-      state
+      state,
     );
     expect(poppedState3.routes.length).toBe(1);
     expect(poppedState3.index).toBe(0);
@@ -581,19 +581,19 @@ describe('StackRouter', () => {
     };
     const poppedState = TestRouter.getStateForAction(
       StackActions.popToTop(),
-      state
+      state,
     );
     expect(poppedState.routes.length).toBe(1);
     expect(poppedState.index).toBe(0);
     expect(poppedState.isTransitioning).toBe(true);
     const poppedState2 = TestRouter.getStateForAction(
       StackActions.popToTop(),
-      poppedState
+      poppedState,
     );
     expect(poppedState).toEqual(poppedState2);
     const poppedImmediatelyState = TestRouter.getStateForAction(
       StackActions.popToTop({ immediate: true }),
-      state
+      state,
     );
     expect(poppedImmediatelyState.routes.length).toBe(1);
     expect(poppedImmediatelyState.index).toBe(0);
@@ -606,18 +606,18 @@ describe('StackRouter', () => {
         foo: { screen: () => <div /> },
         bar: { screen: () => <div /> },
       },
-      { initialRouteName: 'foo' }
+      { initialRouteName: 'foo' },
     );
     const initState = TestRouter.getStateForAction(NavigationActions.init());
     const barState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'bar' }),
-      initState
+      initState,
     );
     expect(barState.index).toEqual(1);
     expect(barState.routes[1].routeName).toEqual('bar');
     const navigateOnBarState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'bar' }),
-      barState
+      barState,
     );
     expect(navigateOnBarState).toEqual(null);
   });
@@ -629,23 +629,23 @@ describe('StackRouter', () => {
         bar: { screen: () => <div /> },
         baz: { screen: () => <div /> },
       },
-      { initialRouteName: 'foo' }
+      { initialRouteName: 'foo' },
     );
     const initialState = TestRouter.getStateForAction(NavigationActions.init());
     const fooBarState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'bar' }),
-      initialState
+      initialState,
     );
     const fooBarBazState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'baz' }),
-      fooBarState
+      fooBarState,
     );
     expect(fooBarBazState.index).toEqual(2);
     expect(fooBarBazState.routes[2].routeName).toEqual('baz');
 
     const fooState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'foo' }),
-      fooBarBazState
+      fooBarBazState,
     );
     expect(fooState.index).toEqual(0);
     expect(fooState.routes.length).toEqual(1);
@@ -660,13 +660,13 @@ describe('StackRouter', () => {
     const initState = TestRouter.getStateForAction(NavigationActions.init());
     const pushedState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'bar' }),
-      initState
+      initState,
     );
     expect(pushedState.index).toEqual(1);
     expect(pushedState.routes[1].routeName).toEqual('bar');
     const pushedTwiceState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'bar', key: 'new-unique-key!' }),
-      pushedState
+      pushedState,
     );
     expect(pushedTwiceState.index).toEqual(2);
     expect(pushedTwiceState.routes[2].routeName).toEqual('bar');
@@ -697,7 +697,7 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Corge',
       },
-      state
+      state,
     );
 
     expect(state2.isTransitioning).toEqual(true);
@@ -713,12 +713,12 @@ describe('StackRouter', () => {
         foo: { screen: () => <div /> },
         bar: { screen: () => <div /> },
       },
-      { initialRouteKey: 'foo' }
+      { initialRouteKey: 'foo' },
     );
     const initState = TestRouter.getStateForAction(NavigationActions.init());
     const pushedState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'foo', key: 'foo' }),
-      initState
+      initState,
     );
     expect(pushedState).toEqual(null);
   });
@@ -731,13 +731,13 @@ describe('StackRouter', () => {
     const initState = TestRouter.getStateForAction(NavigationActions.init());
     const pushedState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'bar', key: 'a' }),
-      initState
+      initState,
     );
     expect(pushedState.index).toEqual(1);
     expect(pushedState.routes[1].routeName).toEqual('bar');
     const pushedTwiceState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'bar', key: 'a' }),
-      pushedState
+      pushedState,
     );
     expect(pushedTwiceState).toEqual(null);
   });
@@ -766,12 +766,12 @@ describe('StackRouter', () => {
 
     const first = router.getStateForAction(
       NavigationActions.navigate({ routeName: 'First2' }),
-      state
+      state,
     );
 
     const second = router.getStateForAction(
       NavigationActions.navigate({ routeName: 'Second2' }),
-      first
+      first,
     );
 
     const firstAgain = router.getStateForAction(
@@ -779,7 +779,7 @@ describe('StackRouter', () => {
         routeName: 'First2',
         params: { debug: true },
       }),
-      second
+      second,
     );
 
     expect(first.routes.length).toEqual(2);
@@ -799,7 +799,7 @@ describe('StackRouter', () => {
     const initState = TestRouter.getStateForAction(NavigationActions.init());
     const navigatedState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'foo' }),
-      initState
+      initState,
     );
     expect(navigatedState).toBe(null);
   });
@@ -812,14 +812,14 @@ describe('StackRouter', () => {
     const initState = TestRouter.getStateForAction(NavigationActions.init());
     const pushedState = TestRouter.getStateForAction(
       StackActions.push({ routeName: 'bar' }),
-      initState
+      initState,
     );
     expect(pushedState.index).toEqual(1);
     expect(pushedState.routes[1].routeName).toEqual('bar');
     expect(() => {
       TestRouter.getStateForAction(
         { type: StackActions.PUSH, routeName: 'bar', key: 'a' },
-        pushedState
+        pushedState,
       );
     }).toThrow();
   });
@@ -832,13 +832,13 @@ describe('StackRouter', () => {
     const initState = TestRouter.getStateForAction(NavigationActions.init());
     const pushedState = TestRouter.getStateForAction(
       StackActions.push({ routeName: 'bar' }),
-      initState
+      initState,
     );
     expect(pushedState.index).toEqual(1);
     expect(pushedState.routes[1].routeName).toEqual('bar');
     const secondPushedState = TestRouter.getStateForAction(
       StackActions.push({ routeName: 'bar' }),
-      pushedState
+      pushedState,
     );
     expect(secondPushedState.index).toEqual(2);
     expect(secondPushedState.routes[2].routeName).toEqual('bar');
@@ -852,15 +852,15 @@ describe('StackRouter', () => {
     const initState = TestRouter.getStateForAction(NavigationActions.init());
     const pushedState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'bar', key: 'a' }),
-      initState
+      initState,
     );
     const pushedTwiceState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'bar', key: 'b`' }),
-      pushedState
+      pushedState,
     );
     const pushedThriceState = TestRouter.getStateForAction(
       NavigationActions.navigate({ routeName: 'foo', key: 'c`' }),
-      pushedTwiceState
+      pushedTwiceState,
     );
     expect(pushedThriceState.routes.length).toEqual(4);
 
@@ -869,7 +869,7 @@ describe('StackRouter', () => {
         routeName: 'foo',
         key: pushedThriceState.routes[0].key,
       }),
-      pushedThriceState
+      pushedThriceState,
     );
     expect(navigatedBackToFirstRouteState.index).toEqual(0);
     expect(navigatedBackToFirstRouteState.routes.length).toEqual(1);
@@ -905,7 +905,7 @@ describe('StackRouter', () => {
         params: { name: 'Zoom' },
         immediate: true,
       },
-      state
+      state,
     );
     expect(state2.index).toEqual(1);
     expect(state2.routes[1].routeName).toEqual('Bar');
@@ -913,7 +913,7 @@ describe('StackRouter', () => {
     expect(state2.routes.length).toEqual(2);
     const state3 = router.getStateForAction(
       { type: NavigationActions.BACK, immediate: true },
-      state2
+      state2,
     );
     expect(state3).toEqual({
       index: 0,
@@ -934,7 +934,7 @@ describe('StackRouter', () => {
       bar: { screen: () => <div /> },
     });
     const initState = TestRouter.getStateForAction(
-      NavigationActions.navigate({ routeName: 'foo' })
+      NavigationActions.navigate({ routeName: 'foo' }),
     );
     const replacedState = TestRouter.getStateForAction(
       StackActions.replace({
@@ -942,7 +942,7 @@ describe('StackRouter', () => {
         params: { meaning: 42 },
         key: initState.routes[0].key,
       }),
-      initState
+      initState,
     );
     expect(replacedState.index).toEqual(0);
     expect(replacedState.routes.length).toEqual(1);
@@ -955,7 +955,7 @@ describe('StackRouter', () => {
         key: initState.routes[0].key,
         newKey: 'wow',
       }),
-      initState
+      initState,
     );
     expect(replacedState2.index).toEqual(0);
     expect(replacedState2.routes.length).toEqual(1);
@@ -989,28 +989,28 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Bar',
       },
-      state
+      state,
     );
     const state3 = router.getStateForAction(
       {
         type: NavigationActions.NAVIGATE,
         routeName: 'Qux',
       },
-      state2
+      state2,
     );
     const state4 = router.getStateForAction(
       {
         type: NavigationActions.NAVIGATE,
         routeName: 'Corge',
       },
-      state3
+      state3,
     );
     const state5 = router.getStateForAction(
       {
         type: NavigationActions.NAVIGATE,
         routeName: 'Grault',
       },
-      state4
+      state4,
     );
 
     const replacedState = router.getStateForAction(
@@ -1018,7 +1018,7 @@ describe('StackRouter', () => {
         routeName: 'Woo',
         params: { meaning: 42 },
       }),
-      state5
+      state5,
     );
 
     const originalCurrentScreen = state5.routes[1].routes[1].routes[2];
@@ -1028,7 +1028,7 @@ describe('StackRouter', () => {
     expect(replacedState.routes[1].routes[1].routes.length).toEqual(3);
     expect(replacedCurrentScreen.key).not.toEqual(originalCurrentScreen.key);
     expect(replacedCurrentScreen.routeName).not.toEqual(
-      originalCurrentScreen.routeName
+      originalCurrentScreen.routeName,
     );
     expect(replacedCurrentScreen.routeName).toEqual('Woo');
     expect(replacedCurrentScreen.params.meaning).toEqual(42);
@@ -1052,7 +1052,7 @@ describe('StackRouter', () => {
         routeName: 'Bar',
         params: { name: 'Zoom' },
       },
-      state
+      state,
     );
     expect(state2 && state2.index).toEqual(1);
     expect(state2 && state2.isTransitioning).toEqual(true);
@@ -1061,7 +1061,7 @@ describe('StackRouter', () => {
         type: StackActions.COMPLETE_TRANSITION,
         toChildKey: state2.routes[1].key,
       },
-      state2
+      state2,
     );
     expect(state3 && state3.index).toEqual(1);
     expect(state3 && state3.isTransitioning).toEqual(false);
@@ -1089,7 +1089,7 @@ describe('StackRouter', () => {
         toChildKey: state.routes[state.index].key,
         key: 'not StackKey',
       },
-      state
+      state,
     );
     expect(outputState.isTransitioning).toEqual(true);
   });
@@ -1117,7 +1117,7 @@ describe('StackRouter', () => {
         toChildKey: 'incorrect',
         key: 'StackKey',
       },
-      state
+      state,
     );
     expect(outputState.isTransitioning).toEqual(true);
   });
@@ -1151,7 +1151,7 @@ describe('StackRouter', () => {
     };
     const testState = TestRouter.getStateForAction(
       { type: NavigationActions.BACK, key: null },
-      state
+      state,
     );
     expect(testState.index).toBe(1);
     expect(testState.routes[1].index).toBe(0);
@@ -1188,7 +1188,7 @@ describe('StackRouter', () => {
     };
     const testState = TestRouter.getStateForAction(
       { type: NavigationActions.BACK },
-      state
+      state,
     );
     expect(testState.index).toBe(2);
     expect(testState.routes[1].index).toBe(1);
@@ -1229,7 +1229,7 @@ describe('StackRouter', () => {
         params: { name: 'Zoom' },
         immediate: true,
       },
-      state
+      state,
     );
     expect(state2 && state2.index).toEqual(1);
     expect(state2 && state2.routes[1].routeName).toEqual('Bar');
@@ -1237,7 +1237,7 @@ describe('StackRouter', () => {
     expect(state2 && state2.routes.length).toEqual(2);
     const state3 = router.getStateForAction(
       { type: NavigationActions.BACK, immediate: true },
-      state2
+      state2,
     );
     expect(state3).toEqual({
       index: 0,
@@ -1312,7 +1312,7 @@ describe('StackRouter', () => {
         immediate: true,
         params: { name: 'Zoom' },
       },
-      state
+      state,
     );
     const state3 = router.getStateForAction(
       {
@@ -1321,11 +1321,11 @@ describe('StackRouter', () => {
         immediate: true,
         params: { name: 'Foo' },
       },
-      state2
+      state2,
     );
     const state4 = router.getStateForAction(
       { type: NavigationActions.BACK, key: 'wrongKey' },
-      state3
+      state3,
     );
     expect(state3).toEqual(state4);
     const state5 = router.getStateForAction(
@@ -1334,7 +1334,7 @@ describe('StackRouter', () => {
         key: state3 && state3.routes[1].key,
         immediate: true,
       },
-      state4
+      state4,
     );
     expect(state5).toEqual(state);
   });
@@ -1351,7 +1351,7 @@ describe('StackRouter', () => {
           screen: BarScreen,
         },
       },
-      { initialRouteName: 'Bar' }
+      { initialRouteName: 'Bar' },
     );
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     expect(state).toEqual({
@@ -1375,7 +1375,7 @@ describe('StackRouter', () => {
           screen: FooScreen,
         },
       },
-      { initialRouteName: 'Foo', initialRouteParams: { foo: 'bar' } }
+      { initialRouteName: 'Foo', initialRouteParams: { foo: 'bar' } },
     );
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     expect(state).toEqual({
@@ -1401,7 +1401,7 @@ describe('StackRouter', () => {
           params: { foo: 'not-bar', meaning: 42 },
         },
       },
-      { initialRouteName: 'Foo', initialRouteParams: { foo: 'bar' } }
+      { initialRouteName: 'Foo', initialRouteParams: { foo: 'bar' } },
     );
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     expect(state).toEqual({
@@ -1437,7 +1437,7 @@ describe('StackRouter', () => {
         params: { bar: '42' },
         immediate: true,
       },
-      state
+      state,
     );
     expect(state2).not.toBeNull();
     expect(state2 && state2.index).toEqual(1);
@@ -1457,7 +1457,7 @@ describe('StackRouter', () => {
       {
         initialRouteName: 'Bar',
         initialRouteParams: { name: 'Zoo' },
-      }
+      },
     );
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     const key = state && state.routes[0].key;
@@ -1469,7 +1469,7 @@ describe('StackRouter', () => {
           params: { name: 'Qux' },
           key,
         },
-        state
+        state,
       );
     expect(state2 && state2.index).toEqual(0);
     expect(state2 && state2.routes[0].params).toEqual({ name: 'Qux' });
@@ -1488,7 +1488,7 @@ describe('StackRouter', () => {
       {
         initialRouteName: 'Bar',
         initialRouteParams: { name: 'Zoo' },
-      }
+      },
     );
     const initialState = {
       index: 1,
@@ -1507,7 +1507,7 @@ describe('StackRouter', () => {
         params: { name: 'NewParam' },
         key: 'RouteA',
       },
-      initialState
+      initialState,
     );
     expect(state.index).toEqual(1);
     expect(state.routes[0].params).toEqual({
@@ -1533,7 +1533,7 @@ describe('StackRouter', () => {
         params: { name: 'foobar' },
         key: 'id-0',
       },
-      state
+      state,
     );
     expect(state2 && state2.index).toEqual(0);
     expect(state2 && state2.routes[0].routes).toEqual([
@@ -1573,7 +1573,7 @@ describe('StackRouter', () => {
         ],
         index: 1,
       },
-      state
+      state,
     );
     expect(state2 && state2.index).toEqual(1);
     expect(state2 && state2.routes[0].params).toEqual({ bar: '42' });
@@ -1616,7 +1616,7 @@ describe('StackRouter', () => {
         ...resetAction,
         key: state2.key,
       },
-      state2
+      state2,
     );
     expect(state3 && state3.index).toEqual(1);
     expect(state3 && state3.routes[0].params).toEqual({ bar: '42' });
@@ -1656,7 +1656,7 @@ describe('StackRouter', () => {
         ],
         index: 0,
       },
-      state
+      state,
     );
 
     expect(state2 && state2.index).toEqual(0);
@@ -1694,7 +1694,7 @@ describe('StackRouter', () => {
           immediate: true,
         },
       },
-      state
+      state,
     );
     const state3 = router.getStateForAction(
       {
@@ -1709,7 +1709,7 @@ describe('StackRouter', () => {
         ],
         index: 0,
       },
-      state2
+      state2,
     );
     const state4 = router.getStateForAction(
       {
@@ -1724,7 +1724,7 @@ describe('StackRouter', () => {
         ],
         index: 0,
       },
-      state3
+      state3,
     );
 
     expect(state4 && state4.index).toEqual(0);
@@ -1747,7 +1747,7 @@ describe('StackRouter', () => {
         routeName: 'Bar',
         params: { foo: '42' },
       },
-      state
+      state,
     );
     expect(state2 && state2.routes[1].params).toEqual({ foo: '42' });
     expect(state2 && state2.routes[1].routes).toEqual([
@@ -1773,14 +1773,14 @@ describe('StackRouter', () => {
         immediate: true,
         routeName: 'Foo',
       },
-      router.getStateForAction({ type: NavigationActions.INIT })
+      router.getStateForAction({ type: NavigationActions.INIT }),
     );
     const state2 = router.getStateForAction(
       {
         type: NavigationActions.NAVIGATE,
         routeName: 'Baz',
       },
-      state
+      state,
     );
     expect(state2.index).toEqual(0);
     expect(state2.isTransitioning).toEqual(true);
@@ -1931,7 +1931,7 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Baz',
       },
-      state
+      state,
     );
     expect(state2.index).toEqual(0);
     expect(state2.isTransitioning).toEqual(false);
@@ -1943,7 +1943,7 @@ describe('StackRouter', () => {
         type: StackActions.COMPLETE_TRANSITION,
         toChildKey: state2.routes[0].routes[1].key,
       },
-      state2
+      state2,
     );
     expect(state3 && state3.index).toEqual(0);
     expect(state3 && state3.isTransitioning).toEqual(false);
@@ -1969,7 +1969,7 @@ describe('StackRouter', () => {
       },
       {
         initialRouteName: 'Baz',
-      }
+      },
     );
 
     const state = router.getStateForAction({ type: NavigationActions.INIT });
@@ -1980,7 +1980,7 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Bar',
       },
-      state
+      state,
     );
     expect(state2.routes[state2.index].routeName).toEqual('Bar');
 
@@ -1989,7 +1989,7 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Baz',
       },
-      state2
+      state2,
     );
     expect(state3.routes[state3.index].routeName).toEqual('Baz');
 
@@ -1998,7 +1998,7 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Foo',
       },
-      state3
+      state3,
     );
     let activeState4 = state4.routes[state4.index];
     expect(activeState4.routeName).toEqual('NestedStack');
@@ -2009,7 +2009,7 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Bar',
       },
-      state4
+      state4,
     );
     let activeState5 = state5.routes[state5.index];
     expect(activeState5.routeName).toEqual('NestedStack');
@@ -2034,7 +2034,7 @@ describe('StackRouter', () => {
       },
       {
         initialRouteName: 'OtherNestedStack',
-      }
+      },
     );
 
     const state = router.getStateForAction({ type: NavigationActions.INIT });
@@ -2045,7 +2045,7 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'Bar',
       },
-      state
+      state,
     );
     expect(state2.routes[state2.index].routeName).toEqual('Bar');
 
@@ -2054,14 +2054,14 @@ describe('StackRouter', () => {
         type: NavigationActions.NAVIGATE,
         routeName: 'NestedStack',
       },
-      state2
+      state2,
     );
     const state4 = router.getStateForAction(
       {
         type: NavigationActions.NAVIGATE,
         routeName: 'Bar',
       },
-      state3
+      state3,
     );
     let activeState4 = state4.routes[state4.index];
     expect(activeState4.routeName).toEqual('NestedStack');

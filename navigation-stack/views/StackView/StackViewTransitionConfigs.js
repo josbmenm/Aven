@@ -66,7 +66,7 @@ const FadeOutToBottomAndroid = {
 function defaultTransitionConfig(
   transitionProps,
   prevTransitionProps,
-  isModal
+  isModal,
 ) {
   if (Platform.OS === 'android') {
     // Use the default Android animation no matter if the screen is a modal.
@@ -91,12 +91,12 @@ function getTransitionConfig(
   transitionConfigurer,
   transitionProps,
   prevTransitionProps,
-  isModal
+  isModal,
 ) {
   const defaultConfig = defaultTransitionConfig(
     transitionProps,
     prevTransitionProps,
-    isModal
+    isModal,
   );
   if (transitionConfigurer) {
     return {

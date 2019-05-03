@@ -436,7 +436,7 @@ describe('eval/lambda behavior', () => {
     });
     c.setLambda(
       'byBar',
-      ({ value }, d, cloud, useValue) => value * useValue(cloud.get('bar'))
+      ({ value }, d, cloud, useValue) => value * useValue(cloud.get('bar')),
     );
     const s = c.get('foo^byBar');
     await s.fetchValue();

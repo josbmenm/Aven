@@ -63,7 +63,7 @@ test('grandchildren subscription', () => {
   grandParentSubscriber.mockReturnValueOnce({ remove: subscriptionRemove });
   const parentSubscriber = getChildEventSubscriber(
     grandParentSubscriber,
-    'parent'
+    'parent',
   ).addListener;
   const childEventSubscriber = getChildEventSubscriber(parentSubscriber, 'key1')
     .addListener;
@@ -130,7 +130,7 @@ test('grandchildren transitions', () => {
   grandParentSubscriber.mockReturnValueOnce({ remove: subscriptionRemove });
   const parentSubscriber = getChildEventSubscriber(
     grandParentSubscriber,
-    'parent'
+    'parent',
   ).addListener;
   const childEventSubscriber = getChildEventSubscriber(parentSubscriber, 'key1')
     .addListener;
@@ -223,7 +223,7 @@ test('grandchildren pass through transitions', () => {
   grandParentSubscriber.mockReturnValueOnce({ remove: subscriptionRemove });
   const parentSubscriber = getChildEventSubscriber(
     grandParentSubscriber,
-    'parent'
+    'parent',
   ).addListener;
   const childEventSubscriber = getChildEventSubscriber(parentSubscriber, 'key1')
     .addListener;
@@ -473,7 +473,7 @@ const setupEventTest = (subscriptionKey, initialLastFocusEvent) => {
   const evtProvider = getChildEventSubscriber(
     parentSubscriber,
     subscriptionKey,
-    initialLastFocusEvent
+    initialLastFocusEvent,
   );
   const handlers = {};
   evtProvider.addListener('action', (handlers.action = jest.fn()));

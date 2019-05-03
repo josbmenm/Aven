@@ -21,7 +21,7 @@ export const getParamsFromPath = (
   inputParams,
   pathMatch,
   pathMatchKeys,
-  allowedParams
+  allowedParams,
 ) => {
   let allowedInputParams = inputParams;
   if (allowedParams) {
@@ -54,7 +54,7 @@ export const getParamsFromPath = (
     {
       // start with the input(query string) params, which will get overridden by path params
       ...allowedInputParams,
-    }
+    },
   );
   return params;
 };
@@ -87,7 +87,7 @@ export const urlToPathAndParams = (url, uriPrefix) => {
 export const createPathParser = (
   childRouters,
   routeConfigs,
-  { paths: pathConfigs = {}, disableRouteNamePaths, explicitParams = false }
+  { paths: pathConfigs = {}, disableRouteNamePaths, explicitParams = false },
 ) => {
   const pathsByRouteNames = {};
   let paths = [];
@@ -110,7 +110,7 @@ export const createPathParser = (
 
     invariant(
       pathPattern === null || typeof pathPattern === 'string',
-      `Route path for ${routeName} must be specified as a string, or null.`
+      `Route path for ${routeName} must be specified as a string, or null.`,
     );
 
     // the path may be specified as null, which is similar to empty string because it allows child routers to handle the action, but it will not match empty paths
@@ -124,7 +124,7 @@ export const createPathParser = (
     const isWildcard = pathPattern === '' || !isPathMatchable;
     const extendedPathRe = pathToRegexp(
       isWildcard ? '*' : `${pathPattern}/*`,
-      extendedPathReKeys
+      extendedPathReKeys,
     );
 
     pathsByRouteNames[routeName] = {
@@ -176,7 +176,7 @@ export const createPathParser = (
     const allChildParamNames = new Set();
     Object.keys(childRouteNamedParams).forEach(childRouteName => {
       childRouteNamedParams[childRouteName].forEach(a =>
-        allChildParamNames.add(a)
+        allChildParamNames.add(a),
       );
     });
 
@@ -187,15 +187,15 @@ export const createPathParser = (
 
     const conflictingParamNames = intersect(
       allChildParamNames,
-      localRouteNamedParams[routeName]
+      localRouteNamedParams[routeName],
     );
     if (conflictingParamNames.size && explicitParams) {
       throw new Error(
         `Conflicting param names for "${routeName}" route. Rename the ${Array.from(
-          conflictingParamNames
+          conflictingParamNames,
         )
           .map(n => `"${n}"`)
-          .join(',')} param(s)`
+          .join(',')} param(s)`,
       );
     }
   });
@@ -205,7 +205,7 @@ export const createPathParser = (
   const getActionForPathAndParams = (
     pathToResolve = '',
     inputParams = {},
-    getActionConfig = {}
+    getActionConfig = {},
   ) => {
     // Attempt to match `pathToResolve` with a route in this router's routeConfigs, deferring to child routers
 
@@ -228,7 +228,7 @@ export const createPathParser = (
             inputParams,
             {
               explicitParams: useExplicitParams,
-            }
+            },
           );
         }
 
@@ -241,7 +241,7 @@ export const createPathParser = (
             inputParams,
             exactMatch,
             exactReKeys,
-            allowedParams
+            allowedParams,
           ),
           action: childAction,
         });
@@ -265,7 +265,7 @@ export const createPathParser = (
             {
               explicitParams: useExplicitParams,
               hello: 'a',
-            }
+            },
           );
         }
         if (!childAction) {
@@ -280,7 +280,7 @@ export const createPathParser = (
             inputParams,
             extendedMatch,
             extendedPathReKeys,
-            allowedParams
+            allowedParams,
           ),
           action: childAction,
         });

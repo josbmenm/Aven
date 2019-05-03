@@ -16,7 +16,7 @@ export default function withNavigation(Component) {
             const navigation = navigationProp || navigationContext;
             invariant(
               !!navigation,
-              'withNavigation can only be used on a view hierarchy of a navigator. The wrapped component is unable to get access to navigation from props or context.'
+              'withNavigation can only be used on a view hierarchy of a navigator. The wrapped component is unable to get access to navigation from props or context.',
             );
             return (
               <Component

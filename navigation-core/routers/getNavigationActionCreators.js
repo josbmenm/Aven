@@ -21,22 +21,22 @@ const getNavigationActionCreators = route => {
       }
       invariant(
         typeof navigateTo === 'object',
-        'Must navigateTo an object or a string'
+        'Must navigateTo an object or a string',
       );
       invariant(
         params == null,
-        'Params must not be provided to .navigate() when specifying an object'
+        'Params must not be provided to .navigate() when specifying an object',
       );
       invariant(
         action == null,
-        'Child action must not be provided to .navigate() when specifying an object'
+        'Child action must not be provided to .navigate() when specifying an object',
       );
       return NavigationActions.navigate(navigateTo);
     },
     setParams: params => {
       invariant(
         route.key && typeof route.key === 'string',
-        'setParams cannot be called by root navigator'
+        'setParams cannot be called by root navigator',
       );
       return NavigationActions.setParams({ params, key: route.key });
     },

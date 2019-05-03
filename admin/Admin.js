@@ -829,12 +829,15 @@ function Folder({ value, path, doc, pathContext }) {
   const restOfPath = pathSegments && pathSegments.slice(1).join('/');
 
   const file = value.files[nextPathSegment];
-  const obj = useMemo(() => {
-    if (!file || !file.id) {
-      return null;
-    }
-    return doc.getBlock(file.id);
-  }, [file]);
+  const obj = useMemo(
+    () => {
+      if (!file || !file.id) {
+        return null;
+      }
+      return doc.getBlock(file.id);
+    },
+    [file],
+  );
   const objValue = useObservable(obj && obj.observeValue);
 
   if (objValue) {
@@ -1337,7 +1340,7 @@ function TargetedPopoverScreen({
             width: width,
             top: location.y + location.height,
             right: Math.ceil(
-              containerLayout.width - location.width - location.x
+              containerLayout.width - location.width - location.x,
             ),
             // left: 100,
             backgroundColor: 'white',
@@ -1417,7 +1420,7 @@ const DocPaneNavigator = createNavigator(
   }),
   {
     explicitParams: true,
-  }
+  },
 );
 
 function DocPane({ navigation }) {
@@ -1450,7 +1453,7 @@ const MainPaneNavigator = createNavigator(
   }),
   {
     explicitParams: true,
-  }
+  },
 );
 
 function MainPane({ onClientConfig, onSession, navigation }) {
@@ -1515,7 +1518,7 @@ function AuthHeaderLink({ loggedInId }) {
     {
       duration: 200,
       easing: Easing.out(Easing.quad),
-    }
+    },
   );
   return (
     <HeaderLink onPress={onPopover} viewRef={targetRef}>
@@ -1538,56 +1541,62 @@ function AuthHeaderLink({ loggedInId }) {
 function AdminApp({ defaultSession = {}, descriptors }) {
   let [sessionState, setSessionState] = useAsyncStorage(
     'AvenSessionState',
-    null
+    null,
   );
 
   let [clientConfig, setClientConfig] = useAsyncStorage(
     'AvenClientConfig',
-    null
+    null,
   );
 
-  let client = useMemo(() => {
-    if (
-      isStateUnloaded(clientConfig) ||
-      isStateUnloaded(sessionState) ||
-      clientConfig === null
-    ) {
-      return null;
-    }
-    const { authority, useSSL, domain } = clientConfig;
-    const source = createBrowserNetworkSource({
-      authority,
-      useSSL,
-    });
-    const client = createCloudClient({
-      initialSession: sessionState,
-      source,
-      domain,
-    });
+  let client = useMemo(
+    () => {
+      if (
+        isStateUnloaded(clientConfig) ||
+        isStateUnloaded(sessionState) ||
+        clientConfig === null
+      ) {
+        return null;
+      }
+      const { authority, useSSL, domain } = clientConfig;
+      const source = createBrowserNetworkSource({
+        authority,
+        useSSL,
+      });
+      const client = createCloudClient({
+        initialSession: sessionState,
+        source,
+        domain,
+      });
 
-    return client;
-  }, [clientConfig, isStateUnloaded(sessionState)]);
+      return client;
+    },
+    [clientConfig, isStateUnloaded(sessionState)],
+  );
 
   const activeRoute = useActiveRoute();
 
   const { navigate } = useNavigation();
 
-  useEffect(() => {
-    if (
-      !isStateUnloaded(clientConfig) &&
-      !client &&
-      activeRoute.routeName !== 'Login'
-    ) {
-      navigate('Login');
-    }
-    if (
-      !isStateUnloaded(sessionState) &&
-      !sessionState &&
-      activeRoute.routeName !== 'Login'
-    ) {
-      navigate('Login');
-    }
-  }, [activeRoute, sessionState, clientConfig, client]);
+  useEffect(
+    () => {
+      if (
+        !isStateUnloaded(clientConfig) &&
+        !client &&
+        activeRoute.routeName !== 'Login'
+      ) {
+        navigate('Login');
+      }
+      if (
+        !isStateUnloaded(sessionState) &&
+        !sessionState &&
+        activeRoute.routeName !== 'Login'
+      ) {
+        navigate('Login');
+      }
+    },
+    [activeRoute, sessionState, clientConfig, client],
+  );
 
   const activeDescriptor = descriptors[activeRoute.key];
 
@@ -1685,7 +1694,7 @@ const router = SwitchRouter(
   },
   {
     explicitParams: true,
-  }
+  },
 );
 
 export default createNavigator(AdminApp, router, {});

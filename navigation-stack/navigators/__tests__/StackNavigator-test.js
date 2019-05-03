@@ -96,7 +96,7 @@ describe('StackNavigator', () => {
       expect.objectContaining({
         navigate: expect.any(Function),
         addListener: expect.any(Function),
-      })
+      }),
     );
   });
 });

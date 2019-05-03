@@ -43,7 +43,7 @@ class Transitioner extends React.Component {
         [],
         this.props.navigation.state,
         null,
-        this.props.descriptors
+        this.props.descriptors,
       ),
     };
 
@@ -82,7 +82,7 @@ class Transitioner extends React.Component {
       this.state.scenes,
       nextProps.navigation.state,
       props.navigation.state,
-      nextProps.descriptors
+      nextProps.descriptors,
     );
 
     if (!nextProps.navigation.state.isTransitioning) {
@@ -148,7 +148,7 @@ class Transitioner extends React.Component {
         if (nextProps.onTransitionStart) {
           const result = nextProps.onTransitionStart(
             this._transitionProps,
-            this._prevTransitionProps
+            this._prevTransitionProps,
           );
           if (result instanceof Promise) {
             // why do we bother awaiting the result here?
@@ -166,7 +166,7 @@ class Transitioner extends React.Component {
         if (nextProps.onTransitionStart) {
           const result = nextProps.onTransitionStart(
             this._transitionProps,
-            this._prevTransitionProps
+            this._prevTransitionProps,
           );
 
           // why do we bother awaiting the result here?
@@ -180,7 +180,7 @@ class Transitioner extends React.Component {
       const transitionUserSpec = nextProps.configureTransition
         ? nextProps.configureTransition(
             this._transitionProps,
-            this._prevTransitionProps
+            this._prevTransitionProps,
           )
         : null;
 
@@ -265,7 +265,7 @@ class Transitioner extends React.Component {
       if (this.props.onTransitionEnd) {
         const result = this.props.onTransitionEnd(
           this._transitionProps,
-          prevTransitionProps
+          prevTransitionProps,
         );
 
         if (result instanceof Promise) {

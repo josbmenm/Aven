@@ -87,7 +87,7 @@ const performRouterTest = createTestRouter => {
           screen: () => <div />,
         },
       },
-      { initialRouteName: 'Bar', initialRouteParams: { foo: 42 } }
+      { initialRouteName: 'Bar', initialRouteParams: { foo: 42 } },
     );
     const action = router.getActionForPathAndParams('');
     expect(action).toEqual(null);
@@ -96,7 +96,7 @@ const performRouterTest = createTestRouter => {
       expect.objectContaining({
         routeName: 'Bar',
         params: { foo: 42 },
-      })
+      }),
     );
   });
 
@@ -120,7 +120,7 @@ const performRouterTest = createTestRouter => {
       },
     });
     const action = router.getActionForPathAndParams(
-      'people/brent/tasks/everything'
+      'people/brent/tasks/everything',
     );
     expect(action).toEqual({
       type: NavigationActions.NAVIGATE,
@@ -458,7 +458,7 @@ const performRouterTest = createTestRouter => {
   test('Querystring params get passed to nested deep link', () => {
     const action = testRouter.getActionForPathAndParams(
       'main/p/4/list/10259959195',
-      { code: 'test', foo: 'bar' }
+      { code: 'test', foo: 'bar' },
     );
     expect(action).toEqual({
       type: NavigationActions.NAVIGATE,
@@ -489,7 +489,7 @@ const performRouterTest = createTestRouter => {
 
     const action2 = testRouter.getActionForPathAndParams(
       'main/p/4/list/10259959195',
-      { code: '', foo: 'bar' }
+      { code: '', foo: 'bar' },
     );
     expect(action2).toEqual({
       type: NavigationActions.NAVIGATE,
@@ -530,7 +530,7 @@ const performRouterTest = createTestRouter => {
           screen: FooNavigator,
         },
       },
-      { paths: { baz: 'overridden' } }
+      { paths: { baz: 'overridden' } },
     );
     const action = router.getActionForPathAndParams('overridden', {});
     expect(action.type).toEqual(NavigationActions.NAVIGATE);
@@ -548,7 +548,7 @@ const performRouterTest = createTestRouter => {
           screen: FooNavigator,
         },
       },
-      { paths: { baz: null } }
+      { paths: { baz: null } },
     );
     const action = router.getActionForPathAndParams('b/noBaz', {});
     expect(action.type).toEqual(NavigationActions.NAVIGATE);
@@ -597,7 +597,7 @@ const performRouteNameAsPathDisabledTest = createTestRouter => {
     {
       A: NestedNavigator,
     },
-    { disableRouteNamePaths: true }
+    { disableRouteNamePaths: true },
   );
 
   test('disableRouteNamePaths option on router prevent the default path to be the routeName', () => {

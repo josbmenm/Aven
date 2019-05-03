@@ -4,7 +4,7 @@ export default function useObservable(observable) {
   const isObservable = !!observable && !!observable.subscribe;
 
   const [value, setValue] = useState(
-    isObservable ? observable.value : observable
+    isObservable ? observable.value : observable,
   );
 
   const [error, setError] = useState(null);
@@ -31,20 +31,23 @@ export default function useObservable(observable) {
     setError(error);
   }
 
-  useEffect(() => {
-    if (error) {
-      setError(null);
-    }
-    if (isObservable) {
-      const subscription = observable.subscribe({
-        next: applyValue,
-        error: applyError,
-      });
-      return () => {
-        subscription && subscription.unsubscribe();
-      };
-    }
-  }, [observable]);
+  useEffect(
+    () => {
+      if (error) {
+        setError(null);
+      }
+      if (isObservable) {
+        const subscription = observable.subscribe({
+          next: applyValue,
+          error: applyError,
+        });
+        return () => {
+          subscription && subscription.unsubscribe();
+        };
+      }
+    },
+    [observable],
+  );
 
   return value;
 }

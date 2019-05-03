@@ -14,7 +14,7 @@ export default function getScreenForRouteName(routeConfigs, routeName) {
       `There is no route defined for key ${routeName}.\n` +
         `Must be one of: ${Object.keys(routeConfigs)
           .map(a => `'${a}'`)
-          .join(',')}`
+          .join(',')}`,
     );
   }
 
@@ -29,7 +29,7 @@ export default function getScreenForRouteName(routeConfigs, routeName) {
       `The getScreen defined for route '${routeName} didn't return a valid ` +
         'screen or navigator.\n\n' +
         'Please pass it like this:\n' +
-        `${routeName}: {\n  getScreen: () => require('./MyScreen').default\n}`
+        `${routeName}: {\n  getScreen: () => require('./MyScreen').default\n}`,
     );
     return screen;
   }

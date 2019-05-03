@@ -37,7 +37,7 @@ export default function createPointerEventsContainer(Component) {
       if (component) {
         invariant(
           typeof component.setNativeProps === 'function',
-          'component must implement method `setNativeProps`'
+          'component must implement method `setNativeProps`',
         );
       }
     };
@@ -46,7 +46,7 @@ export default function createPointerEventsContainer(Component) {
       this._positionListener && this._positionListener.remove();
       this._positionListener = new AnimatedValueSubscription(
         this.props.realPosition,
-        this._onPositionChange
+        this._onPositionChange,
       );
     }
 

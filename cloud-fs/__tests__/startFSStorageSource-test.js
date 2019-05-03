@@ -27,14 +27,14 @@ describe('basic fs source setup', () => {
     expect(
       startFSStorageSource({
         dataDir,
-      })
+      }),
     ).rejects.toThrow();
   });
   test('throws when starting without a data directory', () => {
     expect(
       startFSStorageSource({
         domain: 'test',
-      })
+      }),
     ).rejects.toThrow();
   });
 });

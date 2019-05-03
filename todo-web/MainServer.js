@@ -70,7 +70,7 @@ const runServer = async () => {
   const protectedSource = createProtectedSource({
     source,
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider].filter(
-      provider => provider
+      provider => provider,
     ),
   });
 

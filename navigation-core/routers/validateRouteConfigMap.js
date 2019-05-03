@@ -10,7 +10,7 @@ function validateRouteConfigMap(routeConfigs) {
   const routeNames = Object.keys(routeConfigs);
   invariant(
     routeNames.length > 0,
-    'Please specify at least one route when configuring a navigator.'
+    'Please specify at least one route when configuring a navigator.',
   );
 
   routeNames.forEach(routeName => {
@@ -38,7 +38,7 @@ ${routeName}: MyNavigator,
 
     if (routeConfig.screen && routeConfig.getScreen) {
       throw new Error(
-        `Route '${routeName}' should declare a screen or a getScreen, not both.`
+        `Route '${routeName}' should declare a screen or a getScreen, not both.`,
       );
     }
   });

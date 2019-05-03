@@ -30,7 +30,7 @@ describe('generic navigation actions', () => {
         routeName: 'test',
         params,
         action: navigateAction,
-      })
+      }),
     ).toEqual({
       type: NavigationActions.NAVIGATE,
       routeName: 'test',
@@ -47,7 +47,7 @@ describe('generic navigation actions', () => {
       NavigationActions.setParams({
         key: 'test',
         params,
-      })
+      }),
     ).toEqual({
       type: NavigationActions.SET_PARAMS,
       key: 'test',

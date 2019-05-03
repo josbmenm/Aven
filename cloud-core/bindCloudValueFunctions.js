@@ -67,7 +67,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
     },
     get: toGet => {
       throw new Error(
-        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
+        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`,
       );
     },
     fetchValue: async () => {
@@ -98,7 +98,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
       .distinctUntilChanged(),
     observeValueAndId: new Observable(() => {
       throw new Error(
-        'sorry, observeValueAndId is not supported for expand right now. Use observeValue or lambda functions instead.'
+        'sorry, observeValueAndId is not supported for expand right now. Use observeValue or lambda functions instead.',
       );
     }),
     getValue,
@@ -143,7 +143,7 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
     },
     get: toGet => {
       throw new Error(
-        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`
+        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`,
       );
     },
     // the actual loading and computation is performed by the lambda doc, which may refer to the cloud block lambda.
@@ -151,11 +151,11 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
     fetchValue: () => lambdaDoc.functionFetchValue(cloudValue),
     observeValue: lambdaDoc.functionObserveValue(
       cloudValue,
-      handleFnConnectivity
+      handleFnConnectivity,
     ),
     observeValueAndId: lambdaDoc.functionObserveValueAndId(
       cloudValue,
-      handleFnConnectivity
+      handleFnConnectivity,
     ),
     getValue,
   };
@@ -180,7 +180,7 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
     },
     get: toGet => {
       throw new Error(
-        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been mapped.`
+        `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been mapped.`,
       );
     },
     fetchValue: cloudValue.fetchValue,

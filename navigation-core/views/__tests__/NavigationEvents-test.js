@@ -60,7 +60,7 @@ describe('NavigationEvents', () => {
     } = createTestNavigationAndHelpers();
 
     const component = renderer.create(
-      <NavigationEvents navigation={navigation} />
+      <NavigationEvents navigation={navigation} />,
     );
     expect(NavigationListenersAPI.get('willFocus').length).toBe(1);
     expect(NavigationListenersAPI.get('didFocus').length).toBe(1);
@@ -82,7 +82,7 @@ describe('NavigationEvents', () => {
     const component = renderer.create(
       <NavigationContext.Provider value={navigation}>
         <NavigationEvents />
-      </NavigationContext.Provider>
+      </NavigationContext.Provider>,
     );
 
     expect(NavigationListenersAPI.get('willFocus').length).toBe(1);
@@ -105,7 +105,7 @@ describe('NavigationEvents', () => {
 
     const eventListenerProps = createEventListenersProp();
     renderer.create(
-      <NavigationEvents navigation={navigation} {...eventListenerProps} />
+      <NavigationEvents navigation={navigation} {...eventListenerProps} />,
     );
 
     const checkPropListenerIsCalled = (eventName, propName) => {
@@ -130,7 +130,7 @@ describe('NavigationEvents', () => {
       <NavigationEvents
         navigation={navigation}
         {...createEventListenersProp()}
-      />
+      />,
     );
 
     component.update(
@@ -142,19 +142,22 @@ describe('NavigationEvents', () => {
         onDidFocus={() => {
           throw new Error('should not be called');
         }}
-      />
+      />,
     );
 
     component.update(
       <NavigationEvents
         navigation={navigation}
         {...createEventListenersProp()}
-      />
+      />,
     );
 
     const latestEventListenerProps = createEventListenersProp();
     component.update(
-      <NavigationEvents navigation={navigation} {...latestEventListenerProps} />
+      <NavigationEvents
+        navigation={navigation}
+        {...latestEventListenerProps}
+      />,
     );
 
     const checkLatestPropListenerCalled = (eventName, propName) => {

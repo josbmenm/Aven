@@ -40,7 +40,7 @@ class StackView extends React.Component {
       navigation.dispatch(
         StackActions.completeTransition({
           key: navigation.state.key,
-        })
+        }),
       );
     }
   }
@@ -51,7 +51,7 @@ class StackView extends React.Component {
         this.props.navigationConfig.transitionConfig,
         transitionProps,
         prevTransitionProps,
-        this.props.navigationConfig.mode === 'modal'
+        this.props.navigationConfig.mode === 'modal',
       ).transitionSpec,
       useNativeDriver: USE_NATIVE_DRIVER,
     };
@@ -105,7 +105,7 @@ class StackView extends React.Component {
         StackActions.completeTransition({
           key: navigation.state.key,
           toChildKey: transitionDestKey,
-        })
+        }),
       );
     }
     onTransitionEnd && onTransitionEnd(transition, lastTransition);

@@ -16,7 +16,7 @@ test('getNavigation provides default action helpers', () => {
     dispatch,
     new Set(),
     () => ({}),
-    () => topNav
+    () => topNav,
   );
 
   topNav.navigate('GreatRoute');
@@ -44,7 +44,7 @@ test('getNavigation provides router action helpers', () => {
     dispatch,
     new Set(),
     () => ({}),
-    () => topNav
+    () => topNav,
   );
 
   topNav.foo('Great');
@@ -93,7 +93,7 @@ test('getNavigation get child navigation with router', () => {
     () => {},
     actionSubscribers,
     () => ({}),
-    () => navigation
+    () => navigation,
   );
 
   const childNavA = topNav.getChildNavigation('a');

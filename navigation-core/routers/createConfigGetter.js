@@ -24,14 +24,14 @@ function applyConfig(configurer, navigationOptions, configProps) {
 
 export default (routeConfigs, navigatorScreenConfig) => (
   navigation,
-  screenProps
+  screenProps,
 ) => {
   const { state } = navigation;
   const route = state;
 
   invariant(
     route.routeName && typeof route.routeName === 'string',
-    'Cannot get config because the route does not have a routeName.'
+    'Cannot get config because the route does not have a routeName.',
   );
 
   const Component = getScreenForRouteName(routeConfigs, route.routeName);
@@ -48,7 +48,7 @@ export default (routeConfigs, navigatorScreenConfig) => (
   outputConfig = applyConfig(
     componentScreenConfig,
     outputConfig,
-    configOptions
+    configOptions,
   );
   outputConfig = applyConfig(routeScreenConfig, outputConfig, configOptions);
 

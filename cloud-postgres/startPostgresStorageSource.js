@@ -18,7 +18,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
   if (!domains || !domains.length) {
     throw new Err(
       'Domains must be specified when creating a postgres storage source',
-      'DomainConfiguration'
+      'DomainConfiguration',
     );
   }
   const id = kuid();
@@ -106,14 +106,14 @@ export default async function startPostgresStorageSource({ config, domains }) {
         `
       SELECT "docId" FROM docs WHERE "name" = :name AND "parentId" = :parentId AND "domainName" = :domain
     `,
-        { name: docName, parentId: TOP_PARENT_ID, domain }
+        { name: docName, parentId: TOP_PARENT_ID, domain },
       );
       if (idResult.rowCount === 1) {
         id = idResult.rows[0].docId;
       } else if (forceExistence) {
         const creationResult = await knex.raw(
           `INSERT INTO docs ("name", "domainName", "parentId", "currentBlock") VALUES (:name, :domain, :parentId, NULL) RETURNING "docId";`,
-          { parentId: TOP_PARENT_ID, domain, name: docName }
+          { parentId: TOP_PARENT_ID, domain, name: docName },
         );
         id = creationResult.rows[0].docId;
         didCreate = true;
@@ -149,14 +149,14 @@ export default async function startPostgresStorageSource({ config, domains }) {
       `
     SELECT "docId" FROM docs WHERE "name" = :name AND "parentId" = :parentId AND "domainName" = :domain
   `,
-      { name: localName, parentId: parentContext.id, domain }
+      { name: localName, parentId: parentContext.id, domain },
     );
     if (idResult.rowCount === 1) {
       id = idResult.rows[0].docId;
     } else if (forceExistence) {
       const creationResult = await knex.raw(
         `INSERT INTO docs ("name", "domainName", "parentId", "currentBlock") VALUES (:name, :domain, :parentId, NULL) RETURNING "docId";`,
-        { parentId: parentContext.id, domain, name: localName }
+        { parentId: parentContext.id, domain, name: localName },
       );
       didCreate = true;
       id = creationResult.rows[0].docId;
@@ -196,7 +196,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     INSERT INTO blocks ("id","value","size") VALUES (:id, :value, :size)
     ON CONFLICT ON CONSTRAINT "blockIdentity" DO NOTHING
     `,
-        commitArguments
+        commitArguments,
       );
     };
     try {
@@ -221,13 +221,13 @@ export default async function startPostgresStorageSource({ config, domains }) {
     if (blockData.type === 'BlockReference') {
       if (blockData.value) {
         const { value: referenceValue, refs } = await commitDeepBlock(
-          blockData.value
+          blockData.value,
         );
         const { id } = await commitBlock(referenceValue, refs);
         return { value: { id, type: 'BlockReference' }, refs: [id] };
       } else if (!blockData.id) {
         throw new Error(
-          `This block includes a {type: 'BlockReference'}, without a value or an id!`
+          `This block includes a {type: 'BlockReference'}, without a value or an id!`,
         );
       }
     }
@@ -239,7 +239,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
           const { value, refs } = await commitDeepBlock(innerBlock);
           refs.forEach(ref => outputRefs.add(ref));
           return value;
-        })
+        }),
       );
     } else {
       await Promise.all(
@@ -248,12 +248,12 @@ export default async function startPostgresStorageSource({ config, domains }) {
           const { value, refs } = await commitDeepBlock(innerBlock);
           refs.forEach(ref => outputRefs.add(ref));
           outputValue[blockDataKey] = value;
-        })
+        }),
       );
     }
     if (outputRefs.size > getMaxBlockRefCount()) {
       throw new Error(
-        `This block has too many BlockReferences, you should paginate or compress instead. You can defer this error with setMaxBlockRefCount`
+        `This block has too many BlockReferences, you should paginate or compress instead. You can defer this error with setMaxBlockRefCount`,
       );
     }
 
@@ -320,7 +320,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
         domain,
         current: currentBlockId,
         parentId: internalParentId,
-      }
+      },
     );
     const resultRow = writeResult.rows[0];
     if (resultRow.prevBlock !== currentBlockId) {
@@ -333,7 +333,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     parentId,
     name,
     currentBlock,
-    prevCurrentBlock
+    prevCurrentBlock,
   ) {
     const internalParentId = getInternalParentId(parentId);
     let resp = null;
@@ -346,7 +346,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
           domain,
           currentBlock,
           parentId: internalParentId,
-        }
+        },
       );
     } else {
       resp = await knex.raw(
@@ -358,7 +358,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
           currentBlock,
           parentId: internalParentId,
           prevCurrentBlock,
-        }
+        },
       );
     }
     if (!resp.rows.length) {
@@ -392,7 +392,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     const { localName, parentId, id } = await getContext(domain, name, true);
     const prevResp = await knex.raw(
       `SELECT "docId", "currentBlock" FROM docs WHERE "parentId" = :parentId AND "domainName" = :domain AND "name" = :name;`,
-      { parentId: getInternalParentId(parentId), domain, name: localName }
+      { parentId: getInternalParentId(parentId), domain, name: localName },
     );
     const prevBlockId =
       (prevResp.rows[0] && prevResp.rows[0].currentBlock) || null;
@@ -408,7 +408,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       parentId,
       localName,
       block.id,
-      prevBlockId
+      prevBlockId,
     );
     return {
       name,
@@ -431,7 +431,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       names.map(async name => {
         // todo, join in postgres..
         return await GetDocValue({ domain, name });
-      })
+      }),
     );
     return { results };
   }
@@ -442,7 +442,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       `
     SELECT * FROM docs WHERE "docId" = :id
     `,
-      { id }
+      { id },
     );
     const doc = result.rows[0];
     return {
@@ -456,7 +456,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     const results = await Promise.all(
       names.map(async name => {
         return await GetDoc({ name, domain });
-      })
+      }),
     );
     return { results };
   }
@@ -564,7 +564,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     const limit = getMaxListDocs() + 1;
     const results = await knex.raw(
       `SELECT "name" FROM docs WHERE "name" > :afterName AND "parentId" = :parentId AND "domainName" = :domain ORDER BY "name" LIMIT :limit:`,
-      { limit, parentId, domain, afterName: afterName || '' }
+      { limit, parentId, domain, afterName: afterName || '' },
     );
     const { rows } = results;
     const hasMore = rows.length === limit;
@@ -597,7 +597,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       `
     DELETE FROM docs WHERE "docId" = :docId
   `,
-      { docId: ctx.id }
+      { docId: ctx.id },
     );
     notifyDocDestroy(domain, name);
   }

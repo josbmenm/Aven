@@ -53,7 +53,7 @@ export default function createBrowserApp(App) {
   const initAction =
     App.router.getActionForPathAndParams(
       currentPathAndParams.path,
-      currentPathAndParams.params
+      currentPathAndParams.params,
     ) || NavigationActions.init();
 
   const setHistoryListener = dispatch => {
@@ -65,7 +65,7 @@ export default function createBrowserApp(App) {
       currentPathAndParams = pathAndParams;
       const action = App.router.getActionForPathAndParams(
         pathAndParams.path,
-        pathAndParams.params
+        pathAndParams.params,
       );
       if (action) {
         dispatch(action);
@@ -88,7 +88,7 @@ export default function createBrowserApp(App) {
           action: initAction,
           state: this.state.nav,
           lastState: null,
-        })
+        }),
       );
     }
     componentDidUpdate() {
@@ -109,7 +109,7 @@ export default function createBrowserApp(App) {
         this._dispatch,
         this._actionEventSubscribers,
         () => this.props.screenProps,
-        () => this._navigation
+        () => this._navigation,
       );
       return (
         <NavigationProvider value={this._navigation}>
@@ -137,7 +137,7 @@ export default function createBrowserApp(App) {
             action,
             state: newState,
             lastState,
-          })
+          }),
         );
       if (newState && newState !== lastState) {
         this.setState({ nav: newState }, dispatchEvents);
@@ -151,8 +151,8 @@ export default function createBrowserApp(App) {
           currentPathAndParams = pathAndParams;
           history.push(
             `/${pathAndParams.path}?${queryString.stringify(
-              pathAndParams.params
-            )}`
+              pathAndParams.params,
+            )}`,
           );
         }
       } else {

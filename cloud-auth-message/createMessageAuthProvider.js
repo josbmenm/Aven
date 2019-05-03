@@ -14,7 +14,7 @@ export default function createMessageAuthProvider({
 
   async function getProviderId(verificationInfo) {
     return `${authProviderName}-${await checksum(
-      identifyInfo(verificationInfo)
+      identifyInfo(verificationInfo),
     )}`;
   }
 

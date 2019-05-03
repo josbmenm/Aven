@@ -7,7 +7,7 @@
 export default function getChildEventSubscriber(
   addListener,
   key,
-  initialLastFocusEvent = 'didBlur'
+  initialLastFocusEvent = 'didBlur',
 ) {
   const actionSubscribers = new Set();
   const willFocusSubscribers = new Set();
@@ -168,7 +168,7 @@ export default function getChildEventSubscriber(
       if (lastFocusEvent === 'didBlur' && !newRoute) {
         removeAll();
       }
-    })
+    }),
   );
 
   return {
@@ -186,7 +186,7 @@ export default function getChildEventSubscriber(
     emit(eventName, payload) {
       if (eventName !== 'refocus') {
         console.error(
-          `navigation.emit only supports the 'refocus' event currently.`
+          `navigation.emit only supports the 'refocus' event currently.`,
         );
         return;
       }

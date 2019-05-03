@@ -107,7 +107,7 @@ function forLeft(props) {
 
   return {
     opacity: position.interpolate(
-      crossFadeInterpolation(scenes, first, index, last)
+      crossFadeInterpolation(scenes, first, index, last),
     ),
   };
 }
@@ -123,7 +123,7 @@ function forCenter(props) {
 
   return {
     opacity: position.interpolate(
-      crossFadeInterpolation(scenes, first, index, last)
+      crossFadeInterpolation(scenes, first, index, last),
     ),
   };
 }
@@ -138,7 +138,7 @@ function forRight(props) {
 
   return {
     opacity: position.interpolate(
-      crossFadeInterpolation(scenes, first, index, last)
+      crossFadeInterpolation(scenes, first, index, last),
     ),
   };
 }

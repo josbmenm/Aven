@@ -19,7 +19,7 @@ async function readFSDoc(dataDir, name) {
       childList.map(async child => {
         if (child === '__document.json') {
           const docFile = await fs.readFile(
-            pathJoin(docPath, '__document.json')
+            pathJoin(docPath, '__document.json'),
           );
           const docData = JSON.parse(docFile);
           id = docData.id;
@@ -27,7 +27,7 @@ async function readFSDoc(dataDir, name) {
         }
         children[child] = await readFSDoc(dataDir, pathJoin(name, child));
         childrenSet.add(child);
-      })
+      }),
     );
     return {
       children,
@@ -127,13 +127,13 @@ export default async function startFSStorageSource(opts = {}) {
 
   if (!dataDir) {
     throw new Error(
-      'Cannot start a FS data source without specifying a dataDir to store data files'
+      'Cannot start a FS data source without specifying a dataDir to store data files',
     );
   }
 
   if (!sourceDomain) {
     throw new Error(
-      'Cannot start a FS data source without specifying a domain'
+      'Cannot start a FS data source without specifying a domain',
     );
   }
 

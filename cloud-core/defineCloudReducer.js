@@ -3,7 +3,7 @@ import defineCloudFunction from './defineCloudFunction';
 export default function defineCloudReducer(
   reducerName,
   reducerFn,
-  initialState
+  initialState,
 ) {
   const fn = ({ value, id }, doc, cloud, useValue) => {
     let state = initialState;

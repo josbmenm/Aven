@@ -69,8 +69,8 @@ test('should get config for screen', () => {
         dispatch: () => false,
         addListener: dummyEventSubscriber,
       },
-      {}
-    ).title
+      {},
+    ).title,
   ).toEqual('Welcome anonymous');
   expect(
     getScreenOptions(
@@ -79,8 +79,8 @@ test('should get config for screen', () => {
         dispatch: () => false,
         addListener: dummyEventSubscriber,
       },
-      {}
-    ).title
+      {},
+    ).title,
   ).toEqual('Welcome jane');
   expect(
     getScreenOptions(
@@ -89,8 +89,8 @@ test('should get config for screen', () => {
         dispatch: () => false,
         addListener: dummyEventSubscriber,
       },
-      {}
-    ).gesturesEnabled
+      {},
+    ).gesturesEnabled,
   ).toEqual(true);
   expect(
     getScreenOptions(
@@ -99,8 +99,8 @@ test('should get config for screen', () => {
         dispatch: () => false,
         addListener: dummyEventSubscriber,
       },
-      {}
-    ).title
+      {},
+    ).title,
   ).toEqual('Settings!!!');
   expect(
     getScreenOptions(
@@ -109,8 +109,8 @@ test('should get config for screen', () => {
         dispatch: () => false,
         addListener: dummyEventSubscriber,
       },
-      {}
-    ).gesturesEnabled
+      {},
+    ).gesturesEnabled,
   ).toEqual(false);
   expect(
     getScreenOptions(
@@ -119,8 +119,8 @@ test('should get config for screen', () => {
         dispatch: () => false,
         addListener: dummyEventSubscriber,
       },
-      {}
-    ).title
+      {},
+    ).title,
   ).toEqual('10 new notifications');
   expect(
     getScreenOptions(
@@ -129,8 +129,8 @@ test('should get config for screen', () => {
         dispatch: () => false,
         addListener: dummyEventSubscriber,
       },
-      {}
-    ).gesturesEnabled
+      {},
+    ).gesturesEnabled,
   ).toEqual(true);
   expect(
     getScreenOptions(
@@ -139,8 +139,8 @@ test('should get config for screen', () => {
         dispatch: () => false,
         addListener: dummyEventSubscriber,
       },
-      {}
-    ).gesturesEnabled
+      {},
+    ).gesturesEnabled,
   ).toEqual(false);
 });
 
@@ -164,9 +164,9 @@ test('should throw if the route does not exist', () => {
         dispatch: () => false,
         addListener: dummyEventSubscriber,
       },
-      {}
-    )
+      {},
+    ),
   ).toThrowError(
-    "There is no route defined for key Settings.\nMust be one of: 'Home'"
+    "There is no route defined for key Settings.\nMust be one of: 'Home'",
   );
 });

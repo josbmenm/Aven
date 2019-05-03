@@ -20,15 +20,15 @@ export default function withNavigationFocus(Component) {
       const { navigation } = this.props;
       invariant(
         !!navigation,
-        'withNavigationFocus can only be used on a view hierarchy of a navigator. The wrapped component is unable to get access to navigation from props or context.'
+        'withNavigationFocus can only be used on a view hierarchy of a navigator. The wrapped component is unable to get access to navigation from props or context.',
       );
 
       this.subscriptions = [
         navigation.addListener('didFocus', () =>
-          this.setState({ isFocused: true })
+          this.setState({ isFocused: true }),
         ),
         navigation.addListener('willBlur', () =>
-          this.setState({ isFocused: false })
+          this.setState({ isFocused: false }),
         ),
       ];
     }
