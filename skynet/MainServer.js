@@ -17,6 +17,9 @@ import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
+import createEvalSource from '../cloud-core/createEvalSource';
+import RestaurantReducer from '../logic/RestaurantReducer';
+import DevicesReducer from '../logic/DevicesReducer';
 
 const getEnv = c => process.env[c];
 
@@ -36,7 +39,7 @@ const runServer = async () => {
     host: getEnv('SQL_HOST'),
   };
 
-  const source = await startPostgresStorageSource({
+  const storageSource = await startPostgresStorageSource({
     domains: [domain],
     config: {
       client: 'pg',
@@ -84,13 +87,23 @@ const runServer = async () => {
     rootPasswordHash: await hashSecureString(ONO_ROOT_PASSWORD),
   });
 
+  const evalSource = createEvalSource({
+    source: storageSource,
+    domain: 'onofood.co',
+    functions: [RestaurantReducer, DevicesReducer],
+    getValueOfDoc: (docName, cloud) => {
+      console.log('getting value of doc', docName);
+      return null;
+    },
+  });
+
   const protectedSource = createProtectedSource({
-    source,
+    source: evalSource,
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
   const cloud = createCloudClient({
-    source,
+    source: evalSource,
     domain,
   });
 
@@ -118,6 +131,16 @@ const runServer = async () => {
   await putPermission({
     defaultRule: { canPost: true },
     name: 'Orders',
+  });
+
+  await putPermission({
+    defaultRule: { canWrite: true, canRead: true },
+    name: 'DeviceActions',
+  });
+
+  await putPermission({
+    defaultRule: { canRead: true },
+    name: 'DeviceActions^DevicesReducer',
   });
 
   const dispatch = async action => {

@@ -1,8 +1,8 @@
 import React from 'react';
-import GenericPage from '../../components/GenericPage';
-import RowSection from '../../components/RowSection';
-import Hero from '../../components/Hero';
-import LinkRow from '../../components/LinkRow';
+import GenericPage from '../components/GenericPage';
+import RowSection from '../components/RowSection';
+import Hero from '../components/Hero';
+import LinkRow from '../components/LinkRow';
 import { Image, View } from 'react-native';
 
 export default function HomeScreenMemo({ navigation, ...props }) {
@@ -17,7 +17,7 @@ export default function HomeScreenMemo({ navigation, ...props }) {
   return (
     <GenericPage hideBackButton navigation={navigation} {...props}>
       <Image
-        source={require('../../components/assets/OnoLogo.png')}
+        source={require('../components/assets/OnoLogo.png')}
         style={{
           alignSelf: 'center',
           width: 400,
@@ -41,6 +41,16 @@ export default function HomeScreenMemo({ navigation, ...props }) {
           }}
           icon={'📋'}
           title={'Kitchen Manager'}
+        />
+
+        <LinkRow
+          onPress={() => {
+            navigation.navigate({
+              routeName: 'DeviceManager',
+            });
+          }}
+          icon={'📱'}
+          title={'Device Manager'}
         />
         <LinkRow
           onPress={() => {

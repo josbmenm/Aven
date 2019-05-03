@@ -1,5 +1,5 @@
 import React from 'react';
-import InputPage from '../../components/InputPage';
+import InputPage from '../components/InputPage';
 
 function AppUpsell({ navigation, setAppUpsellPhoneNumber }) {
   return (

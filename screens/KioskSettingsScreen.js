@@ -1,13 +1,12 @@
 import React from 'react';
 import { AlertIOS } from 'react-native';
 
-import Hero from '../../components/Hero';
-import GenericPage from '../../components/GenericPage';
-import RowSection from '../../components/RowSection';
-import LinkRow from '../../components/LinkRow';
-import TextRow from '../../components/TextRow';
-import useCloud from '../../cloud-core/useCloud';
-import useKioskName from '../useKioskName';
+import Hero from '../components/Hero';
+import GenericPage from '../components/GenericPage';
+import RowSection from '../components/RowSection';
+import LinkRow from '../components/LinkRow';
+import TextRow from '../components/TextRow';
+import useCloud from '../cloud-core/useCloud';
 import codePush from 'react-native-code-push';
 
 function AppPushInfo() {
@@ -22,7 +21,7 @@ function AppPushInfo() {
     return () => {};
   }, []);
   return (
-    updateMetadata && (
+    (updateMetadata || null) && (
       <TextRow
         text={`Native v${updateMetadata.appVersion} App ${
           updateMetadata.label
@@ -54,7 +53,6 @@ function UpdateAirtableRow() {
 }
 
 export default function KioskSettingsScreen({ navigation, ...props }) {
-  let [kioskName, setKioskName] = useKioskName();
   return (
     <GenericPage {...props} navigation={navigation}>
       <Hero icon="⚙️" title="Kiosk Settings" />
@@ -86,17 +84,6 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
           }}
           icon="♻️"
           title="Refresh App"
-        />
-        <LinkRow
-          onPress={() => {
-            AlertIOS.prompt(
-              'New Kiosk Name',
-              `Previously "${kioskName}"`,
-              setKioskName,
-            );
-          }}
-          icon="🖥"
-          title={`Change kiosk name from "${kioskName}"`}
         />
         <UpdateAirtableRow />
       </RowSection>

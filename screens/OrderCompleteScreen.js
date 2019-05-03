@@ -1,6 +1,6 @@
 import React from 'react';
-import useEmptyOrderEscape from '../useEmptyOrderEscape';
-import OrderCompletePage from '../../components/OrderCompletePage';
+import useEmptyOrderEscape from './useEmptyOrderEscape';
+import OrderCompletePage from '../components/OrderCompletePage';
 
 export default function OrderCompleteScreen({ props }) {
   useEmptyOrderEscape();

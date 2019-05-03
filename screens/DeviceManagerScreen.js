@@ -1,0 +1,218 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableHighlight,
+  Alert,
+  ScrollView,
+  AlertIOS,
+} from 'react-native';
+import { Easing } from 'react-native-reanimated';
+import Button from '../components/Button';
+import {
+  CardReaderLog,
+  useCardReader,
+  useCardPaymentCapture,
+  useCardReaderConnectionManager,
+  disconnectReader,
+  clearReaderLog,
+} from '../card-reader/CardReader';
+import RowSection from '../components/RowSection';
+import TextRow from '../components/TextRow';
+import TwoPanePage from '../components/TwoPanePage';
+import Row from '../components/Row';
+import BitRow from '../components/BitRow';
+import { rowStyle, rowTitleStyle, titleStyle } from '../components/Styles';
+import useCloudReducer from '../cloud-core/useCloudReducer';
+import useCloudValue from '../cloud-core/useCloudValue';
+import useObservable from '../cloud-core/useObservable';
+import useCloud from '../cloud-core/useCloud';
+import DevicesReducer from '../logic/DevicesReducer';
+import BlockForm from '../components/BlockForm';
+import Title from '../components/Title';
+import BlockFormButton from '../components/BlockFormButton';
+import BlockFormMessage from '../components/BlockFormMessage';
+import BlockFormInput from '../components/BlockFormInput';
+import KeyboardPopover from '../components/KeyboardPopover';
+import { usePopover } from '../views/Popover';
+import useAsyncError from '../react-utils/useAsyncError';
+
+function ModeForm({ onClose, deviceDoc }) {
+  const deviceState = useCloudValue(deviceDoc);
+  const handleErrors = useAsyncError();
+
+  function getModeSetter(mode) {
+    return () => {
+      handleErrors(
+        deviceDoc
+          .put({
+            ...(deviceState || {}),
+            mode,
+          })
+          .then(onClose),
+      );
+    };
+  }
+  return (
+    <React.Fragment>
+      <Button title="Closed" onPress={getModeSetter('closed')} />
+      <Button title="Kiosk" onPress={getModeSetter('kiosk')} />
+      <Button title="Feedback" onPress={getModeSetter('feedback')} />
+    </React.Fragment>
+  );
+}
+
+function DeviceRow({ device }) {
+  const cloud = useCloud();
+  const deviceDoc = cloud.get(`@${device.deviceId}/ScreenControl`);
+  const dispatch = cloud.get('DeviceActions').putTransaction;
+  const deviceState = useCloudValue(deviceDoc);
+  const handleErrors = useAsyncError();
+
+  const { onPopover } = usePopover(
+    ({ onClose, popoverOpenValue }) => {
+      return (
+        <KeyboardPopover onClose={onClose}>
+          <ModeForm onClose={onClose} deviceDoc={deviceDoc} />
+        </KeyboardPopover>
+      );
+    },
+    { easing: Easing.linear, duration: 1 },
+  );
+
+  return (
+    <View>
+      <Text style={{ ...titleStyle }}>
+        {deviceState == undefined
+          ? 'Loading..'
+          : (deviceState && deviceState.name) || 'Unnamed'}
+      </Text>
+      <Text>{device.deviceId}</Text>
+      <View style={{ flexDirection: 'row' }}>
+        <Button
+          title={
+            deviceState && deviceState.mode
+              ? `Mode: ${deviceState.mode}`
+              : 'Mode'
+          }
+          onPress={onPopover}
+        />
+        <Button
+          title="Forget"
+          secondary
+          onPress={() => {
+            handleErrors(
+              dispatch({
+                type: 'ForgetDevice',
+                deviceId: device.deviceId,
+              }),
+            );
+          }}
+        />
+
+        <Button
+          title="Rename"
+          secondary
+          onPress={() => {
+            AlertIOS.prompt('New Device Name', null, name => {
+              handleErrors(
+                deviceDoc.put({
+                  ...(deviceState || {}),
+                  name,
+                }),
+              );
+            });
+          }}
+        />
+      </View>
+    </View>
+  );
+}
+
+function RootLoginForm() {
+  const cloud = useCloud();
+  const [pw, setPw] = React.useState('');
+  const handleErrors = useAsyncError();
+  return (
+    <View>
+      <Title>Log In</Title>
+      <BlockFormInput
+        value={pw}
+        label="root password"
+        type="password"
+        onValue={v => {
+          setPw(v);
+        }}
+      />
+      <BlockFormButton
+        title="Log In"
+        onPress={() => {
+          handleErrors(
+            cloud
+              .createSession({
+                accountId: 'root',
+                verificationInfo: {},
+                verificationResponse: { password: pw },
+              })
+              .then(async resp => {
+                console.log('createSession succes', resp);
+              }),
+          );
+        }}
+      />
+    </View>
+  );
+}
+
+function RootAuthLogin() {
+  const cloud = useCloud();
+  const session = useObservable(cloud && cloud.observeSession);
+  if (session && session.accountId !== 'root') {
+    return (
+      <View>
+        <Title>Wrong Authentication</Title>
+        <BlockFormMessage>
+          Please log out and log back in as root.
+        </BlockFormMessage>
+        <BlockFormButton
+          onPress={() => {
+            cloud.destroySession();
+          }}
+          title="Log out"
+        />
+      </View>
+    );
+  }
+  return <RootLoginForm />;
+}
+
+function RootAuthenticationSection({ children }) {
+  const cloud = useCloud();
+  const session = useObservable(cloud && cloud.observeSession);
+  if (session && session.accountId === 'root') {
+    return children;
+  }
+  console.log('hey ok', session);
+  return <RootAuthLogin />;
+}
+
+export default function DeviceManagerScreen(props) {
+  const [devicesState, dispatch] = useCloudReducer(
+    'DeviceActions',
+    DevicesReducer,
+  );
+  const devices = (devicesState && devicesState.devices) || [];
+  return (
+    <TwoPanePage title="Device Manager" icon="📱" {...props}>
+      <RootAuthenticationSection>
+        <RowSection>
+          {devices.map(device => (
+            <DeviceRow device={device} />
+          ))}
+        </RowSection>
+      </RootAuthenticationSection>
+    </TwoPanePage>
+  );
+}
+
+DeviceManagerScreen.navigationOptions = TwoPanePage.navigationOptions;

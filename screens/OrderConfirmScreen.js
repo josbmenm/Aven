@@ -1,15 +1,8 @@
-import React, { Component, useEffect } from 'react';
-import GenericPage from '../../components/GenericPage';
-import Hero from '../../components/Hero';
-import Button from '../../components/Button';
-import { Text, View } from 'react-native';
-import { useOrder, useOrderSummary } from '../../ono-cloud/OnoKitchen';
-import useObservable from '../../cloud-core/useObservable';
-import { useNavigation } from '../../navigation-hooks/Hooks';
-import useEmptyOrderEscape from '../useEmptyOrderEscape';
-import Receipt from '../../components/Receipt';
-import { useCardPaymentCapture } from '../../card-reader/CardReader';
-import OrderConfirmPage from '../../components/OrderConfirmPage';
+import React from 'react';
+import { useOrder, useOrderSummary } from '../ono-cloud/OnoKitchen';
+import useEmptyOrderEscape from './useEmptyOrderEscape';
+import { useCardPaymentCapture } from '../card-reader/CardReader';
+import OrderConfirmPage from '../components/OrderConfirmPage';
 
 export default function OrderConfirmScreen({
   paymentRequest,

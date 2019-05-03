@@ -6,23 +6,22 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import JSONView from '../../debug-views/JSONView';
-import TwoPanePage from '../../components/TwoPanePage';
-import useCloudValue from '../../cloud-core/useCloudValue';
-import Button from '../../components/Button';
+import TwoPanePage from '../components/TwoPanePage';
+import useCloudValue from '../cloud-core/useCloudValue';
+import Button from '../components/Button';
 import { Easing } from 'react-native-reanimated';
-import KitchenCommands from '../../logic/KitchenCommands';
-import KitchenHistory from '../../components/KitchenHistory';
-import useCloud from '../../cloud-core/useCloud';
-import useCloudReducer from '../../cloud-core/useCloudReducer';
-import useObservable from '../../cloud-core/useObservable';
-import RowSection from '../../components/RowSection';
-import TextRow from '../../components/TextRow';
-import BitRow from '../../components/BitRow';
-import Row from '../../components/Row';
-import BlockFormInput from '../../components/BlockFormInput';
+import KitchenCommands from '../logic/KitchenCommands';
+import KitchenHistory from '../components/KitchenHistory';
+import useCloud from '../cloud-core/useCloud';
+import useCloudReducer from '../cloud-core/useCloudReducer';
+import useObservable from '../cloud-core/useObservable';
+import RowSection from '../components/RowSection';
+import TextRow from '../components/TextRow';
+import BitRow from '../components/BitRow';
+import Row from '../components/Row';
+import BlockFormInput from '../components/BlockFormInput';
 
-import { usePopover } from '../../views/Popover';
+import { usePopover } from '../views/Popover';
 import {
   rowStyle,
   prettyShadow,
@@ -30,15 +29,14 @@ import {
   proseFontFace,
   primaryFontFace,
   monsterra80,
-} from '../../components/Styles';
-import KeyboardPopover from '../../components/KeyboardPopover';
-import RestaurantReducer from '../../logic/RestaurantReducer';
-import { computeNextStep } from '../../logic/KitchenSequence';
-import useFocus from '../../navigation-hooks/useFocus';
-import useAsyncError from '../../react-utils/useAsyncError';
+} from '../components/Styles';
+import KeyboardPopover from '../components/KeyboardPopover';
+import RestaurantReducer from '../logic/RestaurantReducer';
+import { computeNextStep } from '../logic/KitchenSequence';
+import useFocus from '../navigation-hooks/useFocus';
+import useAsyncError from '../react-utils/useAsyncError';
 import ControlPanel from './ControlPanel';
 import kuid from 'kuid';
-import { getSubsystem, getSubsystemFaults } from '../../ono-cloud/OnoKitchen';
 
 function ObservableBitRow({ value, title }) {
   const currentValue = useObservable(value);

@@ -107,6 +107,7 @@ export function OrderContextProvider({ children }) {
   }
 
   useEffect(() => {
+    debugger;
     guardAsync(cloud.establishAnonymousSession());
   }, []);
 

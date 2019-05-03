@@ -1,8 +1,8 @@
 import React from 'react';
-import CollectNamePage from '../../components/CollectNamePage';
-import { useOrder } from '../../ono-cloud/OnoKitchen';
-import { useNavigation } from '../../navigation-hooks/Hooks';
-import useEmptyOrderEscape from '../useEmptyOrderEscape';
+import CollectNamePage from '../components/CollectNamePage';
+import { useOrder } from '../ono-cloud/OnoKitchen';
+import { useNavigation } from '../navigation-hooks/Hooks';
+import useEmptyOrderEscape from './useEmptyOrderEscape';
 
 export default function CollectNameScreen(props) {
   const { navigate } = useNavigation();

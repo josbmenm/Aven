@@ -1,8 +1,8 @@
 import React from 'react';
-import SendReceiptPage from '../../components/SendReceiptPage';
-import { useNavigation } from '../../navigation-hooks/Hooks';
-import useEmptyOrderEscape from '../useEmptyOrderEscape';
-import OnoCloud from '../OnoCloud';
+import SendReceiptPage from '../components/SendReceiptPage';
+import { useNavigation } from '../navigation-hooks/Hooks';
+import useCloud from '../cloud-core/useCloud';
+import useEmptyOrderEscape from './useEmptyOrderEscape';
 
 function usePromiseState(onResult) {
   const [error, setError] = React.useState(null);
@@ -29,6 +29,7 @@ function usePromiseState(onResult) {
 }
 
 export default function SendReceiptScreen(props) {
+  const cloud = useCloud();
   const { getParam, navigate } = useNavigation();
   const { error, isProgressing, handlePromise } = usePromiseState(resp => {
     navigate('OrderComplete');
@@ -42,7 +43,7 @@ export default function SendReceiptScreen(props) {
       isProgressing={isProgressing}
       onSubmit={resp => {
         handlePromise(
-          OnoCloud.dispatch({
+          cloud.dispatch({
             type: 'SendReceipt',
             contact: resp,
           }),
