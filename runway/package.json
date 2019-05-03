@@ -10,7 +10,7 @@
       "mainClient": "MainClient.js"
     },
     "moduleDependencies": [
-      "kuid"
+      "cuid"
     ],
     "srcDependencies": [
       "aven-web",

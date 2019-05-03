@@ -1,6 +1,6 @@
 import { Observable, BehaviorSubject } from 'rxjs-compat';
 import createCloudBlock from './createCloudBlock';
-import kuid from 'kuid';
+import cuid from 'cuid';
 import bindCloudValueFunctions from './bindCloudValueFunctions';
 import mapBehaviorSubject from '../utils/mapBehaviorSubject';
 import runLambda from './runLambda';
@@ -116,7 +116,7 @@ export function createDocPool({
   }
 
   function post() {
-    const localName = kuid();
+    const localName = cuid();
     const postedDoc = createCloudDoc({
       source,
       domain,

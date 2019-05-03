@@ -2620,6 +2620,11 @@ cssstyle@^1.0.0:
   dependencies:
     cssom "0.3.x"
 
+cuid@^2.1.4:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/cuid/-/cuid-2.1.6.tgz#dc3a20b5a7497d36d32c0bf8a2997524c9c796c4"
+  integrity sha512-ZFp7PS6cSYMJNch9fc3tyHdE4T8TDo3Y5qAxb0KSA9mpiYDo7z9ql1CznFuuzxea9STVIDy0tJWm2lYiX2ZU1Q==
+
 currently-unhandled@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/currently-unhandled/-/currently-unhandled-0.4.1.tgz#988df33feab191ef799a61369dd76c17adf957ea"
@@ -5919,11 +5924,6 @@ konva@^3.2.1:
     rollup-plugin-sourcemaps "^0.4.2"
     rollup-plugin-typescript2 "^0.20.1"
 
-kuid@^2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/kuid/-/kuid-2.1.4.tgz#eb500298f5efc64556d28463a7441af69da497d5"
-  integrity sha512-jbgfHWhf0Ksgq2N6fj8cFMavXzFgPdhyBNnd5aYJxVVeBNQQBoenBj5AE5WJ0RdmtQZz71indq3B5Ugna+z9NQ==
-
 lazystream@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/lazystream/-/lazystream-1.0.0.tgz#f6995fe0f820392f61396be89462407bb77168e4"
@@ -6508,6 +6508,8 @@ min-document@^2.19.0:
   version "2.19.0"
   resolved "https://registry.yarnpkg.com/min-document/-/min-document-2.19.0.tgz#7bd282e3f5842ed295bb748cdd9f1ffa2c824685"
   integrity sha1-e9KC4/WELtKVu3SM3Z8f+iyCRoU=
+  dependencies:
+    dom-walk "^0.1.0"
 
 minimatch@^3.0.2, minimatch@^3.0.3, minimatch@^3.0.4:
   version "3.0.4"

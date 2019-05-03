@@ -57,7 +57,7 @@
     "json-stable-stringify": "^1.0.1",
     "knex": "^0.16.3",
     "konva": "^3.2.1",
-    "kuid": "^2.1.4",
+    "cuid": "^2.1.4",
     "mime": "^2.3.1",
     "minimist": "^1.2.0",
     "node-fetch": "^2.3.0",

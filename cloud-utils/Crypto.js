@@ -1,4 +1,4 @@
-import kuid from 'kuid';
+import cuid from 'cuid';
 import { hash, compare } from 'bcrypt';
 
 const crypto = require('crypto');
@@ -26,7 +26,7 @@ export async function genKey() {
 }
 
 export function uuid() {
-  return kuid();
+  return cuid();
 }
 
 export async function hashSecureString(secretInput) {

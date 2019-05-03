@@ -2,7 +2,7 @@ import React, { useState, useReducer } from 'react';
 import { View, Text, Animated, Button, TextInput } from 'react-native';
 import useCloudState from '../cloud-core/useCloudState';
 import useCloudReducer from '../cloud-core/useCloudReducer';
-import kuid from 'kuid';
+import cuid from 'cuid';
 
 export default function App() {
   return (

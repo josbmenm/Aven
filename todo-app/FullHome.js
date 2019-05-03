@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
-import kuid from 'kuid';
+import cuid from 'cuid';
 
 import useCloud from '../cloud-core/useCloud';
 import useCloudReducer, {
@@ -61,7 +61,7 @@ function InputTodo() {
       onChangeText={setDraftTitle}
       placeholder="Add new task.."
       onSubmitEditing={() => {
-        addTask({ title: draftTitle, id: kuid(), isComplete: false });
+        addTask({ title: draftTitle, id: cuid(), isComplete: false });
         setDraftTitle('');
       }}
     />

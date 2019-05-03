@@ -1,6 +1,6 @@
 const pathJoin = require('path').join;
 const fs = require('fs-extra');
-const kuid = require('kuid');
+const cuid = require('cuid');
 const sane = require('sane');
 const homeDir = require('os').homedir();
 const spawn = require('@expo/spawn-async');
@@ -260,7 +260,7 @@ const writeAvenEnvState = async state => {
 };
 
 const initLocation = async (appName, appPkg, platform, appState) => {
-  const newLocation = pathJoin(avenHomeDir, appName + '_' + kuid());
+  const newLocation = pathJoin(avenHomeDir, appName + '_' + cuid());
   await fs.mkdirp(newLocation);
   await platform.init({
     srcDir,
@@ -452,7 +452,7 @@ const runBuild = async argv => {
   const state = await readGlobeState();
   let appState = state.apps && state.apps[appName];
   appState = await getAppLocation(appName, appPkg, appEnv, appState);
-  const buildId = kuid();
+  const buildId = cuid();
   const buildLocation = pathJoin(avenHomeDir, appName + '_build_' + buildId);
 
   await fs.mkdirp(buildLocation);
@@ -482,7 +482,7 @@ const runDeploy = async argv => {
   const state = await readGlobeState();
   let appState = state.apps && state.apps[appName];
   appState = await getAppLocation(appName, appPkg, appEnv, appState);
-  const buildId = kuid();
+  const buildId = cuid();
   const buildLocation = pathJoin(avenHomeDir, appName + '_build_' + buildId);
 
   await fs.mkdirp(buildLocation);
