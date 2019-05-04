@@ -29,9 +29,11 @@ import KioskSettingsScreen from '../screens/KioskSettingsScreen';
 import KioskHomeScreen from '../screens/KioskHomeScreen';
 import BlendScreen from '../screens/BlendScreen';
 import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
-import FeedbackScreen from '../screens/FeedbackScreen';
 import FeedbackCompleteScreen from '../screens/FeedbackCompleteScreen';
 import FeedbackHomeScreen from '../screens/FeedbackHomeScreen';
+import FeedbackScreen from '../screens/FeedbackScreen';
+import FeedbackRatingScreen from '../screens/FeedbackRatingScreen';
+import FeedbackReceiptScreen from '../screens/FeedbackReceiptScreen';
 import FoodScreen from '../screens/FoodScreen';
 import DebugStateScreen from '../screens/DebugStateScreen';
 import PaymentDebugScreen from '../components/PaymentDebugScreen';
@@ -72,7 +74,8 @@ import BlockForm from '../components/BlockFormRow';
 import BlockFormInput from '../components/BlockFormInput';
 import { titleStyle } from '../components/Styles';
 
-const IS_DEV = process.env.NODE_ENV !== 'production';
+// const IS_DEV = process.env.NODE_ENV !== 'production';
+const IS_DEV = false;
 
 const RESTAURANT_DEV = {
   useSSL: false,
@@ -165,6 +168,8 @@ const KioskAppContainer = createAppContainer(KioskAppNavigator);
 const FeedbackAppNavigator = createStackTransitionNavigator({
   FeedbackHome: FeedbackHomeScreen,
   Feedback: FeedbackScreen,
+  FeedbackRating: FeedbackRatingScreen,
+  FeedbackReceipt: FeedbackReceiptScreen,
   FeedbackComplete: FeedbackCompleteScreen,
 });
 
@@ -277,6 +282,9 @@ function AutoSelectionApp() {
   }
   if (mode === 'blank') {
     return <BlankApp />;
+  }
+  if (mode === 'cardreader') {
+    return <PaymentDebugScreen />;
   }
   return <SelectModeApp />;
 }

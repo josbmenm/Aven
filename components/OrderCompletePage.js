@@ -120,18 +120,4 @@ export default function OrderCompletePage({ backBehavior, ...props }) {
   );
 }
 
-// <BlockFormHorizontalRule />
-// <BlockFormMessage message="Next time, skip the line and order ahead with our mobile app" />
-// <BlockFormRow>
-//   <BlockFormInput
-//     mode="phone"
-//     label="phone number"
-//     value={phoneNumber}
-//     onValue={setPhoneNumber}
-//   />
-// </BlockFormRow>
-// <BlockFormRow>
-//   <BlockFormButton title="text me a link" onPress={() => {}} />
-// </BlockFormRow>
-
 OrderCompletePage.navigationOptions = ShortBlockFormPage.navigationOptions;

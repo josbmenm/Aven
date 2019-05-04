@@ -35,7 +35,7 @@ export default function FeedbackHomePage({ navigation, ...props }) {
     >
       <TouchableWithoutFeedback
         onPress={() => {
-          navigate('Feedback');
+          navigate('FeedbackRating');
         }}
       >
         <View

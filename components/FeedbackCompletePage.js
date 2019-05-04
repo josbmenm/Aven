@@ -39,7 +39,7 @@ function PageTitle({ title }) {
   );
 }
 
-export default function FeedbackCompletePage({ backBehavior, ...props }) {
+export default function FeedbackCompletePage({ hideBackButton, ...props }) {
   const { navigate } = useNavigation();
   let [countdown, setCountdown] = useState(10);
   let countRef = useRef({
@@ -69,7 +69,7 @@ export default function FeedbackCompletePage({ backBehavior, ...props }) {
     };
   }, []);
   return (
-    <ShortBlockFormPage backBehavior={backBehavior} {...props}>
+    <ShortBlockFormPage hideBackButton={hideBackButton} {...props}>
       <View
         style={{
           flex: 1,

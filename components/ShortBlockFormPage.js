@@ -7,7 +7,6 @@ import FadeTransition from './FadeTransition';
 
 export default function ShortBlockFormPage({
   children,
-  backBehavior,
   hideBackButton,
   ...props
 }) {

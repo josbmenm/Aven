@@ -8,19 +8,23 @@ import BlockFormRow from '../components/BlockFormRow';
 import BlockFormButton from '../components/BlockFormButton';
 import useFocus from '../navigation-hooks/useFocus';
 
-export default function FeedbackPage({ onSubmit, hideBackButton, ...props }) {
-  const [comment, setComment] = React.useState('');
+export default function FeedbackReceiptPage({
+  onSubmit,
+  hideBackButton,
+  ...props
+}) {
+  const [email, setEmail] = React.useState('');
   function handleSubmit() {
-    onSubmit({ comment });
+    onSubmit({ email });
   }
   const inputRenderers = [
     inputProps => (
       <BlockFormRow>
         <BlockFormInput
-          label={'additional comments..'}
-          mode="description"
-          onValue={setComment}
-          value={comment}
+          label={'email'}
+          mode="email"
+          onValue={setEmail}
+          value={email}
           {...inputProps}
         />
       </BlockFormRow>
@@ -33,8 +37,8 @@ export default function FeedbackPage({ onSubmit, hideBackButton, ...props }) {
   return (
     <ShortBlockFormPage hideBackButton={hideBackButton} {...props}>
       <BlockForm>
-        <BlockFormMessage message="Feedback is a gift" />
-        <BlockFormTitle title="Feedback is a gift" />
+        <BlockFormMessage message="Email please" />
+        <BlockFormTitle message="free blend on the way" />
         {inputs}
         <BlockFormRow>
           <BlockFormButton title="submit" onPress={handleSubmit} />
@@ -44,4 +48,4 @@ export default function FeedbackPage({ onSubmit, hideBackButton, ...props }) {
   );
 }
 
-FeedbackPage.navigationOptions = ShortBlockFormPage.navigationOptions;
+FeedbackReceiptPage.navigationOptions = ShortBlockFormPage.navigationOptions;

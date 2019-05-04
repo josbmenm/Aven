@@ -26,6 +26,8 @@ function BlockFormInputWithRef(
   let enablesReturnKeyAutomatically = true;
   if (mode === 'phone') {
     keyboardType = 'phone-pad';
+  } else if (mode === 'description') {
+    autoCapitalize = 'sentences';
   } else if (mode === 'number') {
     keyboardType = 'number-pad';
   } else if (mode === 'email') {
@@ -82,7 +84,11 @@ function BlockFormInputWithRef(
         onBlur={onBlur}
         onChangeText={onValue}
         onSubmitEditing={onSubmit}
-        style={{ fontSize: textInputFontSize, ...textInputStyle }}
+        style={{
+          fontSize: textInputFontSize,
+          ...textInputStyle,
+          ...(mode === 'description' ? { height: 120 } : {}),
+        }}
       />
     </View>
   );

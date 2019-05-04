@@ -22,6 +22,7 @@ export default function Spinner({ color, isSpinning }) {
   return (
     <Animated.Image
       style={{
+        opacity,
         width: 36,
         height: 36,
         tintColor: color || monsterra,

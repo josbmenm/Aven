@@ -4,6 +4,8 @@ import useEmptyOrderEscape from './useEmptyOrderEscape';
 import { useCardPaymentCapture } from '../card-reader/CardReader';
 import OrderConfirmPage from '../components/OrderConfirmPage';
 
+function Capture() {}
+
 export default function OrderConfirmScreen({
   paymentRequest,
   paymentError,
@@ -15,17 +17,18 @@ export default function OrderConfirmScreen({
 }) {
   const { confirmOrder, order } = useOrder();
   const summary = useOrderSummary();
-  const paymentDetails = summary && {
-    amount: Math.floor(summary.total * 100), // ugh.. we should really be using cents everywhere..
-    description: 'Ono Blends',
-  };
-  function onPaymentComplete() {
+  function onCompletion() {
     confirmOrder();
     navigation.navigate('Receipt', { orderId: order.getName() });
   }
-  const { state } = useCardPaymentCapture(paymentDetails, {
-    onPaymentComplete,
-  });
+  const paymentDetails = summary
+    ? {
+        amount: Math.floor(summary.total * 100), // ugh.. we should really be using cents everywhere..
+        description: 'Ono Blends',
+        onCompletion,
+      }
+    : undefined;
+  const { state } = useCardPaymentCapture(paymentDetails);
   useEmptyOrderEscape();
   return (
     <OrderConfirmPage

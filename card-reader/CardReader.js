@@ -108,7 +108,11 @@ async function collectPayment(state, options) {
   );
 }
 
-export function useCardPaymentCapture({ onCompletion, onFailure, ...request }) {
+export function useCardPaymentCapture({
+  onCompletion,
+  onFailure,
+  ...request
+} = {}) {
   const [capturedPaymentIntent, setCapturedPaymentIntent] = useState(null);
   const [paymentSuccessful, setPaymentSuccessful] = useState(false);
   const [paymentCompleted, setPaymentCompleted] = useState(false);
