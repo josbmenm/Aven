@@ -232,6 +232,20 @@ function FeedbackApp() {
   );
 }
 
+const SettingsAppNavigator = createStackTransitionNavigator({
+  PaymentDebug: PaymentDebugScreen,
+});
+
+const SettingsAppContainer = createAppContainer(SettingsAppNavigator);
+
+function SettingsApp() {
+  return (
+    <PopoverContainer>
+      <SettingsAppContainer />
+    </PopoverContainer>
+  );
+}
+
 function WaitingPage({ title }) {
   return (
     <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
@@ -264,29 +278,12 @@ function SelectModeApp() {
   if (mode === 'kiosk') {
     return <KioskApp />;
   }
+  if (mode === 'cardreader') {
+    return <SettingsApp />;
+  }
+  console.log('helloooo', controlState);
 
   return <WaitingPage title={name ? `${name} Kiosk Closed` : 'Kiosk Closed'} />;
-}
-
-function AutoSelectionApp() {
-  const [appState, setAppState] = useAsyncStorage('BlitzAppState', {
-    mode: null,
-  });
-  if (isStateUnloaded(appState)) {
-    return null;
-  }
-  const { mode } = appState;
-
-  if (mode === 'kiosk') {
-    return <KioskApp />;
-  }
-  if (mode === 'blank') {
-    return <BlankApp />;
-  }
-  if (mode === 'cardreader') {
-    return <PaymentDebugScreen />;
-  }
-  return <SelectModeApp />;
 }
 
 function useControlledApp(cloud) {
@@ -296,7 +293,6 @@ function useControlledApp(cloud) {
       return;
     }
     const deviceId = cloud.observeSession.getValue().accountId;
-    console.log('uploading online action!', deviceId);
     cloud.get('DeviceActions').putTransaction({
       type: 'DeviceOnline',
       deviceId,
@@ -316,7 +312,7 @@ function FullApp() {
   }
   return (
     <CloudContext.Provider value={cloud}>
-      <AutoSelectionApp />
+      <SelectModeApp />
     </CloudContext.Provider>
   );
 }
