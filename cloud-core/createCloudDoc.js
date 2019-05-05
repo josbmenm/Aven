@@ -883,6 +883,8 @@ export default function createCloudDoc({
               })
               .then(res => {
                 if (
+                  res.context &&
+                  res.context.argument &&
                   res.context.argument.type === 'BlockReference' &&
                   argumentDoc.getId() !== res.context.argument.id
                 ) {
@@ -898,6 +900,10 @@ export default function createCloudDoc({
                       getId: () => res.id,
                     });
                   }
+                } else {
+                  console.warn(
+                    'Failure to retrieve remote value! Computing locally instead..',
+                  );
                 }
                 clientComputeSubscription = observeComputed.subscribe({
                   next: val => {
