@@ -28,6 +28,9 @@ export default function createCloudBlock({
     blockValueCache[observedBlockId] = value;
   }
   const blockId = id || observedBlockId;
+  if (!blockId && value === undefined) {
+    throw new Error('Cannot create block without id or value!');
+  }
   if (!blockId) {
     throw new Error('Block id could not be determined!');
   }

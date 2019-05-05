@@ -5,6 +5,7 @@ import bindCloudValueFunctions from './bindCloudValueFunctions';
 import mapBehaviorSubject from '../utils/mapBehaviorSubject';
 import runLambda from './runLambda';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
+import bindCommitDeepBlock from './bindCommitDeepBlock';
 
 function hasDepth(name) {
   return name.match(/\//);
@@ -682,8 +683,16 @@ export default function createCloudDoc({
     await block.functionFetchValue(argumentDoc);
   }
 
-  async function put(value) {
+  async function commitBlock(value) {
     const block = _getBlockWithValue(value);
+    return { id: block.id };
+  }
+
+  const commitDeepBlock = bindCommitDeepBlock(commitBlock);
+
+  async function put(inputValue) {
+    const s = await commitDeepBlock(inputValue);
+    const block = _getBlockWithValue(s.value);
     await putBlock(block);
     return { id: block.id };
   }
