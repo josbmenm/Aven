@@ -3,7 +3,6 @@ import createCloudClient from '../createCloudClient';
 import { setMaxListDocs } from '../maxListDocs';
 
 import sourceTests from './sourceTests';
-import createEvalSource from '../createEvalSource';
 
 describe('create client generic behavior', () => {
   test('passes arbitrary actions to dispatch', () => {
@@ -178,37 +177,37 @@ describe('client doc behavior', () => {
       hello: 'world',
     });
     docsList = await m.dispatch({
-      type: 'GetDocValue',
+      type: 'ListDocs',
       domain: 'd',
-      name: 'foo/_children',
+      parentName: 'foo',
     });
-    expect(docsList.value.docs.length).toEqual(0);
+    expect(docsList.docs.length).toEqual(0);
     const postedDoc = doc.post();
     expect(postedDoc.getFullName().match(/^foo\/(.+)$/)).not.toBeNull();
     await postedDoc.put({ some: 'data' });
     docsList = await m.dispatch({
-      type: 'GetDocValue',
+      type: 'ListDocs',
       domain: 'd',
-      name: 'foo/_children',
+      parentName: 'foo',
     });
-    expect(docsList.value.docs.length).toEqual(1);
+    expect(docsList.docs.length).toEqual(1);
     const bar = doc.get('bar');
     await bar.put({ woah: 42 });
     docsList = await m.dispatch({
-      type: 'GetDocValue',
+      type: 'ListDocs',
       domain: 'd',
-      name: 'foo/_children',
+      parentName: 'foo',
     });
-    expect(docsList.value.docs.length).toEqual(2);
-    expect(docsList.value.docs.indexOf('bar')).not.toEqual(-1);
+    expect(docsList.docs.length).toEqual(2);
+    expect(docsList.docs.indexOf('bar')).not.toEqual(-1);
     await bar.destroy();
     docsList = await m.dispatch({
-      type: 'GetDocValue',
+      type: 'ListDocs',
       domain: 'd',
-      name: 'foo/_children',
+      parentName: 'foo',
     });
-    expect(docsList.value.docs.length).toEqual(1);
-    expect(docsList.value.docs.indexOf('bar')).toEqual(-1);
+    expect(docsList.docs.length).toEqual(1);
+    expect(docsList.docs.indexOf('bar')).toEqual(-1);
   });
   test('doc getting', async () => {
     const m = createMemoryStorageSource({ domain: 'd' });

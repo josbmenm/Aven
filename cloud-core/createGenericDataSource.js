@@ -3,7 +3,6 @@ import xs from 'xstream';
 import cuid from 'cuid';
 
 import createDispatcher from '../cloud-utils/createDispatcher';
-import { getListDocName } from '../cloud-utils/MetaDocNames';
 import { getMaxBlockRefCount } from './maxBlockRefCount';
 import { getMaxListDocs } from './maxListDocs';
 
@@ -30,9 +29,7 @@ function getTerms(name) {
 }
 
 function isDocNameValid(name) {
-  return getTerms(name).reduce((prev, now, i) => {
-    return prev && now !== '_children';
-  }, true);
+  return true; // todo, probably actually use this??
 }
 
 function getParentDocName(name) {
@@ -433,18 +430,6 @@ export default function createGenericDataSource({
   };
   const observeDoc = async (domain, name) => {
     verifyDomain(domain, sourceDomain);
-    // const listDocName = getListDocName(name);
-    // if (typeof listDocName === 'string') {
-    //   const memoryDoc = getMemoryNode(listDocName, true);
-    //   if (memoryDoc.childrenSetBehavior) {
-    //     return memoryDoc.childrenSetBehavior;
-    //   } else {
-    //     memoryDoc.childrenSetBehavior = new BehaviorSubject({
-    //       value: { docs: [...memoryDoc.childrenSet] },
-    //     });
-    //     return memoryDoc.childrenSetBehavior;
-    //   }
-    // }
     const memoryDoc = getMemoryNode(name, false);
     if (memoryDoc === null) {
       throw new Error(`Cannot observe nonexistent doc "${name}"`);
@@ -489,12 +474,6 @@ export default function createGenericDataSource({
 
   async function GetDocValue({ domain, name }) {
     verifyDomain(domain, sourceDomain);
-
-    // const listDocName = getListDocName(name);
-    // if (typeof listDocName === 'string') {
-    //   const docNames = await ListDocs({ domain, parentName: listDocName });
-    //   return { id: undefined, value: docNames };
-    // }
     const doc = await GetDoc({ domain, name });
     const id = doc && doc.id;
     if (!id) {
