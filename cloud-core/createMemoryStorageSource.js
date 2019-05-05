@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs-compat';
 import createGenericDataSource from './createGenericDataSource';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
+import xs from 'xstream';
 
 export default function createMemoryStorageSource(opts = {}) {
   const primaryDomain = opts.domain;
@@ -16,6 +17,7 @@ export default function createMemoryStorageSource(opts = {}) {
   const docState = { children: {}, childrenSet: new Set() };
 
   const isConnected = new BehaviorSubject(true);
+  const isConnectedStream = xs.of(true);
 
   async function getBlock(blockId) {
     if (typeof blockId !== 'string') {
@@ -68,5 +70,6 @@ export default function createMemoryStorageSource(opts = {}) {
     commitDocMove,
 
     isConnected,
+    isConnectedStream,
   });
 }
