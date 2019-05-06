@@ -4,7 +4,7 @@ import createDispatcher from '../cloud-utils/createDispatcher';
 import cuid from 'cuid';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 import { getMaxListDocs } from '../cloud-core/maxListDocs';
-import bindCommitDeepBlock from '../bindCommitDeepBlock';
+import bindCommitDeepBlock from '../cloud-core/bindCommitDeepBlock';
 import Err from '../utils/Err';
 
 const pgFormat = require('pg-format');
