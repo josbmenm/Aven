@@ -2,7 +2,7 @@ if (__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
 }
 
-import React, { Component } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -11,21 +11,13 @@ import {
   ScrollView,
   YellowBox,
 } from 'react-native';
-import useAsyncError from '../react-utils/useAsyncError';
 import { createAppContainer } from '../navigation-native';
-import { useNavigation } from '../navigation-hooks/Hooks';
 import useObservable from '../cloud-core/useObservable';
 import useCloud from '../cloud-core/useCloud';
-import { createNavigator, StackRouter } from '../navigation-core';
 import codePush from 'react-native-code-push';
 
-import HomeScreen from '../screens/HomeScreen';
-import ComponentPlaygroundScreen from '../screens/ComponentPlaygroundScreen';
+import FeedbackApp from './FeedbackApp';
 import ProductHomeScreen from '../screens/ProductHomeScreen';
-import HostHomeScreen from '../screens/HostHomeScreen';
-import KitchenEngScreen from '../screens/KitchenEngScreen';
-import KitchenEngSubScreen from '../screens/KitchenEngSubScreen';
-import KioskSettingsScreen from '../screens/KioskSettingsScreen';
 import KioskHomeScreen from '../screens/KioskHomeScreen';
 import BlendScreen from '../screens/BlendScreen';
 import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
@@ -35,43 +27,27 @@ import FeedbackScreen from '../screens/FeedbackScreen';
 import FeedbackRatingScreen from '../screens/FeedbackRatingScreen';
 import FeedbackReceiptScreen from '../screens/FeedbackReceiptScreen';
 import FoodScreen from '../screens/FoodScreen';
-import DebugStateScreen from '../screens/DebugStateScreen';
 import PaymentDebugScreen from '../components/PaymentDebugScreen';
 import Spinner from '../components/Spinner';
 import SequencingDebugScreen from '../screens/SequencingDebugScreen';
 
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
-import ManageOrderScreen from '../screens/ManageOrderScreen';
-import ManageOrdersScreen from '../screens/ManageOrdersScreen';
 import OrderCompleteScreen from '../screens/OrderCompleteScreen';
 import CollectNameScreen from '../screens/CollectNameScreen';
 import SendReceiptScreen from '../screens/SendReceiptScreen';
 import ReceiptScreen from '../screens/ReceiptScreen';
 import AppUpsellScreen from '../screens/AppUpsellScreen';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
-import Transitioner from '../navigation-transitioner/Transitioner';
 import LinearGradient from 'react-native-linear-gradient';
-import { loadImages } from '../components/Image';
 import CloudContext from '../cloud-core/CloudContext';
-import createCloudClient from '../cloud-core/createCloudClient';
-import ErrorContainer from '../cloud-react/ErrorContainer';
-import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import OrderSidebarPage from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { registerDispatcher } from '../card-reader/CardReader';
-import cuid from 'cuid';
 import { setHostConfig } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
-import useAsyncStorage, {
-  isStateUnloaded,
-  useStorageMemo,
-} from '../screens/useAsyncStorage';
 import useCloudProvider from '../components/useCloudProvider';
-import BlockForm from '../components/BlockFormRow';
-import BlockFormInput from '../components/BlockFormInput';
 import { titleStyle } from '../components/Styles';
 
 // const IS_DEV = process.env.NODE_ENV !== 'production';
@@ -165,16 +141,6 @@ process.env.REACT_NAV_LOGGING = true;
 
 const KioskAppContainer = createAppContainer(KioskAppNavigator);
 
-const FeedbackAppNavigator = createStackTransitionNavigator({
-  FeedbackHome: FeedbackHomeScreen,
-  Feedback: FeedbackScreen,
-  FeedbackRating: FeedbackRatingScreen,
-  FeedbackReceipt: FeedbackReceiptScreen,
-  FeedbackComplete: FeedbackCompleteScreen,
-});
-
-const FeedbackAppContainer = createAppContainer(FeedbackAppNavigator);
-
 function RetryButton({ onRetry }) {
   return <Button title="Try again.." onPress={onRetry} />;
 }
@@ -224,14 +190,6 @@ function KioskApp() {
   );
 }
 
-function FeedbackApp() {
-  return (
-    <PopoverContainer>
-      <FeedbackAppContainer />
-    </PopoverContainer>
-  );
-}
-
 const SettingsAppNavigator = createStackTransitionNavigator({
   PaymentDebug: PaymentDebugScreen,
 });
@@ -259,13 +217,9 @@ function WaitingPage({ title }) {
 
 function SelectModeApp() {
   const cloud = useCloud();
-  const isConnected = useObservable(cloud.isConnected);
   const session = useObservable(cloud.observeSession);
   const control = session && cloud.get(`@${session.accountId}/ScreenControl`);
   const controlState = useObservable(control && control.observeValue);
-  if (!isConnected) {
-    return <WaitingPage title="Disconnected" />;
-  }
   if (!session) {
     return <WaitingPage title="Waiting for session" />;
   }
@@ -281,7 +235,6 @@ function SelectModeApp() {
   if (mode === 'cardreader') {
     return <SettingsApp />;
   }
-  console.log('helloooo', controlState);
 
   return <WaitingPage title={name ? `${name} Kiosk Closed` : 'Kiosk Closed'} />;
 }

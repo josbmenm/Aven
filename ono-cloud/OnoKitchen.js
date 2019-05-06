@@ -194,39 +194,6 @@ export function useSelectedIngredients(menuItem, item) {
   return getSelectedIngredients(menuItem, item, companyConfig);
 }
 
-function getAllOrders() {
-  let cloud = useCloud();
-  return cloud.get('Orders/_children').expand((o, r) => {
-    return (
-      o &&
-      o
-        .filter(n => n[0] !== '_')
-        .map(orderId => ({
-          id: orderId,
-          orderState: cloud.get(`Orders/${orderId}`),
-        }))
-    );
-  }).observeValue;
-}
-
-export function useOrders() {
-  const companyConfig = useCompanyConfig();
-
-  let ordersSource = useMemo(getAllOrders, []);
-
-  let orders = useObservable(ordersSource);
-
-  if (!orders) {
-    return [];
-  }
-  return orders.map(order => {
-    return {
-      ...order,
-      summary: getOrderSummary(order.orderState, companyConfig),
-    };
-  });
-}
-
 export function useOrder() {
   let orderContext = useContext(OrderContext);
   return orderContext;
@@ -485,16 +452,6 @@ export function useFoodItem(foodItemId) {
     if (!config) return null;
     return companyConfigToFoodMenuItemMapper(foodItemId)(config);
   }, [config, foodItemId]);
-}
-
-function getAirtableData() {
-  const cloud = useCloud();
-  if (!cloud) {
-    return observeNull;
-  }
-  return cloud
-    .get('Airtable')
-    .observeConnectedValue(['files', 'db.json', 'id']);
 }
 
 export function useMenu() {

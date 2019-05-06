@@ -134,6 +134,11 @@ const runServer = async () => {
   });
 
   await putPermission({
+    defaultRule: { canPost: true },
+    name: 'CustomerFeedback',
+  });
+
+  await putPermission({
     defaultRule: { canWrite: true, canRead: true },
     name: 'DeviceActions',
   });

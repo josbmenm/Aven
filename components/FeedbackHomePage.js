@@ -15,7 +15,7 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 
 import FadeTransition from '../components/FadeTransition';
 
-export default function FeedbackHomePage({ navigation, ...props }) {
+export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
   const { navigate } = useNavigation();
   return (
     <FadeTransition
@@ -34,9 +34,12 @@ export default function FeedbackHomePage({ navigation, ...props }) {
       }
     >
       <TouchableWithoutFeedback
-        onPress={() => {
-          navigate('FeedbackRating');
-        }}
+        onPress={
+          onSubmit ||
+          (() => {
+            navigate('FeedbackRating');
+          })
+        }
       >
         <View
           style={{ flex: 1, justifyContent: 'center', ...genericPageStyle }}
