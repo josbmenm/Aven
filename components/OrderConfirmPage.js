@@ -178,6 +178,25 @@ export default function OrderConfirmPage({
     // message = 'hmm..';
   }
 
+  let bottomContent = <AnimateyCreditCard />;
+
+  if (summary && summary.total === 0) {
+    bottomContent = (
+      <View
+        style={{
+          position: 'absolute',
+          right: 20,
+          bottom: 20,
+          left: 20,
+          height: 80,
+          alignItems: 'center',
+        }}
+      >
+        <Button title="Confirm Order" onPress={skipPayment} />
+      </View>
+    );
+  }
+
   return (
     <FadeTransition
       backgroundColor={'#00000040'}
@@ -207,7 +226,7 @@ export default function OrderConfirmPage({
       >
         {message}
       </Text>
-      <AnimateyCreditCard />
+      {bottomContent}
       <View
         style={{
           position: 'absolute',

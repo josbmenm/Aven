@@ -21,13 +21,14 @@ export default function OrderConfirmScreen({
     confirmOrder();
     navigation.navigate('Receipt', { orderId: order.getName() });
   }
-  const paymentDetails = summary
-    ? {
-        amount: Math.floor(summary.total * 100), // ugh.. we should really be using cents everywhere..
-        description: 'Ono Blends',
-        onCompletion,
-      }
-    : undefined;
+  const paymentDetails =
+    summary && summary.total > 0
+      ? {
+          amount: Math.floor(summary.total * 100), // ugh.. we should really be using cents everywhere..
+          description: 'Ono Blends',
+          onCompletion,
+        }
+      : undefined;
   const { state } = useCardPaymentCapture(paymentDetails);
   useEmptyOrderEscape();
   return (

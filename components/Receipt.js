@@ -73,14 +73,28 @@ const rollupRowTextLargeStyle = {
   fontSize: 24,
 };
 
-function RollupRow({ label, amount, textStyle }) {
+function RollupRow({ label, amount, fakeAmount, textStyle }) {
   return (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
       <View style={{}}>
         <Text style={textStyle}>{label}</Text>
       </View>
       <View style={{}}>
-        <Text style={textStyle}>{formatCurrency(amount)}</Text>
+        <Text style={textStyle}>
+          {fakeAmount && fakeAmount !== amount && (
+            <React.Fragment>
+              <Text
+                style={{
+                  textDecorationLine: 'line-through',
+                  ...primaryFontFace,
+                }}
+              >
+                {formatCurrency(fakeAmount)}
+              </Text>{' '}
+            </React.Fragment>
+          )}
+          {formatCurrency(amount)}
+        </Text>
       </View>
     </View>
   );
@@ -143,6 +157,7 @@ export default function Receipt({ summary }) {
       <RollupRow
         label="Total"
         amount={summary.total}
+        fakeAmount={summary.totalBeforeDiscount}
         textStyle={rollupRowTextLargeStyle}
       />
     </View>

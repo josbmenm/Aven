@@ -230,10 +230,31 @@ export function getOrderSummary(orderState, companyConfig) {
   if (!menu) {
     return null;
   }
+  let promo = orderState.promo;
   const items = orderState.items.map(getOrderItemMapper(menu));
-  const subTotal = items.reduce((acc, item) => {
+  const subTotalBeforeDiscount = items.reduce((acc, item) => {
     return acc + item.itemPrice;
   }, 0);
+  const taxBeforeDiscount = subTotalBeforeDiscount * TAX_RATE;
+  const totalBeforeDiscount = subTotalBeforeDiscount + taxBeforeDiscount;
+
+  let discountTotal = 0;
+  if (promo && promo.type === 'FreeBlends') {
+    const blendTotals = items
+      .map(item => Array(item.quantity).fill(item.sellPrice))
+      .flat();
+    const freeBlendTotals = blendTotals.sort().slice(-promo.count);
+    const freeBlendsDiscount = freeBlendTotals.reduce((acc, t) => acc + t, 0);
+    discountTotal += freeBlendsDiscount;
+    console.log({
+      promo,
+      blendTotals,
+      freeBlendsDiscount,
+      freeBlendTotals,
+      discountTotal,
+    });
+  }
+  const subTotal = subTotalBeforeDiscount - discountTotal;
   const tax = subTotal * TAX_RATE;
   const total = subTotal + tax;
   const { isConfirmed, isCancelled, orderId } = orderState;
@@ -253,7 +274,10 @@ export function getOrderSummary(orderState, companyConfig) {
     subTotal,
     tax,
     total,
+    discountTotal,
+    totalBeforeDiscount,
     taxRate: TAX_RATE,
+    promo,
   };
 }
 

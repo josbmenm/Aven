@@ -24,6 +24,7 @@ import {
 import formatCurrency from '../utils/formatCurrency';
 import Button from './Button';
 import {
+  useOrder,
   useOrderItem,
   sellPriceOfMenuItem,
   displayNameOfOrderItem,
@@ -66,7 +67,7 @@ const cartRowTitleStyle = {
   marginBottom: 5,
 };
 
-function SummaryRow({ label, amount, emphasize }) {
+function SummaryRow({ label, amount, fakeAmount }) {
   return (
     <View
       style={{
@@ -80,7 +81,14 @@ function SummaryRow({ label, amount, emphasize }) {
         <Text style={summaryRowLabelStyle}>{label}</Text>
       </View>
       <View style={{}}>
-        <Text style={summaryRowCurrencyStyle}>{formatCurrency(amount)}</Text>
+        <Text style={summaryRowCurrencyStyle}>
+          {fakeAmount && fakeAmount !== amount && (
+            <Text style={{ textDecorationLine: 'line-through' }}>
+              {formatCurrency(fakeAmount)}
+            </Text>
+          )}
+          <Text style={{}}>{formatCurrency(amount)}</Text>
+        </Text>
       </View>
     </View>
   );
@@ -266,7 +274,7 @@ function CartRow({ itemId, item }) {
   );
 }
 
-function PromoCodeForm({ onClose }) {
+function PromoCodeForm({ onClose, order }) {
   const cloud = useCloud();
   const [error, setError] = React.useState(null);
   const [promoCode, setPromoCode] = React.useState('');
@@ -291,7 +299,17 @@ function PromoCodeForm({ onClose }) {
         promoCode,
       })
       .then(resp => {
-        console.log(resp);
+        if (!resp) {
+          setError({});
+          return;
+        }
+        return order.transact(lastOrder => ({
+          ...lastOrder,
+          promo: resp,
+        }));
+      })
+      .then(() => {
+        onClose();
       })
       .catch(e => {
         setError(e);
@@ -316,11 +334,13 @@ function PromoCodeForm({ onClose }) {
 }
 
 function usePromoPopover() {
+  const { order } = useOrder();
+
   const { onPopover } = usePopover(
     ({ onClose, popoverOpenValue }) => {
       return (
         <KeyboardPopover onClose={onClose}>
-          <PromoCodeForm onClose={onClose} />
+          <PromoCodeForm onClose={onClose} order={order} />
         </KeyboardPopover>
       );
     },
@@ -329,8 +349,52 @@ function usePromoPopover() {
   return onPopover;
 }
 
-function PromoCode() {
+function PromoCode({ promo }) {
+  const { order } = useOrder();
   const onPopover = usePromoPopover();
+  if (promo) {
+    return (
+      <View
+        style={{
+          backgroundColor: monsterra5,
+          padding: 8,
+          margin: 16,
+          marginLeft: 0,
+          borderRadius: 4,
+        }}
+      >
+        <Text
+          style={{
+            ...primaryFontFace,
+            color: monsterra80,
+            fontSize: 14,
+          }}
+        >
+          promo code{' '}
+          <Text style={{ ...boldPrimaryFontFace }}>{promo.promoCode}</Text>
+        </Text>
+        <Text
+          style={{
+            fontSize: 12,
+            ...primaryFontFace,
+            color: monsterra80,
+          }}
+        >
+          {promo.count} free blend{promo.count > 1 ? 's' : ''}
+        </Text>
+        <TouchableOpacity
+          onPress={() => {
+            order.transact(o => ({
+              ...o,
+              promo: null,
+            }));
+          }}
+        >
+          <Text>x</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
   return (
     <TouchableOpacity
       onPress={onPopover}
@@ -374,9 +438,14 @@ export default function Cart({ summary }) {
           )}
         />
         <View style={{ marginTop: 9, marginBottom: 4 }}>
-          <PromoCode />
+          <PromoCode promo={summary.promo} />
           <SummaryRow label="taxes" amount={summary.tax} />
-          <SummaryRow label="total" amount={summary.total} emphasize />
+          <SummaryRow
+            label="total"
+            amount={summary.total}
+            fakeAmount={summary.totalBeforeDiscount}
+            emphasize
+          />
         </View>
       </View>
       <Button
