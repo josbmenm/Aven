@@ -36,6 +36,7 @@ import BlockFormMessage from './BlockFormMessage';
 import BlockFormInput from './BlockFormInput';
 import BlockFormButton from './BlockFormButton';
 import BlockFormRow from './BlockFormRow';
+import useCloud from '../cloud-core/useCloud';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { Easing } from 'react-native-reanimated';
 import ListAnimation from './ListAnimation';
@@ -266,6 +267,8 @@ function CartRow({ itemId, item }) {
 }
 
 function PromoCodeForm({ onClose }) {
+  const cloud = useCloud();
+  const [error, setError] = React.useState(null);
   const [promoCode, setPromoCode] = React.useState('');
   const inputRenderers = [
     inputProps => (
@@ -280,7 +283,20 @@ function PromoCodeForm({ onClose }) {
     ),
   ];
 
-  function handleSubmit() {}
+  function handleSubmit() {
+    setError(null);
+    cloud
+      .dispatch({
+        type: 'ValidatePromoCode',
+        promoCode,
+      })
+      .then(resp => {
+        console.log(resp);
+      })
+      .catch(e => {
+        setError(e);
+      });
+  }
   const { inputs } = useFocus({
     onSubmit: handleSubmit,
     inputRenderers,
@@ -290,6 +306,7 @@ function PromoCodeForm({ onClose }) {
       <BlockFormMessage message="You’ve got a code? Lucky you!." />
       <BlockFormTitle title="whats your promo code?" />
       <BlockFormRow>{inputs}</BlockFormRow>
+      {error && <BlockFormMessage message="Woah there!" />}
       <BlockFormRow>
         <BlockFormButton title="cancel" secondary onPress={onClose} />
         <BlockFormButton title="add code" onPress={handleSubmit} />

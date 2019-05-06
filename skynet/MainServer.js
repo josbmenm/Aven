@@ -20,6 +20,8 @@ import createProtectedSource from '../cloud-auth/createProtectedSource';
 import createEvalSource from '../cloud-core/createEvalSource';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import DevicesReducer from '../logic/DevicesReducer';
+import submitFeedback from './submitFeedback';
+import validatePromoCode from './validatePromoCode';
 
 const getEnv = c => process.env[c];
 
@@ -102,15 +104,15 @@ const runServer = async () => {
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
-  const cloud = createCloudClient({
+  const unprotectedCloud = createCloudClient({
     source: evalSource,
     domain,
   });
 
-  const fsClient = createFSClient({ client: cloud });
+  const fsClient = createFSClient({ client: unprotectedCloud });
 
   const context = new Map();
-  context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
+  context.set(CloudContext, unprotectedCloud); // bad idea, must have independent client for authentication!!!
 
   const rootAuth = {
     accountId: 'root',
@@ -154,6 +156,10 @@ const runServer = async () => {
         return getConnectionToken(action);
       case 'StripeCapturePayment':
         return capturePayment(action);
+      case 'ValidatePromoCode':
+        return validatePromoCode(unprotectedCloud, action);
+      case 'SubmitFeedback':
+        return submitFeedback(unprotectedCloud, emailAgent, action);
       case 'UpdateAirtable':
         return await scrapeAirTable(fsClient);
       default:
@@ -177,6 +183,7 @@ const runServer = async () => {
 
   return {
     close: async () => {
+      await unprotectedCloud.close();
       await protectedSource.close();
       await evalSource.close();
       await webService.close();

@@ -39,6 +39,8 @@
     ],
     "moduleDependencies": [
       "sqlite3",
+      "mjml",
+      "mjml-react",
       "@react-navigation/core",
       "airtable",
       "wget-improved",

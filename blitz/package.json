@@ -1,5 +1,5 @@
 {
-  "main": "App",
+  "main": "BlitzApp",
   "aven": {
     "env": "env-kiosk",
     "envOptions": {

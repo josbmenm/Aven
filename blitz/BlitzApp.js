@@ -2,7 +2,7 @@ if (__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
 }
 
-import React, { Component } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -12,55 +12,50 @@ import {
   YellowBox,
 } from 'react-native';
 import { createAppContainer } from '../navigation-native';
-import { useNavigation } from '../navigation-hooks/Hooks';
-import { createNavigator, StackRouter } from '../navigation-core';
+import useObservable from '../cloud-core/useObservable';
+import useCloud from '../cloud-core/useCloud';
 import codePush from 'react-native-code-push';
 
-import HomeScreen from '../screens/HomeScreen';
-import ComponentPlaygroundScreen from '../screens/ComponentPlaygroundScreen';
+import FeedbackApp from './FeedbackApp';
 import ProductHomeScreen from '../screens/ProductHomeScreen';
-import KitchenEngScreen from '../screens/KitchenEngScreen';
-import KitchenEngSubScreen from '../screens/KitchenEngSubScreen';
-import KioskSettingsScreen from '../screens/KioskSettingsScreen';
 import KioskHomeScreen from '../screens/KioskHomeScreen';
 import BlendScreen from '../screens/BlendScreen';
 import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
+import FeedbackCompleteScreen from '../screens/FeedbackCompleteScreen';
+import FeedbackHomeScreen from '../screens/FeedbackHomeScreen';
+import FeedbackScreen from '../screens/FeedbackScreen';
+import FeedbackRatingScreen from '../screens/FeedbackRatingScreen';
+import FeedbackReceiptScreen from '../screens/FeedbackReceiptScreen';
 import FoodScreen from '../screens/FoodScreen';
-import DebugStateScreen from '../screens/DebugStateScreen';
 import PaymentDebugScreen from '../components/PaymentDebugScreen';
-import useCloudProvider from '../components/useCloudProvider';
+import Spinner from '../components/Spinner';
 import SequencingDebugScreen from '../screens/SequencingDebugScreen';
 
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
-import DeviceManagerScreen from '../screens/DeviceManagerScreen';
 import OrderCompleteScreen from '../screens/OrderCompleteScreen';
 import CollectNameScreen from '../screens/CollectNameScreen';
 import SendReceiptScreen from '../screens/SendReceiptScreen';
 import ReceiptScreen from '../screens/ReceiptScreen';
 import AppUpsellScreen from '../screens/AppUpsellScreen';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
-import Transitioner from '../navigation-transitioner/Transitioner';
 import LinearGradient from 'react-native-linear-gradient';
-import { loadImages } from '../components/Image';
 import CloudContext from '../cloud-core/CloudContext';
-import ErrorContainer from '../cloud-react/ErrorContainer';
-import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import OrderSidebarPage from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { registerDispatcher } from '../card-reader/CardReader';
-
 import { setHostConfig } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
+import useCloudProvider from '../components/useCloudProvider';
+import { titleStyle } from '../components/Styles';
 
-// const IS_DEV = process.env.NODE_ENV !== 'production';
-const IS_DEV = false;
+const IS_DEV = process.env.NODE_ENV !== 'production';
+// const IS_DEV = false;
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  authority: '192.168.1.29:8840', // office laptop (skynet)
+  authority: '192.168.1.9:8840', // office laptop (skynet)
   // authority: '192.168.1.29:8830', // office laptop
   // authority: 'localhost:8830', // generic simulator
   // authority: 'restaurant0.maui.onofood.co:8830', // prod test
@@ -120,37 +115,18 @@ const OrderNavigator = createStackTransitionNavigator(
   },
 );
 
-// const App = createStackTransitionNavigator({
-//   // Home: HomeScreen,
-//   // ComponentPlayground: ComponentPlaygroundScreen,
-//   // KitchenEng: KitchenEngScreen,
-//   // KitchenEngSub: KitchenEngSubScreen,
-//   // KioskSettings: KioskSettingsScreen,
-//   KioskHome: KioskHomeScreen,
-//   // Blend: BlendScreen,
-//   // CustomizeBlend: CustomizeBlendScreen,
-//   // Food: FoodScreen,
-//   // ProductHome: ProductHomeScreen,
-//   OrderConfirm: OrderConfirmScreen,
-//   OrderComplete: OrderCompleteScreen,
-//   CollectName: CollectNameScreen,
-//   SendReceipt: SendReceiptScreen,
-//   Receipt: ReceiptScreen,
-//   PaymentDebug: PaymentDebugScreen,
-//   SequencingDebug: SequencingDebugScreen,
-//   AppUpsell: AppUpsellScreen,
-//   OrderNavigator,
-// });
-
-const App = createStackTransitionNavigator({
-  Home: HomeScreen,
-  ComponentPlayground: ComponentPlaygroundScreen,
-  KitchenEng: KitchenEngScreen,
-  KitchenEngSub: KitchenEngSubScreen,
-  KioskSettings: KioskSettingsScreen,
+const KioskAppNavigator = createStackTransitionNavigator({
+  // Home: HomeScreen,
+  // ComponentPlayground: ComponentPlaygroundScreen,
+  // KitchenEng: KitchenEngScreen,
+  // KitchenEngSub: KitchenEngSubScreen,
+  // KioskSettings: KioskSettingsScreen,
   KioskHome: KioskHomeScreen,
+  // Blend: BlendScreen,
+  // CustomizeBlend: CustomizeBlendScreen,
+  // Food: FoodScreen,
+  // ProductHome: ProductHomeScreen,
   OrderConfirm: OrderConfirmScreen,
-  DeviceManager: DeviceManagerScreen,
   OrderComplete: OrderCompleteScreen,
   CollectName: CollectNameScreen,
   SendReceipt: SendReceiptScreen,
@@ -161,7 +137,9 @@ const App = createStackTransitionNavigator({
   OrderNavigator,
 });
 
-const AppContainer = createAppContainer(App);
+process.env.REACT_NAV_LOGGING = true;
+
+const KioskAppContainer = createAppContainer(KioskAppNavigator);
 
 function RetryButton({ onRetry }) {
   return <Button title="Try again.." onPress={onRetry} />;
@@ -178,34 +156,135 @@ function renderAppError({ error, errorInfo, onRetry }) {
 }
 
 const NAV_STORAGE_KEY = 'NavigationState-N3e26u1o';
-function FullApp() {
-  const cloud = useCloudProvider({
-    source: cloudSource,
-    domain: 'onofood.co',
-  });
-  if (!cloud) {
-    return null;
-  }
-  return (
-    <PopoverContainer>
-      <CloudContext.Provider value={cloud}>
-        <ErrorContainer
-          renderError={renderAppError}
-          onCatch={async () => {
-            await AsyncStorage.removeItem(NAV_STORAGE_KEY);
-          }}
-        >
-          <AppContainer />
-        </ErrorContainer>
-      </CloudContext.Provider>
-    </PopoverContainer>
-  );
-}
+// function FullApp() {
+//   return (
+//     <PopoverContainer>
+//       <CloudContext.Provider value={cloud}>
+//         <ErrorContainer
+//           renderError={renderAppError}
+//           onCatch={async () => {
+//             await AsyncStorage.removeItem(NAV_STORAGE_KEY);
+//           }}
+//         >
+//           <OrderContextProvider>
+//             <AppContainer persistenceKey={NAV_STORAGE_KEY} />
+//           </OrderContextProvider>
+//         </ErrorContainer>
+//       </CloudContext.Provider>
+//     </PopoverContainer>
+//   );
+// }
 
 const PRELOAD_IMAGES = [
   require('../components/assets/BgHome.png'),
   require('../components/assets/BgGeneric.png'),
 ];
+
+function KioskApp() {
+  return (
+    <PopoverContainer>
+      <OrderContextProvider>
+        <KioskAppContainer />
+      </OrderContextProvider>
+    </PopoverContainer>
+  );
+}
+
+const SettingsAppNavigator = createStackTransitionNavigator({
+  PaymentDebug: PaymentDebugScreen,
+});
+
+const SettingsAppContainer = createAppContainer(SettingsAppNavigator);
+
+function SettingsApp() {
+  return (
+    <PopoverContainer>
+      <SettingsAppContainer />
+    </PopoverContainer>
+  );
+}
+
+function WaitingPage({ title, name }) {
+  return (
+    <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+      <View style={{ marginVertical: 30 }}>
+        <Spinner />
+      </View>
+      {name && (
+        <Text
+          style={{ ...titleStyle, textAlign: 'center', marginVertical: 10 }}
+        >
+          {name}
+        </Text>
+      )}
+      <Text style={{ ...titleStyle, textAlign: 'center' }}>{title}</Text>
+    </View>
+  );
+}
+
+function SelectModeApp() {
+  const cloud = useCloud();
+  const session = useObservable(cloud.observeSession);
+  const isConnected = useObservable(cloud.isConnected);
+  const control = session && cloud.get(`@${session.accountId}/ScreenControl`);
+  const controlState = useObservable(control && control.observeValue);
+  if (!session) {
+    return <WaitingPage title="Waiting for session" />;
+  }
+  const mode = controlState && controlState.mode;
+  const name = controlState && controlState.name;
+
+  if (mode === 'feedback') {
+    return <FeedbackApp />;
+  }
+  if (mode === 'kiosk') {
+    return <KioskApp />;
+  }
+  if (mode === 'cardreader') {
+    return <SettingsApp />;
+  }
+
+  if (!isConnected) {
+    return <WaitingPage name={name} title="Kiosk Disconnected" />;
+  }
+
+  if (!controlState) {
+    return <WaitingPage name={name} title="Loading Configuration" />;
+  }
+
+  return <WaitingPage name={name} title="Kiosk Closed" />;
+}
+
+function useControlledApp(cloud) {
+  const isReady = !!cloud && !!cloud.observeSession.getValue();
+  React.useEffect(() => {
+    if (!isReady) {
+      return;
+    }
+    const deviceId = cloud.observeSession.getValue().accountId;
+    cloud.get('DeviceActions').putTransaction({
+      type: 'DeviceOnline',
+      deviceId,
+    });
+  }, [cloud, isReady]);
+}
+
+function FullApp() {
+  const cloud = useCloudProvider({
+    source: cloudSource,
+    domain: 'onofood.co',
+    establishAnonymousSession: true,
+  });
+  useControlledApp(cloud);
+  if (!cloud) {
+    return null;
+  }
+  return (
+    <CloudContext.Provider value={cloud}>
+      <SelectModeApp />
+    </CloudContext.Provider>
+  );
+}
 
 // loadImages(PRELOAD_IMAGES)
 //   .then(results => {

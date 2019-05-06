@@ -99,6 +99,7 @@ export default async function scrapeAirTable(fsClient) {
     'Ingredients',
     'Benefits',
     'Dietary',
+    'PromoCodes',
     'KitchenSlots',
     'KitchenSystems',
     'KitchenSystemTags',
