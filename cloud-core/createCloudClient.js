@@ -166,7 +166,7 @@ export default function createCloudClient({
       return await defaultAction();
     }
     const doc = docs.get(name);
-    await doc.put(value);
+    await doc.putToSource(value);
     const id = await doc.getId();
     return { id, name, domain };
   }

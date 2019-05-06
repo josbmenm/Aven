@@ -697,6 +697,13 @@ export default function createCloudDoc({
     return { id: block.id };
   }
 
+  async function putToSource(inputValue) {
+    const s = await commitDeepBlock(inputValue);
+    const block = _getBlockWithValue(s.value);
+    await putBlockToSource(block);
+    return { id: block.id };
+  }
+
   async function putTransaction(value) {
     await fetch();
     const prevId = getId();
@@ -744,6 +751,66 @@ export default function createCloudDoc({
   }
 
   let postingPromise = null;
+
+  async function putBlockToSource(block) {
+    let postResult = null;
+    if (!docState.value.isPosted && !postingPromise) {
+      postingPromise = doPost(block);
+      await postingPromise;
+      postingPromise = null;
+      return;
+    }
+
+    if (postingPromise) {
+      await postingPromise;
+    }
+
+    if (postResult === block) {
+      return;
+    }
+
+    const state = getState();
+    if (state.puttingFromId) {
+      // console.log(
+      //   `Warning.. putBlock of "${name}" while another put from ${
+      //     state.puttingFromId
+      //   } is in progress`,
+      // );
+    }
+    const lastId = state.id;
+    setState({
+      id: block.id,
+      puttingFromId: state.id,
+    });
+    try {
+      if (block.getIsPublished()) {
+        await putId(block.id);
+      } else {
+        await source.dispatch({
+          type: 'PutDocValue',
+          domain,
+          name: getFullName(),
+          id: block.id,
+          value: block.getValue(),
+        });
+        block.setPutTime();
+      }
+
+      setState({
+        puttingFromId: null,
+        lastPutTime: Date.now(),
+      });
+    } catch (e) {
+      setState({
+        puttingFromId: null,
+        id: lastId,
+      });
+
+      throw new Error(
+        `Failed to putBlockId "${block.id}" to "${name}". ${e.message}`,
+      );
+    }
+  }
 
   async function putBlock(block) {
     let postResult = null;
@@ -1033,6 +1100,7 @@ export default function createCloudDoc({
     domain,
     fetch,
     put,
+    putToSource,
     putTransaction,
     putId,
     fetchConnectedValue,
