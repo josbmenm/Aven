@@ -304,7 +304,7 @@ function StepperButton({ onPress, icon, disabled }) {
         height: 26,
         width: 26,
         borderRadius: 13,
-        opacity: disabled ? 0.6 : 1,
+        opacity: disabled ? 0.35 : 1,
         borderColor: monsterra50,
         justifyContent: 'center',
         alignItems: 'center',

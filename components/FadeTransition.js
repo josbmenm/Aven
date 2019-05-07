@@ -15,17 +15,11 @@ export default class FadeTransition extends React.Component {
         const isVisible = !!toState.routes.find(
           route => route.key === transition.transitionRouteKey,
         );
-        console.log('rendering for transition', {
-          isVisible,
-          transition,
-          fromState,
-          toState,
-        });
         const toValue = isVisible ? 1 : 0;
-        const baseEase = Easing.poly(5);
+        const baseEase = Easing.poly(3);
         timing(transition.progress, {
           easing: baseEase,
-          duration: 1000,
+          duration: 300,
           toValue,
         }).start(
           () => {

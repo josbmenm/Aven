@@ -1444,7 +1444,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/kiosk.app/kiosk";
 			};
@@ -1481,7 +1481,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/kiosk.app/kiosk";
 			};
@@ -1513,7 +1513,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = kiosk;
 				PROVISIONING_PROFILE_SPECIFIER = BlitzDevelopment;
 				SWIFT_OBJC_BRIDGING_HEADER = "src/kiosk-Bridging-Header.h";
@@ -1550,7 +1550,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = kiosk;
 				PROVISIONING_PROFILE_SPECIFIER = BlitzDevelopment;
 				SWIFT_OBJC_BRIDGING_HEADER = "src/kiosk-Bridging-Header.h";
