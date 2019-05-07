@@ -23,7 +23,8 @@
       "admin",
       "cloud-core",
       "cloud-server",
-      "cloud-postgres"
+      "cloud-postgres",
+      "components"
     ],
     "moduleDependencies": [
       "mjml",
