@@ -11,13 +11,10 @@ async function isSocketInUse(socketPath) {
         reject(e);
       }
     });
-    clientSocket.connect(
-      { path: socketPath },
-      () => {
-        clientSocket.unref();
-        resolve(true);
-      },
-    );
+    clientSocket.connect({ path: socketPath }, () => {
+      clientSocket.unref();
+      resolve(true);
+    });
   });
 }
 

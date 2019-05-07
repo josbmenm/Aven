@@ -31,23 +31,20 @@ export default function useObservable(observable) {
     setError(error);
   }
 
-  useEffect(
-    () => {
-      if (error) {
-        setError(null);
-      }
-      if (isObservable) {
-        const subscription = observable.subscribe({
-          next: applyValue,
-          error: applyError,
-        });
-        return () => {
-          subscription && subscription.unsubscribe();
-        };
-      }
-    },
-    [observable],
-  );
+  useEffect(() => {
+    if (error) {
+      setError(null);
+    }
+    if (isObservable) {
+      const subscription = observable.subscribe({
+        next: applyValue,
+        error: applyError,
+      });
+      return () => {
+        subscription && subscription.unsubscribe();
+      };
+    }
+  }, [observable]);
 
   return value;
 }

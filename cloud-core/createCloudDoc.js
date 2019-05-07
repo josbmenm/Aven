@@ -1060,8 +1060,12 @@ export default function createCloudDoc({
   }
 
   async function transact(transactionFn) {
-    await fetchValue();
-    const lastValue = getValue();
+    // todo.. uh, do this safely by putting a TransactionValue!
+    let lastValue = undefined;
+    if (docState.value.isPosted) {
+      await fetchValue();
+      lastValue = getValue();
+    }
     const newValue = transactionFn(lastValue);
     if (lastValue !== newValue) {
       await put(newValue);

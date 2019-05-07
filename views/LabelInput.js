@@ -12,16 +12,13 @@ function RefLabelInput(
   const [placeholderOpenProgress] = useState(
     new Animated.Value(desiredPlaceholderOpen),
   );
-  useEffect(
-    () => {
-      Animated.timing(placeholderOpenProgress, {
-        toValue: desiredPlaceholderOpen,
-        duration: 500,
-        easing: Easing.out(Easing.cubic),
-      }).start();
-    },
-    [desiredPlaceholderOpen],
-  );
+  useEffect(() => {
+    Animated.timing(placeholderOpenProgress, {
+      toValue: desiredPlaceholderOpen,
+      duration: 500,
+      easing: Easing.out(Easing.cubic),
+    }).start();
+  }, [desiredPlaceholderOpen]);
   const autoCorrect = false;
   let autoComplete = null;
   let keyboardType = 'default';
