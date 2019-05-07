@@ -1,21 +1,13 @@
 import React from 'react';
-import GenericPage from '../components/GenericPage';
+import SimplePage from '../components/SimplePage';
 import RowSection from '../components/RowSection';
 import Hero from '../components/Hero';
 import LinkRow from '../components/LinkRow';
-import { Image, View } from 'react-native';
+import { Image } from 'react-native';
 
 export default function HomeScreenMemo({ navigation, ...props }) {
-  //   <LinkRow
-  //   onPress={() => {
-  //     navigation.navigate({ routeName: 'HostHome' });
-  //   }}
-  //   icon="📋"
-  //   title="Vehicle Host Panel"
-  // />
-
   return (
-    <GenericPage hideBackButton navigation={navigation} {...props}>
+    <SimplePage hideBackButton navigation={navigation} {...props}>
       <Image
         source={require('../components/assets/OnoLogo.png')}
         style={{
@@ -28,10 +20,10 @@ export default function HomeScreenMemo({ navigation, ...props }) {
       <RowSection>
         <LinkRow
           onPress={() => {
-            navigation.navigate({ routeName: 'KioskHome' });
+            navigation.navigate({ routeName: 'ProductHome' });
           }}
-          icon="🖥"
-          title="Kiosk Home"
+          icon="🍹"
+          title="Order"
         />
         <LinkRow
           onPress={() => {
@@ -67,10 +59,10 @@ export default function HomeScreenMemo({ navigation, ...props }) {
           title="Settings"
         />
       </RowSection>
-    </GenericPage>
+    </SimplePage>
   );
 }
 
 const HomeScreen = React.memo(HomeScreenMemo);
 
-HomeScreen.navigationOptions = GenericPage.navigationOptions;
+HomeScreen.navigationOptions = SimplePage.navigationOptions;

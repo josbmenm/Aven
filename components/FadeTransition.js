@@ -1,16 +1,44 @@
 import React from 'react';
 import Animated, { Easing } from 'react-native-reanimated';
-import {
-  SharedTransition,
-  sharedNavigationOptionsWithConfig,
-} from '../navigation-transitioner/Shared';
+
 import { StyleSheet } from 'react-native';
-const { Value, timing, interpolate } = Animated;
+const { Value, timing, interpolate, View } = Animated;
 
 export default class FadeTransition extends React.Component {
-  static navigationOptions = sharedNavigationOptionsWithConfig({
-    duration: 500,
-  });
+  static navigationOptions = {
+    createTransition: transition => {
+      const progress = new Value(0);
+      return { ...transition, progress };
+    },
+    runTransition: async (transition, screenRefs, fromState, toState) => {
+      await new Promise((resolve, reject) => {
+        const isVisible = !!toState.routes.find(
+          route => route.key === transition.transitionRouteKey,
+        );
+        console.log('rendering for transition', {
+          isVisible,
+          transition,
+          fromState,
+          toState,
+        });
+        const toValue = isVisible ? 1 : 0;
+        const baseEase = Easing.poly(5);
+        timing(transition.progress, {
+          easing: baseEase,
+          duration: 1000,
+          toValue,
+        }).start(
+          () => {
+            resolve();
+          },
+          e => {
+            console.error('wot', e);
+            reject(e);
+          },
+        );
+      });
+    },
+  };
   render() {
     const {
       transition,
@@ -35,14 +63,14 @@ export default class FadeTransition extends React.Component {
       ];
     }
     return (
-      <SharedTransition
+      <View
         style={{
           ...StyleSheet.absoluteFillObject,
         }}
         {...this.props}
         ref={transitionRef}
       >
-        <Animated.View
+        <View
           style={{
             ...StyleSheet.absoluteFillObject,
             opacity: interpolate(progress, {
@@ -52,9 +80,9 @@ export default class FadeTransition extends React.Component {
           }}
         >
           {background}
-        </Animated.View>
+        </View>
 
-        <Animated.View
+        <View
           style={{
             flex: 1,
             opacity: interpolate(progress, {
@@ -65,8 +93,8 @@ export default class FadeTransition extends React.Component {
           }}
         >
           {children}
-        </Animated.View>
-      </SharedTransition>
+        </View>
+      </View>
     );
   }
 }

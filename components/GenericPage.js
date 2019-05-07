@@ -20,15 +20,19 @@ export default function GenericPage({
       {...props}
       background={
         <View
-          style={{
-            position: 'absolute',
-            width: 1366, // yes I am going straight to hell
-            height: 1024, // ...cant figure out real layout inside FadeTransition..
-          }}
+          style={{ backgroundColor: 'white', ...StyleSheet.absoluteFillObject }}
         >
-          {background || (
-            <View style={{ flex: 1, backgroundColor: pageBackgroundColor }} />
-          )}
+          <View
+            style={{
+              position: 'absolute',
+              width: 1366, // yes I am going straight to hell
+              height: 1024, // ...cant figure out real layout inside FadeTransition..
+            }}
+          >
+            {background || (
+              <View style={{ flex: 1, backgroundColor: pageBackgroundColor }} />
+            )}
+          </View>
         </View>
       }
     >
@@ -37,7 +41,10 @@ export default function GenericPage({
       ) : (
         <ScrollView
           style={{ flex: 1 }}
-          contentContainerStyle={{}}
+          contentContainerStyle={{
+            // alignItems: 'center',
+            justifyContent: 'center',
+          }}
           showsVerticalScrollIndicator={false}
         >
           {children}

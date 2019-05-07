@@ -20,10 +20,10 @@ import {
 import useObservable from '../cloud-core/useObservable';
 import RowSection from './RowSection';
 import TextRow from './TextRow';
-import TwoPanePage from './TwoPanePage';
 import Row from './Row';
 import BitRow from './BitRow';
 import { rowStyle, rowTitleStyle } from './Styles';
+import SimplePage from './SimplePage';
 
 function ObservableBitRow({ value, title }) {
   // const currentValue = useObservable(value);
@@ -258,7 +258,7 @@ export default function PaymentDebugScreen(props) {
   const [isShowingFullExample, setFullExample] = useState(false);
   const [isShowingUseCard, setUseCard] = useState(false);
   return (
-    <TwoPanePage title="Card Reader Debugging" icon="💸">
+    <SimplePage title="Card Reader Debugging" icon="💸" {...props}>
       <RowSection>
         <Button
           title="Test useCardReaderConnectionManager"
@@ -286,8 +286,8 @@ export default function PaymentDebugScreen(props) {
 
         <ReaderEvents />
       </RowSection>
-    </TwoPanePage>
+    </SimplePage>
   );
 }
 
-PaymentDebugScreen.navigationOptions = TwoPanePage.navigationOptions;
+PaymentDebugScreen.navigationOptions = SimplePage.navigationOptions;

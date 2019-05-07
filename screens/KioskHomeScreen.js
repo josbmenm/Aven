@@ -16,7 +16,7 @@ import { useOrder } from '../ono-cloud/OnoKitchen';
 import FadeTransition from '../components/FadeTransition';
 
 export default function KioskHomeScreen({ navigation, ...props }) {
-  const { startOrder, resetOrder } = useOrder();
+  const { resetOrder } = useOrder();
   useEffect(() => {
     resetOrder();
   }, []);
@@ -39,7 +39,6 @@ export default function KioskHomeScreen({ navigation, ...props }) {
     >
       <TouchableWithoutFeedback
         onPress={async () => {
-          await startOrder();
           navigation.navigate('ProductHome');
         }}
       >

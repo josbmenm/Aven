@@ -1,8 +1,7 @@
 import React from 'react';
 import { AlertIOS } from 'react-native';
 
-import Hero from '../components/Hero';
-import GenericPage from '../components/GenericPage';
+import SimplePage from '../components/SimplePage';
 import RowSection from '../components/RowSection';
 import LinkRow from '../components/LinkRow';
 import TextRow from '../components/TextRow';
@@ -54,8 +53,12 @@ function UpdateAirtableRow() {
 
 export default function KioskSettingsScreen({ navigation, ...props }) {
   return (
-    <GenericPage {...props} navigation={navigation}>
-      <Hero icon="⚙️" title="Kiosk Settings" />
+    <SimplePage
+      {...props}
+      navigation={navigation}
+      icon="⚙️"
+      title="Kiosk Settings"
+    >
       <RowSection>
         <LinkRow
           onPress={() => {
@@ -88,8 +91,8 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
         <UpdateAirtableRow />
       </RowSection>
       <AppPushInfo />
-    </GenericPage>
+    </SimplePage>
   );
 }
 
-KioskSettingsScreen.navigationOptions = GenericPage.navigationOptions;
+KioskSettingsScreen.navigationOptions = SimplePage.navigationOptions;

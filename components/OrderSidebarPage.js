@@ -18,7 +18,7 @@ const { interpolate } = Animated;
 
 export const SidebarOverlayContext = createContext({});
 
-export default function OrderSidebarPage({ children, ...props }) {
+function SidebarPage({ children, ...props }) {
   const { navigate } = useNavigation();
   const summary = useOrderSummary();
   const { cancelOrder } = useOrder();
@@ -85,11 +85,16 @@ export default function OrderSidebarPage({ children, ...props }) {
         <TextButton
           title="cancel order"
           onLongPress={() => {
-            navigate('Home');
+            if (isPortal) {
+              navigate('Home');
+            }
           }}
           onPress={async () => {
             await cancelOrder();
-            navigate('KioskHome');
+            if (!isPortal) {
+              navigate('KioskHome');
+              return;
+            }
           }}
         />
       </View>
@@ -98,3 +103,15 @@ export default function OrderSidebarPage({ children, ...props }) {
 }
 
 OrderSidebarPage.navigationOptions = FadeTransition.navigationOptions;
+
+export default function OrderSidebarPage({ children, ...props }) {
+  return <SidebarPage children={children} {...props} />;
+}
+
+OrderSidebarPage.navigationOptions = FadeTransition.navigationOptions;
+
+export function PortalOrderSidebarPage({ children, ...props }) {
+  return <SidebarPage children={children} isPortal {...props} />;
+}
+
+PortalOrderSidebarPage.navigationOptions = FadeTransition.navigationOptions;

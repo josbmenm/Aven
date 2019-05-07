@@ -1,7 +1,7 @@
 import React, { useState, memo } from 'react';
 import { View } from 'react-native';
 import FadeTransition from '../components/FadeTransition';
-import GenericPage from '../components/GenericPage';
+import SimplePage from '../components/SimplePage';
 import RowSection from '../components/RowSection';
 import Hero from '../components/Hero';
 import LinkRow from '../components/LinkRow';
@@ -24,12 +24,12 @@ const menu = require('./exampleMenu.json');
 
 function CartSidebarExample(props) {
   return (
-    <GenericPage {...props}>
+    <SimplePage {...props}>
       <CartSidebar {...props} />
-    </GenericPage>
+    </SimplePage>
   );
 }
-CartSidebarExample.navigationOptions = GenericPage.navigationOptions;
+CartSidebarExample.navigationOptions = SimplePage.navigationOptions;
 
 function CustomizationExample(props) {
   let [customization, setCustomization] = useState({});
@@ -129,14 +129,15 @@ const Components = {
 
 function ComponentPlaygroundScreenMemo({ navigation, ...props }) {
   return (
-    <GenericPage
+    <SimplePage
       backBehavior={() => {
         navigation.goBack();
       }}
       navigation={navigation}
       {...props}
+      title="Components"
+      icon="🍹"
     >
-      <Hero title="Components" icon="🍹" />
       <RowSection>
         {Object.keys(Components).map(componentName => {
           const { icon } = Components[componentName];
@@ -152,7 +153,7 @@ function ComponentPlaygroundScreenMemo({ navigation, ...props }) {
           );
         })}
       </RowSection>
-    </GenericPage>
+    </SimplePage>
   );
 }
 const ComponentPlaygroundScreen = memo(ComponentPlaygroundScreenMemo);

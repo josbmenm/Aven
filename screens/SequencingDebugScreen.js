@@ -551,8 +551,8 @@ export default function SequencingDebugScreen(props) {
   return (
     <TwoPanePage
       {...props}
-      title="Kitchen Sequencer"
-      icon="🧭"
+      title="Kitchen Manager"
+      icon="📋"
       afterSide={
         <ControlPanel
           restaurantState={restaurantState}

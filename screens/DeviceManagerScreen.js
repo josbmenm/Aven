@@ -19,7 +19,7 @@ import {
 } from '../card-reader/CardReader';
 import RowSection from '../components/RowSection';
 import TextRow from '../components/TextRow';
-import TwoPanePage from '../components/TwoPanePage';
+import SimplePage from '../components/SimplePage';
 import Row from '../components/Row';
 import BitRow from '../components/BitRow';
 import { rowStyle, rowTitleStyle, titleStyle } from '../components/Styles';
@@ -82,13 +82,13 @@ function DeviceRow({ device }) {
   );
 
   return (
-    <View>
-      <Text style={{ ...titleStyle }}>
-        {deviceState == undefined
+    <Row
+      title={
+        deviceState == undefined
           ? 'Loading..'
-          : (deviceState && deviceState.name) || 'Unnamed'}
-      </Text>
-      <Text>{device.deviceId}</Text>
+          : (deviceState && deviceState.name) || 'Unnamed'
+      }
+    >
       <View style={{ flexDirection: 'row' }}>
         <Button
           title={
@@ -126,7 +126,7 @@ function DeviceRow({ device }) {
           }}
         />
       </View>
-    </View>
+    </Row>
   );
 }
 
@@ -204,7 +204,7 @@ export default function DeviceManagerScreen(props) {
   );
   const devices = (devicesState && devicesState.devices) || [];
   return (
-    <TwoPanePage title="Device Manager" icon="📱" {...props}>
+    <SimplePage title="Device Manager" icon="📱" {...props}>
       <RootAuthenticationSection>
         <RowSection>
           {devices.map(device => (
@@ -212,8 +212,8 @@ export default function DeviceManagerScreen(props) {
           ))}
         </RowSection>
       </RootAuthenticationSection>
-    </TwoPanePage>
+    </SimplePage>
   );
 }
 
-DeviceManagerScreen.navigationOptions = TwoPanePage.navigationOptions;
+DeviceManagerScreen.navigationOptions = SimplePage.navigationOptions;

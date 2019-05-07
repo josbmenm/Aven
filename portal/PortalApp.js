@@ -47,7 +47,7 @@ import CloudContext from '../cloud-core/CloudContext';
 import ErrorContainer from '../cloud-react/ErrorContainer';
 import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
-import OrderSidebarPage from '../components/OrderSidebarPage';
+import { PortalOrderSidebarPage } from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { registerDispatcher } from '../card-reader/CardReader';
@@ -116,7 +116,24 @@ const OrderNavigator = createStackTransitionNavigator(
   },
   {
     alwaysTopRoute: null,
-    ContainerView: OrderSidebarPage,
+    ContainerView: PortalOrderSidebarPage,
+  },
+);
+
+const KioskNavigator = createStackTransitionNavigator(
+  {
+    KioskHome: KioskHomeScreen,
+    OrderConfirm: OrderConfirmScreen,
+    OrderComplete: OrderCompleteScreen,
+    CollectName: CollectNameScreen,
+    SendReceipt: SendReceiptScreen,
+    Receipt: ReceiptScreen,
+    AppUpsell: AppUpsellScreen,
+    OrderNavigator,
+  },
+  {
+    alwaysTopRoute: 'KioskHome',
+    ContainerView: OrderContextProvider,
   },
 );
 
@@ -144,21 +161,14 @@ const OrderNavigator = createStackTransitionNavigator(
 
 const App = createStackTransitionNavigator({
   Home: HomeScreen,
+  Kiosk: KioskNavigator,
   ComponentPlayground: ComponentPlaygroundScreen,
   KitchenEng: KitchenEngScreen,
   KitchenEngSub: KitchenEngSubScreen,
   KioskSettings: KioskSettingsScreen,
-  KioskHome: KioskHomeScreen,
-  OrderConfirm: OrderConfirmScreen,
   DeviceManager: DeviceManagerScreen,
-  OrderComplete: OrderCompleteScreen,
-  CollectName: CollectNameScreen,
-  SendReceipt: SendReceiptScreen,
-  Receipt: ReceiptScreen,
   PaymentDebug: PaymentDebugScreen,
   SequencingDebug: SequencingDebugScreen,
-  AppUpsell: AppUpsellScreen,
-  OrderNavigator,
 });
 
 const AppContainer = createAppContainer(App);
@@ -177,7 +187,7 @@ function renderAppError({ error, errorInfo, onRetry }) {
   );
 }
 
-const NAV_STORAGE_KEY = 'NavigationState-N3e26u1o';
+const NAV_STORAGE_KEY = 'NavigationState-N3e2u121o';
 function FullApp() {
   const cloud = useCloudProvider({
     source: cloudSource,
