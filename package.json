@@ -48,7 +48,6 @@
     "react-navigation-transitioner": "^1.0.0-alpha.3",
     "rxjs": "^6.3.3",
     "rxjs-compat": "^6.3.3",
-    "sqlite3": "^4.0.4",
     "square-connect": "^2.20180918.0",
     "stripe": "^6.19.0",
     "wget-improved": "^3.0.1",
