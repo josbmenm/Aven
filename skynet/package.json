@@ -7,19 +7,7 @@
       "deployEnv": "Heroku",
       "herokuAppName": "ono-skynet",
       "mainServer": "MainServer.js",
-      "mainClient": "MainClient.js",
-      "knexFile": {
-        "development": {
-          "client": "sqlite3",
-          "useNullAsDefault": true,
-          "migrations": {
-            "directory": "src/sync/cloud-postgres/migrations"
-          },
-          "connection": {
-            "filename": "cloud.sqlite"
-          }
-        }
-      }
+      "mainClient": "MainClient.js"
     },
     "srcDependencies": [
       "stripe-server",
@@ -38,7 +26,6 @@
       "cloud-postgres"
     ],
     "moduleDependencies": [
-      "sqlite3",
       "mjml",
       "mjml-react",
       "@react-navigation/core",

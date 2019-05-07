@@ -25,7 +25,6 @@
       "mjml-react",
       "mjml",
       "stripe",
-      "sqlite3",
       "fbjs",
       "ws",
       "rxjs-compat",

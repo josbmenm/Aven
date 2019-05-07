@@ -10,19 +10,7 @@
       "mainServer": "MainServer.js",
       "mainClient": "MainClient.js",
       "deployEnv": "Script",
-      "deployScript": "deploy.sh",
-      "knexFile": {
-        "development": {
-          "client": "sqlite3",
-          "useNullAsDefault": true,
-          "migrations": {
-            "directory": "src/sync/cloud-postgres/migrations"
-          },
-          "connection": {
-            "filename": "cloud.sqlite"
-          }
-        }
-      }
+      "deployScript": "deploy.sh"
     },
     "srcDependencies": [
       "logic",
@@ -41,7 +29,6 @@
     "moduleDependencies": [
       "mjml-react",
       "mjml",
-      "sqlite3",
       "fbjs",
       "ws",
       "rxjs-compat",
