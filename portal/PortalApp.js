@@ -69,7 +69,7 @@ const RESTAURANT_PROD = {
   // useSSL: false,
   useSSL: true,
   // authority: 'restaurant0.maui.onofood.co:8830',
-  authority: 'www.onofood.co',
+  authority: 'onofood.co',
 };
 
 const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;

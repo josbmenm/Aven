@@ -4,7 +4,7 @@ import Image, { loadImages } from './Image';
 const md5 = require('crypto-js/md5');
 const path = require('path');
 
-let authority = 'www.onofood.co';
+let authority = 'onofood.co';
 let useSSL = true;
 
 export function setHostConfig(config) {
