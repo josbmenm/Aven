@@ -28,7 +28,7 @@ export default function createConnectionService(StripeTerminal, options) {
       this.policy = policy;
       this.deviceType = deviceType || StripeTerminal.DeviceTypeChipper2X;
       this.discoveryMode =
-        discoveryMode || StripeTerminal.DiscoveryMethodBluetoothScan;
+        discoveryMode || StripeTerminal.DiscoveryMethodBluetoothProximity;
 
       if (STCS.Policies.indexOf(policy) === -1) {
         throw new Error(

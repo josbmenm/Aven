@@ -52,6 +52,7 @@ StripeTerminal.addLogListener(addCardReaderLogEvent);
 
 const stripeTerminalService = StripeTerminal.startService({
   policy: 'persist-manual',
+  discoveryMode: StripeTerminal.DiscoveryMethodBluetoothScan,
   deviceType: USE_SIMULATOR
     ? StripeTerminal.DeviceTypeReaderSimulator
     : StripeTerminal.DeviceTypeChipper2X,
