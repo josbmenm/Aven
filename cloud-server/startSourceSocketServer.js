@@ -100,7 +100,9 @@ export default function startSourceSocketServer(wss, source) {
                     domain,
                     doc,
                     auth,
-                  )).subscribe(observer);
+                  ))
+                    .distinctUntilChanged()
+                    .subscribe(observer);
                 } catch (e) {
                   observer.error(e);
                 }
