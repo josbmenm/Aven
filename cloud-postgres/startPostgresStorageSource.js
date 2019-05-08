@@ -227,15 +227,11 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function notifyDocCreation(domain, docName) {
-    const parentSlashIndex = docName.lastIndexOf('/');
-    const parent =
-      parentSlashIndex === -1 ? null : docName.slice(0, parentSlashIndex);
-    const localName =
-      parentSlashIndex === -1 ? docName : docName.slice(parentSlashIndex + 1);
-    const channelId = getChildrenChannel(domain, parent);
+    const ctx = await getContext(domain, docName);
+    const channelId = getChildrenChannel(domain, ctx.parentId);
     const payload = JSON.stringify({
       type: 'AddChildDoc',
-      name: localName,
+      name: ctx.localName,
       domain,
     });
     // todo: avoid injection attack probably, with bad channel id?
@@ -243,36 +239,32 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function notifyDocDestroy(domain, docName) {
-    const parentSlashIndex = docName.lastIndexOf('/');
-    const parent =
-      parentSlashIndex === -1 ? null : docName.slice(0, parentSlashIndex);
-    const localName =
-      parentSlashIndex === -1 ? docName : docName.slice(parentSlashIndex + 1);
-    const channelId = getChildrenChannel(domain, parent);
+    const ctx = await getContext(domain, docName);
+    const channelId = getChildrenChannel(domain, ctx.parentId);
     const payload = JSON.stringify({
       type: 'DestroyChildDoc',
-      name: localName,
+      name: ctx.localName,
       domain,
     });
     // todo: avoid injection attack probably, with bad channel id?
     await knex.raw(`NOTIFY "${channelId}", ${pgFormat.literal(payload)}`);
   }
 
-  async function notifyDocWrite(domain, docName, currentBlockId) {
-    const channelId = getDocChannel(domain, docName);
+  async function notifyDocWrite(domain, parentId, docName, currentBlockId) {
+    const channelId = getDocChannel(domain, parentId, docName);
     const payload = JSON.stringify({ id: currentBlockId });
     // todo: avoid injection attack probably, with bad channel id?
     await knex.raw(`NOTIFY "${channelId}", ${pgFormat.literal(payload)}`);
   }
 
-  async function writeDoc(domain, parentId, name, currentBlockId) {
+  async function writeDoc(domain, parentId, localName, currentBlockId) {
     const internalParentId = getInternalParentId(parentId);
     const writeResult = await knex.raw(
-      `INSERT INTO docs ("name", "domainName", "currentBlock", "parentId") VALUES (:name, :domain, :current, :parentId)
+      `INSERT INTO docs ("name", "domainName", "currentBlock", "parentId") VALUES (:localName, :domain, :current, :parentId)
           ON CONFLICT ON CONSTRAINT "docIdentity" DO UPDATE SET "prevBlock" = docs."currentBlock", "currentBlock" = :current
           RETURNING "docId", "currentBlock", "prevBlock";`,
       {
-        name,
+        localName,
         domain,
         current: currentBlockId,
         parentId: internalParentId,
@@ -280,7 +272,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     );
     const resultRow = writeResult.rows[0];
     if (resultRow.prevBlock !== currentBlockId) {
-      await notifyDocWrite(domain, name, currentBlockId);
+      await notifyDocWrite(domain, parentId, localName, currentBlockId);
     }
   }
 
@@ -320,7 +312,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     if (!resp.rows.length) {
       throw new Error('Could not perform this transaction!');
     }
-    await notifyDocWrite(domain, name, currentBlock);
+    await notifyDocWrite(domain, internalParentId, name, currentBlock);
   }
 
   async function PutDocValue({ domain, value, name }) {
@@ -594,15 +586,16 @@ export default async function startPostgresStorageSource({ config, domains }) {
     return obs.observable;
   }
 
-  function getDocChannel(domain, name) {
-    return `doc-${domain}-${name}`;
+  function getDocChannel(domain, parentId, name) {
+    return `doc-${domain}-${parentId}-${name}`;
   }
-  function getChildrenChannel(domain, name) {
-    return `doc-children-${domain}-${name}`;
+  function getChildrenChannel(domain, parentId) {
+    return `doc-children-${domain}-${parentId}`;
   }
 
   async function observeDoc(domain, name) {
-    const channelId = getDocChannel(domain, name);
+    const ctx = await getContext(domain, name, false);
+    const channelId = getDocChannel(domain, ctx.parentId, ctx.localName);
 
     if (observingChannels[channelId]) {
       return observingChannels[channelId].observable;
@@ -637,8 +630,9 @@ export default async function startPostgresStorageSource({ config, domains }) {
     observingChannels[channelId] = obs;
     return obs.observable;
   }
-  async function observeDocChildren(...args) {
-    return getCachedObervable(args, getChildrenChannel);
+  async function observeDocChildren(domain, docName) {
+    const { id } = await getContext(domain, docName);
+    return getCachedObervable([domain, id], getChildrenChannel);
   }
   return {
     isConnected,
