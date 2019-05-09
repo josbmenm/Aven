@@ -17,7 +17,7 @@ import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import createEvalSource from '../cloud-core/createEvalSource';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
-import sendReceipt from './sendReceipt';
+import sendReceipt from '../skynet/sendReceipt';
 import RestaurantReducer from '../logic/RestaurantReducer';
 
 import startKitchen, { computeKitchenConfig } from './startKitchen';

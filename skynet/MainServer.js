@@ -10,6 +10,7 @@ import createFSClient from '../cloud-server/createFSClient';
 
 import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
 
+import sendReceipt from './sendReceipt';
 import { hashSecureString } from '../cloud-utils/Crypto';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
@@ -191,6 +192,8 @@ const runServer = async () => {
 
   const dispatch = async action => {
     switch (action.type) {
+      case 'SendReceipt':
+        return await sendReceipt({ smsAgent, emailAgent, action });
       case 'PlaceOrder':
         return placeOrder(action);
       case 'StripeGetConnectionToken':
