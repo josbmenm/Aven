@@ -361,7 +361,9 @@ export function useOrderItem(orderItemId) {
       order &&
       order.map(orderState => {
         const item =
-          orderState.items && orderState.items.find(i => i.id === orderItemId);
+          orderState &&
+          orderState.items &&
+          orderState.items.find(i => i.id === orderItemId);
         return item && itemMapper(item);
       });
 

@@ -18,7 +18,7 @@ const { interpolate } = Animated;
 
 export const SidebarOverlayContext = createContext({});
 
-function SidebarPage({ children, ...props }) {
+function SidebarPage({ children, isPortal, ...props }) {
   const { navigate } = useNavigation();
   const summary = useOrderSummary();
   const { cancelOrder } = useOrder();

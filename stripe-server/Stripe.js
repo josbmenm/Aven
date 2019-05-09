@@ -17,7 +17,25 @@ export const capturePayment = async action => {
 
   const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
-  console.log('capturePayment paymentIntent!', paymentIntent, paymentIntentId);
+  const source = await stripe.sources.retrieve(paymentIntent.source);
+
+  console.log(
+    'capturePayment paymentIntent!',
+    source,
+    paymentIntent,
+    paymentIntentId,
+  );
 
   return {};
 };
+
+export async function handleStripeAction(action) {
+  switch (action.type) {
+    case 'StripeGetConnectionToken':
+      return getConnectionToken(action);
+    case 'StripeCapturePayment':
+      return capturePayment(action);
+    default:
+      return undefined;
+  }
+}

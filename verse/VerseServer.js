@@ -21,7 +21,7 @@ import sendReceipt from '../skynet/sendReceipt';
 import RestaurantReducer from '../logic/RestaurantReducer';
 
 import startKitchen, { computeKitchenConfig } from './startKitchen';
-import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
+import { handleStripeAction } from '../stripe-server/Stripe';
 import { computeNextStep } from '../logic/KitchenSequence';
 import {
   companyConfigToBlendMenu,
@@ -61,7 +61,7 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
-const runServer = async () => {
+const startVerseServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨 ');
 
   const pgConfig = {
@@ -499,6 +499,10 @@ const runServer = async () => {
   }
 
   const dispatch = async action => {
+    let stripeResponse = handleStripeAction(action);
+    if (stripeResponse) {
+      return stripeResponse;
+    }
     switch (action.type) {
       case 'KitchenCommand': {
         // low level thing
@@ -514,10 +518,6 @@ const runServer = async () => {
         return await kitchenAction(action);
       case 'UpdateAirtable':
         return await scrapeAirTable(fsClient);
-      case 'StripeGetConnectionToken':
-        return getConnectionToken(action);
-      case 'StripeCapturePayment':
-        return capturePayment(action);
       case 'PlaceOrder':
         return placeOrder(action);
       default:
@@ -559,4 +559,4 @@ const runServer = async () => {
   };
 };
 
-export default runServer;
+export default startVerseServer;

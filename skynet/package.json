@@ -6,7 +6,7 @@
     "envOptions": {
       "deployEnv": "Heroku",
       "herokuAppName": "ono-skynet",
-      "mainServer": "MainServer.js",
+      "mainServer": "SkynetServer.js",
       "mainClient": "MainClient.js"
     },
     "srcDependencies": [

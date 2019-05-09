@@ -7,7 +7,7 @@
     "env": "razzle",
     "publicAssetDir": "public",
     "envOptions": {
-      "mainServer": "MainServer.js",
+      "mainServer": "VerseServer.js",
       "mainClient": "MainClient.js",
       "deployEnv": "Script",
       "deployScript": "deploy.sh"

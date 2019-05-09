@@ -28,7 +28,7 @@ const getEnv = c => process.env[c];
 
 const ONO_ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
-const runServer = async () => {
+const startSkynetServer = async () => {
   console.log('☁️ Starting Website 💨');
 
   const domain = 'onofood.co';
@@ -235,4 +235,4 @@ const runServer = async () => {
   };
 };
 
-export default runServer;
+export default startSkynetServer;
