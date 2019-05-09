@@ -50,12 +50,12 @@ import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource
 import useCloudProvider from '../components/useCloudProvider';
 import { titleStyle } from '../components/Styles';
 
-const IS_DEV = process.env.NODE_ENV !== 'production';
-// const IS_DEV = false;
+let IS_DEV = process.env.NODE_ENV !== 'production';
+IS_DEV = false;
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  authority: '192.168.1.9:8840', // office laptop (skynet)
+  authority: '192.168.1.29:8840', // office laptop (skynet)
   // authority: '192.168.1.29:8830', // office laptop
   // authority: 'localhost:8830', // generic simulator
   // authority: 'restaurant0.maui.onofood.co:8830', // prod test

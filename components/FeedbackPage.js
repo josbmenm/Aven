@@ -15,7 +15,7 @@ export default function FeedbackPage({ onSubmit, hideBackButton, ...props }) {
   }
   const inputRenderers = [
     inputProps => (
-      <BlockFormRow>
+      <BlockFormRow key="comment">
         <BlockFormInput
           label={'additional comments..'}
           mode="description"

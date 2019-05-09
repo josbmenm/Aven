@@ -21,9 +21,10 @@ export const capturePayment = async action => {
 
   console.log(
     'capturePayment paymentIntent!',
-    source,
-    paymentIntent,
+    paymentIntent.amount_received,
     paymentIntentId,
+    paymentIntent.source,
+    source.card_present && source.card_present.fingerprint,
   );
 
   return {};
