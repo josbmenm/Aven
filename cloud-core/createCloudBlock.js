@@ -74,14 +74,14 @@ export default function createCloudBlock({
   }
 
   const observe = Observable.create(observer => {
-    fetch()
-      .then(() => {})
-      .catch(console.error); // todo improve async error handling, set err state, etc..
     const upstreamSubscription = blockState.subscribe({
       next: val => {
         observer.next(val);
       },
     });
+    fetch()
+      .then(() => {})
+      .catch(console.error); // todo improve async error handling, set err state, etc..
     return () => {
       upstreamSubscription && upstreamSubscription.unsubscribe();
     };

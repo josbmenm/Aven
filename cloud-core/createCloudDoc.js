@@ -421,36 +421,49 @@ export default function createCloudDoc({
     }
     return getValue();
   }
-  const observe = Observable.create(observer => {
-    // todo, re-observe when name changes!!
-    let upstreamSubscription = null;
-    const myName = getFullName();
-    source.observeDoc(domain, myName).then(upstreamObs => {
-      setState({ isConnected: true });
-      upstreamSubscription = upstreamObs.subscribe({
-        next: upstreamDoc => {
-          if (upstreamDoc === undefined) {
+  const observe = docName
+    .switchMap(currentDocName => {
+      return Observable.create(observer => {
+        console.log('observing', currentDocName);
+        let hasObserved = false;
+        let upstreamSubscription = null;
+        function maybeStartRemoteObservation() {
+          if (!getState().isPosted || hasObserved) {
+            // we are not going to observe something which has not been posted yet
             return;
           }
-          setState({
-            id: upstreamDoc.id,
-            lastSyncTime: Date.now(),
-            value: upstreamDoc.value,
+          hasObserved = true;
+          source.observeDoc(domain, currentDocName).then(upstreamObs => {
+            setState({ isConnected: true });
+            upstreamSubscription = upstreamObs.subscribe({
+              next: upstreamDoc => {
+                console.log('upstream doc, yo!', upstreamDoc);
+                if (upstreamDoc === undefined) {
+                  return;
+                }
+                setState({
+                  id: upstreamDoc.id,
+                  lastSyncTime: Date.now(),
+                  value: upstreamDoc.value,
+                });
+              },
+            });
           });
-        },
-      });
-    });
+        }
+        maybeStartRemoteObservation();
 
-    const stateSubscription = docState.subscribe({
-      next: val => {
-        observer.next(val);
-      },
-    });
-    return () => {
-      stateSubscription.unsubscribe();
-      upstreamSubscription.unsubscribe();
-    };
-  })
+        const stateSubscription = docState.subscribe({
+          next: val => {
+            observer.next(val);
+            maybeStartRemoteObservation();
+          },
+        });
+        return () => {
+          stateSubscription.unsubscribe();
+          upstreamSubscription && upstreamSubscription.unsubscribe();
+        };
+      });
+    })
     .multicast(() => new BehaviorSubject(docState.value))
     .refCount();
   function _getBlockWithId(id) {
@@ -892,17 +905,16 @@ export default function createCloudDoc({
     return block.observeValue;
   });
 
-  const observeValueAndId = observe.switchMap(cloudDocValue => {
-    if (!cloudDocValue.isConnected) {
-      return Observable.of({ getId: () => undefined, value: undefined });
-    }
-    if (!cloudDocValue.id) {
-      const falseyId = cloudDocValue.id;
-      return Observable.of({ getId: () => falseyId, value: undefined });
-    }
-    const block = _getBlockWithId(cloudDocValue.id);
-    return block.observeValueAndId;
-  });
+  const observeValueAndId = observe
+    .map(s => s && s.id)
+    .distinctUntilChanged()
+    .switchMap(docId => {
+      if (!docId) {
+        return Observable.of({ getId: () => docId, value: undefined });
+      }
+      const block = _getBlockWithId(docId);
+      return block.observeValueAndId;
+    });
 
   const overriddenFunctionResults = new Map();
 
