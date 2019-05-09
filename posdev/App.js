@@ -17,7 +17,7 @@ YellowBox.ignoreWarnings([
 
 const cloudSource = createNativeNetworkSource({
   useSSL: false,
-  authority: 'localhost:8808',
+  authority: '192.168.1.9:8808',
 });
 
 registerDispatcher(cloudSource.dispatch);

@@ -44,7 +44,11 @@ function PageTitle({ title }) {
   );
 }
 
-export default function OrderCompletePage({ backBehavior, ...props }) {
+export default function OrderCompletePage({
+  backBehavior,
+  backRouteName,
+  ...props
+}) {
   const { navigate } = useNavigation();
   let [countdown, setCountdown] = useState(10);
   let countRef = useRef({
@@ -58,7 +62,7 @@ export default function OrderCompletePage({ backBehavior, ...props }) {
     function doCount() {
       let count = countRef.current.count;
       if (count === 0) {
-        navigate('KioskHome');
+        navigate(backRouteName);
         return;
       } else if (count > 0) {
         const nextCount = count - 1;
@@ -112,7 +116,7 @@ export default function OrderCompletePage({ backBehavior, ...props }) {
             navigate('Home');
           }}
           onPress={() => {
-            navigate('KioskHome');
+            navigate(backRouteName);
           }}
         />
       </View>

@@ -4,7 +4,7 @@ import useEmptyOrderEscape from './useEmptyOrderEscape';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import ReceiptPage from '../components/ReceiptPage';
 
-export default function ReceiptScreen({ props }) {
+export default function ReceiptScreen({ ...props }) {
   const { navigate } = useNavigation();
   const { resetOrder } = useOrder();
   useEmptyOrderEscape();

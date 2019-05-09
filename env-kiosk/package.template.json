@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "react": "next",
+    "appcenter-analytics": "^1.13.0",
+    "appcenter-crashes": "^1.13.0",
     "react-native": "^0.59.4",
     "react-native-blur": "^3.2.2",
     "react-native-code-push": "^5.6.0",

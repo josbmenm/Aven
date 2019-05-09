@@ -34,7 +34,7 @@ import SequencingDebugScreen from '../screens/SequencingDebugScreen';
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
 import DeviceManagerScreen from '../screens/DeviceManagerScreen';
-import OrderCompleteScreen from '../screens/OrderCompleteScreen';
+import { OrderCompletePortalScreen } from '../screens/OrderCompleteScreen';
 import CollectNameScreen from '../screens/CollectNameScreen';
 import SendReceiptScreen from '../screens/SendReceiptScreen';
 import ReceiptScreen from '../screens/ReceiptScreen';
@@ -124,7 +124,6 @@ const KioskNavigator = createStackTransitionNavigator(
   {
     KioskHome: KioskHomeScreen,
     OrderConfirm: OrderConfirmScreen,
-    OrderComplete: OrderCompleteScreen,
     CollectName: CollectNameScreen,
     SendReceipt: SendReceiptScreen,
     Receipt: ReceiptScreen,
@@ -137,30 +136,11 @@ const KioskNavigator = createStackTransitionNavigator(
   },
 );
 
-// const App = createStackTransitionNavigator({
-//   // Home: HomeScreen,
-//   // ComponentPlayground: ComponentPlaygroundScreen,
-//   // KitchenEng: KitchenEngScreen,
-//   // KitchenEngSub: KitchenEngSubScreen,
-//   // KioskSettings: KioskSettingsScreen,
-//   KioskHome: KioskHomeScreen,
-//   // Blend: BlendScreen,
-//   // CustomizeBlend: CustomizeBlendScreen,
-//   // Food: FoodScreen,
-//   // ProductHome: ProductHomeScreen,
-//   OrderConfirm: OrderConfirmScreen,
-//   OrderComplete: OrderCompleteScreen,
-//   CollectName: CollectNameScreen,
-//   SendReceipt: SendReceiptScreen,
-//   Receipt: ReceiptScreen,
-//   PaymentDebug: PaymentDebugScreen,
-//   SequencingDebug: SequencingDebugScreen,
-//   AppUpsell: AppUpsellScreen,
-//   OrderNavigator,
-// });
+process.env.REACT_NAV_LOGGING = true;
 
 const App = createStackTransitionNavigator({
   Home: HomeScreen,
+  OrderComplete: OrderCompletePortalScreen,
   Kiosk: KioskNavigator,
   ComponentPlayground: ComponentPlaygroundScreen,
   KitchenEng: KitchenEngScreen,

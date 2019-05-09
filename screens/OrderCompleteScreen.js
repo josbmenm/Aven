@@ -1,10 +1,23 @@
 import React from 'react';
-import useEmptyOrderEscape from './useEmptyOrderEscape';
 import OrderCompletePage from '../components/OrderCompletePage';
 
-export default function OrderCompleteScreen({ props }) {
-  useEmptyOrderEscape();
-  return <OrderCompletePage {...props} backBehavior={null} />;
+export default function OrderCompleteScreen({ ...props }) {
+  return (
+    <OrderCompletePage
+      {...props}
+      backBehavior={null}
+      backRouteName="KioskHome"
+    />
+  );
 }
 
 OrderCompleteScreen.navigationOptions = OrderCompletePage.navigationOptions;
+
+export function OrderCompletePortalScreen({ ...props }) {
+  return (
+    <OrderCompletePage {...props} backBehavior={null} backRouteName="Home" />
+  );
+}
+
+OrderCompletePortalScreen.navigationOptions =
+  OrderCompletePage.navigationOptions;

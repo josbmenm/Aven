@@ -41,6 +41,7 @@ const runServer = async () => {
     host: getEnv('SQL_HOST'),
   };
 
+  console.log('Starting PG connection');
   const storageSource = await startPostgresStorageSource({
     domains: [domain],
     config: {
@@ -130,28 +131,68 @@ const runServer = async () => {
     });
   }
 
-  await putPermission({
-    defaultRule: { canPost: true },
-    name: 'Orders',
-  });
+  async function applyPermissions() {
+    console.log('Putting Permission.. Orders');
+    await putPermission({
+      defaultRule: { canPost: true },
+      name: 'Orders',
+    });
 
-  await putPermission({
-    defaultRule: { canPost: true },
-    name: 'CustomerFeedback',
-  });
+    console.log('Putting Permission.. Airtable');
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'Airtable',
+    });
 
-  await putPermission({
-    defaultRule: { canWrite: true, canRead: true },
-    name: 'DeviceActions',
-  });
+    console.log('Putting Permission.. CustomerFeedback');
+    await putPermission({
+      defaultRule: { canPost: true },
+      name: 'CustomerFeedback',
+    });
 
-  await putPermission({
-    defaultRule: { canRead: true },
-    name: 'DeviceActions^DevicesReducer',
-  });
+    console.log('Putting Permission.. DeviceActions');
+    await putPermission({
+      defaultRule: { canWrite: true, canRead: true },
+      name: 'DeviceActions',
+    });
+
+    console.log('Putting Permission.. DeviceActions^DevicesReducer');
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'DeviceActions^DevicesReducer',
+    });
+  }
+
+  applyPermissions()
+    .then(() => {
+      console.log('Done applying permissions!');
+    })
+    .catch(console.error);
+
+  async function placeOrder({ orderId }) {
+    console.log('placing order..', orderId);
+
+    const inputOrder = unprotectedCloud.get(`Orders/${orderId}`);
+    await inputOrder.fetchValue();
+    const order = inputOrder.getValue();
+    console.log('placing order..', order);
+
+    if (!order) {
+      throw new Error('Could not find order');
+    }
+
+    await unprotectedCloud.get('OrderActions').putTransaction({
+      type: 'PlaceOrder',
+      order,
+    });
+
+    return {};
+  }
 
   const dispatch = async action => {
     switch (action.type) {
+      case 'PlaceOrder':
+        return placeOrder(action);
       case 'StripeGetConnectionToken':
         return getConnectionToken(action);
       case 'StripeCapturePayment':

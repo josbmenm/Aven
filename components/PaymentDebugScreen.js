@@ -261,6 +261,12 @@ export default function PaymentDebugScreen(props) {
     <SimplePage title="Card Reader Debugging" icon="💸" {...props}>
       <RowSection>
         <Button
+          title="HOME"
+          onPress={() => {
+            props.navigation.navigate('Home');
+          }}
+        />
+        <Button
           title="Test useCardReaderConnectionManager"
           onPress={() => {
             setManager(!isShowingManager);
