@@ -259,20 +259,31 @@ export default async function startPostgresStorageSource({ config, domains }) {
 
   async function writeDoc(domain, parentId, localName, currentBlockId) {
     const internalParentId = getInternalParentId(parentId);
-    const writeResult = await knex.raw(
-      `INSERT INTO docs ("name", "domainName", "currentBlock", "parentId") VALUES (:localName, :domain, :current, :parentId)
+    try {
+      const writeResult = await knex.raw(
+        `INSERT INTO docs ("name", "domainName", "currentBlock", "parentId") VALUES (:localName, :domain, :current, :parentId)
           ON CONFLICT ON CONSTRAINT "docIdentity" DO UPDATE SET "prevBlock" = docs."currentBlock", "currentBlock" = :current
           RETURNING "docId", "currentBlock", "prevBlock";`,
-      {
-        localName,
-        domain,
-        current: currentBlockId,
-        parentId: internalParentId,
-      },
-    );
-    const resultRow = writeResult.rows[0];
-    if (resultRow.prevBlock !== currentBlockId) {
-      await notifyDocWrite(domain, parentId, localName, currentBlockId);
+        {
+          localName,
+          domain,
+          current: currentBlockId,
+          parentId: internalParentId,
+        },
+      );
+      const resultRow = writeResult.rows[0];
+      if (resultRow.prevBlock !== currentBlockId) {
+        await notifyDocWrite(domain, parentId, localName, currentBlockId);
+      }
+    } catch (e) {
+      if (e.message.match(/docs_currentblock_foreign/)) {
+        throw new Err(
+          `Could not PutDoc because doc id "${currentBlockId}" is unknown.`,
+          'UknownBlock',
+          { blockId: currentBlockId },
+        );
+      }
+      throw e;
     }
   }
 
