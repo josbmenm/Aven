@@ -4,7 +4,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#4a9c7f3b40330fd46ab9f364ac78bb79d77cbf22"
+  resolved "https://github.com/AvenCloud/Aven.git#cc657b01af1d1e0b0bfcde6b5d21ed3e513445a3"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     "@expo/vector-icons" "^8.0.0"
@@ -6881,9 +6881,9 @@ pg-types@~2.0.0:
     postgres-interval "^1.1.0"
 
 pg@^7.5.0:
-  version "7.10.0"
-  resolved "https://registry.yarnpkg.com/pg/-/pg-7.10.0.tgz#2a359ee29ed1971344ac7f44317a9d1bcd80a8ff"
-  integrity sha512-aE6FZomsyn3OeGv1oM50v7Xu5zR75c15LXdOCwA9GGrfjXsQjzwYpbcTS6OwEMhYfZQS6m/FVU/ilPLiPzJDCw==
+  version "7.11.0"
+  resolved "https://registry.yarnpkg.com/pg/-/pg-7.11.0.tgz#a8b9ae9cf19199b7952b72957573d0a9c5e67c0c"
+  integrity sha512-YO4V7vCmEMGoF390LJaFaohWNKaA2ayoQOEZmiHVcAUF+YsRThpf/TaKCgSvsSE7cDm37Q/Cy3Gz41xiX/XjTw==
   dependencies:
     buffer-writer "2.0.0"
     packet-reader "1.0.0"
@@ -7292,9 +7292,9 @@ react-native-safe-area-view@^0.11.0:
     hoist-non-react-statics "^2.3.1"
 
 react-native-safe-area-view@^0.13.0:
-  version "0.13.1"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-view/-/react-native-safe-area-view-0.13.1.tgz#834bbb6d22f76a7ff07de56725ee5667ba1386b0"
-  integrity sha512-d/pu2866jApSwLtK/xWAvMXZkNTIQcFrjjbcTATBrmIfFNnu8TNFUcMRFpfJ+eOn5nmx7uGmDvs9B53Ft7JGpQ==
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-view/-/react-native-safe-area-view-0.13.2.tgz#fd8245182cfa3240dcc679b010cff43ad32cecb1"
+  integrity sha512-UEeoHi7HXObKd111RKZa6a+aQdxLHlngfaoM3UBgeDDc+7BU7Vd54DSzFFWDL3lwFhieTSvLh6z89jHDypA9KQ==
   dependencies:
     hoist-non-react-statics "^2.3.1"
 
@@ -7403,7 +7403,7 @@ react-navigation-stack@1.0.0-alpha.22:
 
 "react-navigation-stack@https://github.com/react-navigation/react-navigation-stack":
   version "1.3.0"
-  resolved "https://github.com/react-navigation/react-navigation-stack#e83795bd4cbfc6daf6afcc430c0594f550c7f2af"
+  resolved "https://github.com/react-navigation/react-navigation-stack#10fe551fce95429851b322c2c1a8a5a2e185af27"
 
 react-navigation-transitioner@^1.0.0-alpha.3:
   version "1.0.0-alpha.3"
@@ -7854,14 +7854,14 @@ rx-lite@*, rx-lite@^4.0.8:
   integrity sha1-Cx4Rr4vESDbwSmQH6S2kJGe3lEQ=
 
 rxjs-compat@^6.3.3:
-  version "6.5.1"
-  resolved "https://registry.yarnpkg.com/rxjs-compat/-/rxjs-compat-6.5.1.tgz#de928292c633a9a5f2f54a4431e6f9c468001c68"
-  integrity sha512-k0aaMAYFg+DCIUxo3yJcUamFRenWLR23e/VJCQvKOxwSd9DQlwcSn2ov+7b23rKaX4weKG7OrzEBWGqQPkQ07A==
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/rxjs-compat/-/rxjs-compat-6.5.2.tgz#e469070adf6260bdad195e9d4a39f444ae28b458"
+  integrity sha512-TRMkTp4FgSxE2HtGvxmgRukh3JqdFM7ejAj1Ti/VdodbPGfWvZR5+KdLKRV9jVDFyu2SknM8RD+PR54KGnoLjg==
 
 rxjs@^6.3.3, rxjs@^6.4.0:
-  version "6.5.1"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.1.tgz#f7a005a9386361921b8524f38f54cbf80e5d08f4"
-  integrity sha512-y0j31WJc83wPu31vS1VlAFW5JGrnGC+j+TtGAa1fRQphy48+fDYiDmX8tjGloToEsMkxnouOg/1IzXGKkJnZMg==
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.2.tgz#2e35ce815cd46d84d02a209fb4e5921e051dbec7"
+  integrity sha512-HUb7j3kvb7p7eCUHE3FqjoDsC1xfZQ4AHFWfTKSpZ+sAhhz5X1WX0ZuUqWbzB2QhSLp3DoLUG+hMdEDKqWo2Zg==
   dependencies:
     tslib "^1.9.0"
 

@@ -6,6 +6,7 @@
     "deploy": "./node_modules/@aven-cloud/aven/aven-tools/cli.js deploy",
     "start-skynet": "PORT=8840 ./node_modules/@aven-cloud/aven/aven-tools/cli.js start skynet",
     "deploy-skynet": "./node_modules/@aven-cloud/aven/aven-tools/cli.js deploy skynet",
+    "backup-skynet": "node script/BackupSkynet.js",
     "start-status": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start ono-kitchen-status",
     "start-verse": "PORT=8830 ./node_modules/@aven-cloud/aven/aven-tools/cli.js start verse",
     "start-blitz": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start blitz",
