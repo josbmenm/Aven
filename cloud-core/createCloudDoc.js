@@ -441,10 +441,15 @@ export default function createCloudDoc({
                 if (upstreamDoc === undefined) {
                   return;
                 }
+                if (upstreamDoc.id === getState().puttingFromId) {
+                  return; // we have an operation to change FROM this id, so another update is expected immenently
+                }
+                if (upstreamDoc.value !== undefined) {
+                  _getBlockWithValueAndId(upstreamDoc.value, upstreamDoc.id);
+                }
                 setState({
                   id: upstreamDoc.id,
                   lastSyncTime: Date.now(),
-                  value: upstreamDoc.value,
                 });
               },
             });
@@ -500,6 +505,9 @@ export default function createCloudDoc({
   }
 
   function _getBlockWithValueAndId(value, id) {
+    if (_docBlocks[id]) {
+      return _docBlocks[id];
+    }
     const block = createCloudBlock({
       dispatch: source.dispatch,
       onGetName: getFullName,
@@ -510,10 +518,6 @@ export default function createCloudDoc({
       blockValueCache,
       cloudDoc,
     });
-
-    if (_docBlocks[id]) {
-      return _docBlocks[id];
-    }
     return (_docBlocks[id] = block);
   }
 
@@ -891,10 +895,6 @@ export default function createCloudDoc({
   }
 
   const observeValue = observe.switchMap(cloudDocValue => {
-    if (cloudDocValue.value !== undefined) {
-      // ugh, what is this.. ? looks like we override the value someplace, when the doc's value is usually defined by the value of the connected block with id of docState.id
-      return Observable.of(cloudDocValue.value);
-    }
     if (!cloudDocValue.isConnected) {
       return Observable.of(undefined);
     }
