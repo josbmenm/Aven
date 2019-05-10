@@ -3,7 +3,7 @@ import createTransactionDataSource from '../createTransactionDataSource';
 
 beforeAll(async () => {});
 
-test('TransactDoc action', async () => {
+it('TransactDoc action', async () => {
   // this action behaves like PutDoc, but always forces the type and "on" to be set
 
   const ds = createMemoryStorageSource({ domain: 'test' });

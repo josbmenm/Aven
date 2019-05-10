@@ -5,7 +5,7 @@ export default function defineCloudReducer(
   reducerFn,
   initialState,
 ) {
-  const fn = ({ value, id }, doc, cloud, useValue) => {
+  const fn = ({ value, id }, doc, cloud, getValue) => {
     let state = initialState;
     if (value === undefined || value === null) {
       return state;
@@ -13,7 +13,7 @@ export default function defineCloudReducer(
     let action = value.value;
     if (value.on && value.on.id) {
       const ancestorName = `${doc.getFullName()}#${value.on.id}^${reducerName}`;
-      state = useValue(cloud.get(ancestorName));
+      state = getValue(cloud.get(ancestorName));
     }
     return reducerFn(state, action);
   };

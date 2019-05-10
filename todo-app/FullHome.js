@@ -33,7 +33,7 @@ export const TaskReducer = defineCloudReducer(
   [],
 );
 
-function getTaskActions() {
+function useTaskActions() {
   const cloud = useCloud();
   const actionsDoc = cloud.get('TaskActions');
   const dispatch = actionsDoc.putTransaction;
@@ -49,7 +49,7 @@ function useTasks() {
   const [tasks, dispatch] = useCloudReducer('TaskActions', TaskReducer);
   return {
     tasks,
-    ...getTaskActions(dispatch),
+    ...useTaskActions(dispatch),
   };
 }
 function InputTodo() {

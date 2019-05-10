@@ -21,7 +21,7 @@ export default function useAsyncStorage(storageKey, defaultValue) {
         }
       })
       .catch(console.error);
-  }, [storageKey]);
+  }, [defaultValue, storageKey]);
 
   function setStorageState(newState) {
     if (isStateUnloaded(storageState)) {

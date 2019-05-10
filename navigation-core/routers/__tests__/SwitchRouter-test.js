@@ -6,7 +6,7 @@ import StackRouter from '../StackRouter';
 import NavigationActions from '../../NavigationActions';
 
 describe('SwitchRouter', () => {
-  test('resets the route when unfocusing a tab by default', () => {
+  it('resets the route when unfocusing a tab by default', () => {
     const router = getExampleRouter();
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     const state2 = router.getStateForAction(
@@ -25,7 +25,7 @@ describe('SwitchRouter', () => {
     expect(state3.routes[0].routes.length).toEqual(1);
   });
 
-  test('does not reset the route on unfocus if resetOnBlur is false', () => {
+  it('does not reset the route on unfocus if resetOnBlur is false', () => {
     const router = getExampleRouter({ resetOnBlur: false });
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     const state2 = router.getStateForAction(
@@ -44,7 +44,7 @@ describe('SwitchRouter', () => {
     expect(state3.routes[0].routes.length).toEqual(2);
   });
 
-  test('ignores back by default', () => {
+  it('ignores back by default', () => {
     const router = getExampleRouter();
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     const state2 = router.getStateForAction(
@@ -61,7 +61,7 @@ describe('SwitchRouter', () => {
     expect(state3.index).toEqual(1);
   });
 
-  test('handles back if given a backBehavior', () => {
+  it('handles back if given a backBehavior', () => {
     const router = getExampleRouter({ backBehavior: 'initialRoute' });
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     const state2 = router.getStateForAction(
@@ -78,7 +78,7 @@ describe('SwitchRouter', () => {
     expect(state3.index).toEqual(0);
   });
 
-  test('handles nested actions', () => {
+  it('handles nested actions', () => {
     const router = getExampleRouter();
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     const state2 = router.getStateForAction(
@@ -94,7 +94,7 @@ describe('SwitchRouter', () => {
     expect(activeGrandChildRoute.routeName).toEqual('B2');
   });
 
-  test('explicit param mode guards against conflicting param names', () => {
+  it('explicit param mode guards against conflicting param names', () => {
     const PlainScreen = () => <div />;
     const SwitchA = () => <div />;
 
@@ -122,7 +122,7 @@ describe('SwitchRouter', () => {
     }).toThrow();
   });
 
-  test('explicit param mode parses path/params correctly', () => {
+  it('explicit param mode parses path/params correctly', () => {
     const PlainScreen = () => <div />;
     const SwitchA = () => <div />;
 
@@ -166,7 +166,7 @@ describe('SwitchRouter', () => {
     });
   });
 
-  test('explicit param mode throws error when setting missing params', () => {
+  it('explicit param mode throws error when setting missing params', () => {
     const PlainScreen = () => <div />;
     const router = SwitchRouter(
       {
@@ -201,7 +201,7 @@ describe('SwitchRouter', () => {
     ).toThrow();
   });
 
-  test('explicit param mode on deep conflicting param names', () => {
+  it('explicit param mode on deep conflicting param names', () => {
     const PlainScreen = () => <div />;
     const SwitchA = () => <div />;
     const SwitchFoo = () => <div />;
@@ -237,7 +237,7 @@ describe('SwitchRouter', () => {
     }).toThrow();
   });
 
-  test('inherit params', () => {
+  it('inherit params', () => {
     const PlainScreen = () => <div />;
     const SwitchA = () => <div />;
 
@@ -279,7 +279,7 @@ describe('SwitchRouter', () => {
     expect(activeChildRoute.params).toEqual({ name: 'Lucy', age: null });
   });
 
-  test('inherit deep params. navigate applies params on correct route', () => {
+  it('inherit deep params. navigate applies params on correct route', () => {
     const PlainScreen = () => <div />;
     const SwitchA = () => <div />;
     const SwitchA1 = () => <div />;
@@ -338,7 +338,7 @@ describe('SwitchRouter', () => {
     expect(activeBabyRoute.params).toEqual({ name: 'Lucy', age: 123 });
   });
 
-  test('handles nested actions and params simultaneously', () => {
+  it('handles nested actions and params simultaneously', () => {
     const router = getExampleRouter();
     const state = router.getStateForAction({ type: NavigationActions.INIT });
     const state2 = router.getStateForAction(
@@ -356,7 +356,7 @@ describe('SwitchRouter', () => {
     expect(activeGrandChildRoute.routeName).toEqual('B2');
   });
 
-  test('order of handling navigate action is correct for nested switchrouters', () => {
+  it('order of handling navigate action is correct for nested switchrouters', () => {
     // router = switch({ Nested: switch({ Foo, Bar }), Other: switch({ Foo }), Bar })
     // if we are focused on Other and navigate to Bar, what should happen?
 
@@ -412,7 +412,7 @@ describe('SwitchRouter', () => {
   });
 
   // https://github.com/react-navigation/react-navigation.github.io/issues/117#issuecomment-385597628
-  test('order of handling navigate action is correct for nested stackrouters', () => {
+  it('order of handling navigate action is correct for nested stackrouters', () => {
     const Screen = () => <div />;
     const MainStack = () => <div />;
     const LoginStack = () => <div />;

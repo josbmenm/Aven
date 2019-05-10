@@ -1,5 +1,5 @@
 describe('Hooks tests coming soon', () => {
-  test('true true', () => {
+  it('true true', () => {
     expect(true).toEqual(true);
   });
 });

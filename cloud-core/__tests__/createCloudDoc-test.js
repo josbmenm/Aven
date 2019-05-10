@@ -6,13 +6,13 @@ function getNull() {
   return null;
 }
 describe('doc generic behavior', () => {
-  test('handles creation', () => {
+  it('handles creation', () => {
     const source = createMemoryStorageSource({ domain: 'foo' });
     const doc = createCloudDoc({ source, domain: 'foo', name: 'bar' });
     expect(doc.getName()).toBe('bar');
     expect(doc.domain).toBe('foo');
   });
-  test('fails on creation without domain', () => {
+  it('fails on creation without domain', () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     expect(() =>
       createCloudDoc({
@@ -22,7 +22,7 @@ describe('doc generic behavior', () => {
       }),
     ).toThrow();
   });
-  test('fails on creation without name', () => {
+  it('fails on creation without name', () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     expect(() =>
       createCloudDoc({
@@ -33,7 +33,7 @@ describe('doc generic behavior', () => {
     ).toThrow();
   });
 
-  test('fails on creation for name with slash', () => {
+  it('fails on creation for name with slash', () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     expect(() =>
       createCloudDoc({
@@ -47,7 +47,7 @@ describe('doc generic behavior', () => {
 });
 
 describe('doc get', () => {
-  test('handles get of child', () => {
+  it('handles get of child', () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     const doc = createCloudDoc({
       source,
@@ -59,7 +59,7 @@ describe('doc get', () => {
     expect(child.getFullName()).toEqual('myDoc/friend');
     expect(child.domain).toEqual('test');
   });
-  test('handles get of self', () => {
+  it('handles get of self', () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     const doc = createCloudDoc({
       source,
@@ -73,7 +73,7 @@ describe('doc get', () => {
 });
 
 describe('basic doc source interaction', () => {
-  test('fetches docs', async () => {
+  it('fetches docs', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     const { id } = await source.dispatch({
       type: 'PutDocValue',
@@ -92,7 +92,7 @@ describe('basic doc source interaction', () => {
     expect(doc.getBlock().id).toEqual(id);
   });
 
-  test('doc can putId of old put id', async () => {
+  it('doc can putId of old put id', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     const doc = createCloudDoc({
       source,
@@ -122,7 +122,7 @@ describe('basic doc source interaction', () => {
     expect(result.value.foo).toEqual(42);
   });
 
-  test('puts blocks', async () => {
+  it('puts blocks', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     const doc = createCloudDoc({
       source,
@@ -151,7 +151,7 @@ const waitForSync_TODO_REMOVE_THIS = () =>
   new Promise(res => setTimeout(res, 1));
 
 describe('observing docs', () => {
-  test('observe doc works', async () => {
+  it('observe doc works', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     const obj1 = await source.dispatch({
       type: 'PutDocValue',
@@ -211,7 +211,7 @@ describe('observing docs', () => {
     expect(lastObserved.id).toEqual(obj2.id);
   });
 
-  test('observe value', async () => {
+  it('observe value', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     const obj1 = await source.dispatch({
       type: 'PutDocValue',
@@ -275,7 +275,7 @@ describe('observing docs', () => {
     expect(lastObserved.foo).toEqual('baz');
   });
 
-  test('observe connected value', async () => {
+  it('observe connected value', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     const obj1a = await source.dispatch({
       type: 'PutDocValue',
@@ -332,7 +332,7 @@ describe('observing docs', () => {
     expect(lastObserved.foo).toEqual('baz');
   });
 
-  test.skip('observe connected value before creation', async () => {
+  it.skip('observe connected value before creation', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
 
     const doc = createCloudDoc({
@@ -395,7 +395,7 @@ async function justASec() {
   return new Promise(resolve => setTimeout(resolve, 1));
 }
 
-test('value mapping', async () => {
+it('value mapping', async () => {
   const source = createMemoryStorageSource({ domain: 'test' });
   await source.dispatch({
     type: 'PutDocValue',
@@ -430,7 +430,7 @@ test('value mapping', async () => {
   expect(lastObserved).toEqual(9);
 });
 
-test('value evaluation', async () => {
+it('value evaluation', async () => {
   const source = createMemoryStorageSource({ domain: 'test' });
   await source.dispatch({
     type: 'PutDocValue',

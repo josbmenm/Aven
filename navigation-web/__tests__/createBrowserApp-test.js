@@ -39,7 +39,7 @@ global.document = {
 };
 
 describe('SwitchNavigator works on web', () => {
-  test('renders successfully', () => {
+  it('renders successfully', () => {
     const AppNavigator = createSwitchNavigator({
       HomeScreen,
       OtherScreen,

@@ -6,7 +6,7 @@ async function justASec(ds) {
 }
 
 export default function testDataSource(startTestDataSource) {
-  test('basic put and get', async () => {
+  it('basic put and get', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const putResult = await ds.dispatch({
       type: 'PutDocValue',
@@ -24,7 +24,7 @@ export default function testDataSource(startTestDataSource) {
     expect(blk.value.foo).toEqual('bar');
   });
 
-  test('get blocks', async () => {
+  it('get blocks', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const putResult1 = await ds.dispatch({
       type: 'PutDocValue',
@@ -49,7 +49,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('gets multiple docs', async () => {
+  it('gets multiple docs', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     await ds.dispatch({
       type: 'PutDocValue',
@@ -73,7 +73,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('move doc shows in list', async () => {
+  it('move doc shows in list', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const blk = await ds.dispatch({
       type: 'PutDocValue',
@@ -107,7 +107,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('move doc works', async () => {
+  it('move doc works', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const blk = await ds.dispatch({
       type: 'PutDocValue',
@@ -144,7 +144,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('list doc works', async () => {
+  it('list doc works', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     let list = null;
     list = await ds.dispatch({
@@ -179,7 +179,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('list docs length limit', async () => {
+  it('list docs length limit', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     let list = null;
     list = await ds.dispatch({
@@ -230,7 +230,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('list doc "after" pagination', async () => {
+  it('list doc "after" pagination', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     let list = null;
     list = await ds.dispatch({
@@ -292,7 +292,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('list doc works works', async () => {
+  it('list doc works works', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     let docs = null;
     docs = await ds.dispatch({
@@ -344,7 +344,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('move doc affects children too', async () => {
+  it('move doc affects children too', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const blk = await ds.dispatch({
       type: 'PutDocValue',
@@ -397,7 +397,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('get missing doc', async () => {
+  it('get missing doc', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const doc = await ds.dispatch({
       type: 'GetDoc',
@@ -408,7 +408,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('gets multiple missing docs', async () => {
+  it('gets multiple missing docs', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const doc = await ds.dispatch({
       type: 'GetDocs',
@@ -420,7 +420,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('implicit parent list doc ', async () => {
+  it('implicit parent list doc ', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     let result = null;
     result = await ds.dispatch({
@@ -455,7 +455,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('implicit parent doc creation with null', async () => {
+  it('implicit parent doc creation with null', async () => {
     // this test also demonstrates that docs can *exist* and still be empty, with id = null
     const ds = await startTestDataSource({ domain: 'test' });
     let result = null;
@@ -501,7 +501,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('can destroy parent docs and children go away', async () => {
+  it('can destroy parent docs and children go away', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     const blk = await ds.dispatch({
       type: 'PutDocValue',
@@ -529,7 +529,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('destroy doc works', async () => {
+  it('destroy doc works', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
     await ds.dispatch({
       type: 'PutDocValue',
@@ -556,7 +556,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('transaction enforcement on PutDocValue', async () => {
+  it('transaction enforcement on PutDocValue', async () => {
     const ds = await startTestDataSource({ domain: 'test' });
 
     const { id } = await ds.dispatch({
@@ -610,7 +610,7 @@ export default function testDataSource(startTestDataSource) {
     await ds.close();
   });
 
-  test('PutTransactionValue action', async () => {
+  it('PutTransactionValue action', async () => {
     // this action behaves like PutDoc, but always forces the type and "on" to be set
 
     const ds = await startTestDataSource({ domain: 'test' });
@@ -648,7 +648,7 @@ export default function testDataSource(startTestDataSource) {
   });
 
   describe('parent child docs', () => {
-    test('can list with parents', async () => {
+    it('can list with parents', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       let list = null;
       list = await ds.dispatch({
@@ -707,7 +707,7 @@ export default function testDataSource(startTestDataSource) {
       await ds.close();
     });
 
-    test('list child docs only with ListDocs', async () => {
+    it('list child docs only with ListDocs', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       let list = null;
 
@@ -759,7 +759,7 @@ export default function testDataSource(startTestDataSource) {
   });
 
   describe('basic data source setup', () => {
-    test('gets status reports ready', async () => {
+    it('gets status reports ready', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       const status = await ds.dispatch({
         type: 'GetStatus',
@@ -771,7 +771,7 @@ export default function testDataSource(startTestDataSource) {
   });
 
   describe('doc storage', () => {
-    test('puts doc fails when a referenced block is missing', async () => {
+    it('puts doc fails when a referenced block is missing', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       await expect(
         ds.dispatch({
@@ -784,7 +784,7 @@ export default function testDataSource(startTestDataSource) {
       await ds.close();
     });
 
-    test('put doc value works', async () => {
+    it('put doc value works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       await ds.dispatch({
         type: 'PutDocValue',
@@ -807,7 +807,7 @@ export default function testDataSource(startTestDataSource) {
       await ds.close();
     });
 
-    test('put doc value correctly dereferences blocks', async () => {
+    it('put doc value correctly dereferences blocks', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       await ds.dispatch({
         type: 'PutDocValue',
@@ -837,7 +837,7 @@ export default function testDataSource(startTestDataSource) {
       await ds.close();
     });
 
-    test('put doc works', async () => {
+    it('put doc works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       const blk = await ds.dispatch({
         type: 'PutDocValue',
@@ -874,7 +874,7 @@ export default function testDataSource(startTestDataSource) {
       await ds.close();
     });
 
-    test('post doc works', async () => {
+    it('post doc works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       const blk = await ds.dispatch({
         type: 'PutDocValue',
@@ -900,7 +900,7 @@ export default function testDataSource(startTestDataSource) {
       await ds.close();
     });
 
-    test('get doc value works', async () => {
+    it('get doc value works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       const blk = await ds.dispatch({
         type: 'PutDocValue',
@@ -919,7 +919,7 @@ export default function testDataSource(startTestDataSource) {
   });
 
   describe('observing docs', () => {
-    test('observe doc works', async () => {
+    it('observe doc works', async () => {
       const ds = await startTestDataSource({ domain: 'test' });
       // note: we run observeDoc before the doc exists to intentionally test that the subscription works on an empty doc
       const blk2 = await ds.dispatch({
@@ -952,7 +952,7 @@ export default function testDataSource(startTestDataSource) {
       await ds.close();
     });
 
-    test('observe cleanup works', async () => {
+    it('observe cleanup works', async () => {
       const ds = await startTestDataSource({ domain: 'test-d' });
       const blk1 = await ds.dispatch({
         type: 'PutDocValue',
@@ -993,7 +993,7 @@ export default function testDataSource(startTestDataSource) {
       await ds.close();
     });
 
-    test('observe same doc multiple times', async () => {
+    it('observe same doc multiple times', async () => {
       const ds = await startTestDataSource({ domain: 'test-obs' });
       const blk1 = await ds.dispatch({
         type: 'PutDocValue',
@@ -1065,7 +1065,7 @@ export default function testDataSource(startTestDataSource) {
   });
 
   describe('observing doc children', () => {
-    test('children events subscription', async () => {
+    it('children events subscription', async () => {
       const ds = await startTestDataSource({ domain: 'test-a' });
       await ds.dispatch({
         type: 'PutDoc',
@@ -1129,7 +1129,7 @@ export default function testDataSource(startTestDataSource) {
       await ds.close();
     });
 
-    test('observe root doc list works', async () => {
+    it('observe root doc list works', async () => {
       const ds = await startTestDataSource({ domain: 'test-b' });
       const obs = await ds.observeDocChildren('test-b', null);
       let lastObserved = undefined;
@@ -1166,7 +1166,7 @@ export default function testDataSource(startTestDataSource) {
       await ds.close();
     });
 
-    test('observe named doc list works', async () => {
+    it('observe named doc list works', async () => {
       const ds = await startTestDataSource({ domain: 'test-c' });
       await ds.dispatch({
         type: 'PutDoc',

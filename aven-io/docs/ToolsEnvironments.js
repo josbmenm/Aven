@@ -88,21 +88,21 @@ function DocPage() {
       </Section>
       <Section title="API">
         <SubSection title="Start">
-          <Snippet code={`yarn start app-name`} />
+          <Snippet code="yarn start app-name" />
           <Body>Will start the app in your repo named app-name</Body>
         </SubSection>
         <SubSection title="Build">
-          <Snippet code={`yarn build app-name`} />
+          <Snippet code="yarn build app-name" />
           <Body>Will build the app in your repo named app-name</Body>
         </SubSection>
         <SubSection title="Publish">
-          <Snippet code={`yarn publish package-name`} />
+          <Snippet code="yarn publish package-name" />
           <Body>
             Will publish the package in your repo named package-name to npm
           </Body>
         </SubSection>
         <SubSection title="Deploy">
-          <Snippet code={`yarn start app-name`} />
+          <Snippet code="yarn start app-name" />
           <Body>Will run the deploy script of the environment</Body>
         </SubSection>
       </Section>

@@ -11,7 +11,7 @@ async function justASec(patienceMS) {
 }
 
 describe('interpreted data sources', () => {
-  test('basic interpreted value', async () => {
+  it('basic interpreted value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
     const evalSource = createEvalSource({
       source: storageSource,
@@ -44,7 +44,7 @@ describe('interpreted data sources', () => {
     expect(result.value).toBe(4);
   });
 
-  test('twice interpreted value', async () => {
+  it('twice interpreted value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
     const interpretedSource = createEvalSource({
       source: storageSource,
@@ -79,7 +79,7 @@ describe('interpreted data sources', () => {
     expect(result.value).toBe(16);
   });
 
-  test('computations for specific blocks', async () => {
+  it('computations for specific blocks', async () => {
     // fix by allowing eval on cloud blocks!
     const storageSource = createMemoryStorageSource({ domain: 'test' });
     const interpretedSource = createEvalSource({
@@ -117,7 +117,7 @@ describe('interpreted data sources', () => {
     expect(result.value).toBe(4);
   });
 
-  test('expanding interpreted value', async () => {
+  it('expanding interpreted value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
     const interpretedSource = createEvalSource({
       source: storageSource,
@@ -149,10 +149,10 @@ describe('interpreted data sources', () => {
       name: 'getSomething',
       value: {
         type: 'LambdaFunction',
-        code: `(a, doc, client, useValue) => {
+        code: `(a, doc, client, getValue) => {
         // a is the current value of the doc
-        const fooA = useValue(doc.get('a'));
-        const fooB = useValue(doc.get('b'));
+        const fooA = getValue(doc.get('a'));
+        const fooB = getValue(doc.get('b'));
         if (!fooA  || !fooB) {
           return null;
         }
@@ -170,7 +170,7 @@ describe('interpreted data sources', () => {
     expect(result.value).toBe(15);
   });
 
-  test.skip('getdoc works with block fetch', async () => {
+  it.skip('getdoc works with block fetch', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
     const interpretedSource = createEvalSource({
       source: storageSource,
@@ -220,11 +220,11 @@ describe('interpreted data sources', () => {
     expect(blockResult.value).toBe(9);
   });
 
-  test('static reduced value', async () => {
+  it('static reduced value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
     const listValue = defineCloudFunction(
       'listValue',
-      ({ value }, doc, cloud, useValue) => {
+      ({ value }, doc, cloud, getValue) => {
         let state = [];
         if (value === undefined) {
           return state;
@@ -232,7 +232,7 @@ describe('interpreted data sources', () => {
         const action = value.value;
         if (value.on && value.on.id) {
           const ancestorName = `${doc.getFullName()}#${value.on.id}^listValue`;
-          state = useValue(cloud.get(ancestorName));
+          state = getValue(cloud.get(ancestorName));
         }
 
         if (action.add) {
@@ -314,7 +314,7 @@ describe('interpreted data sources', () => {
     expect(result2.id).toEqual(result1.id);
   });
 
-  test('interpteted reduced value', async () => {
+  it('interpteted reduced value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
     const interpretedSource = createEvalSource({
       source: storageSource,
@@ -355,7 +355,7 @@ describe('interpreted data sources', () => {
       name: 'listValue',
       value: {
         type: 'LambdaFunction',
-        code: `({value}, doc, cloud, useValue) => {
+        code: `({value}, doc, cloud, getValue) => {
           let state = [];
           if (value === undefined) {
             return state;
@@ -365,7 +365,7 @@ describe('interpreted data sources', () => {
             const ancestorName = \`\${doc.getFullName()}#\${
               value.on.id
             }^listValue\`;
-            state = useValue(cloud.get(ancestorName));
+            state = getValue(cloud.get(ancestorName));
           }
 
           if (action.add) {
@@ -388,7 +388,7 @@ describe('interpreted data sources', () => {
     expect(result.value).toEqual(['a', 'c']);
   });
 
-  test('basic evalDocs static function value', async () => {
+  it('basic evalDocs static function value', async () => {
     const storageSource = createMemoryStorageSource({ domain: 'test' });
 
     const squared = defineCloudFunction('squared', ({ value }) => {
@@ -434,9 +434,9 @@ describe('interpreted data sources', () => {
 });
 
 describe('remote eval', () => {
-  test('reducer remote eval', async () => {
+  it('reducer remote eval', async () => {
     const source = createMemoryStorageSource({ domain: 'd' });
-    const cloudReducer = ({ value, id }, doc, cloud, useValue) => {
+    const cloudReducer = ({ value, id }, doc, cloud, getValue) => {
       let state = [];
       if (!value) {
         return { state };
@@ -445,7 +445,7 @@ describe('remote eval', () => {
       if (value.on && value.on.id) {
         const ancestorName =
           doc.getFullName() + '#' + value.on.id + '^fooReducer';
-        const prevValue = useValue(cloud.get(ancestorName)) || [];
+        const prevValue = getValue(cloud.get(ancestorName)) || [];
         state = prevValue.state;
         action = value.value;
       }
@@ -495,9 +495,9 @@ describe('remote eval', () => {
     await s.fetchValue();
     expect(s.getValue().state).toEqual(['b']);
   });
-  test('reducer remote eval subscription', async () => {
+  it('reducer remote eval subscription', async () => {
     const source = createMemoryStorageSource({ domain: 'd' });
-    const cloudReducer = ({ value, id }, doc, cloud, useValue) => {
+    const cloudReducer = ({ value, id }, doc, cloud, getValue) => {
       let state = [];
       if (!value) {
         return { state };
@@ -506,7 +506,7 @@ describe('remote eval', () => {
       if (value.on && value.on.id) {
         const ancestorName =
           doc.getFullName() + '#' + value.on.id + '^fooReducer';
-        const prevValue = useValue(cloud.get(ancestorName)) || [];
+        const prevValue = getValue(cloud.get(ancestorName)) || [];
         state = prevValue.state;
         action = value.value;
       }

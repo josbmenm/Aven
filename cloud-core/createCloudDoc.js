@@ -424,7 +424,6 @@ export default function createCloudDoc({
   const observe = docName
     .switchMap(currentDocName => {
       return Observable.create(observer => {
-        console.log('observing', currentDocName);
         let hasObserved = false;
         let upstreamSubscription = null;
         function maybeStartRemoteObservation() {
@@ -437,7 +436,6 @@ export default function createCloudDoc({
             setState({ isConnected: true });
             upstreamSubscription = upstreamObs.subscribe({
               next: upstreamDoc => {
-                console.log('upstream doc, yo!', upstreamDoc);
                 if (upstreamDoc === undefined) {
                   return;
                 }

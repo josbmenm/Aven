@@ -22,7 +22,7 @@ describe('fs data source tests', () => {
 });
 
 describe('basic fs source setup', () => {
-  test('throws when starting without a domain', () => {
+  it('throws when starting without a domain', () => {
     const dataDir = pathJoin(TMP_DIR, cuid());
     expect(
       startFSStorageSource({
@@ -30,7 +30,7 @@ describe('basic fs source setup', () => {
       }),
     ).rejects.toThrow();
   });
-  test('throws when starting without a data directory', () => {
+  it('throws when starting without a data directory', () => {
     expect(
       startFSStorageSource({
         domain: 'test',
@@ -40,7 +40,7 @@ describe('basic fs source setup', () => {
 });
 
 describe('persistence', () => {
-  test('doc persistence', async () => {
+  it('doc persistence', async () => {
     const dataDir = pathJoin(TMP_DIR, cuid());
 
     const ds1 = await startTestDataSource({ dataDir });

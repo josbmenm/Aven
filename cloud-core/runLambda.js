@@ -13,7 +13,7 @@ export default function runLambda(
       }),
     );
   }
-  function useValue(cloudValue) {
+  function getValue(cloudValue) {
     dependencies.add(cloudValue);
     return cloudValue.getValue();
   }
@@ -22,7 +22,7 @@ export default function runLambda(
       { value: argumentValue, id: argumentId },
       argumentDoc,
       cloudClient,
-      useValue,
+      getValue,
     );
   }
   return {

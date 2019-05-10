@@ -44,7 +44,7 @@ export default function useObservable(observable) {
         subscription && subscription.unsubscribe();
       };
     }
-  }, [observable]);
+  }, [error, isObservable, observable]);
 
   return value;
 }

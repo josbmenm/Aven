@@ -280,7 +280,7 @@ export class Transitioner extends React.Component {
               },
               behindScreenStyles,
             ]}
-            pointerEvents={'auto'}
+            pointerEvents="auto"
           >
             <C
               transition={transition}

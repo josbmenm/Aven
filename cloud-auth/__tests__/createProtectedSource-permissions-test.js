@@ -65,7 +65,7 @@ async function establishPermissionsTestData() {
 }
 
 describe('Cloud auth Permissions', () => {
-  test('permissions are roughly respected', async () => {
+  it('permissions are roughly respected', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
 
     const password = 'secret, foo';
@@ -119,7 +119,7 @@ describe('Cloud auth Permissions', () => {
     });
   });
 
-  test('default read permission', async () => {
+  it('default read permission', async () => {
     const {
       fooBlock,
       barBlock,
@@ -167,7 +167,7 @@ describe('Cloud auth Permissions', () => {
     expect(result.value.foo).toEqual('bar');
   });
 
-  test('account read permission', async () => {
+  it('account read permission', async () => {
     const {
       fooBlock,
       barBlock,
@@ -225,7 +225,7 @@ describe('Cloud auth Permissions', () => {
     ).rejects.toThrow();
   });
 
-  test('anon session post permission', async () => {
+  it('anon session post permission', async () => {
     const {
       rootSession,
       anonSession,
@@ -264,7 +264,7 @@ describe('Cloud auth Permissions', () => {
     expect(postResult.name).toMatch(/^something\//);
   });
 
-  test('permissions cascade properly', async () => {
+  it('permissions cascade properly', async () => {
     const {
       rootSession,
       anonSession,
@@ -316,7 +316,7 @@ describe('Cloud auth Permissions', () => {
     });
   });
 
-  test('posted doc ownership', async () => {
+  it('posted doc ownership', async () => {
     const {
       rootSession,
       anonSession,
@@ -372,7 +372,7 @@ describe('Cloud auth Permissions', () => {
       owner: anonSession.accountId,
     });
   });
-  test('account write permission', async () => {
+  it('account write permission', async () => {
     const {
       fooBlock,
       barBlock,
@@ -439,7 +439,7 @@ describe('Cloud auth Permissions', () => {
     expect(result.id).toEqual(barBlock.id);
   });
 
-  test('account admin permission for PutPermissionRules', async () => {
+  it('account admin permission for PutPermissionRules', async () => {
     const {
       fooBlock,
       barBlock,
@@ -509,7 +509,7 @@ describe('Cloud auth Permissions', () => {
     expect(result.id).toEqual(fooBlock.id);
   });
 
-  test('account admin permission for GetPermissionRules', async () => {
+  it('account admin permission for GetPermissionRules', async () => {
     const {
       fooBlock,
       barBlock,
@@ -555,7 +555,7 @@ describe('Cloud auth Permissions', () => {
     expect(result.defaultRule.canRead).toEqual(true);
   });
 
-  test('account admin permission for getting _auth', async () => {
+  it('account admin permission for getting _auth', async () => {
     const {
       fooBlock,
       barBlock,
@@ -608,7 +608,7 @@ describe('Cloud auth Permissions', () => {
     });
   });
 
-  test('root permission allows getting _auth', async () => {
+  it('root permission allows getting _auth', async () => {
     const {
       fooBlock,
       barBlock,

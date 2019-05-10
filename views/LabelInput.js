@@ -18,7 +18,7 @@ function RefLabelInput(
       duration: 500,
       easing: Easing.out(Easing.cubic),
     }).start();
-  }, [desiredPlaceholderOpen]);
+  }, [desiredPlaceholderOpen, placeholderOpenProgress]);
   const autoCorrect = false;
   let autoComplete = null;
   let keyboardType = 'default';

@@ -97,6 +97,16 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function getContext(domain, docName, forceExistence) {
+    if (!docName) {
+      return {
+        didCreate: false,
+        parent: null,
+        domain,
+        id: TOP_PARENT_ID,
+        localName: null,
+        name: null,
+      };
+    }
     let didCreate = false;
     const docNameParts = docName.split('/');
     const lastName = docNameParts[0];
@@ -140,7 +150,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
         id: null,
         localName,
         name: docName,
-        parentId: null,
+        parentId: TOP_PARENT_ID,
       };
     }
 
@@ -327,6 +337,24 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function PutDocValue({ domain, value, name }) {
+    if (!name) {
+      throw new Err('Invalid doc name for "PutDocValue"', 'InvalidDocName', {
+        domain,
+        name,
+      });
+    }
+    if (!domain) {
+      throw new Err('Invalid domain for "PutDocValue"', 'InvalidDomain', {
+        domain,
+      });
+    }
+    if (value === undefined) {
+      throw new Err('Undefined doc value', 'InvalidValue', {
+        domain,
+        name,
+        value,
+      });
+    }
     const { localName, parentId } = await getContext(domain, name, true);
     if (
       value &&
@@ -347,6 +375,20 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function PutTransactionValue({ domain, value, name }) {
+    if (!name) {
+      throw new Err(
+        'Invalid doc name for "PutTransactionValue"',
+        'InvalidDocName',
+        { domain, name },
+      );
+    }
+    if (!domain) {
+      throw new Err(
+        'Invalid domain for "PutTransactionValue"',
+        'InvalidDomain',
+        { domain },
+      );
+    }
     // technically this action has a race condition if the prevBlockId changes while we are transacting. But thanks to the "where" inside writeDocTransaction, we will never loose data, will only error occasionally when doing this action concurrently on a doc
     const { localName, parentId, id } = await getContext(domain, name, true);
     const prevResp = await knex.raw(
@@ -396,6 +438,15 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function GetDoc({ name, domain }) {
+    if (!name) {
+      throw new Err('Invalid doc name for "GetDoc"', 'InvalidDocName', {
+        domain,
+        name,
+      });
+    }
+    if (!domain) {
+      throw new Err('Invalid domain for "GetDoc"', 'InvalidDomain', { domain });
+    }
     const { id } = await getContext(domain, name, false);
     const result = await knex.raw(
       `
@@ -435,12 +486,32 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function PutDoc({ domain, name, id }) {
+    if (!name) {
+      throw new Err('Invalid doc name for "PutDoc"', 'InvalidDocName', {
+        domain,
+        name,
+      });
+    }
+    if (!domain) {
+      throw new Err('Invalid domain for "PutDoc"', 'InvalidDomain', { domain });
+    }
     const { localName, parent } = await getContext(domain, name, true);
     const parentId = parent && parent.id;
     await writeDoc(domain, parentId, localName, id);
   }
 
   async function PostDoc({ domain, name, value, id }) {
+    if (!name) {
+      throw new Err('Invalid doc name for "PostDoc"', 'InvalidDocName', {
+        domain,
+        name,
+      });
+    }
+    if (!domain) {
+      throw new Err('Invalid domain for "PostDoc"', 'InvalidDomain', {
+        domain,
+      });
+    }
     const postedName = name ? pathJoin(name, cuid()) : cuid();
 
     if (value) {
@@ -453,6 +524,17 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function GetBlock({ domain, name, id }) {
+    if (!name) {
+      throw new Err('Invalid doc name for "GetBlock"', 'InvalidDocName', {
+        domain,
+        name,
+      });
+    }
+    if (!domain) {
+      throw new Err('Invalid domain for "GetBlock"', 'InvalidDomain', {
+        domain,
+      });
+    }
     return await knex
       .select('*')
       .from('blocks')
@@ -548,6 +630,17 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function DestroyDoc({ domain, name }) {
+    if (!name) {
+      throw new Err('Invalid doc name for "DestroyDoc"', 'InvalidDocName', {
+        domain,
+        name,
+      });
+    }
+    if (!domain) {
+      throw new Err('Invalid domain for "DestroyDoc"', 'InvalidDomain', {
+        domain,
+      });
+    }
     const ctx = await getContext(domain, name, false);
     if (!ctx.id) {
       return; // it is already deleted, or missing? consider throwing an error
@@ -605,6 +698,17 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function observeDoc(domain, name) {
+    if (!name) {
+      throw new Err('Invalid doc name for "observeDoc"', 'InvalidDocName', {
+        domain,
+        name,
+      });
+    }
+    if (!domain) {
+      throw new Err('Invalid domain for "observeDoc"', 'InvalidDomain', {
+        domain,
+      });
+    }
     const ctx = await getContext(domain, name, false);
     const channelId = getDocChannel(domain, ctx.parentId, ctx.localName);
 
@@ -641,8 +745,11 @@ export default async function startPostgresStorageSource({ config, domains }) {
     observingChannels[channelId] = obs;
     return obs.observable;
   }
-  async function observeDocChildren(domain, docName) {
-    const { id } = await getContext(domain, docName);
+  async function observeDocChildren(domain, name) {
+    if (!domain) {
+      throw new Err('Invalid domain', 'InvalidDomain', { domain });
+    }
+    const { id } = await getContext(domain, name);
     return getCachedObervable([domain, id], getChildrenChannel);
   }
   return {

@@ -2,7 +2,7 @@ import { hashSecureString } from '../../cloud-utils/Crypto';
 import RootAuthProvider from '../RootAuthProvider';
 
 describe('Auth provider behavior', () => {
-  test('Auth Verification', async () => {
+  it('Auth Verification', async () => {
     const password = 'secret, foo';
 
     const rootPasswordHash = await hashSecureString(password);

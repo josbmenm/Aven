@@ -13,7 +13,7 @@ describe('memory data source tests', () => {
 });
 
 describe('basic data source setup', () => {
-  test('throws when starting without a domain', () => {
+  it('throws when starting without a domain', () => {
     expect(() => {
       createMemoryStorageSource({});
     }).toThrow();

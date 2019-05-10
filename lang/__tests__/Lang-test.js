@@ -1,6 +1,6 @@
 import Lang from '../Lang';
 
-test.skip('saves basic facts', () => {
+it.skip('saves basic facts', () => {
   const { the, what } = Lang();
   expect(what.is.the('sky')).toBe(undefined);
   the('sky').is('blue');
@@ -9,7 +9,7 @@ test.skip('saves basic facts', () => {
   expect(what.is.the('bug')).toBe('green');
 });
 
-test.skip('saves facts within known things', () => {
+it.skip('saves facts within known things', () => {
   const { the, what } = Lang();
   the('color')
     .ofThe('sky')

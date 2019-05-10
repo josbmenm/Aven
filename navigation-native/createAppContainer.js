@@ -218,6 +218,7 @@ export default function createNavigationContainer(Component) {
       // so we don't end up with a different value for this.state.nav
       // due to changes while async function was resolving
       let action = this._initialAction;
+      // eslint-disable-next-line react/no-access-state-in-setstate
       let startupState = this.state.nav;
 
       // Use persisted state from AsyncStorage. Unfortunately this will squash

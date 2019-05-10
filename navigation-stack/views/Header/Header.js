@@ -150,6 +150,7 @@ class Header extends React.PureComponent {
         ? e => {
             this.setState({
               widths: {
+                // eslint-disable-next-line react/no-access-state-in-setstate
                 ...this.state.widths,
                 [props.scene.key]: e.nativeEvent.layout.width,
               },

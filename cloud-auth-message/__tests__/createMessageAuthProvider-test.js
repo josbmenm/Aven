@@ -3,7 +3,7 @@ import createProtectedSource from '../../cloud-auth/createProtectedSource';
 import createMessageAuthProvider from '../createMessageAuthProvider';
 
 describe('Auth messaging behavior', () => {
-  test('Auth message flow', async () => {
+  it('Auth message flow', async () => {
     const source = createMemoryStorageSource({
       domain: 'test',
     });
@@ -60,7 +60,7 @@ describe('Auth messaging behavior', () => {
     expect(typeof createSessionResp.session.sessionId).toEqual('string');
   });
 
-  test('anon account can add auth provider', async () => {
+  it('anon account can add auth provider', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
 
     const authProviderName = 'example-provider';

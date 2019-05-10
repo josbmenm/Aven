@@ -2,7 +2,7 @@ import createMemoryStorageSource from '../createMemoryStorageSource';
 import createCloudBlock from '../createCloudBlock';
 
 describe('object generic behavior', () => {
-  test('handles creation with empty value', () => {
+  it('handles creation with empty value', () => {
     const obj = createCloudBlock({
       domain: 'test',
       onGetName: () => 'foo',
@@ -12,7 +12,7 @@ describe('object generic behavior', () => {
     });
     expect(obj.id).toBe('asdf1234');
   });
-  test('fails on creation without value or id', () => {
+  it('fails on creation without value or id', () => {
     expect(() =>
       createCloudBlock({
         domain: 'test',
@@ -21,7 +21,7 @@ describe('object generic behavior', () => {
       }),
     ).toThrow();
   });
-  test('handles creation with value', () => {
+  it('handles creation with value', () => {
     const obj = createCloudBlock({
       domain: 'test',
       onGetName: () => 'foo',
@@ -33,7 +33,7 @@ describe('object generic behavior', () => {
 });
 
 describe('basic object DataSource interaction', () => {
-  test('fetches blocks', async () => {
+  it('fetches blocks', async () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const { id } = await m.dispatch({
       type: 'PutDocValue',
@@ -53,7 +53,7 @@ describe('basic object DataSource interaction', () => {
     expect(c.getState().lastFetchTime).not.toBe(null);
     expect(c.getValue().foo).toEqual('bar');
   });
-  test('fetches null objects', async () => {
+  it('fetches null objects', async () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const { id } = await m.dispatch({
       type: 'PutDocValue',
@@ -76,7 +76,7 @@ describe('basic object DataSource interaction', () => {
 });
 
 describe('observing', () => {
-  test('observe obj', async () => {
+  it('observe obj', async () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const obj1 = await m.dispatch({
       type: 'PutDocValue',
@@ -101,7 +101,7 @@ describe('observing', () => {
     await c.fetch();
     expect(lastObserved.value.foo).toEqual('bar');
   });
-  test('observe value', async () => {
+  it('observe value', async () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const obj1 = await m.dispatch({
       type: 'PutDocValue',

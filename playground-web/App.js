@@ -14,7 +14,7 @@ export default function App() {
         return val && val.value.much;
       }`,
     });
-  }, []);
+  }, [cloud]);
 
   // cloud.get('log^reduceLog')
   const data = useObservable(cloud.get('log^reduceLog').observeValue);

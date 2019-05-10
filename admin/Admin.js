@@ -677,9 +677,11 @@ function DocsListWithPermission({ parent, activeDoc }) {
     return <LoadingIndicator />;
   }
   if (docs.length === 0) {
-    <RowSection>
-      <Text>0 Children Docs</Text>
-    </RowSection>;
+    return (
+      <RowSection>
+        <Text>0 Children Docs</Text>
+      </RowSection>
+    );
   }
   return (
     <RowSection>
@@ -834,7 +836,7 @@ function Folder({ value, path, doc, pathContext }) {
       return null;
     }
     return doc.getBlock(file.id);
-  }, [file]);
+  }, [doc, file]);
   const objValue = useObservable(obj && obj.observeValue);
 
   if (objValue) {
@@ -1380,7 +1382,7 @@ function AccountPane() {
   const session = useObservable(cloud.observeSession);
   return (
     <Pane>
-      <Title title={'My account'} />
+      <Title title="My account" />
       {session && <InfoSection text={session.accountId} />}
       <StandaloneButton title="Set Username" onPress={onPopover} />
       <StandaloneButton
@@ -1566,11 +1568,13 @@ function AdminApp({ defaultSession = {}, descriptors }) {
     });
 
     return client;
-  }, [clientConfig, isStateUnloaded(sessionState)]);
+  }, [clientConfig, sessionState]);
 
   const activeRoute = useActiveRoute();
 
   const { navigate } = useNavigation();
+
+  const styles = useStyles();
 
   useEffect(() => {
     if (
@@ -1587,7 +1591,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
     ) {
       navigate('Login');
     }
-  }, [activeRoute, sessionState, clientConfig, client]);
+  }, [activeRoute, sessionState, clientConfig, client, navigate]);
 
   const activeDescriptor = descriptors[activeRoute.key];
 
@@ -1604,8 +1608,6 @@ function AdminApp({ defaultSession = {}, descriptors }) {
       onRetry();
     }
   }
-
-  const styles = useStyles();
 
   const loggedInId = sessionState && sessionState.accountId;
 

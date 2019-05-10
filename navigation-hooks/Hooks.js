@@ -31,7 +31,7 @@ export function useNavigationDidFocusEffect(handleDidFocus) {
     return () => {
       subsDF.remove();
     };
-  }, [navigation.addListener]);
+  }, [handleDidFocus, navigation, navigation.addListener]);
 }
 
 export function useNavigationWillFocusEffect(handleWillFocus) {
@@ -44,7 +44,7 @@ export function useNavigationWillFocusEffect(handleWillFocus) {
     return () => {
       subsWF.remove();
     };
-  }, [navigation.addListener]);
+  }, [handleWillFocus, navigation, navigation.addListener]);
 }
 
 export function useNavigationWillBlurEffect(handleWillBlur) {
@@ -54,7 +54,7 @@ export function useNavigationWillBlurEffect(handleWillBlur) {
     return () => {
       subsWB.remove();
     };
-  }, [navigation.addListener]);
+  }, [handleWillBlur, navigation, navigation.addListener]);
 }
 
 export function useNavigationDidBlurEffect(handleDidBlur) {
@@ -64,7 +64,7 @@ export function useNavigationDidBlurEffect(handleDidBlur) {
     return () => {
       subsDB.remove();
     };
-  }, [navigation.addListener]);
+  }, [handleDidBlur, navigation, navigation.addListener]);
 }
 
 export function useNavigationEvents(handleEvt) {
@@ -90,7 +90,7 @@ export function useNavigationEvents(handleEvt) {
     // seems to cause troubles
     // undefined,
     // [navigation.state.key]
-    [navigation.addListener],
+    [handleEvt, navigation, navigation.addListener],
   );
 }
 

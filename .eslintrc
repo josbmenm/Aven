@@ -11,6 +11,10 @@
   "rules": {
     "import/no-unresolved": "off",
     "import/no-commonjs": "off",
+    "react/no-unescaped-entities": "off",
+    "flowtype/no-types-missing-file-annotation": "off",
+    "jest/require-tothrow-message": "off",
+    "react-native/no-inline-styles": "off",
     "no-unused-vars": "off",
     "import/named": "off",
     "react/sort-comp": "off",
@@ -24,6 +28,15 @@
         "singleQuote": true,
         "trailingComma": "all"
       }
-    ]
-  }
+    ],
+    "import/no-extraneous-dependencies": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.js"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off"
+      }
+    }
+  ]
 }

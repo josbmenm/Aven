@@ -23,7 +23,7 @@ export default function NetworkCloudProvider({
       onSession,
     });
     return cloud;
-  }, [authority, useSSL, domain, onSession]);
+  }, [authority, useSSL, domain, session, onSession]);
   return (
     <CloudContext.Provider value={cloud}>{children}</CloudContext.Provider>
   );

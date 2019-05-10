@@ -3,9 +3,10 @@ import useCloud from './useCloud';
 
 export default function useCloudValue(cloudValueDefinition) {
   let cloudValue = cloudValueDefinition;
+  const cloud = useCloud();
 
   if (typeof cloudValueDefinition === 'string') {
-    cloudValue = useCloud().get(cloudValueDefinition);
+    cloudValue = cloud && cloud.get(cloudValueDefinition);
   }
   const [value, setValue] = useState(cloudValue && cloudValue.getValue());
 
@@ -44,7 +45,7 @@ export default function useCloudValue(cloudValueDefinition) {
       applyError,
     );
     return () => subscription.unsubscribe();
-  }, [cloudValue]);
+  }, [cloudValue, error]);
 
   return value;
 }

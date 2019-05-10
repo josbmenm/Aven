@@ -5,7 +5,7 @@ import RootAuthProvider from '../../cloud-auth-root/RootAuthProvider';
 import { hashSecureString } from '../../cloud-utils/Crypto';
 
 describe('Cloud auth sessions', () => {
-  test('gets root authentication', async () => {
+  it('gets root authentication', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
     const password = 'secret, foo';
     const rootPasswordHash = await hashSecureString(password);
@@ -41,7 +41,7 @@ describe('Cloud auth sessions', () => {
     expect(v.accountId).toEqual('root');
   });
 
-  test('no authentication gets empty permissions at root', async () => {
+  it('no authentication gets empty permissions at root', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
 
     const protectedSource = createProtectedSource({ source, providers: [] });
@@ -59,7 +59,7 @@ describe('Cloud auth sessions', () => {
     expect(noAuthRootPermissions.canAdmin).toEqual(false);
   });
 
-  test('root authentication gets full permissions of domain', async () => {
+  it('root authentication gets full permissions of domain', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
 
     const password = 'secret, foo';
@@ -96,7 +96,7 @@ describe('Cloud auth sessions', () => {
     expect(rootPermissions.canAdmin).toEqual(true);
   });
 
-  test('log out via destroy session', async () => {
+  it('log out via destroy session', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
 
     const password = 'secret, foo';
@@ -136,7 +136,7 @@ describe('Cloud auth sessions', () => {
     ).rejects.toThrow();
   });
 
-  test('gets anon authentication', async () => {
+  it('gets anon authentication', async () => {
     const source = createMemoryStorageSource({ domain: 'test' });
 
     const protectedSource = createProtectedSource({ source, providers: [] });
