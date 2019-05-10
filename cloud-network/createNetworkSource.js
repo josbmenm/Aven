@@ -44,6 +44,7 @@ export default function createNetworkSource(opts) {
   }
 
   let ws = null;
+
   let wsClientId = null;
 
   async function dispatch(action) {
@@ -88,6 +89,8 @@ export default function createNetworkSource(opts) {
     if (ws && ws.readyState === ReconnectingWebSocket.OPEN) {
       log('📣', payload);
       ws.send(JSON.stringify({ ...payload, clientId: wsClientId }));
+    } else {
+      log('Cannot send message to closed WebSocket:', payload);
     }
   }
 
@@ -160,11 +163,11 @@ export default function createNetworkSource(opts) {
     };
     ws.onclose = () => {
       setConnectionState(false);
-      ws = null;
+      !quiet && log('Socket closed.');
     };
-    ws.onerror = () => {
+    ws.onerror = e => {
       setConnectionState(false);
-      ws = null;
+      !quiet && log('Socket errored: ', e);
     };
     ws.onmessage = msg => {
       const evt = JSON.parse(msg.data);
