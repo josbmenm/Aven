@@ -145,10 +145,14 @@ export function OrderContextProvider({ children }) {
     confirmOrder: () => {
       guardAsync(
         (async () => {
-          await currentOrder.transact(doConfirmOrder);
+          let o = currentOrder;
+          if (!o) {
+            return;
+          }
+          await o.transact(doConfirmOrder);
           await cloud.dispatch({
             type: 'PlaceOrder',
-            orderId: currentOrder.getName(),
+            orderId: o.getName(),
           });
         })(),
       );

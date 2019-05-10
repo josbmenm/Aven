@@ -21,11 +21,13 @@ export default function OrderConfirmScreen({
     confirmOrder();
     navigation.navigate('Receipt', { orderId: order.getName() });
   }
+
   const paymentDetails =
     summary && summary.total > 0
       ? {
           amount: Math.floor(summary.total * 100), // ugh.. we should really be using cents everywhere..
           description: 'Ono Blends',
+          context: { id: order && order.getName() },
           onCompletion,
         }
       : undefined;

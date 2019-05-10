@@ -48,14 +48,15 @@ import { registerDispatcher } from '../card-reader/CardReader';
 import { setHostConfig } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import useCloudProvider from '../components/useCloudProvider';
+import FadeTransition from '../components/FadeTransition';
 import { titleStyle } from '../components/Styles';
 
 let IS_DEV = process.env.NODE_ENV !== 'production';
-IS_DEV = false;
+// IS_DEV = false;
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  authority: '192.168.1.29:8840', // office laptop (skynet)
+  authority: '192.168.1.205:8840', // office laptop (skynet)
   // authority: '192.168.1.29:8830', // office laptop
   // authority: 'localhost:8830', // generic simulator
   // authority: 'restaurant0.maui.onofood.co:8830', // prod test
@@ -115,27 +116,32 @@ const OrderNavigator = createStackTransitionNavigator(
   },
 );
 
-const KioskAppNavigator = createStackTransitionNavigator({
-  // Home: HomeScreen,
-  // ComponentPlayground: ComponentPlaygroundScreen,
-  // KitchenEng: KitchenEngScreen,
-  // KitchenEngSub: KitchenEngSubScreen,
-  // KioskSettings: KioskSettingsScreen,
-  KioskHome: KioskHomeScreen,
-  // Blend: BlendScreen,
-  // CustomizeBlend: CustomizeBlendScreen,
-  // Food: FoodScreen,
-  // ProductHome: ProductHomeScreen,
-  OrderConfirm: OrderConfirmScreen,
-  OrderComplete: OrderCompleteScreen,
-  CollectName: CollectNameScreen,
-  SendReceipt: SendReceiptScreen,
-  Receipt: ReceiptScreen,
-  PaymentDebug: PaymentDebugScreen,
-  SequencingDebug: SequencingDebugScreen,
-  AppUpsell: AppUpsellScreen,
-  OrderNavigator,
-});
+const KioskAppNavigator = createStackTransitionNavigator(
+  {
+    // Home: HomeScreen,
+    // ComponentPlayground: ComponentPlaygroundScreen,
+    // KitchenEng: KitchenEngScreen,
+    // KitchenEngSub: KitchenEngSubScreen,
+    // KioskSettings: KioskSettingsScreen,
+    KioskHome: KioskHomeScreen,
+    // Blend: BlendScreen,
+    // CustomizeBlend: CustomizeBlendScreen,
+    // Food: FoodScreen,
+    // ProductHome: ProductHomeScreen,
+    OrderConfirm: OrderConfirmScreen,
+    OrderComplete: OrderCompleteScreen,
+    CollectName: CollectNameScreen,
+    SendReceipt: SendReceiptScreen,
+    Receipt: ReceiptScreen,
+    PaymentDebug: PaymentDebugScreen,
+    SequencingDebug: SequencingDebugScreen,
+    AppUpsell: AppUpsellScreen,
+    OrderNavigator,
+  },
+  {
+    ContainerView: FadeTransition,
+  },
+);
 
 process.env.REACT_NAV_LOGGING = true;
 

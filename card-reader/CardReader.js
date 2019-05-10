@@ -84,10 +84,11 @@ async function cancelPayment() {
   return StripeTerminal.abortCreatePayment();
 }
 
-async function capturePayment(paymentIntentId) {
+async function capturePayment(paymentIntentId, context) {
   return getDispatcher()({
     type: 'StripeCapturePayment',
     paymentIntentId,
+    context,
   });
 }
 
@@ -105,7 +106,7 @@ async function collectPayment(state, options) {
   }
 
   return StripeTerminal.createPayment(options).then(intent =>
-    capturePayment(intent.stripeId),
+    capturePayment(intent.stripeId, options.context),
   );
 }
 
@@ -141,9 +142,10 @@ export function useCardPaymentCapture({
   } = (state = useStripeTerminalCreatePayment({
     amount: request.amount,
     description: request.description,
+    context: request.context,
     currency: 'usd',
     autoRetry: true,
-    onCapture: intent => capturePayment(intent.stripeId),
+    onCapture: intent => capturePayment(intent.stripeId, request.context),
     onSuccess: intent => {
       setPaymentSuccessful(true);
       setCapturedPaymentIntent(intent);
