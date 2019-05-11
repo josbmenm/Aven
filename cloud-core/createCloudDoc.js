@@ -760,10 +760,10 @@ export default function createCloudDoc({
         type: 'PutTransactionValue',
         domain,
         name: getFullName(),
-        value: walkingTransactionValue,
+        value: deepTransactionValue,
       });
     } catch (e) {
-      console.warn('Queued transaction from failure.', value);
+      console.warn('Queued transaction from failure.', values);
       transactionQueue = [...transactionQueue, ...values];
       throw e;
     }
