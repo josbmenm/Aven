@@ -1,5 +1,5 @@
 import Knex from 'knex';
-import { BehaviorSubject, Observable } from 'rxjs-compat';
+import { BehaviorSubject, Observable, Subject } from 'rxjs-compat';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import cuid from 'cuid';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
@@ -40,11 +40,11 @@ export default async function startPostgresStorageSource({ config, domains }) {
     }
 
     client.on('notification', msg => {
-      const { payload, channel } = msg;
+      const { payload, channel: channelId } = msg;
       const payloadData = JSON.parse(payload);
-      const obs = observingChannels[channel];
-      if (obs && obs.observer) {
-        obs.observer.next(payloadData);
+      const channel = observingChannels[channelId];
+      if (channel && channel.notifier) {
+        channel.notifier.next(payloadData);
       } else {
         console.error('undeliverable pg notification!', msg);
       }
@@ -54,12 +54,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     handleClose();
     handleClose = () => {
       // sadly this is needed to clean up the notification subscription, knex.destroy doesn't do it for us..
-      client
-        .end()
-        .then(() => {
-          // console.log('disconnected!');
-        })
-        .catch(console.error);
+      client.end().catch(console.error);
     };
   });
 
@@ -101,6 +96,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       return {
         didCreate: false,
         parent: null,
+        parentId: null,
         domain,
         id: TOP_PARENT_ID,
         localName: null,
@@ -138,6 +134,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
         localName: docName,
         id,
         parent: null,
+        parentId: TOP_PARENT_ID,
       };
     }
     const parentName = docNameParts.slice(0, -1).join('/');
@@ -236,6 +233,14 @@ export default async function startPostgresStorageSource({ config, domains }) {
     return parentId == null ? TOP_PARENT_ID : parentId;
   }
 
+  async function notifyChannel(channelId, payload) {
+    const channel = observingChannels[channelId];
+    if (channel && channel.notifier) {
+      channel.notifier.next(payload);
+    }
+    await knex.raw(`NOTIFY "${channelId}", ${pgFormat.literal(payload)}`);
+  }
+
   async function notifyDocCreation(domain, docName) {
     const ctx = await getContext(domain, docName);
     const channelId = getChildrenChannel(domain, ctx.parentId);
@@ -244,8 +249,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       name: ctx.localName,
       domain,
     });
-    // todo: avoid injection attack probably, with bad channel id?
-    await knex.raw(`NOTIFY "${channelId}", ${pgFormat.literal(payload)}`);
+    await notifyChannel(channelId, payload);
   }
 
   async function notifyDocDestroy(domain, docName) {
@@ -256,15 +260,13 @@ export default async function startPostgresStorageSource({ config, domains }) {
       name: ctx.localName,
       domain,
     });
-    // todo: avoid injection attack probably, with bad channel id?
-    await knex.raw(`NOTIFY "${channelId}", ${pgFormat.literal(payload)}`);
+    await notifyChannel(channelId, payload);
   }
 
   async function notifyDocWrite(domain, parentId, docName, currentBlockId) {
     const channelId = getDocChannel(domain, parentId, docName);
     const payload = JSON.stringify({ id: currentBlockId });
-    // todo: avoid injection attack probably, with bad channel id?
-    await knex.raw(`NOTIFY "${channelId}", ${pgFormat.literal(payload)}`);
+    await notifyChannel(channelId, payload);
   }
 
   async function writeDoc(domain, parentId, localName, currentBlockId) {
@@ -283,7 +285,12 @@ export default async function startPostgresStorageSource({ config, domains }) {
       );
       const resultRow = writeResult.rows[0];
       if (resultRow.prevBlock !== currentBlockId) {
-        await notifyDocWrite(domain, parentId, localName, currentBlockId);
+        await notifyDocWrite(
+          domain,
+          internalParentId,
+          localName,
+          currentBlockId,
+        );
       }
     } catch (e) {
       if (e.message.match(/docs_currentblock_foreign/)) {
@@ -501,12 +508,6 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function PostDoc({ domain, name, value, id }) {
-    if (!name) {
-      throw new Err('Invalid doc name for "PostDoc"', 'InvalidDocName', {
-        domain,
-        name,
-      });
-    }
     if (!domain) {
       throw new Err('Invalid domain for "PostDoc"', 'InvalidDomain', {
         domain,
@@ -667,27 +668,28 @@ export default async function startPostgresStorageSource({ config, domains }) {
     if (observingChannels[channelId]) {
       return observingChannels[channelId].observable;
     }
-    const obs = {
-      observable: new Observable(observer => {
-        obs.observer = observer;
-        pgClient &&
-          pgClient
-            .query(`LISTEN "${channelId}"`)
-            .then(resp => {
-              // console.log('did listen to channel', channelId);
-            })
-            .catch(console.error);
-        return () => {
-          pgClient
-            .query(`UNLISTEN "${channelId}"`)
-            .then(resp => {})
-            .catch(console.error);
-          delete obs.observer;
-        };
-      }).share(),
+    const notifier = new Subject();
+    const observable = new Observable(observer => {
+      const notifierSubscription = notifier.subscribe({
+        next: val => {
+          observer.next(val);
+        },
+      });
+      pgClient && pgClient.query(`LISTEN "${channelId}"`).catch(console.error);
+      return () => {
+        pgClient
+          .query(`UNLISTEN "${channelId}"`)
+          .then(resp => {})
+          .catch(console.error);
+        notifierSubscription.unsubscribe();
+      };
+    }).shareReplay(1);
+    const channel = {
+      notifier,
+      observable,
     };
-    observingChannels[channelId] = obs;
-    return obs.observable;
+    observingChannels[channelId] = channel;
+    return channel.observable;
   }
 
   function getDocChannel(domain, parentId, name) {
@@ -715,35 +717,36 @@ export default async function startPostgresStorageSource({ config, domains }) {
     if (observingChannels[channelId]) {
       return observingChannels[channelId].observable;
     }
-    const obs = {
-      observable: new Observable(observer => {
-        GetDoc({ name, domain })
-          .then(docState => {
-            observer.next({ id: docState.id });
-          })
-          .catch(observer.error);
 
-        obs.observer = observer;
-        pgClient &&
-          pgClient
-            .query(`LISTEN "${channelId}"`)
-            .then(resp => {
-              // console.log('did listen to channel', channelId);
-            })
-            .catch(console.error);
-        return () => {
-          pgClient
-            .query(`UNLISTEN "${channelId}"`)
-            .then(resp => {})
-            .catch(console.error);
-          delete obs.observer;
-        };
-      })
-        .multicast(() => new BehaviorSubject(undefined))
-        .refCount(),
+    const notifier = new Subject();
+    const observable = new Observable(observer => {
+      const notifierSubscription = notifier.subscribe({
+        next: val => {
+          observer.next(val);
+        },
+      });
+      GetDoc({ name, domain })
+        .then(docState => {
+          observer.next({ id: docState.id });
+        })
+        .catch(observer.error);
+
+      pgClient && pgClient.query(`LISTEN "${channelId}"`).catch(console.error);
+      return () => {
+        pgClient
+          .query(`UNLISTEN "${channelId}"`)
+          .then(resp => {})
+          .catch(console.error);
+        notifierSubscription.unsubscribe();
+      };
+    }).shareReplay(1);
+    const channel = {
+      notifier,
+      observable,
     };
-    observingChannels[channelId] = obs;
-    return obs.observable;
+    observingChannels[channelId] = channel;
+
+    return channel.observable;
   }
   async function observeDocChildren(domain, name) {
     if (!domain) {
