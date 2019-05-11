@@ -1,4 +1,4 @@
-import App from './App';
+import App from './SkynetApp';
 
 import startWebClient from '../aven-web/WebClient';
 

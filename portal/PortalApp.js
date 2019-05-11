@@ -55,8 +55,8 @@ import { registerDispatcher } from '../card-reader/CardReader';
 import { setHostConfig } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 
-const IS_DEV = process.env.NODE_ENV !== 'production';
-// const IS_DEV = false;
+let IS_DEV = process.env.NODE_ENV !== 'production';
+// IS_DEV = false;
 
 const RESTAURANT_DEV = {
   useSSL: false,

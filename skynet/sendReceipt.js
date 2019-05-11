@@ -25,13 +25,15 @@ function Header({ title, metaTitle }) {
   );
 }
 
-async function sendSMSReceipt(smsAgent, action) {
+async function sendSMSReceipt(smsAgent, action, logger) {
+  logger.log('SMS Sent', 'SendSMS');
   await smsAgent.actions.SendSMS({
     to: action.contact.value,
     message: 'Thank you for your order, ❤️ Ono Blends',
   });
 }
-async function sendEmailReceipt(emailAgent, action) {
+async function sendEmailReceipt(emailAgent, action, logger) {
+  logger.log('Email Sent', 'SendEmail');
   const { html, errors } = render(
     <Mjml>
       <Header
@@ -72,15 +74,21 @@ async function sendEmailReceipt(emailAgent, action) {
   });
 }
 
-export default async function sendReceipt({ smsAgent, emailAgent, action }) {
+export default async function sendReceipt({
+  cloud,
+  smsAgent,
+  emailAgent,
+  action,
+  logger,
+}) {
   if (!action.contact) {
     throw new Error('Invalid SendReceipt action');
   }
   if (action.contact.type === 'sms') {
-    return await sendSMSReceipt(smsAgent, action);
+    return await sendSMSReceipt(smsAgent, action, logger);
   }
   if (action.contact.type === 'email') {
-    return await sendEmailReceipt(emailAgent, action);
+    return await sendEmailReceipt(emailAgent, action, logger);
   }
   return;
 }

@@ -126,7 +126,7 @@ function StepperButton({ onPress, disabled, isDown }) {
       onPress={onPress}
       disabled={disabled}
       style={{ opacity: buttonOpacity }}
-      hitSlop={{ left: 60, right: 60, top: 60, bottom: 60 }}
+      hitSlop={{ left: 60, right: 60, top: 25, bottom: 25 }}
     >
       <Image
         source={require('./Up.png')}
@@ -274,8 +274,7 @@ function CartRow({ itemId, item }) {
   );
 }
 
-function PromoCodeForm({ onClose, order }) {
-  const cloud = useCloud();
+function PromoCodeForm({ onClose, order, cloud }) {
   const [error, setError] = React.useState(null);
   const [promoCode, setPromoCode] = React.useState('');
   const inputRenderers = [
@@ -335,12 +334,13 @@ function PromoCodeForm({ onClose, order }) {
 
 function usePromoPopover() {
   const { order } = useOrder();
+  const cloud = useCloud();
 
   const { onPopover } = usePopover(
     ({ onClose, popoverOpenValue }) => {
       return (
         <KeyboardPopover onClose={onClose}>
-          <PromoCodeForm onClose={onClose} order={order} />
+          <PromoCodeForm onClose={onClose} order={order} cloud={cloud} />
         </KeyboardPopover>
       );
     },

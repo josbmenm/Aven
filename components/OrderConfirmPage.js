@@ -227,17 +227,6 @@ export default function OrderConfirmPage({
         {message}
       </Text>
       {bottomContent}
-      <View
-        style={{
-          position: 'absolute',
-          right: 20,
-          bottom: 20,
-          width: 350,
-          height: 80,
-        }}
-      >
-        <Button title="skip payment (TEST ONLY)" onPress={skipPayment} />
-      </View>
     </FadeTransition>
   );
 }

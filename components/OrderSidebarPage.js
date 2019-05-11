@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import TextButton from './TextButton';
 import { useOrderSummary, useOrder } from '../ono-cloud/OnoKitchen';
 import CartSidebar from './CartSidebar';
+import useBlitzDebugPopover from '../components/useBlitzDebugPopover';
 
 import { useNavigation } from '../navigation-hooks/Hooks';
 import {
@@ -21,7 +22,7 @@ export const SidebarOverlayContext = createContext({});
 function SidebarPage({ children, isPortal, ...props }) {
   const { navigate } = useNavigation();
   const summary = useOrderSummary();
-  const { cancelOrder } = useOrder();
+  const { cancelOrder, order } = useOrder();
   const [openProgress] = useState(new Animated.Value(0));
   const shouldBeOpen = !!summary && summary.items && summary.items.length >= 1;
   useEffect(() => {
@@ -32,6 +33,8 @@ function SidebarPage({ children, isPortal, ...props }) {
       useNativeDriver: true,
     }).start();
   }, [shouldBeOpen]);
+
+  const { openPopover } = useBlitzDebugPopover();
 
   const panel = summary && <CartSidebar summary={summary} />;
 
@@ -84,16 +87,13 @@ function SidebarPage({ children, isPortal, ...props }) {
       >
         <TextButton
           title="cancel order"
-          onLongPress={() => {
-            if (isPortal) {
-              navigate('Home');
-            }
-          }}
+          onLongPress={openPopover}
           onPress={async () => {
             await cancelOrder();
-            if (!isPortal) {
+            if (isPortal) {
+              navigate('Home');
+            } else {
               navigate('KioskHome');
-              return;
             }
           }}
         />

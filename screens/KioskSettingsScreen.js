@@ -1,34 +1,11 @@
 import React from 'react';
-import { AlertIOS } from 'react-native';
 
 import SimplePage from '../components/SimplePage';
 import RowSection from '../components/RowSection';
 import LinkRow from '../components/LinkRow';
-import TextRow from '../components/TextRow';
+import AppInfoText from '../components/AppInfoText';
 import useCloud from '../cloud-core/useCloud';
 import codePush from 'react-native-code-push';
-
-function AppPushInfo() {
-  let [updateMetadata, setUpdateMetadata] = React.useState(null);
-  React.useEffect(() => {
-    codePush
-      .getUpdateMetadata()
-      .then(m => {
-        setUpdateMetadata(m);
-      })
-      .catch(() => {});
-    return () => {};
-  }, []);
-  return (
-    (updateMetadata || null) && (
-      <TextRow
-        text={`Native v${updateMetadata.appVersion} App ${
-          updateMetadata.label
-        }`}
-      />
-    )
-  );
-}
 
 function UpdateAirtableRow() {
   const cloud = useCloud();
@@ -90,7 +67,7 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
         />
         <UpdateAirtableRow />
       </RowSection>
-      <AppPushInfo />
+      <AppInfoText />
     </SimplePage>
   );
 }

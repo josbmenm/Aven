@@ -1,4 +1,4 @@
-import App from './App';
+import App from './SkynetApp';
 import WebServer from '../aven-web/WebServer';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
@@ -27,6 +27,83 @@ import validatePromoCode from './validatePromoCode';
 const getEnv = c => process.env[c];
 
 const ONO_ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
+
+function createLogger(source, domain, logName) {
+  let queue = [];
+  let slowTimeout = null;
+  let fastTimeout = null;
+
+  function writeLogs() {
+    console.log('writeLogs', queue.length);
+    clearTimeout(slowTimeout);
+    clearTimeout(fastTimeout);
+    if (!queue.length) {
+      return;
+    }
+    const queueSnapshot = queue;
+    queue = [];
+    source
+      .dispatch({
+        type: 'PutTransactionValue',
+        domain,
+        name: logName,
+        value: {
+          type: 'Logs',
+          logs: queueSnapshot,
+        },
+      })
+      .then(() => {
+        console.log('writing done!');
+        if (queue.length) {
+          enqueueWrite();
+        }
+      })
+      .catch(e => {
+        console.error('Error writing logs', e);
+        queue = [...queueSnapshot, ...queue];
+      });
+  }
+
+  function enqueueWrite() {
+    console.log('enqueueWrite log');
+    if (queue.length > 50) {
+      writeLogs();
+    } else {
+      clearTimeout(fastTimeout);
+      slowTimeout = setTimeout(writeLogs, 400);
+      fastTimeout = setTimeout(writeLogs, 32);
+    }
+  }
+
+  function log(message, type, details) {
+    console.log('perform log');
+    queue = [
+      ...queue,
+      { message, type, details, level: 'log', time: Date.now() },
+    ];
+    enqueueWrite();
+  }
+  function warn(message, type, details) {
+    queue = [
+      ...queue,
+      { message, type, details, level: 'warn', time: Date.now() },
+    ];
+    enqueueWrite();
+  }
+  function error(message, type, details) {
+    queue = [
+      ...queue,
+      { message, type, details, level: 'error', time: Date.now() },
+    ];
+    enqueueWrite();
+  }
+
+  return {
+    log,
+    warn,
+    error,
+  };
+}
 
 const startSkynetServer = async () => {
   console.log('☁️ Starting Website 💨');
@@ -101,6 +178,8 @@ const startSkynetServer = async () => {
     },
   });
 
+  const logger = createLogger(storageSource, 'onofood.co', 'SkynetEvents');
+
   const protectedSource = createProtectedSource({
     source: evalSource,
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
@@ -170,7 +249,7 @@ const startSkynetServer = async () => {
     })
     .catch(console.error);
 
-  async function placeOrder({ orderId }) {
+  async function placeOrder({ orderId }, logger) {
     console.log('placing order..', orderId);
 
     const inputOrder = unprotectedCloud.get(`Orders/${orderId}`);
@@ -187,25 +266,33 @@ const startSkynetServer = async () => {
       order,
     });
 
+    logger.log('Order Placed', 'PlaceOrder', { orderId });
+
     return {};
   }
 
   const dispatch = async action => {
     switch (action.type) {
       case 'SendReceipt':
-        return await sendReceipt({ smsAgent, emailAgent, action });
+        return await sendReceipt({
+          cloud: unprotectedCloud,
+          smsAgent,
+          emailAgent,
+          action,
+          logger,
+        });
       case 'PlaceOrder':
-        return placeOrder(action);
+        return placeOrder(action, logger);
       case 'StripeGetConnectionToken':
         return getConnectionToken(action);
       case 'StripeCapturePayment':
         return capturePayment(action);
       case 'ValidatePromoCode':
-        return validatePromoCode(unprotectedCloud, action);
+        return validatePromoCode(unprotectedCloud, action, logger);
       case 'SubmitFeedback':
-        return submitFeedback(unprotectedCloud, emailAgent, action);
+        return submitFeedback(unprotectedCloud, emailAgent, action, logger);
       case 'UpdateAirtable':
-        return await scrapeAirTable(fsClient);
+        return await scrapeAirTable(fsClient, logger);
       default:
         return await protectedSource.dispatch(action);
     }

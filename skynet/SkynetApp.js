@@ -12,6 +12,9 @@ import { createSwitchNavigator } from '../navigation-core';
 import Admin from '../admin/Admin';
 import { monsterra } from '../components/Styles';
 
+import useCloud from '../cloud-core/useCloud';
+import useCloudValue from '../cloud-core/useCloudValue';
+
 const Main = () => (
   <View
     style={{
