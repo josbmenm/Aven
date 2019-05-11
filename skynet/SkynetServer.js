@@ -34,7 +34,6 @@ function createLogger(source, domain, logName) {
   let fastTimeout = null;
 
   function writeLogs() {
-    console.log('writeLogs', queue.length);
     clearTimeout(slowTimeout);
     clearTimeout(fastTimeout);
     if (!queue.length) {
@@ -53,19 +52,16 @@ function createLogger(source, domain, logName) {
         },
       })
       .then(() => {
-        console.log('writing done!');
         if (queue.length) {
           enqueueWrite();
         }
       })
       .catch(e => {
-        console.error('Error writing logs', e);
         queue = [...queueSnapshot, ...queue];
       });
   }
 
   function enqueueWrite() {
-    console.log('enqueueWrite log');
     if (queue.length > 50) {
       writeLogs();
     } else {
@@ -76,7 +72,6 @@ function createLogger(source, domain, logName) {
   }
 
   function log(message, type, details) {
-    console.log('perform log');
     queue = [
       ...queue,
       { message, type, details, level: 'log', time: Date.now() },
