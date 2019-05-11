@@ -1,8 +1,6 @@
 import React from 'react';
 import {
   useNavigationWillBlurEffect,
-  useNavigationDidBlurEffect,
-  useNavigationWillFocusEffect,
   useNavigationDidFocusEffect,
 } from './Hooks';
 
@@ -10,20 +8,12 @@ export default function useFocus({ inputRenderers, onSubmit }) {
   const focused = React.useRef(null);
   const refs = React.useRef(inputRenderers.map(a => React.createRef()));
   useNavigationWillBlurEffect(() => {
-    console.log('Will blur!!!');
     if (focused.current !== null) {
       const activeInputRef = refs.current[focused.current];
       activeInputRef && activeInputRef.current && activeInputRef.current.blur();
     }
   });
-  useNavigationDidBlurEffect(() => {
-    // console.log('Did blur!!!');
-  });
-  useNavigationWillFocusEffect(() => {
-    // console.log('Will focus!!!');
-  });
   useNavigationDidFocusEffect(() => {
-    console.log('Did focus!!!');
     const firstInput = refs.current[0].current;
     firstInput && firstInput.focus();
   });
