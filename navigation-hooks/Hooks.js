@@ -21,7 +21,11 @@ export function useNavigationDidFocusEffect(handleDidFocus) {
   const navigation = useNavigation();
   useEffect(() => {
     const { key } = navigation.state;
-    const parentState = navigation.dangerouslyGetParent().state;
+    const parentNav = navigation.dangerouslyGetParent();
+    if (!parentNav) {
+      return () => {};
+    }
+    const parentState = parentNav.state;
     const isFocused = parentState.routes[parentState.index].key === key;
     const { isTransitioning } = parentState;
     if (isFocused && !isTransitioning) {
