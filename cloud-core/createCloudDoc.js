@@ -388,6 +388,7 @@ export default function createCloudDoc({
       domain,
       name: getFullName(),
     });
+    close();
   }
 
   async function fetchValue() {
@@ -719,40 +720,80 @@ export default function createCloudDoc({
     return { id: block.id };
   }
 
-  async function putTransaction(value) {
-    await fetch();
+  let transactionQueue = [];
+
+  async function putTransactions(values) {
+    try {
+      await fetch();
+    } catch (e) {
+      // we can still assume that we have the latest possible version, and apply a transaction locally. the actual transaction has real error handling below
+    }
     const prevId = getId();
-    const expectedTransactionValue = {
-      type: 'TransactionValue',
-      on: {
-        type: 'BlockReference',
-        id: prevId,
-      },
-      value,
-    };
-    const expectedBlock = _getBlockWithValue(expectedTransactionValue);
+    let deepTransactionValue = undefined;
+    let deepTransactionId = prevId;
+    values.forEach(value => {
+      deepTransactionValue = {
+        type: 'TransactionValue',
+        on: {
+          type: 'BlockReference',
+          value: deepTransactionValue,
+          id: deepTransactionId,
+        },
+        value,
+      };
+      const b = _getBlockWithValue(deepTransactionValue);
+      deepTransactionId = b.id;
+    });
 
     setState({
-      id: expectedBlock.id,
+      id: deepTransactionId,
       puttingFromId: prevId,
     });
 
-    const result = await source.dispatch({
-      type: 'PutTransactionValue',
-      domain,
-      name: getFullName(),
-      value,
-    });
+    if (!cloudClient.isConnected.getValue()) {
+      transactionQueue = [...transactionQueue, ...values];
+      return;
+    }
+    let result = null;
+    try {
+      result = await source.dispatch({
+        type: 'PutTransactionValue',
+        domain,
+        name: getFullName(),
+        value: walkingTransactionValue,
+      });
+    } catch (e) {
+      console.warn('Queued transaction from failure.', value);
+      transactionQueue = [...transactionQueue, ...values];
+      throw e;
+    }
 
-    if (result.id !== expectedBlock.id) {
+    if (result.id !== deepTransactionId) {
       console.warn(
-        `Expected to put block id "${expectedBlock.id}", but actually put id "${
+        `Expected to put block id "${deepTransactionId}", but actually put id "${
           result.id
         }"`,
       );
     }
     return result;
   }
+
+  async function putTransaction(value) {
+    await putTransactions([value]);
+  }
+
+  const isConnectedSubscription = cloudClient.isConnected.subscribe({
+    next: isConn => {
+      if (isConn && transactionQueue.length) {
+        const transactionQueueSnapshot = transactionQueue;
+        transactionQueue = [];
+        putTransactions(transactionQueueSnapshot).catch(e => {
+          console.error('Failed to queued transactions!', e);
+          transactionQueue = [...transactionQueueSnapshot, ...transactionQueue];
+        });
+      }
+    },
+  });
 
   async function putId(blockId) {
     // err.. shouldn't this be using state.puttingFromId to avoid race conditions??
@@ -1097,6 +1138,10 @@ export default function createCloudDoc({
     };
   }
 
+  function close() {
+    isConnectedSubscription && isConnectedSubscription.unsubscribe();
+  }
+
   const isConnected = mapBehaviorSubject(docState, state => state.isConnected);
 
   const cloudDoc = {
@@ -1145,6 +1190,7 @@ export default function createCloudDoc({
     _defineCloudFunction,
     $setOverrideFunction, // I suppose this is an implementation detail of eval data source
     markRemoteLambda, // maybe rename this..
+    close,
   };
 
   bindCloudValueFunctions(cloudDoc, cloudClient);
