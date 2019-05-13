@@ -6,7 +6,6 @@ import createCloudClient from '../cloud-core/createCloudClient';
 import createFSClient from '../cloud-server/createFSClient';
 import CloudContext from '../cloud-core/CloudContext';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
-import scrapeAirTable from '../skynet/scrapeAirTable';
 import { createReducerLambda } from '../cloud-core/useCloudReducer';
 import KitchenCommands from '../logic/KitchenCommands';
 import { hashSecureString } from '../cloud-utils/Crypto';
@@ -16,6 +15,8 @@ import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import createEvalSource from '../cloud-core/createEvalSource';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
+import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
+import combineSources from '../cloud-core/combineSources';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import sendReceipt from '../skynet/sendReceipt';
 import RestaurantReducer from '../logic/RestaurantReducer';
@@ -72,11 +73,29 @@ const startVerseServer = async () => {
     host: getEnv('SQL_HOST'),
   };
 
+  const remoteSource = createNodeNetworkSource({
+    authority: 'onofood.co',
+    useSSL: true,
+
+    // authority: 'localhost:8840',
+    // useSSL: false,
+  });
+
   const storageSource = await startPostgresStorageSource({
     domains: ['onofood.co'],
     config: {
       client: 'pg',
       connection: pgConfig,
+    },
+  });
+
+  const combinedStorageSource = combineSources({
+    fastSource: storageSource,
+    slowSource: remoteSource,
+    fastSourceOnlyMapping: {
+      'onofood.co': {
+        RestaurantActions: true,
+      },
     },
   });
 
@@ -121,7 +140,7 @@ const startVerseServer = async () => {
   });
 
   const evalSource = createEvalSource({
-    source: storageSource,
+    source: combinedStorageSource,
     domain: 'onofood.co',
     functions: [RestaurantReducer],
   });
@@ -133,6 +152,11 @@ const startVerseServer = async () => {
 
   const protectedSource = createProtectedSource({
     source: evalSource,
+    parentAuth: {
+      accountId: 'root',
+      verificationInfo: {},
+      verificationResponse: { password: ROOT_PASSWORD }, // careful! here we assume that skynet's root pw is the same as the one here for verse!
+    },
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
@@ -152,86 +176,89 @@ const startVerseServer = async () => {
     });
   }
 
-  await putPermission({
-    defaultRule: { canRead: true },
-    name: 'Airtable',
-  });
+  async function establishPermissions() {
+    await putPermission({
+      defaultRule: { canWrite: true, canRead: true },
+      name: 'RestaurantActions',
+    });
 
-  await putPermission({
-    defaultRule: { canWrite: true, canRead: true },
-    name: 'RestaurantActions',
-  });
+    await putPermission({
+      defaultRule: { canWrite: true, canRead: true },
+      name: 'RestaurantReducer',
+    });
 
-  await putPermission({
-    defaultRule: { canWrite: true, canRead: true },
-    name: 'RestaurantReducer',
-  });
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'RestaurantActions^RestaurantReducer',
+    });
 
-  await putPermission({
-    defaultRule: { canRead: true },
-    name: 'RestaurantActions^RestaurantReducer',
-  });
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'RestaurantSequencer',
+    });
 
-  await putPermission({
-    defaultRule: { canRead: true },
-    name: 'RestaurantSequencer',
-  });
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'KitchenState',
+    });
 
-  await putPermission({
-    defaultRule: { canRead: true },
-    name: 'KitchenState',
-  });
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'KitchenConfig',
+    });
 
-  await putPermission({
-    defaultRule: { canRead: true },
-    name: 'KitchenConfig',
-  });
+    await putPermission({
+      defaultRule: { canRead: true, canTransact: true },
+      name: 'KitchenActions',
+    });
 
-  await putPermission({
-    defaultRule: { canRead: true, canTransact: true },
-    name: 'KitchenActions',
-  });
+    await putPermission({
+      defaultRule: { canRead: true, canTransact: true },
+      name: 'KitchenLog',
+    });
 
-  await putPermission({
-    defaultRule: { canRead: true, canTransact: true },
-    name: 'KitchenLog',
-  });
+    await putPermission({
+      defaultRule: { canPost: true },
+      name: 'Orders',
+    });
 
-  await putPermission({
-    defaultRule: { canPost: true },
-    name: 'Orders',
-  });
+    await putPermission({
+      defaultRule: { canWrite: true },
+      name: 'Restaurant',
+    });
 
-  await putPermission({
-    defaultRule: { canWrite: true },
-    name: 'Restaurant',
-  });
+    await putPermission({
+      defaultRule: { canWrite: true },
+      name: 'PendingOrder',
+    });
 
-  await putPermission({
-    defaultRule: { canWrite: true },
-    name: 'PendingOrder',
-  });
+    await putPermission({
+      defaultRule: { canWrite: true },
+      name: 'StatusDisplay',
+    });
 
-  await putPermission({
-    defaultRule: { canWrite: true },
-    name: 'StatusDisplay',
-  });
+    await putPermission({
+      defaultRule: { canWrite: true },
+      name: 'StatusDisplay/reducer',
+    });
 
-  await putPermission({
-    defaultRule: { canWrite: true },
-    name: 'StatusDisplay/reducer',
-  });
+    await putPermission({
+      // todo, offer better auth for kiosk state
+      defaultRule: { canWrite: true },
+      name: 'Kiosk/Left',
+    });
+    await putPermission({
+      // todo, offer better auth for kiosk state
+      defaultRule: { canWrite: true },
+      name: 'Kiosk/Right',
+    });
+  }
 
-  await putPermission({
-    // todo, offer better auth for kiosk state
-    defaultRule: { canWrite: true },
-    name: 'Kiosk/Left',
-  });
-  await putPermission({
-    // todo, offer better auth for kiosk state
-    defaultRule: { canWrite: true },
-    name: 'Kiosk/Right',
-  });
+  establishPermissions()
+    .then(() => {
+      console.log('Permissions Applied');
+    })
+    .catch(console.error);
 
   const fsClient = createFSClient({ client: cloud });
   await new Promise(resolve => setTimeout(resolve, 3000));
@@ -499,7 +526,7 @@ const startVerseServer = async () => {
   }
 
   const dispatch = async action => {
-    let stripeResponse = handleStripeAction(action);
+    let stripeResponse = await handleStripeAction(action);
     if (stripeResponse) {
       return stripeResponse;
     }
@@ -516,20 +543,13 @@ const startVerseServer = async () => {
         return await sendReceipt({ smsAgent, emailAgent, action });
       case 'KitchenAction':
         return await kitchenAction(action);
-      case 'UpdateAirtable':
-        return await scrapeAirTable(fsClient);
       case 'PlaceOrder':
         return placeOrder(action);
-      default:
+      default: {
         return await protectedSource.dispatch(action);
+      }
     }
   };
-
-  // scrapeAirTable(fsClient)
-  //   .then(() => {
-  //     console.log('Airtable Updated');
-  //   })
-  //   .catch(console.error);
 
   const serverListenLocation = getEnv('PORT');
 
@@ -551,7 +571,7 @@ const startVerseServer = async () => {
   return {
     close: async () => {
       await protectedSource.close();
-      await storageSource.close();
+      await combinedStorageSource.close();
       await webService.close();
       kitchen && (await kitchen.close());
       console.log('😵 Server Closed');

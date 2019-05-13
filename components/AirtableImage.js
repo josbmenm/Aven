@@ -4,15 +4,18 @@ import Image, { loadImages } from './Image';
 const md5 = require('crypto-js/md5');
 const path = require('path');
 
-let authority = 'onofood.co';
-let useSSL = true;
+const HostContext = React.createContext();
 
-export function setHostConfig(config) {
-  useSSL = config.useSSL;
-  authority = config.authority;
+export function HostContextContainer({ authority, useSSL, children }) {
+  return (
+    <HostContext.Provider value={{ authority, useSSL }}>
+      {children}
+    </HostContext.Provider>
+  );
 }
 
 const AirtableImage = ({ image, style, resizeMode, tintColor }) => {
+  const { authority, useSSL } = React.useContext(HostContext);
   const origUrl = image && image[0] && image[0].url;
   const ext = path.extname(origUrl);
   const imageURI = `${
@@ -30,7 +33,18 @@ const AirtableImage = ({ image, style, resizeMode, tintColor }) => {
   );
 };
 
-export async function preloadImages(images) {
+export function usePreloadedImages(loader, deps) {
+  React.useEffect(() => {
+    const images = loader();
+    preloadImages(images)
+      .then(results => {})
+      .catch(() => {
+        console.warn('Images failed to preload.');
+      });
+  }, deps);
+}
+
+export async function preloadImages(images, authority, useSSL) {
   const imageSources = images.map(image => {
     const origUrl = image && image[0] && image[0].url;
     const ext = path.extname(origUrl);

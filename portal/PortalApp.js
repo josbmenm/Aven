@@ -52,7 +52,7 @@ import { PopoverContainer } from '../views/Popover';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { registerDispatcher } from '../card-reader/CardReader';
 
-import { setHostConfig } from '../components/AirtableImage';
+import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 
 let IS_DEV = process.env.NODE_ENV !== 'production';
@@ -60,21 +60,14 @@ let IS_DEV = process.env.NODE_ENV !== 'production';
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  authority: '192.168.1.9:8840', // office laptop (skynet)
-  // authority: '192.168.1.29:8830', // office laptop
-  // authority: 'localhost:8830', // generic simulator
-  // authority: 'restaurant0.maui.onofood.co:8830', // prod test
+  authority: 'localhost:8830',
 };
 const RESTAURANT_PROD = {
-  // useSSL: false,
-  useSSL: true,
-  // authority: 'restaurant0.maui.onofood.co:8830',
-  authority: 'onofood.co',
+  useSSL: false,
+  authority: 'restaurant0.maui.onofood.co:8830',
 };
 
 const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
-
-setHostConfig(HOST_CONFIG);
 
 const cloudSource = createNativeNetworkSource(HOST_CONFIG);
 
@@ -177,18 +170,20 @@ function FullApp() {
     return null;
   }
   return (
-    <PopoverContainer>
-      <CloudContext.Provider value={cloud}>
-        <ErrorContainer
-          renderError={renderAppError}
-          onCatch={async () => {
-            await AsyncStorage.removeItem(NAV_STORAGE_KEY);
-          }}
-        >
-          <AppContainer />
-        </ErrorContainer>
-      </CloudContext.Provider>
-    </PopoverContainer>
+    <HostContextContainer {...HOST_CONFIG}>
+      <PopoverContainer>
+        <CloudContext.Provider value={cloud}>
+          <ErrorContainer
+            renderError={renderAppError}
+            onCatch={async () => {
+              await AsyncStorage.removeItem(NAV_STORAGE_KEY);
+            }}
+          >
+            <AppContainer />
+          </ErrorContainer>
+        </CloudContext.Provider>
+      </PopoverContainer>
+    </HostContextContainer>
   );
 }
 

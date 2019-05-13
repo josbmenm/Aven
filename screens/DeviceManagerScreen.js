@@ -57,6 +57,7 @@ function ModeForm({ onClose, deviceDoc }) {
     <React.Fragment>
       <Button title="Closed" onPress={getModeSetter('closed')} />
       <Button title="Kiosk" onPress={getModeSetter('kiosk')} />
+      <Button title="Kiosk (Skynet)" onPress={getModeSetter('testKiosk')} />
       <Button title="Feedback" onPress={getModeSetter('feedback')} />
       <Button title="Card Reader" onPress={getModeSetter('cardreader')} />
     </React.Fragment>

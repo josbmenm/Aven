@@ -4,20 +4,19 @@ import { Image, StyleSheet } from 'react-native';
 import FoodMenu from './FoodMenu';
 import BlendMenu from './BlendMenu';
 import loadImages from '../components/Image';
-import { preloadImages } from '../components/AirtableImage';
+import { usePreloadedImages } from '../components/AirtableImage';
 
 function ProductHomePage({ menu, ...props }) {
-  React.useEffect(() => {
+  usePreloadedImages(() => {
     if (!menu) {
       return;
     }
     const images = menu.blends
       .map(blend => blend.Recipe.SplashImage)
       .filter(Boolean);
-    preloadImages(images).then(results => {
-      console.log('splash images preloaded!');
-    });
+    return images;
   }, [menu]);
+
   let menuViews = null;
   if (menu) {
     menuViews = (

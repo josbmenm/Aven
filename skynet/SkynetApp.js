@@ -10,9 +10,11 @@ import {
 } from 'react-native';
 import { createSwitchNavigator } from '../navigation-core';
 import Admin from '../admin/Admin';
+import FocusExample from './FocusExample';
 import { monsterra } from '../components/Styles';
 
 import useCloud from '../cloud-core/useCloud';
+import xs from 'xstream';
 import useCloudValue from '../cloud-core/useCloudValue';
 
 const Main = () => (
@@ -90,6 +92,10 @@ const App = createSwitchNavigator(
     Admin: {
       screen: SkynetAdmin,
       path: 'admin',
+    },
+    Focus: {
+      screen: FocusExample,
+      path: 'focus',
     },
   },
   {},

@@ -45,34 +45,43 @@ import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import OrderSidebarPage from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
 import { registerDispatcher } from '../card-reader/CardReader';
-import { setHostConfig } from '../components/AirtableImage';
+import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import useCloudProvider from '../components/useCloudProvider';
 import FadeTransition from '../components/FadeTransition';
 import { titleStyle } from '../components/Styles';
 
 let IS_DEV = process.env.NODE_ENV !== 'production';
+
+// uncomment to test prod mode:
 // IS_DEV = false;
 
-const RESTAURANT_DEV = {
-  useSSL: false,
-  authority: '192.168.1.9:8840', // office laptop (skynet)
-  // authority: '192.168.1.29:8830', // office laptop
-  // authority: 'localhost:8830', // generic simulator
-  // authority: 'restaurant0.maui.onofood.co:8830', // prod test
-};
-const RESTAURANT_PROD = {
-  // useSSL: false,
-  useSSL: true,
-  // authority: 'restaurant0.maui.onofood.co:8830',
-  authority: 'onofood.co',
-};
+const VERSE_HOST_CONFIG = IS_DEV
+  ? {
+      // Verse dev:
+      useSSL: false,
+      authority: 'localhost:8830',
+    }
+  : {
+      // Verse prod:
+      useSSL: false,
+      authority: 'restaurant0.maui.onofood.co:8830',
+    };
+const SKYNET_HOST_CONFIG = IS_DEV
+  ? {
+      // Skynet dev:
+      useSSL: false,
+      authority: 'localhost:8840',
+    }
+  : {
+      // Skynet prod:
+      useSSL: true,
+      authority: 'onofood.co',
+    };
 
-const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
+const verseSource = createNativeNetworkSource(VERSE_HOST_CONFIG);
 
-setHostConfig(HOST_CONFIG);
-
-const cloudSource = createNativeNetworkSource(HOST_CONFIG);
+const skynetSource = createNativeNetworkSource(SKYNET_HOST_CONFIG);
 
 YellowBox.ignoreWarnings([
   'background tab',
@@ -81,7 +90,7 @@ YellowBox.ignoreWarnings([
   'CardReaderLog',
 ]);
 
-registerDispatcher(cloudSource.dispatch);
+registerDispatcher(skynetSource.dispatch);
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
@@ -186,13 +195,24 @@ const PRELOAD_IMAGES = [
   require('../components/assets/BgGeneric.png'),
 ];
 
-function KioskApp() {
+function KioskApp({ mode }) {
+  const isSkynet = mode === 'testKiosk';
+  const hostConfig = isSkynet ? SKYNET_HOST_CONFIG : VERSE_HOST_CONFIG;
+  const cloud = useCloudProvider({
+    source: isSkynet ? skynetSource : verseSource,
+    domain: 'onofood.co',
+    establishAnonymousSession: true,
+  });
   return (
-    <PopoverContainer>
-      <OrderContextProvider>
-        <KioskAppContainer />
-      </OrderContextProvider>
-    </PopoverContainer>
+    <HostContextContainer {...hostConfig}>
+      <CloudContext.Provider value={cloud}>
+        <PopoverContainer>
+          <OrderContextProvider>
+            <KioskAppContainer />
+          </OrderContextProvider>
+        </PopoverContainer>
+      </CloudContext.Provider>
+    </HostContextContainer>
   );
 }
 
@@ -243,8 +263,8 @@ function SelectModeApp() {
   if (mode === 'feedback') {
     return <FeedbackApp />;
   }
-  if (mode === 'kiosk') {
-    return <KioskApp />;
+  if (mode === 'kiosk' || mode === 'testKiosk') {
+    return <KioskApp mode={mode} />;
   }
   if (mode === 'cardreader') {
     return <SettingsApp />;
@@ -277,7 +297,7 @@ function useControlledApp(cloud) {
 
 function FullApp() {
   const cloud = useCloudProvider({
-    source: cloudSource,
+    source: skynetSource,
     domain: 'onofood.co',
     establishAnonymousSession: true,
   });
