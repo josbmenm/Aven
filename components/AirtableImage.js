@@ -34,12 +34,13 @@ const AirtableImage = ({ image, style, resizeMode, tintColor }) => {
 };
 
 export function usePreloadedImages(loader, deps) {
+  const { authority, useSSL } = React.useContext(HostContext);
   React.useEffect(() => {
     const images = loader();
-    preloadImages(images)
+    preloadImages(images, authority, useSSL)
       .then(results => {})
-      .catch(() => {
-        console.warn('Images failed to preload.');
+      .catch(e => {
+        console.warn('Images failed to preload.', e);
       });
   }, deps);
 }

@@ -203,6 +203,9 @@ function KioskApp({ mode }) {
     domain: 'onofood.co',
     establishAnonymousSession: true,
   });
+  if (!cloud) {
+    return <Spinner />;
+  }
   return (
     <HostContextContainer {...hostConfig}>
       <CloudContext.Provider value={cloud}>
