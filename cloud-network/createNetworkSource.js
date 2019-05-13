@@ -236,6 +236,8 @@ export default function createNetworkSource(opts) {
   return {
     dispatch,
 
+    id: `network-${opts.authority}`,
+
     //  #legacy
     observeDoc,
     //  #legacy

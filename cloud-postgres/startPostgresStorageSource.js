@@ -21,7 +21,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       'DomainConfiguration',
     );
   }
-  const id = cuid();
+  const id = `postgres-${cuid()}`;
 
   const TOP_PARENT_ID = 0; // hacky approach to handle top-level parents and still enforce uniqueness properly on the docs table.
 

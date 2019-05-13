@@ -2,16 +2,24 @@ export default function createDispatcher(
   actions,
   fallbackDispatch,
   filterDomain,
+  sourceId,
 ) {
-  function dispatch(action) {
+  const shouldLog = !!sourceId && false;
+  async function dispatch(action) {
     if (filterDomain && fallbackDispatch && action.domain !== filterDomain) {
-      return fallbackDispatch(action);
+      const result = await fallbackDispatch(action);
+      shouldLog && console.log(`Dispatch via ${sourceId}: `, action, result);
+      return result;
     }
     if (actions[action.type]) {
-      return actions[action.type](action);
+      const result = await actions[action.type](action);
+      shouldLog && console.log(`Dispatch via ${sourceId}: `, action, result);
+      return result;
     }
     if (fallbackDispatch) {
-      return fallbackDispatch(action);
+      const result = await fallbackDispatch(action);
+      shouldLog && console.log(`Dispatch via ${sourceId}: `, action, result);
+      return result;
     }
     throw new Error(`Cannot find action "${action.type}"`);
   }

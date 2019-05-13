@@ -3,45 +3,31 @@ import createDispatcher from '../cloud-utils/createDispatcher';
 import { getAuthDocName } from '../cloud-utils/MetaDocNames';
 import Err from '../utils/Err';
 
-function thanksVeryMuch(dispatch) {
-  return async action => {
-    const resp = await dispatch(action);
-    // console.log('thanks ', action, 'very much', resp);
-    return resp;
-  };
-}
-async function writeDocValue(source, domain, name, value) {
-  await thanksVeryMuch(source.dispatch)({
-    type: 'PutDocValue',
-    domain,
-    value,
-    name,
-  });
-}
-
-async function getDocValue(source, domain, name) {
-  const r = await thanksVeryMuch(source.dispatch)({
-    domain,
-    type: 'GetDoc',
-    name,
-  });
-  if (!r || !r.id) {
-    return null;
+export default function createProtectedSource({
+  source,
+  providers,
+  parentAuth,
+}) {
+  async function writeDocValue(source, domain, name, value) {
+    await source.dispatch({
+      type: 'PutDocValue',
+      domain,
+      value,
+      name,
+      auth: parentAuth,
+    });
   }
 
-  const o = await thanksVeryMuch(source.dispatch)({
-    type: 'GetBlock',
-    name,
-    domain,
-    id: r.id,
-  });
-  if (!o) {
-    return o;
+  async function getDocValue(source, domain, name) {
+    const r = await source.dispatch({
+      domain,
+      type: 'GetDocValue',
+      name,
+      auth: parentAuth,
+    });
+    return r && r.value;
   }
-  return o.value;
-}
 
-export default function createProtectedSource({ source, providers }) {
   async function VerifyAuth({ auth, domain }) {
     if (!auth) {
       return {};
@@ -507,6 +493,7 @@ export default function createProtectedSource({ source, providers }) {
       from: `auth/account/${validated.accountId}`,
       to: `auth/account/${name}`,
       domain,
+      auth: parentAuth,
     });
   }
 
@@ -521,6 +508,7 @@ export default function createProtectedSource({ source, providers }) {
       type: 'DestroyDoc',
       domain,
       name: `auth/account/${auth.accountId}/session/${auth.sessionId}`,
+      auth: parentAuth,
     });
   }
 
@@ -535,6 +523,7 @@ export default function createProtectedSource({ source, providers }) {
       type: 'DestroyDoc',
       domain,
       name: `auth/account/${auth.accountId}/session`,
+      auth: parentAuth,
     });
   }
 
@@ -549,6 +538,7 @@ export default function createProtectedSource({ source, providers }) {
       type: 'DestroyDoc',
       domain,
       name: `auth/account/${auth.accountId}`,
+      auth: parentAuth,
     });
   }
 
@@ -621,7 +611,10 @@ export default function createProtectedSource({ source, providers }) {
           'NoPermission',
         );
       }
-      const result = await dispatch(action);
+      const result = await dispatch({
+        ...action,
+        auth: parentAuth,
+      });
       if (action.type === 'PostDoc' && result && action.auth) {
         const authDocName = nameToAuthDocName(result.name);
         await writeDocValue(source, action.domain, authDocName, {
@@ -669,7 +662,9 @@ export default function createProtectedSource({ source, providers }) {
     GetPermissions,
   };
 
-  const dispatch = createDispatcher(actions, source.dispatch);
+  const sourceId = `protected(${source.id})`;
+
+  const dispatch = createDispatcher(actions, source.dispatch, null, sourceId);
   async function observeDoc(domain, name, auth) {
     const permissions = await GetPermissions({ name, auth, domain });
     if (!permissions.canRead) {

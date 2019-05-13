@@ -483,6 +483,9 @@ function LoginForm({ onSession, onClientConfig, defaultSession }) {
     return <Text>One moment..</Text>;
   }
   async function doLogin() {
+    if (!loginInfo) {
+      return;
+    }
     setIsWorking(true);
     onClientConfig({
       authority,
@@ -778,7 +781,6 @@ function AddDocSection({ parent }) {
 
 function LogoutButton() {
   const { destroySession } = useCloud();
-  debugger;
   const { navigate } = useNavigation();
   return (
     <StandaloneButton
