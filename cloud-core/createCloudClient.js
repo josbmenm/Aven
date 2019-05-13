@@ -23,11 +23,18 @@ export default function createCloudClient({
   const session = new BehaviorSubject(initialSession || null);
 
   async function sessionDispatch(action) {
-    return await source.dispatch({
-      ...action,
-      domain,
-      auth: session.value,
-    });
+    if (session && session.value && !action.auth) {
+      return await source.dispatch({
+        ...action,
+        domain,
+        auth: session.value,
+      });
+    } else {
+      return await source.dispatch({
+        ...action,
+        domain,
+      });
+    }
   }
 
   async function sessionObserveDoc(obsDomain, name) {
