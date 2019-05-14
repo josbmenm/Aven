@@ -108,15 +108,16 @@ export default function createCloudClient({
     onSession && onSession(null);
   }
 
-  async function GetBlock({ domain: actionDomain, name, id }) {
+  async function GetBlock({ domain: actionDomain, name, id, auth }) {
     const defaultAction = () =>
       source.dispatch({
         type: 'GetBlock',
         domain: actionDomain,
+        auth,
         name,
         id,
       });
-    if (actionDomain !== domain) {
+    if (actionDomain !== domain || auth) {
       return await defaultAction();
     }
     const doc = docs.get(name);
@@ -125,14 +126,15 @@ export default function createCloudClient({
     return block && block.serialize();
   }
 
-  async function GetDoc({ domain: actionDomain, name }) {
+  async function GetDoc({ domain: actionDomain, name, auth }) {
     const defaultAction = () =>
       source.dispatch({
         type: 'GetDoc',
-        actionDomain,
+        domain: actionDomain,
+        auth,
         name,
       });
-    if (actionDomain !== domain) {
+    if (actionDomain !== domain || auth) {
       return await defaultAction();
     }
     const doc = docs.get(name);
@@ -143,14 +145,15 @@ export default function createCloudClient({
       name,
     };
   }
-  async function GetDocValue({ domain: actionDomain, name }) {
+  async function GetDocValue({ domain: actionDomain, name, auth }) {
     const defaultAction = () =>
       source.dispatch({
         type: 'GetDocValue',
         domain: actionDomain,
+        auth,
         name,
       });
-    if (actionDomain !== domain) {
+    if (actionDomain !== domain || auth) {
       return await defaultAction();
     }
     const doc = docs.get(name);
@@ -161,15 +164,16 @@ export default function createCloudClient({
     return { value, id, context };
   }
 
-  async function PutDocValue({ domain: actionDomain, name, value }) {
+  async function PutDocValue({ domain: actionDomain, name, value, auth }) {
     const defaultAction = () =>
       source.dispatch({
         type: 'PutDocValue',
         domain: actionDomain,
+        auth,
         name,
         value,
       });
-    if (actionDomain !== domain) {
+    if (actionDomain !== domain || auth) {
       return await defaultAction();
     }
     const doc = docs.get(name);
@@ -187,8 +191,8 @@ export default function createCloudClient({
     GetDocValue,
     PutDocValue,
   };
-
-  const dispatch = createDispatcher(actions, sessionDispatch, domain);
+  const sourceId = `client(${source.id})`;
+  const dispatch = createDispatcher(actions, sessionDispatch, domain, sourceId);
 
   // #deprecate-old-lambda
   const setLambda = (name, fn) => {
@@ -238,6 +242,7 @@ export default function createCloudClient({
 
   const cloudClient = {
     ...source,
+    id: sourceId,
     observeDoc: internalObserveDoc,
     observeDocChildren: internalObserveDocChildren,
     setLambda,
