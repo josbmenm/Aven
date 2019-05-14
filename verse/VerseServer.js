@@ -67,6 +67,7 @@ const startVerseServer = async () => {
   const remoteSource = createNodeNetworkSource({
     authority: 'onofood.co',
     useSSL: true,
+    quiet: true,
 
     // authority: 'localhost:8840',
     // useSSL: false,

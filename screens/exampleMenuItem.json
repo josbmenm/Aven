@@ -660,7 +660,6 @@
       "Name": "Beverage",
       "Overflow Limit": 0,
       "Display Name": "Base",
-      "Underflow Limit": 0,
       "Description": "Blend with ",
       "_index": 0,
       "Ingredients": [
@@ -815,7 +814,6 @@
       "Name": "Boost",
       "Overflow Limit": 0,
       "Display Name": "Boost",
-      "Underflow Limit": 0,
       "Description": "Healthy fuel to live, work & create",
       "_index": 1,
       "Ingredients": [
@@ -1105,7 +1103,6 @@
       "Name": "Frozen",
       "Overflow Limit": 0,
       "Display Name": "Produce",
-      "Underflow Limit": 0,
       "Description": "Keep your chill",
       "_index": 2,
       "Ingredients": [

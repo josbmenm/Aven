@@ -560,8 +560,6 @@ function getCustomizationSections(
       // console.log('wheyo!!!', name, customSpec.defaultValue.length, customSpec);
       const slotCount =
         customSpec.defaultValue.length + (customSpec['Overflow Limit'] || 0);
-      const slotCountMin =
-        customSpec.defaultValue.length - (customSpec['Underflow Limit'] || 0);
       function setIngredientCustomization(ingredientIds) {
         setCustomization({
           ...customizationState,
@@ -622,7 +620,6 @@ function getCustomizationSections(
           return ing;
         }),
         slotCount,
-        slotCountMin,
       };
     }),
   ];

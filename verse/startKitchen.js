@@ -609,17 +609,17 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
   //   },
   // };
 
-  async function readTags(schema) {
+  async function doReadTags(schema) {
     const readings = {};
 
     const PLC = await getReadyPLC();
 
     await new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
-        console.error('Tag read timeout after 2 seconds');
+        console.error('Tag read timeout after 5 seconds');
         reject(new Error('Error reading tags in time'));
         readyPLC = null;
-      }, 2000);
+      }, 5000);
       PLC.readTagGroup(schema.allTagsGroup)
         .then(results => {
           clearTimeout(timer);
@@ -682,7 +682,7 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
       let isPLCConnected = false;
       try {
         if (mainRobotSchema) {
-          const readings = await readTags(mainRobotSchema, {});
+          const readings = await doReadTags(mainRobotSchema, {});
           isPLCConnected = true;
           currentState = getTagValues(readings);
         }
@@ -696,7 +696,7 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
         ...currentState,
         isPLCConnected,
       });
-      await delay(15); // give js ~15ms to respond to this change.
+      await delay(64); // give js ~64ms to respond to this change.
     };
     const updateTagsForever = () => {
       if (hasClosed) {

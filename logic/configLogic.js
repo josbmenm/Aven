@@ -344,11 +344,6 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
         },
         0,
       );
-      const minDispenses = Math.max(
-        0,
-        dispensesInOrigRecipe - (category['Underflow Limit'] || 0),
-      );
-      console.log('minDispenses', customCategoryName, minDispenses);
       const ingredientIdCounts = {};
       categoryIngredientIds.forEach(ingId => {
         if (ingredientIdCounts[ingId] == null) {

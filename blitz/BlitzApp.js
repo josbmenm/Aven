@@ -54,7 +54,7 @@ import { titleStyle } from '../components/Styles';
 let IS_DEV = process.env.NODE_ENV !== 'production';
 
 // uncomment to test prod mode:
-// IS_DEV = false;
+IS_DEV = false;
 
 const VERSE_HOST_CONFIG = IS_DEV
   ? {
