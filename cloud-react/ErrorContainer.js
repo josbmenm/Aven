@@ -14,7 +14,7 @@ export default class ErrorContainer extends React.Component {
     const { onCatch, canCatchError } = this.props;
     if (canCatchError && !canCatchError(e, i)) {
       if (this.context && this.context.handleCatch) {
-        return this.context.handleCatch(e, i);
+        return this.context.handleCatch(e, i, this.retry);
       }
       throw e;
     }
