@@ -436,6 +436,7 @@ export default function createCloudDoc({
           source.observeDoc(domain, currentDocName).then(upstreamObs => {
             setState({ isConnected: true });
             upstreamSubscription = upstreamObs.subscribe({
+              error: e => observer.error(e),
               next: upstreamDoc => {
                 if (upstreamDoc === undefined) {
                   return;
@@ -457,6 +458,7 @@ export default function createCloudDoc({
         maybeStartRemoteObservation();
 
         const stateSubscription = docState.subscribe({
+          error: e => observer.error(e),
           next: val => {
             observer.next(val);
             maybeStartRemoteObservation();

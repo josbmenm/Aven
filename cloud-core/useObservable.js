@@ -9,13 +9,6 @@ export default function useObservable(observable) {
 
   const [error, setError] = useState(null);
 
-  if (error) {
-    throw error;
-    // This component is basically broken at this point, because error will be thrown here until:
-    // - A parent is responsible for catching the error and re-mounting us. OR
-    // - The observable input changes and the effect clears the error
-  }
-
   const lastRef = useRef(value);
 
   function applyValue(newValue) {
@@ -45,6 +38,13 @@ export default function useObservable(observable) {
       };
     }
   }, [error, isObservable, observable]);
+
+  if (error) {
+    throw error;
+    // This component is basically broken at this point, because error will be thrown here until:
+    // - A parent is responsible for catching the error and re-mounting us. OR
+    // - The observable input changes and the effect clears the error
+  }
 
   return value;
 }

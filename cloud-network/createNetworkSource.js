@@ -202,6 +202,7 @@ export default function createNetworkSource(opts) {
           if (!observer) {
             return;
           }
+          log('🚨', error);
           observer.error(new Err(error.message, error.type, error.detail));
           return;
         }

@@ -96,7 +96,6 @@ export default function combineSources({
     return await dispatchPostDoc(slowSource);
   }
   async function GetBlock({ domain, auth, name, id }) {
-    console.log('you kidding me?!', domain, name, id);
     async function dispatchGetBlock(source) {
       return await source.dispatch({
         type: 'GetBlock',
@@ -107,7 +106,6 @@ export default function combineSources({
       });
     }
     const blockFast = await dispatchGetBlock(fastSource);
-    console.log('MEMEME MEMEMEEME', blockFast);
     if (blockFast) {
       return blockFast;
     }
