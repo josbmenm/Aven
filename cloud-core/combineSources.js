@@ -149,6 +149,7 @@ export default function combineSources({
   }
 
   async function GetDocValue({ domain, auth, name }) {
+    // todo, check if currently subscribed to domain/name, and if so, respond immediately using the curernt id and GetBlock
     async function dispatchGetDocValue(source) {
       return await source.dispatch({
         type: 'GetDocValue',
@@ -157,10 +158,7 @@ export default function combineSources({
         name,
       });
     }
-    const blockFast = await dispatchGetDocValue(fastSource);
-    if (blockFast) {
-      return blockFast;
-    }
+
     const blockSlow = await dispatchGetDocValue(slowSource);
     console.log('has slow block! Should go save this to fast source now, todo');
     return blockSlow;
@@ -298,6 +296,10 @@ export default function combineSources({
 
   const isConnectedStream = xs.createWithMemory(false);
 
+  async function combinedDispatch(action) {
+    return await slowSource.dispatch(action);
+  }
+
   const combinedSource = {
     isConnected,
     close,
@@ -325,7 +327,7 @@ export default function combineSources({
         CollectGarbage,
         MoveDoc,
       },
-      slowSource.dispatch,
+      combinedDispatch,
       null,
       sourceId,
     ),
