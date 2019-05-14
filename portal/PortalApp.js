@@ -175,7 +175,12 @@ function FullApp() {
         <CloudContext.Provider value={cloud}>
           <ErrorContainer
             renderError={renderAppError}
-            onCatch={async () => {
+            onCatch={async (e, info, onRetry) => {
+              if (e.type === 'SessionInvalid') {
+                cloud.destroySession();
+                onRetry();
+              }
+
               await AsyncStorage.removeItem(NAV_STORAGE_KEY);
             }}
           >

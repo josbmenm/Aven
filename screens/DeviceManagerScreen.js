@@ -141,7 +141,7 @@ function RootLoginForm() {
       <BlockFormInput
         value={pw}
         label="root password"
-        type="password"
+        mode="password"
         onValue={v => {
           setPw(v);
         }}
@@ -194,24 +194,29 @@ function RootAuthenticationSection({ children }) {
   if (session && session.accountId === 'root') {
     return children;
   }
-  console.log('hey ok', session);
   return <RootAuthLogin />;
 }
 
-export default function DeviceManagerScreen(props) {
+function DeviceManager() {
   const [devicesState, dispatch] = useCloudReducer(
     'DeviceActions',
     DevicesReducer,
   );
   const devices = (devicesState && devicesState.devices) || [];
   return (
+    <RowSection>
+      {devices.map(device => (
+        <DeviceRow device={device} />
+      ))}
+    </RowSection>
+  );
+}
+
+export default function DeviceManagerScreen(props) {
+  return (
     <SimplePage title="Device Manager" icon="📱" {...props}>
       <RootAuthenticationSection>
-        <RowSection>
-          {devices.map(device => (
-            <DeviceRow device={device} />
-          ))}
-        </RowSection>
+        <DeviceManager />
       </RootAuthenticationSection>
     </SimplePage>
   );

@@ -20,13 +20,18 @@ function BlockFormInputWithRef(
       easing: Easing.out(Easing.cubic),
     }).start();
   }, [desiredPlaceholderOpen]);
-  const autoCorrect = false;
+  let autoCorrect = false;
+  let secureTextEntry = false;
   let autoCapitalize = null;
   let keyboardType = 'default';
   let enablesReturnKeyAutomatically = true;
   if (mode === 'phone') {
     keyboardType = 'phone-pad';
+  } else if (mode === 'password') {
+    secureTextEntry = true;
+    autoCapitalize = 'none';
   } else if (mode === 'description') {
+    autoCorrect = true;
     autoCapitalize = 'sentences';
   } else if (mode === 'number') {
     keyboardType = 'number-pad';
@@ -77,6 +82,7 @@ function BlockFormInputWithRef(
         keyboardAppearance="dark"
         keyboardType={keyboardType}
         autoCorrect={autoCorrect}
+        secureTextEntry={secureTextEntry}
         autoCapitalize={autoCapitalize}
         ref={ref}
         value={value}
