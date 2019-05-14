@@ -7157,8 +7157,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "rechXQIhjW1a1dsXn",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "rechXQIhjW1a1dsXn",
+        "DefaultBenefit": {
           "id": "rechXQIhjW1a1dsXn",
           "Name": "Digestion",
           "Description": "Composed of two strains of ‘good’ bacteria to help with gut health.",
@@ -7201,7 +7201,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Digestion",
+        "DefaultBenefitName": "Digestion",
         "DisplayPrice": "$5.95"
       },
       {
@@ -14262,8 +14262,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "recFlyZ68FePHBGbI",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "recFlyZ68FePHBGbI",
+        "DefaultBenefit": {
           "id": "recFlyZ68FePHBGbI",
           "Name": "Skin & Body",
           "Description": "Marine collagen to support glow and recovery.",
@@ -14299,7 +14299,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Skin & Body",
+        "DefaultBenefitName": "Skin & Body",
         "DisplayPrice": "$5.95"
       },
       {
@@ -21313,8 +21313,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "recSFSa4PUFyryQ3L",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "recSFSa4PUFyryQ3L",
+        "DefaultBenefit": {
           "id": "recSFSa4PUFyryQ3L",
           "Name": "Fitness",
           "Description": "Contains 90% protein and a complete amino acid profile, ideal for building muscle.",
@@ -21356,7 +21356,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Fitness",
+        "DefaultBenefitName": "Fitness",
         "DisplayPrice": "$5.95"
       },
       {
@@ -28491,8 +28491,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "recaqqM3Jq8P8Owk8",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "recaqqM3Jq8P8Owk8",
+        "DefaultBenefit": {
           "id": "recaqqM3Jq8P8Owk8",
           "Name": "Immunity",
           "Description": "Berries and roots to support your immunity. A potent blend of Astragalus, Goji, and Elderberry.",
@@ -28538,7 +28538,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Immunity",
+        "DefaultBenefitName": "Immunity",
         "DisplayPrice": "$5.95"
       },
       {
@@ -35719,8 +35719,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "recaqqM3Jq8P8Owk8",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "recaqqM3Jq8P8Owk8",
+        "DefaultBenefit": {
           "id": "recaqqM3Jq8P8Owk8",
           "Name": "Immunity",
           "Description": "Berries and roots to support your immunity. A potent blend of Astragalus, Goji, and Elderberry.",
@@ -35766,7 +35766,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Immunity",
+        "DefaultBenefitName": "Immunity",
         "DisplayPrice": "$5.95"
       },
       {
@@ -42781,8 +42781,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "recd3ha5AvHU1h8yW",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "recd3ha5AvHU1h8yW",
+        "DefaultBenefit": {
           "id": "recd3ha5AvHU1h8yW",
           "Name": "Focus",
           "Description": "Enhances cogintive performance, and reduces anixety.",
@@ -42822,7 +42822,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Focus",
+        "DefaultBenefitName": "Focus",
         "DisplayPrice": "$5.95"
       }
     ]
@@ -49950,8 +49950,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "rechXQIhjW1a1dsXn",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "rechXQIhjW1a1dsXn",
+        "DefaultBenefit": {
           "id": "rechXQIhjW1a1dsXn",
           "Name": "Digestion",
           "Description": "Composed of two strains of ‘good’ bacteria to help with gut health.",
@@ -49994,7 +49994,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Digestion",
+        "DefaultBenefitName": "Digestion",
         "DisplayPrice": "$5.95"
       }
     },
@@ -57072,8 +57072,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "recFlyZ68FePHBGbI",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "recFlyZ68FePHBGbI",
+        "DefaultBenefit": {
           "id": "recFlyZ68FePHBGbI",
           "Name": "Skin & Body",
           "Description": "Marine collagen to support glow and recovery.",
@@ -57109,7 +57109,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Skin & Body",
+        "DefaultBenefitName": "Skin & Body",
         "DisplayPrice": "$5.95"
       }
     },
@@ -64140,8 +64140,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "recSFSa4PUFyryQ3L",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "recSFSa4PUFyryQ3L",
+        "DefaultBenefit": {
           "id": "recSFSa4PUFyryQ3L",
           "Name": "Fitness",
           "Description": "Contains 90% protein and a complete amino acid profile, ideal for building muscle.",
@@ -64183,7 +64183,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Fitness",
+        "DefaultBenefitName": "Fitness",
         "DisplayPrice": "$5.95"
       }
     },
@@ -71335,8 +71335,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "recaqqM3Jq8P8Owk8",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "recaqqM3Jq8P8Owk8",
+        "DefaultBenefit": {
           "id": "recaqqM3Jq8P8Owk8",
           "Name": "Immunity",
           "Description": "Berries and roots to support your immunity. A potent blend of Astragalus, Goji, and Elderberry.",
@@ -71382,7 +71382,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Immunity",
+        "DefaultBenefitName": "Immunity",
         "DisplayPrice": "$5.95"
       }
     },
@@ -78580,8 +78580,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "recaqqM3Jq8P8Owk8",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "recaqqM3Jq8P8Owk8",
+        "DefaultBenefit": {
           "id": "recaqqM3Jq8P8Owk8",
           "Name": "Immunity",
           "Description": "Berries and roots to support your immunity. A potent blend of Astragalus, Goji, and Elderberry.",
@@ -78627,7 +78627,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Immunity",
+        "DefaultBenefitName": "Immunity",
         "DisplayPrice": "$5.95"
       }
     },
@@ -85659,8 +85659,8 @@
             ]
           }
         ],
-        "DefaultEnhancementId": "recd3ha5AvHU1h8yW",
-        "DefaultBenefitEnhancement": {
+        "DefaultBenefitId": "recd3ha5AvHU1h8yW",
+        "DefaultBenefit": {
           "id": "recd3ha5AvHU1h8yW",
           "Name": "Focus",
           "Description": "Enhances cogintive performance, and reduces anixety.",
@@ -85700,7 +85700,7 @@
             }
           ]
         },
-        "DefaultBenefitEnhancementName": "Focus",
+        "DefaultBenefitName": "Focus",
         "DisplayPrice": "$5.95"
       }
     }

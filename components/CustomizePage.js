@@ -506,7 +506,7 @@ function getCustomizationSections(
   if (!menuItem) {
     return [];
   }
-  let activeEnhancementIds = [menuItem.DefaultEnhancementId];
+  let activeEnhancementIds = [menuItem.DefaultBenefitId];
   if (customizationState && customizationState.enhancements !== undefined) {
     activeEnhancementIds = customizationState.enhancements;
   }

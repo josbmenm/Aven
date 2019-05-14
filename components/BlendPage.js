@@ -132,10 +132,7 @@ function BlendPageContentPure({
   const benefits = (menuItem ? Object.keys(menuItem.AllBenefits) : [])
     .map(benefitId => {
       const benefit = menuItem.AllBenefits[benefitId];
-      if (
-        menuItem.DefaultBenefitEnhancement &&
-        menuItem.DefaultBenefitEnhancement.id === benefitId
-      ) {
+      if (menuItem.DefaultBenefit && menuItem.DefaultBenefit.id === benefitId) {
         return benefit;
       }
       const benefitingIngredients = benefit.Ingredients.filter(
@@ -186,7 +183,7 @@ function BlendPageContentPure({
       <MenuHLayout side={null}>
         <DetailsSection>
           <View style={{ alignSelf: 'flex-start', marginBottom: 5 }}>
-            <Tag tag={menuItem.DefaultBenefitEnhancementName} />
+            <Tag tag={menuItem.DefaultBenefitName} />
           </View>
           <MainTitle subtitle={formatCurrency(menuItem.Recipe['Sell Price'])}>
             {displayNameOfOrderItem(item, menuItem)}

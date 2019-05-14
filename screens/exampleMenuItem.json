@@ -2520,8 +2520,8 @@
       ]
     }
   ],
-  "DefaultEnhancementId": "recFlyZ68FePHBGbI",
-  "DefaultBenefitEnhancement": {
+  "DefaultBenefitId": "recFlyZ68FePHBGbI",
+  "DefaultBenefit": {
     "id": "recFlyZ68FePHBGbI",
     "Name": "Skin & Body",
     "Description": "Marine collagen to support glow and recovery.",
@@ -2557,6 +2557,6 @@
       }
     ]
   },
-  "DefaultBenefitEnhancementName": "Skin & Body",
+  "DefaultBenefitName": "Skin & Body",
   "DisplayPrice": "$5.95"
 }

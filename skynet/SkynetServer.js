@@ -266,6 +266,21 @@ const startSkynetServer = async () => {
     return {};
   }
 
+  setInterval(
+    () => {
+      console.log('Updating Airtable..');
+      scrapeAirTable(fsClient, logger)
+        .then(() => {
+          console.log('Airtable Update complete!');
+        })
+        .catch(e => {
+          console.error('Error Updating Airtable!');
+          console.error(e);
+        });
+    },
+    15 * 60 * 1000, // 15 minutes
+  );
+
   const dispatch = async action => {
     switch (action.type) {
       case 'SendReceipt':

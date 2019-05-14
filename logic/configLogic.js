@@ -10,6 +10,9 @@ function mapObject(inObj, mapper) {
   return out;
 }
 
+const MAX_CUP_VOLUME = 560;
+const LIQUID_SHOT_VOLUME = 25;
+
 export function displayNameOfMenuItem(menuItem) {
   if (!menuItem) {
     return 'Unknown';
@@ -116,23 +119,18 @@ export function companyConfigToBlendMenu(atData) {
     const thisRecipeIngredientIds = thisRecipeIngredients.map(
       ri => ri.Ingredient.id,
     );
-    const defaultEnhancementId =
-      Recipe && Recipe.DefaultEnhancement && Recipe.DefaultEnhancement[0];
+    const defaultBenefitId =
+      Recipe && Recipe.DefaultBenefit && Recipe.DefaultBenefit[0];
     const Benefits = atData.baseTables['Benefits'];
-    const DefaultBenefitEnhancement = defaultEnhancementId
-      ? Benefits[defaultEnhancementId]
-      : null;
-    const DefaultBenefitEnhancementIngredient =
-      DefaultBenefitEnhancement &&
-      DefaultBenefitEnhancement['Enhancement Ingredient'] &&
-      Ingredients[DefaultBenefitEnhancement['Enhancement Ingredient'][0]];
+    const DefaultBenefit = defaultBenefitId ? Benefits[defaultBenefitId] : null;
+    const DefaultBenefitIngredient =
+      DefaultBenefit &&
+      DefaultBenefit['Benefit Ingredient'] &&
+      Ingredients[DefaultBenefit['Benefit Ingredient'][0]];
     const ItemBenefits = Object.keys(Benefits)
       .map(benefitId => {
         const benefit = Benefits[benefitId];
-        if (
-          DefaultBenefitEnhancement &&
-          DefaultBenefitEnhancement.id === benefitId
-        ) {
+        if (DefaultBenefit && DefaultBenefit.id === benefitId) {
           return benefit;
         }
         const benefitingIngredients = benefit.Ingredients.filter(
@@ -183,16 +181,15 @@ export function companyConfigToBlendMenu(atData) {
       }).filter(ic => !!ic),
       AllBenefits: mapObject(atData.baseTables.Benefits, b => ({
         ...b,
-        EnhancementIngredient: Ingredients[b['Enhancement Ingredient']],
+        BenefitIngredient: Ingredients[b['Benefit Ingredient']],
       })),
       BenefitCustomization: Benefits,
       Dietary,
       Benefits: ItemBenefits,
-      DefaultEnhancementId: defaultEnhancementId,
-      DefaultBenefitEnhancement,
-      DefaultBenefitEnhancementIngredient,
-      DefaultBenefitEnhancementName:
-        DefaultBenefitEnhancement && DefaultBenefitEnhancement.Name,
+      DefaultBenefitId: defaultBenefitId,
+      DefaultBenefit,
+      DefaultBenefitIngredient,
+      DefaultBenefitName: DefaultBenefit && DefaultBenefit.Name,
       DisplayPrice: formatCurrency(Recipe['Sell Price']),
       Recipe: {
         ...Recipe,
@@ -282,8 +279,8 @@ export function getOrderSummary(orderState, companyConfig) {
 }
 
 export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
-  if (!menuItem || !menuItem.Recipe) {
-    return [];
+  if (!menuItem || !menuItem.Recipe || !companyConfig) {
+    return null;
   }
   const allIngredients =
     companyConfig &&
@@ -303,9 +300,8 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
   const invalidReasons = [];
   let enhancementIngredients = [
     {
-      ...menuItem.DefaultBenefitEnhancementIngredient,
-      amountVolumeRatio:
-        menuItem.DefaultBenefitEnhancementIngredient['ShotSize(ml)'],
+      ...menuItem.DefaultBenefitIngredient,
+      amountVolumeRatio: menuItem.DefaultBenefitIngredient['ShotSize(ml)'],
       amount: 1,
     },
   ];
@@ -321,9 +317,9 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
   if (customEnhancements) {
     enhancementIngredients = customEnhancements.map(enhId => {
       return {
-        ...menuItem.AllBenefits[enhId].EnhancementIngredient,
+        ...menuItem.AllBenefits[enhId].BenefitIngredient,
         amountVolumeRatio:
-          menuItem.AllBenefits[enhId].EnhancementIngredient['ShotSize(ml)'],
+          menuItem.AllBenefits[enhId].BenefitIngredient['ShotSize(ml)'],
         amount: 1,
       };
     });
@@ -374,14 +370,32 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
   }
   const enhancementsVolume = getVol(enhancementIngredients);
   const ingredientsVolume = getVol(standardIngredients);
-  const finalVolume = ingredientsVolume + enhancementsVolume;
-  const outputIngredients = [...enhancementIngredients, ...standardIngredients];
+  const finalVolumeBeforeLiquid = ingredientsVolume + enhancementsVolume;
+  const baseLiquidIngId = menuItem.Recipe.LiquidBaseIngredient[0];
+  const baseLiquidIng = allIngredients[baseLiquidIngId];
+  const baseLiquidShotSize = baseLiquidIng['ShotSize(ml)'];
+  const volumeRemaining = MAX_CUP_VOLUME - finalVolumeBeforeLiquid;
+  const liquidShotCount = Math.floor(volumeRemaining / baseLiquidShotSize);
+  const liquidVolume = baseLiquidShotSize * liquidShotCount;
+  const finalVolume = liquidVolume + finalVolumeBeforeLiquid;
+  const baseLiquidIngredient = {
+    ...baseLiquidIng,
+    amount: liquidShotCount,
+    amountVolumeRatio: baseLiquidShotSize,
+  };
+  const outputIngredients = [
+    ...enhancementIngredients,
+    ...standardIngredients,
+    baseLiquidIngredient,
+  ];
   return {
     enhancementIngredients,
     standardIngredients,
+    baseLiquidIngredient,
     ingredients: outputIngredients,
     origRecipeVolume,
     finalVolume,
+    liquidVolume,
     enhancementsVolume,
     ingredientsVolume,
   };

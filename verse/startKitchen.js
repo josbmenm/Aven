@@ -400,26 +400,23 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
       return;
     }
     const mainPLC = new Controller();
-    connectingPLC = mainPLC.connect(plcIP, 0);
-
-    connectingPLC
-      .then(async () => {
-        connectingPLC = null;
-        if (hasClosed) {
-          mainPLC.destroy();
-          return;
-        }
-        logBehavior(
-          'PLC Connected. (' + mainPLC.properties.name + ' at ' + plcIP + ')',
-        );
-        readyPLC = mainPLC;
-        Array.from(readyHandlers).forEach(h => h());
-      })
-      .catch(err => {
-        console.error('PLC Connection Error', err);
-        readyPLC = null;
-        connectingPLC = null;
-      });
+    connectingPLC = mainPLC.connect(plcIP, 0).then(async () => {
+      connectingPLC = null;
+      if (hasClosed) {
+        mainPLC.destroy();
+        return;
+      }
+      logBehavior(
+        'PLC Connected. (' + mainPLC.properties.name + ' at ' + plcIP + ')',
+      );
+      readyPLC = mainPLC;
+      Array.from(readyHandlers).forEach(h => h());
+    });
+    connectingPLC.catch(err => {
+      console.error('PLC Connection Error', err);
+      readyPLC = null;
+      connectingPLC = null;
+    });
   }
 
   const getReadyPLC = async () => {
@@ -609,6 +606,10 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
   //   },
   // };
 
+  const PLC_READ_TIMEOUT_SEC = 10;
+
+  const DEBUG_READS = false;
+
   async function doReadTags(schema) {
     const readings = {};
 
@@ -616,16 +617,32 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
 
     await new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
-        console.error('Tag read timeout after 5 seconds');
+        console.error(`Tag read timeout after ${PLC_READ_TIMEOUT_SEC} seconds`);
         reject(new Error('Error reading tags in time'));
         readyPLC = null;
-      }, 5000);
-      PLC.readTagGroup(schema.allTagsGroup)
-        .then(results => {
-          clearTimeout(timer);
-          resolve(results);
-        })
-        .catch(reject);
+      }, PLC_READ_TIMEOUT_SEC * 1000);
+      if (DEBUG_READS) {
+        let readingPromise = Promise.resolve();
+        Object.keys(schema.tags).forEach(tagId => {
+          readingPromise = readingPromise.then(() => {
+            return PLC.readTag(schema.tags[tagId]).catch(e => {
+              console.error('Failed to read tag ' + tagId);
+            });
+          });
+        });
+        readingPromise.then(resolve).catch(reject);
+      } else {
+        PLC.readTagGroup(schema.allTagsGroup)
+          .then(results => {
+            clearTimeout(timer);
+            resolve(results);
+          })
+          .catch(err => {
+            clearTimeout(timer);
+            console.error('Error reading tags', err);
+            reject(err);
+          });
+      }
     });
 
     Object.keys(schema.config.tags).forEach(tagAlias => {

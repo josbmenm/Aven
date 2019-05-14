@@ -11,6 +11,7 @@ import {
 import { createSwitchNavigator } from '../navigation-core';
 import Admin from '../admin/Admin';
 import FocusExample from './FocusExample';
+import BlendMenu from './BlendMenu';
 import { monsterra } from '../components/Styles';
 
 import useCloud from '../cloud-core/useCloud';
@@ -93,10 +94,18 @@ const App = createSwitchNavigator(
       screen: SkynetAdmin,
       path: 'admin',
     },
-    Focus: {
-      screen: FocusExample,
-      path: 'focus',
+    Menu: {
+      screen: BlendMenu,
+      path: 'icanneverremembertheblendrecipes',
     },
+    Menu2: {
+      screen: BlendMenu,
+      path: 'secrets/blendmenu',
+    },
+    // Focus: {
+    //   screen: FocusExample,
+    //   path: 'focus',
+    // },
   },
   {},
 );

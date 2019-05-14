@@ -23,6 +23,7 @@ import {
   getSelectedIngredients as doGetSelectedIngredients,
   getOrderSummary,
   companyConfigToMenu,
+  companyConfigToFoodMenu,
 } from '../logic/configLogic';
 const OrderContext = createContext(null);
 
@@ -224,7 +225,7 @@ export function getItemCustomizationSummary(item) {
     const enhancementId = item.customization.enhancements[0];
     const enhancement = item.menuItem.BenefitCustomization[enhancementId];
     const isDifferentFromDefaultEnhancement =
-      item.menuItem.DefaultEnhancementId !== enhancementId;
+      item.menuItem.DefaultBenefitId !== enhancementId;
     isDifferentFromDefaultEnhancement &&
       summaryItems.push('with ' + enhancement.Name.toLowerCase());
     const extraEnhancement =
@@ -427,7 +428,7 @@ export function getActiveEnhancement(cartItem, menuItem) {
   ) {
     return menuItem.AllBenefits[cartItem.customization.enhancement];
   }
-  return menuItem.DefaultBenefitEnhancement;
+  return menuItem.DefaultBenefit;
 }
 
 function companyConfigToBlendMenuItemMapper(menuItemId) {

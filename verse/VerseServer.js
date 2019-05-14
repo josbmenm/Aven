@@ -87,6 +87,7 @@ const startVerseServer = async () => {
     fastSourceOnlyMapping: {
       'onofood.co': {
         RestaurantActions: true,
+        KitchenState: true,
       },
     },
   });
