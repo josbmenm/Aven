@@ -16,6 +16,17 @@ const getTypeOfSchema = typeName => {
   }
 };
 
+const COUNT_MAX = 2147483640; // near the maximum unsigned dint
+let tagCounter = Math.floor(Math.random() * COUNT_MAX);
+
+export function getFreshActionId() {
+  tagCounter += 1;
+  if (tagCounter > COUNT_MAX) {
+    tagCounter = 0;
+  }
+  return tagCounter;
+}
+
 const getTagOfSchema = tagSchema => {
   return new Tag(
     tagSchema.tag,
@@ -320,7 +331,7 @@ const extractActionValues = ({
   pulse,
   values,
   systemName,
-  tag,
+  actionId,
 }) => {
   const pulseCommands = subSystemConfig.pulseCommands || {};
   const valueCommands = subSystemConfig.valueCommands || {};
@@ -350,10 +361,10 @@ const extractActionValues = ({
     tagOutput[internalTagName] = values[valueName];
   });
 
-  // tag
-  if (tag != null) {
-    tagOutput[`${systemName}_ActionIdIn_VALUE`] = tag;
-    // immediateOutput[`${systemName}_ActionIdIn_VALUE`] = tag;
+  // actionId
+  if (actionId != null) {
+    tagOutput[`${systemName}_ActionIdIn_VALUE`] = actionId;
+    // immediateOutput[`${systemName}_ActionIdIn_VALUE`] = actionId;
   }
 
   return { immediateOutput, clearPulseOutput, tagOutput };
@@ -719,7 +730,7 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
       systemName: action.subsystem,
       pulse: action.pulse,
       values: action.values,
-      tag: action.tag,
+      actionId: action.actionId,
     });
     await writeTags(mainRobotSchema, tagOutput);
     await writeTags(mainRobotSchema, immediateOutput);

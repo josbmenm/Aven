@@ -21,7 +21,10 @@ import createProtectedSource from '../cloud-auth/createProtectedSource';
 import sendReceipt from '../skynet/sendReceipt';
 import RestaurantReducer from '../logic/RestaurantReducer';
 
-import startKitchen, { computeKitchenConfig } from './startKitchen';
+import startKitchen, {
+  computeKitchenConfig,
+  getFreshActionId,
+} from './startKitchen';
 import { handleStripeAction } from '../stripe-server/Stripe';
 import { computeNextStep } from '../logic/KitchenSequence';
 import {
@@ -30,18 +33,6 @@ import {
   displayNameOfOrderItem,
   getSelectedIngredients,
 } from '../logic/configLogic';
-
-const COUNT_MAX = 2147483640; // near the maximum unsigned dint
-
-let tagCounter = Math.floor(Math.random() * COUNT_MAX);
-
-function getFreshTag() {
-  tagCounter += 1;
-  if (tagCounter > COUNT_MAX) {
-    tagCounter = 0;
-  }
-  return tagCounter;
-}
 
 let lastT = null;
 function logBehavior(msg) {
@@ -292,11 +283,11 @@ const startVerseServer = async () => {
           values[valueCommandName] = provided;
         }
       });
-    const tag = getFreshTag();
-    logBehavior(`Start Action ${tag} : ${JSON.stringify(action)}`);
+    const actionId = getFreshActionId();
+    logBehavior(`Start Action ${actionId} : ${JSON.stringify(action)}`);
 
     const command = {
-      tag,
+      actionId,
       type: 'KitchenCommand',
       subsystem,
       pulse,
@@ -305,8 +296,8 @@ const startVerseServer = async () => {
     kitchen.dispatchCommand(command);
     await new Promise((resolve, reject) => {
       let isSystemIdle = null;
-      let isTagReceived = null;
-      let currentTag = null;
+      let isActionReceived = null;
+      let currentActionId = null;
       let noFaults = true;
       let sub = cloud.get('KitchenState').observeValue.subscribe({
         next: state => {
@@ -314,12 +305,12 @@ const startVerseServer = async () => {
             return;
           }
           noFaults = state[`${subsystem}_NoFaults_READ`];
-          currentTag = state[`${subsystem}_ActionIdOut_READ`];
+          currentActionId = state[`${subsystem}_ActionIdOut_READ`];
           isSystemIdle = state[`${subsystem}_PrgStep_READ`] === 0;
-          isTagReceived = currentTag === tag;
+          isActionReceived = currentActionId === actionId;
 
-          if (isSystemIdle && isTagReceived) {
-            logBehavior(`${noFaults ? 'Done with' : 'FAULTED on'} ${tag}`);
+          if (isSystemIdle && isActionReceived) {
+            logBehavior(`${noFaults ? 'Done with' : 'FAULTED on'} ${actionId}`);
             sub && sub.unsubscribe();
             if (noFaults === false) {
               reject(new Error(`System "${subsystem}" has faulted`));
@@ -335,10 +326,10 @@ const startVerseServer = async () => {
         if (!isSystemIdle) {
           return reject(new Error(`After 30sec, "${subsystem}" is not idle!`));
         }
-        if (!isTagReceived) {
+        if (!isActionReceived) {
           return reject(
             new Error(
-              `After 30sec, ActionIdOut of "${subsystem}" is "${currentTag}" but we expected "${tag}"!`,
+              `After 30sec, ActionIdOut of "${subsystem}" is "${currentActionId}" but we expected "${actionId}"!`,
             ),
           );
         }
@@ -537,7 +528,8 @@ const startVerseServer = async () => {
           throw new Error('no kitchen');
         }
         // subsystem (eg 'IOSystem'), pulse (eg ['home']), values (eg: foo: 123)
-        return await kitchen.dispatchCommand(action);
+        const actionId = getFreshActionId();
+        return await kitchen.dispatchCommand({ ...action, actionId });
       }
       case 'SendReceipt':
         return await sendReceipt({ smsAgent, emailAgent, action });
