@@ -95,15 +95,22 @@ export default function createCloudClient({
     return await createAnonymousSession();
   }
 
-  async function destroySession() {
+  async function destroySession({ ignoreRemoteError }) {
     if (!session.value) {
       throw new Error('no session found!');
     }
-    await source.dispatch({
-      type: 'DestroySession',
-      domain,
-      auth: session.value,
-    });
+    try {
+      await source.dispatch({
+        type: 'DestroySession',
+        domain,
+        auth: session.value,
+      });
+    } catch (e) {
+      // this comes in handy when we expect that the remote response will fail, because the session is already considered unvalid by the source. It allows us to destroy the session locally with the same method.
+      if (!ignoreRemoteError) {
+        throw e;
+      }
+    }
     session.next(null);
     onSession && onSession(null);
   }
