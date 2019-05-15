@@ -666,10 +666,11 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
               })
               .catch(e => {
                 console.error('Error on the DEBUG tag read!');
+                console.error('==SLOW DEBUG ERROR:', e);
+                console.error('==FAST READ ERROR', err);
               });
 
             clearTimeout(timer);
-            console.error('Error reading tags', err);
             reject(err);
           });
       }

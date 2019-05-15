@@ -57,11 +57,11 @@ const startVerseServer = async () => {
   console.log('☁️ Starting Restaurant Server 💨 ');
 
   const pgConfig = {
-    ssl: !!getEnv('SQL_USE_SSL'),
-    user: getEnv('SQL_USER'),
-    password: getEnv('SQL_PASSWORD'),
-    database: getEnv('SQL_DATABASE'),
-    host: getEnv('SQL_HOST'),
+    ssl: !!getEnv('VERSE_SQL_USE_SSL'),
+    user: getEnv('VERSE_SQL_USER'),
+    password: getEnv('VERSE_SQL_PASSWORD'),
+    database: getEnv('VERSE_SQL_DATABASE'),
+    host: getEnv('VERSE_SQL_HOST'),
   };
 
   const remoteSource = createNodeNetworkSource({
