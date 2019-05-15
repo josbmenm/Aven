@@ -297,7 +297,10 @@ const result = await source.dispatch({
           />
         </SubSection>
         <SubSection title="GetBlock">
-          <Body>Get a chunk of data</Body>
+          <Body>
+            Get a chunk of data, identified by id and the associated doc name
+          </Body>
+          <Body>Throws an error if no block is found</Body>
         </SubSection>
         <SubSection title="GetDoc">
           <Body>

@@ -544,7 +544,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       .then(function(res) {
         const block = res.shift();
         if (!block) {
-          return { id };
+          throw new Error(`Block ID "${id}" was not found`);
         }
         // let parsedValue = undefined;
         // try {
