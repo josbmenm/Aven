@@ -225,16 +225,16 @@ const startSkynetServer = async () => {
       name: 'CustomerFeedback',
     });
 
-    console.log('Putting Permission.. DeviceActions');
+    console.log('Putting Permission.. OnoState/Devices');
     await putPermission({
       defaultRule: { canWrite: true, canRead: true },
-      name: 'DeviceActions',
+      name: 'OnoState/Devices',
     });
 
-    console.log('Putting Permission.. DeviceActions^DevicesReducer');
+    console.log('Putting Permission.. OnoState/Devices^DevicesReducer');
     await putPermission({
       defaultRule: { canRead: true },
-      name: 'DeviceActions^DevicesReducer',
+      name: 'OnoState/Devices^DevicesReducer',
     });
   }
 

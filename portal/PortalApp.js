@@ -177,7 +177,7 @@ function FullApp() {
             renderError={renderAppError}
             onCatch={async (e, info, onRetry) => {
               if (e.type === 'SessionInvalid') {
-                cloud.destroySession();
+                client.destroySession({ ignoreRemoteError: true });
                 onRetry();
               }
 

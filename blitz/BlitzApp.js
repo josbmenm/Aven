@@ -291,7 +291,7 @@ function useControlledApp(cloud) {
       return;
     }
     const deviceId = cloud.observeSession.getValue().accountId;
-    cloud.get('DeviceActions').putTransaction({
+    cloud.get('OnoState/Devices').putTransaction({
       type: 'DeviceOnline',
       deviceId,
     });

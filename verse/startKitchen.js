@@ -615,6 +615,20 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
 
     const PLC = await getReadyPLC();
 
+    async function slowDebugRead() {
+      let readingPromise = Promise.resolve();
+      const failedTags = [];
+      Object.keys(schema.tags).forEach(tagId => {
+        readingPromise = readingPromise.then(() => {
+          return PLC.readTag(schema.tags[tagId]).catch(e => {
+            failedTags.push(tagId);
+          });
+        });
+      });
+      await readingPromise;
+      return failedTags;
+    }
+
     await new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         console.error(`Tag read timeout after ${PLC_READ_TIMEOUT_SEC} seconds`);
@@ -622,15 +636,15 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
         readyPLC = null;
       }, PLC_READ_TIMEOUT_SEC * 1000);
       if (DEBUG_READS) {
-        let readingPromise = Promise.resolve();
-        Object.keys(schema.tags).forEach(tagId => {
-          readingPromise = readingPromise.then(() => {
-            return PLC.readTag(schema.tags[tagId]).catch(e => {
-              console.error('Failed to read tag ' + tagId);
-            });
+        slowDebugRead()
+          .then(failedTags => {
+            if (failedTags.length) {
+              console.error('Failing to read tags: ' + failedTags.join(', '));
+            }
+          })
+          .catch(e => {
+            console.error('Error on the DEBUG tag read!');
           });
-        });
-        readingPromise.then(resolve).catch(reject);
       } else {
         PLC.readTagGroup(schema.allTagsGroup)
           .then(results => {
@@ -638,6 +652,22 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
             resolve(results);
           })
           .catch(err => {
+            // failed to read all the tags.. read each individually to see which fail, and report the result
+            slowDebugRead()
+              .then(failedTags => {
+                console.error(
+                  `Failing to read tags quickly! On slow read, ${
+                    failedTags.length
+                  } tags failed to read`,
+                );
+                if (failedTags.length) {
+                  console.error('Failed tags: ' + failedTags.join(', '));
+                }
+              })
+              .catch(e => {
+                console.error('Error on the DEBUG tag read!');
+              });
+
             clearTimeout(timer);
             console.error('Error reading tags', err);
             reject(err);
@@ -703,7 +733,9 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
           isPLCConnected = true;
           currentState = getTagValues(readings);
         }
-      } catch (e) {}
+      } catch (e) {
+        isPLCConnected = false;
+      }
       if (shallowEqual(lastState, currentState)) {
         // the state doesn't appear to be changing. cool off and wait a 1/4 sec..
         await delay(250);
