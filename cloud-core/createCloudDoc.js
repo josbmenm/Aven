@@ -736,11 +736,13 @@ export default function createCloudDoc({
     values.forEach(value => {
       deepTransactionValue = {
         type: 'TransactionValue',
-        on: {
-          type: 'BlockReference',
-          value: deepTransactionValue,
-          id: deepTransactionId,
-        },
+        on: deepTransactionId
+          ? {
+              type: 'BlockReference',
+              value: deepTransactionValue,
+              id: deepTransactionId,
+            }
+          : null,
         value,
       };
       const b = _getBlockWithValue(deepTransactionValue);
