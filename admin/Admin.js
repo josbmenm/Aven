@@ -1605,7 +1605,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
   function handleCatch(e, i, onRetry) {
     if (e.type === 'SessionInvalid') {
-      client.destroySession();
+      client.destroySession({ ignoreRemoteError: true });
       setSessionState(null);
       onRetry();
     }
