@@ -105,7 +105,12 @@ export default function combineSources({
         id,
       });
     }
-    const blockFast = await dispatchGetBlock(fastSource);
+    let blockFast = null;
+    try {
+      blockFast = await dispatchGetBlock(fastSource);
+    } catch (e) {
+      // block not available from the fast source..
+    }
     if (blockFast) {
       return blockFast;
     }
