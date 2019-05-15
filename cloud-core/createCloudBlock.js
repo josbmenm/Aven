@@ -142,14 +142,17 @@ export default function createCloudBlock({
       return await fetchInProgress;
     }
     fetchInProgress = (async () => {
+      const docName = onGetName();
       const result = await dispatch({
         type: 'GetBlock',
         id: blockId,
         domain,
-        name: onGetName(),
+        name: docName,
       });
       if (!result || result.value === undefined) {
-        throw new Error(`Error fetching block "${id}" from remote!`);
+        throw new Error(
+          `Error fetching block "${id}" of "${docName}" from remote!`,
+        );
       }
       fetchInProgress = null;
       setState({
