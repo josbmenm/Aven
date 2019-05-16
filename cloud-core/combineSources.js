@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs-compat';
 import xs from 'xstream';
 import createDispatcher from '../cloud-utils/createDispatcher';
+import Err from '../utils/Err';
 
 export default function combineSources({
   fastSource,
@@ -46,6 +47,7 @@ export default function combineSources({
     dispatchPutDoc(fastSource);
     return await dispatchPutDoc(slowSource);
   }
+
   async function PutDocValue({ domain, auth, name, value }) {
     async function dispatchPutDocValue(source) {
       return await source.dispatch({
@@ -62,6 +64,7 @@ export default function combineSources({
     dispatchPutDocValue(fastSource);
     return await dispatchPutDocValue(slowSource);
   }
+
   async function PutTransactionValue({ domain, auth, name, value }) {
     async function dispatchPutTransactionValue(source) {
       return await source.dispatch({
@@ -78,6 +81,7 @@ export default function combineSources({
     dispatchPutTransactionValue(fastSource);
     return await dispatchPutTransactionValue(slowSource);
   }
+
   async function PostDoc({ domain, auth, name, id, value }) {
     async function dispatchPostDoc(source) {
       return await source.dispatch({
@@ -95,7 +99,15 @@ export default function combineSources({
     dispatchPostDoc(fastSource);
     return await dispatchPostDoc(slowSource);
   }
+
   async function GetBlock({ domain, auth, name, id }) {
+    if (!id) {
+      throw new Err('Invalid block id for "GetBlock"', 'InvalidBlockId', {
+        domain,
+        name,
+        id,
+      });
+    }
     async function dispatchGetBlock(source) {
       return await source.dispatch({
         type: 'GetBlock',
@@ -115,9 +127,26 @@ export default function combineSources({
       return blockFast;
     }
     const blockSlow = await dispatchGetBlock(slowSource);
-    console.log('has slow block! Should go save this to fast source now, todo');
+
+    fastSource
+      .dispatch({
+        type: 'PutBlock',
+        domain,
+        auth,
+        name,
+        id,
+        value: blockSlow.value,
+      })
+      .catch(error => {
+        console.error(
+          `Failed to re-upload block ${id} of "${name}" from slow source to fast source`,
+        );
+        console.error(error);
+      });
+
     return blockSlow;
   }
+
   async function GetBlocks({ domain, auth, name, ids }) {
     // todo, batch properly? Or maybe this is desirable because it will fetch some from fast and some from slow:
     const results = await Promise.all(
@@ -127,7 +156,9 @@ export default function combineSources({
     );
     return { results };
   }
+
   async function GetDoc({ domain, auth, name }) {
+    // todo, check if currently subscribed to domain/name, and if so, respond immediately using the curernt id
     async function dispatchGetDoc(source) {
       return await source.dispatch({
         type: 'GetDoc',
@@ -140,7 +171,6 @@ export default function combineSources({
       return await dispatchGetDoc(fastSource);
     }
     const slowDoc = await dispatchGetDoc(slowSource);
-    console.log('has slow doc!', slowDoc);
     return slowDoc;
   }
 
@@ -165,7 +195,20 @@ export default function combineSources({
     }
 
     const blockSlow = await dispatchGetDocValue(slowSource);
-    console.log('has slow block! Should go save this to fast source now, todo');
+    if (blockSlow.value !== undefined) {
+      fastSource
+        .dispatch({
+          type: 'PutBlock',
+          domain,
+          auth,
+          name,
+          id: blockSlow.id,
+          value: blockSlow.value,
+        })
+        .catch(error => {
+          console.error('Error uploading block to slow source.', error);
+        });
+    }
     return blockSlow;
   }
 
@@ -178,6 +221,7 @@ export default function combineSources({
     );
     return { results };
   }
+
   async function GetStatus() {
     // Who even uses GetStatus, really?
     const f = await fastSource.dispatch({ type: 'GetStatus' });
@@ -188,6 +232,7 @@ export default function combineSources({
       slowSoruceReady: s.ready,
     };
   }
+
   async function ListDomains() {
     async function dispatchListDomains(source) {
       return await source.dispatch({
@@ -204,6 +249,7 @@ export default function combineSources({
     );
     return domains;
   }
+
   async function ListDocs({ domain, auth, parentName, afterName }) {
     async function dispatchList(source) {
       return await source.dispatch({
@@ -220,6 +266,7 @@ export default function combineSources({
     }
     return await dispatchList(slowSource);
   }
+
   async function DestroyDoc({ domain, auth, name }) {
     async function dispatchDestroy(source) {
       return await source.dispatch({
@@ -237,6 +284,7 @@ export default function combineSources({
       dispatchDestroy(slowSource),
     ]);
   }
+
   async function CollectGarbage() {
     async function dispatchCollectGarbage(source) {
       return await source.dispatch({
@@ -248,6 +296,7 @@ export default function combineSources({
       dispatchCollectGarbage(slowSource),
     ]);
   }
+
   async function MoveDoc({ domain, auth, from, to }) {
     const isFromFastStorage = isFastOnly(domain, from);
     const isToFastStorage = isFastOnly(domain, to);

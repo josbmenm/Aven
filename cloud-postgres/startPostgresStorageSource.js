@@ -183,7 +183,19 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function commitBlock(value, refs) {
+    if (value === undefined) {
+      throw new Err('Undefined value provided to commitBlock', 'EmptyValue', {
+        value,
+      });
+    }
     const blockData = stringify(value);
+    if (!blockData) {
+      console.error(
+        'Stringification error while serializing this value:',
+        value,
+      );
+      throw new Err('Internal Server Error', 'InternalError1', {});
+    }
     const size = blockData.length;
     const id = getIdOfValue(value);
     const storedValue = { value, refs };
@@ -227,6 +239,45 @@ export default async function startPostgresStorageSource({ config, domains }) {
     const { value, refs } = await commitDeepBlock(inputValue);
     const block = await commitBlock(value, refs);
     return block;
+  }
+
+  async function PutBlock({ value, name, domain, id }) {
+    if (!name) {
+      throw new Err('Invalid doc name for "PutBlock"', 'InvalidDocName', {
+        domain,
+        name,
+      });
+    }
+    if (!domain) {
+      throw new Err('Invalid domain for "PutBlock"', 'InvalidDomain', {
+        domain,
+      });
+    }
+
+    if (value === undefined) {
+      throw new Err('Invalid value for "PutBlock"', 'EmptyValue', {
+        domain,
+        name,
+        value,
+      });
+    }
+    // todo, (epic): properly associate these blocks with the provided domain+docName
+
+    const putResult = await putBlock(value);
+
+    if (id && putResult.id !== id) {
+      throw new Err(
+        `Invalid ID provided for this value. Provided "${id}" but computed id "${
+          putResult.id
+        }"`,
+        'InvalidValueId',
+        { id, value },
+      );
+      // should destroy putResult.id, todo
+    }
+    return {
+      id: putResult.id,
+    };
   }
 
   function getInternalParentId(parentId) {
@@ -536,6 +587,13 @@ export default async function startPostgresStorageSource({ config, domains }) {
         domain,
       });
     }
+    if (!id) {
+      throw new Err('Invalid block id for "GetBlock"', 'InvalidBlockId', {
+        domain,
+        name,
+        id,
+      });
+    }
     return await knex
       .select('*')
       .from('blocks')
@@ -544,15 +602,10 @@ export default async function startPostgresStorageSource({ config, domains }) {
       .then(function(res) {
         const block = res.shift();
         if (!block) {
-          throw new Error(`Block ID "${id}" was not found`);
+          throw new Err(`Block ID "${id}" was not found`, 'BlockNotFound', {
+            id,
+          });
         }
-        // let parsedValue = undefined;
-        // try {
-        //   parsedValue = JSON.parse(block.value.value);
-        // } catch (e) {
-        //   console.error('Cannot parse JSON value from block: ', block);
-        //   throw e;
-        // }
         return {
           id: block.id,
           value: block.value.value,
@@ -768,7 +821,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       PostDoc,
       MoveDoc,
       PutTransactionValue,
-      // PutBlock,
+      PutBlock,
       GetBlock,
       GetBlocks,
       PutDomainValue,

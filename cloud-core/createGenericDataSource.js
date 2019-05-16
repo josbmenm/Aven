@@ -145,6 +145,44 @@ export default function createGenericDataSource({
     return block;
   }
 
+  async function PutBlock({ value, name, domain, id }) {
+    if (!name) {
+      throw new Err('Invalid doc name for "PutBlock"', 'InvalidDocName', {
+        domain,
+        name,
+      });
+    }
+    if (!domain) {
+      throw new Err('Invalid domain for "PutBlock"', 'InvalidDomain', {
+        domain,
+      });
+    }
+    if (value === undefined) {
+      throw new Err('Invalid value for "PutBlock"', 'EmptyValue', {
+        domain,
+        name,
+        value,
+      });
+    }
+    // todo, (epic): properly associate these blocks with the provided domain+docName
+
+    const putResult = await _putBlock(value);
+
+    if (id && putResult.id !== id) {
+      throw new Err(
+        `Invalid ID provided for this value. Provided "${id}" but expected "${
+          putResult.id
+        }"`,
+        'InvalidValueId',
+        { id, value },
+      );
+      // should destroy putResult.id, todo
+    }
+    return {
+      id: putResult.id,
+    };
+  }
+
   async function PutDoc({ domain, name, id }) {
     if (id === undefined) {
       throw new Error('Cannot PutDoc without id set to null or valid block id');
@@ -461,6 +499,7 @@ export default function createGenericDataSource({
     isConnectedStream,
     dispatch: createDispatcher({
       PutDoc,
+      PutBlock,
       PutDocValue,
       PutTransactionValue,
       PostDoc,
