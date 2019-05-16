@@ -29,7 +29,6 @@ export default function useCloudValue(cloudValueDefinition) {
   }
 
   function applyError(error) {
-    console.log('yeah went HEREEE');
     setError(error);
   }
 

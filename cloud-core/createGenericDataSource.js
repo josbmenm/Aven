@@ -2,6 +2,7 @@ import { BehaviorSubject, Subject } from 'rxjs-compat';
 import xs from 'xstream';
 import cuid from 'cuid';
 
+import Err from '../utils/Err';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import bindCommitDeepBlock from '../cloud-core/bindCommitDeepBlock';
 import { getMaxListDocs } from './maxListDocs';
