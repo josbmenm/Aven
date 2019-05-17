@@ -21,12 +21,14 @@ export default function combineSources({
     }
     name.split('/').forEach(localName => {
       if (!walkingMap) {
-        return false;
+        walkingMap = false;
+        return;
       }
       if (typeof walkingMap === 'object') {
-        return walkingMap[localName];
+        walkingMap = walkingMap[localName];
+        return;
       }
-      return true;
+      walkingMap = true;
     });
     return !!walkingMap;
   }
@@ -185,16 +187,12 @@ export default function combineSources({
 
   async function GetDocValue({ domain, auth, name }) {
     // todo, check if currently subscribed to domain/name, and if so, respond immediately using the curernt id and GetBlock
-    async function dispatchGetDocValue(source) {
-      return await source.dispatch({
-        type: 'GetDocValue',
-        domain,
-        auth,
-        name,
-      });
-    }
-
-    const blockSlow = await dispatchGetDocValue(slowSource);
+    const blockSlow = await slowSource.dispatch({
+      type: 'GetDocValue',
+      domain,
+      auth,
+      name,
+    });
     if (blockSlow.value !== undefined) {
       fastSource
         .dispatch({
@@ -330,11 +328,12 @@ export default function combineSources({
     await slowSource.close();
   }
 
-  function observeDoc(domain, name, auth) {
+  async function observeDoc(domain, name, auth) {
     if (isFastOnly(domain, name)) {
       return fastSource.observeDoc(domain, name, auth);
     }
-    return slowSource.observeDoc(domain, name, auth);
+    const upstream = await slowSource.observeDoc(domain, name, auth);
+    return upstream;
   }
 
   function observeDocChildren(domain, name, auth) {
