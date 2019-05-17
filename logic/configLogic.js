@@ -373,6 +373,21 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
   const finalVolumeBeforeLiquid = ingredientsVolume + enhancementsVolume;
   const baseLiquidIngId = menuItem.Recipe.LiquidBaseIngredient[0];
   const baseLiquidIng = allIngredients[baseLiquidIngId];
+  if (!baseLiquidIng) {
+    console.warn('Missing base liquid');
+    console.log(baseLiquidIngId, menuItem.Recipe);
+    return {
+      enhancementIngredients,
+      standardIngredients,
+      baseLiquidIngredient,
+      ingredients: outputIngredients,
+      origRecipeVolume,
+      finalVolume: finalVolumeBeforeLiquid,
+      liquidVolume: 0,
+      enhancementsVolume,
+      ingredientsVolume,
+    };
+  }
   const baseLiquidShotSize = baseLiquidIng['ShotSize(ml)'];
   const volumeRemaining = MAX_CUP_VOLUME - finalVolumeBeforeLiquid;
   const liquidShotCount = Math.floor(volumeRemaining / baseLiquidShotSize);

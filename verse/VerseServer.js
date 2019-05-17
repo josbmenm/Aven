@@ -22,7 +22,7 @@ import sendReceipt from '../skynet/sendReceipt';
 import RestaurantReducer from '../logic/RestaurantReducer';
 
 import startKitchen, {
-  computeKitchenConfig,
+  // computeKitchenConfig,
   getFreshActionId,
 } from './startKitchen';
 import { handleStripeAction } from '../stripe-server/Stripe';
@@ -65,12 +65,12 @@ const startVerseServer = async () => {
   };
 
   const remoteSource = createNodeNetworkSource({
-    authority: 'onofood.co',
-    useSSL: true,
+    // authority: 'onofood.co',
+    // useSSL: true,
     quiet: true,
 
-    // authority: 'localhost:8840',
-    // useSSL: false,
+    authority: 'localhost:8840',
+    useSSL: false,
   });
 
   const storageSource = await startPostgresStorageSource({
@@ -86,7 +86,6 @@ const startVerseServer = async () => {
     slowSource: remoteSource,
     fastSourceOnlyMapping: {
       'onofood.co': {
-        RestaurantActions: true,
         KitchenState: true,
       },
     },
@@ -253,9 +252,9 @@ const startVerseServer = async () => {
     })
     .catch(console.error);
 
-  const fsClient = createFSClient({ client: cloud });
-  await new Promise(resolve => setTimeout(resolve, 3000));
-  computeKitchenConfig(cloud);
+  // const fsClient = createFSClient({ client: cloud });
+  // await new Promise(resolve => setTimeout(resolve, 3000));
+  // computeKitchenConfig(cloud);
 
   let kitchen = null;
   if (!process.env.DISABLE_ONO_KITCHEN) {

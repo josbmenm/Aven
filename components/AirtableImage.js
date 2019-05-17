@@ -37,6 +37,7 @@ export function usePreloadedImages(loader, deps) {
   const { authority, useSSL } = React.useContext(HostContext);
   React.useEffect(() => {
     const images = loader();
+    if (!images) return;
     preloadImages(images, authority, useSSL)
       .then(results => {})
       .catch(e => {

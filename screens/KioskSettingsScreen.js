@@ -15,7 +15,7 @@ function UpdateAirtableRow() {
         cloud
           .dispatch({ type: 'UpdateAirtable' })
           .then(() => {
-            alert('Airtable Updated!');
+            alert('Airtable Update Started. Usually takes ~2 minutes..');
           })
           .catch(e => {
             console.error(e);

@@ -557,7 +557,6 @@ function getCustomizationSections(
         (customizationState && customizationState.ingredients) || {};
       const customIngredients = customIngredientsByCustomizationCategory[name];
       const selectedIngredients = customIngredients || customSpec.defaultValue;
-      // console.log('wheyo!!!', name, customSpec.defaultValue.length, customSpec);
       const slotCount =
         customSpec.defaultValue.length + (customSpec['Overflow Limit'] || 0);
       function setIngredientCustomization(ingredientIds) {
@@ -933,7 +932,6 @@ export default function CustomizePage({
               customization: customizationState,
               quantity: 1,
             };
-        console.log('owahhahaha', nextItem);
         setCartItem(nextItem);
         navigate({
           routeName: 'Blend',

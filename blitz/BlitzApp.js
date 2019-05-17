@@ -315,14 +315,6 @@ function FullApp() {
   );
 }
 
-// loadImages(PRELOAD_IMAGES)
-//   .then(results => {
-//     console.log('images preloaded!');
-//   })
-//   .catch(err => {
-//     console.error('Error preloading the images!', err);
-//   });
-
 const ENABLE_DEV_OVERLAY = false;
 
 function withDevOverlay(FullApp) {

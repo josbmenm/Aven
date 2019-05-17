@@ -24,6 +24,7 @@ import DevicesReducer from '../logic/DevicesReducer';
 import submitFeedback from './submitFeedback';
 import validatePromoCode from './validatePromoCode';
 
+import startKitchen, { computeKitchenConfig } from './KitchenConfig';
 const getEnv = c => process.env[c];
 
 const ONO_ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
@@ -180,15 +181,17 @@ const startSkynetServer = async () => {
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
-  const unprotectedCloud = createCloudClient({
-    source: evalSource,
-    domain,
-  });
+  // const unprotectedCloud = createCloudClient({
+  //   source: evalSource,
+  //   domain,
+  // });
 
-  const fsClient = createFSClient({ client: unprotectedCloud });
+  computeKitchenConfig(evalSource.cloud);
+
+  const fsClient = createFSClient({ client: evalSource.cloud });
 
   const context = new Map();
-  context.set(CloudContext, unprotectedCloud); // bad idea, must have independent client for authentication!!!
+  context.set(CloudContext, evalSource.cloud); // bad idea, must have independent client for authentication!!!
 
   const rootAuth = {
     accountId: 'root',
@@ -247,7 +250,7 @@ const startSkynetServer = async () => {
   async function placeOrder({ orderId }, logger) {
     console.log('placing order..', orderId);
 
-    const inputOrder = unprotectedCloud.get(`Orders/${orderId}`);
+    const inputOrder = evalSource.cloud.get(`Orders/${orderId}`);
     await inputOrder.fetchValue();
     const order = inputOrder.getValue();
     console.log('placing order..', order);
@@ -256,7 +259,7 @@ const startSkynetServer = async () => {
       throw new Error('Could not find order');
     }
 
-    await unprotectedCloud.get('OrderActions').putTransaction({
+    await evalSource.cloud.get('OrderActions').putTransaction({
       type: 'PlaceOrder',
       order,
     });
@@ -285,7 +288,7 @@ const startSkynetServer = async () => {
     switch (action.type) {
       case 'SendReceipt':
         return await sendReceipt({
-          cloud: unprotectedCloud,
+          cloud: evalSource.cloud,
           smsAgent,
           emailAgent,
           action,
@@ -298,11 +301,19 @@ const startSkynetServer = async () => {
       case 'StripeCapturePayment':
         return capturePayment(action);
       case 'ValidatePromoCode':
-        return validatePromoCode(unprotectedCloud, action, logger);
+        return validatePromoCode(evalSource.cloud, action, logger);
       case 'SubmitFeedback':
-        return submitFeedback(unprotectedCloud, emailAgent, action, logger);
-      case 'UpdateAirtable':
-        return await scrapeAirTable(fsClient, logger);
+        return submitFeedback(evalSource.cloud, emailAgent, action, logger);
+      case 'UpdateAirtable': {
+        scrapeAirTable(fsClient, logger)
+          .then(() => {
+            console.log('Done with user-requested Airtable update');
+          })
+          .catch(e => {
+            console.error('Error updating Airtable!', e);
+          });
+        return {};
+      }
       default:
         return await protectedSource.dispatch(action);
     }
@@ -324,7 +335,6 @@ const startSkynetServer = async () => {
 
   return {
     close: async () => {
-      await unprotectedCloud.close();
       await protectedSource.close();
       await evalSource.close();
       await webService.close();
