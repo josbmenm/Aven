@@ -265,6 +265,8 @@ export default function createCloudClient({
     lazyDefineCloudFunction,
   };
 
+  cloudClient.cloud = cloudClient;
+
   const docs = createDocPool({
     parentName: new BehaviorSubject(null),
     blockValueCache: _blockValues,
