@@ -160,6 +160,9 @@ export function computeKitchenConfig(cloud) {
               {}),
           };
           tags.forEach(tag => {
+            if (!tag.Type) {
+              return;
+            }
             if (tag.Type === 'Command DINT') {
               valueCommands[tag['Internal Name']] = {
                 name: tag['Internal Name'],
