@@ -366,7 +366,9 @@ const extractActionValues = ({
     tagOutput[`${systemName}_ActionIdIn_VALUE`] = actionId;
     // immediateOutput[`${systemName}_ActionIdIn_VALUE`] = actionId;
   }
-
+  if (systemName === 'System') {
+    tagOutput = {};
+  }
   return { immediateOutput, clearPulseOutput, tagOutput };
 };
 
