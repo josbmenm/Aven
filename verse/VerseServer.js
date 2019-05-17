@@ -65,12 +65,9 @@ const startVerseServer = async () => {
   };
 
   const remoteSource = createNodeNetworkSource({
-    // authority: 'onofood.co',
-    // useSSL: true,
+    authority: 'onofood.co',
+    useSSL: true,
     quiet: true,
-
-    authority: 'localhost:8840',
-    useSSL: false,
   });
 
   const storageSource = await startPostgresStorageSource({
