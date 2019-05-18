@@ -95,7 +95,8 @@ export default function createCloudClient({
     return await createAnonymousSession();
   }
 
-  async function destroySession({ ignoreRemoteError }) {
+  async function destroySession(opts) {
+    const ignoreRemoteError = !!opts && opts.ignoreRemoteError;
     if (!session.value) {
       throw new Error('no session found!');
     }
@@ -227,8 +228,8 @@ export default function createCloudClient({
   }
 
   async function internalObserveDoc(obsDomain, name, auth) {
-    if (obsDomain !== domain) {
-      return await source.observeDoc(obsDomain, name, session.value);
+    if (obsDomain !== domain || auth) {
+      return await source.observeDoc(obsDomain, name, auth || session.value);
     }
 
     const doc = docs.get(name);

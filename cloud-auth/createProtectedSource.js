@@ -45,6 +45,7 @@ export default function createProtectedSource({
       });
 
       if (
+        !v ||
         !v.accountId ||
         !v.verifiedProviderId ||
         !v.verifiedProviderName ||
@@ -63,7 +64,7 @@ export default function createProtectedSource({
 
   async function VerifySession({ auth, domain }) {
     if (!auth || !auth.sessionId) {
-      return {};
+      throw new Err('Cannot validate session', 'SessionInvalid', {});
     }
     const { accountId, sessionId, token } = auth;
 
@@ -281,6 +282,7 @@ export default function createProtectedSource({
       verificationResponse,
     });
     if (
+      !verification ||
       !verification.accountId ||
       !verification.verifiedProviderId ||
       !verification.verifiedProviderName ||
@@ -412,7 +414,9 @@ export default function createProtectedSource({
     const validatedAuth = await VerifyAuth({ auth, domain });
 
     const isRootAccount =
-      validatedAuth.provider === 'root' && validatedAuth.accountId === 'root';
+      !!validatedAuth &&
+      validatedAuth.provider === 'root' &&
+      validatedAuth.accountId === 'root';
 
     const permissionBlocks = await Promise.all(
       pathApartName(name)
@@ -439,13 +443,14 @@ export default function createProtectedSource({
       if (!permissions) return;
       if (permissions.owner) {
         owner = permissions.owner;
-        if (permissions.owner === auth.accountId) {
+        if (validatedAuth && permissions.owner === validatedAuth.accountId) {
           userDoesOwn = true;
         }
       }
       permissions.defaultRule && applyRule(permissions.defaultRule);
 
       permissions.accountRules &&
+        validatedAuth &&
         permissions.accountRules[validatedAuth.accountId] &&
         applyRule(permissions.accountRules[validatedAuth.accountId]);
     });
@@ -455,6 +460,7 @@ export default function createProtectedSource({
     }
 
     if (
+      validatedAuth &&
       validatedAuth.accountId &&
       name.match(new RegExp(`^@${validatedAuth.accountId}\/`))
     ) {
@@ -665,16 +671,21 @@ export default function createProtectedSource({
   const sourceId = `protected(${source.id})`;
 
   const dispatch = createDispatcher(actions, source.dispatch, null, sourceId);
+
   async function observeDoc(domain, name, auth) {
     const permissions = await GetPermissions({ name, auth, domain });
     if (!permissions.canRead) {
-      throw new Err('Not authorized to subscribe here', 'NoPermission', {
-        name,
-        domain,
-        authId: auth && auth.id,
-      });
+      throw new Err(
+        `Not authorized to subscribe to "${name}" as "${auth && auth.id}"`,
+        'NoPermission',
+        {
+          name,
+          domain,
+          authId: auth && auth.id,
+        },
+      );
     }
-    return await source.observeDoc(domain, name);
+    return await source.observeDoc(domain, name, parentAuth);
   }
   return {
     ...source,
