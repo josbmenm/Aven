@@ -243,13 +243,6 @@ export function getOrderSummary(orderState, companyConfig) {
     const freeBlendTotals = blendTotals.sort().slice(-promo.count);
     const freeBlendsDiscount = freeBlendTotals.reduce((acc, t) => acc + t, 0);
     discountTotal += freeBlendsDiscount;
-    console.log({
-      promo,
-      blendTotals,
-      freeBlendsDiscount,
-      freeBlendTotals,
-      discountTotal,
-    });
   }
   const subTotal = subTotalBeforeDiscount - discountTotal;
   const tax = subTotal * TAX_RATE;

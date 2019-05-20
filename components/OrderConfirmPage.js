@@ -114,19 +114,19 @@ export default function OrderConfirmPage({
   backBehavior,
   ...props
 }) {
-  console.log('---- =======');
-  console.log(`---- errorStep: ${JSON.stringify(readerState.errorStep)}`);
-  console.log(`---- inputOptions: ${JSON.stringify(readerState.inputOptions)}`);
-  console.log(`---- status: ${JSON.stringify(readerState.status)}`);
-  console.log(`---- promptType: ${JSON.stringify(readerState.promptType)}`);
-  console.log(`---- isCollecting: ${JSON.stringify(readerState.isCollecting)}`);
-  console.log(`---- errorCode: ${JSON.stringify(readerState.errorCode)}`);
-  console.log(
-    `---- errorDeclineCode: ${JSON.stringify(readerState.errorDeclineCode)}`,
-  );
-  console.log(
-    `---- isCardInserted: ${JSON.stringify(readerState.isCardInserted)}`,
-  );
+  // console.log('---- =======');
+  // console.log(`---- errorStep: ${JSON.stringify(readerState.errorStep)}`);
+  // console.log(`---- inputOptions: ${JSON.stringify(readerState.inputOptions)}`);
+  // console.log(`---- status: ${JSON.stringify(readerState.status)}`);
+  // console.log(`---- promptType: ${JSON.stringify(readerState.promptType)}`);
+  // console.log(`---- isCollecting: ${JSON.stringify(readerState.isCollecting)}`);
+  // console.log(`---- errorCode: ${JSON.stringify(readerState.errorCode)}`);
+  // console.log(
+  //   `---- errorDeclineCode: ${JSON.stringify(readerState.errorDeclineCode)}`,
+  // );
+  // console.log(
+  //   `---- isCardInserted: ${JSON.stringify(readerState.isCardInserted)}`,
+  // );
 
   const {
     inputOptions,

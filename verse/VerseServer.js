@@ -18,7 +18,6 @@ import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import combineSources from '../cloud-core/combineSources';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
-import sendReceipt from '../skynet/sendReceipt';
 import RestaurantReducer from '../logic/RestaurantReducer';
 
 import startKitchen, {
@@ -167,7 +166,7 @@ const startVerseServer = async () => {
   async function establishPermissions() {
     await putPermission({
       defaultRule: { canWrite: true, canRead: true },
-      name: 'RestaurantActions',
+      name: 'RestaurantActionsUnburnt',
     });
 
     await putPermission({
@@ -177,7 +176,7 @@ const startVerseServer = async () => {
 
     await putPermission({
       defaultRule: { canRead: true },
-      name: 'RestaurantActions^RestaurantReducer',
+      name: 'RestaurantActionsUnburnt^RestaurantReducer',
     });
 
     await putPermission({
@@ -406,7 +405,7 @@ const startVerseServer = async () => {
 
   (await evalSource.observeDoc(
     'onofood.co',
-    'RestaurantActions^RestaurantReducer',
+    'RestaurantActionsUnburnt^RestaurantReducer',
   )).subscribe({
     next: update => {
       restaurantState = update.value;
@@ -423,7 +422,7 @@ const startVerseServer = async () => {
       domain: 'onofood.co',
     });
 
-    const at = cloud.get('Airtable').expand((folder, doc) => {
+    const at = evalSource.cloud.get('Airtable').expand((folder, doc) => {
       if (!folder) {
         return null;
       }
@@ -475,39 +474,39 @@ const startVerseServer = async () => {
           };
         }
         return {
+          amount: ingredients.amount,
+          amountVolumeRatio: ingredients.amountVolumeRatio,
           ingredientId: ing.id,
           ingredientName: ing.Name,
+          ingredientIcon: ing.Icon,
           slotId: kitchenSlotId,
           systemId: kitchenSystemId,
           slot: kitchenSlot.Slot,
           system: kitchenSystem.FillSystemID,
           invalid: null,
         };
-
-        return { kitchenSlot, slotId: kitchenSlotId };
       });
+      const invalidFills = requestedFills.filter(f => !!f.invalid);
+      if (invalidFills.length) {
+        console.error('Invalid Fills:', invalidFills);
+        throw new Error('Invalid fills!');
+      }
       const orderName =
         order.orderName.firstName + ' ' + order.orderName.lastName;
       const blendName = displayNameOfOrderItem(item, item.menuItem);
-      console.log('ORDERING ITEM!', {
-        requestedFills,
-        orderName,
+      const orderForRestaurant = {
+        id: orderId + item.id,
+        orderItemId: item.id,
+        orderId,
+        name: orderName,
         blendName,
+        fills: requestedFills,
+      };
+      console.log('NEW BLEND ORDER!', orderForRestaurant);
+      await cloud.get('RestaurantActionsUnburnt').putTransaction({
+        type: 'PlaceOrder',
+        order: orderForRestaurant,
       });
-
-      // await cloud.get('RestaurantActions').putTransaction({
-      //   type: 'PlaceOrder',
-      //   order: {
-      //     id: orderId,
-      //     name: ,
-      //     blendName: ,
-      //     fills: [
-      //       { system: 3, slot: 0, amount: 2 },
-      //       { system: 3, slot: 1, amount: 3 },
-      //       { system: 0, slot: 0, amount: 1 },
-      //     ],
-      //   },
-      // });
     }, Promise.resolve());
 
     return {};
@@ -528,8 +527,6 @@ const startVerseServer = async () => {
         const actionId = getFreshActionId();
         return await kitchen.dispatchCommand({ ...action, actionId });
       }
-      case 'SendReceipt':
-        return await sendReceipt({ smsAgent, emailAgent, action });
       case 'KitchenAction':
         return await kitchenAction(action);
       case 'PlaceOrder':

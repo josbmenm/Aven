@@ -174,7 +174,7 @@ export function computeNextStep(restaurantState, kitchenConfig, kitchenState) {
           const resp = await onKitchenAction(kitchenAction);
 
           await cloud
-            .get('RestaurantActions')
+            .get('RestaurantActionsUnburnt')
             .putTransaction(successRestaurantAction);
           return resp;
         },

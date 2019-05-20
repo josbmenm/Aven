@@ -535,7 +535,7 @@ function StatusDisplayDebug({ displayState, dispatch }) {
 
 function StatusDisplayScreen() {
   const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActions',
+    'RestaurantActionsUnburnt',
     RestaurantReducer,
   );
   if (!restaurantState) {

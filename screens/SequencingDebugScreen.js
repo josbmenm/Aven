@@ -215,7 +215,7 @@ function AdHocOrderRow() {
     setFills([...fills, fill]);
   }
   const openAddFill = useFillAddPopover({ onAddFill });
-  const restaurantDispatch = usePutTransaction('RestaurantActions');
+  const restaurantDispatch = usePutTransaction('RestaurantActionsUnburnt');
 
   return (
     <Row title="Ad-Hoc Order">
@@ -545,7 +545,7 @@ function ManualActionsSection() {
 
 export default function SequencingDebugScreen(props) {
   const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActions',
+    'RestaurantActionsUnburnt',
     RestaurantReducer,
   );
   return (

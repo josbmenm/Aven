@@ -75,7 +75,7 @@ const Subsystems = withNavigation(
 
 function Panel() {
   const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActions',
+    'RestaurantActionsUnburnt',
     RestaurantReducer,
   );
   return (
