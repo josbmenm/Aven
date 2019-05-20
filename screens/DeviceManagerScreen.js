@@ -21,6 +21,7 @@ import RowSection from '../components/RowSection';
 import TextRow from '../components/TextRow';
 import SimplePage from '../components/SimplePage';
 import Row from '../components/Row';
+import Spinner from '../components/Spinner';
 import BitRow from '../components/BitRow';
 import { rowStyle, rowTitleStyle, titleStyle } from '../components/Styles';
 import useCloudReducer from '../cloud-core/useCloudReducer';
@@ -203,10 +204,20 @@ function DeviceManager() {
     DevicesReducer,
   );
   const devices = (devicesState && devicesState.devices) || [];
+  if (!devices) {
+    return <Spinner />;
+  }
+  if (devices.length === 0) {
+    return (
+      <RowSection>
+        <TextRow text="No Devices Yet" />
+      </RowSection>
+    );
+  }
   return (
     <RowSection>
       {devices.map(device => (
-        <DeviceRow device={device} />
+        <DeviceRow device={device} key={device.deviceId} />
       ))}
     </RowSection>
   );

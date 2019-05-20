@@ -51,12 +51,14 @@ import useCloudProvider from '../components/useCloudProvider';
 import FadeTransition from '../components/FadeTransition';
 import { titleStyle } from '../components/Styles';
 
-let IS_DEV = process.env.NODE_ENV !== 'production';
+let VERSE_IS_DEV = process.env.NODE_ENV !== 'production';
+let SKYNET_IS_DEV = process.env.NODE_ENV !== 'production';
 
 // uncomment to test prod mode:
-// IS_DEV = false;
+// VERSE_IS_DEV = false;
+SKYNET_IS_DEV = false;
 
-const VERSE_HOST_CONFIG = IS_DEV
+const VERSE_HOST_CONFIG = VERSE_IS_DEV
   ? {
       // Verse dev:
       useSSL: false,
@@ -67,7 +69,7 @@ const VERSE_HOST_CONFIG = IS_DEV
       useSSL: false,
       authority: 'restaurant0.maui.onofood.co:8830',
     };
-const SKYNET_HOST_CONFIG = IS_DEV
+const SKYNET_HOST_CONFIG = SKYNET_IS_DEV
   ? {
       // Skynet dev:
       useSSL: false,
