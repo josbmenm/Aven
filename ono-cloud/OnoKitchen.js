@@ -90,7 +90,6 @@ export function getSubsystemFaults(system) {
 
 export function OrderContextProvider({ children }) {
   let cloud = useContext(CloudContext);
-  const restaurantActions = cloud.get('RestaurantActions');
   let [currentOrder, setCurrentOrder] = useState(null);
   let [asyncError, setAsyncError] = useState(null);
 

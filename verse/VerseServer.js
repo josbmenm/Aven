@@ -131,15 +131,17 @@ const startVerseServer = async () => {
     rootPasswordHash: await hashSecureString(ROOT_PASSWORD),
   });
 
+  const rootAuth = {
+    accountId: 'root',
+    verificationInfo: {},
+    verificationResponse: { password: ROOT_PASSWORD },
+  };
+
   const evalSource = createEvalSource({
+    session: rootAuth,
     source: combinedStorageSource,
     domain: 'onofood.co',
     functions: [RestaurantReducer],
-  });
-
-  const cloud = createCloudClient({
-    source: evalSource,
-    domain: 'onofood.co',
   });
 
   const protectedSource = createProtectedSource({
@@ -151,12 +153,6 @@ const startVerseServer = async () => {
     },
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
-
-  const rootAuth = {
-    accountId: 'root',
-    verificationInfo: {},
-    verificationResponse: { password: ROOT_PASSWORD },
-  };
 
   async function putPermission({ name, defaultRule }) {
     await protectedSource.dispatch({
@@ -260,7 +256,7 @@ const startVerseServer = async () => {
   if (!process.env.DISABLE_ONO_KITCHEN) {
     kitchen = startKitchen({
       logBehavior,
-      client: cloud,
+      client: evalSource.cloud,
       plcIP: '192.168.1.122',
     });
   }
@@ -300,7 +296,7 @@ const startVerseServer = async () => {
       let isActionReceived = null;
       let currentActionId = null;
       let noFaults = true;
-      let sub = cloud.get('KitchenState').observeValue.subscribe({
+      let sub = evalSource.cloud.get('KitchenState').observeValue.subscribe({
         next: state => {
           if (!state) {
             return;
@@ -373,7 +369,7 @@ const startVerseServer = async () => {
     }
     console.log('Next Step:', nextStep.description);
     kitchenStateAtLastStepStart = kitchenState;
-    currentStepPromise = nextStep.perform(cloud, kitchenAction);
+    currentStepPromise = nextStep.perform(evalSource.cloud, kitchenAction);
 
     currentStepPromise
       .then(() => {
@@ -394,14 +390,14 @@ const startVerseServer = async () => {
       });
   }
 
-  cloud.get('KitchenState').observeValue.subscribe({
+  evalSource.cloud.get('KitchenState').observeValue.subscribe({
     next: state => {
       kitchenState = state;
       handleStateUpdates();
     },
   });
 
-  cloud.get('KitchenConfig').observeValue.subscribe({
+  evalSource.cloud.get('KitchenConfig').observeValue.subscribe({
     next: state => {
       kitchenConfig = state;
       handleStateUpdates();
@@ -421,7 +417,7 @@ const startVerseServer = async () => {
   async function placeOrder({ orderId }) {
     console.log('placing order..', orderId);
 
-    const orderResult = await cloud.dispatch({
+    const orderResult = await evalSource.cloud.dispatch({
       type: 'GetDocValue',
       name: `Orders/${orderId}`,
       domain: 'onofood.co',
@@ -548,7 +544,7 @@ const startVerseServer = async () => {
 
   const context = new Map();
 
-  context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
+  context.set(CloudContext, evalSource.cloud); // bad idea, must have independent client for authentication!!!
   const webService = await WebServer({
     App,
     context,

@@ -1,6 +1,8 @@
 import defineCloudReducer from '../cloud-core/defineCloudReducer';
 
-function RestaurantReducerFn(state = {}, action) {
+function RestaurantReducerFn(state = {}, currentValue) {
+  const action = currentValue.value;
+  console.log('do reduce yo', state, action);
   switch (action.type) {
     case 'WipeState': {
       return {};
@@ -119,7 +121,7 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     default: {
-      return;
+      return state;
     }
   }
 }

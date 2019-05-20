@@ -178,7 +178,7 @@ function RootAuthLogin() {
         </BlockFormMessage>
         <BlockFormButton
           onPress={() => {
-            cloud.destroySession();
+            cloud.destroySession({ ignoreRemoteError: true });
           }}
           title="Log out"
         />

@@ -154,7 +154,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   return (
     <View style={{}}>
       {allFaults.map(fault => (
-        <FaultRow fault={fault} />
+        <FaultRow fault={fault} key={fault.systemName + fault.description} />
       ))}
       <View
         style={{
