@@ -820,14 +820,14 @@ export default function createCloudDoc({
 
   const isConnectedSubscription = cloudClient.isConnected.subscribe({
     next: isConn => {
-      if (isConn && transactionQueue.length) {
-        const transactionQueueSnapshot = transactionQueue;
-        transactionQueue = [];
-        putTransactions(transactionQueueSnapshot).catch(e => {
-          console.error('Failed to queued transactions!', e);
-          transactionQueue = [...transactionQueueSnapshot, ...transactionQueue];
-        });
-      }
+      // if (isConn && transactionQueue.length) {
+      //   const transactionQueueSnapshot = transactionQueue;
+      //   transactionQueue = [];
+      //   putTransactions(transactionQueueSnapshot).catch(e => {
+      //     console.error('Failed to queued transactions!', e);
+      //     transactionQueue = [...transactionQueueSnapshot, ...transactionQueue];
+      //   });
+      // }
     },
   });
 
@@ -1002,10 +1002,8 @@ export default function createCloudDoc({
         .filter(({ value }) => value !== undefined)
         .flatMap(async ({ value, getId }) => {
           const argumentId = getId();
-          console.log('haz arg val+id', value, argumentId);
           let result = overriddenFunctionCache[argumentId];
           if (result === undefined) {
-            console.log('yar', value, argumentDoc.getFullName(), argumentId);
             const {
               loadDependencies,
               reComputeResult,
