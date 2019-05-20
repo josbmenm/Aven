@@ -106,10 +106,24 @@ export default async function WebServer({
   serverListenLocation,
   expressRouting = undefined,
   assets,
+  onLogEvent,
 }) {
+  function reportInfo(message) {
+    onLogEvent && onLogEvent(2, message);
+  }
+  function reportWarning(message) {
+    onLogEvent && onLogEvent(1, message);
+  }
+  function reportError(message) {
+    onLogEvent && onLogEvent(0, message);
+  }
   function doExpressRouting(app) {
     process.env.ENFORCE_HTTPS && app.use(yes());
     app.use(helmet());
+    app.use((req, res, next) => {
+      reportInfo(`${req.method} request to ${req.headers.host} ${req.path}`);
+      next();
+    });
     app.use(function(req, res, next) {
       res.header('Access-Control-Allow-Origin', '*');
       res.header(
