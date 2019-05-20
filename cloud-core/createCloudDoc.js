@@ -725,65 +725,97 @@ export default function createCloudDoc({
   let transactionQueue = [];
 
   async function putTransactions(values) {
-    try {
-      await fetch();
-    } catch (e) {
-      // we can still assume that we have the latest possible version, and apply a transaction locally. the actual transaction has real error handling below
-    }
+    throw new Error('putTransactions is buggy and not supported yet');
+    // try {
+    //   await fetch();
+    // } catch (e) {
+    //   // we can still assume that we have the latest possible version, and apply a transaction locally. the actual transaction has real error handling below
+    // }
+    // const prevId = getId();
+    // let deepTransactionValue = undefined;
+    // let deepTransactionId = prevId;
+    // values.forEach(value => {
+    //   deepTransactionValue = {
+    //     type: 'TransactionValue',
+    //     on: deepTransactionId
+    //       ? {
+    //           type: 'BlockReference',
+    //           value: deepTransactionValue,
+    //           id: deepTransactionId,
+    //         }
+    //       : null,
+    //     value,
+    //   };
+    //   const b = _getBlockWithValue(deepTransactionValue);
+    //   deepTransactionId = b.id;
+    // });
+
+    // setState({
+    //   id: deepTransactionId,
+    //   puttingFromId: prevId,
+    // });
+
+    // if (!cloudClient.isConnected.getValue()) {
+    //   transactionQueue = [...transactionQueue, ...values];
+    //   return;
+    // }
+    // let result = null;
+    // try {
+    //   result = await source.dispatch({
+    //     type: 'PutTransactionValue',
+    //     domain,
+    //     name: getFullName(),
+    //     value: deepTransactionValue,
+    //   });
+    // } catch (e) {
+    //   console.warn('Queued transaction from failure.', values);
+    //   transactionQueue = [...transactionQueue, ...values];
+    //   throw e;
+    // }
+
+    // if (result.id !== deepTransactionId) {
+    //   console.warn(
+    //     `Expected to put block id "${deepTransactionId}", but actually put id "${
+    //       result.id
+    //     }"`,
+    //   );
+    // }
+    // return result;
+  }
+
+  async function putTransaction(value) {
+    await fetch();
     const prevId = getId();
-    let deepTransactionValue = undefined;
-    let deepTransactionId = prevId;
-    values.forEach(value => {
-      deepTransactionValue = {
-        type: 'TransactionValue',
-        on: deepTransactionId
-          ? {
-              type: 'BlockReference',
-              value: deepTransactionValue,
-              id: deepTransactionId,
-            }
-          : null,
-        value,
-      };
-      const b = _getBlockWithValue(deepTransactionValue);
-      deepTransactionId = b.id;
-    });
+    const expectedTransactionValue = {
+      type: 'TransactionValue',
+      on: {
+        type: 'BlockReference',
+        id: prevId,
+      },
+      value,
+    };
+    const expectedBlock = _getBlockWithValue(expectedTransactionValue);
 
     setState({
-      id: deepTransactionId,
+      id: expectedBlock.id,
       puttingFromId: prevId,
     });
 
-    if (!cloudClient.isConnected.getValue()) {
-      transactionQueue = [...transactionQueue, ...values];
-      return;
-    }
-    let result = null;
-    try {
-      result = await source.dispatch({
-        type: 'PutTransactionValue',
-        domain,
-        name: getFullName(),
-        value: deepTransactionValue,
-      });
-    } catch (e) {
-      console.warn('Queued transaction from failure.', values);
-      transactionQueue = [...transactionQueue, ...values];
-      throw e;
-    }
+    const result = await source.dispatch({
+      type: 'PutTransactionValue',
+      domain,
+      name: getFullName(),
+      value,
+    });
 
-    if (result.id !== deepTransactionId) {
+    if (result.id !== expectedBlock.id) {
       console.warn(
-        `Expected to put block id "${deepTransactionId}", but actually put id "${
+        `Expected to put block id "${expectedBlock.id}", but actually put id "${
           result.id
         }"`,
       );
     }
     return result;
-  }
-
-  async function putTransaction(value) {
-    await putTransactions([value]);
   }
 
   const isConnectedSubscription = cloudClient.isConnected.subscribe({
@@ -970,8 +1002,10 @@ export default function createCloudDoc({
         .filter(({ value }) => value !== undefined)
         .flatMap(async ({ value, getId }) => {
           const argumentId = getId();
+          console.log('haz arg val+id', value, argumentId);
           let result = overriddenFunctionCache[argumentId];
           if (result === undefined) {
+            console.log('yar', value, argumentDoc.getFullName(), argumentId);
             const {
               loadDependencies,
               reComputeResult,
