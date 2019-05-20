@@ -474,8 +474,8 @@ const startVerseServer = async () => {
           };
         }
         return {
-          amount: ingredients.amount,
-          amountVolumeRatio: ingredients.amountVolumeRatio,
+          amount: ing.amount,
+          amountVolumeRatio: ing.amountVolumeRatio,
           ingredientId: ing.id,
           ingredientName: ing.Name,
           ingredientIcon: ing.Icon,
@@ -503,7 +503,7 @@ const startVerseServer = async () => {
         fills: requestedFills,
       };
       console.log('NEW BLEND ORDER!', orderForRestaurant);
-      await cloud.get('RestaurantActionsUnburnt').putTransaction({
+      await evalSource.cloud.get('RestaurantActionsUnburnt').putTransaction({
         type: 'PlaceOrder',
         order: orderForRestaurant,
       });
