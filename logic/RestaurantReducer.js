@@ -5,7 +5,7 @@ function RestaurantReducerFn(state = {}, action) {
     case 'WipeState': {
       return {};
     }
-    case 'PlaceOrder': {
+    case 'QueueOrderItem': {
       return {
         ...state,
         queue: [...(state.queue || []), action.order],

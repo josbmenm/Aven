@@ -270,8 +270,8 @@ function AdHocOrderRow() {
           title="place order"
           onPress={() => {
             restaurantDispatch({
-              type: 'PlaceOrder',
-              order: {
+              type: 'QueueOrderItem',
+              item: {
                 id: cuid(),
                 name: orderName,
                 blendName: orderBlendName,

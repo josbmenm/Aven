@@ -17,8 +17,8 @@ export default function OrderConfirmScreen({
 }) {
   const { confirmOrder, order } = useOrder();
   const summary = useOrderSummary();
-  function onCompletion() {
-    confirmOrder();
+  function onCompletion(paymentIntent) {
+    confirmOrder(paymentIntent);
     navigation.navigate('Receipt', { orderId: order.getName() });
   }
 

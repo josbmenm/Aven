@@ -3,7 +3,7 @@ import restaurantStateReducer from '../restaurantStateReducer';
 test('places orders', () => {
   const prevState = {};
   const action = {
-    type: 'PlaceOrder',
+    type: 'QueueOrderItem',
     prepQueue: [{ key: 'foo' }],
   };
   const state = restaurantStateReducer(prevState, action);

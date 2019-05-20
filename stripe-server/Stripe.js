@@ -5,8 +5,6 @@ const stripe = Stripe(TOKEN);
 
 export const getConnectionToken = async action => {
   const result = await stripe.terminal.connectionTokens.create();
-  console.log('connection token!', result);
-
   return result;
 };
 

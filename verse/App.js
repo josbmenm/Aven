@@ -483,55 +483,6 @@ function ActionButton({ dispatch, name, type, getParams }) {
     />
   );
 }
-function StatusDisplayDebug({ displayState, dispatch }) {
-  return (
-    <View
-      style={{
-        position: 'absolute',
-        width: 200,
-        height: 200,
-      }}
-    >
-      <ActionButton type="WipeState" dispatch={dispatch} />
-      <ActionButton
-        type="PlaceOrder"
-        getParams={() => ({
-          order: {
-            displayName: window.prompt('person name , last initial'),
-            prepQueue: [
-              {
-                key: cuid(),
-                recipeName: window.prompt('recipe name'),
-              },
-            ],
-          },
-        })}
-        dispatch={dispatch}
-      />
-      <ActionButton type="KitchenPrepStart" dispatch={dispatch} />
-      <ActionButton type="KitchenBlend" dispatch={dispatch} />
-      <ActionButton type="KitchenCompleteBlend" dispatch={dispatch} />
-      <ActionButton
-        type="KitchenDeliver"
-        getParams={() => {
-          return {
-            bay: window.prompt('bay'),
-          };
-        }}
-        dispatch={dispatch}
-      />
-      <ActionButton
-        type="KitchenDeliveryClear"
-        getParams={() => {
-          return {
-            bay: window.prompt('bay'),
-          };
-        }}
-        dispatch={dispatch}
-      />
-    </View>
-  );
-}
 
 function StatusDisplayScreen() {
   const [restaurantState, dispatch] = useCloudReducer(
@@ -542,14 +493,7 @@ function StatusDisplayScreen() {
     return null;
   }
   return (
-    <StatusDisplayLayout
-      debugView={
-        <StatusDisplayDebug
-          displayState={restaurantState}
-          dispatch={dispatch}
-        />
-      }
-    >
+    <StatusDisplayLayout>
       <StatusDisplay state={restaurantState} />
     </StatusDisplayLayout>
   );

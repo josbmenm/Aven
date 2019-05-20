@@ -210,10 +210,10 @@ const startSkynetServer = async () => {
   }
 
   async function applyPermissions() {
-    console.log('Putting Permission.. Orders');
+    console.log('Putting Permission.. PendingOrders');
     await putPermission({
       defaultRule: { canPost: true },
-      name: 'Orders',
+      name: 'PendingOrders',
     });
 
     console.log('Putting Permission.. Airtable');
@@ -239,6 +239,11 @@ const startSkynetServer = async () => {
       defaultRule: { canRead: true },
       name: 'OnoState/Devices^DevicesReducer',
     });
+
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'KitchenConfig',
+    });
   }
 
   applyPermissions()
@@ -250,7 +255,7 @@ const startSkynetServer = async () => {
   async function placeOrder({ orderId }, logger) {
     console.log('placing order..', orderId);
 
-    const inputOrder = evalSource.cloud.get(`Orders/${orderId}`);
+    const inputOrder = evalSource.cloud.get(`PendingOrders/${orderId}`);
     await inputOrder.fetchValue();
     const order = inputOrder.getValue();
     console.log('placing order..', order);

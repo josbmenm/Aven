@@ -165,79 +165,8 @@ const startVerseServer = async () => {
 
   async function establishPermissions() {
     await putPermission({
-      defaultRule: { canWrite: true, canRead: true },
-      name: 'RestaurantActionsUnburnt',
-    });
-
-    await putPermission({
-      defaultRule: { canWrite: true, canRead: true },
-      name: 'RestaurantReducer',
-    });
-
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'RestaurantActionsUnburnt^RestaurantReducer',
-    });
-
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'RestaurantSequencer',
-    });
-
-    await putPermission({
       defaultRule: { canRead: true },
       name: 'KitchenState',
-    });
-
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'KitchenConfig',
-    });
-
-    await putPermission({
-      defaultRule: { canRead: true, canTransact: true },
-      name: 'KitchenActions',
-    });
-
-    await putPermission({
-      defaultRule: { canRead: true, canTransact: true },
-      name: 'KitchenLog',
-    });
-
-    await putPermission({
-      defaultRule: { canPost: true },
-      name: 'Orders',
-    });
-
-    await putPermission({
-      defaultRule: { canWrite: true },
-      name: 'Restaurant',
-    });
-
-    await putPermission({
-      defaultRule: { canWrite: true },
-      name: 'PendingOrder',
-    });
-
-    await putPermission({
-      defaultRule: { canWrite: true },
-      name: 'StatusDisplay',
-    });
-
-    await putPermission({
-      defaultRule: { canWrite: true },
-      name: 'StatusDisplay/reducer',
-    });
-
-    await putPermission({
-      // todo, offer better auth for kiosk state
-      defaultRule: { canWrite: true },
-      name: 'Kiosk/Left',
-    });
-    await putPermission({
-      // todo, offer better auth for kiosk state
-      defaultRule: { canWrite: true },
-      name: 'Kiosk/Right',
     });
   }
 
@@ -413,12 +342,12 @@ const startVerseServer = async () => {
     },
   });
 
-  async function placeOrder({ orderId }) {
-    console.log('placing order..', orderId);
+  async function placeOrder({ orderId, paymentIntent }) {
+    console.log('placing order..', orderId, paymentIntent);
 
     const orderResult = await evalSource.cloud.dispatch({
       type: 'GetDocValue',
-      name: `Orders/${orderId}`,
+      name: `PendingOrders/${orderId}`,
       domain: 'onofood.co',
     });
 

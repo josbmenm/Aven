@@ -142,7 +142,7 @@ export function OrderContextProvider({ children }) {
           }),
         );
     },
-    confirmOrder: () => {
+    confirmOrder: paymentIntent => {
       guardAsync(
         (async () => {
           let o = currentOrder;
@@ -153,6 +153,7 @@ export function OrderContextProvider({ children }) {
           await cloud.dispatch({
             type: 'PlaceOrder',
             orderId: o.getName(),
+            paymentIntent,
           });
         })(),
       );
@@ -160,7 +161,7 @@ export function OrderContextProvider({ children }) {
     startOrder: () =>
       guardAsync(
         (async () => {
-          const order = cloud.get('Orders').post();
+          const order = cloud.get('PendingOrders').post();
           setCurrentOrder(order);
           await order.put({
             startTime: Date.now(),
@@ -477,7 +478,7 @@ export function useOrderSummary() {
 
 export function useOrderIdSummary(orderId) {
   const cloud = useCloud();
-  const order = useMemo(() => cloud.get(`Orders/${orderId}`), [orderId]);
+  const order = useMemo(() => cloud.get(`PendingOrders/${orderId}`), [orderId]);
   const orderState = useObservable(order ? order.observeValue : observeNull);
   const companyConfig = useCompanyConfig();
   return getOrderSummary(orderState, companyConfig);
