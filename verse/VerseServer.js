@@ -362,6 +362,15 @@ const startVerseServer = async () => {
     const blends = companyConfigToBlendMenu(companyConfig);
     const order = orderResult.value;
     const summary = getOrderSummary(order, companyConfig);
+    if (!summary) {
+      console.error({
+        summary,
+        order,
+        orderId,
+        paymentIntent,
+      });
+      throw new Error('Invalid order summary retrieved!');
+    }
     await summary.items.reduce(async (last, item, index) => {
       await last;
       if (item.type !== 'blend') {
