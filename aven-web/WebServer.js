@@ -107,7 +107,43 @@ export default async function WebServer({
   expressRouting = undefined,
   assets,
   onLogEvent,
+  domainAppOverrides,
 }) {
+  let appIdCount = 0;
+  function registerDomainApp(DomainApp) {
+    const appId = `App${appIdCount}`;
+    appIdCount += 1;
+    AppRegistry.registerComponent(appId, () => {
+      function AppWithContext(props) {
+        let el = <DomainApp {...props} />;
+        context.forEach((value, C) => {
+          el = <C.Provider value={value}>{el}</C.Provider>;
+        });
+        el = (
+          <NavigationContext.Provider value={props.navigation}>
+            {el}
+          </NavigationContext.Provider>
+        );
+        return el;
+      }
+      return AppWithContext;
+    });
+    return {
+      appId,
+      AppComponent: DomainApp,
+    };
+  }
+
+  const defaultApp = registerDomainApp(App);
+
+  const appsByDomain = domainAppOverrides
+    ? Object.fromEntries(
+        Object.entries(domainAppOverrides).map(([domainName, domainApp]) => {
+          return [domainName, registerDomainApp(domainApp)];
+        }),
+      )
+    : {};
+
   function reportInfo(message) {
     onLogEvent && onLogEvent(2, message);
   }
@@ -133,24 +169,6 @@ export default async function WebServer({
       next();
     });
 
-    AppRegistry.registerComponent('App', () => {
-      function AppWithContext(props) {
-        let el = <App {...props} />;
-        context.forEach((value, C) => {
-          el = <C.Provider value={value}>{el}</C.Provider>;
-        });
-        el = (
-          <NavigationContext.Provider value={props.navigation}>
-            {el}
-          </NavigationContext.Provider>
-        );
-        return el;
-      }
-
-      return AppWithContext;
-    });
-
-    // const publicDir = isProd ? 'build/public' : `src/${activeApp}/public`;
     const publicDir = isProd ? 'build/public' : `public`;
 
     app.disable('x-powered-by');
@@ -181,23 +199,31 @@ export default async function WebServer({
     });
 
     app.get('/*', (req, res) => {
-      const { path, query } = req;
+      const { path, query, headers } = req;
+
+      const domain = headers.host;
+      const domainApp = appsByDomain[domain] || defaultApp;
+
       let navigation = {};
       let title = '';
       let options = {};
-      if (App.router) {
-        const response = handleServerRequest(App.router, path, query);
+      const router = domainApp.AppComponent.router;
+      if (router) {
+        const response = handleServerRequest(router, path, query);
         navigation = response.navigation;
         title = response.title;
         options = response.options;
       }
 
-      const { element, getStyleElement } = AppRegistry.getApplication('App', {
-        initialProps: {
-          navigation,
-          env: 'server',
+      const { element, getStyleElement } = AppRegistry.getApplication(
+        domainApp.appId,
+        {
+          initialProps: {
+            navigation,
+            env: 'server',
+          },
         },
-      });
+      );
 
       const html = ReactDOMServer.renderToString(element);
       const css = ReactDOMServer.renderToStaticMarkup(getStyleElement());
