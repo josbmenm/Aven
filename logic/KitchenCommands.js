@@ -25,6 +25,49 @@ const KitchenCommands = {
       return kitchenState.FillSystem_DropCupReady_READ;
     },
   },
+  Blend: {
+    subsystem: 'BlendSystem',
+    pulse: ['Blend'],
+    valueParamNames: {
+      BlendDuration: 'duration',
+    },
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.BlendSystem_BlendReady_READ;
+    },
+  },
+  PassToDelivery: {
+    subsystem: 'BlendSystem',
+    pulse: ['DeliverWithClean'],
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.BlendSystem_DeliverWithCleanReady_READ;
+    },
+  },
+  PassToDeliveryWithoutClean: {
+    subsystem: 'BlendSystem',
+    pulse: ['DeliverWithoutClean'],
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.BlendSystem_DeliverWithoutCleanReady_READ;
+    },
+  },
+  Clean: {
+    subsystem: 'BlendSystem',
+    pulse: ['CleanOnly'],
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.BlendSystem_CleanOnlyReady_READ;
+    },
+  },
   PositionAndDispenseAmount: {
     subsystem: 'FillSystem',
     pulse: ['PositionAndDispenseAmount'],
@@ -40,7 +83,7 @@ const KitchenCommands = {
       return kitchenState.FillSystem_PositionAndDispenseAmountReady_READ;
     },
   },
-  DeliverCupToBlender: {
+  PassToBlender: {
     subsystem: 'FillSystem',
     pulse: ['DeliverToBlender'],
     checkReady: kitchenState => {

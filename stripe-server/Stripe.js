@@ -13,21 +13,37 @@ export const capturePayment = async action => {
 
   await stripe.paymentIntents.capture(paymentIntentId);
 
-  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-
-  const source = await stripe.sources.retrieve(paymentIntent.source);
-
-  console.log(
-    'capturePayment paymentIntent!',
-    paymentIntent.amount_received,
-    paymentIntentId,
-    paymentIntent.source,
-    source.card_present && source.card_present.fingerprint,
-  );
-
   return {};
 };
 
+export async function getPaymentIntent(intentId) {
+  const paymentIntent = await stripe.paymentIntents.retrieve(intentId);
+
+  const source = await stripe.sources.retrieve(paymentIntent.source);
+
+  // const charges = await Promise.all(
+  //   paymentIntent.charges.data.map(async chargeId => {
+  //     return await stripe.charges.retrieve(chargeId);
+  //   }),
+  // );
+
+  return {
+    ...paymentIntent,
+    sourceId: paymentIntent.source,
+    source,
+    // charges,
+    // chargesMeta: paymentIntent.charges,
+  };
+}
+
+export async function refundCharge(charge) {
+  console.log('STRIPE REFUNDING: ', charge);
+  const refund = await stripe.refunds.create({
+    charge: charge.id,
+  });
+  console.log('STRIPE REFUNDED: ', refund);
+  return refund;
+}
 export async function handleStripeAction(action) {
   switch (action.type) {
     case 'StripeGetConnectionToken':

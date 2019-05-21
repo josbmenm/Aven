@@ -8,7 +8,7 @@ function RestaurantReducerFn(state = {}, action) {
     case 'QueueOrderItem': {
       return {
         ...state,
-        queue: [...(state.queue || []), action.order],
+        queue: [...(state.queue || []), action.item],
       };
     }
     case 'CancelOrder': {
@@ -17,13 +17,32 @@ function RestaurantReducerFn(state = {}, action) {
         queue: (state.queue || []).filter(order => order.id !== action.id),
       };
     }
+    case 'StartedOrder': {
+      if (!state.queue || !state.queue.length) {
+        return {
+          ...state,
+          fill: {},
+        };
+      }
+      const topOrder = state.queue[0];
+      return {
+        ...state,
+        fill: {
+          order: topOrder,
+          orderStartTime: Date.now(),
+          fillsRemaining: topOrder.fills,
+          fillsCompleted: [],
+        },
+        queue: state.queue.slice(1),
+      };
+    }
     case 'RequestFillDrop': {
       if (!state.fill) {
         return state;
       }
       return {
         ...state,
-        fill: { ...state.fill, requestDrop: true },
+        fill: { ...state.fill, requestedDropTime: Date.now() },
       };
     }
     case 'DroppedFill': {
@@ -68,33 +87,45 @@ function RestaurantReducerFn(state = {}, action) {
         },
       };
     }
-    case 'StartedOrder': {
-      if (!state.queue || !state.queue.length) {
-        return {
-          ...state,
-          fill: {},
-        };
-      }
-      const topOrder = state.queue[0];
-      return {
-        ...state,
-        fill: {
-          order: topOrder,
-          fillsRemaining: topOrder.fills,
-          fillsCompleted: [],
-        },
-        queue: state.queue.slice(1),
-      };
-    }
-    case 'DeliveredToBlender': {
+
+    case 'DidPassToBlender': {
       if (!state.fill) {
         return state;
       }
-      const fillingState = state.fill;
+      const fillState = state.fill;
       return {
         ...state,
+        blend: {
+          ...fillState,
+          passToBlenderTime: Date.now(),
+        },
         fill: null,
-        deliveryA: fillingState,
+      };
+    }
+    case 'DidBlend': {
+      if (!state.blend) {
+        return state;
+      }
+      return {
+        ...state,
+        blend: {
+          ...state.blend,
+          blendCompleteTime: Date.now(),
+        },
+      };
+    }
+    case 'DidPassToDelivery': {
+      if (!state.blend) {
+        return state;
+      }
+      const blendState = state.blend;
+      return {
+        ...state,
+        blend: null,
+        deliveryA: {
+          deliverTime: Date.now(),
+          ...blendState,
+        },
       };
     }
     case 'ClearDeliveryBay': {

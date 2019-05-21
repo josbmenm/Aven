@@ -21,6 +21,8 @@ import {
   displayNameOfMenuItem as getDisplayNameOfMenuItem,
   displayNameOfOrderItem as getDisplayNameOfOrderItem,
   getSelectedIngredients as doGetSelectedIngredients,
+  getItemCustomizationSummary as doGetItemCustomizationSummary,
+  getSellPriceOfItem as doGetSellPriceOfItem,
   getOrderSummary,
   companyConfigToMenu,
   companyConfigToFoodMenu,
@@ -33,6 +35,8 @@ export const getSelectedIngredients = doGetSelectedIngredients;
 export const displayNameOfMenuItem = getDisplayNameOfMenuItem;
 export const displayNameOfOrderItem = getDisplayNameOfOrderItem;
 export const sellPriceOfMenuItem = getSellPriceOfMenuItem;
+export const getItemCustomizationSummary = doGetItemCustomizationSummary;
+export const getSellPriceOfItem = doGetSellPriceOfItem;
 
 function doCancelOrderIfNotConfirmed(lastOrder) {
   if (lastOrder.isConfirmed) {
@@ -204,97 +208,6 @@ export function useOrder() {
   return orderContext;
 }
 
-export function getItemCustomizationSummary(item) {
-  if (item.type !== 'blend') {
-    return [];
-  }
-  if (!item.customization) {
-    return [];
-  }
-  function getIngredientName(ing) {
-    return ing.Name.toLowerCase().trim();
-  }
-  let summaryItems = [];
-  if (item.customization.enhancements === null) {
-    summaryItems.push('with no enhancement');
-  }
-  if (
-    item.customization.enhancements &&
-    item.customization.enhancements.length
-  ) {
-    const enhancementId = item.customization.enhancements[0];
-    const enhancement = item.menuItem.BenefitCustomization[enhancementId];
-    const isDifferentFromDefaultEnhancement =
-      item.menuItem.DefaultBenefitId !== enhancementId;
-    isDifferentFromDefaultEnhancement &&
-      summaryItems.push('with ' + enhancement.Name.toLowerCase());
-    const extraEnhancement =
-      item.menuItem.BenefitCustomization[item.customization.enhancements[1]];
-    extraEnhancement &&
-      summaryItems.push(`add ${extraEnhancement.Name.toLowerCase()} ($.50)`);
-  }
-  item.customization.ingredients &&
-    Object.keys(item.customization.ingredients).forEach(categoryName => {
-      const categorySpec = item.menuItem.IngredientCustomization.find(
-        a => a.Name === categoryName,
-      );
-      const categorySize =
-        categorySpec.defaultValue.length + categorySpec['Overflow Limit'];
-      const category = item.customization.ingredients[categoryName];
-      if (categorySize === 1) {
-        const ing = categorySpec.Ingredients.find(i => i.id === category[0]);
-        if (ing) {
-          summaryItems.push(`with ${getIngredientName(ing)}`);
-        } else {
-          const defaultIngId = categorySpec.defaultValue[0];
-          const defaultIng = categorySpec.Ingredients.find(
-            i => i.id === defaultIngId,
-          );
-          summaryItems.push(`remove ${getIngredientName(defaultIng)}`);
-        }
-      } else {
-        const defaultIngCounts = {};
-        const allIngIds = new Set();
-        categorySpec.defaultValue.forEach(ingId => {
-          defaultIngCounts[ingId] = defaultIngCounts[ingId]
-            ? defaultIngCounts[ingId] + 1
-            : 1;
-          allIngIds.add(ingId);
-        });
-        const customIngCounts = {};
-        category.forEach(ingId => {
-          customIngCounts[ingId] = customIngCounts[ingId]
-            ? customIngCounts[ingId] + 1
-            : 1;
-          allIngIds.add(ingId);
-        });
-        allIngIds.forEach(ingId => {
-          const ing = categorySpec.Ingredients.find(i => i.id === ingId);
-          if (!ing) {
-            return;
-          }
-          const defaultCount = defaultIngCounts[ingId] || 0;
-          const customCount = customIngCounts[ingId] || 0;
-          if (customCount === defaultCount + 1) {
-            summaryItems.push(`add ${getIngredientName(ing)}`);
-          } else if (customCount > defaultCount) {
-            summaryItems.push(
-              `add ${customCount - defaultCount} ${getIngredientName(ing)}`,
-            );
-          } else if (customCount === defaultCount - 1) {
-            summaryItems.push(`remove ${getIngredientName(ing)}`);
-          } else if (customCount < defaultCount) {
-            summaryItems.push(
-              `remove ${defaultCount - customCount} ${getIngredientName(ing)}`,
-            );
-          }
-        });
-      }
-    });
-
-  return summaryItems;
-}
-
 export function addMenuItemToCartItem({
   menuItem,
   orderItemId,
@@ -338,7 +251,8 @@ export function useOrderItem(orderItemId) {
   return useMemo(() => {
     async function setItemState(item) {
       await order.transact(lastOrder => {
-        const items = [...lastOrder.items];
+        const lastItems = (lastOrder && lastOrder.items) || [];
+        const items = [...lastItems];
         const itemIndex = items.findIndex(i => i.id === item.id);
         if (itemIndex === -1) {
           items.push(item);
@@ -353,7 +267,8 @@ export function useOrderItem(orderItemId) {
     }
     async function removeItem() {
       await order.transact(lastOrder => {
-        const items = lastOrder.items.filter(i => i.id !== orderItemId);
+        const lastItems = (lastOrder && lastOrder.items) || [];
+        const items = lastItems.filter(i => i.id !== orderItemId);
         return {
           ...lastOrder,
           items,

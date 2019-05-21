@@ -4,8 +4,6 @@ import useEmptyOrderEscape from './useEmptyOrderEscape';
 import { useCardPaymentCapture } from '../card-reader/CardReader';
 import OrderConfirmPage from '../components/OrderConfirmPage';
 
-function Capture() {}
-
 export default function OrderConfirmScreen({
   paymentRequest,
   paymentError,
@@ -25,7 +23,7 @@ export default function OrderConfirmScreen({
   const paymentDetails =
     summary && summary.total > 0
       ? {
-          amount: Math.floor(summary.total * 100), // ugh.. we should really be using cents everywhere..
+          amount: summary.total,
           description: 'Ono Blends',
           context: { id: order && order.getName() },
           onCompletion,

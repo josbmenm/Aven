@@ -11,6 +11,7 @@ import createFSClient from '../cloud-server/createFSClient';
 import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
 
 import sendReceipt from './sendReceipt';
+import refundOrder from './refundOrder';
 import { hashSecureString } from '../cloud-utils/Crypto';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
@@ -222,6 +223,12 @@ const startSkynetServer = async () => {
       name: 'Airtable',
     });
 
+    // todo make more restrictive
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'ConfirmedOrders',
+    });
+
     console.log('Putting Permission.. CustomerFeedback');
     await putPermission({
       defaultRule: { canPost: true },
@@ -253,23 +260,24 @@ const startSkynetServer = async () => {
     .catch(console.error);
 
   async function placeOrder({ orderId }, logger) {
-    console.log('placing order..', orderId);
+    throw new Error('Cannot place order on skynet! Use verse');
+    // console.log('FAIL order..', orderId);
 
-    const inputOrder = evalSource.cloud.get(`PendingOrders/${orderId}`);
-    await inputOrder.fetchValue();
-    const order = inputOrder.getValue();
-    console.log('placing order..', order);
+    // const inputOrder = evalSource.cloud.get(`PendingOrders/${orderId}`);
+    // await inputOrder.fetchValue();
+    // const order = inputOrder.getValue();
+    // console.log('placing order..', order);
 
-    if (!order) {
-      throw new Error('Could not find order');
-    }
+    // if (!order) {
+    //   throw new Error('Could not find order');
+    // }
 
-    await evalSource.cloud.get('OrderActions').putTransaction({
-      type: 'PlaceOrder',
-      order,
-    });
+    // await evalSource.cloud.get('OrderActions').putTransaction({
+    //   type: 'PlaceOrder',
+    //   order,
+    // });
 
-    logger.log('Order Placed', 'PlaceOrder', { orderId });
+    // logger.log('Order Placed', 'PlaceOrder', { orderId });
 
     return {};
   }
@@ -293,6 +301,14 @@ const startSkynetServer = async () => {
     switch (action.type) {
       case 'SendReceipt':
         return await sendReceipt({
+          cloud: evalSource.cloud,
+          smsAgent,
+          emailAgent,
+          action,
+          logger,
+        });
+      case 'RefundOrder': // todo check for root/employee auth. right now this is top secret!
+        return await refundOrder({
           cloud: evalSource.cloud,
           smsAgent,
           emailAgent,

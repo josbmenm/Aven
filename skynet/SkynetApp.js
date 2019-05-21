@@ -10,7 +10,10 @@ import {
 } from 'react-native';
 import { createSwitchNavigator } from '../navigation-core';
 import Admin from '../admin/Admin';
+import Terms from './Terms';
+import Privacy from './Privacy';
 import FocusExample from './FocusExample';
+import ReceiptPage from './ReceiptPage';
 import BlendMenu from './BlendMenu';
 import { monsterra } from '../components/Styles';
 
@@ -94,10 +97,13 @@ const App = createSwitchNavigator(
       screen: SkynetAdmin,
       path: 'admin',
     },
+    Receipt: ReceiptPage,
     Menu: {
       screen: BlendMenu,
       path: 'icanneverremembertheblendrecipes',
     },
+    Terms,
+    Privacy,
     Menu2: {
       screen: BlendMenu,
       path: 'secrets/blendmenu',

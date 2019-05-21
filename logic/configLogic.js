@@ -9,9 +9,10 @@ function mapObject(inObj, mapper) {
   });
   return out;
 }
-
+function applyTax(amount) {
+  return Math.floor(amount * TAX_RATE);
+}
 const MAX_CUP_VOLUME = 560;
-const LIQUID_SHOT_VOLUME = 25;
 
 export function displayNameOfMenuItem(menuItem) {
   if (!menuItem) {
@@ -46,6 +47,113 @@ export function sellPriceOfMenuItem(menuItem) {
   const sellPrice = menuItem.Recipe
     ? menuItem.Recipe['Sell Price']
     : menuItem['Sell Price'];
+  return sellPrice * 100;
+}
+
+export function getItemCustomizationSummary(item) {
+  if (item.type !== 'blend') {
+    return [];
+  }
+  if (!item.customization) {
+    return [];
+  }
+  function getIngredientName(ing) {
+    return ing.Name.toLowerCase().trim();
+  }
+  let summaryItems = [];
+  if (item.customization.enhancements === null) {
+    summaryItems.push('with no enhancement');
+  }
+  if (
+    item.customization.enhancements &&
+    item.customization.enhancements.length
+  ) {
+    const enhancementId = item.customization.enhancements[0];
+    const enhancement = item.menuItem.BenefitCustomization[enhancementId];
+    const isDifferentFromDefaultEnhancement =
+      item.menuItem.DefaultBenefitId !== enhancementId;
+    isDifferentFromDefaultEnhancement &&
+      summaryItems.push('with ' + enhancement.Name.toLowerCase());
+    const extraEnhancement =
+      item.menuItem.BenefitCustomization[item.customization.enhancements[1]];
+    extraEnhancement &&
+      summaryItems.push(`add ${extraEnhancement.Name.toLowerCase()} ($.50)`);
+  }
+  item.customization.ingredients &&
+    Object.keys(item.customization.ingredients).forEach(categoryName => {
+      const categorySpec = item.menuItem.IngredientCustomization.find(
+        a => a.Name === categoryName,
+      );
+      const categorySize =
+        categorySpec.defaultValue.length + categorySpec['Overflow Limit'];
+      const category = item.customization.ingredients[categoryName];
+      if (categorySize === 1) {
+        const ing = categorySpec.Ingredients.find(i => i.id === category[0]);
+        if (ing) {
+          summaryItems.push(`with ${getIngredientName(ing)}`);
+        } else {
+          const defaultIngId = categorySpec.defaultValue[0];
+          const defaultIng = categorySpec.Ingredients.find(
+            i => i.id === defaultIngId,
+          );
+          summaryItems.push(`remove ${getIngredientName(defaultIng)}`);
+        }
+      } else {
+        const defaultIngCounts = {};
+        const allIngIds = new Set();
+        categorySpec.defaultValue.forEach(ingId => {
+          defaultIngCounts[ingId] = defaultIngCounts[ingId]
+            ? defaultIngCounts[ingId] + 1
+            : 1;
+          allIngIds.add(ingId);
+        });
+        const customIngCounts = {};
+        category.forEach(ingId => {
+          customIngCounts[ingId] = customIngCounts[ingId]
+            ? customIngCounts[ingId] + 1
+            : 1;
+          allIngIds.add(ingId);
+        });
+        allIngIds.forEach(ingId => {
+          const ing = categorySpec.Ingredients.find(i => i.id === ingId);
+          if (!ing) {
+            return;
+          }
+          const defaultCount = defaultIngCounts[ingId] || 0;
+          const customCount = customIngCounts[ingId] || 0;
+          if (customCount === defaultCount + 1) {
+            summaryItems.push(`add ${getIngredientName(ing)}`);
+          } else if (customCount > defaultCount) {
+            summaryItems.push(
+              `add ${customCount - defaultCount} ${getIngredientName(ing)}`,
+            );
+          } else if (customCount === defaultCount - 1) {
+            summaryItems.push(`remove ${getIngredientName(ing)}`);
+          } else if (customCount < defaultCount) {
+            summaryItems.push(
+              `remove ${defaultCount - customCount} ${getIngredientName(ing)}`,
+            );
+          }
+        });
+      }
+    });
+
+  return summaryItems;
+}
+
+export const ENHANCEMENT_PRICE = 50;
+
+export function getSellPriceOfItem(item, menuItem) {
+  let sellPrice = sellPriceOfMenuItem(menuItem);
+  if (
+    item &&
+    item.customization &&
+    item.customization.enhancements &&
+    item.customization.enhancements.length > 1
+  ) {
+    const extraEnhancementCount = item.customization.enhancements.length - 1;
+    sellPrice += extraEnhancementCount * ENHANCEMENT_PRICE;
+  }
   return sellPrice;
 }
 
@@ -56,15 +164,7 @@ export function getOrderItemMapper(menu) {
         ? menu.blends.find(i => i.id === item.menuItemId)
         : menu.food.find(i => i.id === item.menuItemId);
     const recipeBasePrice = sellPriceOfMenuItem(menuItem);
-    let sellPrice = recipeBasePrice;
-    if (
-      item.customization &&
-      item.customization.enhancements &&
-      item.customization.enhancements.length > 1
-    ) {
-      const extraEnhancementCount = item.customization.enhancements.length - 1;
-      sellPrice += extraEnhancementCount * 0.5;
-    }
+    const sellPrice = getSellPriceOfItem(item, menuItem);
     const itemPrice = sellPrice * item.quantity;
     return {
       ...item,
@@ -232,7 +332,7 @@ export function getOrderSummary(orderState, companyConfig) {
   const subTotalBeforeDiscount = items.reduce((acc, item) => {
     return acc + item.itemPrice;
   }, 0);
-  const taxBeforeDiscount = subTotalBeforeDiscount * TAX_RATE;
+  const taxBeforeDiscount = applyTax(subTotalBeforeDiscount);
   const totalBeforeDiscount = subTotalBeforeDiscount + taxBeforeDiscount;
 
   let discountTotal = 0;
@@ -245,7 +345,7 @@ export function getOrderSummary(orderState, companyConfig) {
     discountTotal += freeBlendsDiscount;
   }
   const subTotal = subTotalBeforeDiscount - discountTotal;
-  const tax = subTotal * TAX_RATE;
+  const tax = applyTax(subTotal);
   const total = subTotal + tax;
   const { isConfirmed, isCancelled, orderId } = orderState;
   let state = isConfirmed ? 'confirmed' : 'pending';

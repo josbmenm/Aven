@@ -19,12 +19,13 @@ import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import combineSources from '../cloud-core/combineSources';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import RestaurantReducer from '../logic/RestaurantReducer';
+import placeOrder from './placeOrder';
 
 import startKitchen, {
   // computeKitchenConfig,
   getFreshActionId,
 } from './startKitchen';
-import { handleStripeAction } from '../stripe-server/Stripe';
+import { handleStripeAction, getPaymentIntent } from '../stripe-server/Stripe';
 import { computeNextStep } from '../logic/KitchenSequence';
 import {
   companyConfigToBlendMenu,
@@ -64,11 +65,11 @@ const startVerseServer = async () => {
   };
 
   const remoteSource = createNodeNetworkSource({
-    authority: 'onofood.co',
-    useSSL: true,
+    // authority: 'onofood.co',
+    // useSSL: true,
 
-    // authority: 'localhost:8840',
-    // useSSL: false,
+    authority: 'localhost:8840',
+    useSSL: false,
     quiet: true,
   });
 
@@ -267,7 +268,7 @@ const startVerseServer = async () => {
   let restaurantState = null;
   let kitchenState = null;
   let kitchenConfig = null;
-  let currentStepPromise = null;
+  let currentStepPromises = {};
 
   let kitchenStateAtLastStepStart = null;
   function handleStateUpdates() {
@@ -276,8 +277,7 @@ const startVerseServer = async () => {
       !restaurantState ||
       !kitchenState ||
       !kitchenConfig ||
-      !restaurantState.isAutoRunning ||
-      currentStepPromise
+      !restaurantState.isAutoRunning
     ) {
       return;
     }
@@ -289,6 +289,9 @@ const startVerseServer = async () => {
     if (!nextStep) {
       return;
     }
+    if (currentStepPromises[nextStep.subsystem]) {
+      return;
+    }
     if (kitchenStateAtLastStepStart === kitchenState) {
       console.error(
         'Woah! We are attempting to perform a new kitchen action, but the current state is the same as it was before the previous action!',
@@ -297,18 +300,21 @@ const startVerseServer = async () => {
     }
     console.log('Next Step:', nextStep.description);
     kitchenStateAtLastStepStart = kitchenState;
-    currentStepPromise = nextStep.perform(evalSource.cloud, kitchenAction);
+    currentStepPromises[nextStep.subsystem] = nextStep.perform(
+      evalSource.cloud,
+      kitchenAction,
+    );
 
-    currentStepPromise
+    currentStepPromises[nextStep.subsystem]
       .then(() => {
-        currentStepPromise = null;
+        currentStepPromises[nextStep.subsystem] = null;
         console.log(`Done with ${nextStep.description}`);
         setTimeout(() => {
           handleStateUpdates();
         }, 150);
       })
       .catch(e => {
-        currentStepPromise = null;
+        currentStepPromises[nextStep.subsystem] = null;
         console.error(
           `Failed to perform Kitchen Action: ${
             nextStep.description
@@ -342,114 +348,6 @@ const startVerseServer = async () => {
     },
   });
 
-  async function placeOrder({ orderId, paymentIntent }) {
-    console.log('placing order..', orderId, paymentIntent);
-
-    const orderResult = await evalSource.cloud.dispatch({
-      type: 'GetDocValue',
-      name: `PendingOrders/${orderId}`,
-      domain: 'onofood.co',
-    });
-
-    const at = evalSource.cloud.get('Airtable').expand((folder, doc) => {
-      if (!folder) {
-        return null;
-      }
-      return doc.getBlock(folder.files['db.json']);
-    });
-    await at.fetchValue();
-    const companyConfig = at.getValue();
-    const blends = companyConfigToBlendMenu(companyConfig);
-    const order = orderResult.value;
-    const summary = getOrderSummary(order, companyConfig);
-    if (!summary) {
-      console.error({
-        summary,
-        order,
-        orderId,
-        paymentIntent,
-      });
-      throw new Error('Invalid order summary retrieved!');
-    }
-    await summary.items.reduce(async (last, item, index) => {
-      await last;
-      if (item.type !== 'blend') {
-        return;
-      }
-      const { menuItemId } = item;
-      const menuItem = blends.find(b => b.id === menuItemId);
-      const { ingredients } = getSelectedIngredients(
-        menuItem,
-        item,
-        companyConfig,
-      );
-
-      const KitchenSlots = companyConfig.baseTables.KitchenSlots;
-      const KitchenSystems = companyConfig.baseTables.KitchenSystems;
-      const requestedFills = ingredients.map(ing => {
-        const kitchenSlotId = Object.keys(KitchenSlots).find(slotId => {
-          const slot = KitchenSlots[slotId];
-          return slot.Ingredient && ing.id === slot.Ingredient[0];
-        });
-        const kitchenSlot = kitchenSlotId && KitchenSlots[kitchenSlotId];
-        if (!kitchenSlot) {
-          return {
-            ingredientId: ing.id,
-            ingredientName: ing.Name,
-            invalid: 'NoSlot',
-          };
-        }
-        const kitchenSystemId =
-          kitchenSlot.KitchenSystem && kitchenSlot.KitchenSystem[0];
-        const kitchenSystem =
-          kitchenSystemId && KitchenSystems[kitchenSystemId];
-        if (!kitchenSystem) {
-          return {
-            ingredientId: ing.id,
-            ingredientName: ing.Name,
-            slotId: kitchenSlotId,
-            invalid: 'NoSystem',
-          };
-        }
-        return {
-          amount: ing.amount,
-          amountVolumeRatio: ing.amountVolumeRatio,
-          ingredientId: ing.id,
-          ingredientName: ing.Name,
-          ingredientIcon: ing.Icon,
-          slotId: kitchenSlotId,
-          systemId: kitchenSystemId,
-          slot: kitchenSlot.Slot,
-          system: kitchenSystem.FillSystemID,
-          invalid: null,
-        };
-      });
-      const invalidFills = requestedFills.filter(f => !!f.invalid);
-      if (invalidFills.length) {
-        console.error('Invalid Fills:', invalidFills);
-        throw new Error('Invalid fills!');
-      }
-      const orderName =
-        order.orderName.firstName + ' ' + order.orderName.lastName;
-      const blendName = displayNameOfOrderItem(item, item.menuItem);
-      const orderForRestaurant = {
-        id: orderId + item.id,
-        orderItemId: item.id,
-        orderId,
-        name: orderName,
-        blendName,
-        fills: requestedFills,
-      };
-      console.log('NEW BLEND ORDER!', orderForRestaurant);
-      await evalSource.cloud.get('RestaurantActionsUnburnt').putTransaction({
-        type: 'PlaceOrder',
-        order: orderForRestaurant,
-      });
-    }, Promise.resolve());
-
-    return {};
-  }
-
   const dispatch = async action => {
     let stripeResponse = await handleStripeAction(action);
     if (stripeResponse) {
@@ -468,7 +366,7 @@ const startVerseServer = async () => {
       case 'KitchenAction':
         return await kitchenAction(action);
       case 'PlaceOrder':
-        return placeOrder(action);
+        return placeOrder(evalSource.cloud, action);
       default: {
         return await protectedSource.dispatch(action);
       }

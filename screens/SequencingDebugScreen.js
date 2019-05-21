@@ -529,12 +529,12 @@ function ManualActionsSection() {
       />
       <Button
         title="deliver cup"
-        disabled={!KitchenCommands.DeliverCupToBlender.checkReady(kitchenState)}
+        disabled={!KitchenCommands.PassToBlender.checkReady(kitchenState)}
         onPress={() => {
           handleErrors(
             cloud.dispatch({
               type: 'KitchenAction',
-              command: 'DeliverCupToBlender',
+              command: 'PassToBlender',
             }),
           );
         }}

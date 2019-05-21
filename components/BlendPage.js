@@ -19,6 +19,8 @@ import {
   getActiveEnhancement,
   getSelectedIngredients,
   useCompanyConfig,
+  sellPriceOfMenuItem,
+  getSellPriceOfItem,
   useSelectedIngredients,
 } from '../ono-cloud/OnoKitchen';
 import SmallTitle from './SmallTitle';
@@ -185,7 +187,9 @@ function BlendPageContentPure({
           <View style={{ alignSelf: 'flex-start', marginBottom: 5 }}>
             <Tag tag={menuItem.DefaultBenefitName} />
           </View>
-          <MainTitle subtitle={formatCurrency(menuItem.Recipe['Sell Price'])}>
+          <MainTitle
+            subtitle={formatCurrency(getSellPriceOfItem(item, menuItem))}
+          >
             {displayNameOfOrderItem(item, menuItem)}
           </MainTitle>
           <View style={{ flexDirection: 'row' }}>

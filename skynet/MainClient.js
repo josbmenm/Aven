@@ -11,11 +11,10 @@ const hostConfig = {
   useSSL: window.location.protocol !== 'http:',
 };
 
-console.log(hostConfig);
-const restaurantSource = createBrowserNetworkSource(hostConfig);
+const networkSource = createBrowserNetworkSource(hostConfig);
 
 const cloud = createCloudClient({
-  source: restaurantSource,
+  source: networkSource,
   domain: 'onofood.co',
   functions: [RestaurantReducer],
 });

@@ -24,7 +24,10 @@ import ListAnimation from './ListAnimation';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { EnhancementDetail } from './Enhancements';
 import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
-import { getSelectedIngredients } from '../logic/configLogic';
+import {
+  ENHANCEMENT_PRICE,
+  getSelectedIngredients,
+} from '../logic/configLogic';
 
 const tagSize = {
   width: 100,
@@ -285,7 +288,7 @@ function EnhancementSection({ section }) {
               price={
                 section.selectedIds.length &&
                 section.selectedIds[0] !== enhancement.id &&
-                0.5
+                ENHANCEMENT_PRICE
               }
             />
           </CustomizationPuck>
@@ -844,7 +847,7 @@ function CustomizationSidebar({
       <TextButton
         style={{ position: 'absolute', right: 20, top: 21 }}
         onPress={() => {
-          setCustomization(null);
+          setCustomization({});
         }}
         title="reset"
       />

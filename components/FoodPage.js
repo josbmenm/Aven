@@ -15,6 +15,7 @@ import { proseFontFace, monsterra } from './Styles';
 import SmallTitle from './SmallTitle';
 import BlendMenu from './BlendMenu';
 import { View, Text } from 'react-native';
+import { sellPriceOfMenuItem } from '../logic/configLogic';
 
 function FoodDetails({ orderItem, menuItem }) {
   return (
@@ -80,7 +81,7 @@ export default function FoodPage({
                 key={menuItem.id}
                 title={menuItem['Name']}
                 tag={menuItem.DefaultEnhancementName}
-                price={menuItem['Sell Price']}
+                price={sellPriceOfMenuItem(menuItem)}
                 photo={menuItem['Photo']}
                 onPress={null}
                 style={{ marginBottom: 116 }}

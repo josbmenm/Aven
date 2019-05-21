@@ -64,7 +64,7 @@ const SEQUENCER_STEPS = [
     // drop cup (fill system)
     getDescription: intent => 'Drop Cup',
     getRestaurantStateIntent: restaurantState => {
-      if (restaurantState.fill && restaurantState.fill.requestDrop) {
+      if (restaurantState.fill && !!restaurantState.fill.requestedDropTime) {
         return {};
       }
       return null;
@@ -114,7 +114,7 @@ const SEQUENCER_STEPS = [
     // deliver cup to blender
 
     getDescription: () => {
-      return 'Deliver filled cup to blender';
+      return 'Pass filled cup to blender';
     },
     getRestaurantStateIntent: restaurantState => {
       if (
@@ -132,10 +132,56 @@ const SEQUENCER_STEPS = [
       );
     },
     getKitchenCommand: intent => ({
-      command: 'DeliverCupToBlender',
+      command: 'PassToBlender',
     }),
     getSuccessRestaurantAction: intent => ({
-      type: 'DeliveredToBlender',
+      type: 'DidPassToBlender',
+    }),
+  },
+  {
+    // blend
+
+    getDescription: () => {
+      return 'Blend';
+    },
+    getRestaurantStateIntent: restaurantState => {
+      if (!restaurantState.blend || restaurantState.blendCompleteTime) {
+        return null;
+      }
+      return {};
+    },
+    getKitchenStateReady: (kitchenState, intent) => {
+      return !!kitchenState && kitchenState.BlendSystem_BlendReady_READ;
+    },
+    getKitchenCommand: intent => ({
+      command: 'Blend',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidBlend',
+    }),
+  },
+  {
+    // pass cup to delivery
+
+    getDescription: () => {
+      return 'Pass from blender to delivery system, clean blender';
+    },
+    getRestaurantStateIntent: restaurantState => {
+      if (!restaurantState.blend) {
+        return null;
+      }
+      return {};
+    },
+    getKitchenStateReady: (kitchenState, intent) => {
+      return (
+        !!kitchenState && kitchenState.BlendSystem_DeliverWithCleanReady_READ
+      );
+    },
+    getKitchenCommand: intent => ({
+      command: 'PassToDelivery',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidPassToDelivery',
     }),
   },
 ];
@@ -151,7 +197,7 @@ export function computeNextStep(restaurantState, kitchenConfig, kitchenState) {
   if (isFaulted || isRunning) {
     return null;
   }
-  let respCommand = null;
+  let nextStep = null;
   SEQUENCER_STEPS.find(STEP => {
     const {
       getDescription,
@@ -162,16 +208,19 @@ export function computeNextStep(restaurantState, kitchenConfig, kitchenState) {
     } = STEP;
     const intent = getRestaurantStateIntent(restaurantState);
     if (!intent) {
-      return;
+      return false;
     }
 
     if (getKitchenStateReady(kitchenState, intent)) {
-      respCommand = {
+      const command = getKitchenCommand(intent);
+      nextStep = {
+        intent,
+        command,
+        subsystem: command.subsystem,
         description: getDescription(intent),
-        perform: async (cloud, onKitchenAction) => {
-          const kitchenAction = getKitchenCommand(intent);
+        perform: async (cloud, handleCommand) => {
           const successRestaurantAction = getSuccessRestaurantAction(intent);
-          const resp = await onKitchenAction(kitchenAction);
+          const resp = await handleCommand(command);
 
           await cloud
             .get('RestaurantActionsUnburnt')
@@ -182,5 +231,5 @@ export function computeNextStep(restaurantState, kitchenConfig, kitchenState) {
       return true;
     }
   });
-  return respCommand;
+  return nextStep;
 }

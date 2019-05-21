@@ -21,7 +21,6 @@ function BlendDisplay({ menuItem, companyConfig }) {
       { customization: null },
       companyConfig,
     );
-    console.log(result);
     return result;
   }, [menuItem, companyConfig]);
   if (!computed) {
