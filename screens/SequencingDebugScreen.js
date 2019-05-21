@@ -528,13 +528,63 @@ function ManualActionsSection() {
         }}
       />
       <Button
-        title="deliver cup"
+        title="pass to blender"
         disabled={!KitchenCommands.PassToBlender.checkReady(kitchenState)}
         onPress={() => {
           handleErrors(
             cloud.dispatch({
               type: 'KitchenAction',
               command: 'PassToBlender',
+            }),
+          );
+        }}
+      />
+      <Button
+        title="blend"
+        disabled={!KitchenCommands.Blend.checkReady(kitchenState)}
+        onPress={() => {
+          handleErrors(
+            cloud.dispatch({
+              type: 'KitchenAction',
+              command: 'Blend',
+            }),
+          );
+        }}
+      />
+      <Button
+        title="pass to delivery"
+        disabled={!KitchenCommands.PassToDelivery.checkReady(kitchenState)}
+        onPress={() => {
+          handleErrors(
+            cloud.dispatch({
+              type: 'KitchenAction',
+              command: 'PassToDelivery',
+            }),
+          );
+        }}
+      />
+      <Button
+        title="pass to delivery without clean"
+        disabled={
+          !KitchenCommands.PassToDeliveryWithoutClean.checkReady(kitchenState)
+        }
+        onPress={() => {
+          handleErrors(
+            cloud.dispatch({
+              type: 'KitchenAction',
+              command: 'PassToDeliveryWithoutClean',
+            }),
+          );
+        }}
+      />
+      <Button
+        title="clean"
+        disabled={!KitchenCommands.Clean.checkReady(kitchenState)}
+        onPress={() => {
+          handleErrors(
+            cloud.dispatch({
+              type: 'KitchenAction',
+              command: 'Clean',
             }),
           );
         }}
