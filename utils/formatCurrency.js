@@ -5,6 +5,8 @@ const currency = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2,
 });
 
-const formatCurrency = currency.format;
-
-export default formatCurrency;
+export default function formatCurrency(amountCents) {
+  const amount = amountCents / 100;
+  const formatted = currency.format(amount);
+  return formatted;
+}
