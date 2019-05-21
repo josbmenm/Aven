@@ -145,7 +145,7 @@ const SEQUENCER_STEPS = [
       return 'Blend';
     },
     getRestaurantStateIntent: restaurantState => {
-      if (!restaurantState.blend || restaurantState.blendCompleteTime) {
+      if (!restaurantState.blend || restaurantState.blend.blendCompleteTime) {
         return null;
       }
       return {};

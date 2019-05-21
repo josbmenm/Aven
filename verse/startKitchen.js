@@ -16,7 +16,8 @@ const getTypeOfSchema = typeName => {
   }
 };
 
-const COUNT_MAX = 2147483640; // near the maximum unsigned dint
+const COUNT_MAX = 32767;
+// This max is because we have experienced: RangeError [ERR_OUT_OF_RANGE] [ERR_OUT_OF_RANGE]: The value of "value" is out of range. It must be >= -32768 and <= 32767. Received 1005538255
 let tagCounter = Math.floor(Math.random() * COUNT_MAX);
 
 export function getFreshActionId() {
