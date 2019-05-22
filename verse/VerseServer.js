@@ -64,12 +64,21 @@ const startVerseServer = async () => {
     host: getEnv('VERSE_SQL_HOST'),
   };
 
-  const remoteSource = createNodeNetworkSource({
-    // authority: 'onofood.co',
-    // useSSL: true,
+  let USE_DEV_SERVER = process.env !== 'production';
+  // USE_DEV_SERVER = false
 
-    authority: 'localhost:8840',
-    useSSL: false,
+  const remoteNetworkConfig = USE_DEV_SERVER
+    ? {
+        authority: 'localhost:8840',
+        useSSL: false,
+      }
+    : {
+        authority: 'onofood.co',
+        useSSL: true,
+      };
+
+  const remoteSource = createNodeNetworkSource({
+    ...remoteNetworkConfig,
     quiet: true,
   });
 
