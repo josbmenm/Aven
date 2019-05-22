@@ -57,7 +57,7 @@ const SEQUENCER_STEPS = [
       command: 'GetCup',
     }),
     getSuccessRestaurantAction: () => ({
-      type: 'StartedOrder',
+      type: 'DidGetCup',
     }),
   },
   {
@@ -76,7 +76,7 @@ const SEQUENCER_STEPS = [
       command: 'DropCup',
     }),
     getSuccessRestaurantAction: () => ({
-      type: 'DroppedFill',
+      type: 'DidDropCup',
     }),
   },
 
