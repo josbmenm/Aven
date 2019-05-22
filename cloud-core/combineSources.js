@@ -67,6 +67,24 @@ export default function combineSources({
     return await dispatchPutDocValue(slowSource);
   }
 
+  async function PutBlock({ domain, auth, name, value, id }) {
+    async function dispatchPutBlock(source) {
+      return await source.dispatch({
+        type: 'PutBlock',
+        domain,
+        auth,
+        name,
+        value,
+        id,
+      });
+    }
+    if (isFastOnly(domain, name)) {
+      return await dispatchPutBlock(fastSource);
+    }
+    dispatchPutBlock(fastSource);
+    return await dispatchPutBlock(slowSource);
+  }
+
   async function PutTransactionValue({ domain, auth, name, value }) {
     async function dispatchPutTransactionValue(source) {
       return await source.dispatch({
@@ -364,6 +382,7 @@ export default function combineSources({
     dispatch: createDispatcher(
       {
         PutDoc,
+        PutBlock,
         PutDocValue,
         PutTransactionValue,
         PostDoc,
