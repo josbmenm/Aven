@@ -65,7 +65,7 @@ const startVerseServer = async () => {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  // USE_DEV_SERVER = false
+  USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -306,10 +306,10 @@ const startVerseServer = async () => {
     nextSteps.forEach(nextStep => {
       const commandType = KitchenCommands[nextStep.command.command];
       const subsystem = commandType.subsystem;
-      if (currentStepPromises[nextStep.subsystem]) {
+      if (currentStepPromises[subsystem]) {
         return;
       }
-      console.log(`Performing ${subsystem} ${nextStep.description}`);
+      logBehavior(`Performing ${subsystem} ${nextStep.description}`);
 
       currentStepPromises[subsystem] = nextStep.perform(
         evalSource.cloud,

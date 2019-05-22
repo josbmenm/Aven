@@ -27,18 +27,18 @@
     "rxjs-compat": "^6.3.3",
     "cuid": "^2.1.6",
     "path": "^0.12.7",
-    "create-react-context": "^0.2.3",
     "hoist-non-react-statics": "^3.0.1",
+    "react-native-safe-area-view": "^0.11.0",
+    "create-react-context": "^0.2.3",
     "path-to-regexp": "^1.7.0",
     "query-string": "^6.2.0",
     "react-is": "^16.5.2",
     "react-lifecycles-compat": "^3.0.4",
-    "react-native-safe-area-view": "^0.11.0",
     "reconnecting-websocket": "^4.0.0-rc5",
     "json-stable-stringify": "^1.0.1",
     "crypto-js": "^3.1.9-1",
-    "xstream": "^11.10.0",
-    "bcrypt": "3.0.6"
+    "bcrypt": "3.0.6",
+    "xstream": "^11.10.0"
   },
   "devDependencies": {
     "appcenter-cli": "^1.1.8",
