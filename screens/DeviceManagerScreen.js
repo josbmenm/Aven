@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Easing } from 'react-native-reanimated';
 import Button from '../components/Button';
+import RootAuthenticationSection from './RootAuthenticationSection';
 import {
   CardReaderLog,
   useCardReader,
@@ -130,72 +131,6 @@ function DeviceRow({ device }) {
       </View>
     </Row>
   );
-}
-
-function RootLoginForm() {
-  const cloud = useCloud();
-  const [pw, setPw] = React.useState('');
-  const handleErrors = useAsyncError();
-  return (
-    <View>
-      <Title>Log In</Title>
-      <BlockFormInput
-        value={pw}
-        label="root password"
-        mode="password"
-        onValue={v => {
-          setPw(v);
-        }}
-      />
-      <BlockFormButton
-        title="Log In"
-        onPress={() => {
-          handleErrors(
-            cloud
-              .createSession({
-                accountId: 'root',
-                verificationInfo: {},
-                verificationResponse: { password: pw },
-              })
-              .then(async resp => {
-                console.log('createSession succes', resp);
-              }),
-          );
-        }}
-      />
-    </View>
-  );
-}
-
-function RootAuthLogin() {
-  const cloud = useCloud();
-  const session = useObservable(cloud && cloud.observeSession);
-  if (session && session.accountId !== 'root') {
-    return (
-      <View>
-        <Title>Wrong Authentication</Title>
-        <BlockFormMessage>
-          Please log out and log back in as root.
-        </BlockFormMessage>
-        <BlockFormButton
-          onPress={() => {
-            cloud.destroySession({ ignoreRemoteError: true });
-          }}
-          title="Log out"
-        />
-      </View>
-    );
-  }
-  return <RootLoginForm />;
-}
-
-function RootAuthenticationSection({ children }) {
-  const cloud = useCloud();
-  const session = useObservable(cloud && cloud.observeSession);
-  if (session && session.accountId === 'root') {
-    return children;
-  }
-  return <RootAuthLogin />;
 }
 
 function DeviceManager() {

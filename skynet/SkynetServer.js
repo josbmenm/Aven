@@ -229,6 +229,11 @@ const startSkynetServer = async () => {
       name: 'ConfirmedOrders',
     });
 
+    await putPermission({
+      defaultRule: { canWrite: true },
+      name: 'RequestedLocations',
+    });
+
     console.log('Putting Permission.. CustomerFeedback');
     await putPermission({
       defaultRule: { canPost: true },

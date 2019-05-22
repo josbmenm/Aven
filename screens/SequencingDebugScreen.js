@@ -450,12 +450,12 @@ function RestaurantStateList({ restaurantState, dispatch }) {
     <RowSection>
       <FillRow restaurantState={restaurantState} dispatch={dispatch} />
       <Row title="Blend System">
-        {restaurantState.blending && (
-          <OrderState orderState={restaurantState.blend} />
+        {restaurantState.blend && (
+          <Text>{JSON.stringify(restaurantState.blend)}</Text>
         )}
       </Row>
-      <Row title="Dispense System">
-        {restaurantState.delivering && (
+      <Row title="Delivery System">
+        {restaurantState.delivery && (
           <OrderState orderState={restaurantState.delivery} />
         )}
       </Row>

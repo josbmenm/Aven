@@ -52,9 +52,13 @@ const sequencerSystemReadTags = {
     type: 'boolean',
     subTag: 'NoFaults',
   },
-  ActionIdOut: {
+  ActionIdStarted: {
     type: 'integer',
-    subTag: 'Crumb.ActionIdOut',
+    subTag: 'Crumb.ActionIdStarted',
+  },
+  ActionIdEnded: {
+    type: 'integer',
+    subTag: 'Crumb.ActionIdEnded',
   },
   NoAlarms: {
     type: 'boolean',
@@ -655,6 +659,10 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
             resolve(results);
           })
           .catch(err => {
+            console.error(
+              'Failed to read tags. Retrying with debug read.',
+              err,
+            );
             // failed to read all the tags.. read each individually to see which fail, and report the result
             slowDebugRead()
               .then(failedTags => {

@@ -6,9 +6,13 @@ const sequencerSystemReadTags = {
     type: 'boolean',
     subTag: 'NoFaults',
   },
-  ActionIdOut: {
+  ActionIdStarted: {
     type: 'integer',
-    subTag: 'Crumb.ActionIdOut',
+    subTag: 'Crumb.ActionIdStarted',
+  },
+  ActionIdEnded: {
+    type: 'integer',
+    subTag: 'Crumb.ActionIdEnded',
   },
   NoAlarms: {
     type: 'boolean',

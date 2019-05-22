@@ -6,7 +6,7 @@ import useCloud from '../cloud-core/useCloud';
 import useObservable from '../cloud-core/useObservable';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { prettyShadow, titleStyle } from '../components/Styles';
-import { computeNextStep } from '../logic/KitchenSequence';
+import { computeNextSteps } from '../logic/KitchenSequence';
 import { getSubsystem, getSubsystemFaults } from '../ono-cloud/OnoKitchen';
 
 import useAsyncError from '../react-utils/useAsyncError';
@@ -137,11 +137,11 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
       });
   }
 
-  let nextStep = null;
+  let nextSteps = null;
   if (restaurantState && !restaurantState.isAutoRunning) {
-    nextStep = computeNextStep(restaurantState, kitchenConfig, kitchenState);
-    if (nextStep) {
-      subMessage = 'Next Step: ' + nextStep.description;
+    nextSteps = computeNextSteps(restaurantState, kitchenConfig, kitchenState);
+    if (nextSteps && nextSteps.length) {
+      subMessage = 'Next Step: ' + nextSteps.map(s => s.description).join(', ');
     }
   }
 
@@ -195,10 +195,12 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
           {restaurantState && !restaurantState.isAutoRunning && (
             <Button
               title="Step"
-              disabled={!nextStep}
+              disabled={!nextSteps || !nextSteps.length}
               onPress={() => {
-                nextStep.perform(cloud, handleKitchenAction).then(resp => {
-                  console.log('ACTION RESP', resp);
+                nextSteps.forEach(step => {
+                  step.perform(cloud, handleKitchenAction).then(resp => {
+                    console.log('ACTION RESP', step.description, resp);
+                  });
                 });
               }}
               secondary

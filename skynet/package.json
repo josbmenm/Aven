@@ -25,7 +25,8 @@
       "cloud-core",
       "cloud-server",
       "cloud-postgres",
-      "components"
+      "components",
+      "react-utils"
     ],
     "moduleDependencies": [
       "mjml",

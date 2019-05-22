@@ -26,7 +26,7 @@ import startKitchen, {
   getFreshActionId,
 } from './startKitchen';
 import { handleStripeAction, getPaymentIntent } from '../stripe-server/Stripe';
-import { computeNextStep } from '../logic/KitchenSequence';
+import { computeNextSteps } from '../logic/KitchenSequence';
 import {
   companyConfigToBlendMenu,
   getOrderSummary,
@@ -65,11 +65,11 @@ const startVerseServer = async () => {
   };
 
   const remoteSource = createNodeNetworkSource({
-    authority: 'onofood.co',
-    useSSL: true,
+    // authority: 'onofood.co',
+    // useSSL: true,
 
-    // authority: 'localhost:8840',
-    // useSSL: false,
+    authority: 'localhost:8840',
+    useSSL: false,
     quiet: true,
   });
 
@@ -223,7 +223,9 @@ const startVerseServer = async () => {
     await new Promise((resolve, reject) => {
       let isSystemIdle = null;
       let isActionReceived = null;
+      let isActionComplete = null;
       let currentActionId = null;
+      let endedActionId = null;
       let noFaults = true;
       let sub = evalSource.cloud.get('KitchenState').observeValue.subscribe({
         next: state => {
@@ -231,11 +233,13 @@ const startVerseServer = async () => {
             return;
           }
           noFaults = state[`${subsystem}_NoFaults_READ`];
-          currentActionId = state[`${subsystem}_ActionIdOut_READ`];
+          currentActionId = state[`${subsystem}_ActionIdStarted_READ`];
+          endedActionId = state[`${subsystem}_ActionIdEnded_READ`];
           isSystemIdle = state[`${subsystem}_PrgStep_READ`] === 0;
           isActionReceived = currentActionId === actionId;
+          isActionComplete = endedActionId === actionId;
 
-          if (isSystemIdle && isActionReceived) {
+          if (isActionReceived && (isSystemIdle || isActionComplete)) {
             logBehavior(`${noFaults ? 'Done with' : 'FAULTED on'} ${actionId}`);
             sub && sub.unsubscribe();
             if (noFaults === false) {
@@ -255,12 +259,12 @@ const startVerseServer = async () => {
         if (!isActionReceived) {
           return reject(
             new Error(
-              `After 30sec, ActionIdOut of "${subsystem}" is "${currentActionId}" but we expected "${actionId}"!`,
+              `After 90sec, ActionIdEnded of "${subsystem}" is "${currentActionId}" but we expected "${actionId}"!`,
             ),
           );
         }
         reject(new Error('Unknown timeout waiting for kitchen state..'));
-      }, 30000);
+      }, 90000);
     });
     return command;
   }
@@ -270,7 +274,6 @@ const startVerseServer = async () => {
   let kitchenConfig = null;
   let currentStepPromises = {};
 
-  let kitchenStateAtLastStepStart = null;
   function handleStateUpdates() {
     if (
       !kitchen ||
@@ -281,47 +284,47 @@ const startVerseServer = async () => {
     ) {
       return;
     }
-    const nextStep = computeNextStep(
+    const nextSteps = computeNextSteps(
       restaurantState,
       kitchenConfig,
       kitchenState,
     );
-    if (!nextStep) {
+    if (!nextSteps || !nextSteps.length) {
       return;
     }
-    if (currentStepPromises[nextStep.subsystem]) {
-      return;
-    }
-    if (kitchenStateAtLastStepStart === kitchenState) {
-      console.error(
-        'Woah! We are attempting to perform a new kitchen action, but the current state is the same as it was before the previous action!',
-      );
-      return;
-    }
-    console.log('Next Step:', nextStep.description);
-    kitchenStateAtLastStepStart = kitchenState;
-    currentStepPromises[nextStep.subsystem] = nextStep.perform(
-      evalSource.cloud,
-      kitchenAction,
-    );
 
-    currentStepPromises[nextStep.subsystem]
-      .then(() => {
-        currentStepPromises[nextStep.subsystem] = null;
-        console.log(`Done with ${nextStep.description}`);
-        setTimeout(() => {
-          handleStateUpdates();
-        }, 150);
-      })
-      .catch(e => {
-        currentStepPromises[nextStep.subsystem] = null;
-        console.error(
-          `Failed to perform Kitchen Action: ${
-            nextStep.description
-          }. JS is basically faulted now??`,
-          e,
-        );
-      });
+    console.log('Next Steps:', nextSteps.map(s => s.description).join(', '));
+    nextSteps.forEach(nextStep => {
+      const commandType = KitchenCommands[nextStep.command.command];
+      const subsystem = commandType.subsystem;
+      if (currentStepPromises[nextStep.subsystem]) {
+        return;
+      }
+      console.log(`Performing ${subsystem} ${nextStep.description}`);
+
+      currentStepPromises[subsystem] = nextStep.perform(
+        evalSource.cloud,
+        kitchenAction,
+      );
+
+      currentStepPromises[subsystem]
+        .then(() => {
+          currentStepPromises[subsystem] = null;
+          console.log(`Done with ${nextStep.description}`);
+          setTimeout(() => {
+            handleStateUpdates();
+          }, 50);
+        })
+        .catch(e => {
+          currentStepPromises[subsystem] = null;
+          console.error(
+            `Failed to perform Kitchen Action: ${
+              nextStep.description
+            }. JS is basically faulted now??`,
+            e,
+          );
+        });
+    });
   }
 
   evalSource.cloud.get('KitchenState').observeValue.subscribe({

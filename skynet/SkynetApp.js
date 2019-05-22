@@ -14,6 +14,7 @@ import Terms from './Terms';
 import Privacy from './Privacy';
 import FocusExample from './FocusExample';
 import ReceiptPage from './ReceiptPage';
+import PreviewHome from './PreviewHome';
 import BlendMenu from './BlendMenu';
 import { monsterra } from '../components/Styles';
 
@@ -97,6 +98,7 @@ const App = createSwitchNavigator(
       screen: SkynetAdmin,
       path: 'admin',
     },
+    PreviewHome,
     Receipt: ReceiptPage,
     Menu: {
       screen: BlendMenu,

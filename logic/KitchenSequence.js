@@ -174,19 +174,41 @@ const SEQUENCER_STEPS = [
     },
     getKitchenStateReady: (kitchenState, intent) => {
       return (
-        !!kitchenState && kitchenState.BlendSystem_DeliverWithCleanReady_READ
+        !!kitchenState && kitchenState.BlendSystem_DeliverWithoutCleanReady_READ
       );
     },
     getKitchenCommand: intent => ({
-      command: 'PassToDelivery',
+      command: 'PassToDeliveryWithoutClean',
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidPassToDelivery',
     }),
   },
+  {
+    // clean
+
+    getDescription: () => {
+      return 'Clean Blender';
+    },
+    getRestaurantStateIntent: restaurantState => {
+      if (restaurantState.blend !== 'dirty') {
+        return null;
+      }
+      return {};
+    },
+    getKitchenStateReady: (kitchenState, intent) => {
+      return !!kitchenState && kitchenState.BlendSystem_CleanReady_READ;
+    },
+    getKitchenCommand: intent => ({
+      command: 'Clean',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidClean',
+    }),
+  },
 ];
 
-export function computeNextStep(restaurantState, kitchenConfig, kitchenState) {
+export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
   if (!restaurantState || !kitchenConfig || !kitchenState) {
     return null;
   }
@@ -197,8 +219,7 @@ export function computeNextStep(restaurantState, kitchenConfig, kitchenState) {
   if (isFaulted || isRunning) {
     return null;
   }
-  let nextStep = null;
-  SEQUENCER_STEPS.find(STEP => {
+  return SEQUENCER_STEPS.map(STEP => {
     const {
       getDescription,
       getRestaurantStateIntent,
@@ -213,7 +234,7 @@ export function computeNextStep(restaurantState, kitchenConfig, kitchenState) {
 
     if (getKitchenStateReady(kitchenState, intent)) {
       const command = getKitchenCommand(intent);
-      nextStep = {
+      return {
         intent,
         command,
         subsystem: command.subsystem,
@@ -228,8 +249,6 @@ export function computeNextStep(restaurantState, kitchenConfig, kitchenState) {
           return resp;
         },
       };
-      return true;
     }
-  });
-  return nextStep;
+  }).filter(Boolean);
 }

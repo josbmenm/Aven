@@ -27,6 +27,13 @@ export default function HomeScreenMemo({ navigation, ...props }) {
         />
         <LinkRow
           onPress={() => {
+            navigation.navigate({ routeName: 'Inventory' });
+          }}
+          icon="🍍"
+          title="Inventory"
+        />
+        <LinkRow
+          onPress={() => {
             navigation.navigate({
               routeName: 'SequencingDebug',
             });

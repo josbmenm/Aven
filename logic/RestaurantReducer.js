@@ -17,7 +17,11 @@ function RestaurantReducerFn(state = {}, action) {
         queue: (state.queue || []).filter(order => order.id !== action.id),
       };
     }
-    case 'StartedOrder': {
+    case 'DidGetCup': {
+      const cupInventory = state.cupInventory || {};
+      const estimatedRemaining = cupInventory.estimatedRemaining;
+      const newEstimatedRemaining =
+        estimatedRemaining == null ? null : estimatedRemaining - 1;
       if (!state.queue || !state.queue.length) {
         return {
           ...state,
@@ -27,6 +31,10 @@ function RestaurantReducerFn(state = {}, action) {
       const topOrder = state.queue[0];
       return {
         ...state,
+        cupInventory: {
+          ...cupInventory,
+          estimatedRemaining: newEstimatedRemaining,
+        },
         fill: {
           order: topOrder,
           orderStartTime: Date.now(),
@@ -45,7 +53,7 @@ function RestaurantReducerFn(state = {}, action) {
         fill: { ...state.fill, requestedDropTime: Date.now() },
       };
     }
-    case 'DroppedFill': {
+    case 'DidDropCup': {
       if (!state.fill) {
         return state;
       }
@@ -78,8 +86,25 @@ function RestaurantReducerFn(state = {}, action) {
         }
         return !isTheFill;
       });
+      let ingredientInventory = state.ingredientInventory;
+      if (completedFill.slotId) {
+        const estimatedRemaining =
+          state.ingredientInventory[completedFill.slotId].estimatedRemaining;
+        const newEstimatedRemaining =
+          estimatedRemaining == null
+            ? null
+            : estimatedRemaining - completedFill.amount;
+        ingredientInventory = {
+          ...(state.ingredientInventory || {}),
+          [completedFill.slotId]: {
+            ...(state.ingredientInventory[completedFill.slotId] || {}),
+            estimatedRemaining: newEstimatedRemaining,
+          },
+        };
+      }
       return {
         ...state,
+        ingredientInventory,
         fill: {
           ...state.fill,
           fillsCompleted: [...(state.fill.fillsCompleted || []), completedFill],
@@ -87,7 +112,28 @@ function RestaurantReducerFn(state = {}, action) {
         },
       };
     }
-
+    case 'DidFillSlot': {
+      const ingredientInventory = state.ingredientInventory || {};
+      return {
+        ...state,
+        ingredientInventory: {
+          ...ingredientInventory,
+          [action.slotId]: {
+            ...(ingredientInventory[action.slotId] || {}),
+            estimatedRemaining: action.estimatedRemaining,
+          },
+        },
+      };
+    }
+    case 'DidFillCups': {
+      return {
+        ...state,
+        cupInventory: {
+          ...(state.cupInventory || {}),
+          estimatedRemaining: action.estimatedRemaining,
+        },
+      };
+    }
     case 'DidPassToBlender': {
       if (!state.fill) {
         return state;
@@ -121,11 +167,20 @@ function RestaurantReducerFn(state = {}, action) {
       const blendState = state.blend;
       return {
         ...state,
-        blend: null,
+        blend: 'dirty',
         deliveryA: {
-          deliverTime: Date.now(),
           ...blendState,
+          deliverTime: Date.now(),
         },
+      };
+    }
+    case 'DidClean': {
+      if (state.blend !== 'dirty') {
+        return state;
+      }
+      return {
+        ...state,
+        blend: null,
       };
     }
     case 'ClearDeliveryBay': {
