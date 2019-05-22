@@ -87,9 +87,10 @@ function RestaurantReducerFn(state = {}, action) {
         return !isTheFill;
       });
       let ingredientInventory = state.ingredientInventory;
-      if (completedFill.slotId) {
-        const estimatedRemaining =
-          state.ingredientInventory[completedFill.slotId].estimatedRemaining;
+      if (ingredientInventory && completedFill.slotId) {
+        const slotInventoryState =
+          ingredientInventory[completedFill.slotId] || {};
+        const estimatedRemaining = slotInventoryState.estimatedRemaining;
         const newEstimatedRemaining =
           estimatedRemaining == null
             ? null
@@ -97,7 +98,7 @@ function RestaurantReducerFn(state = {}, action) {
         ingredientInventory = {
           ...(state.ingredientInventory || {}),
           [completedFill.slotId]: {
-            ...(state.ingredientInventory[completedFill.slotId] || {}),
+            ...slotInventoryState,
             estimatedRemaining: newEstimatedRemaining,
           },
         };

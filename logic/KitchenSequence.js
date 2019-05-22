@@ -164,7 +164,7 @@ const SEQUENCER_STEPS = [
     // pass cup to delivery
 
     getDescription: () => {
-      return 'Pass from blender to delivery system, clean blender';
+      return 'Pass from blender to delivery system';
     },
     getRestaurantStateIntent: restaurantState => {
       if (!restaurantState.blend) {

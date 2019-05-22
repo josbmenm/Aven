@@ -60,7 +60,6 @@ function useInventoryState() {
       restaurantState.ingredientInventory[slot.id];
     systemSections[systemId].slots.push({
       ...slot,
-      estimatedRemaining: 77,
       estimatedRemaining: invState && invState.estimatedRemaining,
       name: slot.Ingredient.Name,
       photo: slot.Ingredient.Photo,
@@ -156,9 +155,8 @@ function InventoryRow({ slot }) {
   return (
     <Row>
       <View style={{ flex: 1 }}>
-        <Text>
-          Name: {slot.name} Capacity: {slot.ShotCapacity}
-        </Text>
+        <Text>Name: {slot.name}</Text>
+        <Text>Capacity: {slot.ShotCapacity}</Text>
         {estimatedRemaining && <Text>{estimatedRemaining} remaining</Text>}
         {percentFull && <Text>{percentFull}%</Text>}
       </View>

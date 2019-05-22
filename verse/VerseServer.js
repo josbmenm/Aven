@@ -65,7 +65,7 @@ const startVerseServer = async () => {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  USE_DEV_SERVER = false;
+  // USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -260,20 +260,20 @@ const startVerseServer = async () => {
         },
         error: reject,
       });
-      setTimeout(() => {
-        sub && sub.unsubscribe();
-        if (!isSystemIdle) {
-          return reject(new Error(`After 30sec, "${subsystem}" is not idle!`));
-        }
-        if (!isActionReceived) {
-          return reject(
-            new Error(
-              `After 90sec, ActionIdEnded of "${subsystem}" is "${currentActionId}" but we expected "${actionId}"!`,
-            ),
-          );
-        }
-        reject(new Error('Unknown timeout waiting for kitchen state..'));
-      }, 90000);
+      // setTimeout(() => {
+      //   sub && sub.unsubscribe();
+      //   if (!isSystemIdle) {
+      //     return reject(new Error(`After 30sec, "${subsystem}" is not idle!`));
+      //   }
+      //   if (!isActionReceived) {
+      //     return reject(
+      //       new Error(
+      //         `After 90sec, ActionIdEnded of "${subsystem}" is "${currentActionId}" but we expected "${actionId}"!`,
+      //       ),
+      //     );
+      //   }
+      //   reject(new Error('Unknown timeout waiting for kitchen state..'));
+      // }, 90000);
     });
     return command;
   }
@@ -302,7 +302,6 @@ const startVerseServer = async () => {
       return;
     }
 
-    console.log('Next Steps:', nextSteps.map(s => s.description).join(', '));
     nextSteps.forEach(nextStep => {
       const commandType = KitchenCommands[nextStep.command.command];
       const subsystem = commandType.subsystem;
