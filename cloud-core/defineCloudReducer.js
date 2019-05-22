@@ -15,7 +15,16 @@ export default function defineCloudReducer(
       const ancestorName = `${doc.getFullName()}#${value.on.id}^${reducerName}`;
       state = getValue(cloud.get(ancestorName));
     }
-    return reducerFn(state, action);
+    let nextState = null;
+    try {
+      nextState = reducerFn(state, action);
+    } catch (e) {
+      console.error('Error reducing ' + reducerName);
+      console.error(state, action);
+      throw e;
+    }
+
+    return nextState;
   };
   return defineCloudFunction(reducerName, fn);
 }

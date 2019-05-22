@@ -18,12 +18,19 @@ export default function runLambda(
     return cloudValue.getValue();
   }
   function computeResult() {
-    return pureDataFn(
-      { value: argumentValue, id: argumentId },
-      argumentDoc,
-      cloudClient,
-      getValue,
-    );
+    let result = null;
+    try {
+      result = pureDataFn(
+        { value: argumentValue, id: argumentId },
+        argumentDoc,
+        cloudClient,
+        getValue,
+      );
+    } catch (e) {
+      console.error('Error argument: ', argumentValue);
+      throw new Error(`Error running function: ` + e.message);
+    }
+    return result;
   }
   return {
     getIsConnected: () => ![...dependencies].find(dep => !dep.getIsConnected()),
