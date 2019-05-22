@@ -54,7 +54,7 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
 const startVerseServer = async () => {
-  console.log('☁️ Starting Restaurant Server 💨 ');
+  console.log(`☁️ Starting Restaurant Server in ${process.env.NODE_ENV} 💨 `);
 
   const pgConfig = {
     ssl: !!getEnv('VERSE_SQL_USE_SSL'),
