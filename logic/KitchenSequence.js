@@ -167,7 +167,7 @@ const SEQUENCER_STEPS = [
       return 'Pass from blender to delivery system';
     },
     getRestaurantStateIntent: restaurantState => {
-      if (!restaurantState.blend) {
+      if (!restaurantState.blend || !restaurantState.blend.blendCompleteTime) {
         return null;
       }
       return {};

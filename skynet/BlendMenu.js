@@ -32,6 +32,10 @@ function BlendDisplay({ menuItem, companyConfig }) {
         {menuItem['Display Name']}
       </Text>
       <Text>{menuItem['Display Description']}</Text>
+      <Text>
+        {menuItem.Recipe['DisplayCalories']} Calories |{' '}
+        {menuItem.Recipe['Nutrition Detail']}
+      </Text>
       <Text>{`
 ${computed.ingredients
   .map(ing => `${ing.Name} (${ing.amount} x ${ing.amountVolumeRatio}ml)`)

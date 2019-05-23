@@ -441,6 +441,22 @@ function FillRow({ restaurantState, dispatch }) {
     </Row>
   );
 }
+function BlendRow({ state }) {
+  if (state === 'dirty') {
+    return <Text>Dirty Blender</Text>;
+  }
+  if (!state) {
+    return <Text>Empty</Text>;
+  }
+  return <OrderInfoText orderState={state.order} />;
+}
+
+function DeliverySystemRow({ state }) {
+  if (!state) {
+    return <Text>Empty</Text>;
+  }
+  return <OrderInfoText orderState={state.order} />;
+}
 
 function RestaurantStateList({ restaurantState, dispatch }) {
   if (!restaurantState) {
@@ -450,20 +466,23 @@ function RestaurantStateList({ restaurantState, dispatch }) {
     <RowSection>
       <FillRow restaurantState={restaurantState} dispatch={dispatch} />
       <Row title="Blend System">
-        {restaurantState.blend && (
-          <Text>{JSON.stringify(restaurantState.blend)}</Text>
-        )}
+        <BlendRow state={restaurantState.blend} />
       </Row>
       <Row title="Delivery System">
-        {restaurantState.delivery && (
-          <OrderState orderState={restaurantState.delivery} />
-        )}
+        <DeliverySystemRow state={restaurantState.delivery} />
       </Row>
       <DeliveryBayRow restaurantState={restaurantState} dispatch={dispatch} />
     </RowSection>
   );
 }
 
+function QuickOrderSection() {
+  return (
+    <RowSection title="Quick Order">
+      <Button title="Hello" />
+    </RowSection>
+  );
+}
 function ManualActionsSection() {
   const cloud = useCloud();
   const handleErrors = useAsyncError();
