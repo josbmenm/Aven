@@ -418,7 +418,7 @@ export default function createProtectedSource({
       validatedAuth.provider === 'root' &&
       validatedAuth.accountId === 'root';
 
-    if (name.indexOf('auth/') === 0) {
+    if (name && name.indexOf('auth/') === 0) {
       return isRootAccount ? Permissions.admin : Permissions.none;
     }
     const permissionBlocks = await Promise.all(
