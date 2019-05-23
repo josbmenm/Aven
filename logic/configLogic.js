@@ -243,6 +243,10 @@ export function companyConfigToBlendMenu(atData) {
       })
       .filter(Boolean);
 
+    const LiquidOptions = Object.values(Ingredients).filter(
+      ing => ing.IsLiquid,
+    );
+
     return {
       ...item,
       IngredientCustomization: IngredientCustomization.map(ic => {
@@ -285,6 +289,7 @@ export function companyConfigToBlendMenu(atData) {
       })),
       BenefitCustomization: Benefits,
       Dietary,
+      LiquidOptions,
       Benefits: ItemBenefits,
       DefaultBenefitId: defaultBenefitId,
       DefaultBenefit,

@@ -197,7 +197,7 @@ const SEQUENCER_STEPS = [
       return {};
     },
     getKitchenStateReady: (kitchenState, intent) => {
-      return !!kitchenState && kitchenState.BlendSystem_CleanReady_READ;
+      return !!kitchenState && kitchenState.BlendSystem_CleanOnlyReady_READ;
     },
     getKitchenCommand: intent => ({
       command: 'Clean',
@@ -232,23 +232,24 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
       return false;
     }
 
-    if (getKitchenStateReady(kitchenState, intent)) {
-      const command = getKitchenCommand(intent);
-      return {
-        intent,
-        command,
-        subsystem: command.subsystem,
-        description: getDescription(intent),
-        perform: async (cloud, handleCommand) => {
-          const successRestaurantAction = getSuccessRestaurantAction(intent);
-          const resp = await handleCommand(command);
-
-          await cloud
-            .get('RestaurantActionsUnburnt')
-            .putTransaction(successRestaurantAction);
-          return resp;
-        },
-      };
+    if (!getKitchenStateReady(kitchenState, intent)) {
+      return false;
     }
+    const command = getKitchenCommand(intent);
+    return {
+      intent,
+      command,
+      subsystem: command.subsystem,
+      description: getDescription(intent),
+      perform: async (cloud, handleCommand) => {
+        const successRestaurantAction = getSuccessRestaurantAction(intent);
+        const resp = await handleCommand(command);
+
+        await cloud
+          .get('RestaurantActionsUnburnt')
+          .putTransaction(successRestaurantAction);
+        return resp;
+      },
+    };
   }).filter(Boolean);
 }

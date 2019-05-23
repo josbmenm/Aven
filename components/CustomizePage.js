@@ -298,6 +298,63 @@ function EnhancementSection({ section }) {
   );
 }
 
+function LiquidSection({ section }) {
+  return (
+    <View style={{ paddingBottom: 60 }}>
+      <SectionDescription message="Choose a liquid base to blend with" />
+      <View
+        style={{
+          paddingVertical: 15,
+          alignItems: 'center',
+        }}
+      >
+        {section.options.map(option => (
+          <CustomizationPuck
+            isSingleOption={true}
+            key={option.key}
+            onPress={option.onSelect}
+            isActive={section.selectedIngredients.find(
+              i => i.id === option.key,
+            )}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                minHeight: 72,
+                borderRadius: 4,
+                overflow: 'hidden',
+              }}
+            >
+              <AirtableImage
+                image={option.image}
+                resizeMode="contain"
+                style={{
+                  position: 'absolute',
+                  left: -35,
+                  width: 142,
+                  height: 72,
+                }}
+              />
+              <View
+                style={{
+                  flex: 1,
+                  marginLeft: 70,
+                  paddingHorizontal: 10,
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{ ...titleStyle, fontSize: 12 }}>
+                  {option.name.toUpperCase()}
+                </Text>
+              </View>
+            </View>
+          </CustomizationPuck>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 function StepperButton({ onPress, icon, disabled }) {
   return (
     <TouchableOpacity
@@ -441,64 +498,10 @@ function CustomizationMainSection({ section }) {
   if (section.name === 'enhancement') {
     return <EnhancementSection section={section} />;
   }
-  if (section.name !== 'Beverage') {
-    // hardcoding, great..
-    return <StepperSection section={section} />;
+  if (section.name === 'liquid') {
+    return <LiquidSection section={section} />;
   }
-  return (
-    <View style={{ paddingBottom: 60 }}>
-      <SectionDescription message={section.description} />
-      <View
-        style={{
-          paddingVertical: 15,
-          alignItems: 'center',
-        }}
-      >
-        {section.options.map(option => (
-          <CustomizationPuck
-            isSingleOption={section.name === 'Beverage'}
-            key={option.key}
-            onPress={option.onSelect}
-            isActive={section.selectedIngredients.find(
-              i => i.id === option.key,
-            )}
-          >
-            <View
-              style={{
-                flexDirection: 'row',
-                minHeight: 72,
-                borderRadius: 4,
-                overflow: 'hidden',
-              }}
-            >
-              <AirtableImage
-                image={option.image}
-                resizeMode="contain"
-                style={{
-                  position: 'absolute',
-                  left: -35,
-                  width: 142,
-                  height: 72,
-                }}
-              />
-              <View
-                style={{
-                  flex: 1,
-                  marginLeft: 70,
-                  paddingHorizontal: 10,
-                  justifyContent: 'center',
-                }}
-              >
-                <Text style={{ ...titleStyle, fontSize: 12 }}>
-                  {option.name.toUpperCase()}
-                </Text>
-              </View>
-            </View>
-          </CustomizationPuck>
-        ))}
-      </View>
-    </View>
-  );
+  return <StepperSection section={section} />;
 }
 
 function getCustomizationSections(
@@ -516,6 +519,10 @@ function getCustomizationSections(
   const activeEnhancements = activeEnhancementIds.map(
     eId => menuItem.BenefitCustomization[eId],
   );
+
+  const activeLiquidBase =
+    (customizationState && customizationState.liquidBase) ||
+    menuItem.Recipe.LiquidBaseIngredient[0];
 
   const sections = [
     {
@@ -552,6 +559,28 @@ function getCustomizationSections(
           ),
         });
       },
+    },
+    {
+      name: 'liquid',
+      displayName: 'base',
+      slotCount: 1,
+      options: menuItem.LiquidOptions.map(liquidIng => {
+        return {
+          key: liquidIng.id,
+          name: liquidIng.Name,
+          description: liquidIng.Description,
+          image: liquidIng.Image,
+          onSelect: () => {
+            setCustomization({
+              ...customizationState,
+              liquidBase: ingredientId,
+            });
+          },
+        };
+      }),
+      selectedIngredients: menuItem.LiquidOptions.filter(
+        liquidIng => liquidIng.id === activeLiquidBase,
+      ),
     },
     ...menuItem.IngredientCustomization.map(customSpec => {
       const name = customSpec['Name'];
@@ -593,12 +622,8 @@ function getCustomizationSections(
           key: ingredient.id,
           name: ingredient.Name,
           description: ingredient.Description,
-          image: ingredient['Image'],
+          image: ingredient.Image,
           onSelect: () => {
-            if (name === 'Beverage') {
-              setIngredientCustomization(Array(slotCount).fill(ingredient.id));
-              return;
-            }
             if (slotCount === 1) {
               setIngredientCustomization([ingredient.id]);
               return;
@@ -740,9 +765,7 @@ function CustomizationSidebar({
                 }}
               >
                 <ListAnimation
-                  list={Array(
-                    section.name === 'Beverage' ? 1 : section.slotCount,
-                  )
+                  list={Array(section.slotCount)
                     .fill(0)
                     .map((_, index) => {
                       if (section.name === 'enhancement') {
@@ -790,11 +813,10 @@ function CustomizationSidebar({
 
                       return {
                         onRemove:
-                          section.name !== 'Beverage'
-                            ? () => {
-                                section.removeIngredient(ingredient.id);
-                              }
-                            : null,
+                          section.removeIngredient &&
+                          (() => {
+                            section.removeIngredient(ingredient.id);
+                          }),
                         children: (
                           <View
                             style={{
