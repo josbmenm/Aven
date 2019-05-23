@@ -3,9 +3,8 @@ import { Text } from 'react-native';
 import cuid from 'cuid';
 
 import useCloud from '../cloud-core/useCloud';
-import useCloudReducer, {
-  defineCloudReducer,
-} from '../cloud-core/useCloudReducer';
+import useCloudReducer from '../cloud-core/useCloudReducer';
+import defineCloudReducer from '../cloud-core/defineCloudReducer';
 
 import Screen from './components/Screen';
 import TextInput from './components/TextInput';
