@@ -535,6 +535,7 @@ function LoginForm({ onSession, onClientConfig, defaultSession }) {
 
 function LoginPane({ onClientConfig, onSession, defaultSession }) {
   const session = useCloudSession();
+  const { navigate } = useNavigation();
   if (session) {
     return (
       <Pane>
@@ -546,7 +547,10 @@ function LoginPane({ onClientConfig, onSession, defaultSession }) {
     <Pane>
       <Hero title="Login" />
       <LoginForm
-        onSession={onSession}
+        onSession={session => {
+          onSession(session);
+          navigate('AdminHome');
+        }}
         onClientConfig={onClientConfig}
         defaultSession={defaultSession}
       />
@@ -1547,7 +1551,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
   let [clientConfig, setClientConfig] = useAsyncStorage(
     'AvenClientConfig',
-    null,
+    defaultSession,
   );
 
   let client = useMemo(() => {
@@ -1672,7 +1676,7 @@ function AdminApp({ defaultSession = {}, descriptors }) {
 
 const router = SwitchRouter(
   {
-    Home: {
+    AdminHome: {
       path: '',
       screen: MainPane,
       navigationOptions: {
