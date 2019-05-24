@@ -586,6 +586,7 @@ export default function createCloudDoc({
   }
 
   let overriddenFunction = null;
+  let overriddenFunctionVersionId = null;
   let overriddenFunctionCache = {};
 
   function $setOverrideFunction(fn) {
@@ -605,6 +606,7 @@ export default function createCloudDoc({
       }
     }
     overriddenFunction = cloudFn.fn;
+    overriddenFunctionVersionId = cloudFn.versionId;
     overriddenFunctionCache = {};
   }
 
@@ -817,19 +819,6 @@ export default function createCloudDoc({
     }
     return result;
   }
-
-  const isConnectedSubscription = cloudClient.isConnected.subscribe({
-    next: isConn => {
-      // if (isConn && transactionQueue.length) {
-      //   const transactionQueueSnapshot = transactionQueue;
-      //   transactionQueue = [];
-      //   putTransactions(transactionQueueSnapshot).catch(e => {
-      //     console.error('Failed to queued transactions!', e);
-      //     transactionQueue = [...transactionQueueSnapshot, ...transactionQueue];
-      //   });
-      // }
-    },
-  });
 
   async function putId(blockId) {
     // err.. shouldn't this be using state.puttingFromId to avoid race conditions??
@@ -1174,9 +1163,7 @@ export default function createCloudDoc({
     };
   }
 
-  function close() {
-    isConnectedSubscription && isConnectedSubscription.unsubscribe();
-  }
+  function close() {}
 
   const isConnected = mapBehaviorSubject(docState, state => state.isConnected);
 
