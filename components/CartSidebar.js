@@ -20,6 +20,7 @@ import {
   titleStyle,
   monsterra80,
   monsterra5,
+  monsterraLight,
 } from './Styles';
 import formatCurrency from '../utils/formatCurrency';
 import Button from './Button';
@@ -83,7 +84,12 @@ function SummaryRow({ label, amount, fakeAmount }) {
       <View style={{}}>
         <Text style={summaryRowCurrencyStyle}>
           {fakeAmount && fakeAmount !== amount && (
-            <Text style={{ textDecorationLine: 'line-through' }}>
+            <Text
+              style={{
+                textDecorationLine: 'line-through',
+                marginHorizontal: 5,
+              }}
+            >
               {formatCurrency(fakeAmount)}
             </Text>
           )}
@@ -274,6 +280,18 @@ function CartRow({ itemId, item }) {
   );
 }
 
+function BlockFormErrorRow({ error }) {
+  return (
+    <View style={{ minHeight: 45, padding: 10 }}>
+      {error && (
+        <Text style={{ color: monsterra, ...primaryFontFace, fontSize: 14 }}>
+          {error.message}
+        </Text>
+      )}
+    </View>
+  );
+}
+
 function PromoCodeForm({ onClose, order, cloud }) {
   const [error, setError] = React.useState(null);
   const [promoCode, setPromoCode] = React.useState('');
@@ -297,18 +315,18 @@ function PromoCodeForm({ onClose, order, cloud }) {
         type: 'ValidatePromoCode',
         promoCode,
       })
-      .then(resp => {
-        if (!resp) {
-          setError({});
+      .then(validPromo => {
+        if (!validPromo) {
+          setError({
+            message: 'This promo code is invalid. Please try again.',
+          });
           return;
         }
+        onClose();
         return order.transact(lastOrder => ({
           ...lastOrder,
-          promo: resp,
+          promo: validPromo,
         }));
-      })
-      .then(() => {
-        onClose();
       })
       .catch(e => {
         setError(e);
@@ -319,11 +337,11 @@ function PromoCodeForm({ onClose, order, cloud }) {
     inputRenderers,
   });
   return (
-    <View style={{ padding: 40 }}>
-      <BlockFormMessage message="You’ve got a code? Lucky you!." />
+    <View style={{ padding: 80 }}>
+      <BlockFormMessage message="You’ve got a code? Lucky you!" />
       <BlockFormTitle title="whats your promo code?" />
       <BlockFormRow>{inputs}</BlockFormRow>
-      {error && <BlockFormMessage message="Woah there!" />}
+      <BlockFormErrorRow error={error} />
       <BlockFormRow>
         <BlockFormButton title="cancel" secondary onPress={onClose} />
         <BlockFormButton title="add code" onPress={handleSubmit} />
@@ -361,28 +379,33 @@ function PromoCode({ promo }) {
           margin: 16,
           marginLeft: 0,
           borderRadius: 4,
+          flexDirection: 'row',
         }}
       >
-        <Text
-          style={{
-            ...primaryFontFace,
-            color: monsterra80,
-            fontSize: 14,
-          }}
-        >
-          promo code{' '}
-          <Text style={{ ...boldPrimaryFontFace }}>{promo.promoCode}</Text>
-        </Text>
-        <Text
-          style={{
-            fontSize: 12,
-            ...primaryFontFace,
-            color: monsterra80,
-          }}
-        >
-          {promo.count} free blend{promo.count > 1 ? 's' : ''}
-        </Text>
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{
+              ...primaryFontFace,
+              color: monsterra80,
+              fontSize: 14,
+            }}
+          >
+            promo code{' '}
+            <Text style={{ ...boldPrimaryFontFace }}>{promo.promoCode}</Text>
+          </Text>
+          <Text
+            style={{
+              fontSize: 12,
+              ...primaryFontFace,
+              color: monsterra80,
+            }}
+          >
+            {promo.count} free blend{promo.count > 1 ? 's' : ''}
+          </Text>
+        </View>
         <TouchableOpacity
+          style={{ padding: 8 }}
+          hitSlop={{ top: 15, right: 15, left: 15, right: 15 }}
           onPress={() => {
             order.transact(o => ({
               ...o,
@@ -390,7 +413,10 @@ function PromoCode({ promo }) {
             }));
           }}
         >
-          <Text>x</Text>
+          <Image
+            source={require('./assets/DeleteIcon.png')}
+            style={{ width: 10, height: 13, tintColor: monsterraLight }}
+          />
         </TouchableOpacity>
       </View>
     );

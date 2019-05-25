@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text } from 'react-native';
+import { TextInputMask } from 'react-native-masked-text';
 import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
 import Animated, { Easing } from 'react-native-reanimated';
 
@@ -25,7 +26,22 @@ function BlockFormInputWithRef(
   let autoCapitalize = null;
   let keyboardType = 'default';
   let enablesReturnKeyAutomatically = true;
+  let Input = TextInput;
+  let inputType = undefined;
+  let inputOptions = undefined;
+  let inputRef = ref;
+  let valueHandler = onValue;
+  // let valueHandler = onValue;
   if (mode === 'phone') {
+    Input = TextInputMask;
+    inputType = 'custom';
+    inputOptions = {
+      mask: '(999) 999-9999',
+    };
+    inputRef = i => {
+      ref.current = i && i.getElement();
+    };
+    valueHandler = onValue;
     keyboardType = 'phone-pad';
   } else if (mode === 'password') {
     secureTextEntry = true;
@@ -77,18 +93,20 @@ function BlockFormInputWithRef(
       >
         {label}
       </Animated.Text>
-      <TextInput
+      <Input
         enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
         keyboardAppearance="dark"
         keyboardType={keyboardType}
         autoCorrect={autoCorrect}
         secureTextEntry={secureTextEntry}
         autoCapitalize={autoCapitalize}
-        ref={ref}
+        ref={inputRef}
         value={value}
         onFocus={onFocus}
         onBlur={onBlur}
-        onChangeText={onValue}
+        onChangeText={valueHandler}
+        options={inputOptions}
+        type={inputType}
         onSubmitEditing={onSubmit}
         style={{
           fontSize: textInputFontSize,

@@ -16,9 +16,13 @@ export default function SendReceiptPage({
   type, // sms || email
   ...props
 }) {
-  const [value, setValue] = useState(null);
+  const [inputValue, setValue] = useState(null);
 
   function handleSubmit() {
+    let value = inputValue;
+    if (type === 'sms' && inputValue.match(/\d/g)) {
+      value = '1' + inputValue.match(/\d/g).join('');
+    }
     onSubmit({ value, type });
   }
 
@@ -28,7 +32,7 @@ export default function SendReceiptPage({
         label={type === 'sms' ? 'phone number' : 'email address'}
         mode={type === 'sms' ? 'phone' : 'email'}
         onValue={setValue}
-        value={value}
+        value={inputValue}
         {...inputProps}
       />
     ),

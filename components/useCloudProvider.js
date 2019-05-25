@@ -9,7 +9,9 @@ export default function useCloudProvider({
   establishAnonymousSession,
 }) {
   const [session, setSession] = useAsyncStorage('CloudSession');
-  const handleErrors = useAsyncError();
+  const handleErrors = useAsyncError(e => {
+    return true;
+  });
 
   const cloud = React.useMemo(() => {
     if (isStateUnloaded(session)) {

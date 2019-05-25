@@ -61,7 +61,7 @@ let IS_DEV = process.env.NODE_ENV !== 'production';
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  authority: '192.168.1.29:8830',
+  authority: '192.168.1.9:8830',
 };
 const RESTAURANT_PROD = {
   useSSL: false,
@@ -179,7 +179,7 @@ function FullApp() {
             renderError={renderAppError}
             onCatch={async (e, info, onRetry) => {
               if (e.type === 'SessionInvalid') {
-                client.destroySession({ ignoreRemoteError: true });
+                cloud.destroySession({ ignoreRemoteError: true });
                 onRetry();
               }
 
