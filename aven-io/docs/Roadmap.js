@@ -16,7 +16,6 @@ function DocPage() {
             synthetic data source: migrate from one DS to another
           </ListItem>
           <ListItem>cache configuration of a DataSource</ListItem>
-          <ListItem>switch from sha1 to better hash algo</ListItem>
         </List>
       </Section>
     </Page>

@@ -6,7 +6,7 @@ const { promisify } = require('util');
 const randomBytes = promisify(crypto.randomBytes);
 
 export function checksum(input) {
-  const shasum = crypto.createHash('sha1');
+  const shasum = crypto.createHash('sha256');
   shasum.update(input);
   return shasum.digest('hex');
 }

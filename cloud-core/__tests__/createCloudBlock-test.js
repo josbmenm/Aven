@@ -28,7 +28,9 @@ describe('object generic behavior', () => {
       value: { foo: 42 },
       dispatch: () => {},
     });
-    expect(obj.id).toBe('e7e71fa8b5db791e2346856ee09cb45f867439e4');
+    expect(obj.id).toBe(
+      '080e64543b0bed8b2de186304bb1ed04d5d46b5c1c362e971ec99ad8194576fc',
+    );
   });
 });
 

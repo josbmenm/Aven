@@ -1,5 +1,5 @@
 import { Observable, BehaviorSubject } from 'rxjs-compat';
-import SHA1 from 'crypto-js/sha1';
+import SHA256 from 'crypto-js/sha256';
 import bindCloudValueFunctions from './bindCloudValueFunctions';
 import mapBehaviorSubject from '../utils/mapBehaviorSubject';
 import runLambda from './runLambda';
@@ -24,7 +24,7 @@ export default function createCloudBlock({
 
   if (value !== undefined) {
     const valueString = JSONStringify(value);
-    observedBlockId = SHA1(valueString).toString();
+    observedBlockId = SHA256(valueString).toString();
     blockValueCache[observedBlockId] = value;
   }
   const blockId = id || observedBlockId;
