@@ -145,6 +145,7 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
         amountVolumeRatio: ing.amountVolumeRatio,
         ingredientId: ing.id,
         ingredientName: ing.Name,
+        ingredientColor: ing.Color,
         ingredientIcon: ing.Icon,
         slotId: kitchenSlotId,
         systemId: kitchenSystemId,
