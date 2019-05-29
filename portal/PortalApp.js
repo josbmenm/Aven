@@ -61,7 +61,7 @@ let IS_DEV = process.env.NODE_ENV !== 'production';
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  authority: '192.168.1.9:8830',
+  authority: 'localhost:8830',
 };
 const RESTAURANT_PROD = {
   useSSL: false,

@@ -64,6 +64,12 @@ export function getItemCustomizationSummary(item) {
   if (item.customization.enhancements === null) {
     summaryItems.push('with no enhancement');
   }
+  if (item.customization.liquidBase) {
+    const liquidIng = item.menuItem.LiquidOptions.find(
+      li => item.customization.liquidBase === li.id,
+    );
+    liquidIng && summaryItems.push('with ' + getIngredientName(liquidIng));
+  }
   if (
     item.customization.enhancements &&
     item.customization.enhancements.length
@@ -469,7 +475,10 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
   const enhancementsVolume = getVol(enhancementIngredients);
   const ingredientsVolume = getVol(standardIngredients);
   const finalVolumeBeforeLiquid = ingredientsVolume + enhancementsVolume;
-  const baseLiquidIngId = menuItem.Recipe.LiquidBaseIngredient[0];
+  const customBaseLiquidIngId =
+    cartItem && cartItem.customization && cartItem.customization.liquidBase;
+  const baseLiquidIngId =
+    customBaseLiquidIngId || menuItem.Recipe.LiquidBaseIngredient[0];
   const baseLiquidIng = allIngredients[baseLiquidIngId];
   if (!baseLiquidIng) {
     console.warn('Missing base liquid');

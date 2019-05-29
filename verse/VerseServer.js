@@ -18,6 +18,7 @@ import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import combineSources from '../cloud-core/combineSources';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
+import authenticateSource from '../cloud-core/authenticateSource';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import placeOrder from './placeOrder';
 
@@ -65,7 +66,7 @@ const startVerseServer = async () => {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  USE_DEV_SERVER = false;
+  // USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -82,6 +83,15 @@ const startVerseServer = async () => {
     quiet: true,
   });
 
+  const authenticatedRemoteSource = authenticateSource(
+    remoteSource,
+    'onofood.co',
+    {
+      accountId: 'root',
+      verificationInfo: {},
+      verificationResponse: { password: ROOT_PASSWORD }, // careful! here we assume that skynet's root pw is the same as the one here for verse!
+    },
+  );
   const storageSource = await startPostgresStorageSource({
     domains: ['onofood.co'],
     config: {
@@ -92,7 +102,7 @@ const startVerseServer = async () => {
 
   const combinedStorageSource = combineSources({
     fastSource: storageSource,
-    slowSource: remoteSource,
+    slowSource: authenticatedRemoteSource,
     fastSourceOnlyMapping: {
       'onofood.co': {
         KitchenState: true,
@@ -155,11 +165,6 @@ const startVerseServer = async () => {
 
   const protectedSource = createProtectedSource({
     source: evalSource,
-    parentAuth: {
-      accountId: 'root',
-      verificationInfo: {},
-      verificationResponse: { password: ROOT_PASSWORD }, // careful! here we assume that skynet's root pw is the same as the one here for verse!
-    },
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
@@ -383,6 +388,10 @@ const startVerseServer = async () => {
       }
     }
   };
+
+  if (process.env.TEST_VERSE) {
+    console.log('VERSE TEST RUNNING?');
+  }
 
   const serverListenLocation = getEnv('PORT');
 
