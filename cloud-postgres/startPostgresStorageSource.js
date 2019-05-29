@@ -314,13 +314,28 @@ export default async function startPostgresStorageSource({ config, domains }) {
     await notifyChannel(channelId, payload);
   }
 
-  async function notifyDocWrite(domain, parentId, docName, currentBlockId) {
+  async function notifyDocWrite(
+    domain,
+    parentId,
+    docName,
+    currentBlockId,
+    valueForNotification,
+  ) {
     const channelId = getDocChannel(domain, parentId, docName);
-    const payload = JSON.stringify({ id: currentBlockId });
+    const payload = JSON.stringify({
+      id: currentBlockId,
+      value: valueForNotification,
+    });
     await notifyChannel(channelId, payload);
   }
 
-  async function writeDoc(domain, parentId, localName, currentBlockId) {
+  async function writeDoc(
+    domain,
+    parentId,
+    localName,
+    currentBlockId,
+    valueForNotification,
+  ) {
     const internalParentId = getInternalParentId(parentId);
     try {
       const writeResult = await knex.raw(
@@ -341,6 +356,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
           internalParentId,
           localName,
           currentBlockId,
+          valueForNotification,
         );
       }
     } catch (e) {
@@ -361,6 +377,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     name,
     currentBlock,
     prevCurrentBlock,
+    valueForNotification,
   ) {
     const internalParentId = getInternalParentId(parentId);
     let resp = null;
@@ -391,7 +408,13 @@ export default async function startPostgresStorageSource({ config, domains }) {
     if (!resp.rows.length) {
       throw new Error('Could not perform this transaction!');
     }
-    await notifyDocWrite(domain, internalParentId, name, currentBlock);
+    await notifyDocWrite(
+      domain,
+      internalParentId,
+      name,
+      currentBlock,
+      valueForNotification,
+    );
   }
 
   async function PutDocValue({ domain, value, name }) {
@@ -421,11 +444,25 @@ export default async function startPostgresStorageSource({ config, domains }) {
     ) {
       const onId = value && value.on && value.on.id;
       const block = await putBlock(value);
-      await writeDocTransaction(domain, parentId, localName, block.id, onId);
+      await writeDocTransaction(
+        domain,
+        parentId,
+        localName,
+        block.id,
+        onId,
+        value,
+      );
       return { name, id: block.id };
     }
     const block = await putBlock(value);
-    await writeDoc(domain, parentId, localName, block.id);
+    const smallEnoughForNotification = block.size && block.size < 1000000;
+    await writeDoc(
+      domain,
+      parentId,
+      localName,
+      block.id,
+      smallEnoughForNotification ? value : undefined,
+    );
     return {
       name,
       id: block.id,
@@ -778,13 +815,13 @@ export default async function startPostgresStorageSource({ config, domains }) {
           observer.next(val);
         },
       });
-      GetDoc({ name, domain })
+      GetDocValue({ name, domain })
         .then(docState => {
-          observer.next({ id: docState.id });
+          observer.next({ id: docState.id, value: docState.value });
         })
         .catch(observer.error);
 
-      pgClient && pgClient.query(`LISTEN "${channelId}"`).catch(console.error);
+      pgClient && pgClient.query(`LISTEN "${channelId}"`).catch(observer.error);
       return () => {
         pgClient
           .query(`UNLISTEN "${channelId}"`)
