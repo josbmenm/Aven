@@ -252,6 +252,12 @@ const startSkynetServer = async () => {
       name: 'OnoState/Devices^DevicesReducer',
     });
 
+    console.log('Putting Permission.. InventoryState');
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'InventoryState',
+    });
+
     await putPermission({
       defaultRule: { canRead: true },
       name: 'KitchenConfig',

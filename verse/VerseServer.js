@@ -21,6 +21,7 @@ import createProtectedSource from '../cloud-auth/createProtectedSource';
 import authenticateSource from '../cloud-core/authenticateSource';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import placeOrder from './placeOrder';
+import { computeInventory } from './KitchenInventory';
 
 import startKitchen, {
   // computeKitchenConfig,
@@ -184,6 +185,8 @@ const startVerseServer = async () => {
       name: 'KitchenState',
     });
   }
+
+  computeInventory(evalSource.cloud);
 
   establishPermissions()
     .then(() => {

@@ -50,6 +50,7 @@ import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource
 import useCloudProvider from '../components/useCloudProvider';
 import FadeTransition from '../components/FadeTransition';
 import { titleStyle } from '../components/Styles';
+import { AppEnvContext } from '../components/useBlitzDebugPopover';
 
 let VERSE_IS_DEV = process.env.NODE_ENV !== 'production';
 let SKYNET_IS_DEV = process.env.NODE_ENV !== 'production';
@@ -198,7 +199,8 @@ const PRELOAD_IMAGES = [
 ];
 
 function KioskApp({ mode }) {
-  const isSkynet = mode === 'testKiosk';
+  const isTestKiosk = mode === 'testKiosk';
+  const [isSkynet, setIsSkynet] = React.useState(isTestKiosk);
   const hostConfig = isSkynet ? SKYNET_HOST_CONFIG : VERSE_HOST_CONFIG;
   const cloud = useCloudProvider({
     source: isSkynet ? skynetSource : verseSource,
@@ -208,15 +210,18 @@ function KioskApp({ mode }) {
   if (!cloud) {
     return <Spinner />;
   }
+
   return (
     <HostContextContainer {...hostConfig}>
-      <CloudContext.Provider value={cloud}>
-        <PopoverContainer>
-          <OrderContextProvider>
-            <KioskAppContainer />
-          </OrderContextProvider>
-        </PopoverContainer>
-      </CloudContext.Provider>
+      <AppEnvContext.Provider value={{ isSkynet, setIsSkynet }}>
+        <CloudContext.Provider value={cloud}>
+          <PopoverContainer>
+            <OrderContextProvider>
+              <KioskAppContainer />
+            </OrderContextProvider>
+          </PopoverContainer>
+        </CloudContext.Provider>
+      </AppEnvContext.Provider>
     </HostContextContainer>
   );
 }
@@ -275,12 +280,12 @@ function SelectModeApp() {
     return <SettingsApp />;
   }
 
-  if (!isConnected) {
-    return <WaitingPage name={name} title="Kiosk Disconnected" />;
+  if (!controlState) {
+    return <KioskApp mode={'testKiosk'} />;
   }
 
-  if (!controlState) {
-    return <WaitingPage name={name} title="Loading Configuration" />;
+  if (!isConnected) {
+    return <WaitingPage name={name} title="Kiosk Disconnected" />;
   }
 
   return <WaitingPage name={name} title="Kiosk Closed" />;
