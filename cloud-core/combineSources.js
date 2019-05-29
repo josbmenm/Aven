@@ -3,6 +3,37 @@ import xs from 'xstream';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import Err from '../utils/Err';
 
+async function getStreamValue(obs) {
+  await new Promise((resolve, reject) => {
+    let hasResolved = false;
+    setTimeout(() => {
+      if (!hasResolved) {
+        console.error('Timeout on stream value');
+        reject(new Error('Observable timeout'));
+      }
+    }, 5000);
+    let subs = obs.subscribe({
+      next: val => {
+        if (val === undefined) {
+          return;
+        }
+        hasResolved = true;
+        resolve(val);
+        subs && subs.unsubscribe();
+      },
+      error: err => {
+        reject(err);
+        subs && subs.unsubscribe();
+      },
+      complete: () => {
+        if (!hasResolved) {
+          reject(new Error('Completed without resolution'));
+        }
+      },
+    });
+  });
+}
+
 export default function combineSources({
   fastSource,
   slowSource,
@@ -61,10 +92,16 @@ export default function combineSources({
       });
     }
     if (isFastOnly(domain, name)) {
-      return await dispatchPutDocValue(fastSource);
+      const resp = await dispatchPutDocValue(fastSource);
+      const { notifyDocWrite } = performObservation(domain, name);
+      notifyDocWrite(resp.id, value);
+      return resp;
     }
     dispatchPutDocValue(fastSource);
-    return await dispatchPutDocValue(slowSource);
+    const resp = await dispatchPutDocValue(slowSource);
+    const { notifyDocWrite } = performObservation(domain, name);
+    notifyDocWrite(resp.id, value);
+    return resp;
   }
 
   async function PutBlock({ domain, auth, name, value, id }) {
@@ -203,12 +240,17 @@ export default function combineSources({
     return { results };
   }
 
-  async function GetDocValue({ domain, auth, name }) {
+  async function GetDocValue({ domain, name }) {
+    // const obs = performObservation(domain, name).docObservable;
+    // if (!obs) {
+    //   throw new Error('cannot perform observation', domain, name, obs);
+    // }
+    // const val = await getStreamValue(obs);
+
     // todo, check if currently subscribed to domain/name, and if so, respond immediately using the curernt id and GetBlock
     const blockSlow = await slowSource.dispatch({
       type: 'GetDocValue',
       domain,
-      auth,
       name,
     });
     if (blockSlow.value !== undefined) {
@@ -216,7 +258,6 @@ export default function combineSources({
         .dispatch({
           type: 'PutBlock',
           domain,
-          auth,
           name,
           id: blockSlow.id,
           value: blockSlow.value,
@@ -228,11 +269,11 @@ export default function combineSources({
     return blockSlow;
   }
 
-  async function GetDocValues({ domain, auth, names }) {
+  async function GetDocValues({ domain, names }) {
     // todo, batch properly? Or maybe this is desirable because it will fetch some from fast and some from slow:
     const results = await Promise.all(
       names.map(async name => {
-        return await GetDocValue({ domain, auth, name });
+        return await GetDocValue({ domain, name });
       }),
     );
     return { results };
@@ -266,12 +307,11 @@ export default function combineSources({
     return domains;
   }
 
-  async function ListDocs({ domain, auth, parentName, afterName }) {
+  async function ListDocs({ domain, parentName, afterName }) {
     async function dispatchList(source) {
       return await source.dispatch({
         type: 'ListDocs',
         domain,
-        auth,
         parentName,
         afterName,
       });
@@ -283,12 +323,11 @@ export default function combineSources({
     return await dispatchList(slowSource);
   }
 
-  async function DestroyDoc({ domain, auth, name }) {
+  async function DestroyDoc({ domain, name }) {
     async function dispatchDestroy(source) {
       return await source.dispatch({
         type: 'DestroyDoc',
         domain,
-        auth,
         name,
       });
     }
@@ -313,7 +352,7 @@ export default function combineSources({
     ]);
   }
 
-  async function MoveDoc({ domain, auth, from, to }) {
+  async function MoveDoc({ domain, from, to }) {
     const isFromFastStorage = isFastOnly(domain, from);
     const isToFastStorage = isFastOnly(domain, to);
     if (isFromFastStorage !== isToFastStorage) {
@@ -325,7 +364,6 @@ export default function combineSources({
       return await source.dispatch({
         type: 'MoveDoc',
         domain,
-        auth,
         from,
         to,
       });
@@ -346,19 +384,106 @@ export default function combineSources({
     await slowSource.close();
   }
 
-  async function observeDoc(domain, name, auth) {
+  async function observeDoc(domain, name) {
     if (isFastOnly(domain, name)) {
-      return fastSource.observeDoc(domain, name, auth);
+      return fastSource.observeDoc(domain, name);
     }
-    const upstream = await slowSource.observeDoc(domain, name, auth);
-    return upstream;
+    return performObservation(domain, name).docObservable;
   }
 
-  function observeDocChildren(domain, name, auth) {
-    if (isFastOnly(domain, name)) {
-      return fastSource.observeDocChildren(domain, name, auth);
+  const theCache = new Map();
+  function getFromCache(args, onCacheFail) {
+    let cachedValue = theCache;
+    args.forEach(arg => {
+      cachedValue = cachedValue && cachedValue.get(arg);
+    });
+    if (cachedValue) {
+      return cachedValue;
     }
-    return slowSource.observeDocChildren(domain, name, auth);
+    const newValue = onCacheFail();
+    let cache = theCache;
+    args.forEach((arg, argIndex) => {
+      const isLastArg = argIndex === args.length - 1;
+      if (isLastArg) {
+        cache.set(arg, newValue);
+        return;
+      }
+      if (cache.has(arg)) {
+        cache = cache.get(arg);
+      } else {
+        cache.set(arg, new Map());
+        cache = cache.get(arg);
+      }
+    });
+    return newValue;
+  }
+
+  function performObservation(domain, name) {
+    return getFromCache([domain, name], () => {
+      const performedObservation = {
+        notifyDocWrite: (id, value) => {},
+      };
+
+      performedObservation.docObservable = new Observable(observer => {
+        let lastSent = null;
+        function notifyDocWrite(id, value) {
+          if (lastSent === id) {
+            return;
+          }
+          lastSent = id;
+          observer.next({ id, value });
+        }
+        performedObservation.notifyDocWrite = notifyDocWrite;
+
+        let fastSubs = null;
+        let slowSubs = null;
+        fastSource.observeDoc(domain, name).then(observable => {
+          fastSubs = observable.subscribe({
+            next: update => {
+              notifyDocWrite(update.id, update.value);
+            },
+            error: () => {
+              // should retry slowSource periodically, falling back to fast source
+              console.error('Unhandled case 468');
+            },
+            complete: () => {
+              // should retry slowSource periodically, falling back to fast source
+              console.error('Unhandled case 469');
+            },
+          });
+        });
+
+        slowSource.observeDoc(domain, name).then(observable => {
+          slowSubs = observable.subscribe({
+            next: update => {
+              notifyDocWrite(update.id, update.value);
+            },
+            error: () => {
+              // should retry slowSource periodically, falling back to fast source
+              console.error('Unhandled case 478');
+            },
+            complete: () => {
+              // should retry slowSource periodically, falling back to fast source
+              console.error('Unhandled case 479');
+            },
+          });
+        });
+
+        return () => {
+          slowSubs && slowSubs.unsubscribe();
+          fastSubs && fastSubs.unsubscribe();
+        };
+      }).shareReplay(1);
+
+      return performedObservation;
+    });
+  }
+
+  function observeDocChildren(domain, name) {
+    if (isFastOnly(domain, name)) {
+      return fastSource.observeDocChildren(domain, name);
+    }
+    return slowSource.observeDocChildren(domain, name);
   }
 
   function getDocStream() {}
