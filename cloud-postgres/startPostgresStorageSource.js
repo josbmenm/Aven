@@ -455,7 +455,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       return { name, id: block.id };
     }
     const block = await putBlock(value);
-    const smallEnoughForNotification = block.size && block.size < 1000000;
+    const smallEnoughForNotification = block.size && block.size < 1000;
     await writeDoc(
       domain,
       parentId,
