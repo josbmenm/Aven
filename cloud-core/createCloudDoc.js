@@ -470,8 +470,7 @@ export default function createCloudDoc({
         };
       });
     })
-    .multicast(() => new BehaviorSubject(docState.value))
-    .refCount();
+    .shareReplay(1);
   function _getBlockWithId(id) {
     if (_docBlocks[id]) {
       return _docBlocks[id];
@@ -972,13 +971,12 @@ export default function createCloudDoc({
   const observeValueAndId = observe
     .map(s => s && s.id)
     .distinctUntilChanged()
+    .filter(docId => !!docId)
     .switchMap(docId => {
-      if (!docId) {
-        return Observable.of({ getId: () => docId, value: undefined });
-      }
       const block = _getBlockWithId(docId);
       return block.observeValueAndId;
-    });
+    })
+    .shareReplay(1);
 
   const overriddenFunctionResults = new Map();
 
@@ -1047,6 +1045,7 @@ export default function createCloudDoc({
                   });
                   if (overriddenFunction && overriddenFunctionCache) {
                     overriddenFunctionCache[argId] = res.value;
+
                     observer.next({
                       value: res.value,
                       getId: () => res.id,
