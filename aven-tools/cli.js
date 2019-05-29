@@ -7,6 +7,7 @@ const {
   runBuild,
   runDeploy,
   runPublish,
+  runTest,
   createLib,
   createApp,
 } = require('./src/avenTools');
@@ -88,7 +89,9 @@ const runCLI = async argv => {
       return;
     }
     case 'test': {
-      logRespectfully(argv, '🌐 Aven Test 🚦 (coming soon');
+      logRespectfully(argv, '🌐 Aven Test 🚦');
+      const result = await runTest(argv);
+      logResult(argv, result, '');
       return;
     }
     case 'create-lib': {

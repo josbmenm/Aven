@@ -18,8 +18,9 @@ const getTemplatePkg = async () => {
 
 const applyPackage = async ({ location, appName, appPkg, distPkg }) => {
   const serverAppPath = pathJoin(location, 'src', 'server.js');
+  const envOptions = appPkg.aven.envOptions || {};
   const serverAppFileData = `
-import Server from './sync/${appName}/${appPkg.aven.envOptions.mainServer}';
+import Server from './sync/${appName}/${envOptions.mainServer}';
 
 export default Server;
 `;
@@ -27,18 +28,16 @@ export default Server;
 
   const clientAppPath = pathJoin(location, 'src', 'client.js');
   const clientAppFileData = `
-import startClient from './sync/${appName}/${
-    appPkg.aven.envOptions.mainClient
-  }';
+import startClient from './sync/${appName}/${envOptions.mainClient}';
 
 startClient();
 `;
   await fs.writeFile(clientAppPath, clientAppFileData);
 
-  if (appPkg.aven.envOptions.knexFile) {
+  if (envOptions.knexFile) {
     const knexFilePath = pathJoin(location, 'knexfile.js');
     const knexFileData = `module.exports = ${JSON.stringify(
-      appPkg.aven.envOptions.knexFile,
+      envOptions.knexFile,
     )};`;
     await fs.writeFile(knexFilePath, knexFileData);
   }
@@ -201,6 +200,17 @@ const build = async ({ appName, appPkg, location, srcDir }) => {
   return { buildLocation };
 };
 
+const test = async ({ appName, appPkg, location, srcDir }) => {
+  const testResult = await spawn('yarn', ['test'], {
+    cwd: location,
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+    },
+  });
+  return { testResult };
+};
+
 module.exports = {
   getPackageSourceDir,
   getTemplatePkg,
@@ -210,4 +220,5 @@ module.exports = {
   start,
   build,
   deploy,
+  test,
 };

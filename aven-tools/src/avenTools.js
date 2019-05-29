@@ -221,7 +221,8 @@ const getAppPackage = async appName => {
 };
 
 const getAppEnv = async (appName, appPkg) => {
-  const envName = appPkg && appPkg.aven && appPkg.aven.env;
+  const specifiedEnvName = appPkg && appPkg.aven && appPkg.aven.env;
+  const envName = specifiedEnvName || 'razzle';
   let envModule = globeEnvs[envName];
   if (!envModule) {
     const envPath = pathJoin(srcDir, envName);
@@ -237,7 +238,7 @@ const getAppEnv = async (appName, appPkg) => {
   return envModule;
 };
 
-const readGlobeState = async () => {
+async function readGlobeState() {
   let state = {};
   try {
     state = JSON.parse(await fs.readFile(envStatePath));
@@ -252,14 +253,14 @@ const readGlobeState = async () => {
     }
   }
   return state;
-};
+}
 
-const writeAvenEnvState = async state => {
+async function writeAvenEnvState(state) {
   const stateData = JSON.stringify(state);
   await fs.writeFile(envStatePath, stateData);
-};
+}
 
-const initLocation = async (appName, appPkg, platform, appState) => {
+async function initLocation(appName, appPkg, platform, appState) {
   const newLocation = pathJoin(avenHomeDir, appName + '_' + cuid());
   await fs.mkdirp(newLocation);
   await platform.init({
@@ -272,8 +273,8 @@ const initLocation = async (appName, appPkg, platform, appState) => {
     location: newLocation,
     ...appState,
   };
-};
-const getAppLocation = async (appName, appPkg, platform, appState) => {
+}
+async function getAppLocation(appName, appPkg, platform, appState) {
   if (platform.runInPlace) {
     return { ...appState, location: pathJoin(srcDir, platform.name) };
   }
@@ -284,9 +285,9 @@ const getAppLocation = async (appName, appPkg, platform, appState) => {
     return await initLocation(appName, appPkg, platform, appState);
   }
   return appState;
-};
+}
 
-const sync = async (appEnv, location, appName, appPkg, srcDir) => {
+async function sync(appEnv, location, appName, appPkg, srcDir) {
   const packageSourceDir = appEnv.getPackageSourceDir(location);
   const globePkg = JSON.parse(
     await fs.readFile(pathJoin(srcDir, 'package.json')),
@@ -342,9 +343,9 @@ const sync = async (appEnv, location, appName, appPkg, srcDir) => {
   });
 
   return { srcDeps };
-};
+}
 
-const runStart = async argv => {
+async function runStart(argv) {
   const appName = argv._[1];
   const appPkg = await getAppPackage(appName);
   const appEnv = await getAppEnv(appName, appPkg);
@@ -443,9 +444,9 @@ const runStart = async argv => {
 
   watcher.close();
   extendedGlobeWatcher && extendedGlobeWatcher.close();
-};
+}
 
-const runBuild = async argv => {
+async function runBuild(argv) {
   const appName = argv._[1];
   const appPkg = await getAppPackage(appName);
   const appEnv = await getAppEnv(appName, appPkg);
@@ -473,9 +474,9 @@ const runBuild = async argv => {
   });
 
   return { buildLocation };
-};
+}
 
-const runDeploy = async argv => {
+async function runDeploy(argv) {
   const appName = argv._[1];
   const appPkg = await getAppPackage(appName);
   const appEnv = await getAppEnv(appName, appPkg);
@@ -510,7 +511,39 @@ const runDeploy = async argv => {
   });
 
   return { buildLocation };
-};
+}
+
+async function runTest(argv) {
+  const appName = argv._[1];
+  const appPkg = await getAppPackage(appName);
+  const appEnv = await getAppEnv(appName, appPkg);
+
+  const state = await readGlobeState();
+  let appState = state.apps && state.apps[appName];
+  appState = await getAppLocation(appName, appPkg, appEnv, appState);
+
+  await writeAvenEnvState({
+    ...state,
+    srcDir,
+    apps: {
+      ...state.apps,
+      [appName]: appState,
+    },
+  });
+
+  console.log(
+    `🌐 🏹 Syncronizing Workspace to App "${appName}" at ${appState.location}`,
+  );
+  await sync(appEnv, appState.location, appName, appPkg, srcDir);
+
+  await appEnv.test({
+    srcDir,
+    appName,
+    appPkg,
+    location: appState.location,
+  });
+}
+
 const runClean = async () => {
   await fs.remove(avenHomeDir);
   await fs.remove(envStatePath);
@@ -716,6 +749,7 @@ module.exports = {
   runDeploy,
   runClean,
   runPublish,
+  runTest,
   createLib,
   createApp,
 };
