@@ -173,6 +173,22 @@ export default function createCloudClient({
     return { value, id, context };
   }
 
+  async function PostDoc({ domain: actionDomain, name, value, auth, id }) {
+    const defaultAction = () =>
+      source.dispatch({
+        type: 'PostDoc',
+        domain: actionDomain,
+        auth,
+        name,
+        id,
+        value,
+      });
+    if (actionDomain !== domain || auth) {
+      return await defaultAction();
+    }
+    return await defaultAction();
+  }
+
   async function PutDocValue({ domain: actionDomain, name, value, auth }) {
     const defaultAction = () =>
       source.dispatch({
@@ -199,6 +215,7 @@ export default function createCloudClient({
     GetDoc,
     GetDocValue,
     PutDocValue,
+    PostDoc,
   };
   const sourceId = `client(${source.id})`;
   const dispatch = createDispatcher(actions, sessionDispatch, domain, sourceId);
