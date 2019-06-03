@@ -2,32 +2,31 @@ const fs = require('fs-extra');
 const pathJoin = require('path').join;
 
 export default function createFSClient({ client }) {
-  async function uploadFile({ filePath, writeTemporary }) {
+  async function uploadFile({ filePath, doc }) {
     const fileData = await fs.readFile(filePath);
-    let block;
+    let blockValue;
     try {
-      block = JSON.parse(fileData);
+      blockValue = JSON.parse(fileData);
     } catch (e) {
-      block = {
+      blockValue = {
         type: 'BinaryFileHex',
         data: fileData.toString('hex'),
       };
     }
-    const { id } = await writeTemporary(block);
-    console.log('did put file', filePath);
-    return id;
+    const block = await doc.writeBlockCompletely(blockValue);
+    return block;
   }
 
-  async function uploadFolder({ folderPath, writeTemporary }) {
+  async function uploadFolder({ folderPath, doc }) {
     const filesInDir = await fs.readdir(folderPath);
     const fileList = await Promise.all(
       filesInDir.map(async fileName => {
         const filePath = pathJoin(folderPath, fileName);
         const stat = await fs.stat(filePath);
         if (stat.isDirectory()) {
-          return await uploadFolder({ folderPath: filePath, writeTemporary });
+          return await uploadFolder({ folderPath: filePath, doc });
         } else {
-          return await uploadFile({ filePath, writeTemporary });
+          return await uploadFile({ filePath, doc });
         }
       }),
     );
@@ -36,22 +35,19 @@ export default function createFSClient({ client }) {
       files[fileName] = { type: 'BlockReference', id: fileList[index] };
     });
     const folderObj = { files, type: 'Folder' };
-    const { id } = await writeTemporary(folderObj);
-    console.log('did upload folder', folderPath);
+    const block = await doc.writeBlockCompletely(folderObj);
 
-    return id;
+    return block;
   }
 
   async function putFolder({ folderPath, name }) {
     const doc = client.get(name);
-    const uploadPointDoc = doc.post();
-    const id = await uploadFolder({
+    const folderBlock = await uploadFolder({
       folderPath,
-      writeTemporary: uploadPointDoc.put,
+      doc,
     });
-    uploadPointDoc.destroy();
-    await doc.putId(id);
-    console.log('did put folder', folderPath);
+    const id = folderBlock.getId();
+    await doc.put(folderBlock);
     return { id, name };
   }
 

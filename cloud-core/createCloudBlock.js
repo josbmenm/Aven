@@ -116,6 +116,22 @@ export default function createCloudBlock({
     }
   }
 
+  async function put() {
+    if (blockState.value.lastFetchTime || blockState.value.lastPutTime) {
+      return;
+    }
+    if (blockState.value.value === undefined) {
+      throw new Err('Cannot put empty block');
+    }
+    await dispatch({
+      type: 'PutBlock',
+      domain,
+      name: onGetName(),
+      value: blockState.value.value,
+    });
+    setPutTime();
+  }
+
   const observeValue = observe
     .map(state => {
       return state.value;
@@ -261,6 +277,7 @@ export default function createCloudBlock({
     get: () => {
       throw new Error('Cannot "get" on a block');
     },
+    put,
     getIsPublished,
     setPutTime, // deprecate me!
     getValue,

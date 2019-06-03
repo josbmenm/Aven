@@ -875,6 +875,20 @@ export default function createCloudDoc({
     }
   }
 
+  async function writeBlockCompletely(value) {
+    const block = _getBlockWithValue(value);
+    await block.put();
+    return block;
+  }
+
+  async function writeBlock(value) {
+    const block = _getBlockWithValue(value);
+    block.put().catch(e => {
+      console.log('Unable to quietly write block', value, e);
+    });
+    return block;
+  }
+
   async function putBlock(block) {
     let postResult = null;
     if (!docState.value.isPosted && !postingPromise) {
@@ -1171,6 +1185,8 @@ export default function createCloudDoc({
     fetchConnectedValue,
     getConnectedValue,
     getBlock,
+    writeBlock,
+    writeBlockCompletely,
     observe,
     observeName: docName,
     destroy,
