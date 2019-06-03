@@ -153,8 +153,11 @@ export default function combineSources({
     if (isFastOnly(domain, name)) {
       return await dispatchPostDoc(fastSource);
     }
-    dispatchPostDoc(fastSource);
-    return await dispatchPostDoc(slowSource);
+    try {
+      return await dispatchPostDoc(slowSource);
+    } catch (e) {
+      return await dispatchPostDoc(fastSource);
+    }
   }
 
   async function GetBlock({ domain, auth, name, id }) {
@@ -248,25 +251,35 @@ export default function combineSources({
     // const val = await getStreamValue(obs);
 
     // todo, check if currently subscribed to domain/name, and if so, respond immediately using the curernt id and GetBlock
-    const blockSlow = await slowSource.dispatch({
-      type: 'GetDocValue',
-      domain,
-      name,
-    });
-    if (blockSlow.value !== undefined) {
-      fastSource
+    try {
+      const docSlow = await slowSource.dispatch({
+        type: 'GetDocValue',
+        domain,
+        name,
+      });
+      if (docSlow.value === undefined) {
+        return await fastSource
+          .dispatch({
+            type: 'GetDocValue',
+            domain,
+            name,
+          })
+          .catch(error => {
+            console.error('Error uploading block to slow source.', error);
+          });
+      }
+      return docSlow;
+    } catch (e) {
+      return await fastSource
         .dispatch({
-          type: 'PutBlock',
+          type: 'GetDocValue',
           domain,
           name,
-          id: blockSlow.id,
-          value: blockSlow.value,
         })
         .catch(error => {
           console.error('Error uploading block to slow source.', error);
         });
     }
-    return blockSlow;
   }
 
   async function GetDocValues({ domain, names }) {

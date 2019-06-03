@@ -91,7 +91,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     return data.map(d => "('" + d + "')").join(',');
   }
 
-  async function getContext(domain, docName, forceExistence) {
+  async function getDocDBContext(domain, docName, forceExistence) {
     if (!docName) {
       return {
         didCreate: false,
@@ -138,7 +138,11 @@ export default async function startPostgresStorageSource({ config, domains }) {
       };
     }
     const parentName = docNameParts.slice(0, -1).join('/');
-    const parentContext = await getContext(domain, parentName, forceExistence);
+    const parentContext = await getDocDBContext(
+      domain,
+      parentName,
+      forceExistence,
+    );
     const localName = docNameParts[docNameParts.length - 1];
 
     if (!parentContext.id) {
@@ -293,7 +297,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function notifyDocCreation(domain, docName) {
-    const ctx = await getContext(domain, docName);
+    const ctx = await getDocDBContext(domain, docName);
     const channelId = getChildrenChannel(domain, ctx.parentId);
     const payload = JSON.stringify({
       type: 'AddChildDoc',
@@ -304,7 +308,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
   }
 
   async function notifyDocDestroy(domain, docName) {
-    const ctx = await getContext(domain, docName);
+    const ctx = await getDocDBContext(domain, docName);
     const channelId = getChildrenChannel(domain, ctx.parentId);
     const payload = JSON.stringify({
       type: 'DestroyChildDoc',
@@ -436,7 +440,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
         value,
       });
     }
-    const { localName, parentId } = await getContext(domain, name, true);
+    const { localName, parentId } = await getDocDBContext(domain, name, true);
     if (
       value &&
       typeof value === 'object' &&
@@ -485,7 +489,11 @@ export default async function startPostgresStorageSource({ config, domains }) {
       );
     }
     // technically this action has a race condition if the prevBlockId changes while we are transacting. But thanks to the "where" inside writeDocTransaction, we will never loose data, will only error occasionally when doing this action concurrently on a doc
-    const { localName, parentId, id } = await getContext(domain, name, true);
+    const { localName, parentId, id } = await getDocDBContext(
+      domain,
+      name,
+      true,
+    );
     const prevResp = await knex.raw(
       `SELECT "docId", "currentBlock" FROM docs WHERE "parentId" = :parentId AND "domainName" = :domain AND "name" = :name;`,
       { parentId: getInternalParentId(parentId), domain, name: localName },
@@ -542,7 +550,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     if (!domain) {
       throw new Err('Invalid domain for "GetDoc"', 'InvalidDomain', { domain });
     }
-    const { id } = await getContext(domain, name, false);
+    const { id } = await getDocDBContext(domain, name, false);
     const result = await knex.raw(
       `
     SELECT * FROM docs WHERE "docId" = :id
@@ -590,7 +598,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     if (!domain) {
       throw new Err('Invalid domain for "PutDoc"', 'InvalidDomain', { domain });
     }
-    const { localName, parent } = await getContext(domain, name, true);
+    const { localName, parent } = await getDocDBContext(domain, name, true);
     const parentId = parent && parent.id;
     await writeDoc(domain, parentId, localName, id);
   }
@@ -690,7 +698,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
   async function ListDocs({ domain, parentName, afterName }) {
     let parentId = TOP_PARENT_ID;
     if (parentName != null) {
-      const { id } = await getContext(domain, parentName);
+      const { id } = await getDocDBContext(domain, parentName);
       parentId = id;
     }
     const limit = getMaxListDocs() + 1;
@@ -732,7 +740,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
         domain,
       });
     }
-    const ctx = await getContext(domain, name, false);
+    const ctx = await getDocDBContext(domain, name, false);
     if (!ctx.id) {
       return; // it is already deleted, or missing? consider throwing an error
     }
@@ -801,7 +809,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
         domain,
       });
     }
-    const ctx = await getContext(domain, name, false);
+    const ctx = await getDocDBContext(domain, name, false);
     const channelId = getDocChannel(domain, ctx.parentId, ctx.localName);
 
     if (observingChannels[channelId]) {
@@ -842,7 +850,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
     if (!domain) {
       throw new Err('Invalid domain', 'InvalidDomain', { domain });
     }
-    const { id } = await getContext(domain, name);
+    const { id } = await getDocDBContext(domain, name);
     return getCachedObervable([domain, id], getChildrenChannel);
   }
   return {

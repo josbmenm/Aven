@@ -241,7 +241,10 @@ export default function createCloudBlock({
                 name: onGetName(),
                 id: blockId,
               },
-              argument: { type: 'BlockReference', id: argumentId },
+              argument: argumentId && {
+                type: 'BlockReference',
+                id: argumentId,
+              },
             },
           };
         });
@@ -273,8 +276,6 @@ export default function createCloudBlock({
     functionGetValue,
     functionFetchValue,
     functionObserveValueAndId,
-
-    getContext: () => 'what',
   };
 
   bindCloudValueFunctions(cloudBlock, cloudClient);

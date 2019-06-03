@@ -567,23 +567,6 @@ export default function createCloudDoc({
     return block.getValue();
   }
 
-  function getContext() {
-    const { id, value, name } = docState.getValue();
-    // if (value) {
-    //   return value;
-    // }
-    // if (!id) {
-    //   return undefined;
-    // }
-    // const block = _getBlockWithId(id);
-    // return block.getValue();
-
-    return {
-      name: getFullName(),
-      id,
-    };
-  }
-
   let overriddenFunction = null;
   let overriddenFunctionVersionId = null;
   let overriddenFunctionCache = {};
@@ -952,7 +935,7 @@ export default function createCloudDoc({
       });
 
       throw new Error(
-        `Failed to putBlockId "${block.id}" to "${name}". ${e.message}`,
+        `Failed to PutDocValue "${block.id}" to "${name}". ${e.message}`,
       );
     }
   }
@@ -1035,8 +1018,8 @@ export default function createCloudDoc({
                 if (
                   res.context &&
                   res.context.argument &&
-                  res.context.argument.type === 'BlockReference' &&
-                  argumentDoc.getId() !== res.context.argument.id
+                  res.context.argument.type === 'DocReference' &&
+                  argumentDoc.getId() === res.context.argument.id
                 ) {
                   const argId = res.context.argument.id;
                   argumentDoc.$setState({
@@ -1159,6 +1142,7 @@ export default function createCloudDoc({
       type: 'DocReference',
       domain,
       name: getFullName(),
+      id: getId(),
     };
   }
 
@@ -1202,7 +1186,6 @@ export default function createCloudDoc({
     getIsConnected: isConnected.getValue,
     fetchValue,
     getReference,
-    getContext,
     // todo: serialize?
 
     functionGetValue,

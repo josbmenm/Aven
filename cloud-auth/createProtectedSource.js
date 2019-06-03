@@ -421,12 +421,11 @@ export default function createProtectedSource({
     if (name && name.indexOf('auth/') === 0) {
       return isRootAccount ? Permissions.admin : Permissions.none;
     }
+    const authDocNames = pathApartName(name).map(nameToAuthDocName);
     const permissionBlocks = await Promise.all(
-      pathApartName(name)
-        .map(nameToAuthDocName)
-        .map(async docName => {
-          return await getDocValue(source, domain, docName);
-        }),
+      authDocNames.map(async docName => {
+        return await getDocValue(source, domain, docName);
+      }),
     );
 
     let owner = null;
@@ -679,7 +678,8 @@ export default function createProtectedSource({
     const permissions = await GetPermissions({ name, auth, domain });
     if (!permissions.canRead) {
       throw new Err(
-        `Not authorized to subscribe to "${name}" as "${auth && auth.id}"`,
+        `Not authorized to subscribe to "${name}" as "${auth &&
+          auth.accountId}"`,
         'NoPermission',
         {
           name,

@@ -76,10 +76,10 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
       const cloudValues = collectCloudValues(expandSpec);
       await Promise.all(cloudValues.map(v => v.fetchValue()));
     },
-    getContext: () => {
+    getReference: () => {
       return {
         type: 'ExpandedDoc',
-        // todo
+        from: cloudValue.getReference(),
       };
     },
     observeValue: cloudValue.observeValue
@@ -131,11 +131,11 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
     getId: () => getIdOfValue(getValue()),
     getIsConnected: isConnected.getValue,
     type: 'EvaluatedDoc',
-    getContext: () => {
+    getReference: () => {
       return {
         type: 'EvaluatedDoc',
-        argument: { type: 'BlockReference', id: cloudValue.getId() },
-        lambda: { type: 'LambdaReference', name: lambdaDoc.getFullName() },
+        argument: cloudValue.getReference(),
+        lambda: lambdaDoc.getReference(),
       };
     },
     getFullName: () => {
@@ -173,9 +173,10 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
     getFullName: () => {
       return cloudValue.getFullName() + '__mapped';
     },
-    getContext: () => {
+    getReference: () => {
       return {
         type: 'MappedDoc',
+        over: cloudValue.getReference(),
       };
     },
     get: toGet => {
