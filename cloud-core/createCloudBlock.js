@@ -4,6 +4,7 @@ import bindCloudValueFunctions from './bindCloudValueFunctions';
 import mapBehaviorSubject from '../utils/mapBehaviorSubject';
 import runLambda from './runLambda';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
+import Err from '../utils/Err';
 
 const JSONStringify = require('json-stable-stringify');
 
