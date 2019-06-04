@@ -2,6 +2,7 @@ import createMemoryStorageSource from '../createMemoryStorageSource';
 import createEvalSource from '../createEvalSource';
 import defineCloudFunction from '../defineCloudFunction';
 import createCloudClient from '../../cloud-core/createCloudClient';
+import monitorSource from '../monitorSource';
 
 beforeAll(async () => {});
 
@@ -468,7 +469,6 @@ describe('remote eval', () => {
       domain: 'd',
     });
     const c = createCloudClient({ source: evalSource, domain: 'd' });
-    c.izDebugz = true;
     c.get('fooReducer').markRemoteLambda(true);
     await source.dispatch({
       type: 'PutDocValue',
@@ -495,31 +495,39 @@ describe('remote eval', () => {
     await s.fetchValue();
     expect(s.getValue().state).toEqual(['b']);
   });
+
   it('reducer remote eval subscription', async () => {
-    const source = createMemoryStorageSource({ domain: 'd' });
+    const events = [];
+    const logger = {
+      log(eventName, details) {
+        events.push({ eventName, details });
+      },
+    };
+    const source = monitorSource(
+      createMemoryStorageSource({ domain: 'd' }),
+      logger,
+    );
     const cloudReducer = ({ value, id }, doc, cloud, getValue) => {
-      let state = [];
-      if (!value) {
-        return { state };
+      let state = { lastActionId: null, list: [] };
+      if (value === undefined || value === null) {
+        return state;
       }
-      let action = value;
+      let action = value.value;
       if (value.on && value.on.id) {
-        const ancestorName =
-          doc.getFullName() + '#' + value.on.id + '^fooReducer';
-        const prevValue = getValue(cloud.get(ancestorName)) || [];
-        state = prevValue.state;
-        action = value.value;
+        const ancestorName = `${doc.getFullName()}#${value.on.id}^fooReducer`;
+        state = getValue(cloud.get(ancestorName));
       }
+
       if (action.add) {
         return {
           lastActionId: id,
-          state: [...state, action.add],
+          list: [...state.list, action.add],
         };
       }
       if (action.remove) {
         return {
           lastActionId: id,
-          state: state.filter(v => v !== action.remove),
+          list: state.list.filter(v => v !== action.remove),
         };
       }
       return state;
@@ -529,10 +537,10 @@ describe('remote eval', () => {
       domain: 'd',
     });
     const c = createCloudClient({ source: evalSource, domain: 'd' });
-    c.izDebugz = true;
     c.get('fooReducer').markRemoteLambda(true);
+
     await source.dispatch({
-      type: 'PutDocValue',
+      type: 'PutTransactionValue',
       domain: 'd',
       name: 'fooActions',
       value: { add: 'a' },
@@ -543,6 +551,7 @@ describe('remote eval', () => {
       name: 'fooActions',
       value: { add: 'b' },
     });
+    // console.log(events.length, JSON.stringify(events, null, 2));
     c.setLambda('fooReducer', cloudReducer);
     const s = c.get('fooActions^fooReducer');
     let lastObserved = null;
@@ -552,7 +561,8 @@ describe('remote eval', () => {
       },
     });
     await justASec();
-    expect(lastObserved.state).toEqual(['a', 'b']);
+    expect(lastObserved.list).toEqual(['a', 'b']);
+    // console.log(events.length);
     await source.dispatch({
       type: 'PutTransactionValue',
       domain: 'd',
@@ -560,6 +570,7 @@ describe('remote eval', () => {
       value: { remove: 'a' },
     });
     await justASec();
-    expect(lastObserved.state).toEqual(['b']);
+    expect(lastObserved.list).toEqual(['b']);
+    // console.log(events.length, JSON.stringify(events, null, 2));
   });
 });
