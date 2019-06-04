@@ -146,21 +146,17 @@ export function OrderContextProvider({ children }) {
           }),
         );
     },
-    confirmOrder: paymentIntent => {
-      guardAsync(
-        (async () => {
-          let o = currentOrder;
-          if (!o) {
-            return;
-          }
-          await o.transact(doConfirmOrder);
-          await cloud.dispatch({
-            type: 'PlaceOrder',
-            orderId: o.getName(),
-            paymentIntent,
-          });
-        })(),
-      );
+    confirmOrder: async paymentIntent => {
+      let o = currentOrder;
+      if (!o) {
+        return;
+      }
+      await o.transact(doConfirmOrder);
+      await cloud.dispatch({
+        type: 'PlaceOrder',
+        orderId: o.getName(),
+        paymentIntent,
+      });
     },
     startOrder: () =>
       guardAsync(

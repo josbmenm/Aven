@@ -296,16 +296,29 @@ const startSkynetServer = async () => {
   setInterval(
     () => {
       console.log('Updating Airtable..');
+      console.log(
+        (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
+          'MB Memory Consumption',
+      );
       scrapeAirTable(fsClient, logger)
         .then(() => {
           console.log('Airtable Update complete!');
+          console.log(
+            (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
+              'MB Memory Consumption',
+          );
         })
         .catch(e => {
           console.error('Error Updating Airtable!');
+          console.log(
+            (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
+              'MB Memory Consumption',
+          );
+
           console.error(e);
         });
     },
-    15 * 60 * 1000, // 15 minutes
+    1 * 60 * 1000, // 1 minutes
   );
 
   const dispatch = async action => {

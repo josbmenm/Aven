@@ -6,7 +6,7 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "aven:build": "echo Build.",
-    "aven:deploy": "npx appcenter codepush release-react -a OnoFoodCo/Blitz -d Production --plist-file ios/kiosk/Info.plist",
+    "aven:deploy": "npx appcenter codepush release-react -a OnoFoodCo/Portal -d Production --plist-file ios/kiosk/Info.plist",
     "aven:start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
@@ -24,8 +24,8 @@
     "@nozbe/with-observables": "^1.0.2",
     "rxjs": "^6.3.3",
     "fbjs": "^1.0.0",
-    "rxjs-compat": "^6.3.3",
     "react-native-masked-text": "^1.12.3",
+    "rxjs-compat": "^6.3.3",
     "cuid": "^2.1.6",
     "path": "^0.12.7",
     "create-react-context": "^0.2.3",

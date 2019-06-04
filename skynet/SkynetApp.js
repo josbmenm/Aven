@@ -110,10 +110,10 @@ const App = createSwitchNavigator(
       screen: BlendMenu,
       path: 'secrets/blendmenu',
     },
-    // Focus: {
-    //   screen: FocusExample,
-    //   path: 'focus',
-    // },
+    Focus: {
+      screen: FocusExample,
+      path: 'secrets/focus-prototype',
+    },
   },
   {},
 );

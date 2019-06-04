@@ -87,7 +87,7 @@ function SummaryRow({ label, amount, fakeAmount }) {
             <Text
               style={{
                 textDecorationLine: 'line-through',
-                marginHorizontal: 5,
+                paddingHorizontal: 5,
               }}
             >
               {formatCurrency(fakeAmount)}

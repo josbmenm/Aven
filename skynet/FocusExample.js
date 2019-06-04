@@ -13,7 +13,7 @@ function FocusContextProvider({ children, id }) {
   const parentContext = useFocusContext();
   let focusStream = null;
   if (parentContext) {
-    focusStream = parentContext.getFocusStream(id);
+    focusStream = parentContext.createFocusStream(id);
   } else {
     // top level focus stream provider:
     focusStream = focusContextCache.topFocusStream;
@@ -22,19 +22,21 @@ function FocusContextProvider({ children, id }) {
       focusStream.shamefullySendNext({ routes: [], index: 0, isFocused: true });
     }
   }
-  function requestFocus(id, focusState) {}
-  function getFocusStream(id) {
+  function requestFocus(childId) {
+    console.log('requestFocus', childId);
+  }
+  function createFocusStream(childId) {
     return focusStream.map(state => {
-      console.log('mapping state yo', state, id);
+      console.log('mapping state yo', state, childId, id);
       return { isFocused: false };
     });
   }
   // React.useEffect(() => {}, [])
-  function registerFocusable(id) {
-    console.log('registerFocusable', id);
+  function registerFocusable({ childId }) {
+    console.log('registerFocusable', childId);
   }
   const focusContext = {
-    getFocusStream,
+    createFocusStream,
     requestFocus,
     registerFocusable,
   };
@@ -47,12 +49,11 @@ function FocusContextProvider({ children, id }) {
 
 function useStream(stream) {
   const listenerRef = React.useRef();
-  const lastStream = React.useRef();
+  const lastStream = React.useRef(null);
   let [value, setValue] = React.useState();
-
   React.useEffect(() => {
     if (listenerRef.current && lastStream.current) {
-      lastStream.current.unsubscribe(listenerRef.current);
+      lastStream.current.removeListener(listenerRef.current);
     }
     lastStream.current = stream;
     listenerRef.current = {
@@ -60,9 +61,9 @@ function useStream(stream) {
         setValue(v);
       },
     };
-    stream.subscribe(listenerRef.current);
+    stream.addListener(listenerRef.current);
     return () => {
-      stream.unsubscribe(listenerRef.current);
+      stream.removeListener(listenerRef.current);
     };
   }, [stream]);
   return value;
@@ -70,10 +71,13 @@ function useStream(stream) {
 
 function useFocusable(id) {
   const focusContext = useFocusContext();
-  const focusStream = focusContext.getFocusStream(id);
+  const focusStream = React.useMemo(() => focusContext.createFocusStream(id), [
+    id,
+    focusContext,
+  ]);
   const focusState = useStream(focusStream);
   React.useEffect(() => {
-    focusContext.registerFocusable(id);
+    focusContext.registerFocusable({ childId: id });
   }, [focusContext]);
   if (!focusState) {
     return false;

@@ -112,6 +112,7 @@ export default function OrderConfirmPage({
   skipPayment,
   readerState,
   backBehavior,
+  error,
   ...props
 }) {
   // console.log('---- =======');
@@ -194,6 +195,40 @@ export default function OrderConfirmPage({
       >
         <Button title="Confirm Order" onPress={skipPayment} />
       </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <FadeTransition
+        backgroundColor={'#00000040'}
+        background={
+          <BlurView
+            style={StyleSheet.absoluteFill}
+            blurType="dark"
+            blurAmount={10}
+          />
+        }
+        {...props}
+      >
+        <CloseButton />
+        <Receipt summary={summary} />
+        <Text
+          style={{
+            color: 'white',
+            fontSize: 30,
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            height: 50,
+            textAlign: 'center',
+            bottom: 300,
+            ...boldPrimaryFontFace,
+          }}
+        >
+          Oops! {error.message}
+        </Text>
+      </FadeTransition>
     );
   }
 

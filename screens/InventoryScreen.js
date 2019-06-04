@@ -50,6 +50,7 @@ function useInventoryState() {
     if (!systemSections[systemId]) {
       const system = tables.KitchenSystems[systemId];
       systemSections[systemId] = {
+        id: system.id,
         name: system.Name,
         icon: system.Icon,
         slots: [],
@@ -76,6 +77,7 @@ function useInventoryState() {
   const inventorySections = [
     {
       name: 'Cups',
+      id: 'cups',
       icon: '🥤',
       slots: [
         {
@@ -179,11 +181,11 @@ function Inventory() {
   }
   const { inventorySections } = inventoryState;
 
-  return inventorySections.map(inventorySection => {
+  return inventorySections.map(section => {
     return (
-      <RowSection title={`${inventorySection.icon} ${inventorySection.name}`}>
-        {inventorySection.slots.map(slot => {
-          return <InventoryRow slot={slot} key={slot.slotId} />;
+      <RowSection title={`${section.icon} ${section.name}`} key={section.id}>
+        {section.slots.map(slot => {
+          return <InventoryRow slot={slot} key={slot.id} />;
         })}
       </RowSection>
     );
