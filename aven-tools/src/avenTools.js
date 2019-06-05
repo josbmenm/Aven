@@ -70,6 +70,7 @@ async function syncAndReplace(source, dest, replacements) {
 }
 
 const srcDir = process.cwd();
+const repoPkg = require(`${srcDir}/package.json`);
 const avenHomeDir = pathJoin(homeDir, '.aven');
 const envStatePath = pathJoin(srcDir, '.aven-env-state.json');
 
@@ -80,9 +81,9 @@ if (extendOverride) {
   );
 }
 
-const getPackageDir = async (srcDir, packageName, globePkg) => {
+const getPackageDir = async (srcDir, packageName, repoPkg) => {
   const extendsSrcModule =
-    globePkg && globePkg.aven && globePkg.aven.extendsSrcModule;
+    repoPkg && repoPkg.aven && repoPkg.aven.extendsSrcModule;
   let packageDir = pathJoin(srcDir, packageName);
   let extendingSrcDir = null;
   if (!(await fs.existsSync(packageDir)) && extendsSrcModule) {
@@ -122,20 +123,20 @@ async function syncDirectories(from, to, exclude = []) {
   });
 }
 
-const syncPackage = async (packageName, srcDir, destLocation, globePkg) => {
-  const { packageDir } = await getPackageDir(srcDir, packageName, globePkg);
+const syncPackage = async (packageName, srcDir, destLocation, repoPkg) => {
+  const { packageDir } = await getPackageDir(srcDir, packageName, repoPkg);
   const destPackage = pathJoin(destLocation, packageName);
   await syncDirectories(packageDir, destPackage, ['node_modules', 'src-sync']);
 };
 
-const getAllSrcDependencies = async (srcDir, packageName, globePkg) => {
-  const { packageDir } = await getPackageDir(srcDir, packageName, globePkg);
+const getAllSrcDependencies = async (srcDir, packageName, repoPkg) => {
+  const { packageDir } = await getPackageDir(srcDir, packageName, repoPkg);
   const packageJSONPath = pathJoin(packageDir, 'package.json');
   const pkgJSON = JSON.parse(await fs.readFile(packageJSONPath));
   const pkgDeps = (pkgJSON.aven && pkgJSON.aven.srcDependencies) || [];
   const childPkgDeps = await Promise.all(
     pkgDeps.map(async pkgDep => {
-      return await getAllSrcDependencies(srcDir, pkgDep, globePkg);
+      return await getAllSrcDependencies(srcDir, pkgDep, repoPkg);
     }),
   );
   const allPkgDeps = new Set(pkgDeps);
@@ -146,15 +147,15 @@ const getAllSrcDependencies = async (srcDir, packageName, globePkg) => {
   return allPkgDeps;
 };
 
-const getAllModuleDependencies = async (srcDir, packageName, globePkg) => {
-  const pkgDeps = await getAllSrcDependencies(srcDir, packageName, globePkg);
+const getAllModuleDependencies = async (srcDir, packageName, repoPkg) => {
+  const pkgDeps = await getAllSrcDependencies(srcDir, packageName, repoPkg);
   const allModuleDeps = {};
   await Promise.all(
     Array.from(pkgDeps).map(async pkgDep => {
       const { packageDir, extendingSrcDir } = await getPackageDir(
         srcDir,
         pkgDep,
-        globePkg,
+        repoPkg,
       );
       const packageJSONPath = pathJoin(packageDir, 'package.json');
       const pkgJSON = JSON.parse(await fs.readFile(packageJSONPath));
@@ -165,7 +166,7 @@ const getAllModuleDependencies = async (srcDir, packageName, globePkg) => {
         JSON.parse(
           await fs.readFile(pathJoin(extendingSrcDir, 'package.json')),
         );
-      const srcPkg = extendsSrcModulePkg ? extendsSrcModulePkg : globePkg;
+      const srcPkg = extendsSrcModulePkg ? extendsSrcModulePkg : repoPkg;
       moduleDeps.forEach(moduleDepName => {
         if (!srcPkg.dependencies[moduleDepName]) {
           throw new Error(
@@ -183,12 +184,12 @@ const getAllModuleDependencies = async (srcDir, packageName, globePkg) => {
   return allModuleDeps;
 };
 
-const getAllPublicAssetDirs = async (srcDir, packageName, globePkg) => {
-  const pkgDeps = await getAllSrcDependencies(srcDir, packageName, globePkg);
+const getAllPublicAssetDirs = async (srcDir, packageName, repoPkg) => {
+  const pkgDeps = await getAllSrcDependencies(srcDir, packageName, repoPkg);
   const allPublicAssetDirs = [];
   await Promise.all(
     Array.from(pkgDeps).map(async pkgDep => {
-      const { packageDir } = await getPackageDir(srcDir, pkgDep, globePkg);
+      const { packageDir } = await getPackageDir(srcDir, pkgDep, repoPkg);
       const packageJSONPath = pathJoin(packageDir, 'package.json');
       const pkgJSON = JSON.parse(await fs.readFile(packageJSONPath));
       if (pkgJSON.aven && pkgJSON.aven.publicAssetDir) {
@@ -225,8 +226,16 @@ const getAppEnv = async (appName, appPkg) => {
   const envName = specifiedEnvName || 'razzle';
   let envModule = globeEnvs[envName];
   if (!envModule) {
-    const envPath = pathJoin(srcDir, envName);
-    if (!(await fs.exists(envPath))) {
+    let envPath = null;
+    let error = null;
+    try {
+      const { packageDir } = await getPackageDir(srcDir, envName, repoPkg);
+      envPath = packageDir;
+    } catch (e) {
+      error = e;
+    }
+    if (!envPath) {
+      error && console.error(error);
       throw new Error(
         `Failed to load platform env "${envName}" as specified in package.json aven.env for "${appName}"`,
       );
@@ -278,10 +287,11 @@ async function getAppLocation(appName, appPkg, platform, appState) {
   if (platform.runInPlace) {
     return { ...appState, location: pathJoin(srcDir, platform.name) };
   }
-  if (!appState || !appState.location) {
-    return await initLocation(appName, appPkg, platform, appState);
-  }
-  if (!(await fs.exists(appState.location))) {
+  if (
+    !appState ||
+    !appState.location ||
+    !(await fs.exists(appState.location))
+  ) {
     return await initLocation(appName, appPkg, platform, appState);
   }
   return appState;
@@ -289,14 +299,14 @@ async function getAppLocation(appName, appPkg, platform, appState) {
 
 async function sync(appEnv, location, appName, appPkg, srcDir) {
   const packageSourceDir = appEnv.getPackageSourceDir(location);
-  const globePkg = JSON.parse(
+  const repoPkg = JSON.parse(
     await fs.readFile(pathJoin(srcDir, 'package.json')),
   );
   await fs.mkdirp(packageSourceDir);
 
   const existingDirs = await fs.readdir(packageSourceDir);
 
-  const srcDepsSet = await getAllSrcDependencies(srcDir, appName, globePkg);
+  const srcDepsSet = await getAllSrcDependencies(srcDir, appName, repoPkg);
   const srcDeps = Array.from(srcDepsSet);
   await Promise.all(
     existingDirs
@@ -308,7 +318,7 @@ async function sync(appEnv, location, appName, appPkg, srcDir) {
   );
   await Promise.all(
     srcDeps.map(async srcDep => {
-      await syncPackage(srcDep, srcDir, packageSourceDir, globePkg);
+      await syncPackage(srcDep, srcDir, packageSourceDir, repoPkg);
     }),
   );
 
@@ -317,7 +327,7 @@ async function sync(appEnv, location, appName, appPkg, srcDir) {
   const allModuleDeps = await getAllModuleDependencies(
     srcDir,
     appName,
-    globePkg,
+    repoPkg,
   );
 
   const distPkg = {
@@ -329,7 +339,7 @@ async function sync(appEnv, location, appName, appPkg, srcDir) {
     },
   };
 
-  const assetDirs = await getAllPublicAssetDirs(srcDir, appName, globePkg);
+  const assetDirs = await getAllPublicAssetDirs(srcDir, appName, repoPkg);
   const destAssetDir = pathJoin(location, 'public');
   await Promise.all(
     assetDirs.map(async assetDir => syncDirectories(assetDir, destAssetDir)),
@@ -563,7 +573,7 @@ async function doPublish(packageName, localParentDeps = []) {
     );
   }
   const { moduleDependencies, srcDependencies } = localPackage.aven;
-  const globePkg = JSON.parse(
+  const repoPkg = JSON.parse(
     await fs.readFile(pathJoin(srcDir, 'package.json')),
   );
   let publishedVersion = localPackage.version;
@@ -580,7 +590,7 @@ async function doPublish(packageName, localParentDeps = []) {
   };
   if (moduleDependencies) {
     moduleDependencies.forEach(depName => {
-      finalPkgJson.dependencies[depName] = globePkg.dependencies[depName];
+      finalPkgJson.dependencies[depName] = repoPkg.dependencies[depName];
     });
   }
   const npmNames = {};
