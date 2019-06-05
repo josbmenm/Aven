@@ -47,7 +47,7 @@ export default function createFSClient({ client }) {
       doc,
     });
     const id = folderBlock.getId();
-    await doc.put(folderBlock);
+    await doc.putBlock(folderBlock);
     return { id, name };
   }
 

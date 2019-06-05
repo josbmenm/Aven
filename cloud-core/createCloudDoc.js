@@ -1186,6 +1186,7 @@ export default function createCloudDoc({
     putToSource,
     putTransaction,
     putId,
+    putBlock,
     fetchConnectedValue,
     getConnectedValue,
     getBlock,
