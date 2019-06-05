@@ -124,6 +124,7 @@ export function computeKitchenConfig(cloud) {
     .observeConnectedValue(['files', 'db.json', 'id'])
     .subscribe({
       next: atData => {
+        console.log('HIHO', atData);
         if (atData == null) {
           return;
         }

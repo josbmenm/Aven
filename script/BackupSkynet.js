@@ -26,7 +26,6 @@ async function startBackupRunner(
       encoding: 'utf8',
     });
   }
-  console.log('ffs', backupState);
 
   let flushStateQuickTimeout = null;
   let flushStateSlowTimeout = null;

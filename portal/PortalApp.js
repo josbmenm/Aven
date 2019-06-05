@@ -33,6 +33,8 @@ import SequencingDebugScreen from '../screens/SequencingDebugScreen';
 
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
+import GuideDashboardScreen from '../screens/GuideDashboardScreen';
+import EngDashboardScreen from '../screens/EngDashboardScreen';
 import DeviceManagerScreen from '../screens/DeviceManagerScreen';
 import { OrderCompletePortalScreen } from '../screens/OrderCompleteScreen';
 import CollectNameScreen from '../screens/CollectNameScreen';
@@ -57,7 +59,7 @@ import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 
 let IS_DEV = process.env.NODE_ENV !== 'production';
-// IS_DEV = false;
+IS_DEV = false;
 
 const RESTAURANT_DEV = {
   useSSL: false,
@@ -144,6 +146,8 @@ const App = createStackTransitionNavigator({
   DeviceManager: DeviceManagerScreen,
   PaymentDebug: PaymentDebugScreen,
   SequencingDebug: SequencingDebugScreen,
+  EngDashboard: EngDashboardScreen,
+  GuideDashboard: GuideDashboardScreen,
 });
 
 const AppContainer = createAppContainer(App);

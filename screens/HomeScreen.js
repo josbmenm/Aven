@@ -65,6 +65,25 @@ export default function HomeScreenMemo({ navigation, ...props }) {
           icon="⚙️"
           title="Settings"
         />
+
+        <LinkRow
+          onPress={() => {
+            navigation.navigate({
+              routeName: 'EngDashboard',
+            });
+          }}
+          icon={'📋'}
+          title={'Engineering Dashboard'}
+        />
+        <LinkRow
+          onPress={() => {
+            navigation.navigate({
+              routeName: 'GuideDashboard',
+            });
+          }}
+          icon={'📋'}
+          title={'Guide Dashboard'}
+        />
       </RowSection>
     </SimplePage>
   );

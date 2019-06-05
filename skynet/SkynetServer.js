@@ -318,7 +318,7 @@ const startSkynetServer = async () => {
           console.error(e);
         });
     },
-    1 * 60 * 1000, // 1 minutes
+    10 * 60 * 1000, // 10 minutes
   );
 
   const dispatch = async action => {
