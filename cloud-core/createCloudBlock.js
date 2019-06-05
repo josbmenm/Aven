@@ -124,12 +124,20 @@ export default function createCloudBlock({
     if (blockState.value.value === undefined) {
       throw new Err('Cannot put empty block');
     }
-    await dispatch({
+    const name = onGetName();
+    const resp = await dispatch({
       type: 'PutBlock',
       domain,
-      name: onGetName(),
+      name,
       value: blockState.value.value,
     });
+    if (resp.id !== blockId) {
+      throw new Error(
+        `Attempted to put "${name}" block "${blockId}" but the server claims the ID is "${
+          resp.id
+        }"`,
+      );
+    }
     setPutTime();
   }
 
