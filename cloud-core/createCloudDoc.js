@@ -1079,7 +1079,8 @@ export default function createCloudDoc({
         return Observable.of(undefined);
       }
       const block = _getBlockWithId(cloudDocValue.id);
-      return block.functionObserveValueAndId(argumentDoc, onIsConnected);
+      const fnObs = block.functionObserveValueAndId(argumentDoc, onIsConnected);
+      return fnObs;
     });
   };
 
@@ -1095,7 +1096,7 @@ export default function createCloudDoc({
       docValue = docValue && docValue[v];
     });
     if (docValue == null) {
-      return Observable.of(undefined);
+      throw new Error(`Cannot look up block ID in ${name} on ${lookup.join()}`);
     }
     if (typeof docValue !== 'string') {
       throw new Error(`Cannot look up block ID in ${name} on ${lookup.join()}`);
@@ -1110,6 +1111,9 @@ export default function createCloudDoc({
           return Observable.of(null);
         }
         const connected = lookupDocBlock(value, lookup);
+        if (!connected) {
+          return Observable.of(undefined);
+        }
         return connected.observeValue;
       })
       .switch();
