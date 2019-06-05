@@ -32,7 +32,7 @@ export default function createFSClient({ client }) {
     );
     const files = {};
     filesInDir.forEach((fileName, index) => {
-      files[fileName] = { type: 'BlockReference', id: fileList[index] };
+      files[fileName] = fileList[index].getReference();
     });
     const folderObj = { files, type: 'Folder' };
     const block = await doc.writeBlockCompletely(folderObj);
