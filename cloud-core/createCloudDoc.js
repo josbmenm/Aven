@@ -65,7 +65,7 @@ export function createDocPool({
       restOfName = fullName.slice(localName.length + 1);
     }
     returningCloudValue = _docs[localName];
-    if (!returningCloudValue) {
+    if (!returningCloudValue && localName) {
       returningCloudValue = _docs[localName] = createCloudDoc({
         source,
         domain,
