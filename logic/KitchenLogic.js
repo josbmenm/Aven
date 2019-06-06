@@ -1,18 +1,6 @@
 const shallowEqual = require('fbjs/lib/shallowEqual');
 const mapObject = require('fbjs/lib/mapObject');
 
-const getTypeOfSchema = typeName => {
-  switch (typeName) {
-    case 'boolean':
-      return BOOL;
-    case 'integer':
-      return INT;
-    default: {
-      throw new Error(`Invalid type name "${typeName}"`);
-    }
-  }
-};
-
 const COUNT_MAX = 32767;
 // This max is because we have experienced: RangeError [ERR_OUT_OF_RANGE] [ERR_OUT_OF_RANGE]: The value of "value" is out of range. It must be >= -32768 and <= 32767. Received 1005538255
 let tagCounter = Math.floor(Math.random() * COUNT_MAX);
@@ -24,14 +12,6 @@ export function getFreshActionId() {
   }
   return tagCounter;
 }
-
-export const getTagOfSchema = tagSchema => {
-  return new Tag(
-    tagSchema.tag,
-    tagSchema.program,
-    getTypeOfSchema(tagSchema.type),
-  );
-};
 
 export const objFromCount = (size, keyMapper, valMapper) => {
   const o = {};

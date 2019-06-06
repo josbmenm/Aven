@@ -1,7 +1,25 @@
-import { getTagOfSchema } from '../logic/KitchenLogic';
-
 const { Controller, Tag, EthernetIP, TagGroup } = require('ethernet-ip');
 const { INT, BOOL } = EthernetIP.CIP.DataTypes.Types;
+
+const getTypeOfSchema = typeName => {
+  switch (typeName) {
+    case 'boolean':
+      return BOOL;
+    case 'integer':
+      return INT;
+    default: {
+      throw new Error(`Invalid type name "${typeName}"`);
+    }
+  }
+};
+
+export const getTagOfSchema = tagSchema => {
+  return new Tag(
+    tagSchema.tag,
+    tagSchema.program,
+    getTypeOfSchema(tagSchema.type),
+  );
+};
 
 const createSchema = config => {
   const tags = {};
