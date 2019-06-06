@@ -21,11 +21,11 @@ import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import createEvalSource from '../cloud-core/createEvalSource';
 import RestaurantReducer from '../logic/RestaurantReducer';
+import RestaurantConfig from './RestaurantConfig';
 import DevicesReducer from '../logic/DevicesReducer';
 import submitFeedback from './submitFeedback';
 import validatePromoCode from './validatePromoCode';
 
-import startKitchen, { computeKitchenConfig } from './KitchenConfig';
 const getEnv = c => process.env[c];
 
 const ONO_ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
@@ -168,7 +168,7 @@ const startSkynetServer = async () => {
   const evalSource = createEvalSource({
     source: storageSource,
     domain: 'onofood.co',
-    functions: [RestaurantReducer, DevicesReducer],
+    functions: [RestaurantReducer, DevicesReducer, RestaurantConfig],
     getValueOfDoc: (docName, cloud) => {
       console.log('getting value of doc', docName);
       return null;
@@ -186,8 +186,6 @@ const startSkynetServer = async () => {
   //   source: evalSource,
   //   domain,
   // });
-
-  computeKitchenConfig(evalSource.cloud);
 
   const fsClient = createFSClient({ client: evalSource.cloud });
 
@@ -252,15 +250,16 @@ const startSkynetServer = async () => {
       name: 'OnoState/Devices^DevicesReducer',
     });
 
+    console.log('Putting Permission.. OnoState^RestaurantConfig');
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'OnoState^RestaurantConfig',
+    });
+
     console.log('Putting Permission.. InventoryState');
     await putPermission({
       defaultRule: { canRead: true },
       name: 'InventoryState',
-    });
-
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'KitchenConfig',
     });
   }
 

@@ -73,7 +73,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   const cloud = useCloud();
   const isConnected = useObservable(cloud.isConnected);
   const kitchenState = useCloudValue('KitchenState');
-  const kitchenConfig = useCloudValue('KitchenConfig');
+  const kitchenConfig = useCloudValue('OnoState^RestaurantConfig');
   const isPLCConnected = React.useMemo(
     () => kitchenState && kitchenState.isPLCConnected,
     [kitchenState],

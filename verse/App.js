@@ -524,7 +524,7 @@ function StatusDisplayScreen() {
 // }
 
 function Kitchen() {
-  const kitchenConfig = useCloudValue('KitchenConfig');
+  const kitchenConfig = useCloudValue('OnoState^RestaurantConfig');
   const kitchenState = useCloudValue('KitchenState');
   const restaurantState = useCloudValue('RestaurantState');
 

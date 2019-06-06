@@ -303,7 +303,9 @@ export function withKitchen(Component) {
     <CloudContext.Consumer>
       {restaurant => (
         <ComponentWithObservedState
-          kitchenConfig={restaurant.get('KitchenConfig').observeValue}
+          kitchenConfig={
+            restaurant.get('OnoState^RestaurantConfig').observeValue
+          }
           kitchenState={restaurant.get('KitchenState').observeValue}
           kitchenCommand={async (subsystemName, pulse, values) => {
             await restaurant.dispatch({

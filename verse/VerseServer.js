@@ -23,10 +23,7 @@ import RestaurantReducer from '../logic/RestaurantReducer';
 import placeOrder from './placeOrder';
 import { computeInventory } from './KitchenInventory';
 
-import startKitchen, {
-  // computeKitchenConfig,
-  getFreshActionId,
-} from './startKitchen';
+import startKitchen, { getFreshActionId } from './startKitchen';
 import { handleStripeAction, getPaymentIntent } from '../stripe-server/Stripe';
 import { computeNextSteps } from '../logic/KitchenSequence';
 import {
@@ -196,7 +193,6 @@ const startVerseServer = async () => {
 
   // const fsClient = createFSClient({ client: cloud });
   // await new Promise(resolve => setTimeout(resolve, 3000));
-  // computeKitchenConfig(cloud);
 
   let kitchen = null;
   if (!process.env.DISABLE_ONO_KITCHEN) {
@@ -350,7 +346,7 @@ const startVerseServer = async () => {
     },
   });
 
-  evalSource.cloud.get('KitchenConfig').observeValue.subscribe({
+  evalSource.cloud.get('OnoState^RestaurantConfig').observeValue.subscribe({
     next: state => {
       kitchenConfig = state;
       handleStateUpdates();
