@@ -1029,11 +1029,13 @@ export default function createCloudDoc({
                 name: `${valueName}^${getFullName()}`,
               })
               .then(res => {
+                const argumentId = argumentDoc.getId();
                 if (
                   res.context &&
                   res.context.argument &&
                   res.context.argument.type === 'DocReference' &&
-                  argumentDoc.getId() === res.context.argument.id
+                  (argumentId === undefined ||
+                    argumentId === res.context.argument.id)
                 ) {
                   const argId = res.context.argument.id;
                   argumentDoc.$setState({
