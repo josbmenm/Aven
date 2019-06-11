@@ -30,8 +30,6 @@ import { HostContext } from '../components/AirtableImage';
 
 const getEnv = c => process.env[c];
 
-const IS_DEV = process.env.NODE_ENV === 'development';
-
 const ONO_ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
 function createLogger(source, domain, logName) {
