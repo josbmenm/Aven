@@ -17,12 +17,14 @@ export function HostContextContainer({ authority, useSSL, children }) {
 const AirtableImage = ({ image, style, resizeMode, tintColor }) => {
   const { authority, useSSL } = React.useContext(HostContext);
   const origUrl = image && image[0] && image[0].url;
-  const ext = path.extname(origUrl);
-  const imageURI = `${
-    useSSL ? 'https' : 'http'
-  }://${authority}/_/onofood.co/Airtable/files/${md5(
-    origUrl,
-  ).toString()}${ext}`;
+  const ext = origUrl && path.extname(origUrl);
+  const imageURI =
+    ext &&
+    `${
+      useSSL ? 'https' : 'http'
+    }://${authority}/_/onofood.co/Airtable/files/${md5(
+      origUrl,
+    ).toString()}${ext}`;
   return (
     <Image
       style={style}
