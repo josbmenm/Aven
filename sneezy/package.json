@@ -1,0 +1,41 @@
+{
+  "name": "sneezy",
+  "aven": {
+    "env": "razzle",
+    "publicAssetDir": "public",
+    "envOptions": {
+      "deployEnv": "Heroku",
+      "herokuAppName": "ono-something",
+      "mainServer": "SneezyServer.js",
+      "mainClient": "MainClient.js"
+    },
+    "srcDependencies": [
+      "utils",
+      "stripe-server",
+      "aven-web",
+      "ono-cloud",
+      "cloud-auth",
+      "cloud-auth-email",
+      "cloud-auth-sms",
+      "cloud-auth-root",
+      "cloud-utils",
+      "email-agent-sendgrid",
+      "sms-agent-twilio",
+      "admin",
+      "cloud-core",
+      "cloud-server",
+      "cloud-postgres",
+      "components",
+      "react-utils"
+    ],
+    "moduleDependencies": [
+      "mjml",
+      "mjml-react",
+      "@react-navigation/core",
+      "airtable",
+      "wget-improved",
+      "square-connect",
+      "fs-extra"
+    ]
+  }
+}
