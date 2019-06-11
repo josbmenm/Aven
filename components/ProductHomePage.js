@@ -4,7 +4,7 @@ import { Image, StyleSheet } from 'react-native';
 import FoodMenu from './FoodMenu';
 import BlendMenu from './BlendMenu';
 import loadImages from '../components/Image';
-import { usePreloadedImages } from '../components/AirtableImage';
+import { usePreloadedImages } from './AirtableImage';
 
 function ProductHomePage({ menu, ...props }) {
   usePreloadedImages(() => {

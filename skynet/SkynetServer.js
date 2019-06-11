@@ -22,11 +22,15 @@ import createProtectedSource from '../cloud-auth/createProtectedSource';
 import createEvalSource from '../cloud-core/createEvalSource';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import RestaurantConfig from './RestaurantConfig';
+import CompanyConfigFn from './CompanyConfigFn';
 import DevicesReducer from '../logic/DevicesReducer';
 import submitFeedback from './submitFeedback';
 import validatePromoCode from './validatePromoCode';
+import { HostContext } from '../components/AirtableImage';
 
 const getEnv = c => process.env[c];
+
+const IS_DEV = process.env.NODE_ENV === 'development';
 
 const ONO_ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
@@ -168,7 +172,12 @@ const startSkynetServer = async () => {
   const evalSource = createEvalSource({
     source: storageSource,
     domain: 'onofood.co',
-    functions: [RestaurantReducer, DevicesReducer, RestaurantConfig],
+    functions: [
+      RestaurantReducer,
+      DevicesReducer,
+      RestaurantConfig,
+      CompanyConfigFn,
+    ],
     getValueOfDoc: (docName, cloud) => {
       console.log('getting value of doc', docName);
       return null;
@@ -191,6 +200,7 @@ const startSkynetServer = async () => {
 
   const context = new Map();
   context.set(CloudContext, evalSource.cloud); // bad idea, must have independent client for authentication!!!
+  context.set(HostContext, { authority: 'onofood.co', useSSL: !IS_DEV });
 
   const rootAuth = {
     accountId: 'root',
@@ -254,6 +264,12 @@ const startSkynetServer = async () => {
     await putPermission({
       defaultRule: { canRead: true },
       name: 'OnoState^RestaurantConfig',
+    });
+
+    console.log('Putting Permission.. OnoState^RestaurantConfig');
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'OnoState^CompanyConfig',
     });
 
     console.log('Putting Permission.. InventoryState');

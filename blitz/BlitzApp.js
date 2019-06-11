@@ -21,15 +21,9 @@ import ProductHomeScreen from '../screens/ProductHomeScreen';
 import KioskHomeScreen from '../screens/KioskHomeScreen';
 import BlendScreen from '../screens/BlendScreen';
 import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
-import FeedbackCompleteScreen from '../screens/FeedbackCompleteScreen';
-import FeedbackHomeScreen from '../screens/FeedbackHomeScreen';
-import FeedbackScreen from '../screens/FeedbackScreen';
-import FeedbackRatingScreen from '../screens/FeedbackRatingScreen';
-import FeedbackReceiptScreen from '../screens/FeedbackReceiptScreen';
 import FoodScreen from '../screens/FoodScreen';
-import PaymentDebugScreen from '../components/PaymentDebugScreen';
+import PaymentDebugScreen from '../screens/PaymentDebugScreen';
 import Spinner from '../components/Spinner';
-import SequencingDebugScreen from '../screens/SequencingDebugScreen';
 
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
@@ -130,23 +124,13 @@ const OrderNavigator = createStackTransitionNavigator(
 
 const KioskAppNavigator = createStackTransitionNavigator(
   {
-    // Home: HomeScreen,
-    // ComponentPlayground: ComponentPlaygroundScreen,
-    // KitchenEng: KitchenEngScreen,
-    // KitchenEngSub: KitchenEngSubScreen,
-    // KioskSettings: KioskSettingsScreen,
     KioskHome: KioskHomeScreen,
-    // Blend: BlendScreen,
-    // CustomizeBlend: CustomizeBlendScreen,
-    // Food: FoodScreen,
-    // ProductHome: ProductHomeScreen,
     OrderConfirm: OrderConfirmScreen,
     OrderComplete: OrderCompleteScreen,
     CollectName: CollectNameScreen,
     SendReceipt: SendReceiptScreen,
     Receipt: ReceiptScreen,
     PaymentDebug: PaymentDebugScreen,
-    SequencingDebug: SequencingDebugScreen,
     AppUpsell: AppUpsellScreen,
     OrderNavigator,
   },

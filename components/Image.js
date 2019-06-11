@@ -1,25 +1,11 @@
 import React from 'react';
-import FastImage from 'react-native-fast-image';
 import { Image } from 'react-native';
 
-const OnoImage = ({ imageURI, style, resizeMode, tintColor }) => {
-  // special treatment for tintColor because FastImage does not support it
-  if (tintColor) {
-    return (
-      <Image
-        style={[style, { tintColor }]}
-        tintColor={tintColor}
-        resizeMode={resizeMode}
-        source={{
-          uri: imageURI,
-        }}
-      />
-    );
-  }
-
+const CustomImage = ({ imageURI, style, resizeMode, tintColor }) => {
   return (
-    <FastImage
-      style={style}
+    <Image
+      style={[style, { tintColor }]}
+      tintColor={tintColor}
       resizeMode={resizeMode}
       source={{
         uri: imageURI,
@@ -28,6 +14,6 @@ const OnoImage = ({ imageURI, style, resizeMode, tintColor }) => {
   );
 };
 
-export const loadImages = FastImage.preload;
+export const loadImages = () => {};
 
-export default OnoImage;
+export default CustomImage;

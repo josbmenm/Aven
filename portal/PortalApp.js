@@ -16,7 +16,7 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 import { createNavigator, StackRouter } from '../navigation-core';
 import codePush from 'react-native-code-push';
 
-import HomeScreen from '../screens/HomeScreen';
+import PortalHomeScreen from '../screens/PortalHomeScreen';
 import ComponentPlaygroundScreen from '../screens/ComponentPlaygroundScreen';
 import ProductHomeScreen from '../screens/ProductHomeScreen';
 import KitchenEngScreen from '../screens/KitchenEngScreen';
@@ -27,9 +27,11 @@ import BlendScreen from '../screens/BlendScreen';
 import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
 import FoodScreen from '../screens/FoodScreen';
 import DebugStateScreen from '../screens/DebugStateScreen';
-import PaymentDebugScreen from '../components/PaymentDebugScreen';
+import PaymentDebugScreen from '../screens/PaymentDebugScreen';
+import OrdersScreen from '../screens/OrdersScreen';
+import ManualControlScreen from '../screens/ManualControlScreen';
 import useCloudProvider from '../components/useCloudProvider';
-import SequencingDebugScreen from '../screens/SequencingDebugScreen';
+import SequencerScreen from '../screens/SequencerScreen';
 
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
@@ -39,6 +41,7 @@ import DeviceManagerScreen from '../screens/DeviceManagerScreen';
 import { OrderCompletePortalScreen } from '../screens/OrderCompleteScreen';
 import CollectNameScreen from '../screens/CollectNameScreen';
 import SendReceiptScreen from '../screens/SendReceiptScreen';
+import OrderConfirmTestScreen from '../screens/OrderConfirmTestScreen';
 import InventoryScreen from '../screens/InventoryScreen';
 import ReceiptScreen from '../screens/ReceiptScreen';
 import AppUpsellScreen from '../screens/AppUpsellScreen';
@@ -63,7 +66,7 @@ IS_DEV = false;
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  authority: 'localhost:8830',
+  authority: '192.168.1.81:8830',
 };
 const RESTAURANT_PROD = {
   useSSL: false,
@@ -135,7 +138,7 @@ const KioskNavigator = createStackTransitionNavigator(
 process.env.REACT_NAV_LOGGING = true;
 
 const App = createStackTransitionNavigator({
-  Home: HomeScreen,
+  Home: PortalHomeScreen,
   OrderComplete: OrderCompletePortalScreen,
   Kiosk: KioskNavigator,
   ComponentPlayground: ComponentPlaygroundScreen,
@@ -145,9 +148,12 @@ const App = createStackTransitionNavigator({
   Inventory: InventoryScreen,
   DeviceManager: DeviceManagerScreen,
   PaymentDebug: PaymentDebugScreen,
-  SequencingDebug: SequencingDebugScreen,
+  OrderConfirmTest: OrderConfirmTestScreen,
+  Sequencer: SequencerScreen,
   EngDashboard: EngDashboardScreen,
   GuideDashboard: GuideDashboardScreen,
+  Orders: OrdersScreen,
+  ManualControl: ManualControlScreen,
 });
 
 const AppContainer = createAppContainer(App);

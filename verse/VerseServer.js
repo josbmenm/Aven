@@ -19,6 +19,8 @@ import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import combineSources from '../cloud-core/combineSources';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import authenticateSource from '../cloud-core/authenticateSource';
+import InventoryFn from './InventoryFn';
+import MenuFn from './MenuFn';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import placeOrder from './placeOrder';
 import { computeInventory } from './KitchenInventory';
@@ -158,7 +160,7 @@ const startVerseServer = async () => {
     session: rootAuth,
     source: combinedStorageSource,
     domain: 'onofood.co',
-    functions: [RestaurantReducer],
+    functions: [RestaurantReducer, InventoryFn, MenuFn],
   });
 
   const protectedSource = createProtectedSource({
@@ -180,6 +182,14 @@ const startVerseServer = async () => {
     await putPermission({
       defaultRule: { canRead: true },
       name: 'KitchenState',
+    });
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'OnoState^Inventory',
+    });
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'OnoState^Menu',
     });
   }
 

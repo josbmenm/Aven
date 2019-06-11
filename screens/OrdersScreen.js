@@ -612,26 +612,13 @@ function ManualActionsSection() {
   );
 }
 
-export default function SequencingDebugScreen(props) {
-  const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActionsUnburnt',
-    RestaurantReducer,
-  );
+function OrdersList({ restaurantState, dispatch }) {
+  return <OrderQueue restaurantState={restaurantState} dispatch={dispatch} />;
+}
+
+function PrepState({ restaurantState, dispatch }) {
   return (
-    <TwoPanePage
-      {...props}
-      title="Kitchen Manager"
-      icon="📋"
-      afterSide={
-        <ControlPanel
-          restaurantState={restaurantState}
-          restaurantDispatch={dispatch}
-        />
-      }
-      side={
-        <KitchenHistory restaurantState={restaurantState} dispatch={dispatch} />
-      }
-    >
+    <React.Fragment>
       <OrderQueue restaurantState={restaurantState} dispatch={dispatch} />
       <RestaurantStateList
         restaurantState={restaurantState}
@@ -640,7 +627,25 @@ export default function SequencingDebugScreen(props) {
       <RowSection>
         <AdHocOrderRow />
       </RowSection>
-      <ManualActionsSection />
+    </React.Fragment>
+  );
+}
+
+export default function OrdersScreen(props) {
+  const [restaurantState, dispatch] = useCloudReducer(
+    'RestaurantActionsUnburnt',
+    RestaurantReducer,
+  );
+  return (
+    <TwoPanePage
+      {...props}
+      title="Orders"
+      icon="🎟"
+      afterSide={null}
+      side={<PrepState restaurantState={restaurantState} dispatch={dispatch} />}
+    >
+      <OrdersList restaurantState={restaurantState} dispatch={dispatch} />
+
       <Button
         secondary
         title="Wipe Restaurant State"
@@ -652,4 +657,4 @@ export default function SequencingDebugScreen(props) {
   );
 }
 
-SequencingDebugScreen.navigationOptions = TwoPanePage.navigationOptions;
+OrdersScreen.navigationOptions = TwoPanePage.navigationOptions;

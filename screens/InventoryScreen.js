@@ -109,7 +109,9 @@ function SetFillForm({ slot, onClose }) {
   }
   return (
     <View>
-      <Text>Set {slot.name} fill state</Text>
+      <Text style={{ ...titleStyle, textAlign: 'center', marginVertical: 8 }}>
+        Set {slot.name} fill state
+      </Text>
       <Button
         title="100%"
         onPress={() => {
@@ -132,6 +134,12 @@ function SetFillForm({ slot, onClose }) {
         title="25%"
         onPress={() => {
           setAmount(0.25);
+        }}
+      />
+      <Button
+        title="Empty"
+        onPress={() => {
+          setAmount(0);
         }}
       />
     </View>

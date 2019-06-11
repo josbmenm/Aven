@@ -4,7 +4,7 @@ import Image, { loadImages } from './Image';
 const md5 = require('crypto-js/md5');
 const path = require('path');
 
-const HostContext = React.createContext();
+export const HostContext = React.createContext();
 
 export function HostContextContainer({ authority, useSSL, children }) {
   return (

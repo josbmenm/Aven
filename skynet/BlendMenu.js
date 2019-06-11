@@ -13,6 +13,7 @@ import useCloud from '../cloud-core/useCloud';
 import { useMenu, useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import useObservable from '../cloud-core/useObservable';
 import { getSelectedIngredients } from '../logic/configLogic';
+import AirtableImage from '../components/AirtableImage';
 
 function BlendDisplay({ menuItem, companyConfig }) {
   const computed = React.useMemo(() => {
@@ -31,21 +32,43 @@ function BlendDisplay({ menuItem, companyConfig }) {
       <Text style={{ fontWeight: 'bold', fontSize: 32 }}>
         {menuItem['Display Name']}
       </Text>
+      <AirtableImage
+        image={menuItem.Recipe['Recipe Image']}
+        style={{
+          width: 250,
+          height: 250,
+          resizeMode: 'contain',
+        }}
+      />
       <Text>{menuItem['Display Description']}</Text>
       <Text>
         {menuItem.Recipe['DisplayCalories']} Calories |{' '}
         {menuItem.Recipe['Nutrition Detail']}
       </Text>
+      {computed.ingredients.map(ing => {
+        return (
+          <View key={ing.id}>
+            <AirtableImage
+              image={ing.Image}
+              style={{
+                width: 50,
+                height: 50,
+                resizeMode: 'contain',
+              }}
+            />
+            <Text>{`${ing.Name} (${ing.amount} x ${
+              ing.amountVolumeRatio
+            }ml)`}</Text>
+          </View>
+        );
+      })}
       <Text>{`
-${computed.ingredients
-  .map(ing => `${ing.Name} (${ing.amount} x ${ing.amountVolumeRatio}ml)`)
-  .join('\n')}
-
 Ingredients: ${computed.ingredientsVolume}ml
 Enhancements: ${computed.enhancementsVolume}ml
 Liquid: ${computed.liquidVolume}ml
 ===
-Final Volume: ${computed.finalVolume}ml`}</Text>
+Final Volume: ${computed.finalVolume}ml
+`}</Text>
     </View>
   );
 }

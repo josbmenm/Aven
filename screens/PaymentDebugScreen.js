@@ -7,8 +7,8 @@ import {
   ScrollView,
   AlertIOS,
 } from 'react-native';
-import JSONView from './JSONView';
-import Button from './Button';
+import JSONView from '../components/JSONView';
+import Button from '../components/Button';
 import {
   CardReaderLog,
   useCardReader,
@@ -18,12 +18,12 @@ import {
   clearReaderLog,
 } from '../card-reader/CardReader';
 import useObservable from '../cloud-core/useObservable';
-import RowSection from './RowSection';
-import TextRow from './TextRow';
-import Row from './Row';
-import BitRow from './BitRow';
-import { rowStyle, rowTitleStyle } from './Styles';
-import SimplePage from './SimplePage';
+import RowSection from '../components/RowSection';
+import TextRow from '../components/TextRow';
+import Row from '../components/Row';
+import BitRow from '../components/BitRow';
+import { rowStyle, rowTitleStyle } from '../components/Styles';
+import SimplePage from '../components/SimplePage';
 
 function ObservableBitRow({ value, title }) {
   // const currentValue = useObservable(value);
@@ -261,9 +261,9 @@ export default function PaymentDebugScreen(props) {
     <SimplePage title="Card Reader Debugging" icon="💸" {...props}>
       <RowSection>
         <Button
-          title="HOME"
+          title="Sample Checkout"
           onPress={() => {
-            props.navigation.navigate('Home');
+            props.navigation.navigate('OrderConfirmTest');
           }}
         />
         <Button

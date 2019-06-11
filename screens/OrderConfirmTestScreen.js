@@ -1,39 +1,27 @@
 import React from 'react';
-import { useOrder, useOrderSummary } from '../ono-cloud/OnoKitchen';
-import useEmptyOrderEscape from './useEmptyOrderEscape';
 import { useCardPaymentCapture } from '../card-reader/CardReader';
 import OrderConfirmPage from '../components/OrderConfirmPage';
 import useAsyncError from '../react-utils/useAsyncError';
 
-export default function OrderConfirmScreen({
-  paymentRequest,
-  paymentError,
-  isPaymentReady,
-  paymentActivityLog,
-  navigation,
-  ...props
-}) {
-  const { confirmOrder, order } = useOrder();
-  const [isCompleted, setIsCompleted] = React.useState(false);
+const exampleOrderSummary = require('./exampleOrderSummary.json');
+
+export default function OrderConfirmTestScreen({ navigation, ...props }) {
   const [error, setError] = React.useState(null);
   function handleCaughtError(e) {
     setError(e);
     return true;
   }
   const handleError = useAsyncError(handleCaughtError);
-  const summary = useOrderSummary();
-  console.log(JSON.stringify(summary));
+  const summary = { ...exampleOrderSummary };
   async function handleCompletion(paymentIntent) {
-    setIsCompleted(true);
-    await confirmOrder(paymentIntent);
-    navigation.navigate('Receipt', { orderId: order.getName() });
+    navigation.goBack();
   }
   const paymentDetails =
     summary && summary.total > 0
       ? {
           amount: summary.total,
           description: 'Ono Blends',
-          context: { id: order && order.getName() },
+          context: { id: 'uhhh' },
           onCompletion: paymentIntent =>
             handleError(handleCompletion(paymentIntent)),
         }
@@ -45,11 +33,7 @@ export default function OrderConfirmScreen({
     paymentErrorMessage,
     displayMessage,
   } = useCardPaymentCapture(paymentDetails);
-  useEmptyOrderEscape();
-  async function handleSkippedPayment() {
-    await confirmOrder();
-    navigation.navigate('Receipt', { orderId: order.getName() });
-  }
+  async function handleSkippedPayment() {}
   return (
     <OrderConfirmPage
       summary={summary}
@@ -60,8 +44,7 @@ export default function OrderConfirmScreen({
       paymentDisplayMessage={displayMessage}
       error={error}
       backBehavior={() => {
-        cancelPayment();
-        goBack();
+        navigation.goBack();
       }}
       skipPayment={async () => {
         handleError(handleSkippedPayment());
@@ -72,4 +55,4 @@ export default function OrderConfirmScreen({
   );
 }
 
-OrderConfirmScreen.navigationOptions = OrderConfirmPage.navigationOptions;
+OrderConfirmTestScreen.navigationOptions = OrderConfirmPage.navigationOptions;

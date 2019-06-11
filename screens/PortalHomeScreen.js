@@ -1,11 +1,10 @@
 import React from 'react';
 import SimplePage from '../components/SimplePage';
 import RowSection from '../components/RowSection';
-import Hero from '../components/Hero';
 import LinkRow from '../components/LinkRow';
 import { Image } from 'react-native';
 
-export default function HomeScreenMemo({ navigation, ...props }) {
+export default function PortalHomeScreenMemo({ navigation, ...props }) {
   return (
     <SimplePage hideBackButton navigation={navigation} {...props}>
       <Image
@@ -35,11 +34,29 @@ export default function HomeScreenMemo({ navigation, ...props }) {
         <LinkRow
           onPress={() => {
             navigation.navigate({
-              routeName: 'SequencingDebug',
+              routeName: 'Sequencer',
             });
           }}
-          icon={'📋'}
-          title={'Kitchen Manager'}
+          icon={'🚦'}
+          title={'Sequencer'}
+        />
+        <LinkRow
+          onPress={() => {
+            navigation.navigate({
+              routeName: 'ManualControl',
+            });
+          }}
+          icon={'⚡️'}
+          title={'Manual Control'}
+        />
+        <LinkRow
+          onPress={() => {
+            navigation.navigate({
+              routeName: 'Orders',
+            });
+          }}
+          icon={'🎟'}
+          title={'Orders'}
         />
 
         <LinkRow
@@ -89,6 +106,6 @@ export default function HomeScreenMemo({ navigation, ...props }) {
   );
 }
 
-const HomeScreen = React.memo(HomeScreenMemo);
+const PortalHomeScreen = React.memo(PortalHomeScreenMemo);
 
-HomeScreen.navigationOptions = SimplePage.navigationOptions;
+PortalHomeScreen.navigationOptions = SimplePage.navigationOptions;

@@ -31,12 +31,18 @@ function waveIndefinitely(position) {
   });
 }
 
-function AnimateyCreditCard({ ready }) {
-  const isReady = ready === undefined ? true : ready;
+function AnimateyCreditCard({ ready, isDone, isCardInserted }) {
   const [position] = useState(new Animated.Value(0));
 
   useEffect(() => {
-    if (isReady) {
+    const isReady = !isDone ? true : ready;
+    if (isCardInserted) {
+      Animated.timing(position, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.inOut(Easing.cubic),
+      }).start(evt => {});
+    } else if (isReady) {
       Animated.timing(position, {
         toValue: 1,
         duration: 1000,
@@ -53,7 +59,7 @@ function AnimateyCreditCard({ ready }) {
         easing: Easing.inOut(Easing.cubic),
       }).start();
     }
-  }, [isReady]);
+  }, [ready, isDone, isCardInserted]);
 
   return (
     <Animated.View
@@ -113,6 +119,11 @@ export default function OrderConfirmPage({
   readerState,
   backBehavior,
   error,
+  paymentState,
+  paymentSuccessful,
+  paymentCompleted,
+  paymentErrorMessage,
+  paymentDisplayMessage,
   ...props
 }) {
   // console.log('---- =======');
@@ -134,52 +145,90 @@ export default function OrderConfirmPage({
     status,
     promptType,
     isCollecting,
-    isCardInserted,
-    errorStep,
-    errorCode,
-    errorDeclineCode,
-  } = readerState;
+    cardInserted,
+    paymentStatus,
+  } = paymentState;
+  const shouldRemoveCard =
+    paymentDisplayMessage === 'Remove Card' && cardInserted;
+
+  // function hasInputOption(name) {
+  //   return (
+  //     status === 'CollectingPaymentMethod' &&
+  //     inputOptions &&
+  //     inputOptions.indexOf(name) !== -1
+  //   );
+  // }
+  // if (
+  //   isCollecting &&
+  //   !isCardInserted &&
+  //   hasInputOption('InsertCard') &&
+  //   hasInputOption('TapCard')
+  // ) {
+  //   message = 'insert card or tap payment';
+  // } else if (isCollecting && !isCardInserted && hasInputOption('InsertCard')) {
+  //   message = 'insert card';
+  // }
+
+  // if (!message && promptType === 'TryAnotherReadMethod') {
+  //   message = 'try another payment method';
+  // }
+
+  // if (!message && status === 'CollectingPaymentIntent') {
+  //   message = 'please wait.';
+  // }
+
+  // if (!message && status === 'NotReady') {
+  //   message = 'please wait.';
+  // }
+
+  // if (!message && errorStep === 'confirmPaymentIntent' && errorCode === 103) {
+  //   message = 'card declined ' + errorDeclineCode;
+  // }
+
   let message = null;
 
-  function hasInputOption(name) {
-    return (
-      status === 'CollectingPaymentMethod' &&
-      inputOptions &&
-      inputOptions.indexOf(name) !== -1
-    );
-  }
   if (
-    isCollecting &&
-    !isCardInserted &&
-    hasInputOption('InsertCard') &&
-    hasInputOption('TapCard')
+    !message &&
+    !paymentCompleted &&
+    paymentState.paymentStatus === 2 &&
+    !cardInserted
   ) {
     message = 'insert card or tap payment';
-  } else if (isCollecting && !isCardInserted && hasInputOption('InsertCard')) {
-    message = 'insert card';
   }
 
-  if (!message && promptType === 'TryAnotherReadMethod') {
-    message = 'try another payment method';
+  if (!message && shouldRemoveCard) {
+    message = 'remove card';
   }
 
-  if (!message && status === 'CollectingPaymentIntent') {
-    message = 'please wait.';
+  if (!message && paymentErrorMessage) {
+    message = JSON.stringify({
+      paymentErrorMessage,
+      paymentState: {
+        ...paymentState,
+        capturedPaymentIntent: !!paymentState.capturedPaymentIntent,
+      },
+      paymentDisplayMessage,
+    });
   }
 
-  if (!message && status === 'NotReady') {
-    message = 'please wait.';
-  }
+  // message = `p: ${
+  //   paymentState.paymentStatus
+  // } cardInserted: ${cardInserted} isCompleted: ${!!paymentCompleted}`;
+  // }
 
-  if (!message && errorStep === 'confirmPaymentIntent' && errorCode === 103) {
-    message = 'card declined ' + errorDeclineCode;
+  if (!message && paymentCompleted) {
+    message = 'thanks.';
   }
-
   if (!message) {
-    // message = 'hmm..';
+    message = '...';
   }
 
-  let bottomContent = <AnimateyCreditCard />;
+  let bottomContent = (
+    <AnimateyCreditCard
+      isCardInserted={cardInserted}
+      isDone={paymentCompleted}
+    />
+  );
 
   if (summary && summary.total === 0) {
     bottomContent = (
@@ -216,11 +265,11 @@ export default function OrderConfirmPage({
         <Text
           style={{
             color: 'white',
-            fontSize: 30,
+            fontSize: 16,
             position: 'absolute',
             left: 0,
             right: 0,
-            height: 50,
+            height: 70,
             textAlign: 'center',
             bottom: 300,
             ...boldPrimaryFontFace,
@@ -246,22 +295,27 @@ export default function OrderConfirmPage({
     >
       <CloseButton />
       <Receipt summary={summary} />
-      <Text
+      {bottomContent}
+      <View
         style={{
-          color: 'white',
-          fontSize: 30,
           position: 'absolute',
           left: 0,
           right: 0,
-          height: 50,
+          height: 70,
           textAlign: 'center',
           bottom: 300,
-          ...boldPrimaryFontFace,
         }}
       >
-        {message}
-      </Text>
-      {bottomContent}
+        <Text
+          style={{
+            color: 'white',
+            fontSize: 16,
+            ...boldPrimaryFontFace,
+          }}
+        >
+          {message}
+        </Text>
+      </View>
     </FadeTransition>
   );
 }
