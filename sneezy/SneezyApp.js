@@ -15,6 +15,7 @@ import Privacy from './Privacy';
 import FocusExample from './FocusExample';
 import ReceiptPage from './ReceiptPage';
 import PreviewHome from './PreviewHome';
+import Home from './Home';
 import BlendMenu from './BlendMenu';
 import { monsterra } from '../components/Styles';
 
@@ -45,7 +46,7 @@ const Main = () => (
 
 const fontsCSS = `
 @font-face {
-  src: url('/fonts/Maax - Bold-205TF/Maax - Bold-205TF.ttf');
+  src: url('/fonts/Maax.ttf');
   font-family: Maax;
 }
 `;
@@ -85,35 +86,39 @@ SkynetAdmin.router = Admin.router;
 const App = createSwitchNavigator(
   {
     Main: {
+      path: '',
       screen: Main,
       navigationOptions: {
         backgroundColor: '#FFFFFF',
         title: 'ono food co',
         customCSS: fontsCSS,
         customHTML: GoogleAnalyticsTag,
-      },
-      path: '',
+      }
     },
     Admin: {
-      screen: SkynetAdmin,
       path: 'admin',
+      screen: SkynetAdmin,
     },
     PreviewHome,
     Receipt: ReceiptPage,
     Menu: {
-      screen: BlendMenu,
       path: 'icanneverremembertheblendrecipes',
+      screen: BlendMenu,
     },
     Terms,
     Privacy,
     Menu2: {
-      screen: BlendMenu,
       path: 'secrets/blendmenu',
+      screen: BlendMenu,
     },
     Focus: {
-      screen: FocusExample,
       path: 'secrets/focus-prototype',
+      screen: FocusExample,
     },
+    Home: {
+      path: 'home',
+      screen: Home,
+    }
   },
   {},
 );
