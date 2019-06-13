@@ -217,8 +217,8 @@ export default function createCloudBlock({
   function functionGetValue(argDoc) {
     const { result } = runEvalLambda(
       getValue(),
-      argDoc.getValue(),
-      argDoc.getId(),
+      argDoc && argDoc.getValue(),
+      argDoc && argDoc.getId(),
       argDoc,
     );
 

@@ -1,4 +1,4 @@
-import { Observable, BehaviorSubject } from 'rxjs-compat';
+import { Observable, BehaviorSubject, ReplaySubject } from 'rxjs-compat';
 import createCloudBlock from './createCloudBlock';
 import cuid from 'cuid';
 import bindCloudValueFunctions from './bindCloudValueFunctions';
@@ -968,22 +968,49 @@ export default function createCloudDoc({
   const observeValueAndId = observe
     .map(s => s && s.id)
     .distinctUntilChanged()
-    .filter(docId => !!docId)
     .switchMap(docId => {
-      const block = _getBlockWithId(docId);
-      return block.observeValueAndId;
+      if (docId) {
+        const block = _getBlockWithId(docId);
+        return block.observeValueAndId;
+      }
+      return Observable.of({
+        getId: () => docId,
+        value: undefined,
+      });
     })
     .shareReplay(1);
 
   const overriddenFunctionResults = new Map();
 
   const functionObserveValueAndId = (argumentDoc, onIsConnected) => {
+    function observeRemote() {
+      const responseSubject = new ReplaySubject(1);
+      const evalDocName = `${argumentDoc.getFullName()}^${getFullName()}`;
+      source
+        .observeDoc(domain, evalDocName)
+        .then(observable => {
+          observable.subscribe({
+            next: resp => {
+              responseSubject.next({
+                value: resp.value,
+                getId: () => resp.id,
+              });
+            },
+            error: err => {
+              responseSubject.error(err);
+            },
+          });
+        })
+        .catch(e => {
+          responseSubject.error(e);
+        });
+      return responseSubject;
+    }
     if (overriddenFunction) {
       if (overriddenFunctionResults.has(argumentDoc)) {
         return overriddenFunctionResults.get(argumentDoc);
       }
       const observeComputed = argumentDoc.observeValueAndId
-        .filter(({ value }) => value !== undefined)
         .flatMap(async ({ value, getId }) => {
           const argumentId = getId();
           let result = overriddenFunctionCache[argumentId];
@@ -1078,7 +1105,7 @@ export default function createCloudDoc({
     }
     return observe.switchMap(cloudDocValue => {
       if (!cloudDocValue.id) {
-        return Observable.of(undefined);
+        return observeRemote();
       }
       const block = _getBlockWithId(cloudDocValue.id);
       const fnObs = block.functionObserveValueAndId(argumentDoc, onIsConnected);
