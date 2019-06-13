@@ -2,12 +2,13 @@ import { TextInput, View, TouchableOpacity, Text } from 'react-native';
 import React from 'react';
 import GenericPage from '../GenericPage';
 import HeroHeader from './HeroHeader'
+import { ThemeContext, theme } from '../ThemeContext'
 
 function Home({}) {
   return (
-    <React.Fragment>
+    <ThemeContext.Provider value={theme}>
       <HeroHeader />
-    </React.Fragment>
+    </ThemeContext.Provider>
   );
 }
 
