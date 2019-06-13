@@ -1,23 +1,17 @@
 import React from "react";
-import { View } from "react-native-web";
+import { View } from "react-native";
 
 const Container = ({ children, style = {} }) => (
   <View
     style={{
-      width: "100%",
-      alignItems: "center",
-      justifyContent: "flex-start",
+      width: "90%",
+      maxWidth: 1280,
+      alignItems: "stretch",
+      alignSelf: "center",
       ...style
     }}
   >
-    <View
-      style={{
-        width: "90%",
-        maxWidth: 1280
-      }}
-    >
-      {children}
-    </View>
+    {children}
   </View>
 );
 

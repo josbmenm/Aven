@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "react-native-web";
+import { View, Text } from "react-native";
 import Container from "./Container";
 import { Link, Button } from "./Buttons";
 
@@ -27,8 +27,7 @@ export default function MainMenu() {
   return (
     <View
       style={{
-        backgroundColor: "red",
-        paddingTop: 38
+        paddingVertical: 38
       }}
     >
       <Container>
