@@ -471,13 +471,14 @@ export default function combineSources({
             next: update => {
               notifyDocWrite(update.id, update.value);
             },
-            error: () => {
+            error: err => {
               // should retry slowSource periodically, falling back to fast source
-              console.error('Unhandled case 478');
+              console.error('Slow source observeDoc Error:', domain, name, err);
             },
             complete: () => {
-              // should retry slowSource periodically, falling back to fast source
-              console.error('Unhandled case 479');
+              console.error(
+                'slowSource observeDoc complete, unimplemented path',
+              );
             },
           });
         });
