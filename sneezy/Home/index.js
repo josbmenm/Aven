@@ -3,11 +3,13 @@ import React from 'react';
 import GenericPage from '../GenericPage';
 import HeroHeader from './HeroHeader'
 import { ThemeContext, theme } from '../ThemeContext'
+import PageFooter from '../PageFooter';
 
 function Home({}) {
   return (
     <ThemeContext.Provider value={theme}>
       <HeroHeader />
+      <PageFooter />
     </ThemeContext.Provider>
   );
 }
