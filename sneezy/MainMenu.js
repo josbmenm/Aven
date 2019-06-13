@@ -3,26 +3,6 @@ import { View, Text } from "react-native";
 import Container from "./Container";
 import { Link, Button } from "./Buttons";
 
-const menuItemStyle = {
-  fontSize: 20,
-  fontWeight: "bold",
-  fontFamily: "Maax-Bold"
-};
-
-function MenuLink({ onPress, children, ...rest }) {
-  return (
-    <Link onPress={onPress} style={menuItemStyle} {...rest}>
-      {children}
-    </Link>
-  );
-}
-
-function MenuButton({ text, onPress, children, ...rest }) {
-  return (
-    <Button text={text} onPress={onPress} style={menuItemStyle} {...rest} />
-  );
-}
-
 export default function MainMenu() {
   return (
     <View
@@ -50,17 +30,21 @@ export default function MainMenu() {
             <Text>LOGO IMAGE</Text>
           </View>
           {/* Menu Items */}
-
           <View
             style={{
               alignItems: "flex-end",
               flexDirection: "row"
             }}
           >
-            <MenuLink>menu</MenuLink>
-            <MenuLink>schedule</MenuLink>
-            <MenuLink>our story</MenuLink>
-            <MenuButton text="book with us" />
+            <Link>menu</Link>
+            <Link active>schedule</Link>
+            <Link>our story</Link>
+            <Button
+              outline
+              text="book with us"
+              type="outline"
+              textStyle={{ fontSize: 20 }}
+            />
           </View>
         </View>
       </Container>
