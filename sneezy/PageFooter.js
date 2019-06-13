@@ -1,18 +1,19 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native-web";
+import { View, Text, StyleSheet } from "react-native";
 import Container from "./Container";
 import { useTheme } from "./ThemeContext";
 import OnoBlendsLogo from "./OnoBlendsLogo";
 import OnoFoodLogo from "./OnoFoodLogo";
+import { Link } from "./Buttons";
 
 export default function PageFooter() {
-  const { colors, fonts } = useTheme();
+  const theme = useTheme();
   return (
     <View>
       <Container
         style={{
           borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: colors.border,
+          borderTopColor: theme.colors.border,
           paddingVertical: 100,
           flexDirection: "row",
           alignItems: "center"
@@ -30,9 +31,9 @@ export default function PageFooter() {
           <OnoFoodLogo style={{ marginRight: 52 }} />
           <Text
             style={{
-              color: colors.primary,
+              color: theme.colors.primary,
               fontSize: 11,
-              fontFamily: fonts.Maax
+              fontFamily: theme.fonts.Maax
             }}
           >
             © Copyright 2018 Ono Food Co. All Rights Reserved
@@ -43,11 +44,55 @@ export default function PageFooter() {
             flex: 1,
             flexDirection: "row",
             alignItems: "center",
-            paddingLeft: 20,
-            backgroundColor: "red"
+            paddingLeft: 20
           }}
         >
-          <Text>FOOTER MENU</Text>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row"
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <Link text="menu" />
+              <Link text="0ur story" />
+              <Link text="book with us" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Link text="press kit" />
+              <Link text="terms & privacy" />
+              <Link text="contact us" />
+              <Link text="subscribe to updates" />
+            </View>
+          </View>
+          <View
+            style={{
+              paddingHorizontal: 24,
+              paddingTop: 4,
+              alignSelf: "flex-start",
+              flexDirection: "row",
+              alignItems: "center"
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: theme.colors.lightGrey,
+                width: 20,
+                height: 20,
+                borderRadius: 2,
+                marginRight: 8
+              }}
+            />
+            <Text
+              style={{
+                fontSize: 12,
+                fontFamily: theme.fonts.Maax,
+                color: theme.colors.primary
+              }}
+            >
+              @onofodco
+            </Text>
+          </View>
         </View>
       </Container>
     </View>

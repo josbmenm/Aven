@@ -1,68 +1,48 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { useTheme } from './ThemeContext';
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { ThemeContext, useTheme } from "./ThemeContext";
 
-const defaultButtonStyles = {
+export const defaultButtonStyles = {
   button: {
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 12
   },
   text: {
-    fontWeight: 'bold',
-    fontFamily: 'Maax-Bold',
-    fontSize: 20,
-  },
+    fontWeight: "bold",
+    fontFamily: "Maax-Bold",
+    fontSize: 20
+  }
 };
 
 export function Button({
   buttonStyle,
-  text = 'button',
+  text = "button",
   onPress,
-  type = 'solid', // solid | outline
-  variant = 'primary', // primary | secondary
+  type = "solid", // solid | outline
+  variant = "primary", // primary | secondary
   textStyle = {},
   ...rest
 }) {
-  const [focusStyles, setFocusStyles] = React.useState({});
   const { colors } = useTheme();
 
-  function onFocus() {
-    setFocusStyles({
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-
-      elevation: 5,
-    });
-  }
-
-  function onBlur() {
-    setFocusStyles({});
-  }
-
   return (
-    <TouchableOpacity onPress={onPress} onFocus={onFocus} onBlur={onBlur}>
+    <TouchableOpacity onPress={onPress}>
       <View
         style={{
           ...defaultButtonStyles.button,
           borderRadius: 4,
           borderWidth: 3,
           borderColor: colors.primary,
-          backgroundColor: type === 'solid' ? colors.primary : 'transparent',
+          backgroundColor: type === "solid" ? colors.primary : "transparent",
           ...buttonStyle,
-          ...focusStyles,
-          cursor: 'pointer',
+          cursor: "pointer"
         }}
       >
         <Text
           style={{
             ...defaultButtonStyles.text,
-            color: type === 'solid' ? colors.white : colors.primary,
-            ...textStyle,
+            color: type === "solid" ? colors.white : colors.primary,
+            ...textStyle
           }}
         >
           {text}
@@ -76,30 +56,33 @@ export function Link({
   buttonStyle = {},
   textStyle = {},
   active = false,
-  children,
+  text,
   onPress,
   ...rest
 }) {
-  const { colors } = useTheme();
+  const { colors, fonts } = useTheme();
 
   return (
     <TouchableOpacity onPress={onPress}>
       <View
         style={{
-          ...defaultButtonStyles.button,
+          paddingHorizontal: 8,
+          paddingVertical: 4,
           borderBottomWidth: 3,
-          borderColor: active ? colors.primary : 'transparent',
-          ...buttonStyle,
+          borderColor: active ? colors.primary : "transparent",
+          ...buttonStyle
         }}
       >
         <Text
           style={{
-            ...defaultButtonStyles.text,
+            fontWeight: "bold",
+            fontSize: 16,
+            fontFamily: fonts.MaaxBold,
             color: colors.primary,
-            ...textStyle,
+            ...textStyle
           }}
         >
-          {children}
+          {text}
         </Text>
       </View>
     </TouchableOpacity>

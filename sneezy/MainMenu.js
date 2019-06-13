@@ -1,8 +1,44 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import Container from './Container';
-import { Link, Button } from './Buttons';
+import { useTheme } from './ThemeContext';
+import { Link, Button, defaultButtonStyles } from './Buttons';
 import OnoBlendsLogo from './OnoBlendsLogo';
+
+export function MenuLink({
+  buttonStyle = {},
+  textStyle = {},
+  active = false,
+  text,
+  onPress,
+  ...rest
+}) {
+  const { colors } = useTheme();
+
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <View
+        style={{
+          ...defaultButtonStyles.button,
+          borderBottomWidth: 3,
+          borderColor: active ? colors.primary : "transparent",
+          ...buttonStyle
+        }}
+      >
+        <Text
+          style={{
+            ...defaultButtonStyles.text,
+            color: colors.primary,
+            ...textStyle
+          }}
+        >
+          {text}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
 
 export default function MainMenu() {
   return (
@@ -28,9 +64,9 @@ export default function MainMenu() {
               flexDirection: 'row',
             }}
           >
-            <Link onPress={() => console.log('Menu Link pressed')}>menu</Link>
-            <Link onPress={() => console.log('Schedule Link pressed')}>schedule</Link>
-            <Link onPress={() => console.log('Story link pressed')}>our story</Link>
+            <MenuLink text="menu" onPress={() => console.log('Menu Link pressed')}></MenuLink>
+            <MenuLink text="schedule" onPress={() => console.log('Schedule Link pressed')}></MenuLink>
+            <MenuLink text="our story" onPress={() => console.log('Story link pressed')}></MenuLink>
             <Button
               onPress={() => console.log('Book with us pressed')}
               type="outline"
