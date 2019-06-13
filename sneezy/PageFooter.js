@@ -1,12 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native-web";
 import Container from "./Container";
-import { ThemeContext } from "./ThemeContext";
+import { useTheme } from "./ThemeContext";
 import OnoBlendsLogo from "./OnoBlendsLogo";
 import OnoFoodLogo from "./OnoFoodLogo";
 
 export default function PageFooter() {
-  const { colors, fonts } = React.useContext(ThemeContext);
+  const { colors, fonts } = useTheme();
   return (
     <View>
       <Container

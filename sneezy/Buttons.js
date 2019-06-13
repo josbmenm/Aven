@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { ThemeContext } from './ThemeContext';
+import { useTheme } from './ThemeContext';
 
 const defaultButtonStyles = {
   button: {
@@ -24,7 +24,7 @@ export function Button({
   ...rest
 }) {
   const [focusStyles, setFocusStyles] = React.useState({});
-  const { colors } = React.useContext(ThemeContext);
+  const { colors } = useTheme();
 
   function onFocus() {
     setFocusStyles({
@@ -80,7 +80,7 @@ export function Link({
   onPress,
   ...rest
 }) {
-  const { colors } = React.useContext(ThemeContext);
+  const { colors } = useTheme();
 
   return (
     <TouchableOpacity onPress={onPress}>
