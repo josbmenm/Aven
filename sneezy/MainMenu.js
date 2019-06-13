@@ -1,48 +1,41 @@
-import React from "react";
-import { View, Text } from "react-native";
-import Container from "./Container";
-import { Link, Button } from "./Buttons";
+import React from 'react';
+import { View, Text } from 'react-native';
+import Container from './Container';
+import { Link, Button } from './Buttons';
+import OnoBlendsLogo from './OnoBlendsLogo';
+import console = require('console');
 
 export default function MainMenu() {
   return (
     <View
       style={{
-        paddingVertical: 38
+        paddingVertical: 38,
       }}
     >
       <Container>
         <View
           style={{
-            justifyContent: "space-between",
-            flexDirection: "row"
+            justifyContent: 'space-between',
+            flexDirection: 'row',
           }}
         >
           {/* Logo */}
-          <View
-            style={{
-              width: 84,
-              height: 64,
-              backgroundColor: "#005151",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-          >
-            <Text>LOGO IMAGE</Text>
-          </View>
+          <OnoBlendsLogo />
+
           {/* Menu Items */}
           <View
             style={{
-              alignItems: "flex-end",
-              flexDirection: "row"
+              alignItems: 'flex-end',
+              flexDirection: 'row',
             }}
           >
-            <Link>menu</Link>
-            <Link active>schedule</Link>
-            <Link>our story</Link>
+            <Link onPress={() => console.log('Menu Link pressed')}>menu</Link>
+            <Link onPress={() => console.log('Schedule Link pressed')}>schedule</Link>
+            <Link onPress={() => console.log('Story link pressed')}>our story</Link>
             <Button
-              outline
-              text="book with us"
+              onPress={() => console.log('Book with us pressed')}
               type="outline"
+              text="book with us"
               textStyle={{ fontSize: 20 }}
             />
           </View>
