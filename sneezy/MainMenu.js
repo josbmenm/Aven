@@ -3,7 +3,6 @@ import { View, Text } from 'react-native';
 import Container from './Container';
 import { Link, Button } from './Buttons';
 import OnoBlendsLogo from './OnoBlendsLogo';
-import console = require('console');
 
 export default function MainMenu() {
   return (
