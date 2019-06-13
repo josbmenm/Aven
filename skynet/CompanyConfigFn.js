@@ -15,7 +15,7 @@ const CompanyConfig = defineCloudFunction(
       return null;
     }
 
-    return { atData };
+    return atData;
   },
   'a',
 );

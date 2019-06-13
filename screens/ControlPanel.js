@@ -96,7 +96,10 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   } else if (!kitchenState) {
     status = 'disconnected';
     message = 'Loading state of kitchen..';
-  } else if (!isPLCConnected) {
+  } else if (
+    !isPLCConnected &&
+    (!restaurantState || restaurantState.isAttached)
+  ) {
     status = 'disconnected';
     message = 'Server disconnected from machine..';
   } else {
@@ -192,6 +195,19 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
               />
             </View>
           )}
+          {restaurantState && (
+            <Button
+              title={restaurantState.isAttached ? 'Detach' : 'Attach'}
+              onPress={() => {
+                if (restaurantState.isAttached) {
+                  errorHandler(restaurantDispatch({ type: 'Detach' }));
+                } else {
+                  errorHandler(restaurantDispatch({ type: 'Attach' }));
+                }
+              }}
+              secondary
+            />
+          )}
           {restaurantState && !restaurantState.isAutoRunning && (
             <Button
               title="Step"
@@ -206,12 +222,6 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
               secondary
             />
           )}
-          <Button
-            title="STOP"
-            onPress={() => {
-              // todo
-            }}
-          />
         </View>
       </View>
     </View>

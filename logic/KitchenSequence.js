@@ -236,13 +236,14 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
       return false;
     }
     const command = getKitchenCommand(intent);
+    const successRestaurantAction = getSuccessRestaurantAction(intent);
     return {
       intent,
       command,
+      successRestaurantAction,
       subsystem: command.subsystem,
       description: getDescription(intent),
       perform: async (cloud, handleCommand) => {
-        const successRestaurantAction = getSuccessRestaurantAction(intent);
         const resp = await handleCommand(command);
 
         await cloud

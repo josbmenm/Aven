@@ -67,11 +67,17 @@ export function getSubsystemFaults(system) {
         if (!system.reads[`Fault${faultIntIndex}`]) {
           return Array(16).fill(0);
         }
-        return system.reads[`Fault${faultIntIndex}`].value
-          .toString(2)
-          .split('')
-          .reverse()
-          .map(v => v === '1');
+        try {
+          return system.reads[`Fault${faultIntIndex}`].value
+            .toString(2)
+            .split('')
+            .reverse()
+            .map(v => v === '1');
+        } catch (e) {
+          console.error(`Trying to read ${system.name} ${faultIntIndex}`);
+          console.error(system.reads[`Fault${faultIntIndex}`]);
+          throw new Error('Cannot read fault');
+        }
       });
     if (faulted[0][0]) {
       faults.push(

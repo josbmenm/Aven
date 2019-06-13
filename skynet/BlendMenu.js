@@ -29,7 +29,7 @@ function BlendDisplay({ menuItem, companyConfig }) {
   }
   return (
     <View style={{ padding: 10, marginVertical: 10 }}>
-      <Text style={{ fontWeight: 'bold', fontSize: 32 }}>
+      <Text style={{ fontWeight: 'bold', fontSize: 32, color: '#333' }}>
         {menuItem['Display Name']}
       </Text>
       <AirtableImage

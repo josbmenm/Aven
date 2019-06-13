@@ -23,6 +23,7 @@ import createEvalSource from '../cloud-core/createEvalSource';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import RestaurantConfig from './RestaurantConfig';
 import CompanyConfigFn from './CompanyConfigFn';
+import MenuFn from './MenuFn';
 import DevicesReducer from '../logic/DevicesReducer';
 import submitFeedback from './submitFeedback';
 import validatePromoCode from './validatePromoCode';
@@ -174,6 +175,7 @@ const startSkynetServer = async () => {
       RestaurantReducer,
       DevicesReducer,
       RestaurantConfig,
+      MenuFn,
       CompanyConfigFn,
     ],
     getValueOfDoc: (docName, cloud) => {
@@ -264,7 +266,7 @@ const startSkynetServer = async () => {
       name: 'OnoState^RestaurantConfig',
     });
 
-    console.log('Putting Permission.. OnoState^RestaurantConfig');
+    console.log('Putting Permission.. OnoState^CompanyConfig');
     await putPermission({
       defaultRule: { canRead: true },
       name: 'OnoState^CompanyConfig',

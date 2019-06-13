@@ -62,11 +62,11 @@ import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 
 let IS_DEV = process.env.NODE_ENV !== 'production';
-IS_DEV = false;
+// IS_DEV = false;
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  authority: '192.168.1.81:8830',
+  authority: '192.168.1.29:8830',
 };
 const RESTAURANT_PROD = {
   useSSL: false,

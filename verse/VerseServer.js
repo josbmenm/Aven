@@ -191,6 +191,10 @@ const startVerseServer = async () => {
       defaultRule: { canRead: true },
       name: 'OnoState^Menu',
     });
+    await putPermission({
+      defaultRule: { canRead: true },
+      name: 'RestaurantActionsUnburnt^RestaurantReducer',
+    });
   }
 
   computeInventory(evalSource.cloud);
@@ -206,6 +210,7 @@ const startVerseServer = async () => {
 
   let kitchen = null;
   if (!process.env.DISABLE_ONO_KITCHEN) {
+    console.log('Connecting to Maui Kitchen');
     kitchen = startKitchen({
       logBehavior,
       client: evalSource.cloud,
@@ -299,7 +304,6 @@ const startVerseServer = async () => {
 
   function handleStateUpdates() {
     if (
-      !kitchen ||
       !restaurantState ||
       !kitchenState ||
       !kitchenConfig ||
@@ -324,10 +328,23 @@ const startVerseServer = async () => {
       }
       logBehavior(`Performing ${subsystem} ${nextStep.description}`);
 
-      currentStepPromises[subsystem] = nextStep.perform(
-        evalSource.cloud,
-        kitchenAction,
-      );
+      if (kitchen && restaurantState.isAttached) {
+        currentStepPromises[subsystem] = nextStep.perform(
+          evalSource.cloud,
+          kitchenAction,
+        );
+      } else {
+        console.log('auto-running yet detached.');
+        new Promise(resolve => setTimeout(resolve, 2000))
+          .then(() =>
+            cloud
+              .get('RestaurantActionsUnburnt')
+              .putTransaction(nextStep.successRestaurantAction),
+          )
+          .then(() => {
+            console.log('Done with detached auto-run');
+          });
+      }
 
       currentStepPromises[subsystem]
         .then(() => {

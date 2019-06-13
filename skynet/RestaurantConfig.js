@@ -21,7 +21,6 @@ const RestaurantConfig = defineCloudFunction(
     if (!atData) {
       return null;
     }
-
     const {
       KitchenSystems,
       KitchenSystemTags,

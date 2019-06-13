@@ -8,9 +8,10 @@ const InventoryFn = defineCloudFunction(
     );
     const kitchenState = getValue(cloud.get('KitchenState'));
     const companyConfig = getValue(cloud.get('OnoState^CompanyConfig'));
-    console.log('companyConfig', companyConfig);
+    const menu = getValue(cloud.get('OnoState^Menu'));
 
-    if (!restaurantState) {
+
+    if (!restaurantState || !menu) {
       return null;
     }
 
@@ -23,6 +24,8 @@ const InventoryFn = defineCloudFunction(
     // ingredients[]
     return {
       cups,
+      menu,
+      kitchenState,
       restaurantState,
       ingredients,
     };

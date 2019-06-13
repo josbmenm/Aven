@@ -619,7 +619,6 @@ function OrdersList({ restaurantState, dispatch }) {
 function PrepState({ restaurantState, dispatch }) {
   return (
     <React.Fragment>
-      <OrderQueue restaurantState={restaurantState} dispatch={dispatch} />
       <RestaurantStateList
         restaurantState={restaurantState}
         dispatch={dispatch}
@@ -642,10 +641,11 @@ export default function OrdersScreen(props) {
       title="Orders"
       icon="🎟"
       afterSide={null}
-      side={<PrepState restaurantState={restaurantState} dispatch={dispatch} />}
+      side={
+        <OrdersList restaurantState={restaurantState} dispatch={dispatch} />
+      }
     >
-      <OrdersList restaurantState={restaurantState} dispatch={dispatch} />
-
+      <PrepState restaurantState={restaurantState} dispatch={dispatch} />
       <Button
         secondary
         title="Wipe Restaurant State"
