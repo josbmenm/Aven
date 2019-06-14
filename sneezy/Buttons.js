@@ -8,8 +8,6 @@ export const defaultButtonStyles = {
     paddingVertical: 12
   },
   text: {
-    fontWeight: "bold",
-    fontFamily: "Maax-Bold",
     fontSize: 20
   }
 };
@@ -23,7 +21,7 @@ export function Button({
   textStyle = {},
   ...rest
 }) {
-  const { colors } = useTheme();
+  const { colors, fonts } = useTheme();
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -42,7 +40,8 @@ export function Button({
           style={{
             ...defaultButtonStyles.text,
             color: type === "solid" ? colors.white : colors.primary,
-            ...textStyle
+            ...textStyle,
+            fontFamily: fonts.button
           }}
         >
           {text}
@@ -62,7 +61,7 @@ export function Link({
 }) {
   const { colors, fonts } = useTheme();
 
-  return (
+return ( 
     <TouchableOpacity onPress={onPress}>
       <View
         style={{
@@ -77,7 +76,7 @@ export function Link({
           style={{
             fontWeight: "bold",
             fontSize: 16,
-            fontFamily: fonts.MaaxBold,
+            fontFamily: fonts.button,
             color: colors.primary,
             ...textStyle
           }}

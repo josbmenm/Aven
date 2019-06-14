@@ -15,6 +15,7 @@ const fonts = {
   title: 'Maax-Bold',
   body: 'Lora',
   footnote: 'Maax',
+  button: 'Maax-Bold'
 };
 
 const textSpacing = {

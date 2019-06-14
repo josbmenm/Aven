@@ -8,7 +8,7 @@ import { useTheme } from '../ThemeContext'
 function HeaderContent() {
   const theme = useTheme();
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, flexBasis: 0 }}>
       <View
         style={{
           flex: 1,
@@ -70,7 +70,7 @@ export default function HeroHeader() {
             }}
           >
             <HeaderContent />
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, flexBasis: 0 }}>
               <Image
                 source={require('./assets/home_hero-image.jpg')}
                 resizeMode="cover"

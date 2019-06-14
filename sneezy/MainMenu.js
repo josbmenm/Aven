@@ -5,40 +5,25 @@ import { useTheme } from './ThemeContext';
 import { Button, defaultButtonStyles } from './Buttons';
 import OnoBlendsLogo from './OnoBlendsLogo';
 
-export function MenuLink({
-  buttonStyle = {},
-  textStyle = {},
-  active = false,
-  text,
-  onPress,
-  ...rest
-}) {
-  const { colors } = useTheme();
-
+export function MenuLink({text, onPress, buttonStyle, textStyle, active, ...rest}) {
+  const theme = useTheme();
   return (
-    <TouchableOpacity onPress={onPress}>
-      <View
-        style={{
-          ...defaultButtonStyles.button,
-          borderBottomWidth: 3,
-          borderColor: active ? colors.primary : "transparent",
-          ...buttonStyle
-        }}
-      >
-        <Text
-          style={{
-            ...defaultButtonStyles.text,
-            color: colors.primary,
-            ...textStyle
-          }}
-        >
-          {text}
-        </Text>
-      </View>
-    </TouchableOpacity>
+    <Button
+      onPress={onPress}
+      text={text}
+      type="outline"
+      buttonStyle={{
+        borderRadius: 0,
+        borderWidth: 0,
+        borderColor: 'transparent',
+        borderBottomWidth: 3,
+        borderBottomColor: active ? theme.colors.primary : "transparent",
+        ...buttonStyle,
+      }}
+      {...rest}
+    />
   );
 }
-
 
 export default function MainMenu() {
   return (
@@ -64,9 +49,18 @@ export default function MainMenu() {
               flexDirection: 'row',
             }}
           >
-            <MenuLink text="menu" onPress={() => console.log('Menu Link pressed')}></MenuLink>
-            <MenuLink text="schedule" onPress={() => console.log('Schedule Link pressed')}></MenuLink>
-            <MenuLink text="our story" onPress={() => console.log('Story link pressed')}></MenuLink>
+            <MenuLink
+              text="menu"
+              onPress={() => console.log('Menu Link pressed')}
+            />
+            <MenuLink
+              text="schedule"
+              onPress={() => console.log('Schedule Link pressed')}
+            />
+            <MenuLink
+              text="our story"
+              onPress={() => console.log('Story link pressed')}
+            />
             <Button
               onPress={() => console.log('Book with us pressed')}
               type="outline"
