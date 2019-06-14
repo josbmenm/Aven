@@ -33,7 +33,7 @@ module.exports = {
       ...distPkg,
       scripts: {
         ...distPkg.scripts,
-        'aven:start': `yarn ts-node -O '{"allowJs":true,"jsx":"react"}' src-sync/${appName}/${startFile}`,
+        'aven:start': `yarn ts-node -O '{"allowJs":true,"jsx":"react","esModuleInterop":true}' src-sync/${appName}/${startFile}`,
 
         // 'aven:deploy': `npx appcenter codepush release-react -a ${codePushApp} -d ${codePushChannel} --plist-file ios/kiosk/Info.plist`,
       },
