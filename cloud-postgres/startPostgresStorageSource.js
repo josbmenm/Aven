@@ -410,7 +410,7 @@ export default async function startPostgresStorageSource({ config, domains }) {
       );
     }
     if (!resp.rows.length) {
-      throw new Error('Could not perform this transaction!');
+      throw new Error(`Failed to transact on ${name}. Please retry`);
     }
     await notifyDocWrite(
       domain,
@@ -647,9 +647,15 @@ export default async function startPostgresStorageSource({ config, domains }) {
       .then(function(res) {
         const block = res.shift();
         if (!block) {
-          throw new Err(`Block ID "${id}" was not found`, 'BlockNotFound', {
-            id,
-          });
+          throw new Err(
+            `Block ID "${id}" of "${domain}/${name}" was not found`,
+            'BlockNotFound',
+            {
+              id,
+              name,
+              domain,
+            },
+          );
         }
         return {
           id: block.id,
