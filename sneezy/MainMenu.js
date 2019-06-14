@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Container from './Container';
 import { useTheme } from './ThemeContext';
-import { Link, Button, defaultButtonStyles } from './Buttons';
+import { Button, defaultButtonStyles } from './Buttons';
 import OnoBlendsLogo from './OnoBlendsLogo';
 
 export function MenuLink({

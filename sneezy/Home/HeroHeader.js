@@ -3,16 +3,16 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import MainMenu from '../MainMenu';
 import Container from '../Container';
 import { Button } from '../Buttons';
-import { ThemeContext } from '../ThemeContext'
+import { useTheme } from '../ThemeContext'
 
 function HeaderContent() {
-  const { colors, fonts } = React.useContext(ThemeContext)
+  const theme = useTheme();
   return (
     <View style={{ flex: 1 }}>
       <View
         style={{
           flex: 1,
-          backgroundColor: colors.lightGrey,
+          backgroundColor: theme.colors.lightGrey,
           height: '100%',
           justifyContent: 'center',
           padding: 24,
@@ -20,26 +20,11 @@ function HeaderContent() {
           boxSizing: 'border-box',
         }}
       >
-        <Text
-          style={{
-            fontSize: 38,
-            fontWeight: 'bold',
-            lineHeight: 48,
-            fontFamily: fonts.MaaxBold,
-            marginBottom: 8,
-            color: colors.primary
-          }}
-        >
+        <Text style={theme.textStyles.heading}>
           We’re making healthy food accessible to everyone.
         </Text>
         <Text
-          style={{
-            fontSize: 18,
-            lineHeight: 28,
-            fontFamily: fonts.Lora,
-            color: colors.primary,
-            marginBottom: 38,
-          }}
+          style={theme.textStyles.body}
         >
           Using organic fruits and vegetables, we create blends that focus on
           the best ingredients for you. All of our blends are customizable and

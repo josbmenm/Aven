@@ -22,6 +22,7 @@ import { monsterra } from '../components/Styles';
 import useCloud from '../cloud-core/useCloud';
 import xs from 'xstream';
 import useCloudValue from '../cloud-core/useCloudValue';
+import TokensPage from './TokensPage';
 
 const Main = () => (
   <View
@@ -118,6 +119,10 @@ const App = createSwitchNavigator(
     Home: {
       path: 'home',
       screen: Home,
+    },
+    Tokens: {
+      path: 'design-tokens',
+      screen: TokensPage
     }
   },
   {},

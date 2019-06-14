@@ -6,6 +6,8 @@ import { ThemeContext, theme as defaultTheme, useTheme } from '../ThemeContext';
 import FullViewportImage from '../FullViewportImage';
 import Container from '../Container';
 import PageFooter from '../PageFooter';
+import HomeSlider from './HomeSlider';
+import HowItWorks from './HowItWorks';
 
 function Home() {
   const theme = useTheme();
@@ -36,29 +38,10 @@ function Home() {
               maxWidth: 720,
             }}
           >
-            <Text
-              style={{
-                fontSize: 38,
-                fontWeight: 'bold',
-                lineHeight: 48,
-                fontFamily: theme.fonts.MaaxBold,
-                marginBottom: 8,
-                textAlign: 'center',
-                color: theme.colors.primary,
-              }}
-            >
-              We believe that good food  brings out the best in you.
+            <Text style={theme.textStyles.heading}>
+              We believe that good food brings out the best in you.
             </Text>
-            <Text
-              style={{
-                fontSize: 18,
-                lineHeight: 28,
-                textAlign: 'center',
-                fontFamily: theme.fonts.Lora,
-                color: theme.colors.primary,
-                marginBottom: 38,
-              }}
-            >
+            <Text style={theme.textStyles.body}>
               We believe affordable nutrition should be accessible to everyone.
               With advanced robotics, thoughtful food sourcing, and nutritious
               ingredients we’re able to deliver this promise.
@@ -66,6 +49,8 @@ function Home() {
           </View>
         </Container>
       </View>
+      <HomeSlider />
+      <HowItWorks />
       <PageFooter />
     </React.Fragment>
   );
