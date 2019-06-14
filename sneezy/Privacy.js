@@ -2,25 +2,20 @@ import { Text } from 'react-native';
 import React from 'react';
 import GenericPage from './GenericPage';
 import {
-  Title,
-  Section,
   SubSection,
-  List,
-  ListItem,
-  Body,
-  Link,
-  Bold,
-} from './Views';
+  BodyText,
+  Heading,
+} from './Tokens';
 
 function Privacy({}) {
   return (
     <React.Fragment>
-      <Title>Privacy Policy</Title>
+      <Heading>Privacy Policy</Heading>
 
-      <Body>
-        <Bold>Effective Date:</Bold> May 27th, 2019
-      </Body>
-      <Body>
+      <BodyText>
+        <BodyText bold>Effective Date:</BodyText> May 27th, 2019
+      </BodyText>
+      <BodyText>
         We at Ono Food Co. know you care about how your personal information is
         used and shared, and we take your privacy seriously. Please read the
         following to learn more about our Privacy Policy. By using or accessing
@@ -35,10 +30,10 @@ function Privacy({}) {
         which incorporates this Privacy Policy. Any terms we use in this Policy
         without defining them have the definitions given to them in the Terms of
         Use.
-      </Body>
+      </BodyText>
 
       <SubSection title="What does our Privacy Policy cover?">
-        <Body>
+        <BodyText>
           This Privacy Policy covers Ono Food Co’s treatment of personally
           identifiable information ("Personal Information") that we gather when
           you are accessing or using our Services, but not to the practices of
@@ -61,10 +56,10 @@ function Privacy({}) {
           will delete that information as quickly as possible. If you believe
           that a child under 13 may have provided us with personal information,
           please contact us at support@onofood.co
-        </Body>
+        </BodyText>
       </SubSection>
       <SubSection title="Privacy Policy Changes">
-        <Body>
+        <BodyText>
           At Ono Food Co, we are constantly trying to improve our Services, so
           we may need to change this Privacy Policy from time-to-time, but we
           will alert you to changes by sending a notice on the Services, by
@@ -75,11 +70,11 @@ function Privacy({}) {
           understanding them. If you use the Services after any changes to the
           Privacy Policy have been posted, that means you agree to all of the
           changes.
-        </Body>
+        </BodyText>
       </SubSection>
 
       <SubSection title="Information you provide">
-        <Body>
+        <BodyText>
           Ono Food Co. receives and stores any information you knowingly provide
           to us. An example of this would be, if you provide your email when
           checking out from our ordering kiosks. Specific information may be
@@ -90,16 +85,16 @@ function Privacy({}) {
           about your use of the Services. Also, we may receive a confirmation
           when you open an email from us. This confirmation helps us make our
           communications with you more interesting and improve our services.
-        </Body>
-        <Body>
+        </BodyText>
+        <BodyText>
           If you do not want to receive communications from us, please indicate
           your preference by letting us know that you no longer wish to receive
           such communications by clicking on the unsubscribe option in our
           emails or contacting us at support@onofood.co.
-        </Body>
+        </BodyText>
       </SubSection>
       <SubSection title="Information we collect automatically">
-        <Body>
+        <BodyText>
           Whenever you interact with our Services, we automatically receive and
           record information on our server logs from your browser or device,
           which may include your IP address, geolocation data, device
@@ -123,16 +118,16 @@ function Privacy({}) {
           often users use a particular feature of the Services, and we can use
           that information to make our Services engaging to as many users as
           possible.
-        </Body>
+        </BodyText>
       </SubSection>
       <SubSection title="Do we share any of the personal information we receive?">
-        <Body>
+        <BodyText>
           We never sell or rent your Personal Information in personally
           identifiable form to anyone, except as expressly provided below. We
           may share your Personal Information with third parties to provide the
           services to you through our website and mobile app:
-        </Body>
-        <Body>
+        </BodyText>
+        <BodyText>
           We may use third-party analytics services, such as Google Analytics
           and Google Analytics Remarketing and Advertising Reporting Feature, to
           grow our business, to improve our Services, to monitor and analyze the
@@ -142,13 +137,13 @@ function Privacy({}) {
           retain some information about you. Google Analytics collects the IP
           address assigned to you on the date you use the Services for example,
           but not your name or other personal information.
-        </Body>
+        </BodyText>
       </SubSection>
       <SubSection title="Questions about our Privacy Policy?">
-        <Body>
+        <BodyText>
           If you have any questions or concerns, email us at support@onofood.co,
           and we will answer your inquiry as soon as possible.
-        </Body>
+        </BodyText>
       </SubSection>
     </React.Fragment>
   );

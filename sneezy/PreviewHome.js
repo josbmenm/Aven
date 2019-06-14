@@ -2,15 +2,10 @@ import { TextInput, View, TouchableOpacity, Text } from 'react-native';
 import React from 'react';
 import GenericPage from './GenericPage';
 import {
-  Title,
-  Section,
+  Heading,
   SubSection,
-  List,
-  ListItem,
-  Body,
-  Link,
-  Bold,
-} from './Views';
+  BodyText,
+} from './Tokens';
 import Button from '../components/Button';
 import useCloud from '../cloud-core/useCloud';
 import useAsyncError from '../react-utils/useAsyncError';
@@ -89,7 +84,7 @@ function RequestOnoForm() {
   if (isDone) {
     return (
       <View>
-        <Body>Thanks, your request is in!:</Body>
+        <BodyText>Thanks, your request is in!:</BodyText>
       </View>
     );
   }
@@ -101,13 +96,13 @@ function RequestOnoForm() {
   );
 }
 
-function Home({}) {
+function Home() {
   return (
     <React.Fragment>
-      <Title>Ono Blends</Title>
+      <Heading>Ono Blends</Heading>
 
       <SubSection title="Request ono in your City">
-        <Body>Search for your city to request it:</Body>
+        <BodyText>Search for your city to request it:</BodyText>
         <RequestOnoForm />
       </SubSection>
     </React.Fragment>
