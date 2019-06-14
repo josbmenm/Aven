@@ -58,14 +58,14 @@ const textStyles = {
 };
 
 const shadows = {
-  default: {
-    shadowOffset: { width: 0, height: 0 },
+  medium: {
+    shadowOffset: { width: 0, height: 4 },
     shadowColor: 'black',
     shadowOpacity: 0.08,
     shadowRadius: 24,
   },
   small: {
-    shadowOffset: { width: 0, height: 0 },
+    shadowOffset: { width: 0, height: 4 },
     shadowColor: 'black',
     shadowOpacity: 0.04,
     shadowRadius: 12,

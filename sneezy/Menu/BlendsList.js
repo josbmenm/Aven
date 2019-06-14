@@ -1,10 +1,14 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Container from '../Container';
-import { Title, FootNote } from '../Tokens';
+import { Title, FootNote, BodyText } from '../Tokens';
 import { useTheme } from '../ThemeContext';
 import { useMenu, useCompanyConfig } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../../components/AirtableImage';
+
+function spaceText({ text }) {
+  return text.split('').join(' ');
+}
 
 function BlendItem(props) {
   const theme = useTheme();
@@ -20,15 +24,7 @@ function BlendItem(props) {
         backgroundColor: 'white',
         overflow: 'hidden',
         borderRadius: 8,
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 3,
-        },
-        shadowOpacity: 0.29,
-        shadowRadius: 4.65,
-
-        elevation: 7,
+        ...theme.shadows.medium,
       }}
     >
       <Title style={{ textAlign: 'right', fontSize: 24 }}>
@@ -41,14 +37,15 @@ function BlendItem(props) {
           alignSelf: 'flex-end',
           paddingVertical: 4,
           paddingHorizontal: 8,
-          textSpacing: 3,
           borderRadius: 4,
           backgroundColor: theme.colors.primary,
           color: theme.colors.white,
+          minWidth: 120,
+          textAlign: 'center',
         }}
         bold
       >
-        {props.DefaultBenefitName}
+        {spaceText({ text: props.DefaultBenefitName })}
       </FootNote>
       <AirtableImage
         image={props.Recipe['Recipe Image']}
@@ -81,12 +78,6 @@ line-height: 28px;
 function BlendsList() {
   const menu = useMenu();
 
-  if (!menu) {
-    return null;
-  }
-
-  console.log('menu => ', menu);
-
   return (
     <View>
       <Container style={{ paddingVertical: 100 }}>
@@ -98,7 +89,7 @@ function BlendsList() {
             justifyContent: 'center',
           }}
         >
-          {menu.blends.map(BlendItem)}
+          {menu ? menu.blends.map(BlendItem) : <BodyText>Loading...</BodyText>}
         </View>
       </Container>
     </View>
