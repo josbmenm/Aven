@@ -4,48 +4,33 @@ import Container from './Container';
 import { useTheme } from './ThemeContext';
 import { Heading, BodyText } from './Tokens';
 
-export default function GenericHeroHeader({ title, bodyText }) {
-  const theme = useTheme();
+export default function GenericHeroHeader({
+  title,
+  bodyText,
+  backgroundColor,
+}) {
   return (
-    <View
-      style={{
-        flex: 1,
-      }}
-    >
-      <Container
+    <Container>
+      <View
         style={{
           flex: 1,
-          flexDirection: 'column',
+          backgroundColor,
+          alignItems: 'center',
         }}
       >
         <View
           style={{
-            flex: 1,
-            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingHorizontal: 40,
+            paddingVertical: 120,
+            maxWidth: 720,
           }}
         >
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: theme.colors.lightGrey,
-              alignItems: 'center',
-            }}
-          >
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                paddingHorizontal: 40,
-                paddingVertical: 120,
-                maxWidth: 720,
-              }}
-            >
-              <Heading>{title}</Heading>
-              <BodyText style={{ textAlign: 'center' }}>{bodyText}</BodyText>
-            </View>
-          </View>
+          <Heading style={{ textAlign: 'center' }}>{title}</Heading>
+          <BodyText style={{ textAlign: 'center' }}>{bodyText}</BodyText>
         </View>
-      </Container>
-    </View>
+      </View>
+    </Container>
   );
 }

@@ -61,6 +61,7 @@ export function Link({
   textStyle = {},
   text = "link",
   routeName,
+  noActive = false,
   ...rest
 }) {
   const { colors, fonts } = useTheme();
@@ -73,7 +74,7 @@ export function Link({
             paddingHorizontal: 8,
             paddingVertical: 4,
             borderBottomWidth: 3,
-            borderColor: active ? colors.primary : 'transparent',
+            borderColor: noActive ? "transparent" : active ? colors.primary : 'transparent',
             ...buttonStyle,
           }}
           {...rest}

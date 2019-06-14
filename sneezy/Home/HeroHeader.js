@@ -48,13 +48,12 @@ function HeaderContent() {
 
 export default function HeroHeader() {
   return (
-    <View style={{ flex: 1, height: '100vh', paddingBottom: 40, backgroundColor: 'red' }}>
+    <View style={{ flex: 1, height: '100vh', paddingBottom: 60 }}>
       <MainMenu />
       <Container
         style={{
           flex: 1,
           flexDirection: 'column',
-          // alignItems: 'stretch',
         }}
       >
         <View

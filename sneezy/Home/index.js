@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import GenericPage from '../GenericPage';
 import HeroHeader from './HeroHeader';
 import { useTheme } from '../ThemeContext';
@@ -9,6 +9,9 @@ import PageFooter from '../PageFooter';
 import HomeSlider from './HomeSlider';
 import HowItWorks from './HowItWorks';
 import HomeSheduleSection from './HomeSchedule';
+import { aspectRatio169 } from '../../components/Styles';
+import { Heading, BodyText } from '../Tokens';
+import GenericHeroHeader from '../GenericHeroHeader';
 
 function Home() {
   const theme = useTheme();
@@ -16,40 +19,22 @@ function Home() {
     <GenericPage>
       <HeroHeader />
       {/* Image Full viewport Section */}
-      <FullViewportImage
-        source={{
-          uri:
-            'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
-        }}
-      />
-
-      <View>
-        <Container
-          style={{
-            flex: 1,
-            alignItems: 'center',
-          }}
-        >
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingHorizontal: 40,
-              paddingVertical: 120,
-              maxWidth: 720,
+      <View style={{ paddingVertical: 90 }}>
+        <Container>
+          <Image
+            source={{
+              uri:
+                'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
             }}
-          >
-            <Text style={theme.textStyles.heading}>
-              We believe that good food brings out the best in you.
-            </Text>
-            <Text style={theme.textStyles.body}>
-              We believe affordable nutrition should be accessible to everyone.
-              With advanced robotics, thoughtful food sourcing, and nutritious
-              ingredients we’re able to deliver this promise.
-            </Text>
-          </View>
+            resizeMode="cover"
+            style={{ ...aspectRatio169 }}
+          />
         </Container>
       </View>
+      <GenericHeroHeader
+        title="We believe that good food brings out the best in you."
+        bodyText="We believe affordable nutrition should be accessible to everyone. With advanced robotics, thoughtful food sourcing, and nutritious ingredients we’re able to deliver this promise."
+      />
       <HomeSlider />
       <HowItWorks />
       <HomeSheduleSection />
