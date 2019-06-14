@@ -2,24 +2,33 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Container from './Container';
 import { useTheme } from './ThemeContext';
-import { Button, defaultButtonStyles } from './Buttons';
+import { Button } from './Buttons';
 import OnoBlendsLogo from './OnoBlendsLogo';
+import Link from '../navigation-web/Link';
 
-export function MenuLink({text, onPress, buttonStyle, textStyle, active, ...rest}) {
+export function MenuLink({
+  text,
+  buttonStyle,
+  textStyle,
+  active,
+  routeName,
+  ...rest
+}) {
   const theme = useTheme();
   return (
     <Button
-      onPress={onPress}
       text={text}
       type="outline"
+      routeName={routeName}
       buttonStyle={{
         borderRadius: 0,
         borderWidth: 0,
         borderColor: 'transparent',
         borderBottomWidth: 3,
-        borderBottomColor: active ? theme.colors.primary : "transparent",
+        borderBottomColor: active ? theme.colors.primary : 'transparent',
         ...buttonStyle,
       }}
+      textStyle={textStyle}
       {...rest}
     />
   );
@@ -29,7 +38,7 @@ export default function MainMenu() {
   return (
     <View
       style={{
-        paddingVertical: 38,
+        paddingVertical: 40,
       }}
     >
       <Container>
@@ -40,7 +49,7 @@ export default function MainMenu() {
           }}
         >
           {/* Logo */}
-          <OnoBlendsLogo />
+          <Link routeName="Home" renderContent={() => <OnoBlendsLogo />} />
 
           {/* Menu Items */}
           <View
@@ -49,23 +58,15 @@ export default function MainMenu() {
               flexDirection: 'row',
             }}
           >
-            <MenuLink
-              text="menu"
-              onPress={() => console.log('Menu Link pressed')}
-            />
-            <MenuLink
-              text="schedule"
-              onPress={() => console.log('Schedule Link pressed')}
-            />
-            <MenuLink
-              text="our story"
-              onPress={() => console.log('Story link pressed')}
-            />
+            <MenuLink routeName="Menu" text="menu" />
+            <MenuLink routeName="Schedule" text="schedule" />
+            <MenuLink routeName="OurStory" text="our story" />
             <Button
-              onPress={() => console.log('Book with us pressed')}
               type="outline"
               text="book with us"
-              textStyle={{ fontSize: 20 }}
+              routeName="Book"
+              // textStyle={{ fontSize: 20 }}
+              buttonStyle={{ marginLeft: 16 }}
             />
           </View>
         </View>

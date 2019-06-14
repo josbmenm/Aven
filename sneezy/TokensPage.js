@@ -37,7 +37,7 @@ function Tokens() {
           <FootNote>Foot Note</FootNote>
         </TokenSection>
         <TokenSection title="Button Tokens">
-          <Button text="Default Button" onPress={() => {}} />
+          <Button text="Default Button" routeName="Tokens" />
         </TokenSection>
       </View>
     </Container>

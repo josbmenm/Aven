@@ -1,90 +1,96 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { ThemeContext, useTheme } from "./ThemeContext";
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { useTheme } from './ThemeContext';
+import FunctionalLink from '../navigation-web/Link';
 
 export const defaultButtonStyles = {
   button: {
     paddingHorizontal: 20,
-    paddingVertical: 12
+    paddingVertical: 12,
   },
   text: {
     fontSize: 20,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 };
 
 export function Button({
   buttonStyle,
-  text = "button",
-  onPress,
-  type = "solid", // solid | outline
-  variant = "primary", // primary | secondary
+  text = 'button',
+  type = 'solid', // solid | outline
+  variant = 'primary', // primary | secondary
   textStyle = {},
+  routeName,
   ...rest
 }) {
   const { colors, fonts } = useTheme();
 
   return (
-    <TouchableOpacity onPress={onPress}>
-      <View
-        style={{
-          ...defaultButtonStyles.button,
-          borderRadius: 4,
-          borderWidth: 3,
-          borderColor: colors.primary,
-          backgroundColor: type === "solid" ? colors.primary : "transparent",
-          ...buttonStyle,
-          cursor: "pointer"
-        }}
-      >
-        <Text
+    <FunctionalLink
+      routeName={routeName}
+      renderContent={active => (
+        <View
           style={{
-            ...defaultButtonStyles.text,
-            color: type === "solid" ? colors.white : colors.primary,
-            fontFamily: fonts.button,
-            ...textStyle
+            ...defaultButtonStyles.button,
+            borderRadius: 4,
+            borderWidth: 3,
+            borderColor: colors.primary,
+            backgroundColor: type === 'solid' ? colors.primary : 'transparent',
+            ...buttonStyle,
+            cursor: 'pointer',
           }}
         >
-          {text}
-        </Text>
-      </View>
-    </TouchableOpacity>
+          <Text
+            style={{
+              ...defaultButtonStyles.text,
+              color: type === 'solid' ? colors.white : colors.primary,
+              fontFamily: fonts.button,
+              ...textStyle,
+            }}
+          >
+            {text}
+          </Text>
+        </View>
+      )}
+    />
   );
 }
 
 export function Link({
   buttonStyle = {},
   textStyle = {},
-  active = false,
-  text,
-  onPress,
+  text = "link",
+  routeName,
   ...rest
 }) {
   const { colors, fonts } = useTheme();
-
-return ( 
-    <TouchableOpacity onPress={onPress}>
-      <View
-        style={{
-          paddingHorizontal: 8,
-          paddingVertical: 4,
-          borderBottomWidth: 3,
-          borderColor: active ? colors.primary : "transparent",
-          ...buttonStyle
-        }}
-      >
-        <Text
+  return (
+    <FunctionalLink
+      routeName={routeName}
+      renderContent={active => (
+        <View
           style={{
-            fontWeight: "bold",
-            fontSize: 16,
-            fontFamily: fonts.button,
-            color: colors.primary,
-            ...textStyle
+            paddingHorizontal: 8,
+            paddingVertical: 4,
+            borderBottomWidth: 3,
+            borderColor: active ? colors.primary : 'transparent',
+            ...buttonStyle,
           }}
+          {...rest}
         >
-          {text}
-        </Text>
-      </View>
-    </TouchableOpacity>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 16,
+              fontFamily: fonts.button,
+              color: colors.primary,
+              ...textStyle,
+            }}
+          >
+            {text}
+          </Text>
+        </View>
+      )}
+    />
   );
 }

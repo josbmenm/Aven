@@ -33,7 +33,7 @@ function HomeSheduleSection() {
               <Button
                 type="solid"
                 text="Find us"
-                onPress={() => {}}
+                routeName="FindUs"
                 buttonStyle={{ width: 220 }}
               />
             </View>

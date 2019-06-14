@@ -48,15 +48,15 @@ export default function PageFooter() {
             }}
           >
             <View style={{ flex: 1 }}>
-              <Link text="menu" />
-              <Link text="0ur story" />
-              <Link text="book with us" />
+              <Link text="Menu" routeName="Menu" />
+              <Link text="Our story" routeName="OurStory" />
+              <Link text="Book with us" routeName="BookWithUs" />
             </View>
             <View style={{ flex: 1 }}>
-              <Link text="press kit" />
-              <Link text="terms & privacy" />
-              <Link text="contact us" />
-              <Link text="subscribe to updates" />
+              <Link text="Press kit" routeName="PressKit" />
+              <Link text="Terms & privacy" routeName="Terms" />
+              <Link text="Contact us" routeName="ContactUs" />
+              <Link text="Subscribe to updates" routeName="Subscribe" />
             </View>
           </View>
           <View
