@@ -1,8 +1,8 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { View, Text } from 'react-native';
 import GenericPage from '../GenericPage';
 import HeroHeader from './HeroHeader';
-import { ThemeContext, theme as defaultTheme, useTheme } from '../ThemeContext';
+import { useTheme } from '../ThemeContext';
 import FullViewportImage from '../FullViewportImage';
 import Container from '../Container';
 import PageFooter from '../PageFooter';
@@ -13,7 +13,7 @@ import HomeSheduleSection from './HomeSchedule';
 function Home() {
   const theme = useTheme();
   return (
-    <React.Fragment>
+    <GenericPage>
       <HeroHeader />
       {/* Image Full viewport Section */}
       <FullViewportImage
@@ -54,22 +54,12 @@ function Home() {
       <HowItWorks />
       <HomeSheduleSection />
       <PageFooter />
-    </React.Fragment>
+    </GenericPage>
   );
 }
 
-function HomePage() {
-  return (
-    <ThemeContext.Provider value={defaultTheme}>
-      <GenericPage>
-        <Home />
-      </GenericPage>
-    </ThemeContext.Provider>
-  );
-}
-
-HomePage.navigationOptions = {
+Home.navigationOptions = {
   title: 'Home',
 };
 
-export default HomePage;
+export default Home;

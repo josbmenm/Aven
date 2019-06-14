@@ -24,6 +24,8 @@ import TokensPage from './TokensPage';
 import Home from './Home';
 import MenuPage from './Menu';
 import OLDBlendMenu from './OLDBlendMenu';
+import OurStory from './OurStory'
+import { ThemeContext, theme } from './ThemeContext';
 
 const Main = () => (
   <View
@@ -129,6 +131,10 @@ const App = createSwitchNavigator(
       path: 'menu',
       screen: MenuPage,
     },
+    OurStory: {
+      path: 'our-story',
+      screen: OurStory
+    },
     OldMenu: {
       path: 'old/menu',
       screen: OLDBlendMenu,
@@ -136,4 +142,14 @@ const App = createSwitchNavigator(
   }
 );
 
-export default App;
+function Root(props) {
+  return (
+    <ThemeContext.Provider value={theme}>
+      <App {...props} />
+    </ThemeContext.Provider>
+  )
+}
+
+Root.router = App.router;
+
+export default Root;
