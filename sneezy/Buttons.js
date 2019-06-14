@@ -8,7 +8,8 @@ export const defaultButtonStyles = {
     paddingVertical: 12
   },
   text: {
-    fontSize: 20
+    fontSize: 20,
+    textAlign: 'center'
   }
 };
 
@@ -40,8 +41,8 @@ export function Button({
           style={{
             ...defaultButtonStyles.text,
             color: type === "solid" ? colors.white : colors.primary,
-            ...textStyle,
-            fontFamily: fonts.button
+            fontFamily: fonts.button,
+            ...textStyle
           }}
         >
           {text}

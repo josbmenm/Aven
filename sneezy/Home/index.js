@@ -8,6 +8,7 @@ import Container from '../Container';
 import PageFooter from '../PageFooter';
 import HomeSlider from './HomeSlider';
 import HowItWorks from './HowItWorks';
+import HomeSheduleSection from './HomeSchedule';
 
 function Home() {
   const theme = useTheme();
@@ -51,6 +52,7 @@ function Home() {
       </View>
       <HomeSlider />
       <HowItWorks />
+      <HomeSheduleSection />
       <PageFooter />
     </React.Fragment>
   );
