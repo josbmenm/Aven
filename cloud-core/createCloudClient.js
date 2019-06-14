@@ -207,6 +207,29 @@ export default function createCloudClient({
     return { id, name, domain };
   }
 
+  async function PutTransactionValue({
+    domain: actionDomain,
+    name,
+    value,
+    auth,
+  }) {
+    const defaultAction = () =>
+      source.dispatch({
+        type: 'PutTransactionValue',
+        domain: actionDomain,
+        auth,
+        name,
+        value,
+      });
+    if (actionDomain !== domain || auth) {
+      return await defaultAction();
+    }
+    const doc = docs.get(name);
+    await doc.putTransaction(value);
+    const id = await doc.getId();
+    return { id, name, domain };
+  }
+
   const actions = {
     CreateSession: createSession,
     CreateAnonymousSession: createAnonymousSession,
@@ -215,6 +238,7 @@ export default function createCloudClient({
     GetDoc,
     GetDocValue,
     PutDocValue,
+    PutTransactionValue,
     PostDoc,
   };
   const sourceId = `client(${source.id})`;
