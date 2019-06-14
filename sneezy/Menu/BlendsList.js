@@ -6,10 +6,6 @@ import { useTheme } from '../ThemeContext';
 import { useMenu, useCompanyConfig } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../../components/AirtableImage';
 
-function spaceText({ text }) {
-  return text.split('').join(' ');
-}
-
 function BlendItem(props) {
   const theme = useTheme();
   return (
@@ -42,10 +38,11 @@ function BlendItem(props) {
           color: theme.colors.white,
           minWidth: 120,
           textAlign: 'center',
+          letterSpacing: 3
         }}
         bold
       >
-        {spaceText({ text: props.DefaultBenefitName })}
+        {props.DefaultBenefitName}
       </FootNote>
       <AirtableImage
         image={props.Recipe['Recipe Image']}

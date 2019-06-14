@@ -262,3 +262,12 @@ export const heroViewStyle = {
 };
 export const heroIconStyle = { top: 15, fontSize: 64 };
 export const heroSubtitleStyle = { fontSize: 50 };
+
+
+
+// ---------------------------
+
+export const aspectRatio169 = {
+  width: "100%",
+  paddingTop: "56.25%"
+}
