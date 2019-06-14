@@ -105,5 +105,5 @@ export default function BlendMenu() {
 }
 
 BlendMenu.navigationOptions = {
-  title: 'Secret Blend Menu',
+  title: 'Our Blends',
 };

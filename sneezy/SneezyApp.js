@@ -15,14 +15,15 @@ import Privacy from './Privacy';
 import FocusExample from './FocusExample';
 import ReceiptPage from './ReceiptPage';
 import PreviewHome from './PreviewHome';
-import Home from './Home';
-import BlendMenu from './BlendMenu';
-import { monsterra } from '../components/Styles';
 
+import { monsterra } from '../components/Styles';
 import useCloud from '../cloud-core/useCloud';
 import xs from 'xstream';
 import useCloudValue from '../cloud-core/useCloudValue';
 import TokensPage from './TokensPage';
+import Home from './Home';
+import MenuPage from './Menu';
+import OLDBlendMenu from './OLDBlendMenu';
 
 const Main = () => (
   <View
@@ -94,28 +95,28 @@ const App = createSwitchNavigator(
         title: 'ono food co',
         customCSS: fontsCSS,
         customHTML: GoogleAnalyticsTag,
-      }
+      },
     },
     Admin: {
       path: 'admin',
       screen: SkynetAdmin,
     },
-    PreviewHome,
-    Receipt: ReceiptPage,
-    Menu: {
-      path: 'icanneverremembertheblendrecipes',
-      screen: BlendMenu,
-    },
-    Terms,
-    Privacy,
-    Menu2: {
-      path: 'secrets/blendmenu',
-      screen: BlendMenu,
-    },
-    Focus: {
-      path: 'secrets/focus-prototype',
-      screen: FocusExample,
-    },
+    // PreviewHome,
+    // Receipt: ReceiptPage,
+    // Menu: {
+    //   path: 'icanneverremembertheblendrecipes',
+    //   screen: BlendMenu,
+    // },
+    // Terms,
+    // Privacy,
+    // Menu2: {
+    //   path: 'secrets/blendmenu',
+    //   screen: BlendMenu,
+    // },
+    // Focus: {
+    //   path: 'secrets/focus-prototype',
+    //   screen: FocusExample,
+    // },
     Home: {
       path: 'home',
       screen: Home,
@@ -123,9 +124,16 @@ const App = createSwitchNavigator(
     Tokens: {
       path: 'design-tokens',
       screen: TokensPage
+    },
+    Menu: {
+      path: 'menu',
+      screen: MenuPage,
+    },
+    OldMenu: {
+      path: 'old/menu',
+      screen: OLDBlendMenu,
     }
-  },
-  {},
+  }
 );
 
 export default App;
