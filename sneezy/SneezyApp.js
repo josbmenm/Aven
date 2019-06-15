@@ -1,52 +1,35 @@
 import React from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  Button,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import { View, Text } from 'react-native';
 import { createSwitchNavigator } from '../navigation-core';
 import Admin from '../admin/Admin';
-import Terms from './Terms';
-import Privacy from './Privacy';
-import FocusExample from './FocusExample';
-import ReceiptPage from './ReceiptPage';
-import PreviewHome from './PreviewHome';
-
-import { monsterra } from '../components/Styles';
-import useCloud from '../cloud-core/useCloud';
-import xs from 'xstream';
-import useCloudValue from '../cloud-core/useCloudValue';
+// import FocusExample from './FocusExample';
+// import ReceiptPage from './ReceiptPage';
+// import PreviewHome from './PreviewHome';
+// import useCloud from '../cloud-core/useCloud';
+// import xs from 'xstream';
+// import useCloudValue from '../cloud-core/useCloudValue';
 import TokensPage from './TokensPage';
 import Home from './Home';
 import MenuPage from './Menu';
 import OLDBlendMenu from './OLDBlendMenu';
-import OurStory from './OurStory'
-import { ThemeContext, theme } from './ThemeContext';
+import OurStory from './OurStory';
+import Privacy from './Privacy';
+import Terms from './Terms';
+import { ThemeContext, theme, useTheme } from './ThemeContext';
+import GenericPage from './GenericPage';
+import GenericHeroHeader from './GenericHeroHeader';
 
-const Main = () => (
-  <View
-    style={{
-      flex: 1,
-      overflow: 'hidden',
-      justifyContent: 'center',
-      flexDirection: 'row',
-    }}
-  >
-    <Text
-      style={{
-        fontSize: 24,
-        color: monsterra,
-        fontFamily: 'Maax',
-      }}
-    >
-      not found
-    </Text>
-  </View>
-);
+function Main() {
+  const theme = useTheme();
+  return (
+    <GenericPage>
+      <GenericHeroHeader
+        title="Not Found"
+        backgroundColor={theme.colors.lightGrey}
+      />
+    </GenericPage>
+  );
+}
 
 const fontsCSS = `
 @font-face {
@@ -87,67 +70,67 @@ function SkynetAdmin(props) {
 }
 SkynetAdmin.router = Admin.router;
 
-const App = createSwitchNavigator(
-  {
-    Main: {
-      path: '',
-      screen: Main,
-      navigationOptions: {
-        backgroundColor: '#FFFFFF',
-        title: 'ono food co',
-        customCSS: fontsCSS,
-        customHTML: GoogleAnalyticsTag,
-      },
+const App = createSwitchNavigator({
+  Main: {
+    path: '',
+    screen: Main,
+    navigationOptions: {
+      backgroundColor: '#FFFFFF',
+      title: 'ono food co',
+      customCSS: fontsCSS,
+      customHTML: GoogleAnalyticsTag,
     },
-    Admin: {
-      path: 'admin',
-      screen: SkynetAdmin,
-    },
-    // PreviewHome,
-    // Receipt: ReceiptPage,
-    // Menu: {
-    //   path: 'icanneverremembertheblendrecipes',
-    //   screen: BlendMenu,
-    // },
-    // Terms,
-    // Privacy,
-    // Menu2: {
-    //   path: 'secrets/blendmenu',
-    //   screen: BlendMenu,
-    // },
-    // Focus: {
-    //   path: 'secrets/focus-prototype',
-    //   screen: FocusExample,
-    // },
-    Home: {
-      path: 'home',
-      screen: Home,
-    },
-    Tokens: {
-      path: 'design-tokens',
-      screen: TokensPage
-    },
-    Menu: {
-      path: 'menu',
-      screen: MenuPage,
-    },
-    OurStory: {
-      path: 'our-story',
-      screen: OurStory
-    },
-    OldMenu: {
-      path: 'old/menu',
-      screen: OLDBlendMenu,
-    }
-  }
-);
+  },
+  Admin: {
+    path: 'admin',
+    screen: SkynetAdmin,
+  },
+  // PreviewHome,
+  // Receipt: ReceiptPage,
+  // Menu2: {
+  //   path: 'secrets/blendmenu',
+  //   screen: BlendMenu,
+  // },
+  // Focus: {
+  //   path: 'secrets/focus-prototype',
+  //   screen: FocusExample,
+  // },
+  Home: {
+    path: 'home',
+    screen: Home,
+  },
+  Menu: {
+    path: 'menu',
+    screen: MenuPage,
+  },
+  OurStory: {
+    path: 'our-story',
+    screen: OurStory,
+  },
+  Privacy: {
+    path: 'legal/privacy',
+    screen: Privacy,
+  },
+  Terms: {
+    path: 'legal/terms',
+    screen: Terms,
+  },
+  Tokens: {
+    path: 'design-tokens',
+    screen: TokensPage,
+  },
+  OldMenu: {
+    path: 'old/menu',
+    screen: OLDBlendMenu,
+  },
+});
 
 function Root(props) {
   return (
     <ThemeContext.Provider value={theme}>
       <App {...props} />
     </ThemeContext.Provider>
-  )
+  );
 }
 
 Root.router = App.router;
