@@ -4,42 +4,45 @@ import GenericPage from '../GenericPage';
 import PageFooter from '../PageFooter';
 import Container from '../Container';
 import MainMenu from '../MainMenu';
+import { aspectRatio169 } from '../../components/Styles';
+import { Heading, BodyText } from '../Tokens';
+import { useTheme } from '../ThemeContext';
 
 function OurStory() {
+  const theme = useTheme();
   return (
     <GenericPage>
-      <View style={{ flex: 1, height: '100vh', paddingBottom: 38 }}>
+      <View style={{ flex: 1, height: '100vh', paddingBottom: 40 }}>
         <MainMenu />
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'stretch',
-          }}
-        >
-          <Container
-            style={{
-              flex: 1,
-              flexDirection: 'column',
-              alignItems: 'stretch',
-            }}
-          >
+        <View style={{ marginBottom: 220 }}>
+          <Container style={{ alignItems: 'center' }}>
+            <Image
+              source={{
+                uri:
+                  'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
+              }}
+              resizeMode="cover"
+              style={{ ...aspectRatio169 }}
+            />
             <View
               style={{
-                flex: 1,
-                flexDirection: 'row',
-                alignItems: 'stretch',
+                position: 'absolute',
+                paddingHorizontal: 80,
+                paddingVertical: 40,
+                backgroundColor: theme.colors.lightGrey,
+                bottom: -120,
+                width: '100%',
+                maxWidth: 640,
+                alignSelf: 'center',
               }}
             >
-              <View style={{ flex: 1, flexBasis: 0 }}>
-                <Image
-                  source={{
-                    uri:
-                      'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
-                  }}
-                  resizeMode="cover"
-                  style={{ flex: 1 }}
-                />
-              </View>
+              <Heading>Our Story</Heading>
+              <BodyText>
+                We started Ono with the idea that healthy, organic, and great
+                tasting smoothies should be accessible to everyone. With
+                robotics, locally-sourced food, and a bit of luck — Ono Blends
+                was born.
+              </BodyText>
             </View>
           </Container>
         </View>
