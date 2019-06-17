@@ -3,17 +3,26 @@ import { View, Text } from 'react-native';
 import { useTheme } from '../ThemeContext';
 import Container from '../Container';
 import { BodyText, Title } from '../Tokens';
+import AbsoluteImage from '../AbsoluteImage';
 
-function FeatureSection({ title, bodyText, media, inverted = false }) {
+function FeatureSection({ title, bodyText, media, inverted = false, style = {} }) {
   const theme = useTheme();
   return (
     <View
       style={{
         flexDirection: inverted ? 'row-reverse' : 'row',
         width: '90%',
+        ...style
       }}
     >
-      <View style={{ flex: 1, flexBasis: 0, flexDirection: 'row', justifyContent: inverted ? 'flex-end' : 'flex-start' }}>
+      <View
+        style={{
+          flex: 1,
+          flexBasis: 0,
+          flexDirection: 'row',
+          justifyContent: inverted ? 'flex-end' : 'flex-start',
+        }}
+      >
         {/* IMAGE HERE */}
         <View
           style={{
@@ -37,12 +46,15 @@ function HowItWorks() {
     <View
       style={{
         paddingTop: 68,
-        marginBottom: 200
+        marginBottom: 100,
       }}
     >
       <Container
         style={{
           alignItems: 'center',
+          paddingBottom: 300,
+          borderBottomWidth: 1,
+          borderBottomColor: theme.colors.border
         }}
       >
         <Text style={{ ...theme.textStyles.heading, marginBottom: 100 }}>
@@ -59,27 +71,35 @@ function HowItWorks() {
           }
           // media={}
         />
-        <FeatureSection
-          title="Order"
-          bodyText={
-            <BodyText>
-              Select a blend or personalize oned based on your nutritional
-              preferences or dietary restrictions through our ordering kiosk.
-              Ono Guides are on-site to ensure the best possible experience.
-            </BodyText>
-          }
-          // media={}
-          inverted
-        />
+        <View style={{ position: 'relative', width: '90%' }}>
+          <AbsoluteImage source={require('../public/img/mango.png')} style={{ width: 520, height: 611, right: -410, top: -270, zIndex: 10}} />
+          <FeatureSection
+            style={{width: "100%"}}
+            title="Order"
+            bodyText={
+              <BodyText>
+                Select a blend or personalize oned based on your nutritional
+                preferences or dietary restrictions through our ordering kiosk.
+                Ono Guides are on-site to ensure the best possible experience.
+              </BodyText>
+            }
+            // media={}
+            inverted
+          />
+        </View>
+        <View style={{ position: 'relative', width: '90%' }}>
+        <AbsoluteImage source={require('../public/img/mint-spinach.png')} style={{ width: 310, height: 403, left: -250, bottom: -250, zIndex: 10}} />
         <FeatureSection
           title="Pickup"
           bodyText={
             <BodyText>
-              Watch as advanced robotics create your perfect blend within 60 seconds, and when it’s ready, grab it from our pick-up area.
+              Watch as advanced robotics create your perfect blend within 60
+              seconds, and when it’s ready, grab it from our pick-up area.
             </BodyText>
           }
           // media={}
         />
+        </View>
       </Container>
     </View>
   );

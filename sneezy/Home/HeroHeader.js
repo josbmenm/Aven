@@ -5,6 +5,7 @@ import Container from '../Container';
 import { Button } from '../Buttons';
 import { Heading, BodyText } from '../Tokens';
 import { useTheme } from '../ThemeContext';
+import AbsoluteImage from '../AbsoluteImage';
 
 function HeaderContent() {
   const theme = useTheme();
@@ -48,7 +49,7 @@ function HeaderContent() {
 
 export default function HeroHeader() {
   return (
-    <View style={{ flex: 1, height: '100vh', paddingBottom: 60 }}>
+    <View style={{ flex: 1, paddingBottom: 60, minHeight: '100vh' }}>
       <MainMenu />
       <Container
         style={{
@@ -60,9 +61,38 @@ export default function HeroHeader() {
           style={{
             flex: 1,
             flexDirection: 'row',
-            alignItems: 'stretch',
+            alignItems: 'stretch'
           }}
         >
+          <AbsoluteImage
+            source={require('../public/img/strawberry.png')}
+            style={{ top: -250, left: -290, width: 482, height: 641 }}
+          />
+          <AbsoluteImage
+            source={require('../public/img/avocado.png')}
+            style={{ right: -250, bottom: -290, width: 568, height: 604 }}
+          />
+          <AbsoluteImage
+            source={require('../public/img/fruit_silhouette.png')}
+            style={{
+              right: -440,
+              top: -140,
+              width: 521,
+              height: 383,
+              zIndex: 0,
+            }}
+          />
+          <AbsoluteImage
+            source={require('../public/img/fruit_silhouette.png')}
+            style={{
+              left: -440,
+              bottom: -140,
+              width: 521,
+              height: 383,
+              zIndex: 0,
+            }}
+          />
+
           <HeaderContent />
           <View style={{ flex: 1, flexBasis: 0 }}>
             <Image
