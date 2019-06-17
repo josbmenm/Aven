@@ -41,7 +41,29 @@ export function Title({ children, style, ...rest }) {
 }
 
 export function List({ children }) {
-  return <Text>{children}</Text>;
+  return <View style={{
+    marginLeft: 20
+  }}>{children}</View>;
+}
+
+export function ListItem({ children }) {
+  const theme = useTheme();
+  return (
+    <View style={{ position: 'relative' }}>
+      <View
+        style={{
+          position: 'absolute',
+          width: 6,
+          height: 6,
+          borderRadius: 4,
+          backgroundColor: theme.colors.primary,
+          left: -20,
+          top: 12
+        }}
+      />
+      <BodyText>{children}</BodyText>
+    </View>
+  );
 }
 
 export function BodyText({ children, bold, style, ...rest }) {
@@ -71,10 +93,6 @@ export function FootNote({ children, bold, style, ...rest }) {
 }
 
 export function Link({ children }) {
-  return <Text>{children}</Text>;
-}
-
-export function ListItem({ children }) {
   return <Text>{children}</Text>;
 }
 

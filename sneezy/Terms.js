@@ -257,7 +257,7 @@ function Terms() {
             offered by Ono Food Co. for your personal use.
           </BodyText>
         </SubSection>
-        <SubSection title="General Prohibitions & Ono Food Co’s Enforcement Rights ">
+        <SubSection title="General Prohibitions & Ono Food Co’s Enforcement Rights">
           <BodyText>You agree not to do any of the following:</BodyText>
           <List>
             <ListItem>
@@ -415,197 +415,193 @@ function Terms() {
             or your Account.
           </BodyText>
         </SubSection>
-        <Section title="Dispute Resolution">
-          <SubSection title="Governing Law">
-            <BodyText>
-              These Terms and any action related thereto will be governed by the
-              laws of the State of California without regard to its conflict of
-              laws provisions.
-            </BodyText>
-          </SubSection>
-          <SubSection title="Agreement to Arbitrate">
-            <BodyText>
-              You and Ono Food Co. agree that any dispute, claim or controversy
-              arising out of or relating to these Terms or the breach,
-              termination, enforcement, interpretation or validity thereof or
-              the use of the Services or Content (collectively, “Disputes”) will
-              be settled by binding arbitration, except that each party retains
-              the right: (i) to bring an individual action in small claims court
-              and (ii) to seek injunctive or other equitable relief in a court
-              of competent jurisdiction to prevent the actual or threatened
-              infringement, misappropriation or violation of a party’s
-              copyrights, trademarks, trade secrets, patents or other
-              intellectual property rights (the action described in the
-              foregoing clause (ii), an “IP Protection Action”). Without
-              limiting the preceding sentence, you will also have the right to
-              litigate any other Dispute if you provide Ono Food Co. with
-              written notice of your desire to do so by email or regular mail
-              at: support@onofood.co; 915 Venice Blvd. Los Angeles, CA 90015
-              within thirty (30) days following the date you first agree to
-              these Terms (such notice, an “Arbitration Opt-out Notice”). If you
-              don’t provide Ono Food Co. with an Arbitration Opt-out Notice
-              within the thirty (30) day period, you will be deemed to have
-              knowingly and intentionally waived your right to litigate any
-              Dispute except as expressly set forth in clauses (i) and (ii)
-              above. The exclusive jurisdiction and venue of any IP Protection
-              Action or, if you timely provide Ono Food Co. with an Arbitration
-              Opt-out Notice, will be the state and federal courts located in
-              the Northern District of California and each of the parties hereto
-              waives any objection to jurisdiction and venue in such courts.
-              Unless you timely provide Ono Food Co. with an Arbitration Opt-out
-              Notice, you acknowledge and agree that you and Ono Food Co. are
-              each waiving the right to a trial by jury or to participate as a
-              plaintiff or class member in any purported class action or
-              representative proceeding.Further, unless both you and Ono Food
-              Co. otherwise agree in writing, the arbitrator may not consolidate
-              more than one person's claims, and may not otherwise preside over
-              any form of any class or representative proceeding. If this
-              specific paragraph is held unenforceable, then the entirety of
-              this “Dispute Resolution” section will be deemed void. Except as
-              provided in the preceding sentence, this “Dispute Resolution”
-              section will survive any termination of these Terms.
-            </BodyText>
-          </SubSection>
-          <SubSection title="Arbitration Rules">
-            <BodyText>
-              The arbitration will be administered by the American Arbitration
-              Association (“AAA”) in accordance with the Commercial Arbitration
-              Rules and the Supplementary Procedures for Consumer Related
-              Disputes (the “AAA Rules”) then in effect, except as modified by
-              this “Dispute Resolution” section. (The AAA Rules are available at
-              www.adr.org/arb_medor by calling the AAA at 1-800-778-7879.) The
-              Federal Arbitration Act will govern the interpretation and
-              enforcement of this Section.
-            </BodyText>
-          </SubSection>
-          <SubSection title="Arbitration Process">
-            <BodyText>
-              A party who desires to initiate arbitration must provide the other
-              party with a written Demand for Arbitration as specified in the
-              AAA Rules. (The AAA provides a general Demand for Arbitration and
-              a separate Demand for Arbitration for California residents.) The
-              arbitrator will be either a retired judge or an attorney licensed
-              to practice law and will be selected by the parties from the AAA’s
-              roster of arbitrators. If the parties are unable to agree upon an
-              arbitrator within seven (7) days of delivery of the Demand for
-              Arbitration, then the AAA will appoint the arbitrator in
-              accordance with the AAA Rules.
-            </BodyText>
-          </SubSection>
-          <SubSection title="Arbitration Location & Procedure">
-            <BodyText>
-              Unless you and Ono Food Co. otherwise agree, the arbitration will
-              be conducted in the county where you reside. If your claim does
-              not exceed $10,000, then the arbitration will be conducted solely
-              on the basis of the documents that you and Ono Food Co. submitted
-              to the arbitrator, unless you request a hearing or the arbitrator
-              determines that a hearing is necessary. If your claim exceeds
-              $10,000, your right to a hearing will be determined by the AAA
-              Rules. Subject to the AAA Rules, the arbitrator will have the
-              discretion to direct a reasonable exchange of information by the
-              parties, consistent with the expedited nature of the arbitration.
-            </BodyText>
-          </SubSection>
-          <SubSection title="Arbitrator’s Decision">
-            <BodyText>
-              The arbitrator will render an award within the time frame
-              specified in the AAA Rules. The arbitrator’s decision will include
-              the essential findings and conclusions upon which the arbitrator
-              based the award. Judgment on the arbitration award may be entered
-              in any court having jurisdiction thereof. The arbitrator’s award
-              of damages must be consistent with the terms of the “Limitation of
-              Liability” section above as to the types and amounts of damages
-              for which a party may be held liable. The arbitrator may award
-              declaratory or injunctive relief only in favor of the claimant and
-              only to the extent necessary to provide relief warranted by the
-              claimant’s individual claim. If you prevail in arbitration you
-              will be entitled to an award of attorneys’ fees and expenses, to
-              the extent provided under applicable law. Ono Food Co. will not
-              seek, and hereby waives all rights it may have under applicable
-              law to recover, attorneys’ fees and expenses if it prevails in
-              arbitration.
-            </BodyText>
-          </SubSection>
-          <SubSection title="Fees">
-            <BodyText>
-              Your responsibility to pay any AAA filing, administrative and
-              arbitrator fees will be solely as set forth in the AAA Rules.
-              However, if your claim for damages does not exceed $75,000, Ono
-              Food Co. will pay all such fees unless the arbitrator finds that
-              either the substance of your claim or the relief sought in your
-              Demand for Arbitration was frivolous or was brought for an
-              improper purpose (as measured by the standards set forth in
-              Federal Rule of Civil Procedure 11(b)).
-            </BodyText>
-          </SubSection>
-          <SubSection title="Changes">
-            <BodyText>
-              Notwithstanding the provisions of the “Modification” section
-              above, if Ono Food Co. changes this “Dispute Resolution” section
-              after the date you first accepted these Terms (or accepted any
-              subsequent changes to these Terms), you may reject any such change
-              by sending us written notice (including by email to
-              support@onofood.co) within 30 days of the date such change became
-              effective, as indicated in the “Last Updated” date above or in the
-              date of Ono Food Co’s email to you notifying you of such change.
-              By rejecting any change, you are agreeing that you will arbitrate
-              any Dispute between you and Ono Food Co. in accordance with the
-              provisions of this “Dispute Resolution” section as of the date you
-              first accepted these Terms (or accepted any subsequent changes to
-              these Terms).
-            </BodyText>
-          </SubSection>
-          <SubSection title="General">
-            <BodyText>
-              These Terms constitute the entire and exclusive understanding and
-              agreement between Ono Food Co. and you regarding the Services and
-              Content, and these Terms supersede and replace any and all prior
-              oral or written understandings or agreements between Ono Food Co,
-              and you regarding the Services and Content. If any provision of
-              these Terms is held invalid or unenforceable (either by an
-              arbitrator appointed pursuant to the terms of the “Arbitration”
-              section above or by a court of competent jurisdiction, but only if
-              you timely opt out of arbitration by sending us an Arbitration
-              Opt-out Notice in accordance with the terms set forth above), that
-              provision will be enforced to the maximum extent permissible and
-              the other provisions of these Terms will remain in full force and
-              effect. You may not assign or transfer these Terms, by operation
-              of law or otherwise, without Ono Food Co’s prior written consent.
-              Any attempt by you to assign or transfer these Terms, without such
-              consent, will be null. Ono Food Co. may freely assign or transfer
-              these Terms without restriction. Subject to the foregoing, these
-              Terms will bind and inure to the benefit of the parties, their
-              successors and permitted assigns. Any notices or other
-              communications provided by Ono Food Co. under these Terms,
-              including those regarding modifications to these Terms, will be
-              given: (i) via email; or (ii) by posting to the Services. For
-              notices made by e-mail, the date of receipt will be deemed the
-              date on which such notice is transmitted. Ono Food Co’s failure to
-              enforce any right or provision of these Terms will not be
-              considered a waiver of such right or provision. The waiver of any
-              such right or provision will be effective only if in writing and
-              signed by a duly authorized representative of Ono Food Co. Except
-              as expressly set forth in these Terms, the exercise by either
-              party of any of its remedies under these Terms will be without
-              prejudice to its other remedies under these Terms or otherwise.
-            </BodyText>
-          </SubSection>
-          <SubSection title="Contact Us">
-            <BodyText>
-              In order to resolve a complaint regards the Site or Services or to
-              receive further information regarding the use of the Site or
-              Services, please contact us at:
-            </BodyText>
-            <BodyText>
-              Ono Food Co.{'\n'}
-              915 Venice Blvd.{'\n'}
-              Los Angeles, CA 90015{'\n'}
-              United States{'\n'}
-              Phone: (213) 357-0614{'\n'}
-              support@onofood.co{'\n'}
-            </BodyText>
-          </SubSection>
-        </Section>
+        <SubSection title="Dispute Resolution" />
+        <SubSection title="Governing Law">
+          <BodyText>
+            These Terms and any action related thereto will be governed by the
+            laws of the State of California without regard to its conflict of
+            laws provisions.
+          </BodyText>
+        </SubSection>
+        <SubSection title="Agreement to Arbitrate">
+          <BodyText>
+            You and Ono Food Co. agree that any dispute, claim or controversy
+            arising out of or relating to these Terms or the breach,
+            termination, enforcement, interpretation or validity thereof or the
+            use of the Services or Content (collectively, “Disputes”) will be
+            settled by binding arbitration, except that each party retains the
+            right: (i) to bring an individual action in small claims court and
+            (ii) to seek injunctive or other equitable relief in a court of
+            competent jurisdiction to prevent the actual or threatened
+            infringement, misappropriation or violation of a party’s copyrights,
+            trademarks, trade secrets, patents or other intellectual property
+            rights (the action described in the foregoing clause (ii), an “IP
+            Protection Action”). Without limiting the preceding sentence, you
+            will also have the right to litigate any other Dispute if you
+            provide Ono Food Co. with written notice of your desire to do so by
+            email or regular mail at: support@onofood.co; 915 Venice Blvd. Los
+            Angeles, CA 90015 within thirty (30) days following the date you
+            first agree to these Terms (such notice, an “Arbitration Opt-out
+            Notice”). If you don’t provide Ono Food Co. with an Arbitration
+            Opt-out Notice within the thirty (30) day period, you will be deemed
+            to have knowingly and intentionally waived your right to litigate
+            any Dispute except as expressly set forth in clauses (i) and (ii)
+            above. The exclusive jurisdiction and venue of any IP Protection
+            Action or, if you timely provide Ono Food Co. with an Arbitration
+            Opt-out Notice, will be the state and federal courts located in the
+            Northern District of California and each of the parties hereto
+            waives any objection to jurisdiction and venue in such courts.
+            Unless you timely provide Ono Food Co. with an Arbitration Opt-out
+            Notice, you acknowledge and agree that you and Ono Food Co. are each
+            waiving the right to a trial by jury or to participate as a
+            plaintiff or class member in any purported class action or
+            representative proceeding.Further, unless both you and Ono Food Co.
+            otherwise agree in writing, the arbitrator may not consolidate more
+            than one person's claims, and may not otherwise preside over any
+            form of any class or representative proceeding. If this specific
+            paragraph is held unenforceable, then the entirety of this “Dispute
+            Resolution” section will be deemed void. Except as provided in the
+            preceding sentence, this “Dispute Resolution” section will survive
+            any termination of these Terms.
+          </BodyText>
+        </SubSection>
+        <SubSection title="Arbitration Rules">
+          <BodyText>
+            The arbitration will be administered by the American Arbitration
+            Association (“AAA”) in accordance with the Commercial Arbitration
+            Rules and the Supplementary Procedures for Consumer Related Disputes
+            (the “AAA Rules”) then in effect, except as modified by this
+            “Dispute Resolution” section. (The AAA Rules are available at
+            www.adr.org/arb_medor by calling the AAA at 1-800-778-7879.) The
+            Federal Arbitration Act will govern the interpretation and
+            enforcement of this Section.
+          </BodyText>
+        </SubSection>
+        <SubSection title="Arbitration Process">
+          <BodyText>
+            A party who desires to initiate arbitration must provide the other
+            party with a written Demand for Arbitration as specified in the AAA
+            Rules. (The AAA provides a general Demand for Arbitration and a
+            separate Demand for Arbitration for California residents.) The
+            arbitrator will be either a retired judge or an attorney licensed to
+            practice law and will be selected by the parties from the AAA’s
+            roster of arbitrators. If the parties are unable to agree upon an
+            arbitrator within seven (7) days of delivery of the Demand for
+            Arbitration, then the AAA will appoint the arbitrator in accordance
+            with the AAA Rules.
+          </BodyText>
+        </SubSection>
+        <SubSection title="Arbitration Location & Procedure">
+          <BodyText>
+            Unless you and Ono Food Co. otherwise agree, the arbitration will be
+            conducted in the county where you reside. If your claim does not
+            exceed $10,000, then the arbitration will be conducted solely on the
+            basis of the documents that you and Ono Food Co. submitted to the
+            arbitrator, unless you request a hearing or the arbitrator
+            determines that a hearing is necessary. If your claim exceeds
+            $10,000, your right to a hearing will be determined by the AAA
+            Rules. Subject to the AAA Rules, the arbitrator will have the
+            discretion to direct a reasonable exchange of information by the
+            parties, consistent with the expedited nature of the arbitration.
+          </BodyText>
+        </SubSection>
+        <SubSection title="Arbitrator’s Decision">
+          <BodyText>
+            The arbitrator will render an award within the time frame specified
+            in the AAA Rules. The arbitrator’s decision will include the
+            essential findings and conclusions upon which the arbitrator based
+            the award. Judgment on the arbitration award may be entered in any
+            court having jurisdiction thereof. The arbitrator’s award of damages
+            must be consistent with the terms of the “Limitation of Liability”
+            section above as to the types and amounts of damages for which a
+            party may be held liable. The arbitrator may award declaratory or
+            injunctive relief only in favor of the claimant and only to the
+            extent necessary to provide relief warranted by the claimant’s
+            individual claim. If you prevail in arbitration you will be entitled
+            to an award of attorneys’ fees and expenses, to the extent provided
+            under applicable law. Ono Food Co. will not seek, and hereby waives
+            all rights it may have under applicable law to recover, attorneys’
+            fees and expenses if it prevails in arbitration.
+          </BodyText>
+        </SubSection>
+        <SubSection title="Fees">
+          <BodyText>
+            Your responsibility to pay any AAA filing, administrative and
+            arbitrator fees will be solely as set forth in the AAA Rules.
+            However, if your claim for damages does not exceed $75,000, Ono Food
+            Co. will pay all such fees unless the arbitrator finds that either
+            the substance of your claim or the relief sought in your Demand for
+            Arbitration was frivolous or was brought for an improper purpose (as
+            measured by the standards set forth in Federal Rule of Civil
+            Procedure 11(b)).
+          </BodyText>
+        </SubSection>
+        <SubSection title="Changes">
+          <BodyText>
+            Notwithstanding the provisions of the “Modification” section above,
+            if Ono Food Co. changes this “Dispute Resolution” section after the
+            date you first accepted these Terms (or accepted any subsequent
+            changes to these Terms), you may reject any such change by sending
+            us written notice (including by email to support@onofood.co) within
+            30 days of the date such change became effective, as indicated in
+            the “Last Updated” date above or in the date of Ono Food Co’s email
+            to you notifying you of such change. By rejecting any change, you
+            are agreeing that you will arbitrate any Dispute between you and Ono
+            Food Co. in accordance with the provisions of this “Dispute
+            Resolution” section as of the date you first accepted these Terms
+            (or accepted any subsequent changes to these Terms).
+          </BodyText>
+        </SubSection>
+        <SubSection title="General">
+          <BodyText>
+            These Terms constitute the entire and exclusive understanding and
+            agreement between Ono Food Co. and you regarding the Services and
+            Content, and these Terms supersede and replace any and all prior
+            oral or written understandings or agreements between Ono Food Co,
+            and you regarding the Services and Content. If any provision of
+            these Terms is held invalid or unenforceable (either by an
+            arbitrator appointed pursuant to the terms of the “Arbitration”
+            section above or by a court of competent jurisdiction, but only if
+            you timely opt out of arbitration by sending us an Arbitration
+            Opt-out Notice in accordance with the terms set forth above), that
+            provision will be enforced to the maximum extent permissible and the
+            other provisions of these Terms will remain in full force and
+            effect. You may not assign or transfer these Terms, by operation of
+            law or otherwise, without Ono Food Co’s prior written consent. Any
+            attempt by you to assign or transfer these Terms, without such
+            consent, will be null. Ono Food Co. may freely assign or transfer
+            these Terms without restriction. Subject to the foregoing, these
+            Terms will bind and inure to the benefit of the parties, their
+            successors and permitted assigns. Any notices or other
+            communications provided by Ono Food Co. under these Terms, including
+            those regarding modifications to these Terms, will be given: (i) via
+            email; or (ii) by posting to the Services. For notices made by
+            e-mail, the date of receipt will be deemed the date on which such
+            notice is transmitted. Ono Food Co’s failure to enforce any right or
+            provision of these Terms will not be considered a waiver of such
+            right or provision. The waiver of any such right or provision will
+            be effective only if in writing and signed by a duly authorized
+            representative of Ono Food Co. Except as expressly set forth in
+            these Terms, the exercise by either party of any of its remedies
+            under these Terms will be without prejudice to its other remedies
+            under these Terms or otherwise.
+          </BodyText>
+        </SubSection>
+        <SubSection title="Contact Us">
+          <BodyText>
+            In order to resolve a complaint regards the Site or Services or to
+            receive further information regarding the use of the Site or
+            Services, please contact us at:
+          </BodyText>
+          <BodyText>
+            Ono Food Co.{'\n'}
+            915 Venice Blvd.{'\n'}
+            Los Angeles, CA 90015{'\n'}
+            United States{'\n'}
+            Phone: (213) 357-0614{'\n'}
+            support@onofood.co{'\n'}
+          </BodyText>
+        </SubSection>
       </Container>
       <PageFooter />
     </GenericPage>
