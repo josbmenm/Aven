@@ -4,6 +4,7 @@ import { useTheme } from '../ThemeContext';
 import Container from '../Container';
 import { Title, BodyText } from '../Tokens';
 import { Button } from '../Buttons';
+import Schedule from '../Schedule';
 
 function HomeSheduleSection() {
   const theme = useTheme();
@@ -47,14 +48,16 @@ function HomeSheduleSection() {
               justifyContent: 'flex-start',
             }}
           >
-            <Title>Today's Schedule</Title>
+            <Title style={{ marginBottom: 20 }}>Today's Schedule</Title>
             <View
               style={{
-                backgroundColor: theme.colors.lightGrey,
-                height: 433,
+                // backgroundColor: theme.colors.lightGrey,
+                width: "100%",
                 flex: 1,
               }}
-            />
+            >
+              <Schedule />
+</View>
           </View>
         </View>
       </Container>

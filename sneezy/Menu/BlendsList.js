@@ -20,7 +20,7 @@ function BlendItem(props) {
         backgroundColor: 'white',
         overflow: 'hidden',
         borderRadius: 8,
-        ...theme.shadows.medium,
+        ...theme.shadows.large,
       }}
     >
       <Title style={{ textAlign: 'right', fontSize: 24 }}>

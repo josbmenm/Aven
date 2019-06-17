@@ -15,7 +15,7 @@ const fonts = {
   title: 'Maax-Bold',
   body: 'Lora',
   footnote: 'Maax',
-  button: 'Maax-Bold'
+  button: 'Maax-Bold',
 };
 
 const textSpacing = {
@@ -58,11 +58,17 @@ const textStyles = {
 };
 
 const shadows = {
-  medium: {
+  large: {
     shadowOffset: { width: 0, height: 4 },
     shadowColor: 'black',
     shadowOpacity: 0.08,
     shadowRadius: 24,
+  },
+  medium: {
+    shadowOffset: { width: 0, height: 4 },
+    shadowColor: 'black',
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
   },
   small: {
     shadowOffset: { width: 0, height: 4 },
