@@ -243,8 +243,8 @@ export default async function WebServer({
             flex-direction: column;
           }
           ${options.customCSS ? options.customCSS : ''}
-          ${options.customHTMLHeaders ? options.customHTMLHeaders : ''}
           </style>
+          ${options.customHTMLHeaders ? options.customHTMLHeaders : ''}
           ${isProd ? '' : devErrorSupresser}
           ${css}
           ${
