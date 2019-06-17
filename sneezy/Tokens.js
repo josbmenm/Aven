@@ -2,8 +2,7 @@ import { Text, View } from 'react-native';
 import React from 'react';
 import { useTheme } from './ThemeContext';
 
-
-let responsiveIdCount = 0
+let responsiveIdCount = 0;
 
 export function SubSection({ title, children }) {
   return (
@@ -79,12 +78,13 @@ export function ListItem({ children }) {
   return <Text>{children}</Text>;
 }
 
-export function VerticalToHorizontalLayout({
+export function V2HLayout({
   children,
   columnReverse = false,
   rowReverse = false,
   style = {},
   breakpoint = 768,
+  resetFlexBasis,
   ...rest
 }) {
   const elemID = responsiveIdCount++;
@@ -96,29 +96,34 @@ export function VerticalToHorizontalLayout({
         flex-direction: ${columnReverse ? 'column-reverse' : 'column'};
       }
 
-      .vertical-to-horizontal-layout-${elemID} > .vertical-to-horizontal-layout__child {
-      }
-
       @media only screen and (min-width: ${breakpoint}px) {
         .vertical-to-horizontal-layout-${elemID} {
           flex-direction: ${rowReverse ? 'row-reverse' : 'row'};
         }
 
-        .vertical-to-horizontal-layout-${elemID} > .vertical-to-horizontal-layout__child {
+        ${
+          !resetFlexBasis
+            ? `.vertical-to-horizontal-layout-${elemID} > .vertical-to-horizontal-layout__child {
           flex: 1;
           flex-basis: 0;
+        }`
+            : ''
         }
       }
     `}</style>
-      <View className={`vertical-to-horizontal-layout-${elemID}`} style={style} {...rest}>
+      <View
+        className={`vertical-to-horizontal-layout-${elemID}`}
+        style={style}
+        {...rest}
+      >
         {children}
       </View>
     </React.Fragment>
   );
 }
 
-export function VerticalToHorizontalLayoutChild(props) {
-  return <View className="vertical-to-horizontal-layout__child" {...props} />
+export function V2HLayoutChild(props) {
+  return <View className="vertical-to-horizontal-layout__child" {...props} />;
 }
 
 export function NoFlexToFlex({ children, breakpoint = 768 }) {
@@ -137,9 +142,7 @@ export function NoFlexToFlex({ children, breakpoint = 768 }) {
           }
         }
       `}</style>
-      <View className="no-flex-to-flex">
-        {children}
-      </View>
+      <View className="no-flex-to-flex">{children}</View>
     </React.Fragment>
   );
 }

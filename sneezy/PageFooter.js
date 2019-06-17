@@ -5,6 +5,7 @@ import { useTheme } from './ThemeContext';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import OnoFoodLogo from './OnoFoodLogo';
 import { Link } from './Buttons';
+import { V2HLayout, V2HLayoutChild, FootNote } from './Tokens';
 
 export default function PageFooter() {
   const theme = useTheme();
@@ -15,71 +16,95 @@ export default function PageFooter() {
           borderTopWidth: StyleSheet.hairlineWidth,
           borderTopColor: theme.colors.border,
           paddingVertical: 100,
-          flexDirection: 'row',
-          alignItems: 'center',
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingRight: 20,
-          }}
-        >
-          <OnoBlendsLogo width={80} style={{ marginRight: 20 }} />
-          <OnoFoodLogo style={{ marginRight: 52 }} />
-          <Text style={theme.textStyles.footnote}>
-            © Copyright 2018 Ono Food Co. All Rights Reserved
-          </Text>
-        </View>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingLeft: 20,
-          }}
-        >
-          <View
+        <V2HLayout columnReverse>
+          <V2HLayoutChild
             style={{
               flex: 1,
               flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 10,
             }}
           >
-            <View style={{ flex: 1 }}>
-              <Link noActive text="Menu" routeName="Menu" />
-              <Link noActive text="Our story" routeName="OurStory" />
-              <Link noActive text="Book with us" routeName="BookWithUs" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Link noActive text="Press kit" routeName="PressKit" />
-              <Link noActive text="Terms & privacy" routeName="Terms" />
-              <Link noActive text="Contact us" routeName="ContactUs" />
-              <Link noActive text="Subscribe to updates" routeName="Subscribe" />
-            </View>
-          </View>
-          <View
+            <V2HLayout>
+              <V2HLayoutChild>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    flex: 1,
+                    justifyContent: 'center',
+                  }}
+                >
+                  <OnoBlendsLogo width={80} style={{ marginRight: 20 }} />
+                  <OnoFoodLogo style={{ marginRight: 52 }} />
+                </View>
+              </V2HLayoutChild>
+              <V2HLayoutChild>
+                <FootNote style={{textAlign: 'center'}}>
+                  © Copyright 2018 Ono Food Co. All Rights Reserved
+                </FootNote>
+              </V2HLayoutChild>
+            </V2HLayout>
+          </V2HLayoutChild>
+          <V2HLayoutChild
             style={{
-              paddingHorizontal: 24,
-              paddingTop: 4,
-              alignSelf: 'flex-start',
+              flex: 1,
               flexDirection: 'row',
               alignItems: 'center',
+              paddingHorizontal: 10,
             }}
           >
-            <View
-              style={{
-                backgroundColor: theme.colors.lightGrey,
-                width: 20,
-                height: 20,
-                borderRadius: 2,
-                marginRight: 8,
-              }}
-            />
-            <Text style={theme.textStyles.footnote}>@onofodco</Text>
-          </View>
-        </View>
+            <V2HLayout resetFlexBasis style={{ flex: 1 }}>
+              <V2HLayoutChild
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  marginBottom: 40,
+                }}
+              >
+                <View style={{ flex: 1 }}>
+                  <Link noActive text="Menu" routeName="Menu" />
+                  <Link noActive text="Our story" routeName="OurStory" />
+                  <Link noActive text="Book with us" routeName="BookWithUs" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Link noActive text="Press kit" routeName="PressKit" />
+                  <Link noActive text="Terms & privacy" routeName="Terms" />
+                  <Link noActive text="Contact us" routeName="ContactUs" />
+                  <Link
+                    noActive
+                    text="Subscribe to updates"
+                    routeName="Subscribe"
+                  />
+                </View>
+              </V2HLayoutChild>
+              <V2HLayoutChild
+                style={{
+                  paddingHorizontal: 24,
+                  paddingTop: 4,
+                  alignSelf: 'flex-start',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginBottom: 40,
+                }}
+              >
+                {/* Instagram Icon */}
+                <View
+                  style={{
+                    backgroundColor: theme.colors.lightGrey,
+                    width: 20,
+                    height: 20,
+                    borderRadius: 2,
+                    marginRight: 8,
+                  }}
+                />
+                <Text style={theme.textStyles.footnote}>@onofodco</Text>
+              </V2HLayoutChild>
+            </V2HLayout>
+          </V2HLayoutChild>
+        </V2HLayout>
       </Container>
     </View>
   );

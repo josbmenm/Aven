@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { useTheme } from '../ThemeContext';
 import Container from '../Container';
-import { BodyText, Title, VerticalToHorizontalLayout, VerticalToHorizontalLayoutChild } from '../Tokens';
+import { BodyText, Title, V2HLayout, V2HLayoutChild } from '../Tokens';
 import AbsoluteImage from '../AbsoluteImage';
 
 function FeatureSection({
@@ -14,7 +14,7 @@ function FeatureSection({
 }) {
   const theme = useTheme();
   return (
-    <VerticalToHorizontalLayout
+    <V2HLayout
       rowReverse={inverted}
       style={{
         alignSelf: 'center',
@@ -31,7 +31,7 @@ function FeatureSection({
         }}
       > */}
       {/* IMAGE HERE */}
-      <VerticalToHorizontalLayoutChild>
+      <V2HLayoutChild>
         <View
           style={{
             width: 412,
@@ -39,9 +39,9 @@ function FeatureSection({
             backgroundColor: theme.colors.lightGrey,
           }}
         />
-      </VerticalToHorizontalLayoutChild>
+      </V2HLayoutChild>
       {/* <View style={{ flex: 1, flexBasis: 0, justifyContent: 'center' }} /> */}
-      <VerticalToHorizontalLayoutChild
+      <V2HLayoutChild
         style={{
           paddingVertical: 40,
           paddingRight: 40,
@@ -50,8 +50,8 @@ function FeatureSection({
       >
         <Title>{title}</Title>
         {bodyText}
-      </VerticalToHorizontalLayoutChild>
-    </VerticalToHorizontalLayout>
+      </V2HLayoutChild>
+    </V2HLayout>
   );
 }
 
