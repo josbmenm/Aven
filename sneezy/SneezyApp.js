@@ -49,6 +49,9 @@ const GoogleAnalyticsTag = `
   gtag('config', 'UA-127774566-1');
 </script>
 `;
+const customHTMLHeaders = `
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+`;
 
 let authority = '';
 let useSSL = true;
@@ -70,60 +73,67 @@ function SkynetAdmin(props) {
 }
 SkynetAdmin.router = Admin.router;
 
-const App = createSwitchNavigator({
-  Main: {
-    path: '',
-    screen: Main,
-    navigationOptions: {
-      backgroundColor: '#FFFFFF',
-      title: 'ono food co',
-      customCSS: fontsCSS,
-      customHTML: GoogleAnalyticsTag,
+const App = createSwitchNavigator(
+  {
+    Main: {
+      path: '',
+      screen: Main,
+      navigationOptions: {
+        backgroundColor: '#FFFFFF',
+        title: 'ono food co',
+        customCSS: fontsCSS,
+        customHTML: GoogleAnalyticsTag,
+      },
+    },
+    Admin: {
+      path: 'admin',
+      screen: SkynetAdmin,
+    },
+    // PreviewHome,
+    // Receipt: ReceiptPage,
+    // Menu2: {
+    //   path: 'secrets/blendmenu',
+    //   screen: BlendMenu,
+    // },
+    // Focus: {
+    //   path: 'secrets/focus-prototype',
+    //   screen: FocusExample,
+    // },
+    Home: {
+      path: 'home',
+      screen: Home,
+    },
+    Menu: {
+      path: 'menu',
+      screen: MenuPage,
+    },
+    OurStory: {
+      path: 'our-story',
+      screen: OurStory,
+    },
+    Privacy: {
+      path: 'legal/privacy',
+      screen: Privacy,
+    },
+    Terms: {
+      path: 'legal/terms',
+      screen: Terms,
+    },
+    Tokens: {
+      path: 'design-tokens',
+      screen: TokensPage,
+    },
+    OldMenu: {
+      path: 'old/menu',
+      screen: OLDBlendMenu,
     },
   },
-  Admin: {
-    path: 'admin',
-    screen: SkynetAdmin,
+  {
+    defaultNavigationOptions: {
+      customHTMLHeaders,
+    },
   },
-  // PreviewHome,
-  // Receipt: ReceiptPage,
-  // Menu2: {
-  //   path: 'secrets/blendmenu',
-  //   screen: BlendMenu,
-  // },
-  // Focus: {
-  //   path: 'secrets/focus-prototype',
-  //   screen: FocusExample,
-  // },
-  Home: {
-    path: 'home',
-    screen: Home,
-  },
-  Menu: {
-    path: 'menu',
-    screen: MenuPage,
-  },
-  OurStory: {
-    path: 'our-story',
-    screen: OurStory,
-  },
-  Privacy: {
-    path: 'legal/privacy',
-    screen: Privacy,
-  },
-  Terms: {
-    path: 'legal/terms',
-    screen: Terms,
-  },
-  Tokens: {
-    path: 'design-tokens',
-    screen: TokensPage,
-  },
-  OldMenu: {
-    path: 'old/menu',
-    screen: OLDBlendMenu,
-  },
-});
+);
 
 function Root(props) {
   return (
