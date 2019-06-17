@@ -123,7 +123,9 @@ export function V2HLayout({
 }
 
 export function V2HLayoutChild(props) {
-  return <View className="vertical-to-horizontal-layout__child" {...props} />;
+  return <View className="vertical-to-horizontal-layout__child" style={{
+    alignItems: props.inverted ? 'flex-end' : 'flex-start',
+  }} {...props} />;
 }
 
 export function NoFlexToFlex({ children, breakpoint = 768 }) {

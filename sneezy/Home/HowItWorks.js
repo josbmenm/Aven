@@ -2,58 +2,11 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { useTheme } from '../ThemeContext';
 import Container from '../Container';
-import { BodyText, Title, V2HLayout, V2HLayoutChild } from '../Tokens';
+import { BodyText } from '../Tokens';
+import FeatureSection from '../FeatureSection';
 import AbsoluteImage from '../AbsoluteImage';
 
-function FeatureSection({
-  title,
-  bodyText,
-  imageSource,
-  inverted = false,
-  style = {},
-}) {
-  const theme = useTheme();
-  return (
-    <V2HLayout
-      rowReverse={inverted}
-      style={{
-        alignSelf: 'center',
-        justifyContent: 'space-between',
-        ...style,
-      }}
-    >
-      {/* <View
-        style={{
-          flex: 1,
-          flexBasis: 0,
-          flexDirection: 'row',
-          justifyContent: inverted ? 'flex-end' : 'flex-start',
-        }}
-      > */}
-      {/* IMAGE HERE */}
-      <V2HLayoutChild>
-        <View
-          style={{
-            width: 412,
-            height: 372,
-            backgroundColor: theme.colors.lightGrey,
-          }}
-        />
-      </V2HLayoutChild>
-      {/* <View style={{ flex: 1, flexBasis: 0, justifyContent: 'center' }} /> */}
-      <V2HLayoutChild
-        style={{
-          paddingVertical: 40,
-          paddingRight: 40,
-          justifyContent: 'center'
-        }}
-      >
-        <Title>{title}</Title>
-        {bodyText}
-      </V2HLayoutChild>
-    </V2HLayout>
-  );
-}
+
 
 function HowItWorks() {
   const theme = useTheme();

@@ -23,6 +23,7 @@ function OurStoryHeader() {
         `}
       </style>
       <MainMenu />
+      {/* responsive: change margin bottom */}
       <View style={{ marginBottom: 220 }}>
         <Container style={{ alignItems: 'center' }}>
           <Image
