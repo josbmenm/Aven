@@ -75,3 +75,63 @@ export function Link({ children }) {
 export function ListItem({ children }) {
   return <Text>{children}</Text>;
 }
+
+export function VerticalToHorizontalLayout({
+  children,
+  columnReverse = false,
+  rowReverse = false,
+  style = {},
+  breakpoint = 768,
+  ...rest
+}) {
+  return (
+    <React.Fragment>
+      <style>{`
+      .vertical-to-horizontal-layout {
+        display: flex;
+        flex-direction: ${columnReverse ? 'column-reverse' : 'column'};
+      }
+
+      .vertical-to-horizontal-layout > .vertical-to-horizontal-layout__child {
+      }
+
+      @media only screen and (min-width: ${breakpoint}px) {
+        .vertical-to-horizontal-layout {
+          flex-direction: ${rowReverse ? 'row-reverse' : 'row'};
+        }
+
+        .vertical-to-horizontal-layout > .vertical-to-horizontal-layout__child {
+          flex: 1;
+          flex-basis: 0;
+        }
+      }
+    `}</style>
+      <View className="vertical-to-horizontal-layout" style={style} {...rest}>
+        {children}
+      </View>
+    </React.Fragment>
+  );
+}
+
+export function NoFlexToFlex({ children, breakpoint = 768 }) {
+  return (
+    <React.Fragment>
+      <style>{`
+        .no-flex-to-flex,
+        .no-flex-to-flex > * {
+          flex: none;
+        }
+
+        @media only screen and (min-width: ${breakpoint}px) {
+          .no-flex-to-flex,
+          .no-flex-to-flex > * {
+            flex: 1;
+          }
+        }
+      `}</style>
+      <View className="no-flex-to-flex">
+        {children}
+      </View>
+    </React.Fragment>
+  );
+}
