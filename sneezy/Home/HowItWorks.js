@@ -2,28 +2,36 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { useTheme } from '../ThemeContext';
 import Container from '../Container';
-import { BodyText, Title } from '../Tokens';
+import { BodyText, Title, VerticalToHorizontalLayout, VerticalToHorizontalLayoutChild } from '../Tokens';
 import AbsoluteImage from '../AbsoluteImage';
 
-function FeatureSection({ title, bodyText, media, inverted = false, style = {} }) {
+function FeatureSection({
+  title,
+  bodyText,
+  imageSource,
+  inverted = false,
+  style = {},
+}) {
   const theme = useTheme();
   return (
-    <View
+    <VerticalToHorizontalLayout
+      rowReverse={inverted}
       style={{
-        flexDirection: inverted ? 'row-reverse' : 'row',
-        width: '90%',
-        ...style
+        alignSelf: 'center',
+        justifyContent: 'space-between',
+        ...style,
       }}
     >
-      <View
+      {/* <View
         style={{
           flex: 1,
           flexBasis: 0,
           flexDirection: 'row',
           justifyContent: inverted ? 'flex-end' : 'flex-start',
         }}
-      >
-        {/* IMAGE HERE */}
+      > */}
+      {/* IMAGE HERE */}
+      <VerticalToHorizontalLayoutChild>
         <View
           style={{
             width: 412,
@@ -31,12 +39,19 @@ function FeatureSection({ title, bodyText, media, inverted = false, style = {} }
             backgroundColor: theme.colors.lightGrey,
           }}
         />
-      </View>
-      <View style={{ flex: 1, flexBasis: 0, justifyContent: 'center' }}>
+      </VerticalToHorizontalLayoutChild>
+      {/* <View style={{ flex: 1, flexBasis: 0, justifyContent: 'center' }} /> */}
+      <VerticalToHorizontalLayoutChild
+        style={{
+          paddingVertical: 40,
+          paddingRight: 40,
+          justifyContent: 'center'
+        }}
+      >
         <Title>{title}</Title>
         {bodyText}
-      </View>
-    </View>
+      </VerticalToHorizontalLayoutChild>
+    </VerticalToHorizontalLayout>
   );
 }
 
@@ -54,7 +69,7 @@ function HowItWorks() {
           alignItems: 'center',
           paddingBottom: 300,
           borderBottomWidth: 1,
-          borderBottomColor: theme.colors.border
+          borderBottomColor: theme.colors.border,
         }}
       >
         <Text style={{ ...theme.textStyles.heading, marginBottom: 100 }}>
@@ -71,10 +86,19 @@ function HowItWorks() {
           }
           // media={}
         />
-        <View style={{ position: 'relative', width: '90%' }}>
-          <AbsoluteImage source={require('../public/img/mango.png')} style={{ width: 520, height: 611, right: -410, top: -270, zIndex: 10}} />
+        <View style={{ position: 'relative' }}>
+          <AbsoluteImage
+            source={require('../public/img/mango.png')}
+            style={{
+              width: 520,
+              height: 611,
+              right: -410,
+              top: -270,
+              zIndex: 10,
+            }}
+          />
           <FeatureSection
-            style={{width: "100%"}}
+            style={{ width: '100%' }}
             title="Order"
             bodyText={
               <BodyText>
@@ -87,18 +111,27 @@ function HowItWorks() {
             inverted
           />
         </View>
-        <View style={{ position: 'relative', width: '90%' }}>
-        <AbsoluteImage source={require('../public/img/mint-spinach.png')} style={{ width: 310, height: 403, left: -250, bottom: -250, zIndex: 10}} />
-        <FeatureSection
-          title="Pickup"
-          bodyText={
-            <BodyText>
-              Watch as advanced robotics create your perfect blend within 60
-              seconds, and when it’s ready, grab it from our pick-up area.
-            </BodyText>
-          }
-          // media={}
-        />
+        <View style={{ position: 'relative' }}>
+          <AbsoluteImage
+            source={require('../public/img/mint-spinach.png')}
+            style={{
+              width: 310,
+              height: 403,
+              left: -250,
+              bottom: -250,
+              zIndex: 10,
+            }}
+          />
+          <FeatureSection
+            title="Pickup"
+            bodyText={
+              <BodyText>
+                Watch as advanced robotics create your perfect blend within 60
+                seconds, and when it’s ready, grab it from our pick-up area.
+              </BodyText>
+            }
+            // media={}
+          />
         </View>
       </Container>
     </View>

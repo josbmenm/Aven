@@ -2,7 +2,12 @@ import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '../ThemeContext';
 import Container from '../Container';
-import { Title, BodyText } from '../Tokens';
+import {
+  Title,
+  BodyText,
+  VerticalToHorizontalLayout,
+  VerticalToHorizontalLayoutChild,
+} from '../Tokens';
 import { Button } from '../Buttons';
 import Schedule from '../Schedule';
 
@@ -11,19 +16,15 @@ function HomeSheduleSection() {
   return (
     <View style={{ marginBottom: 104 }}>
       <Container>
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          <View
-            style={{
-              flex: 1,
-              flexBasis: 0,
-            }}
-          >
+        <VerticalToHorizontalLayout>
+          <VerticalToHorizontalLayoutChild>
             <View
               style={{
                 maxWidth: 412,
+                marginBottom: 80,
                 flexDirection: 'column',
                 alignItems: 'flex-start',
-                justifyContent: 'flex-start'
+                justifyContent: 'flex-start',
               }}
             >
               <Title>Where are we today?</Title>
@@ -38,11 +39,9 @@ function HomeSheduleSection() {
                 buttonStyle={{ width: 220 }}
               />
             </View>
-          </View>
-          <View
+          </VerticalToHorizontalLayoutChild>
+          <VerticalToHorizontalLayoutChild
             style={{
-              flex: 1,
-              flexBasis: 0,
               flexDirection: 'column',
               alignItems: 'flex-start',
               justifyContent: 'flex-start',
@@ -52,14 +51,14 @@ function HomeSheduleSection() {
             <View
               style={{
                 // backgroundColor: theme.colors.lightGrey,
-                width: "100%",
+                width: '100%',
                 flex: 1,
               }}
             >
               <Schedule />
-</View>
-          </View>
-        </View>
+            </View>
+          </VerticalToHorizontalLayoutChild>
+        </VerticalToHorizontalLayout>
       </Container>
     </View>
   );

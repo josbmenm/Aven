@@ -2,6 +2,9 @@ import { Text, View } from 'react-native';
 import React from 'react';
 import { useTheme } from './ThemeContext';
 
+
+let responsiveIdCount = 0
+
 export function SubSection({ title, children }) {
   return (
     <View style={{ marginVertical: 40 }}>
@@ -84,33 +87,38 @@ export function VerticalToHorizontalLayout({
   breakpoint = 768,
   ...rest
 }) {
+  const elemID = responsiveIdCount++;
   return (
     <React.Fragment>
       <style>{`
-      .vertical-to-horizontal-layout {
+      .vertical-to-horizontal-layout-${elemID} {
         display: flex;
         flex-direction: ${columnReverse ? 'column-reverse' : 'column'};
       }
 
-      .vertical-to-horizontal-layout > .vertical-to-horizontal-layout__child {
+      .vertical-to-horizontal-layout-${elemID} > .vertical-to-horizontal-layout__child {
       }
 
       @media only screen and (min-width: ${breakpoint}px) {
-        .vertical-to-horizontal-layout {
+        .vertical-to-horizontal-layout-${elemID} {
           flex-direction: ${rowReverse ? 'row-reverse' : 'row'};
         }
 
-        .vertical-to-horizontal-layout > .vertical-to-horizontal-layout__child {
+        .vertical-to-horizontal-layout-${elemID} > .vertical-to-horizontal-layout__child {
           flex: 1;
           flex-basis: 0;
         }
       }
     `}</style>
-      <View className="vertical-to-horizontal-layout" style={style} {...rest}>
+      <View className={`vertical-to-horizontal-layout-${elemID}`} style={style} {...rest}>
         {children}
       </View>
     </React.Fragment>
   );
+}
+
+export function VerticalToHorizontalLayoutChild(props) {
+  return <View className="vertical-to-horizontal-layout__child" {...props} />
 }
 
 export function NoFlexToFlex({ children, breakpoint = 768 }) {

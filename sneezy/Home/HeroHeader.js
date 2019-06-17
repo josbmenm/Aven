@@ -3,7 +3,13 @@ import { View, Text, Image } from 'react-native';
 import MainMenu from '../MainMenu';
 import Container from '../Container';
 import { Button } from '../Buttons';
-import { Heading, BodyText, VerticalToHorizontalLayout, NoFlexToFlex } from '../Tokens';
+import {
+  Heading,
+  BodyText,
+  VerticalToHorizontalLayout,
+  VerticalToHorizontalLayoutChild,
+  NoFlexToFlex,
+} from '../Tokens';
 import { useTheme } from '../ThemeContext';
 import AbsoluteImage from '../AbsoluteImage';
 
@@ -48,7 +54,7 @@ export default function HeroHeader() {
                 zIndex: 0,
               }}
             />
-            <View className="vertical-to-horizontal-layout__child">
+            <VerticalToHorizontalLayoutChild>
               <View
                 style={{
                   flex: 1,
@@ -81,14 +87,14 @@ export default function HeroHeader() {
                   }}
                 />
               </View>
-            </View>
-            <View className="vertical-to-horizontal-layout__child">
+            </VerticalToHorizontalLayoutChild>
+            <VerticalToHorizontalLayoutChild>
               <Image
                 source={require('./assets/home_hero-image.jpg')}
                 resizeMode="cover"
                 style={{ flex: 1, width: '100%', paddingTop: '56.25%' }}
               />
-            </View>
+            </VerticalToHorizontalLayoutChild>
           </VerticalToHorizontalLayout>
         </Container>
       </NoFlexToFlex>
