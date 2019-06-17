@@ -212,12 +212,14 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
   if (!restaurantState || !kitchenConfig || !kitchenState) {
     return null;
   }
-  const { isFaulted, isRunning } = checkKitchenState(
-    kitchenState,
-    kitchenConfig,
-  );
-  if (isFaulted || isRunning) {
-    return null;
+  if (kitchenState.isAttached) {
+    const { isFaulted, isRunning } = checkKitchenState(
+      kitchenState,
+      kitchenConfig,
+    );
+    if (isFaulted || isRunning) {
+      return null;
+    }
   }
   return SEQUENCER_STEPS.map(STEP => {
     const {
@@ -225,6 +227,8 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
       getRestaurantStateIntent,
       getKitchenStateReady,
       getKitchenCommand,
+      getFailureRestaurantAction,
+      getStartingRestaurantAction,
       getSuccessRestaurantAction,
     } = STEP;
     const intent = getRestaurantStateIntent(restaurantState);
@@ -232,23 +236,65 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
       return false;
     }
 
-    if (!getKitchenStateReady(kitchenState, intent)) {
+    if (
+      kitchenState.isAttached &&
+      !getKitchenStateReady(kitchenState, intent)
+    ) {
       return false;
     }
     const command = getKitchenCommand(intent);
-    const successRestaurantAction = getSuccessRestaurantAction(intent);
+    const successRestaurantAction =
+      getSuccessRestaurantAction && getSuccessRestaurantAction(intent);
+    const failureRestaurantAction =
+      getFailureRestaurantAction && getFailureRestaurantAction(intent);
+    const startingRestaurantAction =
+      getStartingRestaurantAction && getStartingRestaurantAction(intent);
     return {
       intent,
       command,
       successRestaurantAction,
+      failureRestaurantAction,
+      startingRestaurantAction,
       subsystem: command.subsystem,
       description: getDescription(intent),
       perform: async (cloud, handleCommand) => {
-        const resp = await handleCommand(command);
-
-        await cloud
-          .get('RestaurantActionsUnburnt')
-          .putTransaction(successRestaurantAction);
+        let resp = null;
+        const startTime = Date.now();
+        startingRestaurantAction &&
+          (await cloud
+            .get('RestaurantActionsUnburnt')
+            .putTransaction(startingRestaurantAction));
+        // await cloud.get('KitchenLog').putTransaction({
+        //   type: 'StartKitchenAction',
+        //   intent,
+        //   command,
+        // });
+        try {
+          resp = await handleCommand(command);
+          successRestaurantAction &&
+            (await cloud
+              .get('RestaurantActionsUnburnt')
+              .putTransaction(successRestaurantAction));
+          // await cloud.get('KitchenLog').putTransaction({
+          //   type: 'CompleteKitchenAction',
+          //   intent,
+          //   command,
+          //   duration: Date.now() - startTime,
+          // });
+        } catch (e) {
+          console.error('Failed to perform command', e);
+          failureRestaurantAction &&
+            (await cloud
+              .get('RestaurantActionsUnburnt')
+              .putTransaction(failureRestaurantAction));
+          // await cloud.get('KitchenLog').putTransaction({
+          //   type: 'CompleteFailureAction',
+          //   intent,
+          //   command,
+          //   error: e,
+          //   duration: Date.now() - startTime,
+          // });
+        }
         return resp;
       },
     };

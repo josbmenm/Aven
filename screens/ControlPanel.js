@@ -93,15 +93,15 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   if (!isConnected) {
     status = 'disconnected';
     message = 'App disconnected from server..';
-  } else if (!kitchenState) {
+  } else if (!kitchenState || !restaurantState) {
     status = 'disconnected';
-    message = 'Loading state of kitchen..';
-  } else if (
-    !isPLCConnected &&
-    (!restaurantState || restaurantState.isAttached)
-  ) {
+    message = 'Loading state..';
+  } else if (!isPLCConnected) {
     status = 'disconnected';
     message = 'Server disconnected from machine..';
+  } else if (!restaurantState.isAttached) {
+    status = 'disconnected';
+    message = 'Detached.';
   } else {
     sequencerNames &&
       sequencerNames.forEach(systemName => {

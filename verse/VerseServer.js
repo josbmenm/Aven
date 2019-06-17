@@ -7,6 +7,7 @@ import createFSClient from '../cloud-server/createFSClient';
 import CloudContext from '../cloud-core/CloudContext';
 import { getSecretConfig, IS_DEV } from '../aven-web/config';
 import { createReducerLambda } from '../cloud-core/useCloudReducer';
+import { getFreshActionId } from '../logic/KitchenLogic';
 import KitchenCommands from '../logic/KitchenCommands';
 import { hashSecureString } from '../cloud-utils/Crypto';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
@@ -25,7 +26,7 @@ import RestaurantReducer from '../logic/RestaurantReducer';
 import placeOrder from './placeOrder';
 import { computeInventory } from './KitchenInventory';
 
-import startKitchen, { getFreshActionId } from './startKitchen';
+import startKitchen from './startKitchen';
 import { handleStripeAction, getPaymentIntent } from '../stripe-server/Stripe';
 import { computeNextSteps } from '../logic/KitchenSequence';
 import {
@@ -66,7 +67,7 @@ const startVerseServer = async () => {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  // USE_DEV_SERVER = false;
+  USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -326,18 +327,23 @@ const startVerseServer = async () => {
       if (currentStepPromises[subsystem]) {
         return;
       }
-      logBehavior(`Performing ${subsystem} ${nextStep.description}`);
 
-      if (kitchen && restaurantState.isAttached) {
+      if (restaurantState.isAttached) {
+        if (!kitchen || !kitchenState.isPLCConnected) {
+          return;
+        }
+        logBehavior(`Performing ${subsystem} ${nextStep.description}`);
         currentStepPromises[subsystem] = nextStep.perform(
           evalSource.cloud,
           kitchenAction,
         );
       } else {
-        console.log('auto-running yet detached.');
-        new Promise(resolve => setTimeout(resolve, 2000))
+        logBehavior(`Detached Action: ${subsystem} ${nextStep.description}`);
+        currentStepPromises[subsystem] = new Promise(resolve =>
+          setTimeout(resolve, 2000),
+        )
           .then(() =>
-            cloud
+            evalSource.cloud
               .get('RestaurantActionsUnburnt')
               .putTransaction(nextStep.successRestaurantAction),
           )
@@ -387,6 +393,9 @@ const startVerseServer = async () => {
     next: update => {
       restaurantState = update.value;
       handleStateUpdates();
+    },
+    error: err => {
+      console.error('........,,.Woah WTFZ', err);
     },
   });
 

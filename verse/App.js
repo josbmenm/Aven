@@ -223,7 +223,7 @@ function PresentationSection() {
   );
 }
 
-function QueueSection({ queue, fill, blend, delivery }) {
+function QueueSection({ queue = [], fill, blend, delivery }) {
   const renderQueue = [
     ...queue.map((order, orderIndex) => (
       <OrderRow
@@ -246,7 +246,7 @@ function QueueSection({ queue, fill, blend, delivery }) {
   blend &&
     renderQueue.push(
       <OrderRow
-        key={blend.order.id}
+        key={blend.order && blend.order.id}
         prepSpec={blend.order}
         status="blending"
       />,
@@ -485,10 +485,14 @@ function ActionButton({ dispatch, name, type, getParams }) {
 }
 
 function StatusDisplayScreen() {
-  const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActionsUnburnt',
-    RestaurantReducer,
+  // const [restaurantState, dispatch] = useCloudReducer(
+  //   'RestaurantActionsUnburnt',
+  //   RestaurantReducer,
+  // );
+  const restaurantState = useCloudValue(
+    'RestaurantActionsUnburnt^RestaurantReducer',
   );
+
   if (!restaurantState) {
     return null;
   }

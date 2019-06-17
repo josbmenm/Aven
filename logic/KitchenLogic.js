@@ -1,4 +1,3 @@
-const shallowEqual = require('fbjs/lib/shallowEqual');
 const mapObject = require('fbjs/lib/mapObject');
 
 const COUNT_MAX = 32767;

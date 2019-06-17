@@ -55,6 +55,18 @@ function ManualActionsSection() {
         }}
       />
       <Button
+        title="ditch cup"
+        disabled={!KitchenCommands.DitchCup.checkReady(kitchenState)}
+        onPress={() => {
+          handleErrors(
+            cloud.dispatch({
+              type: 'KitchenAction',
+              command: 'DitchCup',
+            }),
+          );
+        }}
+      />
+      <Button
         title="dispense 2 cocoa powder"
         disabled={
           !KitchenCommands.PositionAndDispenseAmount.checkReady(

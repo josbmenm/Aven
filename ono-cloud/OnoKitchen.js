@@ -61,6 +61,7 @@ export function getSubsystemFaults(system) {
   if (system.reads.NoFaults && system.reads.NoFaults.value !== true) {
     // system has faulting behavior
     faults = [];
+    let faultsUnreadable;
     const faulted = Array(4)
       .fill(0)
       .map((_, faultIntIndex) => {
@@ -74,11 +75,12 @@ export function getSubsystemFaults(system) {
             .reverse()
             .map(v => v === '1');
         } catch (e) {
-          console.error(`Trying to read ${system.name} ${faultIntIndex}`);
-          console.error(system.reads[`Fault${faultIntIndex}`]);
-          throw new Error('Cannot read fault');
+          faultsUnreadable = true;
+          return false;
         }
       });
+
+    faultsUnreadable && faults.push(`Unable to read faults of ${system.name}`);
     if (faulted[0][0]) {
       faults.push(
         'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
@@ -86,7 +88,8 @@ export function getSubsystemFaults(system) {
     }
     system.faults &&
       system.faults.forEach(f => {
-        const isFaulted = faulted[f.intIndex][f.bitIndex];
+        const faultDintArray = faulted[f.intIndex];
+        const isFaulted = faultDintArray && faultDintArray[f.bitIndex];
         if (isFaulted) {
           faults.push(f.description);
         }

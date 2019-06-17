@@ -1,5 +1,6 @@
 const { Controller, Tag, EthernetIP, TagGroup } = require('ethernet-ip');
 const { INT, BOOL } = EthernetIP.CIP.DataTypes.Types;
+const shallowEqual = require('fbjs/lib/shallowEqual');
 
 const getTypeOfSchema = typeName => {
   switch (typeName) {
@@ -20,6 +21,14 @@ export const getTagOfSchema = tagSchema => {
     getTypeOfSchema(tagSchema.type),
   );
 };
+
+function mapObject(inObj, mapper) {
+  const out = {};
+  Object.keys(inObj).forEach(k => {
+    out[k] = mapper(inObj[k]);
+  });
+  return out;
+}
 
 const createSchema = config => {
   const tags = {};
@@ -261,14 +270,10 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
     const updateTags = async () => {
       const lastState = currentState;
       let isPLCConnected = false;
-      try {
-        if (mainRobotSchema) {
-          const readings = await doReadTags(mainRobotSchema, {});
-          isPLCConnected = true;
-          currentState = getTagValues(readings);
-        }
-      } catch (e) {
-        isPLCConnected = false;
+      if (mainRobotSchema) {
+        const readings = await doReadTags(mainRobotSchema, {});
+        isPLCConnected = true;
+        currentState = getTagValues(readings);
       }
       if (shallowEqual(lastState, currentState)) {
         // the state doesn't appear to be changing. cool off and wait a 1/4 sec..
@@ -288,6 +293,8 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
       updateTags()
         .then(() => {})
         .catch(async e => {
+          console.error('Error updating tags!');
+          console.error(e);
           await stateRef.put({
             isPLCConnected: false,
           });
@@ -317,7 +324,7 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
     });
     await writeTags(mainRobotSchema, tagOutput);
     await writeTags(mainRobotSchema, immediateOutput);
-    await delay(300);
+    await delay(600);
     await writeTags(mainRobotSchema, clearPulseOutput);
     return { ...immediateOutput, ...clearPulseOutput, ...(tagOutput || {}) };
   }
