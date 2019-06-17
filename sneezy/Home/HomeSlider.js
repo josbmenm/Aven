@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Image, ScrollView } from 'react-native';
+import { View, Image, ScrollView, StyleSheet } from 'react-native';
+import { useTheme } from '../ThemeContext';
 import Container from '../Container';
 
 function Slide({ source, width, height }) {
@@ -16,13 +17,19 @@ function Slide({ source, width, height }) {
 }
 
 function HomeSlider() {
+  const theme = useTheme();
   return (
     <View
       style={{
-        paddingVertical: 40,
+        // paddingVertical: 40,
+        marginBottom: 100
       }}
     >
-      <Container>
+      <Container style={{
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: theme.colors.border,
+        paddingBottom: 100
+      }}>
         <ScrollView horizontal pagingEnabled>
           <Slide
             source={require('./assets/slides_1.jpg')}
