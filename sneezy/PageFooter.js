@@ -18,31 +18,37 @@ export default function PageFooter() {
           paddingVertical: 100,
         }}
       >
-        <V2HLayout columnReverse>
+        <V2HLayout columnReverse resetFlexBasis>
           <V2HLayoutChild
             style={{
               flex: 1,
               flexDirection: 'row',
               alignItems: 'center',
+              justifyContent: 'center',
               paddingHorizontal: 10,
             }}
           >
-            <V2HLayout>
-              <V2HLayoutChild>
-                <View
-                  style={{
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    flex: 1,
-                    justifyContent: 'center',
-                  }}
-                >
-                  <OnoBlendsLogo width={80} style={{ marginRight: 20 }} />
-                  <OnoFoodLogo style={{ marginRight: 52 }} />
-                </View>
+            <V2HLayout
+              style={{ width: '100%', marginVertical: 20 }}
+            >
+              <V2HLayoutChild
+                style={{
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  flex: 1,
+                  justifyContent: 'flex-start',
+                }}
+              >
+                <OnoBlendsLogo width={80} style={{ marginRight: 20 }} />
+                <OnoFoodLogo />
               </V2HLayoutChild>
-              <V2HLayoutChild>
-                <FootNote style={{textAlign: 'center'}}>
+              <V2HLayoutChild style={{
+                alignItems: 'center',
+                flexDirection: 'row',
+                flex: 1,
+                justifyContent: 'flex-start'
+              }}>
+                <FootNote style={{ textAlign: 'center', marginTop: 0, marginBottom: 0 }}>
                   © Copyright 2018 Ono Food Co. All Rights Reserved
                 </FootNote>
               </V2HLayoutChild>
@@ -82,9 +88,7 @@ export default function PageFooter() {
               </V2HLayoutChild>
               <V2HLayoutChild
                 style={{
-                  paddingHorizontal: 24,
                   paddingTop: 4,
-                  alignSelf: 'flex-start',
                   flexDirection: 'row',
                   alignItems: 'center',
                   marginBottom: 40,

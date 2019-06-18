@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import React from 'react';
 import { useTheme } from './ThemeContext';
 
@@ -90,7 +90,10 @@ export function FootNote({ children, bold, style, ...rest }) {
   let boldStyle = bold ? { fontWeight: 'bold' } : {};
   return (
     <Text
-      style={{ ...theme.textStyles.footnote, ...style, ...boldStyle }}
+      style={StyleSheet.flatten([
+        { ...theme.textStyles.footnote, ...boldStyle },
+        style,
+      ])}
       {...rest}
     >
       {children}
@@ -120,6 +123,11 @@ export function V2HLayout({
         flex-direction: ${columnReverse ? 'column-reverse' : 'column'};
       }
 
+      .vertical-to-horizontal-layout-${elemID} > .vertical-to-horizontal-layout__child {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
       @media only screen and (min-width: ${breakpoint}px) {
         .vertical-to-horizontal-layout-${elemID} {
           flex-direction: ${rowReverse ? 'row-reverse' : 'row'};
@@ -146,16 +154,19 @@ export function V2HLayout({
   );
 }
 
-export function V2HLayoutChild({ inverted = false, ...rest }) {
+export function V2HLayoutChild({ inverted = false, style, ...rest }) {
   return (
     // TODO: RESPONSIVE: add/remove margin for responsive
     <View
       className="vertical-to-horizontal-layout__child"
-      style={{
-        alignItems: inverted ? 'flex-end' : 'flex-start',
-        marginLeft: inverted ? 20 : 0,
-        marginRight: inverted ? 0 : 20,
-      }}
+      style={StyleSheet.flatten([
+        {
+          alignItems: inverted ? 'flex-end' : 'flex-start',
+          // marginLeft: inverted ? 20 : 0,
+          // marginRight: inverted ? 0 : 20,
+        },
+        style,
+      ])}
       {...rest}
     />
   );

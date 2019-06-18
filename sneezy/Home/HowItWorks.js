@@ -51,7 +51,6 @@ function HowItWorks() {
             }}
           />
           <FeatureSection
-            style={{ width: '100%' }}
             title="Order"
             bodyText={
               <BodyText>

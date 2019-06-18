@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { V2HLayout, V2HLayoutChild, Title } from './Tokens';
 import { aspectRatio43 } from '../components/Styles';
 import { useTheme } from './ThemeContext';
@@ -16,18 +16,25 @@ function FeatureSection({
   if (!image) {
     image = (
       <View
-      style={{ maxWidth: 630, ...aspectRatio43, backgroundColor: theme.colors.lightGrey }}
+        style={{
+          maxWidth: 630,
+          ...aspectRatio43,
+          backgroundColor: theme.colors.lightGrey,
+        }}
       />
     );
   }
   return (
     <V2HLayout
       rowReverse={inverted}
-      style={{
-        alignSelf: 'center',
-        justifyContent: 'space-between',
-        ...style,
-      }}
+      style={StyleSheet.flatten([
+        {
+          alignSelf: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
+        },
+        style,
+      ])}
     >
       <V2HLayoutChild inverted={inverted}>{image}</V2HLayoutChild>
       <V2HLayoutChild
