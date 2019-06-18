@@ -26,3 +26,6 @@ export default function Tag({ title, color }) {
     </View>
   );
 }
+
+Tag.negativeColor = '#722';
+Tag.positiveColor = '#272';

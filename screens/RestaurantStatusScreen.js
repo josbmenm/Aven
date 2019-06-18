@@ -8,6 +8,7 @@ import { Easing } from 'react-native-reanimated';
 import {
   titleStyle,
   proseFontFace,
+  monsterra,
   standardTextColor,
 } from '../components/Styles';
 import KeyboardPopover from '../components/KeyboardPopover';
@@ -49,7 +50,7 @@ function InfoText({ children }) {
 
 function StatusSection({ title, children }) {
   return (
-    <View style={{}}>
+    <View style={{ marginBottom: 40 }}>
       <Text style={{ ...titleStyle, fontSize: 24 }}>{title}</Text>
       {children}
     </View>
@@ -74,25 +75,60 @@ function StatusView() {
     </StatusSection>
   );
 }
-
+function TempCell({ title, value, button }) {
+  return (
+    <View style={{ flex: 1 }}>
+      <Text style={{ ...titleStyle, color: monsterra, fontSize: 20 }}>
+        {title}
+      </Text>
+      <Text style={{ ...proseFontFace, color: monsterra, fontSize: 62 }}>
+        {value}
+      </Text>
+      {button}
+    </View>
+  );
+}
 function TemperatureView() {
   return (
-    <StatusSection title="Temperature">
-      <Button
-        title="clear alarm. frozen food is fresh."
-        onPress={() => {}}
-        disabled
-      />
-      <Button
-        title="clear alarm. cold piston filler is fresh."
-        onPress={() => {}}
-        disabled
-      />
-      <Button
-        title="clear alarm. beverages are fresh."
-        onPress={() => {}}
-        disabled
-      />
+    <StatusSection title="Food Safety">
+      <View style={{ flexDirection: 'row' }}>
+        <TempCell
+          title="Frozen Food"
+          value="0°F"
+          button={
+            <Button
+              title="clear alarm. frozen food is fresh."
+              onPress={() => {}}
+              disabled
+            />
+          }
+        />
+        <TempCell
+          title="Piston Fridge"
+          value="42°F"
+          button={
+            <Button
+              title="clear alarm. cold piston filler is fresh."
+              onPress={() => {}}
+              disabled
+            />
+          }
+        />
+      </View>
+      <View style={{ flexDirection: 'row' }}>
+        <TempCell
+          title="Beverage Fridge"
+          value="42°F"
+          button={
+            <Button
+              title="clear alarm. beverages are fresh."
+              onPress={() => {}}
+              disabled
+            />
+          }
+        />
+        <TempCell title="Warm Truck" value="80°F" button={null} />
+      </View>
     </StatusSection>
   );
 }
@@ -100,8 +136,9 @@ function TemperatureView() {
 function AirPressureView() {
   return (
     <StatusSection title="Air Pressure">
-      <Tag title="Pressurized" />
-      <Button title="Close Restaurant" onPress={() => {}} />
+      <Tag title="Pressurized" color={Tag.positiveColor} />
+      <Button title="Disable and Depressureize" onPress={() => {}} />
+      <Button title="Enable" disabled onPress={() => {}} />
     </StatusSection>
   );
 }
@@ -109,8 +146,17 @@ function AirPressureView() {
 function PowerView() {
   return (
     <StatusSection title="Generator Power">
-      <Tag title="Disabled" />
+      <Tag title="Disabled" color={Tag.negativeColor} />
       <Button title="Enable" onPress={() => {}} />
+    </StatusSection>
+  );
+}
+
+function SkidView() {
+  return (
+    <StatusSection title="Machine Loading">
+      <Tag title="Locked" color={Tag.positiveColor} />
+      <Button title="Unlock Skid" onPress={() => {}} />
     </StatusSection>
   );
 }
@@ -123,6 +169,7 @@ export default function RestaurantStatusScreen(props) {
         <TemperatureView />
         <AirPressureView />
         <PowerView />
+        <SkidView />
       </RootAuthenticationSection>
     </SimplePage>
   );

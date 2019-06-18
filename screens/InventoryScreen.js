@@ -44,15 +44,18 @@ function useInventoryState() {
   if (!tables || !restaurantState) {
     return null;
   }
-  const slotsWithIngredients = Object.values(tables.KitchenSlots).map(slot => {
-    console.log(slot._index);
-    const Ingredient =
-      tables.Ingredients[slot.Ingredient && slot.Ingredient[0]];
-    return {
-      ...slot,
-      Ingredient,
-    };
-  });
+  const slotsWithIngredients = Object.values(tables.KitchenSlots)
+    .sort((a, b) => {
+      a._index - b._index;
+    })
+    .map(slot => {
+      const Ingredient =
+        tables.Ingredients[slot.Ingredient && slot.Ingredient[0]];
+      return {
+        ...slot,
+        Ingredient,
+      };
+    });
   const systemSections = {};
   slotsWithIngredients.forEach(slot => {
     const systemId = slot.KitchenSystem[0];
@@ -232,7 +235,10 @@ function InventoryRow({ slot }) {
           )}
           <Text style={{ ...titleStyle, fontSize: 24 }}>{slot.name}</Text>
         </View>
-        <InfoText>Capacity: {slot.ShotCapacity}</InfoText>
+        <InfoText>
+          Capacity: {slot.ShotCapacity}. Has {slot.ShotsAfterLow} shots after
+          low.
+        </InfoText>
         {estimatedRemaining && (
           <InfoText>{estimatedRemaining} remaining</InfoText>
         )}
