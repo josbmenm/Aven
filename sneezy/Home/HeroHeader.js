@@ -19,7 +19,7 @@ export default function HeroHeader() {
     <View style={{ flex: 1, paddingBottom: 60, minHeight: '100vh' }}>
       <MainMenu />
       <NoFlexToFlex>
-        <Container>
+        <Container style={{flex: 1}}>
           <V2HLayout
             columnReverse
             style={{

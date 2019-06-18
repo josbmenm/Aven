@@ -2,8 +2,6 @@ import { Text, View, StyleSheet } from 'react-native';
 import React from 'react';
 import { useTheme } from './ThemeContext';
 
-let responsiveIdCount = 0;
-
 export function SubSection({ title, children }) {
   return (
     <View style={{ marginVertical: 40 }}>
@@ -105,6 +103,8 @@ export function Link({ children }) {
   return <Text>{children}</Text>;
 }
 
+let responsiveIdCount = 0;
+
 export function V2HLayout({
   children,
   columnReverse = false,
@@ -117,7 +117,9 @@ export function V2HLayout({
   const elemID = responsiveIdCount++;
   return (
     <React.Fragment>
-      <style>{`
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
       .vertical-to-horizontal-layout-${elemID} {
         display: flex;
         flex-direction: ${columnReverse ? 'column-reverse' : 'column'};
@@ -142,7 +144,9 @@ export function V2HLayout({
             : ''
         }
       }
-    `}</style>
+      `,
+        }}
+      />
       <View
         className={`vertical-to-horizontal-layout-${elemID}`}
         style={style}
@@ -154,7 +158,12 @@ export function V2HLayout({
   );
 }
 
-export function V2HLayoutChild({ className, inverted = false, style, ...rest }) {
+export function V2HLayoutChild({
+  className,
+  inverted = false,
+  style,
+  ...rest
+}) {
   return (
     // TODO: RESPONSIVE: add/remove margin for responsive
     <View
@@ -175,19 +184,23 @@ export function V2HLayoutChild({ className, inverted = false, style, ...rest }) 
 export function NoFlexToFlex({ children, breakpoint = 768 }) {
   return (
     <React.Fragment>
-      <style>{`
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+      .no-flex-to-flex,
+      .no-flex-to-flex > * {
+        flex: none;
+      }
+
+      @media only screen and (min-width: ${breakpoint}px) {
         .no-flex-to-flex,
         .no-flex-to-flex > * {
-          flex: none;
+          flex: 1;
         }
-
-        @media only screen and (min-width: ${breakpoint}px) {
-          .no-flex-to-flex,
-          .no-flex-to-flex > * {
-            flex: 1;
-          }
-        }
-      `}</style>
+      }
+    `,
+        }}
+      />
       <View className="no-flex-to-flex">{children}</View>
     </React.Fragment>
   );
@@ -199,21 +212,25 @@ export function Responsive({
   breakpoint = 768,
   ...rest
 }) {
-  const id = responsiveIdCount++
+  const id = responsiveIdCount++;
   return (
     <React.Fragment>
-      <style>{`
-        .responsive-element-${id} {
-          padding-left: ${style.paddingLeft[0]}px;
-        }
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+      .responsive-element-${id} {
+        padding-left: ${style.paddingLeft[0]}px;
+      }
 
-        @media only screen and (min-width: ${breakpoint}px) {
-          .responsive-element-${id} {
-            padding-left: ${style.paddingLeft[1]}px;
-          }
+      @media only screen and (min-width: ${breakpoint}px) {
+        .responsive-element-${id} {
+          padding-left: ${style.paddingLeft[1]}px;
         }
-      `}</style>
-      {React.cloneElement(children, { className: `responsive-element-${id}`})}
+      }
+    `,
+        }}
+      />
+      {React.cloneElement(children, { className: `responsive-element-${id}` })}
     </React.Fragment>
-  )
+  );
 }

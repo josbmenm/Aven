@@ -10,18 +10,16 @@ function OurStoryHeader() {
   const theme = useTheme();
   return (
     <View style={{ flex: 1, minHeight: '100vh', paddingBottom: 40 }}>
-      <style>
-        {`
-          @media only screen and (min-width: 768px) {
-            .ourstory-header-content {
-              position: absolute;
-              bottom: -120px;
-              align-self: center;
-              max-width: 640px;
-            }
+      <style dangerouslySetInnerHTML={{__html: `
+        @media only screen and (min-width: 768px) {
+          .ourstory-header-content {
+            position: absolute;
+            bottom: -120px;
+            align-self: center;
+            max-width: 640px;
           }
-        `}
-      </style>
+        }
+      `}} />
       <MainMenu />
       {/* responsive: change margin bottom */}
       <View style={{ marginBottom: 220 }}>
