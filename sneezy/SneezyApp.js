@@ -7,7 +7,7 @@ import OLDBlendMenu from './OLDBlendMenu';
 import OurStory from './OurStory';
 import Privacy from './Privacy';
 import Terms from './Terms';
-import BookWithUs from './BookWithUs';
+import BookUs from './BookUs';
 import { ThemeContext, theme } from './ThemeContext';
 
 const customHTMLHeaders = `
@@ -40,9 +40,9 @@ const App = createSwitchNavigator(
       path: 'design-tokens',
       screen: TokensPage,
     },
-    BookWithUs: {
+    BookUs: {
       path: 'book-us',
-      screen: BookWithUs,
+      screen: BookUs,
     },
 
     // to be deleted:

@@ -5,19 +5,23 @@ import MainMenu from '../MainMenu';
 import PageFooter from '../PageFooter';
 import GenericHeroHeader from '../GenericHeroHeader';
 
-function BookWithUs() {
+function BookUs() {
   const theme = useTheme();
   return (
     <GenericPage>
       <MainMenu />
-      <GenericHeroHeader backgroundColor={theme.colors.lightGrey} title="Book with Us" bodyText="Are you interested in having Ono Blends cater for an event? We’d love to! All we need from you are a few details about your event, so we can provide you with the best experience possible." />
+      <GenericHeroHeader
+        backgroundColor={theme.colors.lightGrey}
+        title="Book with Us"
+        bodyText="Are you interested in having Ono Blends cater for an event? We’d love to! All we need from you are a few details about your event, so we can provide you with the best experience possible."
+      />
       <PageFooter />
     </GenericPage>
   );
 }
 
-BookWithUs.navigationOptions = {
+BookUs.navigationOptions = {
   title: 'Book with Us',
 };
 
-export default BookWithUs;
+export default BookUs;
