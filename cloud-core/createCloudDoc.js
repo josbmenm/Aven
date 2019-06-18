@@ -6,6 +6,7 @@ import mapBehaviorSubject from '../utils/mapBehaviorSubject';
 import runLambda from './runLambda';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 import bindCommitDeepBlock from './bindCommitDeepBlock';
+import builtInFunctions from './builtInFunctions';
 
 function hasDepth(name) {
   return name.match(/\//);
@@ -57,7 +58,6 @@ export function createDocPool({
     }
     const fullName = docIdTerms[0];
     const localName = fullName.split('/')[0];
-
     let returningCloudValue = null;
 
     let restOfName = null;
@@ -65,6 +65,22 @@ export function createDocPool({
       restOfName = fullName.slice(localName.length + 1);
     }
     returningCloudValue = _docs[localName];
+
+    if (!returningCloudValue && builtInFunctions[localName]) {
+      returningCloudValue = _docs[localName] = createCloudDoc({
+        source,
+        domain,
+        name: localName,
+        blockValueCache: blockValueCache,
+        cloudClient,
+        onRename: newName => {
+          return move(localName, newName);
+        },
+        parentName,
+      });
+      returningCloudValue._defineCloudFunction(builtInFunctions[localName]);
+    }
+
     if (!returningCloudValue && localName) {
       returningCloudValue = _docs[localName] = createCloudDoc({
         source,

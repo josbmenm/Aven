@@ -23,6 +23,48 @@ export default function createCloudBlock({
 
   blockValueCache = blockValueCache || {}; // reassigning an argument is clumsy but convenient here
 
+  const _childBlocks = {};
+
+  function _getBlockWithId(id) {
+    if (_childBlocks[id]) {
+      return _childBlocks[id];
+    }
+    const o = (_childBlocks[id] = createCloudBlock({
+      dispatch,
+      onGetName,
+      domain,
+      id,
+      cloudClient,
+      blockValueCache,
+      cloudDoc,
+    }));
+    return o;
+  }
+
+  function getBlock(requestedId) {
+    // - "get a block with this id", or
+    // - "get a doc with this BlockReference object", or
+
+    if (
+      typeof requestedId === 'object' &&
+      requestedId.type !== 'BlockReference'
+    ) {
+      throw new Error(
+        `Bad reference type "${
+          requestedId.type
+        }" for getBlock! Expected "BlockReference".`,
+      );
+    }
+    const queryId =
+      typeof requestedId === 'string'
+        ? requestedId
+        : requestedId && requestedId.id;
+    if (!queryId) {
+      throw new Error(`Cannot getBlock with id of "${requestedId}"`);
+    }
+    return _getBlockWithId(queryId);
+  }
+
   if (value !== undefined) {
     const valueString = JSONStringify(value);
     observedBlockId = SHA256(valueString).toString();
@@ -215,30 +257,6 @@ export default function createCloudBlock({
     return runLambda(_evaluatedFunction, argValue, argId, argDoc, cloudClient);
   }
 
-  function functionGetValue(argDoc) {
-    const { result } = runEvalLambda(
-      getValue(),
-      argDoc && argDoc.getValue(),
-      argDoc && argDoc.getId(),
-      argDoc,
-    );
-
-    return result;
-  }
-
-  const functionFetchValue = async argumentValue => {
-    await argumentValue.fetchValue();
-    await fetch();
-    const { loadDependencies, reComputeResult } = runEvalLambda(
-      getValue(),
-      argumentValue.getValue(),
-      argumentValue.getId(),
-      argumentValue,
-    );
-    await loadDependencies();
-    return reComputeResult();
-  };
-
   const functionObserveValueAndId = (argumentDoc, onIsConnected) => {
     return observeValue.switchMap(fnValue => {
       if (fnValue === undefined) {
@@ -294,14 +312,13 @@ export default function createCloudBlock({
     fetch,
     loadValue,
     getState,
+    getBlock,
     observe,
     observeValue,
     observeValueAndId,
     getReference,
     serialize,
 
-    functionGetValue,
-    functionFetchValue,
     functionObserveValueAndId,
   };
 
