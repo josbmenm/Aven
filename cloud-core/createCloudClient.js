@@ -167,9 +167,7 @@ export default function createCloudClient({
     }
     const doc = docs.get(name);
     const context = doc.getReference();
-    console.log('A', name, context);
     const { value, id } = await doc.loadValue();
-    console.log('Z', value, id);
     return { context, value, id };
   }
 

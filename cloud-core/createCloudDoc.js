@@ -948,11 +948,9 @@ export default function createCloudDoc({
       if (overriddenFunctionResults.has(argumentDoc)) {
         return overriddenFunctionResults.get(argumentDoc);
       }
-      console.log('B');
       const observeComputed = argumentDoc.observeValueAndId
         .flatMap(async ({ value, getId }) => {
           const argumentId = getId();
-          console.log('C', argumentId);
           let result = overriddenFunctionCache[argumentId];
           if (result === undefined) {
             const {
