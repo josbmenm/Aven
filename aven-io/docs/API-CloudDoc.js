@@ -121,12 +121,15 @@ const child = parent.get('Details');
             fetched)
           </Body>
         </SubSection>
-        <SubSection title="async fetchValue()">
+        <SubSection title="async loadValue()">
           <Body>
             Will make sure the current ID is fetched and the value of the
             corresponding block has been fetched. If the id is not known, the
             value and the ID will be fetched from the data source
             simultaneously.
+          </Body>
+          <Body>
+            {`Returns an object with { value, id } of the current block`}
           </Body>
         </SubSection>
       </Section>

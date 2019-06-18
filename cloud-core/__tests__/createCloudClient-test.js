@@ -66,7 +66,7 @@ describe('client doc behavior', () => {
       domain: 'd',
       id: first.id,
     });
-    await doc.fetchValue();
+    await doc.loadValue();
     expect(doc.getValue()).toEqual({ count: 12 });
   });
 
@@ -236,7 +236,7 @@ describe('block fetching', () => {
     });
     const c = createCloudClient({ source: m, domain: 'd' });
     const block1 = c.get('foo#' + first.id);
-    await block1.fetchValue();
+    await block1.loadValue();
     const result = block1.getValue();
     expect(result.count).toEqual(1);
     expect(block1.getReference()).toMatchObject({
@@ -261,7 +261,7 @@ describe('block fetching', () => {
     const c = createCloudClient({ source: m, domain: 'd' });
     const block1 = c.get('foo/bar#' + first.id);
     expect(block1).not.toBeNull();
-    await block1.fetchValue();
+    await block1.loadValue();
     const result = block1.getValue();
     expect(result.count).toEqual(1);
     expect(block1.getReference()).toMatchObject({
@@ -292,7 +292,7 @@ describe('eval', () => {
       },
     });
     const s = c.get('foo^squared');
-    await s.fetchValue();
+    await s.loadValue();
     const result = s.getValue();
     expect(result).toBe(4);
   });
@@ -357,7 +357,7 @@ describe('cache behavior', () => {
     });
     expect(doc.isConnected.getValue()).toBe(true);
 
-    await doc.fetchValue();
+    await doc.loadValue();
 
     expect(m._observedActionCounts.GetDoc || 0).toEqual(0);
   });
@@ -377,7 +377,7 @@ describe('eval/lambda behavior', () => {
       return value * value;
     });
     const s = c.get('foo^squared');
-    await s.fetchValue();
+    await s.loadValue();
     expect(s.getValue()).toBe(4);
     await source.dispatch({
       type: 'PutDocValue',
@@ -385,7 +385,7 @@ describe('eval/lambda behavior', () => {
       name: 'foo',
       value: 3,
     });
-    await s.fetchValue();
+    await s.loadValue();
     expect(s.getValue()).toBe(9);
   });
   it('basic eval, observed', async () => {
@@ -438,7 +438,7 @@ describe('eval/lambda behavior', () => {
       ({ value }, d, cloud, getValue) => value * getValue(cloud.get('bar')),
     );
     const s = c.get('foo^byBar');
-    await s.fetchValue();
+    await s.loadValue();
     expect(s.getValue()).toBe(6);
     await source.dispatch({
       type: 'PutDocValue',
@@ -446,7 +446,7 @@ describe('eval/lambda behavior', () => {
       name: 'foo',
       value: 3,
     });
-    await s.fetchValue();
+    await s.loadValue();
     expect(s.getValue()).toBe(9);
   });
 
@@ -486,7 +486,7 @@ describe('eval/lambda behavior', () => {
       return state;
     });
     const s = c.get('fooActions^fooReducer');
-    await s.fetchValue();
+    await s.loadValue();
     expect(s.getValue()).toEqual(['a', 'b']);
     await source.dispatch({
       type: 'PutTransactionValue',
@@ -494,7 +494,7 @@ describe('eval/lambda behavior', () => {
       name: 'fooActions',
       value: { remove: 'a' },
     });
-    await s.fetchValue();
+    await s.loadValue();
     expect(s.getValue()).toEqual(['b']);
   });
 
@@ -587,7 +587,7 @@ describe('client doc map', () => {
     const mapped = c
       .get('foo')
       .map(o => o && { squaredCount: o.count * o.count });
-    await mapped.fetchValue();
+    await mapped.loadValue();
     expect(mapped.getValue().squaredCount).toEqual(1);
     await m.dispatch({
       type: 'PutDoc',
@@ -595,7 +595,7 @@ describe('client doc map', () => {
       domain: 'd',
       id: second.id,
     });
-    await mapped.fetchValue();
+    await mapped.loadValue();
     expect(mapped.getValue().squaredCount).toEqual(4);
   });
 
@@ -624,7 +624,7 @@ describe('client doc map', () => {
       .get('foo')
       .map(o => o && { squaredCount: o.count * o.count })
       .map(o => o && { squaredSquaredCount: o.squaredCount * o.squaredCount });
-    await mapped.fetchValue();
+    await mapped.loadValue();
     expect(mapped.getValue().squaredSquaredCount).toEqual(1);
     await m.dispatch({
       type: 'PutDoc',
@@ -632,7 +632,7 @@ describe('client doc map', () => {
       domain: 'd',
       id: second.id,
     });
-    await mapped.fetchValue();
+    await mapped.loadValue();
     expect(mapped.getValue().squaredSquaredCount).toEqual(16);
   });
 
@@ -672,7 +672,7 @@ describe('client doc map', () => {
     const expanded = c
       .get('foo')
       .expand((value, doc) => value && { great: doc.getBlock(value.countObj) });
-    await expanded.fetchValue();
+    await expanded.loadValue();
     expect(expanded.getValue().great.count).toEqual(12);
     await m.dispatch({
       type: 'PutDoc',
@@ -680,7 +680,7 @@ describe('client doc map', () => {
       domain: 'd',
       id: second.id,
     });
-    await expanded.fetchValue();
+    await expanded.loadValue();
     expect(expanded.getValue().great.count).toEqual(42);
   });
 });

@@ -90,8 +90,8 @@ const block = doc.getBlock(blockRef);
             not already been fetched.
           </Body>
         </SubSection>
-        <SubSection title="async fetchValue()">
-          <Body>Same as `fetch()` for blocks.</Body>
+        <SubSection title="async loadValue()">
+          <Body>Load the block. Same behavior as `fetch()`.</Body>
         </SubSection>
         <SubSection title="async publish()">
           <Body>

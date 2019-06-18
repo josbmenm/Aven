@@ -189,8 +189,9 @@ export default function createCloudBlock({
     return await fetchInProgress;
   }
 
-  async function fetchValue() {
+  async function loadValue() {
     await fetch();
+    return getValue();
   }
 
   const isConnected = mapBehaviorSubject(
@@ -291,7 +292,7 @@ export default function createCloudBlock({
     setPutTime, // deprecate me!
     getValue,
     fetch,
-    fetchValue,
+    loadValue,
     getState,
     observe,
     observeValue,

@@ -391,7 +391,7 @@ export default function createCloudDoc({
     close();
   }
 
-  async function fetchValue() {
+  async function loadValue() {
     if (overriddenFunction) {
       return;
     }
@@ -412,6 +412,11 @@ export default function createCloudDoc({
         domain,
         name: getFullName(),
       });
+      if (!result) {
+        throw new Error(
+          `Cannot loadValue of "${getFullName()}" because the source response to GetDocValue is empty.`,
+        );
+      }
       if (result.id && result.value !== undefined) {
         _getBlockWithValueAndId(result.value, result.id);
       }
@@ -556,10 +561,7 @@ export default function createCloudDoc({
     if (overriddenFunction) {
       return undefined;
     }
-    const { id, value } = docState.value;
-    if (value) {
-      return value;
-    }
+    const { id } = docState.value;
     if (!id) {
       return undefined;
     }
@@ -619,70 +621,6 @@ export default function createCloudDoc({
   function markRemoteLambda(isRemote) {
     // this whole thing is a workaround for properly uploading lambdas at build time, and embedding the references into the client
     isLambdaRemote = isRemote;
-  }
-
-  async function functionFetchValue(argumentDoc) {
-    const isArgumentReady = argumentDoc.getIsConnected();
-    const currentId = argumentDoc.getId();
-    if (isLambdaRemote && !isArgumentReady) {
-      const valueDocName = argumentDoc.getFullName();
-      const valueName = currentId
-        ? `${valueDocName}#${currentId}`
-        : valueDocName;
-      const queryName = `${valueName}^${getFullName()}`;
-      const res = await source.dispatch({
-        type: 'GetDocValue',
-        domain,
-        name: queryName,
-      });
-      if (res.context && res.context.type === 'EvaluatedDoc') {
-        if (
-          res.context.argument.type === 'BlockReference' &&
-          argumentDoc.getId() !== res.context.argument.id
-        ) {
-          const argId = res.context.argument.id;
-          argumentDoc.$setState({
-            id: argId,
-            lastSyncTime: Date.now(),
-          });
-          if (overriddenFunction && overriddenFunctionCache) {
-            overriddenFunctionCache[argId] = res.value;
-            return;
-          }
-        }
-      }
-    }
-
-    if (
-      isArgumentReady &&
-      overriddenFunction &&
-      overriddenFunctionCache[currentId] !== undefined
-    ) {
-      return;
-    }
-    if (overriddenFunction) {
-      await argumentDoc.fetchValue();
-      const argId = argumentDoc.getId();
-      if (overriddenFunctionCache[argId] !== undefined) {
-        return;
-      }
-      const { loadDependencies, reComputeResult } = runLambda(
-        overriddenFunction,
-        argumentDoc.getValue(),
-        argId,
-        argumentDoc,
-        cloudClient,
-      );
-      await loadDependencies();
-      overriddenFunctionCache[argId] = reComputeResult();
-      return;
-    }
-    await fetchValue();
-    const block = getBlock();
-    if (!block) {
-      return;
-    }
-    await block.functionFetchValue(argumentDoc);
   }
 
   async function commitBlock(value) {
@@ -1010,9 +948,11 @@ export default function createCloudDoc({
       if (overriddenFunctionResults.has(argumentDoc)) {
         return overriddenFunctionResults.get(argumentDoc);
       }
+      console.log('B');
       const observeComputed = argumentDoc.observeValueAndId
         .flatMap(async ({ value, getId }) => {
           const argumentId = getId();
+          console.log('C', argumentId);
           let result = overriddenFunctionCache[argumentId];
           if (result === undefined) {
             const {
@@ -1113,12 +1053,6 @@ export default function createCloudDoc({
     });
   };
 
-  const functionObserveValue = (argumentDoc, onIsConnected) => {
-    return functionObserveValueAndId(argumentDoc, onIsConnected).map(d => {
-      return d && d.value;
-    });
-  };
-
   function lookupDocBlock(inputVal, lookup) {
     let docValue = inputVal;
     lookup.forEach(v => {
@@ -1149,7 +1083,7 @@ export default function createCloudDoc({
   }
 
   async function fetchConnectedValue(lookup) {
-    await fetchValue();
+    await loadValue();
     const connected = lookupDocBlock(getValue(), lookup);
     if (connected) {
       await connected.fetch();
@@ -1168,7 +1102,7 @@ export default function createCloudDoc({
     // todo.. uh, do this safely by putting a TransactionValue!
     let lastValue = undefined;
     if (docState.value.isPosted) {
-      await fetchValue();
+      await loadValue();
       lastValue = getValue();
     }
     const newValue = transactionFn(lastValue);
@@ -1234,13 +1168,11 @@ export default function createCloudDoc({
     observeValueAndId,
     isConnected,
     getIsConnected: isConnected.getValue,
-    fetchValue,
+    loadValue,
     getReference,
     // todo: serialize?
 
     functionGetValue,
-    functionFetchValue,
-    functionObserveValue,
     functionObserveValueAndId,
     _defineCloudFunction,
     $setOverrideFunction, // I suppose this is an implementation detail of eval data source

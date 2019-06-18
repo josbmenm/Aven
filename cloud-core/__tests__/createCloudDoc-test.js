@@ -251,7 +251,7 @@ describe('observing docs', () => {
     });
 
     expect(lastObserved).toEqual(undefined);
-    await doc.fetchValue();
+    await doc.loadValue();
     expect(lastObserved.foo).toEqual('bar');
 
     await source.dispatch({
@@ -418,7 +418,7 @@ it('value mapping', async () => {
     },
   });
   expect(lastObserved).toEqual(null);
-  await mapped.fetchValue();
+  await mapped.loadValue();
   expect(lastObserved).toEqual(4);
   await source.dispatch({
     type: 'PutDocValue',

@@ -118,8 +118,7 @@ await chatRoom.put({ messages: ['Hello'] });
           code={`const chatRoom = cloud.get('ChatRoom');
           
 // fetch and log the current value of the ChatRoom doc:
-await chatRoom.fetchValue();
-console.log(chatRoom.getValue());
+console.log(await chatRoom.loadValue());
 `}
         />
       </SubSection>

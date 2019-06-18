@@ -7,9 +7,9 @@ export default function runLambda(
 ) {
   const dependencies = new Set();
   async function loadDependencies() {
-    await Promise.all(
+    return await Promise.all(
       [...dependencies].map(async dep => {
-        await dep.fetchValue();
+        return await dep.loadValue();
       }),
     );
   }

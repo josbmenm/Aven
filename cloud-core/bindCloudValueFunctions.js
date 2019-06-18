@@ -18,8 +18,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
       typeof o === 'object' &&
       typeof o.observeValue === 'object' &&
       typeof o.observeValue.subscribe === 'function' &&
-      typeof o.fetchValue === 'function' &&
-      typeof o.getValue === 'function'
+      typeof o.loadValue === 'function'
     );
   }
   function doExpansion(o) {
@@ -70,37 +69,29 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
         `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`,
       );
     },
-    fetchValue: async () => {
-      await cloudValue.fetchValue();
-      const expandSpec = expandFn(cloudValue.getValue(), cloudValue);
-      const cloudValues = collectCloudValues(expandSpec);
-      await Promise.all(cloudValues.map(v => v.fetchValue()));
-    },
     getReference: () => {
       return {
         type: 'ExpandedDoc',
         from: cloudValue.getReference(),
       };
     },
-    observeValue: cloudValue.observeValue
+    observeValueAndId: cloudValue.observeValue
       .distinctUntilChanged()
       .pipe(filterUndefined())
       .mergeMap(async o => {
         isConnected.next(false);
         const expandSpec = expandFn(o, cloudValue);
         const cloudValues = collectCloudValues(expandSpec);
-        await Promise.all(cloudValues.map(v => v.fetchValue()));
+        await Promise.all(cloudValues.map(v => v.loadValue()));
         isConnected.next(true);
-        const expanded = doExpansion(expandSpec);
-        return expanded;
+        const expandedValue = doExpansion(expandSpec);
+        return {
+          value: expandedValue,
+          getId: () => getIdOfValue(expandedValue),
+        };
       })
       .pipe(filterUndefined())
       .distinctUntilChanged(),
-    observeValueAndId: new Observable(() => {
-      throw new Error(
-        'sorry, observeValueAndId is not supported for expand right now. Use observeValue or lambda functions instead.',
-      );
-    }),
     getValue,
   };
   bindCloudValueFunctions(expanded, cloudClient);
@@ -146,13 +137,6 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
         `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been evaluated.`,
       );
     },
-    // the actual loading and computation is performed by the lambda doc, which may refer to the cloud block lambda.
-    // the doc function/lambda may have been overridden via setLambda and $setOverrideFunction
-    fetchValue: () => lambdaDoc.functionFetchValue(cloudValue),
-    observeValue: lambdaDoc.functionObserveValue(
-      cloudValue,
-      handleFnConnectivity,
-    ),
     observeValueAndId: lambdaDoc.functionObserveValueAndId(
       cloudValue,
       handleFnConnectivity,
@@ -184,17 +168,12 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
         `Cannot get "${toGet}" on ${cloudValue.getFullName()} because it has been mapped.`,
       );
     },
-    fetchValue: cloudValue.fetchValue,
-    observeValue: cloudValue.observeValue.distinctUntilChanged().map(data => {
-      return mapFn(data);
-    }),
     observeValueAndId: cloudValue.observeValueAndId
       .distinctUntilChanged()
       .map(data => {
         const value = mapFn(data);
         return { value, getId: () => getIdOfValue(value) };
       }),
-    // distinctUntilChanged(),
     getValue: () => {
       return mapFn(cloudValue.getValue());
     },
@@ -206,6 +185,28 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
 
 export default function bindCloudValueFunctions(cloudValue, cloudClient) {
   const evalCache = new Map();
+  async function loadValue() {
+    return await new Promise((resolve, reject) => {
+      let subs = null;
+      subs = cloudValue.observeValueAndId.subscribe({
+        next: valAndId => {
+          subs && subs.unsubscribe();
+          resolve({ value: valAndId.value, id: valAndId.getId() });
+        },
+        error: err => {
+          subs && subs.unsubscribe();
+          reject(err);
+        },
+        complete: () => {
+          subs && subs.unsubscribe();
+        },
+      });
+    });
+  }
+  cloudValue.observeValue = cloudValue.observeValueAndId.map(
+    valueState => valueState.value,
+  );
+  cloudValue.loadValue = loadValue;
   cloudValue.map = (...args) => mapCloudValue(cloudValue, cloudClient, ...args);
   cloudValue.expand = (...args) =>
     expandCloudValue(cloudValue, cloudClient, ...args);

@@ -484,16 +484,16 @@ describe('remote eval', () => {
     });
     c.setLambda('fooReducer', cloudReducer);
     const s = c.get('fooActions^fooReducer');
-    await s.fetchValue();
-    expect(s.getValue().state).toEqual(['a', 'b']);
+    let loaded = await s.loadValue();
+    expect(loaded.value.state).toEqual(['a', 'b']);
     await source.dispatch({
       type: 'PutTransactionValue',
       domain: 'd',
       name: 'fooActions',
       value: { remove: 'a' },
     });
-    await s.fetchValue();
-    expect(s.getValue().state).toEqual(['b']);
+    loaded = await s.loadValue();
+    expect(loaded.value.state).toEqual(['b']);
   });
 
   it('reducer remote eval subscription', async () => {

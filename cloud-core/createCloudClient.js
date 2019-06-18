@@ -131,7 +131,7 @@ export default function createCloudClient({
     }
     const doc = docs.get(name);
     const block = doc.getBlock(id);
-    await block.fetchValue();
+    await block.loadValue();
     return block && block.serialize();
   }
 
@@ -147,9 +147,9 @@ export default function createCloudClient({
       return await defaultAction();
     }
     const doc = docs.get(name);
-    const value = await doc.fetchValue();
+    const loaded = await doc.loadValue();
     return {
-      id: value === undefined ? undefined : getIdOfValue(value),
+      id: loaded.id,
       domain,
       name,
     };
@@ -166,11 +166,11 @@ export default function createCloudClient({
       return await defaultAction();
     }
     const doc = docs.get(name);
-    await doc.fetchValue();
-    const value = doc.getValue();
     const context = doc.getReference();
-    const id = await doc.getId();
-    return { value, id, context };
+    console.log('A', name, context);
+    const { value, id } = await doc.loadValue();
+    console.log('Z', value, id);
+    return { context, value, id };
   }
 
   async function PostDoc({ domain: actionDomain, name, value, auth, id }) {
