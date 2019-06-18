@@ -15,6 +15,7 @@ import OLDBlendMenu from './OLDBlendMenu';
 import OurStory from './OurStory';
 import Privacy from './Privacy';
 import Terms from './Terms';
+import BookWithUs from './BookWithUs';
 import { ThemeContext, theme, useTheme } from './ThemeContext';
 import GenericPage from './GenericPage';
 import GenericHeroHeader from './GenericHeroHeader';
@@ -126,6 +127,10 @@ const App = createSwitchNavigator(
     OldMenu: {
       path: 'old/menu',
       screen: OLDBlendMenu,
+    },
+    BookWithUs: {
+      path: 'book-with-us',
+      screen: BookWithUs,
     },
   },
   {

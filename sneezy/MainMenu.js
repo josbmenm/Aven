@@ -64,7 +64,7 @@ export default function MainMenu() {
             <Button
               type="outline"
               text="book with us"
-              routeName="Book"
+              routeName="BookWithUs"
               // textStyle={{ fontSize: 20 }}
               buttonStyle={{ marginLeft: 16 }}
             />
