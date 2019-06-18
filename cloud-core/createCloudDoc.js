@@ -915,29 +915,6 @@ export default function createCloudDoc({
   const overriddenFunctionResults = new Map();
 
   const functionObserveValueAndId = (argumentDoc, onIsConnected) => {
-    function observeRemote() {
-      const responseSubject = new ReplaySubject(1);
-      const evalDocName = `${argumentDoc.getFullName()}^${getFullName()}`;
-      source
-        .observeDoc(domain, evalDocName)
-        .then(observable => {
-          observable.subscribe({
-            next: resp => {
-              responseSubject.next({
-                value: resp.value,
-                getId: () => resp.id,
-              });
-            },
-            error: err => {
-              responseSubject.error(err);
-            },
-          });
-        })
-        .catch(e => {
-          responseSubject.error(e);
-        });
-      return responseSubject;
-    }
     if (overriddenFunction) {
       if (overriddenFunctionResults.has(argumentDoc)) {
         return overriddenFunctionResults.get(argumentDoc);
@@ -1035,14 +1012,28 @@ export default function createCloudDoc({
       overriddenFunctionResults.set(argumentDoc, resultObservable);
       return resultObservable;
     }
-    return observe.switchMap(cloudDocValue => {
-      if (!cloudDocValue.id) {
-        return observeRemote();
-      }
-      const block = _getBlockWithId(cloudDocValue.id);
-      const fnObs = block.functionObserveValueAndId(argumentDoc, onIsConnected);
-      return fnObs;
-    });
+    // We don't have this fuction locally, so we will observe the result of the source's evaluator
+    const responseSubject = new ReplaySubject(1);
+    const evalDocName = `${argumentDoc.getFullName()}^${getFullName()}`;
+    source
+      .observeDoc(domain, evalDocName)
+      .then(observable => {
+        observable.subscribe({
+          next: resp => {
+            responseSubject.next({
+              value: resp.value,
+              getId: () => resp.id,
+            });
+          },
+          error: err => {
+            responseSubject.error(err);
+          },
+        });
+      })
+      .catch(e => {
+        responseSubject.error(e);
+      });
+    return responseSubject;
   };
 
   function lookupDocBlock(inputVal, lookup) {
