@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { V2HLayout, V2HLayoutChild, Title } from './Tokens';
+import { V2HLayout, V2HLayoutChild, Title, Responsive } from './Tokens';
 import { aspectRatio43 } from '../components/Styles';
 import { useTheme } from './ThemeContext';
 
@@ -37,16 +37,18 @@ function FeatureSection({
       ])}
     >
       <V2HLayoutChild inverted={inverted}>{image}</V2HLayoutChild>
-      <V2HLayoutChild
-        style={{
-          paddingVertical: 40,
-          paddingRight: 40,
-          justifyContent: 'center',
-        }}
-      >
-        <Title>{title}</Title>
-        {bodyText}
-      </V2HLayoutChild>
+      <Responsive style={{ paddingLeft: [0, 100] }}>
+        <V2HLayoutChild
+          style={{
+            paddingVertical: 40,
+            paddingRight: 40,
+            justifyContent: 'center',
+          }}
+        >
+          <Title>{title}</Title>
+          {bodyText}
+        </V2HLayoutChild>
+      </Responsive>
     </V2HLayout>
   );
 }

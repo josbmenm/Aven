@@ -154,11 +154,11 @@ export function V2HLayout({
   );
 }
 
-export function V2HLayoutChild({ inverted = false, style, ...rest }) {
+export function V2HLayoutChild({ className, inverted = false, style, ...rest }) {
   return (
     // TODO: RESPONSIVE: add/remove margin for responsive
     <View
-      className="vertical-to-horizontal-layout__child"
+      className={`vertical-to-horizontal-layout__child ${className}`}
       style={StyleSheet.flatten([
         {
           alignItems: inverted ? 'flex-end' : 'flex-start',
@@ -191,4 +191,29 @@ export function NoFlexToFlex({ children, breakpoint = 768 }) {
       <View className="no-flex-to-flex">{children}</View>
     </React.Fragment>
   );
+}
+
+export function Responsive({
+  style = {},
+  children,
+  breakpoint = 768,
+  ...rest
+}) {
+  const id = responsiveIdCount++
+  return (
+    <React.Fragment>
+      <style>{`
+        .responsive-element-${id} {
+          padding-left: ${style.paddingLeft[0]}px;
+        }
+
+        @media only screen and (min-width: ${breakpoint}px) {
+          .responsive-element-${id} {
+            padding-left: ${style.paddingLeft[1]}px;
+          }
+        }
+      `}</style>
+      {React.cloneElement(children, { className: `responsive-element-${id}`})}
+    </React.Fragment>
+  )
 }

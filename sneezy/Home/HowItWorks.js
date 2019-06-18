@@ -33,7 +33,7 @@ function HowItWorks() {
           bodyText={
             <BodyText>
               Check out the <BodyText bold>schedule</BodyText> to find us. Not
-              seeing your neighborhood?{' '}
+              seeing your neighborhood?
               <BodyText bold>Request us here.</BodyText>
             </BodyText>
           }
