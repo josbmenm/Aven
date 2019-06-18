@@ -20,8 +20,7 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
     }
     return doc.getBlock(folder.files['db.json']);
   });
-  await at.fetchValue();
-  const companyConfig = at.getValue();
+  const companyConfig = await at.loadValue();
   const blends = companyConfigToBlendMenu(companyConfig);
   const order = orderResult.value;
   const summary = getOrderSummary(order, companyConfig);

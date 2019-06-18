@@ -1,6 +1,7 @@
 import defineCloudReducer from '../cloud-core/defineCloudReducer';
 
 function DevicesReducerFn(state = {}, action) {
+  console.log('devices reducer', state, action);
   function devicesExcludingId(devices, id) {
     return (devices || []).filter(d => d.deviceId !== id);
   }

@@ -6,9 +6,7 @@ export default async function validatePromoCode(cloud, { promoCode }) {
     return doc.getBlock(folder.files['db.json']);
   });
 
-  await atDoc.fetchValue();
-
-  const atData = atDoc.getValue();
+  const atData = await atDoc.loadValue();
   const { PromoCodes } = atData.baseTables;
 
   let atPromoCode = null;
@@ -43,9 +41,7 @@ export default async function validatePromoCode(cloud, { promoCode }) {
 
   const promoDoc = cloud.get(`PromoCodes/${promoCode}`);
 
-  await promoDoc.fetchValue();
-
-  const promoValue = promoDoc.getValue();
+  const promoValue = await promoDoc.loadValue();
 
   if (promoValue && promoValue.usedForOrder == null) {
     return promoValue;

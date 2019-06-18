@@ -40,8 +40,7 @@ export default async function submitFeedback(
   { email, feedbackId },
 ) {
   const feedback = cloud.get(`CustomerFeedback/${feedbackId}`);
-  await feedback.fetchValue();
-  const feedbackValue = feedback.getValue();
+  const feedbackValue = feedback.loadValue();
   if (!feedbackValue) {
     throw new Error(`Feedback ID "${feedbackId}" could not be found.`);
   }

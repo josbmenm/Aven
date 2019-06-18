@@ -287,23 +287,6 @@ const startSkynetServer = async () => {
 
   async function placeOrder({ orderId }, logger) {
     throw new Error('Cannot place order on skynet! Use verse');
-    // console.log('FAIL order..', orderId);
-
-    // const inputOrder = evalSource.cloud.get(`PendingOrders/${orderId}`);
-    // await inputOrder.fetchValue();
-    // const order = inputOrder.getValue();
-    // console.log('placing order..', order);
-
-    // if (!order) {
-    //   throw new Error('Could not find order');
-    // }
-
-    // await evalSource.cloud.get('OrderActions').putTransaction({
-    //   type: 'PlaceOrder',
-    //   order,
-    // });
-
-    // logger.log('Order Placed', 'PlaceOrder', { orderId });
 
     return {};
   }
