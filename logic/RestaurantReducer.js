@@ -223,6 +223,20 @@ function RestaurantReducerFn(state = {}, action) {
         isAttached: false,
       };
     }
+    case 'EnableManualMode': {
+      return {
+        ...state,
+        isAttached: false,
+        manualMode: true,
+      };
+    }
+    case 'DisableManualMode': {
+      return {
+        ...state,
+        manualMode: false,
+      };
+    }
+
     default: {
       return state;
     }

@@ -99,6 +99,8 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   } else if (!isPLCConnected) {
     status = 'disconnected';
     message = 'Server disconnected from machine..';
+  } else if (restaurantState.manualMode) {
+    status = 'manual mode';
   } else if (!restaurantState.isAttached) {
     status = 'disconnected';
     message = 'Detached.';
@@ -198,10 +200,11 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
           {restaurantState && (
             <Button
               title={restaurantState.isAttached ? 'Detach' : 'Attach'}
+              disabled={restaurantState.manualMode}
               onPress={() => {
                 if (restaurantState.isAttached) {
                   errorHandler(restaurantDispatch({ type: 'Detach' }));
-                } else {
+                } else if (!restaurantState.manualMode) {
                   errorHandler(restaurantDispatch({ type: 'Attach' }));
                 }
               }}

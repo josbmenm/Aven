@@ -46,6 +46,7 @@ export const monsterraBlack = '#005151';
 export const highlightPrimaryColor = monsterra;
 export const mutedPrimaryColor = monsterra60;
 export const pinkColor = '#F8C1B8';
+export const standardTextColor = '#171717';
 // -----------
 
 // Fonts with Colors
@@ -263,11 +264,9 @@ export const heroViewStyle = {
 export const heroIconStyle = { top: 15, fontSize: 64 };
 export const heroSubtitleStyle = { fontSize: 50 };
 
-
-
 // ---------------------------
 
 export const aspectRatio169 = {
-  width: "100%",
-  paddingTop: "56.25%"
-}
+  width: '100%',
+  paddingTop: '56.25%',
+};

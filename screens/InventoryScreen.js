@@ -8,7 +8,14 @@ import Row from '../components/Row';
 import Spinner from '../components/Spinner';
 import { Easing } from 'react-native-reanimated';
 import BitRow from '../components/BitRow';
-import { rowStyle, rowTitleStyle, titleStyle } from '../components/Styles';
+import {
+  rowStyle,
+  rowTitleStyle,
+  titleStyle,
+  proseFontFace,
+  monsterraLight,
+  standardTextColor,
+} from '../components/Styles';
 import useCloudReducer from '../cloud-core/useCloudReducer';
 import useCloudValue from '../cloud-core/useCloudValue';
 import useObservable from '../cloud-core/useObservable';
@@ -21,6 +28,7 @@ import BlockFormMessage from '../components/BlockFormMessage';
 import BlockFormInput from '../components/BlockFormInput';
 import KeyboardPopover from '../components/KeyboardPopover';
 import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
+import AirtableImage from '../components/AirtableImage';
 import useAsyncError from '../react-utils/useAsyncError';
 import RestaurantReducer from '../logic/RestaurantReducer';
 
@@ -37,6 +45,7 @@ function useInventoryState() {
     return null;
   }
   const slotsWithIngredients = Object.values(tables.KitchenSlots).map(slot => {
+    console.log(slot._index);
     const Ingredient =
       tables.Ingredients[slot.Ingredient && slot.Ingredient[0]];
     return {
@@ -63,7 +72,8 @@ function useInventoryState() {
       ...slot,
       estimatedRemaining: invState && invState.estimatedRemaining,
       name: slot.Ingredient.Name,
-      photo: slot.Ingredient.Photo,
+      photo: slot.Ingredient.Icon,
+      color: slot.Ingredient.Color,
       onSetEstimatedRemaining: value => {
         return dispatch({
           type: 'DidFillSlot',
@@ -102,6 +112,21 @@ function useInventoryState() {
   return { inventorySections };
 }
 
+function PopoverTitle({ children }) {
+  return (
+    <Text
+      style={{
+        ...titleStyle,
+        textAlign: 'center',
+        margin: 8,
+        fontSize: 28,
+      }}
+    >
+      {children}
+    </Text>
+  );
+}
+
 function SetFillForm({ slot, onClose }) {
   function setAmount(amount) {
     slot.onSetEstimatedRemaining(Math.ceil(amount * slot.ShotCapacity));
@@ -109,9 +134,7 @@ function SetFillForm({ slot, onClose }) {
   }
   return (
     <View>
-      <Text style={{ ...titleStyle, textAlign: 'center', marginVertical: 8 }}>
-        Set {slot.name} fill state
-      </Text>
+      <PopoverTitle>Set {slot.name} fill state</PopoverTitle>
       <Button
         title="100%"
         onPress={() => {
@@ -146,8 +169,25 @@ function SetFillForm({ slot, onClose }) {
   );
 }
 
+function SlotRunButtons({ slot, onClose }) {
+  return (
+    <View>
+      <PopoverTitle>Run {slot.name}</PopoverTitle>
+      <Button title="Dispense One" onPress={() => {}} />
+      <Button title="Dispense Until Empty" onPress={() => {}} />
+    </View>
+  );
+}
+
+function InfoText({ children }) {
+  return (
+    <Text style={{ ...proseFontFace, color: standardTextColor }}>
+      {children}
+    </Text>
+  );
+}
 function InventoryRow({ slot }) {
-  const { onPopover } = usePopover(
+  const { onPopover: onFillPopover } = usePopover(
     ({ onClose, popoverOpenValue }) => {
       return (
         <KeyboardPopover onClose={onClose}>
@@ -158,6 +198,16 @@ function InventoryRow({ slot }) {
     { easing: Easing.linear, duration: 1 },
   );
 
+  const { onPopover: onRunPopover } = usePopover(
+    ({ onClose, popoverOpenValue }) => {
+      return (
+        <KeyboardPopover onClose={onClose}>
+          <SlotRunButtons onClose={onClose} slot={slot} />
+        </KeyboardPopover>
+      );
+    },
+    { easing: Easing.linear, duration: 1 },
+  );
   const estimatedRemaining = slot.estimatedRemaining;
   const percentFull =
     estimatedRemaining &&
@@ -165,19 +215,34 @@ function InventoryRow({ slot }) {
   return (
     <Row>
       <View style={{ flex: 1 }}>
-        <Text>Name: {slot.name}</Text>
-        <Text>Capacity: {slot.ShotCapacity}</Text>
-        {estimatedRemaining && <Text>{estimatedRemaining} remaining</Text>}
-        {percentFull && <Text>{percentFull}%</Text>}
+        <View style={{ flexDirection: 'row' }}>
+          {slot.photo && (
+            <AirtableImage
+              image={slot.photo}
+              style={{
+                width: 36,
+                height: 36,
+                resizeMode: 'contain',
+                tintColor: slot.color,
+                marginRight: 4,
+              }}
+              resizeMode="contain"
+              tintColor={slot.color}
+            />
+          )}
+          <Text style={{ ...titleStyle, fontSize: 24 }}>{slot.name}</Text>
+        </View>
+        <InfoText>Capacity: {slot.ShotCapacity}</InfoText>
+        {estimatedRemaining && (
+          <InfoText>{estimatedRemaining} remaining</InfoText>
+        )}
+        {percentFull && <InfoText>{percentFull}% full</InfoText>}
       </View>
 
-      <Button title="Set.." secondary onPress={onPopover} />
-      <Button
-        title="Set Full"
-        onPress={() => {
-          slot.onSetEstimatedRemaining(slot.ShotCapacity);
-        }}
-      />
+      <View style={{ flexDirection: 'row' }}>
+        <Button title="Run.." onPress={onRunPopover} />
+        <Button title="Fill.." secondary onPress={onFillPopover} />
+      </View>
     </Row>
   );
 }

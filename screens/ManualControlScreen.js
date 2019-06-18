@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import KitchenCommands from '../logic/KitchenCommands';
 import useCloud from '../cloud-core/useCloud';
 import useCloudReducer from '../cloud-core/useCloudReducer';
+import { View } from 'react-native';
 import RowSection from '../components/RowSection';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import useAsyncError from '../react-utils/useAsyncError';
@@ -150,6 +151,32 @@ function ManualActionsSection() {
   );
 }
 
+function ModeView({ restaurantState, dispatch }) {
+  return (
+    <View>
+      {restaurantState.manualMode ? (
+        <Button
+          title="Disable Manual Mode"
+          onPress={() => {
+            dispatch({
+              type: 'DisableManualMode',
+            });
+          }}
+        />
+      ) : (
+        <Button
+          title="Enable Manual Mode"
+          onPress={() => {
+            dispatch({
+              type: 'EnableManualMode',
+            });
+          }}
+        />
+      )}
+    </View>
+  );
+}
+
 export default function OrdersScreen(props) {
   const [restaurantState, dispatch] = useCloudReducer(
     'RestaurantActionsUnburnt',
@@ -161,9 +188,15 @@ export default function OrdersScreen(props) {
       title="Manual Control"
       icon="⚡️"
       afterSide={null}
-      side={null}
+      side={
+        restaurantState && (
+          <ModeView restaurantState={restaurantState} dispatch={dispatch} />
+        )
+      }
     >
-      <ManualActionsSection />
+      {restaurantState && restaurantState.manualMode && (
+        <ManualActionsSection />
+      )}
     </TwoPanePage>
   );
 }

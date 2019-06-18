@@ -58,7 +58,15 @@ export default function PortalHomeScreenMemo({ navigation, ...props }) {
           icon={'🎟'}
           title={'Orders'}
         />
-
+        <LinkRow
+          onPress={() => {
+            navigation.navigate({
+              routeName: 'RestaurantStatus',
+            });
+          }}
+          icon={'🚐'}
+          title={'Restaurant Status'}
+        />
         <LinkRow
           onPress={() => {
             navigation.navigate({
@@ -91,15 +99,6 @@ export default function PortalHomeScreenMemo({ navigation, ...props }) {
           }}
           icon={'📋'}
           title={'Engineering Dashboard'}
-        />
-        <LinkRow
-          onPress={() => {
-            navigation.navigate({
-              routeName: 'GuideDashboard',
-            });
-          }}
-          icon={'📋'}
-          title={'Guide Dashboard'}
         />
       </RowSection>
     </SimplePage>

@@ -20,6 +20,7 @@ import PortalHomeScreen from '../screens/PortalHomeScreen';
 import ComponentPlaygroundScreen from '../screens/ComponentPlaygroundScreen';
 import ProductHomeScreen from '../screens/ProductHomeScreen';
 import KitchenEngScreen from '../screens/KitchenEngScreen';
+import RestaurantStatusScreen from '../screens/RestaurantStatusScreen';
 import KitchenEngSubScreen from '../screens/KitchenEngSubScreen';
 import KioskSettingsScreen from '../screens/KioskSettingsScreen';
 import KioskHomeScreen from '../screens/KioskHomeScreen';
@@ -35,7 +36,6 @@ import SequencerScreen from '../screens/SequencerScreen';
 
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
-import GuideDashboardScreen from '../screens/GuideDashboardScreen';
 import EngDashboardScreen from '../screens/EngDashboardScreen';
 import DeviceManagerScreen from '../screens/DeviceManagerScreen';
 import { OrderCompletePortalScreen } from '../screens/OrderCompleteScreen';
@@ -66,7 +66,7 @@ let IS_DEV = process.env.NODE_ENV !== 'production';
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  authority: '192.168.1.29:8830',
+  authority: '192.168.1.81:8830',
 };
 const RESTAURANT_PROD = {
   useSSL: false,
@@ -147,11 +147,11 @@ const App = createStackTransitionNavigator({
   KioskSettings: KioskSettingsScreen,
   Inventory: InventoryScreen,
   DeviceManager: DeviceManagerScreen,
+  RestaurantStatus: RestaurantStatusScreen,
   PaymentDebug: PaymentDebugScreen,
   OrderConfirmTest: OrderConfirmTestScreen,
   Sequencer: SequencerScreen,
   EngDashboard: EngDashboardScreen,
-  GuideDashboard: GuideDashboardScreen,
   Orders: OrdersScreen,
   ManualControl: ManualControlScreen,
 });
