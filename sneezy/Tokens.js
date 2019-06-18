@@ -41,9 +41,15 @@ export function Title({ children, style, ...rest }) {
 }
 
 export function List({ children }) {
-  return <View style={{
-    marginLeft: 20
-  }}>{children}</View>;
+  return (
+    <View
+      style={{
+        marginLeft: 20,
+      }}
+    >
+      {children}
+    </View>
+  );
 }
 
 export function ListItem({ children }) {
@@ -58,7 +64,7 @@ export function ListItem({ children }) {
           borderRadius: 4,
           backgroundColor: theme.colors.primary,
           left: -20,
-          top: 12
+          top: 12,
         }}
       />
       <BodyText>{children}</BodyText>
@@ -140,10 +146,19 @@ export function V2HLayout({
   );
 }
 
-export function V2HLayoutChild(props) {
-  return <View className="vertical-to-horizontal-layout__child" style={{
-    alignItems: props.inverted ? 'flex-end' : 'flex-start',
-  }} {...props} />;
+export function V2HLayoutChild({ inverted = false, ...rest }) {
+  return (
+    // TODO: RESPONSIVE: add/remove margin for responsive
+    <View
+      className="vertical-to-horizontal-layout__child"
+      style={{
+        alignItems: inverted ? 'flex-end' : 'flex-start',
+        marginLeft: inverted ? 20 : 0,
+        marginRight: inverted ? 0 : 20,
+      }}
+      {...rest}
+    />
+  );
 }
 
 export function NoFlexToFlex({ children, breakpoint = 768 }) {

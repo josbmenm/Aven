@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import GenericPage from '../GenericPage';
 import PageFooter from '../PageFooter';
 import Container from '../Container';
@@ -7,7 +7,7 @@ import { BodyText } from '../Tokens';
 import { useTheme } from '../ThemeContext';
 import Header from './OurStoryHeader';
 import FeatureSection from '../FeatureSection';
-import { aspectRatio169 } from '../../components/Styles';
+import { aspectRatio169, aspectRatio43 } from '../../components/Styles';
 
 function OurStory() {
   const theme = useTheme();
@@ -33,7 +33,12 @@ function OurStory() {
                 hand and perfected with technology.
               </BodyText>
             }
-            // media={}
+            image={
+              <Image
+                source={require('./assets/ourstory-feature.jpg')}
+                style={{ maxWidth: 630, ...aspectRatio43 }}
+              />
+            }
           />
           <FeatureSection
             inverted
@@ -44,7 +49,12 @@ function OurStory() {
                 to perfection. While the robots do the work, we’re able to spend
                 more time with you, our customer.
               </BodyText>
-              // media={}
+            }
+            image={
+              <Image
+                source={require('./assets/ourstory-feature.jpg')}
+                style={{ maxWidth: 630, ...aspectRatio43 }}
+              />
             }
           />
           <FeatureSection
@@ -57,15 +67,22 @@ function OurStory() {
                 you through an early morning meeting or a post-workout recovery
                 — each blend is created specifically with you in mind.
               </BodyText>
-              // media={}
+            }
+            image={
+              <Image
+                source={require('./assets/ourstory-feature.jpg')}
+                style={{ maxWidth: 630, ...aspectRatio43 }}
+              />
             }
           />
         </Container>
       </View>
       <View>
-        <Container style={{
-          marginBottom: 80
-        }}>
+        <Container
+          style={{
+            marginBottom: 80,
+          }}
+        >
           <FeatureSection
             title="The team"
             bodyText={
@@ -75,6 +92,12 @@ function OurStory() {
                 Regardless of the discipline, design and hospitality are at the
                 core of everything we do.
               </BodyText>
+            }
+            image={
+              <Image
+                source={require('./assets/ourstory-feature.jpg')}
+                style={{ maxWidth: 430, ...aspectRatio43 }}
+              />
             }
           />
         </Container>

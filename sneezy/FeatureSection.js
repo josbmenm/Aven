@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { V2HLayout, V2HLayoutChild, Title } from './Tokens';
+import { aspectRatio43 } from '../components/Styles';
 import { useTheme } from './ThemeContext';
 
 function FeatureSection({
@@ -15,11 +16,7 @@ function FeatureSection({
   if (!image) {
     image = (
       <View
-        style={{
-          width: 412,
-          height: 372,
-          backgroundColor: theme.colors.lightGrey,
-        }}
+      style={{ maxWidth: 630, ...aspectRatio43, backgroundColor: theme.colors.lightGrey }}
       />
     );
   }
@@ -32,17 +29,7 @@ function FeatureSection({
         ...style,
       }}
     >
-      {/* <View
-        style={{
-          flex: 1,
-          flexBasis: 0,
-          flexDirection: 'row',
-          justifyContent: inverted ? 'flex-end' : 'flex-start',
-        }}
-      > */}
-      {/* IMAGE HERE */}
       <V2HLayoutChild inverted={inverted}>{image}</V2HLayoutChild>
-      {/* <View style={{ flex: 1, flexBasis: 0, justifyContent: 'center' }} /> */}
       <V2HLayoutChild
         style={{
           paddingVertical: 40,

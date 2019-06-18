@@ -267,6 +267,11 @@ export const heroSubtitleStyle = { fontSize: 50 };
 // ---------------------------
 
 export const aspectRatio169 = {
+  width: "100%",
+  paddingTop: "56.25%"
+}
+
+export const aspectRatio43 = {
   width: '100%',
-  paddingTop: '56.25%',
-};
+  paddingTop: "75%"
+}

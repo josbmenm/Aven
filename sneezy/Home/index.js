@@ -3,14 +3,12 @@ import { View, Text, Image } from 'react-native';
 import GenericPage from '../GenericPage';
 import HeroHeader from './HeroHeader';
 import { useTheme } from '../ThemeContext';
-import FullViewportImage from '../FullViewportImage';
 import Container from '../Container';
 import PageFooter from '../PageFooter';
 import HomeSlider from './HomeSlider';
 import HowItWorks from './HowItWorks';
 import HomeSheduleSection from './HomeSchedule';
 import { aspectRatio169 } from '../../components/Styles';
-import { Heading, BodyText } from '../Tokens';
 import GenericHeroHeader from '../GenericHeroHeader';
 
 function Home() {
