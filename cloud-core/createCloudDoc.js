@@ -610,28 +610,6 @@ export default function createCloudDoc({
     overriddenFunctionCache = {};
   }
 
-  function functionGetValue(argumentDoc) {
-    if (overriddenFunction) {
-      const argId = argumentDoc.getId();
-      if (overriddenFunctionCache[argId] !== undefined) {
-        return overriddenFunctionCache[argId];
-      }
-      const { result } = runLambda(
-        overriddenFunction,
-        argumentDoc.getValue(),
-        argId,
-        argumentDoc,
-        cloudClient,
-      );
-      return result;
-    }
-    const block = getBlock();
-    if (!block) {
-      return undefined;
-    }
-    return block.functionGetValue(argumentDoc);
-  }
-
   let isLambdaRemote = false; // will be set to true if the server has this lambda installed
 
   function markRemoteLambda(isRemote) {
@@ -1186,7 +1164,6 @@ export default function createCloudDoc({
     getReference,
     // todo: serialize?
 
-    functionGetValue,
     functionObserveValueAndId,
     _defineCloudFunction,
     $setOverrideFunction, // I suppose this is an implementation detail of eval data source
