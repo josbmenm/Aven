@@ -16,6 +16,7 @@ import FocusExample from './FocusExample';
 import ReceiptPage from './ReceiptPage';
 import PreviewHome from './PreviewHome';
 import BlendMenu from './BlendMenu';
+import SneezyApp from '../sneezy/SneezyApp';
 import { monsterra } from '../components/Styles';
 
 import useCloud from '../cloud-core/useCloud';
@@ -93,6 +94,10 @@ const App = createSwitchNavigator(
         customHTML: GoogleAnalyticsTag,
       },
       path: '',
+    },
+    PreviewApp: {
+      path: 'preview',
+      screen: SneezyApp,
     },
     Admin: {
       screen: SkynetAdmin,

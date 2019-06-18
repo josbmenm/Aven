@@ -6,6 +6,7 @@ import ManualControlScreen from './ManualControlScreen';
 import OrdersScreen from './OrdersScreen';
 import DeviceManagerScreen from './DeviceManagerScreen';
 import RestaurantStatusScreen from './RestaurantStatusScreen';
+import AlarmsScreen from './AlarmsScreen';
 import { boldPrimaryFontFace, monsterra } from '../components/Styles';
 
 const TABS = [
@@ -14,6 +15,7 @@ const TABS = [
   { key: 'sequencer', Screen: SequencerScreen, title: 'Sequencer' },
   { key: 'orders', Screen: OrdersScreen, title: 'Orders' },
   { key: 'status', Screen: RestaurantStatusScreen, title: 'Status' },
+  { key: 'alarms', Screen: AlarmsScreen, title: 'Alarms' },
   { key: 'devices', Screen: DeviceManagerScreen, title: 'Devices' },
 ];
 

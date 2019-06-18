@@ -26,6 +26,7 @@
       "cloud-server",
       "cloud-postgres",
       "components",
+      "sneezy",
       "react-utils"
     ],
     "moduleDependencies": [

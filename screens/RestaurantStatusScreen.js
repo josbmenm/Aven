@@ -2,6 +2,7 @@ import React from 'react';
 import RootAuthenticationSection from './RootAuthenticationSection';
 import { Text, View } from 'react-native';
 import SimplePage from '../components/SimplePage';
+import Tag from '../components/Tag';
 import Button from '../components/Button';
 import { Easing } from 'react-native-reanimated';
 import {
@@ -45,6 +46,16 @@ function InfoText({ children }) {
     </Text>
   );
 }
+
+function StatusSection({ title, children }) {
+  return (
+    <View style={{}}>
+      <Text style={{ ...titleStyle, fontSize: 24 }}>{title}</Text>
+      {children}
+    </View>
+  );
+}
+
 function StatusView() {
   const { onPopover: onCloseRestaurantPopover } = usePopover(
     ({ onClose, popoverOpenValue }) => {
@@ -56,12 +67,51 @@ function StatusView() {
     },
     { easing: Easing.linear, duration: 1 },
   );
-
   return (
-    <React.Fragment>
+    <StatusSection title="Status Display & Kiosks">
       <Button title="Open Restaurant" onPress={() => {}} />
       <Button title="Close Restaurant" onPress={onCloseRestaurantPopover} />
-    </React.Fragment>
+    </StatusSection>
+  );
+}
+
+function TemperatureView() {
+  return (
+    <StatusSection title="Temperature">
+      <Button
+        title="clear alarm. frozen food is fresh."
+        onPress={() => {}}
+        disabled
+      />
+      <Button
+        title="clear alarm. cold piston filler is fresh."
+        onPress={() => {}}
+        disabled
+      />
+      <Button
+        title="clear alarm. beverages are fresh."
+        onPress={() => {}}
+        disabled
+      />
+    </StatusSection>
+  );
+}
+
+function AirPressureView() {
+  return (
+    <StatusSection title="Air Pressure">
+      <Tag title="Pressurized" />
+      <Button title="Close Restaurant" onPress={() => {}} />
+    </StatusSection>
+  );
+}
+
+function PowerView() {
+  return (
+    <StatusSection title="Generator Power">
+      <Tag title="Disabled" />
+      <Button title="Enable" onPress={() => {}} />
+    </StatusSection>
   );
 }
 
@@ -70,6 +120,9 @@ export default function RestaurantStatusScreen(props) {
     <SimplePage title="Restaurant Status" icon="🚐" {...props}>
       <RootAuthenticationSection>
         <StatusView />
+        <TemperatureView />
+        <AirPressureView />
+        <PowerView />
       </RootAuthenticationSection>
     </SimplePage>
   );
