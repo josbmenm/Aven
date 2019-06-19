@@ -18,6 +18,7 @@ import PreviewHome from './PreviewHome';
 import BlendMenu from './BlendMenu';
 import SneezyApp from '../sneezy/SneezyApp';
 import { monsterra } from '../components/Styles';
+import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
 
 import useCloud from '../cloud-core/useCloud';
 import xs from 'xstream';
@@ -98,7 +99,9 @@ const App = createSwitchNavigator(
     PreviewApp: {
       path: 'maui-preview',
       screen: SneezyApp,
-      navigationOptions: SneezyApp.navigationOptions,
+      navigationOptions: ({ navigation, screenProps }) => ({
+        ...getActiveChildNavigationOptions(navigation, screenProps),
+      }),
     },
     Admin: {
       screen: SkynetAdmin,
