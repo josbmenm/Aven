@@ -17,7 +17,7 @@ function Privacy() {
         title="Privacy Policy"
         backgroundColor={theme.colors.lightGrey}
       />
-      <Container style={{ maxWidth: 768 }}>
+      <Container style={{ maxWidth: 640 }}>
       <SubSection>
           <BodyText>
             <BodyText bold>Effective Date:</BodyText> May 27th, 2019
