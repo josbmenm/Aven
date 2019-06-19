@@ -72,7 +72,7 @@ function BlendsList() {
             justifyContent: 'center',
           }}
         >
-          {menu ? menu.blends.map(item => <BlendItem blend={item} />) : <BodyText>Loading...</BodyText>}
+          {menu ? menu.blends.map((item, i) => <BlendItem key={i} blend={item} />) : <BodyText>Loading...</BodyText>}
         </View>
       </Container>
     </View>

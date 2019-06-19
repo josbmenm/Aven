@@ -5,7 +5,7 @@ import { useTheme } from './ThemeContext';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import OnoFoodLogo from './OnoFoodLogo';
 import { Link } from './Buttons';
-import { V2HLayout, V2HLayoutChild, FootNote } from './Tokens';
+import { ColumnToRow, ColumnToRowChild, FootNote } from './Tokens';
 
 export default function PageFooter() {
   const theme = useTheme();
@@ -18,8 +18,8 @@ export default function PageFooter() {
           paddingVertical: 100,
         }}
       >
-        <V2HLayout columnReverse resetFlexBasis>
-          <V2HLayoutChild
+        <ColumnToRow columnReverse resetFlexBasis>
+          <ColumnToRowChild
             style={{
               flex: 1,
               flexDirection: 'row',
@@ -28,10 +28,10 @@ export default function PageFooter() {
               paddingHorizontal: 10,
             }}
           >
-            <V2HLayout
+            <ColumnToRow
               style={{ width: '100%', marginVertical: 20 }}
             >
-              <V2HLayoutChild
+              <ColumnToRowChild
                 style={{
                   alignItems: 'center',
                   flexDirection: 'row',
@@ -41,8 +41,8 @@ export default function PageFooter() {
               >
                 <OnoBlendsLogo width={80} style={{ marginRight: 20 }} />
                 <OnoFoodLogo />
-              </V2HLayoutChild>
-              <V2HLayoutChild style={{
+              </ColumnToRowChild>
+              <ColumnToRowChild style={{
                 alignItems: 'center',
                 flexDirection: 'row',
                 flex: 1,
@@ -51,10 +51,10 @@ export default function PageFooter() {
                 <FootNote style={{ textAlign: 'center', marginTop: 0, marginBottom: 0 }}>
                   © Copyright 2018 Ono Food Co. All Rights Reserved
                 </FootNote>
-              </V2HLayoutChild>
-            </V2HLayout>
-          </V2HLayoutChild>
-          <V2HLayoutChild
+              </ColumnToRowChild>
+            </ColumnToRow>
+          </ColumnToRowChild>
+          <ColumnToRowChild
             style={{
               flex: 1,
               flexDirection: 'row',
@@ -62,8 +62,8 @@ export default function PageFooter() {
               paddingHorizontal: 10,
             }}
           >
-            <V2HLayout resetFlexBasis style={{ flex: 1 }}>
-              <V2HLayoutChild
+            <ColumnToRow resetFlexBasis style={{ flex: 1 }}>
+              <ColumnToRowChild
                 style={{
                   flex: 1,
                   flexDirection: 'row',
@@ -85,8 +85,8 @@ export default function PageFooter() {
                     routeName="Subscribe"
                   />
                 </View>
-              </V2HLayoutChild>
-              <V2HLayoutChild
+              </ColumnToRowChild>
+              <ColumnToRowChild
                 style={{
                   paddingTop: 4,
                   flexDirection: 'row',
@@ -105,10 +105,10 @@ export default function PageFooter() {
                   }}
                 />
                 <Text style={theme.textStyles.footnote}>@onofodco</Text>
-              </V2HLayoutChild>
-            </V2HLayout>
-          </V2HLayoutChild>
-        </V2HLayout>
+              </ColumnToRowChild>
+            </ColumnToRow>
+          </ColumnToRowChild>
+        </ColumnToRow>
       </Container>
     </View>
   );

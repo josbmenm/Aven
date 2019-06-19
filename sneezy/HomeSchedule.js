@@ -5,8 +5,8 @@ import Container from './Container';
 import {
   Title,
   BodyText,
-  V2HLayout,
-  V2HLayoutChild,
+  ColumnToRow,
+  ColumnToRowChild,
 } from './Tokens';
 import { Button } from './Buttons';
 import Schedule from './Schedule';
@@ -15,8 +15,8 @@ function HomeShedule() {
   return (
     <View style={{ marginBottom: 104 }}>
       <Container>
-        <V2HLayout>
-          <V2HLayoutChild>
+        <ColumnToRow>
+          <ColumnToRowChild>
             <View
               style={{
                 maxWidth: 412,
@@ -38,8 +38,8 @@ function HomeShedule() {
                 buttonStyle={{ width: 220 }}
               />
             </View>
-          </V2HLayoutChild>
-          <V2HLayoutChild
+          </ColumnToRowChild>
+          <ColumnToRowChild
             style={{
               flexDirection: 'column',
               alignItems: 'flex-start',
@@ -56,8 +56,8 @@ function HomeShedule() {
             >
               <Schedule />
             </View>
-          </V2HLayoutChild>
-        </V2HLayout>
+          </ColumnToRowChild>
+        </ColumnToRow>
       </Container>
     </View>
   );

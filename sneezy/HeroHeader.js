@@ -6,8 +6,8 @@ import { Button } from './Buttons';
 import {
   Heading,
   BodyText,
-  V2HLayout,
-  V2HLayoutChild,
+  ColumnToRow,
+  ColumnToRowChild,
   NoFlexToFlex,
 } from './Tokens';
 import { useTheme } from './ThemeContext';
@@ -20,7 +20,7 @@ export default function HeroHeader() {
       <MainMenu />
       <NoFlexToFlex>
         <Container style={{flex: 1}}>
-          <V2HLayout
+          <ColumnToRow
             columnReverse
             style={{
               flex: 1,
@@ -54,7 +54,7 @@ export default function HeroHeader() {
                 zIndex: 0,
               }}
             />
-            <V2HLayoutChild>
+            <ColumnToRowChild>
               <View
                 style={{
                   flex: 1,
@@ -87,15 +87,15 @@ export default function HeroHeader() {
                   }}
                 />
               </View>
-            </V2HLayoutChild>
-            <V2HLayoutChild>
+            </ColumnToRowChild>
+            <ColumnToRowChild>
               <Image
                 source={require('./public/img/home_hero-image.jpg')}
                 resizeMode="cover"
                 style={{ flex: 1, width: '100%', paddingTop: '56.25%' }}
               />
-            </V2HLayoutChild>
-          </V2HLayout>
+            </ColumnToRowChild>
+          </ColumnToRow>
         </Container>
       </NoFlexToFlex>
     </View>

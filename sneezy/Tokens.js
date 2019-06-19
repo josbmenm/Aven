@@ -105,7 +105,7 @@ export function Link({ children }) {
 
 let responsiveIdCount = 0;
 
-export function V2HLayout({
+export function ColumnToRow({
   children,
   columnReverse = false,
   rowReverse = false,
@@ -160,7 +160,7 @@ export function V2HLayout({
   );
 }
 
-export function V2HLayoutChild({
+export function ColumnToRowChild({
   className,
   inverted = false,
   style,
