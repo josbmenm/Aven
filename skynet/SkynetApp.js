@@ -99,10 +99,21 @@ const App = createSwitchNavigator(
     PreviewApp: {
       path: 'maui-preview',
       screen: SneezyApp,
-      navigationOptions: ({ navigation, screenProps }) => ({
-        ...getActiveChildNavigationOptions(navigation, screenProps),
-        customCSS: fontsCSS,
-      }),
+      navigationOptions: ({ navigation, screenProps }) => {
+        const screenOptions = getActiveChildNavigationOptions(
+          navigation,
+          screenProps,
+        );
+        return {
+          ...screenOptions,
+          title: screenOptions.title
+            ? `${screenOptions.title} | Ono Food Co.`
+            : 'Ono Food Co.',
+          customCSS: screenOptions.customCSS
+            ? fontsCSS + '\n' + screenOptions.customCSS
+            : fontsCSS,
+        };
+      },
     },
     Admin: {
       screen: SkynetAdmin,

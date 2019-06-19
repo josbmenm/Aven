@@ -41,7 +41,7 @@ function HomePage() {
 }
 
 HomePage.navigationOptions = {
-  title: 'Home',
+  title: null,
 };
 
 export default HomePage;

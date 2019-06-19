@@ -26,32 +26,32 @@ export default function PageFooter() {
               alignItems: 'flex-start',
             }}
           >
-            <ColumnToRow
-              resetFlexBasis
-              style={{ width: '100%' }}
-            >
+            <ColumnToRow resetFlexBasis style={{ width: '100%' }}>
               <ColumnToRowChild
                 style={{
                   alignItems: 'center',
                   flexDirection: 'row',
                   justifyContent: 'flex-start',
                   marginBottom: 20,
-                  marginRight: 52
+                  marginRight: 52,
                 }}
               >
                 <OnoBlendsLogo width={80} style={{ marginRight: 20 }} />
                 <OnoFoodLogo />
               </ColumnToRowChild>
-              <ColumnToRowChild style={{
-                alignItems: 'center',
-                flexDirection: 'row',
-                flex: 2,
-                alignSelf: 'stretch',
-                justifyContent: 'flex-start',
-                marginBottom: 20
-              }}>
+              <ColumnToRowChild
+                style={{
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  flex: 2,
+                  alignSelf: 'stretch',
+                  justifyContent: 'flex-start',
+                  marginBottom: 20,
+                }}
+              >
                 <FootNote style={{ marginTop: 0, marginBottom: 0 }}>
-                  © Copyright 2018 Ono Food Co. All Rights Reserved
+                  © Copyright {new Date().getFullYear()} Ono Food Co. All Rights
+                  Reserved
                 </FootNote>
               </ColumnToRowChild>
             </ColumnToRow>
@@ -80,7 +80,11 @@ export default function PageFooter() {
                 <View style={{ flex: 1 }}>
                   <Link noActive text="Press kit" routeName="PressKit" />
                   <Link noActive text="Terms & privacy" routeName="Terms" />
-                  <Link noActive text="Contact us" url="mailto:aloha@onofood.co" />
+                  <Link
+                    noActive
+                    text="Contact us"
+                    url="mailto:aloha@onofood.co"
+                  />
                   <Link
                     noActive
                     text="Subscribe to updates"
