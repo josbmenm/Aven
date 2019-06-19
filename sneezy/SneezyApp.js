@@ -1,13 +1,13 @@
 import React from 'react';
 import { createSwitchNavigator } from '../navigation-core';
 import TokensPage from './TokensPage';
-import Home from './Home';
-import MenuPage from './Menu';
+import Home from './HomePage';
+import MenuPage from './MenuPage';
 import OLDBlendMenu from './OLDBlendMenu';
 import OurStory from './OurStory';
 import Privacy from './Privacy';
 import Terms from './Terms';
-import BookUs from './BookUs';
+import BookUs from './BookUsPage';
 import { ThemeContext, theme } from './ThemeContext';
 import MobileSidebar from './MobileSidebar';
 

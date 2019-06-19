@@ -1,11 +1,11 @@
 import React from 'react';
-import { useTheme } from '../ThemeContext';
-import GenericPage from '../GenericPage';
-import MainMenu from '../MainMenu';
-import PageFooter from '../PageFooter';
-import GenericHeroHeader from '../GenericHeroHeader';
+import { useTheme } from './ThemeContext';
+import GenericPage from './GenericPage';
+import MainMenu from './MainMenu';
+import PageFooter from './PageFooter';
+import GenericHeroHeader from './GenericHeroHeader';
 
-function BookUs() {
+function BookUsPage() {
   const theme = useTheme();
   return (
     <GenericPage>
@@ -20,8 +20,8 @@ function BookUs() {
   );
 }
 
-BookUs.navigationOptions = {
+BookUsPage.navigationOptions = {
   title: 'Book with Us',
 };
 
-export default BookUs;
+export default BookUsPage;

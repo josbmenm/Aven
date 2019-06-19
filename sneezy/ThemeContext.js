@@ -3,7 +3,7 @@ import React from 'react';
 const FontSizes = [];
 
 const colors = {
-  primary: '#005151',
+  primary: 'rgb(0,81,81)',
   secondary: '',
   white: '#fff',
   lightGrey: '#F8F8F8',
@@ -84,7 +84,7 @@ export const theme = {
   fonts,
   textStyles,
   shadows,
-  breakpoints: [768]
+  breakpoints: [768],
 };
 
 export const ThemeContext = React.createContext(theme);

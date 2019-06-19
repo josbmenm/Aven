@@ -1,16 +1,16 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import Container from '../Container';
-import { Title, FootNote, BodyText } from '../Tokens';
-import { useTheme } from '../ThemeContext';
-import { useMenu } from '../../ono-cloud/OnoKitchen';
-import AirtableImage from '../../components/AirtableImage';
+import Container from './Container';
+import { Title, FootNote, BodyText } from './Tokens';
+import { useTheme } from './ThemeContext';
+import { useMenu } from '../ono-cloud/OnoKitchen';
+import AirtableImage from '../components/AirtableImage';
 
-function BlendItem(props) {
+function BlendItem({ blend }) {
   const theme = useTheme();
   return (
     <View
-      key={props.id}
+      key={blend.id}
       style={{
         margin: 12,
         padding: 20,
@@ -24,9 +24,11 @@ function BlendItem(props) {
       }}
     >
       <Title style={{ textAlign: 'right', fontSize: 24 }}>
-        {props['Display Name']}
+        {blend['Display Name']}
       </Title>
+      {/* TODO: DESIGN: can this be 70% opacity as a whole or just the bg color? */}
       <FootNote
+        bold
         style={{
           fontSize: 10,
           textTransform: 'uppercase',
@@ -38,14 +40,14 @@ function BlendItem(props) {
           color: theme.colors.white,
           minWidth: 120,
           textAlign: 'center',
-          letterSpacing: 3
+          letterSpacing: 3,
+          opacity: 0.7
         }}
-        bold
       >
-        {props.DefaultBenefitName}
+        {blend.DefaultBenefitName}
       </FootNote>
       <AirtableImage
-        image={props.Recipe['Recipe Image']}
+        image={blend.Recipe['Recipe Image']}
         style={{
           ...StyleSheet.absoluteFill,
           width: '100%',
@@ -57,24 +59,8 @@ function BlendItem(props) {
   );
 }
 
-/*
-background: #FFFFFF;
-box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
-border-radius: 8px;
-
-opacity: 0.3;
-background-image: radial-gradient(50% 100%, #FFFFFF 50%, rgba(255,255,255,0.00) 100%);
-
-font-family: Maax-Bold;
-font-size: 24px;
-color: #005151;
-text-align: right;
-line-height: 28px;
- */
-
 function BlendsList() {
   const menu = useMenu();
-
   return (
     <View>
       <Container style={{ paddingVertical: 100 }}>
@@ -86,7 +72,7 @@ function BlendsList() {
             justifyContent: 'center',
           }}
         >
-          {menu ? menu.blends.map(BlendItem) : <BodyText>Loading...</BodyText>}
+          {menu ? menu.blends.map(item => <BlendItem blend={item} />) : <BodyText>Loading...</BodyText>}
         </View>
       </Container>
     </View>
