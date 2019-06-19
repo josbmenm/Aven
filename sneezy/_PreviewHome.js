@@ -119,5 +119,5 @@ export default function HomePage() {
 
 HomePage.path = 'preview';
 HomePage.navigationOptions = {
-  title: 'Home',
+  title: 'Preview Home',
 };

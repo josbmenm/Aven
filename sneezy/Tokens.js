@@ -271,3 +271,15 @@ export function ResponsiveDisplay({ breakpoint }) {
     />
   );
 }
+
+export function HideDesktopView({ className, ...rest }) {
+  return (
+    <View className={`hide-desktop ${className}`} {...rest} />
+  )
+}
+
+export function HideMobileView({ className, ...rest }) {
+  return (
+    <View className={`hide-mobile ${className}`} {...rest} />
+  )
+}

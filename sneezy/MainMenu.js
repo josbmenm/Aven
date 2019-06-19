@@ -6,7 +6,7 @@ import { Button } from './Buttons';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import FunctionalLink from '../navigation-web/Link';
 import { Link } from './Buttons';
-import { ResponsiveDisplay } from './Tokens';
+import { ResponsiveDisplay, HideDesktopView, HideMobileView } from './Tokens';
 
 const SidebarMenuIcon = props => (
   <svg width="28" height="26" viewBox="0 0 28 26" {...props}>
@@ -47,8 +47,7 @@ function MenuLink({
 
 export function DesktopMenu() {
   return (
-    <View
-      className="hide-mobile"
+    <HideMobileView
       style={{
         paddingVertical: 40,
       }}
@@ -86,7 +85,7 @@ export function DesktopMenu() {
           </View>
         </View>
       </Container>
-    </View>
+    </HideMobileView>
   );
 }
 
@@ -100,8 +99,7 @@ export function MobileMenu() {
   let translateX = sidebar ? 0 : -340;
   return (
     <React.Fragment>
-      <View
-        className="hide-desktop"
+      <HideDesktopView
         style={{
           position: 'absolute',
           top: 0,
@@ -148,8 +146,8 @@ export function MobileMenu() {
           />
           <Link noActive size="Small" routeName="ContactUs" text="contact us" />
         </View>
-      </View>
-      <View className="hide-desktop">
+      </HideDesktopView>
+      <HideDesktopView>
         <Container>
           <View
             style={{
@@ -157,28 +155,38 @@ export function MobileMenu() {
             }}
           >
             <View
-              style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 24 }}
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingVertical: 24,
+              }}
             >
               <OnoBlendsLogo width={68} />
             </View>
           </View>
         </Container>
-      </View>
-      <TouchableOpacity
-        className="hide-desktop"
-        onPress={toggleSidebar}
+      </HideDesktopView>
+      <HideDesktopView
         style={{
           position: 'absolute',
-          width: 40,
-          height: 40,
-          padding: 6,
           top: 21,
           left: 12,
           zIndex: 20,
         }}
       >
-        <SidebarMenuIcon />
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={toggleSidebar}
+          style={{
+            width: 40,
+            height: 40,
+            padding: 6,
+          }}
+        >
+          <SidebarMenuIcon />
+        </TouchableOpacity>
+      </HideDesktopView>
     </React.Fragment>
   );
 }
