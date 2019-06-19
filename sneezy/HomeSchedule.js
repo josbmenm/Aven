@@ -1,18 +1,17 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useTheme } from '../ThemeContext';
-import Container from '../Container';
+import { useTheme } from './ThemeContext';
+import Container from './Container';
 import {
   Title,
   BodyText,
   V2HLayout,
   V2HLayoutChild,
-} from '../Tokens';
-import { Button } from '../Buttons';
-import Schedule from '../Schedule';
+} from './Tokens';
+import { Button } from './Buttons';
+import Schedule from './Schedule';
 
-function HomeSheduleSection() {
-  const theme = useTheme();
+function HomeShedule() {
   return (
     <View style={{ marginBottom: 104 }}>
       <Container>
@@ -64,4 +63,4 @@ function HomeSheduleSection() {
   );
 }
 
-export default HomeSheduleSection;
+export default HomeShedule;

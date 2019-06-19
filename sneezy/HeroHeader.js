@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import MainMenu from '../MainMenu';
-import Container from '../Container';
-import { Button } from '../Buttons';
+import MainMenu from './MainMenu';
+import Container from './Container';
+import { Button } from './Buttons';
 import {
   Heading,
   BodyText,
   V2HLayout,
   V2HLayoutChild,
   NoFlexToFlex,
-} from '../Tokens';
-import { useTheme } from '../ThemeContext';
-import AbsoluteImage from '../AbsoluteImage';
+} from './Tokens';
+import { useTheme } from './ThemeContext';
+import AbsoluteImage from './AbsoluteImage';
 
 export default function HeroHeader() {
   const theme = useTheme();
@@ -27,15 +27,15 @@ export default function HeroHeader() {
             }}
           >
             <AbsoluteImage
-              source={require('../public/img/strawberry.png')}
+              source={require('./public/img/strawberry.png')}
               style={{ top: -250, left: -290, width: 482, height: 641 }}
             />
             <AbsoluteImage
-              source={require('../public/img/avocado.png')}
+              source={require('./public/img/avocado.png')}
               style={{ right: -250, bottom: -290, width: 568, height: 604 }}
             />
             <AbsoluteImage
-              source={require('../public/img/fruit_silhouette.png')}
+              source={require('./public/img/fruit_silhouette.png')}
               style={{
                 right: -440,
                 top: -140,
@@ -45,7 +45,7 @@ export default function HeroHeader() {
               }}
             />
             <AbsoluteImage
-              source={require('../public/img/fruit_silhouette.png')}
+              source={require('./public/img/fruit_silhouette.png')}
               style={{
                 left: -440,
                 bottom: -140,
@@ -90,7 +90,7 @@ export default function HeroHeader() {
             </V2HLayoutChild>
             <V2HLayoutChild>
               <Image
-                source={require('./assets/home_hero-image.jpg')}
+                source={require('./public/img/home_hero-image.jpg')}
                 resizeMode="cover"
                 style={{ flex: 1, width: '100%', paddingTop: '56.25%' }}
               />

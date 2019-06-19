@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Image, ScrollView, StyleSheet } from 'react-native';
-import { useTheme } from '../ThemeContext';
-import Container from '../Container';
+import { useTheme } from './ThemeContext';
+import Container from './Container';
 
 function Slide({ source, width, height }) {
   return (
@@ -32,17 +32,17 @@ function HomeSlider() {
       }}>
         <ScrollView horizontal pagingEnabled>
           <Slide
-            source={require('./assets/slides_1.jpg')}
+            source={require('./public/img/slides_1.jpg')}
             width={292}
             height={520}
           />
           <Slide
-            source={require('./assets/slides_2.jpg')}
+            source={require('./public/img/slides_2.jpg')}
             width={700}
             height={520}
           />
           <Slide
-            source={require('./assets/slides_3.jpg')}
+            source={require('./public/img/slides_3.jpg')}
             width={292}
             height={520}
           />

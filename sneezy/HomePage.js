@@ -1,18 +1,17 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import GenericPage from '../GenericPage';
+import GenericPage from './GenericPage';
 import HeroHeader from './HeroHeader';
-import { useTheme } from '../ThemeContext';
-import Container from '../Container';
-import PageFooter from '../PageFooter';
+import { useTheme } from './ThemeContext';
+import Container from './Container';
+import PageFooter from './PageFooter';
 import HomeSlider from './HomeSlider';
 import HowItWorks from './HowItWorks';
-import HomeSheduleSection from './HomeSchedule';
-import { aspectRatio169 } from '../../components/Styles';
-import GenericHeroHeader from '../GenericHeroHeader';
+import HomeShedule from './HomeSchedule';
+import { aspectRatio169 } from '../components/Styles';
+import GenericHeroHeader from './GenericHeroHeader';
 
-function Home() {
-  const theme = useTheme();
+function HomePage() {
   return (
     <GenericPage>
       <HeroHeader />
@@ -35,14 +34,14 @@ function Home() {
       />
       <HomeSlider />
       <HowItWorks />
-      <HomeSheduleSection />
+      <HomeShedule />
       <PageFooter />
     </GenericPage>
   );
 }
 
-Home.navigationOptions = {
+HomePage.navigationOptions = {
   title: 'Home',
 };
 
-export default Home;
+export default HomePage;
