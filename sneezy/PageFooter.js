@@ -34,10 +34,8 @@ export default function PageFooter() {
                 style={{
                   alignItems: 'center',
                   flexDirection: 'row',
-                  flex: 1,
                   justifyContent: 'flex-start',
                   marginBottom: 20,
-                  flex: 'none',
                   marginRight: 52
                 }}
               >
@@ -47,7 +45,8 @@ export default function PageFooter() {
               <ColumnToRowChild style={{
                 alignItems: 'center',
                 flexDirection: 'row',
-                flex: 1,
+                flex: 2,
+                alignSelf: 'stretch',
                 justifyContent: 'flex-start',
                 marginBottom: 20
               }}>
@@ -81,7 +80,7 @@ export default function PageFooter() {
                 <View style={{ flex: 1 }}>
                   <Link noActive text="Press kit" routeName="PressKit" />
                   <Link noActive text="Terms & privacy" routeName="Terms" />
-                  <Link noActive text="Contact us" routeName="ContactUs" />
+                  <Link noActive text="Contact us" url="mailto:aloha@onofood.co" />
                   <Link
                     noActive
                     text="Subscribe to updates"

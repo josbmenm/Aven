@@ -21,6 +21,7 @@ export function Button({
   variant = 'primary', // primary | secondary
   textStyle = {},
   routeName,
+  url,
   ...rest
 }) {
   const { colors, fonts } = useTheme();
@@ -28,6 +29,7 @@ export function Button({
   return (
     <FunctionalLink
       routeName={routeName}
+      url={url}
       renderContent={active => (
         <View
           style={{
@@ -62,6 +64,7 @@ export function Link({
   text = 'link',
   size = 'Small',
   routeName,
+  url,
   noActive = false,
   ...rest
 }) {
@@ -69,6 +72,7 @@ export function Link({
   return (
     <FunctionalLink
       routeName={routeName}
+      url={url}
       renderContent={active => (
         <View
           style={{
