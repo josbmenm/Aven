@@ -96,55 +96,104 @@ export function MobileMenu() {
   function toggleSidebar() {
     setSidebar(!sidebar);
   }
-  let translateX = sidebar ? 0 : -340;
+  let translateX = sidebar ? 0 : '-100%';
   return (
     <React.Fragment>
       <HideDesktopView
         style={{
+          width: '100%',
+          height: '100%',
           position: 'absolute',
           top: 0,
           left: 0,
           bottom: 0,
+          right: 0,
           zIndex: 10,
           transform: [{ translateX }],
-          backgroundColor: theme.colors.white,
-          width: '90%',
-          maxWidth: 340,
-          paddingLeft: 12,
-          ...theme.shadows.medium,
         }}
       >
         <View
           style={{
-            paddingTop: 80,
-            paddingLeft: 48,
-            paddingRight: 24,
-            paddingBottom: 24,
-            borderBottomColor: theme.colors.border,
-            borderBottomWidth: StyleSheet.hairlineWidth,
+            flexDirection: 'row',
+            alignItems: 'stretch',
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
           }}
         >
-          <Link noActive size="Large" routeName="Menu" text="menu" />
-          <Link noActive size="Large" routeName="Schedule" text="schedule" />
-          <Link noActive size="Large" routeName="OurStory" text="our story" />
-          <Link noActive size="Large" routeName="BookUs" text="book with us" />
-        </View>
-        <View
-          style={{
-            paddingTop: 32,
-            paddingLeft: 48,
-            paddingRight: 24,
-            paddingBottom: 24,
-          }}
-        >
-          <Link noActive size="Small" routeName="Press" text="press kit" />
-          <Link
-            noActive
-            size="Small"
-            routeName="Terms"
-            text="terms & privacy"
+          <View
+            style={{
+              backgroundColor: theme.colors.white,
+              width: '90%',
+              maxWidth: 340,
+              paddingLeft: 12,
+              ...theme.shadows.medium,
+            }}
+          >
+            <View
+              style={{
+                paddingTop: 80,
+                paddingLeft: 48,
+                paddingRight: 24,
+                paddingBottom: 24,
+                borderBottomColor: theme.colors.border,
+                borderBottomWidth: StyleSheet.hairlineWidth,
+              }}
+            >
+              <Link noActive size="Large" routeName="Menu" text="menu" />
+              <Link
+                noActive
+                size="Large"
+                routeName="Schedule"
+                text="schedule"
+              />
+              <Link
+                noActive
+                size="Large"
+                routeName="OurStory"
+                text="our story"
+              />
+              <Link
+                noActive
+                size="Large"
+                routeName="BookUs"
+                text="book with us"
+              />
+            </View>
+            <View
+              style={{
+                paddingTop: 32,
+                paddingLeft: 48,
+                paddingRight: 24,
+                paddingBottom: 24,
+              }}
+            >
+              <Link noActive size="Small" routeName="Press" text="press kit" />
+              <Link
+                noActive
+                size="Small"
+                routeName="Terms"
+                text="terms & privacy"
+              />
+              <Link
+                noActive
+                size="Small"
+                routeName="ContactUs"
+                text="contact us"
+              />
+            </View>
+          </View>
+          <TouchableOpacity
+            onPress={toggleSidebar}
+            style={{
+              flex: 1,
+              alignSelf: 'stretch',
+            }}
           />
-          <Link noActive size="Small" routeName="ContactUs" text="contact us" />
         </View>
       </HideDesktopView>
       <HideDesktopView>
