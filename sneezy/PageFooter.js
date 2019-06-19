@@ -23,13 +23,12 @@ export default function PageFooter() {
             style={{
               flex: 1,
               flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingHorizontal: 10,
+              alignItems: 'flex-start',
             }}
           >
             <ColumnToRow
-              style={{ width: '100%', marginVertical: 20 }}
+              resetFlexBasis
+              style={{ width: '100%' }}
             >
               <ColumnToRowChild
                 style={{
@@ -37,6 +36,9 @@ export default function PageFooter() {
                   flexDirection: 'row',
                   flex: 1,
                   justifyContent: 'flex-start',
+                  marginBottom: 20,
+                  flex: 'none',
+                  marginRight: 52
                 }}
               >
                 <OnoBlendsLogo width={80} style={{ marginRight: 20 }} />
@@ -46,9 +48,10 @@ export default function PageFooter() {
                 alignItems: 'center',
                 flexDirection: 'row',
                 flex: 1,
-                justifyContent: 'flex-start'
+                justifyContent: 'flex-start',
+                marginBottom: 20
               }}>
-                <FootNote style={{ textAlign: 'center', marginTop: 0, marginBottom: 0 }}>
+                <FootNote style={{ marginTop: 0, marginBottom: 0 }}>
                   © Copyright 2018 Ono Food Co. All Rights Reserved
                 </FootNote>
               </ColumnToRowChild>
@@ -58,7 +61,7 @@ export default function PageFooter() {
             style={{
               flex: 1,
               flexDirection: 'row',
-              alignItems: 'center',
+              alignItems: 'flex-start',
               paddingHorizontal: 10,
             }}
           >
@@ -90,7 +93,7 @@ export default function PageFooter() {
                 style={{
                   paddingTop: 4,
                   flexDirection: 'row',
-                  alignItems: 'center',
+                  alignItems: 'flex-start',
                   marginBottom: 40,
                 }}
               >

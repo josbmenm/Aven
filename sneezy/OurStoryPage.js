@@ -12,7 +12,7 @@ function OurStoryPage({}) {
   const theme = useTheme();
   return (
     <GenericPage>
-      <View style={{ flex: 1, minHeight: '100vh', paddingBottom: 40 }}>
+      <View style={{ flex: 1, paddingBottom: 40 }}>
         <style
           dangerouslySetInnerHTML={{
             __html: `

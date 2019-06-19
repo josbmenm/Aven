@@ -1,9 +1,9 @@
 import React from 'react';
 import { createSwitchNavigator } from '../navigation-core';
+import OLDBlendMenu from './OLDBlendMenu';
 import TokensPage from './TokensPage';
 import Home from './HomePage';
-import MenuPage from './MenuPage';
-import OLDBlendMenu from './OLDBlendMenu';
+import Menu from './MenuPage';
 import OurStory from './OurStoryPage';
 import Privacy from './Privacy';
 import Terms from './Terms';
@@ -23,7 +23,7 @@ const App = createSwitchNavigator(
     },
     Menu: {
       path: 'menu',
-      screen: MenuPage,
+      screen: Menu,
     },
     OurStory: {
       path: 'our-story',
