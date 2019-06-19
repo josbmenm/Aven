@@ -101,6 +101,7 @@ const App = createSwitchNavigator(
       screen: SneezyApp,
       navigationOptions: ({ navigation, screenProps }) => ({
         ...getActiveChildNavigationOptions(navigation, screenProps),
+        customCSS: fontsCSS,
       }),
     },
     Admin: {

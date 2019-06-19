@@ -11,7 +11,6 @@ import BookUs from './BookUsPage';
 import { ThemeContext, theme } from './ThemeContext';
 
 const customHTMLHeaders = `
-<!-- Hello, World! -->
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 `;
 
