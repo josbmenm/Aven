@@ -85,6 +85,10 @@ export const theme = {
   textStyles,
   shadows,
   breakpoints: [768],
+  layoutWidth: {
+    small: 640,
+    large: 1280
+  }
 };
 
 export const ThemeContext = React.createContext(theme);
