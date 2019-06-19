@@ -16,6 +16,7 @@ export default function TwoPanePage({
   afterSide,
   title,
   icon,
+  footer,
   ...props
 }) {
   const { goBack } = useNavigation();
@@ -52,6 +53,7 @@ export default function TwoPanePage({
           )}
         </View>
       </View>
+      {footer}
       {!hideBackButton && (
         <BackButton
           backBehavior={() => {

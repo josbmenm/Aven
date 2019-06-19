@@ -98,6 +98,7 @@ const App = createSwitchNavigator(
     PreviewApp: {
       path: 'maui-preview',
       screen: SneezyApp,
+      navigationOptions: SneezyApp.navigationOptions,
     },
     Admin: {
       screen: SkynetAdmin,

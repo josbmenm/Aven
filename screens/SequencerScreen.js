@@ -26,7 +26,7 @@ export default function SequencerScreen(props) {
       {...props}
       title="Sequencer"
       icon="🚦"
-      afterSide={
+      footer={
         <ControlPanel
           restaurantState={restaurantState}
           restaurantDispatch={dispatch}

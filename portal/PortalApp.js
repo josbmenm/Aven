@@ -10,6 +10,7 @@ import {
   AsyncStorage,
   ScrollView,
   YellowBox,
+  Dimensions,
 } from 'react-native';
 import { createAppContainer } from '../navigation-native';
 import { useNavigation } from '../navigation-hooks/Hooks';
@@ -66,6 +67,8 @@ import RootAuthenticationSection from '../screens/RootAuthenticationSection';
 
 let IS_DEV = process.env.NODE_ENV !== 'production';
 // IS_DEV = false;
+
+const windowSize = Dimensions.get('window');
 
 const RESTAURANT_DEV = {
   useSSL: false,
@@ -139,28 +142,55 @@ const KioskNavigator = createStackTransitionNavigator(
   },
 );
 
+function KioskApp({ navigation }) {
+  const scale = windowSize.width / 1366;
+  const translateX = (windowSize.width - 1366) / 2;
+  const translateY = (windowSize.height - 1024) / 2;
+  return (
+    <View
+      style={{
+        flex: 1,
+        transform: [
+          { scaleX: scale },
+          { scaleY: scale },
+          { translateX },
+          { translateY },
+        ],
+      }}
+    >
+      <View style={{ width: 1366, height: 1024 }}>
+        <KioskNavigator navigation={navigation} />
+      </View>
+    </View>
+  );
+}
+KioskApp.router = KioskNavigator.router;
+KioskApp.navigationOptions = KioskNavigator.navigationOptions;
+
 process.env.REACT_NAV_LOGGING = true;
 
 const TABS = [
   { routeName: 'PortalHome', title: 'Home' },
-  { routeName: 'Inventory', title: 'Inventory' },
-  { routeName: 'Manual', title: 'Manual' },
-  { routeName: 'Sequencer', title: 'Sequencer' },
-  { routeName: 'Orders', title: 'Orders' },
   { routeName: 'Status', title: 'Status' },
+  { routeName: 'KitchenEng', title: 'Eng' },
+  { routeName: 'Sequencer', title: 'Sequencer' },
+  { routeName: 'Manual', title: 'Manual' },
+  { routeName: 'Orders', title: 'Orders' },
+  { routeName: 'Inventory', title: 'Inventory' },
   { routeName: 'Alarms', title: 'Alarms' },
-  { routeName: 'Devices', title: 'Devices' },
+  { routeName: 'Settings', title: 'Settings' },
 ];
 
 const PortalHome = createSwitchNavigator({
   PortalHome: { screen: PortalHomeScreen },
+  KitchenEng: { screen: KitchenEngScreen },
   Inventory: { screen: InventoryScreen },
   Manual: { screen: ManualControlScreen },
   Sequencer: { screen: SequencerScreen },
   Orders: { screen: OrdersScreen },
   Status: { screen: RestaurantStatusScreen },
   Alarms: { screen: AlarmsScreen },
-  Devices: { screen: DeviceManagerScreen },
+  Settings: { screen: KioskSettingsScreen },
 });
 
 function PortalHomeApp({ navigation }) {
@@ -178,11 +208,10 @@ PortalHomeApp.navigationOptions = PortalHome.navigationOptions;
 const App = createStackTransitionNavigator({
   Home: PortalHomeApp,
   OrderComplete: OrderCompletePortalScreen,
-  Kiosk: KioskNavigator,
+  Kiosk: KioskApp,
   ComponentPlayground: ComponentPlaygroundScreen,
   KitchenEng: KitchenEngScreen,
   KitchenEngSub: KitchenEngSubScreen,
-  KioskSettings: KioskSettingsScreen,
   Inventory: InventoryScreen,
   DeviceManager: DeviceManagerScreen,
   RestaurantStatus: RestaurantStatusScreen,

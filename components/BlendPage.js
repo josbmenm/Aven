@@ -126,7 +126,11 @@ function BlendPageContentPure({
   foodMenu,
   order,
 }) {
-  const { ingredients } = useSelectedIngredients(menuItem, item);
+  const usedIng = useSelectedIngredients(menuItem, item);
+  if (!usedIng) {
+    return null;
+  }
+  const { ingredients } = usedIng;
   if (!ingredients) {
     return null;
   }

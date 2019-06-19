@@ -39,6 +39,14 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
       <RowSection>
         <LinkRow
           onPress={() => {
+            navigation.navigate({ routeName: 'DeviceManager' });
+          }}
+          icon="📱"
+          title="Restaurant Devices"
+        />
+        <LinkRow onPress={() => {}} icon={'👋'} title={'Log Out'} />
+        <LinkRow
+          onPress={() => {
             navigation.navigate({ routeName: 'ComponentPlayground' });
           }}
           icon="🧱"
