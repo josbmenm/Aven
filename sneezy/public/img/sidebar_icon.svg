@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="26px" viewBox="0 0 28 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.2 (78181) - https://sketchapp.com -->
+    <title>menu icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Website" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.900000036">
+        <g id="Menu" transform="translate(-12.000000, -21.000000)" fill="#005151">
+            <path d="M14,32 L38,32 C39.1045695,32 40,32.8954305 40,34 C40,35.1045695 39.1045695,36 38,36 L14,36 C12.8954305,36 12,35.1045695 12,34 C12,32.8954305 12.8954305,32 14,32 Z M14,43 L38,43 C39.1045695,43 40,43.8954305 40,45 C40,46.1045695 39.1045695,47 38,47 L14,47 C12.8954305,47 12,46.1045695 12,45 C12,43.8954305 12.8954305,43 14,43 Z M14,21 L38,21 C39.1045695,21 40,21.8954305 40,23 C40,24.1045695 39.1045695,25 38,25 L14,25 C12.8954305,25 12,24.1045695 12,23 C12,21.8954305 12.8954305,21 14,21 Z" id="menu-icon"></path>
+        </g>
+    </g>
+</svg>

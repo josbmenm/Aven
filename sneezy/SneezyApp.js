@@ -9,6 +9,7 @@ import Privacy from './Privacy';
 import Terms from './Terms';
 import BookUs from './BookUs';
 import { ThemeContext, theme } from './ThemeContext';
+import MobileSidebar from './MobileSidebar';
 
 const customHTMLHeaders = `
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -62,6 +63,7 @@ function Root(props) {
   return (
     <ThemeContext.Provider value={theme}>
       <App {...props} />
+      <MobileSidebar />
     </ThemeContext.Provider>
   );
 }
