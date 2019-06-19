@@ -4,7 +4,7 @@ import TokensPage from './TokensPage';
 import Home from './HomePage';
 import MenuPage from './MenuPage';
 import OLDBlendMenu from './OLDBlendMenu';
-import OurStory from './OurStory';
+import OurStory from './OurStoryPage';
 import Privacy from './Privacy';
 import Terms from './Terms';
 import BookUs from './BookUsPage';

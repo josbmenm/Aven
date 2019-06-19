@@ -14,7 +14,6 @@ import GenericHeroHeader from './GenericHeroHeader';
 function HomePage() {
   return (
     <GenericPage>
-      <Text style={{ fontSize: 44, opacity: 0.2 }}>Hello</Text>
       <HeroHeader />
       {/* Image Full viewport Section */}
       <View style={{ paddingVertical: 90 }}>
