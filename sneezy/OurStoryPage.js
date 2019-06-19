@@ -8,13 +8,14 @@ import FeatureSection from './FeatureSection';
 import PageFooter from './PageFooter';
 import { aspectRatio169, aspectRatio43 } from '../components/Styles';
 
-
-function OurStoryPage({ }) {
+function OurStoryPage({}) {
   const theme = useTheme();
   return (
     <GenericPage>
       <View style={{ flex: 1, minHeight: '100vh', paddingBottom: 40 }}>
-      <style dangerouslySetInnerHTML={{__html: `
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
         @media only screen and (min-width: ${theme.breakpoints[0]}px) {
           .ourstory-header-content {
             position: absolute;
@@ -23,37 +24,40 @@ function OurStoryPage({ }) {
             max-width: 640px;
           }
         }
-      `}} />
-      {/* responsive: change margin bottom */}
-      <View style={{ marginBottom: 220 }}>
-        <Container style={{ alignItems: 'center' }}>
-          <Image
-            source={{
-              uri:
-                'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
-            }}
-            resizeMode="cover"
-            style={{ ...aspectRatio169 }}
-          />
-          <View
-            className="ourstory-header-content"
-            style={{
-              paddingHorizontal: 80,
-              paddingVertical: 40,
-              backgroundColor: theme.colors.lightGrey,
-              width: '100%',
-            }}
-          >
-            <Heading>Our Story</Heading>
-            <BodyText>
-              We started Ono with the idea that healthy, organic, and great
-              tasting smoothies should be accessible to everyone. With robotics,
-              locally-sourced food, and a bit of luck — Ono Blends was born.
-            </BodyText>
-          </View>
-        </Container>
+      `,
+          }}
+        />
+        {/* responsive: change margin bottom */}
+        <View style={{ marginBottom: 220 }}>
+          <Container style={{ alignItems: 'center' }}>
+            <Image
+              source={{
+                uri:
+                  'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
+              }}
+              resizeMode="cover"
+              style={{ ...aspectRatio169 }}
+            />
+            <View
+              className="ourstory-header-content"
+              style={{
+                paddingHorizontal: 80,
+                paddingVertical: 40,
+                backgroundColor: theme.colors.lightGrey,
+                width: '100%',
+              }}
+            >
+              <Heading>Our Story</Heading>
+              <BodyText>
+                We started Ono with the idea that healthy, organic, and great
+                tasting smoothies should be accessible to everyone. With
+                robotics, locally-sourced food, and a bit of luck - Ono Blends
+                was born.
+              </BodyText>
+            </View>
+          </Container>
+        </View>
       </View>
-    </View>
       <View>
         <Container
           style={{
@@ -69,7 +73,7 @@ function OurStoryPage({ }) {
               <BodyText>
                 Ono, a local Hawaiian term for “delicious” is exactly what our
                 smoothies are. With flavors like avocado & matcha, strawberry &
-                dragonfruit, and mint chip greens — our blends are crafted by
+                dragonfruit, and mint chip greens - our blends are crafted by
                 hand and perfected with technology.
               </BodyText>
             }
