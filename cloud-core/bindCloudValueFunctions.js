@@ -95,7 +95,6 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
 }
 
 function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
-  console.log('evalCloudValue');
   let lambdaCache = evalCache.get(lambdaDoc);
   if (!lambdaCache) {
     lambdaCache = new Map();
