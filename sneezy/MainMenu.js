@@ -1,13 +1,23 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Container from './Container';
 import { useTheme } from './ThemeContext';
 import { Button } from './Buttons';
 import OnoBlendsLogo from './OnoBlendsLogo';
-import Link from '../navigation-web/Link';
-import MobileSidebar from './MobileSidebar';
+import FunctionalLink from '../navigation-web/Link';
+import { Link } from './Buttons';
+import { ResponsiveDisplay } from './Tokens';
 
-export function MenuLink({
+const SidebarMenuIcon = props => (
+  <svg width="28" height="26" viewBox="0 0 28 26" {...props}>
+    <path
+      d="M2 11h24a2 2 0 1 1 0 4H2a2 2 0 1 1 0-4zm0 11h24a2 2 0 1 1 0 4H2a2 2 0 1 1 0-4zM2 0h24a2 2 0 1 1 0 4H2a2 2 0 1 1 0-4z"
+      fill="#005151"
+    />
+  </svg>
+);
+
+function MenuLink({
   text,
   buttonStyle,
   textStyle,
@@ -35,9 +45,10 @@ export function MenuLink({
   );
 }
 
-export default function MainMenu() {
+export function DesktopMenu() {
   return (
     <View
+      className="hide-mobile"
       style={{
         paddingVertical: 40,
       }}
@@ -50,7 +61,10 @@ export default function MainMenu() {
           }}
         >
           {/* Logo */}
-          <Link routeName="Home" renderContent={() => <OnoBlendsLogo />} />
+          <FunctionalLink
+            routeName="Home"
+            renderContent={() => <OnoBlendsLogo />}
+          />
 
           {/* Menu Items */}
           <View
@@ -73,5 +87,108 @@ export default function MainMenu() {
         </View>
       </Container>
     </View>
+  );
+}
+
+export function MobileMenu() {
+  const theme = useTheme();
+  const [sidebar, setSidebar] = React.useState(false);
+
+  function toggleSidebar() {
+    setSidebar(!sidebar);
+  }
+  let translateX = sidebar ? 0 : -340;
+  return (
+    <React.Fragment>
+      <View
+        className="hide-desktop"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          zIndex: 10,
+          transform: [{ translateX }],
+          backgroundColor: theme.colors.white,
+          width: '90%',
+          maxWidth: 340,
+          paddingLeft: 12,
+          ...theme.shadows.medium,
+        }}
+      >
+        <View
+          style={{
+            paddingTop: 80,
+            paddingLeft: 48,
+            paddingRight: 24,
+            paddingBottom: 24,
+            borderBottomColor: theme.colors.border,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+          }}
+        >
+          <Link noActive size="Large" routeName="Menu" text="menu" />
+          <Link noActive size="Large" routeName="Schedule" text="schedule" />
+          <Link noActive size="Large" routeName="OurStory" text="our story" />
+          <Link noActive size="Large" routeName="BookUs" text="book with us" />
+        </View>
+        <View
+          style={{
+            paddingTop: 32,
+            paddingLeft: 48,
+            paddingRight: 24,
+            paddingBottom: 24,
+          }}
+        >
+          <Link noActive size="Small" routeName="Press" text="press kit" />
+          <Link
+            noActive
+            size="Small"
+            routeName="Terms"
+            text="terms & privacy"
+          />
+          <Link noActive size="Small" routeName="ContactUs" text="contact us" />
+        </View>
+      </View>
+      <View className="hide-desktop">
+        <Container>
+          <View
+            style={{
+              flexDirection: 'row',
+            }}
+          >
+            <View
+              style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 24 }}
+            >
+              <OnoBlendsLogo width={68} />
+            </View>
+          </View>
+        </Container>
+      </View>
+      <TouchableOpacity
+        className="hide-desktop"
+        onPress={toggleSidebar}
+        style={{
+          position: 'absolute',
+          width: 40,
+          height: 40,
+          padding: 6,
+          top: 21,
+          left: 12,
+          zIndex: 20,
+        }}
+      >
+        <SidebarMenuIcon />
+      </TouchableOpacity>
+    </React.Fragment>
+  );
+}
+
+export default function LinksMenus() {
+  return (
+    <React.Fragment>
+      <ResponsiveDisplay />
+      <MobileMenu />
+      <DesktopMenu />
+    </React.Fragment>
   );
 }

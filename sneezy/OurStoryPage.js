@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import GenericPage from './GenericPage';
-import MainMenu from './MainMenu';
 import Container from './Container';
 import { BodyText, Heading } from './Tokens';
 import { useTheme } from './ThemeContext';
@@ -25,7 +24,6 @@ function OurStoryPage({ }) {
           }
         }
       `}} />
-      <MainMenu />
       {/* responsive: change margin bottom */}
       <View style={{ marginBottom: 220 }}>
         <Container style={{ alignItems: 'center' }}>

@@ -2,7 +2,6 @@ import React from 'react';
 import { View } from 'react-native';
 import GenericPage from './GenericPage';
 import GenericHeroHeader from './GenericHeroHeader'
-import MainMenu from './MainMenu';
 import BlendsList from './BlendsList';
 import PageFooter from './PageFooter';
 import { useTheme } from './ThemeContext';
@@ -12,7 +11,6 @@ function Menu() {
   return (
     <GenericPage>
       <View style={{ flex: 1, paddingBottom: 38 }}>
-        <MainMenu />
         <GenericHeroHeader
           backgroundColor={theme.colors.lightGrey}
           title="Our Blends"

@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import MainMenu from './MainMenu';
 import Container from './Container';
 import { Button } from './Buttons';
 import {
@@ -16,8 +15,7 @@ import AbsoluteImage from './AbsoluteImage';
 export default function HeroHeader() {
   const theme = useTheme();
   return (
-    <View style={{ flex: 1, paddingBottom: 60, minHeight: '100vh' }}>
-      <MainMenu />
+    <View style={{ flex: 1, paddingBottom: 60 }}>
       <NoFlexToFlex>
         <Container style={{flex: 1}}>
           <ColumnToRow
@@ -26,14 +24,6 @@ export default function HeroHeader() {
               flex: 1,
             }}
           >
-            <AbsoluteImage
-              source={require('./public/img/strawberry.png')}
-              style={{ top: -250, left: -290, width: 482, height: 641 }}
-            />
-            <AbsoluteImage
-              source={require('./public/img/avocado.png')}
-              style={{ right: -250, bottom: -290, width: 568, height: 604 }}
-            />
             <AbsoluteImage
               source={require('./public/img/fruit_silhouette.png')}
               style={{
@@ -60,7 +50,10 @@ export default function HeroHeader() {
                   flex: 1,
                   backgroundColor: theme.colors.lightGrey,
                   justifyContent: 'center',
-                  padding: 40,
+                  paddingTop: 240,
+                  paddingRight: 20,
+                  paddingBottom: 200,
+                  paddingLeft: 100,
                   boxSizing: 'border-box',
                 }}
               >
@@ -78,7 +71,7 @@ export default function HeroHeader() {
                 </BodyText>
                 <Button
                   text="Find us"
-                  routeName="FindUs"
+                  routeName="BookUs"
                   buttonStyle={{
                     width: 210,
                   }}
@@ -95,6 +88,14 @@ export default function HeroHeader() {
                 style={{ flex: 1, width: '100%', paddingTop: '56.25%' }}
               />
             </ColumnToRowChild>
+            <AbsoluteImage
+              source={require('./public/img/strawberry.png')}
+              style={{ top: -250, left: -290, width: 482, height: 641 }}
+            />
+            <AbsoluteImage
+              source={require('./public/img/avocado.png')}
+              style={{ right: -250, bottom: -290, width: 568, height: 604 }}
+            />
           </ColumnToRow>
         </Container>
       </NoFlexToFlex>

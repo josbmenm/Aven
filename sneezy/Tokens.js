@@ -240,3 +240,34 @@ export function Responsive({
     </React.Fragment>
   );
 }
+
+export function ResponsiveDisplay({ breakpoint }) {
+  const theme = useTheme();
+  const bp = breakpoint || theme.breakpoints[0];
+  return (
+    <style
+      dangerouslySetInnerHTML={{
+        __html: `
+
+        .hide-mobile {
+          display: none;
+        }
+
+        .hide-desktop {
+          display: flex;
+        }
+
+        @media only screen and (min-width: ${bp}px) {
+          .hide-desktop {
+            display: none;
+          }
+
+          .hide-mobile {
+            display: flex;
+          }
+        }
+      `,
+      }}
+    />
+  );
+}

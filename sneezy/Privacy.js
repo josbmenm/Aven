@@ -6,13 +6,11 @@ import { SubSection, BodyText } from './Tokens';
 import Container from './Container';
 import { useTheme } from './ThemeContext';
 import PageFooter from './PageFooter';
-import MainMenu from './MainMenu';
 
 function Privacy() {
   const theme = useTheme();
   return (
     <GenericPage>
-      <MainMenu />
       <GenericHeroHeader
         title="Privacy Policy"
         backgroundColor={theme.colors.lightGrey}

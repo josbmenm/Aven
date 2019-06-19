@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTheme } from './ThemeContext';
 import GenericPage from './GenericPage';
-import MainMenu from './MainMenu';
 import PageFooter from './PageFooter';
 import GenericHeroHeader from './GenericHeroHeader';
 
@@ -9,7 +8,6 @@ function BookUsPage() {
   const theme = useTheme();
   return (
     <GenericPage>
-      <MainMenu />
       <GenericHeroHeader
         backgroundColor={theme.colors.lightGrey}
         title="Book with Us"

@@ -1,6 +1,10 @@
-import React from "react";
-import { View, Text } from "react-native-web";
+import React from 'react';
+import { View } from 'react-native-web';
+import MainMenu from './MainMenu';
 
 export default ({ children }) => (
-  <View style={{ width: "100%", overflowX: 'hidden' }}>{children}</View>
+  <View style={{ width: '100%', overflowX: 'hidden' }}>
+    <MainMenu />
+    {children}
+  </View>
 );

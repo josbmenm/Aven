@@ -5,13 +5,11 @@ import GenericHeroHeader from './GenericHeroHeader';
 import { useTheme } from './ThemeContext';
 import Container from './Container';
 import PageFooter from './PageFooter';
-import MainMenu from './MainMenu';
 
 function Terms() {
   const theme = useTheme();
   return (
     <GenericPage>
-      <MainMenu />
       <GenericHeroHeader
         title="Terms of Service"
         backgroundColor={theme.colors.lightGrey}
