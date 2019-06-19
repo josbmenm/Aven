@@ -5,7 +5,11 @@ import { useTheme } from './ThemeContext';
 import { Button, Link } from './Tokens';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import FunctionalLink from '../navigation-web/Link';
-import { ResponsiveDisplay, HideDesktopView, HideMobileView } from './Responsive';
+import {
+  ResponsiveDisplay,
+  HideDesktopView,
+  HideMobileView,
+} from './Responsive';
 
 const SidebarMenuIcon = props => (
   <svg width="28" height="26" viewBox="0 0 28 26" {...props}>
@@ -77,7 +81,7 @@ export function DesktopMenu() {
             <Button
               type="outline"
               text="book with us"
-              routeName="BookWithUs"
+              routeName="BookUs"
               // textStyle={{ fontSize: 20 }}
               buttonStyle={{ marginLeft: 16 }}
             />
@@ -171,7 +175,12 @@ export function MobileMenu() {
                 paddingBottom: 24,
               }}
             >
-              <Link noActive size="Small" routeName="Press" text="press kit" />
+              <Link
+                noActive
+                size="Small"
+                url="https://google.com"
+                text="press kit"
+              />
               <Link
                 noActive
                 size="Small"
@@ -181,7 +190,7 @@ export function MobileMenu() {
               <Link
                 noActive
                 size="Small"
-                routeName="ContactUs"
+                url="mailto:aloha@onofood.co"
                 text="contact us"
               />
             </View>

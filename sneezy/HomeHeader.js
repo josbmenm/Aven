@@ -65,7 +65,7 @@ export default function HeroHeader() {
                 </BodyText>
                 <Button
                   text="Find us"
-                  routeName="BookUs"
+                  routeName="Schedule"
                   buttonStyle={{
                     width: 210,
                   }}

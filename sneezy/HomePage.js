@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
 import GenericPage from './GenericPage';
-import HeroHeader from './HeroHeader';
+import HomeHeader from './HomeHeader';
 import { useTheme } from './ThemeContext';
 import Container from './Container';
 import PageFooter from './PageFooter';
@@ -14,7 +14,7 @@ import GenericHeroHeader from './GenericHeroHeader';
 function HomePage() {
   return (
     <GenericPage>
-      <HeroHeader />
+      <HomeHeader />
       {/* Image Full viewport Section */}
       <View style={{ paddingVertical: 90 }}>
         <Container>

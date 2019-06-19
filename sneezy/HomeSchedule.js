@@ -29,7 +29,7 @@ function HomeShedule() {
               <Button
                 type="solid"
                 text="Find us"
-                routeName="FindUs"
+                routeName="Schedule"
                 buttonStyle={{ width: 220 }}
               />
             </View>

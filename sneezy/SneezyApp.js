@@ -5,9 +5,11 @@ import TokensPage from './TokensPage';
 import Home from './HomePage';
 import Menu from './MenuPage';
 import OurStory from './OurStoryPage';
-import Privacy from './Privacy';
-import Terms from './Terms';
+import Privacy from './PrivacyPage';
+import Terms from './TermsPage';
 import BookUs from './BookUsPage';
+import Schedule from './SchedulePage';
+import Subscribe from './SubscribePage';
 import { ThemeContext, theme } from './ThemeContext';
 
 const customHTMLHeaders = `
@@ -44,7 +46,14 @@ const App = createSwitchNavigator(
       path: 'book-us',
       screen: BookUs,
     },
-
+    Schedule: {
+      path: 'shedule',
+      screen: Schedule
+    },
+    Subscribe: {
+      path: 'subscribe',
+      screen: Subscribe
+    },
     // to be deleted:
     OldMenu: {
       path: 'old/menu',

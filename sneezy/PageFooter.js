@@ -75,10 +75,10 @@ export default function PageFooter() {
                 <View style={{ flex: 1 }}>
                   <Link noActive text="Menu" routeName="Menu" />
                   <Link noActive text="Our story" routeName="OurStory" />
-                  <Link noActive text="Book with us" routeName="BookWithUs" />
+                  <Link noActive text="Book with us" routeName="BookUs" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Link noActive text="Press kit" routeName="PressKit" />
+                  <Link noActive text="Press kit" url="https://google.com" />
                   <Link noActive text="Terms & privacy" routeName="Terms" />
                   <Link
                     noActive
