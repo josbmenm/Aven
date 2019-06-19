@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from './ThemeContext';
 import FunctionalLink from '../navigation-web/Link';
 
@@ -59,7 +59,8 @@ export function Button({
 export function Link({
   buttonStyle = {},
   textStyle = {},
-  text = "link",
+  text = 'link',
+  size = 'Small',
   routeName,
   noActive = false,
   ...rest
@@ -74,19 +75,25 @@ export function Link({
             paddingHorizontal: 8,
             paddingVertical: 4,
             borderBottomWidth: 3,
-            borderColor: noActive ? "transparent" : active ? colors.primary : 'transparent',
+            borderColor: noActive
+              ? 'transparent'
+              : active
+              ? colors.primary
+              : 'transparent',
             ...buttonStyle,
           }}
           {...rest}
         >
           <Text
-            style={{
-              fontWeight: 'bold',
-              fontSize: 16,
-              fontFamily: fonts.button,
-              color: colors.primary,
-              ...textStyle,
-            }}
+            style={StyleSheet.flatten([
+              {
+                fontWeight: 'bold',
+                fontSize: size === "Small" ? 16 : 24,
+                fontFamily: fonts.button,
+                color: colors.primary,
+              },
+              textStyle,
+            ])}
           >
             {text}
           </Text>

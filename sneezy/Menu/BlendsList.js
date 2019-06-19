@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import Container from '../Container';
 import { Title, FootNote, BodyText } from '../Tokens';
 import { useTheme } from '../ThemeContext';
-import { useMenu, useCompanyConfig } from '../../ono-cloud/OnoKitchen';
+import { useMenu } from '../../ono-cloud/OnoKitchen';
 import AirtableImage from '../../components/AirtableImage';
 
 function BlendItem(props) {

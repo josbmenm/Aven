@@ -5,6 +5,7 @@ import { useTheme } from './ThemeContext';
 import { Button } from './Buttons';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import Link from '../navigation-web/Link';
+import MobileSidebar from './MobileSidebar';
 
 export function MenuLink({
   text,
