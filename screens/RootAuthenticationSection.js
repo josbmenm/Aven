@@ -4,42 +4,56 @@ import useObservable from '../cloud-core/useObservable';
 import useCloud from '../cloud-core/useCloud';
 import Title from '../components/Title';
 import BlockFormButton from '../components/BlockFormButton';
+import BlockFormRow from '../components/BlockFormRow';
 import BlockFormMessage from '../components/BlockFormMessage';
 import BlockFormInput from '../components/BlockFormInput';
 import useAsyncError from '../react-utils/useAsyncError';
 
+function GenericContainer({ children }) {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', flexDirection: 'row' }}>
+      <View style={{ maxWidth: 460, flex: 1, marginVertical: 60 }}>
+        {children}
+      </View>
+    </View>
+  );
+}
 function RootLoginForm() {
   const cloud = useCloud();
   const [pw, setPw] = React.useState('');
   const handleErrors = useAsyncError();
   return (
-    <View>
+    <GenericContainer>
       <Title>Log In</Title>
-      <BlockFormInput
-        value={pw}
-        label="root password"
-        mode="password"
-        onValue={v => {
-          setPw(v);
-        }}
-      />
-      <BlockFormButton
-        title="Log In"
-        onPress={() => {
-          handleErrors(
-            cloud
-              .createSession({
-                accountId: 'root',
-                verificationInfo: {},
-                verificationResponse: { password: pw },
-              })
-              .then(async resp => {
-                console.log('createSession succes', resp);
-              }),
-          );
-        }}
-      />
-    </View>
+      <BlockFormRow>
+        <BlockFormInput
+          value={pw}
+          label="root password"
+          mode="password"
+          onValue={v => {
+            setPw(v);
+          }}
+        />
+      </BlockFormRow>
+      <BlockFormRow>
+        <BlockFormButton
+          title="Log In"
+          onPress={() => {
+            handleErrors(
+              cloud
+                .createSession({
+                  accountId: 'root',
+                  verificationInfo: {},
+                  verificationResponse: { password: pw },
+                })
+                .then(async resp => {
+                  console.log('createSession succes', resp);
+                }),
+            );
+          }}
+        />
+      </BlockFormRow>
+    </GenericContainer>
   );
 }
 
@@ -48,7 +62,7 @@ function RootAuthLogin() {
   const session = useObservable(cloud && cloud.observeSession);
   if (session && session.accountId !== 'root') {
     return (
-      <View>
+      <GenericContainer>
         <Title>Wrong Authentication</Title>
         <BlockFormMessage>
           Please log out and log back in as root.
@@ -59,7 +73,7 @@ function RootAuthLogin() {
           }}
           title="Log out"
         />
-      </View>
+      </GenericContainer>
     );
   }
   return <RootLoginForm />;

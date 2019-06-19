@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { createAppContainer } from '../navigation-native';
 import { useNavigation } from '../navigation-hooks/Hooks';
-import { createNavigator, StackRouter } from '../navigation-core';
+import { createSwitchNavigator } from '../navigation-core';
 import codePush from 'react-native-code-push';
 
 import PortalHomeScreen from '../screens/PortalHomeScreen';
@@ -43,6 +43,7 @@ import CollectNameScreen from '../screens/CollectNameScreen';
 import SendReceiptScreen from '../screens/SendReceiptScreen';
 import OrderConfirmTestScreen from '../screens/OrderConfirmTestScreen';
 import InventoryScreen from '../screens/InventoryScreen';
+import AlarmsScreen from '../screens/AlarmsScreen';
 import ReceiptScreen from '../screens/ReceiptScreen';
 import AppUpsellScreen from '../screens/AppUpsellScreen';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
@@ -54,19 +55,22 @@ import ErrorContainer from '../cloud-react/ErrorContainer';
 import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import { PortalOrderSidebarPage } from '../components/OrderSidebarPage';
+import TabsScreen from '../components/TabsScreen';
 import { PopoverContainer } from '../views/Popover';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { registerDispatcher } from '../card-reader/CardReader';
 
 import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
+import RootAuthenticationSection from '../screens/RootAuthenticationSection';
 
 let IS_DEV = process.env.NODE_ENV !== 'production';
 // IS_DEV = false;
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  authority: '192.168.1.81:8830',
+  authority: '192.168.1.29:8830',
+  // authority: '192.168.1.81:8830',
 };
 const RESTAURANT_PROD = {
   useSSL: false,
@@ -137,8 +141,42 @@ const KioskNavigator = createStackTransitionNavigator(
 
 process.env.REACT_NAV_LOGGING = true;
 
+const TABS = [
+  { routeName: 'PortalHome', title: 'Home' },
+  { routeName: 'Inventory', title: 'Inventory' },
+  { routeName: 'Manual', title: 'Manual' },
+  { routeName: 'Sequencer', title: 'Sequencer' },
+  { routeName: 'Orders', title: 'Orders' },
+  { routeName: 'Status', title: 'Status' },
+  { routeName: 'Alarms', title: 'Alarms' },
+  { routeName: 'Devices', title: 'Devices' },
+];
+
+const PortalHome = createSwitchNavigator({
+  PortalHome: { screen: PortalHomeScreen },
+  Inventory: { screen: InventoryScreen },
+  Manual: { screen: ManualControlScreen },
+  Sequencer: { screen: SequencerScreen },
+  Orders: { screen: OrdersScreen },
+  Status: { screen: RestaurantStatusScreen },
+  Alarms: { screen: AlarmsScreen },
+  Devices: { screen: DeviceManagerScreen },
+});
+
+function PortalHomeApp({ navigation }) {
+  return (
+    <RootAuthenticationSection>
+      <TabsScreen tabs={TABS} navigation={navigation}>
+        <PortalHome navigation={navigation} />
+      </TabsScreen>
+    </RootAuthenticationSection>
+  );
+}
+PortalHomeApp.router = PortalHome.router;
+PortalHomeApp.navigationOptions = PortalHome.navigationOptions;
+
 const App = createStackTransitionNavigator({
-  Home: PortalHomeScreen,
+  Home: PortalHomeApp,
   OrderComplete: OrderCompletePortalScreen,
   Kiosk: KioskNavigator,
   ComponentPlayground: ComponentPlaygroundScreen,
