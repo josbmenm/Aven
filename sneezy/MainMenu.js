@@ -2,11 +2,10 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Container from './Container';
 import { useTheme } from './ThemeContext';
-import { Button } from './Buttons';
+import { Button, Link } from './Tokens';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import FunctionalLink from '../navigation-web/Link';
-import { Link } from './Buttons';
-import { ResponsiveDisplay, HideDesktopView, HideMobileView } from './Tokens';
+import { ResponsiveDisplay, HideDesktopView, HideMobileView } from './Responsive';
 
 const SidebarMenuIcon = props => (
   <svg width="28" height="26" viewBox="0 0 28 26" {...props}>

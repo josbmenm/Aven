@@ -4,8 +4,8 @@ import Container from './Container';
 import { useTheme } from './ThemeContext';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import OnoFoodLogo from './OnoFoodLogo';
-import { Link } from './Buttons';
-import { ColumnToRow, ColumnToRowChild, FootNote } from './Tokens';
+import { FootNote, Link } from './Tokens';
+import { ColumnToRow, ColumnToRowChild } from './Responsive';
 
 export default function PageFooter() {
   const theme = useTheme();

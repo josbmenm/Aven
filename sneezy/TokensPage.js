@@ -1,10 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Heading, Title, BodyText, FootNote } from './Tokens';
+import { Heading, Title, BodyText, FootNote, Button } from './Tokens';
 import GenericPage from './GenericPage';
 import Container from './Container';
 import { useTheme } from './ThemeContext';
-import { Button } from './Buttons';
 
 function TokenSection({ title, children }) {
   const theme = useTheme();

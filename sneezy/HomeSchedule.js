@@ -2,13 +2,8 @@ import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from './ThemeContext';
 import Container from './Container';
-import {
-  Title,
-  BodyText,
-  ColumnToRow,
-  ColumnToRowChild,
-} from './Tokens';
-import { Button } from './Buttons';
+import { Button, Title, BodyText } from './Tokens';
+import { ColumnToRow, ColumnToRowChild } from './Responsive';
 import Schedule from './Schedule';
 
 function HomeShedule() {

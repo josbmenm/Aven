@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from './ThemeContext';
-import { Link, defaultButtonStyles } from './Buttons';
+import { Link } from './Tokens';
 
 const SidebarMenuIcon = props => (
   <svg width="28" height="26" viewBox="0 0 28 26" {...props}>

@@ -1,6 +1,7 @@
-import { Text, View, StyleSheet } from 'react-native';
 import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from './ThemeContext';
+import FunctionalLink from '../navigation-web/Link';
 
 export function SubSection({ title, children }) {
   return (
@@ -99,187 +100,106 @@ export function FootNote({ children, bold, style, ...rest }) {
   );
 }
 
-export function Link({ children }) {
-  return <Text>{children}</Text>;
-}
+export const defaultButtonStyles = {
+  button: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+  text: {
+    fontSize: 20,
+    textAlign: 'center',
+  },
+};
 
-let responsiveIdCount = 0;
-
-export function ColumnToRow({
-  children,
-  columnReverse = false,
-  rowReverse = false,
-  style = {},
-  breakpoint,
-  resetFlexBasis,
+export function Button({
+  buttonStyle,
+  text = 'button',
+  type = 'solid', // solid | outline
+  variant = 'primary', // primary | secondary
+  textStyle = {},
+  routeName,
+  url,
   ...rest
 }) {
-  const elemID = responsiveIdCount++;
-  const theme = useTheme();
-  const bp = breakpoint || theme.breakpoints[0];
+  const { colors, fonts } = useTheme();
+
   return (
-    <React.Fragment>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-      .vertical-to-horizontal-layout-${elemID} {
-        display: flex;
-        flex-direction: ${columnReverse ? 'column-reverse' : 'column'};
-      }
-
-      .vertical-to-horizontal-layout-${elemID} > .vertical-to-horizontal-layout__child {
-        margin-left: 0;
-        margin-right: 0;
-      }
-
-      @media only screen and (min-width: ${bp}px) {
-        .vertical-to-horizontal-layout-${elemID} {
-          flex-direction: ${rowReverse ? 'row-reverse' : 'row'};
-        }
-
-        ${
-          !resetFlexBasis
-            ? `.vertical-to-horizontal-layout-${elemID} > .vertical-to-horizontal-layout__child {
-          flex: 1;
-          flex-basis: 0;
-        }`
-            : ''
-        }
-      }
-      `,
-        }}
-      />
-      <View
-        className={`vertical-to-horizontal-layout-${elemID}`}
-        style={style}
-        {...rest}
-      >
-        {children}
-      </View>
-    </React.Fragment>
-  );
-}
-
-export function ColumnToRowChild({
-  className,
-  inverted = false,
-  style,
-  ...rest
-}) {
-  return (
-    // TODO: RESPONSIVE: add/remove margin for responsive
-    <View
-      className={`vertical-to-horizontal-layout__child ${className}`}
-      style={StyleSheet.flatten([
-        {
-          alignItems: inverted ? 'flex-end' : 'flex-start',
-          // marginLeft: inverted ? 20 : 0,
-          // marginRight: inverted ? 0 : 20,
-        },
-        style,
-      ])}
-      {...rest}
+    <FunctionalLink
+      routeName={routeName}
+      url={url}
+      renderContent={active => (
+        <View
+          style={{
+            ...defaultButtonStyles.button,
+            borderRadius: 4,
+            borderWidth: 3,
+            borderColor: colors.primary,
+            backgroundColor: type === 'solid' ? colors.primary : 'transparent',
+            ...buttonStyle,
+            cursor: 'pointer',
+          }}
+        >
+          <Text
+            style={{
+              ...defaultButtonStyles.text,
+              color: type === 'solid' ? colors.white : colors.primary,
+              fontFamily: fonts.button,
+              ...textStyle,
+            }}
+          >
+            {text}
+          </Text>
+        </View>
+      )}
     />
   );
 }
 
-export function NoFlexToFlex({ children, breakpoint }) {
-  const theme = useTheme();
-  const bp = breakpoint || theme.breakpoints[0];
-  return (
-    <React.Fragment>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-      .no-flex-to-flex,
-      .no-flex-to-flex > * {
-        flex: none;
-      }
-
-      @media only screen and (min-width: ${bp}px) {
-        .no-flex-to-flex,
-        .no-flex-to-flex > * {
-          flex: 1;
-        }
-      }
-    `,
-        }}
-      />
-      <View className="no-flex-to-flex">{children}</View>
-    </React.Fragment>
-  );
-}
-
-export function Responsive({
-  style = {},
-  children,
-  breakpoint,
+export function Link({
+  buttonStyle = {},
+  textStyle = {},
+  text = 'link',
+  size = 'Small',
+  routeName,
+  url,
+  noActive = false,
   ...rest
 }) {
-  const id = responsiveIdCount++;
-  const theme = useTheme();
-  const bp = breakpoint || theme.breakpoints[0];
+  const { colors, fonts } = useTheme();
   return (
-    <React.Fragment>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-      .responsive-element-${id} {
-        padding-left: ${style.paddingLeft[0]}px;
-      }
-
-      @media only screen and (min-width: ${bp}px) {
-        .responsive-element-${id} {
-          padding-left: ${style.paddingLeft[1]}px;
-        }
-      }
-    `,
-        }}
-      />
-      {React.cloneElement(children, { className: `responsive-element-${id}` })}
-    </React.Fragment>
-  );
-}
-
-export function ResponsiveDisplay({ breakpoint }) {
-  const theme = useTheme();
-  const bp = breakpoint || theme.breakpoints[0];
-  return (
-    <style
-      dangerouslySetInnerHTML={{
-        __html: `
-
-        .hide-mobile {
-          display: none;
-        }
-
-        .hide-desktop {
-          display: flex;
-        }
-
-        @media only screen and (min-width: ${bp}px) {
-          .hide-desktop {
-            display: none;
-          }
-
-          .hide-mobile {
-            display: flex;
-          }
-        }
-      `,
-      }}
+    <FunctionalLink
+      routeName={routeName}
+      url={url}
+      renderContent={active => (
+        <View
+          style={{
+            paddingHorizontal: 8,
+            paddingVertical: 4,
+            borderBottomWidth: 3,
+            borderColor: noActive
+              ? 'transparent'
+              : active
+              ? colors.primary
+              : 'transparent',
+            ...buttonStyle,
+          }}
+          {...rest}
+        >
+          <Text
+            style={StyleSheet.flatten([
+              {
+                fontWeight: 'bold',
+                fontSize: size === 'Small' ? 16 : 24,
+                fontFamily: fonts.button,
+                color: colors.primary,
+              },
+              textStyle,
+            ])}
+          >
+            {text}
+          </Text>
+        </View>
+      )}
     />
   );
-}
-
-export function HideDesktopView({ className, ...rest }) {
-  return (
-    <View className={`hide-desktop ${className}`} {...rest} />
-  )
-}
-
-export function HideMobileView({ className, ...rest }) {
-  return (
-    <View className={`hide-mobile ${className}`} {...rest} />
-  )
 }

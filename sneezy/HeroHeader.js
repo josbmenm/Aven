@@ -1,14 +1,8 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
 import Container from './Container';
-import { Button } from './Buttons';
-import {
-  Heading,
-  BodyText,
-  ColumnToRow,
-  ColumnToRowChild,
-  NoFlexToFlex,
-} from './Tokens';
+import { Button, Heading, BodyText } from './Tokens';
+import { ColumnToRow, ColumnToRowChild, NoFlexToFlex } from './Responsive';
 import { useTheme } from './ThemeContext';
 import AbsoluteImage from './AbsoluteImage';
 
@@ -17,7 +11,7 @@ export default function HeroHeader() {
   return (
     <View style={{ flex: 1, paddingBottom: 60 }}>
       <NoFlexToFlex>
-        <Container style={{flex: 1}}>
+        <Container style={{ flex: 1 }}>
           <ColumnToRow
             columnReverse
             style={{
