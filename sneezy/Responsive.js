@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from './ThemeContext';
 
@@ -109,12 +109,7 @@ export function NoFlexToFlex({ children, breakpoint }) {
   );
 }
 
-export function Responsive({
-  style = {},
-  children,
-  breakpoint,
-  ...rest
-}) {
+export function Responsive({ style = {}, children, breakpoint, ...rest }) {
   const id = responsiveIdCount++;
   const theme = useTheme();
   const bp = breakpoint || theme.breakpoints[0];
@@ -124,18 +119,99 @@ export function Responsive({
         dangerouslySetInnerHTML={{
           __html: `
       .responsive-element-${id} {
-        padding-left: ${style.paddingLeft[0]}px;
+        ${
+          style.paddingVertical
+            ? `padding: ${style.paddingVertical[0]}px 0;`
+            : ''
+        }
+        ${
+          style.paddingHorizontal
+            ? `padding: 0 ${style.paddingHorizontal[0]}px;`
+            : ''
+        }
+        ${style.paddingTop ? `padding-top: ${style.paddingTop[0]}px;` : ''}
+        ${
+          style.paddingRight ? `padding-right: ${style.paddingRight[0]}px;` : ''
+        }
+        ${
+          style.paddingBottom
+            ? `padding-bottom: ${style.paddingBottom[0]}px;`
+            : ''
+        }
+        ${style.paddingLeft ? `padding-left: ${style.paddingLeft[0]}px;` : ''}
+
+        ${style.marginVertical ? `margin: ${style.marginVertical[0]}px 0;` : ''}
+        ${
+          style.marginHorizontal
+            ? `margin: 0 ${style.marginHorizontal[0]}px;`
+            : ''
+        }
+        ${style.marginTop ? `margin-top: ${style.marginTop[0]}px;` : ''}
+        ${style.marginRight ? `margin-right: ${style.marginRight[0]}px;` : ''}
+        ${
+          style.marginBottom ? `margin-bottom: ${style.marginBottom[0]}px;` : ''
+        }
+        ${style.marginLeft ? `margin-left: ${style.marginLeft[0]}px;` : ''}
+
+        ${style.textAlign ? `text-align: ${style.textAlign[0]};` : ''}
+        ${style.alignItems ? `align-items: ${style.alignItems[0]};` : ''}
       }
 
       @media only screen and (min-width: ${bp}px) {
         .responsive-element-${id} {
-          padding-left: ${style.paddingLeft[1]}px;
+          ${
+            style.paddingVertical
+              ? `padding: ${style.paddingVertical[1]}px 0;`
+              : ''
+          }
+          ${
+            style.paddingHorizontal
+              ? `padding: 0 ${style.paddingHorizontal[1]}px;`
+              : ''
+          }
+          ${style.paddingTop ? `padding-top: ${style.paddingTop[1]}px;` : ''}
+          ${
+            style.paddingRight
+              ? `padding-right: ${style.paddingRight[1]}px;`
+              : ''
+          }
+          ${
+            style.paddingBottom
+              ? `padding-bottom: ${style.paddingBottom[1]}px;`
+              : ''
+          }
+          ${style.paddingLeft ? `padding-left: ${style.paddingLeft[1]}px;` : ''}
+
+          ${
+            style.marginVertical
+              ? `margin: ${style.marginVertical[1]}px 0;`
+              : ''
+          }
+          ${
+            style.marginHorizontal
+              ? `margin: 0 ${style.marginHorizontal[1]}px;`
+              : ''
+          }
+          ${style.marginTop ? `margin-top: ${style.marginTop[1]}px;` : ''}
+          ${style.marginRight ? `margin-right: ${style.marginRight[1]}px;` : ''}
+          ${
+            style.marginBottom
+              ? `margin-bottom: ${style.marginBottom[1]}px;`
+              : ''
+          }
+          ${style.marginLeft ? `margin-left: ${style.marginLeft[1]}px;` : ''}
+
+          ${style.textAlign ? `text-align: ${style.textAlign[1]};` : ''}
+          ${style.alignItems ? `align-items: ${style.alignItems[1]};` : ''}
         }
       }
     `,
         }}
       />
-      {React.cloneElement(children, { className: `responsive-element-${id}` })}
+      {React.cloneElement(children, {
+        className: `responsive-element-${id}`,
+        ...rest,
+      })}
     </React.Fragment>
   );
 }
@@ -172,13 +248,9 @@ export function ResponsiveDisplay({ breakpoint }) {
 }
 
 export function HideDesktopView({ className, ...rest }) {
-  return (
-    <View className={`hide-desktop ${className}`} {...rest} />
-  )
+  return <View className={`hide-desktop ${className}`} {...rest} />;
 }
 
 export function HideMobileView({ className, ...rest }) {
-  return (
-    <View className={`hide-mobile ${className}`} {...rest} />
-  )
+  return <View className={`hide-mobile ${className}`} {...rest} />;
 }

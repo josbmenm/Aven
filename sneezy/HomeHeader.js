@@ -1,12 +1,17 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Image } from 'react-native';
 import Container from './Container';
 import { Button, Heading, BodyText } from './Tokens';
-import { ColumnToRow, ColumnToRowChild, NoFlexToFlex } from './Responsive';
+import {
+  ColumnToRow,
+  ColumnToRowChild,
+  NoFlexToFlex,
+  Responsive,
+} from './Responsive';
 import { useTheme } from './ThemeContext';
 import AbsoluteImage from './AbsoluteImage';
 
-export default function HeroHeader() {
+function HomeHeader() {
   const theme = useTheme();
   return (
     <View style={{ flex: 1, paddingBottom: 60 }}>
@@ -39,41 +44,46 @@ export default function HeroHeader() {
               }}
             />
             <ColumnToRowChild>
-              <View
+              <Responsive
                 style={{
-                  flex: 1,
-                  backgroundColor: theme.colors.lightGrey,
-                  justifyContent: 'center',
-                  paddingTop: 240,
-                  paddingRight: 20,
-                  paddingBottom: 200,
-                  paddingLeft: 100,
-                  boxSizing: 'border-box',
+                  paddingTop: [40, 240],
+                  paddingRight: [20, 20],
+                  paddingBottom: [40, 200],
+                  paddingLeft: [20, 100],
                 }}
               >
-                <Heading>
-                  We’re making healthy food accessible to everyone.
-                </Heading>
-                <BodyText
+                <View
                   style={{
-                    marginBottom: 28,
+                    flex: 1,
+                    backgroundColor: theme.colors.lightGrey,
+                    justifyContent: 'center',
+                    boxSizing: 'border-box',
                   }}
                 >
-                  Using organic fruits and vegetables, we create blends that
-                  focus on the best ingredients for you. All of our blends are
-                  customizable and designed with your best self in mind.
-                </BodyText>
-                <Button
-                  text="Find us"
-                  routeName="Schedule"
-                  buttonStyle={{
-                    width: 210,
-                  }}
-                  textStyle={{
-                    textAlign: 'center',
-                  }}
-                />
-              </View>
+                  <Heading>
+                    We’re making healthy food accessible to everyone.
+                  </Heading>
+                  <BodyText
+                    style={{
+                      marginBottom: 28,
+                    }}
+                  >
+                    Using organic fruits and vegetables, we create blends that
+                    focus on the best ingredients for you. All of our blends are
+                    customizable and designed with your best self in mind.
+                  </BodyText>
+                  <Button
+                    text="Find us"
+                    routeName="Schedule"
+                    buttonStyle={{
+                      width: 210,
+                    }}
+                    textStyle={{
+                      textAlign: 'center',
+                    }}
+                  />
+                </View>
+              </Responsive>
             </ColumnToRowChild>
             <ColumnToRowChild>
               <Image
@@ -96,3 +106,5 @@ export default function HeroHeader() {
     </View>
   );
 }
+
+export default HomeHeader;

@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, Image } from 'react-native';
 import GenericPage from './GenericPage';
 import HomeHeader from './HomeHeader';
-import { useTheme } from './ThemeContext';
 import Container from './Container';
 import PageFooter from './PageFooter';
 import HomeSlider from './HomeSlider';

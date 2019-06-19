@@ -5,6 +5,7 @@ import Container from './Container';
 import { BodyText, Heading } from './Tokens';
 import { useTheme } from './ThemeContext';
 import FeatureSection from './FeatureSection';
+import TheTeam from './TheTeam';
 import PageFooter from './PageFooter';
 import { aspectRatio169, aspectRatio43 } from '../components/Styles';
 
@@ -121,31 +122,7 @@ function OurStoryPage({}) {
           />
         </Container>
       </View>
-      <View>
-        <Container
-          style={{
-            marginBottom: 80,
-          }}
-        >
-          <FeatureSection
-            title="The team"
-            bodyText={
-              <BodyText>
-                We’re a team of foragers, foodies and builders with backgrounds
-                in robotics, automation, logistics, and culinary fine dining.
-                Regardless of the discipline, design and hospitality are at the
-                core of everything we do.
-              </BodyText>
-            }
-            image={
-              <Image
-                source={require('./public/img/ourstory-feature.jpg')}
-                style={{ maxWidth: 430, ...aspectRatio43 }}
-              />
-            }
-          />
-        </Container>
-      </View>
+      <TheTeam />
       <PageFooter />
     </GenericPage>
   );

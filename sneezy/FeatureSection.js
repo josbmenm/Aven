@@ -11,6 +11,7 @@ function FeatureSection({
   image,
   inverted = false,
   style = {},
+  columnReverse,
 }) {
   const theme = useTheme();
   // TODO: remove after definitive images
@@ -28,6 +29,7 @@ function FeatureSection({
   return (
     <ColumnToRow
       rowReverse={inverted}
+      columnReverse={columnReverse}
       style={StyleSheet.flatten([
         {
           alignSelf: 'center',
@@ -37,19 +39,25 @@ function FeatureSection({
         style,
       ])}
     >
-      <ColumnToRowChild inverted={inverted}>{image}</ColumnToRowChild>
-      <Responsive style={{ paddingLeft: [0, 100] }}>
-        <ColumnToRowChild
+      <ColumnToRowChild>{image}</ColumnToRowChild>
+      <ColumnToRowChild
+        style={{
+          paddingVertical: 40,
+          paddingRight: 20,
+          justifyContent: 'center',
+        }}
+      >
+        <Responsive
           style={{
-            paddingVertical: 40,
-            paddingRight: 40,
-            justifyContent: 'center',
+            paddingLeft: inverted ? [0, 0] : [0, 100],
           }}
         >
-          <Title>{title}</Title>
-          {bodyText}
-        </ColumnToRowChild>
-      </Responsive>
+          <View>
+            <Title>{title}</Title>
+            {bodyText}
+          </View>
+        </Responsive>
+      </ColumnToRowChild>
     </ColumnToRow>
   );
 }
