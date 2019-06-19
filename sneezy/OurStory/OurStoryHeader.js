@@ -1,17 +1,18 @@
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 import Container from '../Container';
 import MainMenu from '../MainMenu';
 import { aspectRatio169 } from '../../components/Styles';
 import { Heading, BodyText } from '../Tokens';
 import { useTheme } from '../ThemeContext';
 
-function OurStoryHeader() {
+function OurStoryHeader({ breakpoint, style, ...rest }) {
   const theme = useTheme();
+  const bp = breakpoint || theme.breakpoints[0];
   return (
-    <View style={{ flex: 1, minHeight: '100vh', paddingBottom: 40 }}>
+    <View style={StyleSheet.flatten([{ flex: 1, minHeight: '100vh', paddingBottom: 40 }, style])}>
       <style dangerouslySetInnerHTML={{__html: `
-        @media only screen and (min-width: 768px) {
+        @media only screen and (min-width: ${bp}px) {
           .ourstory-header-content {
             position: absolute;
             bottom: -120px;

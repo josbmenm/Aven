@@ -110,11 +110,13 @@ export function V2HLayout({
   columnReverse = false,
   rowReverse = false,
   style = {},
-  breakpoint = 768,
+  breakpoint,
   resetFlexBasis,
   ...rest
 }) {
   const elemID = responsiveIdCount++;
+  const theme = useTheme();
+  const bp = breakpoint || theme.breakpoints[0];
   return (
     <React.Fragment>
       <style
@@ -130,7 +132,7 @@ export function V2HLayout({
         margin-right: 0;
       }
 
-      @media only screen and (min-width: ${breakpoint}px) {
+      @media only screen and (min-width: ${bp}px) {
         .vertical-to-horizontal-layout-${elemID} {
           flex-direction: ${rowReverse ? 'row-reverse' : 'row'};
         }
@@ -181,7 +183,9 @@ export function V2HLayoutChild({
   );
 }
 
-export function NoFlexToFlex({ children, breakpoint = 768 }) {
+export function NoFlexToFlex({ children, breakpoint }) {
+  const theme = useTheme();
+  const bp = breakpoint || theme.breakpoints[0];
   return (
     <React.Fragment>
       <style
@@ -192,7 +196,7 @@ export function NoFlexToFlex({ children, breakpoint = 768 }) {
         flex: none;
       }
 
-      @media only screen and (min-width: ${breakpoint}px) {
+      @media only screen and (min-width: ${bp}px) {
         .no-flex-to-flex,
         .no-flex-to-flex > * {
           flex: 1;
@@ -209,10 +213,12 @@ export function NoFlexToFlex({ children, breakpoint = 768 }) {
 export function Responsive({
   style = {},
   children,
-  breakpoint = 768,
+  breakpoint,
   ...rest
 }) {
   const id = responsiveIdCount++;
+  const theme = useTheme();
+  const bp = breakpoint || theme.breakpoints[0];
   return (
     <React.Fragment>
       <style
@@ -222,7 +228,7 @@ export function Responsive({
         padding-left: ${style.paddingLeft[0]}px;
       }
 
-      @media only screen and (min-width: ${breakpoint}px) {
+      @media only screen and (min-width: ${bp}px) {
         .responsive-element-${id} {
           padding-left: ${style.paddingLeft[1]}px;
         }
