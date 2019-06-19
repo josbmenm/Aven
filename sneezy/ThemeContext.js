@@ -84,7 +84,7 @@ export const theme = {
   fonts,
   textStyles,
   shadows,
-  breakpoints: ["768px"]
+  breakpoints: [768]
 };
 
 export const ThemeContext = React.createContext(theme);
