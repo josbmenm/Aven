@@ -74,8 +74,8 @@ function MobileSidebar() {
         onPress={toggleSidebar}
         style={{
           position: 'absolute',
-          width: 28,
-          height: 26,
+          width: 40,
+          height: 40,
           padding: 6,
           top: 21,
           left: 12,
