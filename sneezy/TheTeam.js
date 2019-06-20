@@ -37,13 +37,13 @@ function TheTeam() {
                   fine dining. Regardless of the discipline, design and
                   hospitality are at the core of everything we do.
                 </BodyText>
-                <Button
-                  type="solid"
-                  text="Find us"
-                  routeName="Schedule"
-                  buttonStyle={{ width: 220, marginVertical: 20 }}
-                />
               </Responsive>
+              <Button
+                type="solid"
+                text="Find us"
+                routeName="Schedule"
+                buttonStyle={{ width: 220, marginVertical: 20 }}
+              />
             </ColumnToRowChild>
           </Responsive>
           <Responsive
