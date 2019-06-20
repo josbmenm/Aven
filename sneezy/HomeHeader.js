@@ -31,15 +31,16 @@ function HomeHeader() {
                 bottom: [0, -140],
               }}
             >
-              <HideMobileView>
-                <Image
-                  source={require('./public/img/fruit_silhouette.png')}
-                  style={{
-                    ...absoluteElement,
-                    zIndex: 0,
-                  }}
-                />
-              </HideMobileView>
+              <Image
+                className="hide-mobile"
+                source={require('./public/img/fruit_silhouette.png')}
+                style={{
+                  ...absoluteElement,
+                  zIndex: 0,
+                  width: 521,
+                  height: 383,
+                }}
+              />
             </Responsive>
             <Responsive
               style={{
@@ -64,6 +65,7 @@ function HomeHeader() {
                   paddingRight: [20, 20],
                   paddingBottom: [40, 200],
                   paddingLeft: [20, 100],
+                  alignItems: ['center', 'flex-start']
                 }}
               >
                 <View
@@ -77,6 +79,9 @@ function HomeHeader() {
                   <Heading>
                     We’re making healthy food accessible to everyone.
                   </Heading>
+                  <Responsive style={{
+                    textAlign: ['center', 'left']
+                  }}>
                   <BodyText
                     style={{
                       marginBottom: 28,
@@ -86,6 +91,7 @@ function HomeHeader() {
                     focus on the best ingredients for you. All of our blends are
                     customizable and designed with your best self in mind.
                   </BodyText>
+                  </Responsive>
                   <Button
                     text="Find us"
                     routeName="Schedule"
@@ -106,7 +112,9 @@ function HomeHeader() {
                 style={{ flex: 1, width: '100%', paddingTop: '56.25%' }}
               />
             </ColumnToRowChild>
-            <HideMobileView
+            <Image
+              className="hide-mobile"
+              source={require('./public/img/strawberry.png')}
               style={{
                 ...absoluteElement,
                 width: 482,
@@ -114,35 +122,19 @@ function HomeHeader() {
                 top: -250,
                 left: -290,
               }}
-            >
-              <Image
-                source={require('./public/img/strawberry.png')}
-                style={{
-                  ...absoluteElement,
-                  width: 482,
-                  height: 641,
-                }}
-              />
-            </HideMobileView>
-            <HideDesktopView
+            />
+
+            <Image
+              className="hide-desktop"
+              source={require('./public/img/strawberry.png')}
               style={{
                 ...absoluteElement,
                 width: 241,
                 height: 320,
-                bottom: -250,
-                left: -290,
+                bottom: -172,
+                left: -100,
               }}
-            >
-              <Image
-                className="IMAGEE"
-                source={require('./public/img/strawberry.png')}
-                style={{
-                  ...absoluteElement,
-                  width: 241,
-                  height: 320,
-                }}
-              />
-            </HideDesktopView>
+            />
             <Responsive
               style={{
                 right: [0, -250],
