@@ -8,9 +8,10 @@ export default function GenericHeroHeader({
   title,
   bodyText,
   backgroundColor,
+  children
 }) {
   return (
-    <Container>
+    <Container style={{position: 'relative'}}>
       <View
         style={{
           flex: 1,
@@ -22,7 +23,7 @@ export default function GenericHeroHeader({
           style={{
             justifyContent: 'center',
             alignItems: 'center',
-            paddingHorizontal: 40,
+            paddingHorizontal: 80,
             paddingVertical: 120,
             maxWidth: 720,
           }}
@@ -31,6 +32,7 @@ export default function GenericHeroHeader({
           <BodyText style={{ textAlign: 'center' }}>{bodyText}</BodyText>
         </View>
       </View>
+      {children}
     </Container>
   );
 }

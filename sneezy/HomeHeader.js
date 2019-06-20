@@ -7,8 +7,6 @@ import {
   ColumnToRowChild,
   NoFlexToFlex,
   Responsive,
-  HideMobileView,
-  HideDesktopView,
 } from './Responsive';
 import { absoluteElement } from '../components/Styles';
 import { useTheme } from './ThemeContext';
