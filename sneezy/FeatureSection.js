@@ -17,13 +17,16 @@ function FeatureSection({
   // TODO: remove after definitive images
   if (!image) {
     image = (
+      <Responsive style={{
+        maxWidth: ["100%", 400]
+      }}>
       <View
         style={{
-          maxWidth: 630,
-          ...aspectRatio43,
           backgroundColor: theme.colors.lightGrey,
+          ...aspectRatio43,
         }}
       />
+      </Responsive>
     );
   }
   return (
@@ -39,7 +42,15 @@ function FeatureSection({
         style,
       ])}
     >
-      <ColumnToRowChild>{image}</ColumnToRowChild>
+      <Responsive
+        style={{
+          alignItems: ['stretch', inverted ? 'flex-end' : 'flex-start'],
+        }}
+      >
+        <ColumnToRowChild>
+          {image}
+        </ColumnToRowChild>
+      </Responsive>
       <ColumnToRowChild
         style={{
           paddingVertical: 40,

@@ -69,14 +69,7 @@ export function ColumnToRowChild({
     // TODO: RESPONSIVE: add/remove margin for responsive
     <View
       className={`vertical-to-horizontal-layout__child ${className}`}
-      style={StyleSheet.flatten([
-        {
-          alignItems: inverted ? 'flex-end' : 'flex-start',
-          // marginLeft: inverted ? 20 : 0,
-          // marginRight: inverted ? 0 : 20,
-        },
-        style,
-      ])}
+      style={style}
       {...rest}
     />
   );
@@ -109,108 +102,82 @@ export function NoFlexToFlex({ children, breakpoint }) {
   );
 }
 
+function validateNumberValue(value) {
+  if (typeof value === 'number') {
+    return `${value}px`;
+  } else {
+    return value;
+  }
+}
+
 export function Responsive({ style = {}, children, breakpoint, ...rest }) {
   const id = responsiveIdCount++;
   const theme = useTheme();
   const bp = breakpoint || theme.breakpoints[0];
+
+  let small = `
+  ${style.paddingVertical ? `padding: ${style.paddingVertical[0]}px 0;` : ''}
+  ${
+    style.paddingHorizontal ? `padding: 0 ${style.paddingHorizontal[0]}px;` : ''
+  }
+  ${style.paddingTop ? `padding-top: ${style.paddingTop[0]}px;` : ''}
+  ${style.paddingRight ? `padding-right: ${style.paddingRight[0]}px;` : ''}
+  ${style.paddingBottom ? `padding-bottom: ${style.paddingBottom[0]}px;` : ''}
+  ${style.paddingLeft ? `padding-left: ${style.paddingLeft[0]}px;` : ''}
+
+  ${style.marginVertical ? `margin: ${style.marginVertical[0]}px 0;` : ''}
+  ${style.marginHorizontal ? `margin: 0 ${style.marginHorizontal[0]}px;` : ''}
+  ${style.marginTop ? `margin-top: ${style.marginTop[0]}px;` : ''}
+  ${style.marginRight ? `margin-right: ${style.marginRight[0]}px;` : ''}
+  ${style.marginBottom ? `margin-bottom: ${style.marginBottom[0]}px;` : ''}
+  ${style.marginLeft ? `margin-left: ${style.marginLeft[0]}px;` : ''}
+
+  ${style.textAlign ? `text-align: ${style.textAlign[0]};` : ''}
+  ${style.alignItems ? `align-items: ${style.alignItems[0]};` : ''}
+
+  ${
+    style.maxWidth
+      ? `max-width: ${validateNumberValue(style.maxWidth[0])};`
+      : ''
+  }
+  `.trim();
+
+  let large = `
+  ${style.paddingVertical ? `padding: ${style.paddingVertical[1]}px 0;` : ''}
+  ${
+    style.paddingHorizontal ? `padding: 0 ${style.paddingHorizontal[1]}px;` : ''
+  }
+  ${style.paddingTop ? `padding-top: ${style.paddingTop[1]}px;` : ''}
+  ${style.paddingRight ? `padding-right: ${style.paddingRight[1]}px;` : ''}
+  ${style.paddingBottom ? `padding-bottom: ${style.paddingBottom[1]}px;` : ''}
+  ${style.paddingLeft ? `padding-left: ${style.paddingLeft[1]}px;` : ''}
+
+  ${style.marginVertical ? `margin: ${style.marginVertical[1]}px 0;` : ''}
+  ${style.marginHorizontal ? `margin: 0 ${style.marginHorizontal[1]}px;` : ''}
+  ${style.marginTop ? `margin-top: ${style.marginTop[1]}px;` : ''}
+  ${style.marginRight ? `margin-right: ${style.marginRight[1]}px;` : ''}
+  ${style.marginBottom ? `margin-bottom: ${style.marginBottom[1]}px;` : ''}
+  ${style.marginLeft ? `margin-left: ${style.marginLeft[1]}px;` : ''}
+
+  ${style.textAlign ? `text-align: ${style.textAlign[1]};` : ''}
+  ${style.alignItems ? `align-items: ${style.alignItems[1]};` : ''}
+
+  ${
+    style.maxWidth
+      ? `max-width: ${validateNumberValue(style.maxWidth[1])};`
+      : ''
+  }
+  `.trim();
   return (
     <React.Fragment>
       <style
         dangerouslySetInnerHTML={{
-          __html: `
-      .responsive-element-${id} {
-        ${
-          style.paddingVertical
-            ? `padding: ${style.paddingVertical[0]}px 0;`
-            : ''
-        }
-        ${
-          style.paddingHorizontal
-            ? `padding: 0 ${style.paddingHorizontal[0]}px;`
-            : ''
-        }
-        ${style.paddingTop ? `padding-top: ${style.paddingTop[0]}px;` : ''}
-        ${
-          style.paddingRight ? `padding-right: ${style.paddingRight[0]}px;` : ''
-        }
-        ${
-          style.paddingBottom
-            ? `padding-bottom: ${style.paddingBottom[0]}px;`
-            : ''
-        }
-        ${style.paddingLeft ? `padding-left: ${style.paddingLeft[0]}px;` : ''}
-
-        ${style.marginVertical ? `margin: ${style.marginVertical[0]}px 0;` : ''}
-        ${
-          style.marginHorizontal
-            ? `margin: 0 ${style.marginHorizontal[0]}px;`
-            : ''
-        }
-        ${style.marginTop ? `margin-top: ${style.marginTop[0]}px;` : ''}
-        ${style.marginRight ? `margin-right: ${style.marginRight[0]}px;` : ''}
-        ${
-          style.marginBottom ? `margin-bottom: ${style.marginBottom[0]}px;` : ''
-        }
-        ${style.marginLeft ? `margin-left: ${style.marginLeft[0]}px;` : ''}
-
-        ${style.textAlign ? `text-align: ${style.textAlign[0]};` : ''}
-        ${style.alignItems ? `align-items: ${style.alignItems[0]};` : ''}
-      }
-
-      @media only screen and (min-width: ${bp}px) {
-        .responsive-element-${id} {
-          ${
-            style.paddingVertical
-              ? `padding: ${style.paddingVertical[1]}px 0;`
-              : ''
-          }
-          ${
-            style.paddingHorizontal
-              ? `padding: 0 ${style.paddingHorizontal[1]}px;`
-              : ''
-          }
-          ${style.paddingTop ? `padding-top: ${style.paddingTop[1]}px;` : ''}
-          ${
-            style.paddingRight
-              ? `padding-right: ${style.paddingRight[1]}px;`
-              : ''
-          }
-          ${
-            style.paddingBottom
-              ? `padding-bottom: ${style.paddingBottom[1]}px;`
-              : ''
-          }
-          ${style.paddingLeft ? `padding-left: ${style.paddingLeft[1]}px;` : ''}
-
-          ${
-            style.marginVertical
-              ? `margin: ${style.marginVertical[1]}px 0;`
-              : ''
-          }
-          ${
-            style.marginHorizontal
-              ? `margin: 0 ${style.marginHorizontal[1]}px;`
-              : ''
-          }
-          ${style.marginTop ? `margin-top: ${style.marginTop[1]}px;` : ''}
-          ${style.marginRight ? `margin-right: ${style.marginRight[1]}px;` : ''}
-          ${
-            style.marginBottom
-              ? `margin-bottom: ${style.marginBottom[1]}px;`
-              : ''
-          }
-          ${style.marginLeft ? `margin-left: ${style.marginLeft[1]}px;` : ''}
-
-          ${style.textAlign ? `text-align: ${style.textAlign[1]};` : ''}
-          ${style.alignItems ? `align-items: ${style.alignItems[1]};` : ''}
-        }
-      }
-    `,
+          __html: `.re-${id}{${small}}@media only screen and (min-width: ${bp}px) {.re-${id}{${large}}}`,
         }}
       />
       {React.Children.map(children, child =>
         React.cloneElement(child, {
-          className: `responsive-element-${id}`,
+          className: `re-${id}`,
           ...rest,
         }),
       )}
