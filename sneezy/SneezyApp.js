@@ -27,7 +27,7 @@ const App = createSwitchNavigator(
       screen: Menu,
     },
     Blend: {
-      path: 'blend',
+      path: 'menu/:slug',
       screen: BlendPage,
     },
     OurStory: {

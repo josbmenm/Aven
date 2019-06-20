@@ -20,6 +20,7 @@ const startSkynetServer = async () => {
   const networkSource = await createNodeNetworkSource({
     authority: 'onofood.co',
     useSSL: true,
+    quiet: true,
   });
 
   const cloud = createCloudClient({

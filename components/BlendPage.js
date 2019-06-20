@@ -13,6 +13,7 @@ import {
 import { MenuCard, Tag } from '../components/MenuCard';
 import { MenuZone, MenuHLayout } from '../components/MenuZone';
 import formatCurrency from '../utils/formatCurrency';
+import { dietaryInfosOfMenuItem } from '../logic/configLogic';
 import {
   displayNameOfOrderItem,
   addMenuItemToCartItem,
@@ -155,26 +156,8 @@ function BlendPageContentPure({
     `${menuItem.Recipe['DisplayCalories']} Calories | ${
       menuItem.Recipe['Nutrition Detail']
     }`;
-  const dietaryInfos =
-    menuItem &&
-    Object.keys(menuItem.Dietary)
-      .map(dId => menuItem.Dietary[dId])
-      .filter(diet => {
-        if (diet['Applies To All Ingredients']) {
-          return true;
-        }
-        if (!diet.Ingredients) {
-          return false;
-        }
-        if (
-          selectedIngredientIds.find(
-            ingId => diet.Ingredients.indexOf(ingId) === -1,
-          )
-        ) {
-          return false;
-        }
-        return true;
-      });
+
+  const dietaryInfos = dietaryInfosOfMenuItem(menuItem, selectedIngredientIds);
 
   return (
     <BackgroundLayout

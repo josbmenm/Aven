@@ -13,7 +13,6 @@ import useObservable from '../cloud-core/useObservable';
 import withObservables from '@nozbe/with-observables';
 import observeNull from '../cloud-core/observeNull';
 import {
-  companyConfigToBlendMenu,
   getOrderItemMapper,
   sortByField as getSortedByField,
   TAX_RATE,
@@ -25,8 +24,12 @@ import {
   getSellPriceOfItem as doGetSellPriceOfItem,
   getOrderSummary,
   companyConfigToMenu,
+  companyConfigToBlendMenu,
+  getMenuItemSlug,
   companyConfigToFoodMenu,
 } from '../logic/configLogic';
+import slugify from '../utils/slugify';
+
 const OrderContext = createContext(null);
 
 export const sortByField = getSortedByField;
@@ -373,6 +376,19 @@ export function useMenuItem(menuItemId) {
     if (!config) return null;
     return companyConfigToBlendMenuItemMapper(menuItemId)(config);
   }, [config, menuItemId]);
+}
+export function useMenuItemSlug(menuItemSlug) {
+  const companyConfig = useCompanyConfig();
+  const menuItem = useMemo(() => {
+    const blends = companyConfigToBlendMenu(companyConfig);
+    return (
+      blends &&
+      blends.find(blend => {
+        return getMenuItemSlug(blend) === menuItemSlug;
+      })
+    );
+  }, [companyConfig]);
+  return menuItem;
 }
 
 export function useFoodItem(foodItemId) {

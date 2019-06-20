@@ -6,6 +6,7 @@ import FunctionalLink from '../navigation-web/Link';
 import { useTheme } from './ThemeContext';
 import { useMenu } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
+import { getMenuItemSlug } from '../logic/configLogic';
 
 function BlendItem({ blend }) {
   const theme = useTheme();
@@ -26,6 +27,7 @@ function BlendItem({ blend }) {
     >
       <FunctionalLink
         routeName="Blend"
+        params={{ slug: getMenuItemSlug(blend) }}
         overrideATagCSS={{ display: 'flex', flexDirection: 'column' }}
       >
         <AirtableImage

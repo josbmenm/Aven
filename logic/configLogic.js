@@ -1,4 +1,5 @@
 import formatCurrency from '../utils/formatCurrency';
+import slugify from '../utils/slugify';
 
 export const TAX_RATE = 0.09;
 
@@ -20,6 +21,12 @@ export function displayNameOfMenuItem(menuItem) {
   }
   return menuItem['Display Name'] || menuItem['Name'];
 }
+
+export function getMenuItemSlug(menuItem) {
+  const displayName = displayNameOfMenuItem(menuItem);
+  return slugify(displayName);
+}
+
 export function displayNameOfOrderItem(orderItem, menuItem) {
   if (!menuItem) {
     return 'unknown product';
@@ -521,4 +528,28 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
     enhancementsVolume,
     ingredientsVolume,
   };
+}
+
+export function dietaryInfosOfMenuItem(menuItem, selectedIngredientIds) {
+  return (
+    menuItem &&
+    Object.keys(menuItem.Dietary)
+      .map(dId => menuItem.Dietary[dId])
+      .filter(diet => {
+        if (diet['Applies To All Ingredients']) {
+          return true;
+        }
+        if (!diet.Ingredients) {
+          return false;
+        }
+        if (
+          selectedIngredientIds.find(
+            ingId => diet.Ingredients.indexOf(ingId) === -1,
+          )
+        ) {
+          return false;
+        }
+        return true;
+      })
+  );
 }
