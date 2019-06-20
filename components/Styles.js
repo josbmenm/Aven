@@ -275,3 +275,8 @@ export const aspectRatio43 = {
   width: '100%',
   paddingTop: "75%"
 }
+
+export const absoluteElement = {
+  position: 'absolute',
+  zIndex: 10
+}

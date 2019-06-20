@@ -1,12 +1,10 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { useTheme } from './ThemeContext';
 import Container from './Container';
 import { BodyText } from './Tokens';
 import FeatureSection from './FeatureSection';
-import AbsoluteImage from './AbsoluteImage';
-
-
+import { absoluteElement } from '../components/Styles';
 
 function HowItWorks() {
   const theme = useTheme();
@@ -40,9 +38,10 @@ function HowItWorks() {
           // media={}
         />
         <View style={{ position: 'relative' }}>
-          <AbsoluteImage
+          <Image
             source={require('./public/img/mango.png')}
             style={{
+              ...absoluteElement,
               width: 520,
               height: 611,
               right: -410,
@@ -64,9 +63,10 @@ function HowItWorks() {
           />
         </View>
         <View style={{ position: 'relative' }}>
-          <AbsoluteImage
+          <Image
             source={require('./public/img/mint-spinach.png')}
             style={{
+              ...absoluteElement,
               width: 310,
               height: 403,
               left: -250,

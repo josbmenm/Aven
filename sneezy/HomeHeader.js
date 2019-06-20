@@ -7,9 +7,11 @@ import {
   ColumnToRowChild,
   NoFlexToFlex,
   Responsive,
+  HideMobileView,
+  HideDesktopView,
 } from './Responsive';
+import { absoluteElement } from '../components/Styles';
 import { useTheme } from './ThemeContext';
-import AbsoluteImage from './AbsoluteImage';
 
 function HomeHeader() {
   const theme = useTheme();
@@ -23,26 +25,38 @@ function HomeHeader() {
               flex: 1,
             }}
           >
-            <AbsoluteImage
-              source={require('./public/img/fruit_silhouette.png')}
+            <Responsive
               style={{
-                right: -440,
-                top: -140,
-                width: 521,
-                height: 383,
-                zIndex: 0,
+                left: [0, -440],
+                bottom: [0, -140],
               }}
-            />
-            <AbsoluteImage
-              source={require('./public/img/fruit_silhouette.png')}
+            >
+              <HideMobileView>
+                <Image
+                  source={require('./public/img/fruit_silhouette.png')}
+                  style={{
+                    ...absoluteElement,
+                    zIndex: 0,
+                  }}
+                />
+              </HideMobileView>
+            </Responsive>
+            <Responsive
               style={{
-                left: -440,
-                bottom: -140,
-                width: 521,
-                height: 383,
-                zIndex: 0,
+                right: [-440, -440],
+                top: [-240, -140],
               }}
-            />
+            >
+              <Image
+                source={require('./public/img/fruit_silhouette.png')}
+                style={{
+                  ...absoluteElement,
+                  width: 521,
+                  height: 383,
+                  zIndex: 0,
+                }}
+              />
+            </Responsive>
             <ColumnToRowChild>
               <Responsive
                 style={{
@@ -92,14 +106,58 @@ function HomeHeader() {
                 style={{ flex: 1, width: '100%', paddingTop: '56.25%' }}
               />
             </ColumnToRowChild>
-            <AbsoluteImage
-              source={require('./public/img/strawberry.png')}
-              style={{ top: -250, left: -290, width: 482, height: 641 }}
-            />
-            <AbsoluteImage
-              source={require('./public/img/avocado.png')}
-              style={{ right: -250, bottom: -290, width: 568, height: 604 }}
-            />
+            <HideMobileView
+              style={{
+                ...absoluteElement,
+                width: 482,
+                height: 641,
+                top: -250,
+                left: -290,
+              }}
+            >
+              <Image
+                source={require('./public/img/strawberry.png')}
+                style={{
+                  ...absoluteElement,
+                  width: 482,
+                  height: 641,
+                }}
+              />
+            </HideMobileView>
+            <HideDesktopView
+              style={{
+                ...absoluteElement,
+                width: 241,
+                height: 320,
+                bottom: -250,
+                left: -290,
+              }}
+            >
+              <Image
+                className="IMAGEE"
+                source={require('./public/img/strawberry.png')}
+                style={{
+                  ...absoluteElement,
+                  width: 241,
+                  height: 320,
+                }}
+              />
+            </HideDesktopView>
+            <Responsive
+              style={{
+                right: [0, -250],
+                bottom: [0, -290],
+              }}
+            >
+              <Image
+                source={require('./public/img/avocado.png')}
+                style={{
+                  ...absoluteElement,
+                  width: 568,
+                  height: 604,
+                }}
+              />
+            </Responsive>
           </ColumnToRow>
         </Container>
       </NoFlexToFlex>

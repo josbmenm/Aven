@@ -5,7 +5,7 @@ import { useTheme } from './ThemeContext';
 import { BodyText } from './Tokens';
 
 function Schedule(props) {
-  const theme = useTheme();
+  // const theme = useTheme();
   const schedule = [
     {
       id: 1,
