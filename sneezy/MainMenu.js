@@ -220,7 +220,10 @@ export function MobileMenu() {
                 paddingVertical: 24,
               }}
             >
-              <OnoBlendsLogo width={68} />
+              <FunctionalLink
+                routeName="Home"
+                renderContent={() => <OnoBlendsLogo width={68} />}
+              />
             </View>
           </View>
         </Container>

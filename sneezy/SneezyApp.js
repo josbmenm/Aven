@@ -4,6 +4,7 @@ import OLDBlendMenu from './OLDBlendMenu';
 import TokensPage from './TokensPage';
 import Home from './HomePage';
 import Menu from './MenuPage';
+import BlendPage from './BlendPage';
 import OurStory from './OurStoryPage';
 import Privacy from './PrivacyPage';
 import Terms from './TermsPage';
@@ -25,6 +26,10 @@ const App = createSwitchNavigator(
     Menu: {
       path: 'menu',
       screen: Menu,
+    },
+    Blend: {
+      path: 'blend',
+      screen: BlendPage
     },
     OurStory: {
       path: 'our-story',
