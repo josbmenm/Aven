@@ -137,16 +137,16 @@ function HomeHeader() {
             />
             <Responsive
               style={{
-                right: [0, -250],
-                bottom: [0, -290],
+                right: [-125, -250],
+                bottom: [-140, -290],
+                width: [284, 568],
+                height: [302, 604],
               }}
             >
               <Image
                 source={require('./public/img/avocado.png')}
                 style={{
-                  ...absoluteElement,
-                  width: 568,
-                  height: 604,
+                  ...absoluteElement
                 }}
               />
             </Responsive>

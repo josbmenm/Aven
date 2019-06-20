@@ -177,8 +177,8 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
       : ''
   }
 
-  ${style.width ? `width: ${validateNumberValue(style.width[0])};` : ''}
-  ${style.height ? `height: ${validateNumberValue(style.height[0])};` : ''}
+  ${style.width ? `width: ${validateNumberValue(style.width[1])};` : ''}
+  ${style.height ? `height: ${validateNumberValue(style.height[1])};` : ''}
 
   ${style.top ? `top: ${validateNumberValue(style.top[1])};` : ''}
   ${style.right ? `right: ${validateNumberValue(style.right[1])};` : ''}
