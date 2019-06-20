@@ -65,7 +65,7 @@ function HomeHeader() {
                   paddingRight: [20, 20],
                   paddingBottom: [40, 200],
                   paddingLeft: [20, 100],
-                  alignItems: ['center', 'flex-start']
+                  alignItems: ['center', 'flex-start'],
                 }}
               >
                 <View
@@ -79,18 +79,20 @@ function HomeHeader() {
                   <Heading>
                     We’re making healthy food accessible to everyone.
                   </Heading>
-                  <Responsive style={{
-                    textAlign: ['center', 'left']
-                  }}>
-                  <BodyText
+                  <Responsive
                     style={{
-                      marginBottom: 28,
+                      textAlign: ['center', 'left'],
                     }}
                   >
-                    Using organic fruits and vegetables, we create blends that
-                    focus on the best ingredients for you. All of our blends are
-                    customizable and designed with your best self in mind.
-                  </BodyText>
+                    <BodyText
+                      style={{
+                        marginBottom: 28,
+                      }}
+                    >
+                      Using organic fruits and vegetables, we create blends that
+                      focus on the best ingredients for you. All of our blends
+                      are customizable and designed with your best self in mind.
+                    </BodyText>
                   </Responsive>
                   <Button
                     text="Find us"
@@ -146,7 +148,7 @@ function HomeHeader() {
               <Image
                 source={require('./public/img/avocado.png')}
                 style={{
-                  ...absoluteElement
+                  ...absoluteElement,
                 }}
               />
             </Responsive>

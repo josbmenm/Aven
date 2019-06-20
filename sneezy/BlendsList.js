@@ -40,6 +40,11 @@ function BlendItem({ blend }) {
             bottom: 0,
             left: 0,
             zIndex: -1,
+            transform: [
+              { translateX: -36 },
+              { translateY: 40 },
+              { scale: 1.1 },
+            ],
           }}
           resizeMode="cover"
         />
