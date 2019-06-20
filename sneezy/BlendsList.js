@@ -60,7 +60,7 @@ function BlendItem({ blend }) {
             textTransform: 'uppercase',
             alignSelf: 'flex-end',
             paddingVertical: 4,
-            paddingHorizontal: 8,
+            paddingHorizontal: 16,
             borderRadius: 4,
             backgroundColor: theme.colors.primary,
             color: theme.colors.white,
