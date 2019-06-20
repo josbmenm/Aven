@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, Animated, Easing } from 'react-native';
-// import { TextInputMask } from 'react-native-masked-text';
+import { View, TextInput, Text } from 'react-native';
+import { TextInputMask } from 'react-native-masked-text';
 import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
-// import Animated, { Easing } from 'react-native-reanimated';
+import Animated, { Easing } from 'react-native-reanimated';
 
 const textInputFontSize = 26;
 
@@ -33,7 +33,7 @@ function BlockFormInputWithRef(
   let valueHandler = onValue;
   // let valueHandler = onValue;
   if (mode === 'phone') {
-    Input = TextInput;
+    Input = TextInputMask;
     inputType = 'custom';
     inputOptions = {
       mask: '(999) 999-9999',
@@ -64,6 +64,7 @@ function BlockFormInputWithRef(
       style={{
         flex: 1,
         marginHorizontal: 10,
+        borderWidth: 1,
         borderRadius: 4,
         paddingTop: 15,
         borderColor: monsterra60,
@@ -76,16 +77,15 @@ function BlockFormInputWithRef(
           position: 'absolute',
           left: 0,
           right: 0,
-          zIndex: -1,
-          fontSize: placeholderOpenProgress.interpolate({
+          fontSize: Animated.interpolate(placeholderOpenProgress, {
             inputRange: [0, 1],
             outputRange: [13, 28],
           }),
           transform: [
             {
-              translateY: placeholderOpenProgress.interpolate({
+              translateY: Animated.interpolate(placeholderOpenProgress, {
                 inputRange: [0, 1],
-                outputRange: [-6, 0],
+                outputRange: [7, 24],
               }),
             },
           ],

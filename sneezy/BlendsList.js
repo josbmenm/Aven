@@ -26,7 +26,6 @@ function BlendItem({ blend }) {
     >
       <FunctionalLink
         routeName="Blend"
-        params={{ id: 123 }}
         overrideATagCSS={{ display: 'flex', flexDirection: 'column' }}
       >
         <AirtableImage
