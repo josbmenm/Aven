@@ -208,10 +208,12 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
     `,
         }}
       />
-      {React.cloneElement(children, {
-        className: `responsive-element-${id}`,
-        ...rest,
-      })}
+      {React.Children.map(children, child =>
+        React.cloneElement(child, {
+          className: `responsive-element-${id}`,
+          ...rest,
+        }),
+      )}
     </React.Fragment>
   );
 }

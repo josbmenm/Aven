@@ -87,7 +87,7 @@ function OurStoryPage({}) {
           />
           <FeatureSection
             inverted
-            title="Powered by Robotics"
+            title="Powered by robotics"
             bodyText={
               <BodyText>
                 Automation gives us the ability to ensure your order is blended

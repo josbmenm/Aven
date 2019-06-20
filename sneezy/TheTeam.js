@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Title, BodyText } from './Tokens';
+import { Title, BodyText, Button } from './Tokens';
 import Container from './Container';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import { aspectRatio43 } from '../components/Styles';
@@ -19,7 +19,7 @@ function TheTeam() {
           <Responsive
             style={{
               alignItems: ['center !important', 'flex-start !important'],
-              paddingRight: [0, 40]
+              paddingRight: [0, 40],
             }}
           >
             <ColumnToRowChild
@@ -37,6 +37,12 @@ function TheTeam() {
                   fine dining. Regardless of the discipline, design and
                   hospitality are at the core of everything we do.
                 </BodyText>
+                <Button
+                  type="solid"
+                  text="Find us"
+                  routeName="Schedule"
+                  buttonStyle={{ width: 220, marginVertical: 20 }}
+                />
               </Responsive>
             </ColumnToRowChild>
           </Responsive>
