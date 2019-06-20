@@ -244,7 +244,7 @@ export function MobileMenu() {
             padding: 6,
           }}
         >
-          <SidebarMenuIcon />
+          <SidebarMenuIcon style={{ opacity: sidebar ? 1 : 0.4 }} />
         </TouchableOpacity>
       </HideDesktopView>
     </React.Fragment>
