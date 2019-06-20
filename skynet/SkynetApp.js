@@ -10,12 +10,9 @@ import {
 } from 'react-native';
 import { createSwitchNavigator } from '../navigation-core';
 import Admin from '../admin/Admin';
-import Terms from './Terms';
-import Privacy from './Privacy';
 import FocusExample from './FocusExample';
 import ReceiptPage from './ReceiptPage';
-import PreviewHome from './PreviewHome';
-import BlendMenu from './BlendMenu';
+import InternalBlendMenu from './InternalBlendMenu';
 import SneezyApp from '../sneezy/SneezyApp';
 import { monsterra } from '../components/Styles';
 import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
@@ -119,16 +116,13 @@ const App = createSwitchNavigator(
       screen: SkynetAdmin,
       path: 'admin',
     },
-    PreviewHome,
     Receipt: ReceiptPage,
-    Menu: {
-      screen: BlendMenu,
+    InternalBlendMenu: {
+      screen: InternalBlendMenu,
       path: 'icanneverremembertheblendrecipes',
     },
-    Terms,
-    Privacy,
-    Menu2: {
-      screen: BlendMenu,
+    InternalBlendMenu2: {
+      screen: InternalBlendMenu,
       path: 'secrets/blendmenu',
     },
     Focus: {

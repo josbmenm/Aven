@@ -1,6 +1,5 @@
 import React from 'react';
 import { createSwitchNavigator } from '../navigation-core';
-import OLDBlendMenu from './OLDBlendMenu';
 import TokensPage from './TokensPage';
 import Home from './HomePage';
 import Menu from './MenuPage';
@@ -29,7 +28,7 @@ const App = createSwitchNavigator(
     },
     Blend: {
       path: 'blend',
-      screen: BlendPage
+      screen: BlendPage,
     },
     OurStory: {
       path: 'our-story',
@@ -53,16 +52,11 @@ const App = createSwitchNavigator(
     },
     Schedule: {
       path: 'shedule',
-      screen: Schedule
+      screen: Schedule,
     },
     Subscribe: {
       path: 'subscribe',
-      screen: Subscribe
-    },
-    // to be deleted:
-    OldMenu: {
-      path: 'old/menu',
-      screen: OLDBlendMenu,
+      screen: Subscribe,
     },
   },
   {
