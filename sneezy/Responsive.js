@@ -140,6 +140,12 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
       ? `max-width: ${validateNumberValue(style.maxWidth[0])};`
       : ''
   }
+
+  ${style.top ? `top: ${validateNumberValue(style.top[0])}` : ''}
+  ${style.right ? `right: ${validateNumberValue(style.right[0])}` : ''}
+  ${style.bottom ? `bottom: ${validateNumberValue(style.bottom[0])}` : ''}
+  ${style.left ? `left: ${validateNumberValue(style.left[0])}` : ''}
+
   `.trim();
 
   let large = `
@@ -167,6 +173,11 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
       ? `max-width: ${validateNumberValue(style.maxWidth[1])};`
       : ''
   }
+
+  ${style.top ? `top: ${validateNumberValue(style.top[1])}` : ''}
+  ${style.right ? `right: ${validateNumberValue(style.right[1])}` : ''}
+  ${style.bottom ? `bottom: ${validateNumberValue(style.bottom[1])}` : ''}
+  ${style.left ? `left: ${validateNumberValue(style.left[1])}` : ''}
   `.trim();
   return (
     <React.Fragment>

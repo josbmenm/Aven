@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
+import { Responsive } from './Responsive';
 import { useTheme } from './ThemeContext';
 import { BodyText } from './Tokens';
 
@@ -17,13 +18,18 @@ function Schedule(props) {
       time: '10:30 am - 2:30 pm',
       address: '981 35th St, Oakland, CA 94608',
       active: false,
-    }
+    },
   ];
 
   return (
     <View>
       {schedule.map((item, index) => (
-        <ScheduleItem key={item.id} item={item} first={index === 0} last={index === schedule.length - 1} />
+        <ScheduleItem
+          key={item.id}
+          item={item}
+          first={index === 0}
+          last={index === schedule.length - 1}
+        />
       ))}
     </View>
   );
@@ -40,47 +46,60 @@ function ScheduleItem({ item, first, last }) {
         position: 'relative',
       }}
     >
-      <View
+      <Responsive
         style={{
-          width: 3,
-          backgroundColor: theme.colors.primary,
-          position: 'absolute',
-          top: first ? '50%' : 0,
-          bottom: last ? "50%" : 0,
-          left: -40,
-        }}
-      />
-      <View
-        style={{
-          width: 20,
-          height: 20,
-          position: 'absolute',
-          left: -48,
-          backgroundColor: theme.colors.primary,
-          borderWidth: 3,
-          borderColor: theme.colors.white,
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: 10,
+          left: [8, -40],
         }}
       >
-        {item.active && (
-          <View
-            style={{
-              backgroundColor: theme.colors.white,
-              width: 8,
-              height: 8,
-              borderRadius: 4,
-            }}
-          />
-        )}
-      </View>
+        <View
+          style={{
+            width: 3,
+            backgroundColor: theme.colors.primary,
+            position: 'absolute',
+            top: first ? '50%' : 0,
+            bottom: last ? '50%' : 0,
+          }}
+        />
+      </Responsive>
+      <Responsive
+        style={{
+          left: [0, -48],
+        }}
+      >
+        <View
+          style={{
+            width: 20,
+            height: 20,
+            position: 'absolute',
+            backgroundColor: theme.colors.primary,
+            borderWidth: 3,
+            borderColor: theme.colors.white,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 10,
+          }}
+        >
+          {item.active && (
+            <View
+              style={{
+                backgroundColor: theme.colors.white,
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+              }}
+            />
+          )}
+        </View>
+      </Responsive>
+      <Responsive style={{
+        marginLeft: [40, 0]
+      }}>
       <View
         style={{
           flex: 1,
           borderRadius: 8,
           borderWidth: 3,
-          borderColor: item.active ? theme.colors.primary : "transparent",
+          borderColor: item.active ? theme.colors.primary : 'transparent',
           padding: 20,
           ...theme.shadows.medium,
         }}
@@ -98,6 +117,7 @@ function ScheduleItem({ item, first, last }) {
         </BodyText>
         <BodyText style={{ marginBottom: 0 }}>{item.address}</BodyText>
       </View>
+      </Responsive>
     </View>
   );
 }
