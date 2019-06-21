@@ -235,6 +235,9 @@ describe('interpreted data sources', () => {
           const ancestorName = `${doc.getFullName()}#${value.on.id}^listValue`;
           state = getValue(cloud.get(ancestorName));
         }
+        if (!state) {
+          return state;
+        }
 
         if (action.add) {
           return [...state, action.add];
@@ -431,6 +434,59 @@ describe('interpreted data sources', () => {
     });
 
     expect(result.value).toBe(9);
+  });
+
+  it('observe evalDocs static function value', async () => {
+    const storageSource = createMemoryStorageSource({ domain: 'test' });
+
+    const squared = defineCloudFunction('squared', ({ value }) => {
+      return value * value;
+    });
+
+    const interpretedSource = createEvalSource({
+      source: storageSource,
+      domain: 'test',
+      functions: [squared],
+    });
+
+    await interpretedSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: 2,
+    });
+
+    let lastVal = null;
+    let subs = (await interpretedSource.observeDoc(
+      'test',
+      'foo^squared',
+    )).subscribe({
+      next: v => {
+        lastVal = v.value;
+      },
+    });
+    await justASec();
+    expect(lastVal).toBe(4);
+
+    await interpretedSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: 3,
+    });
+
+    expect(lastVal).toBe(9);
+
+    subs.unsubscribe();
+
+    await interpretedSource.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: 4,
+    });
+
+    expect(lastVal).toBe(9);
   });
 });
 

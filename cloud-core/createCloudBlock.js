@@ -295,6 +295,17 @@ export default function createCloudBlock({
     });
   };
 
+  function functionGetValue(argDoc) {
+    const { result } = runEvalLambda(
+      getValue(),
+      argDoc && argDoc.getValue(),
+      argDoc && argDoc.getId(),
+      argDoc,
+    );
+
+    return result;
+  }
+
   const cloudBlock = {
     type: 'Block',
     isConnected,
@@ -320,6 +331,7 @@ export default function createCloudBlock({
     serialize,
 
     functionObserveValueAndId,
+    functionGetValue,
   };
 
   bindCloudValueFunctions(cloudBlock, cloudClient);

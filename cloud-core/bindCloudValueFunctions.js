@@ -50,10 +50,17 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
     return [];
   }
   const isConnected = new BehaviorSubject(false);
-  let lastValue = undefined;
+
+  const getValue = () => {
+    const o = cloudValue.getValue();
+    const expandSpec = expandFn(o, cloudValue);
+    const expanded = doExpansion(expandSpec);
+    return expanded;
+  };
+
   const expanded = {
     isConnected,
-    getId: () => (lastValue ? getIdOfValue(lastValue) : undefined),
+    getId: () => getIdOfValue(getValue()),
     getIsConnected: isConnected.getValue,
     type: 'ExpandedDoc',
     getFullName: () => {
@@ -80,7 +87,6 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
         await Promise.all(cloudValues.map(v => v.loadValue()));
         isConnected.next(true);
         const expandedValue = doExpansion(expandSpec);
-        lastValue = expandedValue;
         return {
           value: expandedValue,
           getId: () => getIdOfValue(expandedValue),
@@ -88,7 +94,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
       })
       .distinctUntilChanged()
       .shareReplay(),
-    getValue: () => lastValue,
+    getValue,
   };
   bindCloudValueFunctions(expanded, cloudClient);
   return expanded;
@@ -105,7 +111,9 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
     return cachedResult;
   }
   const isConnected = new BehaviorSubject(false);
-  let lastValue = undefined;
+  const getValue = () => {
+    return lambdaDoc.functionGetValue(cloudValue);
+  };
   const handleFnConnectivity = isConn => {
     // effectively, this is the only way for an eval doc to be connected
     isConnected.next(isConn);
@@ -113,7 +121,7 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
   // creating a synthetic doc that can be observed and fetched.
   const evalDoc = {
     isConnected,
-    getId: () => (lastValue ? getIdOfValue(lastValue) : undefined),
+    getId: () => getIdOfValue(getValue()),
     getIsConnected: isConnected.getValue,
     type: 'EvaluatedDoc',
     getReference: () => {
@@ -135,10 +143,10 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
       cloudValue,
       handleFnConnectivity,
       value => {
-        lastValue = value;
+        // err.. cache it?
       },
     ),
-    getValue: () => lastValue,
+    getValue,
   };
   bindCloudValueFunctions(evalDoc, cloudClient);
   lambdaCache.set(cloudValue, evalDoc);
@@ -146,12 +154,11 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
 }
 
 function mapCloudValue(cloudValue, cloudClient, mapFn) {
-  let lastValue = undefined;
   const mapped = {
     isConnected: cloudValue.isConnected,
     getIsConnected: cloudValue.isConnected.getValue,
     type: cloudValue.type + '-Mapped',
-    getId: () => (lastValue ? getIdOfValue(lastValue) : undefined),
+    getId: () => getIdOfValue(mapFn(cloudValue.getValue())),
     getFullName: () => {
       return cloudValue.getFullName() + '__mapped';
     },
@@ -170,11 +177,10 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
       .distinctUntilChanged()
       .map(data => {
         const value = mapFn(data);
-        lastValue = value;
         return { value, getId: () => getIdOfValue(value) };
       })
       .shareReplay(1),
-    getValue: () => lastValue,
+    getValue: () => mapFn(cloudValue.getValue()),
   };
 
   bindCloudValueFunctions(mapped, cloudClient);

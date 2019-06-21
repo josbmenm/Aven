@@ -1012,28 +1012,41 @@ export default function createCloudDoc({
       overriddenFunctionResults.set(argumentDoc, resultObservable);
       return resultObservable;
     }
-    // We don't have this fuction locally, so we will observe the result of the source's evaluator
-    const responseSubject = new ReplaySubject(1);
-    const evalDocName = `${argumentDoc.getFullName()}^${getFullName()}`;
-    source
-      .observeDoc(domain, evalDocName)
-      .then(observable => {
-        observable.subscribe({
-          next: resp => {
-            responseSubject.next({
-              value: resp.value,
-              getId: () => resp.id,
-            });
-          },
-          error: err => {
-            responseSubject.error(err);
-          },
+
+    function observeRemote() {
+      // We don't have this fuction locally, so we will observe the result of the source's evaluator
+      const responseSubject = new ReplaySubject(1);
+      const evalDocName = `${argumentDoc.getFullName()}^${getFullName()}`;
+      source
+        .observeDoc(domain, evalDocName)
+        .then(observable => {
+          observable.subscribe({
+            next: resp => {
+              responseSubject.next({
+                value: resp.value,
+                getId: () => resp.id,
+              });
+            },
+            error: err => {
+              responseSubject.error(err);
+            },
+            complete: () => {},
+          });
+        })
+        .catch(e => {
+          responseSubject.error(e);
         });
-      })
-      .catch(e => {
-        responseSubject.error(e);
-      });
-    return responseSubject;
+      return responseSubject;
+    }
+
+    return observe.switchMap(cloudDocValue => {
+      if (!cloudDocValue.id) {
+        return observeRemote();
+      }
+      const block = _getBlockWithId(cloudDocValue.id);
+      const fnObs = block.functionObserveValueAndId(argumentDoc, onIsConnected);
+      return fnObs;
+    });
   };
 
   function lookupDocBlock(inputVal, lookup) {
@@ -1112,6 +1125,28 @@ export default function createCloudDoc({
 
   function close() {}
 
+  function functionGetValue(argumentDoc) {
+    if (overriddenFunction) {
+      const argId = argumentDoc.getId();
+      if (overriddenFunctionCache[argId] !== undefined) {
+        return overriddenFunctionCache[argId];
+      }
+      const { result } = runLambda(
+        overriddenFunction,
+        argumentDoc.getValue(),
+        argId,
+        argumentDoc,
+        cloudClient,
+      );
+      return result;
+    }
+    const block = getBlock();
+    if (!block) {
+      return undefined;
+    }
+    return block.functionGetValue(argumentDoc);
+  }
+
   const isConnected = mapBehaviorSubject(docState, state => state.isConnected);
 
   const cloudDoc = {
@@ -1156,6 +1191,8 @@ export default function createCloudDoc({
     // todo: serialize?
 
     functionObserveValueAndId,
+    functionGetValue,
+
     _defineCloudFunction,
     $setOverrideFunction, // I suppose this is an implementation detail of eval data source
     markRemoteLambda, // maybe rename this..

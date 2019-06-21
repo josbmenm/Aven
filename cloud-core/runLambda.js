@@ -7,11 +7,12 @@ export default function runLambda(
 ) {
   const dependencies = new Set();
   async function loadDependencies() {
-    return await Promise.all(
+    const depResults = await Promise.all(
       [...dependencies].map(async dep => {
         return await dep.loadValue();
       }),
     );
+    return depResults;
   }
   function getValue(cloudValue) {
     dependencies.add(cloudValue);
