@@ -28,7 +28,6 @@ import {
   getMenuItemSlug,
   companyConfigToFoodMenu,
 } from '../logic/configLogic';
-import slugify from '../utils/slugify';
 
 const OrderContext = createContext(null);
 

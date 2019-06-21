@@ -1,5 +1,4 @@
 import formatCurrency from '../utils/formatCurrency';
-import slugify from '../utils/slugify';
 
 export const TAX_RATE = 0.09;
 
@@ -23,8 +22,7 @@ export function displayNameOfMenuItem(menuItem) {
 }
 
 export function getMenuItemSlug(menuItem) {
-  const displayName = displayNameOfMenuItem(menuItem);
-  return slugify(displayName);
+  return menuItem.Slug;
 }
 
 export function displayNameOfOrderItem(orderItem, menuItem) {
