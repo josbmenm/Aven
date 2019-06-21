@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import Container from './Container';
 import { useTheme } from './ThemeContext';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import OnoFoodLogo from './OnoFoodLogo';
 import { FootNote, Link } from './Tokens';
+import FunctionalLink from '../navigation-web/Link';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
 
 export default function PageFooter() {
@@ -95,27 +96,71 @@ export default function PageFooter() {
               <ColumnToRowChild
                 style={{
                   paddingTop: 4,
-                  flexDirection: 'row',
+                  flexDirection: 'column',
                   alignItems: 'flex-start',
                   marginBottom: 40,
                 }}
               >
-                {/* Instagram Icon */}
-                <View
-                  style={{
-                    backgroundColor: theme.colors.lightGrey,
-                    width: 20,
-                    height: 20,
-                    borderRadius: 2,
-                    marginRight: 8,
-                  }}
-                />
-                <Text style={theme.textStyles.footnote}>@onofodco</Text>
+
+                <FunctionalLink url="https://www.twitter.com/onofoodco/">
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      marginBottom: 8,
+                    }}
+                  >
+                    <SocialIcon icon={require('./public/img/twitter.png')} />
+                    <Text style={theme.textStyles.footnote}>@onofodco</Text>
+                  </View>
+                </FunctionalLink>
+                <FunctionalLink url="https://www.facebook.com/onofoodco/">
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      marginBottom: 8,
+                    }}
+                  >
+                    <SocialIcon icon={require('./public/img/facebook.png')} />
+                    <Text style={theme.textStyles.footnote}>@onofodco</Text>
+                  </View>
+                </FunctionalLink>
+                <FunctionalLink url="https://www.instagram.com/onofoodco/">
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      marginBottom: 8,
+                    }}
+                  >
+                    <SocialIcon icon={require('./public/img/instagram.png')} />
+                    <Text style={theme.textStyles.footnote}>@onofodco</Text>
+                  </View>
+                </FunctionalLink>
               </ColumnToRowChild>
             </ColumnToRow>
           </ColumnToRowChild>
         </ColumnToRow>
       </Container>
     </View>
+  );
+}
+
+function SocialIcon({ icon }) {
+  const theme = useTheme();
+  if (typeof icon === 'undefined') {
+    console.error('SocialIcon required an `icon` prop');
+    return null;
+  }
+  return (
+    <Image
+      resizeMode="contain"
+      source={icon}
+      style={{
+        backgroundColor: theme.colors.lightGrey,
+        width: 20,
+        height: 20,
+        borderRadius: 2,
+        marginRight: 8,
+      }}
+    />
   );
 }
