@@ -10,7 +10,8 @@ import Terms from './TermsPage';
 import BookUs from './BookUsPage';
 import Schedule from './SchedulePage';
 import Subscribe from './SubscribePage';
-import { ThemeContext, theme } from './ThemeContext';
+import { theme } from './Theme';
+import { ThemeProvider } from '../dashboard/Theme'
 import Preview from './PreviewHome';
 
 const customHTMLHeaders = `
@@ -73,9 +74,9 @@ const App = createSwitchNavigator(
 
 function Root(props) {
   return (
-    <ThemeContext.Provider value={theme}>
+  <ThemeProvider value={theme}>
       <App {...props} />
-    </ThemeContext.Provider>
+    </ThemeProvider>
   );
 }
 

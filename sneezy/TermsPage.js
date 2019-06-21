@@ -2,7 +2,7 @@ import React from 'react';
 import GenericPage from './GenericPage';
 import { Section, SubSection, List, ListItem, BodyText } from './Tokens';
 import GenericHeroHeader from './GenericHeroHeader';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import Container from './Container';
 import PageFooter from './PageFooter';
 

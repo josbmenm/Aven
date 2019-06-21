@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image } from 'react-native';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import Container from './Container';
 import { BodyText, Heading } from './Tokens';
 import FunctionalLink from '../navigation-web/Link';

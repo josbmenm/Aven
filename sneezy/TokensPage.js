@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { Heading, Title, BodyText, FootNote, Button } from './Tokens';
 import GenericPage from './GenericPage';
 import Container from './Container';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import Input from '../components/BlockFormInput'
 
 function TokenSection({ title, children }) {

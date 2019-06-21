@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import Container from './Container';
 import { Title, FootNote, BodyText } from './Tokens';
 import FunctionalLink from '../navigation-web/Link';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import { useMenu } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { getMenuItemSlug } from '../logic/configLogic';

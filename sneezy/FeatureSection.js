@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Title } from './Tokens';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import { aspectRatio43 } from '../components/Styles';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 
 function FeatureSection({
   title,

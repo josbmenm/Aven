@@ -4,7 +4,7 @@ import GenericPage from './GenericPage';
 import GenericHeroHeader from './GenericHeroHeader';
 import { SubSection, BodyText } from './Tokens';
 import Container from './Container';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import PageFooter from './PageFooter';
 
 function Privacy() {

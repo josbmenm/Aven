@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import Container from './Container';
 import { Button, Title, BodyText } from './Tokens';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';

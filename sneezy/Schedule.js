@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Responsive } from './Responsive';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import { BodyText } from './Tokens';
 
 function Schedule(props) {

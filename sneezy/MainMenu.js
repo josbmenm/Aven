@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Container from './Container';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import { Button, Link, StyledButton } from './Tokens';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import FunctionalLink from '../navigation-web/Link';

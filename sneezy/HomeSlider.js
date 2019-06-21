@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image, ScrollView, StyleSheet } from 'react-native';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import Container from './Container';
 
 function Slide({ source, width, height }) {

@@ -5,7 +5,7 @@ import Container from './Container';
 import BlockForm from '../components/BlockForm';
 import FormInput from '../components/BlockFormInput';
 import Button from '../components/Button';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import { LocationInput } from './LocationInput';
 import { Responsive } from './Responsive';
 

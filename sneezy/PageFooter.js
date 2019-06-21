@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import Container from './Container';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import OnoBlendsLogo from './OnoBlendsLogo';
 import OnoFoodLogo from './OnoFoodLogo';
 import { FootNote, Link } from './Tokens';

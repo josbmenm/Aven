@@ -4,7 +4,7 @@ import { Title, BodyText, Button } from './Tokens';
 import Container from './Container';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import { aspectRatio43 } from '../components/Styles';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 
 function TheTeam() {
   const theme = useTheme();

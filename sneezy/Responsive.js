@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 
 let responsiveIdCount = 0;
 

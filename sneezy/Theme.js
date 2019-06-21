@@ -90,10 +90,6 @@ const shadows = {
   },
 };
 
-const button = {
-
-}
-
 export const theme = {
   colors,
   fontFamily,
@@ -107,9 +103,3 @@ export const theme = {
   },
   spaces: [0, 4, 8, 12, 16, 20, 24, 28, 32]
 };
-
-export const ThemeContext = React.createContext(theme);
-
-export function useTheme() {
-  return React.useContext(ThemeContext);
-}

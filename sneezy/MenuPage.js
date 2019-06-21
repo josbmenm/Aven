@@ -5,7 +5,7 @@ import GenericPage from './GenericPage';
 import GenericHeroHeader from './GenericHeroHeader';
 import BlendsList from './BlendsList';
 import PageFooter from './PageFooter';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import { Responsive } from './Responsive';
 
 function Menu() {

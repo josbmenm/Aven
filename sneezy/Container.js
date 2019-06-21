@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 
 function Container({ children, style = {} }) {
   const theme = useTheme();

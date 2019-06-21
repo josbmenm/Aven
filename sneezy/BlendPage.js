@@ -4,7 +4,7 @@ import GenericPage from './GenericPage';
 import GenericHeroHeader from './GenericHeroHeader';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import PageFooter from './PageFooter';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import { useMenuItemSlug, useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { dietaryInfosOfMenuItem } from '../logic/configLogic';

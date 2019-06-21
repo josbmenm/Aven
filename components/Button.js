@@ -1,7 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 import { StyledButton } from '../sneezy/Tokens';
-import { useTheme } from '../sneezy/ThemeContext';
 
 const Button = ({
   onPress,

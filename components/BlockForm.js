@@ -1,6 +1,6 @@
 import React from 'react';
 import Container from '../sneezy/Container';
-import { useTheme } from '../sneezy/ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 
 export default function BlockForm({ children }) {
   const theme = useTheme();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 import GenericPage from './GenericPage';
 import PageFooter from './PageFooter';
 import GenericHeroHeader from './GenericHeroHeader';

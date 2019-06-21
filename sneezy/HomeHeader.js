@@ -9,7 +9,7 @@ import {
   Responsive,
 } from './Responsive';
 import { absoluteElement } from '../components/Styles';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../dashboard/Theme'
 
 function HomeHeader() {
   const theme = useTheme();
