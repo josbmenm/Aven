@@ -21,12 +21,9 @@ function useSteps(initialValue) {
 function formReducer(state, action) {
   switch (action.type) {
     case 'UPDATE_FIELD':
-      // validate values here
-      let errors;
       return {
         ...state,
-        fields: { ...state.fields, [action.key]: action.value },
-        errors,
+        fields: { ...state.fields, [action.key]: action.value }
       };
     default:
       return state;
@@ -46,8 +43,7 @@ function BookUsWizard() {
         place_name_en: '',
       },
       comments: '',
-    },
-    errors: null,
+    }
   });
   const { step, setStep, totalSteps } = useSteps(0);
 
