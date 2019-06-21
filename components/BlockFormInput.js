@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, Animated, Easing } from 'react-native';
 // import { TextInputMask } from 'react-native-masked-text';
 import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
+import { Responsive } from '../sneezy/Responsive';
 // import Animated, { Easing } from 'react-native-reanimated';
 
 const textInputFontSize = 26;
@@ -9,6 +10,7 @@ const textInputFontSize = 26;
 function BlockFormInputWithRef(
   { value, onValue, label, mode, onSubmit, onFocus, onBlur, upperCase },
   ref,
+  ...rest
 ) {
   const desiredPlaceholderOpen = value ? 0 : 1;
   const [placeholderOpenProgress] = useState(
@@ -31,6 +33,7 @@ function BlockFormInputWithRef(
   let inputOptions = undefined;
   let inputRef = ref;
   let valueHandler = onValue;
+  let multiline = false;
   // let valueHandler = onValue;
   if (mode === 'phone') {
     Input = TextInput;
@@ -58,63 +61,74 @@ function BlockFormInputWithRef(
     autoCapitalize = 'words';
   } else if (mode === 'code') {
     autoCapitalize = 'characters';
+  } else if (mode === 'textarea') {
+    multiline = true;
   }
   return (
-    <View
+    <Responsive
       style={{
-        flex: 1,
-        marginHorizontal: 8,
-        borderRadius: 4,
-        paddingTop: 12,
-        borderColor: monsterra60,
-        borderWidth: 3,
+        marginBottom: [16, 0],
       }}
     >
-      <Animated.Text
+      <View
         style={{
-          ...textInputLabelStyle,
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          zIndex: -1,
-          fontSize: placeholderOpenProgress.interpolate({
-            inputRange: [0, 1],
-            outputRange: [13, 28],
-          }),
-          transform: [
-            {
-              translateY: placeholderOpenProgress.interpolate({
-                inputRange: [0, 1],
-                outputRange: [-6, 0],
-              }),
-            },
-          ],
+          flex: 1,
+          marginHorizontal: 8,
+          borderRadius: 4,
+          paddingTop: 12,
+          borderColor: monsterra60,
+          borderWidth: 3,
         }}
+        {...rest}
       >
-        {label}
-      </Animated.Text>
-      <Input
-        enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
-        keyboardAppearance="dark"
-        keyboardType={keyboardType}
-        autoCorrect={autoCorrect}
-        secureTextEntry={secureTextEntry}
-        autoCapitalize={autoCapitalize}
-        ref={inputRef}
-        value={value}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        onChangeText={valueHandler}
-        options={inputOptions}
-        type={inputType}
-        onSubmitEditing={onSubmit}
-        style={{
-          fontSize: textInputFontSize,
-          ...textInputStyle,
-          ...(mode === 'description' ? { height: 120 } : {}),
-        }}
-      />
-    </View>
+        <Animated.Text
+          style={{
+            ...textInputLabelStyle,
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            zIndex: -1,
+            fontSize: placeholderOpenProgress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [13, 28],
+            }),
+            transform: [
+              {
+                translateY: placeholderOpenProgress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-6, 0],
+                }),
+              },
+            ],
+          }}
+        >
+          {label}
+        </Animated.Text>
+        <Input
+          enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
+          keyboardAppearance="dark"
+          keyboardType={keyboardType}
+          autoCorrect={autoCorrect}
+          secureTextEntry={secureTextEntry}
+          autoCapitalize={autoCapitalize}
+          ref={inputRef}
+          multiline={multiline}
+          value={value}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          onChangeText={valueHandler}
+          options={inputOptions}
+          type={inputType}
+          onSubmitEditing={onSubmit}
+          style={{
+            fontSize: textInputFontSize,
+            ...textInputStyle,
+            ...(mode === 'description' ? { height: 120 } : {}),
+            ...(mode === 'textarea' ? { height: 200 } : {}),
+          }}
+        />
+      </View>
+    </Responsive>
   );
 }
 

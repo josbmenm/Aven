@@ -7,6 +7,7 @@ import FormInput from '../components/BlockFormInput';
 import Button from '../components/Button';
 import { useTheme } from './ThemeContext';
 import { LocationInput } from './LocationInput';
+import { Responsive } from './Responsive';
 
 function useSteps(initialValue) {
   const [step, setStep] = React.useState(initialValue);
@@ -18,8 +19,6 @@ function useSteps(initialValue) {
 }
 
 function formReducer(state, action) {
-  console.log("TCL: formReducer -> state", state)
-  console.log("TCL: formReducer -> action", action)
   switch (action.type) {
     case 'UPDATE_FIELD':
       // validate values here
@@ -27,7 +26,7 @@ function formReducer(state, action) {
       return {
         ...state,
         fields: { ...state.fields, [action.key]: action.value },
-        errors
+        errors,
       };
     default:
       return state;
@@ -44,7 +43,7 @@ function BookUsWizard() {
       eventType: '',
       date: '',
       address: {
-        place_name_en: ""
+        place_name_en: '',
       },
       comments: '',
     },
@@ -78,8 +77,8 @@ function BookUsWizard() {
             </BodyText>
             <View />
           </Row>
-          <Row>
-            <Button title="Start booking" onPress={goNext} />
+          <Row direction="row" style={{ alignItems: 'center'}}>
+            <Button style={{ flex: 1 }} title="Start booking" onPress={goNext} />
           </Row>
         </Step>
 
@@ -89,44 +88,50 @@ function BookUsWizard() {
             <BodyText>We’d love to know who we are speaking to.</BodyText>
             <View />
           </Row>
-          <Row direction="row">
-            <FormInput
-              label="first name"
-              mode="name"
-              value={formState.fields.firstName}
-              onValue={value =>
-                dispatch({
-                  type: 'UPDATE_FIELD',
-                  key: 'firstName',
-                  value,
-                })
-              }
-            />
-            <FormInput
-              label="last name"
-              mode="name"
-              value={formState.fields.lastName}
-              onValue={value =>
-                dispatch({
-                  type: 'UPDATE_FIELD',
-                  key: 'lastName',
-                  value,
-                })
-              }
-            />
-          </Row>
+          <Responsive
+            style={{
+              flexDirection: ['column', 'row'],
+            }}
+          >
+            <Row direction="row">
+              <FormInput
+                label="first name"
+                mode="name"
+                value={formState.fields.firstName}
+                onValue={value =>
+                  dispatch({
+                    type: 'UPDATE_FIELD',
+                    key: 'firstName',
+                    value,
+                  })
+                }
+              />
+              <FormInput
+                label="last name"
+                mode="name"
+                value={formState.fields.lastName}
+                onValue={value =>
+                  dispatch({
+                    type: 'UPDATE_FIELD',
+                    key: 'lastName',
+                    value,
+                  })
+                }
+              />
+            </Row>
+          </Responsive>
           <Row>
             <ProgressBar step={step} />
           </Row>
           <Row direction="row">
             <Button
-              style={{ flex: 1 }}
+              style={{ flex: 1, marginBottom: 16 }}
               type="outline"
               title="back"
               onPress={goBack}
             />
             <Button
-              style={{ flex: 2 }}
+              style={{ flex: 2, marginBottom: 16 }}
               disabled={
                 !formState.fields.firstName || !formState.fields.lastName
               }
@@ -163,14 +168,17 @@ function BookUsWizard() {
           </Row>
           <Row direction="row">
             <Button
-              style={{ flex: 1 }}
+              style={{ flex: 1, marginBottom: 16 }}
               type="outline"
               title="back"
               onPress={goBack}
             />
             <Button
-              style={{ flex: 2 }}
-              disabled={!formState.fields.email || formState.errors && formState.errors.email}
+              style={{ flex: 2, marginBottom: 16 }}
+              disabled={
+                !formState.fields.email ||
+                (formState.errors && formState.errors.email)
+              }
               title="next"
               onPress={goNext}
             />
@@ -191,13 +199,13 @@ function BookUsWizard() {
           </Row>
           <Row direction="row">
             <Button
-              style={{ flex: 1 }}
+              style={{ flex: 1, marginBottom: 16 }}
               type="outline"
               title="back"
               onPress={goBack}
             />
             <Button
-              style={{ flex: 2 }}
+              style={{ flex: 2, marginBottom: 16 }}
               disabled={false}
               title="next"
               onPress={goNext}
@@ -219,13 +227,13 @@ function BookUsWizard() {
           </Row>
           <Row direction="row">
             <Button
-              style={{ flex: 1 }}
+              style={{ flex: 1, marginBottom: 16 }}
               type="outline"
               title="back"
               onPress={goBack}
             />
             <Button
-              style={{ flex: 2 }}
+              style={{ flex: 2, marginBottom: 16 }}
               disabled={false}
               title="next"
               onPress={goNext}
@@ -241,24 +249,26 @@ function BookUsWizard() {
           </Row>
           <Row>
             {/* mapbox autocomplete */}
-            <LocationInput inputValue={formState.fields.address.place_name_en} onSelectedResult={value => {
-              console.log("TCL: BookUsWizard -> value", value)
-              dispatch({ type: "UPDATE_FIELD", key: "address", value })
-            }} />
-
+            <LocationInput
+              inputValue={formState.fields.address.place_name_en}
+              onSelectedResult={value => {
+                console.log('TCL: BookUsWizard -> value', value);
+                dispatch({ type: 'UPDATE_FIELD', key: 'address', value });
+              }}
+            />
           </Row>
           <Row>
             <ProgressBar step={step} />
           </Row>
           <Row direction="row">
             <Button
-              style={{ flex: 1 }}
+              style={{ flex: 1, marginBottom: 16 }}
               type="outline"
               title="back"
               onPress={goBack}
             />
             <Button
-              style={{ flex: 2 }}
+              style={{ flex: 2, marginBottom: 16 }}
               disabled={!formState.fields.address.id}
               title="next"
               onPress={goNext}
@@ -275,21 +285,28 @@ function BookUsWizard() {
             <View />
           </Row>
           <Row>
-            <FormInput label="any additional comments?" type="textarea" />
+            <FormInput
+              value={formState.fields.comments}
+              label="any additional comments?"
+              mode="textarea"
+              onValue={value =>
+                dispatch({ type: 'UPDATE_FIELD', key: 'comments', value })
+              }
+            />
           </Row>
           <Row>
             <ProgressBar step={step} />
           </Row>
           <Row direction="row">
             <Button
-              style={{ flex: 1 }}
+              style={{ flex: 1, marginBottom: 16 }}
               type="outline"
               title="back"
               onPress={goBack}
             />
             <Button
-              style={{ flex: 2 }}
-              disabled={false}
+              style={{ flex: 2, marginBottom: 16 }}
+              disabled={!formState.fields.comments}
               title="book now"
               onPress={onSubmit}
             />
@@ -311,12 +328,15 @@ function Step({ title, subtitle, children, active, style, ...rest }) {
 
 function Row({ children, style, direction = 'column', ...rest }) {
   return (
-    <View
-      style={[{ paddingBottom: 36, flexDirection: direction }, style]}
-      {...rest}
+    <Responsive
+      style={{
+        flexDirection: ['column', direction],
+      }}
     >
-      {children}
-    </View>
+      <View style={[{ paddingBottom: 36 }, style]} {...rest}>
+        {children}
+      </View>
+    </Responsive>
   );
 }
 

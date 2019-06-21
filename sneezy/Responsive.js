@@ -134,6 +134,7 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
 
   ${style.textAlign ? `text-align: ${style.textAlign[0]};` : ''}
   ${style.alignItems ? `align-items: ${style.alignItems[0]};` : ''}
+  ${style.flexDirection ? `flex-direction: ${style.flexDirection[0]};` : ''}
 
   ${
     style.maxWidth
@@ -148,6 +149,8 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
   ${style.right ? `right: ${validateNumberValue(style.right[0])};` : ''}
   ${style.bottom ? `bottom: ${validateNumberValue(style.bottom[0])};` : ''}
   ${style.left ? `left: ${validateNumberValue(style.left[0])};` : ''}
+
+
 
   `.trim();
 
@@ -170,6 +173,7 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
 
   ${style.textAlign ? `text-align: ${style.textAlign[1]};` : ''}
   ${style.alignItems ? `align-items: ${style.alignItems[1]};` : ''}
+  ${style.flexDirection ? `flex-direction: ${style.flexDirection[1]};` : ''}
 
   ${
     style.maxWidth
