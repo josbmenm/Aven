@@ -63,7 +63,7 @@ function BlockFormInputWithRef(
     <View
       style={{
         flex: 1,
-        marginHorizontal: 10,
+        marginHorizontal: 8,
         borderRadius: 4,
         paddingTop: 15,
         borderColor: monsterra60,

@@ -111,7 +111,7 @@ export function StyledButton({
   const theme = useTheme();
   return (
     <View
-      style={{
+      style={[{
         borderRadius: 4,
         borderWidth: 3,
         paddingVertical: theme.spaces[4],
@@ -120,10 +120,9 @@ export function StyledButton({
         borderColor: type === 'outline' ? theme.colors.primary80 : 'transparent',
         backgroundColor:
           type === 'solid' ? theme.colors.primary80 : 'transparent',
-        cursor: 'pointer',
-        ...buttonStyle,
+        cursor: disabled ? "no-drop" : 'pointer',
         opacity: disabled ? 0.5 : 1,
-      }}
+      }, buttonStyle]}
       {...rest}
     >
       <Text

@@ -7,19 +7,27 @@ const Button = ({
   onPress,
   onLongPress,
   title,
-  style,
   secondary,
   buttonStyle,
   titleStyle,
   disabled,
+  style,
+  ...rest
 }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
       onLongPress={onLongPress}
       disabled={disabled}
+      style={[{ paddingHorizontal: 8 }, style]}
     >
-      <StyledButton title={title} buttonStyle={buttonStyle} titleStyle={titleStyle} disabled={disabled} />
+      <StyledButton
+        title={title}
+        buttonStyle={buttonStyle}
+        titleStyle={titleStyle}
+        disabled={disabled}
+        {...rest}
+      />
     </TouchableOpacity>
   );
 };

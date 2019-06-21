@@ -16,7 +16,7 @@ function BookUsWizard() {
     <View style={{ paddingVertical: 100 }}>
       <BlockForm>
         <Step active={step === 0}>
-          <StepSection>
+          <StepSection style={{ paddingHorizontal: 8 }}>
             <Title>Book with us</Title>
             <BodyText>
               Are you interested in having Ono Blends cater for an event? We’d
@@ -26,12 +26,16 @@ function BookUsWizard() {
             <View />
           </StepSection>
           <StepSection>
-          <Button disabled={false} title="Start booking" onPress={() => setStep(1)} />
+            <Button
+              disabled={false}
+              title="Start booking"
+              onPress={() => setStep(1)}
+            />
           </StepSection>
         </Step>
 
         <Step active={step === 1}>
-          <StepSection>
+          <StepSection style={{ paddingHorizontal: 8 }}>
             <Title>First thing’s first</Title>
             <BodyText>We’d love to know who we are speaking to.</BodyText>
             <View />
@@ -43,7 +47,20 @@ function BookUsWizard() {
             </FormSection>
           </StepSection>
           <StepSection>
-            <FormButton text="Start booking" onPress={() => setStep(1)} />
+            <FormSection direction="row">
+              <Button
+                style={{ flex: 1 }}
+                type="outline"
+                title="back"
+                onPress={() => setStep(0)}
+              />
+              <Button
+                style={{ flex: 2 }}
+                disabled={true}
+                title="Start booking"
+                onPress={() => setStep(2)}
+              />
+            </FormSection>
           </StepSection>
         </Step>
       </BlockForm>
@@ -51,42 +68,21 @@ function BookUsWizard() {
   );
 }
 
-function FormButton({ title, disabled, onPress }) {
-  const theme = useTheme();
-
+function Step({ title, subtitle, children, active, style, ...rest }) {
+  if (!active) return null;
   return (
-    <TouchableOpacity onPress={!disabled ? onPress : null}>
-      <View
-        style={{
-          backgroundColor: theme.colors.primary,
-          paddingVertical: 16,
-          paddingHorizontal: 24,
-          borderRadius: theme.spaces[1],
-          flex: 1,
-        }}
-      >
-        <Text
-          style={{
-            color: theme.colors.white,
-            textAlign: 'center',
-            fontFamily: theme.fontFamily.button,
-            fontSize: theme.fontSizes[2],
-          }}
-        >
-          {title}
-        </Text>
-      </View>
-    </TouchableOpacity>
+    <View style={[{ paddingVertical: 40 }, style]} {...rest}>
+      {children}
+    </View>
   );
 }
 
-function Step({ title, subtitle, children, active }) {
-  if (!active) return null;
-  return <View style={{ paddingVertical: 40 }}>{children}</View>;
-}
-
-function StepSection({ children }) {
-  return <View style={{ paddingBottom: 40 }}>{children}</View>;
+function StepSection({ children, style, ...rest }) {
+  return (
+    <View style={[{ paddingBottom: 40 }, style]} {...rest}>
+      {children}
+    </View>
+  );
 }
 
 export default BookUsWizard;
