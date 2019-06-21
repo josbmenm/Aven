@@ -1,11 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
-import {
-  buttonStyle,
-  buttonTitleStyle,
-  secondaryButtonStyle,
-  secondaryButtonTitleStyle,
-} from './Styles';
+import { StyledButton } from '../sneezy/Tokens';
+import { useTheme } from '../sneezy/ThemeContext';
 
 const Button = ({
   onPress,
@@ -13,23 +9,17 @@ const Button = ({
   title,
   style,
   secondary,
+  buttonStyle,
+  titleStyle,
   disabled,
 }) => {
-  const viewStyle = secondary ? secondaryButtonStyle : buttonStyle;
-  const titleStyle = secondary ? secondaryButtonTitleStyle : buttonTitleStyle;
   return (
     <TouchableOpacity
       onPress={onPress}
       onLongPress={onLongPress}
       disabled={disabled}
-      style={{
-        flexDirection: 'row',
-        ...viewStyle,
-        ...style,
-        opacity: disabled ? 0.5 : 1,
-      }}
     >
-      <Text style={{ ...titleStyle, alignSelf: 'center' }}>{title}</Text>
+      <StyledButton title={title} buttonStyle={buttonStyle} titleStyle={titleStyle} disabled={disabled} />
     </TouchableOpacity>
   );
 };

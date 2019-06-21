@@ -34,7 +34,7 @@ export default function PageFooter() {
                   flexDirection: 'row',
                   justifyContent: 'flex-start',
                   marginBottom: 20,
-                  marginRight: 52,
+                  marginRight: 32,
                 }}
               >
                 <OnoBlendsLogo width={80} style={{ marginRight: 20 }} />
@@ -74,23 +74,15 @@ export default function PageFooter() {
                 }}
               >
                 <View style={{ flex: 1 }}>
-                  <Link noActive text="Menu" routeName="Menu" />
-                  <Link noActive text="Our story" routeName="OurStory" />
-                  <Link noActive text="Book with us" routeName="BookUs" />
+                  <Link noActive titleStyle={{textAlign: 'left'}} title="Menu" routeName="Menu" />
+                  <Link noActive titleStyle={{textAlign: 'left'}} title="Our story" routeName="OurStory" />
+                  <Link noActive titleStyle={{textAlign: 'left'}} title="Book with us" routeName="BookUs" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Link noActive text="Press kit" url="https://google.com" />
-                  <Link noActive text="Terms & privacy" routeName="Terms" />
-                  <Link
-                    noActive
-                    text="Contact us"
-                    url="mailto:aloha@onofood.co"
-                  />
-                  <Link
-                    noActive
-                    text="Subscribe to updates"
-                    routeName="Subscribe"
-                  />
+                  <Link noActive titleStyle={{textAlign: 'left'}} title="Press kit" url="https://google.com" />
+                  <Link noActive titleStyle={{textAlign: 'left'}} title="Terms & privacy" routeName="Terms" />
+                  <Link noActive titleStyle={{textAlign: 'left'}} title="Contact us" url="mailto:aloha@onofood.co" />
+                  <Link noActive titleStyle={{textAlign: 'left'}} title="Subscribe to updates" routeName="Subscribe" />
                 </View>
               </ColumnToRowChild>
               <ColumnToRowChild
@@ -101,7 +93,6 @@ export default function PageFooter() {
                   marginBottom: 40,
                 }}
               >
-
                 <FunctionalLink url="https://www.twitter.com/onofoodco/">
                   <View
                     style={{

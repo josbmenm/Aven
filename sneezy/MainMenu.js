@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Container from './Container';
 import { useTheme } from './ThemeContext';
-import { Button, Link } from './Tokens';
+import { Button, Link, StyledButton } from './Tokens';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import FunctionalLink from '../navigation-web/Link';
 import {
@@ -11,39 +11,47 @@ import {
   HideMobileView,
 } from './Responsive';
 
-const SidebarMenuIcon = props => (
-  <svg width="28" height="26" viewBox="0 0 28 26" {...props}>
-    <path
-      d="M2 11h24a2 2 0 1 1 0 4H2a2 2 0 1 1 0-4zm0 11h24a2 2 0 1 1 0 4H2a2 2 0 1 1 0-4zM2 0h24a2 2 0 1 1 0 4H2a2 2 0 1 1 0-4z"
-      fill="#005151"
-    />
-  </svg>
-);
+function SidebarMenuIcon({ color, ...rest }) {
+  const theme = useTheme();
+  const fill = color || theme.colors.primary40;
+  return (
+    <svg width="28" height="26" viewBox="0 0 28 26" {...rest}>
+      <path
+        d="M2 11h24a2 2 0 1 1 0 4H2a2 2 0 1 1 0-4zm0 11h24a2 2 0 1 1 0 4H2a2 2 0 1 1 0-4zM2 0h24a2 2 0 1 1 0 4H2a2 2 0 1 1 0-4z"
+        fill={fill}
+      />
+    </svg>
+  );
+}
 
 function MenuLink({
-  text,
+  title,
   buttonStyle,
-  textStyle,
+  titleStyle,
   active,
   routeName,
   ...rest
 }) {
   const theme = useTheme();
   return (
-    <Button
-      text={text}
-      type="outline"
+    <FunctionalLink
       routeName={routeName}
-      buttonStyle={{
-        borderRadius: 0,
-        borderWidth: 0,
-        borderColor: 'transparent',
-        borderBottomWidth: 3,
-        borderBottomColor: active ? theme.colors.primary : 'transparent',
-        ...buttonStyle,
-      }}
-      textStyle={textStyle}
-      {...rest}
+      renderContent={active => (
+        <StyledButton
+          title={title}
+          type="outline"
+          buttonStyle={{
+            borderRadius: 0,
+            borderWidth: 0,
+            borderColor: 'transparent',
+            borderBottomWidth: 3,
+            borderBottomColor: active ? theme.colors.primary : 'transparent',
+            ...buttonStyle,
+          }}
+          titleStyle={titleStyle}
+          {...rest}
+        />
+      )}
     />
   );
 }
@@ -75,14 +83,13 @@ export function DesktopMenu() {
               flexDirection: 'row',
             }}
           >
-            <MenuLink routeName="Menu" text="menu" />
-            <MenuLink routeName="Schedule" text="schedule" />
-            <MenuLink routeName="OurStory" text="our story" />
+            <MenuLink routeName="Menu" title="menu" />
+            <MenuLink routeName="Schedule" title="schedule" />
+            <MenuLink routeName="OurStory" title="our story" />
             <Button
               type="outline"
-              text="book with us"
+              title="book with us"
               routeName="BookUs"
-              // textStyle={{ fontSize: 20 }}
               buttonStyle={{ marginLeft: 16 }}
             />
           </View>
@@ -152,19 +159,19 @@ export function MobileMenu() {
                 noActive
                 size="Large"
                 routeName="Schedule"
-                text="schedule"
+                title="schedule"
               />
               <Link
                 noActive
                 size="Large"
                 routeName="OurStory"
-                text="our story"
+                title="our story"
               />
               <Link
                 noActive
                 size="Large"
                 routeName="BookUs"
-                text="book with us"
+                title="book with us"
               />
             </View>
             <View
@@ -179,19 +186,19 @@ export function MobileMenu() {
                 noActive
                 size="Small"
                 url="https://google.com"
-                text="press kit"
+                title="press kit"
               />
               <Link
                 noActive
                 size="Small"
                 routeName="Terms"
-                text="terms & privacy"
+                title="terms & privacy"
               />
               <Link
                 noActive
                 size="Small"
                 url="mailto:aloha@onofood.co"
-                text="contact us"
+                title="contact us"
               />
             </View>
           </View>
@@ -244,7 +251,7 @@ export function MobileMenu() {
             padding: 6,
           }}
         >
-          <SidebarMenuIcon style={{ opacity: sidebar ? 1 : 0.4 }} />
+          <SidebarMenuIcon color={sidebar ? theme.colors.primary : null} />
         </TouchableOpacity>
       </HideDesktopView>
     </React.Fragment>

@@ -39,7 +39,7 @@ function HomeShedule() {
                 </Responsive>
                 <Button
                   type="solid"
-                  text="Find us"
+                  title="Find us"
                   routeName="Schedule"
                   buttonStyle={{ width: 220 }}
                 />

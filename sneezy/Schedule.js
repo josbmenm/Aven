@@ -107,9 +107,9 @@ function ScheduleItem({ item, first, last }) {
         <BodyText
           bold
           style={{
-            fontSize: 13,
+            fontSize: 12,
             lineHeight: 16,
-            fontFamily: theme.fonts.title,
+            fontFamily: theme.fontFamily.title,
             margin: 0,
           }}
         >

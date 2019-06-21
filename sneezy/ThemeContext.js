@@ -2,16 +2,26 @@ import React from 'react';
 
 const FontSizes = [];
 
+const primaryColor = "#005151";
+
 const colors = {
-  primary: 'rgb(0,81,81)',
-  secondary: '',
+  primary: primaryColor,
+  primary5: `${primaryColor}0D`,
+  primary8: `${primaryColor}14`,
+  primary10: `${primaryColor}20`,
+  primary30: `${primaryColor}4C`,
+  primary40: `${primaryColor}66`,
+  primary50: `${primaryColor}80`,
+  primary60: `${primaryColor}99`,
+  primary70: `${primaryColor}B2`,
+  primary80: `${primaryColor}CC`,
+  primaryLight: '#669797',
   white: '#fff',
   lightGrey: '#F8F8F8',
-  // lightGrey: "#999",
   border: 'rgba(0,0,0,0.1)',
 };
 
-const fonts = {
+const fontFamily = {
   heading: 'Maax-Bold',
   title: 'Maax-Bold',
   body: 'Lora',
@@ -33,28 +43,28 @@ const textStyles = {
     ...textSpacing,
     fontSize: 38,
     lineHeight: 48,
-    fontFamily: fonts.heading,
+    fontFamily: fontFamily.heading,
   },
   title: {
     ...textDefaults,
     ...textSpacing,
     fontSize: 28,
     lineHeight: 36,
-    fontFamily: fonts.title,
+    fontFamily: fontFamily.title,
   },
   body: {
     ...textDefaults,
     ...textSpacing,
     fontSize: 18,
     lineHeight: 28,
-    fontFamily: fonts.body,
+    fontFamily: fontFamily.body,
   },
   footnote: {
     ...textDefaults,
     ...textSpacing,
     fontSize: 12,
     lineHeight: 18,
-    fontFamily: fonts.footnote,
+    fontFamily: fontFamily.footnote,
   },
 };
 
@@ -79,16 +89,22 @@ const shadows = {
   },
 };
 
+const button = {
+
+}
+
 export const theme = {
   colors,
-  fonts,
+  fontFamily,
+  fontSizes: [12, 18, 20, 28, 38],
   textStyles,
   shadows,
   breakpoints: [768],
   layoutWidth: {
     small: 640,
     large: 1280
-  }
+  },
+  spaces: [0, 4, 8, 12, 16, 20, 24, 28, 32]
 };
 
 export const ThemeContext = React.createContext(theme);

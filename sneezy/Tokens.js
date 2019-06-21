@@ -100,56 +100,71 @@ export function FootNote({ children, bold, style, ...rest }) {
   );
 }
 
-export const defaultButtonStyles = {
-  button: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  text: {
-    fontSize: 20,
-    textAlign: 'center',
-  },
-};
+export function StyledButton({
+  buttonStyle,
+  titleStyle,
+  title,
+  type = "solid",
+  disabled,
+  ...rest
+}) {
+  const theme = useTheme();
+  return (
+    <View
+      style={{
+        borderRadius: 4,
+        borderWidth: 3,
+        paddingVertical: theme.spaces[4],
+        paddingHorizontal: theme.spaces[8],
+        justifyContent: 'center',
+        borderColor: type === 'outline' ? theme.colors.primary80 : 'transparent',
+        backgroundColor:
+          type === 'solid' ? theme.colors.primary80 : 'transparent',
+        cursor: 'pointer',
+        ...buttonStyle,
+        opacity: disabled ? 0.5 : 1,
+      }}
+      {...rest}
+    >
+      <Text
+        style={[
+          {
+            fontFamily: theme.fontFamily.button,
+            fontSize: theme.fontSizes[2],
+            textAlign: 'center',
+            lineHeight: theme.fontSizes[2] * 1.2,
+            color: type === 'solid' ? theme.colors.white : theme.colors.primary,
+          },
+          titleStyle,
+        ]}
+      >
+        {title}
+      </Text>
+    </View>
+  );
+}
 
 export function Button({
   buttonStyle,
-  text = 'button',
+  title = 'button',
   type = 'solid', // solid | outline
   variant = 'primary', // primary | secondary
-  textStyle = {},
+  titleStyle,
   routeName,
   url,
   ...rest
 }) {
-  const { colors, fonts } = useTheme();
-
   return (
     <FunctionalLink
       routeName={routeName}
       url={url}
       renderContent={active => (
-        <View
-          style={{
-            ...defaultButtonStyles.button,
-            borderRadius: 4,
-            borderWidth: 3,
-            borderColor: colors.primary,
-            backgroundColor: type === 'solid' ? colors.primary : 'transparent',
-            ...buttonStyle,
-            cursor: 'pointer',
-          }}
-        >
-          <Text
-            style={{
-              ...defaultButtonStyles.text,
-              color: type === 'solid' ? colors.white : colors.primary,
-              fontFamily: fonts.button,
-              ...textStyle,
-            }}
-          >
-            {text}
-          </Text>
-        </View>
+        <StyledButton
+          active={active}
+          buttonStyle={buttonStyle}
+          titleStyle={titleStyle}
+          title={title}
+        />
       )}
     />
   );
@@ -157,48 +172,41 @@ export function Button({
 
 export function Link({
   buttonStyle = {},
-  textStyle = {},
-  text = 'link',
+  titleStyle = {},
+  title = 'link',
   size = 'Small',
   routeName,
   url,
   noActive = false,
   ...rest
 }) {
-  const { colors, fonts } = useTheme();
+  const theme = useTheme();
   return (
     <FunctionalLink
       routeName={routeName}
       url={url}
       renderContent={active => (
-        <View
-          style={{
+        <StyledButton
+          title={title}
+          buttonStyle={{
             paddingHorizontal: 8,
             paddingVertical: 4,
+            borderColor: 'transparent',
             borderBottomWidth: 3,
             borderColor: noActive
               ? 'transparent'
               : active
-              ? colors.primary
+              ? theme.colors.primary
               : 'transparent',
             ...buttonStyle,
           }}
-          {...rest}
-        >
-          <Text
-            style={StyleSheet.flatten([
-              {
-                fontWeight: 'bold',
-                fontSize: size === 'Small' ? 16 : 24,
-                fontFamily: fonts.button,
-                color: colors.primary,
-              },
-              textStyle,
-            ])}
-          >
-            {text}
-          </Text>
-        </View>
+          type="outline"
+          titleStyle={{
+            color: theme.colors.primary,
+            fontSize: size === 'Small' ? 16 : 24,
+            ...titleStyle,
+          }}
+        />
       )}
     />
   );

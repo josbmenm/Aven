@@ -62,12 +62,11 @@ function BlendItem({ blend }) {
             paddingVertical: 4,
             paddingHorizontal: 16,
             borderRadius: 4,
-            backgroundColor: theme.colors.primary,
+            backgroundColor: theme.colors.primary70,
             color: theme.colors.white,
             minWidth: 120,
             textAlign: 'center',
             letterSpacing: 3,
-            opacity: 0.7,
           }}
         >
           {blend.DefaultBenefitName}

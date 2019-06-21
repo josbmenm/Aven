@@ -93,12 +93,12 @@ function HomeHeader() {
                     </BodyText>
                   </Responsive>
                   <Button
-                    text="Find us"
+                    title="Find us"
                     routeName="Schedule"
                     buttonStyle={{
                       width: 210,
                     }}
-                    textStyle={{
+                    titleStyle={{
                       textAlign: 'center',
                     }}
                   />

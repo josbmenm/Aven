@@ -45,7 +45,7 @@ function Tokens() {
           <FootNote>Foot Note</FootNote>
         </TokenSection>
         <TokenSection title="Button Tokens">
-          <Button text="Default Button" routeName="Tokens" />
+          <Button title="Default Button" routeName="Tokens" />
         </TokenSection>
         <TokenSection title="Input">
           <Forms />
