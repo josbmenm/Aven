@@ -1,22 +1,43 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import { Title, BodyText } from './Tokens';
+import { Title, BodyText, FootNote } from './Tokens';
 import Container from './Container';
 import BlockForm from '../components/Form';
-import FormSection from '../components/FormSection';
 import FormInput from '../components/FormInput';
 import Button from '../components/Button';
 import { useTheme } from './ThemeContext';
 
+function useSteps(initialValue) {
+  const [step, setStep] = React.useState(initialValue);
+  return {
+    step,
+    setStep,
+    totalSteps: 7, //TODO: HARDCODED VALUE WARNING
+  };
+}
+
 function BookUsWizard() {
   const theme = useTheme();
-  const [step, setStep] = React.useState(0);
+  const { step, setStep, totalSteps } = useSteps(0);
+
+  function goNext() {
+    setStep(step + 1);
+  }
+
+  function goBack() {
+    let backStep = step === 0 ? 0 : step - 1;
+    setStep(backStep);
+  }
+
+  function onSubmit() {
+    console.log('TCL: onSubmit -> ', { foo: 'bar' });
+  }
 
   return (
     <View style={{ paddingVertical: 100 }}>
       <BlockForm>
         <Step active={step === 0}>
-          <StepSection style={{ paddingHorizontal: 8 }}>
+          <Row style={{ paddingHorizontal: 8 }}>
             <Title>Book with us</Title>
             <BodyText>
               Are you interested in having Ono Blends cater for an event? We’d
@@ -24,44 +45,184 @@ function BookUsWizard() {
               so we can provide you with the best experience possible.
             </BodyText>
             <View />
-          </StepSection>
-          <StepSection>
-            <Button
-              disabled={false}
-              title="Start booking"
-              onPress={() => setStep(1)}
-            />
-          </StepSection>
+          </Row>
+          <Row>
+            <Button disabled={false} title="Start booking" onPress={goNext} />
+          </Row>
         </Step>
 
         <Step active={step === 1}>
-          <StepSection style={{ paddingHorizontal: 8 }}>
+          <Row style={{ paddingHorizontal: 8 }}>
             <Title>First thing’s first</Title>
             <BodyText>We’d love to know who we are speaking to.</BodyText>
             <View />
-          </StepSection>
-          <StepSection>
-            <FormSection direction="row">
-              <FormInput label="first name" />
-              <FormInput label="last name" />
-            </FormSection>
-          </StepSection>
-          <StepSection>
-            <FormSection direction="row">
-              <Button
-                style={{ flex: 1 }}
-                type="outline"
-                title="back"
-                onPress={() => setStep(0)}
-              />
-              <Button
-                style={{ flex: 2 }}
-                disabled={true}
-                title="Start booking"
-                onPress={() => setStep(2)}
-              />
-            </FormSection>
-          </StepSection>
+          </Row>
+          <Row direction="row">
+            <FormInput label="first name" />
+            <FormInput label="last name" />
+          </Row>
+          <Row>
+            <ProgressBar step={step} />
+          </Row>
+          <Row direction="row">
+            <Button
+              style={{ flex: 1 }}
+              type="outline"
+              title="back"
+              onPress={goBack}
+            />
+            <Button
+              style={{ flex: 2 }}
+              disabled={false}
+              title="next"
+              onPress={goNext}
+            />
+          </Row>
+        </Step>
+
+        <Step active={step === 2}>
+          <Row style={{ paddingHorizontal: 8 }}>
+            <Title>How do we contact you?</Title>
+            <BodyText>
+              Please let us know a good email to follow up with you.
+            </BodyText>
+            <View />
+          </Row>
+          <Row>
+            <FormInput label="email" />
+          </Row>
+          <Row>
+            <ProgressBar step={step} />
+          </Row>
+          <Row direction="row">
+            <Button
+              style={{ flex: 1 }}
+              type="outline"
+              title="back"
+              onPress={goBack}
+            />
+            <Button
+              style={{ flex: 2 }}
+              disabled={false}
+              title="next"
+              onPress={goNext}
+            />
+          </Row>
+        </Step>
+
+        <Step active={step === 3}>
+          <Row style={{ paddingHorizontal: 8 }}>
+            <Title>What sort of event is this?</Title>
+            <BodyText>Let us know so we can best cater to it.</BodyText>
+            <View />
+          </Row>
+          <Row>
+            <FormInput label="email" />
+          </Row>
+          <Row>
+            <ProgressBar step={step} />
+          </Row>
+          <Row direction="row">
+            <Button
+              style={{ flex: 1 }}
+              type="outline"
+              title="back"
+              onPress={goBack}
+            />
+            <Button
+              style={{ flex: 2 }}
+              disabled={false}
+              title="next"
+              onPress={goNext}
+            />
+          </Row>
+        </Step>
+
+        <Step active={step === 4}>
+          <Row style={{ paddingHorizontal: 8 }}>
+            <Title>When would you like us there?</Title>
+            <BodyText>Just let us know to when would be best.</BodyText>
+            <View />
+          </Row>
+          <Row>
+            <FormInput label="event date" type="date" />
+          </Row>
+          <Row>
+            <ProgressBar step={step} />
+          </Row>
+          <Row direction="row">
+            <Button
+              style={{ flex: 1 }}
+              type="outline"
+              title="back"
+              onPress={goBack}
+            />
+            <Button
+              style={{ flex: 2 }}
+              disabled={false}
+              title="next"
+              onPress={goNext}
+            />
+          </Row>
+        </Step>
+
+        <Step active={step === 5}>
+          <Row style={{ paddingHorizontal: 8 }}>
+            <Title>Almost done…..</Title>
+            <BodyText>Where would you like us to be?</BodyText>
+            <View />
+          </Row>
+          <Row>
+            {/* mapbox autocomplete */}
+            <FormInput label="address" type="text" />
+          </Row>
+          <Row>
+            <ProgressBar step={step} />
+          </Row>
+          <Row direction="row">
+            <Button
+              style={{ flex: 1 }}
+              type="outline"
+              title="back"
+              onPress={goBack}
+            />
+            <Button
+              style={{ flex: 2 }}
+              disabled={false}
+              title="next"
+              onPress={goNext}
+            />
+          </Row>
+        </Step>
+
+        <Step active={step === 6}>
+          <Row style={{ paddingHorizontal: 8 }}>
+            <Title>Additional Comments</Title>
+            <BodyText>
+              Do you have anything else you’d like us to know?
+            </BodyText>
+            <View />
+          </Row>
+          <Row>
+            <FormInput label="any additional comments?" type="textarea" />
+          </Row>
+          <Row>
+            <ProgressBar step={step} />
+          </Row>
+          <Row direction="row">
+            <Button
+              style={{ flex: 1 }}
+              type="outline"
+              title="back"
+              onPress={goBack}
+            />
+            <Button
+              style={{ flex: 2 }}
+              disabled={false}
+              title="book now"
+              onPress={onSubmit}
+            />
+          </Row>
         </Step>
       </BlockForm>
     </View>
@@ -77,10 +238,51 @@ function Step({ title, subtitle, children, active, style, ...rest }) {
   );
 }
 
-function StepSection({ children, style, ...rest }) {
+function Row({ children, style, direction = 'column', ...rest }) {
   return (
-    <View style={[{ paddingBottom: 40 }, style]} {...rest}>
+    <View
+      style={[{ paddingBottom: 36, flexDirection: direction }, style]}
+      {...rest}
+    >
       {children}
+    </View>
+  );
+}
+
+function ProgressBar({ step, ...rest }) {
+  const theme = useTheme();
+  const { totalSteps } = useSteps();
+  return (
+    <View
+      style={{
+        marginHorizontal: 8,
+      }}
+    >
+      <View
+        style={{
+          marginBottom: 8,
+          height: 4,
+          borderRadius: 2,
+          overflow: 'hidden',
+          position: 'relative',
+          backgroundColor: theme.colors.lighterGrey,
+        }}
+      >
+        <View
+          style={{
+            width: `${(step / totalSteps) * 100}%`, // use step here
+            height: 4,
+            backgroundColor: theme.colors.primary,
+            borderRadius: 2,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }}
+        />
+      </View>
+      <FootNote bold>
+        {step} / {totalSteps}
+      </FootNote>
     </View>
   );
 }

@@ -18,6 +18,7 @@ const colors = {
   primaryLight: '#669797',
   white: '#fff',
   lightGrey: '#F8F8F8',
+  lighterGrey: "#EFEFEF",
   border: 'rgba(0,0,0,0.1)',
 };
 
