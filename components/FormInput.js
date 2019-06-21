@@ -65,7 +65,7 @@ function BlockFormInputWithRef(
         flex: 1,
         marginHorizontal: 8,
         borderRadius: 4,
-        paddingTop: 15,
+        paddingTop: 12,
         borderColor: monsterra60,
         borderWidth: 3,
       }}

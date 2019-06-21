@@ -11,6 +11,7 @@ import BookUs from './BookUsPage';
 import Schedule from './SchedulePage';
 import Subscribe from './SubscribePage';
 import { ThemeContext, theme } from './ThemeContext';
+import Preview from './PreviewHome';
 
 const customHTMLHeaders = `
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -57,6 +58,10 @@ const App = createSwitchNavigator(
     Subscribe: {
       path: 'subscribe',
       screen: Subscribe,
+    },
+    Preview: {
+      path: 'preview',
+      screen: Preview,
     },
   },
   {

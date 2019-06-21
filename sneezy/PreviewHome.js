@@ -1,17 +1,14 @@
-import { TextInput, View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity, Text, TextInput } from 'react-native';
 import React from 'react';
 import GenericPage from './GenericPage';
-import {
-  Heading,
-  SubSection,
-  BodyText,
-} from './Tokens';
+import { Heading, SubSection, BodyText } from './Tokens';
 import Button from '../components/Button';
 import useCloud from '../cloud-core/useCloud';
 import useAsyncError from '../react-utils/useAsyncError';
+import Container from './Container';
 
-//
-function LocationInput({ onSelectedResult, selectedResult }) {
+
+export function LocationInput({ onSelectedResult, selectedResult }) {
   const [inputText, setInputText] = React.useState('');
   const [results, setResults] = React.useState(null);
   const ref = React.useRef({});
@@ -99,12 +96,14 @@ function RequestOnoForm() {
 function Home() {
   return (
     <React.Fragment>
-      <Heading>Ono Blends</Heading>
+      <Container>
+        <Heading>Ono Blends</Heading>
 
-      <SubSection title="Request ono in your City">
-        <BodyText>Search for your city to request it:</BodyText>
-        <RequestOnoForm />
-      </SubSection>
+        <SubSection title="Request ono in your City">
+          <BodyText>Search for your city to request it:</BodyText>
+          <RequestOnoForm />
+        </SubSection>
+      </Container>
     </React.Fragment>
   );
 }
@@ -117,7 +116,6 @@ export default function HomePage() {
   );
 }
 
-HomePage.path = 'preview';
 HomePage.navigationOptions = {
   title: 'Preview Home',
 };

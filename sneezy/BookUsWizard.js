@@ -6,18 +6,50 @@ import BlockForm from '../components/Form';
 import FormInput from '../components/FormInput';
 import Button from '../components/Button';
 import { useTheme } from './ThemeContext';
+import { LocationInput } from './LocationInput';
 
 function useSteps(initialValue) {
   const [step, setStep] = React.useState(initialValue);
   return {
     step,
     setStep,
-    totalSteps: 7, //TODO: HARDCODED VALUE WARNING
+    totalSteps: 7, //TODO: HARDCODED VALUE WARNING!!!
   };
+}
+
+function formReducer(state, action) {
+  console.log("TCL: formReducer -> state", state)
+  console.log("TCL: formReducer -> action", action)
+  switch (action.type) {
+    case 'UPDATE_FIELD':
+      // validate values here
+      let errors;
+      return {
+        ...state,
+        fields: { ...state.fields, [action.key]: action.value },
+        errors
+      };
+    default:
+      return state;
+  }
 }
 
 function BookUsWizard() {
   const theme = useTheme();
+  const [formState, dispatch] = React.useReducer(formReducer, {
+    fields: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      eventType: '',
+      date: '',
+      address: {
+        place_name_en: ""
+      },
+      comments: '',
+    },
+    errors: null,
+  });
   const { step, setStep, totalSteps } = useSteps(0);
 
   function goNext() {
@@ -30,7 +62,7 @@ function BookUsWizard() {
   }
 
   function onSubmit() {
-    console.log('TCL: onSubmit -> ', { foo: 'bar' });
+    console.log('TCL: onSubmit -> ', formState);
   }
 
   return (
@@ -47,7 +79,7 @@ function BookUsWizard() {
             <View />
           </Row>
           <Row>
-            <Button disabled={false} title="Start booking" onPress={goNext} />
+            <Button title="Start booking" onPress={goNext} />
           </Row>
         </Step>
 
@@ -58,8 +90,30 @@ function BookUsWizard() {
             <View />
           </Row>
           <Row direction="row">
-            <FormInput label="first name" />
-            <FormInput label="last name" />
+            <FormInput
+              label="first name"
+              mode="name"
+              value={formState.fields.firstName}
+              onValue={value =>
+                dispatch({
+                  type: 'UPDATE_FIELD',
+                  key: 'firstName',
+                  value,
+                })
+              }
+            />
+            <FormInput
+              label="last name"
+              mode="name"
+              value={formState.fields.lastName}
+              onValue={value =>
+                dispatch({
+                  type: 'UPDATE_FIELD',
+                  key: 'lastName',
+                  value,
+                })
+              }
+            />
           </Row>
           <Row>
             <ProgressBar step={step} />
@@ -73,7 +127,9 @@ function BookUsWizard() {
             />
             <Button
               style={{ flex: 2 }}
-              disabled={false}
+              disabled={
+                !formState.fields.firstName || !formState.fields.lastName
+              }
               title="next"
               onPress={goNext}
             />
@@ -89,7 +145,18 @@ function BookUsWizard() {
             <View />
           </Row>
           <Row>
-            <FormInput label="email" />
+            <FormInput
+              mode="email"
+              label="email"
+              value={formState.fields.email}
+              onValue={value =>
+                dispatch({
+                  type: 'UPDATE_FIELD',
+                  key: 'email',
+                  value,
+                })
+              }
+            />
           </Row>
           <Row>
             <ProgressBar step={step} />
@@ -103,7 +170,7 @@ function BookUsWizard() {
             />
             <Button
               style={{ flex: 2 }}
-              disabled={false}
+              disabled={!formState.fields.email || formState.errors && formState.errors.email}
               title="next"
               onPress={goNext}
             />
@@ -117,7 +184,7 @@ function BookUsWizard() {
             <View />
           </Row>
           <Row>
-            <FormInput label="email" />
+            <FormInput label="select an event type" />
           </Row>
           <Row>
             <ProgressBar step={step} />
@@ -174,7 +241,11 @@ function BookUsWizard() {
           </Row>
           <Row>
             {/* mapbox autocomplete */}
-            <FormInput label="address" type="text" />
+            <LocationInput inputValue={formState.fields.address.place_name_en} onSelectedResult={value => {
+              console.log("TCL: BookUsWizard -> value", value)
+              dispatch({ type: "UPDATE_FIELD", key: "address", value })
+            }} />
+
           </Row>
           <Row>
             <ProgressBar step={step} />
@@ -188,7 +259,7 @@ function BookUsWizard() {
             />
             <Button
               style={{ flex: 2 }}
-              disabled={false}
+              disabled={!formState.fields.address.id}
               title="next"
               onPress={goNext}
             />
