@@ -10,7 +10,7 @@ import {
 import Button from '../components/Button';
 import useCloud from '../cloud-core/useCloud';
 import useAsyncError from '../react-utils/useAsyncError';
-import FormInput from '../components/FormInput';
+import FormInput from '../components/BlockFormInput';
 
 //
 export function LocationInput({ onSelectedResult, selectedResult, inputValue = "" }) {

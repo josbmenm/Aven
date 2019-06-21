@@ -2,8 +2,8 @@ import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { Title, BodyText, FootNote } from './Tokens';
 import Container from './Container';
-import BlockForm from '../components/Form';
-import FormInput from '../components/FormInput';
+import BlockForm from '../components/BlockForm';
+import FormInput from '../components/BlockFormInput';
 import Button from '../components/Button';
 import { useTheme } from './ThemeContext';
 import { LocationInput } from './LocationInput';
@@ -66,7 +66,7 @@ function BookUsWizard() {
   }
 
   return (
-    <View style={{ paddingVertical: 100 }}>
+    <View style={{ paddingVertical: 40 }}>
       <BlockForm>
         <Step active={step === 0}>
           <Row style={{ paddingHorizontal: 8 }}>
