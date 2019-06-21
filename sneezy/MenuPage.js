@@ -16,7 +16,7 @@ function Menu() {
         <GenericHeroHeader
           backgroundColor={theme.colors.lightGrey}
           title="Our Blends"
-          bodyText="All of our blends are designed thoughfully to provide you. with a
+          bodyText="All of our blends are designed thoughfully to provide you with a
         healthy, balanced, and nutritious meal. All our drinks are made with
         100% organic ingredients, and are guaranteed to make you feel great."
         >
