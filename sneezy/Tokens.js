@@ -160,10 +160,12 @@ export function Button({
       url={url}
       renderContent={active => (
         <StyledButton
+          type={type}
           active={active}
           buttonStyle={buttonStyle}
           titleStyle={titleStyle}
           title={title}
+          {...rest}
         />
       )}
     />
