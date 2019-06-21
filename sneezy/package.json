@@ -27,7 +27,8 @@
       "cloud-postgres",
       "components",
       "react-utils",
-      "navigation-web"
+      "navigation-web",
+      "dashboard"
     ],
     "moduleDependencies": [
       "mjml",
