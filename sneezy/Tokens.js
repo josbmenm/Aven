@@ -212,3 +212,27 @@ export function Link({
     />
   );
 }
+
+export function Tag({ title, style }) {
+  const theme = useTheme();
+  return (
+    <FootNote
+      bold
+      style={[{
+        fontSize: 10,
+        textTransform: 'uppercase',
+        alignSelf: 'flex-start',
+        paddingVertical: 4,
+        paddingHorizontal: 16,
+        borderRadius: 4,
+        backgroundColor: theme.colors.primary70,
+        color: theme.colors.white,
+        minWidth: 120,
+        textAlign: 'center',
+        letterSpacing: 3,
+      }, style]}
+    >
+      {title}
+    </FootNote>
+  );
+}

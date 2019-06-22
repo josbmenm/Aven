@@ -1,9 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
 import Container from './Container';
-import { Title, FootNote, BodyText } from './Tokens';
+import { Title, Tag, BodyText } from './Tokens';
 import FunctionalLink from '../navigation-web/Link';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 import { useMenu } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { getMenuItemSlug } from '../logic/configLogic';
@@ -52,25 +52,7 @@ function BlendItem({ blend }) {
         <Title style={{ textAlign: 'right', fontSize: 24 }}>
           {blend['Display Name']}
         </Title>
-        {/* TODO: DESIGN: can this be 70% opacity as a whole or just the bg color? */}
-        <FootNote
-          bold
-          style={{
-            fontSize: 10,
-            textTransform: 'uppercase',
-            alignSelf: 'flex-end',
-            paddingVertical: 4,
-            paddingHorizontal: 16,
-            borderRadius: 4,
-            backgroundColor: theme.colors.primary70,
-            color: theme.colors.white,
-            minWidth: 120,
-            textAlign: 'center',
-            letterSpacing: 3,
-          }}
-        >
-          {blend.DefaultBenefitName}
-        </FootNote>
+        <Tag title={blend.DefaultBenefitName} style={{alignSelf: 'flex-end'}} />
       </FunctionalLink>
     </View>
   );
