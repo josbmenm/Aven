@@ -3,7 +3,8 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Container from './Container';
 import { useTheme } from '../dashboard/Theme'
 import UIButton from '../dashboard/UIButton';
-import { ButtonLink, Link } from './Tokens';
+import { Link } from './Tokens';
+import ButtonLink from './ButtonLink';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import FunctionalLink from '../navigation-web/Link';
 import {

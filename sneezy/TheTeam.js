@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Title, BodyText, ButtonLink } from './Tokens';
+import { Title, BodyText } from './Tokens';
+import ButtonLink from './ButtonLink';
 import Container from './Container';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import { aspectRatio43 } from '../components/Styles';

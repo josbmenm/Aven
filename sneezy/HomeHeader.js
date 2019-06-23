@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Image } from 'react-native';
 import Container from './Container';
-import { ButtonLink, Heading, BodyText } from './Tokens';
+import { Heading, BodyText } from './Tokens';
+import ButtonLink from './ButtonLink';
 import {
   ColumnToRow,
   ColumnToRowChild,
@@ -74,7 +75,7 @@ function HomeHeader() {
                     boxSizing: 'border-box',
                   }}
                 >
-                  <Responsive 
+                  <Responsive
                     style={{
                       textAlign: ['center', 'left'],
                     }}

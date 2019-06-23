@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Heading, Title, BodyText, FootNote, ButtonLink } from './Tokens';
+import { Heading, Title, BodyText, FootNote } from './Tokens';
+import ButtonLink from './ButtonLink';
 import GenericPage from './GenericPage';
 import Container from './Container';
 import { useTheme } from '../dashboard/Theme'

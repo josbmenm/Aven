@@ -1,8 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useTheme } from '../dashboard/Theme'
 import Container from './Container';
-import { ButtonLink, Title, BodyText } from './Tokens';
+import { Title, BodyText } from './Tokens';
+import ButtonLink from './ButtonLink';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import Schedule from './Schedule';
 

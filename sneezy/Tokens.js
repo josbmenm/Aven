@@ -93,34 +93,6 @@ export function FootNote({ children, bold, style, ...rest }) {
   );
 }
 
-export function ButtonLink({
-  buttonStyle,
-  title = 'button',
-  type = 'solid', // solid | outline
-  variant = 'primary', // primary | secondary
-  titleStyle,
-  routeName,
-  url,
-  ...rest
-}) {
-  return (
-    <FunctionalLink
-      routeName={routeName}
-      url={url}
-      renderContent={active => (
-        <UIButton
-          type={type}
-          active={active}
-          buttonStyle={buttonStyle}
-          titleStyle={titleStyle}
-          title={title}
-          {...rest}
-        />
-      )}
-    />
-  );
-}
-
 export function Link({
   buttonStyle = {},
   titleStyle = {},
