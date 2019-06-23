@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Image } from 'react-native';
 import Container from './Container';
-import { Button, Heading, BodyText } from './Tokens';
+import { ButtonLink, Heading, BodyText } from './Tokens';
 import {
   ColumnToRow,
   ColumnToRowChild,
@@ -92,7 +92,7 @@ function HomeHeader() {
                       are customizable and designed with your best self in mind.
                     </BodyText>
                   </Responsive>
-                  <Button
+                  <ButtonLink
                     title="Find us"
                     routeName="Schedule"
                     buttonStyle={{

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Title, BodyText, Button } from './Tokens';
+import { Title, BodyText, ButtonLink } from './Tokens';
 import Container from './Container';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import { aspectRatio43 } from '../components/Styles';
@@ -38,7 +38,7 @@ function TheTeam() {
                   hospitality are at the core of everything we do.
                 </BodyText>
               </Responsive>
-              <Button
+              <ButtonLink
                 type="solid"
                 title="Find us"
                 routeName="Schedule"

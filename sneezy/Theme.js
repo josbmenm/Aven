@@ -96,10 +96,11 @@ export const theme = {
   fontSizes: [12, 18, 20, 28, 38],
   textStyles,
   shadows,
+  radii: [0, 2, 4, 8],
   breakpoints: [768],
   layoutWidth: {
     small: 640,
     large: 1280
   },
-  spaces: [0, 4, 8, 12, 16, 20, 24, 28, 32]
+  space: [0, 4, 8, 12, 16, 20, 24, 28, 32]
 };

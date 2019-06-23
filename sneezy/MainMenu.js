@@ -2,7 +2,8 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Container from './Container';
 import { useTheme } from '../dashboard/Theme'
-import { Button, Link, StyledButton } from './Tokens';
+import UIButton from '../dashboard/UIButton';
+import { ButtonLink, Link } from './Tokens';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import FunctionalLink from '../navigation-web/Link';
 import {
@@ -37,7 +38,7 @@ function MenuLink({
     <FunctionalLink
       routeName={routeName}
       renderContent={active => (
-        <StyledButton
+        <UIButton
           title={title}
           type="outline"
           buttonStyle={{
@@ -86,7 +87,7 @@ export function DesktopMenu() {
             <MenuLink routeName="Menu" title="menu" />
             <MenuLink routeName="Schedule" title="schedule" />
             <MenuLink routeName="OurStory" title="our story" />
-            <Button
+            <ButtonLink
               type="outline"
               title="book with us"
               routeName="BookUs"

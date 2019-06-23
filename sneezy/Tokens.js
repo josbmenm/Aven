@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../dashboard/Theme'
+import UIButton from '../dashboard/UIButton';
 import FunctionalLink from '../navigation-web/Link';
+
 
 export function SubSection({ title, children }) {
   return (
@@ -100,50 +102,7 @@ export function FootNote({ children, bold, style, ...rest }) {
   );
 }
 
-export function StyledButton({
-  buttonStyle,
-  titleStyle,
-  title,
-  type = "solid",
-  disabled,
-  ...rest
-}) {
-  const theme = useTheme();
-  return (
-    <View
-      style={[{
-        borderRadius: 4,
-        borderWidth: 3,
-        paddingVertical: theme.spaces[4],
-        paddingHorizontal: theme.spaces[8],
-        justifyContent: 'center',
-        borderColor: type === 'outline' ? theme.colors.primary80 : 'transparent',
-        backgroundColor:
-          type === 'solid' ? theme.colors.primary80 : 'transparent',
-        cursor: disabled ? "no-drop" : 'pointer',
-        opacity: disabled ? 0.5 : 1,
-      }, buttonStyle]}
-      {...rest}
-    >
-      <Text
-        style={[
-          {
-            fontFamily: theme.fontFamily.button,
-            fontSize: theme.fontSizes[2],
-            textAlign: 'center',
-            lineHeight: theme.fontSizes[2] * 1.2,
-            color: type === 'solid' ? theme.colors.white : theme.colors.primary,
-          },
-          titleStyle,
-        ]}
-      >
-        {title}
-      </Text>
-    </View>
-  );
-}
-
-export function Button({
+export function ButtonLink({
   buttonStyle,
   title = 'button',
   type = 'solid', // solid | outline
@@ -158,7 +117,7 @@ export function Button({
       routeName={routeName}
       url={url}
       renderContent={active => (
-        <StyledButton
+        <UIButton
           type={type}
           active={active}
           buttonStyle={buttonStyle}
@@ -187,7 +146,7 @@ export function Link({
       routeName={routeName}
       url={url}
       renderContent={active => (
-        <StyledButton
+        <UIButton
           title={title}
           buttonStyle={{
             paddingHorizontal: 8,

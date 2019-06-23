@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '../dashboard/Theme'
 import Container from './Container';
-import { Button, Title, BodyText } from './Tokens';
+import { ButtonLink, Title, BodyText } from './Tokens';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import Schedule from './Schedule';
 
@@ -37,7 +37,7 @@ function HomeShedule() {
                     Check out our schedule to find us today!
                   </BodyText>
                 </Responsive>
-                <Button
+                <ButtonLink
                   type="solid"
                   title="Find us"
                   routeName="Schedule"

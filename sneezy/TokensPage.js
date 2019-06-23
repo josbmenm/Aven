@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Heading, Title, BodyText, FootNote, Button } from './Tokens';
+import { Heading, Title, BodyText, FootNote, ButtonLink } from './Tokens';
 import GenericPage from './GenericPage';
 import Container from './Container';
 import { useTheme } from '../dashboard/Theme'
@@ -45,7 +45,7 @@ function Tokens() {
           <FootNote>Foot Note</FootNote>
         </TokenSection>
         <TokenSection title="Button Tokens">
-          <Button title="Default Button" routeName="Tokens" />
+          <ButtonLink title="Default Button" routeName="Tokens" />
         </TokenSection>
         <TokenSection title="Input">
           <Forms />

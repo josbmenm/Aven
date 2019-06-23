@@ -2,12 +2,10 @@ import { View, TouchableOpacity, Text } from 'react-native';
 import React from 'react';
 import GenericPage from './GenericPage';
 import {
-  Heading,
-  SubSection,
   BodyText,
   Title
 } from './Tokens';
-import Button from '../components/Button';
+import Button from '../dashboard/Button';
 import useCloud from '../cloud-core/useCloud';
 import useAsyncError from '../react-utils/useAsyncError';
 import FormInput from '../components/BlockFormInput';
