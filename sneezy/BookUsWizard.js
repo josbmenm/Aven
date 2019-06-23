@@ -5,7 +5,7 @@ import Container from './Container';
 import BlockForm from '../components/BlockForm';
 import FormInput from '../components/BlockFormInput';
 import Button from '../dashboard/Button';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 import { LocationInput } from './LocationInput';
 import { Responsive } from './Responsive';
 
@@ -23,7 +23,7 @@ function formReducer(state, action) {
     case 'UPDATE_FIELD':
       return {
         ...state,
-        fields: { ...state.fields, [action.key]: action.value }
+        fields: { ...state.fields, [action.key]: action.value },
       };
     default:
       return state;
@@ -43,7 +43,7 @@ function BookUsWizard() {
         place_name_en: '',
       },
       comments: '',
-    }
+    },
   });
   const { step, setStep, totalSteps } = useSteps(0);
 
@@ -73,8 +73,12 @@ function BookUsWizard() {
             </BodyText>
             <View />
           </Row>
-          <Row direction="row" style={{ alignItems: 'center'}}>
-            <Button style={{ flex: 1 }} title="Start booking" onPress={goNext} />
+          <Row direction="row" style={{ alignItems: 'center' }}>
+            <Button
+              style={{ flex: 1 }}
+              title="Start booking"
+              onPress={goNext}
+            />
           </Row>
         </Step>
 
@@ -116,25 +120,6 @@ function BookUsWizard() {
               />
             </Row>
           </Responsive>
-          <Row>
-            <ProgressBar step={step} />
-          </Row>
-          <Row direction="row">
-            <Button
-              style={{ flex: 1, marginBottom: 16 }}
-              type="outline"
-              title="back"
-              onPress={goBack}
-            />
-            <Button
-              style={{ flex: 2, marginBottom: 16 }}
-              disabled={
-                !formState.fields.firstName || !formState.fields.lastName
-              }
-              title="next"
-              onPress={goNext}
-            />
-          </Row>
         </Step>
 
         <Step active={step === 2}>
@@ -159,26 +144,6 @@ function BookUsWizard() {
               }
             />
           </Row>
-          <Row>
-            <ProgressBar step={step} />
-          </Row>
-          <Row direction="row">
-            <Button
-              style={{ flex: 1, marginBottom: 16 }}
-              type="outline"
-              title="back"
-              onPress={goBack}
-            />
-            <Button
-              style={{ flex: 2, marginBottom: 16 }}
-              disabled={
-                !formState.fields.email ||
-                (formState.errors && formState.errors.email)
-              }
-              title="next"
-              onPress={goNext}
-            />
-          </Row>
         </Step>
 
         <Step active={step === 3}>
@@ -190,23 +155,6 @@ function BookUsWizard() {
           <Row>
             <FormInput label="select an event type" />
           </Row>
-          <Row>
-            <ProgressBar step={step} />
-          </Row>
-          <Row direction="row">
-            <Button
-              style={{ flex: 1, marginBottom: 16 }}
-              type="outline"
-              title="back"
-              onPress={goBack}
-            />
-            <Button
-              style={{ flex: 2, marginBottom: 16 }}
-              disabled={false}
-              title="next"
-              onPress={goNext}
-            />
-          </Row>
         </Step>
 
         <Step active={step === 4}>
@@ -217,23 +165,6 @@ function BookUsWizard() {
           </Row>
           <Row>
             <FormInput label="event date" type="date" />
-          </Row>
-          <Row>
-            <ProgressBar step={step} />
-          </Row>
-          <Row direction="row">
-            <Button
-              style={{ flex: 1, marginBottom: 16 }}
-              type="outline"
-              title="back"
-              onPress={goBack}
-            />
-            <Button
-              style={{ flex: 2, marginBottom: 16 }}
-              disabled={false}
-              title="next"
-              onPress={goNext}
-            />
           </Row>
         </Step>
 
@@ -251,23 +182,6 @@ function BookUsWizard() {
                 console.log('TCL: BookUsWizard -> value', value);
                 dispatch({ type: 'UPDATE_FIELD', key: 'address', value });
               }}
-            />
-          </Row>
-          <Row>
-            <ProgressBar step={step} />
-          </Row>
-          <Row direction="row">
-            <Button
-              style={{ flex: 1, marginBottom: 16 }}
-              type="outline"
-              title="back"
-              onPress={goBack}
-            />
-            <Button
-              style={{ flex: 2, marginBottom: 16 }}
-              disabled={!formState.fields.address.id}
-              title="next"
-              onPress={goNext}
             />
           </Row>
         </Step>
@@ -290,24 +204,28 @@ function BookUsWizard() {
               }
             />
           </Row>
-          <Row>
-            <ProgressBar step={step} />
-          </Row>
-          <Row direction="row">
-            <Button
-              style={{ flex: 1, marginBottom: 16 }}
-              type="outline"
-              title="back"
-              onPress={goBack}
-            />
-            <Button
-              style={{ flex: 2, marginBottom: 16 }}
-              disabled={!formState.fields.comments}
-              title="book now"
-              onPress={onSubmit}
-            />
-          </Row>
         </Step>
+        {step >= 1 ? (
+          <View style={{flex: 1}}>
+            <Row>
+              <ProgressBar step={step} />
+            </Row>
+            <Row direction="row">
+              <Button
+                style={{ flex: 1, marginBottom: 16, marginHorizontal: 8 }}
+                type="outline"
+                title="back"
+                onPress={goBack}
+              />
+              <Button
+                style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
+                disabled={false}
+                title="next"
+                onPress={goNext}
+              />
+            </Row>
+          </View>
+        ) : null}
       </BlockForm>
     </View>
   );
