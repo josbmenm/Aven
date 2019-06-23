@@ -1,7 +1,8 @@
 import { View, TouchableOpacity, Text, TextInput } from 'react-native';
 import React from 'react';
 import GenericPage from './GenericPage';
-import { Heading, SubSection } from './Tokens';
+import { SubSection } from './Tokens';
+import Heading from './Heading';
 import BodyText from './BodyText';
 import Button from '../dashboard/Button';
 import useCloud from '../cloud-core/useCloud';

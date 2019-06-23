@@ -4,7 +4,7 @@ import GenericPage from './GenericPage';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import PageFooter from './PageFooter';
 import Container from './Container';
-import { Heading } from './Tokens';
+import Heading from './Heading';
 import BodyText from './BodyText';
 import FootNote from './FootNote';
 import Tag from './Tag';

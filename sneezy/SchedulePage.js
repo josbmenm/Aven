@@ -10,7 +10,8 @@ import {
   Responsive,
 } from './Responsive';
 import Container from './Container';
-import { Title, Heading } from './Tokens';
+import { Title } from './Tokens';
+import Heading from './Heading';
 import BodyText from './BodyText';
 import Schedule from './Schedule';
 

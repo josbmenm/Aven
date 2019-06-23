@@ -33,7 +33,7 @@ function formReducer(state, action) {
 }
 
 function BookUsWizard() {
-  const theme = useTheme();
+  const { step, setStep, totalSteps } = useSteps(0);
   const [formState, dispatch] = React.useReducer(formReducer, {
     fields: {
       firstName: '',
@@ -47,10 +47,10 @@ function BookUsWizard() {
       comments: '',
     },
   });
-  const { step, setStep, totalSteps } = useSteps(0);
 
   function goNext() {
-    setStep(step + 1);
+    const nextStep = step === totalSteps ? totalSteps : step + 1
+    setStep(nextStep);
   }
 
   function goBack() {

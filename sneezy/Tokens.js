@@ -13,15 +13,6 @@ export function SubSection({ title, children }) {
   );
 }
 
-export function Heading({ children, style, ...rest }) {
-  const theme = useTheme();
-  return (
-    <Text style={{ ...theme.textStyles.heading, ...style }} {...rest}>
-      {children}
-    </Text>
-  );
-}
-
 export function Title({ children, style, ...rest }) {
   const theme = useTheme();
   return (

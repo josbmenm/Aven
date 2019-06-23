@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import Container from './Container';
-import { Heading } from './Tokens';
+import Heading from './Heading';
 import BodyText from './BodyText';
 
 export default function GenericHeroHeader({
