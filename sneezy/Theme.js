@@ -98,7 +98,7 @@ export const theme = {
   shadows,
   radii: [0, 2, 4, 8],
   breakpoints: [768],
-  layoutWidth: {
+  layouts: {
     small: 640,
     large: 1280
   },

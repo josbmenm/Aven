@@ -8,7 +8,7 @@ function Container({ children, style = {} }) {
     <View
       style={{
         width: '90%',
-        maxWidth: theme.layoutWidth.large,
+        maxWidth: theme.layouts.large,
         alignItems: 'stretch',
         alignSelf: 'center',
         ...style,

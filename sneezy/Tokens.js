@@ -14,15 +14,6 @@ export function SubSection({ title, children }) {
   );
 }
 
-export function Section({ title, children }) {
-  return (
-    <View>
-      <Text style={{ fontSize: 32 }}>{title}</Text>
-      {children}
-    </View>
-  );
-}
-
 export function Heading({ children, style, ...rest }) {
   const theme = useTheme();
   return (
