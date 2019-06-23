@@ -2,7 +2,8 @@ import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import GenericPage from './GenericPage';
 import Container from './Container';
-import { BodyText, Heading } from './Tokens';
+import { Heading } from './Tokens';
+import BodyText from './BodyText';
 import { useTheme } from '../dashboard/Theme'
 import FeatureSection from './FeatureSection';
 import TheTeam from './TheTeam';

@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Image } from 'react-native';
 import Container from './Container';
-import { Heading, BodyText } from './Tokens';
+import { Heading } from './Tokens';
+import BodyText from './BodyText';
 import ButtonLink from './ButtonLink';
 import {
   ColumnToRow,

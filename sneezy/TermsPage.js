@@ -1,6 +1,7 @@
 import React from 'react';
 import GenericPage from './GenericPage';
-import { SubSection, List, ListItem, BodyText } from './Tokens';
+import { SubSection, List, ListItem } from './Tokens';
+import BodyText from './BodyText';
 import GenericHeroHeader from './GenericHeroHeader';
 import { useTheme } from '../dashboard/Theme'
 import Container from './Container';

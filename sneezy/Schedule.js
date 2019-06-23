@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Responsive } from './Responsive';
 import { useTheme } from '../dashboard/Theme'
-import { BodyText } from './Tokens';
+import BodyText from './BodyText';
 
 function Schedule(props) {
   const schedule = [

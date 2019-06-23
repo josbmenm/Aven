@@ -2,7 +2,8 @@ import { Text } from 'react-native';
 import React from 'react';
 import GenericPage from './GenericPage';
 import GenericHeroHeader from './GenericHeroHeader';
-import { SubSection, BodyText } from './Tokens';
+import { SubSection } from './Tokens';
+import BodyText from './BodyText';
 import Container from './Container';
 import { useTheme } from '../dashboard/Theme'
 import PageFooter from './PageFooter';

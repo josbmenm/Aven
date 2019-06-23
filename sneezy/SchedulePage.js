@@ -10,7 +10,8 @@ import {
   Responsive,
 } from './Responsive';
 import Container from './Container';
-import { BodyText, Title, Heading } from './Tokens';
+import { Title, Heading } from './Tokens';
+import BodyText from './BodyText';
 import Schedule from './Schedule';
 
 function SchedulePage() {

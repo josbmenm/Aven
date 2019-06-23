@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { useTheme } from '../dashboard/Theme'
-import UIButton from '../dashboard/UIButton';
-import FunctionalLink from '../navigation-web/Link';
+import BodyText from './BodyText';
 
 
 export function SubSection({ title, children }) {
@@ -61,18 +60,5 @@ export function ListItem({ children }) {
       />
       <BodyText>{children}</BodyText>
     </View>
-  );
-}
-
-export function BodyText({ children, bold, style, ...rest }) {
-  const theme = useTheme();
-  let boldStyle = bold ? { fontWeight: 'bold' } : {};
-  return (
-    <Text
-      style={{ ...theme.textStyles.body, ...style, ...boldStyle }}
-      {...rest}
-    >
-      {children}
-    </Text>
   );
 }

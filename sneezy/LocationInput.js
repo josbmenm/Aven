@@ -1,18 +1,20 @@
 import { View, TouchableOpacity, Text } from 'react-native';
 import React from 'react';
 import GenericPage from './GenericPage';
-import {
-  BodyText,
-  Title
-} from './Tokens';
+import { Title } from './Tokens';
+import BodyText from './BodyText';
 import Button from '../dashboard/Button';
 import useCloud from '../cloud-core/useCloud';
 import useAsyncError from '../react-utils/useAsyncError';
 import FormInput from '../components/BlockFormInput';
 
 //
-export function LocationInput({ onSelectedResult, selectedResult, inputValue = "" }) {
-  console.log("TCL: LocationInput -> selectedResult", selectedResult)
+export function LocationInput({
+  onSelectedResult,
+  selectedResult,
+  inputValue = '',
+}) {
+  console.log('TCL: LocationInput -> selectedResult', selectedResult);
 
   const [inputText, setInputText] = React.useState(inputValue);
   const [results, setResults] = React.useState(null);
@@ -56,11 +58,16 @@ export function LocationInput({ onSelectedResult, selectedResult, inputValue = "
               key={result.id}
               onPress={() => {
                 onSelectedResult(result);
-                setResults(null)
-                setInputText(result.place_name)
+                setResults(null);
+                setInputText(result.place_name);
               }}
             >
-              <View style={{ backgroundColor: isSelected ? 'blue' : 'white',  padding: 12 }}>
+              <View
+                style={{
+                  backgroundColor: isSelected ? 'blue' : 'white',
+                  padding: 12,
+                }}
+              >
                 <Title>{result.text}</Title>
                 <BodyText>
                   {result.context.map(c => c.text).join(', ')}
