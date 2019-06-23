@@ -4,7 +4,7 @@ import Container from './Container';
 import { useTheme } from '../dashboard/Theme';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import OnoFoodLogo from './OnoFoodLogo';
-import { FootNote } from './Tokens';
+import FootNote from './FootNote';
 import Link from './Link';
 import FunctionalLink from '../navigation-web/Link';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';

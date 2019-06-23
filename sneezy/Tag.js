@@ -1,5 +1,5 @@
 import React from 'react'
-import { FootNote } from './Tokens';
+import FootNote from './FootNote';
 import { useTheme } from '../dashboard/Theme';
 
 function Tag({ title, style, ...rest }) {

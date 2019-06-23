@@ -76,19 +76,3 @@ export function BodyText({ children, bold, style, ...rest }) {
     </Text>
   );
 }
-
-export function FootNote({ children, bold, style, ...rest }) {
-  const theme = useTheme();
-  let boldStyle = bold ? { fontWeight: 'bold' } : {};
-  return (
-    <Text
-      style={StyleSheet.flatten([
-        { ...theme.textStyles.footnote, ...boldStyle },
-        style,
-      ])}
-      {...rest}
-    >
-      {children}
-    </Text>
-  );
-}

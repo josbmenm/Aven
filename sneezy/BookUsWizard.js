@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
-import { Title, BodyText, FootNote } from './Tokens';
+import { Title, BodyText } from './Tokens';
+import FootNote from './FootNote';
 import BlockForm from '../components/BlockForm';
 import FormInput from '../components/BlockFormInput';
 import Button from '../dashboard/Button';
