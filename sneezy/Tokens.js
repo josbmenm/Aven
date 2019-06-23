@@ -93,48 +93,6 @@ export function FootNote({ children, bold, style, ...rest }) {
   );
 }
 
-export function Link({
-  buttonStyle = {},
-  titleStyle = {},
-  title = 'link',
-  size = 'Small',
-  routeName,
-  url,
-  noActive = false,
-  ...rest
-}) {
-  const theme = useTheme();
-  return (
-    <FunctionalLink
-      routeName={routeName}
-      url={url}
-      renderContent={active => (
-        <UIButton
-          title={title}
-          buttonStyle={{
-            paddingHorizontal: 8,
-            paddingVertical: 4,
-            borderColor: 'transparent',
-            borderBottomWidth: 3,
-            borderColor: noActive
-              ? 'transparent'
-              : active
-              ? theme.colors.primary
-              : 'transparent',
-            ...buttonStyle,
-          }}
-          type="outline"
-          titleStyle={{
-            color: theme.colors.primary,
-            fontSize: size === 'Small' ? 16 : 24,
-            ...titleStyle,
-          }}
-        />
-      )}
-    />
-  );
-}
-
 export function Tag({ title, style, ...rest }) {
   const theme = useTheme();
   return (
