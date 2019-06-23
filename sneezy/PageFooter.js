@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 import Container from './Container';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import OnoFoodLogo from './OnoFoodLogo';
 import { FootNote, Link } from './Tokens';
@@ -74,56 +74,108 @@ export default function PageFooter() {
                 }}
               >
                 <View style={{ flex: 1 }}>
-                  <Link noActive titleStyle={{textAlign: 'left'}} title="Menu" routeName="Menu" />
-                  <Link noActive titleStyle={{textAlign: 'left'}} title="Our story" routeName="OurStory" />
-                  <Link noActive titleStyle={{textAlign: 'left'}} title="Book with us" routeName="BookUs" />
+                  <Link
+                    noActive
+                    titleStyle={{ textAlign: 'left' }}
+                    title="Menu"
+                    routeName="Menu"
+                  />
+                  <Link
+                    noActive
+                    titleStyle={{ textAlign: 'left' }}
+                    title="Our story"
+                    routeName="OurStory"
+                  />
+                  <Link
+                    noActive
+                    titleStyle={{ textAlign: 'left' }}
+                    title="Book with us"
+                    routeName="BookUs"
+                  />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Link noActive titleStyle={{textAlign: 'left'}} title="Press kit" url="https://google.com" />
-                  <Link noActive titleStyle={{textAlign: 'left'}} title="Terms & privacy" routeName="Terms" />
-                  <Link noActive titleStyle={{textAlign: 'left'}} title="Contact us" url="mailto:aloha@onofood.co" />
-                  <Link noActive titleStyle={{textAlign: 'left'}} title="Subscribe to updates" routeName="Subscribe" />
+                  <Link
+                    noActive
+                    titleStyle={{ textAlign: 'left' }}
+                    title="Press kit"
+                    url="https://google.com"
+                  />
+                  <Link
+                    noActive
+                    titleStyle={{ textAlign: 'left' }}
+                    title="Terms & privacy"
+                    routeName="Terms"
+                  />
+                  <Link
+                    noActive
+                    titleStyle={{ textAlign: 'left' }}
+                    title="Contact us"
+                    url="mailto:aloha@onofood.co"
+                  />
+                  <Link
+                    noActive
+                    titleStyle={{ textAlign: 'left' }}
+                    title="Subscribe to updates"
+                    routeName="Subscribe"
+                  />
                 </View>
               </ColumnToRowChild>
               <ColumnToRowChild
                 style={{
-                  paddingTop: 4,
                   flexDirection: 'column',
                   alignItems: 'flex-start',
                   marginBottom: 40,
                 }}
               >
-                <FunctionalLink url="https://www.twitter.com/onofoodco/">
+                <FunctionalLink
+                  url="https://www.twitter.com/onofoodco/"
+                  overrideATagCSS={{
+                    height: 42,
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
                   <View
                     style={{
                       flexDirection: 'row',
-                      marginBottom: 8,
                     }}
                   >
                     <SocialIcon icon={require('./public/img/twitter.png')} />
-                    <Text style={theme.textStyles.footnote}>@onofodco</Text>
+                    <FootNote style={{ marginBottom: 0}}>@onofodco</FootNote>
                   </View>
                 </FunctionalLink>
-                <FunctionalLink url="https://www.facebook.com/onofoodco/">
+                <FunctionalLink
+                  url="https://www.facebook.com/onofoodco/"
+                  overrideATagCSS={{
+                    height: 42,
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
                   <View
                     style={{
                       flexDirection: 'row',
-                      marginBottom: 8,
                     }}
                   >
                     <SocialIcon icon={require('./public/img/facebook.png')} />
-                    <Text style={theme.textStyles.footnote}>@onofodco</Text>
+                    <FootNote style={{ marginBottom: 0}}>@onofodco</FootNote>
                   </View>
                 </FunctionalLink>
-                <FunctionalLink url="https://www.instagram.com/onofoodco/">
+                <FunctionalLink
+                  url="https://www.instagram.com/onofoodco/"
+                  overrideATagCSS={{
+                    height: 42,
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
                   <View
                     style={{
                       flexDirection: 'row',
-                      marginBottom: 8,
                     }}
                   >
                     <SocialIcon icon={require('./public/img/instagram.png')} />
-                    <Text style={theme.textStyles.footnote}>@onofodco</Text>
+                    <FootNote style={{ marginBottom: 0}}>@onofodco</FootNote>
                   </View>
                 </FunctionalLink>
               </ColumnToRowChild>

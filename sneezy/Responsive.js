@@ -134,6 +134,7 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
 
   ${style.textAlign ? `text-align: ${style.textAlign[0]};` : ''}
   ${style.alignItems ? `align-items: ${style.alignItems[0]};` : ''}
+  ${style.alignSelf ? `align-self: ${style.alignSelf[0]};` : ''}
   ${style.flexDirection ? `flex-direction: ${style.flexDirection[0]};` : ''}
 
   ${
@@ -173,6 +174,7 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
 
   ${style.textAlign ? `text-align: ${style.textAlign[1]};` : ''}
   ${style.alignItems ? `align-items: ${style.alignItems[1]};` : ''}
+  ${style.alignSelf ? `align-self: ${style.alignSelf[1]};` : ''}
   ${style.flexDirection ? `flex-direction: ${style.flexDirection[1]};` : ''}
 
   ${

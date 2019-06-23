@@ -172,7 +172,7 @@ export function Link({
   );
 }
 
-export function Tag({ title, style }) {
+export function Tag({ title, style, ...rest }) {
   const theme = useTheme();
   return (
     <FootNote
@@ -190,6 +190,7 @@ export function Tag({ title, style }) {
         textAlign: 'center',
         letterSpacing: 3,
       }, style]}
+      {...rest}
     >
       {title}
     </FootNote>
