@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { Title, BodyText, FootNote } from './Tokens';
-import Container from './Container';
 import BlockForm from '../components/BlockForm';
 import FormInput from '../components/BlockFormInput';
 import Button from '../dashboard/Button';
 import { useTheme } from '../dashboard/Theme';
 import { LocationInput } from './LocationInput';
 import { Responsive } from './Responsive';
+import FormRow from './FormRow';
 
 function useSteps(initialValue) {
   const [step, setStep] = React.useState(initialValue);
@@ -64,7 +64,7 @@ function BookUsWizard() {
     <View style={{ paddingVertical: 40 }}>
       <BlockForm>
         <Step active={step === 0}>
-          <Row style={{ paddingHorizontal: 8 }}>
+          <FormRow style={{ paddingHorizontal: 8 }}>
             <Title>Book with us</Title>
             <BodyText>
               Are you interested in having Ono Blends cater for an event? We’d
@@ -72,28 +72,28 @@ function BookUsWizard() {
               so we can provide you with the best experience possible.
             </BodyText>
             <View />
-          </Row>
-          <Row direction="row" style={{ alignItems: 'center' }}>
+          </FormRow>
+          <FormRow direction="row" style={{ alignItems: 'center' }}>
             <Button
               style={{ flex: 1 }}
               title="Start booking"
               onPress={goNext}
             />
-          </Row>
+          </FormRow>
         </Step>
 
         <Step active={step === 1}>
-          <Row style={{ paddingHorizontal: 8 }}>
+          <FormRow style={{ paddingHorizontal: 8 }}>
             <Title>First thing’s first</Title>
             <BodyText>We’d love to know who we are speaking to.</BodyText>
             <View />
-          </Row>
+          </FormRow>
           <Responsive
             style={{
               flexDirection: ['column', 'row'],
             }}
           >
-            <Row direction="row">
+            <FormRow direction="row">
               <FormInput
                 label="first name"
                 mode="name"
@@ -118,19 +118,19 @@ function BookUsWizard() {
                   })
                 }
               />
-            </Row>
+            </FormRow>
           </Responsive>
         </Step>
 
         <Step active={step === 2}>
-          <Row style={{ paddingHorizontal: 8 }}>
+          <FormRow style={{ paddingHorizontal: 8 }}>
             <Title>How do we contact you?</Title>
             <BodyText>
               Please let us know a good email to follow up with you.
             </BodyText>
             <View />
-          </Row>
-          <Row>
+          </FormRow>
+          <FormRow>
             <FormInput
               mode="email"
               label="email"
@@ -143,38 +143,38 @@ function BookUsWizard() {
                 })
               }
             />
-          </Row>
+          </FormRow>
         </Step>
 
         <Step active={step === 3}>
-          <Row style={{ paddingHorizontal: 8 }}>
+          <FormRow style={{ paddingHorizontal: 8 }}>
             <Title>What sort of event is this?</Title>
             <BodyText>Let us know so we can best cater to it.</BodyText>
             <View />
-          </Row>
-          <Row>
+          </FormRow>
+          <FormRow>
             <FormInput label="select an event type" />
-          </Row>
+          </FormRow>
         </Step>
 
         <Step active={step === 4}>
-          <Row style={{ paddingHorizontal: 8 }}>
+          <FormRow style={{ paddingHorizontal: 8 }}>
             <Title>When would you like us there?</Title>
             <BodyText>Just let us know to when would be best.</BodyText>
             <View />
-          </Row>
-          <Row>
+          </FormRow>
+          <FormRow>
             <FormInput label="event date" type="date" />
-          </Row>
+          </FormRow>
         </Step>
 
         <Step active={step === 5}>
-          <Row style={{ paddingHorizontal: 8 }}>
+          <FormRow style={{ paddingHorizontal: 8 }}>
             <Title>Almost done…..</Title>
             <BodyText>Where would you like us to be?</BodyText>
             <View />
-          </Row>
-          <Row>
+          </FormRow>
+          <FormRow>
             {/* mapbox autocomplete */}
             <LocationInput
               inputValue={formState.fields.address.place_name_en}
@@ -183,18 +183,18 @@ function BookUsWizard() {
                 dispatch({ type: 'UPDATE_FIELD', key: 'address', value });
               }}
             />
-          </Row>
+          </FormRow>
         </Step>
 
         <Step active={step === 6}>
-          <Row style={{ paddingHorizontal: 8 }}>
+          <FormRow style={{ paddingHorizontal: 8 }}>
             <Title>Additional Comments</Title>
             <BodyText>
               Do you have anything else you’d like us to know?
             </BodyText>
             <View />
-          </Row>
-          <Row>
+          </FormRow>
+          <FormRow>
             <FormInput
               value={formState.fields.comments}
               label="any additional comments?"
@@ -203,14 +203,14 @@ function BookUsWizard() {
                 dispatch({ type: 'UPDATE_FIELD', key: 'comments', value })
               }
             />
-          </Row>
+          </FormRow>
         </Step>
         {step >= 1 ? (
-          <View style={{flex: 1}}>
-            <Row>
+          <View style={{ flex: 1 }}>
+            <FormRow>
               <ProgressBar step={step} />
-            </Row>
-            <Row direction="row">
+            </FormRow>
+            <FormRow direction="row">
               <Button
                 style={{ flex: 1, marginBottom: 16, marginHorizontal: 8 }}
                 type="outline"
@@ -223,7 +223,7 @@ function BookUsWizard() {
                 title="next"
                 onPress={goNext}
               />
-            </Row>
+            </FormRow>
           </View>
         ) : null}
       </BlockForm>
@@ -237,20 +237,6 @@ function Step({ title, subtitle, children, active, style, ...rest }) {
     <View style={[{ paddingVertical: 40 }, style]} {...rest}>
       {children}
     </View>
-  );
-}
-
-function Row({ children, style, direction = 'column', ...rest }) {
-  return (
-    <Responsive
-      style={{
-        flexDirection: ['column', direction],
-      }}
-    >
-      <View style={[{ paddingBottom: 36 }, style]} {...rest}>
-        {children}
-      </View>
-    </Responsive>
   );
 }
 

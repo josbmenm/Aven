@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
 import Container from './Container';
-import { Title, Tag, BodyText } from './Tokens';
+import { Title, BodyText } from './Tokens';
+import Tag from './Tag';
 import FunctionalLink from '../navigation-web/Link';
 import { useTheme } from '../dashboard/Theme';
 import { useMenu } from '../ono-cloud/OnoKitchen';
