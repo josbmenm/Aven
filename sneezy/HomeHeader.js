@@ -9,7 +9,7 @@ import {
   Responsive,
 } from './Responsive';
 import { absoluteElement } from '../components/Styles';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 
 function HomeHeader() {
   const theme = useTheme();
@@ -74,14 +74,15 @@ function HomeHeader() {
                     boxSizing: 'border-box',
                   }}
                 >
-                  <Heading>
-                    We’re making healthy food accessible to everyone.
-                  </Heading>
-                  <Responsive
+                  <Responsive 
                     style={{
                       textAlign: ['center', 'left'],
                     }}
                   >
+                    <Heading>
+                      We’re making healthy food accessible to everyone.
+                    </Heading>
+
                     <BodyText
                       style={{
                         marginBottom: 28,

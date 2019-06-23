@@ -5,7 +5,6 @@ import { useTheme } from '../dashboard/Theme'
 import { BodyText } from './Tokens';
 
 function Schedule(props) {
-  // const theme = useTheme();
   const schedule = [
     {
       id: 1,
@@ -22,7 +21,7 @@ function Schedule(props) {
   ];
 
   return (
-    <View>
+    <View {...props}>
       {schedule.map((item, index) => (
         <ScheduleItem
           key={item.id}
