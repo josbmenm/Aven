@@ -94,7 +94,7 @@ export const theme = {
   fontFamily,
   textStyles,
   shadows,
-  layoutWidth: {
+  layouts: {
     small: 640,
     large: 1280,
   },
