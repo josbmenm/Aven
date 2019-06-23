@@ -49,7 +49,7 @@ function BookUsWizard() {
   });
 
   function goNext() {
-    const nextStep = step === totalSteps ? totalSteps : step + 1
+    const nextStep = step === totalSteps ? totalSteps : step + 1;
     setStep(nextStep);
   }
 
@@ -225,6 +225,15 @@ function BookUsWizard() {
                 title="next"
                 onPress={goNext}
               />
+              {step === totalSteps ? (
+                <Button
+                  style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
+                  disabled={false}
+                  title="submit"
+                  onPress={onSubmit}
+                />
+              ) : null}
+              }
             </FormRow>
           </View>
         ) : null}

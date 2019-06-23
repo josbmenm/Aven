@@ -3,6 +3,7 @@ import { View, Image, StyleSheet } from 'react-native';
 import GenericPage from './GenericPage';
 import PageFooter from './PageFooter';
 import { useTheme } from '../dashboard/Theme';
+import { aspectRatio43 } from '../components/Styles';
 import {
   NoFlexToFlex,
   ColumnToRow,
@@ -81,12 +82,16 @@ function SchedulePage() {
           marginVertical: 80,
         }}
       >
-        <Container style={{
-          borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: theme.colors.border,
-          paddingBottom: 100
-        }}>
-          <Heading style={{ marginVertical: 80, textAlign: 'center'}}>Today’s Schedule</Heading>
+        <Container
+          style={{
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderBottomColor: theme.colors.border,
+            paddingBottom: 100,
+          }}
+        >
+          <Heading style={{ marginVertical: 80, textAlign: 'center' }}>
+            Today’s Schedule
+          </Heading>
           <View>
             <ColumnToRow>
               <ColumnToRowChild>
@@ -116,7 +121,7 @@ function SchedulePage() {
                       height: 371,
                       backgroundColor: 'blue',
                       borderRadius: theme.radii[2],
-                    ...theme.shadows.large
+                      ...theme.shadows.large,
                     }}
                   />
                 </View>
@@ -125,7 +130,39 @@ function SchedulePage() {
           </View>
         </Container>
       </View>
-
+      <View style={{ paddingVertical: 80 }}>
+        <Container>
+          <Heading style={{ textAlign: 'center', alignSelf: 'center' }}>
+            This Week
+          </Heading>
+        </Container>
+      </View>
+      <View style={{ paddingVertical: 80 }}>
+        <Container>
+          <ColumnToRow>
+            <ColumnToRowChild className="hide-mobile" style={{ flex: 2 }}>
+              <Image
+                style={{ marginHorizontal: 40, maxWidth: 333, ...aspectRatio43 }}
+                source={require('./public/img/map.jpg')}
+              />
+            </ColumnToRowChild>
+            <ColumnToRowChild style={{ flex: 3, justifyContent: 'center' }}>
+              <Responsive
+                style={{
+                  textAlign: ['center', 'left'],
+                  alignSelf: ['center', 'flex-start'],
+                }}
+              >
+                <Heading>Don’t see us in your city?</Heading>
+                <BodyText style={{ marginBottom: 20, maxWidth: 412 }}>
+                  Ono Blends is always looking to grow. Request your city and
+                  we’ll try to make it happen.
+                </BodyText>
+              </Responsive>
+            </ColumnToRowChild>
+          </ColumnToRow>
+        </Container>
+      </View>
       <PageFooter />
     </GenericPage>
   );
