@@ -86,7 +86,7 @@ const shadows = {
 };
 
 export const theme = {
-  spaces: [0, 4, 8, 12, 16, 20, 24, 28, 32],
+  space: [0, 4, 8, 12, 16, 20, 24, 28, 32],
   radii: [0, 2, 4, 8],
   fontSizes: [12, 18, 20, 28, 38],
   breakpoints: [768],
