@@ -102,7 +102,7 @@ function SchedulePage() {
                     marginLeft: [0, 120],
                   }}
                 >
-                  <Schedule />
+                  <Schedule withFloatingLabel={true} />
                 </Responsive>
               </ColumnToRowChild>
               <ColumnToRowChild>

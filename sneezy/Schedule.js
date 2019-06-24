@@ -1,11 +1,13 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Responsive } from './Responsive';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 import BodyText from './BodyText';
+import FootNote from './FootNote';
 
-function Schedule(props) {
-  const schedule = [
+function fetchSchedule() {
+  //TODO: replace this with real api call
+  return Promise.resolve([
     {
       id: 1,
       time: '8:00 - 10:30 am',
@@ -18,18 +20,54 @@ function Schedule(props) {
       address: '981 35th St, Oakland, CA 94608',
       active: false,
     },
-  ];
+  ]);
+}
+
+function useSchedule() {
+  const [schedule, setSchedule] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  React.useEffect(async () => {
+    const res = await fetchSchedule();
+    setSchedule(res);
+    setLoading(false);
+  }, []);
+
+  return {
+    loading,
+    schedule,
+  };
+}
+
+function Schedule({ withFloatingLabel = false, ...rest }) {
+  const { schedule, loading } = useSchedule();
 
   return (
-    <View {...props}>
-      {schedule.map((item, index) => (
-        <ScheduleItem
-          key={item.id}
-          item={item}
-          first={index === 0}
-          last={index === schedule.length - 1}
-        />
-      ))}
+    <View {...rest}>
+      {withFloatingLabel ? (
+        <FootNote
+          bold
+          className="hide-mobile"
+          style={{
+            position: 'absolute',
+            top: 24,
+            left: -120,
+          }}
+        >
+          We're Here!
+        </FootNote>
+      ) : null}
+      {!loading ? (
+        schedule.map((item, index) => (
+          <ScheduleItem
+            key={item.id}
+            item={item}
+            first={index === 0}
+            last={index === schedule.length - 1}
+          />
+        ))
+      ) : (
+        <FootNote>loading...</FootNote>
+      )}
     </View>
   );
 }
@@ -90,32 +128,34 @@ function ScheduleItem({ item, first, last }) {
           )}
         </View>
       </Responsive>
-      <Responsive style={{
-        marginLeft: [40, 0]
-      }}>
-      <View
+      <Responsive
         style={{
-          flex: 1,
-          borderRadius: 8,
-          borderWidth: 3,
-          borderColor: item.active ? theme.colors.primary : 'transparent',
-          padding: 20,
-          ...theme.shadows.medium,
+          marginLeft: [40, 0],
         }}
       >
-        <BodyText
-          bold
+        <View
           style={{
-            fontSize: 12,
-            lineHeight: 16,
-            fontFamily: theme.fontFamily.title,
-            margin: 0,
+            flex: 1,
+            borderRadius: 8,
+            borderWidth: 3,
+            borderColor: item.active ? theme.colors.primary : 'transparent',
+            padding: 20,
+            ...theme.shadows.medium,
           }}
         >
-          {item.time}
-        </BodyText>
-        <BodyText style={{ marginBottom: 0 }}>{item.address}</BodyText>
-      </View>
+          <BodyText
+            bold
+            style={{
+              fontSize: 12,
+              lineHeight: 16,
+              fontFamily: theme.fontFamily.title,
+              margin: 0,
+            }}
+          >
+            {item.time}
+          </BodyText>
+          <BodyText style={{ marginBottom: 0 }}>{item.address}</BodyText>
+        </View>
       </Responsive>
     </View>
   );
