@@ -142,7 +142,7 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/twitter.png')} />
-                    <FootNote style={{ marginBottom: 0 }}>@onofoodco</FootNote>
+                    <FootNote style={{ marginBottom: 0, lineHeight: 16}}>@onofodco</FootNote>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -159,7 +159,7 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/facebook.png')} />
-                    <FootNote style={{ marginBottom: 0 }}>@onofoodco</FootNote>
+                    <FootNote style={{ marginBottom: 0, lineHeight: 16}}>@onofodco</FootNote>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -176,7 +176,7 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/instagram.png')} />
-                    <FootNote style={{ marginBottom: 0 }}>@onofoodco</FootNote>
+                    <FootNote style={{ marginBottom: 0, lineHeight: 16}}>@onofodco</FootNote>
                   </View>
                 </FunctionalLink>
               </ColumnToRowChild>
@@ -199,7 +199,6 @@ function SocialIcon({ icon }) {
       resizeMode="contain"
       source={icon}
       style={{
-        backgroundColor: theme.colors.lightGrey,
         width: 20,
         height: 20,
         borderRadius: 2,

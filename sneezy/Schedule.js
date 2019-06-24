@@ -26,10 +26,11 @@ function fetchSchedule() {
 function useSchedule() {
   const [schedule, setSchedule] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  React.useEffect(async () => {
-    const res = await fetchSchedule();
-    setSchedule(res);
-    setLoading(false);
+  React.useEffect(() => {
+    fetchSchedule().then(res => {
+      setSchedule(res);
+      setLoading(false);
+    });
   }, []);
 
   return {

@@ -94,7 +94,7 @@ function BlockFormInputWithRef(
               {
                 translateY: placeholderOpenProgress.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [4, 8],
+                  outputRange: [-4, 8],
                 }),
               },
             ],

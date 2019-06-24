@@ -54,7 +54,7 @@ function BlendsListItem({ blend, style }) {
           }}
           resizeMode="cover"
         />
-        <Title style={{ textAlign: 'right', fontSize: 24 }}>
+        <Title style={{ textAlign: 'right', fontSize: 24, lineHeight: 32 }}>
           {blend['Display Name']}
         </Title>
         <Tag
