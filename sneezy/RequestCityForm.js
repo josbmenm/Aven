@@ -37,7 +37,9 @@ function RequestCityForm() {
         onSelectedResult={setLocation}
         style={{ marginRight: 16 }}
       />
-      <Button disabled={!location} title="Submit" onPress={handleSubmit} />
+      <Button buttonStyle={{
+        height: 73
+      }} titleStyle={{fontSize: 24, lineHeight: 32}} disabled={!location} title="request city" onPress={handleSubmit} />
     </View>
   );
 }
