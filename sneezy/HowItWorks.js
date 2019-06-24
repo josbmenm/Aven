@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image } from 'react-native';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 import Container from './Container';
 import Heading from './Heading';
 import BodyText from './BodyText';
@@ -86,6 +86,7 @@ function HowItWorks() {
             />
           </Responsive>
           <FeatureSection
+            style={{ width: '100%' }}
             title="Pickup"
             bodyText={
               <BodyText>

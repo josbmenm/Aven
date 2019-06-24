@@ -10,7 +10,7 @@ function FeatureSection({
   bodyText,
   image,
   inverted = false,
-  style = {},
+  style,
   columnReverse,
 }) {
   const theme = useTheme();
@@ -21,10 +21,11 @@ function FeatureSection({
         maxWidth: ["100%", 400]
       }}>
       <View
-        style={{
+        style={[{
           backgroundColor: theme.colors.lightGrey,
-          ...aspectRatio43,
-        }}
+        },
+        aspectRatio43,
+        ]}
       />
       </Responsive>
     );
@@ -33,14 +34,14 @@ function FeatureSection({
     <ColumnToRow
       rowReverse={inverted}
       columnReverse={columnReverse}
-      style={StyleSheet.flatten([
+      style={[
         {
           alignSelf: 'center',
           justifyContent: 'space-between',
           width: '100%',
         },
         style,
-      ])}
+      ]}
     >
       <Responsive
         style={{
