@@ -10,7 +10,7 @@ export function LocationInput({
   onSelectedResult,
   selectedResult,
   inputValue = '',
-  style
+  style,
 }) {
   console.log('TCL: LocationInput -> selectedResult', selectedResult);
   const theme = useTheme();
@@ -47,33 +47,55 @@ export function LocationInput({
         value={inputText}
         label="Culver City, California"
       />
-      {results &&
-        results.map(result => {
-          const isSelected =
-            !!selectedResult && selectedResult.id === result.id;
-          return (
-            <TouchableOpacity
-              key={result.id}
-              onPress={() => {
-                onSelectedResult(result);
-                setResults(null);
-                setInputText(result.place_name);
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: isSelected ? theme.color.primary80 : 'white',
-                  padding: 12,
+      {results ? (
+        <View style={{
+          margin: theme.space[2],
+          marginTop: 0,
+          borderBottomLeftRadius: theme.space[2],
+          borderBottomRightRadius: theme.space[2],
+          borderWidth: 1,
+          borderColor: theme.colors.border,
+          overflow: 'hidden',
+          ...theme.shadows.medium
+        }}>
+          {results.map(result => {
+            const isSelected =
+              !!selectedResult && selectedResult.id === result.id;
+            return (
+              <TouchableOpacity
+                key={result.id}
+                onPress={() => {
+                  onSelectedResult(result);
+                  setResults(null);
+                  setInputText(result.place_name);
                 }}
               >
-                <BodyText bold style={{ fontFamily: theme.fontFamily.heading, color: isSelected ? theme.colors.white : theme.colors.primary }}>{result.text}</BodyText>
-                <FootNote>
-                  {result.context.map(c => c.text).join(', ')}
-                </FootNote>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+                <View
+                  style={{
+                    paddingVertical: theme.space[2],
+                    paddingHorizontal: theme.space[4],
+                  }}
+                >
+                  <BodyText
+                    bold
+                    style={{
+                      fontFamily: theme.fontFamily.heading,
+                      color: theme.colors.primary,
+                      marginBottom: 0,
+                      lineHeight: 28
+                    }}
+                  >
+                    {result.text}
+                  </BodyText>
+                  <FootNote style={{ marginBottom: 0, lineHeight: 20 }}>
+                    {result.context.map(c => c.text).join(', ')}
+                  </FootNote>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      ) : null}
     </View>
   );
 }
