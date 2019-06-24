@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Title } from './Tokens';
+import Title from './Title';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import { aspectRatio43 } from '../components/Styles';
 import { useTheme } from '../dashboard/Theme'

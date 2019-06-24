@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { useTheme } from '../dashboard/Theme'
 import BodyText from './BodyText';
+import Title from './Title';
 
 
 export function SubSection({ title, children }) {
@@ -10,15 +11,6 @@ export function SubSection({ title, children }) {
       {title ? <Title style={{ marginBottom: 24 }}>{title}</Title> : null}
       {children}
     </View>
-  );
-}
-
-export function Title({ children, style, ...rest }) {
-  const theme = useTheme();
-  return (
-    <Text style={{ ...theme.textStyles.title, ...style }} {...rest}>
-      {children}
-    </Text>
   );
 }
 

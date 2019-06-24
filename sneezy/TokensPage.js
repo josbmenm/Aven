@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Title } from './Tokens';
+import Title from './Title';
 import Heading from './Heading';
 import BodyText from './BodyText';
 import FootNote from './FootNote';

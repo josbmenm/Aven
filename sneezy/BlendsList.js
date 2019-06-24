@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
 import Container from './Container';
-import { Title } from './Tokens';
+import Title from './Title';
 import BodyText from './BodyText';
 import Tag from './Tag';
 import FunctionalLink from '../navigation-web/Link';

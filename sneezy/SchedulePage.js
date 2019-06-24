@@ -11,7 +11,7 @@ import {
   Responsive,
 } from './Responsive';
 import Container from './Container';
-import { Title } from './Tokens';
+import Title from './Title';
 import Heading from './Heading';
 import BodyText from './BodyText';
 import Schedule from './Schedule';
@@ -23,7 +23,8 @@ function SchedulePage() {
     <GenericPage>
       <View
         style={{
-          marginVertical: 40,
+          marginTop: 40,
+          marginBottom: 80,
         }}
       >
         <NoFlexToFlex>
@@ -90,7 +91,7 @@ function SchedulePage() {
             paddingBottom: 100,
           }}
         >
-          <Heading style={{ marginVertical: 80, textAlign: 'center' }}>
+          <Heading style={{ marginBottom: 80, textAlign: 'center' }}>
             Today’s Schedule
           </Heading>
           <View>
@@ -110,7 +111,6 @@ function SchedulePage() {
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: 'red',
                   }}
                 >
                   {/* MAP HERE */}
@@ -120,7 +120,7 @@ function SchedulePage() {
                       maxWidth: 532,
                       overflow: 'hidden',
                       height: 371,
-                      backgroundColor: 'blue',
+                      backgroundColor: theme.colors.lightGrey,
                       borderRadius: theme.radii[2],
                       ...theme.shadows.large,
                     }}

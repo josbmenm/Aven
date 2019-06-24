@@ -5,7 +5,7 @@ import { useTheme } from '../dashboard/Theme'
 function Heading({ children, style, ...rest }) {
   const theme = useTheme();
   return (
-    <Text style={{ ...theme.textStyles.heading, ...style }} {...rest}>
+    <Text style={[theme.textStyles.heading, style]} {...rest}>
       {children}
     </Text>
   );
