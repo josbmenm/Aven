@@ -5,8 +5,56 @@ import mapBehaviorSubject from '../utils/mapBehaviorSubject';
 import runLambda from './runLambda';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 import Err from '../utils/Err';
+import xs from 'xstream';
 
 const JSONStringify = require('json-stable-stringify');
+
+function createCloudValue(initialValue, onStart, onStop) {
+  let currentValue = initialValue;
+  let isAttached = false;
+  let onIsAttached = null;
+  function setIsAttached(isConn) {
+    if (isConn === isAttached) {
+      return;
+    }
+    isAttached = isConn;
+    onIsAttached && onIsAttached(isAttached);
+  }
+  function start(listener) {
+    onStart({
+      next: value => {
+        currentValue = value;
+        listener.next(value);
+        setIsAttached(true);
+      },
+      error: e => {
+        listener.error(e);
+        setIsAttached(false);
+      },
+      complete: () => {
+        listener.complete();
+        setIsAttached(false);
+      },
+    });
+  }
+  function stop() {
+    onStop();
+  }
+
+  return {
+    stream: xs.createWithMemory({ start, stop }),
+    connectedStream: xs.createWithMemory({
+      start: l => {
+        onIsAttached = l.next;
+      },
+      stop: () => {
+        onIsAttached = null;
+      },
+    }),
+    get: () => currentValue,
+    getIsAttached: () => isAttached,
+  };
+}
 
 export default function createCloudBlock({
   domain,
@@ -305,6 +353,32 @@ export default function createCloudBlock({
 
     return result;
   }
+  function onStartCloudValue(listener) {
+    const docName = onGetName();
+    const result = dispatch({
+      type: 'GetBlock',
+      id: blockId,
+      domain,
+      name: docName,
+    })
+      .then(result => {
+        listener.next({
+          ...result.value,
+          lastFetchTime: Date.now(),
+        });
+      })
+      .catch(e => {
+        listener.error(e);
+      });
+  }
+  function onStopCloudValue() {
+    // cancel the GetBlock request, maybe?
+  }
+  const cloudValue = createCloudValue(
+    undefined,
+    onStartCloudValue,
+    onStopCloudValue,
+  );
 
   const cloudBlock = {
     type: 'Block',
@@ -332,6 +406,8 @@ export default function createCloudBlock({
 
     functionObserveValueAndId,
     functionGetValue,
+
+    value: cloudValue,
   };
 
   bindCloudValueFunctions(cloudBlock, cloudClient);
