@@ -5,6 +5,7 @@ import View from '../views/View';
 import BodyText from './BodyText';
 import useCloud from '../cloud-core/useCloud';
 import useAsyncError from '../react-utils/useAsyncError';
+import { Responsive } from './Responsive';
 
 function RequestCityForm() {
   const [location, setLocation] = React.useState(null);
@@ -27,20 +28,34 @@ function RequestCityForm() {
     );
   }
   return (
-    <View
+    <Responsive
       style={{
-        flexDirection: 'row',
+        flexDirection: ['column', 'row'],
       }}
     >
-      <LocationInput
-        // inputValue={"ar"}
-        onSelectedResult={setLocation}
-        style={{ marginRight: 16 }}
-      />
-      <Button buttonStyle={{
-        height: 73
-      }} titleStyle={{fontSize: 24, lineHeight: 32}} disabled={!location} title="request city" onPress={handleSubmit} />
-    </View>
+      <View>
+        <Responsive
+          style={{
+            marginBottom: [16, 0],
+          }}
+        >
+          <LocationInput
+            // inputValue={"ar"}
+            onSelectedResult={setLocation}
+            style={{ marginRight: 16, flex: 1 }}
+          />
+        </Responsive>
+        <Button
+          buttonStyle={{
+            height: 73,
+          }}
+          titleStyle={{ fontSize: 24, lineHeight: 32 }}
+          disabled={!location}
+          title="request city"
+          onPress={handleSubmit}
+        />
+      </View>
+    </Responsive>
   );
 }
 

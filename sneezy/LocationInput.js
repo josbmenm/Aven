@@ -10,6 +10,7 @@ export function LocationInput({
   onSelectedResult,
   selectedResult,
   inputValue = '',
+  style
 }) {
   console.log('TCL: LocationInput -> selectedResult', selectedResult);
   const theme = useTheme();
@@ -40,7 +41,7 @@ export function LocationInput({
     ref.current.slow = setTimeout(queryResults, 300);
   }
   return (
-    <View>
+    <View style={style}>
       <FormInput
         onValue={handleTextInput}
         value={inputText}

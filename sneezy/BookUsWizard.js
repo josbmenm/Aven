@@ -52,7 +52,6 @@ function formReducer(state, action) {
 function BookUsWizard() {
   // const { step, setStep, totalSteps } = useSteps(0);
   const [stepsState, stepsDispatch] = React.useReducer(stepsReducer, {
-    totalSteps: 7,
     current: 0,
     hasNext: true,
     hasPrev: false,
