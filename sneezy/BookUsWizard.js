@@ -67,13 +67,12 @@ function BookUsWizard() {
       <BlockForm>
         <Step active={step === 0}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Title>Book with us</Title>
+            <Title style={{ textAlign: 'center' }}>Book with us</Title>
             <BodyText>
               Are you interested in having Ono Blends cater for an event? We’d
               love to! All we need from you are a few details about your event,
               so we can provide you with the best experience possible.
             </BodyText>
-            <View />
           </FormRow>
           <FormRow direction="row" style={{ alignItems: 'center' }}>
             <Button
@@ -88,7 +87,6 @@ function BookUsWizard() {
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Title>First thing’s first</Title>
             <BodyText>We’d love to know who we are speaking to.</BodyText>
-            <View />
           </FormRow>
           <Responsive
             style={{
@@ -130,7 +128,6 @@ function BookUsWizard() {
             <BodyText>
               Please let us know a good email to follow up with you.
             </BodyText>
-            <View />
           </FormRow>
           <FormRow>
             <FormInput
@@ -152,7 +149,6 @@ function BookUsWizard() {
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Title>What sort of event is this?</Title>
             <BodyText>Let us know so we can best cater to it.</BodyText>
-            <View />
           </FormRow>
           <FormRow>
             <FormInput label="select an event type" />
@@ -163,7 +159,6 @@ function BookUsWizard() {
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Title>When would you like us there?</Title>
             <BodyText>Just let us know to when would be best.</BodyText>
-            <View />
           </FormRow>
           <FormRow>
             <FormInput label="event date" type="date" />
@@ -174,14 +169,12 @@ function BookUsWizard() {
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Title>Almost done…..</Title>
             <BodyText>Where would you like us to be?</BodyText>
-            <View />
           </FormRow>
           <FormRow>
             {/* mapbox autocomplete */}
             <LocationInput
               inputValue={formState.fields.address.place_name_en}
               onSelectedResult={value => {
-                console.log('TCL: BookUsWizard -> value', value);
                 dispatch({ type: 'UPDATE_FIELD', key: 'address', value });
               }}
             />
@@ -194,7 +187,6 @@ function BookUsWizard() {
             <BodyText>
               Do you have anything else you’d like us to know?
             </BodyText>
-            <View />
           </FormRow>
           <FormRow>
             <FormInput
@@ -233,7 +225,6 @@ function BookUsWizard() {
                   onPress={onSubmit}
                 />
               ) : null}
-              }
             </FormRow>
           </View>
         ) : null}

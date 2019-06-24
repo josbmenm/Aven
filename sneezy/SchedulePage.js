@@ -15,6 +15,7 @@ import { Title } from './Tokens';
 import Heading from './Heading';
 import BodyText from './BodyText';
 import Schedule from './Schedule';
+import RequestCityForm from './RequestCityForm';
 
 function SchedulePage() {
   const theme = useTheme();
@@ -159,6 +160,7 @@ function SchedulePage() {
                   we’ll try to make it happen.
                 </BodyText>
               </Responsive>
+              <RequestCityForm />
             </ColumnToRowChild>
           </ColumnToRow>
         </Container>

@@ -5,8 +5,6 @@ import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
 import { Responsive } from '../sneezy/Responsive';
 // import Animated, { Easing } from 'react-native-reanimated';
 
-const textInputFontSize = 26;
-
 function BlockFormInputWithRef(
   { value, onValue, label, mode, onSubmit, onFocus, onBlur, upperCase },
   ref,
@@ -90,13 +88,13 @@ function BlockFormInputWithRef(
             zIndex: -1,
             fontSize: placeholderOpenProgress.interpolate({
               inputRange: [0, 1],
-              outputRange: [13, 28],
+              outputRange: [12, 24],
             }),
             transform: [
               {
                 translateY: placeholderOpenProgress.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [-6, 0],
+                  outputRange: [4, 8],
                 }),
               },
             ],
@@ -121,7 +119,7 @@ function BlockFormInputWithRef(
           type={inputType}
           onSubmitEditing={onSubmit}
           style={{
-            fontSize: textInputFontSize,
+            fontSize: 24,
             ...textInputStyle,
             ...(mode === 'description' ? { height: 120 } : {}),
             ...(mode === 'textarea' ? { height: 200 } : {}),

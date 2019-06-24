@@ -1,7 +1,3 @@
-import React from 'react';
-
-const FontSizes = [];
-
 const primaryColor = "#005151";
 
 const colors = {

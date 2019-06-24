@@ -200,7 +200,7 @@ export const buttonStyle = {
   justifyContent: 'center',
 };
 
-export const textInputHorizPadding = 20;
+export const textInputHorizPadding = 16;
 export const textInputStyle = {
   minHeight: 56,
   paddingHorizontal: textInputHorizPadding,

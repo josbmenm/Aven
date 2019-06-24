@@ -1,11 +1,8 @@
 import { View, TouchableOpacity, Text } from 'react-native';
 import React from 'react';
-import GenericPage from './GenericPage';
-import { Title } from './Tokens';
+import { useTheme } from '../dashboard/Theme';
 import BodyText from './BodyText';
-import Button from '../dashboard/Button';
-import useCloud from '../cloud-core/useCloud';
-import useAsyncError from '../react-utils/useAsyncError';
+import FootNote from './FootNote';
 import FormInput from '../components/BlockFormInput';
 
 //
@@ -15,7 +12,7 @@ export function LocationInput({
   inputValue = '',
 }) {
   console.log('TCL: LocationInput -> selectedResult', selectedResult);
-
+  const theme = useTheme();
   const [inputText, setInputText] = React.useState(inputValue);
   const [results, setResults] = React.useState(null);
   const ref = React.useRef({});
@@ -64,46 +61,18 @@ export function LocationInput({
             >
               <View
                 style={{
-                  backgroundColor: isSelected ? 'blue' : 'white',
+                  backgroundColor: isSelected ? theme.color.primary80 : 'white',
                   padding: 12,
                 }}
               >
-                <Title>{result.text}</Title>
-                <BodyText>
+                <BodyText bold style={{ fontFamily: theme.fontFamily.heading, color: isSelected ? theme.colors.white : theme.colors.primary }}>{result.text}</BodyText>
+                <FootNote>
                   {result.context.map(c => c.text).join(', ')}
-                </BodyText>
+                </FootNote>
               </View>
             </TouchableOpacity>
           );
         })}
-    </View>
-  );
-}
-
-function RequestOnoForm() {
-  const [location, setLocation] = React.useState(null);
-  const [isDone, setIsDone] = React.useState(false);
-  const cloud = useCloud();
-  const doc = cloud.get('RequestedLocations');
-  const handleErrors = useAsyncError();
-  function handleSubmit() {
-    handleErrors(
-      doc.putTransaction({ type: 'LocationVote', location }).then(() => {
-        setIsDone(true);
-      }),
-    );
-  }
-  if (isDone) {
-    return (
-      <View>
-        <BodyText>Thanks, your request is in!:</BodyText>
-      </View>
-    );
-  }
-  return (
-    <View>
-      <LocationInput selectedResult={location} onSelectedResult={setLocation} />
-      {location && <Button title="Submit" onPress={handleSubmit} />}
     </View>
   );
 }
