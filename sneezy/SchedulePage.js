@@ -132,10 +132,14 @@ function SchedulePage() {
         </Container>
       </View>
       <View style={{ paddingVertical: 80 }}>
-        <Container>
-          <Heading style={{ textAlign: 'center', alignSelf: 'center' }}>
+        <Container style={{
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderBottomColor: theme.colors.border,
+            paddingBottom: 100,
+          }}>
+          <Title style={{ textAlign: 'center', alignSelf: 'center' }}>
             This Week
-          </Heading>
+          </Title>
         </Container>
       </View>
       <View style={{ paddingVertical: 80 }}>
