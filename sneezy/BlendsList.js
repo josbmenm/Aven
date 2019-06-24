@@ -94,6 +94,7 @@ export function BlendsList() {
 
 function BlendsCarouselItem({ blend }) {
   const theme = useTheme();
+  const slug = getMenuItemSlug(blend);
   return (
     <View
       key={blend.id}
@@ -110,7 +111,8 @@ function BlendsCarouselItem({ blend }) {
     >
       <FunctionalLink
         routeName="Blend"
-        params={{ slug: getMenuItemSlug(blend) }}
+        params={{ slug }}
+        routeKey={`blend-${slug}`}
         overrideATagCSS={{ display: 'flex', flexDirection: 'column' }}
       >
         <AirtableImage

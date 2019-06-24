@@ -133,7 +133,7 @@ export default function PageFooter() {
                   overrideATagCSS={{
                     height: 42,
                     display: 'flex',
-                    alignItems: 'center'
+                    alignItems: 'center',
                   }}
                 >
                   <View
@@ -142,7 +142,7 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/twitter.png')} />
-                    <FootNote style={{ marginBottom: 0}}>@onofodco</FootNote>
+                    <FootNote style={{ marginBottom: 0 }}>@onofoodco</FootNote>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -150,7 +150,7 @@ export default function PageFooter() {
                   overrideATagCSS={{
                     height: 42,
                     display: 'flex',
-                    alignItems: 'center'
+                    alignItems: 'center',
                   }}
                 >
                   <View
@@ -159,7 +159,7 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/facebook.png')} />
-                    <FootNote style={{ marginBottom: 0}}>@onofodco</FootNote>
+                    <FootNote style={{ marginBottom: 0 }}>@onofoodco</FootNote>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -167,7 +167,7 @@ export default function PageFooter() {
                   overrideATagCSS={{
                     height: 42,
                     display: 'flex',
-                    alignItems: 'center'
+                    alignItems: 'center',
                   }}
                 >
                   <View
@@ -176,7 +176,7 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/instagram.png')} />
-                    <FootNote style={{ marginBottom: 0}}>@onofodco</FootNote>
+                    <FootNote style={{ marginBottom: 0 }}>@onofoodco</FootNote>
                   </View>
                 </FunctionalLink>
               </ColumnToRowChild>

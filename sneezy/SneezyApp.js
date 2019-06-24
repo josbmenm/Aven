@@ -11,7 +11,7 @@ import BookUs from './BookUsPage';
 import Schedule from './SchedulePage';
 import Subscribe from './SubscribePage';
 import { theme } from './Theme';
-import { ThemeProvider } from '../dashboard/Theme'
+import { ThemeProvider } from '../dashboard/Theme';
 import Preview from './PreviewHome';
 
 const customHTMLHeaders = `
@@ -53,7 +53,7 @@ const App = createSwitchNavigator(
       screen: BookUs,
     },
     Schedule: {
-      path: 'shedule',
+      path: 'schedule',
       screen: Schedule,
     },
     Subscribe: {
@@ -74,7 +74,7 @@ const App = createSwitchNavigator(
 
 function Root(props) {
   return (
-  <ThemeProvider value={theme}>
+    <ThemeProvider value={theme}>
       <App {...props} />
     </ThemeProvider>
   );

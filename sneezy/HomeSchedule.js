@@ -7,7 +7,7 @@ import ButtonLink from './ButtonLink';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import Schedule from './Schedule';
 
-function HomeShedule() {
+function HomeSchedule() {
   return (
     <View style={{ marginBottom: 104 }}>
       <Container>
@@ -71,4 +71,4 @@ function HomeShedule() {
   );
 }
 
-export default HomeShedule;
+export default HomeSchedule;

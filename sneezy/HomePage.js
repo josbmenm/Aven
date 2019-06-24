@@ -6,7 +6,7 @@ import Container from './Container';
 import PageFooter from './PageFooter';
 import HomeSlider from './HomeSlider';
 import HowItWorks from './HowItWorks';
-import HomeShedule from './HomeSchedule';
+import HomeSchedule from './HomeSchedule';
 import { aspectRatio169 } from '../components/Styles';
 import GenericHeroHeader from './GenericHeroHeader';
 
@@ -33,7 +33,7 @@ function HomePage() {
       />
       <HomeSlider />
       <HowItWorks />
-      <HomeShedule />
+      <HomeSchedule />
       <PageFooter />
     </GenericPage>
   );
