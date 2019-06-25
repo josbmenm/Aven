@@ -20,13 +20,12 @@ function HowItWorks() {
     >
       <Container
         style={{
-          alignItems: 'center',
           borderBottomWidth: 1,
           paddingBottom: 200,
           borderBottomColor: theme.colors.border,
         }}
       >
-        <Heading style={{ marginBottom: 100 }}>How it works</Heading>
+        <Heading style={{ marginBottom: 100, textAlign: 'center' }}>How it works</Heading>
         <FeatureSection
           title="Find us"
           bodyText={
