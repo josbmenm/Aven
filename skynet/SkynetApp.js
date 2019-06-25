@@ -45,7 +45,7 @@ const Main = () => (
 const fontsCSS = `
 @font-face {
   src: url('/fonts/Maax - Bold-205TF/Maax - Bold-205TF.ttf');
-  font-family: Maax;
+  font-family: Maax-Bold;
 }
 `;
 

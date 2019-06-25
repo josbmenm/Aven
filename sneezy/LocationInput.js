@@ -16,14 +16,15 @@ export function LocationInput({
   const theme = useTheme();
   const [inputText, setInputText] = React.useState(inputValue);
   const [results, setResults] = React.useState(null);
+  const type = 'city'; // or, address
   const ref = React.useRef({});
   function queryResults() {
     clearTimeout(ref.current.fast);
     clearTimeout(ref.current.slow);
     const queryString = ref.current.lastQuery;
-    fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${queryString}.json?access_token=pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g&cachebuster=1558464828315&autocomplete=true&country=us&types=postcode%2Cneighborhood%2Cregion%2Cdistrict%2Clocality%2Cplace&proximity=-118.24641974855012%2C34.052861456951575&language=en`,
-    )
+    const queryURL = `https://api.mapbox.com/geocoding/v5/mapbox.places/${queryString}.json?access_token=pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g&cachebuster=1561478159473&autocomplete=true&types=place&proximity=-118.0605468750104%2C33.95587146610272`; // has proximity bias to SoCal
+    // const queryURL = `https://api.mapbox.com/geocoding/v5/mapbox.places/${queryString}.json?access_token=pk.eyJ1IjoibWF0dGZpY2tlIiwiYSI6ImNqNnM2YmFoNzAwcTMzM214NTB1NHdwbnoifQ.Or19S7KmYPHW8YjRz82v6g&cachebuster=1561477994620&autocomplete=true&types=place`; // no proximity bias
+    fetch(queryURL)
       .then(res => res.json())
       .then(resp => {
         if (!resp || !resp.features) {
@@ -45,19 +46,21 @@ export function LocationInput({
       <FormInput
         onValue={handleTextInput}
         value={inputText}
-        label="Culver City, California"
+        label="enter your city"
       />
-      {results ? (
-        <View style={{
-          margin: theme.space[2],
-          marginTop: 0,
-          borderBottomLeftRadius: theme.space[2],
-          borderBottomRightRadius: theme.space[2],
-          borderWidth: 1,
-          borderColor: theme.colors.border,
-          overflow: 'hidden',
-          ...theme.shadows.medium
-        }}>
+      {results && inputText !== '' ? (
+        <View
+          style={{
+            margin: theme.space[2],
+            marginTop: 0,
+            borderBottomLeftRadius: theme.space[2],
+            borderBottomRightRadius: theme.space[2],
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            overflow: 'hidden',
+            ...theme.shadows.medium,
+          }}
+        >
           {results.map(result => {
             const isSelected =
               !!selectedResult && selectedResult.id === result.id;
@@ -82,7 +85,7 @@ export function LocationInput({
                       fontFamily: theme.fontFamily.heading,
                       color: theme.colors.primary,
                       marginBottom: 0,
-                      lineHeight: 28
+                      lineHeight: 28,
                     }}
                   >
                     {result.text}
