@@ -156,7 +156,7 @@ export function MobileMenu() {
                 borderBottomWidth: StyleSheet.hairlineWidth,
               }}
             >
-              <Link noActive size="Large" routeName="Menu" text="menu" />
+              <Link noActive size="Large" routeName="Menu" title="menu" />
               <Link
                 noActive
                 size="Large"
