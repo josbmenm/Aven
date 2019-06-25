@@ -54,6 +54,7 @@ function formReducer(state, action) {
 function BookUsWizard() {
   const [loading, setLoading] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
+  const [error, setError] = React.useState(null);
   const [stepsState, stepsDispatch] = React.useReducer(stepsReducer, {
     current: 0,
     hasNext: true,
@@ -79,7 +80,8 @@ function BookUsWizard() {
     console.log('TCL: onSubmit -> ', formState);
     setTimeout(() => {
       setLoading(false);
-      setIsDone(true);
+      // setIsDone(true);
+      setError('ups, something went wrong. please try again later');
     }, 2000);
   }
 
@@ -282,7 +284,7 @@ function BookUsWizard() {
             </FormRow>
           ) : null}
           {stepsState.current === TOTAL_STEPS ? (
-            <FormRow direction="row">
+            <FormRow direction="row" style={{ marginBottom: 0 }}>
               <Button
                 style={{ flex: 1, marginBottom: 16, marginHorizontal: 8 }}
                 type="outline"
@@ -291,15 +293,15 @@ function BookUsWizard() {
                 onPress={() => stepsDispatch({ type: 'GO_BACK' })}
               />
               <SubmitButton
-                disabled={false}
-                title="submit"
+                disabled={loading}
                 onPress={onSubmit}
                 loading={loading}
               />
             </FormRow>
           ) : null}
-          <FormRow style={{height: 24, }}>
-            <Text>Hello Error</Text>
+
+          <FormRow style={{ height: 24, marginHorizontal: 8 }}>
+            {error ? <Title style={{ fontSize: 14 }}>{error}</Title> : null}
           </FormRow>
         </View>
       </BlockForm>
@@ -324,7 +326,7 @@ function SubmitButton({ onPress, disabled = false, loading }) {
   const theme = useTheme();
   return (
     <Button
-      style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
+    style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
       disabled={disabled}
       onPress={onPress}
     >
