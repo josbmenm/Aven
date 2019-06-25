@@ -1,46 +1,36 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Responsive } from './Responsive';
-import { useTheme } from '../dashboard/Theme';
-import BodyText from './BodyText';
 import FootNote from './FootNote';
-
-function fetchSchedule() {
-  //TODO: replace this with real api call
-  return Promise.resolve([
-    {
-      id: 1,
-      time: '8:00 - 10:30 am',
-      address: '420 7th Ave. Apt 301 San Francisco, CA, 94118',
-      active: true,
-    },
-    {
-      id: 2,
-      time: '10:30 am - 2:30 pm',
-      address: '981 35th St, Oakland, CA 94608',
-      active: false,
-    },
-  ]);
-}
+import ScheduleItem from './ScheduleItem';
+import { useTheme } from '../dashboard/Theme'
+import {Responsive} from './Responsive';
 
 function useSchedule() {
-  const [schedule, setSchedule] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
+  const [schedule, setSchedule] = React.useState(null);
   React.useEffect(() => {
-    fetchSchedule().then(res => {
-      setSchedule(res);
-      setLoading(false);
-    });
+    setTimeout(() => {
+      setSchedule([
+        {
+          id: 1,
+          time: '8:00 - 10:30 am',
+          address: '420 7th Ave. Apt 301 San Francisco, CA, 94118',
+          active: true,
+        },
+        {
+          id: 2,
+          time: '10:30 am - 2:30 pm',
+          address: '981 35th St, Oakland, CA 94608',
+          active: false,
+        },
+      ]);
+    }, 2000);
   }, []);
 
-  return {
-    loading,
-    schedule,
-  };
+  return React.useMemo(() => schedule, [schedule])
 }
 
 function Schedule({ withFloatingLabel = false, ...rest }) {
-  const { schedule, loading } = useSchedule();
+  const schedule = useSchedule();
 
   return (
     <View {...rest}>
@@ -57,32 +47,30 @@ function Schedule({ withFloatingLabel = false, ...rest }) {
           We're Here!
         </FootNote>
       ) : null}
-      {!loading ? (
+      {schedule &&
         schedule.map((item, index) => (
-          <ScheduleItem
+          <DayScheduleItem
+            style={{ flex: 1 }}
             key={item.id}
             item={item}
             first={index === 0}
             last={index === schedule.length - 1}
           />
-        ))
-      ) : (
-        <FootNote>loading...</FootNote>
-      )}
+        ))}
     </View>
   );
 }
 
-function ScheduleItem({ item, first, last }) {
+function DayScheduleItem({ item, first, last, style }) {
   const theme = useTheme();
   return (
     <View
-      style={{
+      style={[{
         flexDirection: 'row',
         alignItems: 'center',
         paddingBottom: 20,
         position: 'relative',
-      }}
+      }, style]}
     >
       <Responsive
         style={{
@@ -134,29 +122,7 @@ function ScheduleItem({ item, first, last }) {
           marginLeft: [40, 0],
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            borderRadius: 8,
-            borderWidth: 3,
-            borderColor: item.active ? theme.colors.primary : 'transparent',
-            padding: 20,
-            ...theme.shadows.medium,
-          }}
-        >
-          <BodyText
-            bold
-            style={{
-              fontSize: 12,
-              lineHeight: 16,
-              fontFamily: theme.fontFamily.title,
-              margin: 0,
-            }}
-          >
-            {item.time}
-          </BodyText>
-          <BodyText style={{ marginBottom: 0 }}>{item.address}</BodyText>
-        </View>
+        <ScheduleItem style={{ flex: 1 }} item={item} />
       </Responsive>
     </View>
   );

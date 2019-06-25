@@ -16,6 +16,7 @@ import Heading from './Heading';
 import BodyText from './BodyText';
 import Schedule from './Schedule';
 import RequestCityForm from './RequestCityForm';
+import WeekSchedule from './WeekSchedule';
 
 function SchedulePage() {
   const theme = useTheme();
@@ -131,17 +132,7 @@ function SchedulePage() {
           </View>
         </Container>
       </View>
-      <View style={{ paddingVertical: 80 }}>
-        <Container style={{
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderBottomColor: theme.colors.border,
-            paddingBottom: 100,
-          }}>
-          <Title style={{ textAlign: 'center', alignSelf: 'center' }}>
-            This Week
-          </Title>
-        </Container>
-      </View>
+      <WeekSchedule />
       <View style={{ paddingVertical: 80 }}>
         <Container>
           <ColumnToRow>
