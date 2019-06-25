@@ -6,11 +6,12 @@ import { useTheme } from './Theme';
 function UIButton({
   buttonStyle,
   titleStyle,
-  title = 'button',
+  title,
   type = 'solid', // 'solid' | 'outline'
   variant = 'primary', // 'primary' | 'secondary'
   size = 'medium', // 'small' | 'medium' | 'large'
   disabled,
+  children,
   ...rest
 }) {
   const theme = useTheme();
@@ -68,20 +69,23 @@ function UIButton({
       ]}
       {...rest}
     >
-      <Text
-        style={[
-          {
-            fontFamily: theme.fontFamily.button,
-            textAlign: 'center',
-            lineHeight: theme.fontSizes[2] * 1.4,
-            color: type === 'solid' ? theme.colors.white : buttonColor,
-          },
-          buttonSize.title,
-          titleStyle,
-        ]}
-      >
-        {title}
-      </Text>
+      {children ? children : null}
+      {title ? (
+        <Text
+          style={[
+            {
+              fontFamily: theme.fontFamily.button,
+              textAlign: 'center',
+              lineHeight: theme.fontSizes[2] * 1.4,
+              color: type === 'solid' ? theme.colors.white : buttonColor,
+            },
+            buttonSize.title,
+            titleStyle,
+          ]}
+        >
+          {title}
+        </Text>
+      ) : null}
     </View>
   );
 }
