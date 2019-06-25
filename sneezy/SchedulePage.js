@@ -101,6 +101,7 @@ function SchedulePage() {
                 <Responsive
                   style={{
                     marginLeft: [0, 120],
+                    marginRight: [0, 40]
                   }}
                 >
                   <Schedule withFloatingLabel={true} />
