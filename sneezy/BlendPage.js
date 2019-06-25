@@ -11,6 +11,7 @@ import Tag from './Tag';
 import { useTheme } from '../dashboard/Theme';
 import { useMenuItemSlug, useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
+import BenefitDescription from './BenefitDetails';
 import { dietaryInfosOfMenuItem } from '../logic/configLogic';
 
 import {
@@ -19,6 +20,7 @@ import {
 } from '../logic/configLogic';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import { BlendsCarousel } from './BlendsList';
+import BenefitDetails from './BenefitDetails';
 
 const dietary = [
   {
@@ -208,6 +210,7 @@ function BlendContent({ displayName, blend, recipe }) {
           </ColumnToRow>
         </Container>
       </View>
+      <BenefitDetails benefit={blend.DefaultBenefit} />
       <View>
         <Container
           style={{
