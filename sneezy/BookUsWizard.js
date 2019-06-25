@@ -82,7 +82,7 @@ function BookUsWizard() {
       setLoading(false);
       setIsDone(true);
       // setError({ message: 'ups, something went wrong. please try again later'});
-    }, 20000);
+    }, 2000);
   }
 
   if (isDone) {
