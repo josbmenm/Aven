@@ -1,5 +1,7 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Animated, Image } from 'react-native';
+import View from '../views/View';
+import Text from '../views/Text';
 import Title from './Title';
 import BodyText from './BodyText';
 import FootNote from './FootNote';
@@ -50,7 +52,8 @@ function formReducer(state, action) {
 }
 
 function BookUsWizard() {
-  // const { step, setStep, totalSteps } = useSteps(0);
+  const [loading, setLoading] = React.useState(false);
+  const [isDone, setIsDone] = React.useState(false);
   const [stepsState, stepsDispatch] = React.useReducer(stepsReducer, {
     current: 0,
     hasNext: true,
@@ -72,7 +75,33 @@ function BookUsWizard() {
   });
 
   function onSubmit() {
+    setLoading(true);
     console.log('TCL: onSubmit -> ', formState);
+    setTimeout(() => {
+      setLoading(false);
+      setIsDone(true);
+    }, 2000);
+  }
+
+  if (isDone) {
+    return (
+      <View style={{ paddingVertical: 40 }}>
+        <BlockForm>
+          <Step active={true}>
+            <FormRow style={{ paddingHorizontal: 8, alignItems: 'center' }}>
+              <Title style={{ textAlign: 'center' }}>
+                Thanks! You’ll be hearing from us soon.
+              </Title>
+              <Image
+                source={require('./public/img/hand_icon.png')}
+                style={{ width: 80, height: 80, margin: 24 }}
+                resizeMode="contain"
+              />
+            </FormRow>
+          </Step>
+        </BlockForm>
+      </View>
+    );
   }
 
   return (
@@ -81,7 +110,7 @@ function BookUsWizard() {
         <Step active={stepsState.current === 0}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Title style={{ textAlign: 'center' }}>Book with us</Title>
-            <BodyText>
+            <BodyText style={{ textAlign: 'center' }}>
               Are you interested in having Ono Blends cater for an event? We’d
               love to! All we need from you are a few details about your event,
               so we can provide you with the best experience possible.
@@ -258,20 +287,62 @@ function BookUsWizard() {
                 style={{ flex: 1, marginBottom: 16, marginHorizontal: 8 }}
                 type="outline"
                 title="back"
-                disabled={false}
+                disabled={loading}
                 onPress={() => stepsDispatch({ type: 'GO_BACK' })}
               />
-              <Button
-                style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
+              <SubmitButton
                 disabled={false}
                 title="submit"
                 onPress={onSubmit}
+                loading={loading}
               />
             </FormRow>
           ) : null}
+          <FormRow style={{height: 24, }}>
+            <Text>Hello Error</Text>
+          </FormRow>
         </View>
       </BlockForm>
     </View>
+  );
+}
+
+function Spinner() {
+  return (
+    <Animated.View style={{ padding: 5, alignItems: 'center' }}>
+      <svg width={18} height={17}>
+        <path
+          d="M13.026-.052a9 9 0 1 1-8.052 0l.895 1.79a7 7 0 1 0 6.262 0l.895-1.79z"
+          fill="#FFF"
+        />
+      </svg>
+    </Animated.View>
+  );
+}
+
+function SubmitButton({ onPress, disabled = false, loading }) {
+  const theme = useTheme();
+  return (
+    <Button
+      style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
+      disabled={disabled}
+      onPress={onPress}
+    >
+      {loading ? (
+        <Spinner />
+      ) : (
+        <Text
+          style={{
+            fontFamily: theme.fontFamily.button,
+            textAlign: 'center',
+            lineHeight: theme.fontSizes[2] * 1.4,
+            color: theme.colors.white,
+          }}
+        >
+          Submit
+        </Text>
+      )}
+    </Button>
   );
 }
 
