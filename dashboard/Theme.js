@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 
 const fontSizes = [10, 12, 16, 18, 20, 32, 44];
 
@@ -104,5 +104,6 @@ export const ThemeContext = createContext(theme);
 export const ThemeProvider = ThemeContext.Provider;
 
 export function useTheme() {
-  return useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
+  return useMemo(() => theme, [theme]);
 }
