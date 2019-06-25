@@ -1,17 +1,35 @@
 import React from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, Image } from 'react-native';
 import View from '../views/View';
 import Container from './Container';
 import Title from './Title';
 import { useTheme } from '../dashboard/Theme';
 import ScheduleItem from './ScheduleItem';
 import FootNote from './FootNote';
-import LinearGradientView from '../dashboard/LinearGradientView';
 
 function WeekSchedule() {
   const theme = useTheme();
   const schedule = useWeekSchedule();
-  console.log('TCL: schedule', schedule);
+  const [startGradient, setStartGradient] = React.useState(null);
+  const [endGradient, setEndGradient] = React.useState(true);
+
+  function handleScroll({ nativeEvent }) {
+    const { contentOffset, contentSize, layoutMeasurement } = nativeEvent;
+    const limitOffset = contentSize.width - 40;
+
+    if (contentOffset.x > 10) {
+      setStartGradient(true);
+    } else {
+      setStartGradient(false);
+    }
+
+    if (contentOffset.x + layoutMeasurement.width < limitOffset) {
+      setEndGradient(true);
+    } else {
+      setEndGradient(false);
+    }
+  }
+  console.log("COMPONENT RENDERED")
   return (
     <View style={{ paddingVertical: 80 }}>
       <Container
@@ -26,23 +44,46 @@ function WeekSchedule() {
         </Title>
         {schedule && (
           <View style={{ paddingVertical: 60, position: 'relative' }}>
-            <ScrollView horizontal>
+            <ScrollView
+              horizontal
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+            >
               {schedule.map(day => (
                 <DaySchedule key={day.id} day={day} />
               ))}
             </ScrollView>
-            <LinearGradientView style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              bottom: 0,
-              width: 88,
-              height: "100%",
-              // backgroundColor: 'red'
-            }} />
+            {startGradient && (
+              <Image
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  bottom: 0,
+                  width: 88,
+                  height: '100%',
+                  transform: [{ rotate: '180deg' }],
+                }}
+                source={require('./public/img/white-gradient.png')}
+                resizeMode="repeat"
+              />
+            )}
+            {endGradient && (
+              <Image
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  width: 88,
+                  height: '100%'
+                }}
+                source={require('./public/img/white-gradient.png')}
+                resizeMode="repeat"
+              />
+            )}
           </View>
         )}
-
       </Container>
     </View>
   );
@@ -60,23 +101,26 @@ function DaySchedule({ day }) {
           marginHorizontal: 10,
           borderRadius: theme.radii[2],
           overflow: 'hidden',
-          position: 'relative'
+          position: 'relative',
         },
         today ? { backgroundColor: theme.colors.lightGrey } : {},
       ]}
     >
-      <Title style={{marginTop: 28 }}>{label}</Title>
-      {today ? <FootNote bold style={{
-        position: 'absolute',
-        top: 20,
-        left: 20
-      }}>TODAY</FootNote> : null}
+      <Title style={{ marginTop: 28 }}>{label}</Title>
+      {today ? (
+        <FootNote
+          bold
+          style={{
+            position: 'absolute',
+            top: 20,
+            left: 20,
+          }}
+        >
+          TODAY
+        </FootNote>
+      ) : null}
       {schedule.map(item => (
-        <ScheduleItem
-          style={{ marginBottom: 20 }}
-          key={item.id}
-          item={item}
-        />
+        <ScheduleItem style={{ marginBottom: 20 }} key={item.id} item={item} />
       ))}
     </View>
   );
