@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import Title from './Title';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import { aspectRatio43 } from '../components/Styles';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 
 function FeatureSection({
   title,
@@ -17,16 +17,19 @@ function FeatureSection({
   // TODO: remove after definitive images
   if (!image) {
     image = (
-      <Responsive style={{
-        maxWidth: ["100%", 400]
-      }}>
-      <View
-        style={[{
-          backgroundColor: theme.colors.lightGrey,
-        },
-        aspectRatio43,
-        ]}
-      />
+      <Responsive
+        style={{
+          maxWidth: ['100%', 400],
+        }}
+      >
+        <View
+          style={[
+            {
+              backgroundColor: theme.colors.lightGrey,
+            },
+            aspectRatio43,
+          ]}
+        />
       </Responsive>
     );
   }
@@ -48,9 +51,7 @@ function FeatureSection({
           alignItems: ['stretch', inverted ? 'flex-end' : 'flex-start'],
         }}
       >
-        <ColumnToRowChild>
-          {image}
-        </ColumnToRowChild>
+        <ColumnToRowChild>{image}</ColumnToRowChild>
       </Responsive>
       <ColumnToRowChild
         style={{
@@ -59,16 +60,8 @@ function FeatureSection({
           justifyContent: 'center',
         }}
       >
-        <Responsive
-          style={{
-            paddingLeft: inverted ? [0, 0] : [0, 100],
-          }}
-        >
-          <View>
-            <Title>{title}</Title>
-            {bodyText}
-          </View>
-        </Responsive>
+        <Title>{title}</Title>
+        {bodyText}
       </ColumnToRowChild>
     </ColumnToRow>
   );
