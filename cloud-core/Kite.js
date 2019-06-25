@@ -1,6 +1,7 @@
 // Kite - The lightweight Aven Cloud Client
 
 import xs from 'xstream';
+import getIdOfValue from '../cloud-utils/getIdOfValue';
 
 /*
 
@@ -25,51 +26,126 @@ CloudValue<V, E>:
     addListener: (s: AttachmentSubscriber) => void,
     removeListener: (s: AttachmentSubscriber) => void,
   }
+  load: () => Promise<void>
+
+
+Block
+  value: CloudValue()
+
+BlockState
+
+
+Doc
+
 
 
 */
 
-function map(cloudValue) {
-  return {};
+function map(cloudValue, mapFn) {
+  function get() {
+    return mapFn(cloudValue.get());
+  }
+  return {
+    ...cloudValue,
+    get,
+    stream: cloudValue.stream.map(mapFn),
+  };
 }
 
-function createCloudValue(initialValue, onStart, onStop) {
+function createCloudValue(
+  initialValue,
+  addListener,
+  removeListener,
+  getAttachmentStatus,
+) {
   let currentValue = initialValue;
   let isAttached = false;
   let onIsAttached = null;
-  function setIsAttached(isConn) {
-    if (isConn === isAttached) {
+  function setAttachment(err, isConnectedUpstream) {
+    const isAtt = getAttachmentStatus(currentValue, err, isConnectedUpstream);
+    if (isAtt === isAttached) {
       return;
     }
-    isAttached = isConn;
+    isAttached = isAtt;
     onIsAttached && onIsAttached(isAttached);
   }
+
+  let internalListener = null;
   function start(listener) {
-    onStart({
+    listener.next(currentValue);
+    if (internalListener) {
+      throw new Error(
+        'Listener has not been stopped! This is likely a misunderstanding with xstream..',
+      );
+    }
+    internalListener = {
       next: value => {
         currentValue = value;
         listener.next(value);
-        setIsAttached(true);
+        setAttachment(null, true);
       },
       error: e => {
         listener.error(e);
-        setIsAttached(false);
+        setAttachment(e, false);
       },
       complete: () => {
         listener.complete();
-        setIsAttached(false);
+        setAttachment(null, false); // maybe not need this?
       },
-    });
+    };
+    addListener(internalListener);
   }
   function stop() {
-    onStop();
+    setAttachment(null, false);
+    if (internalListener) {
+      removeListener(internalListener);
+      internalListener = null;
+    }
   }
+  async function load() {
+    if (isAttached) {
+      return currentValue;
+    }
+    return new Promise((resolve, reject) => {
+      let loadTimeout = setTimeout(() => {
+        reject(new Error('Timed out loading..'));
+      }, 30000);
 
+      let loadListener = null;
+
+      function wrapUp() {
+        clearTimeout(loadTimeout);
+        if (loadListener) {
+          removeListener(loadListener);
+          loadListener = null;
+        }
+      }
+      loadListener = {
+        next: value => {
+          currentValue = value;
+          setAttachment(null, false);
+          wrapUp();
+          resolve(value);
+        },
+        error: e => {
+          setAttachment(e, false);
+          wrapUp();
+          reject(e);
+        },
+        complete: () => {
+          setAttachment(null, false); // maybe not need this?
+          // should be covereed by next and erorr?
+        },
+      };
+      addListener(loadListener);
+    });
+  }
   return {
     stream: xs.createWithMemory({ start, stop }),
     isAttachedStream: xs.createWithMemory({
       start: l => {
-        onIsAttached = l.next;
+        l.next(isAttached);
+        onIsAttached = isAtt => l.next(isAtt);
       },
       stop: () => {
         onIsAttached = null;
@@ -77,16 +153,17 @@ function createCloudValue(initialValue, onStart, onStop) {
     }),
     get: () => currentValue,
     getIsAttached: () => isAttached,
+    load,
   };
 }
 
-export function createBlock({ domain, onGetName, dispatch, id, value }) {
+// const blockValueCache = new WeakMap();
+
+export function createBlock({ domain, onGetName, source, id, value }) {
   let observedBlockId = null;
 
   if (value !== undefined) {
-    const valueString = JSONStringify(value);
-    observedBlockId = SHA256(valueString).toString();
-    blockValueCache[observedBlockId] = value;
+    observedBlockId = getIdOfValue(value);
   }
   const blockId = id || observedBlockId;
   if (!blockId && value === undefined) {
@@ -105,21 +182,104 @@ export function createBlock({ domain, onGetName, dispatch, id, value }) {
     throw new Error('id or value must be provided to createCloudBlock!');
   }
 
+  const initValue = value;
+  // const initValue = value === undefined ? blockValueCache.get(blockId) : value;
+
   const initialBlockState = {
     id: blockId, // Known to be the correct id by this point
-    value, // either the final value, or undefined
+    value: initValue, // either the block's final value, or undefined
     lastFetchTime: null,
     lastPutTime: null,
   };
 
-  const blockStateValue = createCloudValue(initialBlockState);
+  function internalAddListener(listener) {
+    source
+      .dispatch({
+        type: 'GetBlock',
+        domain,
+        name: onGetName(),
+        id: blockId,
+      })
+      .then(resp => {
+        listener.next({
+          ...resp,
+          lastFetchTime: Date.now(),
+        });
+      })
+      .catch(err => {
+        listener.error(err);
+      });
+  }
+
+  function internalRemoveListener(listener) {
+    // no way to cancel the loading of a block..
+  }
+
+  function getValueAttachmentStatus(
+    valueState,
+    loadError,
+    isConnectedUpstream,
+  ) {
+    if (loadError) {
+      console.warn('Error loading block..', loadError);
+    }
+    if (valueState && valueState.value !== undefined) {
+      return true;
+    }
+    return false;
+  }
+
+  const blockStateValue = createCloudValue(
+    initialBlockState,
+    internalAddListener,
+    internalRemoveListener,
+    getValueAttachmentStatus,
+  );
   const blockValue = map(
     blockStateValue,
     blockState => blockState && blockState.value,
   );
 
-  return {
+  function getReference() {
+    if (!blockId) {
+      throw new Error(
+        'Cannot getReference of an incomplete block without a value or id',
+      );
+    }
+    return { type: 'BlockReference', id: blockId };
+  }
+
+  const cloudBlock = {
     ...blockStateValue,
+    getReference,
     value: blockValue,
+  };
+
+  // if (!blockValueCache.has(cloudBlock)) {
+  //   blockValueCache.set(observedBlockId, value);
+  // }
+
+  return cloudBlock;
+}
+
+export function createDoc({ source, domain, name }) {
+  function getReference() {
+    return {
+      type: 'DocReference',
+      domain,
+      name: getFullName(),
+      id: getId(),
+    };
+  }
+
+  const docStateValue = createCloudValue();
+  // initialBlockState,
+  // internalAddListener,
+  // internalRemoveListener,
+  // getValueAttachmentStatus,
+
+  return {
+    ...docStateValue,
+    getReference,
   };
 }
