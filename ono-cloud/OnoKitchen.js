@@ -386,7 +386,7 @@ export function useMenuItemSlug(menuItemSlug) {
         return getMenuItemSlug(blend) === menuItemSlug;
       })
     );
-  }, [companyConfig]);
+  }, [menuItemSlug, companyConfig]);
   return menuItem;
 }
 

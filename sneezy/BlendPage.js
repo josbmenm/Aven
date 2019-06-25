@@ -251,12 +251,6 @@ function BlendContent({ displayName, blend, recipe }) {
           </View>
         </Container>
       </View>
-      <View>
-        <Container style={{ alignitems: 'center', marginVertical: 80 }}>
-          <Heading style={{ textAlign: 'center', marginBottom: 52 }}>our blends</Heading>
-          <BlendsCarousel />
-        </Container>
-      </View>
     </React.Fragment>
   );
 }
@@ -285,7 +279,14 @@ function BlendPage() {
           recipe={itemRecipe}
         />
       )}
-
+      <View>
+        <Container style={{ alignItems: 'center', marginVertical: 80 }}>
+          <Heading style={{ textAlign: 'center', marginBottom: 52 }}>
+            our blends
+          </Heading>
+          <BlendsCarousel />
+        </Container>
+      </View>
       <PageFooter />
     </GenericPage>
   );

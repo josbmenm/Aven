@@ -156,7 +156,7 @@ function BlendsCarouselItem({ blend }) {
 export function BlendsCarousel() {
   const menu = useMenu();
   return menu ? (
-    <ScrollView horizontal pagingEnabled>
+    <ScrollView horizontal>
       {menu.blends.map((item, i) => (
         <BlendsCarouselItem key={i} blend={item} />
       ))}
