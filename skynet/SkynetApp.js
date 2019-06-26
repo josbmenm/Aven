@@ -47,6 +47,27 @@ const fontsCSS = `
   src: url('/fonts/Maax - Bold-205TF/Maax - Bold-205TF.ttf');
   font-family: Maax-Bold;
 }
+@font-face {
+  src: url('/fonts/Maax - Regular-205TF/Maax - Regular-205TF.ttf');
+  font-family: Maax;
+}
+@font-face {
+  src: url('/fonts/Lora.ttf');
+  font-family: Lora;
+}
+@font-face {
+  src: url('/fonts/Lora-Bold.ttf');
+  font-weight: bold;
+}
+a:active {
+  color: inherit;
+}
+a:hover {
+  color: inherit;
+}
+a {
+  color: inherit;
+}
 `;
 
 const GoogleAnalyticsTag = `

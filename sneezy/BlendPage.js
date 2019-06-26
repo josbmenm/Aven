@@ -22,31 +22,16 @@ import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import { BlendsCarousel } from './BlendsList';
 import BenefitDetails from './BenefitDetails';
 
-const dietary = [
-  {
-    name: 'Calories',
-    value: 480,
-  },
-  {
-    name: 'Fiber',
-    value: '3g',
-  },
-  {
-    name: 'Protein',
-    value: '4g',
-  },
-  {
-    name: 'Sugars',
-    value: '23g',
-  },
-];
-
 function BlendContent({ displayName, blend, recipe }) {
   const theme = useTheme();
   const dietaryInfos = dietaryInfosOfMenuItem(
     blend,
     recipe.ingredients.map(i => i.id),
   );
+  const dietary = [
+    `${blend.Recipe.DisplayCalories} Calories`,
+    blend.Recipe['Nutrition Detail'],
+  ];
   return (
     <React.Fragment>
       <View>
@@ -148,7 +133,7 @@ function BlendContent({ displayName, blend, recipe }) {
                     marginBottom: 20,
                   }}
                 >
-                  {dietary.map((elem, index) => (
+                  {dietary.map((dietaryMessage, index) => (
                     <View
                       style={{
                         borderRightColor:
@@ -156,16 +141,15 @@ function BlendContent({ displayName, blend, recipe }) {
                             ? 'transparent'
                             : theme.colors.primary,
                         borderRightWidth: 1,
-                        // alignItems: 'center',
                         justifyContent: 'center',
                         marginRight: 8,
                         paddingRight: 8,
                         height: 16,
                       }}
                     >
-                      <FootNote style={{ marginBottom: 0 }}>{`${elem.name} ${
-                        elem.value
-                      }`}</FootNote>
+                      <FootNote style={{ marginBottom: 0 }}>
+                        {dietaryMessage}
+                      </FootNote>
                     </View>
                   ))}
                 </View>
