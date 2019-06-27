@@ -138,10 +138,6 @@ const App = createSwitchNavigator(
       path: 'admin',
     },
     Receipt: ReceiptPage,
-    InternalBlendMenu: {
-      screen: InternalBlendMenu,
-      path: 'icanneverremembertheblendrecipes',
-    },
     InternalBlendMenu2: {
       screen: InternalBlendMenu,
       path: 'secrets/blendmenu',

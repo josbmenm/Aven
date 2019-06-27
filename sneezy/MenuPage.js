@@ -3,9 +3,9 @@ import { View, Image } from 'react-native';
 import { absoluteElement } from '../components/Styles';
 import GenericPage from './GenericPage';
 import GenericHeroHeader from './GenericHeroHeader';
-import {BlendsList} from './BlendsList';
+import { BlendsList } from './BlendsList';
 import PageFooter from './PageFooter';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 import { Responsive } from './Responsive';
 
 function Menu() {
@@ -16,9 +16,7 @@ function Menu() {
         <GenericHeroHeader
           backgroundColor={theme.colors.lightGrey}
           title="Our Blends"
-          bodyText="All of our blends are designed thoughfully to provide you with a
-        healthy, balanced, and nutritious meal. All our drinks are made with
-        100% organic ingredients, and are guaranteed to make you feel great."
+          bodyText="All of our blends are made with certified organic fruits and vegetables. Each blend has been thoughtfully designed to provide you with a healthy, balanced, and nutritious meal. They are fully customizable and are 100% accurate to ensure no cross contamination."
         >
           <Responsive
             style={{
