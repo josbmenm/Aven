@@ -173,6 +173,71 @@ describe('kite doc', () => {
       expect(doc.get().id).toEqual(obj1.id);
       expect(doc.value.get().foo).toBe('bar');
     });
+
+    it('can publish value block', async () => {
+      const m = createMemoryStorageSource({ domain: 'test' });
+      const doc = createDoc({
+        source: m,
+        nameStream: xs.of('foo'),
+        domain: 'test',
+      });
+      const block = await doc.publishValue({ x: 42 });
+
+      const id = block.get().id;
+
+      const resp = await m.dispatch({
+        type: 'GetBlock',
+        domain: 'test',
+        name: 'foo',
+        id,
+      });
+      expect(resp.value.x).toEqual(42);
+    });
+
+    it('can publish value block then put block', async () => {
+      const m = createMemoryStorageSource({ domain: 'test' });
+      const doc = createDoc({
+        source: m,
+        nameStream: xs.of('foo'),
+        domain: 'test',
+      });
+      const block = await doc.publishValue({ x: 42 });
+
+      const id = block.get().id;
+
+      const resp = await m.dispatch({
+        type: 'GetBlock',
+        domain: 'test',
+        name: 'foo',
+        id,
+      });
+      expect(resp.value.x).toEqual(42);
+      await doc.putBlock(block);
+      const resp2 = await m.dispatch({
+        type: 'GetDocValue',
+        domain: 'test',
+        name: 'foo',
+      });
+      expect(resp2.value.x).toEqual(42);
+      expect(resp2.id).toEqual(id);
+    });
+
+    it('can put doc value', async () => {
+      const m = createMemoryStorageSource({ domain: 'test' });
+      const doc = createDoc({
+        source: m,
+        nameStream: xs.of('foo'),
+        domain: 'test',
+      });
+      await doc.putValue({ x: 42 });
+      const resp = await m.dispatch({
+        type: 'GetDocValue',
+        domain: 'test',
+        name: 'foo',
+      });
+      expect(resp.value.x).toEqual(42);
+      expect(resp.id).toEqual(doc.get().id);
+    });
   });
 
   describe('stream behavior', () => {
@@ -217,7 +282,43 @@ describe('kite doc', () => {
       await justASec();
       expect(lastValue.foo).toEqual('a');
       await doc.value.load();
-      // expect(doc.value.get().foo).toBe('b');
+      expect(doc.value.get().foo).toBe('b');
+    });
+
+    it('can stream putValue vals via doc.value.stream', async () => {
+      const m = createMemoryStorageSource({ domain: 'test' });
+      const doc = createDoc({
+        source: m,
+        nameStream: xs.of('foo'),
+        domain: 'test',
+      });
+      await doc.putValue({ foo: 'bar' });
+      const listenDoc = createDoc({
+        source: m,
+        nameStream: xs.of('foo'),
+        domain: 'test',
+      });
+      let lastValue = undefined;
+      const listener = {
+        next: v => {
+          lastValue = v;
+        },
+      };
+      listenDoc.value.stream.addListener(listener);
+      expect(lastValue).toEqual(undefined);
+      await justASec();
+      expect(lastValue.foo).toEqual('bar');
+      await doc.putValue({ foo: 'a' });
+
+      await justASec();
+      expect(lastValue.foo).toEqual('a');
+      listenDoc.value.stream.removeListener(listener);
+      await doc.putValue({ foo: 'b' });
+
+      await justASec();
+      expect(lastValue.foo).toEqual('a');
+      await doc.value.load();
+      expect(doc.value.get().foo).toBe('b');
     });
   });
 });

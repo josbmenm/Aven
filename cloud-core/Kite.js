@@ -2,6 +2,7 @@
 
 import xs from 'xstream';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
+import Err from '../utils/Err';
 
 /*
 
@@ -69,7 +70,7 @@ async function streamLoad(stream) {
   });
 }
 
-function createCloudValue2(memoryStream) {
+function createStreamValue(memoryStream) {
   return {
     get: () => streamGet(memoryStream),
     load: () => streamLoad(memoryStream),
@@ -124,41 +125,58 @@ export function createBlock({ domain, nameStream, source, id, value }) {
     lastPutTime: null,
   };
 
-  let lastBlockState = initialBlockState;
+  let blockState = initialBlockState;
+
+  let notifyStateChange = null;
+
+  function setState(stateUpdates) {
+    blockState = {
+      ...blockState,
+      ...stateUpdates,
+    };
+    notifyStateChange && notifyStateChange();
+  }
 
   let onStop = null;
   const blockStateStream = xs.createWithMemory({
     start: notify => {
-      notify.next(lastBlockState);
-      source
-        .dispatch({
-          type: 'GetBlock',
-          domain,
-          name: streamGet(nameStream),
-          id: blockId,
-        })
-        .then(resp => {
-          lastBlockState = {
-            ...lastBlockState,
-            value: resp.value,
-            lastFetchTime: Date.now(),
-          };
-          notify.next(lastBlockState);
-        })
-        .catch(err => {
-          notify.error(err);
-        });
+      notify.next(blockState);
+      notifyStateChange = () => {
+        notify.next(blockState);
+      };
+      const subsName = streamGet(nameStream);
+      if (blockState.value === undefined) {
+        source
+          .dispatch({
+            type: 'GetBlock',
+            domain,
+            name: subsName,
+            id: blockId,
+          })
+          .then(resp => {
+            blockState = {
+              ...blockState,
+              value: resp.value,
+              lastFetchTime: Date.now(),
+            };
+            notify.next(blockState);
+          })
+          .catch(err => {
+            notify.error(err);
+          });
+      }
     },
     stop: () => {
       if (onStop) {
         onStop();
-        onStop = null;
       }
+      notifyStateChange = null;
+      onStop = null;
     },
   });
-  const blockStateValue = createCloudValue2(blockStateStream);
+  const blockStateValue = createStreamValue(blockStateStream);
 
-  const blockValue = createCloudValue2(
+  const blockValue = createStreamValue(
     blockStateStream
       .map(blockState => {
         return blockState.value;
@@ -177,10 +195,44 @@ export function createBlock({ domain, nameStream, source, id, value }) {
     return { type: 'BlockReference', id: blockId };
   }
 
+  function shamefullySetPutTime() {
+    // internal use only please
+    setState({
+      lastPutTime: Date.now(),
+    });
+  }
+
+  async function put() {
+    if (blockState.lastFetchTime || blockState.lastPutTime) {
+      return;
+    }
+    if (blockState.value === undefined) {
+      throw new Err('Cannot put empty block');
+    }
+    const name = streamGet(nameStream);
+    const resp = await source.dispatch({
+      type: 'PutBlock',
+      domain,
+      name,
+      value: blockState.value,
+    });
+    if (resp.id !== blockId) {
+      throw new Error(
+        `Attempted to put "${name}" block "${blockId}" but the server claims the ID is "${
+          resp.id
+        }"`,
+      );
+    }
+    shamefullySetPutTime();
+  }
+
   const cloudBlock = {
     ...blockStateValue,
+    id: blockId,
     getReference,
     value: blockValue,
+    put,
+    shamefullySetPutTime,
   };
 
   return cloudBlock;
@@ -189,7 +241,7 @@ export function createBlock({ domain, nameStream, source, id, value }) {
 export function createDoc({ source, domain, nameStream }) {
   const getName = () => streamGet(nameStream);
 
-  let lastDocState = {
+  let docState = {
     lastFetchTime: null,
     id: null,
   };
@@ -199,39 +251,39 @@ export function createDoc({ source, domain, nameStream }) {
       type: 'DocReference',
       domain,
       name: getName(),
-      id: lastDocState.id,
+      id: docState.id,
     };
   }
 
-  const docBlocks = {};
-
-  function getBlock(id) {
-    if (docBlocks[id]) {
-      return docBlocks[id];
-    }
-    docBlocks[id] = createBlock({ domain, nameStream, source, id });
-
-    return docBlocks[id];
-  }
-
   let doStop = null;
+  let notifyStateChange = null;
+
+  function setState(updates) {
+    docState = {
+      ...docState,
+      ...updates,
+    };
+    notifyStateChange && notifyStateChange();
+  }
   const docProducer = {
     start: listen => {
-      listen.next(lastDocState);
+      listen.next(docState);
+      notifyStateChange = () => {
+        listen.next(docState);
+      };
       const upStream = source.getDocStream(domain, getName());
       const internalListener = {
         next: v => {
-          lastDocState = {
-            ...lastDocState,
+          setState({
             lastFetchTime: Date.now(),
             id: v.id,
-          };
+          });
           if (v.value) {
             throw new Error(
               'Streaming value! not yet impll.. go make a block, ok',
             );
           }
-          listen.next(lastDocState);
+          listen.next(docState);
         },
         error: e => {
           listen.error(e);
@@ -245,16 +297,101 @@ export function createDoc({ source, domain, nameStream }) {
     },
     stop: () => {
       doStop && doStop();
+      doStop = null;
+      notifyStateChange = null;
     },
   };
 
   const docStream = xs.createWithMemory(docProducer);
 
-  const docStateValue = createCloudValue2(docStream);
+  const docStateValue = createStreamValue(docStream);
 
-  // flat map cloud value..
+  const docBlocks = {};
 
-  const value = createCloudValue2(
+  function getBlockOfValue(value) {
+    const block = createBlock({
+      source,
+      domain,
+      nameStream,
+      value,
+    });
+    if (docBlocks[block.id]) {
+      return docBlocks[block.id];
+    }
+    return (docBlocks[block.id] = block);
+  }
+
+  function getBlock(id) {
+    if (docBlocks[id]) {
+      return docBlocks[id];
+    }
+    docBlocks[id] = createBlock({ domain, nameStream, source, id });
+
+    return docBlocks[id];
+  }
+
+  async function publishValue(value) {
+    const block = getBlockOfValue(value);
+    await block.put();
+    return block;
+  }
+
+  async function putValue(value) {
+    const block = getBlockOfValue(value);
+    await putBlock(block);
+  }
+
+  function isBlockPublished(block) {
+    const blockState = block.get();
+    return blockState.lastFetchTime != null || blockState.lastPutTime != null;
+  }
+
+  async function putBlock(block) {
+    const lastId = docState.id;
+    if (isBlockPublished(block)) {
+      setState({
+        puttingFromId: lastId,
+        id: block.id,
+      });
+      try {
+        await source.dispatch({
+          type: 'PutDoc',
+          domain,
+          name: getName(),
+          id: block.id,
+        });
+      } catch (e) {
+        setState({
+          id: lastId,
+          puttingFromId: null,
+        });
+        throw e;
+      }
+    } else {
+      setState({
+        puttingFromId: lastId,
+        id: block.id,
+      });
+      try {
+        await source.dispatch({
+          type: 'PutDocValue',
+          domain,
+          name: getName(),
+          id: block.id,
+          value: block.value.get(),
+        });
+        block.shamefullySetPutTime();
+      } catch (e) {
+        setState({
+          id: lastId,
+          puttingFromId: null,
+        });
+        throw e;
+      }
+    }
+  }
+
+  const value = createStreamValue(
     docStream
       .filter(state => !!state.id)
       .map(state => {
@@ -272,5 +409,9 @@ export function createDoc({ source, domain, nameStream }) {
     getReference,
     value,
     getBlock,
+    getBlockOfValue,
+    publishValue,
+    putValue,
+    putBlock,
   };
 }
