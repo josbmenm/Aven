@@ -74,7 +74,7 @@ class LinkWithNavigation extends Component {
     const isActive = navActionResponse === null;
     return (
       <a
-        style={{ textDecoration: 'none', ...overrideATagCSS }}
+        style={{ textDecoration: 'none', color: 'inherit', ...overrideATagCSS }}
         href={href}
         onClick={e => {
           if (navAction.type === NavigationActions.URL) {
