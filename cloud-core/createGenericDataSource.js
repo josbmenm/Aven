@@ -446,26 +446,18 @@ export default function createGenericDataSource({
     return memoryDoc.childrenEvents;
   };
 
-  function getDocStream(domain, name, auth) {
-    // verifyDomain(domain, sourceDomain);
-    // const memoryDoc = getMemoryNode(name, false);
-    // if (memoryDoc === null) {
-    //   throw new Error(`Cannot stream nonexistent doc "${name}"`);
-    // }
-    // if (memoryDoc && memoryDoc.stream) {
-    //   return memoryDoc.stream;
-    // } else {
-    //   return (memoryDoc.stream = new BehaviorSubject(_renderDoc(memoryDoc)));
-    // }
+  function getDocStream(domain, name) {
+    return xs
+      .fromPromise(observeDoc(domain, name))
+      .map(obs => xs.fromObservable(obs))
+      .flatten();
   }
 
-  function getDocChildrenEventStream(domain, name, auth) {
-    // verifyDomain(domain, sourceDomain);
-    // const memoryDoc = getMemoryNode(name, false);
-    // if (!memoryDoc) {
-    //   throw new Error('parent does not exist');
-    // }
-    // return memoryDoc.childrenEventsStream;
+  function getDocChildrenEventStream(domain, name) {
+    return xs
+      .fromPromise(observeDocChildren(domain, name))
+      .map(obs => xs.fromObservable(obs))
+      .flatten();
   }
 
   async function GetDocValue({ domain, name }) {

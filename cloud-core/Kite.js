@@ -28,138 +28,70 @@ CloudValue<V, E>:
   }
   load: () => Promise<void>
 
-
 Block
   value: CloudValue()
 
 BlockState
 
-
 Doc
-
-
 
 */
 
-function map(cloudValue, mapFn) {
-  function get() {
-    return mapFn(cloudValue.get());
-  }
-  return {
-    ...cloudValue,
-    get,
-    stream: cloudValue.stream.map(mapFn),
-  };
-}
+async function streamLoad(stream) {
+  return new Promise((resolve, reject) => {
+    let loadTimeout = setTimeout(() => {
+      reject(new Error('Timed out loading..'));
+    }, 30000);
 
-function createCloudValue(
-  initialValue,
-  addListener,
-  removeListener,
-  getAttachmentStatus,
-) {
-  let currentValue = initialValue;
-  let isAttached = false;
-  let onIsAttached = null;
-  function setAttachment(err, isConnectedUpstream) {
-    const isAtt = getAttachmentStatus(currentValue, err, isConnectedUpstream);
-    if (isAtt === isAttached) {
-      return;
-    }
-    isAttached = isAtt;
-    onIsAttached && onIsAttached(isAttached);
-  }
+    let loadListener = null;
 
-  let internalListener = null;
-  function start(listener) {
-    listener.next(currentValue);
-    if (internalListener) {
-      throw new Error(
-        'Listener has not been stopped! This is likely a misunderstanding with xstream..',
-      );
+    function wrapUp() {
+      clearTimeout(loadTimeout);
+      if (loadListener) {
+        stream.removeListener(loadListener);
+        loadListener = null;
+      }
     }
-    internalListener = {
+    loadListener = {
       next: value => {
-        currentValue = value;
-        listener.next(value);
-        setAttachment(null, true);
+        resolve(value);
+        wrapUp();
       },
       error: e => {
-        listener.error(e);
-        setAttachment(e, false);
+        reject(e);
+        wrapUp();
       },
       complete: () => {
-        listener.complete();
-        setAttachment(null, false); // maybe not need this?
+        // should be covereed by next and erorr?
       },
     };
-    addListener(internalListener);
-  }
-  function stop() {
-    setAttachment(null, false);
-    if (internalListener) {
-      removeListener(internalListener);
-      internalListener = null;
-    }
-  }
-  async function load() {
-    if (isAttached) {
-      return currentValue;
-    }
-    return new Promise((resolve, reject) => {
-      let loadTimeout = setTimeout(() => {
-        reject(new Error('Timed out loading..'));
-      }, 30000);
+    stream.addListener(loadListener);
+  });
+}
 
-      let loadListener = null;
-
-      function wrapUp() {
-        clearTimeout(loadTimeout);
-        if (loadListener) {
-          removeListener(loadListener);
-          loadListener = null;
-        }
-      }
-      loadListener = {
-        next: value => {
-          currentValue = value;
-          setAttachment(null, false);
-          wrapUp();
-          resolve(value);
-        },
-        error: e => {
-          setAttachment(e, false);
-          wrapUp();
-          reject(e);
-        },
-        complete: () => {
-          setAttachment(null, false); // maybe not need this?
-          // should be covereed by next and erorr?
-        },
-      };
-      addListener(loadListener);
-    });
-  }
+function createCloudValue2(memoryStream) {
   return {
-    stream: xs.createWithMemory({ start, stop }),
-    isAttachedStream: xs.createWithMemory({
-      start: l => {
-        l.next(isAttached);
-        onIsAttached = isAtt => l.next(isAtt);
-      },
-      stop: () => {
-        onIsAttached = null;
-      },
-    }),
-    get: () => currentValue,
-    getIsAttached: () => isAttached,
-    load,
+    get: () => streamGet(memoryStream),
+    load: () => streamLoad(memoryStream),
+    stream: memoryStream,
   };
 }
 
-// const blockValueCache = new WeakMap();
+// A utility to extract the current value from a stream with memory, aka a stream that updates with a value right away upon subscription
+function streamGet(stream) {
+  let val = undefined;
+  const listener = {
+    next: v => {
+      val = v;
+    },
+  };
+  stream.addListener(listener);
+  // ok.. we expect that the stream has updated the listener with the current value!
+  stream.removeListener(listener);
+  return val;
+}
 
-export function createBlock({ domain, onGetName, source, id, value }) {
+export function createBlock({ domain, nameStream, source, id, value }) {
   let observedBlockId = null;
 
   if (value !== undefined) {
@@ -192,52 +124,48 @@ export function createBlock({ domain, onGetName, source, id, value }) {
     lastPutTime: null,
   };
 
-  function internalAddListener(listener) {
-    source
-      .dispatch({
-        type: 'GetBlock',
-        domain,
-        name: onGetName(),
-        id: blockId,
-      })
-      .then(resp => {
-        listener.next({
-          ...resp,
-          lastFetchTime: Date.now(),
+  let lastBlockState = initialBlockState;
+
+  let onStop = null;
+  const blockStateStream = xs.createWithMemory({
+    start: notify => {
+      notify.next(lastBlockState);
+      source
+        .dispatch({
+          type: 'GetBlock',
+          domain,
+          name: streamGet(nameStream),
+          id: blockId,
+        })
+        .then(resp => {
+          lastBlockState = {
+            ...lastBlockState,
+            value: resp.value,
+            lastFetchTime: Date.now(),
+          };
+          notify.next(lastBlockState);
+        })
+        .catch(err => {
+          notify.error(err);
         });
+    },
+    stop: () => {
+      if (onStop) {
+        onStop();
+        onStop = null;
+      }
+    },
+  });
+  const blockStateValue = createCloudValue2(blockStateStream);
+
+  const blockValue = createCloudValue2(
+    blockStateStream
+      .map(blockState => {
+        return blockState.value;
       })
-      .catch(err => {
-        listener.error(err);
-      });
-  }
-
-  function internalRemoveListener(listener) {
-    // no way to cancel the loading of a block..
-  }
-
-  function getValueAttachmentStatus(
-    valueState,
-    loadError,
-    isConnectedUpstream,
-  ) {
-    if (loadError) {
-      console.warn('Error loading block..', loadError);
-    }
-    if (valueState && valueState.value !== undefined) {
-      return true;
-    }
-    return false;
-  }
-
-  const blockStateValue = createCloudValue(
-    initialBlockState,
-    internalAddListener,
-    internalRemoveListener,
-    getValueAttachmentStatus,
-  );
-  const blockValue = map(
-    blockStateValue,
-    blockState => blockState && blockState.value,
+      .filter(val => val !== undefined)
+      .remember()
+      .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
   );
 
   function getReference() {
@@ -255,31 +183,94 @@ export function createBlock({ domain, onGetName, source, id, value }) {
     value: blockValue,
   };
 
-  // if (!blockValueCache.has(cloudBlock)) {
-  //   blockValueCache.set(observedBlockId, value);
-  // }
-
   return cloudBlock;
 }
 
-export function createDoc({ source, domain, name }) {
+export function createDoc({ source, domain, nameStream }) {
+  const getName = () => streamGet(nameStream);
+
+  let lastDocState = {
+    lastFetchTime: null,
+    id: null,
+  };
+
   function getReference() {
     return {
       type: 'DocReference',
       domain,
-      name: getFullName(),
-      id: getId(),
+      name: getName(),
+      id: lastDocState.id,
     };
   }
 
-  const docStateValue = createCloudValue();
-  // initialBlockState,
-  // internalAddListener,
-  // internalRemoveListener,
-  // getValueAttachmentStatus,
+  const docBlocks = {};
+
+  function getBlock(id) {
+    if (docBlocks[id]) {
+      return docBlocks[id];
+    }
+    docBlocks[id] = createBlock({ domain, nameStream, source, id });
+
+    return docBlocks[id];
+  }
+
+  let doStop = null;
+  const docProducer = {
+    start: listen => {
+      listen.next(lastDocState);
+      const upStream = source.getDocStream(domain, getName());
+      const internalListener = {
+        next: v => {
+          lastDocState = {
+            ...lastDocState,
+            lastFetchTime: Date.now(),
+            id: v.id,
+          };
+          if (v.value) {
+            throw new Error(
+              'Streaming value! not yet impll.. go make a block, ok',
+            );
+          }
+          listen.next(lastDocState);
+        },
+        error: e => {
+          listen.error(e);
+        },
+        complete: () => {
+          listen.complete();
+        },
+      };
+      upStream.addListener(internalListener);
+      doStop = () => upStream.removeListener(internalListener);
+    },
+    stop: () => {
+      doStop && doStop();
+    },
+  };
+
+  const docStream = xs.createWithMemory(docProducer);
+
+  const docStateValue = createCloudValue2(docStream);
+
+  // flat map cloud value..
+
+  const value = createCloudValue2(
+    docStream
+      .filter(state => !!state.id)
+      .map(state => {
+        const block = getBlock(state.id);
+        return block.value.stream;
+      })
+      .flatten()
+      .filter(state => state !== undefined)
+      .remember()
+      .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
+  );
 
   return {
     ...docStateValue,
     getReference,
+    value,
+    getBlock,
   };
 }

@@ -1,17 +1,22 @@
 import { createBlock, createDoc } from '../Kite';
 import createMemoryStorageSource from '../createMemoryStorageSource';
+import xs from 'xstream';
 
 async function justASec() {
   return new Promise(resolve => setTimeout(resolve, 1));
 }
+
+const dummySource = {
+  dispatch: async () => null,
+};
 
 describe('kite block', () => {
   describe('generic behavior', () => {
     it('handles creation with empty value', () => {
       const obj = createBlock({
         domain: 'test',
-        onGetName: () => 'foo',
-        source: {},
+        nameStream: xs.of('foo'),
+        source: dummySource,
         id: 'asdf1234',
       });
       expect(obj.get().id).toBe('asdf1234');
@@ -22,17 +27,17 @@ describe('kite block', () => {
       expect(() =>
         createBlock({
           domain: 'test',
-          onGetName: () => 'foo',
-          source: {},
+          nameStream: xs.of('foo'),
+          source: dummySource,
         }),
       ).toThrow();
     });
     it('handles creation with value', () => {
       const obj = createBlock({
         domain: 'test',
-        onGetName: () => 'foo',
+        nameStream: xs.of('foo'),
         value: { foo: 42 },
-        source: {},
+        source: dummySource,
       });
       expect(obj.get().id).toBe(
         '080e64543b0bed8b2de186304bb1ed04d5d46b5c1c362e971ec99ad8194576fc',
@@ -53,25 +58,14 @@ describe('kite block', () => {
       });
       const block = createBlock({
         source: m,
-        onGetName: () => 'foo',
+        nameStream: xs.of('foo'),
         domain: 'test',
         id: obj1.id,
       });
       expect(block.get().lastFetchTime).toEqual(null);
       expect(block.get().value).toEqual(undefined);
-      expect(block.getIsAttached()).toEqual(false);
       expect(block.value.get()).toBe(undefined);
-
-      let streamedIsAttached = null;
-      block.isAttachedStream.addListener({
-        next: isAtt => {
-          streamedIsAttached = isAtt;
-        },
-      });
-      expect(streamedIsAttached).toEqual(false);
-      await block.load();
-      expect(streamedIsAttached).toEqual(true);
-      expect(block.getIsAttached()).toEqual(true);
+      await block.value.load();
       expect(typeof block.get().lastFetchTime).toBe('number');
       expect(block.get().value.foo).toEqual('bar');
       expect(block.value.get().foo).toBe('bar');
@@ -89,23 +83,13 @@ describe('kite block', () => {
       });
       const block = createBlock({
         source: m,
-        onGetName: () => 'foo',
+        nameStream: xs.of('foo'),
         domain: 'test',
         id: obj1.id,
       });
       expect(block.get().lastFetchTime).toEqual(null);
       expect(block.get().value).toEqual(undefined);
-      expect(block.getIsAttached()).toEqual(false);
       expect(block.value.get()).toBe(undefined);
-
-      let streamedIsAttached = null;
-      block.isAttachedStream.addListener({
-        next: isAtt => {
-          streamedIsAttached = isAtt;
-        },
-      });
-      expect(streamedIsAttached).toEqual(false);
-
       let streamedValue = null;
       const streamListener = {
         next: v => {
@@ -116,18 +100,12 @@ describe('kite block', () => {
       expect(streamedValue.value).toEqual(undefined);
       expect(streamedValue.lastFetchTime).toEqual(null);
       await justASec();
-      expect(streamedIsAttached).toEqual(true);
-      expect(block.getIsAttached()).toEqual(true);
 
       expect(streamedValue.value.foo).toEqual('bar');
       expect(typeof streamedValue.lastFetchTime).toEqual('number');
       expect(streamedValue.id).toEqual(obj1.id);
 
       block.stream.removeListener(streamListener);
-      // block values never change. so they are always attached once loaded, even when we stop listening
-      await justASec();
-      expect(streamedIsAttached).toEqual(true);
-      expect(block.getIsAttached()).toEqual(true);
     });
 
     it('can subscribe and unsubscribe to block values', async () => {
@@ -140,22 +118,13 @@ describe('kite block', () => {
       });
       const block = createBlock({
         source: m,
-        onGetName: () => 'foo',
+        nameStream: xs.of('foo'),
         domain: 'test',
         id: obj1.id,
       });
       expect(block.get().lastFetchTime).toEqual(null);
       expect(block.get().value).toEqual(undefined);
-      expect(block.getIsAttached()).toEqual(false);
       expect(block.value.get()).toBe(undefined);
-
-      let streamedIsAttached = null;
-      block.isAttachedStream.addListener({
-        next: isAtt => {
-          streamedIsAttached = isAtt;
-        },
-      });
-      expect(streamedIsAttached).toEqual(false);
 
       let streamedValue = undefined;
       const streamListener = {
@@ -166,16 +135,14 @@ describe('kite block', () => {
       block.value.stream.addListener(streamListener);
       expect(streamedValue).toEqual(undefined);
       await justASec();
-      expect(streamedIsAttached).toEqual(true);
-      expect(block.getIsAttached()).toEqual(true);
 
       expect(streamedValue.foo).toEqual('bar');
 
       block.value.stream.removeListener(streamListener);
-      // block values never change. so they are always attached once loaded, even when we stop listening
       await justASec();
-      expect(streamedIsAttached).toEqual(true);
-      expect(block.getIsAttached()).toEqual(true);
+      expect(block.get().id).toBe(obj1.id);
+      expect(block.get().value.foo).toBe('bar');
+
       expect(block.value.get().foo).toBe('bar');
     });
   });
@@ -193,28 +160,64 @@ describe('kite doc', () => {
       });
       const doc = createDoc({
         source: m,
-        name: 'foo',
+        nameStream: xs.of('foo'),
         domain: 'test',
       });
+
       expect(doc.get().lastFetchTime).toEqual(null);
       expect(doc.get().value).toEqual(undefined);
-      expect(doc.getIsAttached()).toEqual(false);
       expect(doc.value.get()).toBe(undefined);
 
-      let streamedIsAttached = null;
-      doc.isAttachedStream.addListener({
-        next: isAtt => {
-          streamedIsAttached = isAtt;
-        },
-      });
-      expect(streamedIsAttached).toEqual(false);
-      await doc.load();
-      expect(streamedIsAttached).toEqual(true);
-      expect(doc.getIsAttached()).toEqual(true);
+      await doc.value.load();
       expect(typeof doc.get().lastFetchTime).toBe('number');
-      expect(doc.get().value.foo).toEqual('bar');
       expect(doc.get().id).toEqual(obj1.id);
       expect(doc.value.get().foo).toBe('bar');
+    });
+  });
+
+  describe('stream behavior', () => {
+    it('can load via doc.value.stream', async () => {
+      const m = createMemoryStorageSource({ domain: 'test' });
+      const obj1 = await m.dispatch({
+        type: 'PutDocValue',
+        domain: 'test',
+        name: 'foo',
+        value: { foo: 'bar' },
+      });
+      const doc = createDoc({
+        source: m,
+        nameStream: xs.of('foo'),
+        domain: 'test',
+      });
+      let lastValue = undefined;
+      const listener = {
+        next: v => {
+          lastValue = v;
+        },
+      };
+      doc.value.stream.addListener(listener);
+      expect(lastValue).toEqual(undefined);
+      await justASec();
+      expect(lastValue.foo).toEqual('bar');
+      const obj2 = await m.dispatch({
+        type: 'PutDocValue',
+        domain: 'test',
+        name: 'foo',
+        value: { foo: 'a' },
+      });
+      await justASec();
+      expect(lastValue.foo).toEqual('a');
+      doc.value.stream.removeListener(listener);
+      const obj3 = await m.dispatch({
+        type: 'PutDocValue',
+        domain: 'test',
+        name: 'foo',
+        value: { foo: 'b' },
+      });
+      await justASec();
+      expect(lastValue.foo).toEqual('a');
+      await doc.value.load();
+      // expect(doc.value.get().foo).toBe('b');
     });
   });
 });

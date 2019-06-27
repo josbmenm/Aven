@@ -1,7 +1,7 @@
 import createMemoryStorageSource from '../createMemoryStorageSource';
 import createCloudBlock from '../createCloudBlock';
 
-describe('object generic behavior', () => {
+describe('block generic behavior', () => {
   it('handles creation with empty value', () => {
     const obj = createCloudBlock({
       domain: 'test',
@@ -19,7 +19,6 @@ describe('object generic behavior', () => {
         onGetName: () => 'foo',
         dispatch: () => {},
       }),
-
     ).toThrow();
   });
   it('handles creation with value', () => {
@@ -35,7 +34,7 @@ describe('object generic behavior', () => {
   });
 });
 
-describe('basic object DataSource interaction', () => {
+describe('basic block DataSource interaction', () => {
   it('fetches blocks', async () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const { id } = await m.dispatch({
@@ -78,36 +77,6 @@ describe('basic object DataSource interaction', () => {
   });
 });
 
-describe('stream loading of a block', () => {
-  it ('blah', () => {
-    const m = createMemoryStorageSource({ domain: 'test' });
-    const obj1 = await m.dispatch({
-      type: 'PutDocValue',
-      domain: 'test',
-      name: 'foo',
-      value: { foo: 'bar' },
-
-    });
-    const c = createCloudBlock({
-      dispatch: m.dispatch,
-      onGetName: () => 'foo',
-      domain: 'test',
-      id: obj1.id,
-    });
-
-    let lastObserved = undefined;
-    c.observe.subscribe({
-      next: e => {
-        lastObserved = e;
-      },
-    });
-    expect(lastObserved.value).toEqual(undefined);
-    await c.fetch();
-    expect(lastObserved.value.foo).toEqual('bar');
-
-  })
-})
-
 describe('observing', () => {
   it('observe obj', async () => {
     const m = createMemoryStorageSource({ domain: 'test' });
@@ -116,7 +85,6 @@ describe('observing', () => {
       domain: 'test',
       name: 'foo',
       value: { foo: 'bar' },
-
     });
     const c = createCloudBlock({
       dispatch: m.dispatch,

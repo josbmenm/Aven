@@ -99,7 +99,7 @@ export default function createNetworkSource(opts) {
 
   function subscribeStream(subsSpec) {
     let id = getClientId();
-    return xs.create({
+    return xs.createWithMemory({
       start: listener => {
         const finalSpec = { ...subsSpec, id };
         socketSendIfConnected({
