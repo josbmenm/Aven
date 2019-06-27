@@ -238,6 +238,25 @@ describe('kite doc', () => {
       expect(resp.value.x).toEqual(42);
       expect(resp.id).toEqual(doc.get().id);
     });
+
+    it('can transact on doc values', async () => {
+      const m = createMemoryStorageSource({ domain: 'test' });
+      const doc = createDoc({
+        source: m,
+        nameStream: xs.of('foo'),
+        domain: 'test',
+      });
+      await doc.putTransactionValue({ x: 42 });
+      const resp = await m.dispatch({
+        type: 'GetDocValue',
+        domain: 'test',
+        name: 'foo',
+      });
+      expect(resp.value.on).toEqual(null);
+      expect(resp.value.value.x).toEqual(42);
+      expect(doc.value.get().value.x).toEqual(42);
+      expect(typeof doc.get().lastPutTime).toEqual('number');
+    });
   });
 
   describe('stream behavior', () => {

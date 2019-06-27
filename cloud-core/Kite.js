@@ -243,6 +243,7 @@ export function createDoc({ source, domain, nameStream }) {
 
   let docState = {
     lastFetchTime: null,
+    lastPutTime: null,
     id: null,
   };
 
@@ -304,6 +305,10 @@ export function createDoc({ source, domain, nameStream }) {
 
   const docStream = xs.createWithMemory(docProducer);
 
+  const loadedDocStream = docStream.filter(docState => {
+    return docState.lastFetchTime != null || docState.lastPutTime != null;
+  });
+
   const docStateValue = createStreamValue(docStream);
 
   const docBlocks = {};
@@ -360,6 +365,9 @@ export function createDoc({ source, domain, nameStream }) {
           name: getName(),
           id: block.id,
         });
+        setState({
+          lastPutTime: Date.now(),
+        });
       } catch (e) {
         setState({
           id: lastId,
@@ -380,6 +388,9 @@ export function createDoc({ source, domain, nameStream }) {
           id: block.id,
           value: block.value.get(),
         });
+        setState({
+          lastPutTime: Date.now(),
+        });
         block.shamefullySetPutTime();
       } catch (e) {
         setState({
@@ -389,6 +400,67 @@ export function createDoc({ source, domain, nameStream }) {
         throw e;
       }
     }
+  }
+
+  async function putTransactionValue(value) {
+    let onCleanup = null;
+
+    const startingDocState = await new Promise((resolve, reject) => {
+      let hasResolved = false;
+      const listen = {
+        next: v => {
+          if (hasResolved) {
+            // may be a race condition where the value changes at the same time we are transacting on it, or this can be the actual id we are putting.
+          } else {
+            resolve(v);
+          }
+        },
+        error: err => {
+          reject(err);
+        },
+        complete: () => {},
+      };
+      loadedDocStream.addListener(listen);
+      onCleanup = () => {
+        loadedDocStream.removeListener(listen);
+      };
+    });
+    const prevId = startingDocState.id;
+    const expectedTransactionValue = {
+      type: 'TransactionValue',
+      on: {
+        type: 'BlockReference',
+        id: prevId,
+      },
+      value,
+    };
+    const expectedBlock = getBlockOfValue(expectedTransactionValue);
+
+    setState({
+      id: expectedBlock.id,
+      puttingFromId: prevId,
+    });
+
+    const result = await source.dispatch({
+      type: 'PutTransactionValue',
+      domain,
+      name: getName(),
+      value,
+    });
+
+    setState({
+      lastPutTime: Date.now(),
+    });
+    if (result.id !== expectedBlock.id) {
+      console.warn(
+        `Expected to put block id "${expectedBlock.id}", but actually put id "${
+          result.id
+        }"`,
+      );
+    }
+
+    onCleanup && onCleanup();
+    return result;
   }
 
   const value = createStreamValue(
@@ -412,6 +484,7 @@ export function createDoc({ source, domain, nameStream }) {
     getBlockOfValue,
     publishValue,
     putValue,
+    putTransactionValue,
     putBlock,
   };
 }
