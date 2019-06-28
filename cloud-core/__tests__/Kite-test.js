@@ -7,6 +7,7 @@ import {
 } from '../Kite';
 import createMemoryStorageSource from '../createMemoryStorageSource';
 import xs from 'xstream';
+import sourceTests from './sourceTests';
 
 async function justASec() {
   return new Promise(resolve => setTimeout(resolve, 1));
@@ -379,6 +380,30 @@ describe('kite doc set', () => {
     const sameChild = parentDoc.children.get('bar');
     expect(childDoc).toBe(sameChild);
   });
+  it('sets and gets overridden stream docs', async () => {
+    const m = createMemoryStorageSource({ domain: 'test' });
+    await m.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    const docSet = createDocSet({
+      source: m,
+      nameStream: xs.of(null),
+      domain: 'test',
+    });
+    const foo = docSet.get('foo');
+    expect(await foo.value.load()).toMatchObject({ foo: 'bar' });
+    docSet.setOverrideStream(
+      'foobar',
+      foo.value.stream.map(v => {
+        return v.foo;
+      }),
+    );
+    const mappedDoc = docSet.get('foobar');
+    expect(await mappedDoc.value.load()).toBe('bar');
+  });
   it('posts at root', async () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const docSet = createDocSet({
@@ -465,4 +490,20 @@ describe('kite doc set', () => {
     expect(res.value).toEqual(undefined);
     expect(res.id).toEqual(undefined);
   });
+});
+
+describe('authenticated client behaves as source', () => {
+  async function startTestSource(options = { domain: 'test' }) {
+    const source = createMemoryStorageSource({
+      domain: options.domain,
+      ...options,
+    });
+    const client = createAuthenticatedClient({
+      source,
+      domain: options.domain,
+    });
+    return client;
+  }
+
+  sourceTests(startTestSource);
 });

@@ -94,6 +94,17 @@ function streamGet(stream) {
   return val;
 }
 
+export function createStreamDoc(stream) {
+  const value = createStreamValue(stream);
+  return {
+    type: 'StreamDoc',
+    value,
+    getId: () => {
+      throw new Error('yes');
+    },
+  };
+}
+
 export function createBlock({ domain, auth, nameStream, source, id, value }) {
   let observedBlockId = null;
 
@@ -109,12 +120,12 @@ export function createBlock({ domain, auth, nameStream, source, id, value }) {
   }
   if (id && observedBlockId && id !== observedBlockId) {
     throw new Error(
-      'id and value were both provided to createCloudBlock, but the id does not match the value!',
+      'id and value were both provided to createBlock, but the id does not match the value!',
     );
   }
 
   if (!blockId) {
-    throw new Error('id or value must be provided to createCloudBlock!');
+    throw new Error('id or value must be provided to createBlock!');
   }
 
   const initValue = value;
@@ -206,6 +217,13 @@ export function createBlock({ domain, auth, nameStream, source, id, value }) {
     });
   }
 
+  function shamefullySetFetchedValue(value) {
+    setState({
+      lastFetchTime: Date.now(),
+      value,
+    });
+  }
+
   async function put() {
     if (blockState.lastFetchTime || blockState.lastPutTime) {
       return;
@@ -237,12 +255,14 @@ export function createBlock({ domain, auth, nameStream, source, id, value }) {
 
   const cloudBlock = {
     ...blockStateValue,
+    type: 'Block',
     id: blockId,
     getId,
     getReference,
     value: blockValue,
     put,
     shamefullySetPutTime,
+    shamefullySetFetchedValue,
   };
 
   return cloudBlock;
@@ -317,10 +337,9 @@ export function createDoc({
                 lastFetchTime: Date.now(),
                 id: v.id,
               });
-              if (v.value) {
-                throw new Error(
-                  'Streaming value! not yet impll.. go make a block, ok',
-                );
+              if (v.value !== undefined) {
+                const block = getBlock(v.id);
+                block.shamefullySetFetchedValue(v.value);
               }
               listen.next(docState);
             },
@@ -579,8 +598,14 @@ export function createDoc({
 
   const children = createDocSet({ domain, auth, source, nameStream });
 
+  async function getId() {
+    return docState.id;
+  }
+
   return {
     ...docStateValue,
+    type: 'Doc',
+    getId,
     getReference,
     value,
     getName,
@@ -688,9 +713,19 @@ export function createDocSet({ domain, auth, source, nameStream }) {
     return postedDoc;
   }
 
+  function setOverrideStream(name, stream) {
+    const childNameStream = xs.createWithMemory();
+    childNameStream.shamefullySendNext(name);
+    const streamDoc = createStreamDoc(stream);
+    childNameStreams.set(name, childNameStream);
+    childDocs.set(childNameStream, streamDoc);
+    return streamDoc;
+  }
+
   return {
     get,
     post,
+    setOverrideStream,
   };
 }
 
@@ -720,7 +755,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
 
   async function PutDocValue({ name, value }) {
     const doc = rootDocSet.get(name);
-    await doc.putToSource(value);
+    await doc.putValue(value);
     const id = await doc.getId();
     return { id, name, domain };
   }
@@ -787,11 +822,19 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
   async function GetDocValue({ name }) {
     const doc = rootDocSet.get(name);
     const context = doc.getReference();
-    const { value, id } = await doc.loadValue();
-    return { context, value, id };
+    const value = await doc.value.load();
+    return { context, value, id: doc.get().id };
   }
 
-  async function GetDocValues() {}
+  async function GetDocValues({ domain, names }) {
+    const results = await Promise.all(
+      names.map(async name => {
+        return await GetDocValue({ domain, name });
+      }),
+    );
+    return { results };
+  }
+
   return {
     close,
     getDocStream,
