@@ -6,6 +6,7 @@ import getIdOfValue from '../cloud-utils/getIdOfValue';
 import { getMaxListDocs } from '../cloud-core/maxListDocs';
 import bindCommitDeepBlock from '../cloud-core/bindCommitDeepBlock';
 import Err from '../utils/Err';
+import xs from 'xstream';
 
 const pgFormat = require('pg-format');
 
@@ -860,11 +861,28 @@ export default async function startPostgresStorageSource({ config, domains }) {
     const { id } = await getDocDBContext(domain, name);
     return getCachedObervable([domain, id], getChildrenChannel);
   }
+
+  function getDocStream(domain, name) {
+    return xs
+      .fromPromise(observeDoc(domain, name))
+      .map(obs => xs.fromObservable(obs))
+      .flatten();
+  }
+
+  function getDocChildrenEventStream(domain, name) {
+    return xs
+      .fromPromise(observeDocChildren(domain, name))
+      .map(obs => xs.fromObservable(obs))
+      .flatten();
+  }
+
   return {
     isConnected,
     close,
     observeDoc,
     observeDocChildren,
+    getDocStream,
+    getDocChildrenEventStream,
     dispatch: createDispatcher({
       PutDocValue,
       GetDocValue,
