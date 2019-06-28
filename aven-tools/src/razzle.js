@@ -42,14 +42,24 @@ startClient();
     await fs.writeFile(knexFilePath, knexFileData);
   }
 
+  const finalDistPkg = {
+    ...distPkg,
+    scripts: {
+      ...distPkg.scripts,
+      test: `${distPkg.scripts.test} ${appName}/`,
+    },
+  };
+
   const distPkgPath = pathJoin(location, 'package.json');
-  await fs.writeFile(distPkgPath, JSON.stringify(distPkg, null, 2));
+  await fs.writeFile(distPkgPath, JSON.stringify(finalDistPkg, null, 2));
 
   await spawn('yarn', { cwd: location, stdio: 'inherit' });
 };
 
 const init = async ({ location }) => {
   await fs.copy(pathJoin(protoPath), location);
+  await spawn('git', ['init'], { cwd: location, stdio: 'inherit' });
+
   return {};
 };
 
