@@ -1,4 +1,4 @@
-import { createBlock, createDoc } from '../Kite';
+import { createBlock, createDoc, createDocSet } from '../Kite';
 import createMemoryStorageSource from '../createMemoryStorageSource';
 import xs from 'xstream';
 
@@ -339,5 +339,55 @@ describe('kite doc', () => {
       await doc.value.load();
       expect(doc.value.get().foo).toBe('b');
     });
+  });
+});
+
+describe('kite doc set', () => {
+  it('get - basic', async () => {
+    const m = createMemoryStorageSource({ domain: 'test' });
+    await m.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    const docSet = createDocSet({
+      source: m,
+      nameStream: xs.of(null),
+      domain: 'test',
+    });
+    const doc = docSet.get('foo');
+    expect((await doc.value.load()).foo).toBe('bar');
+  });
+  it('get - parents to children', async () => {
+    const m = createMemoryStorageSource({ domain: 'test' });
+    const docSet = createDocSet({
+      source: m,
+      nameStream: xs.of(null),
+      domain: 'test',
+    });
+    const parentDoc = docSet.get('foo');
+    const childDoc = docSet.get('foo/bar');
+    expect(childDoc.get().id).toEqual(null);
+    expect(parentDoc.get().id).toEqual(null);
+    const sameChild = parentDoc.children.get('bar');
+    expect(childDoc).toBe(sameChild);
+  });
+  it('posts at root', async () => {
+    const m = createMemoryStorageSource({ domain: 'test' });
+    const docSet = createDocSet({
+      source: m,
+      nameStream: xs.of(null),
+      domain: 'test',
+    });
+    const newDoc = docSet.post();
+    await newDoc.putValue({ hello: 'world' });
+    const postedName = newDoc.getName();
+    const res = await m.dispatch({
+      type: 'GetDocValue',
+      domain: 'test',
+      name: postedName,
+    });
+    expect(res.value.hello).toEqual('world');
   });
 });

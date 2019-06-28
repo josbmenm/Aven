@@ -3,6 +3,7 @@
 import xs from 'xstream';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 import Err from '../utils/Err';
+import cuid from 'cuid';
 
 /*
 
@@ -186,7 +187,8 @@ export function createBlock({ domain, nameStream, source, id, value }) {
       .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
   );
 
-  function getReference() {
+  async function getReference() {
+    // why is this async? good question. Eventually, we should make block checksumming lazy, so unlike the current implementation, the id may not be ready yet
     if (!blockId) {
       throw new Error(
         'Cannot getReference of an incomplete block without a value or id',
@@ -226,9 +228,14 @@ export function createBlock({ domain, nameStream, source, id, value }) {
     shamefullySetPutTime();
   }
 
+  async function getId() {
+    return blockId;
+  }
+
   const cloudBlock = {
     ...blockStateValue,
     id: blockId,
+    getId,
     getReference,
     value: blockValue,
     put,
@@ -238,16 +245,35 @@ export function createBlock({ domain, nameStream, source, id, value }) {
   return cloudBlock;
 }
 
-export function createDoc({ source, domain, nameStream }) {
-  const getName = () => streamGet(nameStream);
+export function createDoc({
+  source,
+  domain,
+  nameStream,
+  isUnposted,
+  onDidRename,
+}) {
+  function getName() {
+    return streamGet(nameStream);
+  }
+
+  function getParentName() {
+    const name = getName();
+    const nameParts = name.split('/');
+    if (nameParts.length === 1) {
+      return null;
+    }
+    return nameParts.slice(0, -1).join('/');
+  }
 
   let docState = {
+    isPosted: !isUnposted,
     lastFetchTime: null,
     lastPutTime: null,
     id: null,
   };
 
-  function getReference() {
+  async function getReference() {
+    // why is this async? good question. Eventually, we should make block checksumming lazy, so unlike the current implementation, the id may not be ready yet
     return {
       type: 'DocReference',
       domain,
@@ -256,7 +282,6 @@ export function createDoc({ source, domain, nameStream }) {
     };
   }
 
-  let doStop = null;
   let notifyStateChange = null;
 
   function setState(updates) {
@@ -266,44 +291,55 @@ export function createDoc({ source, domain, nameStream }) {
     };
     notifyStateChange && notifyStateChange();
   }
-  const docProducer = {
-    start: listen => {
-      listen.next(docState);
-      notifyStateChange = () => {
-        listen.next(docState);
-      };
-      const upStream = source.getDocStream(domain, getName());
-      const internalListener = {
-        next: v => {
-          setState({
-            lastFetchTime: Date.now(),
-            id: v.id,
-          });
-          if (v.value) {
-            throw new Error(
-              'Streaming value! not yet impll.. go make a block, ok',
-            );
-          }
-          listen.next(docState);
-        },
-        error: e => {
-          listen.error(e);
-        },
-        complete: () => {
-          listen.complete();
-        },
-      };
-      upStream.addListener(internalListener);
-      doStop = () => upStream.removeListener(internalListener);
-    },
-    stop: () => {
-      doStop && doStop();
-      doStop = null;
-      notifyStateChange = null;
-    },
-  };
 
-  const docStream = xs.createWithMemory(docProducer);
+  const docStream = nameStream
+    .map(name => {
+      let doStop = null;
+      let performNotification = null;
+      const docProducer = {
+        start: listen => {
+          performNotification = () => {
+            listen.next(docState);
+          };
+          performNotification();
+          notifyStateChange = () => {
+            performNotification && performNotification();
+          };
+          const upStream = source.getDocStream(domain, name);
+          const internalListener = {
+            next: v => {
+              setState({
+                lastFetchTime: Date.now(),
+                id: v.id,
+              });
+              if (v.value) {
+                throw new Error(
+                  'Streaming value! not yet impll.. go make a block, ok',
+                );
+              }
+              listen.next(docState);
+            },
+            error: e => {
+              listen.error(e);
+            },
+            complete: () => {
+              listen.complete();
+            },
+          };
+          upStream.addListener(internalListener);
+          doStop = () => upStream.removeListener(internalListener);
+        },
+        stop: () => {
+          performNotification = null;
+          doStop && doStop();
+          doStop = null;
+        },
+      };
+      return xs.createWithMemory(docProducer);
+    })
+    .flatten()
+    .remember()
+    .debug(() => {});
 
   const loadedDocStream = docStream.filter(docState => {
     return docState.lastFetchTime != null || docState.lastPutTime != null;
@@ -353,6 +389,49 @@ export function createDoc({ source, domain, nameStream }) {
 
   async function putBlock(block) {
     const lastId = docState.id;
+    const isPosted = docState.isPosted;
+
+    if (!isPosted) {
+      setState({
+        puttingFromId: lastId,
+        id: block.id,
+      });
+
+      let postData = { id: null };
+      if (block && block.value.get()) {
+        postData = { value: block.value.get() };
+      } else if (block) {
+        postData = { id: await block.getId() };
+      }
+
+      try {
+        const parentName = getParentName();
+        const postResp = await source.dispatch({
+          type: 'PostDoc',
+          domain,
+          name: parentName,
+          ...postData,
+        });
+        const resultingChildName =
+          parentName == null
+            ? postResp.name
+            : postResp.name.slice(parentName.length + 1);
+        onDidRename(resultingChildName);
+        setState({
+          lastPutTime: Date.now(),
+          isPosted: true,
+        });
+        block.shamefullySetPutTime();
+      } catch (e) {
+        setState({
+          id: lastId,
+          puttingFromId: null,
+        });
+        throw e;
+      }
+      return;
+    }
+
     if (isBlockPublished(block)) {
       setState({
         puttingFromId: lastId,
@@ -476,15 +555,100 @@ export function createDoc({ source, domain, nameStream }) {
       .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
   );
 
+  const children = createDocSet({ domain, source, nameStream });
+
   return {
     ...docStateValue,
     getReference,
     value,
+    getName,
     getBlock,
     getBlockOfValue,
     publishValue,
     putValue,
     putTransactionValue,
     putBlock,
+    children,
+  };
+}
+
+function combineNameStreams(parentStream, nameStream) {
+  return xs
+    .combine(parentStream, nameStream)
+    .map(([parent, name]) => {
+      if (parent) {
+        return `${parent}/${name}`;
+      }
+      return name;
+    })
+    .remember()
+    .debug(v => {}); // uhh, remember doesnt seem to work until this debug is here....???
+}
+
+export function createDocSet({ domain, source, nameStream }) {
+  const _docs = {};
+
+  const childNameStreams = new Map();
+  const childDocs = new WeakMap();
+
+  function get(name) {
+    if (typeof name !== 'string') {
+      throw new Err(
+        `Expected a string to be passed to DocSet.get(). Instead got "${name}"`,
+      );
+    }
+    const localName = name.split('/')[0];
+    if (!localName) {
+      throw new Err('Invalid name to get');
+    }
+    let returningCloudValue = null;
+
+    let restOfName = null;
+    if (localName.length < name.length - 1) {
+      restOfName = name.slice(localName.length + 1);
+    }
+    if (childNameStreams.has(localName)) {
+      returningCloudValue = childDocs.get(childNameStreams.get(localName));
+    }
+
+    if (!returningCloudValue) {
+      const childNameStream = xs.createWithMemory();
+      childNameStream.shamefullySendNext(localName);
+      const newDoc = createDoc({
+        source,
+        domain,
+        nameStream: combineNameStreams(nameStream, childNameStream),
+      });
+      childNameStreams.set(localName, childNameStream);
+      childDocs.set(childNameStream, newDoc);
+      returningCloudValue = newDoc;
+    }
+    if (restOfName) {
+      returningCloudValue = returningCloudValue.children.get(restOfName);
+    }
+    return returningCloudValue;
+  }
+
+  function post() {
+    const localName = cuid();
+    const childNameStream = xs.createWithMemory();
+    childNameStream.shamefullySendNext(localName);
+    const postedDoc = createDoc({
+      source,
+      domain,
+      nameStream: combineNameStreams(nameStream, childNameStream),
+      isUnposted: true,
+      onDidRename: newLocalName => {
+        childNameStream.shamefullySendNext(newLocalName);
+      },
+    });
+    childNameStreams.set(localName, childNameStream);
+    childDocs.set(childNameStream, postedDoc);
+    return postedDoc;
+  }
+
+  return {
+    get,
+    post,
   };
 }
