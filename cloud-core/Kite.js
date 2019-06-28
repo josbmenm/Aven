@@ -4,6 +4,7 @@ import xs from 'xstream';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 import Err from '../utils/Err';
 import cuid from 'cuid';
+import createDispatcher from '../cloud-utils/createDispatcher';
 
 /*
 
@@ -93,7 +94,7 @@ function streamGet(stream) {
   return val;
 }
 
-export function createBlock({ domain, nameStream, source, id, value }) {
+export function createBlock({ domain, auth, nameStream, source, id, value }) {
   let observedBlockId = null;
 
   if (value !== undefined) {
@@ -151,6 +152,7 @@ export function createBlock({ domain, nameStream, source, id, value }) {
           .dispatch({
             type: 'GetBlock',
             domain,
+            auth,
             name: subsName,
             id: blockId,
           })
@@ -215,6 +217,7 @@ export function createBlock({ domain, nameStream, source, id, value }) {
     const resp = await source.dispatch({
       type: 'PutBlock',
       domain,
+      auth,
       name,
       value: blockState.value,
     });
@@ -248,9 +251,11 @@ export function createBlock({ domain, nameStream, source, id, value }) {
 export function createDoc({
   source,
   domain,
+  auth,
   nameStream,
   isUnposted,
   onDidRename,
+  onDidDestroy,
 }) {
   function getName() {
     return streamGet(nameStream);
@@ -305,7 +310,7 @@ export function createDoc({
           notifyStateChange = () => {
             performNotification && performNotification();
           };
-          const upStream = source.getDocStream(domain, name);
+          const upStream = source.getDocStream(domain, name, auth);
           const internalListener = {
             next: v => {
               setState({
@@ -353,6 +358,7 @@ export function createDoc({
     const block = createBlock({
       source,
       domain,
+      auth,
       nameStream,
       value,
     });
@@ -366,7 +372,7 @@ export function createDoc({
     if (docBlocks[id]) {
       return docBlocks[id];
     }
-    docBlocks[id] = createBlock({ domain, nameStream, source, id });
+    docBlocks[id] = createBlock({ source, domain, auth, nameStream, id });
 
     return docBlocks[id];
   }
@@ -409,6 +415,7 @@ export function createDoc({
         const postResp = await source.dispatch({
           type: 'PostDoc',
           domain,
+          auth,
           name: parentName,
           ...postData,
         });
@@ -441,6 +448,7 @@ export function createDoc({
         await source.dispatch({
           type: 'PutDoc',
           domain,
+          auth,
           name: getName(),
           id: block.id,
         });
@@ -463,6 +471,7 @@ export function createDoc({
         await source.dispatch({
           type: 'PutDocValue',
           domain,
+          auth,
           name: getName(),
           id: block.id,
           value: block.value.get(),
@@ -511,6 +520,7 @@ export function createDoc({
         type: 'BlockReference',
         id: prevId,
       },
+      time: Date.now(),
       value,
     };
     const expectedBlock = getBlockOfValue(expectedTransactionValue);
@@ -523,6 +533,7 @@ export function createDoc({
     const result = await source.dispatch({
       type: 'PutTransactionValue',
       domain,
+      auth,
       name: getName(),
       value,
     });
@@ -555,16 +566,29 @@ export function createDoc({
       .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
   );
 
-  const children = createDocSet({ domain, source, nameStream });
+  async function destroy() {
+    setState({ id: null, isDestroyed: true });
+    onDidDestroy();
+    await source.dispatch({
+      type: 'DestroyDoc',
+      domain,
+      auth,
+      name: getName(),
+    });
+  }
+
+  const children = createDocSet({ domain, auth, source, nameStream });
 
   return {
     ...docStateValue,
     getReference,
     value,
     getName,
+    getParentName,
     getBlock,
     getBlockOfValue,
     publishValue,
+    destroy,
     putValue,
     putTransactionValue,
     putBlock,
@@ -585,11 +609,17 @@ function combineNameStreams(parentStream, nameStream) {
     .debug(v => {}); // uhh, remember doesnt seem to work until this debug is here....???
 }
 
-export function createDocSet({ domain, source, nameStream }) {
-  const _docs = {};
-
+export function createDocSet({ domain, auth, source, nameStream }) {
   const childNameStreams = new Map();
   const childDocs = new WeakMap();
+
+  function _handleDestroy(doc) {
+    const name = doc.getName();
+    childNameStreams.get(name);
+    // errmmmm. todo
+  }
+
+  function _handleRename() {}
 
   function get(name) {
     if (typeof name !== 'string') {
@@ -617,7 +647,14 @@ export function createDocSet({ domain, source, nameStream }) {
       const newDoc = createDoc({
         source,
         domain,
+        auth,
         nameStream: combineNameStreams(nameStream, childNameStream),
+        onDidRename: newLocalName => {
+          childNameStream.shamefullySendNext(newLocalName);
+        },
+        onDidDestroy: () => {
+          _handleDestroy(newDoc);
+        },
       });
       childNameStreams.set(localName, childNameStream);
       childDocs.set(childNameStream, newDoc);
@@ -636,10 +673,14 @@ export function createDocSet({ domain, source, nameStream }) {
     const postedDoc = createDoc({
       source,
       domain,
+      auth,
       nameStream: combineNameStreams(nameStream, childNameStream),
       isUnposted: true,
       onDidRename: newLocalName => {
         childNameStream.shamefullySendNext(newLocalName);
+      },
+      onDidDestroy: () => {
+        _handleDestroy(postedDoc);
       },
     });
     childNameStreams.set(localName, childNameStream);
@@ -650,5 +691,157 @@ export function createDocSet({ domain, source, nameStream }) {
   return {
     get,
     post,
+  };
+}
+
+function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
+  const sourceId = `CloudClient-${cuid()}`;
+  function close() {}
+
+  function getDocStream(subsDomain, name, auth) {
+    if (subsDomain !== domain) {
+      return source.getDocStream(subsDomain, name, auth);
+    }
+    const doc = rootDocSet.get(name);
+    return doc.stream;
+  }
+
+  function getDocChildrenEventStream() {}
+
+  async function sessionDispatch(action) {
+    return await source.dispatch({
+      ...action,
+      ...(authHack || {}),
+    });
+  }
+
+  // async function PutDoc() {}
+  // async function PutBlock() {}
+
+  async function PutDocValue({ name, value }) {
+    const doc = rootDocSet.get(name);
+    await doc.putToSource(value);
+    const id = await doc.getId();
+    return { id, name, domain };
+  }
+
+  async function PutTransactionValue({ name, value }) {
+    const doc = rootDocSet.get(name);
+    await doc.putTransactionValue(value);
+    const id = await doc.get().id;
+    return { id, name, domain };
+  }
+
+  async function PostDoc({ name, value, id }) {
+    const doc = rootDocSet.get(name);
+    const newDoc = doc.post();
+    if (value !== undefined) {
+      await newDoc.putValue(value);
+      // todo check id of newDoc
+    } else {
+      const block = newDoc.getBlock(id);
+      await newDoc.putBlock(block);
+    }
+    return {
+      name: newDoc.getName(),
+      id: newDoc.get().id,
+    };
+  }
+
+  async function GetBlock({ name, id }) {
+    const doc = rootDocSet.get(name);
+    const block = doc.getBlock(id);
+    const value = await block.value.load();
+    return {
+      id: block.id,
+      value,
+    };
+  }
+  async function GetBlocks({ domain, name, ids }) {
+    const results = await Promise.all(
+      ids.map(async id => {
+        return await GetBlock({ domain, name, id });
+      }),
+    );
+    return { results };
+  }
+  async function GetDoc({ name }) {
+    const doc = rootDocSet.get(name);
+    const loaded = await doc.load();
+    return {
+      id: loaded.id,
+      domain,
+      name,
+    };
+  }
+
+  async function GetDocs({ domain, names }) {
+    const results = await Promise.all(
+      names.map(async name => {
+        return await GetDoc({ domain, name });
+      }),
+    );
+    return { results };
+  }
+
+  async function GetDocValue({ name }) {
+    const doc = rootDocSet.get(name);
+    const context = doc.getReference();
+    const { value, id } = await doc.loadValue();
+    return { context, value, id };
+  }
+
+  async function GetDocValues() {}
+  return {
+    close,
+    getDocStream,
+    getDocChildrenEventStream,
+    // isConnectedStream,
+    dispatch: createDispatcher(
+      {
+        // PutDoc,
+        // PutBlock,
+        PutDocValue,
+        PutTransactionValue,
+        PostDoc,
+        GetBlock,
+        GetBlocks,
+        GetDoc,
+        GetDocs,
+        GetDocValue,
+        GetDocValues,
+
+        // GetStatus,
+        // ListDomains,
+        // ListDocs,
+        // DestroyDoc,
+        // CollectGarbage,
+        // MoveDoc,
+      },
+      sessionDispatch,
+      domain,
+      sourceId,
+    ),
+    id: sourceId,
+  };
+}
+
+export function createAuthenticatedClient({ domain, source, auth }) {
+  const docs = createDocSet({
+    domain,
+    source,
+    auth,
+    nameStream: xs.of(null),
+  });
+
+  return {
+    docs,
+    ...sourceFromRootDocSet(docs, domain, source, auth),
+  };
+}
+
+export function createClient({ domain, source }) {
+  return {
+    ...createAuthenticatedClient({ domain, source }),
   };
 }

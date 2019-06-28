@@ -1,4 +1,10 @@
-import { createBlock, createDoc, createDocSet } from '../Kite';
+import {
+  createBlock,
+  createDoc,
+  createDocSet,
+  createAuthenticatedClient,
+  createClient,
+} from '../Kite';
 import createMemoryStorageSource from '../createMemoryStorageSource';
 import xs from 'xstream';
 
@@ -389,5 +395,74 @@ describe('kite doc set', () => {
       name: postedName,
     });
     expect(res.value.hello).toEqual('world');
+  });
+  it('posts children', async () => {
+    const m = createMemoryStorageSource({ domain: 'test' });
+    const docSet = createDocSet({
+      source: m,
+      nameStream: xs.of('foo'),
+      domain: 'test',
+    });
+    const newDoc = docSet.post();
+    await newDoc.putValue({ hello: 'world' });
+    const postedName = newDoc.getName();
+    const res = await m.dispatch({
+      type: 'GetDocValue',
+      domain: 'test',
+      name: postedName,
+    });
+    expect(res.value.hello).toEqual('world');
+    expect(postedName.length > 10).toEqual(true);
+    expect(postedName.indexOf('foo/')).toEqual(0);
+  });
+  it('destroys at root without loading', async () => {
+    const m = createMemoryStorageSource({ domain: 'test' });
+    const docSet = createDocSet({
+      source: m,
+      nameStream: xs.of(null),
+      domain: 'test',
+    });
+    await m.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    const doc = docSet.get('foo');
+    await doc.destroy();
+    expect(doc.get().isDestroyed).toBe(true);
+    const res = await m.dispatch({
+      type: 'GetDocValue',
+      domain: 'test',
+      name: 'foo',
+    });
+    expect(res.value).toEqual(undefined);
+    expect(res.id).toEqual(undefined);
+  });
+
+  it('destroys at root after loading', async () => {
+    const m = createMemoryStorageSource({ domain: 'test' });
+    const docSet = createDocSet({
+      source: m,
+      nameStream: xs.of(null),
+      domain: 'test',
+    });
+    await m.dispatch({
+      type: 'PutDocValue',
+      domain: 'test',
+      name: 'foo',
+      value: { foo: 'bar' },
+    });
+    const doc = docSet.get('foo');
+    await doc.load();
+    await doc.destroy();
+    expect(doc.get().isDestroyed).toBe(true);
+    const res = await m.dispatch({
+      type: 'GetDocValue',
+      domain: 'test',
+      name: 'foo',
+    });
+    expect(res.value).toEqual(undefined);
+    expect(res.id).toEqual(undefined);
   });
 });
