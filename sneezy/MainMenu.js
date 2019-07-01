@@ -50,7 +50,10 @@ function MenuLink({
             borderBottomColor: active ? theme.colors.primary : 'transparent',
             ...buttonStyle,
           }}
-          titleStyle={titleStyle}
+          titleStyle={{
+            fontSize: 20, // change for theme
+            ...titleStyle
+          }}
           {...rest}
         />
       )}
@@ -93,6 +96,7 @@ export function DesktopMenu() {
               title="book with us"
               routeName="BookUs"
               buttonStyle={{ marginLeft: 16 }}
+              titleStyle={{ fontSize: 20 }}
             />
           </View>
         </View>
