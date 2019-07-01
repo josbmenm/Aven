@@ -96,7 +96,7 @@ function HomeHeader() {
                     </BodyText>
                   </Responsive>
                   <ButtonLink
-                    title="Find us"
+                    title="find us"
                     routeName="Schedule"
                     buttonStyle={{
                       width: 210,

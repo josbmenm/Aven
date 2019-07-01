@@ -39,7 +39,7 @@ const textStyles = {
     ...textDefaults,
     ...textSpacing,
     fontSize: 38,
-    lineHeight: 64,
+    lineHeight: 48,
     fontFamily: fontFamily.heading,
   },
   title: {
@@ -54,6 +54,7 @@ const textStyles = {
     ...textSpacing,
     fontSize: 18,
     lineHeight: 32,
+    letterSpacing: 0.3,
     fontFamily: fontFamily.body,
   },
   footnote: {
