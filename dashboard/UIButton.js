@@ -15,11 +15,25 @@ function UIButton({
   ...rest
 }) {
   const theme = useTheme();
+  const buttonBackgroundColor =
+    variant === 'primary'
+      ? theme.colors.primary80
+      : variant === 'secondary'
+      ? theme.colors.secondary80
+      : theme.colors.lightGrey;
+
   const buttonColor =
     variant === 'primary'
       ? theme.colors.primary
       : variant === 'secondary'
       ? theme.colors.secondary
+      : theme.colors.lightGrey;
+
+  const borderColor =
+    variant === 'primary'
+      ? theme.colors.primary80
+      : variant === 'secondary'
+      ? theme.colors.secondary80
       : theme.colors.lightGrey;
 
   const buttonSize =
@@ -51,7 +65,7 @@ function UIButton({
             paddingHorizontal: theme.space[6],
             borderRadius: theme.radii[2],
           },
-          title: { fontSize: theme.fontSizes.body },
+          title: { fontSize: 20 },
         };
   return (
     <View
@@ -60,8 +74,9 @@ function UIButton({
           borderRadius: theme.radii[2],
           borderWidth: 3,
           justifyContent: 'center',
-          borderColor: type === 'outline' ? buttonColor : 'transparent',
-          backgroundColor: type === 'solid' ? buttonColor : 'transparent',
+          borderColor: type === 'outline' ? borderColor : 'transparent',
+          backgroundColor:
+            type === 'solid' ? buttonBackgroundColor : 'transparent',
           opacity: disabled ? 0.5 : 1,
         },
         buttonSize.button,
