@@ -82,32 +82,23 @@ function HomeHeader() {
                       boxSizing: 'border-box',
                     }}
                   >
-                    <Responsive
-                      style={{
+                    <Heading
+                      responsiveStyle={{
                         marginBottom: [16, 6],
                         textAlign: ['center', 'left'],
                       }}
                     >
-                      <Heading>
-                        We’re making healthy food accessible to everyone.
-                      </Heading>
-                    </Responsive>
-                    <Responsive
-                      style={{
+                      We’re making healthy food accessible to everyone.
+                    </Heading>
+                    <BodyText
+                      responsiveStyle={{
                         marginBottom: [20, 45],
                       }}
                     >
-                      <BodyText
-                        style={{
-                          marginBottom: 28,
-                        }}
-                      >
-                        Using organic fruits and vegetables, we create blends
-                        that focus on the best ingredients for you. All of our
-                        blends are customizable and designed with your best self
-                        in mind.
-                      </BodyText>
-                    </Responsive>
+                      Using organic fruits and vegetables, we create blends that
+                      focus on the best ingredients for you. All of our blends
+                      are customizable and designed with your best self in mind.
+                    </BodyText>
                     <ButtonLink
                       title="find us"
                       routeName="Schedule"

@@ -44,13 +44,7 @@ function Tokens() {
       <View>
         <Heading style={{ marginBottom: 40 }}>Design Tokens</Heading>
         <TokenSection title="Text Tokens">
-          <Responsive
-            style={{
-              marginVertical: [100, 200],
-            }}
-          >
-            <Heading>Heading</Heading>
-          </Responsive>
+          <Heading>Heading</Heading>
           <Title>Title</Title>
           <BodyText>Body Text</BodyText>
           <FootNote>Foot Note</FootNote>

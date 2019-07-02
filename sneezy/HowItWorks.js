@@ -30,13 +30,10 @@ function HowItWorks() {
               borderBottomColor: theme.colors.border,
             }}
           >
-            <Responsive
-              style={{
+              <Heading style={{ textAlign: 'center' }} responsiveStyle={{
                 marginBottom: [25, 100],
-              }}
-            >
-              <Heading style={{ textAlign: 'center' }}>How it works</Heading>
-            </Responsive>
+              }}>How it works</Heading>
+
             <FeatureSection
               title="Find us"
               bodyText={

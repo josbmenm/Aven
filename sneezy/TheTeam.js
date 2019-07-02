@@ -6,7 +6,7 @@ import ButtonLink from './ButtonLink';
 import Container from './Container';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import { aspectRatio43 } from '../components/Styles';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 
 function TheTeam() {
   const theme = useTheme();
@@ -28,18 +28,12 @@ function TheTeam() {
               style={{ justifyContent: 'center', paddingVertical: 40 }}
             >
               <Title>The team</Title>
-              <Responsive
-                style={{
-                  textAlign: ['center', 'left'],
-                }}
-              >
-                <BodyText>
-                  We’re a team of foragers, foodies and builders with
-                  backgrounds in robotics, automation, logistics, and culinary
-                  fine dining. Regardless of the discipline, design and
-                  hospitality are at the core of everything we do.
-                </BodyText>
-              </Responsive>
+              <BodyText responsiveStyle={{ textAlign: ['center', 'left'] }}>
+                We’re a team of foragers, foodies and builders with backgrounds
+                in robotics, automation, logistics, and culinary fine dining.
+                Regardless of the discipline, design and hospitality are at the
+                core of everything we do.
+              </BodyText>
               <ButtonLink
                 type="solid"
                 title="Find us"

@@ -52,19 +52,23 @@ function SchedulePage() {
                       backgroundColor: theme.colors.lightGrey,
                     }}
                   >
-                    <Responsive
-                      style={{
+                    <Title
+                      responsiveStyle={{
                         textAlign: ['center', 'left'],
                       }}
                     >
-                      <Title>Where are we today?</Title>
-                      <BodyText>
-                        Ono Blends is based in LA, but we’re always on the move.
-                        If you’d like to see us in your city, please{' '}
-                        <BodyText bold>request a new city</BodyText> and we’ll
-                        try to make it happen!
-                      </BodyText>
-                    </Responsive>
+                      Where are we today?
+                    </Title>
+                    <BodyText
+                      responsiveStyle={{
+                        textAlign: ['center', 'left'],
+                      }}
+                    >
+                      Ono Blends is based in LA, but we’re always on the move.
+                      If you’d like to see us in your city, please{' '}
+                      <BodyText bold>request a new city</BodyText> and we’ll try
+                      to make it happen!
+                    </BodyText>
                   </View>
                 </Responsive>
               </ColumnToRowChild>
@@ -101,7 +105,7 @@ function SchedulePage() {
                 <Responsive
                   style={{
                     marginLeft: [0, 120],
-                    marginRight: [0, 40]
+                    marginRight: [0, 40],
                   }}
                 >
                   <Schedule withFloatingLabel={true} />
@@ -139,23 +143,33 @@ function SchedulePage() {
           <ColumnToRow>
             <ColumnToRowChild className="hide-mobile" style={{ flex: 2 }}>
               <Image
-                style={{ marginHorizontal: 40, maxWidth: 333, ...aspectRatio43 }}
+                style={{
+                  marginHorizontal: 40,
+                  maxWidth: 333,
+                  ...aspectRatio43,
+                }}
                 source={require('./public/img/map.jpg')}
               />
             </ColumnToRowChild>
             <ColumnToRowChild style={{ flex: 3, justifyContent: 'center' }}>
-              <Responsive
-                style={{
+              <Heading
+                responsiveStyle={{
                   textAlign: ['center', 'left'],
                   alignSelf: ['center', 'flex-start'],
                 }}
               >
-                <Heading>Don’t see us in your city?</Heading>
-                <BodyText style={{ marginBottom: 20, maxWidth: 412 }}>
-                  Ono Blends is always looking to grow. Request your city and
-                  we’ll try to make it happen.
-                </BodyText>
-              </Responsive>
+                Don’t see us in your city?
+              </Heading>
+              <BodyText
+                style={{ marginBottom: 20, maxWidth: 412 }}
+                responsiveStyle={{
+                  textAlign: ['center', 'left'],
+                  alignSelf: ['center', 'flex-start'],
+                }}
+              >
+                Ono Blends is always looking to grow. Request your city and
+                we’ll try to make it happen.
+              </BodyText>
               <RequestCityForm />
             </ColumnToRowChild>
           </ColumnToRow>

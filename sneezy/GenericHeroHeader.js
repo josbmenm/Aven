@@ -30,15 +30,14 @@ export default function GenericHeroHeader({
               maxWidth: 720,
             }}
           >
-            <Responsive style={{
-              marginBottom: [16, 24],
-            }}>
             <Heading
               style={{ textAlign: 'center' }}
+              responsiveStyle={{
+                marginBottom: [16, 24],
+              }}
             >
               {title}
             </Heading>
-            </Responsive>
             <BodyText style={{ textAlign: 'center' }}>{bodyText}</BodyText>
           </View>
         </View>

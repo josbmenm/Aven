@@ -118,15 +118,14 @@ function BlendContent({ displayName, blend, recipe }) {
                     </View>
                   ))}
                 </View>
-                <Responsive
-                  style={{
+                <BodyText
+                  style={{ marginBottom: 48 }}
+                  responsiveStyle={{
                     textAlign: ['center', 'left'],
                   }}
                 >
-                  <BodyText style={{ marginBottom: 48 }}>
-                    {blend['Display Description']}
-                  </BodyText>
-                </Responsive>
+                  {blend['Display Description']}
+                </BodyText>
                 <View
                   style={{
                     flexDirection: 'row',

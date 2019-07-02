@@ -27,24 +27,19 @@ function HomeSchedule() {
                     flexDirection: 'column',
                   }}
                 >
-                  <Responsive
-                    style={{
-                      marginBottom: [12, 16],
-                    }}
-                  >
-                    <Title>Where are we today?</Title>
-                  </Responsive>
-                  <Responsive
-                    style={{
+                  <Title responsiveStyle={{ marginBottom: [12, 16] }}>
+                    Where are we today?
+                  </Title>
+                  <BodyText
+                    responsiveStyle={{
                       textAlign: ['center', 'left'],
                       marginBottom: [48, 40],
                     }}
                   >
-                    <BodyText>
-                      Ono Blends is based in LA, but we’re always on the move.
-                      Check out our schedule to find us today!
-                    </BodyText>
-                  </Responsive>
+                    Ono Blends is based in LA, but we’re always on the move.
+                    Check out our schedule to find us today!
+                  </BodyText>
+
                   <ButtonLink
                     type="solid"
                     title="Find us"
