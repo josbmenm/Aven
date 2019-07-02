@@ -9,8 +9,8 @@ import {
   ColumnToRow,
   ColumnToRowChild,
   NoFlexToFlex,
-  Responsive,
 } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 import { absoluteElement } from '../components/Styles';
 import { useTheme } from '../dashboard/Theme';
 

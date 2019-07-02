@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, Animated, Easing } from 'react-native';
 // import { TextInputMask } from 'react-native-masked-text';
 import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
-import { Responsive } from '../sneezy/Responsive';
+import { Responsive } from '../dashboard/Responsive';
 // import Animated, { Easing } from 'react-native-reanimated';
 
 function BlockFormInputWithRef(

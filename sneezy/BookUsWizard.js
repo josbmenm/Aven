@@ -10,7 +10,7 @@ import FormInput from '../components/BlockFormInput';
 import Button from '../dashboard/Button';
 import { useTheme } from '../dashboard/Theme';
 import { LocationInput } from './LocationInput';
-import { Responsive } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 import FormRow from './FormRow';
 
 const TOTAL_STEPS = 6;

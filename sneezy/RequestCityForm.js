@@ -5,7 +5,7 @@ import View from '../views/View';
 import BodyText from './BodyText';
 import useCloud from '../cloud-core/useCloud';
 import useAsyncError from '../react-utils/useAsyncError';
-import { Responsive } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 
 function RequestCityForm() {
   const [location, setLocation] = React.useState(null);

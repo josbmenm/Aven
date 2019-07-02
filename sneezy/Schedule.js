@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import FootNote from './FootNote';
 import ScheduleItem from './ScheduleItem';
 import { useTheme } from '../dashboard/Theme'
-import {Responsive} from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 
 function useSchedule() {
   const [schedule, setSchedule] = React.useState(null);

@@ -8,8 +8,8 @@ import {
   NoFlexToFlex,
   ColumnToRow,
   ColumnToRowChild,
-  Responsive,
 } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 import Container from './Container';
 import Title from './Title';
 import Heading from './Heading';

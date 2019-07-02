@@ -4,7 +4,8 @@ import Link from '../navigation-web/Link';
 import AirtableImage from '../components/AirtableImage';
 import { useTheme } from '../dashboard/Theme';
 import Container from './Container';
-import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
+import { ColumnToRow, ColumnToRowChild } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 
 function BodyLink({ children, url }) {
   return (

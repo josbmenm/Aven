@@ -3,7 +3,6 @@ import View from '../views/View';
 import Container from './Container';
 import Heading from './Heading';
 import BodyText from './BodyText';
-import { Responsive } from './Responsive';
 
 export default function GenericHeroHeader({
   title,

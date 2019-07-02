@@ -4,7 +4,8 @@ import Container from './Container';
 import Title from './Title';
 import BodyText from './BodyText';
 import ButtonLink from './ButtonLink';
-import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
+import { ColumnToRow, ColumnToRowChild } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 import Schedule from './Schedule';
 
 function HomeSchedule() {

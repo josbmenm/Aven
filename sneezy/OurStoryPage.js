@@ -10,7 +10,7 @@ import FeatureSection from './FeatureSection';
 import TheTeam from './TheTeam';
 import PageFooter from './PageFooter';
 import { aspectRatio169, aspectRatio43 } from '../components/Styles';
-import { Responsive } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 
 function OurStoryPage({}) {
   const theme = useTheme();

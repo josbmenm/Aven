@@ -10,7 +10,7 @@ import HowItWorks from './HowItWorks';
 import HomeSchedule from './HomeSchedule';
 import { aspectRatio169 } from '../components/Styles';
 import GenericHeroHeader from './GenericHeroHeader';
-import { Responsive } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 
 function HomePage() {
   return (

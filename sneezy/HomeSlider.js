@@ -3,7 +3,7 @@ import { Image, ScrollView, StyleSheet } from 'react-native';
 import View from '../views/View';
 import { useTheme } from '../dashboard/Theme'
 import Container from './Container';
-import { Responsive } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 
 function Slide({ source, width, height }) {
   return (

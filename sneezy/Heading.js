@@ -1,7 +1,7 @@
 import React from 'react';
 import Text from '../views/Text';
 import { useTheme } from '../dashboard/Theme';
-import { Responsive } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 
 function Heading({ children, style, responsiveStyle, ...rest }) {
   const theme = useTheme();

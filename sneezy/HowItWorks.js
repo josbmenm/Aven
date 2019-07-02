@@ -6,7 +6,7 @@ import Container from './Container';
 import Heading from './Heading';
 import BodyText from './BodyText';
 import FunctionalLink from '../navigation-web/Link';
-import { Responsive } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 import FeatureSection from './FeatureSection';
 import { absoluteElement } from '../components/Styles';
 

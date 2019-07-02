@@ -6,7 +6,7 @@ import GenericHeroHeader from './GenericHeroHeader';
 import { BlendsList } from './BlendsList';
 import PageFooter from './PageFooter';
 import { useTheme } from '../dashboard/Theme';
-import { Responsive } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 
 function Menu() {
   const theme = useTheme();

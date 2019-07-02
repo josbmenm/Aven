@@ -11,14 +11,14 @@ import Tag from './Tag';
 import { useTheme } from '../dashboard/Theme';
 import { useMenuItemSlug, useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
-import BenefitDescription from './BenefitDetails';
 import { dietaryInfosOfMenuItem } from '../logic/configLogic';
 
 import {
   displayNameOfMenuItem,
   getSelectedIngredients,
 } from '../logic/configLogic';
-import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
+import { ColumnToRow, ColumnToRowChild } from './Responsive';
+import { Responsive } from '../dashboard/Responsive';
 import { BlendsCarousel } from './BlendsList';
 import BenefitDetails from './BenefitDetails';
 
