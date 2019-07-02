@@ -53,7 +53,7 @@ function BlendContent({ displayName, blend, recipe }) {
                 }}
               >
                 <AirtableImage
-                  image={blend.Recipe['Recipe Image']}
+                  image={blend.Recipe.DecorationImage}
                   resizeMode="contain"
                   style={{ flex: 1, width: 400, paddingTop: '56.25%' }}
                 />
