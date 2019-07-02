@@ -1,13 +1,22 @@
-import React from 'react'
+import React from 'react';
 import Text from '../views/Text';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
+import { Responsive } from './Responsive';
 
-function Heading({ children, style, ...rest }) {
+function Heading({ children, style, className, ...rest }) {
   const theme = useTheme();
   return (
-    <Text style={[theme.textStyles.heading, style]} {...rest}>
-      {children}
-    </Text>
+    <Responsive
+      style={{
+        fontSize: [24, 38],
+        lineHeight: [32, 48],
+      }}
+      className={className}
+    >
+      <Text style={[theme.textStyles.heading, style]} {...rest}>
+        {children}
+      </Text>
+    </Responsive>
   );
 }
 

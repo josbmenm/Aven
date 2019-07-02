@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useTheme } from '../dashboard/Theme'
+import View from '../views/View';
+import { useTheme } from '../dashboard/Theme';
 
 let responsiveIdCount = 0;
 
@@ -110,7 +110,13 @@ function validateNumberValue(value) {
   }
 }
 
-export function Responsive({ style = {}, children, breakpoint, ...rest }) {
+export function Responsive({
+  style = {},
+  children,
+  breakpoint,
+  className,
+  ...rest
+}) {
   const id = responsiveIdCount++;
   const theme = useTheme();
   const bp = breakpoint || theme.breakpoints[0];
@@ -133,6 +139,10 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
   ${style.marginLeft ? `margin-left: ${style.marginLeft[0]}px;` : ''}
 
   ${style.textAlign ? `text-align: ${style.textAlign[0]};` : ''}
+  ${style.fontSize ? `font-size: ${style.fontSize[0]}px;` : ''}
+  ${style.lineHeight ? `line-height: ${style.lineHeight[0]}px;` : ''}
+  ${style.letterSpacing ? `letter-spacing: ${style.letterSpacing[0]};` : ''}
+
   ${style.alignItems ? `align-items: ${style.alignItems[0]};` : ''}
   ${style.alignSelf ? `align-self: ${style.alignSelf[0]};` : ''}
   ${style.flexDirection ? `flex-direction: ${style.flexDirection[0]};` : ''}
@@ -173,6 +183,10 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
   ${style.marginLeft ? `margin-left: ${style.marginLeft[1]}px;` : ''}
 
   ${style.textAlign ? `text-align: ${style.textAlign[1]};` : ''}
+  ${style.fontSize ? `font-size: ${style.fontSize[1]}px;` : ''}
+  ${style.lineHeight ? `line-height: ${style.lineHeight[1]}px;` : ''}
+  ${style.letterSpacing ? `letter-spacing: ${style.letterSpacing[1]};` : ''}
+
   ${style.alignItems ? `align-items: ${style.alignItems[1]};` : ''}
   ${style.alignSelf ? `align-self: ${style.alignSelf[1]};` : ''}
   ${style.flexDirection ? `flex-direction: ${style.flexDirection[1]};` : ''}
@@ -200,7 +214,7 @@ export function Responsive({ style = {}, children, breakpoint, ...rest }) {
       />
       {React.Children.map(children, child =>
         React.cloneElement(child, {
-          className: `re-${id}`,
+          className: `re-${id}${className ? ` ${className}` : ''}`,
           ...rest,
         }),
       )}

@@ -16,9 +16,13 @@ const colors = {
   lightGrey: '#F8F8F8',
   lighterGrey: "#EFEFEF",
   border: 'rgba(0,0,0,0.1)',
+  monsterra: 'hsl(180, 100%, 16%)',
+  monsterras: [
+    'hsla(180, 100%, 16%, 0.8)'
+  ]
 };
 
-const fontFamily = {
+const fontFamily = { // TODO: DEPRECATE
   heading: 'Maax-Bold',
   title: 'Maax-Bold',
   body: 'Lora',
@@ -26,43 +30,33 @@ const fontFamily = {
   button: 'Maax-Bold',
 };
 
-const textSpacing = {
-  marginBottom: 8,
-};
-
-const textDefaults = {
-  color: colors.primary,
-};
+const fonts = {
+  normal: "Maax",
+  medium: "Maax-Bold",
+  serif: "Lora"
+}
 
 const textStyles = {
   heading: {
-    ...textDefaults,
-    ...textSpacing,
-    fontSize: 38,
-    lineHeight: 48,
-    fontFamily: fontFamily.heading,
+    color: colors.monsterra,
+    fontFamily: fonts.medium,
   },
   title: {
-    ...textDefaults,
-    ...textSpacing,
-    fontSize: 28,
-    lineHeight: 48,
-    fontFamily: fontFamily.title,
+    color: colors.monsterra,
+    fontFamily: fonts.medium,
   },
   body: {
-    ...textDefaults,
-    ...textSpacing,
+    color: colors.monsterra,
     fontSize: 18,
     lineHeight: 32,
     letterSpacing: 0.3,
-    fontFamily: fontFamily.body,
+    fontFamily: fonts.serif,
   },
   footnote: {
-    ...textDefaults,
-    ...textSpacing,
+    color: colors.monsterra,
     fontSize: 12,
     lineHeight: 20,
-    fontFamily: fontFamily.footnote,
+    fontFamily: fonts.normal,
   },
 };
 
@@ -89,7 +83,8 @@ const shadows = {
 
 export const theme = {
   colors,
-  fontFamily,
+  fontFamily, // DEPRECATE
+  fonts,
   fontSizes: [12, 18, 20, 28, 38],
   textStyles,
   shadows,

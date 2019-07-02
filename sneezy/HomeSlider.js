@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Image, ScrollView, StyleSheet } from 'react-native';
+import { Image, ScrollView, StyleSheet } from 'react-native';
+import View from '../views/View';
 import { useTheme } from '../dashboard/Theme'
 import Container from './Container';
+import { Responsive } from './Responsive';
 
 function Slide({ source, width, height }) {
   return (
@@ -21,14 +23,15 @@ function HomeSlider() {
   return (
     <View
       style={{
-        // paddingVertical: 40,
-        marginBottom: 100
+        marginBottom: 70
       }}
     >
+      <Responsive style={{
+        paddingBottom: [70, 200]
+      }}>
       <Container style={{
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderBottomColor: theme.colors.border,
-        paddingBottom: 100
       }}>
         <ScrollView horizontal pagingEnabled>
           <Slide
@@ -48,6 +51,7 @@ function HomeSlider() {
           />
         </ScrollView>
       </Container>
+      </Responsive>
     </View>
   );
 }

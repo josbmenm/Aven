@@ -1,38 +1,49 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import View from '../views/View';
 import Container from './Container';
 import Heading from './Heading';
 import BodyText from './BodyText';
+import { Responsive } from './Responsive';
 
 export default function GenericHeroHeader({
   title,
   bodyText,
   backgroundColor,
-  children
+  children,
+  className,
 }) {
   return (
-    <Container style={{position: 'relative'}}>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor,
-          alignItems: 'center',
-        }}
-      >
+    <View className={className}>
+      <Container style={{ position: 'relative' }}>
         <View
           style={{
-            justifyContent: 'center',
+            flex: 1,
+            backgroundColor,
             alignItems: 'center',
-            paddingHorizontal: 80,
-            paddingVertical: 120,
-            maxWidth: 720,
           }}
         >
-          <Heading style={{ textAlign: 'center' }}>{title}</Heading>
-          <BodyText style={{ textAlign: 'center' }}>{bodyText}</BodyText>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingHorizontal: 80,
+              maxWidth: 720,
+            }}
+          >
+            <Responsive style={{
+              marginBottom: [16, 24],
+            }}>
+            <Heading
+              style={{ textAlign: 'center' }}
+            >
+              {title}
+            </Heading>
+            </Responsive>
+            <BodyText style={{ textAlign: 'center' }}>{bodyText}</BodyText>
+          </View>
         </View>
-      </View>
-      {children}
-    </Container>
+        {children}
+      </Container>
+    </View>
   );
 }

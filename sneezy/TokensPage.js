@@ -7,8 +7,9 @@ import FootNote from './FootNote';
 import ButtonLink from './ButtonLink';
 import GenericPage from './GenericPage';
 import Container from './Container';
-import { useTheme } from '../dashboard/Theme'
-import Input from '../components/BlockFormInput'
+import { useTheme } from '../dashboard/Theme';
+import Input from '../components/BlockFormInput';
+import { Responsive } from './Responsive';
 
 function TokenSection({ title, children }) {
   const theme = useTheme();
@@ -29,12 +30,12 @@ function TokenSection({ title, children }) {
 }
 
 function Forms() {
-  const [input, setInput] = React.useState("");
+  const [input, setInput] = React.useState('');
   return (
     <React.Fragment>
       <Input value={input} onValue={setInput} label="First Name" />
     </React.Fragment>
-  )
+  );
 }
 
 function Tokens() {
@@ -43,7 +44,13 @@ function Tokens() {
       <View>
         <Heading style={{ marginBottom: 40 }}>Design Tokens</Heading>
         <TokenSection title="Text Tokens">
-          <Heading>Heading</Heading>
+          <Responsive
+            style={{
+              marginVertical: [100, 200],
+            }}
+          >
+            <Heading>Heading</Heading>
+          </Responsive>
           <Title>Title</Title>
           <BodyText>Body Text</BodyText>
           <FootNote>Foot Note</FootNote>

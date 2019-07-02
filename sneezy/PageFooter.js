@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
+import View from '../views/View';
 import Container from './Container';
 import { useTheme } from '../dashboard/Theme';
 import OnoBlendsLogo from './OnoBlendsLogo';
@@ -78,19 +79,19 @@ export default function PageFooter() {
                   <Link
                     noActive
                     titleStyle={{ textAlign: 'left' }}
-                    title="Menu"
+                    title="menu"
                     routeName="Menu"
                   />
                   <Link
                     noActive
                     titleStyle={{ textAlign: 'left' }}
-                    title="Our story"
+                    title="our story"
                     routeName="OurStory"
                   />
                   <Link
                     noActive
                     titleStyle={{ textAlign: 'left' }}
-                    title="Book with us"
+                    title="book with us"
                     routeName="BookUs"
                   />
                 </View>
@@ -98,25 +99,25 @@ export default function PageFooter() {
                   <Link
                     noActive
                     titleStyle={{ textAlign: 'left' }}
-                    title="Press kit"
+                    title="press kit"
                     url="https://google.com"
                   />
                   <Link
                     noActive
                     titleStyle={{ textAlign: 'left' }}
-                    title="Terms & privacy"
+                    title="terms & privacy"
                     routeName="Terms"
                   />
                   <Link
                     noActive
                     titleStyle={{ textAlign: 'left' }}
-                    title="Contact us"
+                    title="contact us"
                     url="mailto:aloha@onofood.co"
                   />
                   <Link
                     noActive
                     titleStyle={{ textAlign: 'left' }}
-                    title="Subscribe to updates"
+                    title="subscribe to updates"
                     routeName="Subscribe"
                   />
                 </View>

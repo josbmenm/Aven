@@ -1,8 +1,8 @@
 import React from 'react';
-import { View } from 'react-native';
+import View from '../views/View';
 import { useTheme } from '../dashboard/Theme'
 
-function Container({ children, style = {} }) {
+function Container({ children, className, style = {} }) {
   const theme = useTheme();
   return (
     <View
@@ -13,6 +13,7 @@ function Container({ children, style = {} }) {
         alignSelf: 'center',
         ...style,
       }}
+      className={className}
     >
       {children}
     </View>

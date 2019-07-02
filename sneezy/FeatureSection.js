@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import View from '../views/View';
 import Title from './Title';
 import { ColumnToRow, ColumnToRowChild, Responsive } from './Responsive';
 import { aspectRatio43 } from '../components/Styles';
@@ -56,7 +56,7 @@ function FeatureSection({
       <ColumnToRowChild
         style={{
           paddingVertical: 40,
-          paddingRight: 20,
+          paddingHorizontal: 20,
           justifyContent: 'center',
         }}
       >
