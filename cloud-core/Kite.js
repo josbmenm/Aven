@@ -5,6 +5,7 @@ import getIdOfValue from '../cloud-utils/getIdOfValue';
 import Err from '../utils/Err';
 import cuid from 'cuid';
 import createDispatcher from '../cloud-utils/createDispatcher';
+import bindCommitDeepBlock from './bindCommitDeepBlock';
 
 /*
 
@@ -40,6 +41,10 @@ Doc
 
 */
 
+function hasDepth(name) {
+  return name.match(/\//);
+}
+
 async function streamLoad(stream) {
   return new Promise((resolve, reject) => {
     let loadTimeout = setTimeout(() => {
@@ -57,6 +62,7 @@ async function streamLoad(stream) {
     }
     loadListener = {
       next: value => {
+        console.log('loaded value!', value);
         resolve(value);
         wrapUp();
       },
@@ -195,7 +201,9 @@ export function createBlock({ domain, auth, nameStream, source, id, value }) {
       .map(blockState => {
         return blockState.value;
       })
-      .filter(val => val !== undefined)
+      .filter(val => {
+        return val !== undefined;
+      })
       .remember()
       .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
   );
@@ -294,7 +302,7 @@ export function createDoc({
     isPosted: !isUnposted,
     lastFetchTime: null,
     lastPutTime: null,
-    id: null,
+    id: undefined,
   };
 
   async function getReference() {
@@ -333,6 +341,7 @@ export function createDoc({
           const upStream = source.getDocStream(domain, name, auth);
           const internalListener = {
             next: v => {
+              console.log('yess', name, v);
               setState({
                 lastFetchTime: Date.now(),
                 id: v.id,
@@ -396,14 +405,16 @@ export function createDoc({
     return docBlocks[id];
   }
 
+  const getDeepBlockOfValue = bindCommitDeepBlock(getBlockOfValue);
+
   async function publishValue(value) {
-    const block = getBlockOfValue(value);
+    const block = getDeepBlockOfValue(value);
     await block.put();
     return block;
   }
 
   async function putValue(value) {
-    const block = getBlockOfValue(value);
+    const block = getDeepBlockOfValue(value);
     await putBlock(block);
   }
 
@@ -574,15 +585,22 @@ export function createDoc({
 
   const value = createStreamValue(
     docStream
-      .filter(state => !!state.id)
+      // .filter(state => !!state.id)
       .map(state => {
+        if (state.id === undefined) {
+          return xs.never();
+        }
+        if (state.id === null) {
+          return xs.of(undefined);
+        }
         const block = getBlock(state.id);
         return block.value.stream;
       })
       .flatten()
-      .filter(state => state !== undefined)
+      // .filter(state => state !== undefined)
       .remember()
       .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
+    // .debug('value zoom'),
   );
 
   async function destroy() {
@@ -643,8 +661,6 @@ export function createDocSet({ domain, auth, source, nameStream }) {
     childNameStreams.get(name);
     // errmmmm. todo
   }
-
-  function _handleRename() {}
 
   function get(name) {
     if (typeof name !== 'string') {
@@ -722,9 +738,41 @@ export function createDocSet({ domain, auth, source, nameStream }) {
     return streamDoc;
   }
 
+  async function move(fromName, toName) {
+    if (hasDepth(fromName)) {
+      throw new Error(
+        `Cannot move from "${fromName}" because it has a slash. Deep moves are not supported yet.`,
+      );
+    }
+    if (hasDepth(toName)) {
+      throw new Error(
+        `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`,
+      );
+    }
+    const docName = childNameStreams.get(fromName);
+    // const docToMove = childDocs.get(docName);
+
+    childNameStreams.set(toName, docName);
+    docName.shamefullySendNext(toName);
+    childNameStreams.delete(fromName);
+
+    try {
+      await source.dispatch({
+        type: 'MoveDoc',
+        domain,
+        from: fromName,
+        to: toName,
+      });
+    } catch (e) {
+      // undo move
+      throw e;
+    }
+  }
+
   return {
     get,
     post,
+    move,
     setOverrideStream,
   };
 }
@@ -768,8 +816,8 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
   }
 
   async function PostDoc({ name, value, id }) {
-    const doc = rootDocSet.get(name);
-    const newDoc = doc.post();
+    const docSet = name == null ? rootDocSet : rootDocSet.post(name);
+    const newDoc = docSet.post();
     if (value !== undefined) {
       await newDoc.putValue(value);
       // todo check id of newDoc
@@ -823,7 +871,8 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
     const doc = rootDocSet.get(name);
     const context = doc.getReference();
     const value = await doc.value.load();
-    return { context, value, id: doc.get().id };
+    const id = doc.get().id;
+    return { context, value, id };
   }
 
   async function GetDocValues({ domain, names }) {
@@ -833,6 +882,15 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
       }),
     );
     return { results };
+  }
+
+  async function MoveDoc({ domain, from, to }) {
+    await rootDocSet.move(from, to);
+  }
+
+  async function DestroyDoc({ domain, name }) {
+    const doc = rootDocSet.get(name);
+    await doc.destroy();
   }
 
   return {
@@ -857,9 +915,9 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
         // GetStatus,
         // ListDomains,
         // ListDocs,
-        // DestroyDoc,
+        DestroyDoc,
         // CollectGarbage,
-        // MoveDoc,
+        MoveDoc,
       },
       sessionDispatch,
       domain,

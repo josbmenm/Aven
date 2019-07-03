@@ -547,7 +547,7 @@ export default function testDataSource(startTestDataSource) {
       domain: 'test',
       name: 'foo',
     });
-    expect(doc.id).toEqual(undefined);
+    expect(doc.id).toEqual(null);
     const list = await ds.dispatch({
       type: 'ListDocs',
       domain: 'test',

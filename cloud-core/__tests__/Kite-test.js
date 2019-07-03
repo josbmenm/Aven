@@ -175,7 +175,7 @@ describe('kite doc', () => {
       expect(doc.get().value).toEqual(undefined);
       expect(doc.value.get()).toBe(undefined);
 
-      await doc.value.load();
+      const loadResp = await doc.value.load();
       expect(typeof doc.get().lastFetchTime).toBe('number');
       expect(doc.get().id).toEqual(obj1.id);
       expect(doc.value.get().foo).toBe('bar');
@@ -375,8 +375,8 @@ describe('kite doc set', () => {
     });
     const parentDoc = docSet.get('foo');
     const childDoc = docSet.get('foo/bar');
-    expect(childDoc.get().id).toEqual(null);
-    expect(parentDoc.get().id).toEqual(null);
+    expect(childDoc.get().id).toEqual(undefined);
+    expect(parentDoc.get().id).toEqual(undefined);
     const sameChild = parentDoc.children.get('bar');
     expect(childDoc).toBe(sameChild);
   });
