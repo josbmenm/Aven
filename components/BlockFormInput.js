@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, Animated, Easing } from 'react-native';
 // import { TextInputMask } from 'react-native-masked-text';
 import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
+import { useTheme } from '../dashboard/Theme';
 import { Responsive } from '../dashboard/Responsive';
 // import Animated, { Easing } from 'react-native-reanimated';
 
@@ -10,6 +11,7 @@ function BlockFormInputWithRef(
   ref,
   ...rest
 ) {
+  const theme = useTheme();
   const desiredPlaceholderOpen = value ? 0 : 1;
   const [placeholderOpenProgress] = useState(
     new Animated.Value(desiredPlaceholderOpen),
@@ -73,28 +75,31 @@ function BlockFormInputWithRef(
           flex: 1,
           marginHorizontal: 8,
           borderRadius: 4,
-          paddingTop: 12,
           borderColor: monsterra60,
           borderWidth: 3,
+          paddingTop: 24,
+          paddingBottom: 8,
+          paddingHorizontal: 20,
         }}
         {...rest}
       >
         <Animated.Text
           style={{
-            ...textInputLabelStyle,
+            fontFamily: theme.fonts.normal,
             position: 'absolute',
-            left: 0,
-            right: 0,
+            color: theme.colors.monsterras[1],
+            left: 20,
+            right: 20,
             zIndex: -1,
             fontSize: placeholderOpenProgress.interpolate({
               inputRange: [0, 1],
-              outputRange: [12, 24],
+              outputRange: [12, 18],
             }),
             transform: [
               {
                 translateY: placeholderOpenProgress.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [-4, 8],
+                  outputRange: [-18, 0],
                 }),
               },
             ],
@@ -119,8 +124,10 @@ function BlockFormInputWithRef(
           type={inputType}
           onSubmitEditing={onSubmit}
           style={{
-            fontSize: 24,
-            ...textInputStyle,
+            fontSize: 18,
+            lineHeight: 28,
+            color: theme.colors.monsterra,
+            // ...textInputStyle,
             ...(mode === 'description' ? { height: 120 } : {}),
             ...(mode === 'textarea' ? { height: 200 } : {}),
           }}

@@ -18,7 +18,8 @@ const colors = {
   border: 'rgba(0,0,0,0.1)',
   monsterra: 'hsl(180, 100%, 16%)',
   monsterras: [
-    'hsla(180, 100%, 16%, 0.8)'
+    'hsla(180, 100%, 16%, 0.8)',
+    'hsla(180, 100%, 16%, 0.4)'
   ]
 };
 
@@ -32,18 +33,18 @@ const fontFamily = { // TODO: DEPRECATE
 
 const fonts = {
   normal: "Maax",
-  medium: "Maax-Bold",
+  bold: "Maax-Bold",
   serif: "Lora"
 }
 
 const textStyles = {
   heading: {
     color: colors.monsterra,
-    fontFamily: fonts.medium,
+    fontFamily: fonts.bold,
   },
   title: {
     color: colors.monsterra,
-    fontFamily: fonts.medium,
+    fontFamily: fonts.bold,
   },
   body: {
     color: colors.monsterra,
