@@ -9,6 +9,53 @@ import FunctionalLink from '../navigation-web/Link';
 import { Responsive } from '../dashboard/Responsive';
 import FeatureSection from './FeatureSection';
 import { absoluteElement } from '../components/Styles';
+import { aspectRatio43 } from '../components/Styles';
+
+function FeatureImage({ source, floatingImageStyle }) {
+  const theme = useTheme();
+  return (
+    <Responsive
+      style={{
+        maxWidth: ['100%', 412],
+      }}
+    >
+      <View
+        style={{
+          position: 'relative',
+          width: '100%',
+        }}
+      >
+        <Responsive
+          style={{
+            width: [239, 335],
+            height: [176, 246],
+            ...floatingImageStyle,
+          }}
+        >
+          <Image
+            source={require('./public/img/fruit_silhouette.png')}
+            style={{
+              ...absoluteElement,
+              zIndex: 0,
+            }}
+          />
+        </Responsive>
+        {/* FEATURE IMAGE HERE */}
+        {/* TODO: aspect ratio image? */}
+        <Responsive style={{ height: [288, 372] }}>
+          <View
+            style={[
+              {
+                backgroundColor: theme.colors.lightGrey,
+                width: '100%',
+              },
+            ]}
+          />
+        </Responsive>
+      </View>
+    </Responsive>
+  );
+}
 
 function HowItWorks() {
   const theme = useTheme();
@@ -30,9 +77,14 @@ function HowItWorks() {
               borderBottomColor: theme.colors.border,
             }}
           >
-              <Heading style={{ textAlign: 'center' }} responsiveStyle={{
+            <Heading
+              style={{ textAlign: 'center' }}
+              responsiveStyle={{
                 marginBottom: [25, 100],
-              }}>How it works</Heading>
+              }}
+            >
+              How it works
+            </Heading>
 
             <FeatureSection
               title="Find us"
@@ -48,8 +100,16 @@ function HowItWorks() {
                   </FunctionalLink>
                 </BodyText>
               }
-              // media={}
+              image={
+                <FeatureImage
+                  floatingImageStyle={{
+                    right: [-80, -119],
+                    top: [59, -38],
+                  }}
+                />
+              }
             />
+
             <View style={{ position: 'relative' }}>
               <Image
                 source={require('./public/img/mango.png')}
@@ -62,7 +122,9 @@ function HowItWorks() {
                   zIndex: 10,
                 }}
               />
+
               <FeatureSection
+                inverted
                 title="Order"
                 bodyText={
                   <BodyText>
@@ -72,8 +134,14 @@ function HowItWorks() {
                     experience.
                   </BodyText>
                 }
-                // media={}
-                inverted
+                image={
+                  <FeatureImage
+                    floatingImageStyle={{
+                      left: [-174, -68],
+                      top: [66, 8],
+                    }}
+                  />
+                }
               />
             </View>
             <View style={{ position: 'relative' }}>
@@ -103,7 +171,14 @@ function HowItWorks() {
                     area.
                   </BodyText>
                 }
-                // media={}
+                image={
+                  <FeatureImage
+                    floatingImageStyle={{
+                      right: [-185, -48],
+                      top: [24, 64],
+                    }}
+                  />
+                }
               />
             </View>
           </Container>
