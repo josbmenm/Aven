@@ -91,8 +91,8 @@ export const theme = {
   radii: [0, 2, 4, 8],
   breakpoints: [768],
   layouts: {
-    small: 640,
-    large: 1280
+    small: 640 + 56, // 56 is the padding horizontal on the container
+    large: 1280 + 56
   },
   space: [0, 4, 8, 12, 16, 20, 24, 28, 32]
 };

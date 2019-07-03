@@ -43,6 +43,8 @@ function MenuLink({
           title={title}
           type="outline"
           buttonStyle={{
+            paddingHorizontal: 0,
+            marginLeft: 32,
             borderRadius: 0,
             borderWidth: 0,
             borderColor: 'transparent',
@@ -95,7 +97,7 @@ export function DesktopMenu() {
               type="outline"
               title="book with us"
               routeName="BookUs"
-              buttonStyle={{ marginLeft: 16 }}
+              buttonStyle={{ marginLeft: 32 }}
               titleStyle={{ fontSize: 20 }}
             />
           </View>

@@ -16,20 +16,34 @@ function OurStoryPage({}) {
   const theme = useTheme();
   return (
     <GenericPage>
-      <View style={{ flex: 1, paddingBottom: 40 }}>
-        <Responsive style={{
-          marginBottom: [80, 233]
-        }}>
-          <View>
+      <View style={{ flex: 1 }}>
+        <View>
+          <Responsive
+            style={{
+              width: ['100% !important', '100%'],
+              marginHoriontal: [0, 28],
+              marginBottom: [80, 0]
+            }}
+          >
             <Container style={{ alignItems: 'center' }}>
-              <Image
-                source={{
-                  uri:
-                    'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
+              <Responsive
+                style={{
+                  marginHorizontal: [28, 0],
+                  marginBottom: [12, 0],
+                  width: ['calc(100% - 56px)', '100%'],
                 }}
-                resizeMode="cover"
-                style={{ ...aspectRatio169 }}
-              />
+              >
+                <View style={{ flex: 1 }}>
+                  <Image
+                    source={{
+                      uri:
+                        'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
+                    }}
+                    resizeMode="cover"
+                    style={{ ...aspectRatio169 }}
+                  />
+                </View>
+              </Responsive>
               <Responsive
                 style={{
                   position: ['relative', 'absolute'],
@@ -56,8 +70,8 @@ function OurStoryPage({}) {
                 </View>
               </Responsive>
             </Container>
-          </View>
-        </Responsive>
+          </Responsive>
+        </View>
       </View>
       <View>
         <Container
