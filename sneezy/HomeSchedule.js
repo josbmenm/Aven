@@ -20,7 +20,8 @@ function HomeSchedule() {
                   alignItems: ['center !important', 'flex-start !important'],
                   // paddingRight: [0, 40],
                   marginBottom: [80, 0],
-                  maxWidth: ['100%', 412],
+                  maxWidth: ['100%', 416],
+                  paddingRight: [0, 40]
                 }}
               >
                 <View

@@ -5,19 +5,18 @@ import Container from './Container';
 import Heading from './Heading';
 import BodyText from './BodyText';
 import ButtonLink from './ButtonLink';
-import {
-  ColumnToRow,
-  ColumnToRowChild,
-  NoFlexToFlex,
-} from './Responsive';
+import { ColumnToRow, ColumnToRowChild, NoFlexToFlex } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import { absoluteElement } from '../components/Styles';
 import { useTheme } from '../dashboard/Theme';
+
+const breakpoint = 1024;
 
 function HomeHeader() {
   const theme = useTheme();
   return (
     <Responsive
+      breakpoint={breakpoint}
       style={{
         marginBottom: [132, 180],
       }}
@@ -27,11 +26,13 @@ function HomeHeader() {
           <Container style={{ flex: 1 }}>
             <ColumnToRow
               columnReverse
+              breakpoint={breakpoint}
               style={{
                 flex: 1,
               }}
             >
               <Responsive
+                breakpoint={breakpoint}
                 style={{
                   left: [0, -440],
                   bottom: [0, -140],
@@ -49,9 +50,10 @@ function HomeHeader() {
                 />
               </Responsive>
               <Responsive
+                breakpoint={breakpoint}
                 style={{
                   right: [-440, -440],
-                  top: [-240, -140],
+                  top: [-156, -140],
                 }}
               >
                 <Image
@@ -66,6 +68,7 @@ function HomeHeader() {
               </Responsive>
               <ColumnToRowChild>
                 <Responsive
+                  breakpoint={breakpoint}
                   style={{
                     paddingTop: [40, 240],
                     paddingRight: [20, 20],
@@ -119,30 +122,39 @@ function HomeHeader() {
                   style={{ flex: 1, width: '100%', paddingTop: '56.25%' }}
                 />
               </ColumnToRowChild>
-              <Image
-                className="hide-mobile"
-                source={require('./public/img/strawberry.png')}
-                style={{
-                  ...absoluteElement,
-                  width: 482,
-                  height: 641,
-                  top: -250,
-                  left: -290,
-                }}
-              />
-
-              <Image
-                className="hide-desktop"
-                source={require('./public/img/strawberry.png')}
-                style={{
-                  ...absoluteElement,
-                  width: 241,
-                  height: 320,
-                  bottom: -172,
-                  left: -100,
-                }}
-              />
               <Responsive
+                breakpoint={breakpoint}
+                style={{ display: ['none', 'block'] }}
+              >
+                <Image
+                  source={require('./public/img/strawberry.png')}
+                  style={{
+                    ...absoluteElement,
+                    width: 482,
+                    height: 641,
+                    top: -250,
+                    left: -290,
+                  }}
+                />
+              </Responsive>
+              <Responsive
+                breakpoint={breakpoint}
+                style={{ display: ['block', 'none'] }}
+              >
+                <Image
+                  className="hide-desktop"
+                  source={require('./public/img/strawberry.png')}
+                  style={{
+                    ...absoluteElement,
+                    width: 241,
+                    height: 320,
+                    bottom: -172,
+                    left: -100,
+                  }}
+                />
+              </Responsive>
+              <Responsive
+                breakpoint={breakpoint}
                 style={{
                   right: [-125, -250],
                   bottom: [-140, -290],
