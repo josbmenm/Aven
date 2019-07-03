@@ -49,14 +49,19 @@ function TheTeam() {
             }}
           >
             <ColumnToRowChild>
-              <View
+              <Responsive
                 style={{
-                  maxWidth: 430,
-                  ...aspectRatio43,
-                  backgroundColor: theme.colors.lightGrey,
-                  marginRight: 40,
+                  maxWidth: ['100%', 522],
                 }}
-              />
+              >
+                <View
+                  style={{
+                    ...aspectRatio43,
+                    backgroundColor: theme.colors.lightGrey,
+                    marginRight: 40,
+                  }}
+                />
+              </Responsive>
             </ColumnToRowChild>
           </Responsive>
         </ColumnToRow>

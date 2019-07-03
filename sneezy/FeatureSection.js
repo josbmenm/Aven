@@ -11,6 +11,7 @@ function FeatureSection({
   inverted = false,
   style,
   columnReverse,
+  responsiveStyles
 }) {
   return (
     <ColumnToRow
@@ -44,8 +45,12 @@ function FeatureSection({
             justifyContent: 'center',
           }}
         >
+          <Responsive style={{
+            ...responsiveStyles
+          }}>
           <Title>{title}</Title>
           {bodyText}
+          </Responsive>
         </ColumnToRowChild>
       </Responsive>
     </ColumnToRow>

@@ -9,8 +9,43 @@ import { useTheme } from '../dashboard/Theme';
 import FeatureSection from './FeatureSection';
 import TheTeam from './TheTeam';
 import PageFooter from './PageFooter';
-import { aspectRatio169, aspectRatio43 } from '../components/Styles';
+import {
+  aspectRatio169,
+  aspectRatio43,
+  absoluteElement,
+} from '../components/Styles';
 import { Responsive } from '../dashboard/Responsive';
+
+function FeatureImage({ source, floatingImageStyle }) {
+  // const theme = useTheme();
+  return (
+      <View
+        style={{
+          position: 'relative',
+          width: '100%',
+        }}
+      >
+        <Responsive
+          style={{
+            width: [239, 335],
+            height: [176, 246],
+            ...floatingImageStyle,
+          }}
+        >
+          <Image
+            source={require('./public/img/fruit_silhouette.png')}
+            style={{
+              ...absoluteElement,
+              zIndex: 0,
+            }}
+          />
+        </Responsive>
+        {/* FEATURE IMAGE HERE */}
+        {/* TODO: aspect ratio image? */}
+        <Image source={source} style={{ ...aspectRatio43 }} />
+      </View>
+  );
+}
 
 function OurStoryPage({}) {
   const theme = useTheme();
@@ -73,67 +108,89 @@ function OurStoryPage({}) {
           </Responsive>
         </View>
       </View>
-      <View>
-        <Container
-          style={{
-            borderBottomColor: theme.colors.border,
-            borderBottomWidth: StyleSheet.hairlineWidth,
-          }}
-        >
-          <FeatureSection
-            title="Real food. Real good. Real fast."
-            bodyText={
-              <BodyText>
-                Ono, a local Hawaiian term for “delicious” is exactly what our
-                smoothies are. With flavors like avocado & matcha, strawberry &
-                dragonfruit, and mint chip greens - our blends are crafted by
-                hand and perfected with technology.
-              </BodyText>
-            }
-            image={
-              <Image
-                source={require('./public/img/ourstory-feature.jpg')}
-                style={{ maxWidth: 630, ...aspectRatio43 }}
-              />
-            }
-          />
-          <FeatureSection
-            inverted
-            title="Powered by robotics"
-            bodyText={
-              <BodyText>
-                Automation gives us the ability to ensure your order is blended
-                to perfection. While the robots do the work, we’re able to spend
-                more time with you, our customer.
-              </BodyText>
-            }
-            image={
-              <Image
-                source={require('./public/img/ourstory-feature.jpg')}
-                style={{ maxWidth: 630, ...aspectRatio43 }}
-              />
-            }
-          />
-          <FeatureSection
-            title="Blends with benefits"
-            bodyText={
-              <BodyText>
-                Healthy, organic, and great tasting smoothies don’t have to be
-                over priced. We believe that nutritious food should be
-                accessible to everyone. With customization we’re able to fuel
-                you through an early morning meeting or a post-workout recovery
-                — each blend is created specifically with you in mind.
-              </BodyText>
-            }
-            image={
-              <Image
-                source={require('./public/img/ourstory-feature.jpg')}
-                style={{ maxWidth: 630, ...aspectRatio43 }}
-              />
-            }
-          />
-        </Container>
-      </View>
+      <Responsive
+        style={{
+          marginBottom: [40, 80],
+        }}
+      >
+        <View>
+          <Container
+            style={{
+              borderBottomColor: theme.colors.border,
+              borderBottomWidth: StyleSheet.hairlineWidth,
+            }}
+          >
+            <FeatureSection
+              title="Real food. Real good. Real fast."
+              style={{ marginBottom: 80 }}
+              responsiveStyles={{textAlign: ['center', 'left']}}
+              bodyText={
+                <BodyText>
+                  Ono, a local Hawaiian term for “delicious” is exactly what our
+                  smoothies are. With flavors like avocado & matcha, strawberry
+                  & dragonfruit, and mint chip greens - our blends are crafted
+                  by hand and perfected with technology.
+                </BodyText>
+              }
+              image={
+                <FeatureImage
+                  source={require('./public/img/ourstory-feature.jpg')}
+                  floatingImageStyle={{
+                    top: [-80, -18],
+                    right: [400, -72]
+                  }}
+                />
+              }
+            />
+            <FeatureSection
+              inverted
+              title="Powered by robotics"
+              style={{ marginBottom: 80 }}
+              bodyText={
+                <BodyText>
+                  Automation gives us the ability to ensure your order is
+                  blended to perfection. While the robots do the work, we’re
+                  able to spend more time with you, our customer.
+                </BodyText>
+              }
+              image={
+                <FeatureImage
+                  source={require('./public/img/ourstory-feature.jpg')}
+                  floatingImageStyle={{
+                    top: [0, 28],
+                    left: [0, -96],
+                    display: ['none', 'block']
+                  }}
+                />
+              }
+            />
+            <FeatureSection
+              title="Blends with benefits"
+              style={{ marginBottom: 80 }}
+              bodyText={
+                <BodyText>
+                  Healthy, organic, and great tasting smoothies don’t have to be
+                  over priced. We believe that nutritious food should be
+                  accessible to everyone. With customization we’re able to fuel
+                  you through an early morning meeting or a post-workout
+                  recovery — each blend is created specifically with you in
+                  mind.
+                </BodyText>
+              }
+              image={
+                <FeatureImage
+                  source={require('./public/img/ourstory-feature.jpg')}
+                  floatingImageStyle={{
+                    top: [0, 28],
+                    right: [0, -100],
+                    display: ['none', 'block']
+                  }}
+                />
+              }
+            />
+          </Container>
+        </View>
+      </Responsive>
       <TheTeam />
       <PageFooter />
     </GenericPage>
