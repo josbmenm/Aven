@@ -25,7 +25,9 @@ export function Responsive({
   let small = `
   ${style.paddingVertical ? `padding: ${style.paddingVertical[0]}px 0;` : ''}
   ${
-    style.paddingHorizontal ? `padding: 0 ${style.paddingHorizontal[0]}px;` : ''
+    style.paddingHorizontal
+      ? `padding: 0 ${validateNumberValue(style.paddingHorizontal[1])};`
+      : ''
   }
   ${style.paddingTop ? `padding-top: ${style.paddingTop[0]}px;` : ''}
   ${style.paddingRight ? `padding-right: ${style.paddingRight[0]}px;` : ''}
@@ -70,7 +72,9 @@ export function Responsive({
   let large = `
   ${style.paddingVertical ? `padding: ${style.paddingVertical[1]}px 0;` : ''}
   ${
-    style.paddingHorizontal ? `padding: 0 ${style.paddingHorizontal[1]}px;` : ''
+    style.paddingHorizontal
+      ? `padding: 0 ${validateNumberValue(style.paddingHorizontal[1])};`
+      : ''
   }
   ${style.paddingTop ? `padding-top: ${style.paddingTop[1]}px;` : ''}
   ${style.paddingRight ? `padding-right: ${style.paddingRight[1]}px;` : ''}
@@ -111,7 +115,8 @@ export function Responsive({
   return (
     <React.Fragment>
       <style
-        dangerouslySetInnerHTML={{ /* eslint-disable-line */
+        dangerouslySetInnerHTML={{
+          /* eslint-disable-line */
           __html: `.re-${id}{${small}}@media only screen and (min-width: ${bp}px) {.re-${id}{${large}}}`,
         }}
       />
