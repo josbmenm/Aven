@@ -23,10 +23,18 @@ export function Responsive({
   const bp = breakpoint || theme.breakpoints[0];
 
   let small = `
-  ${style.paddingVertical ? `padding: ${style.paddingVertical[0]}px 0;` : ''}
+  ${
+    style.paddingVertical
+      ? `padding-top: ${validateNumberValue(
+          style.paddingVertical[0],
+        )}; padding-bottom: ${validateNumberValue(style.paddingVertical[0])};`
+      : ''
+  }
   ${
     style.paddingHorizontal
-      ? `padding: 0 ${validateNumberValue(style.paddingHorizontal[1])};`
+      ? `padding-left: ${validateNumberValue(
+          style.paddingHorizontal[0],
+        )}; padding-right: ${validateNumberValue(style.paddingHorizontal[0])};`
       : ''
   }
   ${style.paddingTop ? `padding-top: ${style.paddingTop[0]}px;` : ''}
@@ -34,46 +42,57 @@ export function Responsive({
   ${style.paddingBottom ? `padding-bottom: ${style.paddingBottom[0]}px;` : ''}
   ${style.paddingLeft ? `padding-left: ${style.paddingLeft[0]}px;` : ''}
 
-  ${style.marginVertical ? `margin: ${style.marginVertical[0]}px 0;` : ''}
-  ${style.marginHorizontal ? `margin: 0 ${style.marginHorizontal[0]}px;` : ''}
+  ${
+    style.marginVertical
+      ? `margin-top: ${validateNumberValue(
+          style.marginVertical[0],
+        )}; margin-bottom: ${validateNumberValue(style.marginVertical[0])};`
+      : ''
+  }
+  ${
+    style.marginHorizontal
+      ? `margin-left: ${validateNumberValue(
+          style.marginHorizontal[0],
+        )}; margin-right: ${validateNumberValue(style.marginHorizontal[0])};`
+      : ''
+  }
   ${style.marginTop ? `margin-top: ${style.marginTop[0]}px;` : ''}
   ${style.marginRight ? `margin-right: ${style.marginRight[0]}px;` : ''}
   ${style.marginBottom ? `margin-bottom: ${style.marginBottom[0]}px;` : ''}
   ${style.marginLeft ? `margin-left: ${style.marginLeft[0]}px;` : ''}
-
   ${style.textAlign ? `text-align: ${style.textAlign[0]};` : ''}
   ${style.fontSize ? `font-size: ${style.fontSize[0]}px;` : ''}
   ${style.lineHeight ? `line-height: ${style.lineHeight[0]}px;` : ''}
   ${style.letterSpacing ? `letter-spacing: ${style.letterSpacing[0]};` : ''}
-
   ${style.alignItems ? `align-items: ${style.alignItems[0]};` : ''}
   ${style.alignSelf ? `align-self: ${style.alignSelf[0]};` : ''}
   ${style.flexDirection ? `flex-direction: ${style.flexDirection[0]};` : ''}
   ${style.display ? `display: ${style.display[0]};` : ''}
-
   ${
     style.maxWidth
       ? `max-width: ${validateNumberValue(style.maxWidth[0])};`
       : ''
   }
-
   ${style.width ? `width: ${validateNumberValue(style.width[0])};` : ''}
   ${style.height ? `height: ${validateNumberValue(style.height[0])};` : ''}
-
   ${style.top ? `top: ${validateNumberValue(style.top[0])};` : ''}
   ${style.right ? `right: ${validateNumberValue(style.right[0])};` : ''}
   ${style.bottom ? `bottom: ${validateNumberValue(style.bottom[0])};` : ''}
-  ${style.left ? `left: ${validateNumberValue(style.left[0])};` : ''}
-
-
-
-  `.trim();
+  ${style.left ? `left: ${validateNumberValue(style.left[0])};` : ''}`.trim();
 
   let large = `
-  ${style.paddingVertical ? `padding: ${style.paddingVertical[1]}px 0;` : ''}
+  ${
+    style.paddingVertical
+      ? `padding-top: ${validateNumberValue(
+          style.paddingVertical[1],
+        )}; padding-bottom: ${validateNumberValue(style.paddingVertical[1])};`
+      : ''
+  }
   ${
     style.paddingHorizontal
-      ? `padding: 0 ${validateNumberValue(style.paddingHorizontal[1])};`
+      ? `padding-left: ${validateNumberValue(
+          style.paddingHorizontal[1],
+        )}; padding-right: ${validateNumberValue(style.paddingHorizontal[1])};`
       : ''
   }
   ${style.paddingTop ? `padding-top: ${style.paddingTop[1]}px;` : ''}
@@ -81,8 +100,20 @@ export function Responsive({
   ${style.paddingBottom ? `padding-bottom: ${style.paddingBottom[1]}px;` : ''}
   ${style.paddingLeft ? `padding-left: ${style.paddingLeft[1]}px;` : ''}
 
-  ${style.marginVertical ? `margin: ${style.marginVertical[1]}px 0;` : ''}
-  ${style.marginHorizontal ? `margin: 0 ${style.marginHorizontal[1]}px;` : ''}
+  ${
+    style.marginVertical
+      ? `margin-top: ${validateNumberValue(
+          style.marginVertical[1],
+        )}; margin-bottom: ${validateNumberValue(style.marginVertical[1])};`
+      : ''
+  }
+  ${
+    style.marginHorizontal
+      ? `margin-left: ${validateNumberValue(
+          style.marginHorizontal[1],
+        )}; margin-right: ${validateNumberValue(style.marginHorizontal[1])};`
+      : ''
+  }
   ${style.marginTop ? `margin-top: ${style.marginTop[1]}px;` : ''}
   ${style.marginRight ? `margin-right: ${style.marginRight[1]}px;` : ''}
   ${style.marginBottom ? `margin-bottom: ${style.marginBottom[1]}px;` : ''}
@@ -115,8 +146,7 @@ export function Responsive({
   return (
     <React.Fragment>
       <style
-        dangerouslySetInnerHTML={{
-          /* eslint-disable-line */
+        dangerouslySetInnerHTML={{ /* eslint-disable-line */
           __html: `.re-${id}{${small}}@media only screen and (min-width: ${bp}px) {.re-${id}{${large}}}`,
         }}
       />
