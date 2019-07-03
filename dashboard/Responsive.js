@@ -47,6 +47,7 @@ export function Responsive({
   ${style.alignItems ? `align-items: ${style.alignItems[0]};` : ''}
   ${style.alignSelf ? `align-self: ${style.alignSelf[0]};` : ''}
   ${style.flexDirection ? `flex-direction: ${style.flexDirection[0]};` : ''}
+  ${style.display ? `display: ${style.display[0]};` : ''}
 
   ${
     style.maxWidth
@@ -91,6 +92,7 @@ export function Responsive({
   ${style.alignItems ? `align-items: ${style.alignItems[1]};` : ''}
   ${style.alignSelf ? `align-self: ${style.alignSelf[1]};` : ''}
   ${style.flexDirection ? `flex-direction: ${style.flexDirection[1]};` : ''}
+  ${style.display ? `display: ${style.display[1]};` : ''}
 
   ${
     style.maxWidth
