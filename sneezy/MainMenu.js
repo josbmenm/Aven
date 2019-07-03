@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Container from './Container';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 import UIButton from '../dashboard/UIButton';
 import Link from './Link';
 import ButtonLink from './ButtonLink';
@@ -54,7 +54,7 @@ function MenuLink({
             ...buttonStyle,
           }}
           titleStyle={{
-            ...titleStyle
+            ...titleStyle,
           }}
           {...rest}
         />
@@ -162,24 +162,53 @@ export function MobileMenu() {
                 borderBottomWidth: StyleSheet.hairlineWidth,
               }}
             >
-              <Link noActive size="Large" routeName="Menu" title="menu" />
+              <Link
+                noActive
+                size="Large"
+                routeName="Menu"
+                title="menu"
+                titleStyle={{
+                  textAlign: 'left',
+                }}
+                buttonStyle={{
+                  marginBottom: 32
+                }}
+              />
               <Link
                 noActive
                 size="Large"
                 routeName="Schedule"
                 title="schedule"
+                titleStyle={{
+                  textAlign: 'left',
+                }}
+                buttonStyle={{
+                  marginBottom: 32
+                }}
               />
               <Link
                 noActive
                 size="Large"
                 routeName="OurStory"
                 title="our story"
+                titleStyle={{
+                  textAlign: 'left',
+                }}
+                buttonStyle={{
+                  marginBottom: 32
+                }}
               />
               <Link
                 noActive
                 size="Large"
                 routeName="BookUs"
                 title="book with us"
+                titleStyle={{
+                  textAlign: 'left',
+                }}
+                buttonStyle={{
+                  marginBottom: 32
+                }}
               />
             </View>
             <View
