@@ -44,6 +44,7 @@ function MenuLink({
           type="outline"
           buttonStyle={{
             paddingHorizontal: 0,
+            paddingVertical: 9,
             marginLeft: 32,
             borderRadius: 0,
             borderWidth: 0,
@@ -53,7 +54,6 @@ function MenuLink({
             ...buttonStyle,
           }}
           titleStyle={{
-            fontSize: 20, // change for theme
             ...titleStyle
           }}
           {...rest}
