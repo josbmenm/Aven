@@ -73,6 +73,7 @@ export function Responsive({
       ? `max-width: ${validateNumberValue(style.maxWidth[0])};`
       : ''
   }
+  ${style.flex ? `flex: ${style.flex[0]};` : ''}
   ${style.width ? `width: ${validateNumberValue(style.width[0])};` : ''}
   ${style.height ? `height: ${validateNumberValue(style.height[0])};` : ''}
   ${style.top ? `top: ${validateNumberValue(style.top[0])};` : ''}
@@ -134,7 +135,7 @@ export function Responsive({
       ? `max-width: ${validateNumberValue(style.maxWidth[1])};`
       : ''
   }
-
+  ${style.flex ? `flex: ${style.flex[1]};` : ''}
   ${style.width ? `width: ${validateNumberValue(style.width[1])};` : ''}
   ${style.height ? `height: ${validateNumberValue(style.height[1])};` : ''}
 
@@ -146,7 +147,8 @@ export function Responsive({
   return (
     <React.Fragment>
       <style
-        dangerouslySetInnerHTML={{ /* eslint-disable-line */
+        dangerouslySetInnerHTML={{
+          /* eslint-disable-line */
           __html: `.re-${id}{${small}}@media only screen and (min-width: ${bp}px) {.re-${id}{${large}}}`,
         }}
       />
