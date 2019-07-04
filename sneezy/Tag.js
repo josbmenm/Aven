@@ -9,6 +9,7 @@ function Tag({ title, style, ...rest }) {
       bold
       style={[{
         fontSize: 10,
+        lineHeight: 13,
         textTransform: 'uppercase',
         alignSelf: 'flex-start',
         paddingVertical: 4,
@@ -18,7 +19,7 @@ function Tag({ title, style, ...rest }) {
         color: theme.colors.white,
         minWidth: 120,
         textAlign: 'center',
-        letterSpacing: 3,
+        letterSpacing: 2.5,
       }, style]}
       {...rest}
     >

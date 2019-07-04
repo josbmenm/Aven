@@ -13,7 +13,7 @@ function Container({ children, className, style = {} }) {
         alignSelf: 'center',
         ...style,
       }}
-      className={className}
+      className={className} // TODO: remove this className (web specific)
     >
       {children}
     </View>

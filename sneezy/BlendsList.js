@@ -9,6 +9,7 @@ import { useTheme } from '../dashboard/Theme';
 import { useMenu } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { getMenuItemSlug } from '../logic/configLogic';
+import { Responsive } from '../dashboard/Responsive';
 
 function BlendsListItem({ blend, style }) {
   const theme = useTheme();
@@ -54,7 +55,13 @@ function BlendsListItem({ blend, style }) {
           }}
           resizeMode="cover"
         />
-        <Title style={{ textAlign: 'right', fontSize: 24, lineHeight: 32 }}>
+        <Title
+          style={{ textAlign: 'right' }}
+          responsiveStyle={{
+            lineHeight: [28, 28],
+            marginBottom: [4, 8],
+          }}
+        >
           {blend['Display Name']}
         </Title>
         <Tag
@@ -69,26 +76,32 @@ function BlendsListItem({ blend, style }) {
 export function BlendsList() {
   const menu = useMenu();
   return (
-    <View>
-      <Container style={{ paddingVertical: 100 }}>
-        <View
-          style={{
-            flexWrap: 'wrap',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {menu ? (
-            menu.blends.map((item, i) => (
-              <BlendsListItem key={i} blend={item} />
-            ))
-          ) : (
-            <BodyText>Loading...</BodyText>
-          )}
-        </View>
-      </Container>
-    </View>
+    <Responsive
+      style={{
+        marginBottom: [60, 80],
+      }}
+    >
+      <View>
+        <Container>
+          <View
+            style={{
+              flexWrap: 'wrap',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {menu ? (
+              menu.blends.map((item, i) => (
+                <BlendsListItem key={i} blend={item} />
+              ))
+            ) : (
+              <BodyText>Loading...</BodyText>
+            )}
+          </View>
+        </Container>
+      </View>
+    </Responsive>
   );
 }
 
