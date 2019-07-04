@@ -76,7 +76,7 @@ function BlendContent({ displayName, blend, recipe }) {
                 <Image
                   style={{
                     position: 'absolute',
-                    bottom: -40,
+                    bottom: -48,
                     right: 0,
                     left: 0,
                     height: 100,
@@ -276,7 +276,12 @@ function BlendContent({ displayName, blend, recipe }) {
                     marginBottom: 8,
                   }}
                 />
-                <FootNote style={{ textAlign: 'center' }}>{ing.Name}</FootNote>
+                <FootNote
+                  bold
+                  style={{ textAlign: 'center', textTransform: 'uppercase', letterSpacing: 2 }}
+                >
+                  {ing.Name}
+                </FootNote>
               </View>
             ))}
           </View>
