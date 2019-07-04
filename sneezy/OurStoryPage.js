@@ -19,31 +19,31 @@ import { Responsive } from '../dashboard/Responsive';
 function FeatureImage({ source, floatingImageStyle }) {
   // const theme = useTheme();
   return (
-      <View
+    <View
+      style={{
+        position: 'relative',
+        width: '100%',
+      }}
+    >
+      <Responsive
         style={{
-          position: 'relative',
-          width: '100%',
+          width: [239, 335],
+          height: [176, 246],
+          ...floatingImageStyle,
         }}
       >
-        <Responsive
+        <Image
+          source={require('./public/img/fruit_silhouette.png')}
           style={{
-            width: [239, 335],
-            height: [176, 246],
-            ...floatingImageStyle,
+            ...absoluteElement,
+            zIndex: 0,
           }}
-        >
-          <Image
-            source={require('./public/img/fruit_silhouette.png')}
-            style={{
-              ...absoluteElement,
-              zIndex: 0,
-            }}
-          />
-        </Responsive>
-        {/* FEATURE IMAGE HERE */}
-        {/* TODO: aspect ratio image? */}
-        <Image source={source} style={{ ...aspectRatio43 }} />
-      </View>
+        />
+      </Responsive>
+      {/* FEATURE IMAGE HERE */}
+      {/* TODO: aspect ratio image? */}
+      <Image source={source} style={{ ...aspectRatio43 }} />
+    </View>
   );
 }
 
@@ -53,59 +53,58 @@ function OurStoryPage({}) {
     <GenericPage>
       <View style={{ flex: 1 }}>
         <View>
-          <Responsive
-            style={{
+          <Container
+            style={{ alignItems: 'center' }}
+            responsiveStyle={{
               width: ['100% !important', '100%'],
               marginHoriontal: [0, 28],
-              marginBottom: [80, 0]
+              marginBottom: [80, 0],
             }}
           >
-            <Container style={{ alignItems: 'center' }}>
-              <Responsive
-                style={{
-                  marginHorizontal: [28, 0],
-                  marginBottom: [12, 0],
-                  width: ['calc(100% - 56px)', '100%'],
-                }}
-              >
-                <View style={{ flex: 1 }}>
-                  <Image
-                    source={{
-                      uri:
-                        'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
-                    }}
-                    resizeMode="cover"
-                    style={{ ...aspectRatio169 }}
-                  />
-                </View>
-              </Responsive>
-              <Responsive
-                style={{
-                  position: ['relative', 'absolute'],
-                  bottom: [0, 120],
-                  alignSelf: ['inherit', 'center'],
-                  maxWidth: [1200, 640],
-                }}
-              >
-                <View
-                  style={{
-                    paddingHorizontal: 80,
-                    paddingVertical: 40,
-                    backgroundColor: theme.colors.lightGrey,
-                    width: '100%',
+            <Responsive
+              style={{
+                marginHorizontal: [28, 0],
+                marginBottom: [12, 0],
+                width: ['calc(100% - 56px)', '100%'],
+              }}
+            >
+              <View style={{ flex: 1 }}>
+                <Image
+                  source={{
+                    uri:
+                      'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
                   }}
-                >
-                  <Heading>Our Story</Heading>
-                  <BodyText>
-                    We started Ono with the idea that healthy, organic, and
-                    great tasting smoothies should be accessible to everyone.
-                    With robotics, locally-sourced food, and a bit of luck - Ono
-                    Blends was born.
-                  </BodyText>
-                </View>
-              </Responsive>
-            </Container>
-          </Responsive>
+                  resizeMode="cover"
+                  style={{ ...aspectRatio169 }}
+                />
+              </View>
+            </Responsive>
+            <Responsive
+              style={{
+                position: ['relative', 'absolute'],
+                bottom: [0, 120],
+                alignSelf: ['inherit', 'center'],
+                maxWidth: [1200, 640],
+              }}
+            >
+              <View
+                style={{
+                  paddingHorizontal: 80,
+                  paddingVertical: 40,
+                  backgroundColor: theme.colors.lightGrey,
+                  width: '100%',
+                }}
+              >
+                <Heading>Our Story</Heading>
+                <BodyText>
+                  We started Ono with the idea that healthy, organic, and great
+                  tasting smoothies should be accessible to everyone. With
+                  robotics, locally-sourced food, and a bit of luck - Ono Blends
+                  was born.
+                </BodyText>
+              </View>
+            </Responsive>
+          </Container>
         </View>
       </View>
       <Responsive
@@ -123,7 +122,7 @@ function OurStoryPage({}) {
             <FeatureSection
               title="Real food. Real good. Real fast."
               style={{ marginBottom: 80 }}
-              responsiveStyles={{textAlign: ['center', 'left']}}
+              responsiveStyles={{ textAlign: ['center', 'left'] }}
               bodyText={
                 <BodyText>
                   Ono, a local Hawaiian term for “delicious” is exactly what our
@@ -137,7 +136,7 @@ function OurStoryPage({}) {
                   source={require('./public/img/ourstory-feature.jpg')}
                   floatingImageStyle={{
                     top: [-80, -18],
-                    right: [400, -72]
+                    right: [400, -72],
                   }}
                 />
               }
@@ -159,7 +158,7 @@ function OurStoryPage({}) {
                   floatingImageStyle={{
                     top: [0, 28],
                     left: [0, -96],
-                    display: ['none', 'block']
+                    display: ['none', 'block'],
                   }}
                 />
               }
@@ -183,7 +182,7 @@ function OurStoryPage({}) {
                   floatingImageStyle={{
                     top: [0, 28],
                     right: [0, -100],
-                    display: ['none', 'block']
+                    display: ['none', 'block'],
                   }}
                 />
               }

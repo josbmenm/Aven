@@ -11,6 +11,10 @@ export default function GenericHeroHeader({
   backgroundColor,
   children,
   className,
+  responsiveStyle = {
+    paddingTop: [80, 128],
+    paddingBottom: [112, 128],
+  },
 }) {
   return (
     <View className={className}>
@@ -22,15 +26,11 @@ export default function GenericHeroHeader({
             alignItems: 'center',
           }}
         >
-          <Responsive style={{
-            paddingTop: [80, 128],
-            paddingBottom: [112, 128]
-          }}>
+          <Responsive style={responsiveStyle}>
             <View
               style={{
                 justifyContent: 'center',
                 alignItems: 'center',
-                // paddingHorizontal: 80,
                 maxWidth: 720,
               }}
             >

@@ -66,123 +66,119 @@ function HowItWorks() {
       }}
     >
       <View>
-        <Responsive
+        <Container
           style={{
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.border,
+          }}
+          responsiveStyle={{
             paddingBottom: [48, 200],
           }}
         >
-          <Container
-            style={{
-              borderBottomWidth: 1,
-              borderBottomColor: theme.colors.border,
+          <Heading
+            style={{ textAlign: 'center' }}
+            responsiveStyle={{
+              marginBottom: [25, 100],
             }}
           >
-            <Heading
-              style={{ textAlign: 'center' }}
-              responsiveStyle={{
-                marginBottom: [25, 100],
+            How it works
+          </Heading>
+
+          <FeatureSection
+            title="Find us"
+            bodyText={
+              <BodyText>
+                Check out the{' '}
+                <FunctionalLink routeName="Schedule">
+                  <BodyText bold>schedule</BodyText>{' '}
+                </FunctionalLink>
+                to find us. Not seeing your neighborhood?{' '}
+                <FunctionalLink routeName="Schedule">
+                  <BodyText bold>Request us here.</BodyText>
+                </FunctionalLink>
+              </BodyText>
+            }
+            image={
+              <FeatureImage
+                floatingImageStyle={{
+                  right: [-80, -119],
+                  top: [59, -38],
+                }}
+              />
+            }
+          />
+
+          <View style={{ position: 'relative' }}>
+            <Image
+              source={require('./public/img/mango.png')}
+              style={{
+                ...absoluteElement,
+                width: 520,
+                height: 611,
+                right: -410,
+                top: -270,
+                zIndex: 10,
               }}
-            >
-              How it works
-            </Heading>
+            />
 
             <FeatureSection
-              title="Find us"
+              inverted
+              title="Order"
               bodyText={
                 <BodyText>
-                  Check out the{' '}
-                  <FunctionalLink routeName="Schedule">
-                    <BodyText bold>schedule</BodyText>{' '}
-                  </FunctionalLink>
-                  to find us. Not seeing your neighborhood?{' '}
-                  <FunctionalLink routeName="Schedule">
-                    <BodyText bold>Request us here.</BodyText>
-                  </FunctionalLink>
+                  Select a blend or personalize oned based on your nutritional
+                  preferences or dietary restrictions through our ordering
+                  kiosk. Ono Guides are on-site to ensure the best possible
+                  experience.
                 </BodyText>
               }
               image={
                 <FeatureImage
                   floatingImageStyle={{
-                    right: [-80, -119],
-                    top: [59, -38],
+                    left: [-174, -68],
+                    top: [66, 8],
                   }}
                 />
               }
             />
-
-            <View style={{ position: 'relative' }}>
+          </View>
+          <View style={{ position: 'relative' }}>
+            <Responsive
+              style={{
+                bottom: [140, -250],
+              }}
+            >
               <Image
-                source={require('./public/img/mango.png')}
+                source={require('./public/img/mint-spinach.png')}
                 style={{
                   ...absoluteElement,
-                  width: 520,
-                  height: 611,
-                  right: -410,
-                  top: -270,
+                  width: 310,
+                  height: 403,
+                  left: -250,
                   zIndex: 10,
                 }}
               />
-
-              <FeatureSection
-                inverted
-                title="Order"
-                bodyText={
-                  <BodyText>
-                    Select a blend or personalize oned based on your nutritional
-                    preferences or dietary restrictions through our ordering
-                    kiosk. Ono Guides are on-site to ensure the best possible
-                    experience.
-                  </BodyText>
-                }
-                image={
-                  <FeatureImage
-                    floatingImageStyle={{
-                      left: [-174, -68],
-                      top: [66, 8],
-                    }}
-                  />
-                }
-              />
-            </View>
-            <View style={{ position: 'relative' }}>
-              <Responsive
-                style={{
-                  bottom: [140, -250],
-                }}
-              >
-                <Image
-                  source={require('./public/img/mint-spinach.png')}
-                  style={{
-                    ...absoluteElement,
-                    width: 310,
-                    height: 403,
-                    left: -250,
-                    zIndex: 10,
+            </Responsive>
+            <FeatureSection
+              style={{ width: '100%' }}
+              title="Pickup"
+              bodyText={
+                <BodyText>
+                  Watch as advanced robotics create your perfect blend within 60
+                  seconds, and when it’s ready, grab it from our pick-up area.
+                </BodyText>
+              }
+              image={
+                <FeatureImage
+                  floatingImageStyle={{
+                    right: [-185, -48],
+                    top: [24, 64],
                   }}
                 />
-              </Responsive>
-              <FeatureSection
-                style={{ width: '100%' }}
-                title="Pickup"
-                bodyText={
-                  <BodyText>
-                    Watch as advanced robotics create your perfect blend within
-                    60 seconds, and when it’s ready, grab it from our pick-up
-                    area.
-                  </BodyText>
-                }
-                image={
-                  <FeatureImage
-                    floatingImageStyle={{
-                      right: [-185, -48],
-                      top: [24, 64],
-                    }}
-                  />
-                }
-              />
-            </View>
-          </Container>
-        </Responsive>
+              }
+            />
+          </View>
+        </Container>
       </View>
     </Responsive>
   );

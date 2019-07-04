@@ -1,22 +1,28 @@
 import React from 'react';
 import View from '../views/View';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
+import { Responsive } from '../dashboard/Responsive';
 
-function Container({ children, className, style = {} }) {
+function Container({ children, responsiveStyle, style = {} }) {
   const theme = useTheme();
   return (
-    <View
+    <Responsive
       style={{
-        width: '90%',
-        maxWidth: theme.layouts.large,
-        alignItems: 'stretch',
-        alignSelf: 'center',
-        ...style,
+        ...responsiveStyle,
       }}
-      className={className} // TODO: remove this className (web specific)
     >
-      {children}
-    </View>
+      <View
+        style={{
+          width: '90%',
+          maxWidth: theme.layouts.large,
+          alignItems: 'stretch',
+          alignSelf: 'center',
+          ...style,
+        }}
+      >
+        {children}
+      </View>
+    </Responsive>
   );
 }
 
