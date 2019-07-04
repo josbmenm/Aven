@@ -1,5 +1,6 @@
 import React from 'react';
 import Image, { loadImages } from './Image';
+import { Responsive } from '../dashboard/Responsive';
 
 const md5 = require('crypto-js/md5');
 const path = require('path');
@@ -14,7 +15,13 @@ export function HostContextContainer({ authority, useSSL, children }) {
   );
 }
 
-const AirtableImage = ({ image, style, resizeMode, tintColor }) => {
+const AirtableImage = ({
+  image,
+  style,
+  responsiveStyle,
+  resizeMode,
+  tintColor,
+}) => {
   const { authority, useSSL } = React.useContext(HostContext);
   const origUrl = image && image[0] && image[0].url;
   const ext = origUrl && path.extname(origUrl);
@@ -26,12 +33,18 @@ const AirtableImage = ({ image, style, resizeMode, tintColor }) => {
       origUrl,
     ).toString()}${ext}`;
   return (
-    <Image
-      style={style}
-      imageURI={imageURI}
-      resizeMode={resizeMode}
-      tintColor={tintColor}
-    />
+    <Responsive
+      style={{
+        ...responsiveStyle,
+      }}
+    >
+      <Image
+        style={style}
+        imageURI={imageURI}
+        resizeMode={resizeMode}
+        tintColor={tintColor}
+      />
+    </Responsive>
   );
 };
 

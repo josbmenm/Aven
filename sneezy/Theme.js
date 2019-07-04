@@ -58,6 +58,7 @@ const textStyles = {
     fontSize: 12,
     lineHeight: 20,
     fontFamily: fonts.normal,
+    letterSpacing: 0.3
   },
 };
 

@@ -1,10 +1,14 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import View from '../views/View';
+import Text from '../views/Text';
 import Link from '../navigation-web/Link';
 import AirtableImage from '../components/AirtableImage';
 import { useTheme } from '../dashboard/Theme';
+import Title from './Title';
 import Container from './Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
+import FootNote from './FootNote';
+import BodyText from './BodyText';
 import { Responsive } from '../dashboard/Responsive';
 
 function BodyLink({ children, url }) {
@@ -14,24 +18,15 @@ function BodyLink({ children, url }) {
     </Link>
   );
 }
-function Body({ children }) {
-  const theme = useTheme();
-  return (
-    <Text
-      style={{
-        ...theme.textStyles.body,
-      }}
-    >
-      {children}
-    </Text>
-  );
-}
 
 function BenefitDescription({ name }) {
   switch (name) {
     case 'Skin & Body':
       return (
-        <Body>
+        <BodyText
+          responsiveStyle={{ textAlign: ['center', 'left'] }}
+          style={{ maxWidth: 630 }}
+        >
           We use marine collagen, which can help promote youthful skin, and is
           great for healthier hair, and joint and bone health. You can read more
           research on marine collagen{' '}
@@ -39,11 +34,14 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </Body>
+        </BodyText>
       );
     case 'Digestion':
       return (
-        <Body>
+        <BodyText
+          responsiveStyle={{ textAlign: ['center', 'left'] }}
+          style={{ maxWidth: 630 }}
+        >
           Probiotics are one of the most lauded supplements on the market for
           digestive support. We use 5,000 CFUS of plant-based probiotics
           clinically proven to aid in digestion, tame inflammation and boost
@@ -52,11 +50,14 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </Body>
+        </BodyText>
       );
     case 'Immunity':
       return (
-        <Body>
+        <BodyText
+          responsiveStyle={{ textAlign: ['center', 'left'] }}
+          style={{ maxWidth: 630 }}
+        >
           Immunity: Our immunity benefit includes Astragalus, Goji Berries, and
           Elderberries to support your immune system. Studies have shown that
           elderberry can help for immune health, which you can read{' '}
@@ -75,20 +76,26 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </Body>
+        </BodyText>
       );
     case 'Fitness':
       return (
-        <Body>
+        <BodyText
+          responsiveStyle={{ textAlign: ['center', 'left'] }}
+          style={{ maxWidth: 630 }}
+        >
           Our fitness benefit is comprised of plant protein and amino acids,
           which is great for muscle growth and recovery. Most people know this,
           but it’s also a great way to make a meal more filling, and is a
           building block of any healthy diet.
-        </Body>
+        </BodyText>
       );
     case 'Focus':
       return (
-        <Body>
+        <BodyText
+          responsiveStyle={{ textAlign: ['center', 'left'] }}
+          style={{ maxWidth: 630 }}
+        >
           A blend of Lion’s Mane Mushroom, Rhodiola, and Cordyceps. Research has
           shown that these ingredients can support attention, focus, and mental
           energy. All of these ingredients are natural and well researched, you
@@ -105,7 +112,7 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </Body>
+        </BodyText>
       );
     default:
       return null;
@@ -118,49 +125,50 @@ export default function BenefitDetails({ benefit }) {
     <View>
       <Container
         style={{
-          alignItems: 'center',
-          paddingVertical: 10,
+          // alignItems: 'center',
+          // paddingVertical: 10,
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.border,
         }}
+        responsiveStyle={{
+          marginBottom: [40, 100],
+          paddingBottom: [40, 100],
+        }}
       >
-        <Responsive
-          style={{
-            marginBottom: [30, 60],
-            marginTop: [30, 60],
+        <Title
+          style={{ textAlign: 'center' }}
+          responsiveStyle={{
+            marginBottom: [0, 24],
           }}
         >
-          <Text
-            style={{
-              color: theme.colors.primary,
-              fontSize: theme.fontSizes[0],
-              textAlign: 'center',
-              ...theme.textStyles.title,
-            }}
-          >
-            this blend is designed for..
-          </Text>
-        </Responsive>
+          this blend is designed for..
+        </Title>
         <ColumnToRow>
           <ColumnToRowChild>
             <AirtableImage
               image={benefit.Icon}
-              style={{ width: 150, height: 150, alignSelf: 'center' }}
-              tintColor={theme.colors.primary}
+              style={{ alignSelf: 'center', width: 120, height: 120 }}
+              tintColor={theme.colors.monsterras[0]}
             />
           </ColumnToRowChild>
-          <ColumnToRowChild>
-            <Text
-              style={{
-                color: theme.colors.primary,
-                ...theme.textStyles.title,
-                fontSize: theme.fontSizes[2],
-              }}
-            >
-              {benefit.Name.toUpperCase()}
-            </Text>
-            <BenefitDescription name={benefit.Name} />
-          </ColumnToRowChild>
+          <Responsive
+            style={{
+              flex: [1, '2 !important'],
+            }}
+          >
+            <ColumnToRowChild>
+              <FootNote
+                bold
+                responsiveStyle={{
+                  alignSelf: ['center', 'flex-start'],
+                  marginBottom: [16, 0],
+                }}
+              >
+                {benefit.Name.toUpperCase()}
+              </FootNote>
+              <BenefitDescription name={benefit.Name} />
+            </ColumnToRowChild>
+          </Responsive>
         </ColumnToRow>
       </Container>
     </View>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Image } from 'react-native';
+import View from '../views/View';
 import GenericPage from './GenericPage';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import PageFooter from './PageFooter';
@@ -34,176 +35,220 @@ function BlendContent({ displayName, blend, recipe }) {
   ];
   return (
     <React.Fragment>
-      <View>
-        <Container
-          style={{
-            paddingBottom: 80,
-            marginBottom: 80,
-            borderBottomWidth: 1,
-            borderBottomColor: theme.colors.border,
-          }}
-        >
-          <ColumnToRow>
-            <ColumnToRowChild>
-              <View
+      <Responsive
+        style={{
+          marginBottom: [40, 100],
+        }}
+      >
+        <View>
+          <Container
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: theme.colors.border,
+            }}
+            responsiveStyle={{
+              paddingBottom: [40, 120],
+            }}
+          >
+            <ColumnToRow>
+              <ColumnToRowChild
                 style={{
-                  width: '100%',
-                  flexDirection: 'row',
-                  alignItems: 'center',
+                  position: 'relative',
                 }}
               >
-                <AirtableImage
-                  image={blend.Recipe.DecorationImage}
-                  resizeMode="contain"
-                  style={{ flex: 1, width: 400, paddingTop: '56.25%' }}
+                <View
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    position: 'absolute',
+                    bottom: 0,
+                    right: 0,
+                    transform: [{ scale: 1.2 }],
+                    zIndex: -1,
+                  }}
+                >
+                  <AirtableImage
+                    image={blend.Recipe.DecorationImage}
+                    resizeMode="contain"
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                </View>
+                <Image
+                  style={{
+                    position: 'absolute',
+                    bottom: -40,
+                    right: 0,
+                    left: 0,
+                    height: 100,
+                    width: '100%',
+                  }}
+                  source={require('./public/img/white-gradient-bottom.png')}
+                  resizeMode="repeat"
                 />
-              </View>
-            </ColumnToRowChild>
-            <Responsive
-              style={{
-                alignItems: ['center', 'flex-start'],
-              }}
-            >
-              <ColumnToRowChild>
-                <Responsive
-                  style={{
-                    flexDirection: ['column-reverse', 'column'],
-                    marginVertical: [40, 0],
-                  }}
-                >
-                  <View>
-                    <Heading>{displayName}</Heading>
-                    <Responsive
-                      style={{
-                        alignSelf: [
-                          'center !important',
-                          'flex-start !important',
-                        ],
-                      }}
-                    >
-                      <Tag title={blend.DefaultBenefitName} />
-                    </Responsive>
-                  </View>
-                </Responsive>
-                <View
-                  style={{
-                    alignItems: 'flex-start',
-                    marginBottom: 40,
-                    flexDirection: 'row',
-                  }}
-                >
-                  {blend.Benefits.map(benefit => (
-                    <View
-                      key={benefit.id}
-                      style={{
-                        marginRight: 12,
-                        alignItems: 'center',
-                      }}
-                    >
-                      <AirtableImage
-                        image={benefit.Icon}
-                        tintColor={theme.colors.primary80}
-                        resizeMode="contain"
-                        style={{ width: 44, height: 44 }}
-                      />
-                      <FootNote
-                        bold
-                        style={{
-                          fontSize: 10,
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {benefit.Name}
-                      </FootNote>
-                    </View>
-                  ))}
-                </View>
-                <BodyText
-                  style={{ marginBottom: 48 }}
-                  responsiveStyle={{
-                    textAlign: ['center', 'left'],
-                  }}
-                >
-                  {blend['Display Description']}
-                </BodyText>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    marginBottom: 20,
-                  }}
-                >
-                  {dietary.map((dietaryMessage, index) => (
-                    <View
-                      style={{
-                        borderRightColor:
-                          index + 1 === dietary.length
-                            ? 'transparent'
-                            : theme.colors.primary,
-                        borderRightWidth: 1,
-                        justifyContent: 'center',
-                        marginRight: 8,
-                        paddingRight: 8,
-                        height: 16,
-                      }}
-                    >
-                      <FootNote style={{ marginBottom: 0 }}>
-                        {dietaryMessage}
-                      </FootNote>
-                    </View>
-                  ))}
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    marginBottom: 20,
-                  }}
-                >
-                  {dietaryInfos.map(d => (
-                    <View
-                      key={d.id}
-                      style={{
-                        marginRight: 20,
-                        alignItems: 'center',
-                      }}
-                    >
-                      <AirtableImage
-                        key={d.id}
-                        image={d.Icon}
-                        style={{
-                          width: 32,
-                          height: 32,
-                          marginBottom: 8,
-                        }}
-                        tintColor={theme.colors.primary}
-                      />
-                      <FootNote
-                        bold
-                        style={{
-                          fontSize: theme.fontSizes[0],
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {d.Name}
-                      </FootNote>
-                    </View>
-                  ))}
-                </View>
               </ColumnToRowChild>
-            </Responsive>
-          </ColumnToRow>
-        </Container>
-      </View>
+              <Responsive
+                style={{
+                  alignItems: ['center', 'flex-start'],
+                }}
+              >
+                <ColumnToRowChild>
+                  <Responsive
+                    style={{
+                      alignSelf: ['center !important', 'flex-start !important'],
+                    }}
+                  >
+                    <Tag
+                      style={{ marginBottom: 8 }}
+                      title={blend.DefaultBenefitName}
+                    />
+                  </Responsive>
+                  <Heading
+                    responsiveStyle={{
+                      marginBottom: [16, 8],
+                    }}
+                  >
+                    {displayName}
+                  </Heading>
+                  <Responsive
+                    style={{
+                      marginBottom: [28, 36],
+                    }}
+                  >
+                    <View
+                      style={{
+                        alignItems: 'flex-start',
+                        flexDirection: 'row',
+                      }}
+                    >
+                      {blend.Benefits.map(benefit => (
+                        <View
+                          key={benefit.id}
+                          style={{
+                            marginRight: 12,
+                            alignItems: 'center',
+                          }}
+                        >
+                          <AirtableImage
+                            image={benefit.Icon}
+                            tintColor={theme.colors.primary80}
+                            resizeMode="contain"
+                            style={{ width: 60, height: 60 }}
+                          />
+                          <FootNote
+                            bold
+                            style={{
+                              fontSize: 10,
+                              lineHeight: 24,
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {benefit.Name}
+                          </FootNote>
+                        </View>
+                      ))}
+                    </View>
+                  </Responsive>
+                  <BodyText
+                    style={{ marginBottom: 48 }}
+                    responsiveStyle={{
+                      textAlign: ['center', 'left'],
+                      marginBottom: [32, 48],
+                    }}
+                  >
+                    {blend['Display Description']}
+                  </BodyText>
+                  <Responsive
+                    style={{
+                      marginBottom: [40, 20],
+                    }}
+                  >
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                      }}
+                    >
+                      {dietary.map((dietaryMessage, index) => (
+                        <View
+                          style={{
+                            borderRightColor:
+                              index + 1 === dietary.length
+                                ? 'transparent'
+                                : theme.colors.primary,
+                            borderRightWidth: 1,
+                            justifyContent: 'center',
+                            marginRight: 8,
+                            paddingRight: 8,
+                            height: 16,
+                          }}
+                        >
+                          <FootNote style={{ marginBottom: 0 }}>
+                            {dietaryMessage}
+                          </FootNote>
+                        </View>
+                      ))}
+                    </View>
+                  </Responsive>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      marginBottom: 20,
+                    }}
+                  >
+                    {dietaryInfos.map(d => (
+                      <View
+                        key={d.id}
+                        style={{
+                          marginRight: 20,
+                          alignItems: 'center',
+                        }}
+                      >
+                        <AirtableImage
+                          key={d.id}
+                          image={d.Icon}
+                          style={{
+                            width: 32,
+                            height: 32,
+                            marginBottom: 8,
+                          }}
+                          tintColor={theme.colors.primary}
+                        />
+                        <FootNote
+                          bold
+                          style={{
+                            fontSize: theme.fontSizes[0],
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {d.Name}
+                        </FootNote>
+                      </View>
+                    ))}
+                  </View>
+                </ColumnToRowChild>
+              </Responsive>
+            </ColumnToRow>
+          </Container>
+        </View>
+      </Responsive>
       <BenefitDetails benefit={blend.DefaultBenefit} />
       <View>
         <Container
           style={{
             alignItems: 'center',
-            paddingVertical: 60,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.border,
+          }}
+          responsiveStyle={{
+            paddingBottom: [60, 100],
+            marginBottom: [40, 100],
           }}
         >
-          <Heading style={{ marginBottom: 20 }}>organic ingredients</Heading>
+          <Heading style={{ marginBottom: 16 }}>organic ingredients</Heading>
           <BodyText
-            style={{ marginBottom: 80, maxWidth: 520, textAlign: 'center' }}
+            style={{ maxWidth: 520, textAlign: 'center' }}
+            responsiveStyle={{
+              marginBottom: [60, 90],
+            }}
           >
             All of our ingredients for our drinks are locally sourced, fully
             organic, and guarenteed to taste amazing.
@@ -266,11 +311,16 @@ function BlendPage() {
         />
       )}
       <View>
-        <Container style={{ alignItems: 'center', marginVertical: 80 }}>
-          <Heading style={{ textAlign: 'center', marginBottom: 52 }}>
+        <Container style={{ overflow: 'hidden' }}>
+          <Heading
+            style={{ textAlign: 'center' }}
+            responsiveStyle={{
+              marginBottom: [28, 52],
+            }}
+          >
             our blends
           </Heading>
-          <BlendsCarousel />
+          <BlendsCarousel style={{ alignSelf: 'flex-start' }} />
         </Container>
       </View>
       <PageFooter />

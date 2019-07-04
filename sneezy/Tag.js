@@ -11,7 +11,6 @@ function Tag({ title, style, ...rest }) {
         fontSize: 10,
         lineHeight: 13,
         textTransform: 'uppercase',
-        alignSelf: 'flex-start',
         paddingVertical: 4,
         paddingHorizontal: 16,
         borderRadius: 4,

@@ -1,17 +1,24 @@
 import React from 'react';
 import Text from '../views/Text';
 import { useTheme } from '../dashboard/Theme';
+import { Responsive } from '../dashboard/Responsive';
 
-function FootNote({ children, bold, style, ...rest }) {
+function FootNote({ children, bold, style, responsiveStyle, ...rest }) {
   const theme = useTheme();
   let boldStyle = bold ? { fontWeight: 'bold' } : {};
   return (
-    <Text
-      style={[{ ...theme.textStyles.footnote, ...boldStyle }, style]}
-      {...rest}
+    <Responsive
+      style={{
+        ...responsiveStyle,
+      }}
     >
-      {children}
-    </Text>
+      <Text
+        style={[{ ...theme.textStyles.footnote, ...boldStyle }, style]}
+        {...rest}
+      >
+        {children}
+      </Text>
+    </Responsive>
   );
 }
 
