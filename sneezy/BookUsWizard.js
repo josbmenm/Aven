@@ -418,7 +418,7 @@ function ProgressBar({ step, ...rest }) {
           style={{
             width: `${(step / TOTAL_STEPS) * 100}%`, // use step here
             height: 4,
-            backgroundColor: theme.colors.primary,
+            backgroundColor: theme.colors.monsterra,
             borderRadius: 2,
             position: 'absolute',
             top: 0,

@@ -14,7 +14,7 @@ function Tag({ title, style, ...rest }) {
         paddingVertical: 4,
         paddingHorizontal: 16,
         borderRadius: 4,
-        backgroundColor: theme.colors.primary70,
+        backgroundColor: theme.colors.monsterras[0],
         color: theme.colors.white,
         minWidth: 120,
         textAlign: 'center',

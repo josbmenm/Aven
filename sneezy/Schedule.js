@@ -80,7 +80,7 @@ function DayScheduleItem({ item, first, last, style }) {
         <View
           style={{
             width: 3,
-            backgroundColor: theme.colors.primary,
+            backgroundColor: theme.colors.monsterra,
             position: 'absolute',
             top: first ? '50%' : 0,
             bottom: last ? '50%' : 0,
@@ -97,7 +97,7 @@ function DayScheduleItem({ item, first, last, style }) {
             width: 20,
             height: 20,
             position: 'absolute',
-            backgroundColor: theme.colors.primary,
+            backgroundColor: theme.colors.monsterra,
             borderWidth: 3,
             borderColor: theme.colors.white,
             alignItems: 'center',

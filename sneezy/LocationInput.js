@@ -83,7 +83,7 @@ export function LocationInput({
                     bold
                     style={{
                       fontFamily: theme.fontFamily.heading,
-                      color: theme.colors.primary,
+                      color: theme.colors.monsterra,
                       marginBottom: 0,
                       lineHeight: 28,
                     }}

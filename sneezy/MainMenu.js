@@ -15,7 +15,7 @@ import {
 
 function SidebarMenuIcon({ color, ...rest }) {
   const theme = useTheme();
-  const fill = color || theme.colors.primary40;
+  const fill = color || theme.colors.monsterras[1];
   return (
     <svg width="28" height="26" viewBox="0 0 28 26" {...rest}>
       <path
@@ -50,7 +50,7 @@ function MenuLink({
             borderWidth: 0,
             borderColor: 'transparent',
             borderBottomWidth: 3,
-            borderBottomColor: active ? theme.colors.primary : 'transparent',
+            borderBottomColor: active ? theme.colors.monsterra : 'transparent',
             ...buttonStyle,
           }}
           titleStyle={{
@@ -288,7 +288,7 @@ export function MobileMenu() {
             padding: 6,
           }}
         >
-          <SidebarMenuIcon color={sidebar ? theme.colors.primary : null} />
+          <SidebarMenuIcon color={sidebar ? theme.colors.monsterra : null} />
         </TouchableOpacity>
       </HideDesktopView>
     </React.Fragment>

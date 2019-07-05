@@ -25,17 +25,12 @@ function Link({
             paddingHorizontal: 8,
             paddingVertical: 4,
             borderColor: 'transparent',
-            borderBottomWidth: 3,
-            borderColor: noActive
-              ? 'transparent'
-              : active
-              ? theme.colors.primary
-              : 'transparent',
+            borderBottomWidth: 0,
             ...buttonStyle,
           }}
           type="outline"
           titleStyle={{
-            color: theme.colors.primary,
+            color: theme.colors.monsterra,
             fontSize: size === 'Small' ? 16 : 24,
             ...titleStyle,
           }}

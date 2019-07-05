@@ -130,7 +130,7 @@ function BlendContent({ displayName, blend, recipe }) {
                         >
                           <AirtableImage
                             image={benefit.Icon}
-                            tintColor={theme.colors.primary80}
+                            tintColor={theme.colors.monsterras[0]}
                             resizeMode="contain"
                             style={{ width: 60, height: 60 }}
                           />
@@ -173,7 +173,7 @@ function BlendContent({ displayName, blend, recipe }) {
                             borderRightColor:
                               index + 1 === dietary.length
                                 ? 'transparent'
-                                : theme.colors.primary,
+                                : theme.colors.monsterra,
                             borderRightWidth: 1,
                             justifyContent: 'center',
                             marginRight: 8,
@@ -210,7 +210,7 @@ function BlendContent({ displayName, blend, recipe }) {
                             height: 32,
                             marginBottom: 8,
                           }}
-                          tintColor={theme.colors.primary}
+                          tintColor={theme.colors.monsterra}
                         />
                         <FootNote
                           bold

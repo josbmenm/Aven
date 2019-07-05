@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet } from 'react-native';
 import View from '../views/View';
+import Text from '../views/Text';
 import Container from './Container';
 import { useTheme } from '../dashboard/Theme';
 import OnoBlendsLogo from './OnoBlendsLogo';
@@ -77,19 +78,16 @@ export default function PageFooter() {
               >
                 <View style={{ flex: 1 }}>
                   <Link
-                    noActive
                     titleStyle={{ textAlign: 'left' }}
                     title="menu"
                     routeName="Menu"
                   />
                   <Link
-                    noActive
                     titleStyle={{ textAlign: 'left' }}
                     title="our story"
                     routeName="OurStory"
                   />
                   <Link
-                    noActive
                     titleStyle={{ textAlign: 'left' }}
                     title="book with us"
                     routeName="BookUs"
@@ -97,25 +95,47 @@ export default function PageFooter() {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Link
-                    noActive
                     titleStyle={{ textAlign: 'left' }}
                     title="press kit"
                     url="https://google.com"
                   />
+                  <Text>
+                    <Link
+                      titleStyle={{ textAlign: 'left' }}
+                      title="terms"
+                      routeName="Terms"
+                      buttonStyle={{
+                        paddingHorizontal: 0,
+                        paddingLeft: 8,
+                      }}
+                    />
+                    <Text
+                      style={{
+                        fontFamily: theme.fontFamily.button,
+                        fontSize: 16,
+                        lineHeight: 24,
+                        color: theme.colors.monsterra
+                      }}
+                    >
+                      &
+                    </Text>
+                    <Link
+                      titleStyle={{ textAlign: 'left' }}
+                      title="privacy"
+                      routeName="Privacy"
+                      buttonStyle={{
+                        paddingHorizontal: 0,
+                        paddingRight: 8,
+                      }}
+                    />
+                  </Text>
+
                   <Link
-                    noActive
-                    titleStyle={{ textAlign: 'left' }}
-                    title="terms & privacy"
-                    routeName="Terms"
-                  />
-                  <Link
-                    noActive
                     titleStyle={{ textAlign: 'left' }}
                     title="contact us"
                     url="mailto:aloha@onofood.co"
                   />
                   <Link
-                    noActive
                     titleStyle={{ textAlign: 'left' }}
                     title="subscribe to updates"
                     routeName="Subscribe"
@@ -143,7 +163,9 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/twitter.png')} />
-                    <FootNote style={{ marginBottom: 0, lineHeight: 16}}>@onofodco</FootNote>
+                    <FootNote style={{ marginBottom: 0, lineHeight: 16 }}>
+                      @onofodco
+                    </FootNote>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -160,7 +182,9 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/facebook.png')} />
-                    <FootNote style={{ marginBottom: 0, lineHeight: 16}}>@onofodco</FootNote>
+                    <FootNote style={{ marginBottom: 0, lineHeight: 16 }}>
+                      @onofodco
+                    </FootNote>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -177,7 +201,9 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/instagram.png')} />
-                    <FootNote style={{ marginBottom: 0, lineHeight: 16}}>@onofodco</FootNote>
+                    <FootNote style={{ marginBottom: 0, lineHeight: 16 }}>
+                      @onofodco
+                    </FootNote>
                   </View>
                 </FunctionalLink>
               </ColumnToRowChild>

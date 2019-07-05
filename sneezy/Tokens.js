@@ -36,7 +36,7 @@ export function ListItem({ children }) {
           width: 6,
           height: 6,
           borderRadius: 4,
-          backgroundColor: theme.colors.primary,
+          backgroundColor: theme.colors.monsterra,
           left: -20,
           top: 12,
         }}

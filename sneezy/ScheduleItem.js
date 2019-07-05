@@ -12,7 +12,7 @@ function ScheduleItem({ item, style, ...rest }) {
         // flex: 1,
         borderRadius: 8,
         borderWidth: 3,
-        borderColor: item.active ? theme.colors.primary : 'transparent',
+        borderColor: item.active ? theme.colors.monsterra : 'transparent',
         padding: 20,
         ...theme.shadows.medium,
       }, style]}
