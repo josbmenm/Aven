@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import FootNote from './FootNote';
 import ScheduleItem from './ScheduleItem';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 import { Responsive } from '../dashboard/Responsive';
 
 function useSchedule() {
@@ -26,7 +26,7 @@ function useSchedule() {
     }, 2000);
   }, []);
 
-  return React.useMemo(() => schedule, [schedule])
+  return React.useMemo(() => schedule, [schedule]);
 }
 
 function Schedule({ withFloatingLabel = false, ...rest }) {
@@ -34,7 +34,7 @@ function Schedule({ withFloatingLabel = false, ...rest }) {
 
   return (
     <View {...rest}>
-      {withFloatingLabel ? (
+      {schedule && withFloatingLabel ? (
         <FootNote
           bold
           className="hide-mobile"
@@ -65,12 +65,15 @@ function DayScheduleItem({ item, first, last, style }) {
   const theme = useTheme();
   return (
     <View
-      style={[{
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingBottom: 20,
-        position: 'relative',
-      }, style]}
+      style={[
+        {
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingBottom: 20,
+          position: 'relative',
+        },
+        style,
+      ]}
     >
       <Responsive
         style={{

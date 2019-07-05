@@ -6,7 +6,7 @@ import Title from './Title';
 import BodyText from './BodyText';
 import FootNote from './FootNote';
 import BlockForm from '../components/BlockForm';
-import FormInput from '../components/BlockFormInput';
+import Input from '../components/BlockFormInput';
 import Button from '../dashboard/Button';
 import { useTheme } from '../dashboard/Theme';
 import { LocationInput } from './LocationInput';
@@ -14,6 +14,8 @@ import { Responsive } from '../dashboard/Responsive';
 import FormRow from './FormRow';
 
 const TOTAL_STEPS = 6;
+
+const FormInput = ({ style, ...rest }) => <Input style={{ marginHorizontal: 8, ...style}} {...rest} />
 
 function stepsReducer(state, action) {
   let newStep;

@@ -114,7 +114,7 @@ export default function PageFooter() {
                         fontFamily: theme.fontFamily.button,
                         fontSize: 16,
                         lineHeight: 24,
-                        color: theme.colors.monsterra
+                        color: theme.colors.monsterra,
                       }}
                     >
                       &
@@ -152,7 +152,7 @@ export default function PageFooter() {
                 <FunctionalLink
                   url="https://www.twitter.com/onofoodco/"
                   overrideATagCSS={{
-                    height: 42,
+                    paddingVertical: 4,
                     display: 'flex',
                     alignItems: 'center',
                   }}
@@ -160,6 +160,9 @@ export default function PageFooter() {
                   <View
                     style={{
                       flexDirection: 'row',
+                      borderWidth: 3,
+                      borderColor: 'transparent',
+                      paddingVertical: 4,
                     }}
                   >
                     <SocialIcon icon={require('./public/img/twitter.png')} />
@@ -171,7 +174,6 @@ export default function PageFooter() {
                 <FunctionalLink
                   url="https://www.facebook.com/onofoodco/"
                   overrideATagCSS={{
-                    height: 42,
                     display: 'flex',
                     alignItems: 'center',
                   }}
@@ -179,6 +181,9 @@ export default function PageFooter() {
                   <View
                     style={{
                       flexDirection: 'row',
+                      borderWidth: 3,
+                      borderColor: 'transparent',
+                      paddingVertical: 4,
                     }}
                   >
                     <SocialIcon icon={require('./public/img/facebook.png')} />
@@ -190,7 +195,6 @@ export default function PageFooter() {
                 <FunctionalLink
                   url="https://www.instagram.com/onofoodco/"
                   overrideATagCSS={{
-                    height: 42,
                     display: 'flex',
                     alignItems: 'center',
                   }}
@@ -198,6 +202,9 @@ export default function PageFooter() {
                   <View
                     style={{
                       flexDirection: 'row',
+                      borderWidth: 3,
+                      borderColor: 'transparent',
+                      paddingVertical: 4,
                     }}
                   >
                     <SocialIcon icon={require('./public/img/instagram.png')} />

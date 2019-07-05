@@ -4,7 +4,7 @@ import { monsterra60 } from './Styles';
 import { useTheme } from '../dashboard/Theme';
 
 function BlockFormInputWithRef(
-  { value, onValue, label, mode, onSubmit, onFocus, onBlur, upperCase },
+  { value, onValue, label, mode, onSubmit, onFocus, onBlur, upperCase, style },
   ref,
   ...rest
 ) {
@@ -71,6 +71,7 @@ function BlockFormInputWithRef(
           paddingTop: 20,
           paddingBottom: 8,
           paddingHorizontal: 20,
+          ...style
         }}
         {...rest}
       >
