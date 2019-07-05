@@ -44,7 +44,7 @@ function Schedule({ withFloatingLabel = false, ...rest }) {
             left: -120,
           }}
         >
-          We're Here!
+          we're here!
         </FootNote>
       ) : null}
       {schedule &&

@@ -3,11 +3,12 @@ import Text from '../views/Text';
 import { useTheme } from '../dashboard/Theme';
 import { Responsive } from '../dashboard/Responsive';
 
-function BodyText({ children, bold, style, responsiveStyle, ...rest }) {
+function BodyText({ children, bold, style, responsiveStyle, breakpoint, ...rest }) {
   const theme = useTheme();
   let boldStyle = bold ? { fontWeight: 'bold' } : {};
   return (
     <Responsive
+      breakpoint={breakpoint}
       style={{
         fontSize: [15, 18],
         lineHeight: [24, 28],

@@ -29,7 +29,7 @@ function WeekSchedule() {
       setEndGradient(false);
     }
   }
-  console.log("COMPONENT RENDERED")
+  console.log('COMPONENT RENDERED');
   return (
     <View style={{ paddingVertical: 80 }}>
       <Container
@@ -58,7 +58,7 @@ function WeekSchedule() {
                 style={{
                   position: 'absolute',
                   top: 0,
-                  left: 0,
+                  left: -4,
                   bottom: 0,
                   width: 88,
                   height: '100%',
@@ -76,7 +76,7 @@ function WeekSchedule() {
                   right: 0,
                   bottom: 0,
                   width: 88,
-                  height: '100%'
+                  height: '100%',
                 }}
                 source={require('./public/img/white-gradient.png')}
                 resizeMode="repeat"
@@ -99,26 +99,34 @@ function DaySchedule({ day }) {
           width: 308,
           padding: 20,
           marginHorizontal: 10,
-          borderRadius: theme.radii[2],
+          borderRadius: theme.radii[3],
           overflow: 'hidden',
           position: 'relative',
         },
         today ? { backgroundColor: theme.colors.lightGrey } : {},
       ]}
     >
-      <Title style={{ marginTop: 28 }}>{label}</Title>
       {today ? (
         <FootNote
           bold
           style={{
             position: 'absolute',
-            top: 20,
+            top: 28,
             left: 20,
           }}
         >
           TODAY
         </FootNote>
       ) : null}
+      <Title
+        style={{ marginTop: 36 }}
+        responsiveStyle={{
+          lineHeight: [32, 36],
+          marginBottom: [20, 16],
+        }}
+      >
+        {label}
+      </Title>
       {schedule.map(item => (
         <ScheduleItem style={{ marginBottom: 20 }} key={item.id} item={item} />
       ))}

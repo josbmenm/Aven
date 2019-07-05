@@ -55,8 +55,8 @@ const textStyles = {
   },
   footnote: {
     color: colors.monsterra,
-    fontSize: 12,
-    lineHeight: 20,
+    fontSize: 13,
+    lineHeight: 28,
     fontFamily: fonts.normal,
     letterSpacing: 0.3
   },

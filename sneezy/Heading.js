@@ -3,10 +3,11 @@ import Text from '../views/Text';
 import { useTheme } from '../dashboard/Theme';
 import { Responsive } from '../dashboard/Responsive';
 
-function Heading({ children, style, responsiveStyle, ...rest }) {
+function Heading({ children, style, responsiveStyle, breakpoint, ...rest }) {
   const theme = useTheme();
   return (
     <Responsive
+      breakpoint={breakpoint}
       style={{
         fontSize: [24, 38],
         lineHeight: [32, 48],

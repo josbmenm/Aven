@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
-import { StyledButton } from '../sneezy/Tokens';
+import UIButton from '../dashboard/UIButton';
 
 const Button = ({
   onPress,
@@ -18,9 +18,9 @@ const Button = ({
       onPress={onPress}
       onLongPress={onLongPress}
       disabled={disabled}
-      style={[{ paddingHorizontal: 8 }, style]}
+      style={style}
     >
-      <StyledButton
+      <UIButton
         title={title}
         buttonStyle={buttonStyle}
         titleStyle={titleStyle}

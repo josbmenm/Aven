@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Animated, Easing } from 'react-native';
-// import { TextInputMask } from 'react-native-masked-text';
-import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
+import { monsterra60 } from './Styles';
 import { useTheme } from '../dashboard/Theme';
-import { Responsive } from '../dashboard/Responsive';
-// import Animated, { Easing } from 'react-native-reanimated';
 
 function BlockFormInputWithRef(
   { value, onValue, label, mode, onSubmit, onFocus, onBlur, upperCase },
@@ -65,19 +62,13 @@ function BlockFormInputWithRef(
     multiline = true;
   }
   return (
-    <Responsive
-      style={{
-        marginBottom: [16, 0],
-      }}
-    >
       <View
         style={{
           flex: 1,
-          marginHorizontal: 8,
           borderRadius: 4,
           borderColor: monsterra60,
           borderWidth: 3,
-          paddingTop: 24,
+          paddingTop: 20,
           paddingBottom: 8,
           paddingHorizontal: 20,
         }}
@@ -133,7 +124,7 @@ function BlockFormInputWithRef(
           }}
         />
       </View>
-    </Responsive>
+
   );
 }
 

@@ -1,14 +1,11 @@
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
+import View from '../views/View';
 import GenericPage from './GenericPage';
 import PageFooter from './PageFooter';
 import { useTheme } from '../dashboard/Theme';
 import { aspectRatio43 } from '../components/Styles';
-import {
-  NoFlexToFlex,
-  ColumnToRow,
-  ColumnToRowChild,
-} from './Responsive';
+import { NoFlexToFlex, ColumnToRow, ColumnToRowChild } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import Container from './Container';
 import Title from './Title';
@@ -17,6 +14,8 @@ import BodyText from './BodyText';
 import Schedule from './Schedule';
 import RequestCityForm from './RequestCityForm';
 import WeekSchedule from './WeekSchedule';
+
+const breakpoint = 1024;
 
 function SchedulePage() {
   const theme = useTheme();
@@ -140,19 +139,23 @@ function SchedulePage() {
       <WeekSchedule />
       <View style={{ paddingVertical: 80 }}>
         <Container>
-          <ColumnToRow>
-            <ColumnToRowChild className="hide-mobile" style={{ flex: 2 }}>
-              <Image
-                style={{
-                  marginHorizontal: 40,
-                  maxWidth: 333,
-                  ...aspectRatio43,
-                }}
-                source={require('./public/img/map.jpg')}
-              />
-            </ColumnToRowChild>
+          <ColumnToRow breakpoint={breakpoint}>
+            <Responsive
+              breakpoint={breakpoint}
+              style={{ display: ['none', 'flex'] }}
+            >
+              <ColumnToRowChild style={{ flex: 2, paddingRight: 60 }}>
+                <Image
+                  style={{
+                    ...aspectRatio43,
+                  }}
+                  source={require('./public/img/map.jpg')}
+                />
+              </ColumnToRowChild>
+            </Responsive>
             <ColumnToRowChild style={{ flex: 3, justifyContent: 'center' }}>
               <Heading
+                breakpoint={breakpoint}
                 responsiveStyle={{
                   textAlign: ['center', 'left'],
                   alignSelf: ['center', 'flex-start'],
@@ -161,16 +164,18 @@ function SchedulePage() {
                 Don’t see us in your city?
               </Heading>
               <BodyText
-                style={{ marginBottom: 20, maxWidth: 412 }}
+                style={{ maxWidth: 412 }}
+                breakpoint={breakpoint}
                 responsiveStyle={{
                   textAlign: ['center', 'left'],
                   alignSelf: ['center', 'flex-start'],
+                  marginBottom: [60, 40],
                 }}
               >
                 Ono Blends is always looking to grow. Request your city and
                 we’ll try to make it happen.
               </BodyText>
-              <RequestCityForm />
+              <RequestCityForm breakpoint={breakpoint} />
             </ColumnToRowChild>
           </ColumnToRow>
         </Container>

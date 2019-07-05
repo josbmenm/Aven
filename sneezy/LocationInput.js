@@ -4,6 +4,7 @@ import { useTheme } from '../dashboard/Theme';
 import BodyText from './BodyText';
 import FootNote from './FootNote';
 import FormInput from '../components/BlockFormInput';
+import { Responsive } from '../dashboard/Responsive';
 
 //
 export function LocationInput({
@@ -11,8 +12,10 @@ export function LocationInput({
   selectedResult,
   inputValue = '',
   style,
+  responsiveStyle,
+  breakpoint,
+  ...rest
 }) {
-  console.log('TCL: LocationInput -> selectedResult', selectedResult);
   const theme = useTheme();
   const [inputText, setInputText] = React.useState(inputValue);
   const [results, setResults] = React.useState(null);
@@ -42,63 +45,69 @@ export function LocationInput({
     ref.current.slow = setTimeout(queryResults, 300);
   }
   return (
-    <View style={style}>
-      <FormInput
-        onValue={handleTextInput}
-        value={inputText}
-        label="enter your city"
-      />
-      {results && inputText !== '' ? (
-        <View
-          style={{
-            margin: theme.space[2],
-            marginTop: 0,
-            borderBottomLeftRadius: theme.space[2],
-            borderBottomRightRadius: theme.space[2],
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-            overflow: 'hidden',
-            ...theme.shadows.medium,
-          }}
-        >
-          {results.map(result => {
-            const isSelected =
-              !!selectedResult && selectedResult.id === result.id;
-            return (
-              <TouchableOpacity
-                key={result.id}
-                onPress={() => {
-                  onSelectedResult(result);
-                  setResults(null);
-                  setInputText(result.place_name);
-                }}
-              >
-                <View
-                  style={{
-                    paddingVertical: theme.space[2],
-                    paddingHorizontal: theme.space[4],
+    <Responsive
+      breakpoint={breakpoint}
+      style={{
+        marginBottom: [16, 0],
+        ...responsiveStyle,
+      }}
+    >
+      <View style={style}>
+        <FormInput
+          onValue={handleTextInput}
+          value={inputText}
+          label="enter your city"
+        />
+        {results && inputText !== '' ? (
+          <View
+            style={{
+              margin: theme.space[2],
+              marginTop: 0,
+              borderBottomLeftRadius: theme.space[2],
+              borderBottomRightRadius: theme.space[2],
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+              overflow: 'hidden',
+              ...theme.shadows.medium,
+            }}
+          >
+            {results.map(result => {
+              return (
+                <TouchableOpacity
+                  key={result.id}
+                  onPress={() => {
+                    onSelectedResult(result);
+                    setResults(null);
+                    setInputText(result.place_name);
                   }}
                 >
-                  <BodyText
-                    bold
+                  <View
                     style={{
-                      fontFamily: theme.fontFamily.heading,
-                      color: theme.colors.monsterra,
-                      marginBottom: 0,
-                      lineHeight: 28,
+                      paddingVertical: theme.space[2],
+                      paddingHorizontal: theme.space[4],
                     }}
                   >
-                    {result.text}
-                  </BodyText>
-                  <FootNote style={{ marginBottom: 0, lineHeight: 20 }}>
-                    {result.context.map(c => c.text).join(', ')}
-                  </FootNote>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      ) : null}
-    </View>
+                    <BodyText
+                      bold
+                      style={{
+                        fontFamily: theme.fontFamily.heading,
+                        color: theme.colors.monsterra,
+                        marginBottom: 0,
+                        lineHeight: 28,
+                      }}
+                    >
+                      {result.text}
+                    </BodyText>
+                    <FootNote style={{ marginBottom: 0, lineHeight: 20 }}>
+                      {result.context.map(c => c.text).join(', ')}
+                    </FootNote>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ) : null}
+      </View>
+    </Responsive>
   );
 }
