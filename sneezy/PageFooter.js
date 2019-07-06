@@ -111,7 +111,7 @@ export default function PageFooter() {
                     />
                     <Text
                       style={{
-                        fontFamily: theme.fontFamily.button,
+                        fontFamily: theme.fonts.bold,
                         fontSize: 16,
                         lineHeight: 24,
                         color: theme.colors.monsterra,

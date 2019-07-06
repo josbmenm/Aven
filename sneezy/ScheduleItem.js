@@ -24,7 +24,7 @@ function ScheduleItem({ item, style, ...rest }) {
       <FootNote
         bold
         style={{
-          fontFamily: theme.fontFamily.title,
+          fontFamily: theme.fonts.bold,
           textTransform: 'uppercase',
           margin: 0,
         }}

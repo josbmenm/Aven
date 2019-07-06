@@ -376,9 +376,11 @@ function SubmitButton({ onPress, disabled = false, loading }) {
       ) : (
         <Text
           style={{
-            fontFamily: theme.fontFamily.button,
+            fontFamily: theme.fonts.bold,
             textAlign: 'center',
-            lineHeight: theme.fontSizes[2] * 1.4,
+            fontSize: 24,
+            letterSpacing: 0.3,
+            lineHeight: 28,
             color: theme.colors.white,
           }}
         >

@@ -215,7 +215,7 @@ function BlendContent({ displayName, blend, recipe }) {
                         <FootNote
                           bold
                           style={{
-                            fontSize: theme.fontSizes[0],
+                            fontSize: 12,
                             textTransform: 'uppercase',
                           }}
                         >

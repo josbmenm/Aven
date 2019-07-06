@@ -61,10 +61,10 @@ export function LocationInput({
         {results && inputText !== '' ? (
           <View
             style={{
-              margin: theme.space[2],
+              margin: 8,
               marginTop: 0,
-              borderBottomLeftRadius: theme.space[2],
-              borderBottomRightRadius: theme.space[2],
+              borderBottomLeftRadius: 8,
+              borderBottomRightRadius: 8,
               borderWidth: 1,
               borderColor: theme.colors.border,
               overflow: 'hidden',
@@ -83,14 +83,14 @@ export function LocationInput({
                 >
                   <View
                     style={{
-                      paddingVertical: theme.space[2],
-                      paddingHorizontal: theme.space[4],
+                      paddingVertical: 8,
+                      paddingHorizontal: 16,
                     }}
                   >
                     <BodyText
                       bold
                       style={{
-                        fontFamily: theme.fontFamily.heading,
+                        fontFamily: theme.fonts.bold,
                         color: theme.colors.monsterra,
                         marginBottom: 0,
                         lineHeight: 28,
