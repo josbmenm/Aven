@@ -32,10 +32,10 @@ const colors = {
   border: 'rgba(0,0,0,0.1)',
 };
 
-const fontFamily = {
-  body: 'system-ui, sans-serif',
-  heading: 'Georgia, serif',
-  monospace: 'Menlo, monospace',
+const fonts = {
+  normal: 'Maax',
+  bold: 'Maax-Bold',
+  serif: 'Lora',
 };
 
 const textSpacing = {
@@ -53,14 +53,14 @@ const textStyles = {
     fontSize: 38,
     fontSizes,
     lineHeight: 48,
-    fontFamily: fontFamily.heading,
+    fontFamily: fonts.bold,
   },
   body: {
     ...textDefaults,
     ...textSpacing,
     fontSize: 18,
     lineHeight: 28,
-    fontFamily: fontFamily.body,
+    fontFamily: fonts.serif,
   },
 };
 
@@ -91,7 +91,7 @@ export const theme = {
   fontSizes: [12, 18, 20, 28, 38],
   breakpoints: [768],
   colors,
-  fontFamily,
+  fonts,
   textStyles,
   shadows,
   layouts: {

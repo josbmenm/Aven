@@ -72,7 +72,7 @@ function UIButton({
           <Text
             style={[
               {
-                fontFamily: theme.fontFamily.button,
+                fontFamily: theme.fonts.bold,
                 fontSize: 20,
                 lineHeight: 24,
                 textAlign: 'center',
