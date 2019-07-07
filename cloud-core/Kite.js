@@ -62,7 +62,6 @@ async function streamLoad(stream) {
     }
     loadListener = {
       next: value => {
-        console.log('loaded value!', value);
         resolve(value);
         wrapUp();
       },
@@ -87,7 +86,7 @@ function createStreamValue(memoryStream) {
 }
 
 // A utility to extract the current value from a stream with memory, aka a stream that updates with a value right away upon subscription
-function streamGet(stream) {
+export function streamGet(stream) {
   let val = undefined;
   const listener = {
     next: v => {
@@ -100,11 +99,13 @@ function streamGet(stream) {
   return val;
 }
 
-export function createStreamDoc(stream) {
+export function createStreamDoc(stream, reference) {
   const value = createStreamValue(stream);
   return {
     type: 'StreamDoc',
     value,
+    get: () => ({}),
+    getReference: () => reference,
     getId: () => {
       throw new Error('yes');
     },
@@ -341,7 +342,6 @@ export function createDoc({
           const upStream = source.getDocStream(domain, name, auth);
           const internalListener = {
             next: v => {
-              console.log('yess', name, v);
               setState({
                 lastFetchTime: Date.now(),
                 id: v.id,
@@ -405,22 +405,34 @@ export function createDoc({
     return docBlocks[id];
   }
 
-  const getDeepBlockOfValue = bindCommitDeepBlock(getBlockOfValue);
+  function commitBlock(value) {
+    const block = getBlockOfValue(value);
+    return { id: block.id };
+  }
+
+  const commitDeepBlock = bindCommitDeepBlock(commitBlock);
 
   async function publishValue(value) {
-    const block = getDeepBlockOfValue(value);
+    const committed = await commitDeepBlock(value);
+    const block = getBlockOfValue(committed.value);
     await block.put();
     return block;
   }
 
   async function putValue(value) {
-    const block = getDeepBlockOfValue(value);
+    const committed = await commitDeepBlock(value);
+    const block = getBlockOfValue(committed.value);
     await putBlock(block);
   }
 
   function isBlockPublished(block) {
     const blockState = block.get();
     return blockState.lastFetchTime != null || blockState.lastPutTime != null;
+  }
+
+  function isBlockValueLoaded(block) {
+    const blockState = block.get();
+    return blockState.value !== undefined;
   }
 
   async function putBlock(block) {
@@ -434,7 +446,7 @@ export function createDoc({
       });
 
       let postData = { id: null };
-      if (block && block.value.get()) {
+      if (block && block.value.get() !== undefined) {
         postData = { value: block.value.get() };
       } else if (block) {
         postData = { id: await block.getId() };
@@ -442,6 +454,7 @@ export function createDoc({
 
       try {
         const parentName = getParentName();
+
         const postResp = await source.dispatch({
           type: 'PostDoc',
           domain,
@@ -449,11 +462,12 @@ export function createDoc({
           name: parentName,
           ...postData,
         });
+
         const resultingChildName =
           parentName == null
             ? postResp.name
             : postResp.name.slice(parentName.length + 1);
-        onDidRename(resultingChildName);
+        await onDidRename(resultingChildName);
         setState({
           lastPutTime: Date.now(),
           isPosted: true,
@@ -469,10 +483,15 @@ export function createDoc({
       return;
     }
 
-    if (isBlockPublished(block)) {
+    if (
+      block === null ||
+      isBlockPublished(block) ||
+      !isBlockValueLoaded(block)
+    ) {
+      const putId = block === null ? null : block.id;
       setState({
         puttingFromId: lastId,
-        id: block.id,
+        id: putId,
       });
       try {
         await source.dispatch({
@@ -480,7 +499,7 @@ export function createDoc({
           domain,
           auth,
           name: getName(),
-          id: block.id,
+          id: putId,
         });
         setState({
           lastPutTime: Date.now(),
@@ -603,9 +622,12 @@ export function createDoc({
     // .debug('value zoom'),
   );
 
+  const children = createDocSet({ domain, auth, source, nameStream });
+
   async function destroy() {
     setState({ id: null, isDestroyed: true });
     onDidDestroy();
+    children.shamefullyDestroyAll();
     await source.dispatch({
       type: 'DestroyDoc',
       domain,
@@ -613,8 +635,6 @@ export function createDoc({
       name: getName(),
     });
   }
-
-  const children = createDocSet({ domain, auth, source, nameStream });
 
   async function getId() {
     return docState.id;
@@ -662,6 +682,16 @@ export function createDocSet({ domain, auth, source, nameStream }) {
     // errmmmm. todo
   }
 
+  async function _shamefullyRename(childNameStream, newName) {
+    const prevName = streamGet(childNameStream);
+    childNameStream.shamefullySendNext(newName);
+    childNameStreams.set(newName, childNameStream);
+    await new Promise(resolve => {
+      setTimeout(resolve, 42); // what?!!! if this number is lower than ~10ms, the post test will fail sporadically!
+    });
+    childNameStreams.delete(prevName);
+  }
+
   function get(name) {
     if (typeof name !== 'string') {
       throw new Err(
@@ -690,8 +720,8 @@ export function createDocSet({ domain, auth, source, nameStream }) {
         domain,
         auth,
         nameStream: combineNameStreams(nameStream, childNameStream),
-        onDidRename: newLocalName => {
-          childNameStream.shamefullySendNext(newLocalName);
+        onDidRename: async newLocalName => {
+          await _shamefullyRename(childNameStream, newLocalName);
         },
         onDidDestroy: () => {
           _handleDestroy(newDoc);
@@ -717,8 +747,8 @@ export function createDocSet({ domain, auth, source, nameStream }) {
       auth,
       nameStream: combineNameStreams(nameStream, childNameStream),
       isUnposted: true,
-      onDidRename: newLocalName => {
-        childNameStream.shamefullySendNext(newLocalName);
+      onDidRename: async newLocalName => {
+        await _shamefullyRename(childNameStream, newLocalName);
       },
       onDidDestroy: () => {
         _handleDestroy(postedDoc);
@@ -727,6 +757,10 @@ export function createDocSet({ domain, auth, source, nameStream }) {
     childNameStreams.set(localName, childNameStream);
     childDocs.set(childNameStream, postedDoc);
     return postedDoc;
+  }
+
+  function shamefullyDestroyAll() {
+    childNameStreams.clear();
   }
 
   function setOverrideStream(name, stream) {
@@ -774,6 +808,7 @@ export function createDocSet({ domain, auth, source, nameStream }) {
     post,
     move,
     setOverrideStream,
+    shamefullyDestroyAll,
   };
 }
 
@@ -798,7 +833,12 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
     });
   }
 
-  // async function PutDoc() {}
+  async function PutDoc({ domain, name, id }) {
+    const doc = rootDocSet.get(name);
+    const block = id === null ? null : doc.getBlock(id);
+    await doc.putBlock(block);
+    return { id, name, domain };
+  }
   // async function PutBlock() {}
 
   async function PutDocValue({ name, value }) {
@@ -816,7 +856,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
   }
 
   async function PostDoc({ name, value, id }) {
-    const docSet = name == null ? rootDocSet : rootDocSet.post(name);
+    const docSet = name == null ? rootDocSet : rootDocSet.get(name).children;
     const newDoc = docSet.post();
     if (value !== undefined) {
       await newDoc.putValue(value);
@@ -871,8 +911,15 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
     const doc = rootDocSet.get(name);
     const context = doc.getReference();
     const value = await doc.value.load();
-    const id = doc.get().id;
-    return { context, value, id };
+    const docState = doc.get();
+    if (docState.isDestroyed) {
+      return {
+        value: undefined,
+        id: undefined,
+        context,
+      };
+    }
+    return { context, value, id: docState.id };
   }
 
   async function GetDocValues({ domain, names }) {
@@ -900,7 +947,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
     // isConnectedStream,
     dispatch: createDispatcher(
       {
-        // PutDoc,
+        PutDoc,
         // PutBlock,
         PutDocValue,
         PutTransactionValue,
@@ -937,6 +984,7 @@ export function createAuthenticatedClient({ domain, source, auth }) {
 
   return {
     docs,
+    get: docs.get,
     ...sourceFromRootDocSet(docs, domain, source, auth),
   };
 }

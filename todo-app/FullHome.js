@@ -2,9 +2,11 @@ import React from 'react';
 import { Text } from 'react-native';
 import cuid from 'cuid';
 
-import useCloud from '../cloud-core/useCloud';
-import useCloudReducer from '../cloud-core/useCloudReducer';
-import defineCloudReducer from '../cloud-core/defineCloudReducer';
+import {
+  useCloudReducer,
+  useCloud,
+  defineCloudReducer,
+} from '../cloud-core/KiteReact';
 
 import Screen from './components/Screen';
 import TextInput from './components/TextInput';
@@ -35,7 +37,7 @@ export const TaskReducer = defineCloudReducer(
 function useTaskActions() {
   const cloud = useCloud();
   const actionsDoc = cloud.get('TaskActions');
-  const dispatch = actionsDoc.putTransaction;
+  const dispatch = actionsDoc.putTransactionValue;
   return {
     addTask: params => dispatch({ type: 'AddTask', params }),
     removeTask: id => dispatch({ type: 'RemoveTask', id }),

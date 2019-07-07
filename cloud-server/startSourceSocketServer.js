@@ -92,23 +92,47 @@ export default function startSourceSocketServer(wss, source) {
                 error: sendError,
               };
               if (doc) {
-                try {
-                  subs[subscriptionId] = (await source.observeDoc(
-                    domain,
-                    doc,
-                    auth,
-                  ))
-                    .distinctUntilChanged()
-                    .subscribe(observer);
-                } catch (e) {
-                  observer.error(e);
+                if (source.observeDoc) {
+                  try {
+                    subs[subscriptionId] = (await source.observeDoc(
+                      domain,
+                      doc,
+                      auth,
+                    ))
+                      .distinctUntilChanged()
+                      .subscribe(observer);
+                  } catch (e) {
+                    observer.error(e);
+                  }
+                } else {
+                  const stream = source.getDocStream(domain, doc, auth);
+                  subs[subscriptionId] = {
+                    unsubscribe: () => {
+                      stream.removeListener(observer);
+                    },
+                  };
+                  stream.addListener(observer);
                 }
               } else if (docChildren !== undefined) {
-                subs[subscriptionId] = (await source.observeDocChildren(
-                  domain,
-                  docChildren,
-                  auth,
-                )).subscribe(observer);
+                if (source.observeDocChildren) {
+                  subs[subscriptionId] = (await source.observeDocChildren(
+                    domain,
+                    docChildren,
+                    auth,
+                  )).subscribe(observer);
+                } else {
+                  const stream = source.getDocChildrenEventStream(
+                    domain,
+                    docChildren,
+                    auth,
+                  );
+                  subs[subscriptionId] = {
+                    unsubscribe: () => {
+                      stream.removeListener(observer);
+                    },
+                  };
+                  stream.addListener(observer);
+                }
               } else {
                 throw new Error(
                   'Invalid subscription, should contain doc or docChildren',

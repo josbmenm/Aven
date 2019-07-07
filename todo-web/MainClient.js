@@ -1,18 +1,19 @@
 import App from './App';
 
 import startWebClient from '../aven-web/WebClient';
-import CloudContext from '../cloud-core/CloudContext';
-import createCloudClient from '../cloud-core/createCloudClient';
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
+import { createAuthenticatedClient } from '../cloud-core/Kite';
+import { CloudContext } from '../cloud-core/KiteReact';
 
 const networkSource = createBrowserNetworkSource({
   authority: null, // this means to inherit from the server
   useSSL: null,
 });
 
-const client = createCloudClient({
+const client = createAuthenticatedClient({
   source: networkSource,
   domain: 'todo.aven.io',
+  auth: null,
 });
 
 const context = new Map();

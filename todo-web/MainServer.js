@@ -1,6 +1,7 @@
-import CloudContext from '../cloud-core/CloudContext';
 import createEvalSource from '../cloud-core/createEvalSource';
 import createCloudClient from '../cloud-core/createCloudClient';
+import { createAuthenticatedClient } from '../cloud-core/Kite';
+import { CloudContext } from '../cloud-core/KiteReact';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import startFSStorageSource from '../cloud-fs/startFSStorageSource';
 import WebServer from '../aven-web/WebServer';
@@ -24,10 +25,10 @@ const runServer = async () => {
     dataDir: './db',
   });
 
-  const source = createEvalSource({
+  const source = createAuthenticatedClient({
     source: storageSource,
     domain: 'todo.aven.io',
-    functions: [TaskReducer],
+    auth: null,
   });
 
   const emailAgent =
@@ -63,52 +64,52 @@ const runServer = async () => {
     });
 
   // UNSAFE, TESTING ONLY! DELETE ME BEFORE PRODUCTION!
-  const rootAuthProvider = RootAuthProvider({
-    rootPasswordHash: await hashSecureString('pw'),
-  });
+  // const rootAuthProvider = RootAuthProvider({
+  //   rootPasswordHash: await hashSecureString('pw'),
+  // });
 
-  const protectedSource = createProtectedSource({
-    source,
-    providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider].filter(
-      provider => provider,
-    ),
-  });
+  // const protectedSource = createProtectedSource({
+  //   source,
+  //   providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider].filter(
+  //     provider => provider,
+  //   ),
+  // });
 
-  async function putPermission({ name, defaultRule }) {
-    await protectedSource.dispatch({
-      domain: 'todo.aven.io',
-      type: 'PutPermissionRules',
-      auth: {
-        accountId: 'root',
-        verificationInfo: {},
-        verificationResponse: { password: 'pw' },
-      },
-      defaultRule,
-      name,
-    });
-  }
+  // async function putPermission({ name, defaultRule }) {
+  //   await protectedSource.dispatch({
+  //     domain: 'todo.aven.io',
+  //     type: 'PutPermissionRules',
+  //     auth: {
+  //       accountId: 'root',
+  //       verificationInfo: {},
+  //       verificationResponse: { password: 'pw' },
+  //     },
+  //     defaultRule,
+  //     name,
+  //   });
+  // }
 
-  await putPermission({
-    defaultRule: { canRead: true, canWrite: true },
-    name: 'Todos',
-  });
-  await putPermission({
-    defaultRule: { canRead: true, canWrite: true },
-    name: 'Message',
-  });
-  await putPermission({
-    defaultRule: { canRead: true, canWrite: true },
-    name: 'TaskActions',
-  });
-  await putPermission({
-    defaultRule: { canRead: true },
-    name: 'TaskActions^TaskReducer',
-  });
+  // await putPermission({
+  //   defaultRule: { canRead: true, canWrite: true },
+  //   name: 'Todos',
+  // });
+  // await putPermission({
+  //   defaultRule: { canRead: true, canWrite: true },
+  //   name: 'Message',
+  // });
+  // await putPermission({
+  //   defaultRule: { canRead: true, canWrite: true },
+  //   name: 'TaskActions',
+  // });
+  // await putPermission({
+  //   defaultRule: { canRead: true },
+  //   name: 'TaskActions^TaskReducer',
+  // });
 
-  const client = createCloudClient({
-    source: protectedSource,
-    domain: 'todo.aven.io',
-  });
+  // const client = createCloudClient({
+  //   source: protectedSource,
+  //   domain: 'todo.aven.io',
+  // });
 
   // (await source.observeDoc(
   //   'todo.aven.io',
@@ -121,12 +122,12 @@ const runServer = async () => {
 
   const context = new Map();
 
-  context.set(CloudContext, client);
+  context.set(CloudContext, source);
 
   const webService = await WebServer({
     App,
     context,
-    source: protectedSource,
+    source,
     serverListenLocation: getEnv('PORT'),
     assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
   });
