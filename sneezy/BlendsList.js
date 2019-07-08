@@ -176,8 +176,8 @@ export function BlendsCarousel() {
     // console.log("TCL: handleScroll -> nativeEvent", nativeEvent)
     const { layoutMeasurement, contentOffset } = nativeEvent;
     const scrollValue = contentOffset.x + layoutMeasurement.width / 2;
-    console.log('TCL: handleScroll -> scrollValue', scrollValue);
-    setVisibleIndex(Math.round(scrollValue / 200));
+    // console.log('TCL: handleScroll -> scrollValue', scrollValue);
+    setVisibleIndex(Math.round(scrollValue / 200) - 1);
   }
 
   return menu ? (
@@ -215,8 +215,8 @@ export function BlendsCarousel() {
                   height: 8,
                   backgroundColor:
                     visibleIndex === i
-                      ? theme.colors.monsterra
-                      : theme.colors.monsterras[1],
+                      ? theme.colors.monsterras[2]
+                      : theme.colors.monsterras[4],
                   borderRadius: 5,
                   marginRight: i === menu.blends.length - 1 ? 0 : 12,
                 }}

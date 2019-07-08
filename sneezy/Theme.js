@@ -1,11 +1,16 @@
-
 const colors = {
   white: '#fff',
   lightGrey: '#F8F8F8',
   lighterGrey: '#EFEFEF',
   border: 'rgba(0,0,0,0.1)',
   monsterra: 'hsl(180, 100%, 16%)',
-  monsterras: ['hsla(180, 100%, 16%, 0.8)', 'hsla(180, 100%, 16%, 0.4)'],
+  monsterras: [
+    'hsla(180, 100%, 16%, 0.8)',
+    'hsla(180, 100%, 16%, 0.4)',
+    'hsla(180, 100%, 16%, 0.3)',
+    'hsla(180, 100%, 16%, 0.2)',
+    'hsla(180, 100%, 16%, 0.1)',
+  ],
 };
 
 const fonts = {

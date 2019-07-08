@@ -7,6 +7,7 @@ import CloudContext from '../cloud-core/CloudContext';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 
 import { HostContext } from '../components/AirtableImage';
+import { sendReceiptEmail } from './sendReceipt'
 
 const getEnv = c => process.env[c];
 
@@ -34,6 +35,8 @@ const startSkynetServer = async () => {
 
   const dispatch = async action => {
     switch (action.type) {
+      case 'ReceiptEmail':
+        return await sendReceiptEmail();
       default:
         return await networkSource.dispatch(action);
     }
