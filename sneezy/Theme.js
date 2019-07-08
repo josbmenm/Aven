@@ -26,31 +26,6 @@ const fonts = {
   serif: 'Lora',
 };
 
-const textStyles = {
-  heading: {
-    color: colors.monsterra,
-    fontFamily: fonts.bold,
-  },
-  title: {
-    color: colors.monsterra,
-    fontFamily: fonts.bold,
-  },
-  body: {
-    color: colors.monsterra,
-    fontSize: 18,
-    lineHeight: 32,
-    letterSpacing: 0.3,
-    fontFamily: fonts.serif,
-  },
-  footnote: {
-    color: colors.monsterra,
-    fontSize: 13,
-    lineHeight: 28,
-    fontFamily: fonts.normal,
-    letterSpacing: 0.3,
-  },
-};
-
 const shadows = {
   large: {
     shadowOffset: { width: 0, height: 4 },
@@ -77,6 +52,7 @@ export const theme = {
   fonts,
   fontSizes: [
     10,
+    11,
     12,
     13,
     14,
@@ -98,7 +74,6 @@ export const theme = {
   ],
   lineHeights: [12, 13, 15, 16, 19, 20, 22, 24, 26, 28, 32, 36, 48, 49, 40],
   letterSpacings: [0, 0, 25, 0.3, 0.5, 2, 2.5],
-  textStyles,
   shadows,
   radii: [0, 2, 4, 8],
   breakpoints: [768],

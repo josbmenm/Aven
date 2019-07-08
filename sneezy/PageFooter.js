@@ -6,7 +6,7 @@ import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import OnoFoodLogo from './OnoFoodLogo';
-import FootNote from './FootNote';
+import SmallText from '../dashboard/SmallText';
 import Link from './Link';
 import FunctionalLink from '../navigation-web/Link';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
@@ -53,10 +53,10 @@ export default function PageFooter() {
                   marginBottom: 20,
                 }}
               >
-                <FootNote style={{ marginTop: 0, marginBottom: 0 }}>
+                <SmallText>
                   © Copyright {new Date().getFullYear()} Ono Food Co. All Rights
                   Reserved
-                </FootNote>
+                </SmallText>
               </ColumnToRowChild>
             </ColumnToRow>
           </ColumnToRowChild>
@@ -166,9 +166,9 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/twitter.png')} />
-                    <FootNote style={{ marginBottom: 0, lineHeight: 16 }}>
+                    <SmallText size="large">
                       @onofodco
-                    </FootNote>
+                    </SmallText>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -187,9 +187,9 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/facebook.png')} />
-                    <FootNote style={{ marginBottom: 0, lineHeight: 16 }}>
+                    <SmallText size="large">
                       @onofodco
-                    </FootNote>
+                    </SmallText>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -208,11 +208,11 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/instagram.png')} />
-                    <FootNote style={{ marginBottom: 0, lineHeight: 16 }}>
+                    <SmallText size="large">
                       @onofodco
-                    </FootNote>
+                    </SmallText>
                   </View>
-                </FunctionalLink>
+              </FunctionalLink> 
               </ColumnToRowChild>
             </ColumnToRow>
           </ColumnToRowChild>

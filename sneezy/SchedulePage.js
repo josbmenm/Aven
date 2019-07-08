@@ -9,7 +9,7 @@ import { NoFlexToFlex, ColumnToRow, ColumnToRowChild } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import Container from '../dashboard/Container';
 import Title from '../dashboard/Title';
-import Heading from './Heading';
+import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import Schedule from './Schedule';
 import RequestCityForm from './RequestCityForm';

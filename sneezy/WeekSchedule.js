@@ -5,7 +5,7 @@ import Container from '../dashboard/Container';
 import Title from '../dashboard/Title';
 import { useTheme } from '../dashboard/Theme';
 import ScheduleItem from './ScheduleItem';
-import FootNote from './FootNote';
+import SmallText from '../dashboard/SmallText';
 
 function WeekSchedule() {
   const theme = useTheme();
@@ -107,7 +107,7 @@ function DaySchedule({ day }) {
       ]}
     >
       {today ? (
-        <FootNote
+        <SmallText
           bold
           style={{
             position: 'absolute',
@@ -116,7 +116,7 @@ function DaySchedule({ day }) {
           }}
         >
           TODAY
-        </FootNote>
+        </SmallText>
       ) : null}
       <Title
         style={{ marginTop: 36 }}

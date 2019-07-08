@@ -5,9 +5,9 @@ import GenericPage from './GenericPage';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import PageFooter from './PageFooter';
 import Container from '../dashboard/Container';
-import Heading from './Heading';
+import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
-import FootNote from './FootNote';
+import SmallText from '../dashboard/SmallText';
 import Tag from './Tag';
 import { useTheme } from '../dashboard/Theme';
 import { useMenuItemSlug, useCompanyConfig } from '../ono-cloud/OnoKitchen';
@@ -134,7 +134,7 @@ function BlendContent({ displayName, blend, recipe }) {
                             resizeMode="contain"
                             style={{ width: 60, height: 60 }}
                           />
-                          <FootNote
+                          <SmallText
                             bold
                             style={{
                               fontSize: 10,
@@ -143,7 +143,7 @@ function BlendContent({ displayName, blend, recipe }) {
                             }}
                           >
                             {benefit.Name}
-                          </FootNote>
+                          </SmallText>
                         </View>
                       ))}
                     </View>
@@ -181,9 +181,9 @@ function BlendContent({ displayName, blend, recipe }) {
                             height: 16,
                           }}
                         >
-                          <FootNote style={{ marginBottom: 0 }}>
+                          <SmallText style={{ marginBottom: 0 }}>
                             {dietaryMessage}
-                          </FootNote>
+                          </SmallText>
                         </View>
                       ))}
                     </View>
@@ -212,7 +212,7 @@ function BlendContent({ displayName, blend, recipe }) {
                           }}
                           tintColor={theme.colors.monsterra}
                         />
-                        <FootNote
+                        <SmallText
                           bold
                           style={{
                             fontSize: 12,
@@ -220,7 +220,7 @@ function BlendContent({ displayName, blend, recipe }) {
                           }}
                         >
                           {d.Name}
-                        </FootNote>
+                        </SmallText>
                       </View>
                     ))}
                   </View>
@@ -276,12 +276,12 @@ function BlendContent({ displayName, blend, recipe }) {
                     marginBottom: 8,
                   }}
                 />
-                <FootNote
+                <SmallText
                   bold
                   style={{ textAlign: 'center', textTransform: 'uppercase', letterSpacing: 2 }}
                 >
                   {ing.Name}
-                </FootNote>
+                </SmallText>
               </View>
             ))}
           </View>

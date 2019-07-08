@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '../dashboard/Theme';
 import BodyText from '../dashboard/BodyText';
-import FootNote from './FootNote';
+import SmallText from '../dashboard/SmallText';
 
 function ScheduleItem({ item, style, ...rest }) {
   const theme = useTheme();
@@ -21,16 +21,15 @@ function ScheduleItem({ item, style, ...rest }) {
       ]}
       {...rest}
     >
-      <FootNote
+      <SmallText
         bold
         style={{
           fontFamily: theme.fonts.bold,
           textTransform: 'uppercase',
-          margin: 0,
         }}
       >
         {item.time}
-      </FootNote>
+      </SmallText>
       <BodyText style={{ marginBottom: 0, fontSize: 16, lineHeight: 24 }}>
         {item.address}
       </BodyText>

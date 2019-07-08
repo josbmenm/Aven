@@ -1,13 +1,15 @@
-import React from 'react'
-import FootNote from './FootNote';
+import React from 'react';
+import SmallText from '../dashboard/SmallText';
 import { useTheme } from '../dashboard/Theme';
 
-function Tag({ title, style, ...rest }) {
+function Tag({ title, size, style, responsiveStyle, ...rest }) {
   const theme = useTheme();
   return (
-    <FootNote
+    <SmallText
       bold
-      style={[{
+      size={size}
+      responsiveStyle={responsiveStyle}
+      style={{
         fontSize: 10,
         lineHeight: 13,
         textTransform: 'uppercase',
@@ -19,11 +21,12 @@ function Tag({ title, style, ...rest }) {
         minWidth: 120,
         textAlign: 'center',
         letterSpacing: 2.5,
-      }, style]}
+        ...style,
+      }}
       {...rest}
     >
       {title}
-    </FootNote>
+    </SmallText>
   );
 }
 

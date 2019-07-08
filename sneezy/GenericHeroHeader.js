@@ -1,7 +1,7 @@
 import React from 'react';
 import View from '../views/View';
 import Container from '../dashboard/Container';
-import Heading from './Heading';
+import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import { Responsive } from '../dashboard/Responsive';
 

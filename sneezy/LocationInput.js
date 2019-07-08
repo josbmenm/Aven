@@ -2,7 +2,7 @@ import { View, TouchableOpacity, Text } from 'react-native';
 import React from 'react';
 import { useTheme } from '../dashboard/Theme';
 import BodyText from '../dashboard/BodyText';
-import FootNote from './FootNote';
+import SmallText from '../dashboard/SmallText';
 import FormInput from '../components/BlockFormInput';
 import { Responsive } from '../dashboard/Responsive';
 
@@ -98,9 +98,9 @@ export function LocationInput({
                     >
                       {result.text}
                     </BodyText>
-                    <FootNote style={{ marginBottom: 0, lineHeight: 20 }}>
+                    <SmallText>
                       {result.context.map(c => c.text).join(', ')}
-                    </FootNote>
+                    </SmallText>
                   </View>
                 </TouchableOpacity>
               );

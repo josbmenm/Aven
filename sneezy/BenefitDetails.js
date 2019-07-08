@@ -7,7 +7,7 @@ import { useTheme } from '../dashboard/Theme';
 import Title from '../dashboard/Title';
 import Container from '../dashboard/Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
-import FootNote from './FootNote';
+import SmallText from '../dashboard/SmallText';
 import BodyText from '../dashboard/BodyText';
 import { Responsive } from '../dashboard/Responsive';
 
@@ -157,7 +157,7 @@ export default function BenefitDetails({ benefit }) {
             }}
           >
             <ColumnToRowChild>
-              <FootNote
+              <SmallText
                 bold
                 responsiveStyle={{
                   alignSelf: ['center', 'flex-start'],
@@ -165,7 +165,7 @@ export default function BenefitDetails({ benefit }) {
                 }}
               >
                 {benefit.Name.toUpperCase()}
-              </FootNote>
+              </SmallText>
               <BenefitDescription name={benefit.Name} />
             </ColumnToRowChild>
           </Responsive>

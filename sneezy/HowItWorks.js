@@ -3,7 +3,7 @@ import { Image } from 'react-native';
 import View from '../views/View';
 import { useTheme } from '../dashboard/Theme';
 import Container from '../dashboard/Container';
-import Heading from './Heading';
+import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import FunctionalLink from '../navigation-web/Link';
 import { Responsive } from '../dashboard/Responsive';

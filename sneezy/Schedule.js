@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import FootNote from './FootNote';
+import SmallText from '../dashboard/SmallText';
 import ScheduleItem from './ScheduleItem';
 import { useTheme } from '../dashboard/Theme';
 import { Responsive } from '../dashboard/Responsive';
@@ -35,7 +35,7 @@ function Schedule({ withFloatingLabel = false, ...rest }) {
   return (
     <View {...rest}>
       {schedule && withFloatingLabel ? (
-        <FootNote
+        <SmallText
           bold
           className="hide-mobile"
           style={{
@@ -45,7 +45,7 @@ function Schedule({ withFloatingLabel = false, ...rest }) {
           }}
         >
           we're here!
-        </FootNote>
+        </SmallText>
       ) : null}
       {schedule &&
         schedule.map((item, index) => (

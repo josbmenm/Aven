@@ -2,7 +2,7 @@ import { View, TouchableOpacity, Text, TextInput } from 'react-native';
 import React from 'react';
 import GenericPage from './GenericPage';
 import { SubSection } from './Tokens';
-import Heading from './Heading';
+import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import Button from '../dashboard/Button';
 import useCloud from '../cloud-core/useCloud';

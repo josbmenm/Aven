@@ -4,7 +4,7 @@ import View from '../views/View';
 import Text from '../views/Text';
 import Title from '../dashboard/Title';
 import BodyText from '../dashboard/BodyText';
-import FootNote from './FootNote';
+import SmallText from '../dashboard/SmallText';
 import BlockForm from '../components/BlockForm';
 import Input from '../components/BlockFormInput';
 import Button from '../dashboard/Button';
@@ -430,9 +430,9 @@ function ProgressBar({ step, ...rest }) {
           }}
         />
       </View>
-      <FootNote bold>
+      <SmallText bold>
         {step} / {TOTAL_STEPS}
-      </FootNote>
+      </SmallText>
     </View>
   );
 }
