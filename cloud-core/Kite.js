@@ -23,6 +23,7 @@ CloudValue<V, E>:
   get: () => V,
   stream: {
     addListener: (s: CloudSubscriber<V, E>) => void,
+
     removeListener: (s: CloudSubscriber<V, E>) => void,
   }
   getIsAttached: () => bool,
@@ -112,7 +113,15 @@ export function createStreamDoc(stream, reference) {
   };
 }
 
-export function createBlock({ domain, auth, nameStream, source, id, value }) {
+export function createBlock({
+  domain,
+  auth,
+  onGetName,
+  nameChangeNotifiers,
+  source,
+  id,
+  value,
+}) {
   let observedBlockId = null;
 
   if (value !== undefined) {
@@ -164,14 +173,13 @@ export function createBlock({ domain, auth, nameStream, source, id, value }) {
       notifyStateChange = () => {
         notify.next(blockState);
       };
-      const subsName = streamGet(nameStream);
       if (blockState.value === undefined) {
         source
           .dispatch({
             type: 'GetBlock',
             domain,
             auth,
-            name: subsName,
+            name: onGetName(),
             id: blockId,
           })
           .then(resp => {
@@ -240,7 +248,7 @@ export function createBlock({ domain, auth, nameStream, source, id, value }) {
     if (blockState.value === undefined) {
       throw new Err('Cannot put empty block');
     }
-    const name = streamGet(nameStream);
+    const name = onGetName;
     const resp = await source.dispatch({
       type: 'PutBlock',
       domain,
@@ -281,13 +289,14 @@ export function createDoc({
   source,
   domain,
   auth,
-  nameStream,
+  onGetName,
+  nameChangeNotifiers,
   isUnposted,
   onDidRename,
   onDidDestroy,
 }) {
   function getName() {
-    return streamGet(nameStream);
+    return onGetName();
   }
 
   function getParentName() {
@@ -326,53 +335,49 @@ export function createDoc({
     notifyStateChange && notifyStateChange();
   }
 
-  const docStream = nameStream
-    .map(name => {
-      let doStop = null;
-      let performNotification = null;
-      const docProducer = {
-        start: listen => {
-          performNotification = () => {
-            listen.next(docState);
-          };
-          performNotification();
-          notifyStateChange = () => {
-            performNotification && performNotification();
-          };
-          const upStream = source.getDocStream(domain, name, auth);
-          const internalListener = {
-            next: v => {
-              setState({
-                lastFetchTime: Date.now(),
-                id: v.id,
-              });
-              if (v.value !== undefined) {
-                const block = getBlock(v.id);
-                block.shamefullySetFetchedValue(v.value);
-              }
-              listen.next(docState);
-            },
-            error: e => {
-              listen.error(e);
-            },
-            complete: () => {
-              listen.complete();
-            },
-          };
-          upStream.addListener(internalListener);
-          doStop = () => upStream.removeListener(internalListener);
+  let _subsToName = onGetName();
+  let doStop = null;
+  let performNotification = null;
+  const docProducer = {
+    start: listen => {
+      // todo.. add listener to nameChangeNotifiers, then unsubscribe and re-subscribe using new name
+      performNotification = () => {
+        listen.next(docState);
+      };
+      performNotification();
+      notifyStateChange = () => {
+        performNotification && performNotification();
+      };
+      const upStream = source.getDocStream(domain, _subsToName, auth);
+      const internalListener = {
+        next: v => {
+          setState({
+            lastFetchTime: Date.now(),
+            id: v.id,
+          });
+          if (v.value !== undefined) {
+            const block = getBlock(v.id);
+            block.shamefullySetFetchedValue(v.value);
+          }
+          listen.next(docState);
         },
-        stop: () => {
-          performNotification = null;
-          doStop && doStop();
-          doStop = null;
+        error: e => {
+          listen.error(e);
+        },
+        complete: () => {
+          listen.complete();
         },
       };
-      return xs.createWithMemory(docProducer);
-    })
-    .flatten()
-    .remember()
-    .debug(() => {});
+      upStream.addListener(internalListener);
+      doStop = () => upStream.removeListener(internalListener);
+    },
+    stop: () => {
+      performNotification = null;
+      doStop && doStop();
+      doStop = null;
+    },
+  };
+  const docStream = xs.createWithMemory(docProducer);
 
   const loadedDocStream = docStream.filter(docState => {
     return docState.lastFetchTime != null || docState.lastPutTime != null;
@@ -387,7 +392,8 @@ export function createDoc({
       source,
       domain,
       auth,
-      nameStream,
+      onGetName,
+      nameChangeNotifiers,
       value,
     });
     if (docBlocks[block.id]) {
@@ -400,7 +406,14 @@ export function createDoc({
     if (docBlocks[id]) {
       return docBlocks[id];
     }
-    docBlocks[id] = createBlock({ source, domain, auth, nameStream, id });
+    docBlocks[id] = createBlock({
+      source,
+      domain,
+      auth,
+      onGetName,
+      nameChangeNotifiers,
+      id,
+    });
 
     return docBlocks[id];
   }
@@ -604,30 +617,28 @@ export function createDoc({
 
   const value = createStreamValue(
     docStream
-      // .filter(state => !!state.id)
       .map(state => {
         if (state.id === undefined) {
           return xs.never();
-          // return xs.of(undefined);
         }
         if (state.id === null) {
           return xs.of(undefined);
         }
         const block = getBlock(state.id);
-        if (!block.value.stream) {
-          console.log('woah bad bad bad');
-          console.log(block);
-        }
         return block.value.stream;
       })
       .flatten()
-      // .filter(state => state !== undefined)
       .remember()
       .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
-    // .debug('value zoom'),
   );
 
-  const children = createDocSet({ domain, auth, source, nameStream });
+  const children = createDocSet({
+    domain,
+    auth,
+    source,
+    onGetName,
+    nameChangeNotifiers,
+  });
 
   async function destroy() {
     setState({ id: null, isDestroyed: true });
@@ -664,37 +675,64 @@ export function createDoc({
   };
 }
 
-function combineNameStreams(parentStream, nameStream) {
-  return xs
-    .combine(parentStream, nameStream)
-    .map(([parent, name]) => {
-      if (parent) {
-        return `${parent}/${name}`;
-      }
-      return name;
-    })
-    .remember()
-    .debug(v => {}); // uhh, remember doesnt seem to work until this debug is here....???
+function parentChildName(parent, child) {
+  if (parent) {
+    return `${parent}/${child}`;
+  }
+  return child;
 }
 
-export function createDocSet({ domain, auth, source, nameStream }) {
-  const childNameStreams = new Map();
-  const childDocs = new WeakMap();
+export function createDocSet({
+  domain,
+  auth,
+  source,
+  onGetName,
+  nameChangeNotifiers,
+}) {
+  const childDocs = new Map();
 
-  function _handleDestroy(doc) {
-    const name = doc.getName();
-    childNameStreams.get(name);
-    // errmmmm. todo
-  }
+  const childDocMovers = new WeakMap();
 
-  async function _shamefullyRename(childNameStream, newName) {
-    const prevName = streamGet(childNameStream);
-    childNameStream.shamefullySendNext(newName);
-    childNameStreams.set(newName, childNameStream);
-    await new Promise(resolve => {
-      setTimeout(resolve, 42); // what?!!! if this number is lower than ~10ms, the post test will fail sporadically!
+  function _createChildDoc(name) {
+    let currentDocName = name;
+    let currentDocFullName = parentChildName(onGetName(), currentDocName);
+    const childNameChangeNotifiers = new Set();
+
+    function handleParentRename(newParentName) {
+      currentDocFullName = parentChildName(newParentName, currentDocName);
+      childNameChangeNotifiers.forEach(notifier =>
+        notifier(currentDocFullName),
+      );
+    }
+
+    function handleRename(newLocalName) {
+      const childDoc = childDocs.get(currentDocName);
+      childDocs.delete(currentDocName);
+      currentDocName = newLocalName;
+      currentDocFullName = parentChildName(onGetName(), currentDocName);
+      childDocs.set(currentDocName, childDoc);
+    }
+
+    nameChangeNotifiers && nameChangeNotifiers.add(handleParentRename);
+
+    const newDoc = createDoc({
+      source,
+      domain,
+      auth,
+      nameChangeNotifiers: childNameChangeNotifiers,
+      onGetName: () => currentDocFullName,
+      onDidRename: newLocalName => {
+        handleRename(newLocalName);
+      },
+      onDidDestroy: () => {
+        nameChangeNotifiers && nameChangeNotifiers.delete(handleParentRename);
+        childNameChangeNotifiers.clear(); // this probably won't be needed because the whole thing should be GC'd
+        childDocs.delete(currentDocName);
+      },
     });
-    childNameStreams.delete(prevName);
+    childDocs.set(name, newDoc);
+    childDocMovers.set(newDoc, handleRename);
+    return newDoc;
   }
 
   function get(name) {
@@ -713,27 +751,12 @@ export function createDocSet({ domain, auth, source, nameStream }) {
     if (localName.length < name.length - 1) {
       restOfName = name.slice(localName.length + 1);
     }
-    if (childNameStreams.has(localName)) {
-      returningCloudValue = childDocs.get(childNameStreams.get(localName));
+    if (childDocs.has(localName)) {
+      returningCloudValue = childDocs.get(localName);
     }
 
     if (!returningCloudValue) {
-      const childNameStream = xs.createWithMemory();
-      childNameStream.shamefullySendNext(localName);
-      const newDoc = createDoc({
-        source,
-        domain,
-        auth,
-        nameStream: combineNameStreams(nameStream, childNameStream),
-        onDidRename: async newLocalName => {
-          await _shamefullyRename(childNameStream, newLocalName);
-        },
-        onDidDestroy: () => {
-          _handleDestroy(newDoc);
-        },
-      });
-      childNameStreams.set(localName, childNameStream);
-      childDocs.set(childNameStream, newDoc);
+      const newDoc = _createChildDoc(localName);
       returningCloudValue = newDoc;
     }
     if (restOfName) {
@@ -744,36 +767,17 @@ export function createDocSet({ domain, auth, source, nameStream }) {
 
   function post() {
     const localName = cuid();
-    const childNameStream = xs.createWithMemory();
-    childNameStream.shamefullySendNext(localName);
-    const postedDoc = createDoc({
-      source,
-      domain,
-      auth,
-      nameStream: combineNameStreams(nameStream, childNameStream),
-      isUnposted: true,
-      onDidRename: async newLocalName => {
-        await _shamefullyRename(childNameStream, newLocalName);
-      },
-      onDidDestroy: () => {
-        _handleDestroy(postedDoc);
-      },
-    });
-    childNameStreams.set(localName, childNameStream);
-    childDocs.set(childNameStream, postedDoc);
+    const postedDoc = _createChildDoc(localName);
     return postedDoc;
   }
 
   function shamefullyDestroyAll() {
-    childNameStreams.clear();
+    childDocs.clear();
   }
 
   function setOverrideStream(name, stream) {
-    const childNameStream = xs.createWithMemory();
-    childNameStream.shamefullySendNext(name);
     const streamDoc = createStreamDoc(stream);
-    childNameStreams.set(name, childNameStream);
-    childDocs.set(childNameStream, streamDoc);
+    childDocs.set(name, streamDoc);
     return streamDoc;
   }
 
@@ -788,12 +792,14 @@ export function createDocSet({ domain, auth, source, nameStream }) {
         `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`,
       );
     }
-    const docName = childNameStreams.get(fromName);
-    // const docToMove = childDocs.get(docName);
-
-    childNameStreams.set(toName, docName);
-    docName.shamefullySendNext(toName);
-    childNameStreams.delete(fromName);
+    const docToMove = childDocs.get(fromName);
+    const mover = childDocMovers.get(docToMove);
+    if (!mover) {
+      throw new Error(
+        'Cannot move this doc because we misplaced the ability to do so',
+      );
+    }
+    mover(toName);
 
     try {
       await source.dispatch({
@@ -803,7 +809,7 @@ export function createDocSet({ domain, auth, source, nameStream }) {
         to: toName,
       });
     } catch (e) {
-      // undo move
+      mover(fromName);
       throw e;
     }
   }
@@ -985,7 +991,8 @@ export function createAuthenticatedClient({ domain, source, auth }) {
     domain,
     source,
     auth,
-    nameStream: xs.of(null),
+    onGetName: () => null,
+    nameChangeNotifiers: null,
   });
 
   return {

@@ -22,7 +22,7 @@ describe('kite block', () => {
     it('handles creation with empty value', () => {
       const obj = createBlock({
         domain: 'test',
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         source: dummySource,
         id: 'asdf1234',
       });
@@ -34,7 +34,7 @@ describe('kite block', () => {
       expect(() =>
         createBlock({
           domain: 'test',
-          nameStream: xs.of('foo'),
+          onGetName: () => 'foo',
           source: dummySource,
         }),
       ).toThrow();
@@ -42,7 +42,7 @@ describe('kite block', () => {
     it('handles creation with value', () => {
       const obj = createBlock({
         domain: 'test',
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         value: { foo: 42 },
         source: dummySource,
       });
@@ -65,7 +65,7 @@ describe('kite block', () => {
       });
       const block = createBlock({
         source: m,
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         domain: 'test',
         id: obj1.id,
       });
@@ -90,7 +90,7 @@ describe('kite block', () => {
       });
       const block = createBlock({
         source: m,
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         domain: 'test',
         id: obj1.id,
       });
@@ -125,7 +125,7 @@ describe('kite block', () => {
       });
       const block = createBlock({
         source: m,
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         domain: 'test',
         id: obj1.id,
       });
@@ -167,7 +167,7 @@ describe('kite doc', () => {
       });
       const doc = createDoc({
         source: m,
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         domain: 'test',
       });
 
@@ -185,7 +185,7 @@ describe('kite doc', () => {
       const m = createMemoryStorageSource({ domain: 'test' });
       const doc = createDoc({
         source: m,
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         domain: 'test',
       });
       const block = await doc.publishValue({ x: 42 });
@@ -205,7 +205,7 @@ describe('kite doc', () => {
       const m = createMemoryStorageSource({ domain: 'test' });
       const doc = createDoc({
         source: m,
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         domain: 'test',
       });
       const block = await doc.publishValue({ x: 42 });
@@ -233,7 +233,7 @@ describe('kite doc', () => {
       const m = createMemoryStorageSource({ domain: 'test' });
       const doc = createDoc({
         source: m,
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         domain: 'test',
       });
       await doc.putValue({ x: 42 });
@@ -250,7 +250,7 @@ describe('kite doc', () => {
       const m = createMemoryStorageSource({ domain: 'test' });
       const doc = createDoc({
         source: m,
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         domain: 'test',
       });
       await doc.putTransactionValue({ x: 42 });
@@ -277,7 +277,7 @@ describe('kite doc', () => {
       });
       const doc = createDoc({
         source: m,
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         domain: 'test',
       });
       let lastValue = undefined;
@@ -315,13 +315,13 @@ describe('kite doc', () => {
       const m = createMemoryStorageSource({ domain: 'test' });
       const doc = createDoc({
         source: m,
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         domain: 'test',
       });
       await doc.putValue({ foo: 'bar' });
       const listenDoc = createDoc({
         source: m,
-        nameStream: xs.of('foo'),
+        onGetName: () => 'foo',
         domain: 'test',
       });
       let lastValue = undefined;
@@ -360,7 +360,7 @@ describe('kite doc set', () => {
     });
     const docSet = createDocSet({
       source: m,
-      nameStream: xs.of(null),
+      onGetName: () => null,
       domain: 'test',
     });
     const doc = docSet.get('foo');
@@ -370,7 +370,7 @@ describe('kite doc set', () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const docSet = createDocSet({
       source: m,
-      nameStream: xs.of(null),
+      onGetName: () => null,
       domain: 'test',
     });
     const parentDoc = docSet.get('foo');
@@ -390,7 +390,7 @@ describe('kite doc set', () => {
     });
     const docSet = createDocSet({
       source: m,
-      nameStream: xs.of(null),
+      onGetName: () => null,
       domain: 'test',
     });
     const foo = docSet.get('foo');
@@ -408,7 +408,7 @@ describe('kite doc set', () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const docSet = createDocSet({
       source: m,
-      nameStream: xs.of(null),
+      onGetName: () => null,
       domain: 'test',
     });
     const newDoc = docSet.post();
@@ -425,7 +425,7 @@ describe('kite doc set', () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const docSet = createDocSet({
       source: m,
-      nameStream: xs.of('foo'),
+      onGetName: () => 'foo',
       domain: 'test',
     });
     const newDoc = docSet.post();
@@ -444,7 +444,7 @@ describe('kite doc set', () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const docSet = createDocSet({
       source: m,
-      nameStream: xs.of(null),
+      onGetName: () => null,
       domain: 'test',
     });
     await m.dispatch({
@@ -469,7 +469,7 @@ describe('kite doc set', () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const docSet = createDocSet({
       source: m,
-      nameStream: xs.of(null),
+      onGetName: () => null,
       domain: 'test',
     });
     await m.dispatch({

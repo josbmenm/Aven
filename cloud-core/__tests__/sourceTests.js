@@ -485,19 +485,6 @@ export default function testDataSource(startTestDataSource) {
     });
     expect(result.value).toEqual(undefined);
     expect(result.id).toEqual(null);
-    // parent doc destroying works, and id goes to undefined:
-    await ds.dispatch({
-      type: 'DestroyDoc',
-      domain: 'test',
-      name: 'hello',
-    });
-    result = await ds.dispatch({
-      type: 'GetDocValue',
-      domain: 'test',
-      name: 'hello',
-    });
-    expect(result.value).toEqual(undefined);
-    expect(result.id).toEqual(undefined);
     await ds.close();
   });
 
@@ -547,7 +534,7 @@ export default function testDataSource(startTestDataSource) {
       domain: 'test',
       name: 'foo',
     });
-    expect(doc.id).toEqual(null);
+    expect(doc.id).toEqual(undefined);
     const list = await ds.dispatch({
       type: 'ListDocs',
       domain: 'test',
