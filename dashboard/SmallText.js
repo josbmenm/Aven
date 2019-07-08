@@ -1,32 +1,33 @@
 import React from 'react';
 import Text from '../views/Text';
-import { useTheme } from './Theme';
-import { Responsive } from './Responsive';
+import { useTheme } from '../dashboard/Theme';
+import { Responsive } from '../dashboard/Responsive';
 
-function BodyText({
+function SmallText({
   children,
   bold,
+  size,
   style,
   responsiveStyle,
   breakpoint,
   ...rest
 }) {
   const theme = useTheme();
-  let boldStyle = bold ? { fontWeight: 'bold' } : {};
+  let boldStyle = bold ? { fontFamily: theme.fonts.bold } : {};
   return (
     <Responsive
       breakpoint={breakpoint}
       style={{
-        fontSize: [15, 18],
-        lineHeight: [24, 28],
-        letterSpacing: [0.25, 0.3],
         ...responsiveStyle,
       }}
     >
       <Text
         style={{
           color: theme.colors.monsterra,
-          fontFamily: theme.fonts.serif,
+          lineHeight: 20,
+          fontFamily: theme.fonts.normal,
+          letterSpacing: 0.3,
+          fontSize: size === 'small' ? 10 : size === 'large' ? 12 : 11,
           ...boldStyle,
           ...style,
         }}
@@ -38,4 +39,4 @@ function BodyText({
   );
 }
 
-export default BodyText;
+export default SmallText;

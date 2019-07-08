@@ -3,13 +3,13 @@ import Text from '../views/Text';
 import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 
-function Title({ children, style, responsiveStyle, breakpoint, ...rest }) {
+function Heading({ children, style, responsiveStyle, breakpoint, ...rest }) {
   const theme = useTheme();
   return (
     <Responsive
       breakpoint={breakpoint}
       style={{
-        fontSize: [24, 28],
+        fontSize: [24, 38],
         lineHeight: [32, 48],
         ...responsiveStyle,
       }}
@@ -28,4 +28,4 @@ function Title({ children, style, responsiveStyle, breakpoint, ...rest }) {
   );
 }
 
-export default Title;
+export default Heading;
