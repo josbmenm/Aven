@@ -5,10 +5,10 @@ import Link from '../navigation-web/Link';
 import AirtableImage from '../components/AirtableImage';
 import { useTheme } from '../dashboard/Theme';
 import Title from '../dashboard/Title';
-import Container from './Container';
+import Container from '../dashboard/Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
 import FootNote from './FootNote';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import { Responsive } from '../dashboard/Responsive';
 
 function BodyLink({ children, url }) {

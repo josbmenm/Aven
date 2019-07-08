@@ -3,11 +3,11 @@ import React from 'react';
 import GenericPage from './GenericPage';
 import { SubSection } from './Tokens';
 import Heading from './Heading';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import Button from '../dashboard/Button';
 import useCloud from '../cloud-core/useCloud';
 import useAsyncError from '../react-utils/useAsyncError';
-import Container from './Container';
+import Container from '../dashboard/Container';
 
 
 export function LocationInput({ onSelectedResult, selectedResult }) {

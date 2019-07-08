@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
-import Container from './Container';
+import Container from '../dashboard/Container';
 import Title from '../dashboard/Title';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import Tag from './Tag';
 import FunctionalLink from '../navigation-web/Link';
 import { useTheme } from '../dashboard/Theme';

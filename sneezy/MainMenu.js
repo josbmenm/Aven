@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import Container from './Container';
+import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme';
 import UIButton from '../dashboard/UIButton';
 import Link from './Link';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '../dashboard/Theme'
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import Title from '../dashboard/Title';
 
 

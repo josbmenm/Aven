@@ -1,8 +1,8 @@
 import React from 'react';
 import View from '../views/View';
-import Container from './Container';
+import Container from '../dashboard/Container';
 import Heading from './Heading';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import { Responsive } from '../dashboard/Responsive';
 
 export default function GenericHeroHeader({

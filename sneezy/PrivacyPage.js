@@ -3,8 +3,8 @@ import React from 'react';
 import GenericPage from './GenericPage';
 import GenericHeroHeader from './GenericHeroHeader';
 import { SubSection } from './Tokens';
-import BodyText from './BodyText';
-import Container from './Container';
+import BodyText from '../dashboard/BodyText';
+import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme'
 import PageFooter from './PageFooter';
 

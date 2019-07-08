@@ -3,7 +3,7 @@ import { Image } from 'react-native';
 import View from '../views/View';
 import GenericPage from './GenericPage';
 import HomeHeader from './HomeHeader';
-import Container from './Container';
+import Container from '../dashboard/Container';
 import PageFooter from './PageFooter';
 import HomeSlider from './HomeSlider';
 import HowItWorks from './HowItWorks';

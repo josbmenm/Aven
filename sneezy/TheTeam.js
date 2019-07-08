@@ -1,9 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
 import Title from '../dashboard/Title';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import ButtonLink from './ButtonLink';
-import Container from './Container';
+import Container from '../dashboard/Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import { aspectRatio43 } from '../components/Styles';

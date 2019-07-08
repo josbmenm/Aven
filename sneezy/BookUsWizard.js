@@ -3,7 +3,7 @@ import { Animated, Image } from 'react-native';
 import View from '../views/View';
 import Text from '../views/Text';
 import Title from '../dashboard/Title';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import FootNote from './FootNote';
 import BlockForm from '../components/BlockForm';
 import Input from '../components/BlockFormInput';

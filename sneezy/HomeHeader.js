@@ -1,9 +1,9 @@
 import React from 'react';
 import { Image } from 'react-native';
 import View from '../views/View';
-import Container from './Container';
+import Container from '../dashboard/Container';
 import Heading from './Heading';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import ButtonLink from './ButtonLink';
 import { ColumnToRow, ColumnToRowChild, NoFlexToFlex } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';

@@ -2,11 +2,11 @@ import React from 'react';
 import { View } from 'react-native';
 import Title from '../dashboard/Title';
 import Heading from './Heading';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import FootNote from './FootNote';
 import ButtonLink from './ButtonLink';
 import GenericPage from './GenericPage';
-import Container from './Container';
+import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme';
 import Input from '../components/BlockFormInput';
 

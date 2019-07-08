@@ -1,5 +1,5 @@
 import React from 'react';
-import Container from '../sneezy/Container';
+import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme'
 
 export default function BlockForm({ children }) {

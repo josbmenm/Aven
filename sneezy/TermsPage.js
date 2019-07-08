@@ -1,10 +1,10 @@
 import React from 'react';
 import GenericPage from './GenericPage';
 import { SubSection, List, ListItem } from './Tokens';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import GenericHeroHeader from './GenericHeroHeader';
 import { useTheme } from '../dashboard/Theme'
-import Container from './Container';
+import Container from '../dashboard/Container';
 import PageFooter from './PageFooter';
 
 function Terms() {

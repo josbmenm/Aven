@@ -1,7 +1,7 @@
 import { View, TouchableOpacity, Text } from 'react-native';
 import React from 'react';
 import { useTheme } from '../dashboard/Theme';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import FootNote from './FootNote';
 import FormInput from '../components/BlockFormInput';
 import { Responsive } from '../dashboard/Responsive';

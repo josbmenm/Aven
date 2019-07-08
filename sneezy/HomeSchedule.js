@@ -1,8 +1,8 @@
 import React from 'react';
 import View from '../views/View';
-import Container from './Container';
+import Container from '../dashboard/Container';
 import Title from '../dashboard/Title';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import ButtonLink from './ButtonLink';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';

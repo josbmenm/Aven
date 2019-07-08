@@ -2,7 +2,7 @@ import React from 'react';
 import { LocationInput } from './LocationInput';
 import Button from '../dashboard/Button';
 import View from '../views/View';
-import BodyText from './BodyText';
+import BodyText from '../dashboard/BodyText';
 import useCloud from '../cloud-core/useCloud';
 import useAsyncError from '../react-utils/useAsyncError';
 import { Responsive } from '../dashboard/Responsive';
