@@ -8,7 +8,7 @@ import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import SmallText from '../dashboard/SmallText';
-import Tag from './Tag';
+import Tag from '../dashboard/Tag';
 import { useTheme } from '../dashboard/Theme';
 import { useMenuItemSlug, useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';

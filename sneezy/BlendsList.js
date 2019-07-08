@@ -3,7 +3,7 @@ import { View, ScrollView } from 'react-native';
 import Container from '../dashboard/Container';
 import Title from '../dashboard/Title';
 import BodyText from '../dashboard/BodyText';
-import Tag from './Tag';
+import Tag from '../dashboard/Tag';
 import FunctionalLink from '../navigation-web/Link';
 import { useTheme } from '../dashboard/Theme';
 import { useMenu } from '../ono-cloud/OnoKitchen';
