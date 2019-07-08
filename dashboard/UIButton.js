@@ -8,7 +8,7 @@ function UIButton({
   buttonStyle = {},
   titleStyle,
   title,
-  type = 'solid', // 'solid' | 'outline'
+  type = 'solid', // 'solid' | 'outline' | 'link'
   variant = 'primary', // 'primary' | 'secondary'
   size = 'medium', // 'small' | 'medium' | 'large'
   disabled,
@@ -18,27 +18,16 @@ function UIButton({
   ...rest
 }) {
   const theme = useTheme();
-  const buttonBackgroundColor =
-    variant === 'primary'
-      ? theme.colors.primary80
-      : variant === 'secondary'
-      ? theme.colors.secondary80
-      : theme.colors.lightGrey;
 
-  const buttonColor =
-    variant === 'primary'
-      ? theme.colors.primary
-      : variant === 'secondary'
-      ? theme.colors.secondary
-      : theme.colors.lightGrey;
-
-  const borderColor =
-    variant === 'primary'
-      ? theme.colors.primary80
-      : variant === 'secondary'
-      ? theme.colors.secondary80
-      : theme.colors.lightGrey;
-
+  let linkStyle =
+    type === 'link'
+      ? {
+          paddingHorizontal: 8,
+          paddingVertical: 4,
+          borderColor: 'transparent',
+          borderBottomWidth: 0,
+        }
+      : null;
   return (
     <Responsive
       breakpoint={breakpoint}
@@ -59,10 +48,12 @@ function UIButton({
           borderRadius: theme.radii[2],
           borderWidth: 3,
           justifyContent: 'center',
-          borderColor: type === 'outline' ? borderColor : 'transparent',
+          borderColor:
+            type === 'outline' ? theme.colors.monsterras[0] : 'transparent',
           backgroundColor:
-            type === 'solid' ? buttonBackgroundColor : 'transparent',
+            type === 'solid' ? theme.colors.monsterras[0] : 'transparent',
           opacity: disabled ? 0.5 : 1,
+          ...linkStyle,
           ...buttonStyle,
         }}
         {...rest}
@@ -70,16 +61,15 @@ function UIButton({
         {children ? children : null}
         {title ? (
           <Text
-            style={[
-              {
-                fontFamily: theme.fonts.bold,
-                fontSize: 20,
-                lineHeight: 24,
-                textAlign: 'center',
-                color: type === 'solid' ? theme.colors.white : buttonColor,
-              },
-              titleStyle,
-            ]}
+            style={{
+              fontFamily: theme.fonts.bold,
+              fontSize: 20,
+              lineHeight: 24,
+              textAlign: 'center',
+              color:
+                type === 'solid' ? theme.colors.white : theme.colors.monsterra,
+              ...titleStyle,
+            }}
           >
             {title}
           </Text>
