@@ -19,7 +19,8 @@ function Tag({ title, size, style, responsiveStyle, ...rest }) {
         }
       : {
           paddingVertical: 4,
-          lineHeight: 13,
+          fontSize: 10,
+          lineHeight: 12,
           paddingHorizontal: 16,
           minWidth: 120,
         };
