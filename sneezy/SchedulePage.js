@@ -8,7 +8,7 @@ import { aspectRatio43 } from '../components/Styles';
 import { NoFlexToFlex, ColumnToRow, ColumnToRowChild } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import Container from './Container';
-import Title from './Title';
+import Title from '../dashboard/Title';
 import Heading from './Heading';
 import BodyText from './BodyText';
 import Schedule from './Schedule';

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, ScrollView, Image } from 'react-native';
 import View from '../views/View';
 import Container from './Container';
-import Title from './Title';
+import Title from '../dashboard/Title';
 import { useTheme } from '../dashboard/Theme';
 import ScheduleItem from './ScheduleItem';
 import FootNote from './FootNote';

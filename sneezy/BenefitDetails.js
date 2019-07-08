@@ -4,7 +4,7 @@ import Text from '../views/Text';
 import Link from '../navigation-web/Link';
 import AirtableImage from '../components/AirtableImage';
 import { useTheme } from '../dashboard/Theme';
-import Title from './Title';
+import Title from '../dashboard/Title';
 import Container from './Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
 import FootNote from './FootNote';

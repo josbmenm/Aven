@@ -1,6 +1,5 @@
 import React from 'react';
-import View from '../views/View';
-import Title from './Title';
+import Title from '../dashboard/Title';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
 

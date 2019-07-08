@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import Title from './Title';
+import Title from '../dashboard/Title';
 import Heading from './Heading';
 import BodyText from './BodyText';
 import FootNote from './FootNote';
@@ -9,7 +9,6 @@ import GenericPage from './GenericPage';
 import Container from './Container';
 import { useTheme } from '../dashboard/Theme';
 import Input from '../components/BlockFormInput';
-import { Responsive } from './Responsive';
 
 function TokenSection({ title, children }) {
   const theme = useTheme();

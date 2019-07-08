@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '../dashboard/Theme'
 import BodyText from './BodyText';
-import Title from './Title';
+import Title from '../dashboard/Title';
 
 
 export function SubSection({ title, children }) {
