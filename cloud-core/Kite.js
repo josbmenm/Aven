@@ -608,11 +608,16 @@ export function createDoc({
       .map(state => {
         if (state.id === undefined) {
           return xs.never();
+          // return xs.of(undefined);
         }
         if (state.id === null) {
           return xs.of(undefined);
         }
         const block = getBlock(state.id);
+        if (!block.value.stream) {
+          console.log('woah bad bad bad');
+          console.log(block);
+        }
         return block.value.stream;
       })
       .flatten()
@@ -909,11 +914,12 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
 
   async function GetDocValue({ name }) {
     const doc = rootDocSet.get(name);
-    const context = doc.getReference();
+    const context = await doc.getReference();
     const value = await doc.value.load();
     const docState = doc.get();
     if (docState.isDestroyed) {
       return {
+        isDestroyed: true,
         value: undefined,
         id: undefined,
         context,

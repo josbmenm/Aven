@@ -71,16 +71,19 @@ export function useCloudReducer(actionDocName, cloudReducer) {
 
   function streamReduced(val) {
     if (!val) {
-      return undefined;
+      return xs.of(undefined);
     }
     let lastStateStream = undefined;
     if (val.on === null) {
       lastStateStream = xs.of(cloudReducer.initialState);
-    } else {
+    } else if (val.on.id) {
       lastStateStream = actionsDoc
         .getBlock(val.on.id)
         .value.stream.map(streamReduced)
         .flatten();
+    } else {
+      //??
+      return xs.of(undefined);
     }
     return lastStateStream.map(lastState => {
       return cloudReducer.reducerFn(lastState, val.value);

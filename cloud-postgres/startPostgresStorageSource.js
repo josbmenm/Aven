@@ -866,14 +866,16 @@ export default async function startPostgresStorageSource({ config, domains }) {
     return xs
       .fromPromise(observeDoc(domain, name))
       .map(obs => xs.fromObservable(obs))
-      .flatten();
+      .flatten()
+      .debug(() => {});
   }
 
   function getDocChildrenEventStream(domain, name) {
     return xs
       .fromPromise(observeDocChildren(domain, name))
       .map(obs => xs.fromObservable(obs))
-      .flatten();
+      .flatten()
+      .debug(() => {});
   }
 
   return {
