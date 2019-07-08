@@ -3,11 +3,10 @@ import FunctionalLink from '../navigation-web/Link';
 import UIButton from '../dashboard/UIButton';
 
 function ButtonLink({
-  buttonStyle,
   title = 'button',
-  type = 'solid', // solid | outline
-  variant = 'primary', // primary | secondary
-  titleStyle,
+  type = 'solid', // solid | outline | link
+  buttonStyle,
+  titleStyle, 
   routeName,
   url,
   ...rest

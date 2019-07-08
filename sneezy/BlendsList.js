@@ -1,15 +1,16 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
+import View from '../views/View';
 import Container from '../dashboard/Container';
 import Title from '../dashboard/Title';
 import BodyText from '../dashboard/BodyText';
+import { Responsive } from '../dashboard/Responsive';
 import Tag from '../dashboard/Tag';
 import FunctionalLink from '../navigation-web/Link';
 import { useTheme } from '../dashboard/Theme';
 import { useMenu } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { getMenuItemSlug } from '../logic/configLogic';
-import { Responsive } from '../dashboard/Responsive';
 
 function BlendsListItem({ blend, style }) {
   const theme = useTheme();
@@ -168,12 +169,63 @@ function BlendsCarouselItem({ blend }) {
 
 export function BlendsCarousel() {
   const menu = useMenu();
+  const theme = useTheme();
+  const [visibleIndex, setVisibleIndex] = React.useState(0);
+
+  function handleScroll({ nativeEvent }) {
+    // console.log("TCL: handleScroll -> nativeEvent", nativeEvent)
+    const { layoutMeasurement, contentOffset } = nativeEvent;
+    const scrollValue = contentOffset.x + layoutMeasurement.width / 2;
+    console.log('TCL: handleScroll -> scrollValue', scrollValue);
+    setVisibleIndex(Math.round(scrollValue / 200));
+  }
+
   return menu ? (
-    <ScrollView horizontal>
-      {menu.blends.map((item, i) => (
-        <BlendsCarouselItem key={i} blend={item} />
-      ))}
-    </ScrollView>
+    <Responsive
+      style={{
+        paddingBottom: [100, 120],
+      }}
+    >
+      <View>
+        <ScrollView horizontal onScroll={handleScroll} scrollEventThrottle={16}>
+          {menu.blends.map((item, i) => (
+            <BlendsCarouselItem key={i} blend={item} />
+          ))}
+        </ScrollView>
+        <Responsive
+          style={{
+            display: ['flex', 'none'],
+          }}
+        >
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 60,
+              left: '50%',
+              transform: [{ translateX: '-50%' }],
+              height: 8,
+              flexDirection: 'row',
+            }}
+          >
+            {menu.blends.map((item, i) => (
+              <View
+                key={item.id}
+                style={{
+                  width: 8,
+                  height: 8,
+                  backgroundColor:
+                    visibleIndex === i
+                      ? theme.colors.monsterra
+                      : theme.colors.monsterras[1],
+                  borderRadius: 5,
+                  marginRight: i === menu.blends.length - 1 ? 0 : 12,
+                }}
+              />
+            ))}
+          </View>
+        </Responsive>
+      </View>
+    </Responsive>
   ) : (
     <BodyText>Loading...</BodyText>
   );

@@ -1,13 +1,13 @@
-import React from 'react'
+import React from 'react';
 import FunctionalLink from '../navigation-web/Link';
 import UIButton from '../dashboard/UIButton';
 import { useTheme } from '../dashboard/Theme';
 
 function Link({
-  buttonStyle = {},
-  titleStyle = {},
+  buttonStyle,
+  titleStyle,
   title = 'link',
-  size = 'Small',
+  size = 'small',
   routeName,
   url,
   noActive = false,
@@ -20,6 +20,8 @@ function Link({
       url={url}
       renderContent={active => (
         <UIButton
+          type="outline"
+          active={active}
           title={title}
           buttonStyle={{
             paddingHorizontal: 8,
@@ -28,10 +30,9 @@ function Link({
             borderBottomWidth: 0,
             ...buttonStyle,
           }}
-          type="outline"
           titleStyle={{
             color: theme.colors.monsterra,
-            fontSize: size === 'Small' ? 16 : 24,
+            fontSize: size === 'large' ? 24 : 16,
             ...titleStyle,
           }}
         />

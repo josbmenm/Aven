@@ -15,7 +15,7 @@ import FormRow from './FormRow';
 
 const TOTAL_STEPS = 6;
 
-const FormInput = ({ style, ...rest }) => <Input style={{ marginHorizontal: 8, ...style}} {...rest} />
+const FormInput = ({ style, ...rest }) => <Input style={{ marginHorizontal: 8, marginBottom: 16, ...style}} {...rest} />
 
 function stepsReducer(state, action) {
   let newStep;
@@ -131,7 +131,7 @@ function BookUsWizard() {
               flexDirection: ['column', 'row'],
             }}
           >
-            <FormRow direction="row">
+            <FormRow direction="row"> 
               <FormInput
                 label="first name"
                 mode="name"

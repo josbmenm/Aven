@@ -1,17 +1,5 @@
-const primaryColor = '#005151';
 
 const colors = {
-  primary: primaryColor,
-  primary5: `${primaryColor}0D`,
-  primary8: `${primaryColor}14`,
-  primary10: `${primaryColor}20`,
-  primary30: `${primaryColor}4C`,
-  primary40: `${primaryColor}66`,
-  primary50: `${primaryColor}80`,
-  primary60: `${primaryColor}99`,
-  primary70: `${primaryColor}B2`,
-  primary80: `${primaryColor}CC`,
-  primaryLight: '#669797',
   white: '#fff',
   lightGrey: '#F8F8F8',
   lighterGrey: '#EFEFEF',

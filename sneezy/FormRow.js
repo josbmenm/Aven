@@ -9,7 +9,7 @@ function FormRow({ children, style, direction = 'column', ...rest }) {
         flexDirection: ['column', direction],
       }}
     >
-      <View style={[{ marginBottom: 40 }, style]} {...rest}>
+      <View style={[{ marginBottom: 24 }, style]} {...rest}>
         {children}
       </View>
     </Responsive>

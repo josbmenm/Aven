@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import View from '../views/View';
+import Text from '../views/Text';
 import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme';
 import UIButton from '../dashboard/UIButton';
@@ -23,6 +25,25 @@ function SidebarMenuIcon({ color, ...rest }) {
         fill={fill}
       />
     </svg>
+  );
+}
+
+function MobileMenuLink({ routeName, title }) {
+  return (
+    <ButtonLink
+      type="link"
+      noActive
+      size="large"
+      routeName={routeName}
+      title={title}
+      titleStyle={{
+        textAlign: 'left',
+        fontSize: 24,
+      }}
+      buttonStyle={{
+        marginBottom: 32,
+      }}
+    />
   );
 }
 
@@ -149,6 +170,8 @@ export function MobileMenu() {
               width: '90%',
               maxWidth: 340,
               paddingLeft: 12,
+              top: 0,
+              bottom: 0,
               ...theme.shadows.medium,
             }}
           >
@@ -159,57 +182,13 @@ export function MobileMenu() {
                 paddingRight: 24,
                 paddingBottom: 24,
                 borderBottomColor: theme.colors.border,
-                borderBottomWidth: StyleSheet.hairlineWidth,
+                borderBottomWidth: 1,
               }}
             >
-              <Link
-                noActive
-                size="Large"
-                routeName="Menu"
-                title="menu"
-                titleStyle={{
-                  textAlign: 'left',
-                }}
-                buttonStyle={{
-                  marginBottom: 32
-                }}
-              />
-              <Link
-                noActive
-                size="Large"
-                routeName="Schedule"
-                title="schedule"
-                titleStyle={{
-                  textAlign: 'left',
-                }}
-                buttonStyle={{
-                  marginBottom: 32
-                }}
-              />
-              <Link
-                noActive
-                size="Large"
-                routeName="OurStory"
-                title="our story"
-                titleStyle={{
-                  textAlign: 'left',
-                }}
-                buttonStyle={{
-                  marginBottom: 32
-                }}
-              />
-              <Link
-                noActive
-                size="Large"
-                routeName="BookUs"
-                title="book with us"
-                titleStyle={{
-                  textAlign: 'left',
-                }}
-                buttonStyle={{
-                  marginBottom: 32
-                }}
-              />
+              <MobileMenuLink routeName="Menu" title="menu" />
+              <MobileMenuLink routeName="Schedule" title="schedule" />
+              <MobileMenuLink routeName="OurStory" title="our story" />
+              <MobileMenuLink routeName="BookUs" title="book with us" />
             </View>
             <View
               style={{
@@ -221,19 +200,47 @@ export function MobileMenu() {
             >
               <Link
                 noActive
-                size="Small"
+                size="small"
                 url="https://google.com"
                 title="press kit"
+                titleStyle={{ textAlign: 'left' }}
               />
+              <Text>
+                <Link
+                  titleStyle={{ textAlign: 'left' }}
+                  title="terms"
+                  size="small"
+                  routeName="Terms"
+                  buttonStyle={{
+                    paddingHorizontal: 0,
+                    paddingLeft: 8,
+                  }}
+                />
+                <Text
+                  style={{
+                    fontFamily: theme.fonts.bold,
+                    fontSize: 16,
+                    lineHeight: 24,
+                    color: theme.colors.monsterra,
+                  }}
+                >
+                  &
+                </Text>
+                <Link
+                  size="small"
+                  titleStyle={{ textAlign: 'left' }}
+                  title="privacy"
+                  routeName="Privacy"
+                  buttonStyle={{
+                    paddingHorizontal: 0,
+                    paddingRight: 8,
+                  }}
+                />
+              </Text>
               <Link
+                titleStyle={{ textAlign: 'left' }}
                 noActive
-                size="Small"
-                routeName="Terms"
-                title="terms & privacy"
-              />
-              <Link
-                noActive
-                size="Small"
+                size="small"
                 url="mailto:aloha@onofood.co"
                 title="contact us"
               />
