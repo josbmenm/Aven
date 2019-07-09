@@ -2,11 +2,13 @@ import { uuid, checksum } from '../cloud-utils/Crypto';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import { getAuthDocName } from '../cloud-utils/MetaDocNames';
 import Err from '../utils/Err';
+import xs from 'xstream';
 
 export default function createProtectedSource({
   source,
   providers,
   parentAuth,
+  staticPermissions,
 }) {
   async function writeDocValue(source, domain, name, value) {
     await source.dispatch({
@@ -421,10 +423,16 @@ export default function createProtectedSource({
     if (name && name.indexOf('auth/') === 0) {
       return isRootAccount ? Permissions.admin : Permissions.none;
     }
-    const authDocNames = pathApartName(name).map(nameToAuthDocName);
+    const staticPermissionSet = staticPermissions && staticPermissions[domain];
     const permissionBlocks = await Promise.all(
-      authDocNames.map(async docName => {
-        return await getDocValue(source, domain, docName);
+      pathApartName(name).map(async docName => {
+        const staticPermissions =
+          staticPermissionSet && staticPermissionSet[docName];
+        if (staticPermissions) {
+          return staticPermissions;
+        }
+        const authDocName = nameToAuthDocName(docName);
+        return await getDocValue(source, domain, authDocName);
       }),
     );
 
@@ -690,9 +698,50 @@ export default function createProtectedSource({
     }
     return await source.observeDoc(domain, name, parentAuth);
   }
+
+  function getDocStream(domain, name, auth) {
+    let stopped = false;
+    let upstreamRelease = null;
+    return xs.create({
+      start: notify => {
+        GetPermissions({ name, auth, domain })
+          .then(permissions => {
+            if (stopped) {
+              return;
+            }
+            if (!permissions.canRead) {
+              throw new Err(
+                `Not authorized to subscribe to "${name}" as "${auth &&
+                  auth.accountId}"`,
+                'NoPermission',
+                {
+                  name,
+                  domain,
+                  authId: auth && auth.id,
+                },
+              );
+            }
+            const stream = source.getDocStream(domain, name, auth);
+            if (!stream) {
+              throw new Error('no stream to listen to!?');
+            }
+            stream.addListener(notify);
+            upstreamRelease = () => stream.removeListener(notify);
+          })
+          .catch(err => {
+            notify.error(err);
+          });
+      },
+      stop: () => {
+        stopped = true;
+        upstreamRelease && upstreamRelease();
+      },
+    });
+  }
   return {
     ...source,
     observeDoc,
+    getDocStream,
     dispatch,
     close: () => {},
   };
