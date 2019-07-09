@@ -78,11 +78,12 @@ async function streamLoad(stream) {
   });
 }
 
-function createStreamValue(memoryStream) {
+function createStreamValue(inputStream) {
+  const stream = inputStream.remember();
   return {
-    get: () => streamGet(memoryStream),
-    load: () => streamLoad(memoryStream),
-    stream: memoryStream,
+    get: () => streamGet(stream),
+    load: () => streamLoad(stream),
+    stream,
   };
 }
 
