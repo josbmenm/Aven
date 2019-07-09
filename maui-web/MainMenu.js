@@ -65,7 +65,7 @@ function MenuLink({
           type="outline"
           buttonStyle={{
             paddingHorizontal: 0,
-            paddingVertical: 9,
+            paddingVertical: 16,
             marginLeft: 32,
             borderRadius: 0,
             borderWidth: 0,
