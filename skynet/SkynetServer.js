@@ -173,10 +173,14 @@ const startSkynetServer = async () => {
     'CompanyConfig',
     airtableFolder.value.stream
       .map(folder => {
+        console.log('companyConfig map has folder', folder);
         if (!folder) {
           return xs.of(null);
         }
-        return airtableFolder.getBlock(folder.files['db.json'].id).value.stream;
+        const blockId = folder.files['db.json'].id;
+        const block = airtableFolder.getBlock(blockId);
+        console.log(blockId, !!block, !!block.value.stream);
+        return block.value.stream;
       })
       .flatten(),
   );
