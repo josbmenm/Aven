@@ -1,11 +1,10 @@
 import App from './SkynetApp';
 import WebServer from '../aven-web/WebServer';
-import { getSecretConfig, IS_DEV } from '../aven-web/config';
+import { IS_DEV } from '../aven-web/config';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
-// import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
 import scrapeAirTable from './scrapeAirTable';
-import createCloudClient from '../cloud-core/createCloudClient';
-import CloudContext from '../cloud-core/CloudContext';
+import { createClient } from '../cloud-core/Kite';
+import { CloudContext } from '../cloud-core/KiteReact';
 import createFSClient from '../cloud-server/createFSClient';
 
 import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
@@ -19,15 +18,11 @@ import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
-import createEvalSource from '../cloud-core/createEvalSource';
-import RestaurantReducer from '../logic/RestaurantReducer';
-import RestaurantConfig from './RestaurantConfig';
-import CompanyConfigFn from './CompanyConfigFn';
-import MenuFn from './MenuFn';
-import DevicesReducer from '../logic/DevicesReducer';
 import submitFeedback from './submitFeedback';
 import validatePromoCode from './validatePromoCode';
 import { HostContext } from '../components/AirtableImage';
+import { companyConfigToKitchenConfig } from '../logic/KitchenLogic';
+import { companyConfigToMenu } from '../logic/configLogic';
 
 const getEnv = c => process.env[c];
 
@@ -168,127 +163,58 @@ const startSkynetServer = async () => {
     rootPasswordHash: await hashSecureString(ONO_ROOT_PASSWORD),
   });
 
-  const evalSource = createEvalSource({
+  const kiteSource = createClient({
     source: storageSource,
     domain: 'onofood.co',
-    functions: [
-      RestaurantReducer,
-      DevicesReducer,
-      RestaurantConfig,
-      MenuFn,
-      CompanyConfigFn,
-    ],
-    getValueOfDoc: (docName, cloud) => {
-      console.log('getting value of doc', docName);
-      return null;
-    },
   });
+  const airtableFolder = kiteSource.docs.get('Airtable');
+  const companyConfig = kiteSource.docs.setOverrideStream(
+    'CompanyConfig',
+    airtableFolder.value.stream
+      .map(folder => {
+        if (!folder) {
+          return xs.of(null);
+        }
+        return airtableFolder.getBlock(folder.files['db.json'].id).value.stream;
+      })
+      .flatten(),
+  );
+  const kitchenConfig = kiteSource.docs.setOverrideStream(
+    'KitchenConfig',
+    companyConfig.value.stream.map(companyConfigToKitchenConfig),
+  );
 
+  const menu = kiteSource.docs.setOverrideStream(
+    'Menu',
+    companyConfig.value.stream.map(companyConfigToMenu),
+  );
   const logger = createLogger(storageSource, 'onofood.co', 'SkynetEvents');
 
   const protectedSource = createProtectedSource({
-    source: evalSource,
+    source: kiteSource,
+    staticPermissions: {
+      'onofood.co': {
+        CompanyConfig: { defaultRule: { canRead: true } },
+        KitchenConfig: { defaultRule: { canRead: true } },
+        Menu: { defaultRule: { canRead: true } },
+        PendingOrders: { defaultRule: { canPost: true } },
+        Airtable: { defaultRule: { canRead: true } },
+        ConfirmedOrders: { defaultRule: { canRead: true } },
+        RequestedLocations: { defaultRule: { canWrite: true } },
+        CustomerFeedback: { defaultRule: { canPost: true } },
+      },
+    },
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
-  // const unprotectedCloud = createCloudClient({
-  //   source: evalSource,
-  //   domain,
-  // });
-
-  const fsClient = createFSClient({ client: evalSource.cloud });
+  const fsClient = createFSClient({ client: kiteSource });
 
   const context = new Map();
-  context.set(CloudContext, evalSource.cloud); // bad idea, must have independent client for authentication!!!
+  context.set(CloudContext, kiteSource); // bad idea, must have independent client for authentication!!!
   context.set(HostContext, { authority: 'onofood.co', useSSL: !IS_DEV });
-
-  const rootAuth = {
-    accountId: 'root',
-    verificationInfo: {},
-    verificationResponse: { password: ONO_ROOT_PASSWORD },
-  };
-
-  async function putPermission({ name, defaultRule }) {
-    await protectedSource.dispatch({
-      domain: 'onofood.co',
-      type: 'PutPermissionRules',
-      auth: rootAuth,
-      defaultRule,
-      name,
-    });
-  }
-
-  async function applyPermissions() {
-    console.log('Putting Permission.. PendingOrders');
-    await putPermission({
-      defaultRule: { canPost: true },
-      name: 'PendingOrders',
-    });
-
-    console.log('Putting Permission.. Airtable');
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'Airtable',
-    });
-
-    // todo make more restrictive
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'ConfirmedOrders',
-    });
-
-    await putPermission({
-      defaultRule: { canWrite: true },
-      name: 'RequestedLocations',
-    });
-
-    console.log('Putting Permission.. CustomerFeedback');
-    await putPermission({
-      defaultRule: { canPost: true },
-      name: 'CustomerFeedback',
-    });
-
-    console.log('Putting Permission.. OnoState/Devices');
-    await putPermission({
-      defaultRule: { canWrite: true, canRead: true },
-      name: 'OnoState/Devices',
-    });
-
-    console.log('Putting Permission.. OnoState/Devices^DevicesReducer');
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'OnoState/Devices^DevicesReducer',
-    });
-
-    console.log('Putting Permission.. OnoState^RestaurantConfig');
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'OnoState^RestaurantConfig',
-    });
-
-    console.log('Putting Permission.. OnoState^CompanyConfig');
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'OnoState^CompanyConfig',
-    });
-
-    console.log('Putting Permission.. InventoryState');
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'InventoryState',
-    });
-  }
-
-  applyPermissions()
-    .then(() => {
-      console.log('Done applying permissions!');
-    })
-    .catch(console.error);
 
   async function placeOrder({ orderId }, logger) {
     throw new Error('Cannot place order on skynet! Use verse');
-
-    return {};
   }
 
   setInterval(
@@ -323,7 +249,7 @@ const startSkynetServer = async () => {
     switch (action.type) {
       case 'SendReceipt':
         return await sendReceipt({
-          cloud: evalSource.cloud,
+          cloud: kiteSource,
           smsAgent,
           emailAgent,
           action,
@@ -331,7 +257,7 @@ const startSkynetServer = async () => {
         });
       case 'RefundOrder': // todo check for root/employee auth. right now this is top secret!
         return await refundOrder({
-          cloud: evalSource.cloud,
+          cloud: kiteSource,
           smsAgent,
           emailAgent,
           action,
@@ -344,9 +270,9 @@ const startSkynetServer = async () => {
       case 'StripeCapturePayment':
         return capturePayment(action);
       case 'ValidatePromoCode':
-        return validatePromoCode(evalSource.cloud, action, logger);
+        return validatePromoCode(kiteSource, action, logger);
       case 'SubmitFeedback':
-        return submitFeedback(evalSource.cloud, emailAgent, action, logger);
+        return submitFeedback(kiteSource, emailAgent, action, logger);
       case 'UpdateAirtable': {
         scrapeAirTable(fsClient, logger)
           .then(() => {
@@ -382,7 +308,7 @@ const startSkynetServer = async () => {
   return {
     close: async () => {
       await protectedSource.close();
-      await evalSource.close();
+      await kiteSource.close();
       await webService.close();
     },
   };

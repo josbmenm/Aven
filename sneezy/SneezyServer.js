@@ -2,12 +2,12 @@ import App from './SneezyApp';
 import WebServer from '../aven-web/WebServer';
 import { IS_DEV } from '../aven-web/config';
 
-import createCloudClient from '../cloud-core/createCloudClient';
-import CloudContext from '../cloud-core/CloudContext';
+import { createClient } from '../cloud-core/Kite';
+import { CloudContext } from '../cloud-core/KiteReact';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 
 import { HostContext } from '../components/AirtableImage';
-import { sendReceiptEmail } from './sendReceipt'
+import { sendReceiptEmail } from './sendReceipt';
 
 const getEnv = c => process.env[c];
 
@@ -24,7 +24,7 @@ const startSkynetServer = async () => {
     quiet: true,
   });
 
-  const cloud = createCloudClient({
+  const cloud = createClient({
     source: [networkSource],
     domain: 'onofood.co',
   });

@@ -93,7 +93,7 @@ class PLCConnectionError extends Error {
   code = 'PLC_Connection';
 }
 
-export default function startKitchen({ client, plcIP, logBehavior }) {
+export default function startKitchen({ cloud, plcIP, logBehavior }) {
   let readyPLC = null;
   let connectingPLC = null;
   let readyHandlers = new Set();
@@ -249,8 +249,7 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
   let mainRobotSchema = null;
 
   async function connectKitchenClient() {
-    client.get('OnoState^RestaurantConfig').observeValue.subscribe({
-      // unsub one day
+    cloud.get('KitchenConfig').value.stream.addListener({
       next: config => {
         if (!config) {
           return;
@@ -259,9 +258,9 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
       },
     });
 
-    const stateRef = client.get('KitchenState');
+    const kitchenState = cloud.get('KitchenState');
 
-    await stateRef.put({
+    await kitchenState.putValue({
       isPLCConnected: false,
     });
 
@@ -280,7 +279,7 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
         await delay(250);
         return;
       }
-      await stateRef.put({
+      await kitchenState.putValue({
         ...currentState,
         isPLCConnected,
       });
@@ -295,7 +294,7 @@ export default function startKitchen({ client, plcIP, logBehavior }) {
         .catch(async e => {
           console.error('Error updating tags!');
           console.error(e);
-          await stateRef.put({
+          await kitchenState.putValue({
             isPLCConnected: false,
           });
         })

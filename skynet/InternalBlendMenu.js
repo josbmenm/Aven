@@ -45,9 +45,9 @@ function BlendDisplay({ menuItem, companyConfig }) {
         {menuItem.Recipe['DisplayCalories']} Calories |{' '}
         {menuItem.Recipe['Nutrition Detail']}
       </Text>
-      {computed.ingredients.map(ing => {
+      {computed.ingredients.map((ing, index) => {
         return (
-          <View key={ing.id}>
+          <View key={index}>
             <AirtableImage
               image={ing.Image}
               style={{
@@ -93,6 +93,7 @@ export default function BlendMenu() {
             menu.blends.map(menuItem => {
               return (
                 <BlendDisplay
+                  key={menuItem.id}
                   menuItem={menuItem}
                   companyConfig={companyConfig}
                 />

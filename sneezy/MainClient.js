@@ -1,11 +1,8 @@
-import React from 'react';
 import App from './SneezyApp';
-
 import startWebClient from '../aven-web/WebClient';
-import CloudContext from '../cloud-core/CloudContext';
-import createCloudClient from '../cloud-core/createCloudClient';
+import { CloudContext } from '../cloud-core/KiteReact';
+import { createClient } from '../cloud-core/Kite';
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
-import RestaurantReducer from '../logic/RestaurantReducer';
 import { HostContext } from '../components/AirtableImage';
 
 const hostConfig = {
@@ -15,10 +12,9 @@ const hostConfig = {
 
 const networkSource = createBrowserNetworkSource(hostConfig);
 
-const cloud = createCloudClient({
+const cloud = createClient({
   source: networkSource,
   domain: 'onofood.co',
-  functions: [RestaurantReducer],
 });
 
 const context = new Map();

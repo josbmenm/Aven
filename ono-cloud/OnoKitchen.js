@@ -8,7 +8,7 @@ import React, {
   useMemo,
   useEffect,
 } from 'react';
-import useCloudValue from '../cloud-core/useCloudValue';
+import { useCloudValue } from '../cloud-core/KiteReact';
 import useObservable from '../cloud-core/useObservable';
 import withObservables from '@nozbe/with-observables';
 import observeNull from '../cloud-core/observeNull';
@@ -194,14 +194,14 @@ export function OrderContextProvider({ children }) {
 }
 
 export function useCompanyConfig() {
-  const cloud = useCloud();
-  const theValue = cloud.get('Airtable').expand((folder, doc) => {
-    if (!folder) {
-      return null;
-    }
-    return doc.getBlock(folder.files['db.json']);
-  });
-  return useCloudValue(theValue);
+  // const cloud = useCloud();
+  // const theValue = cloud.get('Airtable').expand((folder, doc) => {
+  //   if (!folder) {
+  //     return null;
+  //   }
+  //   return doc.getBlock(folder.files['db.json']);
+  // });
+  return useCloudValue('CompanyConfig');
 }
 
 export function useSelectedIngredients(menuItem, item) {

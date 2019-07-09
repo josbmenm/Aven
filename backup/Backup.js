@@ -1,4 +1,4 @@
-import createCloudClient from '../cloud-core/createCloudClient';
+import { createClient } from '../cloud-core/Kite';
 import createFSClient from '../cloud-server/createFSClient';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import fs from 'fs-extra';
@@ -9,7 +9,7 @@ const source = createNodeNetworkSource({
   useSSL: true,
   quiet: true,
 });
-const client = createCloudClient({
+const client = createClient({
   source,
   domain,
 });
@@ -131,7 +131,11 @@ async function handleBackupBlockNode({ name, id }) {
 }
 
 async function handleJob(job) {
-  console.log('Handling Backup Job', job);
+  console.log(
+    `Handling ${job.type}.. ${Object.entries(job.params)
+      .map(([k, v]) => `${k}:${v}`)
+      .join(',')}`,
+  );
   switch (job.type) {
     case 'BackupDocNode': {
       return await handleBackupDocNode(job.params);

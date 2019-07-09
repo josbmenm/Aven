@@ -1,7 +1,7 @@
 import React from 'react';
 import useAsyncError from '../react-utils/useAsyncError';
 import useAsyncStorage, { isStateUnloaded } from '../screens/useAsyncStorage';
-import createCloudClient from '../cloud-core/createCloudClient';
+import { createClient } from '../cloud-core/Kite';
 
 export default function useCloudProvider({
   source,
@@ -17,22 +17,22 @@ export default function useCloudProvider({
     if (isStateUnloaded(session)) {
       return null;
     }
-    return createCloudClient({
+    return createClient({
       source,
       domain,
-      initialSession: session,
-      onSession: s => {
-        setSession(s);
-      },
+      // initialSession: session,
+      // onSession: s => {
+      //   setSession(s);
+      // },
     });
   }, [source, domain, isStateUnloaded(session)]);
 
-  React.useEffect(() => {
-    if (!cloud || !establishAnonymousSession) {
-      return;
-    }
-    handleErrors(cloud.establishAnonymousSession());
-  }, [cloud, establishAnonymousSession]);
+  // React.useEffect(() => {
+  //   if (!cloud || !establishAnonymousSession) {
+  //     return;
+  //   }
+  //   handleErrors(cloud.establishAnonymousSession());
+  // }, [cloud, establishAnonymousSession]);
 
   return cloud;
 }

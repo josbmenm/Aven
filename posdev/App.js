@@ -3,8 +3,8 @@ import { StatusBar, YellowBox } from 'react-native';
 import { createAppContainer } from '../navigation-native';
 import PaymentDebugScreen from '../components/PaymentDebugScreen';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
-import CloudContext from '../cloud-core/CloudContext';
-import createCloudClient from '../cloud-core/createCloudClient';
+import { CloudContext } from '../cloud-core/KiteReact';
+import { createClient } from '../cloud-core/Kite';
 import { PopoverContainer } from '../views/Popover';
 import { registerDispatcher } from '../card-reader/CardReader';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
@@ -30,7 +30,7 @@ const App = createStackTransitionNavigator({
 
 const AppContainer = createAppContainer(App);
 
-const cloud = createCloudClient({
+const cloud = createClient({
   source: cloudSource,
   domain: 'onofood.co',
 });

@@ -1,8 +1,8 @@
 import App from './App';
 
 import startWebClient from '../aven-web/WebClient';
-import CloudContext from '../cloud-core/CloudContext';
-import createCloudClient from '../cloud-core/createCloudClient';
+import { CloudContext } from '../cloud-core/KiteReact';
+import { createClient } from '../cloud-core/Kite';
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
 import RestaurantReducer from '../logic/RestaurantReducer';
 
@@ -23,10 +23,10 @@ const RESTAURANT_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
 
 const restaurantSource = createBrowserNetworkSource(RESTAURANT_CONFIG);
 
-const cloud = createCloudClient({
+const cloud = createClient({
   source: restaurantSource,
   domain: 'onofood.co',
-  functions: [RestaurantReducer],
+  // functions: [RestaurantReducer],
 });
 
 const context = new Map();

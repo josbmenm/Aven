@@ -166,9 +166,7 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/twitter.png')} />
-                    <SmallText size="large">
-                      @onofodco
-                    </SmallText>
+                    <SmallText size="large">@onofoodco</SmallText>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -187,9 +185,7 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/facebook.png')} />
-                    <SmallText size="large">
-                      @onofodco
-                    </SmallText>
+                    <SmallText size="large">@onofoodco</SmallText>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -208,11 +204,9 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/instagram.png')} />
-                    <SmallText size="large">
-                      @onofodco
-                    </SmallText>
+                    <SmallText size="large">@onofoodco</SmallText>
                   </View>
-              </FunctionalLink> 
+                </FunctionalLink>
               </ColumnToRowChild>
             </ColumnToRow>
           </ColumnToRowChild>

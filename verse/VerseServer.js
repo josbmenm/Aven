@@ -1,12 +1,7 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
-// import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
-import createCloudClient from '../cloud-core/createCloudClient';
-import createFSClient from '../cloud-server/createFSClient';
-import CloudContext from '../cloud-core/CloudContext';
-import { getSecretConfig, IS_DEV } from '../aven-web/config';
-import { createReducerLambda } from '../cloud-core/useCloudReducer';
+import { CloudContext } from '../cloud-core/KiteReact';
 import { getFreshActionId } from '../logic/KitchenLogic';
 import KitchenCommands from '../logic/KitchenCommands';
 import { hashSecureString } from '../cloud-utils/Crypto';
@@ -14,27 +9,17 @@ import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
 import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
-import createEvalSource from '../cloud-core/createEvalSource';
+import { createClient } from '../cloud-core/Kite';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import combineSources from '../cloud-core/combineSources';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import authenticateSource from '../cloud-core/authenticateSource';
-import InventoryFn from './InventoryFn';
-import MenuFn from './MenuFn';
-import RestaurantReducer from '../logic/RestaurantReducer';
 import placeOrder from './placeOrder';
-import { computeInventory } from './KitchenInventory';
 
 import startKitchen from './startKitchen';
-import { handleStripeAction, getPaymentIntent } from '../stripe-server/Stripe';
+import { handleStripeAction } from '../stripe-server/Stripe';
 import { computeNextSteps } from '../logic/KitchenSequence';
-import {
-  companyConfigToBlendMenu,
-  getOrderSummary,
-  displayNameOfOrderItem,
-  getSelectedIngredients,
-} from '../logic/configLogic';
 
 let lastT = null;
 function logBehavior(msg) {
@@ -157,64 +142,35 @@ const startVerseServer = async () => {
     verificationResponse: { password: ROOT_PASSWORD },
   };
 
-  const evalSource = createEvalSource({
-    session: rootAuth,
+  const kiteClient = createClient({
+    auth: rootAuth,
     source: combinedStorageSource,
+    // source: remoteSource,
     domain: 'onofood.co',
-    functions: [RestaurantReducer, InventoryFn, MenuFn],
+    // functions: [RestaurantReducer, InventoryFn, MenuFn],
   });
 
   const protectedSource = createProtectedSource({
-    source: evalSource,
+    source: kiteClient,
+    staticPermissions: {
+      'onofood.co': {
+        KitchenState: { defaultRule: { canRead: true } },
+        // 'OnoState^Inventory': { defaultRule: { canRead: true } },
+        // 'OnoState^Menu': { defaultRule: { canRead: true } },
+        // 'RestaurantActionsUnburnt^RestaurantReducer': {
+        //   defaultRule: { canRead: true },
+        // },
+      },
+    },
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
-
-  async function putPermission({ name, defaultRule }) {
-    await protectedSource.dispatch({
-      domain: 'onofood.co',
-      type: 'PutPermissionRules',
-      auth: rootAuth,
-      defaultRule,
-      name,
-    });
-  }
-
-  async function establishPermissions() {
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'KitchenState',
-    });
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'OnoState^Inventory',
-    });
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'OnoState^Menu',
-    });
-    await putPermission({
-      defaultRule: { canRead: true },
-      name: 'RestaurantActionsUnburnt^RestaurantReducer',
-    });
-  }
-
-  computeInventory(evalSource.cloud);
-
-  establishPermissions()
-    .then(() => {
-      console.log('Permissions Applied');
-    })
-    .catch(console.error);
-
-  // const fsClient = createFSClient({ client: cloud });
-  // await new Promise(resolve => setTimeout(resolve, 3000));
 
   let kitchen = null;
   if (!process.env.DISABLE_ONO_KITCHEN) {
     console.log('Connecting to Maui Kitchen');
     kitchen = startKitchen({
       logBehavior,
-      client: evalSource.cloud,
+      client: kiteClient,
       plcIP: '192.168.1.122',
     });
   }
@@ -256,7 +212,7 @@ const startVerseServer = async () => {
       let currentActionId = null;
       let endedActionId = null;
       let noFaults = true;
-      let sub = evalSource.cloud.get('KitchenState').observeValue.subscribe({
+      let sub = kiteClient.get('KitchenState').observeValue.subscribe({
         next: state => {
           if (!state) {
             return;
@@ -334,7 +290,7 @@ const startVerseServer = async () => {
         }
         logBehavior(`Performing ${subsystem} ${nextStep.description}`);
         currentStepPromises[subsystem] = nextStep.perform(
-          evalSource.cloud,
+          kiteClient,
           kitchenAction,
         );
       } else {
@@ -343,7 +299,7 @@ const startVerseServer = async () => {
           setTimeout(resolve, 2000),
         )
           .then(() =>
-            evalSource.cloud
+            kiteClient
               .get('RestaurantActionsUnburnt')
               .putTransaction(nextStep.successRestaurantAction),
           )
@@ -371,33 +327,32 @@ const startVerseServer = async () => {
         });
     });
   }
+  // // you poor thing...
 
-  evalSource.cloud.get('KitchenState').observeValue.subscribe({
-    next: state => {
-      kitchenState = state;
-      handleStateUpdates();
-    },
-  });
-
-  evalSource.cloud.get('OnoState^RestaurantConfig').observeValue.subscribe({
-    next: state => {
-      kitchenConfig = state;
-      handleStateUpdates();
-    },
-  });
-
-  (await evalSource.observeDoc(
-    'onofood.co',
-    'RestaurantActionsUnburnt^RestaurantReducer',
-  )).subscribe({
-    next: update => {
-      restaurantState = update.value;
-      handleStateUpdates();
-    },
-    error: err => {
-      console.error('........,,.Woah WTFZ', err);
-    },
-  });
+  // kiteClient.get('KitchenState').observeValue.subscribe({
+  //   next: state => {
+  //     kitchenState = state;
+  //     handleStateUpdates();
+  //   },
+  // });
+  // kiteClient.get('OnoState^RestaurantConfig').observeValue.subscribe({
+  //   next: state => {
+  //     kitchenConfig = state;
+  //     handleStateUpdates();
+  //   },
+  // });
+  // (await evalSource.observeDoc(
+  //   'onofood.co',
+  //   'RestaurantActionsUnburnt^RestaurantReducer',
+  // )).subscribe({
+  //   next: update => {
+  //     restaurantState = update.value;
+  //     handleStateUpdates();
+  //   },
+  //   error: err => {
+  //     console.error('........,,.Woah WTFZ', err);
+  //   },
+  // });
 
   const dispatch = async action => {
     let stripeResponse = await handleStripeAction(action);
@@ -417,7 +372,7 @@ const startVerseServer = async () => {
       case 'KitchenAction':
         return await kitchenAction(action);
       case 'PlaceOrder':
-        return placeOrder(evalSource.cloud, action);
+        return placeOrder(kiteClient, action);
       default: {
         return await protectedSource.dispatch(action);
       }
@@ -432,7 +387,7 @@ const startVerseServer = async () => {
 
   const context = new Map();
 
-  context.set(CloudContext, evalSource.cloud); // bad idea, must have independent client for authentication!!!
+  context.set(CloudContext, kiteClient); // bad idea, must have independent client for authentication!!!
   const webService = await WebServer({
     App,
     context,
