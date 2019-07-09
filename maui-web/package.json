@@ -1,14 +1,8 @@
 {
   "name": "sneezy",
   "aven": {
-    "env": "razzle",
     "publicAssetDir": "public",
-    "envOptions": {
-      "deployEnv": "Heroku",
-      "herokuAppName": "ono-something",
-      "mainServer": "SneezyServer.js",
-      "mainClient": "MainClient.js"
-    },
+    "envOptions": {},
     "srcDependencies": [
       "utils",
       "stripe-server",

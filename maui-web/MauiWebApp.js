@@ -1,6 +1,5 @@
 import React from 'react';
-import { createSwitchNavigator } from '../navigation-core';
-import TokensPage from './TokensPage';
+import createFullscreenSwitchNavigator from '../navigation-web/createFullscreenSwitchNavigator';
 import Home from './HomePage';
 import Menu from './MenuPage';
 import BlendPage from './BlendPage';
@@ -12,13 +11,12 @@ import Schedule from './SchedulePage';
 import Subscribe from './SubscribePage';
 import { theme } from './Theme';
 import { ThemeProvider } from '../dashboard/Theme';
-import Preview from './PreviewHome';
 
 const customHTMLHeaders = `
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 `;
 
-const App = createSwitchNavigator(
+const App = createFullscreenSwitchNavigator(
   {
     Home: {
       path: '',
@@ -44,10 +42,6 @@ const App = createSwitchNavigator(
       path: 'legal/terms',
       screen: Terms,
     },
-    Tokens: {
-      path: 'design-tokens',
-      screen: TokensPage,
-    },
     BookUs: {
       path: 'book-us',
       screen: BookUs,
@@ -59,10 +53,6 @@ const App = createSwitchNavigator(
     Subscribe: {
       path: 'subscribe',
       screen: Subscribe,
-    },
-    Preview: {
-      path: 'preview',
-      screen: Preview,
     },
   },
   {

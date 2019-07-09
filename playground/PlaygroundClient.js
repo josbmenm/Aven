@@ -1,4 +1,4 @@
-import App from './SneezyApp';
+import App from './PlaygroundApp';
 import startWebClient from '../aven-web/WebClient';
 import { CloudContext } from '../cloud-core/KiteReact';
 import { createClient } from '../cloud-core/Kite';

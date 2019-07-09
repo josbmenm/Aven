@@ -1,13 +1,13 @@
 {
-  "name": "skynet",
+  "name": "playground",
   "aven": {
     "env": "razzle",
     "publicAssetDir": "public",
     "envOptions": {
       "deployEnv": "Heroku",
-      "herokuAppName": "ono-skynet",
-      "mainServer": "SkynetServer.js",
-      "mainClient": "MainClient.js"
+      "herokuAppName": "ono-playground",
+      "mainServer": "PlaygroundServer.js",
+      "mainClient": "PlaygroundClient.js"
     },
     "srcDependencies": [
       "utils",
@@ -26,11 +26,12 @@
       "cloud-server",
       "cloud-postgres",
       "components",
-      "maui-web",
-      "react-utils"
+      "react-utils",
+      "navigation-web",
+      "dashboard",
+      "maui-web"
     ],
     "moduleDependencies": [
-      "xstream",
       "mjml",
       "mjml-react",
       "@react-navigation/core",

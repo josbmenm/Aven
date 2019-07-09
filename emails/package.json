@@ -1,0 +1,9 @@
+{
+  "aven": {
+    "srcDependencies": [],
+    "moduleDependencies": [
+      "mjml",
+      "mjml-react"
+    ]
+  }
+}

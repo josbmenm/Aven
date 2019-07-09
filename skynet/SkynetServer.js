@@ -173,13 +173,11 @@ const startSkynetServer = async () => {
     'CompanyConfig',
     airtableFolder.value.stream
       .map(folder => {
-        console.log('companyConfig map has folder', folder);
         if (!folder) {
           return xs.of(null);
         }
         const blockId = folder.files['db.json'].id;
         const block = airtableFolder.getBlock(blockId);
-        console.log(blockId, !!block, !!block.value.stream);
         return block.value.stream;
       })
       .flatten(),
@@ -205,7 +203,7 @@ const startSkynetServer = async () => {
         PendingOrders: { defaultRule: { canPost: true } },
         Airtable: { defaultRule: { canRead: true } },
         ConfirmedOrders: { defaultRule: { canRead: true } },
-        RequestedLocations: { defaultRule: { canWrite: true } },
+        RequestedLocations: { defaultRule: { canWrite: true } }, // todo, refactor to canTransact!!
         CustomerFeedback: { defaultRule: { canPost: true } },
       },
     },

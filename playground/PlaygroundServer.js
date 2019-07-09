@@ -1,4 +1,4 @@
-import App from './SneezyApp';
+import App from './PlaygroundApp';
 import WebServer from '../aven-web/WebServer';
 import { IS_DEV } from '../aven-web/config';
 
@@ -7,7 +7,6 @@ import { CloudContext } from '../cloud-core/KiteReact';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 
 import { HostContext } from '../components/AirtableImage';
-import { sendReceiptEmail } from './sendReceipt';
 
 const getEnv = c => process.env[c];
 
@@ -15,7 +14,7 @@ const startSkynetServer = async () => {
   console.log('☁️ Starting Website 💨');
 
   const domain = 'onofood.co';
-  console.log('☁️ Starting Sneezy 💨');
+  console.log('☁️ Starting Playground 💨');
 
   console.log('Starting Node Network connection');
   const networkSource = await createNodeNetworkSource({
@@ -35,8 +34,6 @@ const startSkynetServer = async () => {
 
   const dispatch = async action => {
     switch (action.type) {
-      case 'ReceiptEmail':
-        return await sendReceiptEmail();
       default:
         return await networkSource.dispatch(action);
     }

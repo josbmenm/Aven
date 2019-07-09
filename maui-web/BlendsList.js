@@ -34,6 +34,7 @@ function BlendsListItem({ blend, style }) {
     >
       <FunctionalLink
         routeName="Blend"
+        routeKey={`Blend-${getMenuItemSlug(blend)}`}
         params={{ slug: getMenuItemSlug(blend) }}
         overrideATagCSS={{ display: 'flex', flexDirection: 'column' }}
       >

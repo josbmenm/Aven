@@ -3,7 +3,7 @@ import { LocationInput } from './LocationInput';
 import Button from '../dashboard/Button';
 import View from '../views/View';
 import BodyText from '../dashboard/BodyText';
-import useCloud from '../cloud-core/useCloud';
+import { useCloud } from '../cloud-core/KiteReact';
 import useAsyncError from '../react-utils/useAsyncError';
 import { Responsive } from '../dashboard/Responsive';
 

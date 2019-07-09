@@ -13,7 +13,7 @@ import Admin from '../admin/Admin';
 import FocusExample from './FocusExample';
 import ReceiptPage from './ReceiptPage';
 import InternalBlendMenu from './InternalBlendMenu';
-import SneezyApp from '../sneezy/SneezyApp';
+import MauiWebApp from '../maui-web/MauiWebApp';
 import { monsterra } from '../components/Styles';
 import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
 
@@ -116,7 +116,7 @@ const App = createSwitchNavigator(
     },
     PreviewApp: {
       path: 'maui-preview',
-      screen: SneezyApp,
+      screen: MauiWebApp,
       navigationOptions: ({ navigation, screenProps }) => {
         const screenOptions = getActiveChildNavigationOptions(
           navigation,

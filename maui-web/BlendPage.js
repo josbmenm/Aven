@@ -169,6 +169,7 @@ function BlendContent({ displayName, blend, recipe }) {
                     >
                       {dietary.map((dietaryMessage, index) => (
                         <View
+                          key={index}
                           style={{
                             borderRightColor:
                               index + 1 === dietary.length
@@ -261,8 +262,9 @@ function BlendContent({ displayName, blend, recipe }) {
               justifyContent: 'center',
             }}
           >
-            {recipe.ingredients.map(ing => (
+            {recipe.ingredients.map((ing, index) => (
               <View
+                index={index}
                 style={{
                   margin: 10,
                 }}
@@ -278,7 +280,11 @@ function BlendContent({ displayName, blend, recipe }) {
                 />
                 <SmallText
                   bold
-                  style={{ textAlign: 'center', textTransform: 'uppercase', letterSpacing: 2 }}
+                  style={{
+                    textAlign: 'center',
+                    textTransform: 'uppercase',
+                    letterSpacing: 2,
+                  }}
                 >
                   {ing.Name}
                 </SmallText>
