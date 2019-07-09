@@ -194,7 +194,7 @@ export default async function WebServer({
         .catch(e => {
           res.status(500);
           console.error(e);
-          res.send(JSON.stringify(e.toJSON()));
+          res.send(JSON.stringify(e.toJSON ? e.toJSON() : e));
         });
     });
 
