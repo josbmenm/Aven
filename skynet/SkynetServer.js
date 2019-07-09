@@ -23,6 +23,7 @@ import validatePromoCode from './validatePromoCode';
 import { HostContext } from '../components/AirtableImage';
 import { companyConfigToKitchenConfig } from '../logic/KitchenLogic';
 import { companyConfigToMenu } from '../logic/configLogic';
+import xs from 'xstream';
 
 const getEnv = c => process.env[c];
 

@@ -30,6 +30,7 @@
       "react-utils"
     ],
     "moduleDependencies": [
+      "xstream",
       "mjml",
       "mjml-react",
       "@react-navigation/core",
