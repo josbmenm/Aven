@@ -11,6 +11,7 @@
     },
     "srcDependencies": [
       "utils",
+      "emails",
       "stripe-server",
       "aven-web",
       "ono-cloud",
