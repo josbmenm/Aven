@@ -13,7 +13,8 @@ export default function createFSClient({ client }) {
         data: fileData.toString('hex'),
       };
     }
-    const block = await doc.writeBlockCompletely(blockValue);
+    const block = doc.getBlockOfValue(blockValue);
+    await block.put();
     return block;
   }
 
@@ -31,12 +32,14 @@ export default function createFSClient({ client }) {
       }),
     );
     const files = {};
-    filesInDir.forEach((fileName, index) => {
-      files[fileName] = fileList[index].getReference();
-    });
+    await Promise.all(
+      filesInDir.map(async (fileName, index) => {
+        files[fileName] = await fileList[index].getReference();
+      }),
+    );
     const folderObj = { files, type: 'Folder' };
-    const block = await doc.writeBlockCompletely(folderObj);
-
+    const block = doc.getBlockOfValue(folderObj);
+    await block.put();
     return block;
   }
 

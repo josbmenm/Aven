@@ -351,14 +351,14 @@ export function createDoc({
       const upStream = source.getDocStream(domain, _subsToName, auth);
       const internalListener = {
         next: v => {
-          setState({
-            lastFetchTime: Date.now(),
-            id: v.id,
-          });
           if (v.value !== undefined) {
             const block = getBlock(v.id);
             block.shamefullySetFetchedValue(v.value);
           }
+          setState({
+            lastFetchTime: Date.now(),
+            id: v.id || null,
+          });
           listen.next(docState);
         },
         error: e => {
@@ -760,6 +760,9 @@ export function createDocSet({
       returningCloudValue = newDoc;
     }
     if (restOfName) {
+      if (!returningCloudValue.children) {
+        throw new Error(`Cannot get "${restOfName}" within "${name}"`);
+      }
       returningCloudValue = returningCloudValue.children.get(restOfName);
     }
     return returningCloudValue;
@@ -832,7 +835,10 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
       return source.getDocStream(subsDomain, name, auth);
     }
     const doc = rootDocSet.get(name);
-    return doc.stream;
+    return (
+      doc.stream ||
+      doc.value.stream.map(value => ({ id: getIdOfValue(value), value }))
+    );
   }
 
   function getDocChildrenEventStream() {}

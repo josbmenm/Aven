@@ -500,9 +500,19 @@ export default function combineSources({
     return slowSource.observeDocChildren(domain, name);
   }
 
-  function getDocStream() {}
+  function getDocStream(domain, name) {
+    if (isFastOnly(domain, name)) {
+      return fastSource.observeDoc(domain, name);
+    }
+    console.log(
+      'Warn warrrrn! Experimental usage of getDocStream and combined source!',
+    );
+    return xs.fromObservable(performObservation(domain, name).docObservable);
+  }
 
-  function getDocChildrenEventStream() {}
+  function getDocChildrenEventStream() {
+    throw new Err('Cannot getDocChildrenEventStream of combined source yet');
+  }
 
   const isConnectedStream = xs.createWithMemory(false);
 

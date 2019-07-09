@@ -9,8 +9,8 @@ import createMemoryStorageSource from '../createMemoryStorageSource';
 import xs from 'xstream';
 import sourceTests from './sourceTests';
 
-async function justASec() {
-  return new Promise(resolve => setTimeout(resolve, 1));
+async function justASec(duration) {
+  return new Promise(resolve => setTimeout(resolve, duration || 1));
 }
 
 const dummySource = {
@@ -404,6 +404,81 @@ describe('kite doc set', () => {
     const mappedDoc = docSet.get('foobar');
     expect(await mappedDoc.value.load()).toBe('bar');
   });
+
+  it.only('handles reducer stream docs', async () => {
+    const m = createMemoryStorageSource({ domain: 'test' });
+
+    const docSet = createDocSet({
+      source: m,
+      onGetName: () => null,
+      domain: 'test',
+    });
+    const foo = docSet.get('foo');
+    const initialState = {
+      items: [],
+    };
+    function reducerFn(state, action) {
+      if (action.add) {
+        return {
+          items: [...state.items, action.add],
+        };
+      } else if (action.remove) {
+        return {
+          items: state.items.filter(i => i !== action.remove),
+        };
+      }
+      return state;
+    }
+
+    function streamReduced(val) {
+      console.log('streamReduced', val);
+      if (!val) {
+        return xs.of(undefined);
+      }
+      let lastStateStream = undefined;
+      if (val.on === null) {
+        lastStateStream = xs.of(initialState);
+      } else if (val.on.id) {
+        lastStateStream = foo
+          .getBlock(val.on.id)
+          .value.stream.map(streamReduced)
+          .flatten();
+      } else {
+        return xs.of(undefined);
+      }
+      return lastStateStream.map(lastState => {
+        return reducerFn(lastState, val.value);
+      });
+    }
+
+    const fooReduced = docSet.setOverrideStream(
+      'fooReduced',
+      foo.value.stream.map(streamReduced).flatten(),
+    );
+    const loaded = await fooReduced.value.load();
+    expect(loaded).toBe(undefined);
+    await foo.putTransactionValue({ add: 'a' });
+    console.log('OH I SEEEEEEEEE');
+    const loaded2 = await fooReduced.value.load();
+    console.log('faaaaaail');
+
+    expect(loaded2).toMatchObject({ items: ['a'] });
+    let lastObserved = null;
+    const listener = {
+      next: v => {
+        lastObserved = v;
+      },
+    };
+    fooReduced.value.stream.addListener(listener);
+    await justASec();
+    expect(lastObserved).toMatchObject({ items: ['a'] });
+    // foo.putTransactionValue({ add: 'b' });
+    // const loaded3 = await fooReduced.value.load();
+    // expect(loaded3).toMatchObject({ items: ['a', 'b'] });
+    // await justASec();
+    // expect(lastObserved).toMatchObject({ items: ['a', 'b'] });
+  });
+
   it('posts at root', async () => {
     const m = createMemoryStorageSource({ domain: 'test' });
     const docSet = createDocSet({

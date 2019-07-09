@@ -58,11 +58,17 @@ export function useStream(stream) {
   return value;
 }
 
-export function useCloudValue(v) {
-  if (!v.stream) {
+export function useCloudValue(cloudValueInput) {
+  let cloudVal = cloudValueInput;
+  const cloud = useCloud();
+  if (typeof cloudValueInput === 'string') {
+    const doc = cloud.get(cloudValueInput);
+    cloudVal = doc.value;
+  }
+  if (!cloudVal.stream) {
     throw new Error('Cloud value must have a stream');
   }
-  return useStream(v.stream);
+  return useStream(cloudVal.stream);
 }
 
 export function useCloudReducer(actionDocName, cloudReducer) {
@@ -82,7 +88,6 @@ export function useCloudReducer(actionDocName, cloudReducer) {
         .value.stream.map(streamReduced)
         .flatten();
     } else {
-      //??
       return xs.of(undefined);
     }
     return lastStateStream.map(lastState => {

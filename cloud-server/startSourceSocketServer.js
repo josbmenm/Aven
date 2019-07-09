@@ -67,6 +67,7 @@ export default function startSourceSocketServer(wss, source) {
                 );
               }
               function sendError(error) {
+                console.error('Subscription Error', error);
                 sendMessage({
                   type: 'SubscriptionError',
                   id: subscriptionId,
@@ -92,7 +93,7 @@ export default function startSourceSocketServer(wss, source) {
                 error: sendError,
               };
               if (doc) {
-                if (source.observeDoc) {
+                if (!source.getDocStream) {
                   try {
                     subs[subscriptionId] = (await source.observeDoc(
                       domain,
@@ -114,7 +115,7 @@ export default function startSourceSocketServer(wss, source) {
                   stream.addListener(observer);
                 }
               } else if (docChildren !== undefined) {
-                if (source.observeDocChildren) {
+                if (!source.getDocChildrenEventStream) {
                   subs[subscriptionId] = (await source.observeDocChildren(
                     domain,
                     docChildren,
