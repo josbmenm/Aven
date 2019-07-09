@@ -4,7 +4,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#5ac6a244f644293adb74009084d7e0c47003021c"
+  resolved "https://github.com/AvenCloud/Aven.git#daeb5c7d81eed2feecb14a4b321125c982d7e017"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     "@expo/vector-icons" "^8.0.0"
@@ -82,13 +82,13 @@
     "@babel/highlight" "^7.0.0"
 
 "@babel/core@^7.0.0", "@babel/core@^7.1.0", "@babel/core@^7.3.3":
-  version "7.5.0"
-  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.5.0.tgz#6ed6a2881ad48a732c5433096d96d1b0ee5eb734"
-  integrity sha512-6Isr4X98pwXqHvtigw71CKgmhL1etZjPs5A67jL/w0TkLM9eqmFR40YrnJvEc1WnMZFsskjsmid8bHZyxKEAnw==
+  version "7.5.4"
+  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.5.4.tgz#4c32df7ad5a58e9ea27ad025c11276324e0b4ddd"
+  integrity sha512-+DaeBEpYq6b2+ZmHx3tHspC+ZRflrvLqwfv8E3hNr5LVQoyBnL8RPKSBCg+rK2W2My9PWlujBiqd0ZPsR9Q6zQ==
   dependencies:
     "@babel/code-frame" "^7.0.0"
     "@babel/generator" "^7.5.0"
-    "@babel/helpers" "^7.5.0"
+    "@babel/helpers" "^7.5.4"
     "@babel/parser" "^7.5.0"
     "@babel/template" "^7.4.4"
     "@babel/traverse" "^7.5.0"
@@ -287,10 +287,10 @@
     "@babel/traverse" "^7.1.0"
     "@babel/types" "^7.2.0"
 
-"@babel/helpers@^7.5.0":
-  version "7.5.3"
-  resolved "https://registry.yarnpkg.com/@babel/helpers/-/helpers-7.5.3.tgz#7f8bbcd60d9ce4d591b5a34781244437052b5d0c"
-  integrity sha512-WsQGlraYva5sNtGYgnQWx/kRQNZulxOs5Yc2K260J/4Z5klXIx5HlJgCdv5h9U9apdldeoI/5A7JYylrxNMZoQ==
+"@babel/helpers@^7.5.4":
+  version "7.5.4"
+  resolved "https://registry.yarnpkg.com/@babel/helpers/-/helpers-7.5.4.tgz#2f00608aa10d460bde0ccf665d6dcf8477357cf0"
+  integrity sha512-6LJ6xwUEJP51w0sIgKyfvFMJvIb9mWAfohJp0+m6eHJigkFdcH8duZ1sfhn0ltJRzwUIT/yqqhdSfRpCpL7oow==
   dependencies:
     "@babel/template" "^7.4.4"
     "@babel/traverse" "^7.5.0"
@@ -366,10 +366,10 @@
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/plugin-syntax-nullish-coalescing-operator" "^7.2.0"
 
-"@babel/plugin-proposal-object-rest-spread@^7.0.0", "@babel/plugin-proposal-object-rest-spread@^7.5.3":
-  version "7.5.3"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-object-rest-spread/-/plugin-proposal-object-rest-spread-7.5.3.tgz#e7640391076933aca9ae53a329c5b160cd485076"
-  integrity sha512-QR8Gjmj2RChQ9IbTvparfjrBpr7i6rms9HtN1AJ9ACiLJVXCd9ZanLklVUIJ73kodNlIPUM+SAelEeRvsTvRLw==
+"@babel/plugin-proposal-object-rest-spread@^7.0.0", "@babel/plugin-proposal-object-rest-spread@^7.5.4":
+  version "7.5.4"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-object-rest-spread/-/plugin-proposal-object-rest-spread-7.5.4.tgz#250de35d867ce8260a31b1fdac6c4fc1baa99331"
+  integrity sha512-KCx0z3y7y8ipZUMAEEJOyNi11lMb/FOPUjjB113tfowgw0c16EGYos7worCKBcUAh2oG+OBnoUhsnTSoLpV9uA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/plugin-syntax-object-rest-spread" "^7.2.0"
@@ -796,16 +796,16 @@
     regenerator-runtime "^0.13.2"
 
 "@babel/preset-env@^7.3.1":
-  version "7.5.3"
-  resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.5.3.tgz#a82e2aae041beabf6d4b964b7df226e1c5a99d43"
-  integrity sha512-vfJVfBnsA14ezBRVpF1R8DJRVCa96O+fAwKImU2qS8ewjBnwf3U/aQXyvj4NWOmbTO23lVdu8c5lUaut/NKzGA==
+  version "7.5.4"
+  resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.5.4.tgz#64bc15041a3cbb0798930319917e70fcca57713d"
+  integrity sha512-hFnFnouyRNiH1rL8YkX1ANCNAUVC8Djwdqfev8i1415tnAG+7hlA5zhZ0Q/3Q5gkop4HioIPbCEWAalqcbxRoQ==
   dependencies:
     "@babel/helper-module-imports" "^7.0.0"
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/plugin-proposal-async-generator-functions" "^7.2.0"
     "@babel/plugin-proposal-dynamic-import" "^7.5.0"
     "@babel/plugin-proposal-json-strings" "^7.2.0"
-    "@babel/plugin-proposal-object-rest-spread" "^7.5.3"
+    "@babel/plugin-proposal-object-rest-spread" "^7.5.4"
     "@babel/plugin-proposal-optional-catch-binding" "^7.2.0"
     "@babel/plugin-proposal-unicode-property-regex" "^7.4.4"
     "@babel/plugin-syntax-async-generators" "^7.2.0"
@@ -864,9 +864,9 @@
     source-map-support "^0.5.9"
 
 "@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2":
-  version "7.5.3"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.5.3.tgz#ad06e9d28539426fc20869f0b3d9ed6c21bed909"
-  integrity sha512-09kHrO2Y0JWybW20qnt+UMlNTj7NUQByP6ubyq50Yj1QCDhbHfEmWk/uso+SaEi5XKNEWYVKbBgdiZisIaBPmw==
+  version "7.5.4"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.5.4.tgz#cb7d1ad7c6d65676e66b47186577930465b5271b"
+  integrity sha512-Na84uwyImZZc3FKf4aUF1tysApzwf3p2yuFBIyBfbzT5glzKTdvYI4KVW4kcgjrzoGUjC7w3YyCHcJKaRxsr2Q==
   dependencies:
     regenerator-runtime "^0.13.2"
 
@@ -1040,7 +1040,16 @@
     react-is "^16.5.2"
     react-lifecycles-compat "^3.0.4"
 
-"@react-navigation/native@^3.0.0-alpha.5", "@react-navigation/native@https://github.com/react-navigation/react-navigation-native.git":
+"@react-navigation/native@^3.0.0-alpha.5":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-3.5.0.tgz#f5d16e0845ac26d1147d1caa481f18a00740e7ae"
+  integrity sha512-TmGOis++ejEXG3sqNJhCSKqB0/qLu3FQgDtO959qpqif36R/diR8SQwJqeSdofoEiK3CepdhFlTCeHdS1/+MsQ==
+  dependencies:
+    hoist-non-react-statics "^3.0.1"
+    react-native-safe-area-view "^0.14.1"
+    react-native-screens "^1.0.0 || ^1.0.0-alpha"
+
+"@react-navigation/native@https://github.com/react-navigation/react-navigation-native.git":
   version "3.5.0"
   resolved "https://github.com/react-navigation/react-navigation-native.git#d54c3590825a3567f63fdea940a784699c653742"
   dependencies:
@@ -7811,7 +7820,12 @@ react-native@^0.58.5:
     xmldoc "^0.4.0"
     yargs "^9.0.0"
 
-react-navigation-hooks@^1.0.0-alpha.2, "react-navigation-hooks@https://github.com/react-navigation/react-navigation-hooks":
+react-navigation-hooks@^1.0.0-alpha.2:
+  version "1.0.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/react-navigation-hooks/-/react-navigation-hooks-1.0.0-alpha.2.tgz#e44de3790d1f0ba6ff33dc11caa0e55d2a4fc8f7"
+  integrity sha512-G/JlquD3Xs8fYSLywKz6TV+APev8IwHDThU7X9gK2fZnLyk5tX9OeuO4pTpv4jv/tTRcjk7wkKQ+pHI+rFXa/g==
+
+"react-navigation-hooks@https://github.com/react-navigation/react-navigation-hooks":
   version "1.0.0-alpha.2"
   resolved "https://github.com/react-navigation/react-navigation-hooks#d12207749be1b60ab95e4b9576552a66323fded3"
 
@@ -7826,7 +7840,14 @@ react-navigation-stack@1.0.0-alpha.22:
   dependencies:
     react-native-safe-area-view "^0.14.6"
 
-react-navigation-transitioner@^1.0.0-alpha.3, "react-navigation-transitioner@https://github.com/react-navigation/react-navigation-transitioner":
+react-navigation-transitioner@^1.0.0-alpha.3:
+  version "1.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/react-navigation-transitioner/-/react-navigation-transitioner-1.0.0-alpha.3.tgz#a509d328ab531edd9b32e2c257f3747a5107787c"
+  integrity sha512-lzNRqEFjBY89/T78qQ3NYWU9R0KIfR2WTC30Mi5kwMJAMMsxjaWrZSeWBl/LWnAhvgmifeycmWaCcgWmub31Zw==
+  dependencies:
+    react-native-reanimated "^1.0.0-alpha.10"
+
+"react-navigation-transitioner@https://github.com/react-navigation/react-navigation-transitioner":
   version "1.0.0-alpha.3"
   resolved "https://github.com/react-navigation/react-navigation-transitioner#42ce7383830f38e0a89952c19ab511cd854cc609"
   dependencies:
