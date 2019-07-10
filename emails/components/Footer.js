@@ -11,7 +11,7 @@ function Footer() {
       paddingLeft="136px"
       paddingRight="136px"
     >
-      <MjmlColumn padding="28px 36px 20px 36px" borderBottom="1px solid hsla(0, 0%, 59%, 0.3)">
+      <MjmlColumn padding="28px 36px 20px 36px">
         <MjmlRaw>
           <div
             style={{

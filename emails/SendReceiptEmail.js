@@ -24,7 +24,7 @@ function getBodyHTML({ orderDetails, promocode }) {
     <Layout title="Receipt email" metaTitle="ONO food - Blend Receipt">
       <Header />
       <MjmlSection
-        backgroundUrl={'https://via.placeholder.com/1200x900'}
+        backgroundUrl="https://emailassets-kglyyrazbw.now.sh/blend_avo-matcha.jpg"
         backgroundSize="cover"
         backgroundRepeat="no-repeat"
       >
@@ -44,27 +44,39 @@ function getBodyHTML({ orderDetails, promocode }) {
           <MjmlTable padding="0">
             <tr style={{ border: 'none', borderCollapse: 'collapse' }}>
               <th align="left">
-                <MjmlText
-                  fontFamily="MaaxBold"
-                  textAlign="left"
-                  color={theme.colors.primary}
-                  fontSize="38px"
-                  lineHeight="48px"
-                  letterSpacing="0.5"
-                >
-                  <h2>total</h2>
+                <MjmlText fontFamily="Maax-Bold">
+                  <p
+                    style={{
+                      margin: 0,
+                      padding: 0,
+                      fontFamily: 'Maax-Bold',
+                      textAlign: 'left',
+                      color: theme.colors.primary,
+                      fontSize: '38px',
+                      lineHeight: '48px',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    total
+                  </p>
                 </MjmlText>
               </th>
               <th align="right">
-                <MjmlText
-                  fontFamily="MaaxBold"
-                  textAlign="left"
-                  color={theme.colors.primary}
-                  fontSize="38px"
-                  lineHeight="48px"
-                  letterSpacing="0.5"
-                >
-                  <h2>{renderCurrency(total.amount)}</h2>
+                <MjmlText>
+                  <p
+                    style={{
+                      margin: 0,
+                      padding: 0,
+                      fontFamily: 'Maax-Bold',
+                      textAlign: 'right',
+                      color: theme.colors.primary,
+                      fontSize: '38px',
+                      lineHeight: '48px',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    {renderCurrency(total.amount)}
+                  </p>
                 </MjmlText>
               </th>
             </tr>
@@ -106,7 +118,7 @@ function getBodyHTML({ orderDetails, promocode }) {
                   fontFamily: 'serif',
                   color: '#005151',
                   fontSize: '18px',
-                  lineHeight: '28px',
+                  lineHeight: '32px',
                 }}
               >
                 {subTotal.label}
@@ -116,7 +128,7 @@ function getBodyHTML({ orderDetails, promocode }) {
                   fontFamily: 'serif',
                   color: '#005151',
                   fontSize: '18px',
-                  lineHeight: '28px',
+                  lineHeight: '32px',
                   textAlign: 'right',
                 }}
               >
@@ -129,7 +141,7 @@ function getBodyHTML({ orderDetails, promocode }) {
                   fontFamily: 'serif',
                   color: '#005151',
                   fontSize: '18px',
-                  lineHeight: '28px',
+                  lineHeight: '32px',
                 }}
               >
                 {tax.label}
@@ -139,7 +151,7 @@ function getBodyHTML({ orderDetails, promocode }) {
                   fontFamily: 'serif',
                   color: '#005151',
                   fontSize: '18px',
-                  lineHeight: '28px',
+                  lineHeight: '32px',
                   textAlign: 'right',
                 }}
               >
@@ -156,7 +168,7 @@ function getBodyHTML({ orderDetails, promocode }) {
                   fontFamily: 'serif',
                   color: '#005151',
                   fontSize: '18px',
-                  lineHeight: '28px',
+                  lineHeight: '32px',
                 }}
               >
                 {total.label}
@@ -166,7 +178,7 @@ function getBodyHTML({ orderDetails, promocode }) {
                   fontFamily: 'serif',
                   color: '#005151',
                   fontSize: '18px',
-                  lineHeight: '28px',
+                  lineHeight: '32px',
                   textAlign: 'right',
                 }}
               >
@@ -179,7 +191,7 @@ function getBodyHTML({ orderDetails, promocode }) {
                   fontFamily: 'serif',
                   color: '#005151',
                   fontSize: '18px',
-                  lineHeight: '28px',
+                  lineHeight: '32px',
                 }}
               >
                 {paymentMethod.cardNumber}
