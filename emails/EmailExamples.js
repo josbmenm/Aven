@@ -1,8 +1,6 @@
-import SendReceiptEmail from './SendReceiptEmail';
-
 const EmailExamples = {
   SendReceipt: {
-    template: SendReceiptEmail,
+    template: 'SendReceiptEmail',
     paramOptions: {
       SmallOrder: { total: '$6.50' },
       LargeOrder: { total: '$26.50' },

@@ -28,7 +28,7 @@ function Header({ title, metaTitle }) {
   );
 }
 
-function generateEmailHTML(params) {
+function getBodyHTML(params) {
   const { html, errors } = render(
     <Mjml>
       <Header />
@@ -231,7 +231,7 @@ function generateEmailHTML(params) {
   return html;
 }
 
-function generateEmailText(params) {
+function getBodyText(params) {
   return `Thanks for ordering from ono blends!
 
 Your total is ${params.total}
@@ -239,7 +239,12 @@ Your total is ${params.total}
 Ono Blends`;
 }
 
+function getSubject(params) {
+  return 'Your receipt from Ono Blends';
+}
+
 export default {
-  generateEmailHTML,
-  generateEmailText,
+  getBodyHTML,
+  getBodyText,
+  getSubject,
 };

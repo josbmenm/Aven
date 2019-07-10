@@ -7,6 +7,8 @@ import { CloudContext } from '../cloud-core/KiteReact';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 
 import { HostContext } from '../components/AirtableImage';
+import { sendEmail } from '../emails/Emails';
+import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 
 const getEnv = c => process.env[c];
 
@@ -32,8 +34,18 @@ const startSkynetServer = async () => {
   context.set(CloudContext, cloud);
   context.set(HostContext, { authority: 'onofood.co', useSSL: !IS_DEV });
 
+  const emailAgent = EmailAgent({
+    defaultFromEmail: 'Ono Blends <aloha@onofood.co>',
+    config: {
+      sendgridAPIKey: getEnv('SENDGRID_API_KEY'),
+    },
+  });
+
   const dispatch = async action => {
     switch (action.type) {
+      case 'TestEmail': {
+        return await sendEmail(emailAgent, action);
+      }
       default:
         return await networkSource.dispatch(action);
     }
