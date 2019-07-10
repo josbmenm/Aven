@@ -38,6 +38,7 @@ export default function EmailsPlayground({}) {
             }}
             title={exName}
             type={exampleName === exName ? 'solid' : 'outline'}
+            style={{marginBottom: 24}}
           />
         ))}
         {!!exampleName && (
@@ -56,6 +57,7 @@ export default function EmailsPlayground({}) {
                     }}
                     title={paramOptionName}
                     type={exParams === params ? 'solid' : 'outline'}
+                    style={{marginBottom: 24}}
                   />
                 );
               },
@@ -66,7 +68,7 @@ export default function EmailsPlayground({}) {
                   Review the results on the right, or send the example email to
                   yourself:
                 </BodyText>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row', marginBottom: 24 }}>
                   <BlockFormInput
                     mode="email"
                     value={recipientEmail}

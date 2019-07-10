@@ -56,7 +56,7 @@ function formReducer(state, action) {
 function BookUsWizard() {
   const [loading, setLoading] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
-  const [error, setError] = React.useState(null);
+  const [error] = React.useState(null);
   const [stepsState, stepsDispatch] = React.useReducer(stepsReducer, {
     current: 0,
     hasNext: true,
@@ -131,7 +131,7 @@ function BookUsWizard() {
               flexDirection: ['column', 'row'],
             }}
           >
-            <FormRow direction="row"> 
+            <FormRow direction="row">
               <FormInput
                 label="first name"
                 mode="name"

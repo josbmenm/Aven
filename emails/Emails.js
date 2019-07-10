@@ -1,7 +1,9 @@
 import SendReceiptEmail from './SendReceiptEmail';
+import ThankyouEmail from './ThankyouEmail'
 
 const Emails = {
   SendReceipt: SendReceiptEmail,
+  Thankyou: ThankyouEmail,
 };
 
 export async function sendEmail(agent, { recipient, templateName, params }) {
