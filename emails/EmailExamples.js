@@ -7,20 +7,20 @@ const EmailExamples = {
           displayItems: [
             {
               label: 'Avocado + Matcha',
-              amount: { currency: 'USD', value: '5.95' },
+              amount: 595,
             },
           ],
           subTotal: {
             label: 'Subtotal',
-            amount: { currency: 'USD', value: '5.95' },
+            amount: 595,
           },
           tax: {
             label: 'Tax',
-            amount: { currency: 'USD', value: '0.55' },
+            amount: 55,
           },
           total: {
             label: 'Amount Charged',
-            amount: { currency: 'USD', value: '6.50' },
+            amount: 650,
           },
           paymentMethod: {
             methodName: 'basic-card',
@@ -35,24 +35,24 @@ const EmailExamples = {
           displayItems: [
             {
               label: 'Avocado + Matcha',
-              amount: { currency: 'USD', value: '5.95' },
+              amount: 595,
             },
             {
               label: 'Strawberry + Dragon Fruit',
-              amount: { currency: 'USD', value: '5.95' },
+              amount: 595,
             },
             {
               label: 'Mango + Turmeric',
-              amount: { currency: 'USD', value: '5.95' },
+              amount: 595,
             },
           ],
           subTotal: {
             label: 'Subtotal',
-            amount: { currency: 'USD', value: '17.85' },
+            amount: 1785,
           },
           tax: {
             label: 'Tax',
-            amount: { currency: 'USD', value: '1.70' },
+            amount: 170,
           },
           total: {
             label: 'Amount Charged',
@@ -82,7 +82,7 @@ const EmailExamples = {
       params: {
         refund: {
           label: '',
-          amount: { currency: 'USD', value: '6.50' },
+          amount: 650,
         },
       },
     },

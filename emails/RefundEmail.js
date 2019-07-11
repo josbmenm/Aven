@@ -23,7 +23,7 @@ function getBodyHTML({ refund }) {
             align="center"
             padding="0px"
           >{`A refund of ${
-            formatCurrency(refund)
+            formatCurrency(refund.amount)
           } has been issued to your credit card.`}</Text>
           <MjmlSpacer height="24px" />
           <Text align="center">
@@ -38,7 +38,6 @@ function getBodyHTML({ refund }) {
   );
 
   if (errors.length) {
-    console.log('TCL: sendReceiptEmail -> errors', errors);
     console.error(errors);
     throw new Error('Cannot construct email!', errors);
   }

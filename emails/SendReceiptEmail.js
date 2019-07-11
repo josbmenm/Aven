@@ -12,7 +12,7 @@ import Header from './components/Header';
 import BaseText from './components/Text';
 import PromoCodeSection from './components/PromoCodeSection';
 import theme from './theme';
-import { formatCurrency } from './utils';
+import formatCurrency from '../utils/formatCurrency'
 
 const BodyText = props => <BaseText {...props} lineHeight="32px" />;
 
