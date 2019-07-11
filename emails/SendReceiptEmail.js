@@ -9,14 +9,12 @@ import {
 import Footer from './components/Footer';
 import Layout from './components/Layout';
 import Header from './components/Header';
-import Text from './components/Text';
+import BaseText from './components/Text';
 import PromoCodeSection from './components/PromoCodeSection';
 import theme from './theme';
+import { formatCurrency } from './utils';
 
-function renderCurrency(amount) {
-  // TODO: check the currency and render the appropiate symbol
-  return `$${amount.value}`;
-}
+const BodyText = props => <BaseText {...props} lineHeight="32px" />;
 
 function getBodyHTML({ orderDetails, promocode }) {
   const { displayItems, subTotal, total, tax, paymentMethod } = orderDetails;
@@ -44,40 +42,23 @@ function getBodyHTML({ orderDetails, promocode }) {
           <MjmlTable padding="0">
             <tr style={{ border: 'none', borderCollapse: 'collapse' }}>
               <th align="left">
-                <Text fontFamily="Maax-Bold">
-                  <p
-                    style={{
-                      margin: 0,
-                      padding: 0,
-                      fontFamily: 'Maax-Bold',
-                      textAlign: 'left',
-                      color: theme.colors.primary,
-                      fontSize: '38px',
-                      lineHeight: '48px',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    total
-                  </p>
-                </Text>
+                <p
+                  style={{ ...theme.textStyles.heading, margin: 0, padding: 0 }}
+                >
+                  total
+                </p>
               </th>
               <th align="right">
-                <Text>
-                  <p
-                    style={{
-                      margin: 0,
-                      padding: 0,
-                      fontFamily: 'Maax-Bold',
-                      textAlign: 'right',
-                      color: theme.colors.primary,
-                      fontSize: '38px',
-                      lineHeight: '48px',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    {renderCurrency(total.amount)}
-                  </p>
-                </Text>
+                <p
+                  style={{
+                    ...theme.textStyles.heading,
+                    margin: 0,
+                    padding: 0,
+                    textAlign: 'right',
+                  }}
+                >
+                  {formatCurrency(total.amount)}
+                </p>
               </th>
             </tr>
           </MjmlTable>
@@ -85,26 +66,22 @@ function getBodyHTML({ orderDetails, promocode }) {
           <MjmlTable padding="0">
             {displayItems.map((item, idx) => (
               <tr>
-                <td
-                  style={{
-                    fontFamily: 'serif',
-                    color: '#005151',
-                    fontSize: '18px',
-                    lineHeight: '32px',
-                  }}
-                >
-                  {`${idx + 1}. ${item.label}`}
+                <td>
+                  <p
+                    style={{ ...theme.textStyles.body, margin: 0, padding: 0 }}
+                  >{`${idx + 1}. ${item.label}`}</p>
                 </td>
-                <td
-                  style={{
-                    textAlign: 'right',
-                    fontFamily: 'serif',
-                    color: '#005151',
-                    fontSize: '18px',
-                    lineHeight: '32px',
-                  }}
-                >
-                  {renderCurrency(item.amount)}
+                <td>
+                  <p
+                    style={{
+                      ...theme.textStyles.body,
+                      margin: 0,
+                      padding: 0,
+                      textAlign: 'right',
+                    }}
+                  >
+                    {formatCurrency(item.amount)}
+                  </p>
                 </td>
               </tr>
             ))}
@@ -112,97 +89,90 @@ function getBodyHTML({ orderDetails, promocode }) {
           <MjmlSpacer height="80px" />
           <MjmlTable padding="0">
             <tr>
-              <td
-                style={{
-                  //font-family:serif;color:#005151;font-size:18px;line-height:28px;
-                  fontFamily: 'serif',
-                  color: '#005151',
-                  fontSize: '18px',
-                  lineHeight: '32px',
-                }}
-              >
-                {subTotal.label}
+              <td>
+                <p style={{ ...theme.textStyles.body, margin: 0, padding: 0 }}>
+                  {subTotal.label}
+                </p>
               </td>
-              <td
-                style={{
-                  fontFamily: 'serif',
-                  color: '#005151',
-                  fontSize: '18px',
-                  lineHeight: '32px',
-                  textAlign: 'right',
-                }}
-              >
-                {renderCurrency(subTotal.amount)}
+              <td>
+                <p
+                  style={{
+                    ...theme.textStyles.body,
+                    textAlign: 'right',
+                    margin: 0,
+                    padding: 0,
+                  }}
+                >
+                  {formatCurrency(subTotal.amount)}
+                </p>
               </td>
             </tr>
             <tr>
-              <td
-                style={{
-                  fontFamily: 'serif',
-                  color: '#005151',
-                  fontSize: '18px',
-                  lineHeight: '32px',
-                }}
-              >
-                {tax.label}
+              <td>
+                <p style={{ ...theme.textStyles.body, margin: 0, padding: 0 }}>
+                  {tax.label}
+                </p>
               </td>
-              <td
-                style={{
-                  fontFamily: 'serif',
-                  color: '#005151',
-                  fontSize: '18px',
-                  lineHeight: '32px',
-                  textAlign: 'right',
-                }}
-              >
-                {renderCurrency(tax.amount)}
+              <td>
+                <p
+                  style={{
+                    ...theme.textStyles.body,
+                    textAlign: 'right',
+                    margin: 0,
+                    padding: 0,
+                  }}
+                >
+                  {formatCurrency(tax.amount)}
+                </p>
               </td>
             </tr>
           </MjmlTable>
           <MjmlSpacer height="42px" />
           <MjmlTable padding="0">
             <tr>
-              <td
-                style={{
-                  //font-family:serif;color:#005151;font-size:18px;line-height:28px;
-                  fontFamily: 'serif',
-                  color: '#005151',
-                  fontSize: '18px',
-                  lineHeight: '32px',
-                }}
-              >
-                {total.label}
+              <td>
+                <p style={{ ...theme.textStyles.body, margin: 0, padding: 0 }}>
+                  {total.label}
+                </p>
               </td>
-              <td
-                style={{
-                  fontFamily: 'serif',
-                  color: '#005151',
-                  fontSize: '18px',
-                  lineHeight: '32px',
-                  textAlign: 'right',
-                }}
-              >
-                {renderCurrency(total.amount)}
+              <td>
+                <p
+                  style={{
+                    ...theme.textStyles.body,
+                    margin: 0,
+                    padding: 0,
+                    textAlign: 'right',
+                  }}
+                >
+                  {formatCurrency(total.amount)}
+                </p>
               </td>
             </tr>
             <tr>
-              <td
-                style={{
-                  fontFamily: 'serif',
-                  color: '#005151',
-                  fontSize: '18px',
-                  lineHeight: '32px',
-                }}
-              >
-                <img src="https://onofood.co/img/visa.png" width="30px" height="21px" />
-                <span style={{marginLeft: "28px"}}>**** {paymentMethod.cardNumber}</span>
+              <td>
+                <img
+                  src="https://onofood.co/img/visa.png"
+                  width="30px"
+                  height="21px"
+                />
+                <p
+                  style={{
+                    ...theme.textStyles.body,
+                    margin: 0,
+                    padding: 0,
+                    marginLeft: 24,
+                    display: 'inline-block'
+                  }}
+                >
+                  **** {paymentMethod.cardNumber}
+                </p>
               </td>
             </tr>
           </MjmlTable>
         </MjmlColumn>
       </MjmlSection>
       {promocode && <PromoCodeSection promocode={promocode} />}
-      <Footer />
+      {/* <Footer /> */}
     </Layout>,
     { validationLevel: 'soft' },
   );

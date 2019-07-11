@@ -1,9 +1,11 @@
 import SendReceiptEmail from './SendReceiptEmail';
 import ThankyouEmail from './ThankyouEmail'
+import RefundEmail from './RefundEmail';
 
 const Emails = {
   SendReceipt: SendReceiptEmail,
   Thankyou: ThankyouEmail,
+  Refund: RefundEmail
 };
 
 export async function sendEmail(agent, { recipient, templateName, params }) {

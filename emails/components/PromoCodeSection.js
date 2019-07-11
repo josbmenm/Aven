@@ -1,6 +1,6 @@
 import React from 'react';
-
 import { MjmlSection, MjmlColumn, MjmlButton } from 'mjml-react';
+import theme from '../theme';
 import Text from './Text'
 
 function PromoCodeSection({ promocode }) {
@@ -14,20 +14,18 @@ function PromoCodeSection({ promocode }) {
     >
       <MjmlColumn>
         <Text
-          fontSize="12px"
-          font-Weight="bold"
-          color="#005151"
-          padding="0"
+          {...theme.textStyles.small}
+          fontWeight="bold"
         >
           Give a Blend, Get a Blend.
         </Text>
-        <Text padding="4px 0" fontSize="12px" color="#005151">
+        <Text {...theme.textStyles.small }>
           For every friend who places their first order, you’ll get a free blend
           on your next visit.
         </Text>
       </MjmlColumn>
-      <MjmlColumn>
-        <Text align="right" padding="0" paddingBottom="4px">
+      <MjmlColumn padding="0px">
+        <Text {...theme.textStyles.small } align="right" paddingBottom="4px">
           Share your promo code:
         </Text>
         <MjmlButton

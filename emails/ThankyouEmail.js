@@ -1,11 +1,11 @@
 import React from 'react';
 import {
   render,
-  MjmlStyle,
   MjmlSection,
   MjmlColumn,
   MjmlButton,
   MjmlImage,
+  MjmlSpacer
 } from 'mjml-react';
 import theme from './theme';
 import Layout from './components/Layout';
@@ -24,7 +24,7 @@ function getBodyHTML({ promocode }) {
         backgroundRepeat="no-repeat"
       >
         <MjmlColumn padding="0px">
-          <mj-spacer height="410px" />
+          <MjmlSpacer height="410px" />
         </MjmlColumn>
       </MjmlSection>
       <MjmlSection
@@ -39,13 +39,13 @@ function getBodyHTML({ promocode }) {
             paddingTop="32px"
             paddingBottom="16px"
           />
-          <Text fontSize="18px" lineHeight="28px" color={theme.colors.primary}>
+          <Text variant="body">
             We appreciate the feedback. As a token of our appreciation, we want
             to give you&nbsp;
             <span style={{ textDecoration: 'line-through' }}>food</span> a
             blend for thought.
           </Text>
-          <Text fontSize="18px" lineHeight="28px" color={theme.colors.primary}>
+          <Text variant="body">
             Next time you order, use the promo code below to redeem a free
             blend.
           </Text>
@@ -60,9 +60,7 @@ function getBodyHTML({ promocode }) {
       >
         <MjmlColumn padding="0px">
           <Text
-            fontSize="18px"
-            lineHeight="28px"
-            color={theme.colors.primary}
+            variant="body"
             align="center"
           >
             Use promo code:
@@ -99,13 +97,11 @@ function getBodyHTML({ promocode }) {
 function getBodyText(params) {
   return `Thanks for ordering from ono blends!
 
-Your total is ${params.total}
-
 Ono Blends`;
 }
 
 function getSubject(params) {
-  return 'Your receipt from Ono Blends';
+  return 'Thanks! Order Complete from Ono Blends';
 }
 
 export default {

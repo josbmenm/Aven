@@ -6,21 +6,21 @@ import {
   MjmlImage,
   MjmlDivider,
   MjmlSpacer,
+  MjmlButton,
 } from 'mjml-react';
 import theme from '../theme';
-import Text from './Text'
+import BaseText from './Text';
 
-function FooterText({ children }) {
+function Text({ children }) {
   return (
-    <Text
+    <BaseText
+      {...theme.textStyles.xsmall}
       align="center"
       padding="0px"
-      fontSize="7px"
-      lineHeight="9px"
       color="#9B9B9B"
     >
       {children}
-    </Text>
+    </BaseText>
   );
 }
 
@@ -36,6 +36,7 @@ function Footer() {
       >
         <MjmlColumn verticalAlign="middle" padding="0px">
           <MjmlImage
+            href="https://www.instagram.com/onofoodco/"
             padding="0px"
             src="https://onofood.co/img/social_instagram.png"
             width="28px"
@@ -43,6 +44,7 @@ function Footer() {
         </MjmlColumn>
         <MjmlColumn verticalAlign="middle" padding="0px">
           <MjmlImage
+            href="https://twitter.com/onofoodco"
             padding="0px"
             src="https://onofood.co/img/social_twitter.png"
             width="28px"
@@ -50,6 +52,7 @@ function Footer() {
         </MjmlColumn>
         <MjmlColumn verticalAlign="middle" padding="0px">
           <MjmlImage
+            href="https://www.facebook.com/onofoodco/"
             padding="0px"
             src="https://onofood.co/img/social_facebook.png"
             width="28px"
@@ -70,11 +73,11 @@ function Footer() {
 
       <MjmlSection padding="0px" backgroundColor="white">
         <MjmlColumn padding="0px 0px 20px 0px">
-          <FooterText>No longer wish to receive these emails?</FooterText>
-          <FooterText>please unsubscribe</FooterText>
+          <Text>No longer wish to receive these emails?</Text>
+          <Text>please unsubscribe</Text>
           <MjmlSpacer height="10px" />
-          <FooterText>Ono Food Co.</FooterText>
-          <FooterText>915 Venice Blvd. Los Angeles, CA 90015</FooterText>
+          <Text>Ono Food Co.</Text>
+          <Text>915 Venice Blvd. Los Angeles, CA 90015</Text>
         </MjmlColumn>
       </MjmlSection>
     </React.Fragment>

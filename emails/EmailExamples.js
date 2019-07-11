@@ -76,6 +76,17 @@ const EmailExamples = {
       },
     },
   },
+  Refund: {
+    template: 'RefundEmail',
+    paramOptions: {
+      params: {
+        refund: {
+          label: '',
+          amount: { currency: 'USD', value: '6.50' },
+        },
+      },
+    },
+  },
 };
 
 export default EmailExamples;
