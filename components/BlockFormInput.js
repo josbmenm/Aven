@@ -10,6 +10,8 @@ function BlockFormInputWithRef(
 ) {
   const theme = useTheme();
   const desiredPlaceholderOpen = value ? 0 : 1;
+  const inputOpacity = new Animated.Value(0);
+  const [focus, setFocus] = React.useState(0);
   const [placeholderOpenProgress] = useState(
     new Animated.Value(desiredPlaceholderOpen),
   );
@@ -20,6 +22,27 @@ function BlockFormInputWithRef(
       easing: Easing.out(Easing.cubic),
     }).start();
   }, [desiredPlaceholderOpen]);
+
+  useEffect(() => {
+    Animated.timing(inputOpacity, {
+      toValue: focus,
+      duration: 200,
+      easing: Easing.out(Easing.cubic),
+    }).start();
+  }, [focus]);
+
+  function handleFocus(e) {
+    e.persist();
+    setFocus(1);
+    onFocus && onFocus(e);
+  }
+
+  function handleBlur(e) {
+    e.persist();
+    setFocus(0);
+    onBlur && onBlur(e);
+  }
+
   let autoCorrect = false;
   let secureTextEntry = false;
   let autoCapitalize = null;
@@ -62,6 +85,17 @@ function BlockFormInputWithRef(
     multiline = true;
   }
   return (
+    <Animated.View style={{
+      padding: 4,
+      margin: -4,
+      borderRadius: 4,
+      backgroundColor: inputOpacity.interpolate({
+        inputRange: [0, 1],
+        outputRange: ["rgba(204, 221, 220, 0)", "rgba(204, 221, 220, 1)"]
+      }),
+      flex: 1,
+      ...style,
+    }}>
       <View
         style={{
           flex: 1,
@@ -71,7 +105,7 @@ function BlockFormInputWithRef(
           paddingTop: 20,
           paddingBottom: 8,
           paddingHorizontal: 20,
-          ...style
+          backgroundColor: 'white',
         }}
         {...rest}
       >
@@ -109,14 +143,15 @@ function BlockFormInputWithRef(
           ref={inputRef}
           multiline={multiline}
           value={value}
-          onFocus={onFocus}
-          onBlur={onBlur}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           onChangeText={valueHandler}
           options={inputOptions}
           type={inputType}
           onSubmitEditing={onSubmit}
           style={{
             fontSize: 18,
+            outline: 'none',
             lineHeight: 28,
             color: theme.colors.monsterra,
             // ...textInputStyle,
@@ -125,7 +160,7 @@ function BlockFormInputWithRef(
           }}
         />
       </View>
-
+    </Animated.View>
   );
 }
 

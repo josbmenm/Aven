@@ -6,7 +6,7 @@ import {
   MjmlTable,
   MjmlSpacer,
 } from 'mjml-react';
-import Footer from './components/Footer';
+import SocialFooter from './components/SocialFooter';
 import Layout from './components/Layout';
 import Header from './components/Header';
 import BaseText from './components/Text';
@@ -172,7 +172,7 @@ function getBodyHTML({ orderDetails, promocode }) {
         </MjmlColumn>
       </MjmlSection>
       {promocode && <PromoCodeSection promocode={promocode} />}
-      {/* <Footer /> */}
+      {/* <SocialFooter /> */}
     </Layout>,
     { validationLevel: 'soft' },
   );

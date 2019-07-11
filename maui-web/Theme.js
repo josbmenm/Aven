@@ -40,9 +40,14 @@ const shadows = {
   },
 };
 
+
+
 export const theme = {
   colors,
   fonts,
+  textStyles: {
+
+  },
   fontSizes: [
     10,
     11,
@@ -124,3 +129,5 @@ export const theme = {
     640,
   ],
 };
+
+theme.fontSizes.small = theme.fontSizes[3]

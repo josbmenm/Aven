@@ -13,18 +13,13 @@ import BaseText from './Text';
 
 function Text({ children }) {
   return (
-    <BaseText
-      {...theme.textStyles.xsmall}
-      align="center"
-      padding="0px"
-      color="#9B9B9B"
-    >
+    <BaseText variant="xsmall" align="center" padding="0px" color="#9B9B9B">
       {children}
     </BaseText>
   );
 }
 
-function Footer() {
+function SocialFooter() {
   return (
     <React.Fragment>
       <MjmlSection
@@ -73,9 +68,17 @@ function Footer() {
 
       <MjmlSection padding="0px" backgroundColor="white">
         <MjmlColumn padding="0px 0px 20px 0px">
-          <Text>No longer wish to receive these emails?</Text>
-          <Text>please unsubscribe</Text>
-          <MjmlSpacer height="10px" />
+          {/* <Text>No longer wish to receive these emails?</Text>
+          <Text>
+            please&nbsp;
+            <a
+              style={{ textDecoration: 'underline', color: 'inherit' }}
+              href="#"
+            >
+              unsubscribe
+            </a>
+          </Text>
+          <MjmlSpacer height="10px" /> */}
           <Text>Ono Food Co.</Text>
           <Text>915 Venice Blvd. Los Angeles, CA 90015</Text>
         </MjmlColumn>
@@ -84,4 +87,4 @@ function Footer() {
   );
 }
 
-export default Footer;
+export default SocialFooter;

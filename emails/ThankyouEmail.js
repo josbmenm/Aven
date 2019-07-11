@@ -5,13 +5,13 @@ import {
   MjmlColumn,
   MjmlButton,
   MjmlImage,
-  MjmlSpacer
+  MjmlSpacer,
 } from 'mjml-react';
-import theme from './theme';
 import Layout from './components/Layout';
 import Text from './components/Text';
 import Header from './components/Header';
-import Footer from './components/Footer';
+import GenericFooter from './components/GenericFooter';
+import theme from './theme';
 
 function getBodyHTML({ promocode }) {
   const { html, errors } = render(
@@ -42,8 +42,8 @@ function getBodyHTML({ promocode }) {
           <Text variant="body">
             We appreciate the feedback. As a token of our appreciation, we want
             to give you&nbsp;
-            <span style={{ textDecoration: 'line-through' }}>food</span> a
-            blend for thought.
+            <span style={{ textDecoration: 'line-through',  }}>food</span> a blend
+            for thought.
           </Text>
           <Text variant="body">
             Next time you order, use the promo code below to redeem a free
@@ -59,21 +59,18 @@ function getBodyHTML({ promocode }) {
         borderBottom="1px solid #005151"
       >
         <MjmlColumn padding="0px">
-          <Text
-            variant="body"
-            align="center"
-          >
+          <Text variant="body" align="center">
             Use promo code:
           </Text>
           <MjmlButton
             align="center"
-            padding="0px"
+            padding="10px 0px"
             innerPadding="28px 24px"
             fontSize="28px"
             fontFamily="Maax-Bold"
             backgroundColor="#eee"
             fontWeight="bold"
-            color="#005151"
+            color={theme.colors.primary}
             borderRadius="3px"
             fontFamily="Maax-Bold"
           >
@@ -81,7 +78,7 @@ function getBodyHTML({ promocode }) {
           </MjmlButton>
         </MjmlColumn>
       </MjmlSection>
-      <Footer />
+      <GenericFooter />
     </Layout>,
     { validationLevel: 'soft' },
   );

@@ -3,9 +3,9 @@ import { render, MjmlSection, MjmlColumn, MjmlSpacer } from 'mjml-react';
 import Layout from './components/Layout';
 import Text from './components/Text';
 import Header from './components/Header';
-import Footer from './components/Footer';
+import SocialFooter from './components/SocialFooter';
 import theme from './theme';
-import { formatCurrency } from './utils';
+import formatCurrency from '../utils/formatCurrency'
 
 function getBodyHTML({ refund }) {
   const { html, errors } = render(
@@ -32,7 +32,7 @@ function getBodyHTML({ refund }) {
           </Text>
         </MjmlColumn>
       </MjmlSection>
-      <Footer />
+      <SocialFooter />
     </Layout>,
     { validationLevel: 'soft' },
   );

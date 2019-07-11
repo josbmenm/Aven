@@ -56,7 +56,7 @@ const EmailExamples = {
           },
           total: {
             label: 'Amount Charged',
-            amount: { currency: 'USD', value: '19.55' },
+            amount: 1955,
           },
           paymentMethod: {
             methodName: 'basic-card',

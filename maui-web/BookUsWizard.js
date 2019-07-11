@@ -368,7 +368,7 @@ function SubmitButton({ onPress, disabled = false, loading }) {
   return (
     <Button
     style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
-      disabled={disabled}
+      disabled={disabled || loading}
       onPress={onPress}
     >
       {loading ? (

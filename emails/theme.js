@@ -29,7 +29,7 @@ const theme = {
       lineHeight: '48px',
       color: colors.primary,
     },
-  },
+  }
 };
 
 export default theme;
