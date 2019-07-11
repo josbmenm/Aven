@@ -5,11 +5,11 @@ import {
   MjmlColumn,
   MjmlTable,
   MjmlSpacer,
-  MjmlText,
 } from 'mjml-react';
 import Footer from './components/Footer';
 import Layout from './components/Layout';
 import Header from './components/Header';
+import Text from './components/Text';
 import PromoCodeSection from './components/PromoCodeSection';
 import theme from './theme';
 
@@ -44,7 +44,7 @@ function getBodyHTML({ orderDetails, promocode }) {
           <MjmlTable padding="0">
             <tr style={{ border: 'none', borderCollapse: 'collapse' }}>
               <th align="left">
-                <MjmlText fontFamily="Maax-Bold">
+                <Text fontFamily="Maax-Bold">
                   <p
                     style={{
                       margin: 0,
@@ -59,10 +59,10 @@ function getBodyHTML({ orderDetails, promocode }) {
                   >
                     total
                   </p>
-                </MjmlText>
+                </Text>
               </th>
               <th align="right">
-                <MjmlText>
+                <Text>
                   <p
                     style={{
                       margin: 0,
@@ -77,7 +77,7 @@ function getBodyHTML({ orderDetails, promocode }) {
                   >
                     {renderCurrency(total.amount)}
                   </p>
-                </MjmlText>
+                </Text>
               </th>
             </tr>
           </MjmlTable>
@@ -194,7 +194,8 @@ function getBodyHTML({ orderDetails, promocode }) {
                   lineHeight: '32px',
                 }}
               >
-                {paymentMethod.cardNumber}
+                <img src="https://emailassets-kglyyrazbw.now.sh/visa.png" width="30px" height="21px" />
+                <span style={{marginLeft: "28px"}}>**** {paymentMethod.cardNumber}</span>
               </td>
             </tr>
           </MjmlTable>

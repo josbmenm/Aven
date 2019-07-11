@@ -1,9 +1,18 @@
 import React from 'react';
+import {
+  MjmlSection,
+  MjmlColumn,
+  MjmlRaw,
+  MjmlImage,
+  MjmlDivider,
+  MjmlSpacer,
+} from 'mjml-react';
 import theme from '../theme';
+import Text from './Text'
 
 function FooterText({ children }) {
   return (
-    <MjmlText
+    <Text
       align="center"
       padding="0px"
       fontSize="7px"
@@ -11,19 +20,9 @@ function FooterText({ children }) {
       color="#9B9B9B"
     >
       {children}
-    </MjmlText>
+    </Text>
   );
 }
-
-import {
-  MjmlSection,
-  MjmlColumn,
-  MjmlRaw,
-  MjmlImage,
-  MjmlDivider,
-  MjmlText,
-  MjmlSpacer,
-} from 'mjml-react';
 
 function Footer() {
   return (

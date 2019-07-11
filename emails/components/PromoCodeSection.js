@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { MjmlSection, MjmlText, MjmlColumn, MjmlButton } from 'mjml-react';
+import { MjmlSection, MjmlColumn, MjmlButton } from 'mjml-react';
+import Text from './Text'
 
 function PromoCodeSection({ promocode }) {
   return (
@@ -12,23 +13,23 @@ function PromoCodeSection({ promocode }) {
       paddingRight="24px"
     >
       <MjmlColumn>
-        <MjmlText
+        <Text
           fontSize="12px"
           font-Weight="bold"
           color="#005151"
           padding="0"
         >
           Give a Blend, Get a Blend.
-        </MjmlText>
-        <MjmlText padding="4px 0" fontSize="12px" color="#005151">
+        </Text>
+        <Text padding="4px 0" fontSize="12px" color="#005151">
           For every friend who places their first order, you’ll get a free blend
           on your next visit.
-        </MjmlText>
+        </Text>
       </MjmlColumn>
       <MjmlColumn>
-        <MjmlText align="right" padding="0" paddingBottom="4px">
+        <Text align="right" padding="0" paddingBottom="4px">
           Share your promo code:
-        </MjmlText>
+        </Text>
         <MjmlButton
           align="right"
           padding="0"
@@ -38,6 +39,7 @@ function PromoCodeSection({ promocode }) {
           fontWeight="bold"
           color="#005151"
           borderRadius="3px"
+          fontFamily="Maax-Bold"
         >
           {promocode}
         </MjmlButton>

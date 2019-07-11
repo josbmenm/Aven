@@ -17,6 +17,10 @@ function Head({ title, metaTitle }) {
         name="Maax-Bold"
         href="http://onofood.co/fonts/Maax%20-%20Bold-205TF/Maax%20-%20Bold-205TF.woff2"
       />
+      <MjmlFont
+        name="Lora"
+        href="https://fonts.googleapis.com/css?family=Lora:400,700"
+      />
       <MjmlTitle>{title}</MjmlTitle>
       <MjmlPreview>{metaTitle}</MjmlPreview>
     </MjmlHead>
