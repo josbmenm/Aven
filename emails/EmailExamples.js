@@ -71,7 +71,9 @@ const EmailExamples = {
   Thankyou: {
     template: 'ThankyouEmail',
     paramOptions: {
-      promocode: 'PROMOCODETEST',
+      params: {
+        promocode: 'PROMOCODETEST',
+      },
     },
   },
 };

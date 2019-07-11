@@ -28,7 +28,6 @@ function Footer() {
   return (
     <React.Fragment>
       <MjmlSection
-        borderTop="1px solid #4A4A4A"
         backgroundColor="white"
         paddingTop="28px"
         paddingLeft="136px"
@@ -38,21 +37,21 @@ function Footer() {
         <MjmlColumn verticalAlign="middle" padding="0px">
           <MjmlImage
             padding="0px"
-            src="https://emailassets-kglyyrazbw.now.sh/social_instagram.png"
+            src="https://onofood.co/img/social_instagram.png"
             width="28px"
           />
         </MjmlColumn>
         <MjmlColumn verticalAlign="middle" padding="0px">
           <MjmlImage
             padding="0px"
-            src="https://emailassets-kglyyrazbw.now.sh/social_twitter.png"
+            src="https://onofood.co/img/social_twitter.png"
             width="28px"
           />
         </MjmlColumn>
         <MjmlColumn verticalAlign="middle" padding="0px">
           <MjmlImage
             padding="0px"
-            src="https://emailassets-kglyyrazbw.now.sh/social_facebook.png"
+            src="https://onofood.co/img/social_facebook.png"
             width="28px"
           />
         </MjmlColumn>

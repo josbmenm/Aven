@@ -15,13 +15,13 @@ function Header() {
           padding="0"
           width="88px"
           height="64px"
-          src="https://emailassets-kglyyrazbw.now.sh/email_top-left-corner.png"
+          src="https://onofood.co/img/email_top-left-corner.png"
         />
       </MjmlColumn>
       <MjmlColumn padding="0" verticalAlign="middle">
         <MjmlImage
           width="150px"
-          src="https://emailassets-kglyyrazbw.now.sh/email_logo.png"
+          src="https://onofood.co/img/email_logo.png"
         />
       </MjmlColumn>
       <MjmlColumn verticalAlign="bottom" padding="0">
@@ -30,7 +30,7 @@ function Header() {
           padding="0"
           width="104px"
           height="66px"
-          src="https://emailassets-kglyyrazbw.now.sh/email_bottom-right-corner.jpg"
+          src="https://onofood.co/img/email_bottom-right-corner.jpg"
         />
       </MjmlColumn>
     </MjmlSection>

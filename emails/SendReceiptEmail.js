@@ -24,7 +24,7 @@ function getBodyHTML({ orderDetails, promocode }) {
     <Layout title="Receipt email" metaTitle="ONO food - Blend Receipt">
       <Header />
       <MjmlSection
-        backgroundUrl="https://emailassets-kglyyrazbw.now.sh/blend_avo-matcha.jpg"
+        backgroundUrl="https://onofood.co/img/blend_avo-matcha.jpg"
         backgroundSize="cover"
         backgroundRepeat="no-repeat"
       >
@@ -194,7 +194,7 @@ function getBodyHTML({ orderDetails, promocode }) {
                   lineHeight: '32px',
                 }}
               >
-                <img src="https://emailassets-kglyyrazbw.now.sh/visa.png" width="30px" height="21px" />
+                <img src="https://onofood.co/img/visa.png" width="30px" height="21px" />
                 <span style={{marginLeft: "28px"}}>**** {paymentMethod.cardNumber}</span>
               </td>
             </tr>
