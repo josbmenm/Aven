@@ -35,11 +35,11 @@ function UIButton({
         paddingVertical:
           buttonStyle.paddingVertical !== undefined
             ? [buttonStyle.paddingVertical, buttonStyle.paddingVertical]
-            : [9, 16],
+            : [9, 12],
         paddingHorizontal:
           buttonStyle.paddingHorizontal !== undefined
             ? [buttonStyle.paddingHorizontal, buttonStyle.paddingHorizontal]
-            : [24, 32],
+            : [20, 24],
         ...responsiveStyle,
       }}
     >
