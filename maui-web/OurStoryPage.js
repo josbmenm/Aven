@@ -47,7 +47,7 @@ function FeatureImage({ source, floatingImageStyle }) {
   );
 }
 
-function OurStoryPage({}) {
+function OurStoryPage() {
   const theme = useTheme();
   return (
     <GenericPage>
@@ -58,7 +58,7 @@ function OurStoryPage({}) {
             responsiveStyle={{
               width: ['100% !important', '100%'],
               marginHoriontal: [0, 28],
-              marginBottom: [80, 0],
+              marginBottom: [80, 230],
             }}
           >
             <Responsive
@@ -82,9 +82,9 @@ function OurStoryPage({}) {
             <Responsive
               style={{
                 position: ['relative', 'absolute'],
-                bottom: [0, 120],
+                bottom: [0, -120],
                 alignSelf: ['inherit', 'center'],
-                maxWidth: [1200, 640],
+                maxWidth: [1200, 640]
               }}
             >
               <View
