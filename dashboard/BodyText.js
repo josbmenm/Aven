@@ -8,14 +8,14 @@ function BodyText({
   bold,
   style,
   responsiveStyle,
-  breakpoint,
+  breakpoints,
   ...rest
 }) {
   const theme = useTheme();
   let boldStyle = bold ? { fontWeight: 'bold' } : {};
   return (
     <Responsive
-      breakpoint={breakpoint}
+      breakpoints={breakpoints}
       style={{
         fontSize: [15, 18],
         lineHeight: [24, 28],

@@ -9,14 +9,14 @@ function SmallText({
   size,
   style,
   responsiveStyle,
-  breakpoint,
+  breakpoints,
   ...rest
 }) {
   const theme = useTheme();
   let boldStyle = bold ? { fontFamily: theme.fonts.bold } : {};
   return (
     <Responsive
-      breakpoint={breakpoint}
+      breakpoints={breakpoints}
       style={{
         ...responsiveStyle,
       }}

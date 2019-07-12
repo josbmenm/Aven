@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTheme } from './Theme';
-
-let responsiveIdCount = 0;
+import CSSProperties from './CSSProperties';
 
 function validateNumberValue(value) {
   if (typeof value === 'number') {
@@ -14,147 +13,68 @@ function validateNumberValue(value) {
 export function Responsive({
   style = {},
   children,
-  breakpoint,
+  breakpoints,
   className,
   ...rest
 }) {
-  const id = responsiveIdCount++;
+  /*
+    - create component id
+    - iterate over breakpoints
+      - iterate over styles
+    
+    - return children map with new className
+  */
   const theme = useTheme();
-  const bp = breakpoint || theme.breakpoints[0];
+  const viewports = breakpoints || theme.breakpoints;
+  const compID = React.useMemo(() => {
+    return `r-${Math.random()
+      .toString(36)
+      .substring(2, 5)}${Math.random()
+      .toString(36)
+      .substring(2, 5)}`;
+  }, []);
 
-  let small = `
-  ${
-    style.paddingVertical
-      ? `padding-top: ${validateNumberValue(
-          style.paddingVertical[0],
-        )}; padding-bottom: ${validateNumberValue(style.paddingVertical[0])};`
-      : ''
-  }
-  ${
-    style.paddingHorizontal
-      ? `padding-left: ${validateNumberValue(
-          style.paddingHorizontal[0],
-        )}; padding-right: ${validateNumberValue(style.paddingHorizontal[0])};`
-      : ''
-  }
-  ${style.paddingTop ? `padding-top: ${style.paddingTop[0]}px;` : ''}
-  ${style.paddingRight ? `padding-right: ${style.paddingRight[0]}px;` : ''}
-  ${style.paddingBottom ? `padding-bottom: ${style.paddingBottom[0]}px;` : ''}
-  ${style.paddingLeft ? `padding-left: ${style.paddingLeft[0]}px;` : ''}
+  function mapStyles(styleIndex = 0) {
+    return Object.keys(style)
+      .map(attr => {
+        if (!CSSProperties[attr]) {
+          console.warn('Invalid responsive Style property', attr);
+          return `${attr}: ${validateNumberValue(style[attr][styleIndex])};`;
+        }
 
-  ${
-    style.marginVertical
-      ? `margin-top: ${validateNumberValue(
-          style.marginVertical[0],
-        )}; margin-bottom: ${validateNumberValue(style.marginVertical[0])};`
-      : ''
+        if (Array.isArray(CSSProperties[attr])) {
+          // check for special attributes (marginVertical, paddingVertical...)
+          return CSSProperties[attr]
+            .map(k => `${k}: ${validateNumberValue(style[attr][styleIndex])};`)
+            .join('');
+        }
+        return `${CSSProperties[attr]}: ${validateNumberValue(
+          style[attr][styleIndex],
+        )};`;
+      })
+      .join('');
   }
-  ${
-    style.marginHorizontal
-      ? `margin-left: ${validateNumberValue(
-          style.marginHorizontal[0],
-        )}; margin-right: ${validateNumberValue(style.marginHorizontal[0])};`
-      : ''
-  }
-  ${style.marginTop ? `margin-top: ${style.marginTop[0]}px;` : ''}
-  ${style.marginRight ? `margin-right: ${style.marginRight[0]}px;` : ''}
-  ${style.marginBottom ? `margin-bottom: ${style.marginBottom[0]}px;` : ''}
-  ${style.marginLeft ? `margin-left: ${style.marginLeft[0]}px;` : ''}
-  ${style.textAlign ? `text-align: ${style.textAlign[0]};` : ''}
-  ${style.fontSize ? `font-size: ${style.fontSize[0]}px;` : ''}
-  ${style.lineHeight ? `line-height: ${style.lineHeight[0]}px;` : ''}
-  ${style.letterSpacing ? `letter-spacing: ${style.letterSpacing[0]};` : ''}
-  ${style.alignItems ? `align-items: ${style.alignItems[0]};` : ''}
-  ${style.alignSelf ? `align-self: ${style.alignSelf[0]};` : ''}
-  ${style.flexDirection ? `flex-direction: ${style.flexDirection[0]};` : ''}
-  ${style.display ? `display: ${style.display[0]};` : ''}
-  ${
-    style.maxWidth
-      ? `max-width: ${validateNumberValue(style.maxWidth[0])};`
-      : ''
-  }
-  ${style.flex ? `flex: ${style.flex[0]};` : ''}
-  ${style.width ? `width: ${validateNumberValue(style.width[0])};` : ''}
-  ${style.height ? `height: ${validateNumberValue(style.height[0])};` : ''}
-  ${style.top ? `top: ${validateNumberValue(style.top[0])};` : ''}
-  ${style.right ? `right: ${validateNumberValue(style.right[0])};` : ''}
-  ${style.bottom ? `bottom: ${validateNumberValue(style.bottom[0])};` : ''}
-  ${style.left ? `left: ${validateNumberValue(style.left[0])};` : ''}`.trim();
 
-  let large = `
-  ${
-    style.paddingVertical
-      ? `padding-top: ${validateNumberValue(
-          style.paddingVertical[1],
-        )}; padding-bottom: ${validateNumberValue(style.paddingVertical[1])};`
-      : ''
-  }
-  ${
-    style.paddingHorizontal
-      ? `padding-left: ${validateNumberValue(
-          style.paddingHorizontal[1],
-        )}; padding-right: ${validateNumberValue(style.paddingHorizontal[1])};`
-      : ''
-  }
-  ${style.paddingTop ? `padding-top: ${style.paddingTop[1]}px;` : ''}
-  ${style.paddingRight ? `padding-right: ${style.paddingRight[1]}px;` : ''}
-  ${style.paddingBottom ? `padding-bottom: ${style.paddingBottom[1]}px;` : ''}
-  ${style.paddingLeft ? `padding-left: ${style.paddingLeft[1]}px;` : ''}
-
-  ${
-    style.marginVertical
-      ? `margin-top: ${validateNumberValue(
-          style.marginVertical[1],
-        )}; margin-bottom: ${validateNumberValue(style.marginVertical[1])};`
-      : ''
-  }
-  ${
-    style.marginHorizontal
-      ? `margin-left: ${validateNumberValue(
-          style.marginHorizontal[1],
-        )}; margin-right: ${validateNumberValue(style.marginHorizontal[1])};`
-      : ''
-  }
-  ${style.marginTop ? `margin-top: ${style.marginTop[1]}px;` : ''}
-  ${style.marginRight ? `margin-right: ${style.marginRight[1]}px;` : ''}
-  ${style.marginBottom ? `margin-bottom: ${style.marginBottom[1]}px;` : ''}
-  ${style.marginLeft ? `margin-left: ${style.marginLeft[1]}px;` : ''}
-
-  ${style.textAlign ? `text-align: ${style.textAlign[1]};` : ''}
-  ${style.fontSize ? `font-size: ${style.fontSize[1]}px;` : ''}
-  ${style.lineHeight ? `line-height: ${style.lineHeight[1]}px;` : ''}
-  ${style.letterSpacing ? `letter-spacing: ${style.letterSpacing[1]};` : ''}
-
-  ${style.alignItems ? `align-items: ${style.alignItems[1]};` : ''}
-  ${style.alignSelf ? `align-self: ${style.alignSelf[1]};` : ''}
-  ${style.flexDirection ? `flex-direction: ${style.flexDirection[1]};` : ''}
-  ${style.display ? `display: ${style.display[1]};` : ''}
-
-  ${
-    style.maxWidth
-      ? `max-width: ${validateNumberValue(style.maxWidth[1])};`
-      : ''
-  }
-  ${style.flex ? `flex: ${style.flex[1]};` : ''}
-  ${style.width ? `width: ${validateNumberValue(style.width[1])};` : ''}
-  ${style.height ? `height: ${validateNumberValue(style.height[1])};` : ''}
-
-  ${style.top ? `top: ${validateNumberValue(style.top[1])};` : ''}
-  ${style.right ? `right: ${validateNumberValue(style.right[1])};` : ''}
-  ${style.bottom ? `bottom: ${validateNumberValue(style.bottom[1])};` : ''}
-  ${style.left ? `left: ${validateNumberValue(style.left[1])};` : ''}
-  `.trim();
+  const styleString = viewports
+    .map((bp, idx) => {
+      // if it's not the first breakpoint, don't add the `@media` in front
+      return idx > 0
+        ? `@media(min-width: ${viewports[idx - 1]}px){.${compID}{${mapStyles(
+            idx,
+          )}}}`
+        : `.${compID}{${mapStyles(idx)}}`;
+    })
+    .join('');
   return (
     <React.Fragment>
       <style
-        dangerouslySetInnerHTML={{
-          /* eslint-disable-line */
-          __html: `.re-${id}{${small}}@media only screen and (min-width: ${bp}px) {.re-${id}{${large}}}`,
+        dangerouslySetInnerHTML={{ /* eslint-disable-line */
+          __html: styleString,
         }}
       />
       {React.Children.map(children, child =>
         React.cloneElement(child, {
-          className: `re-${id}${className ? ` ${className}` : ''}`,
+          className: `${compID}${className ? ` ${className}` : ''}`,
           ...rest,
         }),
       )}

@@ -3,11 +3,11 @@ import Text from '../views/Text';
 import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 
-function Heading({ children, style, responsiveStyle, breakpoint, ...rest }) {
+function Heading({ children, style, responsiveStyle, breakpoints, ...rest }) {
   const theme = useTheme();
   return (
     <Responsive
-      breakpoint={breakpoint}
+      breakpoints={breakpoints}
       style={{
         fontSize: [24, 38],
         lineHeight: [32, 48],

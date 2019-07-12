@@ -13,7 +13,7 @@ function UIButton({
   size = 'medium', // 'small' | 'medium' | 'large'
   disabled,
   responsiveStyle,
-  breakpoint,
+  breakpoints,
   children,
   ...rest
 }) {
@@ -30,7 +30,7 @@ function UIButton({
       : null;
   return (
     <Responsive
-      breakpoint={breakpoint}
+      breakpoints={breakpoints}
       style={{
         paddingVertical:
           buttonStyle.paddingVertical !== undefined
