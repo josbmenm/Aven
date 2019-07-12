@@ -38,6 +38,23 @@ const fonts = {
   serif: 'Lora',
 };
 
+const headingStyles = {
+  small: {
+    fontSize: [24, 28],
+    lineHeight: [28, 48],
+    letterSpacing: ['auto', 0.44],
+  },
+  medium: {
+    fontSize: [24, 36],
+    lineHeight: [28, 44],
+  },
+  large: {
+    fontSize: [24, 38],
+    lineHeight: [28, 48],
+    letterSpacing: ['auto', 0.5],
+  },
+};
+
 const textSpacing = {
   marginBottom: 8,
 };
@@ -93,12 +110,19 @@ export const theme = {
   colors,
   fonts,
   textStyles,
+  headingStyles,
   shadows,
   layouts: {
     small: 640,
     large: 1280,
   },
 };
+
+export function createVariant({ theme, key }) {
+  return function getValue(variant) {
+    return theme[key][variant];
+  };
+}
 
 export const ThemeContext = createContext(theme);
 export const ThemeProvider = ThemeContext.Provider;

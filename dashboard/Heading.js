@@ -1,16 +1,26 @@
 import React from 'react';
 import Text from '../views/Text';
-import { useTheme } from './Theme';
+import { useTheme, createVariant } from './Theme';
 import { Responsive } from './Responsive';
 
-function Heading({ children, style, responsiveStyle, breakpoints, ...rest }) {
+function Heading({
+  children,
+  style,
+  responsiveStyle,
+  variant = 'medium', // 'small' | 'medium' | 'large'
+  breakpoints,
+  ...rest
+}) {
   const theme = useTheme();
+  const headingVariant = React.useMemo(
+    () => createVariant({ theme, key: 'headingStyles' }),
+    [theme],
+  );
   return (
     <Responsive
       breakpoints={breakpoints}
       style={{
-        fontSize: [24, 38],
-        lineHeight: [32, 48],
+        ...headingVariant(variant),
         ...responsiveStyle,
       }}
     >
