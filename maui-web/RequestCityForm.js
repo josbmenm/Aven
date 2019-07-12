@@ -7,7 +7,7 @@ import { useCloud } from '../cloud-core/KiteReact';
 import useAsyncError from '../react-utils/useAsyncError';
 import { Responsive } from '../dashboard/Responsive';
 
-function RequestCityForm({ breakpoint }) {
+function RequestCityForm({ breakpoints }) {
   const [location, setLocation] = React.useState(null);
   const [isDone, setIsDone] = React.useState(false);
   const cloud = useCloud();
@@ -29,7 +29,7 @@ function RequestCityForm({ breakpoint }) {
   }
   return (
     <Responsive
-      breakpoint={breakpoint}
+      breakpoints={breakpoints}
       style={{
         flexDirection: ['column', 'row'],
       }}
@@ -39,14 +39,14 @@ function RequestCityForm({ breakpoint }) {
           // inputValue={"ar"}
           onSelectedResult={setLocation}
           style={{ flex: 1 }}
-          breakpoint={breakpoint}
+          breakpoints={breakpoints}
           responsiveStyle={{
             marginBottom: [16, 0],
             marginRight: [0, 16],
           }}
         />
         <Button
-          breakpoint={breakpoint}
+          breakpoints={breakpoints}
           disabled={!location}
           title="request city"
           onPress={handleSubmit}

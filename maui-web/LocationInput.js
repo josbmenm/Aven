@@ -13,7 +13,7 @@ export function LocationInput({
   inputValue = '',
   style,
   responsiveStyle,
-  breakpoint,
+  breakpoints,
   ...rest
 }) {
   const theme = useTheme();
@@ -46,7 +46,7 @@ export function LocationInput({
   }
   return (
     <Responsive
-      breakpoint={breakpoint}
+    breakpoints={breakpoints}
       style={{
         marginBottom: [16, 0],
         ...responsiveStyle,

@@ -9,13 +9,13 @@ export function ColumnToRow({
   columnReverse = false,
   rowReverse = false,
   style = {},
-  breakpoint,
+  breakpoints,
   resetFlexBasis,
   ...rest
 }) {
   const elemID = responsiveIdCount++;
   const theme = useTheme();
-  const bp = breakpoint || theme.breakpoints[0];
+  const bp = breakpoints || theme.breakpoints;
   return (
     <React.Fragment>
       <style
@@ -31,7 +31,7 @@ export function ColumnToRow({
         margin-right: 0;
       }
 
-      @media only screen and (min-width: ${bp}px) {
+      @media only screen and (min-width: ${bp[0]}px) {
         .vertical-to-horizontal-layout-${elemID} {
           flex-direction: ${rowReverse ? 'row-reverse' : 'row'};
         }
@@ -75,9 +75,9 @@ export function ColumnToRowChild({
   );
 }
 
-export function NoFlexToFlex({ children, breakpoint }) {
+export function NoFlexToFlex({ children, breakpoints }) {
   const theme = useTheme();
-  const bp = breakpoint || theme.breakpoints[0];
+  const bp = breakpoints || theme.breakpoints;
   return (
     <React.Fragment>
       <style
@@ -88,7 +88,7 @@ export function NoFlexToFlex({ children, breakpoint }) {
         flex: none;
       }
 
-      @media only screen and (min-width: ${bp}px) {
+      @media only screen and (min-width: ${bp[0]}px) {
         .no-flex-to-flex,
         .no-flex-to-flex > * {
           flex: 1;
@@ -102,9 +102,9 @@ export function NoFlexToFlex({ children, breakpoint }) {
   );
 }
 
-export function ResponsiveDisplay({ breakpoint }) {
+export function ResponsiveDisplay({ breakpoints }) {
   const theme = useTheme();
-  const bp = breakpoint || theme.breakpoints[0];
+  const bp = breakpoints || theme.breakpoints;
   return (
     <style
       dangerouslySetInnerHTML={{
@@ -118,7 +118,7 @@ export function ResponsiveDisplay({ breakpoint }) {
           display: flex;
         }
 
-        @media only screen and (min-width: ${bp}px) {
+        @media only screen and (min-width: ${bp[0]}px) {
           .hide-desktop {
             display: none;
           }

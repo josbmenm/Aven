@@ -201,7 +201,7 @@ export function MobileMenu() {
               <Link
                 noActive
                 size="small"
-                url="https://google.com"
+                url="#press-kit"
                 title="press kit"
                 titleStyle={{ textAlign: 'left' }}
               />

@@ -15,7 +15,7 @@ import Schedule from './Schedule';
 import RequestCityForm from './RequestCityForm';
 import WeekSchedule from './WeekSchedule';
 
-const breakpoint = 1024;
+const breakpoints = [1024, 1400];
 
 function SchedulePage() {
   const theme = useTheme();
@@ -139,9 +139,9 @@ function SchedulePage() {
       <WeekSchedule />
       <View style={{ paddingVertical: 80 }}>
         <Container>
-          <ColumnToRow breakpoint={breakpoint}>
+          <ColumnToRow breakpoints={breakpoints}>
             <Responsive
-              breakpoint={breakpoint}
+              breakpoints={breakpoints}
               style={{ display: ['none', 'flex'] }}
             >
               <ColumnToRowChild style={{ flex: 2, paddingRight: 60 }}>
@@ -155,7 +155,7 @@ function SchedulePage() {
             </Responsive>
             <ColumnToRowChild style={{ flex: 3, justifyContent: 'center' }}>
               <Heading
-                breakpoint={breakpoint}
+                breakpoints={breakpoints}
                 responsiveStyle={{
                   textAlign: ['center', 'left'],
                   alignSelf: ['center', 'flex-start'],
@@ -165,7 +165,7 @@ function SchedulePage() {
               </Heading>
               <BodyText
                 style={{ maxWidth: 412 }}
-                breakpoint={breakpoint}
+                breakpoints={breakpoints}
                 responsiveStyle={{
                   textAlign: ['center', 'left'],
                   alignSelf: ['center', 'flex-start'],
@@ -175,7 +175,7 @@ function SchedulePage() {
                 Ono Blends is always looking to grow. Request your city and
                 we’ll try to make it happen.
               </BodyText>
-              <RequestCityForm breakpoint={breakpoint} />
+              <RequestCityForm breakpoints={breakpoints} />
             </ColumnToRowChild>
           </ColumnToRow>
         </Container>

@@ -97,7 +97,7 @@ export default function PageFooter() {
                   <Link
                     titleStyle={{ textAlign: 'left' }}
                     title="press kit"
-                    url="https://google.com"
+                    url="#press-kit"
                   />
                   <Text>
                     <Link

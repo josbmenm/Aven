@@ -74,7 +74,7 @@ export const theme = {
   letterSpacings: [0, 0, 25, 0.3, 0.5, 2, 2.5],
   shadows,
   radii: [0, 2, 4, 8],
-  breakpoints: [768],
+  breakpoints: [768, 1024],
   layouts: {
     small: 640 + 56, // 56 is the padding horizontal on the container
     large: 1280 + 56,
