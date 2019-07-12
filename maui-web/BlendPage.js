@@ -123,6 +123,7 @@ function BlendContent({ displayName, blend, recipe }) {
                     />
                   </Responsive>
                   <Heading
+                    variant="large"
                     responsiveStyle={{
                       marginBottom: [16, 8],
                     }}
@@ -264,7 +265,7 @@ function BlendContent({ displayName, blend, recipe }) {
             marginBottom: [40, 100],
           }}
         >
-          <Heading style={{ marginBottom: 16 }}>organic ingredients</Heading>
+          <Heading variant="medium" style={{ marginBottom: 16 }}>organic ingredients</Heading>
           <BodyText
             style={{ maxWidth: 520, textAlign: 'center' }}
             responsiveStyle={{
@@ -344,6 +345,7 @@ function BlendPage() {
       <View>
         <Container style={{ overflow: 'hidden' }}>
           <Heading
+            variant="medium"
             style={{ textAlign: 'center' }}
             responsiveStyle={{
               marginBottom: [28, 52],

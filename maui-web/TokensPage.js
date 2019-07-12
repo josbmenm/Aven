@@ -1,6 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
-import Title from '../dashboard/Title';
+import View from '../views/View';
 import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import SmallText from '../dashboard/SmallText';
@@ -14,7 +13,7 @@ function TokenSection({ title, children }) {
   const theme = useTheme();
   return (
     <View style={{ marginTop: 20, marginBottom: 40 }}>
-      <Title>{title}</Title>
+      <Heading>{title}</Heading>
       <View
         style={{
           padding: 40,
@@ -41,10 +40,12 @@ function Tokens() {
   return (
     <Container style={{ paddingVertical: 100 }}>
       <View>
-        <Heading style={{ marginBottom: 40 }}>Design Tokens</Heading>
+        <Heading variant="large" style={{ marginBottom: 40 }}>Design Tokens</Heading>
         <TokenSection title="Text Tokens">
-          <Heading>Heading</Heading>
-          <Title>Title</Title>
+          <Heading variant="small">Small Heading</Heading>
+          <Heading variant="medium">Medium Heading</Heading>
+          <Heading variant="large">Large Heading</Heading>
+          <View style={{ height: 40 }} />
           <BodyText>Body Text</BodyText>
           <SmallText>Small Text</SmallText>
         </TokenSection>

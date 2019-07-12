@@ -76,6 +76,7 @@ function HowItWorks() {
           }}
         >
           <Heading
+            variant="large"
             style={{ textAlign: 'center' }}
             responsiveStyle={{
               marginBottom: [25, 100],

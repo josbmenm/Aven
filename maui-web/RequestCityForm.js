@@ -50,6 +50,9 @@ function RequestCityForm({ breakpoints }) {
           disabled={!location}
           title="request city"
           onPress={handleSubmit}
+          buttonStyle={{
+            paddingVertical: 16
+          }}
         />
       </View>
     </Responsive>

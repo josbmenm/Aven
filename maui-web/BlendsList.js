@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import View from '../views/View';
 import Container from '../dashboard/Container';
-import Title from '../dashboard/Title';
+import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import { Responsive } from '../dashboard/Responsive';
 import Tag from '../dashboard/Tag';
@@ -57,15 +57,18 @@ function BlendsListItem({ blend, style }) {
           }}
           resizeMode="cover"
         />
-        <Title
+        <Heading
+          variant="small"
           style={{ textAlign: 'right' }}
           responsiveStyle={{
+            fontSize: [18, 24],
             lineHeight: [28, 28],
+            letterSpacing: [0, 0],
             marginBottom: [4, 8],
           }}
         >
           {blend['Display Name']}
-        </Title>
+        </Heading>
         <Tag
           title={blend.DefaultBenefitName}
           style={{ alignSelf: 'flex-end' }}
@@ -149,7 +152,7 @@ function BlendsCarouselItem({ blend }) {
           }}
           resizeMode="cover"
         />
-        <Title
+        <Heading
           style={{
             textAlign: 'center',
             fontSize: 13,
@@ -158,7 +161,7 @@ function BlendsCarouselItem({ blend }) {
           }}
         >
           {blend['Display Name']}
-        </Title>
+        </Heading>
         {/* <Tag
           title={blend.DefaultBenefitName}
           style={{ alignSelf: 'flex-end' }}

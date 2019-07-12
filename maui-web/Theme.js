@@ -19,6 +19,23 @@ const fonts = {
   serif: 'Lora',
 };
 
+const headingStyles = {
+  small: {
+    fontSize: [24, 28],
+    lineHeight: [28, 48],
+    letterSpacing: ['auto', 0.44],
+  },
+  medium: {
+    fontSize: [24, 36],
+    lineHeight: [28, 44],
+  },
+  large: {
+    fontSize: [24, 38],
+    lineHeight: [28, 48],
+    letterSpacing: ['auto', 0.5],
+  },
+};
+
 const shadows = {
   large: {
     shadowOffset: { width: 0, height: 4 },
@@ -45,6 +62,9 @@ const shadows = {
 export const theme = {
   colors,
   fonts,
+  fontSizes: [24, 28, 36, 38],
+  lineHeights: [28, 44, 48],
+  headingStyles,
   shadows,
   radii: [0, 2, 4, 8],
   breakpoints: [768, 1024],

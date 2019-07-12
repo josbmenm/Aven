@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, ScrollView, Image } from 'react-native';
 import View from '../views/View';
 import Container from '../dashboard/Container';
-import Title from '../dashboard/Title';
+import Heading from '../dashboard/Heading';
 import { useTheme } from '../dashboard/Theme';
 import ScheduleItem from './ScheduleItem';
 import SmallText from '../dashboard/SmallText';
@@ -39,9 +39,9 @@ function WeekSchedule() {
           paddingBottom: 100,
         }}
       >
-        <Title style={{ textAlign: 'center', alignSelf: 'center' }}>
+        <Heading variant="small" style={{ textAlign: 'center', alignSelf: 'center' }}>
           This Week
-        </Title>
+        </Heading>
         {schedule && (
           <View style={{ paddingVertical: 60, position: 'relative' }}>
             <ScrollView
@@ -118,15 +118,16 @@ function DaySchedule({ day }) {
           TODAY
         </SmallText>
       ) : null}
-      <Title
+      <Heading
+        variant="small"
         style={{ marginTop: 36 }}
         responsiveStyle={{
-          lineHeight: [32, 36],
+          lineHeight: [28, 36],
           marginBottom: [20, 16],
         }}
       >
         {label}
-      </Title>
+      </Heading>
       {schedule.map(item => (
         <ScheduleItem style={{ marginBottom: 20 }} key={item.id} item={item} />
       ))}

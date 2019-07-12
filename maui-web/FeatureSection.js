@@ -1,5 +1,5 @@
 import React from 'react';
-import Title from '../dashboard/Title';
+import Heading from '../dashboard/Heading';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
 
@@ -47,7 +47,7 @@ function FeatureSection({
           <Responsive style={{
             ...responsiveStyles
           }}>
-          <Title>{title}</Title>
+          <Heading variant="small">{title}</Heading>
           {bodyText}
           </Responsive>
         </ColumnToRowChild>

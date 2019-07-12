@@ -1,7 +1,7 @@
 import React from 'react';
 import View from '../views/View';
 import Container from '../dashboard/Container';
-import Title from '../dashboard/Title';
+import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import ButtonLink from './ButtonLink';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
@@ -29,9 +29,9 @@ function HomeSchedule() {
                     flexDirection: 'column',
                   }}
                 >
-                  <Title responsiveStyle={{ marginBottom: [12, 16] }}>
+                  <Heading variant="small" responsiveStyle={{ marginBottom: [12, 16] }}>
                     Where are we today?
-                  </Title>
+                  </Heading>
                   <BodyText
                     responsiveStyle={{
                       textAlign: ['center', 'left'],
@@ -58,7 +58,7 @@ function HomeSchedule() {
                 justifyContent: 'flex-start',
               }}
             >
-              <Title style={{ marginBottom: 28 }}>Today's Schedule</Title>
+              <Heading variant="small" style={{ marginBottom: 28 }}>Today's Schedule</Heading>
               <View
                 style={{
                   // backgroundColor: theme.colors.lightGrey,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import Title from '../dashboard/Title';
+import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import ButtonLink from './ButtonLink';
 import Container from '../dashboard/Container';
@@ -28,7 +28,7 @@ function TheTeam() {
             <ColumnToRowChild
               style={{ justifyContent: 'center', paddingVertical: 40 }}
             >
-              <Title>The team</Title>
+              <Heading variant="small">The team</Heading>
               <BodyText responsiveStyle={{ textAlign: ['center', 'left'] }}>
                 We’re a team of foragers, foodies and builders with backgrounds
                 in robotics, automation, logistics, and culinary fine dining.

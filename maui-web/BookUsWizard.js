@@ -2,7 +2,7 @@ import React from 'react';
 import { Animated, Image } from 'react-native';
 import View from '../views/View';
 import Text from '../views/Text';
-import Title from '../dashboard/Title';
+import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import SmallText from '../dashboard/SmallText';
 import BlockForm from '../components/BlockForm';
@@ -15,7 +15,12 @@ import FormRow from './FormRow';
 
 const TOTAL_STEPS = 6;
 
-const FormInput = ({ style, ...rest }) => <Input style={{ marginHorizontal: 8, marginBottom: 16, ...style}} {...rest} />
+const FormInput = ({ style, ...rest }) => (
+  <Input
+    style={{ marginHorizontal: 8, marginBottom: 16, ...style }}
+    {...rest}
+  />
+);
 
 function stepsReducer(state, action) {
   let newStep;
@@ -93,9 +98,9 @@ function BookUsWizard() {
         <BlockForm>
           <Step active={true}>
             <FormRow style={{ paddingHorizontal: 8, alignItems: 'center' }}>
-              <Title style={{ textAlign: 'center' }}>
+              <Heading variant="small" style={{ textAlign: 'center' }}>
                 Thanks! You’ll be hearing from us soon.
-              </Title>
+              </Heading>
               <Image
                 source={require('./public/img/hand_icon.png')}
                 style={{ width: 80, height: 80, margin: 24 }}
@@ -113,7 +118,9 @@ function BookUsWizard() {
       <BlockForm>
         <Step active={stepsState.current === 0}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Title style={{ textAlign: 'center' }}>Book with us</Title>
+            <Heading variant="large" style={{ textAlign: 'center' }}>
+              Book with us
+            </Heading>
             <BodyText style={{ textAlign: 'center' }}>
               Are you interested in having Ono Blends cater for an event? We’d
               love to! All we need from you are a few details about your event,
@@ -123,7 +130,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 1}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Title>First thing’s first</Title>
+            <Heading variant="large">First thing’s first</Heading>
             <BodyText>We’d love to know who we are speaking to.</BodyText>
           </FormRow>
           <Responsive
@@ -161,7 +168,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 2}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Title>How do we contact you?</Title>
+            <Heading variant="large">How do we contact you?</Heading>
             <BodyText>
               Please let us know a good email to follow up with you.
             </BodyText>
@@ -183,7 +190,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 3}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Title>What sort of event is this?</Title>
+            <Heading variant="large">What sort of event is this?</Heading>
             <BodyText>Let us know so we can best cater to it.</BodyText>
           </FormRow>
           <FormRow>
@@ -203,7 +210,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 4}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Title>When would you like us there?</Title>
+            <Heading variant="large">When would you like us there?</Heading>
             <BodyText>Just let us know to when would be best.</BodyText>
           </FormRow>
           <FormRow>
@@ -223,7 +230,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 5}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Title>Almost done…..</Title>
+            <Heading variant="large">Almost done…..</Heading>
             <BodyText>Where would you like us to be?</BodyText>
           </FormRow>
           <FormRow>
@@ -238,7 +245,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 6}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Title>Additional Comments</Title>
+            <Heading variant="large">Additional Comments</Heading>
             <BodyText>
               Do you have anything else you’d like us to know?
             </BodyText>
@@ -303,7 +310,11 @@ function BookUsWizard() {
           ) : null}
 
           <FormRow style={{ height: 24, marginHorizontal: 8 }}>
-            {error ? <Title style={{ fontSize: 14 }}>{error.message}</Title> : null}
+            {error ? (
+              <Text style={{ fontSize: 14, fontFamily: 'Maax-Bold' }}>
+                {error.message}
+              </Text>
+            ) : null}
           </FormRow>
         </View>
       </BlockForm>
@@ -314,7 +325,7 @@ function BookUsWizard() {
 function spinIndefinitely(position) {
   Animated.timing(position, {
     toValue: 1,
-    duration: 1000
+    duration: 1000,
   }).start(evt => {
     if (evt.finished) {
       position.setValue(0);
@@ -344,15 +355,17 @@ function Spinner({ loading }) {
         spinIndefinitely(position);
       }
     });
-  }, [])
+  }, []);
 
   let rotate = position.interpolate({
     inputRange: [0, 1],
-    outputRange: ["0deg", "359deg"]
-  })
+    outputRange: ['0deg', '359deg'],
+  });
 
   return (
-    <Animated.View style={{ padding: 5, alignItems: 'center', transform: [{ rotate }] }}>
+    <Animated.View
+      style={{ padding: 5, alignItems: 'center', transform: [{ rotate }] }}
+    >
       <svg width={18} height={17}>
         <path
           d="M13.026-.052a9 9 0 1 1-8.052 0l.895 1.79a7 7 0 1 0 6.262 0l.895-1.79z"
@@ -367,7 +380,7 @@ function SubmitButton({ onPress, disabled = false, loading }) {
   const theme = useTheme();
   return (
     <Button
-    style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
+      style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
       disabled={disabled || loading}
       onPress={onPress}
     >

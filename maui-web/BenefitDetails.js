@@ -4,7 +4,7 @@ import Text from '../views/Text';
 import Link from '../navigation-web/Link';
 import AirtableImage from '../components/AirtableImage';
 import { useTheme } from '../dashboard/Theme';
-import Title from '../dashboard/Title';
+import Heading from '../dashboard/Heading';
 import Container from '../dashboard/Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
 import SmallText from '../dashboard/SmallText';
@@ -135,14 +135,15 @@ export default function BenefitDetails({ benefit }) {
           paddingBottom: [40, 100],
         }}
       >
-        <Title
+        <Heading
+          variant="medium"
           style={{ textAlign: 'center' }}
           responsiveStyle={{
             marginBottom: [0, 24],
           }}
         >
           this blend is designed for..
-        </Title>
+        </Heading>
         <ColumnToRow>
           <ColumnToRowChild>
             <AirtableImage

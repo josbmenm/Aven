@@ -8,7 +8,6 @@ import { aspectRatio43 } from '../components/Styles';
 import { NoFlexToFlex, ColumnToRow, ColumnToRowChild } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import Container from '../dashboard/Container';
-import Title from '../dashboard/Title';
 import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import Schedule from './Schedule';
@@ -51,13 +50,13 @@ function SchedulePage() {
                       backgroundColor: theme.colors.lightGrey,
                     }}
                   >
-                    <Title
+                    <Heading variant="small"
                       responsiveStyle={{
                         textAlign: ['center', 'left'],
                       }}
                     >
                       Where are we today?
-                    </Title>
+                    </Heading>
                     <BodyText
                       responsiveStyle={{
                         textAlign: ['center', 'left'],
@@ -95,7 +94,7 @@ function SchedulePage() {
             paddingBottom: 100,
           }}
         >
-          <Heading style={{ marginBottom: 80, textAlign: 'center' }}>
+          <Heading variant="large" style={{ marginBottom: 80, textAlign: 'center' }}>
             Today’s Schedule
           </Heading>
           <View>
@@ -155,6 +154,7 @@ function SchedulePage() {
             </Responsive>
             <ColumnToRowChild style={{ flex: 3, justifyContent: 'center' }}>
               <Heading
+                variant="small"
                 breakpoints={breakpoints}
                 responsiveStyle={{
                   textAlign: ['center', 'left'],
