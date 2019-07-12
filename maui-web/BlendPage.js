@@ -56,23 +56,43 @@ function BlendContent({ displayName, blend, recipe }) {
                   position: 'relative',
                 }}
               >
-                <View
+                <Responsive
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    position: 'absolute',
-                    bottom: 0,
-                    right: 0,
-                    transform: [{ scale: 1.2 }],
-                    zIndex: -1,
+                    position: ['relative', 'absolute'],
+                    transform: [[{ scale: 1 }], [{ scale: 1.2 }]],
                   }}
                 >
-                  <AirtableImage
-                    image={blend.Recipe.DecorationImage}
-                    resizeMode="contain"
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                </View>
+                  <View
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      bottom: 0,
+                      right: 0,
+                      zIndex: -1,
+                    }}
+                  >
+                    <AirtableImage
+                      image={blend.Recipe.DecorationImage}
+                      resizeMode="contain"
+                      style={{
+                        flex: 1,
+                        width: '100%',
+                        height: '100%',
+                        paddingTop: '56.25%',
+                      }}
+                    />
+                    {/* <Image
+                      source={require('./public/img/blend-preview.png')}
+                      resizeMode="contain"
+                      style={{
+                        flex: 1,
+                        width: '100%',
+                        height: '100%',
+                        paddingTop: '56.25%',
+                      }}
+                    /> */}
+                  </View>
+                </Responsive>
                 <Image
                   style={{
                     position: 'absolute',
