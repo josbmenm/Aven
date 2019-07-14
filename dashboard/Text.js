@@ -1,29 +1,32 @@
 import React from 'react';
-import Text from '../views/Text';
-import { useTheme } from './Theme';
+import ViewText from '../views/Text';
+import { useTheme, createVariant } from './Theme';
 import { Responsive } from './Responsive';
 
-function BodyText({
+function Text({
   children,
   bold,
   style,
   responsiveStyle,
   breakpoints,
+  size = 'medium', // 'small' | 'mmedium' | 'large'
   ...rest
 }) {
   const theme = useTheme();
+  const sizeVariant = React.useMemo(
+    () => createVariant({ theme, key: 'textStyles' }),
+    [theme],
+  );
   let boldStyle = bold ? { fontWeight: 'bold' } : {};
   return (
     <Responsive
       breakpoints={breakpoints}
       style={{
-        fontSize: [15, 18],
-        lineHeight: [24, 28],
-        letterSpacing: [0.25, 0.3],
+        ...sizeVariant(size),
         ...responsiveStyle,
       }}
     >
-      <Text
+      <ViewText
         style={{
           color: theme.colors.monsterra,
           fontFamily: theme.fonts.serif,
@@ -33,9 +36,9 @@ function BodyText({
         {...rest}
       >
         {children}
-      </Text>
+      </ViewText>
     </Responsive>
   );
 }
 
-export default BodyText;
+export default Text;

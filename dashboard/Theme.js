@@ -1,7 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
 
-const fontSizes = [10, 12, 16, 18, 20, 32, 44];
-
 const primaryColor = '#3d70b2';
 const secondaryColor = '#5596e6';
 
