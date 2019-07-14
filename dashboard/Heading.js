@@ -7,12 +7,12 @@ function Heading({
   children,
   style,
   responsiveStyle,
-  variant = 'medium', // 'small' | 'medium' | 'large'
+  size = 'medium', // 'small' | 'mmedium' | 'large'
   breakpoints,
   ...rest
 }) {
   const theme = useTheme();
-  const headingVariant = React.useMemo(
+  const sizeVariant = React.useMemo(
     () => createVariant({ theme, key: 'headingStyles' }),
     [theme],
   );
@@ -20,7 +20,7 @@ function Heading({
     <Responsive
       breakpoints={breakpoints}
       style={{
-        ...headingVariant(variant),
+        ...sizeVariant(size),
         ...responsiveStyle,
       }}
     >

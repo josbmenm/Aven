@@ -41,43 +41,33 @@ const fonts = {
 const headingStyles = {
   small: {
     fontSize: [24, 28],
-    lineHeight: [28, 48],
+    lineHeight: [32, 48],
     letterSpacing: ['auto', 0.44],
   },
   medium: {
     fontSize: [24, 36],
-    lineHeight: [28, 44],
+    lineHeight: [32, 44],
   },
   large: {
     fontSize: [24, 38],
-    lineHeight: [28, 48],
+    lineHeight: [32, 48],
     letterSpacing: ['auto', 0.5],
   },
 };
 
-const textSpacing = {
-  marginBottom: 8,
-};
-
-const textDefaults = {
-  color: colors.primary,
-};
-
 const textStyles = {
-  heading: {
-    ...textDefaults,
-    ...textSpacing,
-    fontSize: 38,
-    fontSizes,
-    lineHeight: 48,
-    fontFamily: fonts.bold,
+  small: {
+    fontSize: [10, 10],
+    lineHeight: [12, 12],
   },
-  body: {
-    ...textDefaults,
-    ...textSpacing,
-    fontSize: 18,
-    lineHeight: 28,
-    fontFamily: fonts.serif,
+  medium: {
+    fontSize: [13, 13],
+    lineHeight: [20, 20],
+  },
+  large: {
+    fontSize: [15, 18],
+    lineHeight: [24, 28],
+    letterSpacing: [0.25, 0.3],
   },
 };
 
@@ -109,8 +99,8 @@ export const theme = {
   breakpoints: [768, 1024],
   colors,
   fonts,
-  textStyles,
   headingStyles,
+  textStyles,
   shadows,
   layouts: {
     small: 640,
