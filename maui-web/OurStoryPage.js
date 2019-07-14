@@ -95,7 +95,7 @@ function OurStoryPage() {
                   width: '100%',
                 }}
               >
-                <Heading variant="large">Our Story</Heading>
+                <Heading size="large">Our Story</Heading>
                 <BodyText>
                   We started Ono with the idea that healthy, organic, and great
                   tasting smoothies should be accessible to everyone. With

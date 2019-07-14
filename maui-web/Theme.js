@@ -22,19 +22,35 @@ const fonts = {
 const headingStyles = {
   small: {
     fontSize: [24, 28],
-    lineHeight: [28, 48],
+    lineHeight: [32, 48],
     letterSpacing: ['auto', 0.44],
   },
-  medium: {
+  mmedium: {
     fontSize: [24, 36],
-    lineHeight: [28, 44],
+    lineHeight: [32, 44],
   },
   large: {
     fontSize: [24, 38],
-    lineHeight: [28, 48],
+    lineHeight: [32, 48],
     letterSpacing: ['auto', 0.5],
   },
 };
+
+const textStyles = {
+  small: {
+    fontSize: [10, 10],
+    lineHeight: [12, 12]
+  },
+  medium: {
+    fontSize: [13, 13],
+    lineHeight: [20, 20]
+  },
+  large: {
+    fontSize: [15, 18],
+    lineHeight: [24, 28],
+    letterSpacing: [0.25, 0.3]
+  }
+}
 
 const shadows = {
   large: {
@@ -65,6 +81,7 @@ export const theme = {
   fontSizes: [24, 28, 36, 38],
   lineHeights: [28, 44, 48],
   headingStyles,
+  textStyles,
   shadows,
   radii: [0, 2, 4, 8],
   breakpoints: [768, 1024],

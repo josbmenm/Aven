@@ -50,7 +50,7 @@ function SchedulePage() {
                       backgroundColor: theme.colors.lightGrey,
                     }}
                   >
-                    <Heading variant="small"
+                    <Heading size="small"
                       responsiveStyle={{
                         textAlign: ['center', 'left'],
                       }}
@@ -94,7 +94,7 @@ function SchedulePage() {
             paddingBottom: 100,
           }}
         >
-          <Heading variant="large" style={{ marginBottom: 80, textAlign: 'center' }}>
+          <Heading size="large" style={{ marginBottom: 80, textAlign: 'center' }}>
             Today’s Schedule
           </Heading>
           <View>
@@ -154,7 +154,7 @@ function SchedulePage() {
             </Responsive>
             <ColumnToRowChild style={{ flex: 3, justifyContent: 'center' }}>
               <Heading
-                variant="small"
+                size="small"
                 breakpoints={breakpoints}
                 responsiveStyle={{
                   textAlign: ['center', 'left'],

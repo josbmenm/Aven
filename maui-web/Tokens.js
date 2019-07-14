@@ -8,7 +8,7 @@ import Heading from '../dashboard/Heading';
 export function SubSection({ title, children }) {
   return (
     <View style={{ marginVertical: 40 }}>
-      {title ? <Heading variant="small" style={{ marginBottom: 24 }}>{title}</Heading> : null}
+      {title ? <Heading size="s" style={{ marginBottom: 24 }}>{title}</Heading> : null}
       {children}
     </View>
   );

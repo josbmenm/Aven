@@ -40,11 +40,11 @@ function Tokens() {
   return (
     <Container style={{ paddingVertical: 100 }}>
       <View>
-        <Heading variant="large" style={{ marginBottom: 40 }}>Design Tokens</Heading>
+        <Heading size="l" style={{ marginBottom: 40 }}>Design Tokens</Heading>
         <TokenSection title="Text Tokens">
-          <Heading variant="small">Small Heading</Heading>
-          <Heading variant="medium">Medium Heading</Heading>
-          <Heading variant="large">Large Heading</Heading>
+          <Heading size="s">Small Heading</Heading>
+          <Heading size="m">Medium Heading</Heading>
+          <Heading size="l">Large Heading</Heading>
           <View style={{ height: 40 }} />
           <BodyText>Body Text</BodyText>
           <SmallText>Small Text</SmallText>

@@ -92,7 +92,7 @@ function HomeHeader() {
                     }}
                   >
                     <Heading
-                      variant="large"
+                      size="large"
                       breakpoints={breakpoints}
                       responsiveStyle={{
                         marginBottom: [16, 6],

@@ -28,7 +28,7 @@ function TheTeam() {
             <ColumnToRowChild
               style={{ justifyContent: 'center', paddingVertical: 40 }}
             >
-              <Heading variant="small">The team</Heading>
+              <Heading size="small">The team</Heading>
               <BodyText responsiveStyle={{ textAlign: ['center', 'left'] }}>
                 We’re a team of foragers, foodies and builders with backgrounds
                 in robotics, automation, logistics, and culinary fine dining.

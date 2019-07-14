@@ -35,7 +35,7 @@ export default function GenericHeroHeader({
               }}
             >
               <Heading
-                variant="large"
+                size="large"
                 style={{ textAlign: 'center' }}
                 responsiveStyle={{
                   marginBottom: [8, 16],

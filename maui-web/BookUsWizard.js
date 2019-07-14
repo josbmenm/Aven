@@ -98,7 +98,7 @@ function BookUsWizard() {
         <BlockForm>
           <Step active={true}>
             <FormRow style={{ paddingHorizontal: 8, alignItems: 'center' }}>
-              <Heading variant="small" style={{ textAlign: 'center' }}>
+              <Heading size="small" style={{ textAlign: 'center' }}>
                 Thanks! You’ll be hearing from us soon.
               </Heading>
               <Image
@@ -118,7 +118,7 @@ function BookUsWizard() {
       <BlockForm>
         <Step active={stepsState.current === 0}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Heading variant="large" style={{ textAlign: 'center' }}>
+            <Heading size="large" style={{ textAlign: 'center' }}>
               Book with us
             </Heading>
             <BodyText style={{ textAlign: 'center' }}>
@@ -130,7 +130,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 1}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Heading variant="large">First thing’s first</Heading>
+            <Heading size="large">First thing’s first</Heading>
             <BodyText>We’d love to know who we are speaking to.</BodyText>
           </FormRow>
           <Responsive
@@ -168,7 +168,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 2}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Heading variant="large">How do we contact you?</Heading>
+            <Heading size="large">How do we contact you?</Heading>
             <BodyText>
               Please let us know a good email to follow up with you.
             </BodyText>
@@ -190,7 +190,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 3}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Heading variant="large">What sort of event is this?</Heading>
+            <Heading size="large">What sort of event is this?</Heading>
             <BodyText>Let us know so we can best cater to it.</BodyText>
           </FormRow>
           <FormRow>
@@ -210,7 +210,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 4}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Heading variant="large">When would you like us there?</Heading>
+            <Heading size="large">When would you like us there?</Heading>
             <BodyText>Just let us know to when would be best.</BodyText>
           </FormRow>
           <FormRow>
@@ -230,7 +230,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 5}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Heading variant="large">Almost done…..</Heading>
+            <Heading size="large">Almost done…..</Heading>
             <BodyText>Where would you like us to be?</BodyText>
           </FormRow>
           <FormRow>
@@ -245,7 +245,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 6}>
           <FormRow style={{ paddingHorizontal: 8 }}>
-            <Heading variant="large">Additional Comments</Heading>
+            <Heading size="large">Additional Comments</Heading>
             <BodyText>
               Do you have anything else you’d like us to know?
             </BodyText>

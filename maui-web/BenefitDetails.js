@@ -136,7 +136,7 @@ export default function BenefitDetails({ benefit }) {
         }}
       >
         <Heading
-          variant="medium"
+          size="medium"
           style={{ textAlign: 'center' }}
           responsiveStyle={{
             marginBottom: [0, 24],

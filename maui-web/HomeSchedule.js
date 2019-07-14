@@ -29,7 +29,7 @@ function HomeSchedule() {
                     flexDirection: 'column',
                   }}
                 >
-                  <Heading variant="small" responsiveStyle={{ marginBottom: [12, 16] }}>
+                  <Heading size="small" responsiveStyle={{ marginBottom: [12, 16] }}>
                     Where are we today?
                   </Heading>
                   <BodyText
@@ -58,7 +58,7 @@ function HomeSchedule() {
                 justifyContent: 'flex-start',
               }}
             >
-              <Heading variant="small" style={{ marginBottom: 28 }}>Today's Schedule</Heading>
+              <Heading size="small" style={{ marginBottom: 28 }}>Today's Schedule</Heading>
               <View
                 style={{
                   // backgroundColor: theme.colors.lightGrey,

@@ -47,7 +47,7 @@ function FeatureSection({
           <Responsive style={{
             ...responsiveStyles
           }}>
-          <Heading variant="small">{title}</Heading>
+          <Heading size="small">{title}</Heading>
           {bodyText}
           </Responsive>
         </ColumnToRowChild>

@@ -58,7 +58,7 @@ function BlendsListItem({ blend, style }) {
           resizeMode="cover"
         />
         <Heading
-          variant="small"
+          size="small"
           style={{ textAlign: 'right' }}
           responsiveStyle={{
             fontSize: [18, 24],
