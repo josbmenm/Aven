@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native';
 import View from '../views/View';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import { Responsive } from '../dashboard/Responsive';
 import Tag from '../dashboard/Tag';
 import FunctionalLink from '../navigation-web/Link';
@@ -101,7 +101,7 @@ export function BlendsList() {
                 <BlendsListItem key={i} blend={item} />
               ))
             ) : (
-              <BodyText>Loading...</BodyText>
+              <Text size="large">Loading...</Text>
             )}
           </View>
         </Container>
@@ -231,6 +231,6 @@ export function BlendsCarousel() {
       </View>
     </Responsive>
   ) : (
-    <BodyText>Loading...</BodyText>
+    <Text size="large">Loading...</Text>
   );
 }

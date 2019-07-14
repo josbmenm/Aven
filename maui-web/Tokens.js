@@ -1,14 +1,14 @@
 import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '../dashboard/Theme'
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import Heading from '../dashboard/Heading';
 
 
 export function SubSection({ title, children }) {
   return (
     <View style={{ marginVertical: 40 }}>
-      {title ? <Heading size="s" style={{ marginBottom: 24 }}>{title}</Heading> : null}
+      {title ? <Heading size="small" style={{ marginBottom: 24 }}>{title}</Heading> : null}
       {children}
     </View>
   );
@@ -41,7 +41,7 @@ export function ListItem({ children }) {
           top: 12,
         }}
       />
-      <BodyText>{children}</BodyText>
+      <Text size="large">{children}</Text>
     </View>
   );
 }

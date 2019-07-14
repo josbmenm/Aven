@@ -1,9 +1,8 @@
 import React from 'react';
 import { Animated, Image } from 'react-native';
 import View from '../views/View';
-import Text from '../views/Text';
 import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import SmallText from '../dashboard/SmallText';
 import BlockForm from '../components/BlockForm';
 import Input from '../components/BlockFormInput';
@@ -121,17 +120,17 @@ function BookUsWizard() {
             <Heading size="large" style={{ textAlign: 'center' }}>
               Book with us
             </Heading>
-            <BodyText style={{ textAlign: 'center' }}>
+            <Text size="large" style={{ textAlign: 'center' }}>
               Are you interested in having Ono Blends cater for an event? We’d
               love to! All we need from you are a few details about your event,
               so we can provide you with the best experience possible.
-            </BodyText>
+            </Text>
           </FormRow>
         </Step>
         <Step active={stepsState.current === 1}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">First thing’s first</Heading>
-            <BodyText>We’d love to know who we are speaking to.</BodyText>
+            <Text size="large">We’d love to know who we are speaking to.</Text>
           </FormRow>
           <Responsive
             style={{
@@ -169,9 +168,9 @@ function BookUsWizard() {
         <Step active={stepsState.current === 2}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">How do we contact you?</Heading>
-            <BodyText>
+            <Text size="large">
               Please let us know a good email to follow up with you.
-            </BodyText>
+            </Text>
           </FormRow>
           <FormRow>
             <FormInput
@@ -191,7 +190,7 @@ function BookUsWizard() {
         <Step active={stepsState.current === 3}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">What sort of event is this?</Heading>
-            <BodyText>Let us know so we can best cater to it.</BodyText>
+            <Text size="large">Let us know so we can best cater to it.</Text>
           </FormRow>
           <FormRow>
             <FormInput
@@ -211,7 +210,7 @@ function BookUsWizard() {
         <Step active={stepsState.current === 4}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">When would you like us there?</Heading>
-            <BodyText>Just let us know to when would be best.</BodyText>
+            <Text size="large">Just let us know to when would be best.</Text>
           </FormRow>
           <FormRow>
             <FormInput
@@ -231,7 +230,7 @@ function BookUsWizard() {
         <Step active={stepsState.current === 5}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">Almost done…..</Heading>
-            <BodyText>Where would you like us to be?</BodyText>
+            <Text size="large">Where would you like us to be?</Text>
           </FormRow>
           <FormRow>
             {/* mapbox autocomplete */}
@@ -246,9 +245,9 @@ function BookUsWizard() {
         <Step active={stepsState.current === 6}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">Additional Comments</Heading>
-            <BodyText>
+            <Text size="large">
               Do you have anything else you’d like us to know?
-            </BodyText>
+            </Text>
           </FormRow>
           <FormRow>
             <FormInput
@@ -311,7 +310,7 @@ function BookUsWizard() {
 
           <FormRow style={{ height: 24, marginHorizontal: 8 }}>
             {error ? (
-              <Text style={{ fontSize: 14, fontFamily: 'Maax-Bold' }}>
+              <Text style={{ fontFamily: 'Maax-Bold' }}>
                 {error.message}
               </Text>
             ) : null}

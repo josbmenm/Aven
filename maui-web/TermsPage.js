@@ -1,7 +1,7 @@
 import React from 'react';
 import GenericPage from './GenericPage';
 import { SubSection, List, ListItem } from './Tokens';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import GenericHeroHeader from './GenericHeroHeader';
 import { useTheme } from '../dashboard/Theme'
 import Container from '../dashboard/Container';
@@ -17,13 +17,13 @@ function Terms() {
       />
       <Container style={{ maxWidth: theme.layouts.small }}>
         <SubSection>
-          <BodyText>
-            <BodyText bold>Effective Date:</BodyText> May 27th, 2019
-          </BodyText>
+          <Text size="large">
+            <Text size="large" bold>Effective Date:</Text> May 27th, 2019
+          </Text>
         </SubSection>
 
         <SubSection>
-          <BodyText>
+          <Text size="large">
             Welcome to Ono Food Co. Please read these Terms of Service (the
             “Terms”), and our Privacy Policy (http://onofood.co/legal/privacy)
             carefully because they govern your use of our website (the “Site”),
@@ -35,8 +35,8 @@ function Terms() {
             regarding these terms or the Services, please contact us via email
             at support@onofood.co, or through a written letter sent to our
             physical address: 915 Venice Blvd. Los Angeles, CA 90015.
-          </BodyText>
-          <BodyText>
+          </Text>
+          <Text size="large">
             These Terms are a binding contract between you and Ono Food Co.,
             doing business as Ono Blends (“Ono Blends”, “we”, “us”, or “our”).
             You must agree to and accept all of the Terms, or you don’t have the
@@ -45,10 +45,10 @@ function Terms() {
             effect while you use the Services. These Terms include the
             provisions in this document, as well as those in the Privacy Policy
             (http://onofood.co/legal/privacy).
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Modification">
-          <BodyText>
+          <Text size="large">
             We are constantly trying to improve our Services, and so these Terms
             may change at any time, in Ono Food Co’s sole discretion. If we do
             so, we’ll let you know either by posting the modified Terms on our
@@ -62,16 +62,16 @@ function Terms() {
             discretion. You agree that Ono Food Co. will not be liable to you or
             any third party as a result of such suspension, modification or
             discontinuation.
-          </BodyText>
-          <BodyText>
+          </Text>
+          <Text size="large">
             If you do not agree with our new Terms, you are free to reject them;
             unfortunately, that means you will no longer be able to use the
             Services. If you use the Services in any way after a change to the
             Terms is effective, that means you agree to all of the changes.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Our Services">
-          <BodyText>
+          <Text size="large">
             Ono Food Co. is a robotic food truck that is called “Ono Blends”,
             and it provides its customers smoothies and coffee. You can order
             your smoothie when you’re on-site at our ordering kiosk. At our
@@ -86,10 +86,10 @@ function Terms() {
             order within 3-minutes of displaying your name on our status
             display, you will have to pick it up from our counter or you will
             have to have one of our employees re-order your beverage for you.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Registration & Your Information">
-          <BodyText>
+          <Text size="large">
             In order to use the Services via our App, you are required to create
             an account (Account), and select a password. We may, at our
             discretion, allow you to connect through your account with certain
@@ -113,18 +113,18 @@ function Terms() {
             Account or any other breach of security and (b) ensure that you
             properly exit or log out from your Account each time you use the
             Services.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Eligibility">
-          <BodyText>
+          <Text size="large">
             The Children’s Online Privacy Protection Act (“COPPA”) requires that
             online service providers obtain parental consent before they
             knowingly collect personally identifiable information online from
             children who are under 13. You may use the Services only if you are
             13 years or older and are not barred from using the Services under
             applicable law.
-          </BodyText>
-          <BodyText>
+          </Text>
+          <Text size="large">
             We do not knowingly collect or solicit personally identifiable
             information from children under the age of 13; if you are a child
             under 13, please do not attempt to register for the Services or send
@@ -133,10 +133,10 @@ function Terms() {
             that information as soon as possible. If you believe that a child
             under 13 may have provided us with personal information, please
             contact us at support@onofood.co.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Payment">
-          <BodyText>
+          <Text size="large">
             When you place an order with us through our ordering kiosk of via
             the App, we will provide you the price of the smoothies and other
             items you have ordered. By clicking the “Place Order” button on the
@@ -145,8 +145,8 @@ function Terms() {
             Co or its third party payment processor to charge your credit card
             or other form of payment for the price of the beverages and other
             items that you have ordered and confirmed.
-          </BodyText>
-          <BodyText>We accept the following forms of payment:</BodyText>
+          </Text>
+          <Text size="large">We accept the following forms of payment:</Text>
           <List>
             <ListItem>Visa</ListItem>
             <ListItem>Mastercard</ListItem>
@@ -155,14 +155,14 @@ function Terms() {
           </List>
         </SubSection>
         <SubSection title="Return Policy">
-          <BodyText>
+          <Text size="large">
             If you don’t like your beverage for any reason at all, we will
             return it free of charge. To do so, please contact
             support@onofood.co
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Communications & Feedback">
-          <BodyText>
+          <Text size="large">
             Ono Food Co. welcomes feedback, comments, and suggestions for
             improvements and/or feature requests relating to the Services
             (“Feedback”). You can submit Feedback by emailing us at
@@ -172,8 +172,8 @@ function Terms() {
             all intellectual property rights that you own or control to use,
             copy, modify, create derivative works based upon and otherwise
             exploit the Feedback for any purpose.
-          </BodyText>
-          <BodyText>
+          </Text>
+          <Text size="large">
             As part of the Services, you may receive alerts, notifications, or
             other types of messages via text message (“Messages”). Please be
             aware that third party messaging fees may occur for some of the
@@ -182,10 +182,10 @@ function Terms() {
             registration process, you are agreeing to receive communications
             from Ono Food Co., and you specifically authorize Ono Food Co. to
             send text messages to your mobile phone.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Content & Content Rights ">
-          <BodyText>
+          <Text size="large">
             For purposes of these Terms: (i) “Content” means text, graphics,
             images, music, software, audio, video, works of authorship of any
             kind, and information or other materials that are posted, generated,
@@ -194,10 +194,10 @@ function Terms() {
             you) provide to be made available through the Services including
             without limitation, the Order Details. Content includes without
             limitation User Content.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Ownership, Responsibility, & Removal ">
-          <BodyText>
+          <Text size="large">
             Ono Food Co does not claim any ownership rights in any User Content
             and nothing in these Terms will be deemed to restrict any rights
             that you may have to use and exploit your User Content. Subject to
@@ -209,10 +209,10 @@ function Terms() {
             foreign countries. You agree not to remove, alter or obscure any
             copyright, trademark, service mark or other proprietary rights
             notices incorporated in or accompanying the Services or Content.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Rights in User Content Granted by You ">
-          <BodyText>
+          <Text size="large">
             By making any User Content available through the Services you hereby
             grant to Ono Food Co. a non-exclusive, transferable, sublicensable,
             worldwide, royalty-free license to use, copy, modify, create
@@ -236,10 +236,10 @@ function Terms() {
             Services. We are not responsible or liable for the removal or
             deletion of (or the failure to remove or delete) any of your User
             Content.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Rights in Services & Content Granted by Us">
-          <BodyText>
+          <Text size="large">
             Subject to your compliance with these Terms, Ono Food Co. grants you
             a limited, non-exclusive, non-transferable, non-sublicensable
             license to download, view, copy, display and print the Content
@@ -254,10 +254,10 @@ function Terms() {
             the information included in the Services, to subscribe to programs
             included in the Services, and to purchase the services or products
             offered by Ono Food Co. for your personal use.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="General Prohibitions & Ono Food Co’s Enforcement Rights">
-          <BodyText>You agree not to do any of the following:</BodyText>
+          <Text size="large">You agree not to do any of the following:</Text>
           <List>
             <ListItem>
               Post, upload, publish, submit or transmit any Content that: (i)
@@ -314,7 +314,7 @@ function Terms() {
               foregoing.{' '}
             </ListItem>
           </List>
-          <BodyText>
+          <Text size="large">
             Although we’re not obligated to monitor access to or use of the
             Services or Content or to review or edit any Content, we have the
             right to do so for the purpose of operating the Services, to ensure
@@ -327,10 +327,10 @@ function Terms() {
             violations of these Terms or conduct that affects the Services
             including, consulting and cooperating with law enforcement
             authorities to prosecute users who violate the law.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Warranty Disclaimer">
-          <BodyText>
+          <Text size="large">
             YOUR USE OF THE SERVICE IS AT YOUR SOLE RISK AND IS PROVIDED ON AN
             ‘AS IS’ AND ‘AS AVAILABLE’ BASIS. THE SERVICES ARE FOR YOUR PERSONAL
             USE ONLY AND WE MAKE NO REPRESENTATION OR WARRANTY OF ANY KIND,
@@ -343,10 +343,10 @@ function Terms() {
             DISCLAIMS ANY WARRANTY THAT THE SERVICES WILL BE UNINTERRUPTED, BE
             FREE FROM INACCURACIES, ERRORS, VIRUSES OR OTHER HARMFUL COMPONENTS,
             OR MEET YOUR REQUIREMENTS.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Limitation of Liability">
-          <BodyText>
+          <Text size="large">
             TO THE EXTENT PERMITTED BY LAW, ONO FOOD CO. AND ITS SUBSIDIARIES
             AND LICENSORS WILL NOT BE LIABLE TO YOU OR ANY THIRD PARTY FOR ANY
             DIRECT, INDIRECT, PUNITIVE, INCIDENTAL, SPECIAL, CONSEQUENTIAL
@@ -366,10 +366,10 @@ function Terms() {
             THREE MONTHS PRECEDING THE CLAIM, OR ONE HUNDRED DOLLARS ($100), IF
             YOU HAVE NOT HAD ANY PAYMENT OBLIGATIONS TO ONO FOOD CO., AS
             APPLICABLE.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Third Party Websites">
-          <BodyText>
+          <Text size="large">
             The third party websites linked to or from the Services are not
             controlled by Ono Food Co. and Ono Food Co. is not responsible for
             the contents of such third party websites. Accordingly, Ono Food Co.
@@ -381,10 +381,10 @@ function Terms() {
             convenience and do not indicate, expressly or impliedly, any
             endorsement by Ono Food Co. for the third party websites or the
             products or services provided at such websites.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Indemnity">
-          <BodyText>
+          <Text size="large">
             You will indemnify and hold harmless Ono Food Co. and its
             representatives, agents, affiliates, members, officers, directors,
             employees and managers (the “Indemnified Parties”), and at Ono Food
@@ -401,10 +401,10 @@ function Terms() {
             limitation of the foregoing, you will not settle, compromise or in
             any other manner dispose of any Claim without the written consent of
             Ono Food Co.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Termination">
-          <BodyText>
+          <Text size="large">
             In its sole and absolute discretion, with or without notice to you,
             Ono Food Co. may (1) suspend or terminate your use of the Service,
             or (2) terminate your Account. You may terminate your Account for
@@ -412,18 +412,18 @@ function Terms() {
             Co. shall not be liable to you or any third party for any claims or
             damages arising out of any termination or suspension of the Services
             or your Account.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Dispute Resolution" />
         <SubSection title="Governing Law">
-          <BodyText>
+          <Text size="large">
             These Terms and any action related thereto will be governed by the
             laws of the State of California without regard to its conflict of
             laws provisions.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Agreement to Arbitrate">
-          <BodyText>
+          <Text size="large">
             You and Ono Food Co. agree that any dispute, claim or controversy
             arising out of or relating to these Terms or the breach,
             termination, enforcement, interpretation or validity thereof or the
@@ -462,10 +462,10 @@ function Terms() {
             Resolution” section will be deemed void. Except as provided in the
             preceding sentence, this “Dispute Resolution” section will survive
             any termination of these Terms.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Arbitration Rules">
-          <BodyText>
+          <Text size="large">
             The arbitration will be administered by the American Arbitration
             Association (“AAA”) in accordance with the Commercial Arbitration
             Rules and the Supplementary Procedures for Consumer Related Disputes
@@ -474,10 +474,10 @@ function Terms() {
             www.adr.org/arb_medor by calling the AAA at 1-800-778-7879.) The
             Federal Arbitration Act will govern the interpretation and
             enforcement of this Section.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Arbitration Process">
-          <BodyText>
+          <Text size="large">
             A party who desires to initiate arbitration must provide the other
             party with a written Demand for Arbitration as specified in the AAA
             Rules. (The AAA provides a general Demand for Arbitration and a
@@ -488,10 +488,10 @@ function Terms() {
             arbitrator within seven (7) days of delivery of the Demand for
             Arbitration, then the AAA will appoint the arbitrator in accordance
             with the AAA Rules.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Arbitration Location & Procedure">
-          <BodyText>
+          <Text size="large">
             Unless you and Ono Food Co. otherwise agree, the arbitration will be
             conducted in the county where you reside. If your claim does not
             exceed $10,000, then the arbitration will be conducted solely on the
@@ -502,10 +502,10 @@ function Terms() {
             Rules. Subject to the AAA Rules, the arbitrator will have the
             discretion to direct a reasonable exchange of information by the
             parties, consistent with the expedited nature of the arbitration.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Arbitrator’s Decision">
-          <BodyText>
+          <Text size="large">
             The arbitrator will render an award within the time frame specified
             in the AAA Rules. The arbitrator’s decision will include the
             essential findings and conclusions upon which the arbitrator based
@@ -521,10 +521,10 @@ function Terms() {
             under applicable law. Ono Food Co. will not seek, and hereby waives
             all rights it may have under applicable law to recover, attorneys’
             fees and expenses if it prevails in arbitration.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Fees">
-          <BodyText>
+          <Text size="large">
             Your responsibility to pay any AAA filing, administrative and
             arbitrator fees will be solely as set forth in the AAA Rules.
             However, if your claim for damages does not exceed $75,000, Ono Food
@@ -533,10 +533,10 @@ function Terms() {
             Arbitration was frivolous or was brought for an improper purpose (as
             measured by the standards set forth in Federal Rule of Civil
             Procedure 11(b)).
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Changes">
-          <BodyText>
+          <Text size="large">
             Notwithstanding the provisions of the “Modification” section above,
             if Ono Food Co. changes this “Dispute Resolution” section after the
             date you first accepted these Terms (or accepted any subsequent
@@ -549,10 +549,10 @@ function Terms() {
             Food Co. in accordance with the provisions of this “Dispute
             Resolution” section as of the date you first accepted these Terms
             (or accepted any subsequent changes to these Terms).
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="General">
-          <BodyText>
+          <Text size="large">
             These Terms constitute the entire and exclusive understanding and
             agreement between Ono Food Co. and you regarding the Services and
             Content, and these Terms supersede and replace any and all prior
@@ -584,22 +584,22 @@ function Terms() {
             these Terms, the exercise by either party of any of its remedies
             under these Terms will be without prejudice to its other remedies
             under these Terms or otherwise.
-          </BodyText>
+          </Text>
         </SubSection>
         <SubSection title="Contact Us">
-          <BodyText>
+          <Text size="large">
             In order to resolve a complaint regards the Site or Services or to
             receive further information regarding the use of the Site or
             Services, please contact us at:
-          </BodyText>
-          <BodyText>
+          </Text>
+          <Text size="large">
             Ono Food Co.{'\n'}
             915 Venice Blvd.{'\n'}
             Los Angeles, CA 90015{'\n'}
             United States{'\n'}
             Phone: (213) 357-0614{'\n'}
             support@onofood.co{'\n'}
-          </BodyText>
+          </Text>
         </SubSection>
       </Container>
       <PageFooter />

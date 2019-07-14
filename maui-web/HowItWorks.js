@@ -4,12 +4,11 @@ import View from '../views/View';
 import { useTheme } from '../dashboard/Theme';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import FunctionalLink from '../navigation-web/Link';
 import { Responsive } from '../dashboard/Responsive';
 import FeatureSection from './FeatureSection';
 import { absoluteElement } from '../components/Styles';
-import { aspectRatio43 } from '../components/Styles';
 
 function FeatureImage({ source, floatingImageStyle }) {
   const theme = useTheme();
@@ -88,16 +87,16 @@ function HowItWorks() {
           <FeatureSection
             title="Find us"
             bodyText={
-              <BodyText>
+              <Text size="large">
                 Check out the{' '}
                 <FunctionalLink routeName="Schedule">
-                  <BodyText bold>schedule</BodyText>{' '}
+                  <Text size="large" bold>schedule</Text>{' '}
                 </FunctionalLink>
                 to find us. Not seeing your neighborhood?{' '}
                 <FunctionalLink routeName="Schedule">
-                  <BodyText bold>Request us here.</BodyText>
+                  <Text size="large" bold>Request us here.</Text>
                 </FunctionalLink>
-              </BodyText>
+              </Text>
             }
             image={
               <FeatureImage
@@ -126,12 +125,12 @@ function HowItWorks() {
               inverted
               title="Order"
               bodyText={
-                <BodyText>
+                <Text size="large">
                   Select a blend or personalize oned based on your nutritional
                   preferences or dietary restrictions through our ordering
                   kiosk. Ono Guides are on-site to ensure the best possible
                   experience.
-                </BodyText>
+                </Text>
               }
               image={
                 <FeatureImage
@@ -164,10 +163,10 @@ function HowItWorks() {
               style={{ width: '100%' }}
               title="Pickup"
               bodyText={
-                <BodyText>
+                <Text size="large">
                   Watch as advanced robotics create your perfect blend within 60
                   seconds, and when it’s ready, grab it from our pick-up area.
-                </BodyText>
+                </Text>
               }
               image={
                 <FeatureImage

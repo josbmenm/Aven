@@ -4,7 +4,7 @@ import View from '../views/View';
 import GenericPage from './GenericPage';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import { useTheme } from '../dashboard/Theme';
 import FeatureSection from './FeatureSection';
 import TheTeam from './TheTeam';
@@ -96,12 +96,12 @@ function OurStoryPage() {
                 }}
               >
                 <Heading size="large">Our Story</Heading>
-                <BodyText>
+                <Text size="large">
                   We started Ono with the idea that healthy, organic, and great
                   tasting smoothies should be accessible to everyone. With
                   robotics, locally-sourced food, and a bit of luck - Ono Blends
                   was born.
-                </BodyText>
+                </Text>
               </View>
             </Responsive>
           </Container>
@@ -124,12 +124,12 @@ function OurStoryPage() {
               style={{ marginBottom: 80 }}
               responsiveStyles={{ textAlign: ['center', 'left'] }}
               bodyText={
-                <BodyText>
+                <Text size="large">
                   Ono, a local Hawaiian term for “delicious” is exactly what our
                   smoothies are. With flavors like avocado & matcha, strawberry
                   & dragonfruit, and mint chip greens - our blends are crafted
                   by hand and perfected with technology.
-                </BodyText>
+                </Text>
               }
               image={
                 <FeatureImage
@@ -146,11 +146,11 @@ function OurStoryPage() {
               title="Powered by robotics"
               style={{ marginBottom: 80 }}
               bodyText={
-                <BodyText>
+                <Text size="large">
                   Automation gives us the ability to ensure your order is
                   blended to perfection. While the robots do the work, we’re
                   able to spend more time with you, our customer.
-                </BodyText>
+                </Text>
               }
               image={
                 <FeatureImage
@@ -167,14 +167,14 @@ function OurStoryPage() {
               title="Blends with benefits"
               style={{ marginBottom: 80 }}
               bodyText={
-                <BodyText>
+                <Text size="large">
                   Healthy, organic, and great tasting smoothies don’t have to be
                   over priced. We believe that nutritious food should be
                   accessible to everyone. With customization we’re able to fuel
                   you through an early morning meeting or a post-workout
                   recovery — each blend is created specifically with you in
                   mind.
-                </BodyText>
+                </Text>
               }
               image={
                 <FeatureImage

@@ -6,15 +6,11 @@ import {
   MjmlTable,
   MjmlSpacer,
 } from 'mjml-react';
-import SocialFooter from './components/SocialFooter';
 import Layout from './components/Layout';
 import Header from './components/Header';
-import BaseText from './components/Text';
 import PromoCodeSection from './components/PromoCodeSection';
 import theme from './theme';
 import formatCurrency from '../utils/formatCurrency'
-
-const BodyText = props => <BaseText {...props} lineHeight="32px" />;
 
 function getBodyHTML({ orderDetails, promocode }) {
   const { displayItems, subTotal, total, tax, paymentMethod } = orderDetails;

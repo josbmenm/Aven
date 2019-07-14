@@ -217,7 +217,6 @@ export default function PageFooter() {
 }
 
 function SocialIcon({ icon }) {
-  const theme = useTheme();
   if (typeof icon === 'undefined') {
     console.error('SocialIcon required an `icon` prop');
     return null;

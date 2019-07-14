@@ -6,7 +6,7 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 import PageFooter from './PageFooter';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import SmallText from '../dashboard/SmallText';
 import Tag from '../dashboard/Tag';
 import { useTheme } from '../dashboard/Theme';
@@ -169,7 +169,8 @@ function BlendContent({ displayName, blend, recipe }) {
                       ))}
                     </View>
                   </Responsive>
-                  <BodyText
+                  <Text
+                    size="large"
                     style={{ marginBottom: 48 }}
                     responsiveStyle={{
                       textAlign: ['center', 'left'],
@@ -177,7 +178,7 @@ function BlendContent({ displayName, blend, recipe }) {
                     }}
                   >
                     {blend['Display Description']}
-                  </BodyText>
+                  </Text>
                   <Responsive
                     style={{
                       marginBottom: [40, 20],
@@ -265,8 +266,11 @@ function BlendContent({ displayName, blend, recipe }) {
             marginBottom: [40, 100],
           }}
         >
-          <Heading size="medium" style={{ marginBottom: 16 }}>organic ingredients</Heading>
-          <BodyText
+          <Heading size="medium" style={{ marginBottom: 16 }}>
+            organic ingredients
+          </Heading>
+          <Text
+            size="large"
             style={{ maxWidth: 520, textAlign: 'center' }}
             responsiveStyle={{
               marginBottom: [60, 90],
@@ -274,7 +278,7 @@ function BlendContent({ displayName, blend, recipe }) {
           >
             All of our ingredients for our drinks are locally sourced, fully
             organic, and guarenteed to taste amazing.
-          </BodyText>
+          </Text>
           <View
             style={{
               flexWrap: 'wrap',

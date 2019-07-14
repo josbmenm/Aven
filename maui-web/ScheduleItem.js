@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '../dashboard/Theme';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import SmallText from '../dashboard/SmallText';
 
 function ScheduleItem({ item, style, ...rest }) {
@@ -30,9 +30,9 @@ function ScheduleItem({ item, style, ...rest }) {
       >
         {item.time}
       </SmallText>
-      <BodyText style={{ marginBottom: 0, fontSize: 16, lineHeight: 24 }}>
+      <Text style={{ marginBottom: 0, fontSize: 16, lineHeight: 24 }}>
         {item.address}
-      </BodyText>
+      </Text>
     </View>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import ButtonLink from './ButtonLink';
 import Container from '../dashboard/Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
@@ -29,12 +29,12 @@ function TheTeam() {
               style={{ justifyContent: 'center', paddingVertical: 40 }}
             >
               <Heading size="small">The team</Heading>
-              <BodyText responsiveStyle={{ textAlign: ['center', 'left'] }}>
+              <Text size="large" responsiveStyle={{ textAlign: ['center', 'left'] }}>
                 We’re a team of foragers, foodies and builders with backgrounds
                 in robotics, automation, logistics, and culinary fine dining.
                 Regardless of the discipline, design and hospitality are at the
                 core of everything we do.
-              </BodyText>
+              </Text>
               <ButtonLink
                 type="solid"
                 title="find us"

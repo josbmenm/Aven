@@ -3,7 +3,7 @@ import { Image } from 'react-native';
 import View from '../views/View';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import ButtonLink from './ButtonLink';
 import { ColumnToRow, ColumnToRowChild, NoFlexToFlex } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
@@ -101,7 +101,8 @@ function HomeHeader() {
                     >
                       We’re making healthy food accessible to everyone.
                     </Heading>
-                    <BodyText
+                    <Text
+                      size="large"
                       responsiveStyle={{
                         marginBottom: [20, 45],
                       }}
@@ -109,7 +110,7 @@ function HomeHeader() {
                       Using organic fruits and vegetables, we create blends that
                       focus on the best ingredients for you. All of our blends
                       are customizable and designed with your best self in mind.
-                    </BodyText>
+                    </Text>
                     <ButtonLink
                       title="find us"
                       routeName="Schedule"

@@ -39,7 +39,7 @@ function WeekSchedule() {
           paddingBottom: 100,
         }}
       >
-        <Heading size="s" style={{ textAlign: 'center', alignSelf: 'center' }}>
+        <Heading size="small" style={{ textAlign: 'center', alignSelf: 'center' }}>
           This Week
         </Heading>
         {schedule && (
@@ -119,7 +119,7 @@ function DaySchedule({ day }) {
         </SmallText>
       ) : null}
       <Heading
-        size="s"
+        size="small"
         style={{ marginTop: 36 }}
         responsiveStyle={{
           lineHeight: [28, 36],

@@ -1,6 +1,5 @@
 import React from 'react';
 import View from '../views/View';
-import Text from '../views/Text';
 import Link from '../navigation-web/Link';
 import AirtableImage from '../components/AirtableImage';
 import { useTheme } from '../dashboard/Theme';
@@ -8,7 +7,7 @@ import Heading from '../dashboard/Heading';
 import Container from '../dashboard/Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
 import SmallText from '../dashboard/SmallText';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import { Responsive } from '../dashboard/Responsive';
 
 function BodyLink({ children, url }) {
@@ -23,7 +22,8 @@ function BenefitDescription({ name }) {
   switch (name) {
     case 'Skin & Body':
       return (
-        <BodyText
+        <Text
+          size="large"
           responsiveStyle={{ textAlign: ['center', 'left'] }}
           style={{ maxWidth: 630 }}
         >
@@ -34,11 +34,12 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </BodyText>
+        </Text>
       );
     case 'Digestion':
       return (
-        <BodyText
+        <Text
+          size="large"
           responsiveStyle={{ textAlign: ['center', 'left'] }}
           style={{ maxWidth: 630 }}
         >
@@ -50,11 +51,12 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </BodyText>
+        </Text>
       );
     case 'Immunity':
       return (
-        <BodyText
+        <Text
+          size="large"
           responsiveStyle={{ textAlign: ['center', 'left'] }}
           style={{ maxWidth: 630 }}
         >
@@ -76,11 +78,12 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </BodyText>
+        </Text>
       );
     case 'Fitness':
       return (
-        <BodyText
+        <Text
+          size="large"
           responsiveStyle={{ textAlign: ['center', 'left'] }}
           style={{ maxWidth: 630 }}
         >
@@ -88,11 +91,12 @@ function BenefitDescription({ name }) {
           which is great for muscle growth and recovery. Most people know this,
           but it’s also a great way to make a meal more filling, and is a
           building block of any healthy diet.
-        </BodyText>
+        </Text>
       );
     case 'Focus':
       return (
-        <BodyText
+        <Text
+          size="large"
           responsiveStyle={{ textAlign: ['center', 'left'] }}
           style={{ maxWidth: 630 }}
         >
@@ -112,7 +116,7 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </BodyText>
+        </Text>
       );
     default:
       return null;

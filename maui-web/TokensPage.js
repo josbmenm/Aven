@@ -1,7 +1,7 @@
 import React from 'react';
 import View from '../views/View';
 import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import SmallText from '../dashboard/SmallText';
 import ButtonLink from './ButtonLink';
 import GenericPage from './GenericPage';
@@ -40,13 +40,17 @@ function Tokens() {
   return (
     <Container style={{ paddingVertical: 100 }}>
       <View>
-        <Heading size="l" style={{ marginBottom: 40 }}>Design Tokens</Heading>
+        <Heading size="large" style={{ marginBottom: 40 }}>
+          Design Tokens
+        </Heading>
         <TokenSection title="Text Tokens">
-          <Heading size="s">Small Heading</Heading>
-          <Heading size="m">Medium Heading</Heading>
-          <Heading size="l">Large Heading</Heading>
+          <Heading size="small">Small Heading</Heading>
+          <Heading size="medium">Medium Heading</Heading>
+          <Heading size="large">Large Heading</Heading>
           <View style={{ height: 40 }} />
-          <BodyText>Body Text</BodyText>
+          <Text size="large">Large Text</Text>
+          <Text size="medium">Medium Text</Text>
+          <Text size="small">Small Text</Text>
           <SmallText>Small Text</SmallText>
         </TokenSection>
         <TokenSection title="Button Tokens">

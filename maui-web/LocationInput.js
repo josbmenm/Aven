@@ -1,7 +1,7 @@
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { useTheme } from '../dashboard/Theme';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import SmallText from '../dashboard/SmallText';
 import FormInput from '../components/BlockFormInput';
 import { Responsive } from '../dashboard/Responsive';
@@ -19,7 +19,7 @@ export function LocationInput({
   const theme = useTheme();
   const [inputText, setInputText] = React.useState(inputValue);
   const [results, setResults] = React.useState(null);
-  const type = 'city'; // or, address
+  // const type = 'city'; // or, address
   const ref = React.useRef({});
   function queryResults() {
     clearTimeout(ref.current.fast);
@@ -87,7 +87,8 @@ export function LocationInput({
                       paddingHorizontal: 16,
                     }}
                   >
-                    <BodyText
+                    <Text
+                      size="large"
                       bold
                       style={{
                         fontFamily: theme.fonts.bold,
@@ -97,7 +98,7 @@ export function LocationInput({
                       }}
                     >
                       {result.text}
-                    </BodyText>
+                    </Text>
                     <SmallText>
                       {result.context.map(c => c.text).join(', ')}
                     </SmallText>

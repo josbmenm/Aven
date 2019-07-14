@@ -15,7 +15,6 @@ import observeNull from '../cloud-core/observeNull';
 import {
   getOrderItemMapper,
   sortByField as getSortedByField,
-  TAX_RATE,
   sellPriceOfMenuItem as getSellPriceOfMenuItem,
   displayNameOfMenuItem as getDisplayNameOfMenuItem,
   displayNameOfOrderItem as getDisplayNameOfOrderItem,

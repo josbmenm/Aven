@@ -2,7 +2,7 @@ import React from 'react';
 import View from '../views/View';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import Text from '../dashboard/Text';
 import { Responsive } from '../dashboard/Responsive';
 
 export default function GenericHeroHeader({
@@ -43,7 +43,7 @@ export default function GenericHeroHeader({
               >
                 {title}
               </Heading>
-              <BodyText style={{ textAlign: 'center' }}>{bodyText}</BodyText>
+              <Text size="large" style={{ textAlign: 'center' }}>{bodyText}</Text>
             </View>
           </Responsive>
         </View>
