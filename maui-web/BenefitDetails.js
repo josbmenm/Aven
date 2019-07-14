@@ -6,7 +6,6 @@ import { useTheme } from '../dashboard/Theme';
 import Heading from '../dashboard/Heading';
 import Container from '../dashboard/Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
-import SmallText from '../dashboard/SmallText';
 import Text from '../dashboard/Text';
 import { Responsive } from '../dashboard/Responsive';
 
@@ -140,13 +139,12 @@ export default function BenefitDetails({ benefit }) {
         }}
       >
         <Heading
-          size="medium"
           style={{ textAlign: 'center' }}
           responsiveStyle={{
             marginBottom: [0, 24],
           }}
         >
-          this blend is designed for..
+          this blend is designed for {benefit.Name}
         </Heading>
         <ColumnToRow>
           <ColumnToRowChild>
@@ -162,15 +160,6 @@ export default function BenefitDetails({ benefit }) {
             }}
           >
             <ColumnToRowChild>
-              <SmallText
-                bold
-                responsiveStyle={{
-                  alignSelf: ['center', 'flex-start'],
-                  marginBottom: [16, 0],
-                }}
-              >
-                {benefit.Name.toUpperCase()}
-              </SmallText>
               <BenefitDescription name={benefit.Name} />
             </ColumnToRowChild>
           </Responsive>

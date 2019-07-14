@@ -2,7 +2,6 @@ import React from 'react';
 import View from '../views/View';
 import Heading from '../dashboard/Heading';
 import Text from '../dashboard/Text';
-import SmallText from '../dashboard/SmallText';
 import ButtonLink from './ButtonLink';
 import GenericPage from './GenericPage';
 import Container from '../dashboard/Container';
@@ -51,7 +50,6 @@ function Tokens() {
           <Text size="large">Large Text</Text>
           <Text size="medium">Medium Text</Text>
           <Text size="small">Small Text</Text>
-          <SmallText>Small Text</SmallText>
         </TokenSection>
         <TokenSection title="Button Tokens">
           <ButtonLink title="Default Button" routeName="Tokens" />

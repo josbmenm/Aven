@@ -2,7 +2,6 @@ import { View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { useTheme } from '../dashboard/Theme';
 import Text from '../dashboard/Text';
-import SmallText from '../dashboard/SmallText';
 import FormInput from '../components/BlockFormInput';
 import { Responsive } from '../dashboard/Responsive';
 
@@ -99,9 +98,9 @@ export function LocationInput({
                     >
                       {result.text}
                     </Text>
-                    <SmallText>
+                    <Text>
                       {result.context.map(c => c.text).join(', ')}
-                    </SmallText>
+                    </Text>
                   </View>
                 </TouchableOpacity>
               );

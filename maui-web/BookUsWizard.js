@@ -3,7 +3,6 @@ import { Animated, Image } from 'react-native';
 import View from '../views/View';
 import Heading from '../dashboard/Heading';
 import Text from '../dashboard/Text';
-import SmallText from '../dashboard/SmallText';
 import BlockForm from '../components/BlockForm';
 import Input from '../components/BlockFormInput';
 import Button from '../dashboard/Button';
@@ -442,9 +441,9 @@ function ProgressBar({ step, ...rest }) {
           }}
         />
       </View>
-      <SmallText bold>
+      <Text bold style={{ fontSize: 12, fontFamily: theme.fonts.bold}}>
         {step} / {TOTAL_STEPS}
-      </SmallText>
+      </Text>
     </View>
   );
 }

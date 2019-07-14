@@ -7,7 +7,6 @@ import PageFooter from './PageFooter';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
 import Text from '../dashboard/Text';
-import SmallText from '../dashboard/SmallText';
 import Tag from '../dashboard/Tag';
 import { useTheme } from '../dashboard/Theme';
 import { useMenuItemSlug, useCompanyConfig } from '../ono-cloud/OnoKitchen';
@@ -155,16 +154,18 @@ function BlendContent({ displayName, blend, recipe }) {
                             resizeMode="contain"
                             style={{ width: 60, height: 60 }}
                           />
-                          <SmallText
+                          <Text
                             bold
                             style={{
                               fontSize: 10,
+                              fontFamily: theme.fonts.bold,
                               lineHeight: 24,
                               textTransform: 'uppercase',
                             }}
                           >
                             {benefit.Name}
-                          </SmallText>
+                            siz{' '}
+                          </Text>
                         </View>
                       ))}
                     </View>
@@ -204,9 +205,16 @@ function BlendContent({ displayName, blend, recipe }) {
                             height: 16,
                           }}
                         >
-                          <SmallText style={{ marginBottom: 0 }}>
+                          <Text
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 12,
+                              letterSpacing: 0.3,
+                              fontFamily: theme.fonts.normal,
+                            }}
+                          >
                             {dietaryMessage}
-                          </SmallText>
+                          </Text>
                         </View>
                       ))}
                     </View>
@@ -235,15 +243,16 @@ function BlendContent({ displayName, blend, recipe }) {
                           }}
                           tintColor={theme.colors.monsterra}
                         />
-                        <SmallText
+                        <Text
                           bold
                           style={{
                             fontSize: 12,
+                            fontFamily: theme.fonts.bold,
                             textTransform: 'uppercase',
                           }}
                         >
                           {d.Name}
-                        </SmallText>
+                        </Text>
                       </View>
                     ))}
                   </View>
@@ -266,9 +275,7 @@ function BlendContent({ displayName, blend, recipe }) {
             marginBottom: [40, 100],
           }}
         >
-          <Heading size="medium" style={{ marginBottom: 16 }}>
-            organic ingredients
-          </Heading>
+          <Heading style={{ marginBottom: 16 }}>organic ingredients</Heading>
           <Text
             size="large"
             style={{ maxWidth: 520, textAlign: 'center' }}
@@ -303,16 +310,19 @@ function BlendContent({ displayName, blend, recipe }) {
                     marginBottom: 8,
                   }}
                 />
-                <SmallText
+                <Text
+                  size="small"
                   bold
                   style={{
                     textAlign: 'center',
                     textTransform: 'uppercase',
                     letterSpacing: 2,
+                    fontFamily: theme.fonts.bold,
+                    lineHeight: 24,
                   }}
                 >
                   {ing.Name}
-                </SmallText>
+                </Text>
               </View>
             ))}
           </View>
@@ -349,7 +359,6 @@ function BlendPage() {
       <View>
         <Container style={{ overflow: 'hidden' }}>
           <Heading
-            size="medium"
             style={{ textAlign: 'center' }}
             responsiveStyle={{
               marginBottom: [28, 52],

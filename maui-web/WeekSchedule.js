@@ -3,9 +3,9 @@ import { StyleSheet, ScrollView, Image } from 'react-native';
 import View from '../views/View';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
+import Text from '../dashboard/Text';
 import { useTheme } from '../dashboard/Theme';
 import ScheduleItem from './ScheduleItem';
-import SmallText from '../dashboard/SmallText';
 
 function WeekSchedule() {
   const theme = useTheme();
@@ -110,16 +110,17 @@ function DaySchedule({ day }) {
       ]}
     >
       {today ? (
-        <SmallText
+        <Text
           bold
           style={{
+            fontFamily: theme.fonts.bold,
             position: 'absolute',
             top: 28,
             left: 20,
           }}
         >
           TODAY
-        </SmallText>
+        </Text>
       ) : null}
       <Heading
         size="small"

@@ -6,7 +6,6 @@ import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import OnoFoodLogo from './OnoFoodLogo';
-import SmallText from '../dashboard/SmallText';
 import Link from './Link';
 import FunctionalLink from '../navigation-web/Link';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
@@ -53,10 +52,10 @@ export default function PageFooter() {
                   marginBottom: 20,
                 }}
               >
-                <SmallText>
+                <Text size="medium" style={{ fontSize: 11, lineHeight: 18 }}>
                   © Copyright {new Date().getFullYear()} Ono Food Co. All Rights
                   Reserved
-                </SmallText>
+                </Text>
               </ColumnToRowChild>
             </ColumnToRow>
           </ColumnToRowChild>
@@ -166,7 +165,9 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/twitter.png')} />
-                    <SmallText size="large">@onofoodco</SmallText>
+                    <Text style={{ fontSize: 12, lineHeight: 18 }}>
+                      @onofoodco
+                    </Text>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -185,7 +186,9 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/facebook.png')} />
-                    <SmallText size="large">@onofoodco</SmallText>
+                    <Text style={{ fontSize: 12, lineHeight: 18 }}>
+                      @onofoodco
+                    </Text>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -204,7 +207,9 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/instagram.png')} />
-                    <SmallText size="large">@onofoodco</SmallText>
+                    <Text style={{ fontSize: 12, lineHeight: 18 }}>
+                      @onofoodco
+                    </Text>
                   </View>
                 </FunctionalLink>
               </ColumnToRowChild>
