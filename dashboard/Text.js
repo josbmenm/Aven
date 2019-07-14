@@ -17,7 +17,9 @@ function Text({
     () => createVariant({ theme, key: 'textStyles' }),
     [theme],
   );
-  let boldStyle = bold ? { fontWeight: 'bold' } : {};
+  let boldStyle = bold
+    ? { fontWeight: 'bold', fontFamily: theme.fonts.bold }
+    : {};
   return (
     <Responsive
       breakpoints={breakpoints}
