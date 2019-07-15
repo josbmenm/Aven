@@ -555,34 +555,11 @@ export function createDoc({
 
   async function putTransactionValue(value) {
     let onCleanup = null;
-
-    const startingDocState = await new Promise((resolve, reject) => {
-      let hasResolved = false;
-      const listen = {
-        next: v => {
-          if (hasResolved) {
-            // may be a race condition where the value changes at the same time we are transacting on it, or this can be the actual id we are putting.
-          } else {
-            resolve(v);
-          }
-        },
-        error: err => {
-          reject(err);
-        },
-        complete: () => {},
-      };
-      loadedDocStream.addListener(listen);
-      onCleanup = () => {
-        loadedDocStream.removeListener(listen);
-      };
-    });
-    const prevId = startingDocState.id;
+    const prevId = docState.id;
+    const on = prevId ? { id: prevId, type: 'BlockReference' } : null;
     const expectedTransactionValue = {
       type: 'TransactionValue',
-      on: {
-        type: 'BlockReference',
-        id: prevId,
-      },
+      on,
       time: Date.now(),
       value,
     };
@@ -601,9 +578,12 @@ export function createDoc({
       value,
     });
 
-    setState({
+    let stateUpdates = {
       lastPutTime: Date.now(),
-    });
+      puttingFromId: null,
+      lastFetchTime: Date.now(),
+      id: result.id,
+    };
     if (result.id !== expectedBlock.id) {
       console.warn(
         `Expected to put block id "${expectedBlock.id}", but actually put id "${
@@ -611,6 +591,7 @@ export function createDoc({
         }"`,
       );
     }
+    setState(stateUpdates);
 
     onCleanup && onCleanup();
     return result;
