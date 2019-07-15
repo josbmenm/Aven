@@ -1,0 +1,35 @@
+{
+  "main": "PlaygroundNativeApp",
+  "aven": {
+    "env": "env-kiosk",
+    "envOptions": {
+      "bundleId": "co.onofood.portal",
+      "displayName": "Control",
+      "appcenterSecret": "52542d85-9a56-4246-956d-ffd8f22b7788",
+      "codePushKey": "_3pcIaFvPpBPLkUNdCILthOOP-fqry0UbYIiN",
+      "codePushApp": "OnoFoodCo/Portal",
+      "codePushChannel": "Production"
+    },
+    "srcDependencies": [
+      "navigation-core",
+      "navigation-native",
+      "navigation-stack",
+      "views",
+      "logic",
+      "screens",
+      "debug-views",
+      "ono-cloud",
+      "cloud-react",
+      "cloud-native",
+      "react-utils",
+      "components",
+      "card-reader",
+      "navigation-transitioner",
+      "navigation-hooks"
+    ],
+    "moduleDependencies": [
+      "cuid",
+      "path"
+    ]
+  }
+}

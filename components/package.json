@@ -5,6 +5,7 @@
     ],
     "srcDependencies": [
       "views",
+      "dashboard",
       "cloud-core"
     ]
   }
