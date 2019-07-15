@@ -98,7 +98,7 @@ const Components = {
   OrderConfirmPage: {
     Component: OrderConfirmPage,
     exampleProps: {
-      readerState: { example: 'readerState' },
+      paymentState: {},
       summary: orderSummary,
       cancelPayment: () => alert('Payment Cancelled'),
       skipPayment: () => alert('Payment Skipped'),

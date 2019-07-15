@@ -17,7 +17,6 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 import { createSwitchNavigator } from '../navigation-core';
 import codePush from 'react-native-code-push';
 
-import PortalHomeScreen from '../screens/PortalHomeScreen';
 import ComponentPlaygroundScreen from '../screens/ComponentPlaygroundScreen';
 import ProductHomeScreen from '../screens/ProductHomeScreen';
 import KitchenEngScreen from '../screens/KitchenEngScreen';
@@ -181,46 +180,43 @@ const TABS = [
   { routeName: 'Settings', title: 'Settings' },
 ];
 
-const PortalHome = createSwitchNavigator({
-  PortalHome: { screen: PortalHomeScreen },
-  KitchenEng: { screen: KitchenEngScreen },
-  Inventory: { screen: InventoryScreen },
-  Manual: { screen: ManualControlScreen },
-  Sequencer: { screen: SequencerScreen },
-  Orders: { screen: OrdersScreen },
-  Status: { screen: RestaurantStatusScreen },
-  Alarms: { screen: AlarmsScreen },
-  Settings: { screen: KioskSettingsScreen },
-});
+// const PortalHome = createSwitchNavigator({
+//   PortalHome: { screen: PortalHomeScreen },
+//   KitchenEng: { screen: KitchenEngScreen },
+//   Inventory: { screen: InventoryScreen },
+//   Manual: { screen: ManualControlScreen },
+//   Sequencer: { screen: SequencerScreen },
+//   Orders: { screen: OrdersScreen },
+//   Status: { screen: RestaurantStatusScreen },
+//   Alarms: { screen: AlarmsScreen },
+//   Settings: { screen: KioskSettingsScreen },
+// });
 
-function PortalHomeApp({ navigation }) {
-  return (
-    <RootAuthenticationSection>
-      <TabsScreen tabs={TABS} navigation={navigation}>
-        <PortalHome navigation={navigation} />
-      </TabsScreen>
-    </RootAuthenticationSection>
-  );
-}
-PortalHomeApp.router = PortalHome.router;
-PortalHomeApp.navigationOptions = PortalHome.navigationOptions;
+// function PortalHomeApp({ navigation }) {
+//   return (
+//     <RootAuthenticationSection>
+//       <TabsScreen tabs={TABS} navigation={navigation}>
+//         <PortalHome navigation={navigation} />
+//       </TabsScreen>
+//     </RootAuthenticationSection>
+//   );
+// }
+// PortalHomeApp.router = PortalHome.router;
+// PortalHomeApp.navigationOptions = PortalHome.navigationOptions;
 
 const App = createStackTransitionNavigator({
-  Home: PortalHomeApp,
-  OrderComplete: OrderCompletePortalScreen,
-  Kiosk: KioskApp,
   ComponentPlayground: ComponentPlaygroundScreen,
-  KitchenEng: KitchenEngScreen,
-  KitchenEngSub: KitchenEngSubScreen,
-  Inventory: InventoryScreen,
-  DeviceManager: DeviceManagerScreen,
-  RestaurantStatus: RestaurantStatusScreen,
-  PaymentDebug: PaymentDebugScreen,
-  OrderConfirmTest: OrderConfirmTestScreen,
-  Sequencer: SequencerScreen,
-  EngDashboard: EngDashboardScreen,
-  Orders: OrdersScreen,
-  ManualControl: ManualControlScreen,
+  // KitchenEng: KitchenEngScreen,
+  // KitchenEngSub: KitchenEngSubScreen,
+  // Inventory: InventoryScreen,
+  // DeviceManager: DeviceManagerScreen,
+  // RestaurantStatus: RestaurantStatusScreen,
+  // PaymentDebug: PaymentDebugScreen,
+  // OrderConfirmTest: OrderConfirmTestScreen,
+  // Sequencer: SequencerScreen,
+  // EngDashboard: EngDashboardScreen,
+  // Orders: OrdersScreen,
+  // ManualControl: ManualControlScreen,
 });
 
 const AppContainer = createAppContainer(App);
@@ -239,7 +235,7 @@ function renderAppError({ error, errorInfo, onRetry }) {
   );
 }
 
-const NAV_STORAGE_KEY = 'NavigationState-N3e2u121o';
+const NAV_STORAGE_KEY = 'PlaygroundNavigationState';
 function FullApp() {
   const cloud = useCloudProvider({
     source: cloudSource,

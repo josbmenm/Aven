@@ -2,19 +2,17 @@ import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 import Button from './Button';
 
-export default function BlockFormButton({
-  onPress,
-  title,
-  disabled,
-  secondary,
-}) {
+export default function BlockFormButton({ buttonStyle, type, ...props }) {
   return (
     <Button
-      onPress={onPress}
-      secondary={secondary}
-      title={title}
-      disabled={disabled}
-      style={{ flex: 1, marginHorizontal: 10, marginVertical: 0 }}
+      {...props}
+      type={type || 'solid'}
+      buttonStyle={{
+        flex: 1,
+        marginHorizontal: 10,
+        marginVertical: 0,
+        ...buttonStyle,
+      }}
     />
   );
 }

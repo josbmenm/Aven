@@ -80,10 +80,11 @@ function RootAuthLogin() {
 }
 
 export default function RootAuthenticationSection({ children }) {
-  const cloud = useCloud();
-  const session = useObservable(cloud && cloud.observeSession);
-  if (session && session.accountId === 'root') {
-    return children;
-  }
-  return <RootAuthLogin />;
+  return children;
+  // const cloud = useCloud();
+  // const session = useObservable(cloud && cloud.observeSession);
+  // if (session && session.accountId === 'root') {
+  //   return children;
+  // }
+  // return <RootAuthLogin />;
 }
