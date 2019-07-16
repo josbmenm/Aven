@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '../dashboard/Theme'
-import Text from '../dashboard/Text';
+import BodyText from '../dashboard/BodyText';
 import Heading from '../dashboard/Heading';
 
 
@@ -41,7 +41,7 @@ export function ListItem({ children }) {
           top: 12,
         }}
       />
-      <Text size="large">{children}</Text>
+      <BodyText>{children}</BodyText>
     </View>
   );
 }

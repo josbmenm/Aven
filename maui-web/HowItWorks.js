@@ -4,7 +4,7 @@ import View from '../views/View';
 import { useTheme } from '../dashboard/Theme';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import Text from '../dashboard/Text';
+import BodyText from '../dashboard/BodyText';
 import FunctionalLink from '../navigation-web/Link';
 import { Responsive } from '../dashboard/Responsive';
 import FeatureSection from './FeatureSection';
@@ -87,16 +87,16 @@ function HowItWorks() {
           <FeatureSection
             title="Find us"
             bodyText={
-              <Text size="large">
+              <BodyText>
                 Check out the{' '}
                 <FunctionalLink routeName="Schedule">
-                  <Text size="large" bold>schedule</Text>{' '}
+                  <BodyText bold>schedule</BodyText>{' '}
                 </FunctionalLink>
                 to find us. Not seeing your neighborhood?{' '}
                 <FunctionalLink routeName="Schedule">
-                  <Text size="large" bold>Request us here.</Text>
+                  <BodyText bold>Request us here.</BodyText>
                 </FunctionalLink>
-              </Text>
+              </BodyText>
             }
             image={
               <FeatureImage
@@ -125,12 +125,12 @@ function HowItWorks() {
               inverted
               title="Order"
               bodyText={
-                <Text size="large">
+                <BodyText>
                   Select a blend or personalize oned based on your nutritional
                   preferences or dietary restrictions through our ordering
                   kiosk. Ono Guides are on-site to ensure the best possible
                   experience.
-                </Text>
+                </BodyText>
               }
               image={
                 <FeatureImage
@@ -163,10 +163,10 @@ function HowItWorks() {
               style={{ width: '100%' }}
               title="Pickup"
               bodyText={
-                <Text size="large">
+                <BodyText>
                   Watch as advanced robotics create your perfect blend within 60
                   seconds, and when it’s ready, grab it from our pick-up area.
-                </Text>
+                </BodyText>
               }
               image={
                 <FeatureImage

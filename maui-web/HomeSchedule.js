@@ -2,7 +2,7 @@ import React from 'react';
 import View from '../views/View';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import Text from '../dashboard/Text';
+import BaseText from '../dashboard/BaseText';
 import ButtonLink from './ButtonLink';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
@@ -32,7 +32,7 @@ function HomeSchedule() {
                   <Heading size="small" responsiveStyle={{ marginBottom: [12, 16] }}>
                     Where are we today?
                   </Heading>
-                  <Text
+                  <BaseText
                     responsiveStyle={{
                       textAlign: ['center', 'left'],
                       marginBottom: [48, 40],
@@ -40,7 +40,7 @@ function HomeSchedule() {
                   >
                     Ono Blends is based in LA, but we’re always on the move.
                     Check out our schedule to find us today!
-                  </Text>
+                  </BaseText>
 
                   <ButtonLink
                     type="solid"

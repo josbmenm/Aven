@@ -1,7 +1,8 @@
 import React from 'react';
 import View from '../views/View';
 import Heading from '../dashboard/Heading';
-import Text from '../dashboard/Text';
+import BaseText from '../dashboard/BaseText';
+import BodyText from '../dashboard/BodyText';
 import ButtonLink from './ButtonLink';
 import GenericPage from './GenericPage';
 import Container from '../dashboard/Container';
@@ -47,9 +48,9 @@ function Tokens() {
           <Heading size="medium">Medium Heading</Heading>
           <Heading size="large">Large Heading</Heading>
           <View style={{ height: 40 }} />
-          <Text size="large">Large Text</Text>
-          <Text size="medium">Medium Text</Text>
-          <Text size="small">Small Text</Text>
+          <BodyText>Large Text</BodyText>
+          <BaseText size="medium">Medium Text</BaseText>
+          <BaseText size="small">Small Text</BaseText>
         </TokenSection>
         <TokenSection title="Button Tokens">
           <ButtonLink title="Default Button" routeName="Tokens" />

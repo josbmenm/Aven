@@ -3,7 +3,7 @@ import { StyleSheet, ScrollView, Image } from 'react-native';
 import View from '../views/View';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import Text from '../dashboard/Text';
+import BaseText from '../dashboard/BaseText';
 import { useTheme } from '../dashboard/Theme';
 import ScheduleItem from './ScheduleItem';
 
@@ -110,7 +110,7 @@ function DaySchedule({ day }) {
       ]}
     >
       {today ? (
-        <Text
+        <BaseText
           bold
           style={{
             fontFamily: theme.fonts.bold,
@@ -120,7 +120,7 @@ function DaySchedule({ day }) {
           }}
         >
           TODAY
-        </Text>
+        </BaseText>
       ) : null}
       <Heading
         size="small"

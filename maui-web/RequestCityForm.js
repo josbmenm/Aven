@@ -2,7 +2,7 @@ import React from 'react';
 import { LocationInput } from './LocationInput';
 import Button from '../dashboard/Button';
 import View from '../views/View';
-import Text from '../dashboard/Text';
+import BodyText from '../dashboard/BodyText';
 import { useCloud } from '../cloud-core/KiteReact';
 import useAsyncError from '../react-utils/useAsyncError';
 import { Responsive } from '../dashboard/Responsive';
@@ -23,7 +23,7 @@ function RequestCityForm({ breakpoints }) {
   if (isDone) {
     return (
       <View>
-        <Text size="large" bold>Thanks, your request is in!:</Text>
+        <BodyText bold>Thanks, your request is in!:</BodyText>
       </View>
     );
   }

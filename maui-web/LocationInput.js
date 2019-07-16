@@ -1,7 +1,8 @@
 import { View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { useTheme } from '../dashboard/Theme';
-import Text from '../dashboard/Text';
+import BaseText from '../dashboard/BaseText';
+import BodyText from '../dashboard/BodyText';
 import FormInput from '../components/BlockFormInput';
 import { Responsive } from '../dashboard/Responsive';
 
@@ -86,8 +87,7 @@ export function LocationInput({
                       paddingHorizontal: 16,
                     }}
                   >
-                    <Text
-                      size="large"
+                    <BodyText
                       bold
                       style={{
                         fontFamily: theme.fonts.bold,
@@ -97,10 +97,10 @@ export function LocationInput({
                       }}
                     >
                       {result.text}
-                    </Text>
-                    <Text>
+                    </BodyText>
+                    <BaseText>
                       {result.context.map(c => c.text).join(', ')}
-                    </Text>
+                    </BaseText>
                   </View>
                 </TouchableOpacity>
               );

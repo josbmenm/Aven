@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import Text from '../dashboard/Text';
+import BaseText from '../dashboard/BaseText';
 import ScheduleItem from './ScheduleItem';
 import { useTheme } from '../dashboard/Theme';
 import { Responsive } from '../dashboard/Responsive';
@@ -35,7 +35,7 @@ function Schedule({ withFloatingLabel = false, ...rest }) {
   return (
     <View {...rest}>
       {schedule && withFloatingLabel ? (
-        <Text
+        <BaseText
           bold
           className="hide-mobile"
           style={{
@@ -45,7 +45,7 @@ function Schedule({ withFloatingLabel = false, ...rest }) {
           }}
         >
           we're here!
-        </Text>
+        </BaseText>
       ) : null}
       {schedule &&
         schedule.map((item, index) => (

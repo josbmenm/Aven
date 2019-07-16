@@ -9,7 +9,7 @@ import { NoFlexToFlex, ColumnToRow, ColumnToRowChild } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import Text from '../dashboard/Text';
+import BodyText from '../dashboard/BodyText';
 import Schedule from './Schedule';
 import RequestCityForm from './RequestCityForm';
 import WeekSchedule from './WeekSchedule';
@@ -58,19 +58,16 @@ function SchedulePage() {
                     >
                       Where are we today?
                     </Heading>
-                    <Text
-                      size="large"
+                    <BodyText
                       responsiveStyle={{
                         textAlign: ['center', 'left'],
                       }}
                     >
                       Ono Blends is based in LA, but we’re always on the move.
                       If you’d like to see us in your city, please{' '}
-                      <Text size="large" bold>
-                        request a new city
-                      </Text>{' '}
-                      and we’ll try to make it happen!
-                    </Text>
+                      <BodyText bold>request a new city</BodyText> and we’ll try
+                      to make it happen!
+                    </BodyText>
                   </View>
                 </Responsive>
               </ColumnToRowChild>
@@ -170,8 +167,7 @@ function SchedulePage() {
               >
                 Don’t see us in your city?
               </Heading>
-              <Text
-                size="large"
+              <BodyText
                 style={{ maxWidth: 412 }}
                 breakpoints={breakpoints}
                 responsiveStyle={{
@@ -182,7 +178,7 @@ function SchedulePage() {
               >
                 Ono Blends is always looking to grow. Request your city and
                 we’ll try to make it happen.
-              </Text>
+              </BodyText>
               <RequestCityForm breakpoints={breakpoints} />
             </ColumnToRowChild>
           </ColumnToRow>

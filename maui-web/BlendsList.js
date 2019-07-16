@@ -3,7 +3,6 @@ import { ScrollView } from 'react-native';
 import View from '../views/View';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import Text from '../dashboard/Text';
 import { Responsive } from '../dashboard/Responsive';
 import Tag from '../dashboard/Tag';
 import FunctionalLink from '../navigation-web/Link';
@@ -11,6 +10,7 @@ import { useTheme } from '../dashboard/Theme';
 import { useMenu } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { getMenuItemSlug } from '../logic/configLogic';
+import BodyText from '../dashboard/BodyText';
 
 function BlendsListItem({ blend, style }) {
   const theme = useTheme();
@@ -101,7 +101,7 @@ export function BlendsList() {
                 <BlendsListItem key={i} blend={item} />
               ))
             ) : (
-              <Text size="large">Loading...</Text>
+              <BodyText>Loading...</BodyText>
             )}
           </View>
         </Container>
@@ -231,6 +231,6 @@ export function BlendsCarousel() {
       </View>
     </Responsive>
   ) : (
-    <Text size="large">Loading...</Text>
+    <BodyText>Loading...</BodyText>
   );
 }

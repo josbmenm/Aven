@@ -2,7 +2,7 @@ import React from 'react';
 import { Animated, Image } from 'react-native';
 import View from '../views/View';
 import Heading from '../dashboard/Heading';
-import Text from '../dashboard/Text';
+import BaseText from '../dashboard/BaseText';
 import BlockForm from '../components/BlockForm';
 import Input from '../components/BlockFormInput';
 import Button from '../dashboard/Button';
@@ -10,6 +10,7 @@ import { useTheme } from '../dashboard/Theme';
 import { LocationInput } from './LocationInput';
 import { Responsive } from '../dashboard/Responsive';
 import FormRow from './FormRow';
+import BodyText from '../dashboard/BodyText';
 
 const TOTAL_STEPS = 6;
 
@@ -119,17 +120,17 @@ function BookUsWizard() {
             <Heading size="large" style={{ textAlign: 'center' }}>
               Book with us
             </Heading>
-            <Text size="large" style={{ textAlign: 'center' }}>
+            <BodyText style={{ textAlign: 'center' }}>
               Are you interested in having Ono Blends cater for an event? We’d
               love to! All we need from you are a few details about your event,
               so we can provide you with the best experience possible.
-            </Text>
+            </BodyText>
           </FormRow>
         </Step>
         <Step active={stepsState.current === 1}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">First thing’s first</Heading>
-            <Text size="large">We’d love to know who we are speaking to.</Text>
+            <BodyText>We’d love to know who we are speaking to.</BodyText>
           </FormRow>
           <Responsive
             style={{
@@ -167,9 +168,9 @@ function BookUsWizard() {
         <Step active={stepsState.current === 2}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">How do we contact you?</Heading>
-            <Text size="large">
+            <BodyText>
               Please let us know a good email to follow up with you.
-            </Text>
+            </BodyText>
           </FormRow>
           <FormRow>
             <FormInput
@@ -189,7 +190,7 @@ function BookUsWizard() {
         <Step active={stepsState.current === 3}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">What sort of event is this?</Heading>
-            <Text size="large">Let us know so we can best cater to it.</Text>
+            <BodyText>Let us know so we can best cater to it.</BodyText>
           </FormRow>
           <FormRow>
             <FormInput
@@ -209,7 +210,7 @@ function BookUsWizard() {
         <Step active={stepsState.current === 4}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">When would you like us there?</Heading>
-            <Text size="large">Just let us know to when would be best.</Text>
+            <BodyText>Just let us know to when would be best.</BodyText>
           </FormRow>
           <FormRow>
             <FormInput
@@ -229,7 +230,7 @@ function BookUsWizard() {
         <Step active={stepsState.current === 5}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">Almost done…..</Heading>
-            <Text size="large">Where would you like us to be?</Text>
+            <BodyText>Where would you like us to be?</BodyText>
           </FormRow>
           <FormRow>
             {/* mapbox autocomplete */}
@@ -244,9 +245,9 @@ function BookUsWizard() {
         <Step active={stepsState.current === 6}>
           <FormRow style={{ paddingHorizontal: 8 }}>
             <Heading size="large">Additional Comments</Heading>
-            <Text size="large">
+            <BodyText>
               Do you have anything else you’d like us to know?
-            </Text>
+            </BodyText>
           </FormRow>
           <FormRow>
             <FormInput
@@ -309,9 +310,9 @@ function BookUsWizard() {
 
           <FormRow style={{ height: 24, marginHorizontal: 8 }}>
             {error ? (
-              <Text style={{ fontFamily: 'Maax-Bold' }}>
+              <BaseText style={{ fontFamily: 'Maax-Bold' }}>
                 {error.message}
-              </Text>
+              </BaseText>
             ) : null}
           </FormRow>
         </View>
@@ -385,7 +386,7 @@ function SubmitButton({ onPress, disabled = false, loading }) {
       {loading ? (
         <Spinner />
       ) : (
-        <Text
+        <BaseText
           style={{
             fontFamily: theme.fonts.bold,
             textAlign: 'center',
@@ -396,7 +397,7 @@ function SubmitButton({ onPress, disabled = false, loading }) {
           }}
         >
           Submit
-        </Text>
+        </BaseText>
       )}
     </Button>
   );
@@ -441,9 +442,9 @@ function ProgressBar({ step, ...rest }) {
           }}
         />
       </View>
-      <Text bold style={{ fontSize: 12, fontFamily: theme.fonts.bold}}>
+      <BaseText bold style={{ fontSize: 12, fontFamily: theme.fonts.bold}}>
         {step} / {TOTAL_STEPS}
-      </Text>
+      </BaseText>
     </View>
   );
 }

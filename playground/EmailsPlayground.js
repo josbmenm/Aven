@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View } from 'react-native';
 import Title from '../dashboard/Title';
 import Button from '../dashboard/Button';
-import Text from '../dashboard/Text';
+import BodyText from '../dashboard/BodyText';
 import { useCloud } from '../cloud-core/KiteReact';
 import EmailExamples from '../emails/EmailExamples';
 
@@ -30,7 +30,7 @@ export default function EmailsPlayground() {
     <ColumnToRow>
       <ColumnToRowChild style={{ padding: 30 }}>
         <Title>Email Playground</Title>
-        <Text size="large">First, select an email template to send:</Text>
+        <BodyText>First, select an email template to send:</BodyText>
         {EmailExampleList.map(([exName, exampleSpec]) => (
           <Button
             onPress={() => {
@@ -43,9 +43,9 @@ export default function EmailsPlayground() {
         ))}
         {!!exampleName && (
           <React.Fragment>
-            <Text size="large" style={{ marginTop: 50 }}>
+            <BodyText style={{ marginTop: 50 }}>
               Next, choose a set of example params to use:
-            </Text>
+            </BodyText>
             {Object.keys(EmailExamples[exampleName].paramOptions).map(
               paramOptionName => {
                 const exParams =
@@ -64,10 +64,10 @@ export default function EmailsPlayground() {
             )}
             {!!params && (
               <React.Fragment>
-                <Text size="large" style={{ marginTop: 50 }}>
+                <BodyText style={{ marginTop: 50 }}>
                   Review the results on the right, or send the example email to
-                  yourself:
-                </Text>
+Body                  yourself:
+                </BodyText>
                 <View style={{ flexDirection: 'row', marginBottom: 24 }}>
                   <BlockFormInput
                     mode="email"
@@ -92,9 +92,9 @@ export default function EmailsPlayground() {
                   title={'Send Example Email'}
                 />
                 {results && results.recipient && (
-                  <Text size="large" style={{ marginTop: 50 }}>
+                  <BodyText style={{ marginTop: 50 }}>
                     Email sent to {results.recipient}
-                  </Text>
+                  </BodyText>
                 )}
               </React.Fragment>
             )}
@@ -105,9 +105,9 @@ export default function EmailsPlayground() {
         {results && (
           <React.Fragment>
             <Title>{results.subject}</Title>
-            <Text size="large">{results.bodyText}</Text>
+            <BodyText>{results.bodyText}</BodyText>
             <hr />
-            <ScrollView>
+            Body<ScrollView>
               <div dangerouslySetInnerHTML={{ __html: results.bodyHTML }} />
             </ScrollView>
           </React.Fragment>

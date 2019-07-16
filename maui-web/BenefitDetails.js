@@ -6,7 +6,8 @@ import { useTheme } from '../dashboard/Theme';
 import Heading from '../dashboard/Heading';
 import Container from '../dashboard/Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
-import Text from '../dashboard/Text';
+import Text from '../dashboard/BaseText';
+import BodyText from '../dashboard/BodyText';
 import { Responsive } from '../dashboard/Responsive';
 
 function BodyLink({ children, url }) {
@@ -21,8 +22,7 @@ function BenefitDescription({ name }) {
   switch (name) {
     case 'Skin & Body':
       return (
-        <Text
-          size="large"
+        <BodyText
           responsiveStyle={{ textAlign: ['center', 'left'] }}
           style={{ maxWidth: 630 }}
         >
@@ -33,12 +33,11 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </Text>
+        </BodyText>
       );
     case 'Digestion':
       return (
-        <Text
-          size="large"
+        <BodyText
           responsiveStyle={{ textAlign: ['center', 'left'] }}
           style={{ maxWidth: 630 }}
         >
@@ -50,12 +49,11 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </Text>
+        </BodyText>
       );
     case 'Immunity':
       return (
-        <Text
-          size="large"
+        <BodyText
           responsiveStyle={{ textAlign: ['center', 'left'] }}
           style={{ maxWidth: 630 }}
         >
@@ -77,12 +75,11 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </Text>
+        </BodyText>
       );
     case 'Fitness':
       return (
-        <Text
-          size="large"
+        <BodyText
           responsiveStyle={{ textAlign: ['center', 'left'] }}
           style={{ maxWidth: 630 }}
         >
@@ -90,12 +87,11 @@ function BenefitDescription({ name }) {
           which is great for muscle growth and recovery. Most people know this,
           but it’s also a great way to make a meal more filling, and is a
           building block of any healthy diet.
-        </Text>
+        </BodyText>
       );
     case 'Focus':
       return (
-        <Text
-          size="large"
+        <BodyText
           responsiveStyle={{ textAlign: ['center', 'left'] }}
           style={{ maxWidth: 630 }}
         >
@@ -115,7 +111,7 @@ function BenefitDescription({ name }) {
             here
           </BodyLink>
           .
-        </Text>
+        </BodyText>
       );
     default:
       return null;

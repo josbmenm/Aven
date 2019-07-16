@@ -6,7 +6,8 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 import PageFooter from './PageFooter';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
-import Text from '../dashboard/Text';
+import BaseText from '../dashboard/BaseText';
+import BodyText from '../dashboard/BodyText';
 import Tag from '../dashboard/Tag';
 import { useTheme } from '../dashboard/Theme';
 import { useMenuItemSlug, useCompanyConfig } from '../ono-cloud/OnoKitchen';
@@ -154,7 +155,7 @@ function BlendContent({ displayName, blend, recipe }) {
                             resizeMode="contain"
                             style={{ width: 60, height: 60 }}
                           />
-                          <Text
+                          <BaseText
                             bold
                             style={{
                               fontSize: 10,
@@ -165,13 +166,12 @@ function BlendContent({ displayName, blend, recipe }) {
                           >
                             {benefit.Name}
                             siz{' '}
-                          </Text>
+                          </BaseText>
                         </View>
                       ))}
                     </View>
                   </Responsive>
-                  <Text
-                    size="large"
+                  <BodyText
                     style={{ marginBottom: 48 }}
                     responsiveStyle={{
                       textAlign: ['center', 'left'],
@@ -179,7 +179,7 @@ function BlendContent({ displayName, blend, recipe }) {
                     }}
                   >
                     {blend['Display Description']}
-                  </Text>
+                  </BodyText>
                   <Responsive
                     style={{
                       marginBottom: [40, 20],
@@ -205,7 +205,7 @@ function BlendContent({ displayName, blend, recipe }) {
                             height: 16,
                           }}
                         >
-                          <Text
+                          <BaseText
                             style={{
                               marginBottom: 0,
                               fontSize: 12,
@@ -214,7 +214,7 @@ function BlendContent({ displayName, blend, recipe }) {
                             }}
                           >
                             {dietaryMessage}
-                          </Text>
+                          </BaseText>
                         </View>
                       ))}
                     </View>
@@ -243,7 +243,7 @@ function BlendContent({ displayName, blend, recipe }) {
                           }}
                           tintColor={theme.colors.monsterra}
                         />
-                        <Text
+                        <BaseText
                           bold
                           style={{
                             fontSize: 12,
@@ -252,7 +252,7 @@ function BlendContent({ displayName, blend, recipe }) {
                           }}
                         >
                           {d.Name}
-                        </Text>
+                        </BaseText>
                       </View>
                     ))}
                   </View>
@@ -276,8 +276,7 @@ function BlendContent({ displayName, blend, recipe }) {
           }}
         >
           <Heading style={{ marginBottom: 16 }}>organic ingredients</Heading>
-          <Text
-            size="large"
+          <BodyText
             style={{ maxWidth: 520, textAlign: 'center' }}
             responsiveStyle={{
               marginBottom: [60, 90],
@@ -285,7 +284,7 @@ function BlendContent({ displayName, blend, recipe }) {
           >
             All of our ingredients for our drinks are locally sourced, fully
             organic, and guarenteed to taste amazing.
-          </Text>
+          </BodyText>
           <View
             style={{
               flexWrap: 'wrap',
@@ -310,7 +309,7 @@ function BlendContent({ displayName, blend, recipe }) {
                     marginBottom: 8,
                   }}
                 />
-                <Text
+                <BaseText
                   size="small"
                   bold
                   style={{
@@ -322,7 +321,7 @@ function BlendContent({ displayName, blend, recipe }) {
                   }}
                 >
                   {ing.Name}
-                </Text>
+                </BaseText>
               </View>
             ))}
           </View>
