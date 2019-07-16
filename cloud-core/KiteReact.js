@@ -71,33 +71,45 @@ export function useCloudValue(cloudValueInput) {
   return useStream(cloudVal.stream);
 }
 
-export function useCloudReducer(actionDocName, cloudReducer) {
-  const cloud = useCloud();
-  const actionsDoc = cloud.get(actionDocName);
-
+export function createReducerStream(doc, reducerFn, initialState) {
   function streamReduced(val) {
     if (!val) {
       return xs.of(undefined);
     }
     let lastStateStream = undefined;
     if (val.on === null) {
-      lastStateStream = xs.of(cloudReducer.initialState);
+      lastStateStream = xs.of(initialState);
     } else if (val.on.id) {
-      lastStateStream = actionsDoc
+      lastStateStream = doc
         .getBlock(val.on.id)
-        .value.stream.map(streamReduced)
+        .value.stream.map(childVal => {
+          return streamReduced(childVal);
+        })
         .flatten();
     } else {
       return xs.of(undefined);
     }
     return lastStateStream.map(lastState => {
-      return cloudReducer.reducerFn(lastState, val.value);
+      return reducerFn(lastState, val.value);
     });
   }
+  return doc.value.stream.map(streamReduced).flatten();
+}
 
-  const reducedState = useStream(
-    actionsDoc.value.stream.map(streamReduced).flatten(),
+export function useCloudReducer(actionDocName, cloudReducer) {
+  const cloud = useCloud();
+  const actionsDoc = cloud.get(actionDocName);
+
+  const reducedStream = React.useMemo(
+    () =>
+      createReducerStream(
+        actionsDoc,
+        cloudReducer.reducerFn,
+        cloudReducer.initialState,
+      ),
+    [actionsDoc, cloudReducer],
   );
+  const reducedState = useStream(reducedStream);
 
   if (reducedState === undefined) {
     return [undefined, actionsDoc.putTransactionValue];
