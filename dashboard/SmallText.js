@@ -1,8 +1,9 @@
 import React from 'react';
-import Text from './Text';
+import BaseText from './BaseText';
 
 function SmallText({ ...props }) {
-  return <Text {...props} />;
+  // todo, @horacioh
+  return <BaseText {...props} />;
 }
 
 export default SmallText;
