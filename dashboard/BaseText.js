@@ -3,7 +3,7 @@ import ViewText from '../views/Text';
 import { useTheme, createVariant } from './Theme';
 import { Responsive } from './Responsive';
 
-function Text({
+function BaseText({
   children,
   bold,
   style,
@@ -43,4 +43,4 @@ function Text({
   );
 }
 
-export default Text;
+export default BaseText;
