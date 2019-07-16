@@ -4,7 +4,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#8fc6f5a975baf83cfb5b53eff5735b785a7051d1"
+  resolved "https://github.com/AvenCloud/Aven.git#f82691bff60bf9f5e196de59328971895ca84bf2"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     "@expo/vector-icons" "^8.0.0"
@@ -35,7 +35,7 @@
     json-stable-stringify "^1.0.1"
     knex "^0.16.3"
     konva "^3.2.1"
-    mime "^2.3.1"
+    mime "^2.4.4"
     minimist "^1.2.0"
     node-fetch "^2.3.0"
     path "^0.12.7"
@@ -982,9 +982,9 @@
   integrity sha512-7WfV4R/3YV5T30WRZW0lqmvZy9hE2/p9MvpI34WuKa2Wz62mLu5XplGTFEMK6uTbJCLWUxTcZ4J4IyClKucE5g==
 
 "@google-cloud/storage@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@google-cloud/storage/-/storage-3.0.2.tgz#b9dfa6bba6139c15b554f0cc0208030df710ed47"
-  integrity sha512-vIKaTSEpZJkWXUWhAN4wrEisL0JJ6SYjuwWMZKGSit/nRbhAxC8IA82Yrhbm/jI6R9VdBpB+oyHbhQLcMiNJvQ==
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@google-cloud/storage/-/storage-3.0.3.tgz#985b17043c6b8840c4bbc9b9e6e4ae133be61c3f"
+  integrity sha512-62N6qRCnY9zi5bK1O+IX/wQEU8NL2D4Tuo3DrrgY5Fk5n8lHlTLJLHZi730k/v2Vr1p1+fG0trfB8eNIUjkW/A==
   dependencies:
     "@google-cloud/common" "^2.0.0"
     "@google-cloud/paginator" "^1.0.0"
@@ -1103,7 +1103,16 @@
     react-is "^16.5.2"
     react-lifecycles-compat "^3.0.4"
 
-"@react-navigation/native@^3.0.0-alpha.5", "@react-navigation/native@https://github.com/react-navigation/react-navigation-native.git":
+"@react-navigation/native@^3.0.0-alpha.5":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-3.5.0.tgz#f5d16e0845ac26d1147d1caa481f18a00740e7ae"
+  integrity sha512-TmGOis++ejEXG3sqNJhCSKqB0/qLu3FQgDtO959qpqif36R/diR8SQwJqeSdofoEiK3CepdhFlTCeHdS1/+MsQ==
+  dependencies:
+    hoist-non-react-statics "^3.0.1"
+    react-native-safe-area-view "^0.14.1"
+    react-native-screens "^1.0.0 || ^1.0.0-alpha"
+
+"@react-navigation/native@https://github.com/react-navigation/react-navigation-native.git":
   version "3.5.0"
   resolved "https://github.com/react-navigation/react-navigation-native.git#d54c3590825a3567f63fdea940a784699c653742"
   dependencies:
@@ -1257,9 +1266,9 @@
   integrity sha512-FwI9gX75FgVBJ7ywgnq/P7tw+/o1GUbtP0KzbtusLigAOgIgNISRK0ZPl4qertvXSIE8YbsVJueQ90cDt9YYyw==
 
 "@types/node@*":
-  version "12.6.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.6.3.tgz#44d507c5634f85e7164707ca36bba21b5213d487"
-  integrity sha512-7TEYTQT1/6PP53NftXXabIZDaZfaoBdeBm8Md/i7zsWRoBe0YwOXguyK8vhHs8ehgB/w9U4K/6EWuTyp0W6nIA==
+  version "12.6.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.6.4.tgz#e0b5ac3ccbf183cd3c230967c323632d6cf927ae"
+  integrity sha512-ZKrDzI6KhrqtLpccI1YxMh4d+qzNnftNtp6iL9c4mLTNgzguFu7VR7pXH/C/MfzikMeoXjvISL9mlIGNGGDXDg==
 
 "@types/range-parser@*":
   version "1.2.3"
@@ -3226,9 +3235,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.3.191:
-  version "1.3.191"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.191.tgz#c451b422cd8b2eab84dedabab5abcae1eaefb6f0"
-  integrity sha512-jasjtY5RUy/TOyiUYM2fb4BDaPZfm6CXRFeJDMfFsXYADGxUN49RBqtgB7EL2RmJXeIRUk9lM1U6A5yk2YJMPQ==
+  version "1.3.192"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.192.tgz#28721072385e48525a948f4297824ddb4bf1f75f"
+  integrity sha512-JkkpGlrilP1s/aFanueYZWf/DFDJaYgo3ZeamzgL5Drb70KQrVQRIPBq5vBN8sSRoKeZZak3aFJ83YtwsZgeEg==
 
 encodeurl@~1.0.2:
   version "1.0.2"
@@ -6431,7 +6440,7 @@ mime@1.6.0, mime@^1.3.4, mime@^1.4.1:
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.6.0.tgz#32cd9e5c64553bd58d19a568af452acff04981b1"
   integrity sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==
 
-mime@^2.2.0, mime@^2.3.1:
+mime@^2.2.0, mime@^2.4.4:
   version "2.4.4"
   resolved "https://registry.yarnpkg.com/mime/-/mime-2.4.4.tgz#bd7b91135fc6b01cde3e9bae33d659b63d8857e5"
   integrity sha512-LRxmNwziLPT828z+4YkNzloCFC2YM4wrB99k+AV5ZbEyfGNWfG8SO1FUXLmLDBSo89NrJZ4DIWeLjy1CHGhMGA==
@@ -8086,7 +8095,12 @@ react-native@^0.58.5:
     xmldoc "^0.4.0"
     yargs "^9.0.0"
 
-react-navigation-hooks@^1.0.0-alpha.2, "react-navigation-hooks@https://github.com/react-navigation/react-navigation-hooks":
+react-navigation-hooks@^1.0.0-alpha.2:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-navigation-hooks/-/react-navigation-hooks-1.0.1.tgz#f8bc2061c31026b14162943650946df715a9ae57"
+  integrity sha512-CUnnzrDlLB+OLYQwlY90T4/Bnlq5EbVnSdenrC+29JUgR5cys50ZL+ixQjArVSv5aiuyyQ68Fo4tF0ru3sFt8Q==
+
+"react-navigation-hooks@https://github.com/react-navigation/react-navigation-hooks":
   version "1.0.1"
   resolved "https://github.com/react-navigation/react-navigation-hooks#80d48ea6f98378653ed466b5c93e47824e3e3a0e"
 
@@ -8101,7 +8115,14 @@ react-navigation-stack@1.0.0-alpha.22:
   dependencies:
     react-native-safe-area-view "^0.14.6"
 
-react-navigation-transitioner@^1.0.0-alpha.3, "react-navigation-transitioner@https://github.com/react-navigation/react-navigation-transitioner":
+react-navigation-transitioner@^1.0.0-alpha.3:
+  version "1.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/react-navigation-transitioner/-/react-navigation-transitioner-1.0.0-alpha.3.tgz#a509d328ab531edd9b32e2c257f3747a5107787c"
+  integrity sha512-lzNRqEFjBY89/T78qQ3NYWU9R0KIfR2WTC30Mi5kwMJAMMsxjaWrZSeWBl/LWnAhvgmifeycmWaCcgWmub31Zw==
+  dependencies:
+    react-native-reanimated "^1.0.0-alpha.10"
+
+"react-navigation-transitioner@https://github.com/react-navigation/react-navigation-transitioner":
   version "1.0.0-alpha.3"
   resolved "https://github.com/react-navigation/react-navigation-transitioner#42ce7383830f38e0a89952c19ab511cd854cc609"
   dependencies:
