@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const pathJoin = require('path').join;
+const mime = require('mime');
 
 export default function createFSClient({ client }) {
   async function uploadFile({ filePath, doc }) {
@@ -8,7 +9,9 @@ export default function createFSClient({ client }) {
     try {
       blockValue = JSON.parse(fileData);
     } catch (e) {
+      const contentType = mime.getType(filePath);
       blockValue = {
+        contentType,
         type: 'BinaryFileHex',
         data: fileData.toString('hex'),
       };

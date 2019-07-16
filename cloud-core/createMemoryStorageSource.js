@@ -25,7 +25,7 @@ export default function createMemoryStorageSource(opts = {}) {
       throw new Error(`Block ID is not valid ${blockId}`);
     }
     if (_blocks[blockId] === undefined) {
-      throw new Error(`Block ID "${blockId}" was not found`);
+      throw new Error(`Block ID "${blockId}" was not found in the store.`);
     }
     return _blocks[blockId];
   }
@@ -35,7 +35,7 @@ export default function createMemoryStorageSource(opts = {}) {
   }
 
   async function commitBlock(value) {
-    const id = getIdOfValue(value);
+    const { id } = getIdOfValue(value);
     if (!_blocks[id]) {
       _blocks[id] = value;
     }

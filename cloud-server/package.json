@@ -6,6 +6,7 @@
       "cloud-network"
     ],
     "moduleDependencies": [
+      "mime",
       "fs-extra",
       "rxjs-compat",
       "reconnecting-websocket",

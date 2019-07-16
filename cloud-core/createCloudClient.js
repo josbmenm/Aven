@@ -1,7 +1,6 @@
 import { default as withObs } from '@nozbe/with-observables';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import mapBehaviorSubject from '../cloud-utils/mapBehaviorSubject';
-import getIdOfValue from '../cloud-utils/getIdOfValue';
 import { BehaviorSubject } from 'rxjs-compat';
 
 import { createDocPool } from './createCloudDoc';

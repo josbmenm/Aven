@@ -126,7 +126,7 @@ export function createBlock({
   let observedBlockId = null;
 
   if (value !== undefined) {
-    observedBlockId = getIdOfValue(value);
+    observedBlockId = getIdOfValue(value).id;
   }
   const blockId = id || observedBlockId;
   if (!blockId && value === undefined) {
@@ -184,6 +184,9 @@ export function createBlock({
             id: blockId,
           })
           .then(resp => {
+            if (!resp) {
+              throw new Error('Could not load block');
+            }
             blockState = {
               ...blockState,
               value: resp.value,
@@ -450,6 +453,10 @@ export function createDoc({
   }
 
   async function putBlock(block) {
+    if (docState.isLocalOnly) {
+      setState({ id: block.id });
+      return;
+    }
     const lastId = docState.id;
     const isPosted = docState.isPosted;
 
@@ -638,7 +645,13 @@ export function createDoc({
     return docState.id;
   }
 
-  return {
+  function setLocalOnly() {
+    setState({
+      isLocalOnly: true,
+    });
+  }
+
+  const cloudDoc = {
     ...docStateValue,
     type: 'Doc',
     getId,
@@ -649,12 +662,14 @@ export function createDoc({
     getBlock,
     getBlockOfValue,
     publishValue,
+    setLocalOnly,
     destroy,
     putValue,
     putTransactionValue,
     putBlock,
     children,
   };
+  return cloudDoc;
 }
 
 function parentChildName(parent, child) {
@@ -819,7 +834,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
     const doc = rootDocSet.get(name);
     return (
       doc.stream ||
-      doc.value.stream.map(value => ({ id: getIdOfValue(value), value }))
+      doc.value.stream.map(value => ({ id: getIdOfValue(value).id, value }))
     );
   }
 

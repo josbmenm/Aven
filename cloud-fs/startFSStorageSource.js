@@ -46,8 +46,7 @@ async function readFSDoc(dataDir, name) {
 async function writeFSBlock(dataDir, value) {
   try {
     const blocksDir = pathJoin(dataDir, 'blocks');
-    const blockData = stringify(value);
-    const id = getIdOfValue(value);
+    const { id, size, blockData } = getIdOfValue(value);
     const blockPath = pathJoin(blocksDir, id);
     if (!(await fs.exists(blockPath))) {
       await fs.writeFile(blockPath, blockData);

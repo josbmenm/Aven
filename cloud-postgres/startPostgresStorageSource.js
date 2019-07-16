@@ -12,10 +12,14 @@ const pgFormat = require('pg-format');
 
 const { Client } = require('pg');
 
-const stringify = require('json-stable-stringify');
 const pathJoin = require('path').join;
 
-export default async function startPostgresStorageSource({ config, domains }) {
+export default async function startPostgresStorageSource({
+  config,
+  domains,
+  onLargeBlockSave,
+  onLargeBlockGet,
+}) {
   if (!domains || !domains.length) {
     throw new Err(
       'Domains must be specified when creating a postgres storage source',
@@ -187,13 +191,14 @@ export default async function startPostgresStorageSource({ config, domains }) {
     };
   }
 
-  async function commitBlock(value, refs) {
+  async function commitBlock(value) {
     if (value === undefined) {
       throw new Err('Undefined value provided to commitBlock', 'EmptyValue', {
         value,
       });
     }
-    const blockData = stringify(value);
+    const { id, size, blockData } = getIdOfValue(value);
+
     if (!blockData) {
       console.error(
         'Stringification error while serializing this value:',
@@ -201,35 +206,37 @@ export default async function startPostgresStorageSource({ config, domains }) {
       );
       throw new Err('Internal Server Error', 'InternalError1', {});
     }
-    const size = blockData.length;
-    const id = getIdOfValue(value);
-    const storedValue = { value, refs };
     if (id === undefined) {
       throw new Error('Bad ID!');
-    }
-    if (storedValue === undefined) {
-      throw new Error('Bad Stored Value');
     }
     if (size === undefined) {
       throw new Error('Bad Size');
     }
-    const commitArguments = { value: JSON.stringify(storedValue), size, id };
+
+    let getWriteValue = () => JSON.stringify({ value });
     const doQuery = async () => {
+      const commitArguments = { value: getWriteValue(), size, id };
       await knex.raw(
         `
-    INSERT INTO blocks ("id","value","size") VALUES (:id, :value, :size)
-    ON CONFLICT ON CONSTRAINT "blockIdentity" DO NOTHING
-    `,
+        INSERT INTO blocks ("id","value","size") VALUES (:id, :value, :size)
+        ON CONFLICT ON CONSTRAINT "blockIdentity" DO NOTHING
+        `,
         commitArguments,
       );
     };
+    if (
+      (size > 1000000 || value.type === 'BinaryFileHex') &&
+      onLargeBlockSave
+    ) {
+      await onLargeBlockSave(value, id, size, blockData);
+      getWriteValue = () => ({ external: true });
+    }
     try {
       await doQuery();
     } catch (e) {
       if (e.message.indexOf('Undefined binding(s)') === -1) {
         throw e;
       }
-      console.log('Retrying...!', commitArguments);
       await new Promise(resolve => {
         setTimeout(resolve, 1000 + Math.floor(Math.random() * 2000));
       });
@@ -641,32 +648,31 @@ export default async function startPostgresStorageSource({ config, domains }) {
         id,
       });
     }
-    return await knex
+    const resp = await knex
       .select('*')
       .from('blocks')
       .where('id', '=', id)
-      .limit(1)
-      .then(function(res) {
-        const block = res.shift();
-        if (!block) {
-          throw new Err(
-            `Block ID "${id}" of "${domain}/${name}" was not found`,
-            'BlockNotFound',
-            {
-              id,
-              name,
-              domain,
-            },
-          );
-        }
-        return {
-          id: block.id,
-          value: block.value.value,
-        };
-      })
-      .catch(function(error) {
-        console.error(error);
-      });
+      .limit(1);
+
+    const block = resp.shift();
+    if (!block) {
+      throw new Err(
+        `Block ID "${id}" of "${domain}/${name}" was not found`,
+        'BlockNotFound',
+        {
+          id,
+          name,
+          domain,
+        },
+      );
+    }
+    if (block.value.external && onLargeBlockGet) {
+      return onLargeBlockGet(id, domain, name);
+    }
+    return {
+      ...block.value,
+      id: block.id,
+    };
   }
 
   async function GetBlocks({ domain, name, ids }) {

@@ -943,7 +943,7 @@ export default function createCloudDoc({
           return {
             value: result,
             argument: { type: 'BlockReference', id: argumentId },
-            getId: () => getIdOfValue(result),
+            getId: () => getIdOfValue(result).id,
           };
         })
         .shareReplay(1);

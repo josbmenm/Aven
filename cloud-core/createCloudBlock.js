@@ -325,7 +325,7 @@ export default function createCloudBlock({
           const result = reComputeResult();
           return {
             value: result,
-            getId: () => getIdOfValue(result),
+            getId: () => getIdOfValue(result).id,
             context: {
               type: 'LambdaResult',
               lambda: {

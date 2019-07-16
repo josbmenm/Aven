@@ -59,7 +59,7 @@
     "json-stable-stringify": "^1.0.1",
     "knex": "^0.16.3",
     "konva": "^3.2.1",
-    "mime": "^2.3.1",
+    "mime": "^2.4.4",
     "minimist": "^1.2.0",
     "node-fetch": "^2.3.0",
     "path": "^0.12.7",

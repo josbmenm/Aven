@@ -60,7 +60,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
 
   const expanded = {
     isConnected,
-    getId: () => getIdOfValue(getValue()),
+    getId: () => getIdOfValue(getValue()).id,
     getIsConnected: isConnected.getValue,
     type: 'ExpandedDoc',
     getFullName: () => {
@@ -89,7 +89,7 @@ function expandCloudValue(cloudValue, cloudClient, expandFn) {
         const expandedValue = doExpansion(expandSpec);
         return {
           value: expandedValue,
-          getId: () => getIdOfValue(expandedValue),
+          getId: () => getIdOfValue(expandedValue).id,
         };
       })
       .distinctUntilChanged()
@@ -121,7 +121,7 @@ function evalCloudValue(cloudValue, cloudClient, evalCache, lambdaDoc) {
   // creating a synthetic doc that can be observed and fetched.
   const evalDoc = {
     isConnected,
-    getId: () => getIdOfValue(getValue()),
+    getId: () => getIdOfValue(getValue()).id,
     getIsConnected: isConnected.getValue,
     type: 'EvaluatedDoc',
     getReference: () => {
@@ -158,7 +158,7 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
     isConnected: cloudValue.isConnected,
     getIsConnected: cloudValue.isConnected.getValue,
     type: cloudValue.type + '-Mapped',
-    getId: () => getIdOfValue(mapFn(cloudValue.getValue())),
+    getId: () => getIdOfValue(mapFn(cloudValue.getValue())).id,
     getFullName: () => {
       return cloudValue.getFullName() + '__mapped';
     },
@@ -177,7 +177,7 @@ function mapCloudValue(cloudValue, cloudClient, mapFn) {
       .distinctUntilChanged()
       .map(data => {
         const value = mapFn(data);
-        return { value, getId: () => getIdOfValue(value) };
+        return { value, getId: () => getIdOfValue(value).id };
       })
       .shareReplay(1),
     getValue: () => mapFn(cloudValue.getValue()),
