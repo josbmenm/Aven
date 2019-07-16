@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@aven-cloud/aven": "https://github.com/AvenCloud/Aven.git#master",
+    "@google-cloud/storage": "^3.0.2",
     "@nozbe/with-observables": "^1.0.1",
     "@react-navigation/core": "^3.0.0-alpha.10",
     "@react-navigation/native": "^3.0.0-alpha.5",

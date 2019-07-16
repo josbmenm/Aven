@@ -295,7 +295,7 @@ function BlendContent({ displayName, blend, recipe }) {
           >
             {recipe.ingredients.map((ing, index) => (
               <View
-                index={index}
+                key={index}
                 style={{
                   margin: 10,
                 }}

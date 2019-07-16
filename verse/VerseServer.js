@@ -78,23 +78,23 @@ const startVerseServer = async () => {
       verificationResponse: { password: ROOT_PASSWORD }, // careful! here we assume that skynet's root pw is the same as the one here for verse!
     },
   );
-  const storageSource = await startPostgresStorageSource({
-    domains: ['onofood.co'],
-    config: {
-      client: 'pg',
-      connection: pgConfig,
-    },
-  });
+  // const storageSource = await startPostgresStorageSource({
+  //   domains: ['onofood.co'],
+  //   config: {
+  //     client: 'pg',
+  //     connection: pgConfig,
+  //   },
+  // });
 
-  const combinedStorageSource = combineSources({
-    fastSource: storageSource,
-    slowSource: authenticatedRemoteSource,
-    fastSourceOnlyMapping: {
-      'onofood.co': {
-        KitchenState: true,
-      },
-    },
-  });
+  // const combinedStorageSource = combineSources({
+  //   fastSource: storageSource,
+  //   slowSource: authenticatedRemoteSource,
+  //   fastSourceOnlyMapping: {
+  //     'onofood.co': {
+  //       KitchenState: true,
+  //     },
+  //   },
+  // });
 
   const emailAgent = EmailAgent({
     defaultFromEmail: 'Ono Blends <aloha@onofood.co>',
@@ -144,11 +144,13 @@ const startVerseServer = async () => {
 
   const kiteClient = createClient({
     auth: rootAuth,
-    source: combinedStorageSource,
+    source: authenticatedRemoteSource,
     // source: remoteSource,
     domain: 'onofood.co',
     // functions: [RestaurantReducer, InventoryFn, MenuFn],
   });
+
+  kiteClient.get('KitchenState').setLocalOnly();
 
   const protectedSource = createProtectedSource({
     source: kiteClient,
@@ -403,7 +405,7 @@ const startVerseServer = async () => {
   return {
     close: async () => {
       await protectedSource.close();
-      await combinedStorageSource.close();
+      await kiteClient.close();
       await webService.close();
       kitchen && (await kitchen.close());
       console.log('😵 Server Closed');

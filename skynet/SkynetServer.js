@@ -24,8 +24,22 @@ import { HostContext } from '../components/AirtableImage';
 import { companyConfigToKitchenConfig } from '../logic/KitchenLogic';
 import { companyConfigToMenu } from '../logic/configLogic';
 import xs from 'xstream';
+import { Storage } from '@google-cloud/storage';
 
+const path = require('path');
+const pathJoin = require('path').join;
+const md5 = require('crypto-js/md5');
+
+const fs = require('fs');
 const getEnv = c => process.env[c];
+
+const gTokenPath = pathJoin(__dirname, 'gToken.json');
+fs.writeFileSync(gTokenPath, Buffer.from(getEnv('GCS_TOKEN'), 'base64'));
+
+const gcsStorage = new Storage({
+  keyFilename: gTokenPath,
+});
+const gcsBucket = gcsStorage.bucket(getEnv('GCS_BUCKET'));
 
 const ONO_ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
@@ -122,6 +136,35 @@ const startSkynetServer = async () => {
       client: 'pg',
       connection: pgConfig,
     },
+    onLargeBlockSave: async (value, id, size, blockData) => {
+      let fileValue = blockData;
+      if (value.type === 'BinaryFileHex') {
+        fileValue = Buffer.from(value.data, 'hex');
+      }
+      const theFile = gcsBucket.file(id);
+      try {
+        await theFile.save(fileValue, { contentType: value.contentType });
+      } catch (e) {
+        if (e.errors.length === 1 && e.errors[0].reason === 'forbidden') {
+          // known case, re-uploading duplicate is fine
+        } else {
+          throw e;
+        }
+      }
+    },
+    onLargeBlockGet: async (id, domain, name) => {
+      const theFile = gcsBucket.file(id);
+      const [metadata] = await theFile.getMetadata();
+      const [content] = await theFile.download();
+      return {
+        id,
+        value: {
+          type: 'BinaryFileHex',
+          contentType: metadata.contentType,
+          data: content.toString('hex'),
+        },
+      };
+    },
   });
 
   const emailAgent = EmailAgent({
@@ -177,8 +220,45 @@ const startSkynetServer = async () => {
           return xs.of(null);
         }
         const blockId = folder.files['db.json'].id;
+        const directoryBlockId = folder.files['files'].id;
         const block = airtableFolder.getBlock(blockId);
-        return block.value.stream;
+        const directoryBlock = airtableFolder.getBlock(directoryBlockId);
+        return xs
+          .combine(block.value.stream, directoryBlock.value.stream)
+          .map(([atData, directory]) => {
+            // below, we inject block refs for our Airtable images, by referring to the files directory
+            const baseTables = Object.fromEntries(
+              Object.entries(atData.baseTables).map(([tableName, table]) => {
+                const tableWithRefs = Object.fromEntries(
+                  Object.entries(table).map(([rowId, row]) => {
+                    const rowWithRefs = Object.fromEntries(
+                      Object.entries(row).map(([colName, cell]) => {
+                        if (Array.isArray(cell) && cell[0] && cell[0].url) {
+                          // ok, this is an image!
+                          const cellWithRefs = cell.map(image => {
+                            const ext = path.extname(image.url);
+                            const fileName = `${md5(
+                              image.url,
+                            ).toString()}${ext}`;
+                            const ref = directory.files[fileName];
+                            return {
+                              ...image,
+                              ref,
+                            };
+                          });
+                          return [colName, cellWithRefs];
+                        }
+                        return [colName, cell];
+                      }),
+                    );
+                    return [rowId, rowWithRefs];
+                  }),
+                );
+                return [tableName, tableWithRefs];
+              }),
+            );
+            return { ...atData, baseTables, directory };
+          });
       })
       .flatten(),
   );

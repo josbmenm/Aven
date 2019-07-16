@@ -23,15 +23,15 @@ const AirtableImage = ({
   tintColor,
 }) => {
   const { authority, useSSL } = React.useContext(HostContext);
-  const origUrl = image && image[0] && image[0].url;
-  const ext = origUrl && path.extname(origUrl);
-  const imageURI =
-    ext &&
-    `${
-      useSSL ? 'https' : 'http'
-    }://${authority}/_/onofood.co/Airtable/files/${md5(
-      origUrl,
-    ).toString()}${ext}`;
+  const primaryImage = image[0];
+  const imageURI = `https://storage.googleapis.com/onofoodco/${
+    primaryImage.ref.id
+  }`;
+  // const imageURI =
+  //   ext &&
+  //   `${
+  //     useSSL ? 'https' : 'http'
+  //   }://${authority}/_/onofood.co/Airtable/files/...`;
   return (
     <Responsive
       style={{
