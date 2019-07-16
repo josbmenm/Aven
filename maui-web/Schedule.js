@@ -12,14 +12,14 @@ function useSchedule() {
       setSchedule([
         {
           id: 1,
-          time: '8:00 - 10:30 am',
-          address: '420 7th Ave. Apt 301 San Francisco, CA, 94118',
+          time: '8:00 am - 2:00 pm',
+          address: '633 West 5th St.\nLos Angeles, CA 90071',
           active: true,
         },
         {
           id: 2,
-          time: '10:30 am - 2:30 pm',
-          address: '981 35th St, Oakland, CA 94608',
+          time: '5:00 pm - 9:00 pm',
+          address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
           active: false,
         },
       ]);

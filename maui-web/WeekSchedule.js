@@ -39,7 +39,10 @@ function WeekSchedule() {
           paddingBottom: 100,
         }}
       >
-        <Heading size="small" style={{ textAlign: 'center', alignSelf: 'center' }}>
+        <Heading
+          size="small"
+          style={{ textAlign: 'center', alignSelf: 'center' }}
+        >
           This Week
         </Heading>
         {schedule && (
@@ -147,15 +150,15 @@ function useWeekSchedule() {
           label: 'Monday',
           schedule: [
             {
-              id: 11,
-              time: '8:00 - 10:30 am',
-              address: '420 7th Ave. Apt 301 San Francisco, CA, 94118',
+              id: 1,
+              time: '8:00 am - 2:00 pm',
+              address: '633 West 5th St.\nLos Angeles, CA 90071',
               active: true,
             },
             {
-              id: 12,
-              time: '10:30 am - 2:30 pm',
-              address: '981 35th St, Oakland, CA 94608',
+              id: 2,
+              time: '5:00 pm - 9:00 pm',
+              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
               active: false,
             },
           ],
@@ -166,21 +169,21 @@ function useWeekSchedule() {
           label: 'Tuesday',
           schedule: [
             {
-              id: 21,
-              time: '8:00 - 10:30 am',
-              address: '420 7th Ave. Apt 301 San Francisco, CA, 94118',
+              id: 1,
+              time: '8:00 am - 2:00 pm',
+              address: '633 West 5th St.\nLos Angeles, CA 90071',
+              active: true,
+            },
+            {
+              id: 2,
+              time: '5:00 pm - 9:00 pm',
+              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
               active: false,
             },
             {
-              id: 22,
-              time: '10:30 am - 2:30 pm',
-              address: '981 35th St, Oakland, CA 94608',
-              active: false,
-            },
-            {
-              id: 23,
-              time: '10:30 am - 2:30 pm',
-              address: '981 35th St, Oakland, CA 94608',
+              id: 3,
+              time: '5:00 pm - 9:00 pm',
+              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
               active: false,
             },
           ],
@@ -191,15 +194,15 @@ function useWeekSchedule() {
           label: 'Wednesday',
           schedule: [
             {
-              id: 31,
-              time: '8:00 - 10:30 am',
-              address: '420 7th Ave. Apt 301 San Francisco, CA, 94118',
-              active: false,
+              id: 1,
+              time: '8:00 am - 2:00 pm',
+              address: '633 West 5th St.\nLos Angeles, CA 90071',
+              active: true,
             },
             {
-              id: 32,
-              time: '10:30 am - 2:30 pm',
-              address: '981 35th St, Oakland, CA 94608',
+              id: 2,
+              time: '5:00 pm - 9:00 pm',
+              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
               active: false,
             },
           ],
@@ -210,15 +213,15 @@ function useWeekSchedule() {
           label: 'Thursday',
           schedule: [
             {
-              id: 41,
-              time: '8:00 - 10:30 am',
-              address: '420 7th Ave. Apt 301 San Francisco, CA, 94118',
-              active: false,
+              id: 1,
+              time: '8:00 am - 2:00 pm',
+              address: '633 West 5th St.\nLos Angeles, CA 90071',
+              active: true,
             },
             {
-              id: 42,
-              time: '10:30 am - 2:30 pm',
-              address: '981 35th St, Oakland, CA 94608',
+              id: 2,
+              time: '5:00 pm - 9:00 pm',
+              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
               active: false,
             },
           ],
@@ -229,15 +232,15 @@ function useWeekSchedule() {
           label: 'Friday',
           schedule: [
             {
-              id: 51,
-              time: '8:00 - 10:30 am',
-              address: '420 7th Ave. Apt 301 San Francisco, CA, 94118',
-              active: false,
+              id: 1,
+              time: '8:00 am - 2:00 pm',
+              address: '633 West 5th St.\nLos Angeles, CA 90071',
+              active: true,
             },
             {
-              id: 52,
-              time: '10:30 am - 2:30 pm',
-              address: '981 35th St, Oakland, CA 94608',
+              id: 2,
+              time: '5:00 pm - 9:00 pm',
+              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
               active: false,
             },
           ],
