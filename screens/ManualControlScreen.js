@@ -1,10 +1,12 @@
 import React from 'react';
 import TwoPanePage from '../components/TwoPanePage';
-import useCloudValue from '../cloud-core/useCloudValue';
 import Button from '../components/Button';
 import KitchenCommands from '../logic/KitchenCommands';
-import useCloud from '../cloud-core/useCloud';
-import useCloudReducer from '../cloud-core/useCloudReducer';
+import {
+  useCloud,
+  useCloudReducer,
+  useCloudValue,
+} from '../cloud-core/KiteReact';
 import { View } from 'react-native';
 import RowSection from '../components/RowSection';
 import RestaurantReducer from '../logic/RestaurantReducer';
@@ -180,7 +182,7 @@ function ModeView({ restaurantState, dispatch }) {
 
 export default function OrdersScreen(props) {
   const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActionsUnburnt',
+    'RestaurantActions',
     RestaurantReducer,
   );
   return (

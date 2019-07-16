@@ -1,4 +1,4 @@
-import defineCloudReducer from '../cloud-core/defineCloudReducer';
+import { defineCloudReducer } from '../cloud-core/KiteReact';
 
 function RestaurantReducerFn(state = {}, action) {
   switch (action.type) {

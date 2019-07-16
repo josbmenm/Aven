@@ -71,7 +71,8 @@ function FaultRow({ fault }) {
 
 export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   const cloud = useCloud();
-  const isConnected = useObservable(cloud.isConnected);
+  // const isConnected = useObservable(cloud.isConnected);
+  const isConnected = true; // uh....
   const kitchenState = useCloudValue('KitchenState');
   const kitchenConfig = useCloudValue('OnoState^RestaurantConfig');
   const isPLCConnected = React.useMemo(
