@@ -9,7 +9,7 @@ import Terms from './TermsPage';
 import BookUs from './BookUsPage';
 import Schedule from './SchedulePage';
 import Subscribe from './SubscribePage';
-import { theme } from './Theme';
+import OnoTheme from '../logic/OnoTheme';
 import { ThemeProvider } from '../dashboard/Theme';
 
 const customHTMLHeaders = `
@@ -64,7 +64,7 @@ const App = createFullscreenSwitchNavigator(
 
 function Root(props) {
   return (
-    <ThemeProvider value={theme}>
+    <ThemeProvider value={OnoTheme}>
       <App {...props} />
     </ThemeProvider>
   );

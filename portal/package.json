@@ -11,6 +11,7 @@
       "codePushChannel": "Production"
     },
     "srcDependencies": [
+      "dashboard",
       "navigation-core",
       "navigation-native",
       "navigation-stack",

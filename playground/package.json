@@ -10,6 +10,7 @@
       "mainClient": "PlaygroundClient.js"
     },
     "srcDependencies": [
+      "logic",
       "utils",
       "emails",
       "stripe-server",

@@ -4,8 +4,8 @@ import MauiWebApp from '../maui-web/MauiWebApp';
 import TokensPage from '../maui-web/TokensPage';
 import EmailsPlayground from './EmailsPlayground';
 // import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
-import { theme } from '../maui-web/Theme';
 import { ThemeProvider } from '../dashboard/Theme';
+import OnoTheme from '../logic/OnoTheme';
 
 const App = createSwitchNavigator(
   {
@@ -31,7 +31,7 @@ const App = createSwitchNavigator(
 
 function Root(props) {
   return (
-    <ThemeProvider value={theme}>
+    <ThemeProvider value={OnoTheme}>
       <App {...props} />
     </ThemeProvider>
   );

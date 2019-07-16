@@ -39,18 +39,18 @@ const headingStyles = {
 const textStyles = {
   small: {
     fontSize: [10, 10],
-    lineHeight: [12, 12]
+    lineHeight: [12, 12],
   },
   medium: {
     fontSize: [13, 13],
-    lineHeight: [20, 20]
+    lineHeight: [20, 20],
   },
   large: {
     fontSize: [15, 18],
     lineHeight: [24, 28],
-    letterSpacing: [0.25, 0.3]
-  }
-}
+    letterSpacing: [0.25, 0.3],
+  },
+};
 
 const shadows = {
   large: {
@@ -73,9 +73,7 @@ const shadows = {
   },
 };
 
-
-
-export const theme = {
+const OnoTheme = {
   colors,
   fonts,
   fontSizes: [24, 28, 36, 38],
@@ -139,3 +137,5 @@ export const theme = {
     640,
   ],
 };
+
+export default OnoTheme;

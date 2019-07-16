@@ -60,6 +60,8 @@ import TabsScreen from '../components/TabsScreen';
 import { PopoverContainer } from '../views/Popover';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { registerDispatcher } from '../card-reader/CardReader';
+import { ThemeProvider } from '../dashboard/Theme';
+import OnoTheme from '../logic/OnoTheme';
 
 import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
@@ -249,25 +251,27 @@ function FullApp() {
     return null;
   }
   return (
-    <HostContextContainer {...HOST_CONFIG}>
-      <PopoverContainer>
-        <CloudContext.Provider value={cloud}>
-          <ErrorContainer
-            renderError={renderAppError}
-            onCatch={async (e, info, onRetry) => {
-              if (e.type === 'SessionInvalid') {
-                cloud.destroySession({ ignoreRemoteError: true });
-                onRetry();
-              }
+    <ThemeProvider theme={OnoTheme}>
+      <HostContextContainer {...HOST_CONFIG}>
+        <PopoverContainer>
+          <CloudContext.Provider value={cloud}>
+            <ErrorContainer
+              renderError={renderAppError}
+              onCatch={async (e, info, onRetry) => {
+                if (e.type === 'SessionInvalid') {
+                  cloud.destroySession({ ignoreRemoteError: true });
+                  onRetry();
+                }
 
-              await AsyncStorage.removeItem(NAV_STORAGE_KEY);
-            }}
-          >
-            <AppContainer persistenceKey={NAV_STORAGE_KEY} />
-          </ErrorContainer>
-        </CloudContext.Provider>
-      </PopoverContainer>
-    </HostContextContainer>
+                await AsyncStorage.removeItem(NAV_STORAGE_KEY);
+              }}
+            >
+              <AppContainer persistenceKey={NAV_STORAGE_KEY} />
+            </ErrorContainer>
+          </CloudContext.Provider>
+        </PopoverContainer>
+      </HostContextContainer>
+    </ThemeProvider>
   );
 }
 
