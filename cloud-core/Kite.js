@@ -78,11 +78,11 @@ async function streamLoad(stream) {
   });
 }
 
-function createStreamValue(inputStream) {
+function createStreamValue(inputStream, onGetContext) {
   const stream = inputStream.remember();
   return {
     get: () => streamGet(stream),
-    load: () => streamLoad(stream),
+    load: () => streamLoad(stream, onGetContext),
     stream,
   };
 }
@@ -102,7 +102,7 @@ export function streamGet(stream) {
 }
 
 export function createStreamDoc(stream, reference) {
-  const value = createStreamValue(stream);
+  const value = createStreamValue(stream, () => reference);
   return {
     type: 'StreamDoc',
     value,
@@ -207,7 +207,10 @@ export function createBlock({
       onStop = null;
     },
   });
-  const blockStateValue = createStreamValue(blockStateStream);
+  const blockStateValue = createStreamValue(
+    blockStateStream,
+    () => `Block(${onGetName()}#${blockId})`,
+  );
 
   const blockValue = createStreamValue(
     blockStateStream
@@ -219,6 +222,7 @@ export function createBlock({
       })
       .remember()
       .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
+    () => `Block(${onGetName()}#${blockId}).value`,
   );
 
   async function getReference() {
@@ -352,6 +356,9 @@ export function createDoc({
       notifyStateChange = () => {
         performNotification && performNotification();
       };
+      if (docState.isLocalOnly) {
+        return;
+      }
       const upStream = source.getDocStream(domain, _subsToName, auth);
       const internalListener = {
         next: v => {
@@ -363,7 +370,6 @@ export function createDoc({
             lastFetchTime: Date.now(),
             id: v.id || null,
           });
-          listen.next(docState);
         },
         error: e => {
           listen.error(e);
@@ -383,11 +389,8 @@ export function createDoc({
   };
   const docStream = xs.createWithMemory(docProducer);
 
-  const loadedDocStream = docStream.filter(docState => {
-    return docState.lastFetchTime != null || docState.lastPutTime != null;
-  });
 
-  const docStateValue = createStreamValue(docStream);
+  const docStateValue = createStreamValue(docStream, () => `Doc(${getName()})`);
 
   const docBlocks = {};
 
@@ -619,6 +622,7 @@ export function createDoc({
       .flatten()
       .remember()
       .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
+    () => `Doc(${getName()}).value`,
   );
 
   const children = createDocSet({
@@ -648,6 +652,7 @@ export function createDoc({
   function setLocalOnly() {
     setState({
       isLocalOnly: true,
+      id: docState.id || null,
     });
   }
 
