@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import UIButton from './UIButton';
+import VisualButton from './VisualButton';
 
 function Button({
   onPress,
@@ -21,7 +21,7 @@ function Button({
       disabled={disabled}
       style={style}
     >
-      <UIButton
+      <VisualButton
         title={title}
         variant={variant}
         type={type}

@@ -4,7 +4,7 @@ import Text from '../views/Text';
 import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 
-function UIButton({
+function VisualButton({
   buttonStyle = {},
   titleStyle,
   title,
@@ -79,4 +79,4 @@ function UIButton({
   );
 }
 
-export default UIButton;
+export default VisualButton;
