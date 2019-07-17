@@ -1,6 +1,6 @@
 import React from 'react';
 import FunctionalLink from '../navigation-web/Link';
-import UIButton from '../dashboard/UIButton';
+import VisualButton from '../dashboard/VisualButton';
 import { useTheme } from '../dashboard/Theme';
 
 function Link({
@@ -19,7 +19,7 @@ function Link({
       routeName={routeName}
       url={url}
       renderContent={active => (
-        <UIButton
+        <VisualButton
           type="outline"
           active={active}
           title={title}

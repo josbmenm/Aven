@@ -1,12 +1,12 @@
 import React from 'react';
 import FunctionalLink from '../navigation-web/Link';
-import UIButton from '../dashboard/UIButton';
+import VisualButton from '../dashboard/VisualButton';
 
 function ButtonLink({
   title = 'button',
   type = 'solid', // solid | outline | link
   buttonStyle,
-  titleStyle, 
+  titleStyle,
   routeName,
   url,
   ...rest
@@ -16,7 +16,7 @@ function ButtonLink({
       routeName={routeName}
       url={url}
       renderContent={active => (
-        <UIButton
+        <VisualButton
           type={type}
           active={active}
           buttonStyle={buttonStyle}

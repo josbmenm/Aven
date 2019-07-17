@@ -4,7 +4,7 @@ import View from '../views/View';
 import Text from '../views/Text';
 import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme';
-import UIButton from '../dashboard/UIButton';
+import VisualButton from '../dashboard/VisualButton';
 import Link from './Link';
 import ButtonLink from './ButtonLink';
 import OnoBlendsLogo from './OnoBlendsLogo';
@@ -60,7 +60,7 @@ function MenuLink({
     <FunctionalLink
       routeName={routeName}
       renderContent={active => (
-        <UIButton
+        <VisualButton
           title={title}
           type="outline"
           buttonStyle={{

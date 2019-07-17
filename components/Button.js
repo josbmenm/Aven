@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
-import UIButton from '../dashboard/UIButton';
+import VisualButton from '../dashboard/VisualButton';
 
 const Button = ({
   onPress,
@@ -20,7 +20,7 @@ const Button = ({
       disabled={disabled}
       style={style}
     >
-      <UIButton
+      <VisualButton
         title={title}
         buttonStyle={buttonStyle}
         titleStyle={titleStyle}
