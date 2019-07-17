@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { View, Text, Animated, Button, Image } from 'react-native';
 
-import useCloud from '../cloud-core/useCloud';
-import useObservable from '../cloud-core/useObservable';
-import useCloudReducer from '../cloud-core/useCloudReducer';
-import useCloudValue from '../cloud-core/useCloudValue';
-import cuid from 'cuid';
+import { useCloudValue, useCloud } from '../cloud-core/KiteReact';
 
 import Admin from '../admin/Admin';
 
@@ -17,7 +13,6 @@ import {
   primaryFontFace,
   black10,
 } from '../components/Styles';
-import RestaurantReducer from '../logic/RestaurantReducer';
 
 let baseAuthority = undefined;
 let baseUseSSL = undefined;
@@ -424,21 +419,20 @@ function SubSystemSection({ subsystemName, subsystem, state }) {
 }
 
 function ConnectedDot() {
-  const cloud = useCloud();
-  const isConnected = useObservable(cloud.isConnected);
-  return (
-    <View
-      style={{
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        position: 'absolute',
-        backgroundColor: isConnected ? 'green' : 'red',
-        top: 25,
-        right: 50,
-      }}
-    />
-  );
+  return null;
+  // return (
+  //   <View
+  //     style={{
+  //       width: 50,
+  //       height: 50,
+  //       borderRadius: 25,
+  //       position: 'absolute',
+  //       backgroundColor: isConnected ? 'green' : 'red',
+  //       top: 25,
+  //       right: 50,
+  //     }}
+  //   />
+  // );
 }
 function KitchenDisplay({ kitchenState, config, restaurantState }) {
   return (
@@ -485,13 +479,7 @@ function ActionButton({ dispatch, name, type, getParams }) {
 }
 
 function StatusDisplayScreen() {
-  // const [restaurantState, dispatch] = useCloudReducer(
-  //   'RestaurantActionsUnburnt',
-  //   RestaurantReducer,
-  // );
-  const restaurantState = useCloudValue(
-    'RestaurantActionsUnburnt^RestaurantReducer',
-  );
+  const restaurantState = useCloudValue('RestaurantState');
 
   if (!restaurantState) {
     return null;
@@ -503,32 +491,8 @@ function StatusDisplayScreen() {
   );
 }
 
-// function StatusDisplayScreen() {
-//   const [displayState, dispatch] = useCloudReducer(
-//     'StatusDisplay',
-//     reduceStatusDisplayState,
-//     {
-//       prepQueue: [],
-//       pickup: { left: null, right: null },
-//     },
-//   );
-
-//   if (!displayState) {
-//     return null;
-//   }
-//   return (
-//     <StatusDisplayLayout
-//       debugView={
-//         <StatusDisplayDebug displayState={displayState} dispatch={dispatch} />
-//       }
-//     >
-//       <StatusDisplay state={displayState} />
-//     </StatusDisplayLayout>
-//   );
-// }
-
 function Kitchen() {
-  const kitchenConfig = useCloudValue('OnoState^RestaurantConfig');
+  const kitchenConfig = useCloudValue('KitchenConfig');
   const kitchenState = useCloudValue('KitchenState');
   const restaurantState = useCloudValue('RestaurantState');
 
@@ -580,10 +544,9 @@ const App = createSwitchNavigator(
 function FullApp(props) {
   const cloud = useCloud();
   useEffect(() => {
-    let hasConnectedOnce = cloud.isConnected.getValue();
+    let hasConnectedOnce = cloud.connected.get();
     let wasConnected = hasConnectedOnce;
-
-    const subs = cloud.isConnected.subscribe({
+    const listener = {
       next: isConnected => {
         if (isConnected && hasConnectedOnce && !wasConnected) {
           window.location.reload();
@@ -593,8 +556,9 @@ function FullApp(props) {
         }
         wasConnected = isConnected;
       },
-    });
-    return () => subs.unsubscribe();
+    };
+    cloud.connected.addListener(listener);
+    return () => cloud.connected.removeListener(listener);
   }, [cloud]);
   return <App {...props} />;
 }

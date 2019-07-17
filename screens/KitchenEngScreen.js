@@ -1,43 +1,41 @@
 import React, { Component, useReducer, useEffect } from 'react';
 import BitRow from '../components/BitRow';
-import { withNavigation } from '../navigation-core';
 
 import RowSection from '../components/RowSection';
 import { View, ScrollView, Text } from 'react-native';
 import LinkRow from '../components/LinkRow';
-import { getSubsystemOverview, withKitchen } from '../ono-cloud/OnoKitchen';
-import useCloud from '../cloud-core/useCloud';
+import { useSubsystemOverview } from '../ono-cloud/OnoKitchen';
 import KitchenHistory from '../components/KitchenHistory';
 import ControlPanel from './ControlPanel';
 import SimplePage from '../components/SimplePage';
-import useCloudReducer from '../cloud-core/useCloudReducer';
+import { useCloud, useCloudReducer } from '../cloud-core/KiteReact';
 import RestaurantReducer from '../logic/RestaurantReducer';
+import { useNavigation } from '../navigation-hooks/Hooks';
 
-const Subsystems = withNavigation(
-  withKitchen(({ navigation, kitchenState, kitchenConfig }) => {
-    const subsystems = getSubsystemOverview(kitchenConfig, kitchenState);
-    return (
-      <RowSection>
-        {subsystems.map(system => (
-          <LinkRow
-            key={system.name}
-            onPress={() => {
-              navigation.navigate({
-                routeName: 'KitchenEngSub',
-                params: { system: system.name },
-              });
-            }}
-            icon={system.icon}
-            title={system.name}
-            rightIcon={
-              system.noFaults === null ? '' : system.noFaults ? '👍' : '🚨'
-            }
-          />
-        ))}
-      </RowSection>
-    );
-  }),
-);
+function Subsystems() {
+  const subsystems = useSubsystemOverview();
+  const navigation = useNavigation();
+  return (
+    <RowSection>
+      {subsystems.map(system => (
+        <LinkRow
+          key={system.name}
+          onPress={() => {
+            navigation.navigate({
+              routeName: 'KitchenEngSub',
+              params: { system: system.name },
+            });
+          }}
+          icon={system.icon}
+          title={system.name}
+          rightIcon={
+            system.noFaults === null ? '' : system.noFaults ? '👍' : '🚨'
+          }
+        />
+      ))}
+    </RowSection>
+  );
+}
 
 // function LogView() {
 //   const [logs, dispatchLogs] = useReducer((state, action) => {
@@ -75,7 +73,7 @@ const Subsystems = withNavigation(
 
 function Panel() {
   const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActionsUnburnt',
+    'RestaurantActions',
     RestaurantReducer,
   );
   return (

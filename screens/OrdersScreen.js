@@ -7,13 +7,15 @@ import {
   Alert,
 } from 'react-native';
 import TwoPanePage from '../components/TwoPanePage';
-import useCloudValue from '../cloud-core/useCloudValue';
 import Button from '../components/Button';
 import { Easing } from 'react-native-reanimated';
 import KitchenCommands from '../logic/KitchenCommands';
 import KitchenHistory from '../components/KitchenHistory';
-import useCloud from '../cloud-core/useCloud';
-import useCloudReducer from '../cloud-core/useCloudReducer';
+import {
+  useCloud,
+  useCloudReducer,
+  useCloudValue,
+} from '../cloud-core/KiteReact';
 import useObservable from '../cloud-core/useObservable';
 import RowSection from '../components/RowSection';
 import TextRow from '../components/TextRow';
@@ -215,7 +217,7 @@ function AdHocOrderRow() {
     setFills([...fills, fill]);
   }
   const openAddFill = useFillAddPopover({ onAddFill });
-  const restaurantDispatch = usePutTransaction('RestaurantActionsUnburnt');
+  const restaurantDispatch = usePutTransaction('RestaurantActions');
 
   return (
     <Row title="Ad-Hoc Order">
@@ -632,7 +634,7 @@ function PrepState({ restaurantState, dispatch }) {
 
 export default function OrdersScreen(props) {
   const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActionsUnburnt',
+    'RestaurantActions',
     RestaurantReducer,
   );
   return (

@@ -21,11 +21,8 @@ import {
 } from 'react-native';
 import Animated, { Easing } from 'react-native-reanimated';
 
-import {
-  withKitchen,
-  getSubsystem,
-  getSubsystemFaults,
-} from '../ono-cloud/OnoKitchen';
+import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
+import { getSubsystem, getSubsystemFaults } from '../ono-cloud/OnoKitchen';
 import {
   prettyShadow,
   genericText,
@@ -221,7 +218,18 @@ function FaultsRows({ faults }) {
   );
 }
 
-function Subsystem({ systemId, kitchenState, kitchenConfig, kitchenCommand }) {
+export default function Subsystem({ systemId }) {
+  const cloud = useCloud();
+  const kitchenState = useCloudValue('KitchenState');
+  const kitchenConfig = useCloudValue('KitchenConfig');
+  async function kitchenCommand(subsystemName, pulse, values) {
+    return await cloud.dispatch({
+      type: 'KitchenCommand',
+      subsystem: subsystemName,
+      pulse,
+      values,
+    });
+  }
   const system = getSubsystem(systemId, kitchenConfig, kitchenState);
   if (!system) {
     return <Hero title="System Disconnected" />;
@@ -231,7 +239,7 @@ function Subsystem({ systemId, kitchenState, kitchenConfig, kitchenCommand }) {
   const faults = getSubsystemFaults(system);
 
   return (
-    <React.Fragment>
+    <GenericPage {...this.props} disableScrollView={true}>
       <Hero title={`${system.icon} ${system.name}`} />
       <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
         <ScrollView style={{ flex: 1 }}>
@@ -378,21 +386,8 @@ function Subsystem({ systemId, kitchenState, kitchenConfig, kitchenCommand }) {
           </RowSection>
         </ScrollView>
       </View>
-    </React.Fragment>
+    </GenericPage>
   );
 }
 
-const SubsystemWithKitchen = withKitchen(Subsystem);
-
-export default class KitchenEngSubScreen extends Component {
-  static navigationOptions = GenericPage.navigationOptions;
-  render() {
-    return (
-      <GenericPage {...this.props} disableScrollView={true}>
-        <SubsystemWithKitchen
-          systemId={this.props.navigation.getParam('system')}
-        />
-      </GenericPage>
-    );
-  }
-}
+Subsystem.navigationOptions = GenericPage.navigationOptions;

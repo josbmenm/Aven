@@ -8,7 +8,7 @@ const MenuWithInventory = defineCloudFunction(
 
     const kitchenState = getValue(cloud.get('KitchenState'));
     // const companyConfig = getValue(cloud.get('OnoState^CompanyConfig'));
-    const restaurantConfig = getValue(cloud.get('OnoState^RestaurantConfig'));
+    const restaurantConfig = getValue(cloud.get('KitchenConfig'));
 
     if (!menu) {
       return null;

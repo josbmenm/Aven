@@ -1,8 +1,9 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
-import { CloudContext } from '../cloud-core/KiteReact';
+import { CloudContext, createReducerStream } from '../cloud-core/KiteReact';
 import { getFreshActionId } from '../logic/KitchenLogic';
+import RestaurantReducer from '../logic/RestaurantReducer';
 import KitchenCommands from '../logic/KitchenCommands';
 import { hashSecureString } from '../cloud-utils/Crypto';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
@@ -142,7 +143,7 @@ const startVerseServer = async () => {
     verificationResponse: { password: ROOT_PASSWORD },
   };
 
-  const kiteClient = createClient({
+  const cloud = createClient({
     auth: rootAuth,
     source: authenticatedRemoteSource,
     // source: remoteSource,
@@ -150,16 +151,30 @@ const startVerseServer = async () => {
     // functions: [RestaurantReducer, InventoryFn, MenuFn],
   });
 
-  kiteClient.get('KitchenState').setLocalOnly();
+  cloud.get('KitchenState').setLocalOnly();
+
+  const restaurantActions = cloud.get('RestaurantActions');
+
+  const restaurantState = cloud.docs.setOverrideStream(
+    'RestaurantState',
+    createReducerStream(
+      restaurantActions,
+      RestaurantReducer.reducerFn,
+      RestaurantReducer.initialState,
+    ),
+  );
 
   const protectedSource = createProtectedSource({
-    source: kiteClient,
+    source: cloud,
     staticPermissions: {
       'onofood.co': {
         KitchenState: { defaultRule: { canRead: true } },
+        KitchenConfig: { defaultRule: { canRead: true } },
+        RestaurantActions: { defaultRule: { canRead: true } },
+        RestaurantState: { defaultRule: { canRead: true } },
         // 'OnoState^Inventory': { defaultRule: { canRead: true } },
         // 'OnoState^Menu': { defaultRule: { canRead: true } },
-        // 'RestaurantActionsUnburnt^RestaurantReducer': {
+        // 'RestaurantActions^RestaurantReducer': {
         //   defaultRule: { canRead: true },
         // },
       },
@@ -172,7 +187,7 @@ const startVerseServer = async () => {
     console.log('Connecting to Maui Kitchen');
     kitchen = startKitchen({
       logBehavior,
-      client: kiteClient,
+      cloud,
       plcIP: '192.168.1.122',
     });
   }
@@ -214,7 +229,7 @@ const startVerseServer = async () => {
       let currentActionId = null;
       let endedActionId = null;
       let noFaults = true;
-      let sub = kiteClient.get('KitchenState').observeValue.subscribe({
+      let sub = cloud.get('KitchenState').observeValue.subscribe({
         next: state => {
           if (!state) {
             return;
@@ -256,88 +271,86 @@ const startVerseServer = async () => {
     return command;
   }
 
-  let restaurantState = null;
-  let kitchenState = null;
-  let kitchenConfig = null;
-  let currentStepPromises = {};
+  // let restaurantState = null;
+  // let kitchenState = null;
+  // let kitchenConfig = null;
+  // let currentStepPromises = {};
 
-  function handleStateUpdates() {
-    if (
-      !restaurantState ||
-      !kitchenState ||
-      !kitchenConfig ||
-      !restaurantState.isAutoRunning
-    ) {
-      return;
-    }
-    const nextSteps = computeNextSteps(
-      restaurantState,
-      kitchenConfig,
-      kitchenState,
-    );
-    if (!nextSteps || !nextSteps.length) {
-      return;
-    }
+  // function handleStateUpdates() {
+  //   if (
+  //     !restaurantState ||
+  //     !kitchenState ||
+  //     !kitchenConfig ||
+  //     !restaurantState.isAutoRunning
+  //   ) {
+  //     return;
+  //   }
+  //   const nextSteps = computeNextSteps(
+  //     restaurantState,
+  //     kitchenConfig,
+  //     kitchenState,
+  //   );
+  //   if (!nextSteps || !nextSteps.length) {
+  //     return;
+  //   }
 
-    nextSteps.forEach(nextStep => {
-      const commandType = KitchenCommands[nextStep.command.command];
-      const subsystem = commandType.subsystem;
-      if (currentStepPromises[subsystem]) {
-        return;
-      }
+  //   nextSteps.forEach(nextStep => {
+  //     const commandType = KitchenCommands[nextStep.command.command];
+  //     const subsystem = commandType.subsystem;
+  //     if (currentStepPromises[subsystem]) {
+  //       return;
+  //     }
 
-      if (restaurantState.isAttached) {
-        if (!kitchen || !kitchenState.isPLCConnected) {
-          return;
-        }
-        logBehavior(`Performing ${subsystem} ${nextStep.description}`);
-        currentStepPromises[subsystem] = nextStep.perform(
-          kiteClient,
-          kitchenAction,
-        );
-      } else {
-        logBehavior(`Detached Action: ${subsystem} ${nextStep.description}`);
-        currentStepPromises[subsystem] = new Promise(resolve =>
-          setTimeout(resolve, 2000),
-        )
-          .then(() =>
-            kiteClient
-              .get('RestaurantActionsUnburnt')
-              .putTransaction(nextStep.successRestaurantAction),
-          )
-          .then(() => {
-            console.log('Done with detached auto-run');
-          });
-      }
+  //     if (restaurantState.isAttached) {
+  //       if (!kitchen || !kitchenState.isPLCConnected) {
+  //         return;
+  //       }
+  //       logBehavior(`Performing ${subsystem} ${nextStep.description}`);
+  //       currentStepPromises[subsystem] = nextStep.perform(cloud, kitchenAction);
+  //     } else {
+  //       logBehavior(`Detached Action: ${subsystem} ${nextStep.description}`);
+  //       currentStepPromises[subsystem] = new Promise(resolve =>
+  //         setTimeout(resolve, 2000),
+  //       )
+  //         .then(() =>
+  //           cloud
+  //             .get('RestaurantActions')
+  //             .putTransaction(nextStep.successRestaurantAction),
+  //         )
+  //         .then(() => {
+  //           console.log('Done with detached auto-run');
+  //         });
+  //     }
 
-      currentStepPromises[subsystem]
-        .then(() => {
-          currentStepPromises[subsystem] = null;
-          console.log(`Done with ${nextStep.description}`);
-          setTimeout(() => {
-            handleStateUpdates();
-          }, 50);
-        })
-        .catch(e => {
-          currentStepPromises[subsystem] = null;
-          console.error(
-            `Failed to perform Kitchen Action: ${
-              nextStep.description
-            }. JS is basically faulted now??`,
-            e,
-          );
-        });
-    });
-  }
+  //     currentStepPromises[subsystem]
+  //       .then(() => {
+  //         currentStepPromises[subsystem] = null;
+  //         console.log(`Done with ${nextStep.description}`);
+  //         setTimeout(() => {
+  //           handleStateUpdates();
+  //         }, 50);
+  //       })
+  //       .catch(e => {
+  //         currentStepPromises[subsystem] = null;
+  //         console.error(
+  //           `Failed to perform Kitchen Action: ${
+  //             nextStep.description
+  //           }. JS is basically faulted now??`,
+  //           e,
+  //         );
+  //       });
+  //   });
+  // }
+
   // // you poor thing...
 
-  // kiteClient.get('KitchenState').observeValue.subscribe({
+  // cloud.get('KitchenState').observeValue.subscribe({
   //   next: state => {
   //     kitchenState = state;
   //     handleStateUpdates();
   //   },
   // });
-  // kiteClient.get('OnoState^RestaurantConfig').observeValue.subscribe({
+  // cloud.get('OnoState^RestaurantConfig').observeValue.subscribe({
   //   next: state => {
   //     kitchenConfig = state;
   //     handleStateUpdates();
@@ -345,7 +358,7 @@ const startVerseServer = async () => {
   // });
   // (await evalSource.observeDoc(
   //   'onofood.co',
-  //   'RestaurantActionsUnburnt^RestaurantReducer',
+  //   'RestaurantActions^RestaurantReducer',
   // )).subscribe({
   //   next: update => {
   //     restaurantState = update.value;
@@ -374,7 +387,7 @@ const startVerseServer = async () => {
       case 'KitchenAction':
         return await kitchenAction(action);
       case 'PlaceOrder':
-        return placeOrder(kiteClient, action);
+        return placeOrder(cloud, action);
       default: {
         return await protectedSource.dispatch(action);
       }
@@ -389,7 +402,7 @@ const startVerseServer = async () => {
 
   const context = new Map();
 
-  context.set(CloudContext, kiteClient); // bad idea, must have independent client for authentication!!!
+  context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
   const webService = await WebServer({
     App,
     context,
@@ -405,7 +418,7 @@ const startVerseServer = async () => {
   return {
     close: async () => {
       await protectedSource.close();
-      await kiteClient.close();
+      await cloud.close();
       await webService.close();
       kitchen && (await kitchen.close());
       console.log('😵 Server Closed');

@@ -262,7 +262,7 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
         const startTime = Date.now();
         startingRestaurantAction &&
           (await cloud
-            .get('RestaurantActionsUnburnt')
+            .get('RestaurantActions')
             .putTransaction(startingRestaurantAction));
         // await cloud.get('KitchenLog').putTransaction({
         //   type: 'StartKitchenAction',
@@ -273,7 +273,7 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
           resp = await handleCommand(command);
           successRestaurantAction &&
             (await cloud
-              .get('RestaurantActionsUnburnt')
+              .get('RestaurantActions')
               .putTransaction(successRestaurantAction));
           // await cloud.get('KitchenLog').putTransaction({
           //   type: 'CompleteKitchenAction',
@@ -285,7 +285,7 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
           console.error('Failed to perform command', e);
           failureRestaurantAction &&
             (await cloud
-              .get('RestaurantActionsUnburnt')
+              .get('RestaurantActions')
               .putTransaction(failureRestaurantAction));
           // await cloud.get('KitchenLog').putTransaction({
           //   type: 'CompleteFailureAction',

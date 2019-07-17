@@ -12,8 +12,11 @@ import {
   YellowBox,
 } from 'react-native';
 import { createAppContainer } from '../navigation-native';
-import useObservable from '../cloud-core/useObservable';
-import useCloud from '../cloud-core/useCloud';
+import {
+  useStreamValue,
+  useCloudValue,
+  useCloud,
+} from '../cloud-core/KiteReact';
 import codePush from 'react-native-code-push';
 
 import FeedbackApp from './FeedbackApp';
@@ -244,10 +247,10 @@ function WaitingPage({ title, name }) {
 
 function SelectModeApp() {
   const cloud = useCloud();
-  const session = useObservable(cloud.observeSession);
-  const isConnected = useObservable(cloud.isConnected);
-  const control = session && cloud.get(`@${session.accountId}/ScreenControl`);
-  const controlState = useObservable(control && control.observeValue);
+  // const session = useStreamValue(cloud.observeSession);
+  const isConnected = useStreamValue(cloud.isConnected);
+  const control = cloud.get(`@${session.accountId}/ScreenControl`);
+  const controlState = useCloudValue(control.value.stream);
   if (!session) {
     return <WaitingPage title="Waiting for session" />;
   }
@@ -282,7 +285,7 @@ function useControlledApp(cloud) {
       return;
     }
     const deviceId = cloud.observeSession.getValue().accountId;
-    cloud.get('OnoState/Devices').putTransaction({
+    cloud.get('DeviceActions').putTransaction({
       type: 'DeviceOnline',
       deviceId,
     });

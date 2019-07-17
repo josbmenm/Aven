@@ -4,7 +4,7 @@ import { IS_DEV } from '../aven-web/config';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
 import scrapeAirTable from './scrapeAirTable';
 import { createClient } from '../cloud-core/Kite';
-import { CloudContext } from '../cloud-core/KiteReact';
+import { CloudContext, createReducerStream } from '../cloud-core/KiteReact';
 import createFSClient from '../cloud-server/createFSClient';
 
 import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
@@ -22,6 +22,7 @@ import submitFeedback from './submitFeedback';
 import validatePromoCode from './validatePromoCode';
 import { HostContext } from '../components/AirtableImage';
 import { companyConfigToKitchenConfig } from '../logic/KitchenLogic';
+import RestaurantReducer from '../logic/RestaurantReducer';
 import { companyConfigToMenu } from '../logic/configLogic';
 import xs from 'xstream';
 import { Storage } from '@google-cloud/storage';
@@ -262,6 +263,17 @@ const startSkynetServer = async () => {
       })
       .flatten(),
   );
+  const restaurantActions = kiteSource.docs.get('RestaurantActions');
+
+  const restaurantState = kiteSource.docs.setOverrideStream(
+    'RestaurantState',
+    createReducerStream(
+      restaurantActions,
+      RestaurantReducer.reducerFn,
+      RestaurantReducer.initialState,
+    ),
+  );
+
   const kitchenConfig = kiteSource.docs.setOverrideStream(
     'KitchenConfig',
     companyConfig.value.stream.map(companyConfigToKitchenConfig),
@@ -279,6 +291,8 @@ const startSkynetServer = async () => {
       'onofood.co': {
         CompanyConfig: { defaultRule: { canRead: true } },
         KitchenConfig: { defaultRule: { canRead: true } },
+        RestaurantActions: { defaultRule: { canWrite: true } },
+        RestaurantState: { defaultRule: { canWrite: true } },
         Menu: { defaultRule: { canRead: true } },
         PendingOrders: { defaultRule: { canPost: true } },
         Airtable: { defaultRule: { canRead: true } },

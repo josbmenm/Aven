@@ -1,5 +1,3 @@
-import CloudContext from '../cloud-core/CloudContext';
-import useCloud from '../cloud-core/useCloud';
 import mapObject from 'fbjs/lib/mapObject';
 import React, {
   createContext,
@@ -8,7 +6,7 @@ import React, {
   useMemo,
   useEffect,
 } from 'react';
-import { useCloudValue } from '../cloud-core/KiteReact';
+import { useCloud, useCloudValue, CloudContext } from '../cloud-core/KiteReact';
 import useObservable from '../cloud-core/useObservable';
 import withObservables from '@nozbe/with-observables';
 import observeNull from '../cloud-core/observeNull';
@@ -303,33 +301,21 @@ export function useOrderItem(orderItemId) {
   }, [orderItemId, order, menu]);
 }
 
-export function withKitchen(Component) {
-  const ComponentWithObservedState = withObservables(
-    ['kitchenConfig', 'kitchenState'],
-    ({ kitchenConfig, kitchenState }) => ({ kitchenConfig, kitchenState }),
-  )(Component);
+export function useKitchenConfig() {
+  const kitchenConfig = useCloudValue('KitchenConfig');
+  return kitchenConfig;
+}
+export function useKitchenState() {
+  const kitchenState = useCloudValue('KitchenState');
+  return kitchenState;
+}
 
-  return props => (
-    <CloudContext.Consumer>
-      {restaurant => (
-        <ComponentWithObservedState
-          kitchenConfig={
-            restaurant.get('OnoState^RestaurantConfig').observeValue
-          }
-          kitchenState={restaurant.get('KitchenState').observeValue}
-          kitchenCommand={async (subsystemName, pulse, values) => {
-            await restaurant.dispatch({
-              type: 'KitchenCommand',
-              subsystem: subsystemName,
-              pulse,
-              values,
-            });
-          }}
-          restaurant={restaurant}
-          {...props}
-        />
-      )}
-    </CloudContext.Consumer>
+export function useSubsystemOverview() {
+  const kitchenConfig = useKitchenConfig();
+  const kitchenState = useKitchenState();
+  return React.useMemo(
+    () => getSubsystemOverview(kitchenConfig, kitchenState),
+    [kitchenConfig, kitchenState],
   );
 }
 

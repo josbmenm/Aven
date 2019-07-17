@@ -69,7 +69,7 @@ function ModeForm({ onClose, deviceDoc }) {
 function DeviceRow({ device }) {
   const cloud = useCloud();
   const deviceDoc = cloud.get(`@${device.deviceId}/ScreenControl`);
-  const dispatch = cloud.get('OnoState/Devices').putTransaction;
+  const dispatch = cloud.get('DeviceActions').putTransaction;
   const deviceState = useCloudValue(deviceDoc);
   const handleErrors = useAsyncError();
 
@@ -135,7 +135,7 @@ function DeviceRow({ device }) {
 
 function DeviceManager() {
   const [devicesState, dispatch] = useCloudReducer(
-    'OnoState/Devices',
+    'DeviceActions',
     DevicesReducer,
   );
   const devices = (devicesState && devicesState.devices) || [];

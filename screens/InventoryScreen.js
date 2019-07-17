@@ -16,10 +16,11 @@ import {
   monsterraLight,
   standardTextColor,
 } from '../components/Styles';
-import useCloudReducer from '../cloud-core/useCloudReducer';
-import useCloudValue from '../cloud-core/useCloudValue';
-import useObservable from '../cloud-core/useObservable';
-import useCloud from '../cloud-core/useCloud';
+import {
+  useCloudReducer,
+  useCloud,
+  useCloudValue,
+} from '../cloud-core/KiteReact';
 import DevicesReducer from '../logic/DevicesReducer';
 import BlockForm from '../components/BlockForm';
 import Title from '../components/Title';
@@ -37,7 +38,7 @@ import { usePopover } from '../views/Popover';
 function useInventoryState() {
   const config = useCompanyConfig();
   const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActionsUnburnt',
+    'RestaurantActions',
     RestaurantReducer,
   );
   const tables = config && config.baseTables;

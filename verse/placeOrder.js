@@ -170,7 +170,7 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
       fills: requestedFills,
     };
     console.log('NEW BLEND ORDER!', itemForKitchen);
-    await cloud.get('RestaurantActionsUnburnt').putTransaction({
+    await cloud.get('RestaurantActions').putTransaction({
       type: 'QueueOrderItem',
       item: itemForKitchen,
     });

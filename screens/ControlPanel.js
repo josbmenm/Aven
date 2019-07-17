@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import useCloudValue from '../cloud-core/useCloudValue';
 import Button from '../components/Button';
-import useCloud from '../cloud-core/useCloud';
+import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
 import useObservable from '../cloud-core/useObservable';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { prettyShadow, titleStyle } from '../components/Styles';
@@ -74,7 +73,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   // const isConnected = useObservable(cloud.isConnected);
   const isConnected = true; // uh....
   const kitchenState = useCloudValue('KitchenState');
-  const kitchenConfig = useCloudValue('OnoState^RestaurantConfig');
+  const kitchenConfig = useCloudValue('KitchenConfig');
   const isPLCConnected = React.useMemo(
     () => kitchenState && kitchenState.isPLCConnected,
     [kitchenState],

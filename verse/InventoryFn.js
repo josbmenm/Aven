@@ -4,7 +4,7 @@ const InventoryFn = defineCloudFunction(
   'Inventory',
   (nothingDocState, nothingDoc, cloud, getValue) => {
     const restaurantState = getValue(
-      cloud.get('RestaurantActionsUnburnt^RestaurantReducer'),
+      cloud.get('RestaurantActions^RestaurantReducer'),
     );
     const kitchenState = getValue(cloud.get('KitchenState'));
     const companyConfig = getValue(cloud.get('OnoState^CompanyConfig'));
