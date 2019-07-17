@@ -6,6 +6,7 @@ import Err from '../utils/Err';
 import cuid from 'cuid';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import bindCommitDeepBlock from './bindCommitDeepBlock';
+import { createStreamValue } from './StreamValue';
 
 /*
 
@@ -44,61 +45,6 @@ Doc
 
 function hasDepth(name) {
   return name.match(/\//);
-}
-
-async function streamLoad(stream) {
-  return new Promise((resolve, reject) => {
-    let loadTimeout = setTimeout(() => {
-      reject(new Error('Timed out loading..'));
-    }, 30000);
-
-    let loadListener = null;
-
-    function wrapUp() {
-      clearTimeout(loadTimeout);
-      if (loadListener) {
-        stream.removeListener(loadListener);
-        loadListener = null;
-      }
-    }
-    loadListener = {
-      next: value => {
-        resolve(value);
-        wrapUp();
-      },
-      error: e => {
-        reject(e);
-        wrapUp();
-      },
-      complete: () => {
-        // should be covereed by next and erorr?
-      },
-    };
-    stream.addListener(loadListener);
-  });
-}
-
-function createStreamValue(inputStream, onGetContext) {
-  const stream = inputStream.remember();
-  return {
-    get: () => streamGet(stream),
-    load: () => streamLoad(stream, onGetContext),
-    stream,
-  };
-}
-
-// A utility to extract the current value from a stream with memory, aka a stream that updates with a value right away upon subscription
-export function streamGet(stream) {
-  let val = undefined;
-  const listener = {
-    next: v => {
-      val = v;
-    },
-  };
-  stream.addListener(listener);
-  // ok.. we expect that the stream has updated the listener with the current value!
-  stream.removeListener(listener);
-  return val;
 }
 
 export function createStreamDoc(stream, reference) {
@@ -388,7 +334,6 @@ export function createDoc({
     },
   };
   const docStream = xs.createWithMemory(docProducer);
-
 
   const docStateValue = createStreamValue(docStream, () => `Doc(${getName()})`);
 
@@ -780,8 +725,8 @@ export function createDocSet({
     childDocs.clear();
   }
 
-  function setOverrideStream(name, stream) {
-    const streamDoc = createStreamDoc(stream);
+  function setOverrideStream(name, stream, context) {
+    const streamDoc = createStreamDoc(stream, context);
     childDocs.set(name, streamDoc);
     return streamDoc;
   }
@@ -828,7 +773,7 @@ export function createDocSet({
   };
 }
 
-function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
+function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
   const sourceId = `CloudClient-${cuid()}`;
   function close() {}
 
@@ -848,7 +793,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
   async function sessionDispatch(action) {
     return await source.dispatch({
       ...action,
-      ...(authHack || {}),
+      ...(auth || {}),
     });
   }
 
@@ -930,7 +875,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
     const doc = rootDocSet.get(name);
     const context = await doc.getReference();
     const value = await doc.value.load();
-    const docState = doc.get();
+    const docState = doc.getId();
     if (docState.isDestroyed) {
       return {
         isDestroyed: true,
@@ -964,7 +909,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, authHack) {
     close,
     getDocStream,
     getDocChildrenEventStream,
-    // isConnectedStream,
+
     dispatch: createDispatcher(
       {
         PutDoc,
@@ -1005,6 +950,7 @@ export function createAuthenticatedClient({ domain, source, auth }) {
 
   return {
     docs,
+    connected: source.connected,
     get: docs.get,
     ...sourceFromRootDocSet(docs, domain, source, auth),
   };

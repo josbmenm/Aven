@@ -32,6 +32,25 @@ export default async function startPostgresStorageSource({
 
   const isConnected = new BehaviorSubject(false);
 
+  let isCurrentlyConnected = false;
+  const defaultConnectionUpdater = isConn => {
+    isCurrentlyConnected = isConn;
+    isConnected.next(isConn);
+  };
+  let updateIsConnected = defaultConnectionUpdater;
+  const isConnectedStream = xs.createWithMemory({
+    start: listener => {
+      listener.next(isCurrentlyConnected);
+      updateIsConnected = isConn => {
+        listener.next(isConn);
+        defaultConnectionUpdater(isConn);
+      };
+    },
+    stop: () => {
+      updateIsConnected = defaultConnectionUpdater;
+    },
+  });
+
   const observingChannels = {};
 
   const pgClient = new Client(config.connection);
@@ -82,7 +101,7 @@ export default async function startPostgresStorageSource({
           INSERT INTO docs ("docId") VALUES (${TOP_PARENT_ID}) ON CONFLICT ("docId") DO NOTHING;
         `);
 
-          isConnected.next(true);
+          updateIsConnected(true);
           done(null, connection);
         } catch (e) {
           console.error('Error on DB setup:', e);
@@ -770,7 +789,7 @@ export default async function startPostgresStorageSource({
   async function CollectGarbage() {}
 
   async function close() {
-    isConnected.next(false);
+    updateIsConnected(false);
     await knex.destroy();
     handleClose();
   }
@@ -886,6 +905,7 @@ export default async function startPostgresStorageSource({
 
   return {
     isConnected,
+    connected: isConnectedStream,
     close,
     observeDoc,
     observeDocChildren,

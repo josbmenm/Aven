@@ -1,6 +1,6 @@
 import React from 'react';
 import xs from 'xstream';
-import { streamGet } from './Kite';
+import { streamGet } from './StreamValue';
 
 export const CloudContext = React.createContext(null);
 

@@ -2,6 +2,7 @@ import { BehaviorSubject } from 'rxjs-compat';
 import createGenericDataSource from '../cloud-core/createGenericDataSource';
 import Err from '../utils/Err';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
+import xs from 'xstream';
 
 const fs = require('fs-extra');
 const stringify = require('json-stable-stringify');
@@ -146,6 +147,7 @@ export default async function startFSStorageSource(opts = {}) {
   const docState = await readFSDoc(dataDir, '');
 
   const isConnected = new BehaviorSubject(true);
+  const connectedStream = xs.of(true);
 
   async function getBlock(blockId) {
     return await readFSBlock(dataDir, blockId);
@@ -177,10 +179,8 @@ export default async function startFSStorageSource(opts = {}) {
   async function commitDocMove(name, newName) {
     await moveFSDoc(dataDir, name, newName);
   }
-
   return createGenericDataSource({
     id: opts.id,
-
     domain: sourceDomain,
     docState,
 
@@ -193,6 +193,7 @@ export default async function startFSStorageSource(opts = {}) {
     commitDocDestroy,
     commitDocMove,
 
+    connected: connectedStream,
     isConnected,
   });
 }

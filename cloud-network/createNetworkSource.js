@@ -249,7 +249,7 @@ export default function createNetworkSource(opts) {
     // new stream API:
     getDocStream,
     getDocChildrenEventStream,
-    isConnectedStream,
+    connected: isConnectedStream,
 
     close: () => {
       ws && ws.close();
