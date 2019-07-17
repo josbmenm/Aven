@@ -1,9 +1,7 @@
 import React from 'react';
 import BaseText from './BaseText';
 
-function SmallText({ ...props }) {
-  // todo, @horacioh
-  return <BaseText {...props} />;
+export default function SmallText(props) {
+  const textSize = size || 'large';
+  return <BaseText size={textSize} {...props} />;
 }
-
-export default SmallText;
