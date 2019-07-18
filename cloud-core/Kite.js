@@ -49,13 +49,22 @@ function hasDepth(name) {
 
 export function createStreamDoc(stream, reference) {
   const value = createStreamValue(stream, () => reference);
+  const idAndValue = createStreamValue(
+    stream.map(val => {
+      return {
+        id: getIdOfValue(val).id,
+        value: val,
+      };
+    }),
+  );
   return {
     type: 'StreamDoc',
     value,
-    get: () => ({}),
+    idAndValue,
     getReference: () => reference,
+    isDestroyed: () => false,
     getId: () => {
-      throw new Error('yes');
+      return undefined;
     },
   };
 }
@@ -212,9 +221,7 @@ export function createBlock({
     });
     if (resp.id !== blockId) {
       throw new Error(
-        `Attempted to put "${name}" block "${blockId}" but the server claims the ID is "${
-          resp.id
-        }"`,
+        `Attempted to put "${name}" block "${blockId}" but the server claims the ID is "${resp.id}"`,
       );
     }
     shamefullySetPutTime();
@@ -308,6 +315,9 @@ export function createDoc({
       const upStream = source.getDocStream(domain, _subsToName, auth);
       const internalListener = {
         next: v => {
+          if (!v) {
+            return;
+          }
           if (v.value !== undefined) {
             const block = getBlock(v.id);
             block.shamefullySetFetchedValue(v.value);
@@ -541,9 +551,7 @@ export function createDoc({
     };
     if (result.id !== expectedBlock.id) {
       console.warn(
-        `Expected to put block id "${expectedBlock.id}", but actually put id "${
-          result.id
-        }"`,
+        `Expected to put block id "${expectedBlock.id}", but actually put id "${result.id}"`,
       );
     }
     setState(stateUpdates);
@@ -570,6 +578,24 @@ export function createDoc({
     () => `Doc(${getName()}).value`,
   );
 
+  const idAndValue = createStreamValue(
+    docStream
+      .map(state => {
+        if (state.id === undefined) {
+          return xs.never();
+        }
+        if (state.id === null) {
+          return xs.of({ id: null, value: undefined });
+        }
+        const block = getBlock(state.id);
+        return block.value.stream.map(val => ({ value: val, id: state.id }));
+      })
+      .flatten()
+      .remember()
+      .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
+    () => `Doc(${getName()}).idValue`,
+  );
+
   const children = createDocSet({
     domain,
     auth,
@@ -594,6 +620,10 @@ export function createDoc({
     return docState.id;
   }
 
+  function isDestroyed() {
+    return docState.isDestroyed;
+  }
+
   function setLocalOnly() {
     setState({
       isLocalOnly: true,
@@ -605,6 +635,8 @@ export function createDoc({
     ...docStateValue,
     type: 'Doc',
     getId,
+    idAndValue,
+    isDestroyed,
     getReference,
     value,
     getName,
@@ -782,10 +814,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
       return source.getDocStream(subsDomain, name, auth);
     }
     const doc = rootDocSet.get(name);
-    return (
-      doc.stream ||
-      doc.value.stream.map(value => ({ id: getIdOfValue(value).id, value }))
-    );
+    return doc.idAndValue.stream;
   }
 
   function getDocChildrenEventStream() {}
@@ -875,8 +904,9 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
     const doc = rootDocSet.get(name);
     const context = await doc.getReference();
     const value = await doc.value.load();
-    const docState = doc.getId();
-    if (docState.isDestroyed) {
+    const id = doc.getId();
+    const isDestroyed = doc.isDestroyed();
+    if (isDestroyed) {
       return {
         isDestroyed: true,
         value: undefined,
@@ -884,7 +914,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
         context,
       };
     }
-    return { context, value, id: docState.id };
+    return { context, value, id };
   }
 
   async function GetDocValues({ domain, names }) {
