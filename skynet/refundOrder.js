@@ -24,7 +24,7 @@ export default async function refundOrder({
     refundTime: Date.now(),
     refund,
   };
-  order.put(newOrder);
+  order.putValue(newOrder);
   console.log('REFUNDING', newOrder);
   return newOrder;
 }

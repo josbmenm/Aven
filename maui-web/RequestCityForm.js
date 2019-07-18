@@ -22,7 +22,7 @@ function RequestCityForm({ breakpoints }) {
   function handleSubmit() {
     setLoading(true);
     handleErrors(
-      doc.putTransaction({ type: 'LocationVote', location }).then(() => {
+      doc.putTransactionValue({ type: 'LocationVote', location }).then(() => {
         setIsDone(true);
         setLoading(false);
       }),

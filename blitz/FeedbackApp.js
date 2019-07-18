@@ -35,7 +35,7 @@ export default function FeedbackApp() {
     }
   }
   function reset() {
-    const feedback = cloud.get('CustomerFeedback').post();
+    const feedback = cloud.get('CustomerFeedback').children.post();
     setFeedbackDoc(feedback);
   }
   return (

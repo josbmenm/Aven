@@ -47,7 +47,7 @@ function ModeForm({ onClose, deviceDoc }) {
     return () => {
       handleErrors(
         deviceDoc
-          .put({
+          .putValue({
             ...(deviceState || {}),
             mode,
           })
@@ -120,7 +120,7 @@ function DeviceRow({ device }) {
           onPress={() => {
             AlertIOS.prompt('New Device Name', null, name => {
               handleErrors(
-                deviceDoc.put({
+                deviceDoc.docValue({
                   ...(deviceState || {}),
                   name,
                 }),

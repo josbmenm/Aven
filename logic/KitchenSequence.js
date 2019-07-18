@@ -263,8 +263,8 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
         startingRestaurantAction &&
           (await cloud
             .get('RestaurantActions')
-            .putTransaction(startingRestaurantAction));
-        // await cloud.get('KitchenLog').putTransaction({
+            .putTransactionValue(startingRestaurantAction));
+        // await cloud.get('KitchenLog').putTransactionValue({
         //   type: 'StartKitchenAction',
         //   intent,
         //   command,
@@ -274,8 +274,8 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
           successRestaurantAction &&
             (await cloud
               .get('RestaurantActions')
-              .putTransaction(successRestaurantAction));
-          // await cloud.get('KitchenLog').putTransaction({
+              .putTransactionValue(successRestaurantAction));
+          // await cloud.get('KitchenLog').putTransactionValue({
           //   type: 'CompleteKitchenAction',
           //   intent,
           //   command,
@@ -286,8 +286,8 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
           failureRestaurantAction &&
             (await cloud
               .get('RestaurantActions')
-              .putTransaction(failureRestaurantAction));
-          // await cloud.get('KitchenLog').putTransaction({
+              .putTransactionValue(failureRestaurantAction));
+          // await cloud.get('KitchenLog').putTransactionValue({
           //   type: 'CompleteFailureAction',
           //   intent,
           //   command,

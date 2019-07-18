@@ -557,8 +557,8 @@ function FullApp(props) {
         wasConnected = isConnected;
       },
     };
-    cloud.connected.addListener(listener);
-    return () => cloud.connected.removeListener(listener);
+    cloud.connected.stream.addListener(listener);
+    return () => cloud.connected.stream.removeListener(listener);
   }, [cloud]);
   return <App {...props} />;
 }

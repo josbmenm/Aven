@@ -98,7 +98,7 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
     throw new Error('Could not verify payment intent! Order has failed.');
   }
 
-  await cloud.get(`ConfirmedOrders/${orderId}`).put(confirmedOrder);
+  await cloud.get(`ConfirmedOrders/${orderId}`).putValue(confirmedOrder);
 
   await summary.items.reduce(async (last, item, index) => {
     await last;
@@ -170,7 +170,7 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
       fills: requestedFills,
     };
     console.log('NEW BLEND ORDER!', itemForKitchen);
-    await cloud.get('RestaurantActions').putTransaction({
+    await cloud.get('RestaurantActions').putTransactionValue({
       type: 'QueueOrderItem',
       item: itemForKitchen,
     });

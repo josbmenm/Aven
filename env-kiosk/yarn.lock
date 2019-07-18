@@ -647,7 +647,7 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@nozbe/with-observables@^1.0.2":
+"@nozbe/with-observables@^1.0.1":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@nozbe/with-observables/-/with-observables-1.0.3.tgz#02faee75e8f09612cf0331792450597259b12922"
   integrity sha512-faNKGNbYV2w3v3StDTcLMUvTPYrWs52XxLKkjA51vAf7tiYWY+uuRQhNvOslXYetbVQ5/pVxQpvna/Uw03kN2A==

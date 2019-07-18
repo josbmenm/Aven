@@ -182,10 +182,10 @@ function useFillAddPopover({ onAddFill }) {
   );
   return onPopover;
 }
-function usePutTransaction(docName) {
+function usePutTransactionValue(docName) {
   const cloud = useCloud();
   const doc = cloud.get(docName);
-  return doc.putTransaction;
+  return doc.putTransactionValue;
 }
 
 function AdHocOrderRow() {
@@ -207,7 +207,7 @@ function AdHocOrderRow() {
     setFills([...fills, fill]);
   }
   const openAddFill = useFillAddPopover({ onAddFill });
-  const restaurantDispatch = usePutTransaction('RestaurantActions');
+  const restaurantDispatch = usePutTransactionValue('RestaurantActions');
 
   return (
     <Row title="Ad-Hoc Order">

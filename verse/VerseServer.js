@@ -172,6 +172,7 @@ const startVerseServer = async () => {
         KitchenConfig: { defaultRule: { canRead: true } },
         RestaurantActions: { defaultRule: { canRead: true } },
         RestaurantState: { defaultRule: { canRead: true } },
+        CompanyConfig: { defaultRule: { canRead: true } },
         // 'OnoState^Inventory': { defaultRule: { canRead: true } },
         // 'OnoState^Menu': { defaultRule: { canRead: true } },
         // 'RestaurantActions^RestaurantReducer': {
@@ -320,7 +321,7 @@ const startVerseServer = async () => {
   //         .then(() =>
   //           cloud
   //             .get('RestaurantActions')
-  //             .putTransaction(nextStep.successRestaurantAction),
+  //             .putTransactionValue(nextStep.successRestaurantAction),
   //         )
   //         .then(() => {
   //           console.log('Done with detached auto-run');

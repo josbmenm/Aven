@@ -118,9 +118,9 @@ export function OrderContextProvider({ children }) {
       });
   }
 
-  useEffect(() => {
-    guardAsync(cloud.establishAnonymousSession());
-  }, []);
+  // useEffect(() => {
+  //   guardAsync(cloud.establishAnonymousSession());
+  // }, []);
 
   let orderContext = {
     order: currentOrder,
@@ -169,9 +169,9 @@ export function OrderContextProvider({ children }) {
     startOrder: () =>
       guardAsync(
         (async () => {
-          const order = cloud.get('PendingOrders').post();
+          const order = cloud.get('PendingOrders').children.post();
           setCurrentOrder(order);
-          await order.put({
+          await order.putValue({
             startTime: Date.now(),
             items: [],
           });

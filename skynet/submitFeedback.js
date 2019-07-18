@@ -101,7 +101,7 @@ Your promo code is ${promoCode}
 
   const now = Date.now();
 
-  await cloud.get('FeedbackSubmissions').putTransaction({
+  await cloud.get('FeedbackSubmissions').putTransactionValue({
     type: 'FeedbackSubmission',
     rating1to5: feedbackValue.rating,
     comment: feedbackValue.comment,
@@ -109,7 +109,7 @@ Your promo code is ${promoCode}
     promoCode,
     time: now,
   });
-  await cloud.get(`PromoCodes/${promoCode}`).put({
+  await cloud.get(`PromoCodes/${promoCode}`).putValue({
     createdTime: now,
     type: 'FreeBlends',
     count: 1,
