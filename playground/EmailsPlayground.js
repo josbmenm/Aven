@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, View } from 'react-native';
-import Title from '../dashboard/Title';
+import Heading from '../dashboard/Heading';
 import Button from '../dashboard/Button';
 import BodyText from '../dashboard/BodyText';
 import { useCloud } from '../cloud-core/KiteReact';
@@ -29,7 +29,7 @@ export default function EmailsPlayground() {
   return (
     <ColumnToRow>
       <ColumnToRowChild style={{ padding: 30 }}>
-        <Title>Email Playground</Title>
+        <Heading>Email Playground</Heading>
         <BodyText>First, select an email template to send:</BodyText>
         {EmailExampleList.map(([exName, exampleSpec]) => (
           <Button
@@ -104,7 +104,7 @@ Body                  yourself:
       <ColumnToRowChild style={{ padding: 30 }}>
         {results && (
           <React.Fragment>
-            <Title>{results.subject}</Title>
+            <Heading>{results.subject}</Heading>
             <BodyText>{results.bodyText}</BodyText>
             <hr />
             Body<ScrollView>

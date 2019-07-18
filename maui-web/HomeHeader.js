@@ -4,7 +4,7 @@ import View from '../views/View';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
-import ButtonLink from './ButtonLink';
+import ButtonLink from '../dashboard/ButtonLink';
 import { ColumnToRow, ColumnToRowChild, NoFlexToFlex } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import { absoluteElement } from '../components/Styles';

@@ -148,6 +148,9 @@ function OurStoryPage() {
               inverted
               title="Powered by robotics"
               style={{ marginBottom: 80 }}
+              responsiveStyles={{
+                paddingRight: [0, 120],
+              }}
               bodyText={
                 <BodyText>
                   Automation gives us the ability to ensure your order is

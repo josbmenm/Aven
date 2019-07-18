@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
-import ButtonLink from './ButtonLink';
+import ButtonLink from '../dashboard/ButtonLink';
 import Container from '../dashboard/Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
 import { Responsive } from '../dashboard/Responsive';

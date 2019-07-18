@@ -3,7 +3,7 @@ import View from '../views/View';
 import Heading from '../dashboard/Heading';
 import BaseText from '../dashboard/BaseText';
 import BodyText from '../dashboard/BodyText';
-import ButtonLink from './ButtonLink';
+import ButtonLink from '../dashboard/ButtonLink';
 import GenericPage from './GenericPage';
 import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme';
