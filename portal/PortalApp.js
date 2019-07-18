@@ -181,6 +181,7 @@ const TABS = [
   { routeName: 'Orders', title: 'Orders' },
   { routeName: 'Inventory', title: 'Inventory' },
   { routeName: 'Alarms', title: 'Alarms' },
+  { routeName: 'DeviceManager', title: 'Devices' },
   { routeName: 'Settings', title: 'Settings' },
 ];
 
@@ -191,6 +192,7 @@ const PortalHome = createSwitchNavigator({
   Manual: { screen: ManualControlScreen },
   Sequencer: { screen: SequencerScreen },
   Orders: { screen: OrdersScreen },
+  DeviceManager: DeviceManagerScreen,
   Status: { screen: RestaurantStatusScreen },
   Alarms: { screen: AlarmsScreen },
   Settings: { screen: KioskSettingsScreen },

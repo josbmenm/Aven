@@ -17,7 +17,7 @@ import combineSources from '../cloud-core/combineSources';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
-
+import xs from 'xstream';
 import startKitchen from './startKitchen';
 import { handleStripeAction } from '../stripe-server/Stripe';
 import { computeNextSteps } from '../logic/KitchenSequence';
@@ -53,7 +53,7 @@ const startVerseServer = async () => {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  USE_DEV_SERVER = false;
+  // USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -171,8 +171,11 @@ const startVerseServer = async () => {
         KitchenState: { defaultRule: { canRead: true } },
         KitchenConfig: { defaultRule: { canRead: true } },
         RestaurantActions: { defaultRule: { canRead: true } },
+        DeviceActions: { defaultRule: { canWrite: true } },
         RestaurantState: { defaultRule: { canRead: true } },
         CompanyConfig: { defaultRule: { canRead: true } },
+        PendingOrders: { defaultRule: { canPost: true } },
+
         // 'OnoState^Inventory': { defaultRule: { canRead: true } },
         // 'OnoState^Menu': { defaultRule: { canRead: true } },
         // 'RestaurantActions^RestaurantReducer': {
@@ -258,122 +261,96 @@ const startVerseServer = async () => {
       };
 
       stateValue.addListener(stateListener);
-
-      // setTimeout(() => {
-      //   sub && sub.unsubscribe();
-      //   if (!isSystemIdle) {
-      //     return reject(new Error(`After 30sec, "${subsystem}" is not idle!`));
-      //   }
-      //   if (!isActionReceived) {
-      //     return reject(
-      //       new Error(
-      //         `After 90sec, ActionIdEnded of "${subsystem}" is "${currentActionId}" but we expected "${actionId}"!`,
-      //       ),
-      //     );
-      //   }
-      //   reject(new Error('Unknown timeout waiting for kitchen state..'));
-      // }, 90000);
     });
     return command;
   }
 
-  // let restaurantState = null;
-  // let kitchenState = null;
-  // let kitchenConfig = null;
-  // let currentStepPromises = {};
+  let _restaurantState = null;
+  let _kitchenState = null;
+  let _kitchenConfig = null;
+  let currentStepPromises = {};
 
-  // function handleStateUpdates() {
-  //   if (
-  //     !restaurantState ||
-  //     !kitchenState ||
-  //     !kitchenConfig ||
-  //     !restaurantState.isAutoRunning
-  //   ) {
-  //     return;
-  //   }
-  //   const nextSteps = computeNextSteps(
-  //     restaurantState,
-  //     kitchenConfig,
-  //     kitchenState,
-  //   );
-  //   if (!nextSteps || !nextSteps.length) {
-  //     return;
-  //   }
+  function verboseLog(msg) {
+    console.log(msg);
+    return;
+  }
 
-  //   nextSteps.forEach(nextStep => {
-  //     const commandType = KitchenCommands[nextStep.command.command];
-  //     const subsystem = commandType.subsystem;
-  //     if (currentStepPromises[subsystem]) {
-  //       return;
-  //     }
+  function handleStateUpdates(restaurantState, kitchenState, kitchenConfig) {
+    if (restaurantState !== undefined) _restaurantState = restaurantState;
+    if (kitchenState !== undefined) _kitchenState = kitchenState;
+    if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
+    if (!restaurantState) return verboseLog('Missing RestaurantState');
+    if (!kitchenState) return verboseLog('Missing KitchenState');
+    if (!kitchenConfig) return verboseLog('Missing kitchenConfig');
+    if (!restaurantState.isAutoRunning)
+      return verboseLog('Is not auto-running');
+    if (!restaurantState.isAttached) return verboseLog('Is not attached');
+    const nextSteps = computeNextSteps(
+      restaurantState,
+      kitchenConfig,
+      kitchenState,
+    );
+    if (!nextSteps || !nextSteps.length)
+      return verboseLog('No steps available to take');
 
-  //     if (restaurantState.isAttached) {
-  //       if (!kitchen || !kitchenState.isPLCConnected) {
-  //         return;
-  //       }
-  //       logBehavior(`Performing ${subsystem} ${nextStep.description}`);
-  //       currentStepPromises[subsystem] = nextStep.perform(cloud, kitchenAction);
-  //     } else {
-  //       logBehavior(`Detached Action: ${subsystem} ${nextStep.description}`);
-  //       currentStepPromises[subsystem] = new Promise(resolve =>
-  //         setTimeout(resolve, 2000),
-  //       )
-  //         .then(() =>
-  //           cloud
-  //             .get('RestaurantActions')
-  //             .putTransactionValue(nextStep.successRestaurantAction),
-  //         )
-  //         .then(() => {
-  //           console.log('Done with detached auto-run');
-  //         });
-  //     }
+    nextSteps.forEach(nextStep => {
+      const commandType = KitchenCommands[nextStep.command.command];
+      const subsystem = commandType.subsystem;
+      if (currentStepPromises[subsystem]) {
+        return;
+      }
 
-  //     currentStepPromises[subsystem]
-  //       .then(() => {
-  //         currentStepPromises[subsystem] = null;
-  //         console.log(`Done with ${nextStep.description}`);
-  //         setTimeout(() => {
-  //           handleStateUpdates();
-  //         }, 50);
-  //       })
-  //       .catch(e => {
-  //         currentStepPromises[subsystem] = null;
-  //         console.error(
-  //           `Failed to perform Kitchen Action: ${
-  //             nextStep.description
-  //           }. JS is basically faulted now??`,
-  //           e,
-  //         );
-  //       });
-  //   });
-  // }
+      if (!kitchen || !kitchenState.isPLCConnected) {
+        return;
+      }
+      logBehavior(`Performing ${subsystem} ${nextStep.description}`);
+      currentStepPromises[subsystem] = nextStep.perform(cloud, kitchenAction);
 
-  // // you poor thing...
+      currentStepPromises[subsystem]
+        .then(() => {
+          currentStepPromises[subsystem] = null;
+          console.log(`Done with ${nextStep.description}`);
+          setTimeout(() => {
+            if (
+              kitchenState !== _kitchenState ||
+              kitchenConfig !== _kitchenConfig ||
+              restaurantState !== _restaurantState
+            ) {
+              handleStateUpdates(
+                _restaurantState,
+                _kitchenState,
+                _kitchenConfig,
+              );
+            }
+          }, 50);
+        })
+        .catch(e => {
+          currentStepPromises[subsystem] = null;
+          console.error(
+            `Failed to perform Kitchen Action: ${
+              nextStep.description
+            }. JS is basically faulted now??`,
+            e,
+          );
+        });
+    });
+  }
 
-  // cloud.get('KitchenState').observeValue.subscribe({
-  //   next: state => {
-  //     kitchenState = state;
-  //     handleStateUpdates();
-  //   },
-  // });
-  // cloud.get('OnoState^RestaurantConfig').observeValue.subscribe({
-  //   next: state => {
-  //     kitchenConfig = state;
-  //     handleStateUpdates();
-  //   },
-  // });
-  // (await evalSource.observeDoc(
-  //   'onofood.co',
-  //   'RestaurantActions^RestaurantReducer',
-  // )).subscribe({
-  //   next: update => {
-  //     restaurantState = update.value;
-  //     handleStateUpdates();
-  //   },
-  //   error: err => {
-  //     console.error('........,,.Woah WTFZ', err);
-  //   },
-  // });
+  const sequencerStateStream = xs.combine(
+    cloud.get('RestaurantState').value.stream,
+    cloud.get('KitchenState').value.stream,
+    cloud.get('KitchenConfig').value.stream,
+  );
+  sequencerStateStream.addListener({
+    next: ([restaurantState, kitchenState, kitchenConfig]) => {
+      handleStateUpdates(restaurantState, kitchenState, kitchenConfig);
+    },
+    error: e => {
+      console.error('Failure in sequencer state stream');
+      console.error(e);
+      process.exit(1);
+    },
+  });
 
   const dispatch = async action => {
     let stripeResponse = await handleStripeAction(action);
@@ -386,7 +363,7 @@ const startVerseServer = async () => {
         if (!kitchen) {
           throw new Error('no kitchen');
         }
-        // subsystem (eg 'IOSystem'), pulse (eg ['home']), values (eg: foo: 123)
+        // subsystem (eg 'FillSystem'), pulse (eg ['home']), values (eg: foo: 123)
         const actionId = getFreshActionId();
         return await kitchen.dispatchCommand({ ...action, actionId });
       }

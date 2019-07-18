@@ -3,7 +3,7 @@ import { View, Text, Animated, Button } from 'react-native';
 
 import useCloudState from '../cloud-core/useCloudState';
 import useCloudReducer from '../cloud-core/useCloudReducer';
-import CloudContext from '../cloud-core/CloudContext';
+import { CloudContext } from '../cloud-core/KiteReact';
 
 import { createSwitchNavigator } from '../navigation-core';
 import { createAppContainer } from '../navigation-native';

@@ -14,8 +14,10 @@ import {
 import { createAppContainer } from '../navigation-native';
 import {
   useStreamValue,
+  useValue,
   useCloudValue,
   useCloud,
+  CloudContext,
 } from '../cloud-core/KiteReact';
 import codePush from 'react-native-code-push';
 
@@ -37,7 +39,6 @@ import ReceiptScreen from '../screens/ReceiptScreen';
 import AppUpsellScreen from '../screens/AppUpsellScreen';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
 import LinearGradient from 'react-native-linear-gradient';
-import CloudContext from '../cloud-core/CloudContext';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import OrderSidebarPage from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
@@ -248,12 +249,13 @@ function WaitingPage({ title, name }) {
 function SelectModeApp() {
   const cloud = useCloud();
   // const session = useStreamValue(cloud.observeSession);
-  const isConnected = useStreamValue(cloud.isConnected);
-  const control = cloud.get(`@${session.accountId}/ScreenControl`);
-  const controlState = useCloudValue(control.value.stream);
-  if (!session) {
-    return <WaitingPage title="Waiting for session" />;
-  }
+  const isConnected = useValue(cloud.connected);
+  // const control = cloud.get(`@${session.accountId}/ScreenControl`);
+  // const controlState = useCloudValue(control.value.stream);
+  const controlState = null;
+  // if (!session) {
+  //   return <WaitingPage title="Waiting for session" />;
+  // }
   const mode = controlState && controlState.mode;
   const name = controlState && controlState.name;
 
@@ -279,17 +281,17 @@ function SelectModeApp() {
 }
 
 function useControlledApp(cloud) {
-  const isReady = !!cloud && !!cloud.observeSession.getValue();
-  React.useEffect(() => {
-    if (!isReady) {
-      return;
-    }
-    const deviceId = cloud.observeSession.getValue().accountId;
-    cloud.get('DeviceActions').putTransactionValue({
-      type: 'DeviceOnline',
-      deviceId,
-    });
-  }, [cloud, isReady]);
+  // const isReady = !!cloud && !!cloud.observeSession.getValue();
+  // React.useEffect(() => {
+  //   if (!isReady) {
+  //     return;
+  //   }
+  //   const deviceId = cloud.observeSession.getValue().accountId;
+  //   cloud.get('DeviceActions').putTransactionValue({
+  //     type: 'DeviceOnline',
+  //     deviceId,
+  //   });
+  // }, [cloud, isReady]);
 }
 
 function FullApp() {

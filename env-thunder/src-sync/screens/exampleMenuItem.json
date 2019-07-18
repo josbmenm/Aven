@@ -1,0 +1,2562 @@
+{
+  "id": "rec3SzrHfP2zJnoaO",
+  "Display Name": "papaya + pineapple",
+  "Display Description": "Digestive delight. Enzymes in papaya + protein and probiotics in yogurt combine to create a nutritional powerhouse that tastes like vacation.",
+  "Active in Kiosk": true,
+  "Calories": "500",
+  "Ingredients - DO NOT USE": "Papaya, Pineapple, Bananas, Yogurt, Coconut Milk, Dates, Chia Seeds",
+  "_index": 1,
+  "Recipe": {
+    "id": "rec5COvvN0bV19iLF",
+    "Name": "papaya + pineapple",
+    "Sell Price": 5.95,
+    "Nutrition Detail": "Protein 4g",
+    "DisplayCalories": 480,
+    "Recipe Ingredients copy": "Papaya, Pineapple, Bananas, Yogurt, Coconut Milk, Dates, Chia Seeds, Probiotic Blend",
+    "_index": 0,
+    "Ingredients": [
+      {
+        "id": "recSGTl2PVyr6Gdhf",
+        "Name": "Vanilla Coconut Milk",
+        "DesiredAmount-Old": 10,
+        "DispenseCount": 1,
+        "85%": 8.5,
+        "DispenseAmount(ml)": 3,
+        "_index": 20,
+        "Recipes": ["rec5COvvN0bV19iLF"],
+        "Ingredient": {
+          "id": "recMQbVzKifYdJcjk",
+          "Name": "Vanilla Coconut Milk",
+          "Supplied Ingredients": "Himalayan Salt, Himalayan Salt",
+          "Recipe Ingredients copy": "Vanilla Coconut Milk",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 49,
+          "_index": 10,
+          "As used in recipes": [
+            "recauRAM56Fw34qYQ",
+            "recxxhmYqcgNwrn15",
+            "rec5cRYtBXzmhw60A",
+            "recSGTl2PVyr6Gdhf",
+            "recdZpRFJSNKWX6rG",
+            "recQMsJzYS6UaYm43"
+          ],
+          "RecipeCustomization": ["recBFTCL8OFHr9EG0"],
+          "Feeder Type": ["recNUkbMS99k4UelH"],
+          "Benefits": ["recFlyZ68FePHBGbI"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attrsBOTcT57szbbB",
+              "url": "https://dl.airtable.com/.attachments/8a24d312fd84bc859d520f9425bca48f/0e73203f/coconut-milk.png",
+              "filename": "coconut-milk.png",
+              "size": 3745295,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/50b4f5b07143fb9154fd608f2955740d/6f3be5bf",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/69c06a86582a0aef47a588725b296c59/1fb3dd91",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/1cd141d8ecca61411e7ba23b56a381f5/d394b69b",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        "ShotSize(ml)": [3]
+      },
+      {
+        "id": "rec1NUFConynG2HwT",
+        "Name": "Papaya",
+        "DesiredAmount-Old": 180,
+        "DispenseCount": 1,
+        "85%": 153,
+        "DispenseAmount(ml)": 3,
+        "_index": 0,
+        "Recipes": ["rec5COvvN0bV19iLF"],
+        "Ingredient": {
+          "id": "rec17gjOSmacPTVTk",
+          "Name": "Papaya",
+          "Supplied Ingredients": "Papaya, Papaya, Papaya",
+          "Recipe Ingredients copy": "Papaya",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 180,
+          "_index": 0,
+          "As used in recipes": ["rec1NUFConynG2HwT"],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Benefits": ["rechXQIhjW1a1dsXn"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attM31A2ET4eVPYD1",
+              "url": "https://dl.airtable.com/.attachments/a98fa164de6224bde8b8b179631d535d/7f84f5b3/Papaya.png",
+              "filename": "Papaya.png",
+              "size": 1539779,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/0b72203e31b1b01db6f089ce050deffa/d00dae62",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/c7a12e554f28d1e49c6e5e45dcd1b4d1/a9b9e825",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/4b0460c78a2db0e92c1900aca6ddd9e9/59cec56f",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        "ShotSize(ml)": [3]
+      },
+      {
+        "id": "recvuzyJl7sP0V7BO",
+        "Name": "Pineapple",
+        "DesiredAmount-Old": 90,
+        "DispenseCount": 1,
+        "85%": 76.5,
+        "DispenseAmount(ml)": 3,
+        "_index": 37,
+        "Recipes": ["rec5COvvN0bV19iLF"],
+        "Ingredient": {
+          "id": "recS107K858dvPtBx",
+          "Name": "Pineapple",
+          "Supplied Ingredients": "Pineapple, Pineapple, Pineapple",
+          "Recipe Ingredients copy": "Pineapple",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 300,
+          "_index": 13,
+          "As used in recipes": [
+            "recgc3gAv0JIQkQ0W",
+            "recvuzyJl7sP0V7BO",
+            "recSiIFX4HVApiJt5",
+            "recNHA2MwOUQ3Qh8E"
+          ],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attNVloZOU9Bd5WNp",
+              "url": "https://dl.airtable.com/.attachments/240d3c287405b4e2840f299eb9b16a6f/7428c3ab/pineapple.png",
+              "filename": "pineapple.png",
+              "size": 2739294,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/0ed2a2846d6a72b6b0b0532f65740c58/7da23040",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/f29491a91bbc9cefb16878ef753dd93a/30faa682",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/f9ab473fa9e1c110d9f0a92a35fbdf32/154b361a",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        "ShotSize(ml)": [3]
+      },
+      {
+        "id": "recCJmZJBP2qQDA6T",
+        "Name": "Banana",
+        "DesiredAmount-Old": 60,
+        "DispenseCount": 1,
+        "85%": 51,
+        "DispenseAmount(ml)": 3,
+        "_index": 8,
+        "Recipes": ["rec5COvvN0bV19iLF"],
+        "Ingredient": {
+          "id": "rec1dE86v90OECGMV",
+          "Name": "Banana",
+          "Supplied Ingredients": "Bananas, Bananas, Bananas",
+          "Recipe Ingredients copy": "Bananas, Bananas, Bananas",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 600,
+          "_index": 1,
+          "As used in recipes": [
+            "rec9qKdVEVwc4HaAi",
+            "recLatiXkimDASNeG",
+            "recCJmZJBP2qQDA6T",
+            "recbsXtFc9So9dqwL",
+            "recZZewtiAa2caRMH"
+          ],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Benefits": ["recSFSa4PUFyryQ3L"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "KitchenSlots": ["rec4WRYNLAja8nfQq"],
+          "Image": [
+            {
+              "id": "attV7kOaRJ3Eqpvej",
+              "url": "https://dl.airtable.com/.attachments/e78e8c644301ac59348f8de4f0ed08f4/7caf0be0/banana.png",
+              "filename": "banana.png",
+              "size": 1825976,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7a61bd27bea84193f597fed94bbd86b1/0b8083b3",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/571de14e0e25dd609fc2e27154751faa/6e3e2e8a",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/18ee7fd86991e81e826c89698804f813/147e006a",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        "ShotSize(ml)": [3]
+      },
+      {
+        "id": "recanBFWTcakSaD79",
+        "Name": "Dates",
+        "DesiredAmount-Old": 20,
+        "DispenseCount": 1,
+        "85%": 17,
+        "DispenseAmount(ml)": 1.5,
+        "_index": 24,
+        "Recipes": ["rec5COvvN0bV19iLF"],
+        "Ingredient": {
+          "id": "recJtf3Ud5TBpIG3h",
+          "Name": " Dates",
+          "Supplied Ingredients": "Dates, Dates, Dates",
+          "Recipe Ingredients copy": "Dates",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 1.5,
+          "Total Across Menu": 100,
+          "_index": 9,
+          "As used in recipes": [
+            "recdmbwTvFjeBmvXA",
+            "recmZPUipsjXCLCbp",
+            "recanBFWTcakSaD79",
+            "recj3zdScMIkmnyL4",
+            "recJVUngt27eyLIru"
+          ],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Benefits": ["rechXQIhjW1a1dsXn"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attRJVj48x8MPhmaP",
+              "url": "https://dl.airtable.com/.attachments/1002fb90daed5b0744338490669bf055/9ef3589c/Dates.png",
+              "filename": "Dates.png",
+              "size": 1321523,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/3d0c2d63712b4435f162f45a04c5add6/c636de5c",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/db5ac58777cc9c438bb9601cc2a3bc22/cdd6e46a",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/27a86dda62a7b83f923c0cfcf8bf2baa/ce704f46",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        "ShotSize(ml)": [1.5]
+      },
+      {
+        "id": "recHMID4OOchF8DWf",
+        "Name": "Yogurt",
+        "DesiredAmount-Old": 123,
+        "DispenseCount": 1,
+        "85%": 104.55,
+        "DispenseAmount(ml)": 3,
+        "_index": 10,
+        "Recipes": ["rec5COvvN0bV19iLF"],
+        "Ingredient": {
+          "id": "recXmmTN2saDHFK4t",
+          "Name": "Yogurt",
+          "Supplied Ingredients": "Lion's Mane, Lion's Mane",
+          "Kiosk Menu": "cold brew + coconut",
+          "Recipe Ingredients copy": "focus - lions mane",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 123,
+          "_index": 14,
+          "As used in recipes": ["recHMID4OOchF8DWf"],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recFVKkTzlTcHDzZ6"],
+          "Benefits": ["recSFSa4PUFyryQ3L"],
+          "Dietary": ["recgGK4TpFwyRXEtF"],
+          "KitchenSlots": ["recFpxQOORJc8cXOa"],
+          "Image": [
+            {
+              "id": "attid6DN90zeAfXpG",
+              "url": "https://dl.airtable.com/.attachments/6e0c305c097bac62ab0a311d61e7c3c6/0d7edac1/yogurt.png",
+              "filename": "yogurt.png",
+              "size": 3842830,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7718e80fcba89d1e0656d5cd977ec90e/edde5019",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/d26a4eecbac2355e6c66b0fe23b9ebe4/05b91bf5",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b04ee90717866b9d1f8bea6707681347/14e0200f",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        "ShotSize(ml)": [3]
+      },
+      {
+        "id": "recHqzSiGDs91VQFF",
+        "Name": "Chia Seeds",
+        "DesiredAmount-Old": 12,
+        "DispenseCount": 1,
+        "85%": 10.2,
+        "DispenseAmount(ml)": 1,
+        "_index": 11,
+        "Recipes": ["rec5COvvN0bV19iLF"],
+        "Ingredient": {
+          "id": "recGOJ1oby67xemtp",
+          "Name": "Chia Seeds",
+          "Supplied Ingredients": "Chia Seeds, Chia Seeds",
+          "Recipe Ingredients copy": "Chia Seeds",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 1,
+          "Total Across Menu": 48,
+          "_index": 7,
+          "As used in recipes": [
+            "rec6gzB3dUusCrIfF",
+            "recHqzSiGDs91VQFF",
+            "recx3piQZnWenyR32",
+            "recTsWYIg9f0bei1f"
+          ],
+          "KitchenIngredients": ["recPYVXkuGNPJr0BJ"],
+          "RecipeCustomization": ["recE4HFYIeAkiMIfc"],
+          "Feeder Type": ["recrTO7Xkxgti54Jo"],
+          "Benefits": ["rechXQIhjW1a1dsXn"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "att1nvh269XBxZ7zw",
+              "url": "https://dl.airtable.com/.attachments/1cdac6f45e7fd39a18438822f6030fa1/f8cd50c4/chia.png",
+              "filename": "chia.png",
+              "size": 1278867,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b0411efe8587ceb682133b9575ba9d9d/746e17fa",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/68b3938fc9267fc94cee9ac9dda87d7e/5598a25a",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/537febdf9ff35434d796d182e758f90e/4b88c098",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        "ShotSize(ml)": [1]
+      }
+    ],
+    "Menu": ["rec3SzrHfP2zJnoaO"],
+    "RecipeCustomization": [
+      "recBFTCL8OFHr9EG0",
+      "recF7OyaP05uc5A6I",
+      "recE4HFYIeAkiMIfc"
+    ],
+    "DefaultEnhancement": ["recFlyZ68FePHBGbI"],
+    "Recipe Image": [
+      {
+        "id": "attOlXLX5CDcJ5amg",
+        "url": "https://dl.airtable.com/.attachments/d70174322e00b8b7532ce332bfdc0308/1c682e35/papayapineapple.png",
+        "filename": "papaya + pineapple.png",
+        "size": 1025871,
+        "type": "image/png",
+        "thumbnails": {
+          "small": {
+            "url": "https://dl.airtable.com/.attachmentThumbnails/5974007b0e427f9aa47c5eca962ec645/25a1605f",
+            "width": 25,
+            "height": 36
+          },
+          "large": {
+            "url": "https://dl.airtable.com/.attachmentThumbnails/ea2c055029449e171d4b55ef43a5954a/d4ba7943",
+            "width": 512,
+            "height": 723
+          },
+          "full": {
+            "url": "https://dl.airtable.com/.attachmentThumbnails/bf098ef9fd9093d26184e5282ba73b52/ebc92429",
+            "width": 1098,
+            "height": 1551
+          }
+        }
+      }
+    ],
+    "SplashImage": [
+      {
+        "id": "attNhF325a1zlS1CC",
+        "url": "https://dl.airtable.com/.attachments/02dceb1623a82965e611e2fccf61af70/eb848714/Papaya.png",
+        "filename": "Papaya.png",
+        "size": 1604544,
+        "type": "image/png",
+        "thumbnails": {
+          "small": {
+            "url": "https://dl.airtable.com/.attachmentThumbnails/e34f1db0c52cd1e982c9424158b6593a/ed5447cc",
+            "width": 38,
+            "height": 36
+          },
+          "large": {
+            "url": "https://dl.airtable.com/.attachmentThumbnails/aefd49e3fb780d116d471d974c0b7990/1a911985",
+            "width": 546,
+            "height": 512
+          },
+          "full": {
+            "url": "https://dl.airtable.com/.attachmentThumbnails/6c82766554fd3d46adabfb049b6fa1ce/60d5075e",
+            "width": 3000,
+            "height": 3000
+          }
+        }
+      }
+    ]
+  },
+  "IngredientCustomization": [
+    {
+      "id": "recBFTCL8OFHr9EG0",
+      "Name": "Beverage",
+      "Overflow Limit": 0,
+      "Display Name": "Base",
+      "Description": "Blend with ",
+      "_index": 0,
+      "Ingredients": [
+        {
+          "id": "recMQbVzKifYdJcjk",
+          "Name": "Vanilla Coconut Milk",
+          "Supplied Ingredients": "Himalayan Salt, Himalayan Salt",
+          "Recipe Ingredients copy": "Vanilla Coconut Milk",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 49,
+          "_index": 10,
+          "As used in recipes": [
+            "recauRAM56Fw34qYQ",
+            "recxxhmYqcgNwrn15",
+            "rec5cRYtBXzmhw60A",
+            "recSGTl2PVyr6Gdhf",
+            "recdZpRFJSNKWX6rG",
+            "recQMsJzYS6UaYm43"
+          ],
+          "RecipeCustomization": ["recBFTCL8OFHr9EG0"],
+          "Feeder Type": ["recNUkbMS99k4UelH"],
+          "Benefits": ["recFlyZ68FePHBGbI"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attrsBOTcT57szbbB",
+              "url": "https://dl.airtable.com/.attachments/8a24d312fd84bc859d520f9425bca48f/0e73203f/coconut-milk.png",
+              "filename": "coconut-milk.png",
+              "size": 3745295,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/50b4f5b07143fb9154fd608f2955740d/6f3be5bf",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/69c06a86582a0aef47a588725b296c59/1fb3dd91",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/1cd141d8ecca61411e7ba23b56a381f5/d394b69b",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "recy7vqDhX0XvrBcd",
+          "Name": "Cold Brew Coffee",
+          "Supplied Ingredients": "Ginger, Ginger",
+          "Recipe Ingredients copy": "Ginger, Ginger",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 240,
+          "Total Across Menu": 8,
+          "_index": 21,
+          "As used in recipes": ["recQFedfVL5PysLnv"],
+          "RecipeCustomization": ["recBFTCL8OFHr9EG0"],
+          "Feeder Type": ["recNUkbMS99k4UelH"],
+          "Benefits": ["recd3ha5AvHU1h8yW"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attZH4FOSJVFmfNDR",
+              "url": "https://dl.airtable.com/.attachments/4b95fa3932269ff83a312739f8509d53/4c09c02f/coldbrew.png",
+              "filename": "coldbrew.png",
+              "size": 2968585,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/f3b682c48004b70f17ddb39b30a1801b/5dc70087",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/05e772ab1edd68668e5c60b47cd715df/e1f91e6d",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/30809ff930adb9c372d7c52d80d45cfc/f2cfc96c",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "PortionCustomization": ["recx6ukS1NMp08VgT"],
+      "defaultValue": ["recMQbVzKifYdJcjk"],
+      "optionLimit": 1
+    },
+    {
+      "id": "recE4HFYIeAkiMIfc",
+      "Name": "Boost",
+      "Overflow Limit": 0,
+      "Display Name": "Boost",
+      "Description": "Healthy fuel to live, work & create",
+      "_index": 1,
+      "Ingredients": [
+        {
+          "id": "receMWRnBlXKKta4e",
+          "Name": "Turmeric",
+          "Supplied Ingredients": "Collagen Peptides, Collagen Peptides",
+          "Kiosk Menu": "ginger + greens",
+          "Recipes": "ginger + greens",
+          "Recipe Ingredients copy": "Collagen Peptides",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 1,
+          "Total Across Menu": 2.5,
+          "_index": 16,
+          "As used in recipes": ["recP79bQv4HUabBYc"],
+          "RecipeCustomization": ["recE4HFYIeAkiMIfc"],
+          "Feeder Type": ["recrTO7Xkxgti54Jo"],
+          "Benefits": ["recaqqM3Jq8P8Owk8"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attQOtGLtLImzxUSs",
+              "url": "https://dl.airtable.com/.attachments/1f15491eed9f16909336b80ebf48b8f8/9144b322/Tumeric.png",
+              "filename": "Tumeric.png",
+              "size": 521567,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/94fe38c3a83cb299f28ae6b25208c47c/690ffc7e",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/24859d7591ca00c1f21d161bce3ce404/c32e1bf0",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/8fdf3e2fba2a0f6ddb4efd1993e345fd/36eb8ff8",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "recQeOwgATMJMs69w",
+          "Name": "Cacao Nibs",
+          "Supplied Ingredients": "Astragalus, Astragalus",
+          "Kiosk Menu": "ginger + greens",
+          "Recipe Ingredients copy": "Astragalus",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 1.5,
+          "Total Across Menu": 60,
+          "_index": 11,
+          "As used in recipes": ["recgcYNzZFj5SqLDU", "recqukdJfnlILiiaC"],
+          "RecipeCustomization": ["recE4HFYIeAkiMIfc"],
+          "Feeder Type": ["recrTO7Xkxgti54Jo"],
+          "Benefits": ["recd3ha5AvHU1h8yW"],
+          "Dietary": ["recmfnXpiKD1mQgaC"],
+          "Image": [
+            {
+              "id": "attjabFQUrIXIszt9",
+              "url": "https://dl.airtable.com/.attachments/8bfef54ba08ea206de0f058f069b9ca3/f9b7aacc/cacao.png",
+              "filename": "cacao.png",
+              "size": 1240030,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/309e8698262a4c396115b6aafe2704f2/9b737b45",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/c5315d2ee307693aef226ea564def850/82003410",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/60fd67de43c0d6e9cb233282cbbd1b50/c33b109e",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "rec931A7t8PmNrC8n",
+          "Name": "Cashew Butter",
+          "Supplied Ingredients": "Turmeric, Turmeric",
+          "Recipe Ingredients copy": "focus - tumeric",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 64,
+          "_index": 5,
+          "As used in recipes": ["rec5865G5KTobQH1A", "rec2jHcNzxvZYKmxx"],
+          "RecipeCustomization": ["recE4HFYIeAkiMIfc"],
+          "Feeder Type": ["recFVKkTzlTcHDzZ6"],
+          "Benefits": ["recSFSa4PUFyryQ3L"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attKqeuDYI3kbLTU6",
+              "url": "https://dl.airtable.com/.attachments/5689d49a58f4ff5acf283a4ccc6cb690/7d5df720/nutbutter.png",
+              "filename": "nutbutter.png",
+              "size": 3386735,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/6c05ce165c4ecad3f557aa41686de377/f20321d9",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/66e0fec0ab9dccc47b404c802444eba9/47d2f55a",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/2c9e7128dcd1c747f2fc5a8b794db7f6/ebfc3e34",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "recGOJ1oby67xemtp",
+          "Name": "Chia Seeds",
+          "Supplied Ingredients": "Chia Seeds, Chia Seeds",
+          "Recipe Ingredients copy": "Chia Seeds",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 1,
+          "Total Across Menu": 48,
+          "_index": 7,
+          "As used in recipes": [
+            "rec6gzB3dUusCrIfF",
+            "recHqzSiGDs91VQFF",
+            "recx3piQZnWenyR32",
+            "recTsWYIg9f0bei1f"
+          ],
+          "KitchenIngredients": ["recPYVXkuGNPJr0BJ"],
+          "RecipeCustomization": ["recE4HFYIeAkiMIfc"],
+          "Feeder Type": ["recrTO7Xkxgti54Jo"],
+          "Benefits": ["rechXQIhjW1a1dsXn"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "att1nvh269XBxZ7zw",
+              "url": "https://dl.airtable.com/.attachments/1cdac6f45e7fd39a18438822f6030fa1/f8cd50c4/chia.png",
+              "filename": "chia.png",
+              "size": 1278867,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b0411efe8587ceb682133b9575ba9d9d/746e17fa",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/68b3938fc9267fc94cee9ac9dda87d7e/5598a25a",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/537febdf9ff35434d796d182e758f90e/4b88c098",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "defaultValue": ["recGOJ1oby67xemtp"],
+      "optionLimit": 1
+    },
+    {
+      "id": "recF7OyaP05uc5A6I",
+      "Name": "Frozen",
+      "Overflow Limit": 0,
+      "Display Name": "Produce",
+      "Description": "Keep your chill",
+      "_index": 2,
+      "Ingredients": [
+        {
+          "id": "rec1dE86v90OECGMV",
+          "Name": "Banana",
+          "Supplied Ingredients": "Bananas, Bananas, Bananas",
+          "Recipe Ingredients copy": "Bananas, Bananas, Bananas",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 600,
+          "_index": 1,
+          "As used in recipes": [
+            "rec9qKdVEVwc4HaAi",
+            "recLatiXkimDASNeG",
+            "recCJmZJBP2qQDA6T",
+            "recbsXtFc9So9dqwL",
+            "recZZewtiAa2caRMH"
+          ],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Benefits": ["recSFSa4PUFyryQ3L"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "KitchenSlots": ["rec4WRYNLAja8nfQq"],
+          "Image": [
+            {
+              "id": "attV7kOaRJ3Eqpvej",
+              "url": "https://dl.airtable.com/.attachments/e78e8c644301ac59348f8de4f0ed08f4/7caf0be0/banana.png",
+              "filename": "banana.png",
+              "size": 1825976,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7a61bd27bea84193f597fed94bbd86b1/0b8083b3",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/571de14e0e25dd609fc2e27154751faa/6e3e2e8a",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/18ee7fd86991e81e826c89698804f813/147e006a",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "recv9odwFZKA4RewR",
+          "Name": "Avocado",
+          "Supplied Ingredients": "Organic Blueberries, Blueberries, Blueberries",
+          "Recipe Ingredients copy": "Blueberries, Blueberries",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 40,
+          "_index": 20,
+          "As used in recipes": ["rectL7y9IRE76uyLd"],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Benefits": ["recSFSa4PUFyryQ3L"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attGDzMM81fhaPVUo",
+              "url": "https://dl.airtable.com/.attachments/c2c63d0c84c331c4fefb4743d0e989fb/c17018a5/avacado.png",
+              "filename": "avacado.png",
+              "size": 1485418,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/f477b9f96a8e74604758f9e04a1426e4/d6bb1a58",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/ddae8fabe8508e7348ded0a1f2fc4372/f03d450b",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/0f1610f8d8f081e47cf25c3863954e3b/198c6a21",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "rec17gjOSmacPTVTk",
+          "Name": "Papaya",
+          "Supplied Ingredients": "Papaya, Papaya, Papaya",
+          "Recipe Ingredients copy": "Papaya",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 180,
+          "_index": 0,
+          "As used in recipes": ["rec1NUFConynG2HwT"],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Benefits": ["rechXQIhjW1a1dsXn"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attM31A2ET4eVPYD1",
+              "url": "https://dl.airtable.com/.attachments/a98fa164de6224bde8b8b179631d535d/7f84f5b3/Papaya.png",
+              "filename": "Papaya.png",
+              "size": 1539779,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/0b72203e31b1b01db6f089ce050deffa/d00dae62",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/c7a12e554f28d1e49c6e5e45dcd1b4d1/a9b9e825",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/4b0460c78a2db0e92c1900aca6ddd9e9/59cec56f",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "recGRd3CuZCnJUlEK",
+          "Name": "Cucumber",
+          "Supplied Ingredients": "English Cucumber, English Cucumber, English Cucumber",
+          "Recipe Ingredients copy": "Cucumber",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 47,
+          "Total Across Menu": 90,
+          "_index": 8,
+          "As used in recipes": ["rech3CwuW1x1eesJW"],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Benefits": ["rechXQIhjW1a1dsXn"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attBoLHRk7DBB0EIn",
+              "url": "https://dl.airtable.com/.attachments/d0e2864c1020bcfe159ea638075d455b/b8d7e84e/cucumber.png",
+              "filename": "cucumber.png",
+              "size": 2857653,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/aa414e8ccf204c1b723a9cdf7e170c6d/d48efe46",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/1e175a60d015440867ede8a7b8a2c75f/491d4b35",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/f0893e9ec18380f2a7e5e532008fcbaa/788bffd6",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "recS107K858dvPtBx",
+          "Name": "Pineapple",
+          "Supplied Ingredients": "Pineapple, Pineapple, Pineapple",
+          "Recipe Ingredients copy": "Pineapple",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 300,
+          "_index": 13,
+          "As used in recipes": [
+            "recgc3gAv0JIQkQ0W",
+            "recvuzyJl7sP0V7BO",
+            "recSiIFX4HVApiJt5",
+            "recNHA2MwOUQ3Qh8E"
+          ],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attNVloZOU9Bd5WNp",
+              "url": "https://dl.airtable.com/.attachments/240d3c287405b4e2840f299eb9b16a6f/7428c3ab/pineapple.png",
+              "filename": "pineapple.png",
+              "size": 2739294,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/0ed2a2846d6a72b6b0b0532f65740c58/7da23040",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/f29491a91bbc9cefb16878ef753dd93a/30faa682",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/f9ab473fa9e1c110d9f0a92a35fbdf32/154b361a",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "recs26PO84nLJ6Mkt",
+          "Name": "Spinach + Mint",
+          "Supplied Ingredients": "Spinach, Spinach, Spinach",
+          "Recipe Ingredients copy": "Spinach + Mint",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 288,
+          "_index": 19,
+          "As used in recipes": ["recCaqEn1YQPAumD4", "recNwqkodZlG68THg"],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Benefits": ["recaqqM3Jq8P8Owk8"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attQHUKQnb3amu4V3",
+              "url": "https://dl.airtable.com/.attachments/cb2ef090db5cf2305ddc004b10407262/2493b4d1/mint-spinach.png",
+              "filename": "mint-spinach.png",
+              "size": 3825909,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/1ee062de2db7837e6457b17dd71f5290/9be25cb5",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/d590adb897061b55fcf63e8334cbe523/2e4fd5ac",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/79ca40e76cb662f50610b9a6004af2b5/304ba03b",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "recQkaEbJ9gAfRG1m",
+          "Name": "Mango",
+          "Supplied Ingredients": "Coconut Chunks, Coconut Chunks",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 140,
+          "_index": 12,
+          "As used in recipes": ["rec7Apn9DX2rUxMnX"],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Benefits": ["rechXQIhjW1a1dsXn"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "att5Gspgm37EfmmFg",
+              "url": "https://dl.airtable.com/.attachments/e30e0f2ac8ec60e71a32d213a987655e/981d5977/Mango.png",
+              "filename": "Mango.png",
+              "size": 1708317,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/9c2673e3a1f5c4da108797b105c83d57/66a68794",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/039d46cf9101a0a48a63eba9a154be27/33046193",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/075339f5f58a21e992942487bb673ee6/b1ec368f",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "recXmmTN2saDHFK4t",
+          "Name": "Yogurt",
+          "Supplied Ingredients": "Lion's Mane, Lion's Mane",
+          "Kiosk Menu": "cold brew + coconut",
+          "Recipe Ingredients copy": "focus - lions mane",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 123,
+          "_index": 14,
+          "As used in recipes": ["recHMID4OOchF8DWf"],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recFVKkTzlTcHDzZ6"],
+          "Benefits": ["recSFSa4PUFyryQ3L"],
+          "Dietary": ["recgGK4TpFwyRXEtF"],
+          "KitchenSlots": ["recFpxQOORJc8cXOa"],
+          "Image": [
+            {
+              "id": "attid6DN90zeAfXpG",
+              "url": "https://dl.airtable.com/.attachments/6e0c305c097bac62ab0a311d61e7c3c6/0d7edac1/yogurt.png",
+              "filename": "yogurt.png",
+              "size": 3842830,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7718e80fcba89d1e0656d5cd977ec90e/edde5019",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/d26a4eecbac2355e6c66b0fe23b9ebe4/05b91bf5",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/b04ee90717866b9d1f8bea6707681347/14e0200f",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "rec3f3QhVXHDmMVap",
+          "Name": "Dragonfruit + Strawberry",
+          "Supplied Ingredients": "Strawberries, Strawberries, Strawberries",
+          "Recipe Ingredients copy": "Strawberries",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 3,
+          "Total Across Menu": 180,
+          "_index": 2,
+          "As used in recipes": ["reckGv3WD4Lsm07zl"],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Benefits": ["recaqqM3Jq8P8Owk8"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "att5hkjr2TUovUH06",
+              "url": "https://dl.airtable.com/.attachments/4977bb314882e05f7aefa256574d5c20/54d32e7c/Strawberry.png",
+              "filename": "Strawberry.png",
+              "size": 2023089,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/2601d9661b9964baf327e5319f2d0153/39906bd3",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/3f789cc77f23733646af052ff3bc7839/4374ba7a",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/e975c0d67710f2272a15393cde86448b/4c2537f9",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "recJtf3Ud5TBpIG3h",
+          "Name": " Dates",
+          "Supplied Ingredients": "Dates, Dates, Dates",
+          "Recipe Ingredients copy": "Dates",
+          "Description": "Organic, beneficial.. ingredient description coming here soon",
+          "ShotSize(ml)": 1.5,
+          "Total Across Menu": 100,
+          "_index": 9,
+          "As used in recipes": [
+            "recdmbwTvFjeBmvXA",
+            "recmZPUipsjXCLCbp",
+            "recanBFWTcakSaD79",
+            "recj3zdScMIkmnyL4",
+            "recJVUngt27eyLIru"
+          ],
+          "RecipeCustomization": ["recF7OyaP05uc5A6I"],
+          "Feeder Type": ["recb7veA9oFOyuD4q"],
+          "Benefits": ["rechXQIhjW1a1dsXn"],
+          "Dietary": ["recmfnXpiKD1mQgaC", "recgGK4TpFwyRXEtF"],
+          "Image": [
+            {
+              "id": "attRJVj48x8MPhmaP",
+              "url": "https://dl.airtable.com/.attachments/1002fb90daed5b0744338490669bf055/9ef3589c/Dates.png",
+              "filename": "Dates.png",
+              "size": 1321523,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/3d0c2d63712b4435f162f45a04c5add6/c636de5c",
+                  "width": 54,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/db5ac58777cc9c438bb9601cc2a3bc22/cdd6e46a",
+                  "width": 768,
+                  "height": 512
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/27a86dda62a7b83f923c0cfcf8bf2baa/ce704f46",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ],
+          "Icon": [
+            {
+              "id": "attTnD2OeQ4KgmPYl",
+              "url": "https://dl.airtable.com/.attachments/6ee935f01c2626524eabbc66934c9330/f202c1c6/FruitIcon.png",
+              "filename": "FruitIcon.png",
+              "size": 9090,
+              "type": "image/png",
+              "thumbnails": {
+                "small": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/7e1f1958a3ec739d54f23bf84cf838ba/829c7839",
+                  "width": 25,
+                  "height": 36
+                },
+                "large": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/012731502e8d5d373223ffa09860aaa2/0678304b",
+                  "width": 138,
+                  "height": 201
+                },
+                "full": {
+                  "url": "https://dl.airtable.com/.attachmentThumbnails/07a349c26a21a98c725409d231be5fc6/23f244af",
+                  "width": 3000,
+                  "height": 3000
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "defaultValue": [
+        "rec1dE86v90OECGMV",
+        "rec17gjOSmacPTVTk",
+        "recS107K858dvPtBx",
+        "recXmmTN2saDHFK4t",
+        "recJtf3Ud5TBpIG3h"
+      ],
+      "optionLimit": 5
+    }
+  ],
+  "AllBenefits": {
+    "recFlyZ68FePHBGbI": {
+      "id": "recFlyZ68FePHBGbI",
+      "Name": "Skin & Body",
+      "Description": "Marine collagen to support glow and recovery.",
+      "Enhancements": "Skin & Body",
+      "_index": 0,
+      "Ingredients": ["recMQbVzKifYdJcjk", "reccq7OKeeKYI5StS"],
+      "Enhancement Ingredient": ["reccq7OKeeKYI5StS"],
+      "Recipes": ["rec5COvvN0bV19iLF"],
+      "Icon": [
+        {
+          "id": "attmdfwaQPwAJtiGg",
+          "url": "https://dl.airtable.com/.attachments/f0ac16197bf1598bb39849c9553796db/406c5f4f/SkinBodyIcon.png",
+          "filename": "Skin & Body Icon.png",
+          "size": 5878,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/a4142460009936fc5bf72dc020686ebe/4b158eca",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/44606abfcc9d27185f8f00027ba33e3b/c3b8fc9b",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/685e15630a8e2eef4ffd88f75771c2de/c1d030f7",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    },
+    "recSFSa4PUFyryQ3L": {
+      "id": "recSFSa4PUFyryQ3L",
+      "Name": "Fitness",
+      "Description": "Contains 90% protein and a complete amino acid profile, ideal for building muscle.",
+      "Enhancements": "Fitness",
+      "_index": 1,
+      "Ingredients": [
+        "rec931A7t8PmNrC8n",
+        "recXmmTN2saDHFK4t",
+        "rec4lVJUGEAy0N7wF",
+        "rec1dE86v90OECGMV",
+        "recv9odwFZKA4RewR"
+      ],
+      "Enhancement Ingredient": ["rec4lVJUGEAy0N7wF"],
+      "Recipes": ["rec7tonLJn3hO5XfK"],
+      "Icon": [
+        {
+          "id": "attajoTg0idQeehR7",
+          "url": "https://dl.airtable.com/.attachments/e22323c27258a92dd114d1dcbdc9dc6b/b137f40b/FitnessIcon.png",
+          "filename": "Fitness Icon.png",
+          "size": 5139,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/e4ece38fda227223791f41d9064377fb/454b5eb2",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/af628e6ab81768a3d39393ee855648af/2c2027b2",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/30de28ed50e7b55122986af3a627b92f/97cef07a",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    },
+    "recaqqM3Jq8P8Owk8": {
+      "id": "recaqqM3Jq8P8Owk8",
+      "Name": "Immunity",
+      "Description": "Berries and roots to support your immunity. A potent blend of Astragalus, Goji, and Elderberry.",
+      "Enhancements": "Immunity",
+      "_index": 2,
+      "Ingredients": [
+        "recoZbC19OY1NbQKQ",
+        "recs26PO84nLJ6Mkt",
+        "rec3f3QhVXHDmMVap",
+        "receoVi4E2GALTBj8",
+        "receMWRnBlXKKta4e"
+      ],
+      "Enhancement Ingredient": ["receoVi4E2GALTBj8"],
+      "Recipes": [
+        "recbKBSzWKFJv0Cop",
+        "reclZ8KZQ9pQ52Bdo",
+        "rec9a8JVbgELC1bBL"
+      ],
+      "Icon": [
+        {
+          "id": "attw7UgjNvnvOmJM9",
+          "url": "https://dl.airtable.com/.attachments/0ed680926d3dd1244996ae345fc285b0/0933939a/ImmunityIcon.png",
+          "filename": "Immunity Icon.png",
+          "size": 6145,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/9e9800aec127904c7cff2ded4d1a155a/bad85515",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/05c70e183dc1abaab546f25ebf85856e/950d21e2",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/c8053381001d9d3f174b8441a10811da/3f5eb2a9",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    },
+    "recd3ha5AvHU1h8yW": {
+      "id": "recd3ha5AvHU1h8yW",
+      "Name": "Focus",
+      "Description": "Enhances cogintive performance, and reduces anixety.",
+      "Enhancements": "Focus",
+      "_index": 3,
+      "Ingredients": [
+        "recy7vqDhX0XvrBcd",
+        "recQeOwgATMJMs69w",
+        "rec7bxddOEEx4acOj"
+      ],
+      "Enhancement Ingredient": ["rec7bxddOEEx4acOj"],
+      "Recipes": ["recxMOxeukIvl4XOo"],
+      "Icon": [
+        {
+          "id": "attQgDjUF619Qr4AK",
+          "url": "https://dl.airtable.com/.attachments/8740bcb13836ec17699a346c1b6c6357/c37d122a/FocusIcon.png",
+          "filename": "Focus Icon.png",
+          "size": 3273,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/0864824855833d9a710bba49a8196b16/0736d6c3",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/460b4a607b7e17d8f02bc337963dc57f/c20db8f7",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/c3579d67b0020b43be6a8056a3387948/a465a3e8",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    },
+    "rechXQIhjW1a1dsXn": {
+      "id": "rechXQIhjW1a1dsXn",
+      "Name": "Digestion",
+      "Description": "Composed of two strains of ‘good’ bacteria to help with gut health.",
+      "Enhancements": "Digestion",
+      "_index": 4,
+      "Ingredients": [
+        "recCD2HSPMg4FfJpY",
+        "recGRd3CuZCnJUlEK",
+        "rec17gjOSmacPTVTk",
+        "recQkaEbJ9gAfRG1m",
+        "recJtf3Ud5TBpIG3h",
+        "recGOJ1oby67xemtp"
+      ],
+      "Enhancement Ingredient": ["recCD2HSPMg4FfJpY"],
+      "Recipes": ["rec93XzkFZTAIL7xj"],
+      "Icon": [
+        {
+          "id": "attTVWFoghJPKtZya",
+          "url": "https://dl.airtable.com/.attachments/43c540a53197deaf1b640bdf5b9d40c5/2bb35bbc/DigestionIcon.png",
+          "filename": "Digestion Icon.png",
+          "size": 2620,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/3cebb19ab6e1d0f27559fb6322a435e8/113f1678",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/705460341efee9f8c4baeba0575cb2d6/09595bfb",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/b41d3f494298fb18371aba57fba7e25a/da56b158",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    }
+  },
+  "BenefitCustomization": {
+    "recFlyZ68FePHBGbI": {
+      "id": "recFlyZ68FePHBGbI",
+      "Name": "Skin & Body",
+      "Description": "Marine collagen to support glow and recovery.",
+      "Enhancements": "Skin & Body",
+      "_index": 0,
+      "Ingredients": ["recMQbVzKifYdJcjk", "reccq7OKeeKYI5StS"],
+      "Enhancement Ingredient": ["reccq7OKeeKYI5StS"],
+      "Recipes": ["rec5COvvN0bV19iLF"],
+      "Icon": [
+        {
+          "id": "attmdfwaQPwAJtiGg",
+          "url": "https://dl.airtable.com/.attachments/f0ac16197bf1598bb39849c9553796db/406c5f4f/SkinBodyIcon.png",
+          "filename": "Skin & Body Icon.png",
+          "size": 5878,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/a4142460009936fc5bf72dc020686ebe/4b158eca",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/44606abfcc9d27185f8f00027ba33e3b/c3b8fc9b",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/685e15630a8e2eef4ffd88f75771c2de/c1d030f7",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    },
+    "recSFSa4PUFyryQ3L": {
+      "id": "recSFSa4PUFyryQ3L",
+      "Name": "Fitness",
+      "Description": "Contains 90% protein and a complete amino acid profile, ideal for building muscle.",
+      "Enhancements": "Fitness",
+      "_index": 1,
+      "Ingredients": [
+        "rec931A7t8PmNrC8n",
+        "recXmmTN2saDHFK4t",
+        "rec4lVJUGEAy0N7wF",
+        "rec1dE86v90OECGMV",
+        "recv9odwFZKA4RewR"
+      ],
+      "Enhancement Ingredient": ["rec4lVJUGEAy0N7wF"],
+      "Recipes": ["rec7tonLJn3hO5XfK"],
+      "Icon": [
+        {
+          "id": "attajoTg0idQeehR7",
+          "url": "https://dl.airtable.com/.attachments/e22323c27258a92dd114d1dcbdc9dc6b/b137f40b/FitnessIcon.png",
+          "filename": "Fitness Icon.png",
+          "size": 5139,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/e4ece38fda227223791f41d9064377fb/454b5eb2",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/af628e6ab81768a3d39393ee855648af/2c2027b2",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/30de28ed50e7b55122986af3a627b92f/97cef07a",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    },
+    "recaqqM3Jq8P8Owk8": {
+      "id": "recaqqM3Jq8P8Owk8",
+      "Name": "Immunity",
+      "Description": "Berries and roots to support your immunity. A potent blend of Astragalus, Goji, and Elderberry.",
+      "Enhancements": "Immunity",
+      "_index": 2,
+      "Ingredients": [
+        "recoZbC19OY1NbQKQ",
+        "recs26PO84nLJ6Mkt",
+        "rec3f3QhVXHDmMVap",
+        "receoVi4E2GALTBj8",
+        "receMWRnBlXKKta4e"
+      ],
+      "Enhancement Ingredient": ["receoVi4E2GALTBj8"],
+      "Recipes": [
+        "recbKBSzWKFJv0Cop",
+        "reclZ8KZQ9pQ52Bdo",
+        "rec9a8JVbgELC1bBL"
+      ],
+      "Icon": [
+        {
+          "id": "attw7UgjNvnvOmJM9",
+          "url": "https://dl.airtable.com/.attachments/0ed680926d3dd1244996ae345fc285b0/0933939a/ImmunityIcon.png",
+          "filename": "Immunity Icon.png",
+          "size": 6145,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/9e9800aec127904c7cff2ded4d1a155a/bad85515",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/05c70e183dc1abaab546f25ebf85856e/950d21e2",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/c8053381001d9d3f174b8441a10811da/3f5eb2a9",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    },
+    "recd3ha5AvHU1h8yW": {
+      "id": "recd3ha5AvHU1h8yW",
+      "Name": "Focus",
+      "Description": "Enhances cogintive performance, and reduces anixety.",
+      "Enhancements": "Focus",
+      "_index": 3,
+      "Ingredients": [
+        "recy7vqDhX0XvrBcd",
+        "recQeOwgATMJMs69w",
+        "rec7bxddOEEx4acOj"
+      ],
+      "Enhancement Ingredient": ["rec7bxddOEEx4acOj"],
+      "Recipes": ["recxMOxeukIvl4XOo"],
+      "Icon": [
+        {
+          "id": "attQgDjUF619Qr4AK",
+          "url": "https://dl.airtable.com/.attachments/8740bcb13836ec17699a346c1b6c6357/c37d122a/FocusIcon.png",
+          "filename": "Focus Icon.png",
+          "size": 3273,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/0864824855833d9a710bba49a8196b16/0736d6c3",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/460b4a607b7e17d8f02bc337963dc57f/c20db8f7",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/c3579d67b0020b43be6a8056a3387948/a465a3e8",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    },
+    "rechXQIhjW1a1dsXn": {
+      "id": "rechXQIhjW1a1dsXn",
+      "Name": "Digestion",
+      "Description": "Composed of two strains of ‘good’ bacteria to help with gut health.",
+      "Enhancements": "Digestion",
+      "_index": 4,
+      "Ingredients": [
+        "recCD2HSPMg4FfJpY",
+        "recGRd3CuZCnJUlEK",
+        "rec17gjOSmacPTVTk",
+        "recQkaEbJ9gAfRG1m",
+        "recJtf3Ud5TBpIG3h",
+        "recGOJ1oby67xemtp"
+      ],
+      "Enhancement Ingredient": ["recCD2HSPMg4FfJpY"],
+      "Recipes": ["rec93XzkFZTAIL7xj"],
+      "Icon": [
+        {
+          "id": "attTVWFoghJPKtZya",
+          "url": "https://dl.airtable.com/.attachments/43c540a53197deaf1b640bdf5b9d40c5/2bb35bbc/DigestionIcon.png",
+          "filename": "Digestion Icon.png",
+          "size": 2620,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/3cebb19ab6e1d0f27559fb6322a435e8/113f1678",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/705460341efee9f8c4baeba0575cb2d6/09595bfb",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/b41d3f494298fb18371aba57fba7e25a/da56b158",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    }
+  },
+  "Dietary": {
+    "recIeO6xCUWNJNYN9": {
+      "id": "recIeO6xCUWNJNYN9",
+      "Name": "Non-GMO",
+      "Applies To All Ingredients": true,
+      "_index": 0,
+      "Icon": [
+        {
+          "id": "attyfxsyWwmNHG203",
+          "url": "https://dl.airtable.com/.attachments/6797def73c78bad39b3319d69aae660d/a5351653/NON-GMO2x.png",
+          "filename": "NON-GMO@2x.png",
+          "size": 2173,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/2bd006c83347edfbbbbaa34614fb2fa2/d95a2ff8",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/a1494b8dc26cd738a25da2e4a598cd7c/d9c2c03e",
+              "width": 64,
+              "height": 64
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/f9e432ca7f87629c8fb59944055a703d/34b89d44",
+              "width": 3000,
+              "height": 3000
+            }
+          }
+        }
+      ]
+    },
+    "recchgKnIHjHDlrXJ": {
+      "id": "recchgKnIHjHDlrXJ",
+      "Name": "Vegetarian",
+      "Applies To All Ingredients": true,
+      "_index": 1,
+      "Icon": [
+        {
+          "id": "att2Tymxzj0zRATl6",
+          "url": "https://dl.airtable.com/.attachments/b58d72c966231ff021f5a94d32f90f70/2ddc6da3/Vegetarian2x.png",
+          "filename": "Vegetarian@2x.png",
+          "size": 1479,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/0a73f4db56eb022dd5c2232d33c622c9/b75971f4",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/6b3144293b3ce301c74512f70ef02feb/d14dd5cf",
+              "width": 64,
+              "height": 64
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/c4b4c1179d8cc335c0f8360467b139c2/8348c245",
+              "width": 3000,
+              "height": 3000
+            }
+          }
+        }
+      ]
+    },
+    "recgGK4TpFwyRXEtF": {
+      "id": "recgGK4TpFwyRXEtF",
+      "Name": "GlutenFree",
+      "_index": 2,
+      "Ingredients": [
+        "rec7bxddOEEx4acOj",
+        "reccq7OKeeKYI5StS",
+        "rec4lVJUGEAy0N7wF",
+        "rec1dE86v90OECGMV",
+        "recv9odwFZKA4RewR",
+        "rec3f3QhVXHDmMVap",
+        "rec17gjOSmacPTVTk",
+        "recGRd3CuZCnJUlEK",
+        "recJtf3Ud5TBpIG3h",
+        "recS107K858dvPtBx",
+        "recs26PO84nLJ6Mkt",
+        "recQkaEbJ9gAfRG1m",
+        "recGOJ1oby67xemtp",
+        "receMWRnBlXKKta4e",
+        "recoZbC19OY1NbQKQ",
+        "recMQbVzKifYdJcjk",
+        "recy7vqDhX0XvrBcd",
+        "rec931A7t8PmNrC8n",
+        "recCD2HSPMg4FfJpY",
+        "receoVi4E2GALTBj8",
+        "recXmmTN2saDHFK4t"
+      ],
+      "Icon": [
+        {
+          "id": "attmQrZHtSgRliJNV",
+          "url": "https://dl.airtable.com/.attachments/50f586f0aef1ccd46dda41337537334a/1443f7aa/GlutenFree2x.png",
+          "filename": "GlutenFree@2x.png",
+          "size": 1561,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/6c0fbdaa962c38e646e3c9b5727c7410/a2f0ef33",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/dd87c5950bc29edd6242e50cd0f35572/d20e5437",
+              "width": 64,
+              "height": 64
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/c3f6037c560e0f82c744e7e43dbb9c83/4ff2ea62",
+              "width": 3000,
+              "height": 3000
+            }
+          }
+        }
+      ]
+    },
+    "recmfnXpiKD1mQgaC": {
+      "id": "recmfnXpiKD1mQgaC",
+      "Name": "Vegan",
+      "_index": 3,
+      "Ingredients": [
+        "rec7bxddOEEx4acOj",
+        "reccq7OKeeKYI5StS",
+        "rec4lVJUGEAy0N7wF",
+        "rec1dE86v90OECGMV",
+        "recv9odwFZKA4RewR",
+        "rec3f3QhVXHDmMVap",
+        "rec17gjOSmacPTVTk",
+        "recGRd3CuZCnJUlEK",
+        "recJtf3Ud5TBpIG3h",
+        "recS107K858dvPtBx",
+        "recs26PO84nLJ6Mkt",
+        "recQkaEbJ9gAfRG1m",
+        "recGOJ1oby67xemtp",
+        "receMWRnBlXKKta4e",
+        "recoZbC19OY1NbQKQ",
+        "recMQbVzKifYdJcjk",
+        "recy7vqDhX0XvrBcd",
+        "rec931A7t8PmNrC8n",
+        "recCD2HSPMg4FfJpY",
+        "recQeOwgATMJMs69w",
+        "receoVi4E2GALTBj8"
+      ],
+      "Icon": [
+        {
+          "id": "attgNbWHmuUnKut8A",
+          "url": "https://dl.airtable.com/.attachments/ba195b024c46ff7b5509cbfe5c58088d/d9b03863/Vegan2x.png",
+          "filename": "Vegan@2x.png",
+          "size": 1784,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/97eb87bc7fd309c8d71707dc33b8b0b5/6c606c35",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/94e5b0aba7eec17419daddefd379e453/20f60768",
+              "width": 64,
+              "height": 64
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/f6275d7cbd61fec3a8e71b75800757d8/e93cb99e",
+              "width": 3000,
+              "height": 3000
+            }
+          }
+        }
+      ]
+    }
+  },
+  "Benefits": [
+    {
+      "id": "recFlyZ68FePHBGbI",
+      "Name": "Skin & Body",
+      "Description": "Marine collagen to support glow and recovery.",
+      "Enhancements": "Skin & Body",
+      "_index": 0,
+      "Ingredients": ["recMQbVzKifYdJcjk", "reccq7OKeeKYI5StS"],
+      "Enhancement Ingredient": ["reccq7OKeeKYI5StS"],
+      "Recipes": ["rec5COvvN0bV19iLF"],
+      "Icon": [
+        {
+          "id": "attmdfwaQPwAJtiGg",
+          "url": "https://dl.airtable.com/.attachments/f0ac16197bf1598bb39849c9553796db/406c5f4f/SkinBodyIcon.png",
+          "filename": "Skin & Body Icon.png",
+          "size": 5878,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/a4142460009936fc5bf72dc020686ebe/4b158eca",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/44606abfcc9d27185f8f00027ba33e3b/c3b8fc9b",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/685e15630a8e2eef4ffd88f75771c2de/c1d030f7",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "recSFSa4PUFyryQ3L",
+      "Name": "Fitness",
+      "Description": "Contains 90% protein and a complete amino acid profile, ideal for building muscle.",
+      "Enhancements": "Fitness",
+      "_index": 1,
+      "Ingredients": [
+        "rec931A7t8PmNrC8n",
+        "recXmmTN2saDHFK4t",
+        "rec4lVJUGEAy0N7wF",
+        "rec1dE86v90OECGMV",
+        "recv9odwFZKA4RewR"
+      ],
+      "Enhancement Ingredient": ["rec4lVJUGEAy0N7wF"],
+      "Recipes": ["rec7tonLJn3hO5XfK"],
+      "Icon": [
+        {
+          "id": "attajoTg0idQeehR7",
+          "url": "https://dl.airtable.com/.attachments/e22323c27258a92dd114d1dcbdc9dc6b/b137f40b/FitnessIcon.png",
+          "filename": "Fitness Icon.png",
+          "size": 5139,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/e4ece38fda227223791f41d9064377fb/454b5eb2",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/af628e6ab81768a3d39393ee855648af/2c2027b2",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/30de28ed50e7b55122986af3a627b92f/97cef07a",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "rechXQIhjW1a1dsXn",
+      "Name": "Digestion",
+      "Description": "Composed of two strains of ‘good’ bacteria to help with gut health.",
+      "Enhancements": "Digestion",
+      "_index": 4,
+      "Ingredients": [
+        "recCD2HSPMg4FfJpY",
+        "recGRd3CuZCnJUlEK",
+        "rec17gjOSmacPTVTk",
+        "recQkaEbJ9gAfRG1m",
+        "recJtf3Ud5TBpIG3h",
+        "recGOJ1oby67xemtp"
+      ],
+      "Enhancement Ingredient": ["recCD2HSPMg4FfJpY"],
+      "Recipes": ["rec93XzkFZTAIL7xj"],
+      "Icon": [
+        {
+          "id": "attTVWFoghJPKtZya",
+          "url": "https://dl.airtable.com/.attachments/43c540a53197deaf1b640bdf5b9d40c5/2bb35bbc/DigestionIcon.png",
+          "filename": "Digestion Icon.png",
+          "size": 2620,
+          "type": "image/png",
+          "thumbnails": {
+            "small": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/3cebb19ab6e1d0f27559fb6322a435e8/113f1678",
+              "width": 36,
+              "height": 36
+            },
+            "large": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/705460341efee9f8c4baeba0575cb2d6/09595bfb",
+              "width": 150,
+              "height": 150
+            },
+            "full": {
+              "url": "https://dl.airtable.com/.attachmentThumbnails/b41d3f494298fb18371aba57fba7e25a/da56b158",
+              "width": 150,
+              "height": 150
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "DefaultBenefitId": "recFlyZ68FePHBGbI",
+  "DefaultBenefit": {
+    "id": "recFlyZ68FePHBGbI",
+    "Name": "Skin & Body",
+    "Description": "Marine collagen to support glow and recovery.",
+    "Enhancements": "Skin & Body",
+    "_index": 0,
+    "Ingredients": ["recMQbVzKifYdJcjk", "reccq7OKeeKYI5StS"],
+    "Enhancement Ingredient": ["reccq7OKeeKYI5StS"],
+    "Recipes": ["rec5COvvN0bV19iLF"],
+    "Icon": [
+      {
+        "id": "attmdfwaQPwAJtiGg",
+        "url": "https://dl.airtable.com/.attachments/f0ac16197bf1598bb39849c9553796db/406c5f4f/SkinBodyIcon.png",
+        "filename": "Skin & Body Icon.png",
+        "size": 5878,
+        "type": "image/png",
+        "thumbnails": {
+          "small": {
+            "url": "https://dl.airtable.com/.attachmentThumbnails/a4142460009936fc5bf72dc020686ebe/4b158eca",
+            "width": 36,
+            "height": 36
+          },
+          "large": {
+            "url": "https://dl.airtable.com/.attachmentThumbnails/44606abfcc9d27185f8f00027ba33e3b/c3b8fc9b",
+            "width": 150,
+            "height": 150
+          },
+          "full": {
+            "url": "https://dl.airtable.com/.attachmentThumbnails/685e15630a8e2eef4ffd88f75771c2de/c1d030f7",
+            "width": 150,
+            "height": 150
+          }
+        }
+      }
+    ]
+  },
+  "DefaultBenefitName": "Skin & Body",
+  "DisplayPrice": "$5.95"
+}

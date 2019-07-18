@@ -3,7 +3,7 @@ import WebServer from '../aven-web/WebServer';
 import { IS_DEV } from '../aven-web/config';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
 import scrapeAirTable from './scrapeAirTable';
-import { createClient } from '../cloud-core/Kite';
+import { createSessionClient } from '../cloud-core/Kite';
 import { CloudContext, createReducerStream } from '../cloud-core/KiteReact';
 import createFSClient from '../cloud-server/createFSClient';
 
@@ -208,9 +208,10 @@ const startSkynetServer = async () => {
     rootPasswordHash: await hashSecureString(ONO_ROOT_PASSWORD),
   });
 
-  const kiteSource = createClient({
+  const kiteSource = createSessionClient({
     source: storageSource,
     domain: 'onofood.co',
+    auth: null,
   });
   const airtableFolder = kiteSource.docs.get('Airtable');
   const companyConfig = kiteSource.docs.setOverrideStream(
@@ -291,6 +292,7 @@ const startSkynetServer = async () => {
       'onofood.co': {
         CompanyConfig: { defaultRule: { canRead: true } },
         KitchenConfig: { defaultRule: { canRead: true } },
+        DeviceActions: { defaultRule: { canWrite: true } },
         RestaurantActions: { defaultRule: { canWrite: true } },
         RestaurantState: { defaultRule: { canWrite: true } },
         Menu: { defaultRule: { canRead: true } },

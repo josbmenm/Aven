@@ -1,0 +1,15 @@
+{
+  "aven": {
+    "srcDependencies": [
+      "ono-cloud",
+      "views",
+      "cloud-core",
+      "components",
+      "react-utils",
+      "logic",
+      "navigation-core",
+      "navigation-hooks",
+      "navigation-transitioner"
+    ]
+  }
+}

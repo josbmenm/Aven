@@ -27,12 +27,12 @@ export default function useCloudProvider({
     });
   }, [source, domain, isStateUnloaded(session)]);
 
-  // React.useEffect(() => {
-  //   if (!cloud || !establishAnonymousSession) {
-  //     return;
-  //   }
-  //   handleErrors(cloud.establishAnonymousSession());
-  // }, [cloud, establishAnonymousSession]);
+  React.useEffect(() => {
+    if (!cloud || !establishAnonymousSession) {
+      return;
+    }
+    handleErrors(cloud.establishAnonymousSession());
+  }, [cloud, establishAnonymousSession]);
 
   return cloud;
 }

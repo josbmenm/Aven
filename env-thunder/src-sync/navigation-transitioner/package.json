@@ -1,0 +1,9 @@
+{
+  "name": "react-navigation-transitioner",
+  "aven": {
+    "srcDependencies": [],
+    "moduleDependencies": [
+      "react-native-reanimated"
+    ]
+  }
+}

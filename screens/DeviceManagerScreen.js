@@ -25,10 +25,11 @@ import Row from '../components/Row';
 import Spinner from '../components/Spinner';
 import BitRow from '../components/BitRow';
 import { rowStyle, rowTitleStyle, titleStyle } from '../components/Styles';
-import useCloudReducer from '../cloud-core/useCloudReducer';
-import useCloudValue from '../cloud-core/useCloudValue';
-import useObservable from '../cloud-core/useObservable';
-import useCloud from '../cloud-core/useCloud';
+import {
+  useCloudReducer,
+  useCloud,
+  useCloudValue,
+} from '../cloud-core/KiteReact';
 import DevicesReducer from '../logic/DevicesReducer';
 import BlockForm from '../components/BlockForm';
 import Title from '../components/Title';

@@ -50,7 +50,7 @@ import createStackTransitionNavigator from '../navigation-transitioner/createSta
 import Transitioner from '../navigation-transitioner/Transitioner';
 import LinearGradient from 'react-native-linear-gradient';
 import { loadImages } from '../components/Image';
-import CloudContext from '../cloud-core/CloudContext';
+import { CloudContext } from '../cloud-core/KiteReact';
 import ErrorContainer from '../cloud-react/ErrorContainer';
 import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';

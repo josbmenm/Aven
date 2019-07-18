@@ -85,45 +85,6 @@ export const sequencerSystemValueCommands = {
   },
 };
 export const mainSubsystems = {
-  IOSystem: {
-    tagPrefix: null,
-    icon: '🔌',
-    faults: {},
-    readTags: {
-      // ...objFromCount(
-      //   32,
-      //   i => `PLC_1_Output${i}`,
-      //   i => ({
-      //     type: 'boolean',
-      //     subTag: `Local:1:I.ReadBack.${i}`,
-      //   }),
-      // ),
-      // ...objFromCount(
-      //   32,
-      //   i => `PLC_2_Input${i}`,
-      //   i => ({
-      //     type: 'boolean',
-      //     subTag: `Local:2:I.Data.${i}`,
-      //   }),
-      // ),
-      // ...objFromCount(
-      //   6,
-      //   i => `PLC_3_InputA${i}_Value`,
-      //   i => ({
-      //     type: 'integer',
-      //     subTag: `Local:3:I.Ch${i}Data`,
-      //   }),
-      // ),
-      // ...objFromCount(
-      //   6,
-      //   i => `PLC_3_InputA${i}_Status`,
-      //   i => ({
-      //     type: 'boolean',
-      //     subTag: `Local:3:I.Ch${i}Status`,
-      //   }),
-      // ),
-    },
-  },
   System: {
     tagPrefix: '_System',
     icon: '🤖',

@@ -11,7 +11,6 @@ import { View } from 'react-native';
 import RowSection from '../components/RowSection';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import useAsyncError from '../react-utils/useAsyncError';
-import ControlPanel from './ControlPanel';
 
 function ManualActionsSection() {
   const cloud = useCloud();
@@ -169,6 +168,7 @@ function ModeView({ restaurantState, dispatch }) {
       ) : (
         <Button
           title="Enable Manual Mode"
+          disabled={restaurantState.isAttached}
           onPress={() => {
             dispatch({
               type: 'EnableManualMode',
@@ -190,12 +190,6 @@ export default function OrdersScreen(props) {
       {...props}
       title="Manual Control"
       icon="⚡️"
-      footer={
-        <ControlPanel
-          restaurantState={restaurantState}
-          restaurantDispatch={dispatch}
-        />
-      }
       side={
         restaurantState && (
           <ModeView restaurantState={restaurantState} dispatch={dispatch} />
