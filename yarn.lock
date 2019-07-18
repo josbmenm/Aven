@@ -4,7 +4,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#fafcb1dd6d0fd7938853e9494955a99baa0a97de"
+  resolved "https://github.com/AvenCloud/Aven.git#f89c96ada1d60a7f83ab1ad55cf44beedf02ce13"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     "@expo/vector-icons" "^8.0.0"
