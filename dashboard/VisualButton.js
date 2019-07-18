@@ -5,7 +5,7 @@ import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 
 function VisualButton({
-  buttonStyle,
+  buttonStyle = {},
   titleStyle,
   title,
   type = 'solid', // 'solid' | 'outline' | 'link'
