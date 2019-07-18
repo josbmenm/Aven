@@ -8,25 +8,24 @@ function Heading({
   style,
   responsiveStyle,
   size = 'medium', // 'small' | 'mmedium' | 'large'
+  appearance = 'primary', // 'primary' | 'secondary'
   breakpoints,
   ...rest
 }) {
   const theme = useTheme();
-  const sizeVariant = React.useMemo(
-    () => createVariant({ theme, key: 'headingStyles' }),
-    [theme],
-  );
+  const color = theme.colors[appearance] || theme.colors.primary;
+
   return (
     <Responsive
       breakpoints={breakpoints}
       style={{
-        ...sizeVariant(size),
+        ...theme.headingStyles[size],
         ...responsiveStyle,
       }}
     >
       <Text
         style={{
-          color: theme.colors.monsterra,
+          color: color,
           fontFamily: theme.fonts.bold,
           ...style,
         }}

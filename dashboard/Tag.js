@@ -30,6 +30,7 @@ function Tag({ title, size, style, responsiveStyle, ...rest }) {
       size={size}
       responsiveStyle={responsiveStyle}
       style={{
+        fontFamily: theme.fonts.bold,
         textTransform: 'uppercase',
         borderRadius: 4,
         backgroundColor: theme.colors.monsterras[0],

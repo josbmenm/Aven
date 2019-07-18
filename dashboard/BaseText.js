@@ -9,7 +9,7 @@ function BaseText({
   style,
   responsiveStyle,
   breakpoints,
-  size = 'medium', // 'small' | 'mmedium' | 'large'
+  size = 'large', // 'small' | 'mmedium' | 'large'
   ...rest
 }) {
   const theme = useTheme();
@@ -18,7 +18,7 @@ function BaseText({
     [theme],
   );
   let boldStyle = bold
-    ? { fontWeight: 'bold', fontFamily: theme.fonts.bold }
+    ? { fontWeight: 'bold' }
     : {};
   return (
     <Responsive

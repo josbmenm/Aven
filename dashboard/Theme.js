@@ -5,25 +5,9 @@ const secondaryColor = '#5596e6';
 
 const colors = {
   primary: primaryColor,
-  primary5: `${primaryColor}0D`,
-  primary8: `${primaryColor}14`,
-  primary10: `${primaryColor}20`,
-  primary30: `${primaryColor}4C`,
-  primary40: `${primaryColor}66`,
-  primary50: `${primaryColor}80`,
-  primary60: `${primaryColor}99`,
-  primary70: `${primaryColor}B2`,
-  primary80: `${primaryColor}CC`,
+  primaryBg: primaryColor,
   secondary: secondaryColor,
-  secondary5: `${secondaryColor}0D`,
-  secondary8: `${secondaryColor}14`,
-  secondary10: `${secondaryColor}20`,
-  secondary30: `${secondaryColor}4C`,
-  secondary40: `${secondaryColor}66`,
-  secondary50: `${secondaryColor}80`,
-  secondary60: `${secondaryColor}99`,
-  secondary70: `${secondaryColor}B2`,
-  secondary80: `${secondaryColor}CC`,
+  secondaryBg: secondaryColor,
   white: '#fff',
   lightGrey: '#F8F8F8',
   lighterGrey: '#EFEFEF',
@@ -31,7 +15,7 @@ const colors = {
 };
 
 const fonts = {
-  normal: 'Maax',
+  regular: 'Maax',
   bold: 'Maax-Bold',
   serif: 'Lora',
 };

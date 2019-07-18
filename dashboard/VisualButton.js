@@ -5,11 +5,11 @@ import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 
 function VisualButton({
-  buttonStyle = {},
+  buttonStyle,
   titleStyle,
   title,
   type = 'solid', // 'solid' | 'outline' | 'link'
-  variant = 'primary', // 'primary' | 'secondary'
+  appearance = 'primary', // 'primary' | 'secondary'
   size = 'medium', // 'small' | 'medium' | 'large'
   disabled,
   responsiveStyle,
@@ -28,6 +28,14 @@ function VisualButton({
           borderBottomWidth: 0,
         }
       : null;
+
+  let buttonColor =
+    appearance === 'primary'
+      ? theme.colors.primaryBg
+      : appearance === 'secondary'
+      ? theme.colors.secondaryBg
+      : theme.colors.lightGrey;
+
   return (
     <Responsive
       breakpoints={breakpoints}
@@ -48,10 +56,8 @@ function VisualButton({
           borderRadius: theme.radii[2],
           borderWidth: 3,
           justifyContent: 'center',
-          borderColor:
-            type === 'outline' ? theme.colors.monsterras[0] : 'transparent',
-          backgroundColor:
-            type === 'solid' ? theme.colors.monsterras[0] : 'transparent',
+          borderColor: type === 'outline' ? buttonColor : 'transparent',
+          backgroundColor: type === 'solid' ? buttonColor : 'transparent',
           opacity: disabled ? 0.5 : 1,
           ...linkStyle,
           ...buttonStyle,
@@ -67,7 +73,9 @@ function VisualButton({
               lineHeight: 24,
               textAlign: 'center',
               color:
-                type === 'solid' ? theme.colors.white : theme.colors.monsterra,
+                type === 'solid'
+                  ? theme.colors.white
+                  : theme.colors[appearance],
               ...titleStyle,
             }}
           >
