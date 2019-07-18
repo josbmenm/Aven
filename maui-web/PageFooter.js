@@ -9,7 +9,7 @@ import OnoBlendsLogo from './OnoBlendsLogo';
 import OnoFoodLogo from './OnoFoodLogo';
 import Link from './Link';
 import FunctionalLink from '../navigation-web/Link';
-import { ColumnToRow, ColumnToRowChild } from './Responsive';
+import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
 
 function SocialText(props) {
   const theme = useTheme();

@@ -13,7 +13,7 @@ import {
   ResponsiveDisplay,
   HideDesktopView,
   HideMobileView,
-} from './Responsive';
+} from '../dashboard/Responsive';
 
 function SidebarMenuIcon({ color, ...rest }) {
   const theme = useTheme();

@@ -4,7 +4,7 @@ import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import ButtonLink from '../dashboard/ButtonLink';
 import Container from '../dashboard/Container';
-import { ColumnToRow, ColumnToRowChild } from './Responsive';
+import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import { aspectRatio43 } from '../components/Styles';
 import { useTheme } from '../dashboard/Theme';

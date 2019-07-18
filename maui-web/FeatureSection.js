@@ -1,6 +1,6 @@
 import React from 'react';
 import Heading from '../dashboard/Heading';
-import { ColumnToRow, ColumnToRowChild } from './Responsive';
+import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
 import { Responsive } from '../dashboard/Responsive';
 
 function FeatureSection({

@@ -5,7 +5,7 @@ import GenericPage from './GenericPage';
 import PageFooter from './PageFooter';
 import { useTheme } from '../dashboard/Theme';
 import { aspectRatio43 } from '../components/Styles';
-import { NoFlexToFlex, ColumnToRow, ColumnToRowChild } from './Responsive';
+import { NoFlexToFlex, ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';

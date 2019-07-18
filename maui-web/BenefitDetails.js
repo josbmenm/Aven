@@ -5,7 +5,7 @@ import AirtableImage from '../components/AirtableImage';
 import { useTheme } from '../dashboard/Theme';
 import Heading from '../dashboard/Heading';
 import Container from '../dashboard/Container';
-import { ColumnToRow, ColumnToRowChild } from './Responsive';
+import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
 import BodyText from '../dashboard/BodyText';
 import { Responsive } from '../dashboard/Responsive';
 

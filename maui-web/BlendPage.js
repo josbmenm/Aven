@@ -18,7 +18,7 @@ import {
   displayNameOfMenuItem,
   getSelectedIngredients,
 } from '../logic/configLogic';
-import { ColumnToRow, ColumnToRowChild } from './Responsive';
+import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import { BlendsCarousel } from './BlendsList';
 import BenefitDetails from './BenefitDetails';

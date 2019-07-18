@@ -4,7 +4,7 @@ import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
 import BaseText from '../dashboard/BaseText';
 import ButtonLink from '../dashboard/ButtonLink';
-import { ColumnToRow, ColumnToRowChild } from './Responsive';
+import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import Schedule from './Schedule';
 
