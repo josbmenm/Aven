@@ -1,7 +1,8 @@
 import React from 'react';
 import { Image, StyleSheet } from 'react-native';
 import View from '../views/View';
-import Text from '../views/Text';
+import SmallText from '../dashboard/SmallText';
+import BodyText from '../dashboard/BodyText';
 import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme';
 import OnoBlendsLogo from './OnoBlendsLogo';
@@ -9,6 +10,20 @@ import OnoFoodLogo from './OnoFoodLogo';
 import Link from './Link';
 import FunctionalLink from '../navigation-web/Link';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
+
+function SocialText(props) {
+  const theme = useTheme();
+  return (
+    <SmallText
+      style={{
+        fontSize: 12,
+        lineHeight: 18,
+        fontFamily: theme.fonts.regular,
+      }}
+      {...props}
+    />
+  );
+}
 
 export default function PageFooter() {
   const theme = useTheme();
@@ -52,10 +67,17 @@ export default function PageFooter() {
                   marginBottom: 20,
                 }}
               >
-                <Text size="medium" style={{ fontSize: 11, lineHeight: 18 }}>
+                <SmallText
+                  size="medium"
+                  style={{
+                    fontSize: 11,
+                    lineHeight: 18,
+                    fontFamily: theme.fonts.regular,
+                  }}
+                >
                   © Copyright {new Date().getFullYear()} Ono Food Co. All Rights
                   Reserved
-                </Text>
+                </SmallText>
               </ColumnToRowChild>
             </ColumnToRow>
           </ColumnToRowChild>
@@ -98,7 +120,13 @@ export default function PageFooter() {
                     title="press kit"
                     url="#press-kit"
                   />
-                  <Text>
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'baseline',
+                    }}
+                  >
                     <Link
                       titleStyle={{ textAlign: 'left' }}
                       title="terms"
@@ -108,16 +136,16 @@ export default function PageFooter() {
                         paddingLeft: 8,
                       }}
                     />
-                    <Text
+                    <BodyText
                       style={{
                         fontFamily: theme.fonts.bold,
                         fontSize: 16,
                         lineHeight: 24,
-                        color: theme.colors.monsterra,
+                        color: theme.colors.primary,
                       }}
                     >
                       &
-                    </Text>
+                    </BodyText>
                     <Link
                       titleStyle={{ textAlign: 'left' }}
                       title="privacy"
@@ -127,7 +155,7 @@ export default function PageFooter() {
                         paddingRight: 8,
                       }}
                     />
-                  </Text>
+                  </View>
 
                   <Link
                     titleStyle={{ textAlign: 'left' }}
@@ -165,9 +193,7 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/twitter.png')} />
-                    <Text style={{ fontSize: 12, lineHeight: 18 }}>
-                      @onofoodco
-                    </Text>
+                    <SocialText>@onofoodco</SocialText>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -186,9 +212,7 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/facebook.png')} />
-                    <Text style={{ fontSize: 12, lineHeight: 18 }}>
-                      @onofoodco
-                    </Text>
+                    <SocialText>@onofoodco</SocialText>
                   </View>
                 </FunctionalLink>
                 <FunctionalLink
@@ -207,9 +231,7 @@ export default function PageFooter() {
                     }}
                   >
                     <SocialIcon icon={require('./public/img/instagram.png')} />
-                    <Text style={{ fontSize: 12, lineHeight: 18 }}>
-                      @onofoodco
-                    </Text>
+                    <SocialText>@onofoodco</SocialText>
                   </View>
                 </FunctionalLink>
               </ColumnToRowChild>

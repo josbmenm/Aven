@@ -111,7 +111,7 @@ function BlockFormInputWithRef(
       >
         <Animated.Text
           style={{
-            fontFamily: theme.fonts.normal,
+            fontFamily: theme.fonts.regular,
             position: 'absolute',
             color: theme.colors.monsterras[1],
             left: 20,

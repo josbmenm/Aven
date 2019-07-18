@@ -13,8 +13,11 @@ const colors = {
   ],
 };
 
+colors.primary = colors.monsterra;
+colors.primaryBg = colors.monsterras[0];
+
 const fonts = {
-  normal: 'Maax',
+  regular: 'Maax',
   bold: 'Maax-Bold',
   serif: 'Lora',
 };
@@ -87,55 +90,6 @@ const OnoTheme = {
     small: 640 + 56, // 56 is the padding horizontal on the container
     large: 1280 + 56,
   },
-  space: [
-    0,
-    2,
-    3,
-    4,
-    5,
-    6,
-    8,
-    9,
-    10,
-    11,
-    12,
-    14,
-    15,
-    16,
-    20,
-    22,
-    24,
-    25,
-    27,
-    28,
-    30,
-    32,
-    35,
-    36,
-    40,
-    45,
-    48,
-    50,
-    52,
-    56,
-    60,
-    68,
-    70,
-    80,
-    90,
-    100,
-    116,
-    120,
-    128,
-    132,
-    160,
-    180,
-    184,
-    220,
-    240,
-    520,
-    640,
-  ],
 };
 
 export default OnoTheme;

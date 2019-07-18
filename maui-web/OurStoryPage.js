@@ -84,7 +84,7 @@ function OurStoryPage() {
                 position: ['relative', 'absolute'],
                 bottom: [0, -120],
                 alignSelf: ['inherit', 'center'],
-                maxWidth: [1200, 640]
+                maxWidth: [1200, 640],
               }}
             >
               <View
@@ -122,7 +122,10 @@ function OurStoryPage() {
             <FeatureSection
               title="Real food. Real good. Real fast."
               style={{ marginBottom: 80 }}
-              responsiveStyles={{ textAlign: ['center', 'left'] }}
+              responsiveStyles={{
+                textAlign: ['center', 'left'],
+                paddingLeft: [0, 120],
+              }}
               bodyText={
                 <BodyText>
                   Ono, a local Hawaiian term for “delicious” is exactly what our
@@ -166,6 +169,9 @@ function OurStoryPage() {
             <FeatureSection
               title="Blends with benefits"
               style={{ marginBottom: 80 }}
+              responsiveStyles={{
+                paddingLeft: [0, 120],
+              }}
               bodyText={
                 <BodyText>
                   Healthy, organic, and great tasting smoothies don’t have to be

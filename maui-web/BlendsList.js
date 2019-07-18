@@ -71,7 +71,7 @@ function BlendsListItem({ blend, style }) {
         </Heading>
         <Tag
           title={blend.DefaultBenefitName}
-          style={{ alignSelf: 'flex-end' }}
+          style={{ alignSelf: 'flex-end'  }}
         />
       </FunctionalLink>
     </View>

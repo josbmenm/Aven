@@ -31,7 +31,7 @@ function Link({
             ...buttonStyle,
           }}
           titleStyle={{
-            color: theme.colors.monsterra,
+            color: theme.colors.primary,
             fontSize: size === 'large' ? 24 : 16,
             ...titleStyle,
           }}

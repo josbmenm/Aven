@@ -151,7 +151,7 @@ function BlendContent({ displayName, blend, recipe }) {
                         >
                           <AirtableImage
                             image={benefit.Icon}
-                            tintColor={theme.colors.monsterras[0]}
+                            tintColor={theme.colors.primaryBg}
                             resizeMode="contain"
                             style={{ width: 60, height: 60 }}
                           />
@@ -196,7 +196,7 @@ function BlendContent({ displayName, blend, recipe }) {
                             borderRightColor:
                               index + 1 === dietary.length
                                 ? 'transparent'
-                                : theme.colors.monsterra,
+                                : theme.colors.primary,
                             borderRightWidth: 1,
                             justifyContent: 'center',
                             marginRight: 8,
@@ -209,7 +209,7 @@ function BlendContent({ displayName, blend, recipe }) {
                               marginBottom: 0,
                               fontSize: 12,
                               letterSpacing: 0.3,
-                              fontFamily: theme.fonts.normal,
+                              fontFamily: theme.fonts.regular,
                             }}
                           >
                             {dietaryMessage}
@@ -240,7 +240,7 @@ function BlendContent({ displayName, blend, recipe }) {
                             height: 32,
                             marginBottom: 8,
                           }}
-                          tintColor={theme.colors.monsterra}
+                          tintColor={theme.colors.primaryBg}
                         />
                         <BaseText
                           bold
@@ -274,7 +274,16 @@ function BlendContent({ displayName, blend, recipe }) {
             marginBottom: [40, 100],
           }}
         >
-          <Heading style={{ marginBottom: 16 }}>organic ingredients</Heading>
+          <Heading
+            size="medium"
+            responsiveStyle={{
+              fontSize: [24, 36],
+              lineHeight: [32, 44],
+            }}
+            style={{ marginBottom: 16 }}
+          >
+            organic ingredients
+          </Heading>
           <BodyText
             style={{ maxWidth: 520, textAlign: 'center' }}
             responsiveStyle={{
@@ -357,9 +366,12 @@ function BlendPage() {
       <View>
         <Container style={{ overflow: 'hidden' }}>
           <Heading
+            size="medium"
             style={{ textAlign: 'center' }}
             responsiveStyle={{
               marginBottom: [28, 52],
+              fontSize: [24, 36],
+              lineHeight: [32, 44],
             }}
           >
             our blends

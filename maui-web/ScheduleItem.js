@@ -22,6 +22,7 @@ function ScheduleItem({ item, style, ...rest }) {
     >
       <BaseText
         bold
+        size="medium"
         style={{
           fontFamily: theme.fonts.bold,
           textTransform: 'uppercase',

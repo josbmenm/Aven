@@ -30,6 +30,7 @@ function useSchedule() {
 }
 
 function Schedule({ withFloatingLabel = false, ...rest }) {
+  const theme = useTheme();
   const schedule = useSchedule();
 
   return (
@@ -37,11 +38,13 @@ function Schedule({ withFloatingLabel = false, ...rest }) {
       {schedule && withFloatingLabel ? (
         <BaseText
           bold
+          size="medium"
           className="hide-mobile"
           style={{
             position: 'absolute',
             top: 24,
             left: -120,
+            fontFamily: theme.fonts.bold
           }}
         >
           we're here!

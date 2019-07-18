@@ -91,7 +91,7 @@ export function LocationInput({
                       bold
                       style={{
                         fontFamily: theme.fonts.bold,
-                        color: theme.colors.monsterra,
+                        color: theme.colors.primary,
                         marginBottom: 0,
                         lineHeight: 28,
                       }}

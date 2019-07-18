@@ -4,7 +4,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#d40bb6fc64123326de6694243a591fe4ea7debac"
+  resolved "https://github.com/AvenCloud/Aven.git#fafcb1dd6d0fd7938853e9494955a99baa0a97de"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     "@expo/vector-icons" "^8.0.0"
@@ -3226,6 +3226,16 @@ duplexify@^3.5.0, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
+duplexify@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/duplexify/-/duplexify-4.1.1.tgz#7027dc374f157b122a8ae08c2d3ea4d2d953aa61"
+  integrity sha512-DY3xVEmVHTv1wSzKNbwoU6nVjzI369Y6sPoqfYr0/xlx3IdX2n94xIszTcjPO8W8ZIv0Wb0PXNcjuZyT4wiICA==
+  dependencies:
+    end-of-stream "^1.4.1"
+    inherits "^2.0.3"
+    readable-stream "^3.1.1"
+    stream-shift "^1.0.0"
+
 each-props@^1.3.0:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/each-props/-/each-props-1.3.2.tgz#ea45a414d16dd5cfa419b1a81720d5ca06892333"
@@ -3281,7 +3291,7 @@ encoding@^0.1.11:
   dependencies:
     iconv-lite "~0.4.13"
 
-end-of-stream@^1.0.0, end-of-stream@^1.1.0:
+end-of-stream@^1.0.0, end-of-stream@^1.1.0, end-of-stream@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/end-of-stream/-/end-of-stream-1.4.1.tgz#ed29634d19baba463b6ce6b80a37213eab71ec43"
   integrity sha512-1MkrZNvWTKCaigbn+W15elq2BB/L22nqrSY5DKlo3X6+vclJm8Bb5djXJBmEX6fS3+zCh/F4VBK5Z2KxJt4s2Q==
@@ -4061,15 +4071,15 @@ gcp-metadata@^2.0.0:
     json-bigint "^0.3.0"
 
 gcs-resumable-upload@^2.0.0:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/gcs-resumable-upload/-/gcs-resumable-upload-2.2.1.tgz#f8e23d102864251cc0b5545c1d5eda33dc9c47cd"
-  integrity sha512-daHamg7keMUqlb01dNf2Op/ZN/jSHTiqxlSXg8WsiXN52zSy4uJvhVyUBheWk4Zj6JKHs1f+WqKKmMBLFNIysA==
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/gcs-resumable-upload/-/gcs-resumable-upload-2.2.2.tgz#3cedd2616c7f09a3d688077e1c2bf0591ae3f232"
+  integrity sha512-pAkIVrYlRJ59d0QQHy1qU9JYVOjgwLz+SlPtn4S1Q3ckLYXfzZTd/47HnDra0u85j6BawnVQhNJxJTR+VZVsVg==
   dependencies:
     abort-controller "^3.0.0"
     configstore "^5.0.0"
     gaxios "^2.0.0"
     google-auth-library "^4.0.0"
-    pumpify "^1.5.1"
+    pumpify "^2.0.0"
     stream-events "^1.0.4"
 
 get-caller-file@^1.0.1:
@@ -5601,9 +5611,9 @@ jest@^23.6.0:
     jest-cli "^23.6.0"
 
 js-beautify@^1.6.14:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/js-beautify/-/js-beautify-1.10.0.tgz#9753a13c858d96828658cd18ae3ca0e5783ea672"
-  integrity sha512-OMwf/tPDpE/BLlYKqZOhqWsd3/z2N3KOlyn1wsCRGFwViE8LOQTcDtathQvHvZc+q+zWmcNAbwKSC+iJoMaH2Q==
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/js-beautify/-/js-beautify-1.10.1.tgz#bdfe738ddbcaa12e4fced5af2d7cfad59f60ac0a"
+  integrity sha512-4y8SHOIRC+/YQ2gs3zJEKBUraQerq49FJYyXRpdzUGYQzCq8q9xtIh0YXial1S5KmonVui4aiUb6XaGyjE51XA==
   dependencies:
     config-chain "^1.1.12"
     editorconfig "^0.15.3"
@@ -7899,6 +7909,15 @@ pumpify@^1.3.5, pumpify@^1.5.1:
     inherits "^2.0.3"
     pump "^2.0.0"
 
+pumpify@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/pumpify/-/pumpify-2.0.0.tgz#975519e5a9890ae0fb4724274e3fec97e43a30b6"
+  integrity sha512-ieN9HmpFPt4J4U4qnjN4BxrnqpPPXJyp3qFErxfwBtFOec6ewpIHdS2eu3TkmGW6S+RzFGEOGpm5ih/X/onRPQ==
+  dependencies:
+    duplexify "^4.1.1"
+    inherits "^2.0.3"
+    pump "^3.0.0"
+
 punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
@@ -8177,7 +8196,7 @@ react-navigation-stack@1.0.0-alpha.22:
 
 "react-navigation-stack@https://github.com/react-navigation/react-navigation-stack":
   version "2.0.0-alpha.6"
-  resolved "https://github.com/react-navigation/react-navigation-stack#3ed1b283f14388d10213a640b153eb74c1d8536a"
+  resolved "https://github.com/react-navigation/react-navigation-stack#2ddf3a4a3985047811c3c90f1d8263ea71994966"
   dependencies:
     react-native-safe-area-view "^0.14.6"
 

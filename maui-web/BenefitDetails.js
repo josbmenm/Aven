@@ -6,14 +6,13 @@ import { useTheme } from '../dashboard/Theme';
 import Heading from '../dashboard/Heading';
 import Container from '../dashboard/Container';
 import { ColumnToRow, ColumnToRowChild } from './Responsive';
-import Text from '../dashboard/BaseText';
 import BodyText from '../dashboard/BodyText';
 import { Responsive } from '../dashboard/Responsive';
 
 function BodyLink({ children, url }) {
   return (
     <Link url={url}>
-      <Text style={{ fontWeight: 'bold' }}>{children}</Text>
+      <BodyText style={{ fontWeight: 'bold',  }}>{children}</BodyText>
     </Link>
   );
 }
@@ -135,9 +134,12 @@ export default function BenefitDetails({ benefit }) {
         }}
       >
         <Heading
+          size="medium"
           style={{ textAlign: 'center' }}
           responsiveStyle={{
             marginBottom: [0, 24],
+            fontSize: [24, 36],
+            lineHeight: [32, 44]
           }}
         >
           this blend is designed for {benefit.Name}
@@ -147,7 +149,7 @@ export default function BenefitDetails({ benefit }) {
             <AirtableImage
               image={benefit.Icon}
               style={{ alignSelf: 'center', width: 120, height: 120 }}
-              tintColor={theme.colors.monsterras[0]}
+              tintColor={theme.colors.primaryBg}
             />
           </ColumnToRowChild>
           <Responsive
