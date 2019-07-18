@@ -10,11 +10,15 @@ function BlockFormInputWithRef(
 ) {
   const theme = useTheme();
   const desiredPlaceholderOpen = value ? 0 : 1;
-  const inputOpacity = new Animated.Value(0);
-  const [focus, setFocus] = React.useState(0);
   const [placeholderOpenProgress] = useState(
     new Animated.Value(desiredPlaceholderOpen),
   );
+
+
+  const [focus, setFocus] = React.useState(0);
+  const desiredFocus = focus ? 1 : 0;
+  const [inputOpacityProgress] = useState(new Animated.Value(0));
+
   useEffect(() => {
     Animated.timing(placeholderOpenProgress, {
       toValue: desiredPlaceholderOpen,
@@ -24,12 +28,12 @@ function BlockFormInputWithRef(
   }, [desiredPlaceholderOpen]);
 
   useEffect(() => {
-    Animated.timing(inputOpacity, {
-      toValue: focus,
+    Animated.timing(inputOpacityProgress, {
+      toValue: desiredFocus,
       duration: 200,
       easing: Easing.out(Easing.cubic),
     }).start();
-  }, [focus]);
+  }, [desiredFocus]);
 
   function handleFocus(e) {
     e.persist();
@@ -89,7 +93,7 @@ function BlockFormInputWithRef(
       padding: 4,
       margin: -4,
       borderRadius: 4,
-      backgroundColor: inputOpacity.interpolate({
+      backgroundColor: inputOpacityProgress.interpolate({
         inputRange: [0, 1],
         outputRange: ["rgba(204, 221, 220, 0)", "rgba(204, 221, 220, 1)"]
       }),
