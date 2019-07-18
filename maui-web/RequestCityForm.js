@@ -8,7 +8,7 @@ import { useCloud } from '../cloud-core/KiteReact';
 import useAsyncError from '../react-utils/useAsyncError';
 import { Responsive } from '../dashboard/Responsive';
 import Spinner from '../dashboard/Spinner';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 
 function RequestCityForm({ breakpoints }) {
   const theme = useTheme();
@@ -31,7 +31,7 @@ function RequestCityForm({ breakpoints }) {
   if (isDone) {
     return (
       <View>
-        <BodyText bold>Thanks, your request is in!:</BodyText>
+        <BodyText bold>Thanks, your request is in!</BodyText>
       </View>
     );
   }
