@@ -123,12 +123,12 @@ export function createBlock({
   }
 
   let onStop = null;
-  const blockStateStream = xs.createWithMemory({
+  const blockStream = xs.createWithMemory({
     start: notify => {
-      notify.next(blockState);
       notifyStateChange = () => {
         notify.next(blockState);
       };
+      notifyStateChange();
       if (blockState.value === undefined) {
         source
           .dispatch({
@@ -163,12 +163,12 @@ export function createBlock({
     },
   });
   const blockStateValue = createStreamValue(
-    blockStateStream,
+    blockStream,
     () => `Block(${onGetName()}#${blockId})`,
   );
 
   const blockValue = createStreamValue(
-    blockStateStream
+    blockStream
       .map(blockState => {
         return blockState.value;
       })
@@ -560,7 +560,7 @@ export function createDoc({
     return result;
   }
 
-  const value = createStreamValue(
+  const docValue = createStreamValue(
     docStream
       .map(state => {
         if (state.id === undefined) {
@@ -578,7 +578,7 @@ export function createDoc({
     () => `Doc(${getName()}).value`,
   );
 
-  const idAndValue = createStreamValue(
+  const docIdAndValue = createStreamValue(
     docStream
       .map(state => {
         if (state.id === undefined) {
@@ -635,10 +635,10 @@ export function createDoc({
     ...docStateValue,
     type: 'Doc',
     getId,
-    idAndValue,
+    idAndValue: docIdAndValue,
     isDestroyed,
     getReference,
-    value,
+    value: docValue,
     getName,
     getParentName,
     getBlock,
@@ -903,8 +903,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
   async function GetDocValue({ name }) {
     const doc = rootDocSet.get(name);
     const context = await doc.getReference();
-    const value = await doc.value.load();
-    const id = doc.getId();
+    const results = await doc.idAndValue.load();
     const isDestroyed = doc.isDestroyed();
     if (isDestroyed) {
       return {
@@ -914,7 +913,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
         context,
       };
     }
-    return { context, value, id };
+    return { context, ...results };
   }
 
   async function GetDocValues({ domain, names }) {

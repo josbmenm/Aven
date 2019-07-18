@@ -16,7 +16,7 @@ function DocPage() {
   const cloud = useCloud('msg');
   const msg = cloud.get('msg');
   useEffect(() => {
-    msg.put('Hello, world!');
+    msg.putValue('Hello, world!');
   });
       `}
         />
