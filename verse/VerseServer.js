@@ -246,7 +246,6 @@ const startVerseServer = async () => {
           if (isActionReceived && (isSystemIdle || isActionComplete)) {
             logBehavior(`${noFaults ? 'Done with' : 'FAULTED on'} ${actionId}`);
             stateValue.removeListener(stateListener);
-            sub && sub.unsubscribe();
             if (noFaults === false) {
               reject(new Error(`System "${subsystem}" has faulted`));
             } else {
