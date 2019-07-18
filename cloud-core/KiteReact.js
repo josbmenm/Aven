@@ -10,7 +10,7 @@ export function useCloudClient() {
 
 export function useCloud() {
   const cloudClient = useCloudClient();
-  return cloudClient.getCloud();
+  return cloudClient.getCloud ? cloudClient.getCloud() : cloudClient; // hacky temp.. should always .getCloud on a real client..
 }
 
 export function useStream(stream) {

@@ -45,7 +45,7 @@ export async function streamLoad(stream, onGetContext) {
 }
 
 export function createStreamValue(inputStream, onGetContext) {
-  const stream = inputStream.remember();
+  const stream = inputStream.remember().debug(() => {});
   return {
     get: () => streamGet(stream),
     load: () => streamLoad(stream, onGetContext),

@@ -55,11 +55,13 @@ export function createStreamDoc(stream, reference) {
   const value = createStreamValue(stream, () => reference);
   const idAndValue = createStreamValue(
     stream.map(val => {
+      const id = getIdOfValue(val).id;
       return {
-        id: getIdOfValue(val).id,
+        id,
         value: val,
       };
     }),
+    () => `${reference}.value`,
   );
   return {
     type: 'StreamDoc',
@@ -178,9 +180,7 @@ export function createBlock({
       })
       .filter(val => {
         return val !== undefined;
-      })
-      .remember()
-      .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
+      }),
     () => `Block(${onGetName()}#${blockId}).value`,
   );
 
@@ -576,15 +576,14 @@ export function createDoc({
         const block = getBlock(state.id);
         return block.value.stream;
       })
-      .flatten()
-      .remember()
-      .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
+      .flatten(),
     () => `Doc(${getName()}).value`,
   );
 
   const docIdAndValue = createStreamValue(
     docStream
       .map(state => {
+        console.log('woah haz state', state.id);
         if (state.id === undefined) {
           return xs.never();
         }
@@ -594,9 +593,7 @@ export function createDoc({
         const block = getBlock(state.id);
         return block.value.stream.map(val => ({ value: val, id: state.id }));
       })
-      .flatten()
-      .remember()
-      .debug(v => {}), // uhh, remember doesnt seem to work until this debug is here....???
+      .flatten(),
     () => `Doc(${getName()}).idValue`,
   );
 
@@ -762,7 +759,7 @@ export function createDocSet({
   }
 
   function setOverrideStream(name, stream, context) {
-    const streamDoc = createStreamDoc(stream, context);
+    const streamDoc = createStreamDoc(stream, context || name);
     childDocs.set(name, streamDoc);
     return streamDoc;
   }
