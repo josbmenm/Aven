@@ -2,7 +2,7 @@ import {
   createBlock,
   createDoc,
   createDocSet,
-  createAuthenticatedClient,
+  createSessionClient,
   createClient,
 } from '../Kite';
 import createMemoryStorageSource from '../createMemoryStorageSource';

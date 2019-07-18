@@ -219,7 +219,7 @@ export default function createCloudClient({
       return await defaultAction();
     }
     const doc = docs.get(name);
-    await doc.putTransaction(value);
+    await doc.putTransactionValue(value);
     const id = await doc.getId();
     return { id, name, domain };
   }

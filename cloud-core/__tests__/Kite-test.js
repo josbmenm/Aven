@@ -2,7 +2,7 @@ import {
   createBlock,
   createDoc,
   createDocSet,
-  createAuthenticatedClient,
+  createSessionClient,
   createClient,
 } from '../Kite';
 import createMemoryStorageSource from '../createMemoryStorageSource';
@@ -499,7 +499,7 @@ describe('authenticated client behaves as source', () => {
       domain: options.domain,
       ...options,
     });
-    const client = createAuthenticatedClient({
+    const client = createSessionClient({
       source,
       domain: options.domain,
     });

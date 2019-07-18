@@ -3,18 +3,18 @@ export default function authenticateSource(
   authenticatedDomain,
   staticAuth,
 ) {
-  async function observeDoc(domain, name, auth) {
+  function getDocStream(domain, name, auth) {
     if (auth || domain !== authenticatedDomain) {
-      return await source.observeDoc(domain, name, auth);
+      return source.getDocStream(domain, name, auth);
     }
-    return await source.observeDoc(domain, name, staticAuth);
+    return source.getDocStream(domain, name, staticAuth);
   }
 
-  async function observeDocChildren(domain, name, auth) {
+  function getDocChildrenEventStream(domain, name, auth) {
     if (auth || domain !== authenticatedDomain) {
-      return await source.observeDocChildren(domain, name, auth);
+      return source.getDocChildrenEventStream(domain, name, auth);
     }
-    return await source.observeDocChildren(domain, name, staticAuth);
+    return source.getDocChildrenEventStream(domain, name, staticAuth);
   }
 
   async function dispatch(action) {
@@ -25,8 +25,8 @@ export default function authenticateSource(
   }
   return {
     ...source,
-    observeDoc,
-    observeDocChildren,
+    getDocStream,
+    getDocChildrenEventStream,
     dispatch,
   };
 }

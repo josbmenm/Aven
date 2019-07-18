@@ -4,8 +4,13 @@ import { streamGet } from './StreamValue';
 
 export const CloudContext = React.createContext(null);
 
-export function useCloud() {
+export function useCloudClient() {
   return React.useContext(CloudContext);
+}
+
+export function useCloud() {
+  const cloudClient = useCloudClient();
+  return cloudClient.getCloud();
 }
 
 export function useStream(stream) {
@@ -57,7 +62,9 @@ export function useStream(stream) {
 
   return value;
 }
-
+export function useValue(value) {
+  return useStream(value.stream);
+}
 export function useCloudValue(cloudValueInput) {
   let cloudVal = cloudValueInput;
   const cloud = useCloud();

@@ -43,6 +43,10 @@ Doc
 
 */
 
+function getNow() {
+  return Math.floor(new Date().getTime() / 1000);
+}
+
 function hasDepth(name) {
   return name.match(/\//);
 }
@@ -145,7 +149,7 @@ export function createBlock({
             blockState = {
               ...blockState,
               value: resp.value,
-              lastFetchTime: Date.now(),
+              lastFetchTime: getNow(),
             };
             notify.next(blockState);
           })
@@ -193,13 +197,13 @@ export function createBlock({
   function shamefullySetPutTime() {
     // internal use only please
     setState({
-      lastPutTime: Date.now(),
+      lastPutTime: getNow(),
     });
   }
 
   function shamefullySetFetchedValue(value) {
     setState({
-      lastFetchTime: Date.now(),
+      lastFetchTime: getNow(),
       value,
     });
   }
@@ -323,7 +327,7 @@ export function createDoc({
             block.shamefullySetFetchedValue(v.value);
           }
           setState({
-            lastFetchTime: Date.now(),
+            lastFetchTime: getNow(),
             id: v.id || null,
           });
         },
@@ -448,7 +452,7 @@ export function createDoc({
             : postResp.name.slice(parentName.length + 1);
         await onDidRename(resultingChildName);
         setState({
-          lastPutTime: Date.now(),
+          lastPutTime: getNow(),
           isPosted: true,
         });
         block.shamefullySetPutTime();
@@ -481,7 +485,7 @@ export function createDoc({
           id: putId,
         });
         setState({
-          lastPutTime: Date.now(),
+          lastPutTime: getNow(),
         });
       } catch (e) {
         setState({
@@ -505,7 +509,7 @@ export function createDoc({
           value: block.value.get(),
         });
         setState({
-          lastPutTime: Date.now(),
+          lastPutTime: getNow(),
         });
         block.shamefullySetPutTime();
       } catch (e) {
@@ -525,7 +529,7 @@ export function createDoc({
     const expectedTransactionValue = {
       type: 'TransactionValue',
       on,
-      time: Date.now(),
+      time: getNow(),
       value,
     };
     const expectedBlock = getBlockOfValue(expectedTransactionValue);
@@ -544,9 +548,9 @@ export function createDoc({
     });
 
     let stateUpdates = {
-      lastPutTime: Date.now(),
+      lastPutTime: getNow(),
       puttingFromId: null,
-      lastFetchTime: Date.now(),
+      lastFetchTime: getNow(),
       id: result.id,
     };
     if (result.id !== expectedBlock.id) {
@@ -866,6 +870,9 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
 
   async function GetBlock({ name, id }) {
     const doc = rootDocSet.get(name);
+    if (doc.type === 'StreamDoc') {
+      throw new Err('Cannot get block of a stream doc, yet, unfortunately');
+    }
     const block = doc.getBlock(id);
     const value = await block.value.load();
     return {
@@ -968,7 +975,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
   };
 }
 
-export function createAuthenticatedClient({ domain, source, auth }) {
+export function createSessionClient({ domain, source, auth }) {
   const docs = createDocSet({
     domain,
     source,
@@ -978,6 +985,7 @@ export function createAuthenticatedClient({ domain, source, auth }) {
   });
 
   return {
+    type: 'AuthenticatedClient',
     docs,
     connected: source.connected,
     get: docs.get,
@@ -986,7 +994,61 @@ export function createAuthenticatedClient({ domain, source, auth }) {
 }
 
 export function createClient({ domain, source }) {
+  let clientState = {};
+
+  let performStateNotification = null;
+
+  let sessionClient = createSessionClient({ domain, source, auth: null });
+
+  function setClientState(updates) {
+    let prevClientState = clientState;
+    clientState = {
+      ...clientState,
+      ...updates,
+    };
+    if (clientState.session !== prevClientState.session) {
+      sessionClient = createSessionClient({
+        domain,
+        source,
+        auth: clientState.session,
+      });
+    }
+    performStateNotification && performStateNotification();
+  }
+
+  const clientStateValue = createStreamValue(
+    xs.createWithMemory({
+      start: listen => {
+        performStateNotification = () => {
+          listen.next(clientState);
+        };
+        performStateNotification();
+      },
+      stop: () => {
+        performStateNotification = null;
+      },
+    }),
+  );
+  async function establishAnonymousSession() {
+    if (clientState.session) {
+      return clientState.session;
+    }
+    const created = await source.dispatch({
+      type: 'CreateAnonymousSession',
+      domain,
+    });
+    if (created && created.session) {
+      setClientState({
+        session: created.session,
+      });
+    }
+    return created;
+  }
   return {
-    ...createAuthenticatedClient({ domain, source }),
+    type: 'Client',
+    establishAnonymousSession,
+    getCloud: () => sessionClient,
+    connected: source.connected,
+    ...clientStateValue,
   };
 }

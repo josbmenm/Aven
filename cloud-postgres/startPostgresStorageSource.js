@@ -7,6 +7,7 @@ import { getMaxListDocs } from '../cloud-core/maxListDocs';
 import bindCommitDeepBlock from '../cloud-core/bindCommitDeepBlock';
 import Err from '../utils/Err';
 import xs from 'xstream';
+import { createStreamValue } from '../cloud-core/StreamValue';
 
 const pgFormat = require('pg-format');
 
@@ -298,9 +299,7 @@ export default async function startPostgresStorageSource({
 
     if (id && putResult.id !== id) {
       throw new Err(
-        `Invalid ID provided for this value. Provided "${id}" but computed id "${
-          putResult.id
-        }"`,
+        `Invalid ID provided for this value. Provided "${id}" but computed id "${putResult.id}"`,
         'InvalidValueId',
         { id, value },
       );
@@ -905,7 +904,7 @@ export default async function startPostgresStorageSource({
 
   return {
     isConnected,
-    connected: isConnectedStream,
+    connected: createStreamValue(isConnectedStream, () => `PostgresConnected`),
     close,
     observeDoc,
     observeDocChildren,

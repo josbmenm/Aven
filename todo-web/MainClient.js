@@ -2,7 +2,7 @@ import App from './App';
 
 import startWebClient from '../aven-web/WebClient';
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
-import { createAuthenticatedClient } from '../cloud-core/Kite';
+import { createSessionClient } from '../cloud-core/Kite';
 import { CloudContext } from '../cloud-core/KiteReact';
 
 const networkSource = createBrowserNetworkSource({
@@ -10,7 +10,7 @@ const networkSource = createBrowserNetworkSource({
   useSSL: null,
 });
 
-const client = createAuthenticatedClient({
+const client = createSessionClient({
   source: networkSource,
   domain: 'todo.aven.io',
   auth: null,

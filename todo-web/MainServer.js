@@ -1,6 +1,6 @@
 import createEvalSource from '../cloud-core/createEvalSource';
 import createCloudClient from '../cloud-core/createCloudClient';
-import { createAuthenticatedClient } from '../cloud-core/Kite';
+import { createSessionClient } from '../cloud-core/Kite';
 import { CloudContext } from '../cloud-core/KiteReact';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import startFSStorageSource from '../cloud-fs/startFSStorageSource';
@@ -25,7 +25,7 @@ const runServer = async () => {
     dataDir: './db',
   });
 
-  const source = createAuthenticatedClient({
+  const source = createSessionClient({
     source: storageSource,
     domain: 'todo.aven.io',
     auth: null,

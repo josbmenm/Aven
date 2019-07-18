@@ -2,6 +2,7 @@ import { Observable, BehaviorSubject } from 'rxjs-compat';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import Err from '../utils/Err';
 import xs from 'xstream';
+import { createStreamValue } from '../cloud-core/StreamValue';
 
 let idIndex = 0;
 const idBase = Date.now();
@@ -27,7 +28,7 @@ export default function createNetworkSource(opts) {
   const isConnectedStream = xs.createWithMemory({
     start: listener => {
       listener.next(isCurrentlyConnected);
-      updateIsConnected = listener.next;
+      updateIsConnected = v => listener.next(v);
     },
     stop: () => {
       updateIsConnected = null;
@@ -249,7 +250,7 @@ export default function createNetworkSource(opts) {
     // new stream API:
     getDocStream,
     getDocChildrenEventStream,
-    connected: isConnectedStream,
+    connected: createStreamValue(isConnectedStream, () => `NetworkConnected`),
 
     close: () => {
       ws && ws.close();

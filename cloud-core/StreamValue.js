@@ -12,10 +12,10 @@ export function streamGet(stream) {
   return val;
 }
 
-export async function streamLoad(stream) {
+export async function streamLoad(stream, onGetContext) {
   return new Promise((resolve, reject) => {
     let loadTimeout = setTimeout(() => {
-      reject(new Error('Timed out loading..'));
+      reject(new Error(`Timed out loading "${onGetContext()}".`));
     }, 30000);
 
     let loadListener = null;

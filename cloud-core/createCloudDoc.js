@@ -699,7 +699,7 @@ export default function createCloudDoc({
     // return result;
   }
 
-  async function putTransaction(value) {
+  async function putTransactionValue(value) {
     await fetch();
     const prevId = getId();
     const expectedTransactionValue = {
