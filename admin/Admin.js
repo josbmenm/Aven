@@ -26,12 +26,10 @@ import {
 import { useNavigation, useNavigationState } from '../navigation-hooks/Hooks';
 
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
-import CloudContext from '../cloud-core/CloudContext';
-import createCloudClient from '../cloud-core/createCloudClient';
+import { CloudContext, useCloudValue } from '../cloud-core/KiteReact';
 import useCloud from '../cloud-core/useCloud';
 import useCloudSession from '../cloud-core/useCloudSession';
 import useObservable from '../cloud-core/useObservable';
-import useCloudValue from '../cloud-core/useCloudValue';
 import ErrorContainer from '../cloud-react/ErrorContainer';
 import Animated from '../views/Animated';
 import useAsyncStorage, { isStateUnloaded } from '../utils/useAsyncStorage';
@@ -1567,11 +1565,12 @@ function AdminApp({ defaultSession = {}, descriptors }) {
       authority,
       useSSL,
     });
-    const client = createCloudClient({
-      initialSession: sessionState,
-      source,
-      domain,
-    });
+    const client = null;
+    // const client = createCloudClient({
+    //   initialSession: sessionState,
+    //   source,
+    //   domain,
+    // });
 
     return client;
   }, [clientConfig, sessionState]);

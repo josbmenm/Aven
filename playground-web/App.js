@@ -28,7 +28,7 @@ export default function App() {
           //   .then(alertDone)
           //   .catch(alertError);
           // log
-          //   .putTransaction({ much: 'value' })
+          //   .putTransactionValue({ much: 'value' })
           //   .then(alertDone)
           //   .catch(alertError);
         }}
