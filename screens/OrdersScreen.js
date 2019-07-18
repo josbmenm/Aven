@@ -16,7 +16,6 @@ import {
   useCloudReducer,
   useCloudValue,
 } from '../cloud-core/KiteReact';
-import useObservable from '../cloud-core/useObservable';
 import RowSection from '../components/RowSection';
 import TextRow from '../components/TextRow';
 import BitRow from '../components/BitRow';
@@ -40,15 +39,6 @@ import useAsyncError from '../react-utils/useAsyncError';
 import ControlPanel from './ControlPanel';
 import cuid from 'cuid';
 
-function ObservableBitRow({ value, title }) {
-  const currentValue = useObservable(value);
-  return <BitRow value={currentValue} title={title} />;
-}
-
-function ObservableJSONRow({ value, title }) {
-  const currentValue = useObservable(value);
-  return <TextRow text={JSON.stringify(currentValue)} title={title} />;
-}
 function Subtitle({ title }) {
   return (
     <Text style={{ ...titleStyle, opacity: 0.8, fontSize: 20 }}>{title}</Text>

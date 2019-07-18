@@ -31,6 +31,7 @@ import {
 
 import useFocus from '../navigation-hooks/useFocus';
 import BlockFormInput from '../components/BlockFormInput';
+import { useNavigation } from '../navigation-hooks/Hooks';
 
 function SystemActionForm({
   pulse,
@@ -217,29 +218,15 @@ function FaultsRows({ faults }) {
     </RowSection>
   );
 }
-
-export default function Subsystem({ systemId }) {
-  const cloud = useCloud();
-  const kitchenState = useCloudValue('KitchenState');
-  const kitchenConfig = useCloudValue('KitchenConfig');
-  async function kitchenCommand(subsystemName, pulse, values) {
-    return await cloud.dispatch({
-      type: 'KitchenCommand',
-      subsystem: subsystemName,
-      pulse,
-      values,
-    });
-  }
-  const system = getSubsystem(systemId, kitchenConfig, kitchenState);
+function SystemView({ system, systemId, kitchenCommand }) {
   if (!system) {
     return <Hero title="System Disconnected" />;
   }
   const pulseCommands = Object.keys(system.pulseCommands || {});
   const valueCommands = Object.keys(system.valueCommands || {});
   const faults = getSubsystemFaults(system);
-
   return (
-    <GenericPage {...this.props} disableScrollView={true}>
+    <React.Fragment>
       <Hero title={`${system.icon} ${system.name}`} />
       <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
         <ScrollView style={{ flex: 1 }}>
@@ -386,6 +373,31 @@ export default function Subsystem({ systemId }) {
           </RowSection>
         </ScrollView>
       </View>
+    </React.Fragment>
+  );
+}
+export default function Subsystem({ ...props }) {
+  const { getParam } = useNavigation();
+  const systemId = getParam('system');
+  const cloud = useCloud();
+  const kitchenState = useCloudValue('KitchenState');
+  const kitchenConfig = useCloudValue('KitchenConfig');
+  async function kitchenCommand(subsystemName, pulse, values) {
+    return await cloud.dispatch({
+      type: 'KitchenCommand',
+      subsystem: subsystemName,
+      pulse,
+      values,
+    });
+  }
+  const system = getSubsystem(systemId, kitchenConfig, kitchenState);
+  return (
+    <GenericPage {...props} disableScrollView={true}>
+      <SystemView
+        system={system}
+        systemId={systemId}
+        kitchenCommand={kitchenCommand}
+      />
     </GenericPage>
   );
 }

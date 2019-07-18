@@ -53,7 +53,7 @@ const startVerseServer = async () => {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  // USE_DEV_SERVER = false;
+  USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -229,7 +229,9 @@ const startVerseServer = async () => {
       let currentActionId = null;
       let endedActionId = null;
       let noFaults = true;
-      let sub = cloud.get('KitchenState').observeValue.subscribe({
+      const stateValue = cloud.get('KitchenState').value.stream;
+
+      const stateListener = {
         next: state => {
           if (!state) {
             return;
@@ -243,6 +245,7 @@ const startVerseServer = async () => {
 
           if (isActionReceived && (isSystemIdle || isActionComplete)) {
             logBehavior(`${noFaults ? 'Done with' : 'FAULTED on'} ${actionId}`);
+            stateValue.removeListener(stateListener);
             sub && sub.unsubscribe();
             if (noFaults === false) {
               reject(new Error(`System "${subsystem}" has faulted`));
@@ -252,7 +255,10 @@ const startVerseServer = async () => {
           }
         },
         error: reject,
-      });
+      };
+
+      stateValue.addListener(stateListener);
+
       // setTimeout(() => {
       //   sub && sub.unsubscribe();
       //   if (!isSystemIdle) {
