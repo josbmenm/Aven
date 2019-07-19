@@ -1,17 +1,6 @@
 import React from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  Button,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
-import { monsterra } from '../components/Styles';
-import useCloud from '../cloud-core/useCloud';
+import { ScrollView, View, Text } from 'react-native';
 import { useMenu, useCompanyConfig } from '../ono-cloud/OnoKitchen';
-import useObservable from '../cloud-core/useObservable';
 import { getSelectedIngredients } from '../logic/configLogic';
 import AirtableImage from '../components/AirtableImage';
 

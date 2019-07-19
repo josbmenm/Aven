@@ -12,7 +12,7 @@ import { Responsive } from '../dashboard/Responsive';
 function BodyLink({ children, url }) {
   return (
     <Link url={url}>
-      <BodyText style={{ fontWeight: 'bold',  }}>{children}</BodyText>
+      <BodyText style={{ fontWeight: 'bold' }}>{children}</BodyText>
     </Link>
   );
 }
@@ -139,10 +139,10 @@ export default function BenefitDetails({ benefit }) {
           responsiveStyle={{
             marginBottom: [0, 24],
             fontSize: [24, 36],
-            lineHeight: [32, 44]
+            lineHeight: [32, 44],
           }}
         >
-          this blend is designed for {benefit.Name}
+          this blend is designed for {benefit.Name.toLowerCase()}
         </Heading>
         <ColumnToRow>
           <ColumnToRowChild>

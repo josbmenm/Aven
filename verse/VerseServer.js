@@ -10,7 +10,7 @@ import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
 import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
-import { createClient } from '../cloud-core/Kite';
+import { createSessionClient } from '../cloud-core/Kite';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import combineSources from '../cloud-core/combineSources';
@@ -53,7 +53,7 @@ const startVerseServer = async () => {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  // USE_DEV_SERVER = false;
+  USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -143,7 +143,7 @@ const startVerseServer = async () => {
     verificationResponse: { password: ROOT_PASSWORD },
   };
 
-  const cloud = createClient({
+  const cloud = createSessionClient({
     auth: rootAuth,
     source: authenticatedRemoteSource,
     // source: remoteSource,

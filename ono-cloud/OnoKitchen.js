@@ -1,14 +1,7 @@
 import mapObject from 'fbjs/lib/mapObject';
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useMemo,
-  useEffect,
-} from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 import { useCloud, useCloudValue, CloudContext } from '../cloud-core/KiteReact';
 import useObservable from '../cloud-core/useObservable';
-import withObservables from '@nozbe/with-observables';
 import observeNull from '../cloud-core/observeNull';
 import {
   getOrderItemMapper,
