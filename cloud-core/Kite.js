@@ -583,7 +583,6 @@ export function createDoc({
   const docIdAndValue = createStreamValue(
     docStream
       .map(state => {
-        console.log('woah haz state', state.id);
         if (state.id === undefined) {
           return xs.never();
         }
