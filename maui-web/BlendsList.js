@@ -51,7 +51,7 @@ function BlendsListItem({ blend, style }) {
             zIndex: -1,
             transform: [
               { translateX: -36 },
-              { translateY: 40 },
+              { translateY: 20 },
               { scale: 1.1 },
             ],
           }}
@@ -64,14 +64,14 @@ function BlendsListItem({ blend, style }) {
             fontSize: [18, 24],
             lineHeight: [28, 28],
             letterSpacing: [0, 0],
-            marginBottom: [4, 8],
+            marginBottom: [8, 12],
           }}
         >
           {blend['Display Name']}
         </Heading>
         <Tag
           title={blend.DefaultBenefitName}
-          style={{ alignSelf: 'flex-end'  }}
+          style={{ alignSelf: 'flex-end' }}
         />
       </FunctionalLink>
     </View>
@@ -110,7 +110,7 @@ export function BlendsList() {
   );
 }
 
-function BlendsCarouselItem({ blend }) {
+function BlendsCarouselItem({ blend, active }) {
   const theme = useTheme();
   const slug = getMenuItemSlug(blend);
   return (
@@ -124,6 +124,8 @@ function BlendsCarouselItem({ blend }) {
         backgroundColor: 'white',
         overflow: 'hidden',
         borderRadius: 8,
+        borderWidth: 3,
+        borderColor: active ? theme.colors.monsterras : 'transparent',
         ...theme.shadows.medium,
       }}
     >
@@ -193,7 +195,11 @@ export function BlendsCarousel() {
       <View>
         <ScrollView horizontal onScroll={handleScroll} scrollEventThrottle={16}>
           {menu.blends.map((item, i) => (
-            <BlendsCarouselItem key={i} blend={item} />
+            <BlendsCarouselItem
+              active={visibleIndex === i}
+              key={i}
+              blend={item}
+            />
           ))}
         </ScrollView>
         <Responsive

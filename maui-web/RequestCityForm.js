@@ -57,7 +57,7 @@ function RequestCityForm({ breakpoints }) {
           breakpoints={breakpoints}
           onPress={handleSubmit}
           buttonStyle={{
-            paddingVertical: 16,
+            paddingVertical: 13,
           }}
           disabled={loading}
         >

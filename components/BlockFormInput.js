@@ -106,8 +106,8 @@ function BlockFormInputWithRef(
           borderRadius: 4,
           borderColor: monsterra60,
           borderWidth: 3,
-          paddingTop: 20,
-          paddingBottom: 8,
+          paddingTop: 14,
+          paddingBottom: 12,
           paddingHorizontal: 20,
           backgroundColor: 'white',
         }}
@@ -129,7 +129,7 @@ function BlockFormInputWithRef(
               {
                 translateY: placeholderOpenProgress.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [-18, 0],
+                  outputRange: [-12, 0],
                 }),
               },
             ],

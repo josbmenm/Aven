@@ -85,6 +85,9 @@ function HowItWorks() {
           </Heading>
 
           <FeatureSection
+          responsiveStyles={{
+            paddingLeft: [0, 120],
+          }}
             title="Find us"
             bodyText={
               <BodyText>
@@ -123,6 +126,9 @@ function HowItWorks() {
 
             <FeatureSection
               inverted
+              responsiveStyles={{
+                paddingRight: [0, 120],
+              }}
               title="Order"
               bodyText={
                 <BodyText>
@@ -161,6 +167,9 @@ function HowItWorks() {
             </Responsive>
             <FeatureSection
               style={{ width: '100%' }}
+              responsiveStyles={{
+                paddingLeft: [0, 120],
+              }}
               title="Pickup"
               bodyText={
                 <BodyText>

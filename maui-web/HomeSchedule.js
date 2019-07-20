@@ -44,7 +44,7 @@ function HomeSchedule() {
 
                   <ButtonLink
                     type="solid"
-                    title="Find us"
+                    title="find us"
                     routeName="Schedule"
                     buttonStyle={{ width: 220 }}
                   />

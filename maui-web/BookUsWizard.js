@@ -22,6 +22,14 @@ const FormInput = ({ style, ...rest }) => (
   />
 );
 
+function StepHeader({ children }) {
+  return (
+    <FormRow style={{ marginBottom: 40, paddingHorizontal: 8 }}>
+      {children}
+    </FormRow>
+  );
+}
+
 function stepsReducer(state, action) {
   let newStep;
   switch (action.type) {
@@ -97,7 +105,7 @@ function BookUsWizard() {
       <View style={{ paddingVertical: 40 }}>
         <BlockForm>
           <Step active={true}>
-            <FormRow style={{ paddingHorizontal: 8, alignItems: 'center' }}>
+            <StepHeader style={{ paddingHorizontal: 8, alignItems: 'center' }}>
               <Heading size="small" style={{ textAlign: 'center' }}>
                 Thanks! You’ll be hearing from us soon.
               </Heading>
@@ -106,7 +114,7 @@ function BookUsWizard() {
                 style={{ width: 80, height: 80, margin: 24 }}
                 resizeMode="contain"
               />
-            </FormRow>
+            </StepHeader>
           </Step>
         </BlockForm>
       </View>
@@ -117,7 +125,7 @@ function BookUsWizard() {
     <View style={{ paddingVertical: 40 }}>
       <BlockForm>
         <Step active={stepsState.current === 0}>
-          <FormRow style={{ paddingHorizontal: 8 }}>
+          <StepHeader>
             <Heading size="large" style={{ textAlign: 'center' }}>
               Book with us
             </Heading>
@@ -126,13 +134,13 @@ function BookUsWizard() {
               love to! All we need from you are a few details about your event,
               so we can provide you with the best experience possible.
             </BodyText>
-          </FormRow>
+          </StepHeader>
         </Step>
         <Step active={stepsState.current === 1}>
-          <FormRow style={{ paddingHorizontal: 8 }}>
+          <StepHeader>
             <Heading size="large">First thing’s first</Heading>
             <BodyText>We’d love to know who we are speaking to.</BodyText>
-          </FormRow>
+          </StepHeader>
           <Responsive
             style={{
               flexDirection: ['column', 'row'],
@@ -167,12 +175,12 @@ function BookUsWizard() {
           </Responsive>
         </Step>
         <Step active={stepsState.current === 2}>
-          <FormRow style={{ paddingHorizontal: 8 }}>
+          <StepHeader>
             <Heading size="large">How do we contact you?</Heading>
             <BodyText>
               Please let us know a good email to follow up with you.
             </BodyText>
-          </FormRow>
+          </StepHeader>
           <FormRow>
             <FormInput
               mode="email"
@@ -189,10 +197,10 @@ function BookUsWizard() {
           </FormRow>
         </Step>
         <Step active={stepsState.current === 3}>
-          <FormRow style={{ paddingHorizontal: 8 }}>
+          <StepHeader>
             <Heading size="large">What sort of event is this?</Heading>
             <BodyText>Let us know so we can best cater to it.</BodyText>
-          </FormRow>
+          </StepHeader>
           <FormRow>
             <FormInput
               mode="name"
@@ -209,10 +217,10 @@ function BookUsWizard() {
           </FormRow>
         </Step>
         <Step active={stepsState.current === 4}>
-          <FormRow style={{ paddingHorizontal: 8 }}>
+          <StepHeader>
             <Heading size="large">When would you like us there?</Heading>
             <BodyText>Just let us know to when would be best.</BodyText>
-          </FormRow>
+          </StepHeader>
           <FormRow>
             <FormInput
               mode="name"
@@ -229,10 +237,10 @@ function BookUsWizard() {
           </FormRow>
         </Step>
         <Step active={stepsState.current === 5}>
-          <FormRow style={{ paddingHorizontal: 8 }}>
+          <StepHeader>
             <Heading size="large">Almost done…..</Heading>
             <BodyText>Where would you like us to be?</BodyText>
-          </FormRow>
+          </StepHeader>
           <FormRow>
             {/* mapbox autocomplete */}
             <LocationInput
@@ -244,12 +252,12 @@ function BookUsWizard() {
           </FormRow>
         </Step>
         <Step active={stepsState.current === 6}>
-          <FormRow style={{ paddingHorizontal: 8 }}>
+          <StepHeader>
             <Heading size="large">Additional Comments</Heading>
             <BodyText>
               Do you have anything else you’d like us to know?
             </BodyText>
-          </FormRow>
+          </StepHeader>
           <FormRow>
             <FormInput
               value={formState.fields.comments}
@@ -262,52 +270,62 @@ function BookUsWizard() {
           </FormRow>
         </Step>
         <View style={{ flex: 1 }}>
-          {stepsState.current === 0 ? (
-            <FormRow direction="row" style={{ alignItems: 'center' }}>
-              <Button
-                style={{ flex: 1 }}
-                title="Start booking"
-                onPress={() => stepsDispatch({ type: 'GO_NEXT' })}
-              />
-            </FormRow>
-          ) : (
+          {stepsState.current !== 0 && (
             <FormRow>
               <ProgressBar step={stepsState.current} />
             </FormRow>
           )}
-          {stepsState.hasPrev && stepsState.hasNext ? (
-            <FormRow direction="row">
+
+          <FormRow direction="row">
+            {stepsState.current !== 0 && (
               <Button
-                style={{ flex: 1, marginBottom: 16, marginHorizontal: 8 }}
+                style={{
+                  flex: 1,
+                  marginBottom: 16,
+                  marginHorizontal: 8,
+                }}
+                buttonStyle={{ paddingVertical: 15 }}
                 type="outline"
                 title="back"
                 disabled={false}
                 onPress={() => stepsDispatch({ type: 'GO_BACK' })}
               />
+            )}
+            {stepsState.current === 0 && (
               <Button
-                style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
+                style={{ flex: 1 }}
+                buttonStyle={{ paddingVertical: 15 }}
+                title="Start booking"
+                onPress={() => stepsDispatch({ type: 'GO_NEXT' })}
+              />
+            )}
+            {stepsState.hasPrev && stepsState.hasNext && (
+              <Button
+                style={{
+                  flex: 2,
+                  marginBottom: 16,
+                  marginHorizontal: 8,
+                }}
+                buttonStyle={{ paddingVertical: 15 }}
                 disabled={false}
                 title="next"
                 onPress={() => stepsDispatch({ type: 'GO_NEXT' })}
               />
-            </FormRow>
-          ) : null}
-          {stepsState.current === TOTAL_STEPS ? (
-            <FormRow direction="row" style={{ marginBottom: 0 }}>
-              <Button
-                style={{ flex: 1, marginBottom: 16, marginHorizontal: 8 }}
-                type="outline"
-                title="back"
-                disabled={loading}
-                onPress={() => stepsDispatch({ type: 'GO_BACK' })}
-              />
+            )}
+            {stepsState.current === TOTAL_STEPS && (
               <SubmitButton
+                buttonStyle={{ paddingVertical: 15 }}
                 disabled={loading}
                 onPress={onSubmit}
                 loading={loading}
               />
-            </FormRow>
-          ) : null}
+            )}
+          </FormRow>
+          {/* { ? (
+
+          ) : null} */}
+          {/* { ? (
+          ) : null} */}
 
           <FormRow style={{ height: 24, marginHorizontal: 8 }}>
             {error ? (
@@ -389,7 +407,7 @@ function ProgressBar({ step, ...rest }) {
           }}
         />
       </View>
-      <BaseText bold style={{ fontSize: 12, fontFamily: theme.fonts.bold}}>
+      <BaseText bold style={{ fontSize: 12, fontFamily: theme.fonts.bold }}>
         {step} / {TOTAL_STEPS}
       </BaseText>
     </View>

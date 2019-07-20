@@ -173,7 +173,7 @@ function useWeekSchedule() {
               id: 1,
               time: '8:00 am - 2:00 pm',
               address: '633 West 5th St.\nLos Angeles, CA 90071',
-              active: true,
+              active: false,
             },
             {
               id: 2,
@@ -198,7 +198,7 @@ function useWeekSchedule() {
               id: 1,
               time: '8:00 am - 2:00 pm',
               address: '633 West 5th St.\nLos Angeles, CA 90071',
-              active: true,
+              active: false,
             },
             {
               id: 2,
@@ -217,7 +217,7 @@ function useWeekSchedule() {
               id: 1,
               time: '8:00 am - 2:00 pm',
               address: '633 West 5th St.\nLos Angeles, CA 90071',
-              active: true,
+              active: false,
             },
             {
               id: 2,
@@ -236,7 +236,7 @@ function useWeekSchedule() {
               id: 1,
               time: '8:00 am - 2:00 pm',
               address: '633 West 5th St.\nLos Angeles, CA 90071',
-              active: true,
+              active: false,
             },
             {
               id: 2,

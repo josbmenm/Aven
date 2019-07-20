@@ -37,7 +37,7 @@ function BlendContent({ displayName, blend, recipe }) {
     <React.Fragment>
       <Responsive
         style={{
-          marginBottom: [40, 100],
+          marginVertical: [40, 100],
         }}
       >
         <View>
@@ -181,7 +181,7 @@ function BlendContent({ displayName, blend, recipe }) {
                   </BodyText>
                   <Responsive
                     style={{
-                      marginBottom: [40, 20],
+                      marginBottom: [44, 24],
                     }}
                   >
                     <View
@@ -325,6 +325,7 @@ function BlendContent({ displayName, blend, recipe }) {
                     textTransform: 'uppercase',
                     letterSpacing: 2,
                     fontFamily: theme.fonts.bold,
+                    fontSize: 11,
                     lineHeight: 24,
                   }}
                 >
