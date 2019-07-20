@@ -43,11 +43,11 @@ function VisualButton({
         paddingVertical:
           buttonStyle.paddingVertical !== undefined
             ? [buttonStyle.paddingVertical, buttonStyle.paddingVertical]
-            : [9, 12],
+            : [9, 9],
         paddingHorizontal:
           buttonStyle.paddingHorizontal !== undefined
             ? [buttonStyle.paddingHorizontal, buttonStyle.paddingHorizontal]
-            : [20, 24],
+            : [16, 20],
         ...responsiveStyle,
       }}
     >
