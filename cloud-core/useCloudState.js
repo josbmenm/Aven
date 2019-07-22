@@ -1,12 +1,12 @@
 import useCloud from './useCloud';
-import useObservable from './useObservable';
+import useCloudValue from './useCloudValue';
 
 export default function useCloudState(name, defaultValue) {
   const cloud = useCloud();
   const doc = cloud.get(name);
-  let value = useObservable(doc.observeValue);
+  let value = useCloudValue(doc.value);
   if (value === null && defaultValue !== undefined) {
     value = defaultValue;
   }
-  return [value, doc.put];
+  return [value, doc.putValue];
 }

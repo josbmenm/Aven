@@ -1,6 +1,3 @@
-import { useContext } from 'react';
-import CloudContext from './CloudContext';
+import { useCloud } from './KiteReact';
 
-export default function useCloudContext() {
-  return useContext(CloudContext);
-}
+export default useCloud;

@@ -104,6 +104,11 @@ export function createReducerStream(doc, reducerFn, initialState) {
 }
 
 export function useCloudReducer(actionDocName, cloudReducer) {
+  if (cloudReducer.type !== 'CloudReducer') {
+    throw new Error(
+      'Invalid cloud reducer provided to useCloudReducer. Create one with defineCloudReducer',
+    );
+  }
   const cloud = useCloud();
   const actionsDoc = cloud.get(actionDocName);
 
