@@ -12,6 +12,7 @@ const colors = {
   lightGrey: '#F8F8F8',
   lighterGrey: '#EFEFEF',
   border: 'rgba(0,0,0,0.1)',
+  text: primaryColor,
 };
 
 const fonts = {
@@ -89,12 +90,6 @@ export const theme = {
     large: 1280,
   },
 };
-
-export function createVariant({ theme, key }) {
-  return function getValue(variant) {
-    return theme[key][variant];
-  };
-}
 
 export const ThemeContext = createContext(theme);
 export const ThemeProvider = ThemeContext.Provider;

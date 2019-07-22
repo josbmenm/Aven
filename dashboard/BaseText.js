@@ -1,6 +1,6 @@
 import React from 'react';
-import ViewText from '../views/Text';
-import { useTheme, createVariant } from './Theme';
+import Text from '../views/Text';
+import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 
 function BaseText({
@@ -13,24 +13,20 @@ function BaseText({
   ...rest
 }) {
   const theme = useTheme();
-  const sizeVariant = React.useMemo(
-    () => createVariant({ theme, key: 'textStyles' }),
-    [theme],
-  );
-  let boldStyle = bold
-    ? { fontWeight: 'bold' }
-    : {};
+  let boldStyle = bold ? { fontWeight: 'bold' } : {};
   return (
     <Responsive
       breakpoints={breakpoints}
       style={{
-        ...sizeVariant(size),
+        ...theme.textStyles[size],
         ...responsiveStyle,
       }}
     >
-      <ViewText
+      <Text
         style={{
-          color: theme.colors.monsterra,
+          color: theme.colors.text,
+          WebkitFontSmoothing: 'antialiased',
+          MozOsxFontSmoothing: 'grayscale',
           fontFamily: theme.fonts.serif,
           ...boldStyle,
           ...style,
@@ -38,7 +34,7 @@ function BaseText({
         {...rest}
       >
         {children}
-      </ViewText>
+      </Text>
     </Responsive>
   );
 }
