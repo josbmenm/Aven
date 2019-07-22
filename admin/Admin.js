@@ -27,8 +27,7 @@ import { useNavigation, useNavigationState } from '../navigation-hooks/Hooks';
 
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
 import { CloudContext, useCloudValue } from '../cloud-core/KiteReact';
-import useCloud from '../cloud-core/useCloud';
-import useCloudSession from '../cloud-core/useCloudSession';
+import { useCloud } from '../cloud-core/KiteReact';
 import useObservable from '../cloud-core/useObservable';
 import ErrorContainer from '../cloud-react/ErrorContainer';
 import Animated from '../views/Animated';
@@ -532,7 +531,7 @@ function LoginForm({ onSession, onClientConfig, defaultSession }) {
 }
 
 function LoginPane({ onClientConfig, onSession, defaultSession }) {
-  const session = useCloudSession();
+  const session = null; // todo rewrite it alllll
   const { navigate } = useNavigation();
   if (session) {
     return (

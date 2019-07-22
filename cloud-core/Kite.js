@@ -6,7 +6,8 @@ import Err from '../utils/Err';
 import cuid from 'cuid';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import bindCommitDeepBlock from './bindCommitDeepBlock';
-import { createStreamValue } from './StreamValue';
+import { createStreamValue, streamGet } from './StreamValue';
+import dropRepeats from 'xstream/extra/dropRepeats';
 
 /*
 
@@ -566,14 +567,16 @@ export function createDoc({
 
   const docValue = createStreamValue(
     docStream
-      .map(state => {
-        if (state.id === undefined) {
+      .map(state => state.id)
+      .compose(dropRepeats())
+      .map(docId => {
+        if (docId === undefined) {
           return xs.never();
         }
-        if (state.id === null) {
+        if (docId === null) {
           return xs.of(undefined);
         }
-        const block = getBlock(state.id);
+        const block = getBlock(docId);
         return block.value.stream;
       })
       .flatten(),
@@ -631,9 +634,26 @@ export function createDoc({
     });
   }
 
+  async function transact(transactionFn) {
+    // todo.. uh, do this safely by putting a TransactionValue!
+    let lastValue = undefined;
+    if (docState.isPosted) {
+      const { value, id } = await docIdAndValue.load();
+      lastValue = value;
+    } else {
+      const { value, id } = docIdAndValue.get();
+      lastValue = value;
+    }
+    const newValue = transactionFn(lastValue);
+    if (lastValue !== newValue) {
+      await putValue(newValue);
+    }
+  }
+
   const cloudDoc = {
     ...docStateValue,
     type: 'Doc',
+    transact,
     getId,
     idAndValue: docIdAndValue,
     isDestroyed,
