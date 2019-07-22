@@ -218,6 +218,7 @@ const startSkynetServer = async () => {
     'CompanyConfig',
     airtableFolder.value.stream
       .map(folder => {
+        console.log('map Airtable to compayConfig', !!folder);
         if (!folder) {
           return xs.of(null);
         }
@@ -228,6 +229,7 @@ const startSkynetServer = async () => {
         return xs
           .combine(block.value.stream, directoryBlock.value.stream)
           .map(([atData, directory]) => {
+            console.log('AirtableData has NEW value', !!atData, !!directory);
             // below, we inject block refs for our Airtable images, by referring to the files directory
             const baseTables = Object.fromEntries(
               Object.entries(atData.baseTables).map(([tableName, table]) => {
@@ -259,6 +261,7 @@ const startSkynetServer = async () => {
                 return [tableName, tableWithRefs];
               }),
             );
+            console.log('returning new compayConfig');
             return { ...atData, baseTables, directory };
           });
       })
@@ -296,7 +299,12 @@ const startSkynetServer = async () => {
         RestaurantActions: { defaultRule: { canWrite: true } },
         RestaurantState: { defaultRule: { canWrite: true } },
         Menu: { defaultRule: { canRead: true } },
-        PendingOrders: { defaultRule: { canPost: true } },
+        PendingOrders: {
+          defaultRule: {
+            canPost: true,
+            canWrite: true, // todo, disable write, very dangerous. posted docs are owned by original poster and should allow writes
+          },
+        },
         Airtable: { defaultRule: { canRead: true } },
         ConfirmedOrders: { defaultRule: { canRead: true } },
         RequestedLocations: { defaultRule: { canWrite: true } }, // todo, refactor to canTransact!!
@@ -383,7 +391,8 @@ const startSkynetServer = async () => {
         return {};
       }
       default:
-        return await protectedSource.dispatch(action);
+        return await kiteSource.dispatch(action);
+      // return await protectedSource.dispatch(action);
     }
   };
 
@@ -393,7 +402,8 @@ const startSkynetServer = async () => {
     mainDomain: domain,
     App,
     source: {
-      ...protectedSource,
+      // ...protectedSource,
+      ...kiteSource,
       dispatch,
     },
     serverListenLocation,

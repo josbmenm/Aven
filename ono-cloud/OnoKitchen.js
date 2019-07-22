@@ -1,8 +1,6 @@
 import mapObject from 'fbjs/lib/mapObject';
 import React, { createContext, useContext, useState, useMemo } from 'react';
-import { useCloud, useCloudValue, CloudContext } from '../cloud-core/KiteReact';
-import useObservable from '../cloud-core/useObservable';
-import observeNull from '../cloud-core/observeNull';
+import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import {
   getOrderItemMapper,
   sortByField as getSortedByField,
@@ -94,7 +92,7 @@ export function getSubsystemFaults(system) {
 }
 
 export function OrderContextProvider({ children }) {
-  let cloud = useContext(CloudContext);
+  let cloud = useCloud();
   let [currentOrder, setCurrentOrder] = useState(null);
   let [asyncError, setAsyncError] = useState(null);
 
@@ -168,11 +166,6 @@ export function OrderContextProvider({ children }) {
             startTime: Date.now(),
             items: [],
           });
-          // order.observeValue.subscribe({
-          //   next: oo => {
-          //     console.log('Lol ok, order changed!', oo);
-          //   },
-          // });
         })(),
       ),
   };
@@ -184,13 +177,6 @@ export function OrderContextProvider({ children }) {
 }
 
 export function useCompanyConfig() {
-  // const cloud = useCloud();
-  // const theValue = cloud.get('Airtable').expand((folder, doc) => {
-  //   if (!folder) {
-  //     return null;
-  //   }
-  //   return doc.getBlock(folder.files['db.json']);
-  // });
   return useCloudValue('CompanyConfig');
 }
 
@@ -232,11 +218,10 @@ export function addMenuItemToCartItem({
 
 export function useCurrentOrder() {
   let { order } = useContext(OrderContext);
-  const observedOrder = useObservable(order ? order.observeValue : observeNull);
+  const observedOrder = useValue(order ? order.value : null);
   if (!observedOrder) {
     return observedOrder;
   }
-
   return { ...observedOrder, orderId: order && order.getName() };
 }
 
@@ -273,20 +258,17 @@ export function useOrderItem(orderItemId) {
       });
     }
     const itemMapper = menu && getOrderItemMapper(menu);
+    const orderState = order.value.get();
+
     const orderItem =
-      itemMapper &&
-      order &&
-      order.map(orderState => {
-        const item =
-          orderState &&
-          orderState.items &&
-          orderState.items.find(i => i.id === orderItemId);
-        return item && itemMapper(item);
-      });
+      orderState &&
+      orderState.items &&
+      orderState.items.find(i => i.id === orderItemId);
+    const fullOrderItem = orderItem && itemMapper(orderItem);
 
     return {
       orderItemId,
-      orderItem,
+      orderItem: fullOrderItem,
       setItemState,
       removeItem,
       order,
@@ -394,7 +376,7 @@ export function useOrderSummary() {
 export function useOrderIdSummary(orderId) {
   const cloud = useCloud();
   const order = useMemo(() => cloud.get(`PendingOrders/${orderId}`), [orderId]);
-  const orderState = useObservable(order ? order.observeValue : observeNull);
+  const orderState = useValue(order ? order.value : null);
   const companyConfig = useCompanyConfig();
   return getOrderSummary(orderState, companyConfig);
 }

@@ -220,7 +220,7 @@ export default function OrderConfirmPage({
     message = 'thanks.';
   }
   if (!message) {
-    message = '...';
+    message = '';
   }
 
   let bottomContent = (

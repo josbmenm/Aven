@@ -13,7 +13,6 @@ import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
 import { createSessionClient } from '../cloud-core/Kite';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
-import combineSources from '../cloud-core/combineSources';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
@@ -53,7 +52,7 @@ const startVerseServer = async () => {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  USE_DEV_SERVER = false;
+  // USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -146,9 +145,7 @@ const startVerseServer = async () => {
   const cloud = createSessionClient({
     auth: rootAuth,
     source: authenticatedRemoteSource,
-    // source: remoteSource,
     domain: 'onofood.co',
-    // functions: [RestaurantReducer, InventoryFn, MenuFn],
   });
 
   cloud.get('KitchenState').setLocalOnly();
@@ -192,7 +189,7 @@ const startVerseServer = async () => {
     kitchen = startKitchen({
       logBehavior,
       cloud,
-      plcIP: '192.168.1.122',
+      plcIP: '10.10.1.122',
     });
   }
 

@@ -13,14 +13,7 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
     name: `PendingOrders/${orderId}`,
     domain: 'onofood.co',
   });
-
-  const at = cloud.get('Airtable').expand((folder, doc) => {
-    if (!folder) {
-      return null;
-    }
-    return doc.getBlock(folder.files['db.json']);
-  });
-  const companyConfig = await at.loadValue();
+  const companyConfig = await cloud.get('CompanyConfig').load();
   const blends = companyConfigToBlendMenu(companyConfig);
   const order = orderResult.value;
   const summary = getOrderSummary(order, companyConfig);

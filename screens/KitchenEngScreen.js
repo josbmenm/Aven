@@ -5,7 +5,6 @@ import RowSection from '../components/RowSection';
 import { View, ScrollView, Text } from 'react-native';
 import LinkRow from '../components/LinkRow';
 import { useSubsystemOverview } from '../ono-cloud/OnoKitchen';
-import KitchenHistory from '../components/KitchenHistory';
 import ControlPanel from './ControlPanel';
 import SimplePage from '../components/SimplePage';
 import { useCloud, useCloudReducer } from '../cloud-core/KiteReact';
@@ -59,7 +58,6 @@ function Subsystems() {
 //   }, [cloud.isConnected, kitchenState]);
 //   return (
 //     <ScrollView style={{ flex: 1 }}>
-//       <KitchenHistory />
 //       <View style={{ padding: 40 }}>
 //         {logs.map((log, index) => (
 //           <Text style={{ fontSize: 28 }} key={index}>

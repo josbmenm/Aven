@@ -2,7 +2,7 @@ import React from 'react';
 import FeedbackReceiptPage from '../components/FeedbackReceiptPage';
 import FeedbackContext from '../components/FeedbackContext';
 
-import useCloud from '../cloud-core/useCloud';
+import { useCloud } from '../cloud-core/KiteReact';
 import { useNavigation } from '../navigation-hooks/Hooks';
 
 export default function FeedbackReceiptScreen({ ...props }) {

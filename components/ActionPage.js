@@ -89,7 +89,14 @@ class ActionPageWithNavigation extends React.Component {
                 title={action.title}
                 onPress={action.onPress}
                 onLongPress={action.onLongPress}
-                style={{ flex: 1, maxWidth: 488 }}
+                style={{
+                  flex: 1,
+                  marginHorizontal: 10,
+                  marginVertical: 12,
+                  maxWidth: 488,
+                }}
+                buttonStyle={{ height: buttonHeight }}
+                titleStyle={{ fontSize: 24 }}
               />
             ))}
           </Animated.View>

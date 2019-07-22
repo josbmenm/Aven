@@ -31,7 +31,7 @@ import {
 
 const tagSize = {
   width: 100,
-  height: 76,
+  height: 68,
 };
 
 export function MenuHLayout({ side, children }) {

@@ -1,13 +1,6 @@
 export default async function validatePromoCode(cloud, { promoCode }) {
-  const atDoc = cloud.get('Airtable').expand((folder, doc) => {
-    if (!folder) {
-      return null;
-    }
-    return doc.getBlock(folder.files['db.json']);
-  });
-
-  const atData = await atDoc.loadValue();
-  const { PromoCodes } = atData.baseTables;
+  const { baseTables } = await cloud.get('CompanyConfig').value.load();
+  const { PromoCodes } = baseTables;
 
   let atPromoCode = null;
   Object.keys(PromoCodes).find(promoId => {
@@ -41,7 +34,7 @@ export default async function validatePromoCode(cloud, { promoCode }) {
 
   const promoDoc = cloud.get(`PromoCodes/${promoCode}`);
 
-  const promoValue = await promoDoc.loadValue();
+  const promoValue = await promoDoc.value.load();
 
   if (promoValue && promoValue.usedForOrder == null) {
     return promoValue;

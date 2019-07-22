@@ -1,7 +1,7 @@
 import React from 'react';
 import SendReceiptPage from '../components/SendReceiptPage';
 import { useNavigation } from '../navigation-hooks/Hooks';
-import useCloud from '../cloud-core/useCloud';
+import { useCloud } from '../cloud-core/KiteReact';
 import useEmptyOrderEscape from './useEmptyOrderEscape';
 import { useOrder } from '../ono-cloud/OnoKitchen';
 

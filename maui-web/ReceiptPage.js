@@ -1,7 +1,7 @@
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { View, Text } from 'react-native';
 import React from 'react';
-import useCloud from '../cloud-core/useCloud';
+import { useCloud } from '../cloud-core/KiteReact';
 import GenericPage from './GenericPage';
 import useObservable from '../cloud-core/useObservable';
 import formatTime from '../utils/formatTime';

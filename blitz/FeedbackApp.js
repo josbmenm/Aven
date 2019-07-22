@@ -1,7 +1,7 @@
 import React from 'react';
 import { createAppContainer } from '../navigation-native';
 
-import useCloud from '../cloud-core/useCloud';
+import { useCloud } from '../cloud-core/KiteReact';
 import FeedbackCompleteScreen from '../screens/FeedbackCompleteScreen';
 import FeedbackHomeScreen from '../screens/FeedbackHomeScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';

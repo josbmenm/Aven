@@ -49,13 +49,15 @@ import useCloudProvider from '../components/useCloudProvider';
 import FadeTransition from '../components/FadeTransition';
 import { titleStyle } from '../components/Styles';
 import { AppEnvContext } from '../components/useBlitzDebugPopover';
+import { ThemeProvider } from '../dashboard/Theme';
+import OnoTheme from '../logic/OnoTheme';
 
 let VERSE_IS_DEV = process.env.NODE_ENV !== 'production';
 let SKYNET_IS_DEV = process.env.NODE_ENV !== 'production';
 
 // uncomment to test prod mode:
-VERSE_IS_DEV = false;
-SKYNET_IS_DEV = false;
+// VERSE_IS_DEV = false;
+// SKYNET_IS_DEV = false;
 
 const VERSE_HOST_CONFIG = VERSE_IS_DEV
   ? {
@@ -128,6 +130,7 @@ const OrderNavigator = createStackTransitionNavigator(
 
 const KioskAppNavigator = createStackTransitionNavigator(
   {
+    OrderComplete: OrderCompleteScreen,
     KioskHome: KioskHomeScreen,
     OrderConfirm: OrderConfirmScreen,
     OrderComplete: OrderCompleteScreen,
@@ -200,17 +203,19 @@ function KioskApp({ mode }) {
   }
 
   return (
-    <HostContextContainer {...hostConfig}>
-      <AppEnvContext.Provider value={{ isSkynet, setIsSkynet }}>
-        <CloudContext.Provider value={cloud}>
-          <PopoverContainer>
-            <OrderContextProvider>
-              <KioskAppContainer />
-            </OrderContextProvider>
-          </PopoverContainer>
-        </CloudContext.Provider>
-      </AppEnvContext.Provider>
-    </HostContextContainer>
+    <ThemeProvider value={OnoTheme}>
+      <HostContextContainer {...hostConfig}>
+        <AppEnvContext.Provider value={{ isSkynet, setIsSkynet }}>
+          <CloudContext.Provider value={cloud}>
+            <PopoverContainer>
+              <OrderContextProvider>
+                <KioskAppContainer />
+              </OrderContextProvider>
+            </PopoverContainer>
+          </CloudContext.Provider>
+        </AppEnvContext.Provider>
+      </HostContextContainer>
+    </ThemeProvider>
   );
 }
 

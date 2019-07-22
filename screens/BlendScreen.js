@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import { useOrderItem, useMenuItem, useMenu } from '../ono-cloud/OnoKitchen';
 
-import useObservable from '../cloud-core/useObservable';
 import useEmptyOrderEscape from './useEmptyOrderEscape';
 import BlendPage from '../components/BlendPage';
 
@@ -14,12 +13,11 @@ function BlendScreenMemo({ navigation, ...props }) {
   const menuItem = useMenuItem(menuItemId);
   const menu = useMenu();
 
-  const item = useObservable(orderItem && orderItem.observeValue);
   useEmptyOrderEscape();
   return (
     <BlendPage
       menuItem={menuItem}
-      item={item || null} // this is to avoid re-rendering when item becomes known as undefined
+      item={orderItem || null} // this is to avoid re-rendering when item becomes known as undefined
       foodMenu={menu && menu.food}
       setItemState={setItemState}
       order={order}

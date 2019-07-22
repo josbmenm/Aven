@@ -17,10 +17,6 @@ import MauiWebApp from '../maui-web/MauiWebApp';
 import { monsterra } from '../components/Styles';
 import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
 
-import useCloud from '../cloud-core/useCloud';
-import xs from 'xstream';
-import useCloudValue from '../cloud-core/useCloudValue';
-
 const Main = () => (
   <View
     style={{
