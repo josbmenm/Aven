@@ -63,7 +63,7 @@ export function useStream(stream) {
   return value;
 }
 export function useValue(value) {
-  return useStream(value.stream);
+  return useStream(value && value.stream);
 }
 export function useCloudValue(cloudValueInput) {
   let cloudVal = cloudValueInput;
