@@ -35,7 +35,7 @@ function FeatureSection({
       <Responsive
         style={{
           paddingLeft: [0, inverted ? 0 : 20],
-          paddingLeft: [0, inverted ? 20 : 0],
+          paddingRight: [0, inverted ? 20 : 0],
           ...responsiveStyles
         }}
       >
