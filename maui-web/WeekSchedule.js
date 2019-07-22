@@ -46,11 +46,12 @@ function WeekSchedule() {
           This Week
         </Heading>
         {schedule && (
-          <View style={{ paddingVertical: 60, position: 'relative' }}>
+          <View style={{ paddingTop: 60, position: 'relative' }}>
             <ScrollView
               horizontal
               onScroll={handleScroll}
               scrollEventThrottle={16}
+              style={{paddingBottom: 80}}
             >
               {schedule.map(day => (
                 <DaySchedule key={day.id} day={day} />

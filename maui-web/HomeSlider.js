@@ -31,10 +31,10 @@ function HomeSlider() {
           borderBottomColor: theme.colors.border,
         }}
         responsiveStyle={{
-          paddingBottom: [70, 200],
+          paddingBottom: [0, 120],
         }}
       >
-        <ScrollView horizontal pagingEnabled>
+        <ScrollView horizontal pagingEnabled style={{paddingBottom: 80}}>
           <Slide
             source={require('./public/img/slides_1.jpg')}
             width={292}

@@ -189,11 +189,11 @@ export function BlendsCarousel() {
   return menu ? (
     <Responsive
       style={{
-        paddingBottom: [100, 120],
+        paddingBottom: [20, 40],
       }}
     >
       <View>
-        <ScrollView horizontal onScroll={handleScroll} scrollEventThrottle={16}>
+        <ScrollView horizontal onScroll={handleScroll} scrollEventThrottle={16} style={{paddingBottom: 80}}>
           {menu.blends.map((item, i) => (
             <BlendsCarouselItem
               active={visibleIndex === i}
