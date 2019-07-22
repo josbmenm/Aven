@@ -1,4 +1,3 @@
-import { Observable, BehaviorSubject } from 'rxjs-compat';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import Err from '../utils/Err';
 import xs from 'xstream';
@@ -35,13 +34,9 @@ export default function createNetworkSource(opts) {
     },
   });
 
-  //  #legacy
-  const isConnected = new BehaviorSubject(false);
   function setConnectionState(isConn) {
     isCurrentlyConnected = isConn;
     updateIsConnected && updateIsConnected(isConn);
-    //  #legacy
-    isConnected.getValue() !== isConn && isConnected.next(isConn);
   }
 
   let ws = null;
@@ -122,28 +117,6 @@ export default function createNetworkSource(opts) {
     });
   }
 
-  function subscribe(subsSpec) {
-    const id = getClientId();
-    return new Observable(observer => {
-      const finalSpec = { ...subsSpec, id };
-      socketSendIfConnected({
-        type: 'Subscribe',
-        subscriptions: [finalSpec],
-      });
-      subscriptions[id] = {
-        spec: finalSpec,
-        observer,
-      };
-      return () => {
-        socketSendIfConnected({
-          type: 'Unsubscribe',
-          subscriptionIds: [id],
-        });
-        delete subscriptions[id];
-      };
-    }).share();
-  }
-
   function connectWS() {
     if (ws) {
       throw new Err('ws already here!');
@@ -218,16 +191,6 @@ export default function createNetworkSource(opts) {
 
   connectWS();
 
-  //  #legacy
-  async function observeDoc(domain, name, auth) {
-    return subscribe({ domain, auth, doc: name });
-  }
-
-  //  #legacy
-  async function observeDocChildren(domain, name, auth) {
-    return subscribe({ domain, auth, docChildren: name });
-  }
-
   function getDocStream(domain, name, auth) {
     return subscribeStream({ domain, auth, doc: name });
   }
@@ -241,13 +204,6 @@ export default function createNetworkSource(opts) {
 
     id: `network-${opts.authority}`,
 
-    //  #legacy
-    observeDoc,
-    //  #legacy
-    observeDocChildren,
-    //  #legacy
-    isConnected,
-    // new stream API:
     getDocStream,
     getDocChildrenEventStream,
     connected: createStreamValue(isConnectedStream, () => `NetworkConnected`),

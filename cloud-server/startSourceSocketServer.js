@@ -6,13 +6,14 @@ export default function startSourceSocketServer(wss, source) {
   const connections = {};
 
   wss.on('connection', ws => {
+    const clientId = cuid();
+
     const sendMessage = message => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify(message));
       }
     };
 
-    const clientId = cuid();
     sendMessage({ type: 'ClientId', clientId });
 
     const subs = {};
@@ -93,47 +94,25 @@ export default function startSourceSocketServer(wss, source) {
                 error: sendError,
               };
               if (doc) {
-                if (!source.getDocStream) {
-                  try {
-                    subs[subscriptionId] = (await source.observeDoc(
-                      domain,
-                      doc,
-                      auth,
-                    ))
-                      .distinctUntilChanged()
-                      .subscribe(observer);
-                  } catch (e) {
-                    observer.error(e);
-                  }
-                } else {
-                  const stream = source.getDocStream(domain, doc, auth);
-                  subs[subscriptionId] = {
-                    unsubscribe: () => {
-                      stream.removeListener(observer);
-                    },
-                  };
-                  stream.addListener(observer);
-                }
+                const stream = source.getDocStream(domain, doc, auth);
+                subs[subscriptionId] = {
+                  unsubscribe: () => {
+                    stream.removeListener(observer);
+                  },
+                };
+                stream.addListener(observer);
               } else if (docChildren !== undefined) {
-                if (!source.getDocChildrenEventStream) {
-                  subs[subscriptionId] = (await source.observeDocChildren(
-                    domain,
-                    docChildren,
-                    auth,
-                  )).subscribe(observer);
-                } else {
-                  const stream = source.getDocChildrenEventStream(
-                    domain,
-                    docChildren,
-                    auth,
-                  );
-                  subs[subscriptionId] = {
-                    unsubscribe: () => {
-                      stream.removeListener(observer);
-                    },
-                  };
-                  stream.addListener(observer);
-                }
+                const stream = source.getDocChildrenEventStream(
+                  domain,
+                  docChildren,
+                  auth,
+                );
+                subs[subscriptionId] = {
+                  unsubscribe: () => {
+                    stream.removeListener(observer);
+                  },
+                };
+                stream.addListener(observer);
               } else {
                 throw new Error(
                   'Invalid subscription, should contain doc or docChildren',
