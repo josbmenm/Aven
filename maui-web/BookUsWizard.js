@@ -4,7 +4,7 @@ import View from '../views/View';
 import Heading from '../dashboard/Heading';
 import BaseText from '../dashboard/BaseText';
 import BlockForm from '../components/BlockForm';
-import Input from '../components/BlockFormInput';
+import FormInput from '../components/BlockFormInput';
 import Button from '../dashboard/Button';
 import { useTheme } from '../dashboard/Theme';
 import { LocationInput } from './LocationInput';
@@ -15,12 +15,9 @@ import Spinner from '../dashboard/Spinner';
 
 const TOTAL_STEPS = 6;
 
-const FormInput = ({ style, ...rest }) => (
-  <Input
-    style={{ marginHorizontal: 8, marginBottom: 16, ...style }}
-    {...rest}
-  />
-);
+const formInputStyle = {
+  marginHorizontal: 8, marginBottom: 16
+};
 
 function StepHeader({ children }) {
   return (
@@ -90,6 +87,22 @@ function BookUsWizard() {
     },
   });
 
+  const stepValidation = [ {},
+    {
+      disabled: formState.fields.firstName === '' || formState.fields.lastName === ''
+    }, {
+      disabled: formState.fields.email === ''
+    }, {
+      disabled: formState.fields.eventType === ''
+    }, {
+      disabled: formState.fields.date === ''
+    }, {
+      disabled: formState.fields.address.place_name_en === ''
+    }, {
+      disabled: false
+    }
+  ]
+
   function onSubmit() {
     setLoading(true);
     console.log('TCL: onSubmit -> ', formState);
@@ -103,15 +116,15 @@ function BookUsWizard() {
   if (isDone) {
     return (
       <View style={{ paddingVertical: 40 }}>
-        <BlockForm>
+        <BlockForm style={{ backgroundColor: 'red'}}>
           <Step active={true}>
-            <StepHeader style={{ paddingHorizontal: 8, alignItems: 'center' }}>
+            <StepHeader style={{ paddingHorizontal: 8, alignItems: 'center', backgroundColor: 'red' }}>
               <Heading size="small" style={{ textAlign: 'center' }}>
                 Thanks! You’ll be hearing from us soon.
               </Heading>
               <Image
                 source={require('./public/img/hand_icon.png')}
-                style={{ width: 80, height: 80, margin: 24 }}
+                style={{ width: 80, height: 80, margin: 24, alignSelf: 'center' }}
                 resizeMode="contain"
               />
             </StepHeader>
@@ -158,6 +171,7 @@ function BookUsWizard() {
                     value,
                   })
                 }
+                style={formInputStyle}
               />
               <FormInput
                 label="last name"
@@ -170,6 +184,7 @@ function BookUsWizard() {
                     value,
                   })
                 }
+                style={formInputStyle}
               />
             </FormRow>
           </Responsive>
@@ -193,6 +208,7 @@ function BookUsWizard() {
                   value,
                 })
               }
+              style={formInputStyle}
             />
           </FormRow>
         </Step>
@@ -213,6 +229,7 @@ function BookUsWizard() {
                   value,
                 })
               }
+              style={formInputStyle}
             />
           </FormRow>
         </Step>
@@ -233,6 +250,7 @@ function BookUsWizard() {
                   value,
                 })
               }
+              style={formInputStyle}
             />
           </FormRow>
         </Step>
@@ -266,6 +284,7 @@ function BookUsWizard() {
               onValue={value =>
                 formDispatch({ type: 'UPDATE_FIELD', key: 'comments', value })
               }
+              style={formInputStyle}
             />
           </FormRow>
         </Step>
@@ -307,7 +326,7 @@ function BookUsWizard() {
                   marginHorizontal: 8,
                 }}
                 buttonStyle={{ paddingVertical: 15 }}
-                disabled={false}
+                disabled={stepValidation[stepsState.current].disabled}
                 title="next"
                 onPress={() => stepsDispatch({ type: 'GO_NEXT' })}
               />
@@ -340,13 +359,14 @@ function BookUsWizard() {
   );
 }
 
-function SubmitButton({ onPress, disabled = false, loading }) {
+function SubmitButton({ onPress, disabled = false, loading, buttonStyle }) {
   const theme = useTheme();
   return (
     <Button
       style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
       disabled={disabled || loading}
       onPress={onPress}
+      buttonStyle={buttonStyle}
     >
       {loading ? (
         <Spinner />
@@ -355,9 +375,9 @@ function SubmitButton({ onPress, disabled = false, loading }) {
           style={{
             fontFamily: theme.fonts.bold,
             textAlign: 'center',
-            fontSize: 24,
+            fontSize: 20,
             letterSpacing: 0.3,
-            lineHeight: 28,
+            lineHeight: 24,
             color: theme.colors.white,
           }}
         >
