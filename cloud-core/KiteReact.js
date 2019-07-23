@@ -100,7 +100,10 @@ export function createReducerStream(doc, reducerFn, initialState) {
       return reducerFn(lastState, val.value);
     });
   }
-  return doc.value.stream.map(streamReduced).flatten();
+  return doc.value.stream
+    .map(streamReduced)
+    .flatten()
+    .remember();
 }
 
 export function useCloudReducer(actionDocName, cloudReducer) {

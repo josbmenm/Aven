@@ -261,7 +261,7 @@ describe('kite doc', () => {
       });
       expect(resp.value.on).toEqual(null);
       expect(resp.value.value.x).toEqual(42);
-      expect(doc.value.get().value.x).toEqual(42);
+      expect(doc.idAndValue.get().value.value.x).toEqual(42);
       expect(typeof doc.get().lastPutTime).toEqual('number');
     });
   });

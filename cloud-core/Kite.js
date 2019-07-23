@@ -555,9 +555,9 @@ export function createDoc({
       id: result.id,
     };
     if (result.id !== expectedBlock.id) {
-      console.warn(
-        `Expected to put block id "${expectedBlock.id}", but actually put id "${result.id}"`,
-      );
+      // console.warn(
+      //   `Expected to put block id "${expectedBlock.id}", but actually put id "${result.id}"`,
+      // );
     }
     setState(stateUpdates);
 

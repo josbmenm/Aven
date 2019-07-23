@@ -891,6 +891,7 @@ export default async function startPostgresStorageSource({
       .fromPromise(observeDoc(domain, name))
       .map(obs => xs.fromObservable(obs))
       .flatten()
+      .remember()
       .debug(() => {});
   }
 
@@ -899,6 +900,7 @@ export default async function startPostgresStorageSource({
       .fromPromise(observeDocChildren(domain, name))
       .map(obs => xs.fromObservable(obs))
       .flatten()
+      .remember()
       .debug(() => {});
   }
 

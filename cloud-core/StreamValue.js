@@ -16,7 +16,7 @@ export async function streamLoad(stream, onGetContext) {
   return new Promise((resolve, reject) => {
     let loadTimeout = setTimeout(() => {
       reject(new Error(`Timed out loading "${onGetContext()}".`));
-    }, 30000);
+    }, 10000);
 
     let loadListener = null;
 
@@ -45,7 +45,9 @@ export async function streamLoad(stream, onGetContext) {
 }
 
 export function createStreamValue(inputStream, onGetContext) {
-  const stream = inputStream.remember().debug(() => {});
+  const stream = inputStream.remember().debug(v => {
+    // console.log(`See the stream value ${onGetContext()}..`, !!v);
+  });
   return {
     get: () => streamGet(stream),
     load: () => streamLoad(stream, onGetContext),

@@ -171,9 +171,7 @@ export default function createGenericDataSource({
 
     if (id && putResult.id !== id) {
       throw new Err(
-        `Invalid ID provided for this value. Provided "${id}" but expected "${
-          putResult.id
-        }"`,
+        `Invalid ID provided for this value. Provided "${id}" but expected "${putResult.id}"`,
         'InvalidValueId',
         { id, value },
       );
@@ -451,6 +449,7 @@ export default function createGenericDataSource({
       .fromPromise(observeDoc(domain, name))
       .map(obs => xs.fromObservable(obs))
       .flatten()
+      .remember()
       .debug(() => {});
   }
 
@@ -459,6 +458,7 @@ export default function createGenericDataSource({
       .fromPromise(observeDocChildren(domain, name))
       .map(obs => xs.fromObservable(obs))
       .flatten()
+      .remember()
       .debug(() => {});
   }
 
