@@ -36,6 +36,16 @@ function VisualButton({
       ? theme.colors.secondaryBg
       : theme.colors.lightGrey;
 
+  let minHeight = 44;
+  let paddingHorizontal = 12;
+  if (size === 'large') {
+    minHeight = 56;
+    paddingHorizontal = 16;
+  } else if (size === 'small') {
+    minHeight = 32;
+    paddingHorizontal = 8;
+  }
+
   return (
     <Responsive
       breakpoints={breakpoints}
@@ -59,6 +69,8 @@ function VisualButton({
           borderColor: type === 'outline' ? buttonColor : 'transparent',
           backgroundColor: type === 'solid' ? buttonColor : 'transparent',
           opacity: disabled ? 0.5 : 1,
+          minHeight,
+          paddingHorizontal,
           ...linkStyle,
           ...buttonStyle,
         }}
