@@ -93,7 +93,12 @@ class PLCConnectionError extends Error {
   code = 'PLC_Connection';
 }
 
-export default function startKitchen({ cloud, plcIP, logBehavior }) {
+export default function startKitchen({
+  configStream,
+  kitchenStateDoc,
+  plcIP,
+  logBehavior,
+}) {
   let readyPLC = null;
   let connectingPLC = null;
   let readyHandlers = new Set();
@@ -249,18 +254,18 @@ export default function startKitchen({ cloud, plcIP, logBehavior }) {
   let mainRobotSchema = null;
 
   async function connectKitchenClient() {
-    cloud.get('KitchenConfig').value.stream.addListener({
+    console.log('Waiting for Kitchen Configuration...');
+    configStream.addListener({
       next: config => {
         if (!config) {
           return;
         }
+        console.log('Loaded Kitchen Configuration!');
         mainRobotSchema = createSchema(config);
       },
     });
 
-    const kitchenState = cloud.get('KitchenState');
-
-    await kitchenState.putValue({
+    await kitchenStateDoc.putValue({
       isPLCConnected: false,
     });
 
@@ -279,7 +284,7 @@ export default function startKitchen({ cloud, plcIP, logBehavior }) {
         await delay(250);
         return;
       }
-      await kitchenState.putValue({
+      await kitchenStateDoc.putValue({
         ...currentState,
         isPLCConnected,
       });
@@ -294,7 +299,7 @@ export default function startKitchen({ cloud, plcIP, logBehavior }) {
         .catch(async e => {
           console.error('Error updating tags!');
           console.error(e);
-          await kitchenState.putValue({
+          await kitchenStateDoc.putValue({
             isPLCConnected: false,
           });
         })

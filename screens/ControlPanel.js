@@ -144,6 +144,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
 
   let nextSteps = null;
   if (restaurantState && !restaurantState.isAutoRunning) {
+    console.log('resst', restaurantState);
     nextSteps = computeNextSteps(restaurantState, kitchenConfig, kitchenState);
     if (nextSteps && nextSteps.length) {
       subMessage = 'Next Step: ' + nextSteps.map(s => s.description).join(', ');

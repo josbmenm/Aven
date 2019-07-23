@@ -8,19 +8,22 @@ export default async function refundOrder({
   logger,
 }) {
   const order = cloud.get(`ConfirmedOrders/${action.orderId}`);
-  const orderValue = await order.loadValue();
-  if (!orderValue) {
+  const orderState = await order.idAndValue.load();
+
+  if (!orderState.value) {
     throw new Error('Cannot find this order ' + action.orderId);
   }
-  if (orderValue.refund) {
+  if (orderState.value.refund) {
     throw new Error('Order value is already refunded');
   }
-  if (!orderValue.stripeIntent) {
+  if (!orderState.value.stripeIntent) {
     throw new Error('Cannot refund without a stripe payment intent');
   }
-  const refund = await refundCharge(orderValue.stripeIntent.charges.data[0]);
+  const refund = await refundCharge(
+    orderState.value.stripeIntent.charges.data[0],
+  );
   const newOrder = {
-    ...orderValue,
+    ...orderState.value,
     refundTime: Date.now(),
     refund,
   };

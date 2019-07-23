@@ -524,8 +524,6 @@ function getCustomizationSections(
     (customizationState && customizationState.liquidBase) ||
     menuItem.Recipe.LiquidBaseIngredient[0];
 
-  console.log('zoom', customizationState);
-
   const sections = [
     {
       name: 'enhancement',

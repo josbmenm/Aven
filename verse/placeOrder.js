@@ -8,14 +8,14 @@ import {
 } from '../logic/configLogic';
 
 export default async function placeOrder(cloud, { orderId, paymentIntent }) {
-  const orderResult = await cloud.dispatch({
-    type: 'GetDocValue',
-    name: `PendingOrders/${orderId}`,
-    domain: 'onofood.co',
-  });
-  const companyConfig = await cloud.get('CompanyConfig').load();
+  const orderState = await cloud
+    .get(`PendingOrders/${orderId}`)
+    .idAndValue.load();
+  const companyConfigState = await cloud.get('CompanyConfig').idAndValue.load();
+  const companyConfig = companyConfigState.value;
+  const order = orderState.value;
+
   const blends = companyConfigToBlendMenu(companyConfig);
-  const order = orderResult.value;
   const summary = getOrderSummary(order, companyConfig);
   if (!summary) {
     console.error({

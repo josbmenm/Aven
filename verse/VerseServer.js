@@ -2,7 +2,10 @@ import App from './App';
 import WebServer from '../aven-web/WebServer';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
 import { CloudContext, createReducerStream } from '../cloud-core/KiteReact';
-import { getFreshActionId } from '../logic/KitchenLogic';
+import {
+  getFreshActionId,
+  companyConfigToKitchenConfig,
+} from '../logic/KitchenLogic';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import KitchenCommands from '../logic/KitchenCommands';
 import { hashSecureString } from '../cloud-utils/Crypto';
@@ -183,12 +186,39 @@ const startVerseServer = async () => {
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
+  const kitchenConfigStream = cloud.get('KitchenConfig').value.stream;
+  // const airtableDoc = cloud.get('Airtable');
+  // const kitchenConfigStream = airtableDoc.value.stream
+  //   .map(folder => {
+  //     if (!folder) {
+  //       return xs.of(null);
+  //     }
+  //     const blockId = folder.files['db.json'].id;
+  //     const directoryBlockId = folder.files['files'].id;
+  //     const block = airtableDoc.getBlock(blockId);
+  //     const directoryBlock = airtableDoc.getBlock(directoryBlockId);
+  //     return xs
+  //       .combine(block.value.stream, directoryBlock.value.stream)
+  //       .map(([atData, directory]) => {
+  //         return { ...atData, directory };
+  //       });
+  //   })
+  //   .flatten()
+  //   .map(companyConfig => {
+  //     return companyConfigToKitchenConfig(companyConfig);
+  //   })
+  //   .remember()
+  //   .debug(c => {
+  //     console.log('Has Config: ', !!c);
+  //   });
+
   let kitchen = null;
   if (!process.env.DISABLE_ONO_KITCHEN) {
     console.log('Connecting to Maui Kitchen');
     kitchen = startKitchen({
       logBehavior,
-      cloud,
+      configStream: kitchenConfigStream,
+      kitchenStateDoc: cloud.get('KitchenState'),
       plcIP: '10.10.1.122',
     });
   }
@@ -336,7 +366,7 @@ const startVerseServer = async () => {
   const sequencerStateStream = xs.combine(
     cloud.get('RestaurantState').value.stream,
     cloud.get('KitchenState').value.stream,
-    cloud.get('KitchenConfig').value.stream,
+    kitchenConfigStream,
   );
   sequencerStateStream.addListener({
     next: ([restaurantState, kitchenState, kitchenConfig]) => {
@@ -369,7 +399,7 @@ const startVerseServer = async () => {
       case 'PlaceOrder':
         return placeOrder(cloud, action);
       default: {
-        return await protectedSource.dispatch(action);
+        return await cloud.dispatch(action);
       }
     }
   };
@@ -387,7 +417,8 @@ const startVerseServer = async () => {
     App,
     context,
     source: {
-      ...protectedSource,
+      // ...protectedSource,
+      ...cloud,
       dispatch,
     },
     serverListenLocation,

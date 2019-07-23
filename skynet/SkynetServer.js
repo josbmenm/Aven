@@ -146,10 +146,18 @@ const startSkynetServer = async () => {
       try {
         await theFile.save(fileValue, { contentType: value.contentType });
       } catch (e) {
-        if (e.errors.length === 1 && e.errors[0].reason === 'forbidden') {
+        if (
+          e.errors &&
+          e.errors.length === 1 &&
+          e.errors[0].reason === 'forbidden'
+        ) {
           // known case, re-uploading duplicate is fine
         } else {
-          throw e;
+          console.error(
+            `Failed to upload "${id}" block to google cloud, but continuing anyway!`,
+          );
+          console.error(e);
+          // throw e;
         }
       }
     },
@@ -214,58 +222,55 @@ const startSkynetServer = async () => {
     auth: null,
   });
   const airtableFolder = kiteSource.docs.get('Airtable');
+  const companyConfigStream = airtableFolder.value.stream
+    .map(folder => {
+      if (!folder) {
+        return xs.of(null);
+      }
+      const blockId = folder.files['db.json'].id;
+      const directoryBlockId = folder.files['files'].id;
+      const block = airtableFolder.getBlock(blockId);
+      const directoryBlock = airtableFolder.getBlock(directoryBlockId);
+      return xs
+        .combine(block.value.stream, directoryBlock.value.stream)
+        .map(([atData, directory]) => {
+          // below, we inject block refs for our Airtable images, by referring to the files directory
+          const baseTables = Object.fromEntries(
+            Object.entries(atData.baseTables).map(([tableName, table]) => {
+              const tableWithRefs = Object.fromEntries(
+                Object.entries(table).map(([rowId, row]) => {
+                  const rowWithRefs = Object.fromEntries(
+                    Object.entries(row).map(([colName, cell]) => {
+                      if (Array.isArray(cell) && cell[0] && cell[0].url) {
+                        // ok, this is an image!
+                        const cellWithRefs = cell.map(image => {
+                          const ext = path.extname(image.url);
+                          const fileName = `${md5(image.url).toString()}${ext}`;
+                          const ref = directory.files[fileName];
+                          return {
+                            ...image,
+                            ref,
+                          };
+                        });
+                        return [colName, cellWithRefs];
+                      }
+                      return [colName, cell];
+                    }),
+                  );
+                  return [rowId, rowWithRefs];
+                }),
+              );
+              return [tableName, tableWithRefs];
+            }),
+          );
+          return { ...atData, baseTables, directory };
+        });
+    })
+    .flatten()
+    .remember();
   const companyConfig = kiteSource.docs.setOverrideStream(
     'CompanyConfig',
-    airtableFolder.value.stream
-      .map(folder => {
-        console.log('map Airtable to compayConfig', !!folder);
-        if (!folder) {
-          return xs.of(null);
-        }
-        const blockId = folder.files['db.json'].id;
-        const directoryBlockId = folder.files['files'].id;
-        const block = airtableFolder.getBlock(blockId);
-        const directoryBlock = airtableFolder.getBlock(directoryBlockId);
-        return xs
-          .combine(block.value.stream, directoryBlock.value.stream)
-          .map(([atData, directory]) => {
-            console.log('AirtableData has NEW value', !!atData, !!directory);
-            // below, we inject block refs for our Airtable images, by referring to the files directory
-            const baseTables = Object.fromEntries(
-              Object.entries(atData.baseTables).map(([tableName, table]) => {
-                const tableWithRefs = Object.fromEntries(
-                  Object.entries(table).map(([rowId, row]) => {
-                    const rowWithRefs = Object.fromEntries(
-                      Object.entries(row).map(([colName, cell]) => {
-                        if (Array.isArray(cell) && cell[0] && cell[0].url) {
-                          // ok, this is an image!
-                          const cellWithRefs = cell.map(image => {
-                            const ext = path.extname(image.url);
-                            const fileName = `${md5(
-                              image.url,
-                            ).toString()}${ext}`;
-                            const ref = directory.files[fileName];
-                            return {
-                              ...image,
-                              ref,
-                            };
-                          });
-                          return [colName, cellWithRefs];
-                        }
-                        return [colName, cell];
-                      }),
-                    );
-                    return [rowId, rowWithRefs];
-                  }),
-                );
-                return [tableName, tableWithRefs];
-              }),
-            );
-            console.log('returning new compayConfig');
-            return { ...atData, baseTables, directory };
-          });
-      })
-      .flatten(),
+    companyConfigStream,
   );
   const restaurantActions = kiteSource.docs.get('RestaurantActions');
 
@@ -280,12 +285,14 @@ const startSkynetServer = async () => {
 
   const kitchenConfig = kiteSource.docs.setOverrideStream(
     'KitchenConfig',
-    companyConfig.value.stream.map(companyConfigToKitchenConfig),
+    companyConfigStream.map(companyConfig => {
+      return companyConfigToKitchenConfig(companyConfig);
+    }),
   );
 
   const menu = kiteSource.docs.setOverrideStream(
     'Menu',
-    companyConfig.value.stream.map(companyConfigToMenu),
+    companyConfigStream.map(companyConfigToMenu),
   );
   const logger = createLogger(storageSource, 'onofood.co', 'SkynetEvents');
 
@@ -324,31 +331,36 @@ const startSkynetServer = async () => {
     throw new Error('Cannot place order on skynet! Use verse');
   }
 
-  setInterval(
-    () => {
-      console.log('Updating Airtable..');
-      console.log(
-        (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
-          'MB Memory Consumption',
-      );
-      scrapeAirTable(fsClient, logger)
-        .then(() => {
-          console.log('Airtable Update complete!');
-          console.log(
-            (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
-              'MB Memory Consumption',
-          );
-        })
-        .catch(e => {
-          console.error('Error Updating Airtable!');
-          console.log(
-            (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
-              'MB Memory Consumption',
-          );
+  let shouldUploadImmediately = false;
+  shouldUploadImmediately = true;
 
-          console.error(e);
-        });
-    },
+  const startAirtableScrape = () => {
+    console.log('Updating Airtable..');
+    console.log(
+      (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
+        'MB Memory Consumption',
+    );
+    scrapeAirTable(fsClient, logger)
+      .then(() => {
+        console.log('Airtable Update complete!');
+        console.log(
+          (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
+            'MB Memory Consumption',
+        );
+      })
+      .catch(e => {
+        console.error('Error Updating Airtable!');
+        console.log(
+          (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
+            'MB Memory Consumption',
+        );
+
+        console.error(e);
+      });
+  };
+  shouldUploadImmediately && startAirtableScrape();
+  setInterval(
+    startAirtableScrape,
     10 * 60 * 1000, // 10 minutes
   );
 

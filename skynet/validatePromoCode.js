@@ -1,5 +1,6 @@
 export default async function validatePromoCode(cloud, { promoCode }) {
-  const { baseTables } = await cloud.get('CompanyConfig').value.load();
+  const companyConfigState = await cloud.get('CompanyConfig').idAndValue.load();
+  const { baseTables } = companyConfigState.value;
   const { PromoCodes } = baseTables;
 
   let atPromoCode = null;

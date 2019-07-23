@@ -384,14 +384,18 @@ function FillsDisplay({ state }) {
         <Subtitle title="Remaining Fills" />
         {state.fillsRemaining &&
           state.fillsRemaining.map((fill, i) => (
-            <Text key={i}>{JSON.stringify(fill)}</Text>
+            <Text key={i}>
+              {fill.system}.{fill.slot} x {fill.amount}
+            </Text>
           ))}
       </View>
       <View style={{ flex: 1 }}>
         <Subtitle title="Completed Fills" />
         {state.fillsCompleted &&
           state.fillsCompleted.map((fill, i) => (
-            <Text key={i}>{JSON.stringify(fill)}</Text>
+            <Text key={i}>
+              {fill.system}.{fill.slot} x {fill.amount}
+            </Text>
           ))}
       </View>
     </View>
