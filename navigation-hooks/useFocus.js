@@ -13,10 +13,14 @@ export default function useFocus({ inputRenderers, onSubmit }) {
       activeInputRef && activeInputRef.current && activeInputRef.current.blur();
     }
   });
-  useNavigationDidFocusEffect(() => {
-    const firstInput = refs.current[0].current;
-    firstInput && firstInput.focus();
-  });
+  const focusEventHandler = React.useMemo(
+    () => () => {
+      const firstInput = refs.current[0].current;
+      firstInput && firstInput.focus();
+    },
+    [],
+  );
+  useNavigationDidFocusEffect(focusEventHandler);
 
   function handleSubmit(index) {
     if (index === refs.length - 1) {
