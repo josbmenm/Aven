@@ -1,14 +1,14 @@
 {
   "main": "PlaygroundNativeApp",
   "aven": {
-    "env": "env-kiosk",
+    "env": "env-portal",
     "envOptions": {
-      "bundleId": "co.onofood.portal",
-      "displayName": "Control",
-      "appcenterSecret": "52542d85-9a56-4246-956d-ffd8f22b7788",
-      "codePushKey": "_3pcIaFvPpBPLkUNdCILthOOP-fqry0UbYIiN",
-      "codePushApp": "OnoFoodCo/Portal",
-      "codePushChannel": "Production"
+      "bundleId": "co.onofood.playground",
+      "displayName": "Playground",
+      "appcenterSecret": "",
+      "codePushKey": "",
+      "codePushApp": "",
+      "codePushChannel": ""
     },
     "srcDependencies": [
       "navigation-core",
@@ -23,7 +23,6 @@
       "cloud-native",
       "react-utils",
       "components",
-      "card-reader",
       "navigation-transitioner",
       "navigation-hooks"
     ],

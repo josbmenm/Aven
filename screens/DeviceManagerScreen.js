@@ -1,41 +1,19 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  Alert,
-  ScrollView,
-  AlertIOS,
-} from 'react-native';
+import React from 'react';
+import { View, AlertIOS } from 'react-native';
 import { Easing } from 'react-native-reanimated';
 import Button from '../components/Button';
 import RootAuthenticationSection from './RootAuthenticationSection';
-import {
-  CardReaderLog,
-  useCardReader,
-  useCardPaymentCapture,
-  useCardReaderConnectionManager,
-  disconnectReader,
-  clearReaderLog,
-} from '../card-reader/CardReader';
 import RowSection from '../components/RowSection';
 import TextRow from '../components/TextRow';
 import SimplePage from '../components/SimplePage';
 import Row from '../components/Row';
 import Spinner from '../components/Spinner';
-import BitRow from '../components/BitRow';
-import { rowStyle, rowTitleStyle, titleStyle } from '../components/Styles';
 import {
   useCloudReducer,
   useCloud,
   useCloudValue,
 } from '../cloud-core/KiteReact';
 import DevicesReducer from '../logic/DevicesReducer';
-import BlockForm from '../components/BlockForm';
-import Title from '../components/Title';
-import BlockFormButton from '../components/BlockFormButton';
-import BlockFormMessage from '../components/BlockFormMessage';
-import BlockFormInput from '../components/BlockFormInput';
 import KeyboardPopover from '../components/KeyboardPopover';
 import { usePopover } from '../views/Popover';
 import useAsyncError from '../react-utils/useAsyncError';
