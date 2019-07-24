@@ -93,9 +93,12 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   if (!isConnected) {
     status = 'disconnected';
     message = 'App disconnected from server..';
-  } else if (!kitchenState || !restaurantState) {
+  } else if (!restaurantState) {
     status = 'disconnected';
     message = 'Loading state..';
+  } else if (!kitchenState) {
+    status = 'disconnected';
+    message = 'Disconnected from machine.';
   } else if (!isPLCConnected) {
     status = 'disconnected';
     message = 'Server disconnected from machine..';
