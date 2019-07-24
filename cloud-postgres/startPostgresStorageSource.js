@@ -1,5 +1,4 @@
 import Knex from 'knex';
-import { BehaviorSubject, Observable, Subject } from 'rxjs-compat';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import cuid from 'cuid';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
@@ -31,12 +30,9 @@ export default async function startPostgresStorageSource({
 
   const TOP_PARENT_ID = 0; // hacky approach to handle top-level parents and still enforce uniqueness properly on the docs table.
 
-  const isConnected = new BehaviorSubject(false);
-
   let isCurrentlyConnected = false;
   const defaultConnectionUpdater = isConn => {
     isCurrentlyConnected = isConn;
-    isConnected.next(isConn);
   };
   let updateIsConnected = defaultConnectionUpdater;
   const isConnectedStream = xs.createWithMemory({
@@ -52,7 +48,7 @@ export default async function startPostgresStorageSource({
     },
   });
 
-  const observingChannels = {};
+  const docStreamChannels = {};
 
   const pgClient = new Client(config.connection);
 
@@ -67,9 +63,9 @@ export default async function startPostgresStorageSource({
     client.on('notification', msg => {
       const { payload, channel: channelId } = msg;
       const payloadData = JSON.parse(payload);
-      const channel = observingChannels[channelId];
-      if (channel && channel.notifier) {
-        channel.notifier.next(payloadData);
+      const channel = docStreamChannels[channelId];
+      if (channel && channel.notify) {
+        channel.notify.next(payloadData);
       } else {
         console.error('undeliverable pg notification!', msg);
       }
@@ -315,7 +311,7 @@ export default async function startPostgresStorageSource({
   }
 
   async function notifyChannel(channelId, payload) {
-    const channel = observingChannels[channelId];
+    const channel = docStreamChannels[channelId];
     if (channel && channel.notifier) {
       channel.notifier.next(payload);
     }
@@ -721,9 +717,9 @@ export default async function startPostgresStorageSource({
   async function GetStatus() {
     // todo, fix this
     return {
-      ready: isConnected.getValue(),
-      connected: isConnected.getValue(),
-      migrated: isConnected.getValue(),
+      ready: true,
+      connected: true,
+      migrated: true,
     };
   }
 
@@ -793,35 +789,6 @@ export default async function startPostgresStorageSource({
     handleClose();
   }
 
-  function getCachedObervable(args, getChannelId) {
-    const channelId = getChannelId(...args);
-    if (observingChannels[channelId]) {
-      return observingChannels[channelId].observable;
-    }
-    const notifier = new Subject();
-    const observable = new Observable(observer => {
-      const notifierSubscription = notifier.subscribe({
-        next: val => {
-          observer.next(val);
-        },
-      });
-      pgClient && pgClient.query(`LISTEN "${channelId}"`).catch(console.error);
-      return () => {
-        pgClient
-          .query(`UNLISTEN "${channelId}"`)
-          .then(resp => {})
-          .catch(console.error);
-        notifierSubscription.unsubscribe();
-      };
-    }).shareReplay(1);
-    const channel = {
-      notifier,
-      observable,
-    };
-    observingChannels[channelId] = channel;
-    return channel.observable;
-  }
-
   function getDocChannel(domain, parentId, name) {
     return `doc-${domain}-${parentId}-${name}`;
   }
@@ -829,7 +796,7 @@ export default async function startPostgresStorageSource({
     return `doc-children-${domain}-${parentId}`;
   }
 
-  async function observeDoc(domain, name) {
+  function getDocStream(domain, name) {
     if (!name) {
       throw new Err('Invalid doc name for "observeDoc"', 'InvalidDocName', {
         domain,
@@ -841,77 +808,49 @@ export default async function startPostgresStorageSource({
         domain,
       });
     }
-    const ctx = await getDocDBContext(domain, name, false);
-    const channelId = getDocChannel(domain, ctx.parentId, ctx.localName);
 
-    if (observingChannels[channelId]) {
-      return observingChannels[channelId].observable;
-    }
+    let cleanup = () => {};
 
-    const notifier = new Subject();
-    const observable = new Observable(observer => {
-      const notifierSubscription = notifier.subscribe({
-        next: val => {
-          observer.next(val);
-        },
-      });
-      GetDocValue({ name, domain })
-        .then(docState => {
-          observer.next({ id: docState.id, value: docState.value });
-        })
-        .catch(observer.error);
+    const outputStream = xs.createWithMemory({
+      start: notify => {
+        (async () => {
+          const ctx = await getDocDBContext(domain, name, false);
+          const channelId = getDocChannel(domain, ctx.parentId, ctx.localName);
+          if (docStreamChannels[channelId]) {
+            docStreamChannels[channelId].stream.addListener(notify);
+            cleanup = () => {
+              docStreamChannels[channelId].stream.removeListener(notify);
+            };
+          } else {
+            const channel = { notify };
+            docStreamChannels[channelId] = channel;
+            channel.stream = outputStream;
+            await pgClient.query(`LISTEN "${channelId}"`);
+            cleanup = () => {
+              channel.notify = null;
+              pgClient.query(`UNLISTEN "${channelId}"`).catch(console.error);
+            };
 
-      pgClient && pgClient.query(`LISTEN "${channelId}"`).catch(observer.error);
-      return () => {
-        pgClient
-          .query(`UNLISTEN "${channelId}"`)
-          .then(resp => {})
-          .catch(console.error);
-        notifierSubscription.unsubscribe();
-      };
-    }).shareReplay(1);
-    const channel = {
-      notifier,
-      observable,
-    };
-    observingChannels[channelId] = channel;
+            const docState = await GetDocValue({ name, domain });
+            channel.notify &&
+              channel.notify.next({ id: docState.id, value: docState.value });
+          }
+        })().catch(err => {
+          notify.error(err);
+        });
+      },
+      stop: () => {
+        cleanup();
+      },
+    });
 
-    return channel.observable;
-  }
-  async function observeDocChildren(domain, name) {
-    if (!domain) {
-      throw new Err('Invalid domain', 'InvalidDomain', { domain });
-    }
-    const { id } = await getDocDBContext(domain, name);
-    return getCachedObervable([domain, id], getChildrenChannel);
-  }
-
-  function getDocStream(domain, name) {
-    return xs
-      .fromPromise(observeDoc(domain, name))
-      .map(obs => xs.fromObservable(obs))
-      .flatten()
-      .remember()
-      .debug(() => {});
-  }
-
-  function getDocChildrenEventStream(domain, name) {
-    return xs
-      .fromPromise(observeDocChildren(domain, name))
-      .map(obs => xs.fromObservable(obs))
-      .flatten()
-      .remember()
-      .debug(() => {});
+    return outputStream;
   }
 
   return {
-    isConnected,
     connected: createStreamValue(isConnectedStream, () => `PostgresConnected`),
     close,
-    observeDoc,
-    observeDocChildren,
     getDocStream,
-    getDocChildrenEventStream,
     dispatch: createDispatcher({
       PutDocValue,
       GetDocValue,
