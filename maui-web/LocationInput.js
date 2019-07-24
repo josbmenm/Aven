@@ -7,15 +7,18 @@ import FormInput from '../components/BlockFormInput';
 import { Responsive } from '../dashboard/Responsive';
 
 //
-export function LocationInput({
-  onSelectedResult,
-  selectedResult,
-  inputValue = '',
-  style,
-  responsiveStyle,
-  breakpoints,
+export function LocationInputWithRef(
+  {
+    onSelectedResult,
+    selectedResult,
+    inputValue = '',
+    style,
+    responsiveStyle,
+    breakpoints
+  },
+  forwardedRef,
   ...rest
-}) {
+) {
   const theme = useTheme();
   const [inputText, setInputText] = React.useState(inputValue);
   const [results, setResults] = React.useState(null);
@@ -46,7 +49,7 @@ export function LocationInput({
   }
   return (
     <Responsive
-    breakpoints={breakpoints}
+      breakpoints={breakpoints}
       style={{
         marginBottom: [16, 0],
         ...responsiveStyle,
@@ -57,6 +60,7 @@ export function LocationInput({
           onValue={handleTextInput}
           value={inputText}
           label="enter your city"
+          ref={forwardedRef}
         />
         {results && inputText !== '' ? (
           <View
@@ -111,3 +115,5 @@ export function LocationInput({
     </Responsive>
   );
 }
+
+export const LocationInput = React.forwardRef(LocationInputWithRef);

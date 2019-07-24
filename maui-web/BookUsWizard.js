@@ -73,6 +73,40 @@ function BookUsWizard() {
     hasPrev: false,
   });
 
+  const firstNameRef = React.useRef(null);
+  const lastNameRef = React.useRef(null);
+  const emailRef = React.useRef(null);
+  const eventTypeRef = React.useRef(null);
+  const dateRef = React.useRef(null);
+  const addressRef = React.createRef(null);
+  const commentsRef = React.useRef(null);
+
+  React.useEffect(() => {
+    switch(stepsState.current) {
+      case 1:
+        firstNameRef.current.focus();
+        break;
+      case 2:
+        emailRef.current.focus();
+        break;
+      case 3:
+        eventTypeRef.current.focus();
+        break;
+      case 4:
+        dateRef.current.focus();
+        break;
+      case 5:
+        console.log("TCL: BookUsWizard -> addressRef", addressRef)
+        addressRef.current.focus();
+        break;
+      case 6:
+        commentsRef.current.focus();
+        break;
+      default:
+        return;
+    }
+  }, [stepsState.current])
+
   const [formState, formDispatch] = React.useReducer(formReducer, {
     fields: {
       firstName: '',
@@ -163,6 +197,7 @@ function BookUsWizard() {
               <FormInput
                 label="first name"
                 mode="name"
+                ref={firstNameRef}
                 value={formState.fields.firstName}
                 onValue={value =>
                   formDispatch({
@@ -176,6 +211,7 @@ function BookUsWizard() {
               <FormInput
                 label="last name"
                 mode="name"
+                ref={lastNameRef}
                 value={formState.fields.lastName}
                 onValue={value =>
                   formDispatch({
@@ -200,6 +236,7 @@ function BookUsWizard() {
             <FormInput
               mode="email"
               label="email"
+              ref={emailRef}
               value={formState.fields.email}
               onValue={value =>
                 formDispatch({
@@ -221,6 +258,7 @@ function BookUsWizard() {
             <FormInput
               mode="name"
               label="select an event type"
+              ref={eventTypeRef}
               value={formState.fields.eventType}
               onValue={value =>
                 formDispatch({
@@ -242,6 +280,7 @@ function BookUsWizard() {
             <FormInput
               mode="name"
               label="event date"
+              ref={dateRef}
               value={formState.fields.date}
               onValue={value =>
                 formDispatch({
@@ -263,6 +302,7 @@ function BookUsWizard() {
             {/* mapbox autocomplete */}
             <LocationInput
               inputValue={formState.fields.address.place_name_en}
+              ref={addressRef}
               onSelectedResult={value => {
                 formDispatch({ type: 'UPDATE_FIELD', key: 'address', value });
               }}
@@ -281,6 +321,7 @@ function BookUsWizard() {
               value={formState.fields.comments}
               label="any additional comments?"
               mode="textarea"
+              ref={commentsRef}
               onValue={value =>
                 formDispatch({ type: 'UPDATE_FIELD', key: 'comments', value })
               }

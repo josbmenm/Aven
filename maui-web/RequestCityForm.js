@@ -1,5 +1,5 @@
 import React from 'react';
-import { LocationInput } from './LocationInput';
+import { LocationInput}  from './LocationInput';
 import Button from '../dashboard/Button';
 import View from '../views/View';
 import BodyText from '../dashboard/BodyText';
