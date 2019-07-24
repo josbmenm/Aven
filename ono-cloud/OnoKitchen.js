@@ -19,6 +19,11 @@ import {
 
 const OrderContext = createContext(null);
 
+function getLocalName(name) {
+  const locals = name.split();
+  return locals[locals.length - 1];
+}
+
 export const sortByField = getSortedByField;
 
 export const getSelectedIngredients = doGetSelectedIngredients;
@@ -153,7 +158,7 @@ export function OrderContextProvider({ children }) {
       await o.transact(doConfirmOrder);
       await cloud.dispatch({
         type: 'PlaceOrder',
-        orderId: o.getName(),
+        orderId: getLocalName(o.getName()),
         paymentIntent,
       });
     },
