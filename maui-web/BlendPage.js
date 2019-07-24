@@ -43,6 +43,7 @@ function BlendContent({ displayName, blend, recipe }) {
         <View>
           <Container
             style={{
+              position: 'relative',
               borderBottomWidth: 1,
               borderBottomColor: theme.colors.border,
             }}
@@ -51,67 +52,89 @@ function BlendContent({ displayName, blend, recipe }) {
             }}
           >
             <ColumnToRow>
+            <Responsive style={{
+              height: [300, 'auto'],
+              marginBottom: [32, 0]
+            }}>
               <ColumnToRowChild
                 style={{
                   position: 'relative',
+                  overflow: 'visible',
                 }}
+
               >
                 <Responsive
                   style={{
                     position: ['relative', 'absolute'],
-                    transform: [[{ scale: 1 }], [{ scale: 1.2 }]],
+                    transform: ['scale(1)', 'scale(1.5)'],
                   }}
                 >
                   <View
                     style={{
                       width: '100%',
                       height: '100%',
-                      bottom: 0,
-                      right: 0,
-                      zIndex: -1,
+                      position: 'relative',
+                      overflow: 'visible',
                     }}
                   >
                     <AirtableImage
                       image={blend.Recipe.DecorationImage}
-                      resizeMode="contain"
+                      resizeMode="cover"
+                      responsiveStyle={{
+                        maxWidth: ['100%', 1024],
+                        width: ['100%', '60%'],
+                        height: [300, 768],
+                        position: ['relative', 'absolute'],
+                      }}
                       style={{
                         flex: 1,
-                        width: '100%',
-                        height: '100%',
-                        paddingTop: '56.25%',
+                        overflow: 'visible',
+                        right: 0,
+                        top: 0,
                       }}
                     />
-                    {/* <Image
-                      source={require('./public/img/blend-preview.png')}
-                      resizeMode="contain"
-                      style={{
-                        flex: 1,
-                        width: '100%',
-                        height: '100%',
-                        paddingTop: '56.25%',
-                      }}
-                    /> */}
                   </View>
                 </Responsive>
+                <Responsive style={{
+                  display: ['none', 'block']
+                }}>
                 <Image
                   style={{
                     position: 'absolute',
-                    bottom: -48,
+                    top: -200,
                     right: 0,
-                    left: 0,
-                    height: 100,
-                    width: '100%',
+                    width: 100,
+                    height: 'calc(100% + 200px)',
                   }}
-                  source={require('./public/img/white-gradient-bottom.png')}
+                  source={require('./public/img/white-gradient.png')}
                   resizeMode="repeat"
                 />
+                </Responsive>
               </ColumnToRowChild>
+              </Responsive>
               <Responsive
                 style={{
                   alignItems: ['center', 'flex-start'],
                 }}
               >
-                <ColumnToRowChild>
+                <ColumnToRowChild style={{ backgroundColor: 'white' }}>
+                  <Responsive
+                    style={{
+                      display: ['none', 'block'],
+                    }}
+                  >
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: -120,
+                        right: 0,
+                        backgroundColor: 'white',
+                        height: 300,
+                        width: '100%',
+                        zIndex: -1,
+                      }}
+                    />
+                  </Responsive>
                   <Responsive
                     style={{
                       alignSelf: ['center !important', 'flex-start !important'],
@@ -258,6 +281,24 @@ function BlendContent({ displayName, blend, recipe }) {
                 </ColumnToRowChild>
               </Responsive>
             </ColumnToRow>
+            <Responsive
+              style={{
+                display: ['none', 'block'],
+              }}
+            >
+              <Image
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                  height: 100,
+                  width: '100%',
+                }}
+                source={require('./public/img/white-gradient-bottom.png')}
+                resizeMode="repeat"
+              />
+            </Responsive>
           </Container>
         </View>
       </Responsive>
@@ -365,7 +406,7 @@ function BlendPage() {
         />
       )}
       <View>
-        <Container style={{ overflow: 'hidden' }}>
+        <Container>
           <Heading
             size="medium"
             style={{ textAlign: 'center' }}
