@@ -81,7 +81,7 @@ function VisualButton({
           <Text
             style={{
               fontFamily: theme.fonts.bold,
-              fontSize: 20,
+              fontSize: size === 'large' ? 24 : size === 'small' ? 16 : 20,
               lineHeight: 24,
               textAlign: 'center',
               color:
