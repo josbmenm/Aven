@@ -260,7 +260,7 @@ export default function startKitchen({
         if (!config) {
           return;
         }
-        console.log('Loaded Kitchen Configuration!');
+        console.log('Loaded Kitchen Configuration!', !!config);
         mainRobotSchema = createSchema(config);
       },
     });

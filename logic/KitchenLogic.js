@@ -175,7 +175,7 @@ export function companyConfigToKitchenConfig(companyConfig) {
               .map(tag => tag['Internal Name']),
         };
       } else {
-        throw new Error(`Unexpected tag type "${tag.Type}"`);
+        // throw new Error(`Unexpected tag type "${tag.Type}"`);
       }
     });
     subsystems[kitchenSystem.Name] = {
