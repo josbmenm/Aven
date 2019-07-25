@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import TwoPanePage from '../components/TwoPanePage';
 import Button from '../components/Button';
+import AdHocOrder from '../components/AdHocOrder';
 import { useCloudReducer } from '../cloud-core/KiteReact';
 import RowSection from '../components/RowSection';
 import {
@@ -90,7 +91,7 @@ export default function OrdersScreen(props) {
         <OrdersList restaurantState={restaurantState} dispatch={dispatch} />
       }
     >
-      {null}
+      <AdHocOrder />
     </TwoPanePage>
   );
 }

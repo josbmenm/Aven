@@ -13,7 +13,6 @@ import {
   Dimensions,
 } from 'react-native';
 import { createAppContainer } from '../navigation-native';
-import { useNavigation } from '../navigation-hooks/Hooks';
 import { createSwitchNavigator } from '../navigation-core';
 import codePush from 'react-native-code-push';
 
@@ -28,7 +27,6 @@ import KioskHomeScreen from '../screens/KioskHomeScreen';
 import BlendScreen from '../screens/BlendScreen';
 import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
 import FoodScreen from '../screens/FoodScreen';
-import DebugStateScreen from '../screens/DebugStateScreen';
 import PaymentDebugScreen from '../screens/PaymentDebugScreen';
 import OrdersScreen from '../screens/OrdersScreen';
 import ManualControlScreen from '../screens/ManualControlScreen';
@@ -80,7 +78,7 @@ const RESTAURANT_DEV = {
 };
 const RESTAURANT_PROD = {
   useSSL: false,
-  authority: 'restaurant0.maui.onofood.co:8830',
+  authority: '10.10.1.200:8830',
 };
 
 const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
@@ -181,7 +179,6 @@ const TABS = [
   { routeName: 'Orders', title: 'Orders' },
   { routeName: 'Inventory', title: 'Inventory' },
   { routeName: 'Alarms', title: 'Alarms' },
-  { routeName: 'DeviceManager', title: 'Devices' },
   { routeName: 'Settings', title: 'Settings' },
 ];
 

@@ -1,0 +1,39 @@
+{
+  "name": "verse",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {},
+  "aven": {
+    "env": "razzle",
+    "publicAssetDir": "public",
+    "envOptions": {
+      "mainServer": "VerseServer.js",
+      "mainClient": "MainClient.js",
+      "deployEnv": "Script",
+      "deployScript": "deploy.sh"
+    },
+    "srcDependencies": [
+      "logic",
+      "aven-web",
+      "stripe-server",
+      "admin",
+      "cloud-core",
+      "cloud-server",
+      "cloud-browser",
+      "cloud-fs",
+      "cloud-postgres",
+      "ono-cloud",
+      "components",
+      "skynet"
+    ],
+    "moduleDependencies": [
+      "mjml-react",
+      "mjml",
+      "fbjs",
+      "ws",
+      "rxjs-compat",
+      "ethernet-ip",
+      "@nozbe/with-observables"
+    ]
+  }
+}

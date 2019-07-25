@@ -65,7 +65,15 @@ const SEQUENCER_STEPS = [
     getDescription: intent => 'Drop Cup',
     getRestaurantStateIntent: restaurantState => {
       if (restaurantState.fill && !!restaurantState.fill.requestedDropTime) {
-        return {};
+        return { didCompleteJob: false };
+      }
+      if (
+        restaurantState.fill &&
+        restaurantState.fill.deliveryMode === 'drop' &&
+        restaurantState.fill.skipBlend &&
+        restaurantState.fill.fillsRemaining.length === 0
+      ) {
+        return { didCompleteJob: true };
       }
       return null;
     },
@@ -75,11 +83,11 @@ const SEQUENCER_STEPS = [
     getKitchenCommand: intent => ({
       command: 'DropCup',
     }),
-    getSuccessRestaurantAction: () => ({
-      type: 'DidDropCup',
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidLooseFillCup',
+      didCompleteJob: intent.didCompleteJob,
     }),
   },
-
   {
     // do fill
     getDescription: ({ amount, system, slot }) => {
@@ -120,7 +128,9 @@ const SEQUENCER_STEPS = [
       if (
         !restaurantState.fill ||
         !restaurantState.fill.fillsRemaining ||
-        restaurantState.fill.fillsRemaining.length !== 0
+        restaurantState.fill.fillsRemaining.length !== 0 ||
+        restaurantState.fill.requestedDropTime ||
+        restaurantState.fill.skipBlend
       ) {
         return null;
       }
@@ -136,6 +146,33 @@ const SEQUENCER_STEPS = [
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidPassToBlender',
+    }),
+  },
+  {
+    // ditch cup (fill system)
+    getDescription: intent => 'Ditch Cup',
+    getRestaurantStateIntent: restaurantState => {
+      if (
+        restaurantState.fill &&
+        restaurantState.fill.skipBlend &&
+        restaurantState.fill.deliveryMode === 'ditch' &&
+        restaurantState.fill.fillsRemaining.length === 0
+      ) {
+        return {
+          didCompleteJob: true,
+        };
+      }
+      return null;
+    },
+    getKitchenStateReady: (kitchenState, intent) => {
+      return !!kitchenState && kitchenState.FillSystem_DitchCupReady_READ;
+    },
+    getKitchenCommand: intent => ({
+      command: 'DitchCup',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidLooseFillCup',
+      didCompleteJob: intent.didCompleteJob,
     }),
   },
   {
@@ -212,7 +249,7 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
   if (!restaurantState || !kitchenConfig || !kitchenState) {
     return null;
   }
-  if (kitchenState.isAttached) {
+  if (restaurantState.isAttached) {
     const { isFaulted, isRunning } = checkKitchenState(
       kitchenState,
       kitchenConfig,
@@ -236,10 +273,7 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
       return false;
     }
 
-    if (
-      kitchenState.isAttached &&
-      !getKitchenStateReady(kitchenState, intent)
-    ) {
+    if (!getKitchenStateReady(kitchenState, intent)) {
       return false;
     }
     const command = getKitchenCommand(intent);

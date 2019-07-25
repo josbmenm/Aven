@@ -14,7 +14,7 @@ function RestaurantReducerFn(state = {}, action) {
         actionCount: 0,
       };
     }
-    case 'QueueOrderItem': {
+    case 'QueueTask': {
       return {
         ...defaultReturn(),
         queue: [...(state.queue || []), action.item],
@@ -63,12 +63,12 @@ function RestaurantReducerFn(state = {}, action) {
         fill: { ...state.fill, requestedDropTime: Date.now() },
       };
     }
-    case 'DidDropCup': {
+    case 'DidLooseFillCup': {
       if (!state.fill) {
         return defaultReturn();
       }
       let queue = state.queue;
-      if (state.fill.order) {
+      if (!action.didCompleteJob && state.fill.order) {
         queue = [state.fill.order, ...state.queue];
       }
       return {

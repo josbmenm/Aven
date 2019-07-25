@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Button from '../components/Button';
-import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
-import useObservable from '../cloud-core/useObservable';
+import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { prettyShadow, titleStyle } from '../components/Styles';
 import { computeNextSteps } from '../logic/KitchenSequence';
@@ -71,9 +70,10 @@ function FaultRow({ fault }) {
 export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   const cloud = useCloud();
   // const isConnected = useObservable(cloud.isConnected);
-  const isConnected = true; // uh....
+  const isConnected = useValue(cloud.connected); // uh....
   const kitchenState = useCloudValue('KitchenState');
   const kitchenConfig = useCloudValue('KitchenConfig');
+
   const isPLCConnected = React.useMemo(
     () => kitchenState && kitchenState.isPLCConnected,
     [kitchenState],
@@ -92,7 +92,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   let allFaults = [];
   if (!isConnected) {
     status = 'disconnected';
-    message = 'App disconnected from server..';
+    message = 'Control panel disconnected.';
   } else if (!restaurantState) {
     status = 'disconnected';
     message = 'Loading state..';
@@ -101,7 +101,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
     message = 'Disconnected from machine.';
   } else if (!isPLCConnected) {
     status = 'disconnected';
-    message = 'Server disconnected from machine..';
+    message = 'Server disconnected from machine.';
   } else if (restaurantState.manualMode) {
     status = 'manual mode';
   } else if (!restaurantState.isAttached) {
@@ -147,10 +147,9 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
 
   let nextSteps = null;
   if (restaurantState && !restaurantState.isAutoRunning) {
-    console.log('resst', restaurantState);
     nextSteps = computeNextSteps(restaurantState, kitchenConfig, kitchenState);
     if (nextSteps && nextSteps.length) {
-      subMessage = 'Next Step: ' + nextSteps.map(s => s.description).join(', ');
+      subMessage = `${nextSteps.length} steps ready`;
     }
   }
 
@@ -215,20 +214,29 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
               secondary
             />
           )}
-          {restaurantState && !restaurantState.isAutoRunning && (
+          {status === 'fault' && (
             <Button
-              title="Step"
-              disabled={!nextSteps || !nextSteps.length}
+              title="Home System"
               onPress={() => {
-                nextSteps.forEach(step => {
-                  step.perform(cloud, handleKitchenAction).then(resp => {
-                    console.log('ACTION RESP', step.description, resp);
-                  });
-                });
+                // handleKitchenAction
               }}
-              secondary
             />
           )}
+          {nextSteps &&
+            nextSteps.map((step, i) => (
+              <View key={i}>
+                <Text>{step.description}</Text>
+                <Button
+                  title="Perform"
+                  onPress={() => {
+                    step.perform(cloud, handleKitchenAction).then(resp => {
+                      console.log('ACTION RESP', step.description, resp);
+                    });
+                  }}
+                  secondary
+                />
+              </View>
+            ))}
         </View>
       </View>
     </View>
