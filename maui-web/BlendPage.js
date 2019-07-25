@@ -377,6 +377,22 @@ function BlendContent({ displayName, blend, recipe }) {
           </View>
         </Container>
       </View>
+      <AirtableImage
+        image={blend.Recipe.StandaloneImage}
+        resizeMode="cover"
+        responsiveStyle={
+          {
+            // maxWidth: ['100%', 1024],
+            // width: ['100%', '60%'],
+            // height: [300, 768],
+            // position: ['relative', 'absolute'],
+          }
+        }
+        style={{
+          width: 300,
+          height: 300,
+        }}
+      />
     </React.Fragment>
   );
 }
