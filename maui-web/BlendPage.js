@@ -68,7 +68,7 @@ function BlendContent({ displayName, blend, recipe }) {
                   <Responsive
                     style={{
                       position: ['relative', 'absolute'],
-                      transform: ['scale(1)', 'scale(1.5)'],
+                      transform: ['scale(1.2)', 'scale(1.5)'],
                     }}
                   >
                     <View
@@ -81,12 +81,12 @@ function BlendContent({ displayName, blend, recipe }) {
                     >
                       <AirtableImage
                         image={blend.Recipe.DecorationImage}
-                        resizeMode="cover"
+                        resizeMode="contain"
                         responsiveStyle={{
                           maxWidth: ['100%', 1024],
                           width: ['100%', '60%'],
                           height: [300, 768],
-                          paddingTop: ["56.25%", 0],
+                          paddingTop: ['56.25%', 0],
                           position: ['relative', 'absolute'],
                         }}
                         style={{
