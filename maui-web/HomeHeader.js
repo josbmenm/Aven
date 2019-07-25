@@ -27,7 +27,7 @@ function HomeHeader() {
             style={{ flex: 1 }}
             responsiveStyle={{
               width: ['100% !important', '100%'],
-              marginHoriontal: [0, 28],
+              marginHorizontal: [0, 28],
             }}
           >
             <ColumnToRow

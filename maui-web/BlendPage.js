@@ -10,6 +10,7 @@ import BaseText from '../dashboard/BaseText';
 import BodyText from '../dashboard/BodyText';
 import Tag from '../dashboard/Tag';
 import { useTheme } from '../dashboard/Theme';
+import { aspectRatio169 } from '../components/Styles';
 import { useMenuItemSlug, useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { dietaryInfosOfMenuItem } from '../logic/configLogic';
@@ -52,65 +53,69 @@ function BlendContent({ displayName, blend, recipe }) {
             }}
           >
             <ColumnToRow>
-            <Responsive style={{
-              height: [300, 'auto'],
-              marginBottom: [32, 0]
-            }}>
-              <ColumnToRowChild
+              <Responsive
                 style={{
-                  position: 'relative',
-                  overflow: 'visible',
+                  height: [300, 'auto'],
+                  marginBottom: [32, 0],
                 }}
-
               >
-                <Responsive
+                <ColumnToRowChild
                   style={{
-                    position: ['relative', 'absolute'],
-                    transform: ['scale(1)', 'scale(1.5)'],
+                    position: 'relative',
+                    overflow: 'visible',
                   }}
                 >
-                  <View
+                  <Responsive
                     style={{
-                      width: '100%',
-                      height: '100%',
-                      position: 'relative',
-                      overflow: 'visible',
+                      position: ['relative', 'absolute'],
+                      transform: ['scale(1)', 'scale(1.5)'],
                     }}
                   >
-                    <AirtableImage
-                      image={blend.Recipe.DecorationImage}
-                      resizeMode="cover"
-                      responsiveStyle={{
-                        maxWidth: ['100%', 1024],
-                        width: ['100%', '60%'],
-                        height: [300, 768],
-                        position: ['relative', 'absolute'],
-                      }}
+                    <View
                       style={{
-                        flex: 1,
+                        width: '100%',
+                        height: '100%',
+                        position: 'relative',
                         overflow: 'visible',
-                        right: 0,
-                        top: 0,
                       }}
+                    >
+                      <AirtableImage
+                        image={blend.Recipe.DecorationImage}
+                        resizeMode="cover"
+                        responsiveStyle={{
+                          maxWidth: ['100%', 1024],
+                          width: ['100%', '60%'],
+                          height: [300, 768],
+                          paddingTop: ["56.25%", 0],
+                          position: ['relative', 'absolute'],
+                        }}
+                        style={{
+                          flex: 1,
+                          overflow: 'visible',
+                          right: 0,
+                          top: 0,
+                        }}
+                      />
+                    </View>
+                  </Responsive>
+                  <Responsive
+                    style={{
+                      display: ['none', 'block'],
+                    }}
+                  >
+                    <Image
+                      style={{
+                        position: 'absolute',
+                        top: -120,
+                        right: 0,
+                        width: 100,
+                        height: 'calc(100% + 200px)',
+                      }}
+                      source={require('./public/img/white-gradient.png')}
+                      resizeMode="repeat"
                     />
-                  </View>
-                </Responsive>
-                <Responsive style={{
-                  display: ['none', 'block']
-                }}>
-                <Image
-                  style={{
-                    position: 'absolute',
-                    top: -200,
-                    right: 0,
-                    width: 100,
-                    height: 'calc(100% + 200px)',
-                  }}
-                  source={require('./public/img/white-gradient.png')}
-                  resizeMode="repeat"
-                />
-                </Responsive>
-              </ColumnToRowChild>
+                  </Responsive>
+                </ColumnToRowChild>
               </Responsive>
               <Responsive
                 style={{
@@ -377,22 +382,24 @@ function BlendContent({ displayName, blend, recipe }) {
           </View>
         </Container>
       </View>
-      <AirtableImage
-        image={blend.Recipe.StandaloneImage}
-        resizeMode="cover"
-        responsiveStyle={
-          {
-            // maxWidth: ['100%', 1024],
-            // width: ['100%', '60%'],
-            // height: [300, 768],
-            // position: ['relative', 'absolute'],
-          }
-        }
-        style={{
-          width: 300,
-          height: 300,
-        }}
-      />
+      <View>
+        <Container
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.border,
+          }}
+          responsiveStyle={{
+            paddingBottom: [60, 100],
+            marginBottom: [40, 100],
+          }}
+        >
+          <AirtableImage
+            image={blend.Recipe.StandaloneImage}
+            resizeMode="cover"
+            style={{ ...aspectRatio169 }}
+          />
+        </Container>
+      </View>
     </React.Fragment>
   );
 }

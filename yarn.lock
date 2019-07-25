@@ -1102,16 +1102,7 @@
     react-is "^16.5.2"
     react-lifecycles-compat "^3.0.4"
 
-"@react-navigation/native@^3.0.0-alpha.5":
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-3.5.0.tgz#f5d16e0845ac26d1147d1caa481f18a00740e7ae"
-  integrity sha512-TmGOis++ejEXG3sqNJhCSKqB0/qLu3FQgDtO959qpqif36R/diR8SQwJqeSdofoEiK3CepdhFlTCeHdS1/+MsQ==
-  dependencies:
-    hoist-non-react-statics "^3.0.1"
-    react-native-safe-area-view "^0.14.1"
-    react-native-screens "^1.0.0 || ^1.0.0-alpha"
-
-"@react-navigation/native@https://github.com/react-navigation/react-navigation-native.git":
+"@react-navigation/native@^3.0.0-alpha.5", "@react-navigation/native@https://github.com/react-navigation/react-navigation-native.git":
   version "3.5.0"
   resolved "https://github.com/react-navigation/react-navigation-native.git#d54c3590825a3567f63fdea940a784699c653742"
   dependencies:
@@ -8205,14 +8196,7 @@ react-navigation-stack@1.0.0-alpha.22:
   dependencies:
     react-native-safe-area-view "^0.14.6"
 
-react-navigation-transitioner@^1.0.0-alpha.3:
-  version "1.0.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/react-navigation-transitioner/-/react-navigation-transitioner-1.0.0-alpha.3.tgz#a509d328ab531edd9b32e2c257f3747a5107787c"
-  integrity sha512-lzNRqEFjBY89/T78qQ3NYWU9R0KIfR2WTC30Mi5kwMJAMMsxjaWrZSeWBl/LWnAhvgmifeycmWaCcgWmub31Zw==
-  dependencies:
-    react-native-reanimated "^1.0.0-alpha.10"
-
-"react-navigation-transitioner@https://github.com/react-navigation/react-navigation-transitioner":
+react-navigation-transitioner@^1.0.0-alpha.3, "react-navigation-transitioner@https://github.com/react-navigation/react-navigation-transitioner":
   version "1.0.0-alpha.3"
   resolved "https://github.com/react-navigation/react-navigation-transitioner#42ce7383830f38e0a89952c19ab511cd854cc609"
   dependencies:

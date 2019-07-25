@@ -57,7 +57,7 @@ function OurStoryPage() {
             style={{ alignItems: 'center' }}
             responsiveStyle={{
               width: ['100% !important', '100%'],
-              marginHoriontal: [0, 28],
+              marginHorizontal: [0, 28],
               marginBottom: [80, 230],
             }}
           >
