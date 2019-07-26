@@ -35,7 +35,7 @@ function RestaurantReducerFn(state = {}, action) {
       if (!state.queue || !state.queue.length) {
         return {
           ...defaultReturn(),
-          fill: {},
+          fill: null,
         };
       }
       const topOrder = state.queue[0];
@@ -68,13 +68,21 @@ function RestaurantReducerFn(state = {}, action) {
         return defaultReturn();
       }
       let queue = state.queue;
-      if (!action.didCompleteJob && state.fill.order) {
+      if (!action.didCompleteJob && state.fill && state.fill.order) {
         queue = [state.fill.order, ...state.queue];
       }
       return {
         ...defaultReturn(),
         fill: null,
         queue,
+        lostFills: [
+          ...(state.lostFills || []),
+          {
+            ...(state.fill || {}),
+            didCompleteJob: action.didCompleteJob,
+            fillLossTime: Date.now(),
+          },
+        ],
       };
     }
     case 'DidFill': {

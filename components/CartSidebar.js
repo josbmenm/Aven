@@ -344,7 +344,7 @@ function PromoCodeForm({ onClose, order, cloud }) {
       <BlockFormRow>{inputs}</BlockFormRow>
       <BlockFormErrorRow error={error} />
       <BlockFormRow>
-        <BlockFormButton title="cancel" variant="secondary" onPress={onClose} />
+        <BlockFormButton title="cancel" type="outline" onPress={onClose} />
         <BlockFormButton title="add code" onPress={handleSubmit} />
       </BlockFormRow>
     </View>

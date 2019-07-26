@@ -4,7 +4,7 @@
 
 "@aven-cloud/aven@https://github.com/AvenCloud/Aven.git#master":
   version "0.0.0"
-  resolved "https://github.com/AvenCloud/Aven.git#eec5bbcaa4525b4f4aaefdbd001d6ac1b85b4fd3"
+  resolved "https://github.com/AvenCloud/Aven.git#58d97a36e02e10c16cefb817184effea1fa575fa"
   dependencies:
     "@expo/spawn-async" "^1.3.0"
     "@expo/vector-icons" "^8.0.0"
@@ -1102,7 +1102,16 @@
     react-is "^16.5.2"
     react-lifecycles-compat "^3.0.4"
 
-"@react-navigation/native@^3.0.0-alpha.5", "@react-navigation/native@https://github.com/react-navigation/react-navigation-native.git":
+"@react-navigation/native@^3.0.0-alpha.5":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-3.5.0.tgz#f5d16e0845ac26d1147d1caa481f18a00740e7ae"
+  integrity sha512-TmGOis++ejEXG3sqNJhCSKqB0/qLu3FQgDtO959qpqif36R/diR8SQwJqeSdofoEiK3CepdhFlTCeHdS1/+MsQ==
+  dependencies:
+    hoist-non-react-statics "^3.0.1"
+    react-native-safe-area-view "^0.14.1"
+    react-native-screens "^1.0.0 || ^1.0.0-alpha"
+
+"@react-navigation/native@https://github.com/react-navigation/react-navigation-native.git":
   version "3.5.0"
   resolved "https://github.com/react-navigation/react-navigation-native.git#d54c3590825a3567f63fdea940a784699c653742"
   dependencies:
@@ -8009,9 +8018,9 @@ react-deep-force-update@^1.0.0:
   integrity sha512-WUSQJ4P/wWcusaH+zZmbECOk7H5N2pOIl0vzheeornkIMhu+qrNdGFm0bDZLCb0hSF0jf/kH1SgkNGfBdTc4wA==
 
 react-devtools-core@^3.4.2:
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-3.6.2.tgz#7d425f160c5928129fa9acdbdd9e80a334e09c8d"
-  integrity sha512-a5r2Er0PajtlvKYBUKzB3vW5qek8TbgQWwRruDEwTm3VnqVffHmnvApRil/lfkAa8ghXcESNizrtKu/18oG55Q==
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-3.6.3.tgz#977d95b684c6ad28205f0c62e1e12c5f16675814"
+  integrity sha512-+P+eFy/yo8Z/UH9J0DqHZuUM5+RI2wl249TNvMx3J2jpUomLQa4Zxl56GEotGfw3PIP1eI+hVf1s53FlUONStQ==
   dependencies:
     shell-quote "^1.6.1"
     ws "^3.3.1"
@@ -8192,11 +8201,18 @@ react-navigation-stack@1.0.0-alpha.22:
 
 "react-navigation-stack@https://github.com/react-navigation/react-navigation-stack":
   version "2.0.0-alpha.6"
-  resolved "https://github.com/react-navigation/react-navigation-stack#2ddf3a4a3985047811c3c90f1d8263ea71994966"
+  resolved "https://github.com/react-navigation/react-navigation-stack#2d8274f76ede04fb46c68175c7853659eb641b1f"
   dependencies:
     react-native-safe-area-view "^0.14.6"
 
-react-navigation-transitioner@^1.0.0-alpha.3, "react-navigation-transitioner@https://github.com/react-navigation/react-navigation-transitioner":
+react-navigation-transitioner@^1.0.0-alpha.3:
+  version "1.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/react-navigation-transitioner/-/react-navigation-transitioner-1.0.0-alpha.3.tgz#a509d328ab531edd9b32e2c257f3747a5107787c"
+  integrity sha512-lzNRqEFjBY89/T78qQ3NYWU9R0KIfR2WTC30Mi5kwMJAMMsxjaWrZSeWBl/LWnAhvgmifeycmWaCcgWmub31Zw==
+  dependencies:
+    react-native-reanimated "^1.0.0-alpha.10"
+
+"react-navigation-transitioner@https://github.com/react-navigation/react-navigation-transitioner":
   version "1.0.0-alpha.3"
   resolved "https://github.com/react-navigation/react-navigation-transitioner#42ce7383830f38e0a89952c19ab511cd854cc609"
   dependencies:

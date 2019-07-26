@@ -13,7 +13,6 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
     .idAndValue.load();
   const companyConfigState = await cloud.get('CompanyConfig').idAndValue.load();
   const companyConfig = companyConfigState.value;
-  console.log('orderstate', orderState);
   const order = orderState.value;
 
   const blends = companyConfigToBlendMenu(companyConfig);
@@ -86,7 +85,6 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
     stripeIntent,
     isOrderValid,
   };
-  console.log('confriming order..', confirmedOrder);
 
   if (!isOrderValid) {
     throw new Error('Could not verify payment intent! Order has failed.');
@@ -109,44 +107,51 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
 
     const KitchenSlots = companyConfig.baseTables.KitchenSlots;
     const KitchenSystems = companyConfig.baseTables.KitchenSystems;
-    const requestedFills = ingredients.map(ing => {
-      const kitchenSlotId = Object.keys(KitchenSlots).find(slotId => {
-        const slot = KitchenSlots[slotId];
-        return slot.Ingredient && ing.id === slot.Ingredient[0];
-      });
-      const kitchenSlot = kitchenSlotId && KitchenSlots[kitchenSlotId];
-      if (!kitchenSlot) {
+    const requestedFills = ingredients
+      .map(ing => {
+        const kitchenSlotId = Object.keys(KitchenSlots).find(slotId => {
+          const slot = KitchenSlots[slotId];
+          return slot.Ingredient && ing.id === slot.Ingredient[0];
+        });
+        const kitchenSlot = kitchenSlotId && KitchenSlots[kitchenSlotId];
+        if (!kitchenSlot) {
+          return {
+            ingredientId: ing.id,
+            ingredientName: ing.Name,
+            invalid: 'NoSlot',
+            index: 0,
+          };
+        }
+        const kitchenSystemId =
+          kitchenSlot.KitchenSystem && kitchenSlot.KitchenSystem[0];
+        const kitchenSystem =
+          kitchenSystemId && KitchenSystems[kitchenSystemId];
+        if (!kitchenSystem) {
+          return {
+            ingredientId: ing.id,
+            ingredientName: ing.Name,
+            slotId: kitchenSlotId,
+            invalid: 'NoSystem',
+            index: 0,
+          };
+        }
         return {
+          amount: ing.amount,
+          amountVolumeRatio: ing.amountVolumeRatio,
           ingredientId: ing.id,
           ingredientName: ing.Name,
-          invalid: 'NoSlot',
-        };
-      }
-      const kitchenSystemId =
-        kitchenSlot.KitchenSystem && kitchenSlot.KitchenSystem[0];
-      const kitchenSystem = kitchenSystemId && KitchenSystems[kitchenSystemId];
-      if (!kitchenSystem) {
-        return {
-          ingredientId: ing.id,
-          ingredientName: ing.Name,
+          ingredientColor: ing.Color,
+          ingredientIcon: ing.Icon,
           slotId: kitchenSlotId,
-          invalid: 'NoSystem',
+          systemId: kitchenSystemId,
+          slot: kitchenSlot.Slot,
+          system: kitchenSystem.FillSystemID,
+          index: kitchenSlot._index,
+          invalid: null,
         };
-      }
-      return {
-        amount: ing.amount,
-        amountVolumeRatio: ing.amountVolumeRatio,
-        ingredientId: ing.id,
-        ingredientName: ing.Name,
-        ingredientColor: ing.Color,
-        ingredientIcon: ing.Icon,
-        slotId: kitchenSlotId,
-        systemId: kitchenSystemId,
-        slot: kitchenSlot.Slot,
-        system: kitchenSystem.FillSystemID,
-        invalid: null,
-      };
-    });
+      })
+      .sort((a, b) => a.index - b.index);
+    console.log('sowrded', requestedFills);
     const invalidFills = requestedFills.filter(f => !!f.invalid);
     if (invalidFills.length) {
       console.error('Invalid Fills:', invalidFills);
@@ -163,7 +168,6 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
       blendName,
       fills: requestedFills,
     };
-    console.log('NEW BLEND ORDER!', itemForKitchen);
     await cloud.get('RestaurantActions').putTransactionValue({
       type: 'QueueTask',
       item: itemForKitchen,

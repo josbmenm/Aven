@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Button from '../components/Button';
+import MultiSelect from '../components/MultiSelect';
 import { Easing } from 'react-native-reanimated';
 import { useCloud } from '../cloud-core/KiteReact';
 import Row from '../components/Row';
@@ -16,23 +17,7 @@ import {
   monsterra80,
 } from '../components/Styles';
 
-function MultiSelect({ options, value, onValue }) {
-  return (
-    <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
-      {options.map(opt => {
-        return (
-          <Button
-            type={value === opt.value ? 'solid' : 'outline'}
-            title={opt.name}
-            onPress={() => {
-              onValue(opt.value);
-            }}
-          />
-        );
-      })}
-    </View>
-  );
-}
+const SystemNames = ['Granules', 'Piston', 'Frozen', 'Powder', 'Beverage'];
 
 function OrderInfoText({ orderState }) {
   if (!orderState) {
@@ -61,6 +46,19 @@ function AddFillForm({ onSubmit }) {
   const [amount, setAmount] = React.useState(0);
   const [slot, setSlot] = React.useState(0);
   function handleSubmit() {
+    // amount: ing.amount,
+    // amountVolumeRatio: ing.amountVolumeRatio,
+    // ingredientId: ing.id,
+    // ingredientName: ing.Name,
+    // ingredientColor: ing.Color,
+    // ingredientIcon: ing.Icon,
+    // slotId: kitchenSlotId,
+    // systemId: kitchenSystemId,
+    // slot: kitchenSlot.Slot,
+    // system: kitchenSystem.FillSystemID,
+    // index: kitchenSlot._index,
+    // invalid: null,
+
     onSubmit({
       system,
       amount,
@@ -72,11 +70,16 @@ function AddFillForm({ onSubmit }) {
     inputRenderers: [
       inputProps => (
         <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-          <BlockFormInput
-            {...inputProps}
-            label="Dispense System"
-            onValue={setSystem}
+          <MultiSelect
             value={system}
+            onValue={setSystem}
+            options={[
+              { name: 'Granules', value: 0 },
+              { name: 'Piston', value: 1 },
+              { name: 'Frozen', value: 2 },
+              { name: 'Powder', value: 3 },
+              { name: 'Beverage', value: 4 },
+            ]}
           />
         </View>
       ),
@@ -201,10 +204,8 @@ function usePutTransactionValue(docName) {
 }
 
 export default function AdHocOrder() {
-  const [orderName, setOrderName] = React.useState('Lucy');
-  const [orderBlendName, setOrderBlendName] = React.useState(
-    'Mango and Tumeric',
-  );
+  const [orderName, setOrderName] = React.useState('OnoInternal');
+  const [orderBlendName, setOrderBlendName] = React.useState('Test Blend');
   const [deliveryMode, setDeliveryMode] = React.useState('deliver');
   const [skipBlend, setSkipBlend] = React.useState(null);
 

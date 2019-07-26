@@ -317,8 +317,9 @@ const startVerseServer = async () => {
       kitchenConfig,
       kitchenState,
     );
-    if (!nextSteps || !nextSteps.length)
+    if (!nextSteps || !nextSteps.length) {
       return verboseLog('No steps available to take');
+    }
 
     nextSteps.forEach(nextStep => {
       const commandType = KitchenCommands[nextStep.command.command];

@@ -15,7 +15,7 @@ export default function ReceiptPage({
 }) {
   return (
     <ShortBlockFormPage hideBackButton={hideBackButton} {...props}>
-      <BlockForm>
+      <BlockForm style={{ flex: 1, justifyContent: 'center' }}>
         <BlockFormMessage message="You're almost ready to go..." />
         <BlockFormTitle title="would you like a receipt?" />
         <BlockFormRow>

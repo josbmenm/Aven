@@ -1,3 +1,8 @@
+function delay(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
 function checkKitchenState(kitchenState, kitchenConfig) {
   if (!kitchenState) {
     return {
@@ -131,7 +136,7 @@ const SEQUENCER_STEPS = [
         !restaurantState.fill.fillsRemaining ||
         restaurantState.fill.fillsRemaining.length !== 0 ||
         restaurantState.fill.requestedDropTime ||
-        restaurantState.fill.skipBlend
+        restaurantState.fill.order.skipBlend
       ) {
         return null;
       }
@@ -147,33 +152,6 @@ const SEQUENCER_STEPS = [
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidPassToBlender',
-    }),
-  },
-  {
-    // ditch cup (fill system)
-    getDescription: intent => 'Ditch Cup',
-    getRestaurantStateIntent: restaurantState => {
-      if (
-        restaurantState.fill &&
-        restaurantState.fill.order.skipBlend &&
-        restaurantState.fill.order.deliveryMode === 'ditch' &&
-        restaurantState.fill.fillsRemaining.length === 0
-      ) {
-        return {
-          didCompleteJob: true,
-        };
-      }
-      return null;
-    },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return !!kitchenState && kitchenState.FillSystem_DitchCupReady_READ;
-    },
-    getKitchenCommand: intent => ({
-      command: 'DitchCup',
-    }),
-    getSuccessRestaurantAction: intent => ({
-      type: 'DidLooseFillCup',
-      didCompleteJob: intent.didCompleteJob,
     }),
   },
   {
@@ -224,7 +202,6 @@ const SEQUENCER_STEPS = [
   },
   {
     // clean
-
     getDescription: () => {
       return 'Clean Blender';
     },
@@ -242,6 +219,38 @@ const SEQUENCER_STEPS = [
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidClean',
+    }),
+  },
+  {
+    // ditch cup (fill system)
+    getDescription: intent => 'Ditch Cup',
+    getRestaurantStateIntent: restaurantState => {
+      if (restaurantState.fill === null) {
+        return {
+          didCompleteJob: false,
+        };
+      }
+      if (
+        restaurantState.fill &&
+        restaurantState.fill.order.skipBlend &&
+        restaurantState.fill.order.deliveryMode === 'ditch' &&
+        restaurantState.fill.fillsRemaining.length === 0
+      ) {
+        return {
+          didCompleteJob: true,
+        };
+      }
+      return null;
+    },
+    getKitchenStateReady: (kitchenState, intent) => {
+      return !!kitchenState && kitchenState.FillSystem_DitchCupReady_READ;
+    },
+    getKitchenCommand: intent => ({
+      command: 'DitchCup',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidLooseFillCup',
+      didCompleteJob: intent.didCompleteJob,
     }),
   },
 ];
@@ -310,6 +319,7 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
             (await cloud
               .get('RestaurantActions')
               .putTransactionValue(successRestaurantAction));
+          await delay(30);
           // await cloud.get('KitchenLog').putTransactionValue({
           //   type: 'CompleteKitchenAction',
           //   intent,
