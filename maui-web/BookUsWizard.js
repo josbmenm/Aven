@@ -12,11 +12,13 @@ import { Responsive } from '../dashboard/Responsive';
 import FormRow from './FormRow';
 import BodyText from '../dashboard/BodyText';
 import Spinner from '../dashboard/Spinner';
+import useKeyPress from './useKeyPress';
 
 const TOTAL_STEPS = 6;
 
 const formInputStyle = {
-  marginHorizontal: 8, marginBottom: 16
+  marginHorizontal: 8,
+  marginBottom: 16,
 };
 
 function StepHeader({ children }) {
@@ -67,10 +69,23 @@ function BookUsWizard() {
   const [loading, setLoading] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
   const [error] = React.useState(null);
+  const enterKeyPress = useKeyPress('Enter');
   const [stepsState, stepsDispatch] = React.useReducer(stepsReducer, {
     current: 0,
     hasNext: true,
     hasPrev: false,
+  });
+
+  React.useEffect(() => {
+    if (enterKeyPress && !stepValidation[stepsState.current].disabled) {
+      console.log("TCL: BookUsWizard -> enterKeyPress && stepValidation", enterKeyPress && !stepValidation[stepsState.current].disabled)
+
+      if (stepsState.current === TOTAL_STEPS) {
+        onSubmit();
+      } else {
+        stepsDispatch({ type: 'GO_NEXT' })
+      }
+    }
   });
 
   const firstNameRef = React.useRef(null);
@@ -82,7 +97,7 @@ function BookUsWizard() {
   const commentsRef = React.useRef(null);
 
   React.useEffect(() => {
-    switch(stepsState.current) {
+    switch (stepsState.current) {
       case 1:
         firstNameRef.current.focus();
         break;
@@ -96,7 +111,6 @@ function BookUsWizard() {
         dateRef.current.focus();
         break;
       case 5:
-        console.log("TCL: BookUsWizard -> addressRef", addressRef)
         addressRef.current.focus();
         break;
       case 6:
@@ -105,7 +119,7 @@ function BookUsWizard() {
       default:
         return;
     }
-  }, [stepsState.current])
+  }, [stepsState.current]);
 
   const [formState, formDispatch] = React.useReducer(formReducer, {
     fields: {
@@ -121,21 +135,28 @@ function BookUsWizard() {
     },
   });
 
-  const stepValidation = [ {},
+  const stepValidation = [
+    {},
     {
-      disabled: formState.fields.firstName === '' || formState.fields.lastName === ''
-    }, {
-      disabled: formState.fields.email === ''
-    }, {
-      disabled: formState.fields.eventType === ''
-    }, {
-      disabled: formState.fields.date === ''
-    }, {
-      disabled: formState.fields.address.place_name_en === ''
-    }, {
-      disabled: false
-    }
-  ]
+      disabled:
+        formState.fields.firstName === '' || formState.fields.lastName === '',
+    },
+    {
+      disabled: formState.fields.email === '',
+    },
+    {
+      disabled: formState.fields.eventType === '',
+    },
+    {
+      disabled: formState.fields.date === '',
+    },
+    {
+      disabled: formState.fields.address.place_name_en === '',
+    },
+    {
+      disabled: false,
+    },
+  ];
 
   function onSubmit() {
     setLoading(true);
@@ -150,15 +171,25 @@ function BookUsWizard() {
   if (isDone) {
     return (
       <View style={{ paddingVertical: 40 }}>
-        <BlockForm style={{ backgroundColor: 'red'}}>
+        <BlockForm>
           <Step active={true}>
-            <StepHeader style={{ paddingHorizontal: 8, alignItems: 'center', backgroundColor: 'red' }}>
+            <StepHeader
+              style={{
+                paddingHorizontal: 8,
+                alignItems: 'center',
+              }}
+            >
               <Heading size="small" style={{ textAlign: 'center' }}>
                 Thanks! You’ll be hearing from us soon.
               </Heading>
               <Image
                 source={require('./public/img/hand_icon.png')}
-                style={{ width: 80, height: 80, margin: 24, alignSelf: 'center' }}
+                style={{
+                  width: 80,
+                  height: 80,
+                  margin: 24,
+                  alignSelf: 'center',
+                }}
                 resizeMode="contain"
               />
             </StepHeader>
