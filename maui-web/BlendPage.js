@@ -192,7 +192,7 @@ function BlendContent({ displayName, blend, recipe }) {
                               textTransform: 'uppercase',
                             }}
                           >
-                            {benefit.Name}{' '}
+                            {benefit.Name}
                           </BaseText>
                         </View>
                       ))}

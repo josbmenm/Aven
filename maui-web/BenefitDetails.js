@@ -142,10 +142,16 @@ export default function BenefitDetails({ benefit }) {
             lineHeight: [32, 44],
           }}
         >
-          this blend is designed for {benefit.Name.toLowerCase()}
+          this blend is designed for
         </Heading>
-        <ColumnToRow>
-          <ColumnToRowChild>
+        <ColumnToRow style={{ alignSelf: 'center' }}>
+          <ColumnToRowChild
+            style={{
+              flex: 'none',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <AirtableImage
               image={benefit.Icon}
               style={{ alignSelf: 'center', width: 120, height: 120 }}
@@ -154,10 +160,22 @@ export default function BenefitDetails({ benefit }) {
           </ColumnToRowChild>
           <Responsive
             style={{
-              flex: [1, '2 !important'],
+              flex: ['1', '2 !important'],
             }}
           >
             <ColumnToRowChild>
+              <Heading
+                responsiveStyle={{
+                  textAlign: ['center', 'left'],
+                }}
+                style={{
+                  fontSize: 16,
+                  lineHeight: 28,
+                  textTransform: 'uppercase',
+                }}
+              >
+                {benefit.Name.toLowerCase()}
+              </Heading>
               <BenefitDescription name={benefit.Name} />
             </ColumnToRowChild>
           </Responsive>
