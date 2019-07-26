@@ -13,6 +13,7 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
     .idAndValue.load();
   const companyConfigState = await cloud.get('CompanyConfig').idAndValue.load();
   const companyConfig = companyConfigState.value;
+  console.log('orderstate', orderState);
   const order = orderState.value;
 
   const blends = companyConfigToBlendMenu(companyConfig);

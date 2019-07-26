@@ -20,7 +20,7 @@ import {
 const OrderContext = createContext(null);
 
 function getLocalName(name) {
-  const locals = name.split();
+  const locals = name.split('/');
   return locals[locals.length - 1];
 }
 

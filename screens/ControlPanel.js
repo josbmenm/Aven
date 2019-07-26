@@ -218,7 +218,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
             <Button
               title="Home System"
               onPress={() => {
-                // handleKitchenAction
+                handleKitchenAction({ command: 'Home' });
               }}
             />
           )}

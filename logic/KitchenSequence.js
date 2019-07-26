@@ -69,8 +69,9 @@ const SEQUENCER_STEPS = [
       }
       if (
         restaurantState.fill &&
-        restaurantState.fill.deliveryMode === 'drop' &&
-        restaurantState.fill.skipBlend &&
+        restaurantState.fill.order &&
+        restaurantState.fill.order.deliveryMode === 'drop' &&
+        restaurantState.fill.order.skipBlend &&
         restaurantState.fill.fillsRemaining.length === 0
       ) {
         return { didCompleteJob: true };
@@ -154,8 +155,8 @@ const SEQUENCER_STEPS = [
     getRestaurantStateIntent: restaurantState => {
       if (
         restaurantState.fill &&
-        restaurantState.fill.skipBlend &&
-        restaurantState.fill.deliveryMode === 'ditch' &&
+        restaurantState.fill.order.skipBlend &&
+        restaurantState.fill.order.deliveryMode === 'ditch' &&
         restaurantState.fill.fillsRemaining.length === 0
       ) {
         return {
