@@ -86,7 +86,7 @@ function VisualButton({
               textAlign: 'center',
               color:
                 type === 'solid'
-                  ? theme.colors.white
+                  ? theme.colors.invertedText
                   : theme.colors[appearance],
               ...titleStyle,
             }}
