@@ -93,7 +93,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   if (!isConnected) {
     status = 'disconnected';
     message = 'Control panel disconnected.';
-  } else if (!restaurantState) {
+  } else if (restaurantState === undefined) {
     status = 'disconnected';
     message = 'Loading state..';
   } else if (!kitchenState) {

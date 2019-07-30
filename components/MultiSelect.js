@@ -9,6 +9,7 @@ export default function MultiSelect({ options, value, onValue }) {
         flexDirection: 'row',
         borderRadius: 4,
         borderWidth: 2,
+        flexWrap: 'wrap',
         borderColor: monsterra80,
       }}
     >
@@ -23,7 +24,7 @@ export default function MultiSelect({ options, value, onValue }) {
               backgroundColor: isActive ? monsterra80 : null,
               flex: 1,
               alignSelf: 'stretch',
-              paddingVertical: 10,
+              padding: 10,
             }}
           >
             <Text

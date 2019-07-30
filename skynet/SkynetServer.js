@@ -332,7 +332,7 @@ const startSkynetServer = async () => {
   }
 
   let shouldUploadImmediately = false;
-  // shouldUploadImmediately = true;
+  shouldUploadImmediately = true;
 
   const startAirtableScrape = () => {
     console.log('Updating Airtable..');

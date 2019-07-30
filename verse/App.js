@@ -13,6 +13,7 @@ import {
   primaryFontFace,
   black10,
 } from '../components/Styles';
+import AirtableImage from '../components/AirtableImage';
 
 let baseAuthority = undefined;
 let baseUseSSL = undefined;
@@ -165,7 +166,17 @@ function IngredientFillingCup({ fillLevel, currentFill }) {
   return (
     <View style={{ flexDirection: 'row' }}>
       {currentFill && (
-        <Text>{currentFill.name || JSON.stringify(currentFill)}</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Text
+            style={{ ...boldPrimaryFontFace, color: monsterra, fontSize: 32 }}
+          >
+            Adding {currentFill.ingredientName}
+          </Text>
+          <AirtableImage
+            style={{ width: 50, height: 50 }}
+            image={currentFill.ingredientIcon}
+          />
+        </View>
       )}
       <AnimatedCup fillLevel={fillLevel} />
     </View>

@@ -42,7 +42,7 @@ function AddFillForm({ onSubmit }) {
     onSubmit: handleSubmit,
     inputRenderers: [
       inputProps => (
-        <View style={{ flexDirection: 'row', marginVertical: 10 }}>
+        <View style={{ marginVertical: 10 }}>
           <MultiSelect
             value={system}
             onValue={setSystem}

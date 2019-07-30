@@ -6,6 +6,7 @@ import {
   getSelectedIngredients,
   getItemCustomizationSummary,
 } from '../logic/configLogic';
+import cuid from 'cuid';
 
 export default async function placeOrder(cloud, { orderId, paymentIntent }) {
   const orderState = await cloud
@@ -92,7 +93,7 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
 
   await cloud.get(`ConfirmedOrders/${orderId}`).putValue(confirmedOrder);
 
-  const items = await Promise.all(
+  const allTasks = await Promise.all(
     summary.items.map(async (item, index) => {
       if (item.type !== 'blend') {
         return;
@@ -122,6 +123,7 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
               index: 0,
             };
           }
+          console.log(kitchenSlot);
           const kitchenSystemId =
             kitchenSlot.KitchenSystem && kitchenSlot.KitchenSystem[0];
           const kitchenSystem =
@@ -160,18 +162,18 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
       const orderName =
         order.orderName.firstName + ' ' + order.orderName.lastName;
       const blendName = displayNameOfOrderItem(item, item.menuItem);
-      const task = {
-        id: orderId + item.id,
+      return [...Array(item.quantity)].map((_, quantityIndex) => ({
+        id: cuid(),
+        quantityIndex,
         orderItemId: item.id,
         orderId,
         name: orderName,
         blendName,
         fills: requestedFills,
-      };
-      return task;
+      }));
     }),
   );
-
+  const tasks = allTasks.flat(1);
   await cloud.get('RestaurantActions').putTransactionValue({
     type: 'QueueTasks',
     tasks,

@@ -55,7 +55,7 @@ const startVerseServer = async () => {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  USE_DEV_SERVER = false;
+  // USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -152,6 +152,8 @@ const startVerseServer = async () => {
   });
 
   cloud.get('KitchenState').setLocalOnly();
+  cloud.get('RestaurantActions').setLocalOnly();
+  // cloud.get('RestaurantState').setLocalOnly();
 
   const restaurantActions = cloud.get('RestaurantActions');
 

@@ -263,7 +263,7 @@ export function useOrderItem(orderItemId) {
       });
     }
     const itemMapper = menu && getOrderItemMapper(menu);
-    const orderState = order.value.get();
+    const orderState = order && order.value.get();
 
     const orderItem =
       orderState &&

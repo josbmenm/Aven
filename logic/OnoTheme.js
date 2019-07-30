@@ -16,6 +16,7 @@ const colors = {
 colors.primary = colors.monsterra;
 colors.primaryBg = colors.monsterras[0];
 colors.text = colors.monsterra;
+colors.invertedText = colors.white;
 
 const fonts = {
   regular: 'Maax',
@@ -90,6 +91,16 @@ const OnoTheme = {
   layouts: {
     small: 640 + 56, // 56 is the padding horizontal on the container
     large: 1280,
+  },
+};
+
+export const OnoThemeDark = {
+  ...OnoTheme,
+  colors: {
+    ...colors,
+    invertedText: '#111111',
+    primary: 'white',
+    primaryBg: '#FFFFFFDD',
   },
 };
 
