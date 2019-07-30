@@ -39,27 +39,29 @@ export default async function scrapeAirTable(fsClient) {
 
   const scrapeTable = tableName =>
     new Promise((resolve, reject) => {
-      const allRecords = {};
-      let index = 0;
+      const recordResults = [];
       airtableBase(tableName)
         .select({
-          // view: 'Grid view',
+          view: 'Grid view',
         })
         .eachPage(
           (records, fetchNextPage) => {
-            records.forEach(record => {
-              allRecords[record.id] = {
-                id: record.id,
-                ...record.fields,
-                _index: index++,
-              };
-            });
+            recordResults.push(records);
             fetchNextPage();
           },
           err => {
             if (err) {
               reject(err);
             } else {
+              const records = recordResults.flat(1);
+              const allRecords = {};
+              records.forEach((record, recordIndex) => {
+                allRecords[record.id] = {
+                  ...record.fields,
+                  id: record.id,
+                  _index: recordIndex,
+                };
+              });
               resolve(allRecords);
             }
           },
@@ -106,7 +108,7 @@ export default async function scrapeAirTable(fsClient) {
     'KitchenSystemFaults',
     'KitchenSystemAlarms',
     'IngredientCustomization',
-    'Routing Schedule'
+    'Routing Schedule',
   ];
   const baseTables = {};
   await Promise.all(
