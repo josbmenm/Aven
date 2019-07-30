@@ -33,7 +33,7 @@ export default function useFocus({ inputRenderers, onSubmit }) {
     }
   }
   return {
-    inputs: inputRenderers.map((renderInput, index) => {
+    inputs: inputRenderers.filter(Boolean).map((renderInput, index) => {
       const ref = refs.current[index];
       return renderInput({
         key: index,
