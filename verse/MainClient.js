@@ -4,29 +4,15 @@ import startWebClient from '../aven-web/WebClient';
 import { CloudContext } from '../cloud-core/KiteReact';
 import { createClient } from '../cloud-core/Kite';
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
-import RestaurantReducer from '../logic/RestaurantReducer';
 
-const IS_DEV = process.env.NODE_ENV !== 'production';
-
-const RESTAURANT_DEV = {
-  useSSL: false,
-  authority: 'localhost:8830',
-};
-const RESTAURANT_PROD = {
-  authority: 'restaurant0.maui.onofood.co:8830',
-  useSSL: false,
-};
-
-// const RESTAURANT_CONFIG = RESTAURANT_DEV;
-// const RESTAURANT_CONFIG = RESTAURANT_PROD;
-const RESTAURANT_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
-
-const restaurantSource = createBrowserNetworkSource(RESTAURANT_CONFIG);
+const restaurantSource = createBrowserNetworkSource({
+  useSSL: window.location.protocol !== 'http:',
+  authority: window.location.host,
+});
 
 const cloud = createClient({
   source: restaurantSource,
   domain: 'onofood.co',
-  // functions: [RestaurantReducer],
 });
 
 const context = new Map();
