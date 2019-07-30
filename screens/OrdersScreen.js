@@ -2,7 +2,9 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import TwoPanePage from '../components/TwoPanePage';
 import Button from '../components/Button';
-import AdHocOrder from '../components/AdHocOrder';
+import BlendOrder from '../components/BlendTasker';
+import CustomTasker from '../components/CustomTasker';
+import TaskInfo from '../components/TaskInfo';
 import { useCloudReducer } from '../cloud-core/KiteReact';
 import RowSection from '../components/RowSection';
 import {
@@ -12,29 +14,7 @@ import {
 } from '../components/Styles';
 import RestaurantReducer from '../logic/RestaurantReducer';
 
-function OrderInfoText({ orderState }) {
-  if (!orderState) {
-    return (
-      <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
-        <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
-          Unknown Order
-        </Text>
-      </View>
-    );
-  }
-  return (
-    <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
-      <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
-        {orderState.name}
-      </Text>
-      <Text style={{ fontSize: 24, ...primaryFontFace, color: '#282828' }}>
-        {orderState.blendName}
-      </Text>
-    </View>
-  );
-}
-
-function OrderQueueRow({ onCancel, orderState }) {
+function TaskQueueRow({ onCancel, taskState }) {
   return (
     <View
       style={{
@@ -43,9 +23,9 @@ function OrderQueueRow({ onCancel, orderState }) {
         alignSelf: 'stretch',
       }}
     >
-      <OrderInfoText orderState={orderState} />
+      <TaskInfo task={taskState} />
       <Text style={{ alignSelf: 'center', margin: 10 }}>
-        {orderState.fills.length} fills
+        {taskState.fills.length} fills
       </Text>
       <Button onPress={onCancel} title="Cancel" />
     </View>
@@ -57,14 +37,14 @@ function OrderQueue({ restaurantState, dispatch }) {
     return null;
   }
   return (
-    <RowSection title="Order Queue">
+    <RowSection title="Task Queue">
       {restaurantState.queue &&
-        restaurantState.queue.filter(Boolean).map(orderState => (
-          <OrderQueueRow
-            key={orderState.id}
-            orderState={orderState}
+        restaurantState.queue.filter(Boolean).map(taskState => (
+          <TaskQueueRow
+            key={taskState.id}
+            taskState={taskState}
             onCancel={() => {
-              dispatch({ type: 'CancelOrder', id: orderState.id });
+              dispatch({ type: 'CancelTask', id: taskState.id });
             }}
           />
         ))}
@@ -91,7 +71,8 @@ export default function OrdersScreen(props) {
         <OrdersList restaurantState={restaurantState} dispatch={dispatch} />
       }
     >
-      <AdHocOrder />
+      <BlendOrder />
+      <CustomTasker />
     </TwoPanePage>
   );
 }

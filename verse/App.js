@@ -172,7 +172,7 @@ function IngredientFillingCup({ fillLevel, currentFill }) {
   );
 }
 
-function OrderRow({ prepSpec, status, fill, queuedIndex }) {
+function TaskRow({ task, status, fill, queuedIndex }) {
   let right = null;
   if (status === 'queued') {
     right = <ETAText queuedIndex={queuedIndex} />;
@@ -200,8 +200,8 @@ function OrderRow({ prepSpec, status, fill, queuedIndex }) {
   }
   return (
     <StatusDisplayRow
-      title={prepSpec.name}
-      subTitle={prepSpec.blendName}
+      title={task.name}
+      subTitle={task.blendName}
       right={right}
     />
   );
@@ -220,37 +220,37 @@ function PresentationSection() {
 
 function QueueSection({ queue = [], fill, blend, delivery }) {
   const renderQueue = [
-    ...queue.map((order, orderIndex) => (
-      <OrderRow
-        key={order.id}
-        prepSpec={order}
+    ...queue.map((task, taskIndex) => (
+      <TaskRow
+        key={task.id}
+        task={task}
         status={'queued'}
-        queuedIndex={queue.length - orderIndex}
+        queuedIndex={queue.length - taskIndex}
       />
     )),
   ];
   fill &&
     renderQueue.push(
-      <OrderRow
-        key={fill.order.id}
-        prepSpec={fill.order}
+      <TaskRow
+        key={fill.task.id}
+        task={fill.task}
         fill={fill}
         status="filling"
       />,
     );
   blend &&
     renderQueue.push(
-      <OrderRow
-        key={blend.order && blend.order.id}
-        prepSpec={blend.order}
+      <TaskRow
+        key={blend.task && blend.task.id}
+        task={blend.task}
         status="blending"
       />,
     );
   delivery &&
     renderQueue.push(
-      <OrderRow
-        key={delivery.order.id}
-        prepSpec={delivery.order}
+      <TaskRow
+        key={delivery.task.id}
+        task={delivery.task}
         status="delivering"
       />,
     );
@@ -282,10 +282,10 @@ function ReadyPickupCell({ state }) {
             color: monsterra,
           }}
         >
-          {state.order.name}
+          {state.task.name}
         </Text>
         <Text style={{ ...primaryFontFace, color: monsterra, fontSize: 16 }}>
-          {state.order.blendName}
+          {state.task.blendName}
         </Text>
       </View>
       <AnimatedCup fillLevel={1} />

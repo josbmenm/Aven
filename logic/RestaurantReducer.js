@@ -1,5 +1,29 @@
 import { defineCloudReducer } from '../cloud-core/KiteReact';
 
+const PRIMING_TASKS = [
+  {
+    deliveryMode: 'ditch',
+    skipBlend: true,
+    name: 'Mr. Purge',
+    blendName: 'Do not eat',
+    fills: [
+      { system: 4, slot: 3, amount: 10 },
+      { system: 3, slot: 0, amount: 2 }, // powder. 20g/shot, powdery
+    ],
+  },
+  {
+    deliveryMode: 'ditch',
+    skipBlend: true,
+    name: 'Mr. Purge',
+    blendName: 'Do not eat',
+    fills: [
+      { system: 4, slot: 3, amount: 10 },
+      { system: 3, slot: 1, amount: 1 }, // marine collagen. 12g/shot, runny
+      { system: 3, slot: 2, amount: 10 }, // matcha. 3g/shot, powdery
+    ],
+  },
+];
+
 function RestaurantReducerFn(state = {}, action) {
   const defaultReturn = () => {
     return {
@@ -20,10 +44,15 @@ function RestaurantReducerFn(state = {}, action) {
         queue: [...(state.queue || []), action.item],
       };
     }
-    case 'CancelOrder': {
+    case 'PrimeDispensers': {
       return {
         ...defaultReturn(),
-        actionCount: (state.actionCount || 0) + 1,
+        queue: [...PRIMING_TASKS, ...(state.queue || [])],
+      };
+    }
+    case 'CancelTask': {
+      return {
+        ...defaultReturn(),
         queue: (state.queue || []).filter(order => order.id !== action.id),
       };
     }
@@ -38,7 +67,7 @@ function RestaurantReducerFn(state = {}, action) {
           fill: null,
         };
       }
-      const topOrder = state.queue[0];
+      const topTask = state.queue[0];
       return {
         ...defaultReturn(),
         cupInventory: {
@@ -46,9 +75,9 @@ function RestaurantReducerFn(state = {}, action) {
           estimatedRemaining: newEstimatedRemaining,
         },
         fill: {
-          order: topOrder,
-          orderStartTime: Date.now(),
-          fillsRemaining: topOrder.fills,
+          task: topTask,
+          taskStartTime: Date.now(),
+          fillsRemaining: topTask.fills,
           fillsCompleted: [],
         },
         queue: state.queue.slice(1),
@@ -68,8 +97,8 @@ function RestaurantReducerFn(state = {}, action) {
         return defaultReturn();
       }
       let queue = state.queue;
-      if (!action.didCompleteJob && state.fill && state.fill.order) {
-        queue = [state.fill.order, ...state.queue];
+      if (!action.didCompleteJob && state.fill && state.fill.task) {
+        queue = [state.fill.task, ...state.queue];
       }
       return {
         ...defaultReturn(),
@@ -186,7 +215,7 @@ function RestaurantReducerFn(state = {}, action) {
       const blendState = state.blend;
       return {
         ...defaultReturn(),
-        blend: 'dirty',
+        blend: action.didDirtyBlender ? 'dirty' : null,
         deliveryA: {
           ...blendState,
           deliverTime: Date.now(),

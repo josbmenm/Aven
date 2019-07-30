@@ -21,12 +21,12 @@ import RestaurantReducer from '../logic/RestaurantReducer';
 import useAsyncError from '../react-utils/useAsyncError';
 import ControlPanel from './ControlPanel';
 
-function OrderInfoText({ orderState }) {
-  if (!orderState) {
+function TaskInfoText({ taskState }) {
+  if (!taskState) {
     return (
       <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
         <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
-          Unknown Order
+          Unknown Task
         </Text>
       </View>
     );
@@ -34,19 +34,19 @@ function OrderInfoText({ orderState }) {
   return (
     <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
       <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
-        {orderState.name}
+        {taskState.name}
       </Text>
       <Text style={{ fontSize: 24, ...primaryFontFace, color: '#282828' }}>
-        {orderState.blendName}
+        {taskState.blendName}
       </Text>
     </View>
   );
 }
 
-function OrderState({ orderState }) {
-  return <Text>{JSON.stringify(orderState)}</Text>;
+function taskState({ taskState }) {
+  return <Text>{JSON.stringify(taskState)}</Text>;
 }
-function OrderQueueRow({ onCancel, orderState }) {
+function OrderQueueRow({ onCancel, taskState }) {
   return (
     <View
       style={{
@@ -55,32 +55,12 @@ function OrderQueueRow({ onCancel, orderState }) {
         alignSelf: 'stretch',
       }}
     >
-      <OrderInfoText orderState={orderState} />
+      <TaskInfoText taskState={taskState} />
       <Text style={{ alignSelf: 'center', margin: 10 }}>
-        {orderState.fills.length} fills
+        {taskState.fills.length} fills
       </Text>
       <Button onPress={onCancel} title="Cancel" />
     </View>
-  );
-}
-
-function OrderQueue({ restaurantState, dispatch }) {
-  if (!restaurantState) {
-    return null;
-  }
-  return (
-    <RowSection title="Order Queue">
-      {restaurantState.queue &&
-        restaurantState.queue.filter(Boolean).map(orderState => (
-          <OrderQueueRow
-            key={orderState.id}
-            orderState={orderState}
-            onCancel={() => {
-              dispatch({ type: 'CancelOrder', id: orderState.id });
-            }}
-          />
-        ))}
-    </RowSection>
   );
 }
 
@@ -89,7 +69,7 @@ function BayInfo({ bayState, name, dispatch, bayId }) {
   if (bayState) {
     content = (
       <View style={{ flex: 1 }}>
-        <OrderInfoText orderState={bayState.order} />
+        <TaskInfoText taskState={bayState.task} />
       </View>
     );
   }
@@ -156,13 +136,13 @@ function FillsDisplay({ state }) {
 function FillRow({ restaurantState, dispatch }) {
   // return <Text>{JSON.stringify(fillState)}</Text>;
   const hasFill = !!restaurantState.fill;
-  const order = hasFill && restaurantState.fill.order;
+  const order = hasFill && restaurantState.fill.task;
   return (
     <Row title="Fill System">
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flex: 1 }}>
-            {order && <OrderInfoText orderState={order} />}
+            {order && <TaskInfoText taskState={order} />}
           </View>
           <Button
             disabled={!hasFill}
@@ -184,14 +164,14 @@ function BlendRow({ state }) {
   if (!state) {
     return <Text>Empty</Text>;
   }
-  return <OrderInfoText orderState={state.order} />;
+  return <TaskInfoText taskState={state.task} />;
 }
 
 function DeliverySystemRow({ state }) {
   if (!state) {
     return <Text>Empty</Text>;
   }
-  return <OrderInfoText orderState={state.order} />;
+  return <TaskInfoText taskState={state.task} />;
 }
 
 function RestaurantStateList({ restaurantState, dispatch }) {

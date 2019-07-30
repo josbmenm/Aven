@@ -64,6 +64,10 @@ const SEQUENCER_STEPS = [
     getSuccessRestaurantAction: () => ({
       type: 'DidGetCup',
     }),
+    // getFailureRestaurantAction: (intent) => ({
+    //   type: 'KitchenFailure',
+    //   intent
+    // })
   },
   {
     // drop cup (fill system)
@@ -74,9 +78,9 @@ const SEQUENCER_STEPS = [
       }
       if (
         restaurantState.fill &&
-        restaurantState.fill.order &&
-        restaurantState.fill.order.deliveryMode === 'drop' &&
-        restaurantState.fill.order.skipBlend &&
+        restaurantState.fill.task &&
+        restaurantState.fill.task.deliveryMode === 'drop' &&
+        restaurantState.fill.task.skipBlend &&
         restaurantState.fill.fillsRemaining.length === 0
       ) {
         return { didCompleteJob: true };
@@ -136,7 +140,8 @@ const SEQUENCER_STEPS = [
         !restaurantState.fill.fillsRemaining ||
         restaurantState.fill.fillsRemaining.length !== 0 ||
         restaurantState.fill.requestedDropTime ||
-        restaurantState.fill.order.skipBlend
+        (restaurantState.fill.task.skipBlend &&
+          restaurantState.fill.task.deliveryMode !== 'deliver')
       ) {
         return null;
       }
@@ -161,7 +166,11 @@ const SEQUENCER_STEPS = [
       return 'Blend';
     },
     getRestaurantStateIntent: restaurantState => {
-      if (!restaurantState.blend || restaurantState.blend.blendCompleteTime) {
+      if (
+        !restaurantState.blend ||
+        restaurantState.blend.blendCompleteTime ||
+        restaurantState.blend.task.skipBlend
+      ) {
         return null;
       }
       return {};
@@ -183,10 +192,16 @@ const SEQUENCER_STEPS = [
       return 'Pass from blender to delivery system';
     },
     getRestaurantStateIntent: restaurantState => {
-      if (!restaurantState.blend || !restaurantState.blend.blendCompleteTime) {
+      if (!restaurantState.blend) {
         return null;
       }
-      return {};
+      if (restaurantState.blend.blendCompleteTime) {
+        return { didDirtyBlender: true };
+      }
+      if (restaurantState.blend.task.skipBlend) {
+        return { didDirtyBlender: false };
+      }
+      return null;
     },
     getKitchenStateReady: (kitchenState, intent) => {
       return (
@@ -232,8 +247,8 @@ const SEQUENCER_STEPS = [
       }
       if (
         restaurantState.fill &&
-        restaurantState.fill.order.skipBlend &&
-        restaurantState.fill.order.deliveryMode === 'ditch' &&
+        restaurantState.fill.task.skipBlend &&
+        restaurantState.fill.task.deliveryMode === 'ditch' &&
         restaurantState.fill.fillsRemaining.length === 0
       ) {
         return {

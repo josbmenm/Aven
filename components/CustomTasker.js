@@ -1,45 +1,18 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import Button from '../components/Button';
-import MultiSelect from '../components/MultiSelect';
+import Button from './Button';
+import MultiSelect from './MultiSelect';
 import { Easing } from 'react-native-reanimated';
 import { useCloud } from '../cloud-core/KiteReact';
-import Row from '../components/Row';
-import BlockFormInput from '../components/BlockFormInput';
+import Row from './Row';
+import TaskInfo from './TaskInfo';
+import useOrderInfoPopover from './useOrderInfoPopover';
+import BlockFormInput from './BlockFormInput';
 import { usePopover } from '../views/Popover';
-import KeyboardPopover from '../components/KeyboardPopover';
+import KeyboardPopover from './KeyboardPopover';
 import useFocus from '../navigation-hooks/useFocus';
 import cuid from 'cuid';
-import Subtitle from '../components/Subtitle';
-import {
-  proseFontFace,
-  primaryFontFace,
-  monsterra80,
-} from '../components/Styles';
-
-const SystemNames = ['Granules', 'Piston', 'Frozen', 'Powder', 'Beverage'];
-
-function OrderInfoText({ orderState }) {
-  if (!orderState) {
-    return (
-      <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
-        <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
-          Unknown Order
-        </Text>
-      </View>
-    );
-  }
-  return (
-    <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
-      <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
-        {orderState.name}
-      </Text>
-      <Text style={{ fontSize: 24, ...primaryFontFace, color: '#282828' }}>
-        {orderState.blendName}
-      </Text>
-    </View>
-  );
-}
+import Subtitle from './Subtitle';
 
 function AddFillForm({ onSubmit }) {
   const [system, setSystem] = React.useState(0);
@@ -114,76 +87,6 @@ function AddFillForm({ onSubmit }) {
   );
 }
 
-function SetInfoForm({ onClose, initialInfo, onSubmit }) {
-  const [orderName, setOrderName] = React.useState(initialInfo.orderName);
-  const [orderBlendName, setOrderBlendName] = React.useState(
-    initialInfo.orderBlendName,
-  );
-
-  function handleSubmit() {
-    onSubmit({ orderName, orderBlendName });
-    onClose();
-  }
-
-  const { inputs } = useFocus({
-    onSubmit: handleSubmit,
-    inputRenderers: [
-      inputProps => (
-        <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-          <BlockFormInput
-            {...inputProps}
-            label="Order Name"
-            onValue={setOrderName}
-            value={orderName}
-          />
-        </View>
-      ),
-      inputProps => (
-        <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-          <BlockFormInput
-            {...inputProps}
-            label="Blend Name"
-            onValue={setOrderBlendName}
-            value={orderBlendName}
-          />
-        </View>
-      ),
-    ],
-  });
-
-  return (
-    <React.Fragment>
-      {inputs}
-      <Button onPress={handleSubmit} title="set info" />
-    </React.Fragment>
-  );
-}
-function useOrderInfoPopover({
-  setOrderName,
-  setOrderBlendName,
-  orderName,
-  orderBlendName,
-}) {
-  const { onPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
-      return (
-        <KeyboardPopover onClose={onClose}>
-          <SetInfoForm
-            initialInfo={{ orderName, orderBlendName }}
-            onClose={onClose}
-            onSubmit={i => {
-              setOrderName(i.orderName);
-              setOrderBlendName(i.orderBlendName);
-            }}
-          />
-        </KeyboardPopover>
-      );
-    },
-    { easing: Easing.linear, duration: 100 },
-  );
-  return onPopover;
-}
-
 function useFillAddPopover({ onAddFill }) {
   const { onPopover } = usePopover(
     ({ onClose, popoverOpenValue }) => {
@@ -203,16 +106,13 @@ function usePutTransactionValue(docName) {
   return doc.putTransactionValue;
 }
 
-export default function AdHocOrder() {
+export default function CustomTasker() {
   const [orderName, setOrderName] = React.useState('OnoInternal');
   const [orderBlendName, setOrderBlendName] = React.useState('Test Blend');
   const [deliveryMode, setDeliveryMode] = React.useState('deliver');
   const [skipBlend, setSkipBlend] = React.useState(null);
 
-  const [fills, setFills] = React.useState([
-    { system: 3, slot: 0, amount: 2, name: 'Yummy' },
-    { system: 3, slot: 2, amount: 3, name: 'Food' },
-  ]);
+  const [fills, setFills] = React.useState([]);
 
   const openOrderInfo = useOrderInfoPopover({
     orderName,
@@ -227,19 +127,20 @@ export default function AdHocOrder() {
   const restaurantDispatch = usePutTransactionValue('RestaurantActions');
 
   return (
-    <Row title="Ad-Hoc Order">
+    <Row title="custom order">
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View style={{ flex: 1 }}>
-            <Subtitle title="Order Info" />
-            <OrderInfoText
-              orderState={{ name: orderName, blendName: orderBlendName }}
+            <TaskInfo task={{ name: orderName, blendName: orderBlendName }} />
+            <Button
+              title="set order info"
+              type="outline"
+              onPress={openOrderInfo}
             />
-            <Button title="set order info" secondary onPress={openOrderInfo} />
           </View>
           <View style={{ flex: 1 }}>
             <View style={{ flex: 1, padding: 0 }}>
-              <Subtitle title="Fills" />
+              <Subtitle title="custom ingredients" />
               {fills.map((fill, fillIndex) => (
                 <View key={fillIndex} style={{ flexDirection: 'row' }}>
                   <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -280,9 +181,9 @@ export default function AdHocOrder() {
           value={deliveryMode}
           onValue={setDeliveryMode}
           options={[
-            { name: 'Deliver', value: 'deliver' },
-            { name: 'Drop in trash', value: 'ditch' },
-            { name: 'Drop when done', value: 'drop' },
+            { name: 'deliver', value: 'deliver' },
+            { name: 'drop in trash', value: 'ditch' },
+            { name: 'drop when done', value: 'drop' },
           ]}
         />
 
@@ -290,13 +191,13 @@ export default function AdHocOrder() {
           value={skipBlend}
           onValue={setSkipBlend}
           options={[
-            { name: 'Blend', value: null },
-            { name: 'Skip Blend', value: true },
+            { name: 'blend', value: null },
+            { name: 'skip blend', value: true },
           ]}
         />
 
         <Button
-          title="place order"
+          title="queue task"
           onPress={() => {
             restaurantDispatch({
               type: 'QueueTask',

@@ -158,7 +158,7 @@ function ModeView({ restaurantState, dispatch }) {
     <View>
       {restaurantState.manualMode ? (
         <Button
-          title="Disable Manual Mode"
+          title="disable manual mode"
           onPress={() => {
             dispatch({
               type: 'DisableManualMode',
@@ -167,7 +167,7 @@ function ModeView({ restaurantState, dispatch }) {
         />
       ) : (
         <Button
-          title="Enable Manual Mode"
+          title="enable manual mode"
           disabled={restaurantState.isAttached}
           onPress={() => {
             dispatch({
@@ -176,6 +176,14 @@ function ModeView({ restaurantState, dispatch }) {
           }}
         />
       )}
+      <Button
+        title="prime dispensers"
+        onPress={() => {
+          dispatch({
+            type: 'PrimeDispensers',
+          });
+        }}
+      />
     </View>
   );
 }
