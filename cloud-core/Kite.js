@@ -530,7 +530,6 @@ export function createDoc({
     const expectedTransactionValue = {
       type: 'TransactionValue',
       on,
-      time: getNow(),
       value,
     };
     const expectedBlock = getBlockOfValue(expectedTransactionValue);

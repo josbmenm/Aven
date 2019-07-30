@@ -249,7 +249,6 @@ export default function createGenericDataSource({
       : null;
     const finalValue = {
       type: 'TransactionValue',
-      time: Date.now(),
       on,
       value,
     };

@@ -525,7 +525,6 @@ export default async function startPostgresStorageSource({
     const on = prevBlockId ? { id: prevBlockId, type: 'BlockReference' } : null;
     const finalValue = {
       type: 'TransactionValue',
-      time: Date.now(),
       on,
       value,
     };
