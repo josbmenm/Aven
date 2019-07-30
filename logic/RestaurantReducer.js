@@ -38,10 +38,10 @@ function RestaurantReducerFn(state = {}, action) {
         actionCount: 0,
       };
     }
-    case 'QueueTask': {
+    case 'QueueTasks': {
       return {
         ...defaultReturn(),
-        queue: [...(state.queue || []), action.item],
+        queue: [...(state.queue || []), ...action.tasks],
       };
     }
     case 'PrimeDispensers': {

@@ -85,10 +85,10 @@ function HowItWorks() {
           </Heading>
 
           <FeatureSection
-          responsiveStyles={{
-            paddingLeft: [0, 120],
-          }}
-            title="Find us"
+            responsiveStyles={{
+              paddingLeft: [0, 120],
+            }}
+            title="find us"
             bodyText={
               <BodyText>
                 Check out the{' '}
@@ -170,7 +170,7 @@ function HowItWorks() {
               responsiveStyles={{
                 paddingLeft: [0, 120],
               }}
-              title="Pickup"
+              title="Pick Up"
               bodyText={
                 <BodyText>
                   Watch as advanced robotics create your perfect blend within 60

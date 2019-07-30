@@ -78,12 +78,15 @@ function BookUsWizard() {
 
   React.useEffect(() => {
     if (enterKeyPress && !stepValidation[stepsState.current].disabled) {
-      console.log("TCL: BookUsWizard -> enterKeyPress && stepValidation", enterKeyPress && !stepValidation[stepsState.current].disabled)
+      console.log(
+        'TCL: BookUsWizard -> enterKeyPress && stepValidation',
+        enterKeyPress && !stepValidation[stepsState.current].disabled,
+      );
 
       if (stepsState.current === TOTAL_STEPS) {
         onSubmit();
       } else {
-        stepsDispatch({ type: 'GO_NEXT' })
+        stepsDispatch({ type: 'GO_NEXT' });
       }
     }
   });
@@ -386,7 +389,7 @@ function BookUsWizard() {
               <Button
                 style={{ flex: 1 }}
                 buttonStyle={{ paddingVertical: 15 }}
-                title="Start booking"
+                title="start booking"
                 onPress={() => stepsDispatch({ type: 'GO_NEXT' })}
               />
             )}
@@ -453,7 +456,7 @@ function SubmitButton({ onPress, disabled = false, loading, buttonStyle }) {
             color: theme.colors.white,
           }}
         >
-          Submit
+          submit
         </BaseText>
       )}
     </Button>

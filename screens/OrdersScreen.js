@@ -7,11 +7,6 @@ import CustomTasker from '../components/CustomTasker';
 import TaskInfo from '../components/TaskInfo';
 import { useCloudReducer } from '../cloud-core/KiteReact';
 import RowSection from '../components/RowSection';
-import {
-  proseFontFace,
-  primaryFontFace,
-  monsterra80,
-} from '../components/Styles';
 import RestaurantReducer from '../logic/RestaurantReducer';
 
 function TaskQueueRow({ onCancel, taskState }) {

@@ -92,87 +92,92 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
 
   await cloud.get(`ConfirmedOrders/${orderId}`).putValue(confirmedOrder);
 
-  await summary.items.reduce(async (last, item, index) => {
-    await last;
-    if (item.type !== 'blend') {
-      return;
-    }
-    const { menuItemId } = item;
-    const menuItem = blends.find(b => b.id === menuItemId);
-    const { ingredients } = getSelectedIngredients(
-      menuItem,
-      item,
-      companyConfig,
-    );
+  const items = await Promise.all(
+    summary.items.map(async (item, index) => {
+      if (item.type !== 'blend') {
+        return;
+      }
+      const { menuItemId } = item;
+      const menuItem = blends.find(b => b.id === menuItemId);
+      const { ingredients } = getSelectedIngredients(
+        menuItem,
+        item,
+        companyConfig,
+      );
 
-    const KitchenSlots = companyConfig.baseTables.KitchenSlots;
-    const KitchenSystems = companyConfig.baseTables.KitchenSystems;
-    const requestedFills = ingredients
-      .map(ing => {
-        const kitchenSlotId = Object.keys(KitchenSlots).find(slotId => {
-          const slot = KitchenSlots[slotId];
-          return slot.Ingredient && ing.id === slot.Ingredient[0];
-        });
-        const kitchenSlot = kitchenSlotId && KitchenSlots[kitchenSlotId];
-        if (!kitchenSlot) {
+      const KitchenSlots = companyConfig.baseTables.KitchenSlots;
+      const KitchenSystems = companyConfig.baseTables.KitchenSystems;
+      const requestedFills = ingredients
+        .map(ing => {
+          const kitchenSlotId = Object.keys(KitchenSlots).find(slotId => {
+            const slot = KitchenSlots[slotId];
+            return slot.Ingredient && ing.id === slot.Ingredient[0];
+          });
+          const kitchenSlot = kitchenSlotId && KitchenSlots[kitchenSlotId];
+          if (!kitchenSlot) {
+            return {
+              ingredientId: ing.id,
+              ingredientName: ing.Name,
+              invalid: 'NoSlot',
+              index: 0,
+            };
+          }
+          const kitchenSystemId =
+            kitchenSlot.KitchenSystem && kitchenSlot.KitchenSystem[0];
+          const kitchenSystem =
+            kitchenSystemId && KitchenSystems[kitchenSystemId];
+          if (!kitchenSystem) {
+            return {
+              ingredientId: ing.id,
+              ingredientName: ing.Name,
+              slotId: kitchenSlotId,
+              invalid: 'NoSystem',
+              index: 0,
+            };
+          }
           return {
+            amount: ing.amount,
+            amountVolumeRatio: ing.amountVolumeRatio,
             ingredientId: ing.id,
             ingredientName: ing.Name,
-            invalid: 'NoSlot',
-            index: 0,
-          };
-        }
-        const kitchenSystemId =
-          kitchenSlot.KitchenSystem && kitchenSlot.KitchenSystem[0];
-        const kitchenSystem =
-          kitchenSystemId && KitchenSystems[kitchenSystemId];
-        if (!kitchenSystem) {
-          return {
-            ingredientId: ing.id,
-            ingredientName: ing.Name,
+            ingredientColor: ing.Color,
+            ingredientIcon: ing.Icon,
             slotId: kitchenSlotId,
-            invalid: 'NoSystem',
-            index: 0,
+            systemId: kitchenSystemId,
+            slot: kitchenSlot.Slot,
+            system: kitchenSystem.FillSystemID,
+            index: kitchenSlot._index,
+            invalid: null,
           };
-        }
-        return {
-          amount: ing.amount,
-          amountVolumeRatio: ing.amountVolumeRatio,
-          ingredientId: ing.id,
-          ingredientName: ing.Name,
-          ingredientColor: ing.Color,
-          ingredientIcon: ing.Icon,
-          slotId: kitchenSlotId,
-          systemId: kitchenSystemId,
-          slot: kitchenSlot.Slot,
-          system: kitchenSystem.FillSystemID,
-          index: kitchenSlot._index,
-          invalid: null,
-        };
-      })
-      .sort((a, b) => a.index - b.index);
-    console.log('sowrded', requestedFills);
-    const invalidFills = requestedFills.filter(f => !!f.invalid);
-    if (invalidFills.length) {
-      console.error('Invalid Fills:', invalidFills);
-      throw new Error('Invalid fills!');
-    }
-    const orderName =
-      order.orderName.firstName + ' ' + order.orderName.lastName;
-    const blendName = displayNameOfOrderItem(item, item.menuItem);
-    const itemForKitchen = {
-      id: orderId + item.id,
-      orderItemId: item.id,
-      orderId,
-      name: orderName,
-      blendName,
-      fills: requestedFills,
-    };
-    await cloud.get('RestaurantActions').putTransactionValue({
-      type: 'QueueTask',
-      item: itemForKitchen,
-    });
-  }, Promise.resolve());
+        })
+        .sort((a, b) => a.index - b.index);
+      console.log('sowrded', requestedFills);
+      const invalidFills = requestedFills.filter(f => !!f.invalid);
+      if (invalidFills.length) {
+        console.error('Invalid Fills:', invalidFills);
+        throw new Error('Invalid fills!');
+      }
+      const orderName =
+        order.orderName.firstName + ' ' + order.orderName.lastName;
+      const blendName = displayNameOfOrderItem(item, item.menuItem);
+      const task = {
+        id: orderId + item.id,
+        orderItemId: item.id,
+        orderId,
+        name: orderName,
+        blendName,
+        fills: requestedFills,
+      };
+      return task;
+    }),
+  );
+
+  await cloud.get('RestaurantActions').putTransactionValue({
+    type: 'QueueTasks',
+    tasks,
+  });
+
+  console.log(`Order Placed. Queued ${tasks.length} tasks for kitchen.`);
 
   return {};
 }

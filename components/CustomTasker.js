@@ -200,15 +200,17 @@ export default function CustomTasker() {
           title="queue task"
           onPress={() => {
             restaurantDispatch({
-              type: 'QueueTask',
-              item: {
-                id: cuid(),
-                name: orderName,
-                blendName: orderBlendName,
-                skipBlend,
-                deliveryMode,
-                fills,
-              },
+              type: 'QueueTasks',
+              tasks: [
+                {
+                  id: cuid(),
+                  name: orderName,
+                  blendName: orderBlendName,
+                  skipBlend,
+                  deliveryMode,
+                  fills,
+                },
+              ],
             })
               .then(() => {
                 console.log('order placed!');
