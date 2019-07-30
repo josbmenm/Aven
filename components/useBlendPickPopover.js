@@ -7,8 +7,9 @@ import { usePopover } from '../views/Popover';
 import AirtableImage from './AirtableImage';
 import KeyboardPopover from './KeyboardPopover';
 import useFocus from '../navigation-hooks/useFocus';
-import { useMenu } from '../ono-cloud/OnoKitchen';
+import { useMenu, useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import { titleStyle } from './Styles';
+import { getFillsOfOrder } from '../logic/configLogic';
 
 export default function useBlendPickPopover({
   blendId,
@@ -17,6 +18,7 @@ export default function useBlendPickPopover({
   setBlendFills,
 }) {
   const menu = useMenu();
+  const companyConfig = useCompanyConfig();
   const { onPopover } = usePopover(
     ({ onClose, popoverOpenValue }) => {
       return (
@@ -32,7 +34,12 @@ export default function useBlendPickPopover({
                   }}
                   onPress={() => {
                     setBlendName(blend.Recipe.Name);
-                    setBlendFills([]);
+                    const fills = getFillsOfOrder(
+                      blend,
+                      { customization: null },
+                      companyConfig,
+                    );
+                    setBlendFills(fills);
                     setBlendId(blend.id);
                     onClose();
                   }}

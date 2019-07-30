@@ -14,12 +14,14 @@ import {
   black10,
 } from '../components/Styles';
 import AirtableImage from '../components/AirtableImage';
+import { HostContextContainer } from '../components/AirtableImage';
 
-let baseAuthority = undefined;
-let baseUseSSL = undefined;
+let HOST_CONFIG = {};
 if (global.window) {
-  baseAuthority = window.location.host;
-  baseUseSSL = window.location.protocol !== 'http:';
+  HOST_CONFIG = {
+    useSSL: window.location.protocol !== 'http:',
+    authority: window.location.host,
+  };
 }
 
 function AdminScreen({ navigation }) {
@@ -27,8 +29,7 @@ function AdminScreen({ navigation }) {
     <Admin
       navigation={navigation}
       defaultSession={{
-        useSSL: baseUseSSL,
-        authority: baseAuthority,
+        ...HOST_CONFIG,
         domain: 'onofood.co',
       }}
     />
@@ -571,7 +572,11 @@ function FullApp(props) {
     cloud.connected.stream.addListener(listener);
     return () => cloud.connected.stream.removeListener(listener);
   }, [cloud]);
-  return <App {...props} />;
+  return (
+    <HostContextContainer {...HOST_CONFIG}>
+      <App {...props} />
+    </HostContextContainer>
+  );
 }
 
 FullApp.router = App.router;

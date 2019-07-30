@@ -60,15 +60,17 @@ export default function BlendTasker() {
           disabled={blendId === null}
           onPress={() => {
             restaurantDispatch({
-              type: 'QueueTask',
-              item: {
-                id: cuid(),
-                name: orderName,
-                blendName,
-                skipBlend: false,
-                deliveryMode: 'deliver',
-                fills: blendFills,
-              },
+              type: 'QueueTasks',
+              tasks: [
+                {
+                  id: cuid(),
+                  name: orderName,
+                  blendName,
+                  skipBlend: false,
+                  deliveryMode: 'deliver',
+                  fills: blendFills,
+                },
+              ],
             })
               .then(() => {
                 console.log('order placed!');

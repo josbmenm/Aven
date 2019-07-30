@@ -3,8 +3,8 @@ import {
   companyConfigToBlendMenu,
   getOrderSummary,
   displayNameOfOrderItem,
-  getSelectedIngredients,
   getItemCustomizationSummary,
+  getFillsOfOrder,
 } from '../logic/configLogic';
 import cuid from 'cuid';
 
@@ -94,71 +94,13 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
   await cloud.get(`ConfirmedOrders/${orderId}`).putValue(confirmedOrder);
 
   const allTasks = await Promise.all(
-    summary.items.map(async (item, index) => {
+    summary.items.map(async item => {
       if (item.type !== 'blend') {
         return;
       }
       const { menuItemId } = item;
       const menuItem = blends.find(b => b.id === menuItemId);
-      const { ingredients } = getSelectedIngredients(
-        menuItem,
-        item,
-        companyConfig,
-      );
-
-      const KitchenSlots = companyConfig.baseTables.KitchenSlots;
-      const KitchenSystems = companyConfig.baseTables.KitchenSystems;
-      const requestedFills = ingredients
-        .map(ing => {
-          const kitchenSlotId = Object.keys(KitchenSlots).find(slotId => {
-            const slot = KitchenSlots[slotId];
-            return slot.Ingredient && ing.id === slot.Ingredient[0];
-          });
-          const kitchenSlot = kitchenSlotId && KitchenSlots[kitchenSlotId];
-          if (!kitchenSlot) {
-            return {
-              ingredientId: ing.id,
-              ingredientName: ing.Name,
-              invalid: 'NoSlot',
-              index: 0,
-            };
-          }
-          console.log(kitchenSlot);
-          const kitchenSystemId =
-            kitchenSlot.KitchenSystem && kitchenSlot.KitchenSystem[0];
-          const kitchenSystem =
-            kitchenSystemId && KitchenSystems[kitchenSystemId];
-          if (!kitchenSystem) {
-            return {
-              ingredientId: ing.id,
-              ingredientName: ing.Name,
-              slotId: kitchenSlotId,
-              invalid: 'NoSystem',
-              index: 0,
-            };
-          }
-          return {
-            amount: ing.amount,
-            amountVolumeRatio: ing.amountVolumeRatio,
-            ingredientId: ing.id,
-            ingredientName: ing.Name,
-            ingredientColor: ing.Color,
-            ingredientIcon: ing.Icon,
-            slotId: kitchenSlotId,
-            systemId: kitchenSystemId,
-            slot: kitchenSlot.Slot,
-            system: kitchenSystem.FillSystemID,
-            index: kitchenSlot._index,
-            invalid: null,
-          };
-        })
-        .sort((a, b) => a.index - b.index);
-      console.log('sowrded', requestedFills);
-      const invalidFills = requestedFills.filter(f => !!f.invalid);
-      if (invalidFills.length) {
-        console.error('Invalid Fills:', invalidFills);
-        throw new Error('Invalid fills!');
-      }
+      const fills = getFillsOfOrder(menuItem, item, companyConfig);
       const orderName =
         order.orderName.firstName + ' ' + order.orderName.lastName;
       const blendName = displayNameOfOrderItem(item, item.menuItem);
@@ -169,7 +111,7 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
         orderId,
         name: orderName,
         blendName,
-        fills: requestedFills,
+        fills,
       }));
     }),
   );

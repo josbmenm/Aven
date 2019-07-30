@@ -2,6 +2,7 @@ import React from 'react';
 import RootAuthenticationSection from './RootAuthenticationSection';
 import { Text, View } from 'react-native';
 import SimplePage from '../components/SimplePage';
+import { useCloudValue } from '../cloud-core/KiteReact';
 import Tag from '../components/Tag';
 import Button from '../components/Button';
 import { Easing } from 'react-native-reanimated';
@@ -89,12 +90,16 @@ function TempCell({ title, value, button }) {
   );
 }
 function TemperatureView() {
+  const kitchenState = useCloudValue('KitchenState');
+  if (!kitchenState) {
+    return null;
+  }
   return (
     <StatusSection title="Food Safety">
       <View style={{ flexDirection: 'row' }}>
         <TempCell
           title="Frozen Food"
-          value="0°F"
+          value={`${kitchenState.System_FreezerTemp_READ}0°F`}
           button={
             <Button
               title="clear alarm. frozen food is fresh."
@@ -105,7 +110,7 @@ function TemperatureView() {
         />
         <TempCell
           title="Piston Fridge"
-          value="42°F"
+          value={`${kitchenState.System_YogurtZoneTemp_READ}0°F`}
           button={
             <Button
               title="clear alarm. cold piston filler is fresh."
@@ -118,7 +123,7 @@ function TemperatureView() {
       <View style={{ flexDirection: 'row' }}>
         <TempCell
           title="Beverage Fridge"
-          value="42°F"
+          value={`${kitchenState.System_BevTemp_READ}0°F`}
           button={
             <Button
               title="clear alarm. beverages are fresh."
@@ -127,7 +132,15 @@ function TemperatureView() {
             />
           }
         />
-        <TempCell title="Warm Truck" value="80°F" button={null} />
+        <TempCell
+          title="Ambient"
+          value={`${kitchenState.System_AmbientTemp_READ}0°F`}
+          button={null}
+        />
+        <TempCell
+          title="Power Box"
+          value={`${kitchenState.System_PsuTemp_READ}°F`}
+        />
       </View>
     </StatusSection>
   );
