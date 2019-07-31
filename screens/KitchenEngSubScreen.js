@@ -5,33 +5,23 @@ import IntRow from '../components/IntRow';
 import Row from '../components/Row';
 import ButtonRow from '../components/ButtonRow';
 import Button from '../components/Button';
-import GenericPage from '../components/GenericPage';
 import RowSection from '../components/RowSection';
 import KeyboardPopover from '../components/KeyboardPopover';
 import { usePopover } from '../views/Popover';
-import {
-  AlertIOS,
-  View,
-  ScrollView,
-  Text,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-} from 'react-native';
-import Animated, { Easing } from 'react-native-reanimated';
-
-import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
+import { View, ScrollView, Text } from 'react-native';
+import { Easing } from 'react-native-reanimated';
+import DisconnectedPage from '../components/DisconnectedPage';
+import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import { getSubsystem, getSubsystemFaults } from '../ono-cloud/OnoKitchen';
 import {
   prettyShadow,
   genericText,
   boldPrimaryFontFace,
 } from '../components/Styles';
-
 import useFocus from '../navigation-hooks/useFocus';
 import BlockFormInput from '../components/BlockFormInput';
 import { useNavigation } from '../navigation-hooks/Hooks';
+import TwoPanePage from '../components/TwoPanePage';
 
 function SystemActionForm({
   pulse,
@@ -218,170 +208,179 @@ function FaultsRows({ faults }) {
     </RowSection>
   );
 }
-function SystemView({ system, systemId, kitchenCommand }) {
+
+function ReadsAndFaults({ system }) {
   if (!system) {
-    return <Hero title="System Disconnected" />;
+    return null;
   }
-  const pulseCommands = Object.keys(system.pulseCommands || {});
-  const valueCommands = Object.keys(system.valueCommands || {});
   const faults = getSubsystemFaults(system);
   return (
     <React.Fragment>
-      <Hero title={`${system.icon} ${system.name}`} />
-      <View style={{ flex: 1, flexDirection: 'row-reverse' }}>
-        <ScrollView style={{ flex: 1 }}>
-          <RowSection>
-            {pulseCommands.length > 0 &&
-              pulseCommands.map(pulseCommandName => {
-                const pulse = system.pulseCommands[pulseCommandName];
+      {faults && <FaultsRows faults={faults} />}
+
+      <RowSection>
+        {Object.keys(system.reads).map(readName => {
+          if (readName === 'ActionIdStarted' || readName === 'ActionIdEnded') {
+            return null;
+          }
+          const r = system.reads[readName];
+          if (r.type === 'integer') {
+            return (
+              <IntRow
+                key={readName}
+                title={readName}
+                value={system.reads[readName].value}
+              />
+            );
+          } else if (r.type === 'boolean') {
+            return (
+              <BitRow
+                key={readName}
+                title={readName}
+                value={system.reads[readName].value}
+              />
+            );
+          } else {
+            throw new Error('unknown type');
+          }
+        })}
+      </RowSection>
+    </React.Fragment>
+  );
+}
+function SystemView({ system, systemId, kitchenCommand }) {
+  if (!system) {
+    return null;
+  }
+  const pulseCommands = Object.keys(system.pulseCommands || {});
+  const valueCommands = Object.keys(system.valueCommands || {});
+  return (
+    <React.Fragment>
+      <RowSection>
+        {pulseCommands.length > 0 &&
+          pulseCommands.map(pulseCommandName => {
+            const pulse = system.pulseCommands[pulseCommandName];
+            return (
+              <ButtonRow
+                title={`${pulseCommandName} Action`}
+                key={pulseCommandName}
+              >
+                <SetParamsButton
+                  pulse={pulse}
+                  kitchenCommand={kitchenCommand}
+                  system={system}
+                  systemId={systemId}
+                />
+                <Button
+                  key={pulseCommandName}
+                  title={`do ${pulseCommandName}`}
+                  onPress={() => {
+                    kitchenCommand(systemId, [pulseCommandName], {}).catch(
+                      console.error,
+                    );
+                  }}
+                />
+              </ButtonRow>
+            );
+          })}
+      </RowSection>
+      <RowSection>
+        {valueCommands.length > 0 && (
+          <Row title="Command Values">
+            <View style={{ flex: 1 }}>
+              {valueCommands.map(valueCommand => {
+                const val = system.valueCommands[valueCommand];
+                if (valueCommand === 'ActionIdIn') {
+                  return null;
+                }
+                if (val.type === 'boolean') {
+                  return (
+                    <View
+                      style={{
+                        // alignSelf: 'stretch',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}
+                      key={valueCommand}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 32,
+                          ...genericText,
+                        }}
+                      >
+                        {valueCommand}
+                      </Text>
+                      <Text
+                        style={{
+                          marginHorizontal: 10,
+                          fontSize: 42,
+                          ...genericText,
+                          color: '#414',
+                        }}
+                      >
+                        {val.value ? 'True' : 'False'}
+                      </Text>
+                      <Button
+                        title={val.value ? 'set OFF' : 'set ON'}
+                        onPress={() => {
+                          kitchenCommand(systemId, [], {
+                            [valueCommand]: !val.value,
+                          });
+                        }}
+                      />
+                    </View>
+                  );
+                }
                 return (
-                  <ButtonRow
-                    title={`${pulseCommandName} Action`}
-                    key={pulseCommandName}
+                  <View
+                    style={{
+                      // alignSelf: 'stretch',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}
+                    key={valueCommand}
                   >
-                    <SetParamsButton
-                      pulse={pulse}
-                      kitchenCommand={kitchenCommand}
+                    <Text
+                      style={{
+                        fontSize: 32,
+                        ...genericText,
+                      }}
+                    >
+                      {valueCommand}
+                    </Text>
+                    <Text
+                      style={{
+                        marginHorizontal: 10,
+                        fontSize: 42,
+                        ...genericText,
+                        color: '#414',
+                      }}
+                    >
+                      {val.value}
+                    </Text>
+                    <SetValueButton
                       system={system}
                       systemId={systemId}
+                      val={val}
+                      kitchenCommand={kitchenCommand}
                     />
-                    <Button
-                      key={pulseCommandName}
-                      title={`do ${pulseCommandName}`}
-                      onPress={() => {
-                        kitchenCommand(systemId, [pulseCommandName], {}).catch(
-                          console.error,
-                        );
-                      }}
-                    />
-                  </ButtonRow>
+                  </View>
                 );
               })}
-          </RowSection>
-          <RowSection>
-            {valueCommands.length > 0 && (
-              <Row title="Command Values">
-                <View style={{ flex: 1 }}>
-                  {valueCommands.map(valueCommand => {
-                    const val = system.valueCommands[valueCommand];
-                    if (val.type === 'boolean') {
-                      return (
-                        <View
-                          style={{
-                            // alignSelf: 'stretch',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                          }}
-                          key={valueCommand}
-                        >
-                          <Text
-                            style={{
-                              fontSize: 32,
-                              ...genericText,
-                            }}
-                          >
-                            {valueCommand}
-                          </Text>
-                          <Text
-                            style={{
-                              marginHorizontal: 10,
-                              fontSize: 42,
-                              ...genericText,
-                              color: '#414',
-                            }}
-                          >
-                            {val.value ? 'True' : 'False'}
-                          </Text>
-                          <Button
-                            title={val.value ? 'set OFF' : 'set ON'}
-                            onPress={() => {
-                              kitchenCommand(systemId, [], {
-                                [valueCommand]: !val.value,
-                              });
-                            }}
-                          />
-                        </View>
-                      );
-                    }
-                    return (
-                      <View
-                        style={{
-                          // alignSelf: 'stretch',
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                        }}
-                        key={valueCommand}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 32,
-                            ...genericText,
-                          }}
-                        >
-                          {valueCommand}
-                        </Text>
-                        <Text
-                          style={{
-                            marginHorizontal: 10,
-                            fontSize: 42,
-                            ...genericText,
-                            color: '#414',
-                          }}
-                        >
-                          {val.value}
-                        </Text>
-                        <SetValueButton
-                          system={system}
-                          systemId={systemId}
-                          val={val}
-                          kitchenCommand={kitchenCommand}
-                        />
-                      </View>
-                    );
-                  })}
-                </View>
-              </Row>
-            )}
-          </RowSection>
-        </ScrollView>
-        <ScrollView style={{ flex: 1 }}>
-          {faults && <FaultsRows faults={faults} />}
-
-          <RowSection>
-            {Object.keys(system.reads).map(readName => {
-              const r = system.reads[readName];
-              if (r.type === 'integer') {
-                return (
-                  <IntRow
-                    key={readName}
-                    title={readName}
-                    value={system.reads[readName].value}
-                  />
-                );
-              } else if (r.type === 'boolean') {
-                return (
-                  <BitRow
-                    key={readName}
-                    title={readName}
-                    value={system.reads[readName].value}
-                  />
-                );
-              } else {
-                throw new Error('unknown type');
-              }
-            })}
-          </RowSection>
-        </ScrollView>
-      </View>
+            </View>
+          </Row>
+        )}
+      </RowSection>
     </React.Fragment>
   );
 }
 export default function Subsystem({ ...props }) {
   const { getParam } = useNavigation();
   const systemId = getParam('system');
-  const cloud = useCloud();
   const kitchenState = useCloudValue('KitchenState');
   const kitchenConfig = useCloudValue('KitchenConfig');
+  const cloud = useCloud();
   async function kitchenCommand(subsystemName, pulse, values) {
     return await cloud.dispatch({
       type: 'KitchenCommand',
@@ -391,15 +390,25 @@ export default function Subsystem({ ...props }) {
     });
   }
   const system = getSubsystem(systemId, kitchenConfig, kitchenState);
+  const isConnected = useValue(cloud.connected);
+
   return (
-    <GenericPage {...props} disableScrollView={true}>
-      <SystemView
-        system={system}
-        systemId={systemId}
-        kitchenCommand={kitchenCommand}
-      />
-    </GenericPage>
+    <TwoPanePage
+      {...props}
+      title={system ? `${system.icon} ${system.name}` : null}
+      side={isConnected ? <ReadsAndFaults system={system} /> : null}
+    >
+      {isConnected ? (
+        <SystemView
+          system={system}
+          systemId={systemId}
+          kitchenCommand={kitchenCommand}
+        />
+      ) : (
+        <DisconnectedPage />
+      )}
+    </TwoPanePage>
   );
 }
 
-Subsystem.navigationOptions = GenericPage.navigationOptions;
+Subsystem.navigationOptions = TwoPanePage.navigationOptions;

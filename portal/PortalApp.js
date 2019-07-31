@@ -66,13 +66,15 @@ import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
 
 let IS_DEV = process.env.NODE_ENV !== 'production';
-IS_DEV = false;
+// IS_DEV = false;
 
 const windowSize = Dimensions.get('window');
 
 const RESTAURANT_DEV = {
   useSSL: false,
   authority: 'localhost:8830',
+  quiet: false,
+
   // authority: '192.168.1.81:8830',
   // authority: '192.168.1.81:8830',
 };
@@ -198,31 +200,37 @@ const PortalHome = createSwitchNavigator({
 function PortalHomeApp({ navigation }) {
   return (
     <RootAuthenticationSection>
-      <TabsScreen tabs={TABS} navigation={navigation}>
-        <PortalHome navigation={navigation} />
-      </TabsScreen>
+      <PortalHome navigation={navigation} />
     </RootAuthenticationSection>
   );
+  // return (
+  //   <RootAuthenticationSection>
+  //     <TabsScreen tabs={TABS} navigation={navigation}>
+  //       <PortalHome navigation={navigation} />
+  //     </TabsScreen>
+  //   </RootAuthenticationSection>
+  // );
 }
 PortalHomeApp.router = PortalHome.router;
 PortalHomeApp.navigationOptions = PortalHome.navigationOptions;
 
 const App = createStackTransitionNavigator({
-  Home: PortalHomeApp,
-  OrderComplete: OrderCompletePortalScreen,
-  Kiosk: KioskApp,
-  ComponentPlayground: ComponentPlaygroundScreen,
   KitchenEng: KitchenEngScreen,
   KitchenEngSub: KitchenEngSubScreen,
-  Inventory: InventoryScreen,
-  DeviceManager: DeviceManagerScreen,
-  RestaurantStatus: RestaurantStatusScreen,
-  PaymentDebug: PaymentDebugScreen,
-  OrderConfirmTest: OrderConfirmTestScreen,
-  Sequencer: SequencerScreen,
-  EngDashboard: EngDashboardScreen,
-  Orders: OrdersScreen,
-  ManualControl: ManualControlScreen,
+  // Home: PortalHomeApp,
+  // OrderComplete: OrderCompletePortalScreen,
+  // Kiosk: KioskApp,
+  // ComponentPlayground: ComponentPlaygroundScreen,
+
+  // Inventory: InventoryScreen,
+  // DeviceManager: DeviceManagerScreen,
+  // RestaurantStatus: RestaurantStatusScreen,
+  // PaymentDebug: PaymentDebugScreen,
+  // OrderConfirmTest: OrderConfirmTestScreen,
+  // Sequencer: SequencerScreen,
+  // EngDashboard: EngDashboardScreen,
+  // Orders: OrdersScreen,
+  // ManualControl: ManualControlScreen,
 });
 
 const AppContainer = createAppContainer(App);

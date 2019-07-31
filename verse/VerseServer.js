@@ -55,7 +55,7 @@ const startVerseServer = async () => {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  // USE_DEV_SERVER = false;
+  USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -366,21 +366,21 @@ const startVerseServer = async () => {
     });
   }
 
-  const sequencerStateStream = xs.combine(
-    cloud.get('RestaurantState').value.stream,
-    cloud.get('KitchenState').value.stream,
-    kitchenConfigStream,
-  );
-  sequencerStateStream.addListener({
-    next: ([restaurantState, kitchenState, kitchenConfig]) => {
-      handleStateUpdates(restaurantState, kitchenState, kitchenConfig);
-    },
-    error: e => {
-      console.error('Failure in sequencer state stream');
-      console.error(e);
-      process.exit(1);
-    },
-  });
+  // const sequencerStateStream = xs.combine(
+  //   cloud.get('RestaurantState').value.stream,
+  //   cloud.get('KitchenState').value.stream,
+  //   kitchenConfigStream,
+  // );
+  // sequencerStateStream.addListener({
+  //   next: ([restaurantState, kitchenState, kitchenConfig]) => {
+  //     handleStateUpdates(restaurantState, kitchenState, kitchenConfig);
+  //   },
+  //   error: e => {
+  //     console.error('Failure in sequencer state stream');
+  //     console.error(e);
+  //     process.exit(1);
+  //   },
+  // });
 
   const dispatch = async action => {
     let stripeResponse = await handleStripeAction(action);
