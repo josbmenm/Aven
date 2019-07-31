@@ -12,7 +12,11 @@ import { View, ScrollView, Text } from 'react-native';
 import { Easing } from 'react-native-reanimated';
 import DisconnectedPage from '../components/DisconnectedPage';
 import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
-import { getSubsystem, getSubsystemFaults } from '../ono-cloud/OnoKitchen';
+import {
+  getSubsystem,
+  getSubsystemFaults,
+  getSubsystemAlarms,
+} from '../ono-cloud/OnoKitchen';
 import {
   prettyShadow,
   genericText,
@@ -180,13 +184,13 @@ function SetValueButton({ val, system, kitchenCommand, systemId }) {
   return <Button title="set" secondary onPress={onPopover} />;
 }
 
-function FaultsRows({ faults }) {
+function FaultsRows({ faults, color }) {
   return (
     <RowSection>
       {faults.map(fault => (
         <View
           style={{
-            backgroundColor: '#900',
+            backgroundColor: color || '#900',
             ...prettyShadow,
             marginBottom: 10,
             padding: 20,
@@ -214,9 +218,11 @@ function ReadsAndFaults({ system }) {
     return null;
   }
   const faults = getSubsystemFaults(system);
+  const alarms = getSubsystemAlarms(system);
   return (
     <React.Fragment>
       {faults && <FaultsRows faults={faults} />}
+      {alarms && <FaultsRows faults={alarms} color="#997200" />}
 
       <RowSection>
         {Object.keys(system.reads).map(readName => {

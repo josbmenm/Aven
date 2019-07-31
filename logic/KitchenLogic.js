@@ -68,6 +68,10 @@ export const sequencerSystemReadTags = {
     type: 'integer',
     subTag: 'Fault[3]',
   },
+  Alarm0: {
+    type: 'integer',
+    subTag: 'Alarm[0]',
+  },
 };
 
 export const sequencerSystemPulseCommands = {
@@ -107,6 +111,7 @@ export function companyConfigToKitchenConfig(companyConfig) {
     KitchenSystems,
     KitchenSystemTags,
     KitchenSystemFaults,
+    KitchenSystemAlarms,
   } = companyConfig.baseTables;
   if (!KitchenSystems) {
     return null;
@@ -127,6 +132,14 @@ export function companyConfigToKitchenConfig(companyConfig) {
       description: faultRow.Name,
       bitIndex: faultRow['Fault Bit'],
       intIndex: faultRow['Fault Integer'],
+    }));
+    const systemAlarms = Object.values(KitchenSystemAlarms).filter(
+      a => a.System[0] === kitchenSystemId,
+    );
+    const alarms = systemAlarms.map(row => ({
+      description: row.Name,
+      bitIndex: row['Alarm Bit'],
+      intIndex: row['Alarm Integer'],
     }));
     const readTags = {
       ...((kitchenSystem.HasSequencer && sequencerSystemReadTags) || {}),
@@ -185,6 +198,7 @@ export function companyConfigToKitchenConfig(companyConfig) {
       valueCommands,
       pulseCommands,
       faults,
+      alarms,
       hasSequencer: kitchenSystem.HasSequencer,
       name: kitchenSystem.Name,
     };
