@@ -28,7 +28,7 @@ function SidebarMenuIcon({ color, ...rest }) {
   );
 }
 
-function MobileMenuLink({ routeName, title }) {
+function MobileMenuLink({ routeName, title, ...rest }) {
   return (
     <ButtonLink
       type="link"
@@ -43,6 +43,10 @@ function MobileMenuLink({ routeName, title }) {
       buttonStyle={{
         marginBottom: 32,
       }}
+      accesible="true"
+      accessibilityRole="button"
+      accessibilityLabel={title}
+      {...rest}
     />
   );
 }
@@ -59,6 +63,9 @@ function MenuLink({
   return (
     <FunctionalLink
       routeName={routeName}
+      accesible="true"
+      accessibilityRole="button"
+      accessibilityLabel={title}
       renderContent={active => (
         <VisualButton
           title={title}
@@ -101,6 +108,9 @@ export function DesktopMenu() {
           {/* Logo */}
           <FunctionalLink
             routeName="Home"
+            accesible="true"
+            accessibilityRole="button"
+            accessibilityLabel="Logo"
             renderContent={() => <OnoBlendsLogo />}
           />
 
@@ -111,9 +121,18 @@ export function DesktopMenu() {
               flexDirection: 'row',
             }}
           >
-            <MenuLink routeName="Menu" title="menu" />
-            <MenuLink routeName="Schedule" title="schedule" />
-            <MenuLink routeName="OurStory" title="our story" />
+            <MenuLink
+              routeName="Menu"
+              title="menu"
+            />
+            <MenuLink
+              routeName="Schedule"
+              title="schedule"
+            />
+            <MenuLink
+              routeName="OurStory"
+              title="our story"
+            />
             <ButtonLink
               type="outline"
               title="book with us"

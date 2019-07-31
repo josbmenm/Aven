@@ -70,6 +70,8 @@ function BookUsWizard() {
   const [isDone, setIsDone] = React.useState(false);
   const [error] = React.useState(null);
   const enterKeyPress = useKeyPress('Enter');
+  const downKeyPress = useKeyPress('Down');
+  const upKeyPress = useKeyPress('up');
   const [stepsState, stepsDispatch] = React.useReducer(stepsReducer, {
     current: 0,
     hasNext: true,
@@ -77,19 +79,23 @@ function BookUsWizard() {
   });
 
   React.useEffect(() => {
+    console.log('enter useEffect')
     if (enterKeyPress && !stepValidation[stepsState.current].disabled) {
-      console.log(
-        'TCL: BookUsWizard -> enterKeyPress && stepValidation',
-        enterKeyPress && !stepValidation[stepsState.current].disabled,
-      );
 
       if (stepsState.current === TOTAL_STEPS) {
+        console.log('stepsState.current === TOTAL_STEPS')
         onSubmit();
       } else {
         stepsDispatch({ type: 'GO_NEXT' });
       }
     }
   });
+
+  React.useEffect(() => {
+    if (upKeyPress || downKeyPress) {
+      console.log('arrow keys pressed!')
+    }
+  })
 
   const firstNameRef = React.useRef(null);
   const lastNameRef = React.useRef(null);
@@ -370,21 +376,7 @@ function BookUsWizard() {
             </FormRow>
           )}
 
-          <FormRow direction="row">
-            {stepsState.current !== 0 && (
-              <Button
-                style={{
-                  flex: 1,
-                  marginBottom: 16,
-                  marginHorizontal: 8,
-                }}
-                buttonStyle={{ paddingVertical: 15 }}
-                type="outline"
-                title="back"
-                disabled={false}
-                onPress={() => stepsDispatch({ type: 'GO_BACK' })}
-              />
-            )}
+          <FormRow direction="row-reverse">
             {stepsState.current === 0 && (
               <Button
                 style={{ flex: 1 }}
@@ -412,6 +404,21 @@ function BookUsWizard() {
                 disabled={loading}
                 onPress={onSubmit}
                 loading={loading}
+              />
+            )}
+            {stepsState.current !== 0 && (
+              <Button
+                style={{
+                  flex: 1,
+                  marginBottom: 16,
+                  marginHorizontal: 8,
+                }}
+                tabIndex="-1"
+                buttonStyle={{ paddingVertical: 15 }}
+                type="outline"
+                title="back"
+                disabled={false}
+                onPress={() => stepsDispatch({ type: 'GO_BACK' })}
               />
             )}
           </FormRow>

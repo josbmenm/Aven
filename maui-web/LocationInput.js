@@ -2,6 +2,7 @@ import { View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { useTheme } from '../dashboard/Theme';
 import BaseText from '../dashboard/BaseText';
+
 import BodyText from '../dashboard/BodyText';
 import FormInput from '../components/BlockFormInput';
 import { Responsive } from '../dashboard/Responsive';
@@ -14,16 +15,26 @@ export function LocationInputWithRef(
     inputValue = '',
     style,
     responsiveStyle,
-    breakpoints
+    breakpoints,
   },
   forwardedRef,
   ...rest
 ) {
   const theme = useTheme();
   const [inputText, setInputText] = React.useState(inputValue);
-  const [results, setResults] = React.useState(null);
+  const [results, setResults] = React.useState([]);
+  console.log("TCL: results", results)
   // const type = 'city'; // or, address
   const ref = React.useRef({});
+  const refs = React.useRef(results.map(i => React.createRef()));
+  console.log("TCL: refs", refs)
+
+
+  React.useEffect(() => {
+    refs.current = results.map(i => React.createRef())
+  }, [results])
+
+
   function queryResults() {
     clearTimeout(ref.current.fast);
     clearTimeout(ref.current.slow);
@@ -40,6 +51,7 @@ export function LocationInputWithRef(
       })
       .catch(console.error);
   }
+
   function handleTextInput(q) {
     ref.current.lastQuery = q;
     setInputText(q);
@@ -47,6 +59,7 @@ export function LocationInputWithRef(
     ref.current.fast = setTimeout(queryResults, 100);
     ref.current.slow = setTimeout(queryResults, 300);
   }
+
   return (
     <Responsive
       breakpoints={breakpoints}
@@ -55,61 +68,92 @@ export function LocationInputWithRef(
         ...responsiveStyle,
       }}
     >
-      <View style={style}>
+      <View style={style} accessibilityRole="combobox">
         <FormInput
           onValue={handleTextInput}
           value={inputText}
           label="enter your city"
           ref={forwardedRef}
+          aria-haspopup={true}
+          accesible="true"
+          accessibilityLabel="Location Input"
+          aria-control="location-input-list"
         />
         {results && inputText !== '' ? (
-          <View
-            style={{
-              margin: 8,
-              marginTop: 0,
-              borderBottomLeftRadius: 8,
-              borderBottomRightRadius: 8,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              overflow: 'hidden',
-              ...theme.shadows.medium,
-            }}
-          >
-            {results.map(result => {
-              return (
-                <TouchableOpacity
-                  key={result.id}
-                  onPress={() => {
-                    onSelectedResult(result);
-                    setResults(null);
-                    setInputText(result.place_name);
-                  }}
-                >
-                  <View
-                    style={{
-                      paddingVertical: 8,
-                      paddingHorizontal: 16,
+          <React.Fragment>
+            <BaseText
+              accesible="true"
+              accessibilityLiveRegion="polite"
+              style={{
+                width: 0,
+                height: 0,
+                opacity: 0, // vissually hidden
+              }}
+            >
+              {results.length <= 0
+                ? `Not showing results`
+                : `showing ${results.length} results`}
+            </BaseText>
+
+            <View
+              style={{
+                margin: 8,
+                marginTop: 0,
+                borderBottomLeftRadius: 8,
+                borderBottomRightRadius: 8,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+                overflow: 'hidden',
+                ...theme.shadows.medium,
+              }}
+              id="location-input-list"
+              accesible={true}
+              accessibilityLabel="Results list"
+              aria-expanded={!!results}
+              tabIndex={0}
+            >
+              {results.map((result, index) => {
+                const ref = refs.current[index];
+                console.log("TCL: ref", ref)
+                return (
+                  <TouchableOpacity
+                    key={result.id}
+                    onPress={() => {
+                      onSelectedResult(result);
+                      setResults(null);
+                      setInputText(result.place_name);
                     }}
+                    accesible={true}
+                    accessibilityLabel={`City: ${result.place_name}`}
+                    accessibilityRole="button"
+                    ref={ref}
                   >
-                    <BodyText
-                      bold
+                    <View
                       style={{
-                        fontFamily: theme.fonts.bold,
-                        color: theme.colors.primary,
-                        marginBottom: 0,
-                        lineHeight: 28,
+                        paddingVertical: 8,
+                        paddingHorizontal: 16,
                       }}
                     >
-                      {result.text}
-                    </BodyText>
-                    <BaseText>
-                      {result.context.map(c => c.text).join(', ')}
-                    </BaseText>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+                      <BodyText
+                        bold
+                        style={{
+                          fontFamily: theme.fonts.bold,
+                          color: theme.colors.primary,
+                          marginBottom: 0,
+                          lineHeight: 28,
+                        }}
+                      >
+                        {result.text}
+                      </BodyText>
+                      <BaseText>
+                        {result.context.map(c => c.text).join(', ')}
+                      </BaseText>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </React.Fragment>
         ) : null}
       </View>
     </Responsive>

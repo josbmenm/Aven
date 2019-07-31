@@ -14,7 +14,6 @@ function BlockFormInputWithRef(
     new Animated.Value(desiredPlaceholderOpen),
   );
 
-
   const [focus, setFocus] = React.useState(0);
   const desiredFocus = focus ? 1 : 0;
   const [inputOpacityProgress] = useState(new Animated.Value(0));
@@ -89,17 +88,19 @@ function BlockFormInputWithRef(
     multiline = true;
   }
   return (
-    <Animated.View style={{
-      padding: 4,
-      margin: -4,
-      borderRadius: 4,
-      backgroundColor: inputOpacityProgress.interpolate({
-        inputRange: [0, 1],
-        outputRange: ["rgba(204, 221, 220, 0)", "rgba(204, 221, 220, 1)"]
-      }),
-      flex: 1,
-      ...style,
-    }}>
+    <Animated.View
+      style={{
+        padding: 4,
+        margin: -4,
+        borderRadius: 4,
+        backgroundColor: inputOpacityProgress.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['rgba(204, 221, 220, 0)', 'rgba(204, 221, 220, 1)'],
+        }),
+        flex: 1,
+        ...style,
+      }}
+    >
       <View
         style={{
           flex: 1,
@@ -134,6 +135,9 @@ function BlockFormInputWithRef(
               },
             ],
           }}
+          accesible="true"
+          accessibilityLabel={`input label: ${label}`}
+          accessibilityRole="label"
         >
           {label}
         </Animated.Text>
@@ -153,6 +157,8 @@ function BlockFormInputWithRef(
           options={inputOptions}
           type={inputType}
           onSubmitEditing={onSubmit}
+          accesible="true"
+          accessibilityLabel="Location Input"
           style={{
             fontSize: 18,
             outline: 'none',
