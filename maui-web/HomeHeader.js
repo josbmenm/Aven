@@ -138,7 +138,7 @@ function HomeHeader() {
                 >
                   <View style={{ width: '100%', flex: 1 }}>
                     <Image
-                      source={require('./public/img/OnoLanding.jpg')}
+                      source={require('./public/img/OnoLandingAlt.jpg')}
                       resizeMode="cover"
                       style={{ flex: 1, width: '100%', paddingTop: '56.25%' }}
                     />
