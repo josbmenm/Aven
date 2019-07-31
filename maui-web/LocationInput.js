@@ -123,8 +123,8 @@ export function LocationInputWithRef(
                       setResults(null);
                       setInputText(result.place_name);
                     }}
-                    accesible={true}
-                    accessibilityLabel={`City: ${result.place_name}`}
+                    accesible="true"
+                    accessibilityLabel={result.place_name}
                     accessibilityRole="button"
                     ref={ref}
                   >
