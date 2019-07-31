@@ -88,7 +88,7 @@ function HowItWorks() {
             responsiveStyles={{
               paddingLeft: [0, 120],
             }}
-            title="find us"
+            title="Find Us"
             bodyText={
               <BodyText>
                 Check out the{' '}

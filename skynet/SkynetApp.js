@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { createSwitchNavigator } from '../navigation-core';
 import Admin from '../admin/Admin';
-import FocusExample from './FocusExample';
 import ReceiptPage from './ReceiptPage';
 import InternalBlendMenu from './InternalBlendMenu';
 import MauiWebApp from '../maui-web/MauiWebApp';
@@ -137,10 +136,6 @@ const App = createSwitchNavigator(
     InternalBlendMenu2: {
       screen: InternalBlendMenu,
       path: 'secrets/blendmenu',
-    },
-    Focus: {
-      screen: FocusExample,
-      path: 'secrets/focus-prototype',
     },
   },
   {},
