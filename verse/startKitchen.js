@@ -65,23 +65,18 @@ const extractActionValues = ({
   });
 
   // values
-  Object.keys(values).forEach(valueName => {
+  Object.entries(values).forEach(([valueName, value]) => {
     const valueSpec = valueCommands[valueName];
     if (!valueSpec) {
       throw new Error('Invalid value name: ' + valueName);
     }
     const internalTagName = `${systemName}_${valueName}_VALUE`;
-    // immediateOutput[internalTagName] = values[valueName];
-    tagOutput[internalTagName] = values[valueName];
+    tagOutput[internalTagName] = value;
   });
 
   // actionId
-  if (actionId != null) {
+  if (actionId != null && systemName !== 'System') {
     tagOutput[`${systemName}_ActionIdIn_VALUE`] = actionId;
-    // immediateOutput[`${systemName}_ActionIdIn_VALUE`] = actionId;
-  }
-  if (systemName === 'System') {
-    tagOutput = {};
   }
   return { immediateOutput, clearPulseOutput, tagOutput };
 };
