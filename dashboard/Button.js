@@ -20,6 +20,9 @@ function Button({
       onLongPress={onLongPress}
       disabled={disabled}
       style={style}
+      accesible="true"
+      accessibilityRole="button"
+      accessibilityLabel={title}
     >
       <VisualButton
         title={title}

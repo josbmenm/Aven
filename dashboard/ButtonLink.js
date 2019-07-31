@@ -3,7 +3,7 @@ import FunctionalLink from '../navigation-web/Link';
 import VisualButton from './VisualButton';
 
 function ButtonLink({
-  title = 'button',
+  title = 'link',
   type = 'solid', // solid | outline | link
   buttonStyle,
   titleStyle,
@@ -15,6 +15,9 @@ function ButtonLink({
     <FunctionalLink
       routeName={routeName}
       url={url}
+      accesible="true"
+      accessibilityRole="link"
+      accessibilityLabel={title}
       renderContent={active => (
         <VisualButton
           type={type}
