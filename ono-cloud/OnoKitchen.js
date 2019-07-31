@@ -137,6 +137,9 @@ export function getSubsystemFaults(system) {
         }
       });
   }
+  if (!system.reads.Homed && !faults.length) {
+    faults.push('Not Homed');
+  }
   if (faults && !faults.length) {
     faults.push('Unknown Fault');
   }

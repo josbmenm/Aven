@@ -27,6 +27,20 @@ import BlockFormInput from '../components/BlockFormInput';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import TwoPanePage from '../components/TwoPanePage';
 
+const HiddenReads = new Set([
+  'NoFaults',
+  'NoAlarms',
+  'Homed',
+  'WatchDogFrozeAt',
+  'Fault0',
+  'Fault1',
+  'Fault2',
+  'Fault3',
+  'Alarm0',
+  'ActionIdStarted',
+  'ActionIdEnded',
+]);
+
 function SystemActionForm({
   pulse,
   system,
@@ -226,7 +240,7 @@ function ReadsAndFaults({ system }) {
 
       <RowSection>
         {Object.keys(system.reads).map(readName => {
-          if (readName === 'ActionIdStarted' || readName === 'ActionIdEnded') {
+          if (HiddenReads.has(readName)) {
             return null;
           }
           const r = system.reads[readName];
