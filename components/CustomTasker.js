@@ -140,7 +140,7 @@ export default function CustomTasker() {
           </View>
           <View style={{ flex: 1 }}>
             <View style={{ flex: 1, padding: 0 }}>
-              <Subtitle title="custom ingredients" />
+              <Subtitle title="custom fills" />
               {fills.map((fill, fillIndex) => (
                 <View key={fillIndex} style={{ flexDirection: 'row' }}>
                   <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -154,11 +154,11 @@ export default function CustomTasker() {
                     >
                       slot: {fill.slot}
                     </Text>
-                    <Text
-                      style={{ fontSize: 16, padding: 5, paddingVertical: 5 }}
-                    >
-                      qty: {fill.amount}
-                    </Text>
+                    <Button
+                      type="outline"
+                      title={`${fill.amount} shots`}
+                      onPress={() => {}}
+                    />
                   </View>
                   <TouchableOpacity
                     onPress={() => {

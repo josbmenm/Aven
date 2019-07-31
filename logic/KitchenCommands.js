@@ -35,6 +35,16 @@ const KitchenCommands = {
       return kitchenState.FillSystem_DitchCupReady_READ;
     },
   },
+  DeliveryDropCup: {
+    subsystem: 'Delivery',
+    pulse: ['DropCup'],
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.Delivery_DropCupReady_READ;
+    },
+  },
   Blend: {
     subsystem: 'BlendSystem',
     pulse: ['Blend'],

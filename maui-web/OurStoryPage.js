@@ -70,10 +70,7 @@ function OurStoryPage() {
             >
               <View style={{ flex: 1 }}>
                 <Image
-                  source={{
-                    uri:
-                      'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
-                  }}
+                  source={require('./public/img/OnoLanding2.jpg')}
                   resizeMode="cover"
                   style={{ ...aspectRatio169 }}
                 />

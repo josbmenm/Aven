@@ -46,7 +46,7 @@ function ManualActionsSection() {
         }}
       />
       <Button
-        title="drop cup"
+        title="drop cup (from fill system)"
         disabled={!KitchenCommands.DropCup.checkReady(kitchenState)}
         onPress={() => {
           handleErrors(
@@ -58,7 +58,19 @@ function ManualActionsSection() {
         }}
       />
       <Button
-        title="ditch cup"
+        title="drop cup (from delivery system)"
+        disabled={!KitchenCommands.DeliveryDropCup.checkReady(kitchenState)}
+        onPress={() => {
+          handleErrors(
+            cloud.dispatch({
+              type: 'KitchenAction',
+              command: 'DeliveryDropCup',
+            }),
+          );
+        }}
+      />
+      <Button
+        title="ditch cup (from fill system)"
         disabled={!KitchenCommands.DitchCup.checkReady(kitchenState)}
         onPress={() => {
           handleErrors(

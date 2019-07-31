@@ -237,6 +237,36 @@ const SEQUENCER_STEPS = [
     }),
   },
   {
+    // drop cup from delivery
+
+    getDescription: () => {
+      return 'Drop from delivery system';
+    },
+    getRestaurantStateIntent: restaurantState => {
+      if (!restaurantState.blend) {
+        return null;
+      }
+      if (restaurantState.blend.blendCompleteTime) {
+        return { didDirtyBlender: true };
+      }
+      if (restaurantState.blend.task.skipBlend) {
+        return { didDirtyBlender: false };
+      }
+      return null;
+    },
+    getKitchenStateReady: (kitchenState, intent) => {
+      return (
+        !!kitchenState && kitchenState.BlendSystem_DeliverWithoutCleanReady_READ
+      );
+    },
+    getKitchenCommand: intent => ({
+      command: 'PassToDeliveryWithoutClean',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidPassToDelivery',
+    }),
+  },
+  {
     // ditch cup (fill system)
     getDescription: intent => 'Ditch Cup',
     getRestaurantStateIntent: restaurantState => {
