@@ -397,13 +397,14 @@ export default async function startPostgresStorageSource({
     }
   }
 
-  async function writeDocTransaction(
+  async function tryWriteDocTransaction(
     domain,
     parentId,
     name,
     currentBlock,
     prevCurrentBlock,
     valueForNotification,
+    additionalTriesRemaining,
   ) {
     const internalParentId = getInternalParentId(parentId);
     let resp = null;
@@ -432,7 +433,20 @@ export default async function startPostgresStorageSource({
       );
     }
     if (!resp.rows.length) {
-      throw new Error(`Failed to transact on ${name}. Please retry`);
+      if (additionalTriesRemaining) {
+        return await tryWriteDocTransaction(
+          domain,
+          parentId,
+          name,
+          currentBlock,
+          prevCurrentBlock,
+          valueForNotification,
+          additionalTriesRemaining - 1,
+        );
+      }
+      throw new Error(
+        `Failed to transact on ${name}, probably because of multiple simultaneous transactions. Please retry`,
+      );
     }
     await notifyDocWrite(
       domain,
@@ -440,6 +454,25 @@ export default async function startPostgresStorageSource({
       name,
       currentBlock,
       valueForNotification,
+    );
+  }
+
+  async function writeDocTransaction(
+    domain,
+    parentId,
+    name,
+    currentBlock,
+    prevCurrentBlock,
+    valueForNotification,
+  ) {
+    return await tryWriteDocTransaction(
+      domain,
+      parentId,
+      name,
+      currentBlock,
+      prevCurrentBlock,
+      valueForNotification,
+      3,
     );
   }
 
