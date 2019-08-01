@@ -99,6 +99,35 @@ const SEQUENCER_STEPS = [
     }),
   },
   {
+    // drop cup (delivery system)
+    getDescription: intent => 'Delivery Drop Cup',
+    getRestaurantStateIntent: restaurantState => {
+      if (restaurantState.delivery) {
+        return {};
+      }
+      return null;
+    },
+    getKitchenStateReady: (kitchenState, intent) => {
+      // const {System_VanPluggedIn_READ ,
+      //   System_SkidPositionSensors_READ,
+      //   FillSystem_DeliveryDropCupReady_READ} =kitchenState
+      //   console.log()
+      return (
+        !!kitchenState &&
+        !kitchenState.System_VanPluggedIn_READ &&
+        !kitchenState.System_SkidPositionSensors_READ &&
+        kitchenState.FillSystem_DeliveryDropCupReady_READ
+      );
+    },
+    getKitchenCommand: intent => ({
+      command: 'DeliveryDropCup',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'ClearDeliveryBay',
+      bayId: 'deliveryA',
+    }),
+  },
+  {
     // do fill
     getDescription: ({ amount, system, slot }) => {
       return `Fill Cup ${system}.${slot}x${amount}`;
@@ -304,15 +333,15 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
   if (!restaurantState || !kitchenConfig || !kitchenState) {
     return null;
   }
-  if (restaurantState.isAttached) {
-    const { isFaulted, isRunning } = checkKitchenState(
-      kitchenState,
-      kitchenConfig,
-    );
-    if (isFaulted || isRunning) {
-      return null;
-    }
-  }
+  // if (restaurantState.isAttached) {
+  //   const { isFaulted, isRunning } = checkKitchenState(
+  //     kitchenState,
+  //     kitchenConfig,
+  //   );
+  //   if (isFaulted || isRunning) {
+  //     return null;
+  //   }
+  // }
   return SEQUENCER_STEPS.map(STEP => {
     const {
       getDescription,

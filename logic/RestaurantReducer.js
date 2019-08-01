@@ -216,9 +216,9 @@ function RestaurantReducerFn(state = {}, action) {
       return {
         ...defaultReturn(),
         blend: action.didDirtyBlender ? 'dirty' : null,
-        deliveryA: {
+        delivery: {
           ...blendState,
-          deliverTime: Date.now(),
+          passToDeliveryTime: Date.now(),
         },
       };
     }

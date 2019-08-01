@@ -27,12 +27,12 @@ function StatusPuck({ status }) {
       statusColor = 'yellow';
       break;
     }
+    case 'detached':
     case 'ready': {
       statusColor = '#00990D';
       break;
     }
     case 'disconnected':
-    case 'detached':
     default: {
       statusColor = '#ddd';
       break;
