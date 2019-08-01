@@ -29,7 +29,6 @@ import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
 import FoodScreen from '../screens/FoodScreen';
 import PaymentDebugScreen from '../screens/PaymentDebugScreen';
 import OrdersScreen from '../screens/OrdersScreen';
-import ManualControlScreen from '../screens/ManualControlScreen';
 import useCloudProvider from '../components/useCloudProvider';
 import SequencerScreen from '../screens/SequencerScreen';
 
@@ -174,21 +173,16 @@ process.env.REACT_NAV_LOGGING = true;
 
 const TABS = [
   { routeName: 'PortalHome', title: 'Home' },
-  { routeName: 'Status', title: 'Status' },
-  { routeName: 'KitchenEng', title: 'Eng' },
-  { routeName: 'Sequencer', title: 'Sequencer' },
-  { routeName: 'Manual', title: 'Manual' },
+  { routeName: 'Status', title: 'System' },
+  { routeName: 'Sequencer', title: 'Machine' },
   { routeName: 'Orders', title: 'Orders' },
   { routeName: 'Inventory', title: 'Inventory' },
   { routeName: 'Alarms', title: 'Alarms' },
-  { routeName: 'Settings', title: 'Settings' },
 ];
 
 const PortalHome = createSwitchNavigator({
   PortalHome: { screen: PortalHomeScreen },
-  KitchenEng: { screen: KitchenEngScreen },
   Inventory: { screen: InventoryScreen },
-  Manual: { screen: ManualControlScreen },
   Sequencer: { screen: SequencerScreen },
   Orders: { screen: OrdersScreen },
   DeviceManager: DeviceManagerScreen,
@@ -211,7 +205,7 @@ PortalHomeApp.navigationOptions = PortalHome.navigationOptions;
 
 const App = createStackTransitionNavigator({
   Home: PortalHomeApp,
-  // KitchenEng: KitchenEngScreen,
+  KitchenEng: KitchenEngScreen,
   KitchenEngSub: KitchenEngSubScreen,
   OrderComplete: OrderCompletePortalScreen,
   Kiosk: KioskApp,
@@ -225,7 +219,6 @@ const App = createStackTransitionNavigator({
   // Sequencer: SequencerScreen,
   // EngDashboard: EngDashboardScreen,
   // Orders: OrdersScreen,
-  // ManualControl: ManualControlScreen,
 });
 
 const AppContainer = createAppContainer(App);

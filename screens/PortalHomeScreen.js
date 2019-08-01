@@ -26,6 +26,13 @@ export default function PortalHomeScreenMemo({ navigation, ...props }) {
             icon="🍹"
             title="Order"
           />
+          <LinkRow
+            onPress={() => {
+              navigation.navigate({ routeName: 'KitchenEng' });
+            }}
+            icon="🛠"
+            title="Kitchen Engineering"
+          />
         </RowSection>
       </RootAuthenticationSection>
     </SimplePage>

@@ -40,7 +40,6 @@ export default function KitchenEngScreen({ ...props }) {
       {...props}
       title="Kitchen Engineering"
       icon="🛠"
-      hideBackButton
       disableScrollView={!isConnected}
     >
       {isConnected ? <Subsystems /> : <DisconnectedPage />}

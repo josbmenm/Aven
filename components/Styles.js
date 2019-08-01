@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'; 
+import { StyleSheet } from 'react-native';
 
 // Base Fonts
 
@@ -130,7 +130,7 @@ export const rowStyle = {
 };
 export const rowTitleStyle = {
   fontSize: 26,
-  fontWeight: 'bold',
+  ...boldPrimaryFontFace,
   color: '#444',
   marginBottom: 15,
 };
@@ -154,6 +154,7 @@ export const inputPageStyle = {
 
 export const rowSectionStyle = {
   marginBottom: 15,
+  marginTop: 16,
   paddingHorizontal: 20,
   ...prettyShadow,
 };
@@ -267,16 +268,16 @@ export const heroSubtitleStyle = { fontSize: 50 };
 // ---------------------------
 
 export const aspectRatio169 = {
-  width: "100%",
-  paddingTop: "56.25%"
-}
+  width: '100%',
+  paddingTop: '56.25%',
+};
 
 export const aspectRatio43 = {
   width: '100%',
-  paddingTop: "75%"
-}
+  paddingTop: '75%',
+};
 
 export const absoluteElement = {
   position: 'absolute',
-  zIndex: 10
-}
+  zIndex: 10,
+};

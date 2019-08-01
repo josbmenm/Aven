@@ -3,11 +3,18 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Button from '../components/Button';
 import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import { useNavigation } from '../navigation-hooks/Hooks';
-import { prettyShadow, titleStyle } from '../components/Styles';
+import {
+  prettyShadow,
+  titleStyle,
+  primaryFontFace,
+  monsterra,
+  boldPrimaryFontFace,
+} from '../components/Styles';
 import { computeNextSteps } from '../logic/KitchenSequence';
 import { getSubsystem, getSubsystemFaults } from '../ono-cloud/OnoKitchen';
 
 import useAsyncError from '../react-utils/useAsyncError';
+import Spinner from '../components/Spinner';
 
 function StatusPuck({ status }) {
   let statusColor = null;
@@ -21,12 +28,13 @@ function StatusPuck({ status }) {
       break;
     }
     case 'ready': {
-      statusColor = '#2a4';
+      statusColor = '#00990D';
       break;
     }
     case 'disconnected':
+    case 'detached':
     default: {
-      statusColor = '#888';
+      statusColor = '#ddd';
       break;
     }
   }
@@ -37,9 +45,13 @@ function StatusPuck({ status }) {
         backgroundColor: statusColor,
         width: 50,
         height: 100,
-        borderRadius: 14,
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
-    />
+    >
+      {status === 'disconnected' && <Spinner />}
+    </View>
   );
 }
 
@@ -64,6 +76,16 @@ function FaultRow({ fault }) {
         </Text>
       </View>
     </TouchableOpacity>
+  );
+}
+
+function ControlPanelButton({ ...props }) {
+  return (
+    <Button
+      {...props}
+      style={{ marginVertical: 16, marginHorizontal: 8 }}
+      size="large"
+    />
   );
 }
 
@@ -102,36 +124,37 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   } else if (!isPLCConnected) {
     status = 'disconnected';
     message = 'Server disconnected from machine.';
-  } else if (restaurantState.manualMode) {
-    status = 'manual mode';
+    // } else if (restaurantState.manualMode) {
+    //   status = 'manual mode';
   } else if (!restaurantState.isAttached) {
-    status = 'disconnected';
-    message = 'Detached.';
+    status = 'detached';
+    message = 'Disabled';
   } else {
     sequencerNames &&
       sequencerNames.forEach(systemName => {
         const system = getSubsystem(systemName, kitchenConfig, kitchenState);
-        if (kitchenState[`${systemName}_NoFaults_READ`] === false) {
-          const faults = getSubsystemFaults(system);
-          if (faults) {
-            allFaults = [
-              ...allFaults,
-              ...faults.map(desc => ({
-                description: `${systemName} - ${desc}`,
-                systemName,
-              })),
-            ];
-          }
-          if (status !== 'fault') {
-            status = 'fault';
-            message = `Faulted. ${systemName}`;
-          } else {
-            message += `, ${systemName}`;
-          }
+        const faults = getSubsystemFaults(system);
+        if (faults) {
+          allFaults = [
+            ...allFaults,
+            ...faults.map(desc => ({
+              description: `${systemName} - ${desc}`,
+              isFaulted: desc !== 'Not Homed',
+              systemName,
+            })),
+          ];
         }
       });
+    if (allFaults.length) {
+      status = 'fault';
+      if (allFaults.find(f => f.isFaulted)) {
+        message = 'Faulted';
+      } else {
+        message = 'Not Homed';
+      }
+    }
   }
-  if (status === 'ready') {
+  if (status === 'ready' || status === 'detached') {
     sequencerNames &&
       sequencerNames.forEach(systemName => {
         if (kitchenState[`${systemName}_PrgStep_READ`] !== 0) {
@@ -169,26 +192,45 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
           ...prettyShadow,
           height: 120,
           alignSelf: 'stretch',
-          backgroundColor: '#fff8ee',
+          backgroundColor: 'white',
           flexDirection: 'row',
         }}
       >
         <StatusPuck status={status} />
 
         <View style={{ flex: 1, padding: 16 }}>
-          {message && <Text style={{ fontSize: 32 }}>{message}</Text>}
-          {subMessage && <Text>{subMessage}</Text>}
+          {message && (
+            <Text style={{ fontSize: 32, ...titleStyle }}>{message}</Text>
+          )}
+          {subMessage && (
+            <Text style={{ ...primaryFontFace, color: monsterra }}>
+              {subMessage}
+            </Text>
+          )}
         </View>
-        <View style={{ flexDirection: 'row' }}>
-          {restaurantState && (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-end',
+            paddingHorizontal: 8,
+          }}
+        >
+          {restaurantState && restaurantState.isAttached && (
             <View style={{}}>
-              <Text style={{ textAlign: 'center', paddingTop: 8 }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  paddingTop: 8,
+                  ...boldPrimaryFontFace,
+                  color: '#111',
+                }}
+              >
                 {restaurantState.isAutoRunning
-                  ? 'Auto: Running'
-                  : 'Auto: Paused'}
+                  ? 'auto: RUNNING'
+                  : 'auto: PAUSED'}
               </Text>
-              <Button
-                title={restaurantState.isAutoRunning ? 'Pause' : 'Start'}
+              <ControlPanelButton
+                title={restaurantState.isAutoRunning ? 'pause' : 'start'}
                 onPress={() => {
                   if (restaurantState.isAutoRunning) {
                     errorHandler(restaurantDispatch({ type: 'PauseAutorun' }));
@@ -201,8 +243,10 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
             </View>
           )}
           {restaurantState && (
-            <Button
-              title={restaurantState.isAttached ? 'Detach' : 'Attach'}
+            <ControlPanelButton
+              title={
+                restaurantState.isAttached ? 'disable' : 'enable sequencer'
+              }
               disabled={restaurantState.manualMode}
               onPress={() => {
                 if (restaurantState.isAttached) {
@@ -215,7 +259,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
             />
           )}
           {status === 'fault' && (
-            <Button
+            <ControlPanelButton
               title="Home System"
               onPress={() => {
                 handleKitchenAction({ command: 'Home' });
@@ -226,7 +270,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
             nextSteps.map((step, i) => (
               <View key={i}>
                 <Text>{step.description}</Text>
-                <Button
+                <ControlPanelButton
                   title="Perform"
                   onPress={() => {
                     step.perform(cloud, handleKitchenAction).then(resp => {
@@ -237,6 +281,30 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
                 />
               </View>
             ))}
+
+          {restaurantState && restaurantState.manualMode && (
+            <ControlPanelButton
+              title="disable manual mode"
+              onPress={() => {
+                restaurantDispatch({
+                  type: 'DisableManualMode',
+                });
+              }}
+            />
+          )}
+          {restaurantState &&
+            !restaurantState.manualMode &&
+            !restaurantState.isAttached && (
+              <ControlPanelButton
+                title="enable manual mode"
+                disabled={restaurantState.isAttached}
+                onPress={() => {
+                  restaurantDispatch({
+                    type: 'EnableManualMode',
+                  });
+                }}
+              />
+            )}
         </View>
       </View>
     </View>

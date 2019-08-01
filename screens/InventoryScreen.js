@@ -253,7 +253,7 @@ function Inventory() {
 
 export default function InventoryScreen(props) {
   return (
-    <SimplePage title="Inventory" icon="🍍" {...props}>
+    <SimplePage hideBackButton {...props}>
       <RootAuthenticationSection>
         <Inventory />
       </RootAuthenticationSection>

@@ -16,6 +16,7 @@ import {
 import RestaurantReducer from '../logic/RestaurantReducer';
 import useAsyncError from '../react-utils/useAsyncError';
 import ControlPanel from './ControlPanel';
+import ManualControl from './ManualControl';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 
 function TaskInfoText({ taskState }) {
@@ -41,7 +42,7 @@ function TaskInfoText({ taskState }) {
 }
 
 function BayInfo({ bayState, name, dispatch, bayId }) {
-  let content = <Text style={{ fontSize: 24 }}>Empty</Text>;
+  let content = null;
   if (bayState) {
     content = (
       <View style={{ flex: 1 }}>
@@ -52,35 +53,38 @@ function BayInfo({ bayState, name, dispatch, bayId }) {
 
   return (
     <View style={{ flex: 1 }}>
-      <Text>{name}</Text>
+      <Subtitle title={name} />
       {content}
-      <Button
+      {/* <Button
         title="Clear"
         onPress={() => {
           dispatch({ type: 'ClearDeliveryBay', bayId });
         }}
         disabled={!bayState}
-      />
+      /> */}
     </View>
   );
 }
 
 function DeliveryBayRow({ restaurantState, dispatch }) {
   return (
-    <Row title={`Delivery Bays`}>
-      <BayInfo
-        bayState={restaurantState.deliveryA}
-        bayId="deliveryA"
-        name="Left"
-        dispatch={dispatch}
-      />
-      <BayInfo
-        bayState={restaurantState.deliveryB}
-        bayId="deliveryB"
-        name="Right"
-        dispatch={dispatch}
-      />
-    </Row>
+    ((restaurantState.deliveryA || restaurantState.deliveryB) && (
+      <Row>
+        <BayInfo
+          bayState={restaurantState.deliveryA}
+          bayId="deliveryA"
+          name="deliver left"
+          dispatch={dispatch}
+        />
+        <BayInfo
+          bayState={restaurantState.deliveryB}
+          bayId="deliveryB"
+          name="deliver right"
+          dispatch={dispatch}
+        />
+      </Row>
+    )) ||
+    null
   );
 }
 
@@ -110,42 +114,32 @@ function FillsDisplay({ state }) {
 }
 
 function FillRow({ restaurantState, dispatch }) {
-  const hasFill = !!restaurantState.fill;
-  const order = hasFill && restaurantState.fill.task;
+  const { task } = restaurantState.fill;
   return (
-    <Row title="Fill System">
-      <View style={{ flex: 1 }}>
-        <View style={{ flexDirection: 'row' }}>
-          <View style={{ flex: 1 }}>
-            {order && <TaskInfoText taskState={order} />}
-          </View>
-          <Button
-            disabled={!hasFill}
-            title="Drop"
-            onPress={() => {
-              dispatch({ type: 'RequestFillDrop' });
-            }}
-          />
+    <View style={{ flex: 1 }}>
+      <View style={{ flexDirection: 'row' }}>
+        <View style={{ flex: 1 }}>
+          {task && <TaskInfoText taskState={task} />}
         </View>
-        {restaurantState.fill && <FillsDisplay state={restaurantState.fill} />}
+        <Button
+          title="drop"
+          onPress={() => {
+            dispatch({ type: 'RequestFillDrop' });
+          }}
+        />
       </View>
-    </Row>
+      <FillsDisplay state={restaurantState.fill} />
+    </View>
   );
 }
 function BlendRow({ state }) {
   if (state === 'dirty') {
     return <Text>Dirty Blender</Text>;
   }
-  if (!state) {
-    return <Text>Empty</Text>;
-  }
   return <TaskInfoText taskState={state.task} />;
 }
 
 function DeliverySystemRow({ state }) {
-  if (!state) {
-    return <Text>Empty</Text>;
-  }
   return <TaskInfoText taskState={state.task} />;
 }
 
@@ -153,35 +147,56 @@ function RestaurantStateList({ restaurantState, dispatch }) {
   if (!restaurantState) {
     return null;
   }
+  const count = restaurantState.queue ? restaurantState.queue.length : 0;
   return (
     <RowSection>
-      <FillRow restaurantState={restaurantState} dispatch={dispatch} />
-      <Row title="Blend System">
-        <BlendRow state={restaurantState.blend} />
-      </Row>
-      <Row title="Delivery System">
-        <DeliverySystemRow state={restaurantState.delivery} />
-      </Row>
+      <Row title={`${count} task${count === 1 ? '' : 's'} in queue`} />
+      {restaurantState.fill && (
+        <Row title="filling">
+          <FillRow restaurantState={restaurantState} dispatch={dispatch} />
+        </Row>
+      )}
+      {restaurantState.blend && (
+        <Row title="blender">
+          <BlendRow state={restaurantState.blend} />
+        </Row>
+      )}
+      {restaurantState.delivery && (
+        <Row title="delivery arm">
+          <DeliverySystemRow state={restaurantState.delivery} />
+        </Row>
+      )}
       <DeliveryBayRow restaurantState={restaurantState} dispatch={dispatch} />
     </RowSection>
   );
 }
 
-function OrdersScreen({ restaurantState, dispatch }) {
+function ModeView({ restaurantState, dispatch }) {
+  if (!restaurantState) {
+    return null;
+  }
   return (
-    <React.Fragment>
-      <RestaurantStateList
-        restaurantState={restaurantState}
-        dispatch={dispatch}
-      />
+    <View>
       <Button
-        secondary
-        title="Wipe Restaurant State"
+        title="prime dispensers"
+        onPress={() => {
+          dispatch({
+            type: 'PrimeDispensers',
+          });
+        }}
+      />
+
+      <Button
+        type="outline"
+        title="wipe restaurant state - (DANGER)"
         onPress={() => {
           dispatch({ type: 'WipeState' });
         }}
       />
-    </React.Fragment>
+      {restaurantState.manualMode && (
+        <ManualControl restaurantState={restaurantState} dispatch={dispatch} />
+      )}
+    </View>
   );
 }
 
@@ -190,8 +205,7 @@ export default function SequencerScreen(props) {
   return (
     <TwoPanePage
       {...props}
-      title="Sequencer"
-      icon="🚦"
+      hideBackButton={true}
       footer={
         <ControlPanel
           restaurantState={restaurantState}
@@ -199,10 +213,13 @@ export default function SequencerScreen(props) {
         />
       }
       side={
-        <OrdersScreen restaurantState={restaurantState} dispatch={dispatch} />
+        <RestaurantStateList
+          restaurantState={restaurantState}
+          dispatch={dispatch}
+        />
       }
     >
-      {null}
+      <ModeView restaurantState={restaurantState} dispatch={dispatch} />
     </TwoPanePage>
   );
 }

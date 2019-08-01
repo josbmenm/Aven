@@ -63,7 +63,7 @@ function StatusView() {
 
 export default function RestaurantStatusScreen(props) {
   return (
-    <SimplePage title="Alarms" icon="🔔" {...props}>
+    <SimplePage hideBackButton {...props}>
       <RootAuthenticationSection>
         <StatusView />
       </RootAuthenticationSection>

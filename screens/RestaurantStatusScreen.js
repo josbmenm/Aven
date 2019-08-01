@@ -174,7 +174,7 @@ function SkidView() {
 
 export default function RestaurantStatusScreen(props) {
   return (
-    <SimplePage title="Restaurant Status" icon="🚐" {...props}>
+    <SimplePage {...props} hideBackButton>
       <RootAuthenticationSection>
         <StatusView />
         <TemperatureView />

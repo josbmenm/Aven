@@ -8,7 +8,7 @@ import RowSection from '../components/RowSection';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import useAsyncError from '../react-utils/useAsyncError';
 
-function ManualActionsSection() {
+export default function ManualControl() {
   const cloud = useCloud();
   const handleErrors = useAsyncError();
   const kitchenState = useCloudValue('KitchenState');
@@ -160,61 +160,3 @@ function ManualActionsSection() {
     </RowSection>
   );
 }
-
-function ModeView({ restaurantState, dispatch }) {
-  return (
-    <View>
-      {restaurantState.manualMode ? (
-        <Button
-          title="disable manual mode"
-          onPress={() => {
-            dispatch({
-              type: 'DisableManualMode',
-            });
-          }}
-        />
-      ) : (
-        <Button
-          title="enable manual mode"
-          disabled={restaurantState.isAttached}
-          onPress={() => {
-            dispatch({
-              type: 'EnableManualMode',
-            });
-          }}
-        />
-      )}
-      <Button
-        title="prime dispensers"
-        onPress={() => {
-          dispatch({
-            type: 'PrimeDispensers',
-          });
-        }}
-      />
-    </View>
-  );
-}
-
-export default function OrdersScreen(props) {
-  const [restaurantState, dispatch] = useRestaurantState();
-
-  return (
-    <TwoPanePage
-      {...props}
-      title="Manual Control"
-      icon="⚡️"
-      side={
-        restaurantState && (
-          <ModeView restaurantState={restaurantState} dispatch={dispatch} />
-        )
-      }
-    >
-      {restaurantState && restaurantState.manualMode && (
-        <ManualActionsSection />
-      )}
-    </TwoPanePage>
-  );
-}
-
-OrdersScreen.navigationOptions = TwoPanePage.navigationOptions;
