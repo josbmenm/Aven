@@ -81,7 +81,7 @@ export function useCloudValue(cloudValueInput) {
 export function createReducerStream(doc, reducerFn, initialState) {
   function streamReduced(val) {
     if (!val) {
-      return xs.of(undefined);
+      return xs.of(initialState);
     }
     let lastStateStream = undefined;
     if (val.on === null) {
