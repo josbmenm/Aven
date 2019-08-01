@@ -5,9 +5,8 @@ import Button from '../components/Button';
 import BlendOrder from '../components/BlendTasker';
 import CustomTasker from '../components/CustomTasker';
 import TaskInfo from '../components/TaskInfo';
-import { useCloudReducer } from '../cloud-core/KiteReact';
 import RowSection from '../components/RowSection';
-import RestaurantReducer from '../logic/RestaurantReducer';
+import { useRestaurantState } from '../ono-cloud/Kitchen';
 
 function TaskQueueRow({ onCancel, taskState }) {
   return (
@@ -52,10 +51,7 @@ function OrdersList({ restaurantState, dispatch }) {
 }
 
 export default function OrdersScreen(props) {
-  const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActions',
-    RestaurantReducer,
-  );
+  const [restaurantState, dispatch] = useRestaurantState();
   return (
     <TwoPanePage
       {...props}

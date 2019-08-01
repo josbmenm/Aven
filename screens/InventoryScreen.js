@@ -5,42 +5,21 @@ import { Text, View } from 'react-native';
 import SimplePage from '../components/SimplePage';
 import Button from '../components/Button';
 import Row from '../components/Row';
-import Spinner from '../components/Spinner';
 import { Easing } from 'react-native-reanimated';
-import BitRow from '../components/BitRow';
 import {
-  rowStyle,
-  rowTitleStyle,
   titleStyle,
   proseFontFace,
-  monsterraLight,
   standardTextColor,
 } from '../components/Styles';
-import {
-  useCloudReducer,
-  useCloud,
-  useCloudValue,
-} from '../cloud-core/KiteReact';
-import DevicesReducer from '../logic/DevicesReducer';
-import BlockForm from '../components/BlockForm';
-import Title from '../components/Title';
-import BlockFormButton from '../components/BlockFormButton';
-import BlockFormMessage from '../components/BlockFormMessage';
-import BlockFormInput from '../components/BlockFormInput';
 import KeyboardPopover from '../components/KeyboardPopover';
 import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
-import useAsyncError from '../react-utils/useAsyncError';
-import RestaurantReducer from '../logic/RestaurantReducer';
-
 import { usePopover } from '../views/Popover';
+import { useRestaurantState } from '../ono-cloud/Kitchen';
 
 function useInventoryState() {
   const config = useCompanyConfig();
-  const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActions',
-    RestaurantReducer,
-  );
+  const [restaurantState, dispatch] = useRestaurantState();
   const tables = config && config.baseTables;
   if (!tables || !restaurantState) {
     return null;

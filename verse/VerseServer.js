@@ -1,11 +1,7 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
-import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
 import { CloudContext, createReducerStream } from '../cloud-core/KiteReact';
-import {
-  getFreshActionId,
-  companyConfigToKitchenConfig,
-} from '../logic/KitchenLogic';
+import { getFreshActionId } from '../logic/KitchenLogic';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import KitchenCommands from '../logic/KitchenCommands';
 import { hashSecureString } from '../cloud-utils/Crypto';
@@ -19,8 +15,8 @@ import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
-import xs from 'xstream';
 import startKitchen from './startKitchen';
+import xs from 'xstream';
 import { handleStripeAction } from '../stripe-server/Stripe';
 import { computeNextSteps } from '../logic/KitchenSequence';
 
@@ -189,6 +185,7 @@ const startVerseServer = async () => {
   });
 
   const kitchenConfigStream = cloud.get('KitchenConfig').value.stream;
+
   // const airtableDoc = cloud.get('Airtable');
   // const kitchenConfigStream = airtableDoc.value.stream
   //   .map(folder => {
@@ -366,21 +363,21 @@ const startVerseServer = async () => {
     });
   }
 
-  // const sequencerStateStream = xs.combine(
-  //   cloud.get('RestaurantState').value.stream,
-  //   cloud.get('KitchenState').value.stream,
-  //   kitchenConfigStream,
-  // );
-  // sequencerStateStream.addListener({
-  //   next: ([restaurantState, kitchenState, kitchenConfig]) => {
-  //     handleStateUpdates(restaurantState, kitchenState, kitchenConfig);
-  //   },
-  //   error: e => {
-  //     console.error('Failure in sequencer state stream');
-  //     console.error(e);
-  //     process.exit(1);
-  //   },
-  // });
+  const sequencerStateStream = xs.combine(
+    cloud.get('RestaurantState').value.stream,
+    cloud.get('KitchenState').value.stream,
+    kitchenConfigStream,
+  );
+  sequencerStateStream.addListener({
+    next: ([restaurantState, kitchenState, kitchenConfig]) => {
+      handleStateUpdates(restaurantState, kitchenState, kitchenConfig);
+    },
+    error: e => {
+      console.error('Failure in sequencer state stream');
+      console.error(e);
+      process.exit(1);
+    },
+  });
 
   const dispatch = async action => {
     let stripeResponse = await handleStripeAction(action);

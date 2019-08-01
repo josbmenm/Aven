@@ -200,27 +200,22 @@ const PortalHome = createSwitchNavigator({
 function PortalHomeApp({ navigation }) {
   return (
     <RootAuthenticationSection>
-      <PortalHome navigation={navigation} />
+      <TabsScreen tabs={TABS} navigation={navigation}>
+        <PortalHome navigation={navigation} />
+      </TabsScreen>
     </RootAuthenticationSection>
   );
-  // return (
-  //   <RootAuthenticationSection>
-  //     <TabsScreen tabs={TABS} navigation={navigation}>
-  //       <PortalHome navigation={navigation} />
-  //     </TabsScreen>
-  //   </RootAuthenticationSection>
-  // );
 }
 PortalHomeApp.router = PortalHome.router;
 PortalHomeApp.navigationOptions = PortalHome.navigationOptions;
 
 const App = createStackTransitionNavigator({
-  KitchenEng: KitchenEngScreen,
+  Home: PortalHomeApp,
+  // KitchenEng: KitchenEngScreen,
   KitchenEngSub: KitchenEngSubScreen,
-  // Home: PortalHomeApp,
-  // OrderComplete: OrderCompletePortalScreen,
-  // Kiosk: KioskApp,
-  // ComponentPlayground: ComponentPlaygroundScreen,
+  OrderComplete: OrderCompletePortalScreen,
+  Kiosk: KioskApp,
+  ComponentPlayground: ComponentPlaygroundScreen,
 
   // Inventory: InventoryScreen,
   // DeviceManager: DeviceManagerScreen,

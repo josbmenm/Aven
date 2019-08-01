@@ -4,11 +4,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Button from '../components/Button';
 import { Easing } from 'react-native-reanimated';
 import KitchenCommands from '../logic/KitchenCommands';
-import {
-  useCloud,
-  useCloudReducer,
-  useCloudValue,
-} from '../cloud-core/KiteReact';
+
 import RowSection from '../components/RowSection';
 import Subtitle from '../components/Subtitle';
 import Row from '../components/Row';
@@ -20,6 +16,7 @@ import {
 import RestaurantReducer from '../logic/RestaurantReducer';
 import useAsyncError from '../react-utils/useAsyncError';
 import ControlPanel from './ControlPanel';
+import { useRestaurantState } from '../ono-cloud/Kitchen';
 
 function TaskInfoText({ taskState }) {
   if (!taskState) {
@@ -39,27 +36,6 @@ function TaskInfoText({ taskState }) {
       <Text style={{ fontSize: 24, ...primaryFontFace, color: '#282828' }}>
         {taskState.blendName}
       </Text>
-    </View>
-  );
-}
-
-function taskState({ taskState }) {
-  return <Text>{JSON.stringify(taskState)}</Text>;
-}
-function OrderQueueRow({ onCancel, taskState }) {
-  return (
-    <View
-      style={{
-        flex: 1,
-        flexDirection: 'row',
-        alignSelf: 'stretch',
-      }}
-    >
-      <TaskInfoText taskState={taskState} />
-      <Text style={{ alignSelf: 'center', margin: 10 }}>
-        {taskState.fills.length} fills
-      </Text>
-      <Button onPress={onCancel} title="Cancel" />
     </View>
   );
 }
@@ -134,7 +110,6 @@ function FillsDisplay({ state }) {
 }
 
 function FillRow({ restaurantState, dispatch }) {
-  // return <Text>{JSON.stringify(fillState)}</Text>;
   const hasFill = !!restaurantState.fill;
   const order = hasFill && restaurantState.fill.task;
   return (
@@ -192,142 +167,6 @@ function RestaurantStateList({ restaurantState, dispatch }) {
   );
 }
 
-function QuickOrderSection() {
-  return (
-    <RowSection title="Quick Order">
-      <Button title="Hello" />
-    </RowSection>
-  );
-}
-function ManualActionsSection() {
-  const cloud = useCloud();
-  const handleErrors = useAsyncError();
-  const kitchenState = useCloudValue('KitchenState');
-  const fillParams = {
-    amount: 2,
-    system: 3,
-    slot: 1,
-  };
-  return (
-    <RowSection title="Manual Actions">
-      <Button
-        title="home system"
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenAction',
-              command: 'Home',
-            }),
-          );
-        }}
-      />
-      <Button
-        title="grab new cup"
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenAction',
-              command: 'GetCup',
-            }),
-          );
-        }}
-      />
-      <Button
-        title="drop cup"
-        disabled={!KitchenCommands.DropCup.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenAction',
-              command: 'DropCup',
-            }),
-          );
-        }}
-      />
-      <Button
-        title="dispense 2 cocoa powder"
-        disabled={
-          !KitchenCommands.PositionAndDispenseAmount.checkReady(
-            kitchenState,
-            fillParams,
-          )
-        }
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenAction',
-              command: 'PositionAndDispenseAmount',
-              params: fillParams,
-            }),
-          );
-        }}
-      />
-      <Button
-        title="pass to blender"
-        disabled={!KitchenCommands.PassToBlender.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenAction',
-              command: 'PassToBlender',
-            }),
-          );
-        }}
-      />
-      <Button
-        title="blend"
-        disabled={!KitchenCommands.Blend.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenAction',
-              command: 'Blend',
-            }),
-          );
-        }}
-      />
-      <Button
-        title="pass to delivery"
-        disabled={!KitchenCommands.PassToDelivery.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenAction',
-              command: 'PassToDelivery',
-            }),
-          );
-        }}
-      />
-      <Button
-        title="pass to delivery without clean"
-        disabled={
-          !KitchenCommands.PassToDeliveryWithoutClean.checkReady(kitchenState)
-        }
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenAction',
-              command: 'PassToDeliveryWithoutClean',
-            }),
-          );
-        }}
-      />
-      <Button
-        title="clean"
-        disabled={!KitchenCommands.Clean.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenAction',
-              command: 'Clean',
-            }),
-          );
-        }}
-      />
-    </RowSection>
-  );
-}
-
 function OrdersScreen({ restaurantState, dispatch }) {
   return (
     <React.Fragment>
@@ -347,10 +186,7 @@ function OrdersScreen({ restaurantState, dispatch }) {
 }
 
 export default function SequencerScreen(props) {
-  const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActions',
-    RestaurantReducer,
-  );
+  const [restaurantState, dispatch] = useRestaurantState();
   return (
     <TwoPanePage
       {...props}

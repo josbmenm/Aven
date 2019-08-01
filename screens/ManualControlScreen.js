@@ -2,14 +2,10 @@ import React from 'react';
 import TwoPanePage from '../components/TwoPanePage';
 import Button from '../components/Button';
 import KitchenCommands from '../logic/KitchenCommands';
-import {
-  useCloud,
-  useCloudReducer,
-  useCloudValue,
-} from '../cloud-core/KiteReact';
+import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
 import { View } from 'react-native';
 import RowSection from '../components/RowSection';
-import RestaurantReducer from '../logic/RestaurantReducer';
+import { useRestaurantState } from '../ono-cloud/Kitchen';
 import useAsyncError from '../react-utils/useAsyncError';
 
 function ManualActionsSection() {
@@ -201,10 +197,8 @@ function ModeView({ restaurantState, dispatch }) {
 }
 
 export default function OrdersScreen(props) {
-  const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActions',
-    RestaurantReducer,
-  );
+  const [restaurantState, dispatch] = useRestaurantState();
+
   return (
     <TwoPanePage
       {...props}

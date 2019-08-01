@@ -89,6 +89,12 @@ function TempCell({ title, value, button }) {
     </View>
   );
 }
+function formatTemp(value) {
+  if (!value || value === 1562) {
+    return '?';
+  }
+  return `${value}°F`;
+}
 function TemperatureView() {
   const kitchenState = useCloudValue('KitchenState');
   if (!kitchenState) {
@@ -97,50 +103,42 @@ function TemperatureView() {
   return (
     <StatusSection title="Food Safety">
       <View style={{ flexDirection: 'row' }}>
-        <TempCell
-          title="Frozen Food"
-          value={`${kitchenState.System_FreezerTemp_READ}0°F`}
-          button={
-            <Button
-              title="clear alarm. frozen food is fresh."
-              onPress={() => {}}
-              disabled
-            />
-          }
-        />
-        <TempCell
-          title="Piston Fridge"
-          value={`${kitchenState.System_YogurtZoneTemp_READ}0°F`}
-          button={
-            <Button
-              title="clear alarm. cold piston filler is fresh."
-              onPress={() => {}}
-              disabled
-            />
-          }
-        />
+        {kitchenState.System_FreezerTemp_READ && (
+          <TempCell
+            title="Frozen Food"
+            value={formatTemp(kitchenState.System_FreezerTemp_READ)}
+            button={null}
+          />
+        )}
+        {kitchenState.System_YogurtZoneTemp_READ && (
+          <TempCell
+            title="Piston Fridge"
+            value={formatTemp(kitchenState.System_YogurtZoneTemp_READ)}
+            button={null}
+          />
+        )}
       </View>
       <View style={{ flexDirection: 'row' }}>
-        <TempCell
-          title="Beverage Fridge"
-          value={`${kitchenState.System_BevTemp_READ}0°F`}
-          button={
-            <Button
-              title="clear alarm. beverages are fresh."
-              onPress={() => {}}
-              disabled
-            />
-          }
-        />
-        <TempCell
-          title="Ambient"
-          value={`${kitchenState.System_AmbientTemp_READ}0°F`}
-          button={null}
-        />
-        <TempCell
-          title="Power Box"
-          value={`${kitchenState.System_PsuTemp_READ}°F`}
-        />
+        {kitchenState.System_BevTemp_READ && (
+          <TempCell
+            title="Beverage Fridge"
+            value={formatTemp(kitchenState.System_BevTemp_READ)}
+            button={null}
+          />
+        )}
+        {kitchenState.System_AmbientTemp_READ && (
+          <TempCell
+            title="Ambient"
+            value={formatTemp(kitchenState.System_AmbientTemp_READ)}
+            button={null}
+          />
+        )}
+        {kitchenState.System_PsuTemp_READ && (
+          <TempCell
+            title="Power Box"
+            value={formatTemp(kitchenState.System_PsuTemp_READ)}
+          />
+        )}
       </View>
     </StatusSection>
   );
