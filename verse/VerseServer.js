@@ -1,6 +1,7 @@
 import App from './App';
 import WebServer from '../aven-web/WebServer';
-import { CloudContext, createReducerStream } from '../cloud-core/KiteReact';
+import { CloudContext } from '../cloud-core/KiteReact';
+import { createReducerStream } from '../cloud-core/Kite';
 import { getFreshActionId } from '../logic/KitchenLogic';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import KitchenCommands from '../logic/KitchenCommands';
@@ -17,6 +18,7 @@ import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
 import startKitchen from './startKitchen';
 import xs from 'xstream';
+import { combineStreams } from '../cloud-core/createMemoryStream';
 import { handleStripeAction } from '../stripe-server/Stripe';
 import { computeNextSteps } from '../logic/KitchenSequence';
 
@@ -183,33 +185,7 @@ const startVerseServer = async () => {
     },
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
-
   const kitchenConfigStream = cloud.get('KitchenConfig').value.stream;
-
-  // const airtableDoc = cloud.get('Airtable');
-  // const kitchenConfigStream = airtableDoc.value.stream
-  //   .map(folder => {
-  //     if (!folder) {
-  //       return xs.of(null);
-  //     }
-  //     const blockId = folder.files['db.json'].id;
-  //     const directoryBlockId = folder.files['files'].id;
-  //     const block = airtableDoc.getBlock(blockId);
-  //     const directoryBlock = airtableDoc.getBlock(directoryBlockId);
-  //     return xs
-  //       .combine(block.value.stream, directoryBlock.value.stream)
-  //       .map(([atData, directory]) => {
-  //         return { ...atData, directory };
-  //       });
-  //   })
-  //   .flatten()
-  //   .map(companyConfig => {
-  //     return companyConfigToKitchenConfig(companyConfig);
-  //   })
-  //   .remember()
-  //   .debug(c => {
-  //     console.log('Has Config: ', !!c);
-  //   });
 
   let kitchen = null;
   if (!process.env.DISABLE_ONO_KITCHEN) {
@@ -363,13 +339,13 @@ const startVerseServer = async () => {
     });
   }
 
-  const sequencerStateStream = xs.combine(
-    cloud.get('RestaurantState').value.stream,
-    cloud.get('KitchenState').value.stream,
-    kitchenConfigStream,
-  );
+  const sequencerStateStream = combineStreams({
+    restaurantState: cloud.get('RestaurantState').value.stream,
+    kitchenState: cloud.get('KitchenState').value.stream,
+    kitchenConfig: kitchenConfigStream,
+  });
   sequencerStateStream.addListener({
-    next: ([restaurantState, kitchenState, kitchenConfig]) => {
+    next: ({ restaurantState, kitchenState, kitchenConfig }) => {
       handleStateUpdates(restaurantState, kitchenState, kitchenConfig);
     },
     error: e => {

@@ -3,8 +3,8 @@ import WebServer from '../aven-web/WebServer';
 import { IS_DEV } from '../aven-web/config';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
 import scrapeAirTable from './scrapeAirTable';
-import { createSessionClient } from '../cloud-core/Kite';
-import { CloudContext, createReducerStream } from '../cloud-core/KiteReact';
+import { createSessionClient, createReducerStream } from '../cloud-core/Kite';
+import { CloudContext } from '../cloud-core/KiteReact';
 import createFSClient from '../cloud-server/createFSClient';
 
 import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
@@ -24,7 +24,10 @@ import { HostContext } from '../components/AirtableImage';
 import { companyConfigToKitchenConfig } from '../logic/KitchenLogic';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import { companyConfigToMenu } from '../logic/configLogic';
-import xs from 'xstream';
+import {
+  streamOfValue,
+  combineStreams,
+} from '../cloud-core/createMemoryStream';
 import { Storage } from '@google-cloud/storage';
 
 const path = require('path');
@@ -225,50 +228,50 @@ const startSkynetServer = async () => {
   const companyConfigStream = airtableFolder.value.stream
     .map(folder => {
       if (!folder) {
-        return xs.of(null);
+        return streamOfValue(null);
       }
       const blockId = folder.files['db.json'].id;
       const directoryBlockId = folder.files['files'].id;
       const block = airtableFolder.getBlock(blockId);
       const directoryBlock = airtableFolder.getBlock(directoryBlockId);
-      return xs
-        .combine(block.value.stream, directoryBlock.value.stream)
-        .map(([atData, directory]) => {
-          // below, we inject block refs for our Airtable images, by referring to the files directory
-          const baseTables = Object.fromEntries(
-            Object.entries(atData.baseTables).map(([tableName, table]) => {
-              const tableWithRefs = Object.fromEntries(
-                Object.entries(table).map(([rowId, row]) => {
-                  const rowWithRefs = Object.fromEntries(
-                    Object.entries(row).map(([colName, cell]) => {
-                      if (Array.isArray(cell) && cell[0] && cell[0].url) {
-                        // ok, this is an image!
-                        const cellWithRefs = cell.map(image => {
-                          const ext = path.extname(image.url);
-                          const fileName = `${md5(image.url).toString()}${ext}`;
-                          const ref = directory.files[fileName];
-                          return {
-                            ...image,
-                            ref,
-                          };
-                        });
-                        return [colName, cellWithRefs];
-                      }
-                      return [colName, cell];
-                    }),
-                  );
-                  return [rowId, rowWithRefs];
-                }),
-              );
-              return [tableName, tableWithRefs];
-            }),
-          );
-          return { ...atData, baseTables, directory };
-        });
+      return combineStreams({
+        atData: block.value.stream,
+        directory: directoryBlock.value.stream,
+      }).map(({ atData, directory }) => {
+        // below, we inject block refs for our Airtable images, by referring to the files directory
+        const baseTables = Object.fromEntries(
+          Object.entries(atData.baseTables).map(([tableName, table]) => {
+            const tableWithRefs = Object.fromEntries(
+              Object.entries(table).map(([rowId, row]) => {
+                const rowWithRefs = Object.fromEntries(
+                  Object.entries(row).map(([colName, cell]) => {
+                    if (Array.isArray(cell) && cell[0] && cell[0].url) {
+                      // ok, this is an image!
+                      const cellWithRefs = cell.map(image => {
+                        const ext = path.extname(image.url);
+                        const fileName = `${md5(image.url).toString()}${ext}`;
+                        const ref = directory.files[fileName];
+                        return {
+                          ...image,
+                          ref,
+                        };
+                      });
+                      return [colName, cellWithRefs];
+                    }
+                    return [colName, cell];
+                  }),
+                );
+                return [rowId, rowWithRefs];
+              }),
+            );
+            return [tableName, tableWithRefs];
+          }),
+        );
+        return { ...atData, baseTables, directory };
+      });
     })
-    .flatten()
-    .remember();
-  const companyConfig = kiteSource.docs.setOverrideStream(
+    .flatten();
+  const companyConfig = kiteSource.docs.setOverrideValueStream(
     'CompanyConfig',
     companyConfigStream,
   );
@@ -283,14 +286,14 @@ const startSkynetServer = async () => {
     ),
   );
 
-  const kitchenConfig = kiteSource.docs.setOverrideStream(
+  const kitchenConfig = kiteSource.docs.setOverrideValueStream(
     'KitchenConfig',
     companyConfigStream.map(companyConfig => {
       return companyConfigToKitchenConfig(companyConfig);
     }),
   );
 
-  const menu = kiteSource.docs.setOverrideStream(
+  const menu = kiteSource.docs.setOverrideValueStream(
     'Menu',
     companyConfigStream.map(companyConfigToMenu),
   );
