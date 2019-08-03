@@ -222,6 +222,19 @@ function RestaurantReducerFn(state = {}, action) {
         },
       };
     }
+    case 'DidDeliveryDropCup': {
+      if (!state.delivery) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        delivery: null,
+        completedTasks: [
+          ...(state.completedTasks || []),
+          { ...state.delivery, deliveryType: 'drop', deliveryTime: Date.now() },
+        ],
+      };
+    }
     case 'DidClean': {
       if (state.blend !== 'dirty') {
         return defaultReturn();

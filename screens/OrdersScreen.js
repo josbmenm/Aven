@@ -31,7 +31,7 @@ function OrderQueue({ restaurantState, dispatch }) {
     return null;
   }
   return (
-    <RowSection title="Task Queue">
+    <RowSection title="upcoming tasks">
       {restaurantState.queue &&
         restaurantState.queue.filter(Boolean).map(taskState => (
           <TaskQueueRow
@@ -55,9 +55,8 @@ export default function OrdersScreen(props) {
   return (
     <TwoPanePage
       {...props}
-      title="Orders"
-      icon="🎟"
       afterSide={null}
+      hideBackButton
       side={
         <OrdersList restaurantState={restaurantState} dispatch={dispatch} />
       }

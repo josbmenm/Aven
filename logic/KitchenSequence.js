@@ -108,23 +108,18 @@ const SEQUENCER_STEPS = [
       return null;
     },
     getKitchenStateReady: (kitchenState, intent) => {
-      // const {System_VanPluggedIn_READ ,
-      //   System_SkidPositionSensors_READ,
-      //   FillSystem_DeliveryDropCupReady_READ} =kitchenState
-      //   console.log()
       return (
         !!kitchenState &&
         !kitchenState.System_VanPluggedIn_READ &&
         !kitchenState.System_SkidPositionSensors_READ &&
-        kitchenState.FillSystem_DeliveryDropCupReady_READ
+        kitchenState.Delivery_DropCupReady_READ
       );
     },
     getKitchenCommand: intent => ({
       command: 'DeliveryDropCup',
     }),
     getSuccessRestaurantAction: intent => ({
-      type: 'ClearDeliveryBay',
-      bayId: 'deliveryA',
+      type: 'DidDeliveryDropCup',
     }),
   },
   {
