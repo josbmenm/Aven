@@ -3,10 +3,8 @@ import {
   createDoc,
   createDocSet,
   createSessionClient,
-  createClient,
 } from '../Kite';
 import createMemoryStorageSource from '../createMemoryStorageSource';
-import xs from 'xstream';
 import sourceTests from './sourceTests';
 
 async function justASec(duration) {
@@ -299,6 +297,7 @@ describe('kite doc', () => {
       await justASec();
       expect(lastValue.foo).toEqual('a');
       doc.value.stream.removeListener(listener);
+      await justASec();
       const obj3 = await m.dispatch({
         type: 'PutDocValue',
         domain: 'test',
@@ -307,7 +306,8 @@ describe('kite doc', () => {
       });
       await justASec();
       expect(lastValue.foo).toEqual('a');
-      await doc.value.load();
+      const res = await doc.value.load();
+      expect(res.foo).toBe('b');
       expect(doc.value.get().foo).toBe('b');
     });
 
@@ -339,6 +339,7 @@ describe('kite doc', () => {
       await justASec();
       expect(lastValue.foo).toEqual('a');
       listenDoc.value.stream.removeListener(listener);
+      await justASec();
       await doc.putValue({ foo: 'b' });
 
       await justASec();

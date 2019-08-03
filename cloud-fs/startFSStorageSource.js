@@ -2,10 +2,9 @@ import { BehaviorSubject } from 'rxjs-compat';
 import createGenericDataSource from '../cloud-core/createGenericDataSource';
 import Err from '../utils/Err';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
-import xs from 'xstream';
+import { streamOf } from '../cloud-core/createMemoryStream';
 
 const fs = require('fs-extra');
-const stringify = require('json-stable-stringify');
 const pathJoin = require('path').join;
 
 async function readFSDoc(dataDir, name) {
@@ -147,7 +146,7 @@ export default async function startFSStorageSource(opts = {}) {
   const docState = await readFSDoc(dataDir, '');
 
   const isConnected = new BehaviorSubject(true);
-  const connectedStream = xs.of(true);
+  const [connectedStream] = streamOf(true, 'DocIsConnected');
 
   async function getBlock(blockId) {
     return await readFSBlock(dataDir, blockId);

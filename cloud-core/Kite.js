@@ -8,6 +8,7 @@ import createDispatcher from '../cloud-utils/createDispatcher';
 import bindCommitDeepBlock from './bindCommitDeepBlock';
 import { createStreamValue, streamGet } from './StreamValue';
 import dropRepeats from 'xstream/extra/dropRepeats';
+import { createProducerStream, streamOf } from './createMemoryStream';
 
 /*
 
@@ -51,25 +52,39 @@ function getNow() {
 function hasDepth(name) {
   return name.match(/\//);
 }
-
-export function createStreamDoc(stream, reference) {
-  const value = createStreamValue(stream, () => reference);
+function valuePluck(o) {
+  return o.value;
+}
+export function valueMap(idAndValue) {
+  return idAndValue.map(valuePluck, 'GetValue');
+}
+export function createStreamDoc(idAndValueStream, docName) {
   const idAndValue = createStreamValue(
-    stream.map(val => {
-      const id = getIdOfValue(val).id;
-      return {
-        id,
-        value: val,
-      };
-    }),
-    () => `${reference}.value`,
+    idAndValueStream,
+    () => docName,
+    // stream.map(val => {
+    //   const id = getIdOfValue(val).id;
+    //   return {
+    //     id,
+    //     value: val,
+    //   };
+    // }),
+    // () => `${reference}.value`,
   );
+  const value = createStreamValue(valueMap(idAndValueStream), () => docName);
+
   return {
     type: 'StreamDoc',
     value,
     idAndValue,
-    getReference: () => reference,
+    getReference: () => ({
+      type: 'StreamDoc',
+      name: docName,
+    }),
     isDestroyed: () => false,
+    putTransactionValue: () => {
+      throw new Error(`Cannot putTransactionValue on "${docName}"`);
+    },
     getId: () => {
       return undefined;
     },
@@ -130,7 +145,8 @@ export function createBlock({
   }
 
   let onStop = null;
-  const blockStream = xs.createWithMemory({
+  const blockStream = createProducerStream({
+    crumb: 'BlockState-' + blockId,
     start: notify => {
       notifyStateChange = () => {
         notify.next(blockState);
@@ -174,15 +190,26 @@ export function createBlock({
     () => `Block(${onGetName()}#${blockId})`,
   );
 
+  const blockValueStream = blockStream
+    .map(blockState => {
+      return blockState.value;
+    }, 'GetValue')
+    .filter(val => {
+      return val !== undefined;
+    }, 'FilterUndefined');
+
   const blockValue = createStreamValue(
-    blockStream
-      .map(blockState => {
-        return blockState.value;
-      })
-      .filter(val => {
-        return val !== undefined;
-      }),
+    blockValueStream,
     () => `Block(${onGetName()}#${blockId}).value`,
+  );
+
+  const blockIdAndValueStream = blockValueStream.map(value => {
+    return { value, id: blockId };
+  }, 'ExpandBlockIdAndValue-' + blockId);
+
+  const blockIdAndValue = createStreamValue(
+    blockIdAndValueStream,
+    () => `Block(${onGetName()}#${blockId}).idAndValue`,
   );
 
   async function getReference() {
@@ -243,6 +270,7 @@ export function createBlock({
     getId,
     getReference,
     value: blockValue,
+    idAndValue: blockIdAndValue,
     put,
     shamefullySetPutTime,
     shamefullySetFetchedValue,
@@ -279,6 +307,7 @@ export function createDoc({
     lastFetchTime: null,
     lastPutTime: null,
     id: undefined,
+    context: undefined,
   };
 
   async function getReference() {
@@ -305,6 +334,7 @@ export function createDoc({
   let doStop = null;
   let performNotification = null;
   const docProducer = {
+    crumb: 'DocState-' + _subsToName,
     start: listen => {
       // todo.. add listener to nameChangeNotifiers, then unsubscribe and re-subscribe using new name
       performNotification = () => {
@@ -329,6 +359,7 @@ export function createDoc({
           }
           setState({
             lastFetchTime: getNow(),
+            context: v.context,
             id: v.id || null,
           });
         },
@@ -348,7 +379,7 @@ export function createDoc({
       doStop = null;
     },
   };
-  const docStream = xs.createWithMemory(docProducer);
+  const docStream = createProducerStream(docProducer);
 
   const docStateValue = createStreamValue(docStream, () => `Doc(${getName()})`);
 
@@ -533,7 +564,6 @@ export function createDoc({
       value,
     };
     const expectedBlock = getBlockOfValue(expectedTransactionValue);
-
     setState({
       id: expectedBlock.id,
       puttingFromId: prevId,
@@ -554,9 +584,9 @@ export function createDoc({
       id: result.id,
     };
     if (result.id !== expectedBlock.id) {
-      // console.warn(
-      //   `Expected to put block id "${expectedBlock.id}", but actually put id "${result.id}"`,
-      // );
+      console.warn(
+        `Expected to put block id "${expectedBlock.id}", but actually put id "${result.id}"`,
+      );
     }
     setState(stateUpdates);
 
@@ -566,24 +596,24 @@ export function createDoc({
 
   const docValue = createStreamValue(
     docStream
-      .map(state => state.id)
-      .compose(dropRepeats())
-      .map(docId => {
-        if (docId === undefined) {
+      .dropRepeats((a, b) => a.id === b.id, 'DropRepeatedIds')
+      .map(state => {
+        if (state.id === undefined) {
           return xs.never();
         }
-        if (docId === null) {
+        if (state.id === null) {
           return xs.of(undefined);
         }
-        const block = getBlock(docId);
+        const block = getBlock(state.id);
         return block.value.stream;
-      })
+      }, 'GetBlockValueStream-' + _subsToName)
       .flatten(),
     () => `Doc(${getName()}).value`,
   );
 
   const docIdAndValue = createStreamValue(
     docStream
+      .dropRepeats((a, b) => a.id === b.id, 'DropRepeatedIds')
       .map(state => {
         if (state.id === undefined) {
           return xs.never();
@@ -592,7 +622,13 @@ export function createDoc({
           return xs.of({ id: null, value: undefined });
         }
         const block = getBlock(state.id);
-        return block.value.stream.map(val => ({ value: val, id: state.id }));
+        return block.value.stream.map(val => {
+          return {
+            value: val,
+            id: state.id,
+            context: state.context,
+          };
+        });
       })
       .flatten(),
     () => `Doc(${getName()}).idValue`,
@@ -777,7 +813,7 @@ export function createDocSet({
   }
 
   function setOverrideStream(name, stream, context) {
-    const streamDoc = createStreamDoc(stream, context || name);
+    const streamDoc = createStreamDoc(stream, name);
     childDocs.set(name, streamDoc);
     return streamDoc;
   }
@@ -815,11 +851,22 @@ export function createDocSet({
     }
   }
 
+  function setOverrideValueStream(name, stream, context) {
+    return setOverrideStream(
+      name,
+      stream.map(value => {
+        return { value, id: getIdOfValue(value).id };
+      }),
+      context,
+    );
+  }
+
   return {
     get,
     post,
     move,
     setOverrideStream,
+    setOverrideValueStream,
     shamefullyDestroyAll,
   };
 }
@@ -990,6 +1037,78 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
   };
 }
 
+export function createReducerStream(
+  doc,
+  reducerFn,
+  initialState,
+  reducerName,
+  onRequestDocStateStream,
+) {
+  const docStateStreams = new Map();
+
+  function getDocStateStream(id) {
+    if (id == null) {
+      const [stream] = streamOf(
+        { value: initialState, id: getIdOfValue(initialState).id },
+        'NoActionStateStream',
+      );
+      return stream;
+    }
+    if (docStateStreams.has(id)) {
+      return docStateStreams.get(id);
+    }
+    let requestedDocStateStream = null;
+    if (
+      onRequestDocStateStream &&
+      (requestedDocStateStream = onRequestDocStateStream(id))
+    ) {
+      docStateStreams.set(id, requestedDocStateStream);
+
+      return requestedDocStateStream;
+    }
+    const actionBlock = doc.getBlock(id);
+
+    const docStateStream = actionBlock.idAndValue.stream
+      .map(actionDocState => {
+        const actionDocId = actionDocState.id;
+        const actionDocValue = actionDocState.value;
+        const actionValue = actionDocValue.value;
+
+        let [prevStateStream] = streamOf({
+          value: initialState,
+          id: getIdOfValue(initialState).id,
+        });
+        if (actionDocValue.on && actionDocValue.on.type === 'BlockReference') {
+          prevStateStream = getDocStateStream(actionDocValue.on.id);
+        }
+        return prevStateStream.map(lastState => {
+          const newState = reducerFn(lastState.value, actionValue);
+          const newId = getIdOfValue(newState).id;
+          return {
+            value: newState,
+            id: newId,
+            context: {
+              type: 'ReducedStream',
+              reducerName,
+              docName: doc.getName(),
+              docId: actionDocId,
+              prevStateId: lastState.id,
+            },
+          };
+        });
+      })
+      .flatten();
+
+    docStateStreams.set(id, docStateStream);
+    return docStateStream;
+  }
+  return doc.stream
+    .map(docState => {
+      return getDocStateStream(docState.id);
+    })
+    .flatten();
+}
+
 export function createSessionClient({ domain, source, auth }) {
   const docs = createDocSet({
     domain,
@@ -999,11 +1118,21 @@ export function createSessionClient({ domain, source, auth }) {
     nameChangeNotifiers: null,
   });
 
+  function setReducer(actionDocName, answersDocName, cloudReducer) {
+    const actionDoc = docs.get(actionDocName);
+    const stream = createReducerStream(
+      actionDoc,
+      cloudReducer.reducerFn,
+      cloudReducer.initialState,
+    );
+    docs.setOverrideStream(answersDocName, stream, { well: 'well, well..' });
+  }
   return {
     type: 'AuthenticatedClient',
     docs,
     connected: source.connected,
     get: docs.get,
+    setReducer,
     ...sourceFromRootDocSet(docs, domain, source, auth),
   };
 }
@@ -1032,7 +1161,8 @@ export function createClient({ domain, source }) {
   }
 
   const clientStateValue = createStreamValue(
-    xs.createWithMemory({
+    createProducerStream({
+      crumb: 'ClientState',
       start: listen => {
         performStateNotification = () => {
           listen.next(clientState);

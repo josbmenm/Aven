@@ -2,6 +2,10 @@ import ReconnectingWebSocket from 'reconnecting-websocket';
 import Err from '../utils/Err';
 import xs from 'xstream';
 import { createStreamValue } from '../cloud-core/StreamValue';
+import {
+  streamOf,
+  createProducerStream,
+} from '../cloud-core/createMemoryStream';
 
 let idIndex = 0;
 const idBase = Date.now();
@@ -22,22 +26,7 @@ export default function createNetworkSource(opts) {
   const wsEndpoint = `${opts.useSSL === false ? 'ws' : 'wss'}://${
     opts.authority
   }`;
-  let isCurrentlyConnected = false;
-  let updateIsConnected = null;
-  const isConnectedStream = xs.createWithMemory({
-    start: listener => {
-      listener.next(isCurrentlyConnected);
-      updateIsConnected = v => listener.next(v);
-    },
-    stop: () => {
-      updateIsConnected = null;
-    },
-  });
-
-  function setConnectionState(isConn) {
-    isCurrentlyConnected = isConn;
-    updateIsConnected && updateIsConnected(isConn);
-  }
+  const [isConnectedStream, updateIsConnected] = streamOf(false);
 
   let ws = null;
 
@@ -95,7 +84,8 @@ export default function createNetworkSource(opts) {
 
   function subscribeStream(subsSpec) {
     let id = getClientId();
-    return xs.createWithMemory({
+    return createProducerStream({
+      crumb: { type: 'NetworkStream', spec: subsSpec },
       start: listener => {
         const finalSpec = { ...subsSpec, id };
         socketSendIfConnected({
@@ -137,11 +127,11 @@ export default function createNetworkSource(opts) {
       // actually we're going to wait for the server to say hello with ClientId
     };
     ws.onclose = () => {
-      setConnectionState(false);
+      updateIsConnected(false);
       !quiet && log('Socket closed.');
     };
     ws.onerror = e => {
-      setConnectionState(false);
+      updateIsConnected(false);
       !quiet && log('Socket errored: ', e);
     };
     ws.onmessage = msg => {
@@ -151,7 +141,7 @@ export default function createNetworkSource(opts) {
       switch (evt.type) {
         case 'ClientId': {
           wsClientId = evt.clientId;
-          setConnectionState(true);
+          updateIsConnected(true);
           const subscriptionIds = Object.keys(subscriptions);
           subscriptionIds.length &&
             socketSendIfConnected({

@@ -3,6 +3,7 @@ import createDispatcher from '../cloud-utils/createDispatcher';
 import { getAuthDocName } from '../cloud-utils/MetaDocNames';
 import Err from '../utils/Err';
 import xs from 'xstream';
+import { createProducerStream } from '../cloud-core/createMemoryStream';
 
 export default function createProtectedSource({
   source,
@@ -621,9 +622,7 @@ export default function createProtectedSource({
         (realPermissionLevelRequired && !p[realPermissionLevelRequired])
       ) {
         throw new Err(
-          `Insufficient permissions for "${actionType}" on ${
-            action.name
-          }. Requires "${permissionLevel}"`,
+          `Insufficient permissions for "${actionType}" on ${action.name}. Requires "${permissionLevel}"`,
           'NoPermission',
         );
       }
@@ -702,7 +701,8 @@ export default function createProtectedSource({
   function getDocStream(domain, name, auth) {
     let stopped = false;
     let upstreamRelease = null;
-    return xs.create({
+    return createProducerStream({
+      crumb: { type: 'ProtectedDocStream', domain, name, auth },
       start: notify => {
         GetPermissions({ name, auth, domain })
           .then(permissions => {

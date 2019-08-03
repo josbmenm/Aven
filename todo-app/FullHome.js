@@ -3,9 +3,10 @@ import { Text } from 'react-native';
 import cuid from 'cuid';
 
 import {
-  useCloudReducer,
+  useCloudSmartReducer,
   useCloud,
   defineCloudReducer,
+  useCloudReducer,
 } from '../cloud-core/KiteReact';
 
 import Screen from './components/Screen';
@@ -15,6 +16,7 @@ import TaskRow from './components/TaskRow';
 export const TaskReducer = defineCloudReducer(
   'TaskReducer',
   (state, action) => {
+    console.log('Do Reduce!!');
     if (action.type === 'AddTask') {
       return [...state, action.params];
     } else if (action.type === 'SetTaskCompletion') {
@@ -47,7 +49,14 @@ function useTaskActions() {
 }
 function useTasks() {
   // const [tasks, dispatch] = React.useReducer(TaskReducer, []);
-  const [tasks, dispatch] = useCloudReducer('TaskActions', TaskReducer);
+  const [tasks, dispatch] = useCloudSmartReducer(
+    // const [tasks, dispatch] = useCloudReducer(
+    'TaskActions',
+    'Tasks',
+    TaskReducer,
+    // [],
+  );
+  console.log('ok haz tasks', tasks);
   return {
     tasks,
     ...useTaskActions(dispatch),
@@ -88,7 +97,7 @@ function Title({ children }) {
 export default function Home() {
   return (
     <Screen>
-      <Title>Reduced Todos</Title>
+      <Title>Tasks</Title>
       <TaskList />
       <InputTodo />
     </Screen>

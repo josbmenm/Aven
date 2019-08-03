@@ -1,5 +1,3 @@
-import createEvalSource from '../cloud-core/createEvalSource';
-import createCloudClient from '../cloud-core/createCloudClient';
 import { createSessionClient } from '../cloud-core/Kite';
 import { CloudContext } from '../cloud-core/KiteReact';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
@@ -30,6 +28,7 @@ const runServer = async () => {
     domain: 'todo.aven.io',
     auth: null,
   });
+  source.setReducer('TaskActions', 'Tasks', TaskReducer);
 
   const emailAgent =
     process.env.SENDGRID_API_KEY &&
