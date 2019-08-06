@@ -44,21 +44,32 @@ export function combineStreams(inputs) {
   const stoppers = new Set();
   const waitingForInputNames = new Set(Object.keys(inputs));
   const lastValues = {};
-  const crumb = Object.fromEntries(
+  const entries = Object.fromEntries(
     inputEntries.map(([key, inputStream]) => {
       return [key, inputStream.crumb];
     }),
   );
+
   return createProducerStream({
-    crumb,
+    crumb: {
+      type: 'CombinedStream',
+      entries,
+    },
     start: notifier => {
+      let scheduledUpdate = null;
+      function scheduleNotifyValues() {
+        clearTimeout(scheduledUpdate);
+        scheduledUpdate = setTimeout(() => {
+          notifier.next(lastValues);
+        }, 1);
+      }
       inputEntries.forEach(([inputName, inputStream]) => {
         const listener = {
           next: v => {
             waitingForInputNames.delete(inputName);
             lastValues[inputName] = v;
             if (waitingForInputNames.size === 0) {
-              notifier.next(lastValues);
+              scheduleNotifyValues();
             }
           },
           complete: () => {},
@@ -208,7 +219,11 @@ function spyStream(stream, spier) {
     typeof spier === 'function'
       ? spier
       : report => {
-          typeof spier === 'string' && console.log(spier, stream.crumb, report);
+          if (spier) {
+            console.log(spier, stream.crumb, report);
+          } else {
+            console.log(stream.crumb, report);
+          }
         };
   let listener = null;
   return createProducerStream({
