@@ -6,8 +6,7 @@ import Err from '../utils/Err';
 import cuid from 'cuid';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import bindCommitDeepBlock from './bindCommitDeepBlock';
-import { createStreamValue, streamGet } from './StreamValue';
-import dropRepeats from 'xstream/extra/dropRepeats';
+import { createStreamValue } from './StreamValue';
 import { createProducerStream, streamOf } from './createMemoryStream';
 
 /*
@@ -59,18 +58,7 @@ export function valueMap(idAndValue) {
   return idAndValue.map(valuePluck, 'GetValue');
 }
 export function createStreamDoc(idAndValueStream, docName) {
-  const idAndValue = createStreamValue(
-    idAndValueStream,
-    () => docName,
-    // stream.map(val => {
-    //   const id = getIdOfValue(val).id;
-    //   return {
-    //     id,
-    //     value: val,
-    //   };
-    // }),
-    // () => `${reference}.value`,
-  );
+  const idAndValue = createStreamValue(idAndValueStream, () => docName);
   const value = createStreamValue(valueMap(idAndValueStream), () => docName);
 
   return {
@@ -564,6 +552,12 @@ export function createDoc({
       value,
     };
     const expectedBlock = getBlockOfValue(expectedTransactionValue);
+    if (docState.isLocalOnly) {
+      setState({
+        id: expectedBlock.id,
+      });
+      return { id: expectedBlock.id };
+    }
     setState({
       id: expectedBlock.id,
       puttingFromId: prevId,
@@ -630,7 +624,12 @@ export function createDoc({
           };
         });
       })
-      .flatten(),
+      .flatten()
+      .dropRepeats((a, b) => {
+        return (
+          a.id === b.id && (a.value === undefined) === (b.value === undefined)
+        );
+      }, 'DropRepeatedIdValues'),
     () => `Doc(${getName()}).idValue`,
   );
 
@@ -1026,7 +1025,6 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
         // ListDomains,
         // ListDocs,
         DestroyDoc,
-        // CollectGarbage,
         MoveDoc,
       },
       sessionDispatch,

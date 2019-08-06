@@ -11,6 +11,9 @@ export function useCloudClient() {
 
 export function useCloud() {
   const cloudClient = useCloudClient();
+  if (!cloudClient) {
+    throw new Error('No Cloud Client found in context!');
+  }
   return cloudClient.getCloud ? cloudClient.getCloud() : cloudClient; // hacky temp.. should always .getCloud on a real client..
 }
 
@@ -113,6 +116,9 @@ export function useCloudSmartReducer(
     answersDoc: answersDoc.idAndValue.stream,
   })
     .map(({ actionDoc, answersDoc }) => {
+      if (answerStateStreams.has(actionDoc.id)) {
+        return answerStateStreams.get(actionDoc.id);
+      }
       if (
         answersDoc.context &&
         actionDoc.id === answersDoc.context.docId &&
@@ -128,7 +134,12 @@ export function useCloudSmartReducer(
       }
       return fullReducedStream;
     })
-    .flatten();
+    .flatten()
+    .dropRepeats((a, b) => {
+      return (
+        a.id === b.id && (a.value === undefined) === (b.value === undefined)
+      );
+    }, 'DropRepeatedReducedValues');
   const reducedState = useStream(valueMap(outputStream));
 
   if (reducedState === undefined) {
