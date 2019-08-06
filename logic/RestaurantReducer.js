@@ -296,7 +296,25 @@ function RestaurantReducerFn(state = {}, action) {
         manualMode: false,
       };
     }
-
+    case 'CloseRestaurant': {
+      return {
+        ...defaultReturn(),
+        isClosed: true,
+      };
+    }
+    case 'ScheduleRestaurantClose': {
+      return {
+        ...defaultReturn(),
+        scheduledCloseTime: action.scheduledCloseTime,
+      };
+    }
+    case 'OpenRestaurant': {
+      return {
+        ...defaultReturn(),
+        isClosed: false,
+        scheduledCloseTime: action.scheduledCloseTime || null,
+      };
+    }
     default: {
       return defaultReturn();
     }

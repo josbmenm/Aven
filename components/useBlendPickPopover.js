@@ -20,9 +20,9 @@ export default function useBlendPickPopover({
   const menu = useMenu();
   const companyConfig = useCompanyConfig();
   const { onPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <ScrollView style={{ width: 400, height: 600 }}>
             {menu.blends.map(blend => {
               return (

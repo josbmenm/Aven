@@ -7,7 +7,7 @@ import { usePopover } from '../views/Popover';
 import KeyboardPopover from './KeyboardPopover';
 import useFocus from '../navigation-hooks/useFocus';
 
-function SetInfoForm({ onClose, initialInfo, onSubmit, enableBlendName }) {
+function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
   const [orderName, setOrderName] = React.useState(initialInfo.orderName);
   const [orderBlendName, setOrderBlendName] = React.useState(
     initialInfo.orderBlendName,
@@ -31,8 +31,9 @@ function SetInfoForm({ onClose, initialInfo, onSubmit, enableBlendName }) {
           />
         </View>
       ),
-      enableBlendName
-        ? inputProps => (
+      hideBlendName
+        ? null
+        : inputProps => (
             <View style={{ flexDirection: 'row', marginVertical: 10 }}>
               <BlockFormInput
                 {...inputProps}
@@ -41,8 +42,7 @@ function SetInfoForm({ onClose, initialInfo, onSubmit, enableBlendName }) {
                 value={orderBlendName}
               />
             </View>
-          )
-        : null,
+          ),
     ],
   });
 
@@ -55,23 +55,20 @@ function SetInfoForm({ onClose, initialInfo, onSubmit, enableBlendName }) {
 }
 
 export default function useOrderInfoPopover({
-  setOrderName,
-  setOrderBlendName,
   orderName,
   orderBlendName,
+  onOrderInfo,
+  hideBlendName,
 }) {
   const { onPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <SetInfoForm
             initialInfo={{ orderName, orderBlendName }}
             onClose={onClose}
-            enableBlendName={!!setOrderBlendName}
-            onSubmit={i => {
-              setOrderName(i.orderName);
-              setOrderBlendName && setOrderBlendName(i.orderBlendName);
-            }}
+            hideBlendName={hideBlendName}
+            onSubmit={onOrderInfo}
           />
         </KeyboardPopover>
       );

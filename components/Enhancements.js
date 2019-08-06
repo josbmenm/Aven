@@ -131,7 +131,7 @@ export function EnhancementSelector({
   const enhancements = sortByField(enhancementCustomization, '_index');
 
   const { onPopover, targetRef } = useTargetPopover(
-    ({ location, onClose, popoverOpenValue }) => {
+    ({ location, onClose, openValue }) => {
       const chevronRightMiddle = {
         left: location.pageX + location.width,
         top: location.pageY + location.height / 2,
@@ -145,7 +145,7 @@ export function EnhancementSelector({
             backgroundColor: 'white',
             transform: [
               {
-                translateX: Animated.interpolate(popoverOpenValue, {
+                translateX: Animated.interpolate(openValue, {
                   inputRange: [0, 1],
                   outputRange: [-50, 0],
                 }),
@@ -155,13 +155,13 @@ export function EnhancementSelector({
             height: selectorHeight,
             width: 320,
             borderRadius: 8,
-            opacity: popoverOpenValue,
+            opacity: openValue,
           }}
         >
           <Animated.View
             style={{
               flex: 1,
-              opacity: Animated.interpolate(popoverOpenValue, {
+              opacity: Animated.interpolate(openValue, {
                 inputRange: [0.7, 1],
                 outputRange: [0, 1],
               }),

@@ -3,6 +3,7 @@ import RootAuthenticationSection from './RootAuthenticationSection';
 import { Text, View } from 'react-native';
 import SimplePage from '../components/SimplePage';
 import Button from '../components/Button';
+import TemperatureView from '../components/TemperatureView';
 import { Easing } from 'react-native-reanimated';
 import {
   titleStyle,
@@ -44,9 +45,9 @@ function InfoText({ children }) {
 }
 function StatusView() {
   const { onPopover: onCloseRestaurantPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <ClearAlarmsPopover onClose={onClose} />
         </KeyboardPopover>
       );
@@ -61,14 +62,15 @@ function StatusView() {
   );
 }
 
-export default function RestaurantStatusScreen(props) {
+export default function AlarmsScreen(props) {
   return (
     <SimplePage hideBackButton {...props}>
       <RootAuthenticationSection>
+        <TemperatureView />
         <StatusView />
       </RootAuthenticationSection>
     </SimplePage>
   );
 }
 
-RestaurantStatusScreen.navigationOptions = SimplePage.navigationOptions;
+AlarmsScreen.navigationOptions = SimplePage.navigationOptions;

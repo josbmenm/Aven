@@ -53,9 +53,9 @@ function DeviceRow({ device }) {
   const handleErrors = useAsyncError();
 
   const { onPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <ModeForm onClose={onClose} deviceDoc={deviceDoc} />
         </KeyboardPopover>
       );

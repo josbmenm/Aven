@@ -1,0 +1,14 @@
+{
+  "aven": {
+    "srcDependencies": [
+      "logic",
+      "cloud-core",
+      "cloud-browser",
+      "navigation-core",
+      "ono-cloud",
+      "components",
+      "utils"
+    ],
+    "moduleDependencies": []
+  }
+}

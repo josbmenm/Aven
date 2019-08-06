@@ -171,9 +171,9 @@ function InfoText({ children }) {
 }
 function InventoryRow({ slot }) {
   const { onPopover: onFillPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <SetFillForm onClose={onClose} slot={slot} />
         </KeyboardPopover>
       );
@@ -182,9 +182,9 @@ function InventoryRow({ slot }) {
   );
 
   const { onPopover: onRunPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <SlotRunButtons onClose={onClose} slot={slot} />
         </KeyboardPopover>
       );

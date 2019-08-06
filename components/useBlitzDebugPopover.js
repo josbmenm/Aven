@@ -37,9 +37,9 @@ function BlitzDebug() {
 
 export default function useBlitzDebugPopover() {
   const { onPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <BlitzDebug onClose={onClose} />
         </KeyboardPopover>
       );

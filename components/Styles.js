@@ -129,10 +129,10 @@ export const rowStyle = {
   ...prettyShadow,
 };
 export const rowTitleStyle = {
-  fontSize: 26,
+  fontSize: 20,
   ...boldPrimaryFontFace,
-  color: '#444',
-  marginBottom: 15,
+  color: '#222',
+  marginBottom: 12,
 };
 export const linkRowStyle = {
   ...rowStyle,

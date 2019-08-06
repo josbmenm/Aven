@@ -356,9 +356,9 @@ function usePromoPopover() {
   const cloud = useCloud();
 
   const { onPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <PromoCodeForm onClose={onClose} order={order} cloud={cloud} />
         </KeyboardPopover>
       );

@@ -95,6 +95,7 @@ export function getFillsOfOrder(menuItem, item, companyConfig) {
         ingredientName: ing.Name,
         ingredientColor: ing.Color,
         ingredientIcon: ing.Icon,
+        ingredientImage: ing.Image,
         slotId: kitchenSlotId,
         systemId: kitchenSystemId,
         slot: kitchenSlot.Slot,

@@ -249,8 +249,8 @@ function FullApp() {
   return (
     <ThemeProvider value={OnoTheme}>
       <HostContextContainer {...HOST_CONFIG}>
-        <PopoverContainer>
-          <CloudContext.Provider value={cloud}>
+        <CloudContext.Provider value={cloud}>
+          <PopoverContainer>
             <ErrorContainer
               renderError={renderAppError}
               onCatch={async (e, info, onRetry) => {
@@ -264,8 +264,8 @@ function FullApp() {
             >
               <AppContainer persistenceKey={NAV_STORAGE_KEY} />
             </ErrorContainer>
-          </CloudContext.Provider>
-        </PopoverContainer>
+          </PopoverContainer>
+        </CloudContext.Provider>
       </HostContextContainer>
     </ThemeProvider>
   );

@@ -215,6 +215,32 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
             paddingHorizontal: 8,
           }}
         >
+          {restaurantState &&
+            restaurantState.isAttached &&
+            nextSteps &&
+            nextSteps.map((step, i) => (
+              <View key={i}>
+                <ControlPanelButton
+                  title="go step"
+                  onPress={() => {
+                    step.perform(cloud, handleKitchenAction).then(resp => {
+                      console.log('ACTION RESP', step.description, resp);
+                    });
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: 'white',
+                      marginVertical: 8,
+                      fontSize: 18,
+                      ...primaryFontFace,
+                    }}
+                  >
+                    {step.description}
+                  </Text>
+                </ControlPanelButton>
+              </View>
+            ))}
           {restaurantState && restaurantState.isAttached && (
             <View style={{}}>
               <Text
@@ -242,22 +268,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
               />
             </View>
           )}
-          {restaurantState && (
-            <ControlPanelButton
-              title={
-                restaurantState.isAttached ? 'disable' : 'enable sequencer'
-              }
-              disabled={restaurantState.manualMode}
-              onPress={() => {
-                if (restaurantState.isAttached) {
-                  errorHandler(restaurantDispatch({ type: 'Detach' }));
-                } else if (!restaurantState.manualMode) {
-                  errorHandler(restaurantDispatch({ type: 'Attach' }));
-                }
-              }}
-              secondary
-            />
-          )}
+
           {status === 'fault' && (
             <ControlPanelButton
               title="Home System"
@@ -266,22 +277,6 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
               }}
             />
           )}
-          {nextSteps &&
-            nextSteps.map((step, i) => (
-              <View key={i}>
-                <Text>{step.description}</Text>
-                <ControlPanelButton
-                  title="Perform"
-                  onPress={() => {
-                    step.perform(cloud, handleKitchenAction).then(resp => {
-                      console.log('ACTION RESP', step.description, resp);
-                    });
-                  }}
-                  secondary
-                />
-              </View>
-            ))}
-
           {restaurantState && restaurantState.manualMode && (
             <ControlPanelButton
               title="disable manual mode"
@@ -305,6 +300,24 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
                 }}
               />
             )}
+          {restaurantState && (
+            <ControlPanelButton
+              title={
+                restaurantState.isAttached
+                  ? 'disable sequencer'
+                  : 'enable sequencer'
+              }
+              disabled={restaurantState.manualMode}
+              onPress={() => {
+                if (restaurantState.isAttached) {
+                  errorHandler(restaurantDispatch({ type: 'Detach' }));
+                } else if (!restaurantState.manualMode) {
+                  errorHandler(restaurantDispatch({ type: 'Attach' }));
+                }
+              }}
+              secondary
+            />
+          )}
         </View>
       </View>
     </View>

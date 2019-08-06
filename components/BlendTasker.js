@@ -6,6 +6,7 @@ import useBlendPickPopover from './useBlendPickPopover';
 import { useCloud } from '../cloud-core/KiteReact';
 import Row from './Row';
 import TaskInfo from './TaskInfo';
+import FillList from './FillList';
 import cuid from 'cuid';
 
 function usePutTransactionValue(docName) {
@@ -28,8 +29,9 @@ export default function BlendTasker() {
   });
 
   const openOrderInfo = useOrderInfoPopover({
+    hideBlendName: true,
     orderName,
-    setOrderName,
+    onOrderInfo: ({ orderName }) => setOrderName(orderName),
   });
   const restaurantDispatch = usePutTransactionValue('RestaurantActions');
 
@@ -37,21 +39,26 @@ export default function BlendTasker() {
     <Row title="free blend">
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ flex: 1 }}>
-            <TaskInfo task={{ name: orderName, blendName: null }} />
+          <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+            <TaskInfo task={{ name: orderName, blendName }} />
             <Button
               title="set order info"
               type="outline"
               onPress={openOrderInfo}
             />
-          </View>
-          <View style={{ flex: 1 }}>
-            <TaskInfo task={{ name: null, blendName }} />
             <Button
               title="choose blend"
               type="outline"
               onPress={openBlendChooser}
             />
+          </View>
+          <View style={{ flex: 1 }}>
+            <FillList fills={blendFills} onFillsChange={null} />
+            {/* <Button
+              title="customize"
+              type="outline"
+              onPress={openBlendChooser}
+            /> */}
           </View>
         </View>
 

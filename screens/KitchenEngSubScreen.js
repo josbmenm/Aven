@@ -119,9 +119,9 @@ function SetParamsButton({ pulse, system, kitchenCommand, systemId }) {
     return null;
   }
   const { onPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <SystemActionForm
             pulse={pulse}
             onClose={onClose}
@@ -180,9 +180,9 @@ function SetValueForm({ val, system, kitchenCommand, systemId, onClose }) {
 }
 function SetValueButton({ val, system, kitchenCommand, systemId }) {
   const { onPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <SetValueForm
             val={val}
             system={system}
