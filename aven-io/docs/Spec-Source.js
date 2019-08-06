@@ -362,9 +362,6 @@ const result = await source.dispatch({
             but is not covered in tests yet, and is probably broken.
           </Body>
         </SubSection>
-        <SubSection title="CollectGarbage">
-          <Body>Clean up unreferenced blocks? Not yet implemented..</Body>
-        </SubSection>
       </Section>
     </Page>
   );

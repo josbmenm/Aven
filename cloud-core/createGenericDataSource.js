@@ -408,8 +408,6 @@ export default function createGenericDataSource({
     return [sourceDomain];
   }
 
-  async function CollectGarbage() {}
-
   async function GetStatus() {
     return {
       ready: true,
@@ -508,7 +506,6 @@ export default function createGenericDataSource({
       ListDomains,
       ListDocs,
       DestroyDoc,
-      CollectGarbage,
       MoveDoc,
     }),
     id: sourceId,

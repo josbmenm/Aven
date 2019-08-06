@@ -813,8 +813,6 @@ export default async function startPostgresStorageSource({
     notifyDocDestroy(domain, name);
   }
 
-  async function CollectGarbage() {}
-
   async function close() {
     updateIsConnected(false);
     await knex.destroy();
@@ -901,7 +899,6 @@ export default async function startPostgresStorageSource({
       ListDomains,
       ListDocs,
       DestroyDoc,
-      CollectGarbage,
     }),
     id,
   };
