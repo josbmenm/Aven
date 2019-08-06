@@ -29,7 +29,7 @@ export default function useFocus({ inputRenderers, onSubmit }) {
       onSubmit();
     } else {
       const nextInputRef = refs.current[index + 1];
-      nextInputRef && nextInputRef.current.focus();
+      nextInputRef && nextInputRef.current && nextInputRef.current.focus();
     }
   }
   return {
