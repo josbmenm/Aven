@@ -17,8 +17,8 @@ export const useTargetPopover = useTarget;
 export const PopoverContext = Context;
 
 const defaultTiming = {
-  duration: 1000,
-  easing: Easing.linear,
+  duration: 500,
+  easing: Easing.out(Easing.poly(5)),
 };
 
 export function PopoverContainer({ children }) {
@@ -46,11 +46,16 @@ export function PopoverContainer({ children }) {
         })}
       </NavigationContext.Provider>,
     );
-    Animated.timing(openValue, {
-      toValue: new Animated.Value(1),
-      ...(timing || defaultTiming),
-    }).start(() => {});
   }
+
+  React.useEffect(() => {
+    if (popover) {
+      Animated.timing(openValue, {
+        toValue: new Animated.Value(1),
+        ...(configuredTiming || defaultTiming),
+      }).start(() => {});
+    }
+  }, [popover, configuredTiming, openValue]);
 
   return (
     <View
