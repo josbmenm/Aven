@@ -2,7 +2,7 @@ if (__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
 }
 
-import React, { Component } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,6 @@ import {
 import { createAppContainer } from '../navigation-native';
 import { createSwitchNavigator } from '../navigation-core';
 import codePush from 'react-native-code-push';
-
 import PortalHomeScreen from '../screens/PortalHomeScreen';
 import ComponentPlaygroundScreen from '../screens/ComponentPlaygroundScreen';
 import ProductHomeScreen from '../screens/ProductHomeScreen';
@@ -27,39 +26,30 @@ import KioskHomeScreen from '../screens/KioskHomeScreen';
 import BlendScreen from '../screens/BlendScreen';
 import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
 import FoodScreen from '../screens/FoodScreen';
-import PaymentDebugScreen from '../screens/PaymentDebugScreen';
 import OrdersScreen from '../screens/OrdersScreen';
 import useCloudProvider from '../components/useCloudProvider';
 import SequencerScreen from '../screens/SequencerScreen';
-
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
-import EngDashboardScreen from '../screens/EngDashboardScreen';
 import DeviceManagerScreen from '../screens/DeviceManagerScreen';
 import { OrderCompletePortalScreen } from '../screens/OrderCompleteScreen';
 import CollectNameScreen from '../screens/CollectNameScreen';
 import SendReceiptScreen from '../screens/SendReceiptScreen';
-import OrderConfirmTestScreen from '../screens/OrderConfirmTestScreen';
 import InventoryScreen from '../screens/InventoryScreen';
 import AlarmsScreen from '../screens/AlarmsScreen';
 import ReceiptScreen from '../screens/ReceiptScreen';
 import AppUpsellScreen from '../screens/AppUpsellScreen';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
-import Transitioner from '../navigation-transitioner/Transitioner';
 import LinearGradient from 'react-native-linear-gradient';
-import { loadImages } from '../components/Image';
 import { CloudContext } from '../cloud-core/KiteReact';
 import ErrorContainer from '../cloud-react/ErrorContainer';
-import { createStackNavigator } from '../navigation-stack';
 import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
 import { PortalOrderSidebarPage } from '../components/OrderSidebarPage';
 import TabsScreen from '../components/TabsScreen';
 import { PopoverContainer } from '../views/Popover';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { registerDispatcher } from '../card-reader/CardReader';
 import { ThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
-
 import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
