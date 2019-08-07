@@ -143,12 +143,20 @@ const SEQUENCER_STEPS = [
     getKitchenStateReady: (kitchenState, intent) => {
       return !!kitchenState && kitchenState.FillSystem_DropCupReady_READ;
     },
-    getKitchenCommand: intent => ({
-      command: 'PositionAndDispenseAmount',
-      params: intent,
-    }),
+    getKitchenCommand: intent => {
+      if (intent.pretendDispense) {
+        return {
+          command: 'PositionOnly',
+          params: intent,
+        };
+      }
+      return {
+        command: 'PositionAndDispenseAmount',
+        params: intent,
+      };
+    },
     getSuccessRestaurantAction: intent => ({
-      type: 'DidFill',
+      type: intent.pretendDispense ? 'DidPretendFill' : 'DidFill',
       ...intent,
     }),
   },
@@ -374,44 +382,19 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
       startingRestaurantAction,
       subsystem: command.subsystem,
       description: getDescription(intent),
-      perform: async (cloud, handleCommand) => {
+      perform: async (onDispatcherAction, kitchenCommand) => {
         let resp = null;
-        const startTime = Date.now();
         startingRestaurantAction &&
-          (await cloud
-            .get('RestaurantActions')
-            .putTransactionValue(startingRestaurantAction));
-        // await cloud.get('KitchenLog').putTransactionValue({
-        //   type: 'StartKitchenAction',
-        //   intent,
-        //   command,
-        // });
+          (await onDispatcherAction(startingRestaurantAction));
         try {
-          resp = await handleCommand(command);
+          resp = await kitchenCommand(command);
           successRestaurantAction &&
-            (await cloud
-              .get('RestaurantActions')
-              .putTransactionValue(successRestaurantAction));
+            (await onDispatcherAction(successRestaurantAction));
           await delay(30);
-          // await cloud.get('KitchenLog').putTransactionValue({
-          //   type: 'CompleteKitchenAction',
-          //   intent,
-          //   command,
-          //   duration: Date.now() - startTime,
-          // });
         } catch (e) {
           console.error('Failed to perform command', e);
           failureRestaurantAction &&
-            (await cloud
-              .get('RestaurantActions')
-              .putTransactionValue(failureRestaurantAction));
-          // await cloud.get('KitchenLog').putTransactionValue({
-          //   type: 'CompleteFailureAction',
-          //   intent,
-          //   command,
-          //   error: e,
-          //   duration: Date.now() - startTime,
-          // });
+            (await onDispatcherAction(failureRestaurantAction));
         }
         return resp;
       },

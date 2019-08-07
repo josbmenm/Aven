@@ -24,7 +24,7 @@ export default function ManualControl() {
         onPress={() => {
           handleErrors(
             cloud.dispatch({
-              type: 'KitchenAction',
+              type: 'KitchenCommand',
               command: 'Home',
             }),
           );
@@ -35,7 +35,7 @@ export default function ManualControl() {
         onPress={() => {
           handleErrors(
             cloud.dispatch({
-              type: 'KitchenAction',
+              type: 'KitchenCommand',
               command: 'GetCup',
             }),
           );
@@ -47,7 +47,7 @@ export default function ManualControl() {
         onPress={() => {
           handleErrors(
             cloud.dispatch({
-              type: 'KitchenAction',
+              type: 'KitchenCommand',
               command: 'DropCup',
             }),
           );
@@ -59,7 +59,7 @@ export default function ManualControl() {
         onPress={() => {
           handleErrors(
             cloud.dispatch({
-              type: 'KitchenAction',
+              type: 'KitchenCommand',
               command: 'DeliveryDropCup',
             }),
           );
@@ -71,7 +71,7 @@ export default function ManualControl() {
         onPress={() => {
           handleErrors(
             cloud.dispatch({
-              type: 'KitchenAction',
+              type: 'KitchenCommand',
               command: 'DitchCup',
             }),
           );
@@ -88,7 +88,7 @@ export default function ManualControl() {
         onPress={() => {
           handleErrors(
             cloud.dispatch({
-              type: 'KitchenAction',
+              type: 'KitchenCommand',
               command: 'PositionAndDispenseAmount',
               params: fillParams,
             }),
@@ -101,7 +101,7 @@ export default function ManualControl() {
         onPress={() => {
           handleErrors(
             cloud.dispatch({
-              type: 'KitchenAction',
+              type: 'KitchenCommand',
               command: 'PassToBlender',
             }),
           );
@@ -113,7 +113,7 @@ export default function ManualControl() {
         onPress={() => {
           handleErrors(
             cloud.dispatch({
-              type: 'KitchenAction',
+              type: 'KitchenCommand',
               command: 'Blend',
             }),
           );
@@ -125,7 +125,7 @@ export default function ManualControl() {
         onPress={() => {
           handleErrors(
             cloud.dispatch({
-              type: 'KitchenAction',
+              type: 'KitchenCommand',
               command: 'PassToDelivery',
             }),
           );
@@ -139,7 +139,7 @@ export default function ManualControl() {
         onPress={() => {
           handleErrors(
             cloud.dispatch({
-              type: 'KitchenAction',
+              type: 'KitchenCommand',
               command: 'PassToDeliveryWithoutClean',
             }),
           );
@@ -151,7 +151,7 @@ export default function ManualControl() {
         onPress={() => {
           handleErrors(
             cloud.dispatch({
-              type: 'KitchenAction',
+              type: 'KitchenCommand',
               command: 'Clean',
             }),
           );

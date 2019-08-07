@@ -2,6 +2,7 @@ import { defineCloudReducer } from '../cloud-core/KiteReact';
 
 const PRIMING_TASKS = [
   {
+    id: 'purge-0',
     deliveryMode: 'ditch',
     skipBlend: true,
     name: 'Mr. Purge',
@@ -12,6 +13,7 @@ const PRIMING_TASKS = [
     ],
   },
   {
+    id: 'purge-1',
     deliveryMode: 'ditch',
     skipBlend: true,
     name: 'Mr. Purge',
@@ -23,6 +25,37 @@ const PRIMING_TASKS = [
     ],
   },
 ];
+
+function withdrawInventoryIngredient(state, slotId, amount) {
+  let ingredientInventory = state.ingredientInventory;
+  if (ingredientInventory && slotId) {
+    const slotInventoryState = ingredientInventory[slotId] || {};
+    const estimatedRemaining = slotInventoryState.estimatedRemaining;
+    const newEstimatedRemaining =
+      estimatedRemaining == null ? null : estimatedRemaining - amount;
+    ingredientInventory = {
+      ...(state.ingredientInventory || {}),
+      [slotId]: {
+        ...slotInventoryState,
+        estimatedRemaining: newEstimatedRemaining,
+      },
+    };
+  }
+  return ingredientInventory;
+}
+
+function withdrawInventoryCup(state) {
+  const lastInventory = state.cupInventory || {};
+  const estimatedRemaining = lastInventory.estimatedRemaining;
+  const newEstimatedRemaining =
+    estimatedRemaining == null ? null : estimatedRemaining - 1;
+
+  const cupInventory = {
+    ...lastInventory,
+    estimatedRemaining: newEstimatedRemaining,
+  };
+  return cupInventory;
+}
 
 function RestaurantReducerFn(state = {}, action) {
   const defaultReturn = () => {
@@ -56,11 +89,34 @@ function RestaurantReducerFn(state = {}, action) {
         queue: (state.queue || []).filter(order => order.id !== action.id),
       };
     }
-    case 'DidGetCup': {
-      const cupInventory = state.cupInventory || {};
-      const estimatedRemaining = cupInventory.estimatedRemaining;
-      const newEstimatedRemaining =
-        estimatedRemaining == null ? null : estimatedRemaining - 1;
+    case 'SetSlotSettings': {
+      const { type, slotId, ...slotSettings } = action;
+      const lastSlotSettings = state.slotSettings || {};
+      return {
+        ...defaultReturn(),
+        slotSettings: {
+          ...lastSlotSettings,
+          [action.slotId]: {
+            ...(lastSlotSettings || {}),
+            ...slotSettings,
+          },
+        },
+      };
+    }
+    case 'InvalidateQueuedTask': {
+      const invalidTask = (state.queue || []).find(
+        task => task.id === action.taskId,
+      );
+      if (!invalidTask) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        queue: (state.queue || []).filter(t => t !== invalidTask),
+        invalidTasks: [invalidTask, ...(state.invalidTasks || [])],
+      };
+    }
+    case 'DidStartCup': {
       if (!state.queue || !state.queue.length) {
         return {
           ...defaultReturn(),
@@ -70,10 +126,7 @@ function RestaurantReducerFn(state = {}, action) {
       const topTask = state.queue[0];
       return {
         ...defaultReturn(),
-        cupInventory: {
-          ...cupInventory,
-          estimatedRemaining: newEstimatedRemaining,
-        },
+        cupInventory: withdrawInventoryCup(state),
         fill: {
           task: topTask,
           taskStartTime: Date.now(),
@@ -114,11 +167,65 @@ function RestaurantReducerFn(state = {}, action) {
         ],
       };
     }
+    case 'DidDispense': {
+      const sss = {
+        ...defaultReturn(),
+        ingredientInventory: withdrawInventoryIngredient(
+          state,
+          action.slotId,
+          action.amount,
+        ),
+      };
+      console.log('2tf', sss);
+      return sss;
+    }
+    case 'DidDispenseCup': {
+      return {
+        ...defaultReturn(),
+        cupInventory: withdrawInventoryCup(state),
+      };
+    }
+    case 'DidPretendFill': {
+      if (!state.fill) {
+        return defaultReturn();
+      }
+      let completedFill = {
+        system: action.system,
+        amount: action.amount,
+        slot: action.slot,
+        completedFillTime: Date.now(),
+        isPretendDispense: true,
+      };
+      let fillsRemaining = (state.fill.fillsRemaining || []).filter(fill => {
+        const isTheFill =
+          action.system === fill.system &&
+          action.amount === fill.amount &&
+          action.slot === fill.slot;
+        if (isTheFill) {
+          completedFill = {
+            ...fill,
+            completedFillTime: Date.now(),
+            isPretendDispense: true,
+          };
+        }
+        return !isTheFill;
+      });
+
+      return {
+        ...defaultReturn(),
+        fill: {
+          ...state.fill,
+          fillsCompleted: [...(state.fill.fillsCompleted || []), completedFill],
+          fillsRemaining,
+        },
+      };
+    }
     case 'DidFill': {
       if (!state.fill) {
         return defaultReturn();
       }
       let completedFill = {
+        completedFillTime: Date.now(),
         system: action.system,
         amount: action.amount,
         slot: action.slot,
@@ -129,30 +236,17 @@ function RestaurantReducerFn(state = {}, action) {
           action.amount === fill.amount &&
           action.slot === fill.slot;
         if (isTheFill) {
-          completedFill = fill;
+          completedFill = { ...fill, completedFillTime: Date.now() };
         }
         return !isTheFill;
       });
-      let ingredientInventory = state.ingredientInventory;
-      if (ingredientInventory && completedFill.slotId) {
-        const slotInventoryState =
-          ingredientInventory[completedFill.slotId] || {};
-        const estimatedRemaining = slotInventoryState.estimatedRemaining;
-        const newEstimatedRemaining =
-          estimatedRemaining == null
-            ? null
-            : estimatedRemaining - completedFill.amount;
-        ingredientInventory = {
-          ...(state.ingredientInventory || {}),
-          [completedFill.slotId]: {
-            ...slotInventoryState,
-            estimatedRemaining: newEstimatedRemaining,
-          },
-        };
-      }
       return {
         ...defaultReturn(),
-        ingredientInventory,
+        ingredientInventory: withdrawInventoryIngredient(
+          state,
+          completedFill.slotId,
+          completedFill.amount,
+        ),
         fill: {
           ...state.fill,
           fillsCompleted: [...(state.fill.fillsCompleted || []), completedFill],

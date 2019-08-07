@@ -1,3 +1,5 @@
+import { combineStreams } from '../cloud-core/createMemoryStream';
+
 const { Controller, Tag, EthernetIP, TagGroup } = require('ethernet-ip');
 const { INT, BOOL } = EthernetIP.CIP.DataTypes.Types;
 const shallowEqual = require('fbjs/lib/shallowEqual');
@@ -13,6 +15,18 @@ const getTypeOfSchema = typeName => {
     }
   }
 };
+
+const COUNT_MAX = 32767;
+// This max is because we have experienced: RangeError [ERR_OUT_OF_RANGE] [ERR_OUT_OF_RANGE]: The value of "value" is out of range. It must be >= -32768 and <= 32767. Received 1005538255
+let tagCounter = Math.floor(Math.random() * COUNT_MAX);
+
+export function getFreshActionId() {
+  tagCounter += 1;
+  if (tagCounter > COUNT_MAX) {
+    tagCounter = 0;
+  }
+  return tagCounter;
+}
 
 export const getTagOfSchema = tagSchema => {
   return new Tag(
@@ -88,9 +102,13 @@ class PLCConnectionError extends Error {
   code = 'PLC_Connection';
 }
 
-export default function startKitchen({
+export function connectMachine({
+  commands,
   configStream,
   kitchenStateDoc,
+  restaurantStateStream,
+  computeSequencerNextSteps,
+  onDispatcherAction,
   plcIP,
   logBehavior,
 }) {
@@ -248,6 +266,8 @@ export default function startKitchen({
 
   let mainRobotSchema = null;
 
+  const subsystemResolvers = {};
+
   async function connectKitchenClient() {
     console.log('Waiting for Kitchen Configuration...');
     configStream.addListener({
@@ -283,6 +303,27 @@ export default function startKitchen({
         ...currentState,
         isPLCConnected,
       });
+
+      Object.entries(subsystemResolvers).forEach(([subsystem, resolver]) => {
+        const noFaults = currentState[`${subsystem}_NoFaults_READ`];
+        const startedActionId =
+          currentState[`${subsystem}_ActionIdStarted_READ`];
+        const endedActionId = currentState[`${subsystem}_ActionIdEnded_READ`];
+        const isSystemIdle = currentState[`${subsystem}_PrgStep_READ`] === 0;
+        const isActionReceived = startedActionId === resolver.actionId;
+        const isActionComplete = endedActionId === resolver.actionId;
+        if (isActionReceived && (isSystemIdle || isActionComplete)) {
+          logBehavior(
+            `${noFaults ? 'Done with' : 'FAULTED on'} ${resolver.actionId}`,
+          );
+          if (noFaults) {
+            resolver.resolve();
+          } else {
+            resolver.reject(new Error(`System "${subsystem}" has faulted`));
+          }
+        }
+      });
+
       await delay(64); // give js ~64ms to respond to this change.
     };
     const updateTagsForever = () => {
@@ -305,7 +346,8 @@ export default function startKitchen({
     updateTagsForever();
   }
 
-  async function dispatchCommand(action) {
+  async function writeMachineValues(action) {
+    const actionId = action.actionId || getFreshActionId();
     if (!mainRobotSchema) {
       return;
     }
@@ -319,19 +361,26 @@ export default function startKitchen({
       systemName: action.subsystem,
       pulse: action.pulse,
       values: action.values,
-      actionId: action.actionId,
+      actionId,
     });
     await writeTags(mainRobotSchema, tagOutput);
     await writeTags(mainRobotSchema, immediateOutput);
-    await delay(600);
-    await writeTags(mainRobotSchema, clearPulseOutput);
-    return { ...immediateOutput, ...clearPulseOutput, ...(tagOutput || {}) };
-  }
+    (async () => {
+      await delay(250);
+      await writeTags(mainRobotSchema, clearPulseOutput);
+    })()
+      .then(() => {})
+      .catch(err => {
+        console.error('Error writing machine value for pulse clearing..');
+        console.error({
+          clearPulseOutput,
+          actionId,
+          subsystem: action.subsystem,
+        });
+        console.error(err);
+      });
 
-  function close() {
-    readyPLC && readyPLC.destroy();
-    readyPLC = null;
-    hasClosed = true;
+    return { ...immediateOutput, ...clearPulseOutput, ...(tagOutput || {}) };
   }
 
   connectKitchenClient()
@@ -341,8 +390,167 @@ export default function startKitchen({
       process.exit();
     });
 
+  function verboseLog(msg) {
+    console.log(msg);
+    return;
+  }
+
+  async function command(action) {
+    const commandType = commands[action.command];
+
+    if (!commandType) {
+      throw new Error(`Unknown kitchen command "${action.command}"`);
+    }
+    const { valueParamNames, pulse, subsystem } = commandType;
+    const values = { ...commandType.values };
+    valueParamNames &&
+      Object.keys(valueParamNames).forEach(valueCommandName => {
+        const provided =
+          action.params && action.params[valueParamNames[valueCommandName]];
+        if (provided != null) {
+          values[valueCommandName] = provided;
+        }
+      });
+    const actionId = getFreshActionId();
+    logBehavior(`Start Action ${actionId} : ${JSON.stringify(action)}`);
+
+    if (subsystemResolvers[subsystem]) {
+      throw new Error(
+        `Already waiting for an action to resolve on the "${subsystem}" subsystem.`,
+      );
+    }
+
+    await writeMachineValues({
+      actionId,
+      subsystem,
+      pulse,
+      values,
+    });
+    await new Promise((resolve, reject) => {
+      let watchKittyTimeout = setTimeout(() => {
+        delete subsystemResolvers[subsystem];
+        reject(
+          new Error(`Watch kitty timeout on "${subsystem}" system, meow!`),
+        );
+      }, 2 * 60 * 1000);
+      subsystemResolvers[subsystem] = {
+        resolve: value => {
+          delete subsystemResolvers[subsystem];
+          clearTimeout(watchKittyTimeout);
+          resolve(value);
+        },
+        reject: err => {
+          delete subsystemResolvers[subsystem];
+          clearTimeout(watchKittyTimeout);
+          reject(err);
+        },
+        actionId,
+      };
+    });
+    return action;
+  }
+
+  let _restaurantState = null;
+  let _kitchenState = null;
+  let _kitchenConfig = null;
+  let currentStepPromises = {};
+
+  function handleSequencerUpdates(
+    restaurantState,
+    kitchenState,
+    kitchenConfig,
+  ) {
+    if (restaurantState !== undefined) _restaurantState = restaurantState;
+    if (kitchenState !== undefined) _kitchenState = kitchenState;
+    if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
+    if (!restaurantState) return verboseLog('Missing RestaurantState');
+    if (!kitchenState) return verboseLog('Missing KitchenState');
+    if (!kitchenConfig) return verboseLog('Missing kitchenConfig');
+    if (!restaurantState.isAutoRunning)
+      return verboseLog('Is not auto-running');
+    if (!restaurantState.isAttached) return verboseLog('Is not attached');
+    const nextSteps = computeSequencerNextSteps(
+      restaurantState,
+      kitchenConfig,
+      kitchenState,
+    );
+    if (!nextSteps || !nextSteps.length) {
+      return verboseLog('No steps available to take');
+    }
+
+    nextSteps.forEach(nextStep => {
+      const commandType = commands[nextStep.command.command];
+      const subsystem = commandType.subsystem;
+      if (currentStepPromises[subsystem]) {
+        return;
+      }
+
+      if (!kitchenState.isPLCConnected) {
+        return;
+      }
+      logBehavior(`Performing ${subsystem} ${nextStep.description}`);
+      currentStepPromises[subsystem] = nextStep.perform(
+        onDispatcherAction,
+        command,
+      );
+
+      currentStepPromises[subsystem]
+        .then(() => {
+          currentStepPromises[subsystem] = null;
+          console.log(`Done with ${nextStep.description}`);
+          setTimeout(() => {
+            if (
+              kitchenState !== _kitchenState ||
+              kitchenConfig !== _kitchenConfig ||
+              restaurantState !== _restaurantState
+            ) {
+              handleSequencerUpdates(
+                _restaurantState,
+                _kitchenState,
+                _kitchenConfig,
+              );
+            }
+          }, 50);
+        })
+        .catch(e => {
+          currentStepPromises[subsystem] = null;
+          console.error(
+            `Failed to perform Kitchen Action: ${
+              nextStep.description
+            }. JS is basically faulted now??`,
+            e,
+          );
+        });
+    });
+  }
+
+  const sequencerStateStream = combineStreams({
+    restaurantState: restaurantStateStream,
+    kitchenState: kitchenStateDoc.value.stream,
+    kitchenConfig: configStream,
+  });
+  const sequencerStateStreamListener = {
+    next: ({ restaurantState, kitchenState, kitchenConfig }) => {
+      handleSequencerUpdates(restaurantState, kitchenState, kitchenConfig);
+    },
+    error: e => {
+      console.error('Failure in sequencer state stream');
+      console.error(e);
+      process.exit(1);
+    },
+  };
+  sequencerStateStream.addListener(sequencerStateStreamListener);
+
+  function close() {
+    sequencerStateStream.removeListener(sequencerStateStreamListener);
+    readyPLC && readyPLC.destroy();
+    readyPLC = null;
+    hasClosed = true;
+  }
+
   return {
+    command,
     close,
-    dispatchCommand,
+    writeMachineValues,
   };
 }

@@ -15,6 +15,33 @@ const KitchenCommands = {
       return kitchenState.FillSystem_PickUpNewCupReady_READ;
     },
   },
+
+  DispenseCup: {
+    subsystem: 'Denester',
+    pulse: ['DispenseAmount'],
+    values: {},
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.Denester_DispenseAmount_READ;
+    },
+  },
+  DispenseOnly: {
+    subsystem: 'FillSystem',
+    pulse: ['DispenseAmountSystem'],
+    valueParamNames: {
+      DispenseAmount: 'amount',
+      DispenseSystem: 'system',
+      SlotToDispense: 'slot',
+    },
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.FillSystem_DispenseAmountReady_READ;
+    },
+  },
   DropCup: {
     subsystem: 'FillSystem',
     pulse: ['DropCup'],

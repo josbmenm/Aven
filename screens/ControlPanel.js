@@ -176,10 +176,10 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
     }
   }
 
-  async function handleKitchenAction(action) {
+  async function handleKitchenCommand(action) {
     await cloud.dispatch({
       ...action,
-      type: 'KitchenAction',
+      type: 'KitchenCommand',
     });
   }
   return (
@@ -223,9 +223,14 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
                 <ControlPanelButton
                   title="go step"
                   onPress={() => {
-                    step.perform(cloud, handleKitchenAction).then(resp => {
-                      console.log('ACTION RESP', step.description, resp);
-                    });
+                    step
+                      .perform(
+                        cloud.get('RestaurantActions').putTransactionValue,
+                        handleKitchenCommand,
+                      )
+                      .then(resp => {
+                        console.log('ACTION RESP', step.description, resp);
+                      });
                   }}
                 >
                   <Text
@@ -273,7 +278,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
             <ControlPanelButton
               title="Home System"
               onPress={() => {
-                handleKitchenAction({ command: 'Home' });
+                handleKitchenCommand({ command: 'Home' });
               }}
             />
           )}

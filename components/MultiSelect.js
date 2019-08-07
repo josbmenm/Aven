@@ -17,6 +17,7 @@ export default function MultiSelect({ options, value, onValue }) {
         const isActive = value === opt.value;
         return (
           <TouchableOpacity
+            key={opt.name}
             onPress={() => {
               onValue(opt.value);
             }}

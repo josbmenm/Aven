@@ -29,3 +29,4 @@ export default function Tag({ title, color }) {
 
 Tag.negativeColor = '#722';
 Tag.positiveColor = '#272';
+Tag.warningColor = '#997200';

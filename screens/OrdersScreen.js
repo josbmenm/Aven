@@ -10,7 +10,7 @@ import RowSection from '../components/RowSection';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 
-function TaskQueueRow({ onCancel, taskState }) {
+function TaskRow({ onCancel, taskState }) {
   return (
     <View
       style={{
@@ -20,10 +20,12 @@ function TaskQueueRow({ onCancel, taskState }) {
       }}
     >
       <TaskInfo task={taskState} />
-      <Text style={{ alignSelf: 'center', margin: 10 }}>
-        {taskState.fills.length} fills
-      </Text>
-      <Button onPress={onCancel} title="Cancel" />
+      {taskState.fills && (
+        <Text style={{ alignSelf: 'center', margin: 10 }}>
+          {taskState.fills.length} fills
+        </Text>
+      )}
+      {onCancel && <Button onPress={onCancel} title="Cancel" />}
     </View>
   );
 }
@@ -37,7 +39,7 @@ function OrderQueue({ restaurantState, dispatch }) {
       <RowSection title="upcoming tasks">
         {restaurantState.queue &&
           restaurantState.queue.filter(Boolean).map(taskState => (
-            <TaskQueueRow
+            <TaskRow
               key={taskState.id}
               taskState={taskState}
               onCancel={() => {
@@ -48,7 +50,7 @@ function OrderQueue({ restaurantState, dispatch }) {
       </RowSection>
       {restaurantState.fill && (
         <RowSection title="filling">
-          <TaskQueueRow
+          <TaskRow
             key={restaurantState.fill.id}
             taskState={restaurantState.fill.task}
           />
@@ -56,7 +58,7 @@ function OrderQueue({ restaurantState, dispatch }) {
       )}
       {restaurantState.blend && (
         <RowSection title="blending">
-          <TaskQueueRow
+          <TaskRow
             key={restaurantState.blend.id}
             taskState={restaurantState.blend.task}
           />
@@ -64,7 +66,7 @@ function OrderQueue({ restaurantState, dispatch }) {
       )}
       {restaurantState.delivery && (
         <RowSection title="delivering">
-          <TaskQueueRow
+          <TaskRow
             key={restaurantState.delivery.id}
             taskState={restaurantState.delivery.task}
           />
@@ -73,19 +75,27 @@ function OrderQueue({ restaurantState, dispatch }) {
       {(restaurantState.deliveryA || restaurantState.deliveryB) && (
         <RowSection title="ready for pickup">
           {restaurantState.deliveryA && (
-            <TaskQueueRow
+            <TaskRow
               key={restaurantState.deliveryA.id}
               taskState={restaurantState.deliveryA.task}
             />
           )}
           {restaurantState.deliveryB && (
-            <TaskQueueRow
+            <TaskRow
               key={restaurantState.deliveryB.id}
               taskState={restaurantState.deliveryB.task}
             />
           )}
         </RowSection>
       )}
+      <RowSection title="completed tasks">
+        {restaurantState.completedTasks &&
+          restaurantState.completedTasks
+            .filter(Boolean)
+            .map(taskState => (
+              <TaskRow key={taskState.id} taskState={taskState.task} />
+            ))}
+      </RowSection>
     </React.Fragment>
   );
 }

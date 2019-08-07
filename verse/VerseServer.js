@@ -2,7 +2,6 @@ import App from './App';
 import WebServer from '../aven-web/WebServer';
 import { CloudContext } from '../cloud-core/KiteReact';
 import { createReducerStream } from '../cloud-core/Kite';
-import { getFreshActionId } from '../logic/KitchenLogic';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import KitchenCommands from '../logic/KitchenCommands';
 import { hashSecureString } from '../cloud-utils/Crypto';
@@ -16,9 +15,7 @@ import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
-import startKitchen from './startKitchen';
-import xs from 'xstream';
-import { combineStreams } from '../cloud-core/createMemoryStream';
+import { connectMachine } from './Machine';
 import { handleStripeAction } from '../stripe-server/Stripe';
 import { computeNextSteps } from '../logic/KitchenSequence';
 
@@ -187,173 +184,22 @@ const startVerseServer = async () => {
   });
   const kitchenConfigStream = cloud.get('KitchenConfig').value.stream;
 
+  const kitchenStateDoc = cloud.get('KitchenState');
+
   let kitchen = null;
   if (!process.env.DISABLE_ONO_KITCHEN) {
     console.log('Connecting to Maui Kitchen');
-    kitchen = startKitchen({
+    kitchen = connectMachine({
+      commands: KitchenCommands,
+      computeSequencerNextSteps: computeNextSteps,
       logBehavior,
       configStream: kitchenConfigStream,
-      kitchenStateDoc: cloud.get('KitchenState'),
+      restaurantStateStream: cloud.get('RestaurantState').value.stream,
+      onDispatcherAction: cloud.get('RestaurantActions').putTransactionValue,
+      kitchenStateDoc,
       plcIP: '10.10.1.122',
     });
   }
-
-  async function kitchenAction(action) {
-    if (!kitchen) {
-      throw new Error('No kitchen right now');
-    }
-    const commandType = KitchenCommands[action.command];
-
-    if (!commandType) {
-      throw new Error(`Unknown kitchen command "${action.command}"`);
-    }
-    const { valueParamNames, pulse, subsystem } = commandType;
-    const values = { ...commandType.values };
-    valueParamNames &&
-      Object.keys(valueParamNames).forEach(valueCommandName => {
-        const provided =
-          action.params && action.params[valueParamNames[valueCommandName]];
-        if (provided != null) {
-          values[valueCommandName] = provided;
-        }
-      });
-    const actionId = getFreshActionId();
-    logBehavior(`Start Action ${actionId} : ${JSON.stringify(action)}`);
-
-    const command = {
-      actionId,
-      type: 'KitchenCommand',
-      subsystem,
-      pulse,
-      values,
-    };
-    kitchen.dispatchCommand(command);
-    await new Promise((resolve, reject) => {
-      let isSystemIdle = null;
-      let isActionReceived = null;
-      let isActionComplete = null;
-      let currentActionId = null;
-      let endedActionId = null;
-      let noFaults = true;
-      const stateValue = cloud.get('KitchenState').value.stream;
-
-      const stateListener = {
-        next: state => {
-          if (!state) {
-            return;
-          }
-          noFaults = state[`${subsystem}_NoFaults_READ`];
-          currentActionId = state[`${subsystem}_ActionIdStarted_READ`];
-          endedActionId = state[`${subsystem}_ActionIdEnded_READ`];
-          isSystemIdle = state[`${subsystem}_PrgStep_READ`] === 0;
-          isActionReceived = currentActionId === actionId;
-          isActionComplete = endedActionId === actionId;
-
-          if (isActionReceived && (isSystemIdle || isActionComplete)) {
-            logBehavior(`${noFaults ? 'Done with' : 'FAULTED on'} ${actionId}`);
-            stateValue.removeListener(stateListener);
-            if (noFaults === false) {
-              reject(new Error(`System "${subsystem}" has faulted`));
-            } else {
-              resolve();
-            }
-          }
-        },
-        error: reject,
-      };
-
-      stateValue.addListener(stateListener);
-    });
-    return command;
-  }
-
-  let _restaurantState = null;
-  let _kitchenState = null;
-  let _kitchenConfig = null;
-  let currentStepPromises = {};
-
-  function verboseLog(msg) {
-    console.log(msg);
-    return;
-  }
-
-  function handleStateUpdates(restaurantState, kitchenState, kitchenConfig) {
-    if (restaurantState !== undefined) _restaurantState = restaurantState;
-    if (kitchenState !== undefined) _kitchenState = kitchenState;
-    if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
-    if (!restaurantState) return verboseLog('Missing RestaurantState');
-    if (!kitchenState) return verboseLog('Missing KitchenState');
-    if (!kitchenConfig) return verboseLog('Missing kitchenConfig');
-    if (!restaurantState.isAutoRunning)
-      return verboseLog('Is not auto-running');
-    if (!restaurantState.isAttached) return verboseLog('Is not attached');
-    const nextSteps = computeNextSteps(
-      restaurantState,
-      kitchenConfig,
-      kitchenState,
-    );
-    if (!nextSteps || !nextSteps.length) {
-      return verboseLog('No steps available to take');
-    }
-
-    nextSteps.forEach(nextStep => {
-      const commandType = KitchenCommands[nextStep.command.command];
-      const subsystem = commandType.subsystem;
-      if (currentStepPromises[subsystem]) {
-        return;
-      }
-
-      if (!kitchen || !kitchenState.isPLCConnected) {
-        return;
-      }
-      logBehavior(`Performing ${subsystem} ${nextStep.description}`);
-      currentStepPromises[subsystem] = nextStep.perform(cloud, kitchenAction);
-
-      currentStepPromises[subsystem]
-        .then(() => {
-          currentStepPromises[subsystem] = null;
-          console.log(`Done with ${nextStep.description}`);
-          setTimeout(() => {
-            if (
-              kitchenState !== _kitchenState ||
-              kitchenConfig !== _kitchenConfig ||
-              restaurantState !== _restaurantState
-            ) {
-              handleStateUpdates(
-                _restaurantState,
-                _kitchenState,
-                _kitchenConfig,
-              );
-            }
-          }, 50);
-        })
-        .catch(e => {
-          currentStepPromises[subsystem] = null;
-          console.error(
-            `Failed to perform Kitchen Action: ${
-              nextStep.description
-            }. JS is basically faulted now??`,
-            e,
-          );
-        });
-    });
-  }
-
-  const sequencerStateStream = combineStreams({
-    restaurantState: cloud.get('RestaurantState').value.stream,
-    kitchenState: cloud.get('KitchenState').value.stream,
-    kitchenConfig: kitchenConfigStream,
-  });
-  sequencerStateStream.addListener({
-    next: ({ restaurantState, kitchenState, kitchenConfig }) => {
-      handleStateUpdates(restaurantState, kitchenState, kitchenConfig);
-    },
-    error: e => {
-      console.error('Failure in sequencer state stream');
-      console.error(e);
-      process.exit(1);
-    },
-  });
 
   const dispatch = async action => {
     let stripeResponse = await handleStripeAction(action);
@@ -361,17 +207,16 @@ const startVerseServer = async () => {
       return stripeResponse;
     }
     switch (action.type) {
-      case 'KitchenCommand': {
+      case 'KitchenCommand':
+        return await kitchen.command(action);
+      case 'KitchenWriteMachineValues': {
         // low level thing
         if (!kitchen) {
-          throw new Error('no kitchen');
+          throw new Error('No Machine');
         }
         // subsystem (eg 'FillSystem'), pulse (eg ['home']), values (eg: foo: 123)
-        const actionId = getFreshActionId();
-        return await kitchen.dispatchCommand({ ...action, actionId });
+        return await kitchen.writeMachineValues(action);
       }
-      case 'KitchenAction':
-        return await kitchenAction(action);
       case 'PlaceOrder':
         return placeOrder(cloud, action);
       default: {

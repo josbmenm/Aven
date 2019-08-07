@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import Hero from '../components/Hero';
+import React from 'react';
 import BitRow from '../components/BitRow';
 import IntRow from '../components/IntRow';
 import Row from '../components/Row';
@@ -8,21 +7,14 @@ import Button from '../components/Button';
 import RowSection from '../components/RowSection';
 import KeyboardPopover from '../components/KeyboardPopover';
 import { usePopover } from '../views/Popover';
-import { View, ScrollView, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { Easing } from 'react-native-reanimated';
 import DisconnectedPage from '../components/DisconnectedPage';
 import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
-import {
-  getSubsystem,
-  getSubsystemFaults,
-  getSubsystemAlarms,
-} from '../ono-cloud/OnoKitchen';
-import {
-  prettyShadow,
-  genericText,
-  boldPrimaryFontFace,
-} from '../components/Styles';
+import { getSubsystem } from '../ono-cloud/OnoKitchen';
+import { genericText } from '../components/Styles';
 import useFocus from '../navigation-hooks/useFocus';
+import { SystemFaultsAndAlarms } from '../components/FaultsAndAlarms';
 import BlockFormInput from '../components/BlockFormInput';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import TwoPanePage from '../components/TwoPanePage';
@@ -198,46 +190,13 @@ function SetValueButton({ val, system, kitchenCommand, systemId }) {
   return <Button title="set" secondary onPress={onPopover} />;
 }
 
-function FaultsRows({ faults, color }) {
-  return (
-    <RowSection>
-      {faults.map(fault => (
-        <View
-          style={{
-            backgroundColor: color || '#900',
-            ...prettyShadow,
-            marginBottom: 10,
-            padding: 20,
-            borderRadius: 4,
-          }}
-        >
-          <Text
-            style={{
-              ...boldPrimaryFontFace,
-              color: 'white',
-              textAlign: 'center',
-              fontSize: 36,
-            }}
-          >
-            {fault}
-          </Text>
-        </View>
-      ))}
-    </RowSection>
-  );
-}
-
 function ReadsAndFaults({ system }) {
   if (!system) {
     return null;
   }
-  const faults = getSubsystemFaults(system);
-  const alarms = getSubsystemAlarms(system);
   return (
     <React.Fragment>
-      {faults && <FaultsRows faults={faults} />}
-      {alarms && <FaultsRows faults={alarms} color="#997200" />}
-
+      <SystemFaultsAndAlarms system={system} />
       <RowSection>
         {Object.keys(system.reads).map(readName => {
           if (HiddenReads.has(readName)) {
@@ -403,7 +362,7 @@ export default function Subsystem({ ...props }) {
   const cloud = useCloud();
   async function kitchenCommand(subsystemName, pulse, values) {
     return await cloud.dispatch({
-      type: 'KitchenCommand',
+      type: 'KitchenWriteMachineValues',
       subsystem: subsystemName,
       pulse,
       values,

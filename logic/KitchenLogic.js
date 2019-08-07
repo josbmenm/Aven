@@ -1,17 +1,3 @@
-const mapObject = require('fbjs/lib/mapObject');
-
-const COUNT_MAX = 32767;
-// This max is because we have experienced: RangeError [ERR_OUT_OF_RANGE] [ERR_OUT_OF_RANGE]: The value of "value" is out of range. It must be >= -32768 and <= 32767. Received 1005538255
-let tagCounter = Math.floor(Math.random() * COUNT_MAX);
-
-export function getFreshActionId() {
-  tagCounter += 1;
-  if (tagCounter > COUNT_MAX) {
-    tagCounter = 0;
-  }
-  return tagCounter;
-}
-
 export const objFromCount = (size, keyMapper, valMapper) => {
   const o = {};
   for (let i = 0; i < size; i++) {
