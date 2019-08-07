@@ -62,7 +62,7 @@ const SEQUENCER_STEPS = [
       command: 'GetCup',
     }),
     getSuccessRestaurantAction: () => ({
-      type: 'DidGetCup',
+      type: 'DidStartCup',
     }),
     // getFailureRestaurantAction: (intent) => ({
     //   type: 'KitchenFailure',
