@@ -97,7 +97,7 @@ function RestaurantReducerFn(state = {}, action) {
         slotSettings: {
           ...lastSlotSettings,
           [action.slotId]: {
-            ...(lastSlotSettings || {}),
+            ...(lastSlotSettings[action.slotId] || {}),
             ...slotSettings,
           },
         },

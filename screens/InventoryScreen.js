@@ -11,12 +11,14 @@ import {
   titleStyle,
   proseFontFace,
   standardTextColor,
+  prettyShadowSmall,
 } from '../components/Styles';
 import { useCloud } from '../cloud-core/KiteReact';
 import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import MultiSelect from '../components/MultiSelect';
+import { white } from 'ansi-colors';
 
 function useInventoryState() {
   const cloud = useCloud();
@@ -75,7 +77,6 @@ function useInventoryState() {
             system: slot.KitchenSystem.FillSystemID,
           },
         });
-        debugger;
         await dispatch({
           type: 'DidDispense',
           slotId: slot.id,
@@ -83,25 +84,37 @@ function useInventoryState() {
         });
       },
       onPurgeSmall: async () => {
+        const amount = 40;
         await cloud.dispatch({
           type: 'KitchenCommand',
           command: 'DispenseOnly',
           params: {
-            amount: 40,
+            amount,
             slot: slot.Slot,
             system: slot.KitchenSystem.FillSystemID,
           },
         });
+        await dispatch({
+          type: 'DidDispense',
+          slotId: slot.id,
+          amount,
+        });
       },
       onPurgeLarge: async () => {
+        const amount = 120;
         await cloud.dispatch({
           type: 'KitchenCommand',
           command: 'DispenseOnly',
           params: {
-            amount: 120,
+            amount,
             slot: slot.Slot,
             system: slot.KitchenSystem.FillSystemID,
           },
+        });
+        await dispatch({
+          type: 'DidDispense',
+          slotId: slot.id,
+          amount,
         });
       },
       onSetEstimatedRemaining: value => {
@@ -231,7 +244,15 @@ function InventoryRow({ slot, dispatch }) {
     !!slot.KitchenSystem && slot.KitchenSystem.Name === 'Beverage';
   const isCups = !!slot.isCups;
   return (
-    <Row>
+    <View
+      style={{
+        ...prettyShadowSmall,
+        backgroundColor: 'white',
+        padding: 12,
+        marginVertical: 15,
+        borderRadius: 4,
+      }}
+    >
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row' }}>
           {slot.photo && (
@@ -259,49 +280,59 @@ function InventoryRow({ slot, dispatch }) {
           <InfoText>{estimatedRemaining} remaining</InfoText>
         )}
         {percentFull != null && <InfoText>{percentFull}% full</InfoText>}
-        {/* <MultiSelect
-          options={[
-            { name: 'enable', value: true },
-            { name: 'disable', value: false },
-          ]}
-          onValue={enabled => {
-            dispatch({
-              type: 'SetSlotSettings',
-              slotId: slot.id,
-              enabled,
-            });
-          }}
-          value={!!slot.settings.enabled}
-        />
-        <MultiSelect
-          options={[
-            { name: 'mandatory', value: true },
-            { name: 'optional', value: false },
-          ]}
-          onValue={mandatory => {
-            dispatch({
-              type: 'SetSlotSettings',
-              slotId: slot.id,
-              mandatory,
-            });
-          }}
-          value={!!slot.settings.mandatory}
-        /> */}
       </View>
 
+      {!isCups && (
+        <View
+          style={{
+            marginTop: 30,
+            flex: 1,
+          }}
+        >
+          <MultiSelect
+            options={[
+              { name: 'enable', value: true },
+              { name: 'disable', value: false },
+            ]}
+            onValue={enabled => {
+              dispatch({
+                type: 'SetSlotSettings',
+                slotId: slot.id,
+                enabled,
+              });
+            }}
+            value={!!slot.settings.enabled}
+          />
+          <MultiSelect
+            options={[
+              { name: 'mandatory', value: true },
+              { name: 'optional', value: false },
+            ]}
+            onValue={mandatory => {
+              dispatch({
+                type: 'SetSlotSettings',
+                slotId: slot.id,
+                mandatory,
+              });
+            }}
+            value={!!slot.settings.mandatory}
+          />
+        </View>
+      )}
+
       <View style={{ flexDirection: 'row' }}>
-        <Button title="Dispense One" onPress={slot.onDispenseOne} />
+        <Button title="dispense one" onPress={slot.onDispenseOne} />
         {isBeverage && (
-          <Button title="Purge Small" onPress={slot.onPurgeSmall} />
+          <Button title="purge small" onPress={slot.onPurgeSmall} />
         )}
         {isBeverage && (
-          <Button title="Purge Large" onPress={slot.onPurgeLarge} />
+          <Button title="purge large" onPress={slot.onPurgeLarge} />
         )}
         {!slot.disableFilling && (
-          <Button title="Fill.." secondary onPress={onFillPopover} />
+          <Button title="fill.." secondary onPress={onFillPopover} />
         )}
       </View>
-    </Row>
+    </View>
   );
 }
 
