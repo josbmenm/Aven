@@ -269,7 +269,9 @@ function InventoryRow({ slot, dispatch }) {
               tintColor={slot.color}
             />
           )}
-          <Text style={{ ...titleStyle, fontSize: 24 }}>{slot.name}</Text>
+          <Text style={{ ...titleStyle, fontSize: 24 }}>
+            {slot.name} (slot ${slot.Slot})
+          </Text>
         </View>
         {isCups && <Tag color={Tag.positiveColor} title="20+ remaining" />}
         <InfoText>
