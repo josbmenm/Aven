@@ -82,6 +82,28 @@ function useInventoryState() {
           amount: 1,
         });
       },
+      onPurgeSmall: async () => {
+        await cloud.dispatch({
+          type: 'KitchenCommand',
+          command: 'DispenseOnly',
+          params: {
+            amount: 40,
+            slot: slot.Slot,
+            system: slot.KitchenSystem.FillSystemID,
+          },
+        });
+      },
+      onPurgeLarge: async () => {
+        await cloud.dispatch({
+          type: 'KitchenCommand',
+          command: 'DispenseOnly',
+          params: {
+            amount: 120,
+            slot: slot.Slot,
+            system: slot.KitchenSystem.FillSystemID,
+          },
+        });
+      },
       onSetEstimatedRemaining: value => {
         return dispatch({
           type: 'DidFillSlot',
@@ -103,6 +125,7 @@ function useInventoryState() {
           name: 'Cups',
           settings: {},
           disableFilling: true,
+          isCups: true,
           estimatedRemaining:
             restaurantState.cupInventory &&
             restaurantState.cupInventory.estimatedRemaining,
@@ -204,6 +227,9 @@ function InventoryRow({ slot, dispatch }) {
   const percentFull =
     estimatedRemaining &&
     Math.floor((estimatedRemaining / slot.ShotCapacity) * 100);
+  const isBeverage =
+    !!slot.KitchenSystem && slot.KitchenSystem.Name === 'Beverage';
+  const isCups = !!slot.isCups;
   return (
     <Row>
       <View style={{ flex: 1 }}>
@@ -224,7 +250,7 @@ function InventoryRow({ slot, dispatch }) {
           )}
           <Text style={{ ...titleStyle, fontSize: 24 }}>{slot.name}</Text>
         </View>
-        <Tag color={Tag.positiveColor} title="20+ remaining" />
+        {isCups && <Tag color={Tag.positiveColor} title="20+ remaining" />}
         <InfoText>
           Capacity: {slot.ShotCapacity}. Has {slot.ShotsAfterLow} shots after
           low.
@@ -233,7 +259,7 @@ function InventoryRow({ slot, dispatch }) {
           <InfoText>{estimatedRemaining} remaining</InfoText>
         )}
         {percentFull != null && <InfoText>{percentFull}% full</InfoText>}
-        <MultiSelect
+        {/* <MultiSelect
           options={[
             { name: 'enable', value: true },
             { name: 'disable', value: false },
@@ -260,11 +286,17 @@ function InventoryRow({ slot, dispatch }) {
             });
           }}
           value={!!slot.settings.mandatory}
-        />
+        /> */}
       </View>
 
       <View style={{ flexDirection: 'row' }}>
         <Button title="Dispense One" onPress={slot.onDispenseOne} />
+        {isBeverage && (
+          <Button title="Purge Small" onPress={slot.onPurgeSmall} />
+        )}
+        {isBeverage && (
+          <Button title="Purge Large" onPress={slot.onPurgeLarge} />
+        )}
         {!slot.disableFilling && (
           <Button title="Fill.." secondary onPress={onFillPopover} />
         )}
