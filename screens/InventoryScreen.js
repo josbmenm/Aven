@@ -270,7 +270,7 @@ function InventoryRow({ slot, dispatch }) {
             />
           )}
           <Text style={{ ...titleStyle, fontSize: 24 }}>
-            {slot.name} (slot ${slot.Slot})
+            {slot.name} (slot {slot.Slot})
           </Text>
         </View>
         {isCups && <Tag color={Tag.positiveColor} title="20+ remaining" />}
