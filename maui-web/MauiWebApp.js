@@ -8,6 +8,7 @@ import Privacy from './PrivacyPage';
 import Terms from './TermsPage';
 import BookUs from './BookUsPage';
 import Schedule from './SchedulePage';
+import RequestLocation from './RequestLocationPage';
 import Subscribe from './SubscribePage';
 import OnoTheme from '../logic/OnoTheme';
 import { ThemeProvider } from '../dashboard/Theme';
@@ -49,6 +50,10 @@ const App = createFullscreenSwitchNavigator(
     Schedule: {
       path: 'schedule',
       screen: Schedule,
+    },
+    RequestLocation: {
+      path: 'request-location',
+      screen: RequestLocation,
     },
     Subscribe: {
       path: 'subscribe',

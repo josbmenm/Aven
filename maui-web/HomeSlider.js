@@ -34,19 +34,19 @@ function HomeSlider() {
           paddingBottom: [0, 120],
         }}
       >
-        <ScrollView horizontal pagingEnabled style={{paddingBottom: 80}}>
+        <ScrollView horizontal pagingEnabled style={{ paddingBottom: 80 }}>
           <Slide
-            source={require('./public/img/slides_1.jpg')}
+            source={require('./public/img/Blend_Mango_Turmeric.png')}
             width={292}
             height={520}
           />
           <Slide
-            source={require('./public/img/slides_2.jpg')}
+            source={require('./public/img/OnoGuides.jpg')}
             width={700}
             height={520}
           />
           <Slide
-            source={require('./public/img/slides_3.jpg')}
+            source={require('./public/img/Blend_Straw_Dragonfruit.png')}
             width={292}
             height={520}
           />

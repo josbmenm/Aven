@@ -15,36 +15,19 @@ function HomePage() {
   return (
     <GenericPage>
       <HomeHeader />
-      {/* Image Full viewport Section */}
-      {/* <Responsive
-        style={{
-          marginBottom: [40, 100],
-        }}
-      > */}
       <View>
         <Container>
           <Image
-            source={{
-              uri:
-                'https://images.unsplash.com/photo-1494989615690-9900562a5b20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80',
-            }}
+            source={require('./public/img/OnoLanding2.jpg')}
             resizeMode="cover"
             style={{ ...aspectRatio169 }}
           />
         </Container>
       </View>
-      {/* </Responsive> */}
-      {/* <Responsive
-        style={{
-          marginBottom: [40, 160],
-        }}
-      > */}
       <GenericHeroHeader
         title="We believe that good food brings out the best in you."
         bodyText="We believe affordable nutrition should be accessible to everyone. With advanced robotics, thoughtful food sourcing, and nutritious ingredients we’re able to deliver this promise."
-        // responsiveStyle={{}}
       />
-      {/* </Responsive> */}
       <HomeSlider />
       <HowItWorks />
       <HomeSchedule />

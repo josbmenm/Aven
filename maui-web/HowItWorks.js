@@ -42,13 +42,12 @@ function FeatureImage({ source, floatingImageStyle }) {
         {/* FEATURE IMAGE HERE */}
         {/* TODO: aspect ratio image? */}
         <Responsive style={{ height: [288, 372] }}>
-          <View
-            style={[
-              {
-                backgroundColor: theme.colors.lightGrey,
-                width: '100%',
-              },
-            ]}
+          <Image
+            source={source}
+            style={{
+              flex: 1,
+              alignSelf: 'stretch',
+            }}
           />
         </Responsive>
       </View>
@@ -87,6 +86,7 @@ function HowItWorks() {
           <FeatureSection
             responsiveStyles={{
               paddingLeft: [0, 120],
+              paddingBottom: [100, 0],
             }}
             title="Find Us"
             bodyText={
@@ -107,6 +107,7 @@ function HowItWorks() {
                   right: [-80, -119],
                   top: [59, -38],
                 }}
+                source={require('./public/img/FindUs.png')}
               />
             }
           />
@@ -128,6 +129,7 @@ function HowItWorks() {
               inverted
               responsiveStyles={{
                 paddingRight: [0, 120],
+                paddingBottom: [80, 0],
               }}
               title="Order"
               bodyText={
@@ -144,6 +146,7 @@ function HowItWorks() {
                     left: [-174, -68],
                     top: [66, 8],
                   }}
+                  source={require('./public/img/KioskOrder.png')}
                 />
               }
             />
@@ -183,6 +186,7 @@ function HowItWorks() {
                     right: [-185, -48],
                     top: [24, 64],
                   }}
+                  source={require('./public/img/PickUp.png')}
                 />
               }
             />

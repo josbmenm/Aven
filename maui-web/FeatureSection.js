@@ -36,12 +36,13 @@ function FeatureSection({
         style={{
           paddingLeft: [0, inverted ? 0 : 20],
           paddingRight: [0, inverted ? 20 : 0],
-          ...responsiveStyles
+          paddingVertical: [40, 40],
+
+          ...responsiveStyles,
         }}
       >
         <ColumnToRowChild
           style={{
-            paddingVertical: 40,
             justifyContent: 'center',
           }}
         >

@@ -70,7 +70,7 @@ function OurStoryPage() {
             >
               <View style={{ flex: 1 }}>
                 <Image
-                  source={require('./public/img/OnoLanding2.jpg')}
+                  source={require('./public/img/OurStory_Hero.png')}
                   resizeMode="cover"
                   style={{ ...aspectRatio169 }}
                 />
@@ -133,7 +133,7 @@ function OurStoryPage() {
               }
               image={
                 <FeatureImage
-                  source={require('./public/img/ourstory-feature.jpg')}
+                  source={require('./public/img/SandStrawDragonfruit.png')}
                   floatingImageStyle={{
                     top: [-80, -18],
                     right: [400, -72],
@@ -157,7 +157,7 @@ function OurStoryPage() {
               }
               image={
                 <FeatureImage
-                  source={require('./public/img/ourstory-feature.jpg')}
+                  source={require('./public/img/SandStrawDragonfruit.png')}
                   floatingImageStyle={{
                     top: [0, 28],
                     left: [0, -96],
@@ -184,7 +184,7 @@ function OurStoryPage() {
               }
               image={
                 <FeatureImage
-                  source={require('./public/img/ourstory-feature.jpg')}
+                  source={require('./public/img/BlendsBenefits.png')}
                   floatingImageStyle={{
                     top: [0, 28],
                     right: [0, -100],

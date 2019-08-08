@@ -11,6 +11,9 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 
 function TaskRow({ onCancel, taskState }) {
+  if (!taskState) {
+    return;
+  }
   return (
     <View
       style={{

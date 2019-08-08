@@ -4,17 +4,19 @@ import View from '../views/View';
 import GenericPage from './GenericPage';
 import PageFooter from './PageFooter';
 import { useTheme } from '../dashboard/Theme';
-import { aspectRatio43 } from '../components/Styles';
-import { NoFlexToFlex, ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
+import {
+  NoFlexToFlex,
+  ColumnToRow,
+  ColumnToRowChild,
+} from '../dashboard/Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import Schedule from './Schedule';
-import RequestCityForm from './RequestCityForm';
+import RequestCity from './RequestCity';
 import WeekSchedule from './WeekSchedule';
-
-const breakpoints = [1024, 1400];
+import Link from './Link';
 
 function SchedulePage() {
   const theme = useTheme();
@@ -64,18 +66,25 @@ function SchedulePage() {
                       }}
                     >
                       Ono Blends is based in LA, but we’re always on the move.
-                      If you’d like to see us in your city, please{' '}
-                      <BodyText bold>request a new city</BodyText> and we’ll try
-                      to make it happen!
+                      If you’d like to see us in your city, please
+                      <Link
+                        title="request a new city"
+                        routeName="RequestLocation"
+                      />
+                      and we’ll try to make it happen!
                     </BodyText>
                   </View>
                 </Responsive>
               </ColumnToRowChild>
               <ColumnToRowChild>
                 <Image
-                  source={require('./public/img/schedule_hero-image.jpg')}
-                  resizeMode="cover"
-                  style={{ flex: 1, width: '100%', paddingTop: '56.25%' }}
+                  source={require('./public/img/Schedule_Hero.png')}
+                  style={{
+                    flex: 1,
+                    width: '100%',
+                    paddingTop: '70%',
+                    resizeMode: 'cover',
+                  }}
                 />
               </ColumnToRowChild>
             </ColumnToRow>
@@ -141,48 +150,7 @@ function SchedulePage() {
       </View>
       <WeekSchedule />
       <View style={{ paddingVertical: 80 }}>
-        <Container>
-          <ColumnToRow breakpoints={breakpoints}>
-            <Responsive
-              breakpoints={breakpoints}
-              style={{ display: ['none', 'flex'] }}
-            >
-              <ColumnToRowChild style={{ flex: 2, paddingRight: 60 }}>
-                <Image
-                  style={{
-                    ...aspectRatio43,
-                  }}
-                  source={require('./public/img/map.jpg')}
-                />
-              </ColumnToRowChild>
-            </Responsive>
-            <ColumnToRowChild style={{ flex: 3, justifyContent: 'center' }}>
-              <Heading
-                size="small"
-                breakpoints={breakpoints}
-                responsiveStyle={{
-                  textAlign: ['center', 'left'],
-                  alignSelf: ['center', 'flex-start'],
-                }}
-              >
-                Don’t see us in your city?
-              </Heading>
-              <BodyText
-                style={{ maxWidth: 412 }}
-                breakpoints={breakpoints}
-                responsiveStyle={{
-                  textAlign: ['center', 'left'],
-                  alignSelf: ['center', 'flex-start'],
-                  marginBottom: [60, 40],
-                }}
-              >
-                Ono Blends is always looking to grow. Request your city and
-                we’ll try to make it happen.
-              </BodyText>
-              <RequestCityForm breakpoints={breakpoints} />
-            </ColumnToRowChild>
-          </ColumnToRow>
-        </Container>
+        <RequestCity />
       </View>
       <PageFooter />
     </GenericPage>

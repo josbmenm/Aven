@@ -42,6 +42,23 @@ const KitchenCommands = {
       return kitchenState.FillSystem_DispenseAmountReady_READ;
     },
   },
+
+  // PrepareForBlender: {
+  //   subsystem: 'FillPositioner',
+  //   pulse: ['GoToPosition'],
+  //   values:
+  //   checkReady: kitchenState => {
+  //     if (!kitchenState) {
+  //       return false;
+  //     }
+  //     return kitchenState.FillPositioner_GoToPosition_READ && FillSystem_PrgStep_READ === 0;
+  //   },
+  // },
+  // PrepareForNewCup: {
+  //   system: 'FillPositioner',
+  //   pulse: ['GoToPosition'],
+  //   values: {}
+  // },
   DropCup: {
     subsystem: 'FillSystem',
     pulse: ['DropCup'],
