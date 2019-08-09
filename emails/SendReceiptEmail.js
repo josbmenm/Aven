@@ -10,7 +10,7 @@ import Layout from './components/Layout';
 import Header from './components/Header';
 import PromoCodeSection from './components/PromoCodeSection';
 import theme from './theme';
-import formatCurrency from '../utils/formatCurrency'
+import formatCurrency from '../utils/formatCurrency';
 
 function getBodyHTML({ orderDetails, promocode }) {
   const { displayItems, subTotal, total, tax, paymentMethod } = orderDetails;
@@ -147,7 +147,7 @@ function getBodyHTML({ orderDetails, promocode }) {
             <tr>
               <td>
                 <img
-                  src="https://onofood.co/img/visa.png"
+                  src="https://onofood.co/img/CC_Visa.png"
                   width="30px"
                   height="21px"
                 />
@@ -157,7 +157,7 @@ function getBodyHTML({ orderDetails, promocode }) {
                     margin: 0,
                     padding: 0,
                     marginLeft: 24,
-                    display: 'inline-block'
+                    display: 'inline-block',
                   }}
                 >
                   **** {paymentMethod.cardNumber}

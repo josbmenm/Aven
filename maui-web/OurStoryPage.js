@@ -70,7 +70,7 @@ function OurStoryPage() {
             >
               <View style={{ flex: 1 }}>
                 <Image
-                  source={require('./public/img/OurStory_Hero.png')}
+                  source={require('./public/img/OurStory_Hero.jpg')}
                   resizeMode="cover"
                   style={{ ...aspectRatio169 }}
                 />
@@ -157,7 +157,7 @@ function OurStoryPage() {
               }
               image={
                 <FeatureImage
-                  source={require('./public/img/SandStrawDragonfruit.png')}
+                  source={require('./public/img/Robotics.jpg')}
                   floatingImageStyle={{
                     top: [0, 28],
                     left: [0, -96],
