@@ -1,0 +1,7 @@
+{
+  "aven": {
+    "srcDependencies": [
+      "utils"
+    ]
+  }
+}

@@ -16,7 +16,7 @@ import BodyText from '../dashboard/BodyText';
 import Schedule from './Schedule';
 import RequestCity from './RequestCity';
 import WeekSchedule from './WeekSchedule';
-import Link from './Link';
+import Link from '../navigation-web/Link';
 
 function SchedulePage() {
   const theme = useTheme();
@@ -66,12 +66,12 @@ function SchedulePage() {
                       }}
                     >
                       Ono Blends is based in LA, but we’re always on the move.
-                      If you’d like to see us in your city, please
-                      <Link
-                        title="request a new city"
-                        routeName="RequestLocation"
-                      />
-                      and we’ll try to make it happen!
+                      If you’d like to see us in your city, please{' '}
+                      <BodyText bold>
+                        <Link routeName="RequestLocation">
+                          and we’ll try to make it happen!
+                        </Link>
+                      </BodyText>
                     </BodyText>
                   </View>
                 </Responsive>

@@ -1,0 +1,10 @@
+{
+  "name": "@aven-cloud/utils",
+  "version": "1.4.0",
+  "aven": {
+    "moduleDependencies": [
+      "rxjs-compat"
+    ]
+  },
+  "srcChecksum": "36930725f2158fb55d357e97599d7c9b30ed321dc8ba36c037dfcd1e63232c98"
+}

@@ -1,0 +1,12 @@
+{
+  "aven": {
+    "moduleDependencies": [
+      "react-native-masked-text"
+    ],
+    "srcDependencies": [
+      "views",
+      "dashboard",
+      "cloud-core"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "aven": {
+    "srcDependencies": [
+      "cloud-network",
+      "cloud-core"
+    ],
+    "moduleDependencies": [
+      "reconnecting-websocket"
+    ]
+  }
+}

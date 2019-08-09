@@ -100,12 +100,13 @@ function SkynetAdmin(props) {
 }
 SkynetAdmin.router = Admin.router;
 
-const defaultMetaImage = 'https://onofood.co/img/OnoLanding2.jpg';
+const defaultMetaImage = 'https://onofood.co/img/OnoLanding2.png';
 const defaultMetaDescription =
   'Taste the future with Ono Blends. Brought to you by Ono Food Co.';
 
 function getMetaInfo({ screenOptions, navigation, title }) {
   return `
+<meta property="og:site_name" content="Ono Blends"/>
 <meta property="og:title" content="${title}">
 <meta property="og:description" content="${screenOptions.metaDescription ||
     defaultMetaDescription}">

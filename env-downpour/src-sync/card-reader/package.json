@@ -1,0 +1,9 @@
+{
+  "aven": {
+    "moduleDependencies": [
+      "rxjs",
+      "rxjs-compat"
+    ],
+    "srcDependencies": []
+  }
+}

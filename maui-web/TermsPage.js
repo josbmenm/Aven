@@ -3,9 +3,10 @@ import GenericPage from './GenericPage';
 import { SubSection, List, ListItem } from './Tokens';
 import BodyText from '../dashboard/BodyText';
 import GenericHeroHeader from './GenericHeroHeader';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 import Container from '../dashboard/Container';
 import PageFooter from './PageFooter';
+import LegalLinks from './LegalLinks';
 
 function Terms() {
   const theme = useTheme();
@@ -15,6 +16,7 @@ function Terms() {
         title="Terms of Service"
         backgroundColor={theme.colors.lightGrey}
       />
+      <LegalLinks />
       <Container style={{ maxWidth: theme.layouts.small }}>
         <SubSection>
           <BodyText>

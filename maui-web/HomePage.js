@@ -18,7 +18,7 @@ function HomePage() {
       <View>
         <Container>
           <Image
-            source={require('./public/img/OnoLanding2.jpg')}
+            source={require('./public/img/OnoLanding2.png')}
             resizeMode="cover"
             style={{ ...aspectRatio169 }}
           />

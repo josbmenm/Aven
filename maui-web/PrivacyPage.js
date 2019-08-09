@@ -6,6 +6,7 @@ import BodyText from '../dashboard/BodyText';
 import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme';
 import PageFooter from './PageFooter';
+import LegalLinks from './LegalLinks';
 
 function Privacy() {
   const theme = useTheme();
@@ -15,6 +16,7 @@ function Privacy() {
         title="Privacy Policy"
         backgroundColor={theme.colors.lightGrey}
       />
+      <LegalLinks />
       <Container style={{ maxWidth: theme.layouts.small }}>
         <SubSection>
           <BodyText>
