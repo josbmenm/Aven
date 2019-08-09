@@ -41,7 +41,7 @@ function HomeSlider() {
             height={520}
           />
           <Slide
-            source={require('./public/img/OnoGuides.jpg')}
+            source={require('./public/img/OnoGuides.png')}
             width={700}
             height={520}
           />

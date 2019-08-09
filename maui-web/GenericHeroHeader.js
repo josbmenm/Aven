@@ -34,16 +34,20 @@ export default function GenericHeroHeader({
                 maxWidth: 720,
               }}
             >
-              <Heading
-                size="large"
-                style={{ textAlign: 'center' }}
-                responsiveStyle={{
-                  marginBottom: [8, 16],
-                }}
-              >
-                {title}
-              </Heading>
-              <BodyText style={{ textAlign: 'center' }}>{bodyText}</BodyText>
+              {title && (
+                <Heading
+                  size="large"
+                  style={{ textAlign: 'center' }}
+                  responsiveStyle={{
+                    marginBottom: [8, 16],
+                  }}
+                >
+                  {title}
+                </Heading>
+              )}
+              {bodyText && (
+                <BodyText style={{ textAlign: 'center' }}>{bodyText}</BodyText>
+              )}
             </View>
           </Responsive>
         </View>

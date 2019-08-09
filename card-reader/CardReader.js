@@ -106,7 +106,7 @@ async function collectPayment(state, options) {
   }
 
   return StripeTerminal.createPayment(options).then(intent =>
-    capturePayment(intent.stripeId, options.context),
+    capturePayment(intent.stripeId, options.context, !!options.isLive),
   );
 }
 
@@ -186,8 +186,8 @@ export function useCardReader() {
     readerHasCardInserted: cardInserted,
     readerState: state,
     cancelPayment: cancelPayment,
-    collectPayment: collectPayment.bind(null, state),
-    prepareReader: prepareReader.bind(null, state),
+    collectPayment: () => collectPayment(state),
+    prepareReader: () => prepareReader(state),
   };
 }
 
