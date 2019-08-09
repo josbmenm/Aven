@@ -37,7 +37,7 @@ function HomePage() {
 }
 
 HomePage.navigationOptions = {
-  title: null,
+  title: 'The perfect grab-and-go meal for busy professionals',
 };
 
 export default HomePage;
