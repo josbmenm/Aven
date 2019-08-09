@@ -124,7 +124,10 @@ const SEQUENCER_STEPS = [
   },
   {
     // do fill
-    getDescription: ({ amount, system, slot }) => {
+    getDescription: ({ amount, system, slot, pretendDispense }) => {
+      if (pretendDispense) {
+        return `Pretend to Fill Cup ${system}.${slot}x${amount}`;
+      }
       return `Fill Cup ${system}.${slot}x${amount}`;
     },
     getRestaurantStateIntent: restaurantState => {
@@ -136,9 +139,11 @@ const SEQUENCER_STEPS = [
         return null;
       }
       const nextFill = restaurantState.fill.fillsRemaining[0];
-      return {
+      const intent = {
         ...nextFill,
+        pretendDispense: restaurantState.isDryRunning,
       };
+      return intent;
     },
     getKitchenStateReady: (kitchenState, intent) => {
       return !!kitchenState && kitchenState.FillSystem_DropCupReady_READ;
@@ -146,7 +151,7 @@ const SEQUENCER_STEPS = [
     getKitchenCommand: intent => {
       if (intent.pretendDispense) {
         return {
-          command: 'PositionOnly',
+          command: 'PositionToSystemSlot',
           params: intent,
         };
       }

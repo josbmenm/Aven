@@ -192,6 +192,32 @@ const startVerseServer = async () => {
     kitchen = connectMachine({
       commands: KitchenCommands,
       computeSequencerNextSteps: computeNextSteps,
+      computeSideEffects: (prevKitchenState, kitchenState, restaurantState) => {
+        const {
+          System_FreezerTemp_READ,
+          System_BevTemp_READ,
+          System_YogurtZoneTemp_READ,
+          Denester_DispensedSinceLow_READ,
+        } = kitchenState;
+        const foodMonitoring = {
+          isBeverageCold: System_BevTemp_READ < 42,
+          isFreezerCold: System_FreezerTemp_READ < 42,
+          isYogurtCold: System_YogurtZoneTemp_READ < 42,
+          cupsLow: !!Denester_DispensedSinceLow_READ,
+        };
+        const lastMonitoredState = restaurantState.foodMonitoring || {};
+
+        const sideEffects = [];
+        if (
+          Object.entries(foodMonitoring).find(
+            ([monitorKey, monitorValue]) =>
+              monitorValue !== lastMonitoredState[monitorKey],
+          )
+        ) {
+          sideEffects.push({ type: 'SetFoodMonitoring', foodMonitoring });
+        }
+        return sideEffects;
+      },
       logBehavior,
       configStream: kitchenConfigStream,
       restaurantStateStream: cloud.get('RestaurantState').value.stream,

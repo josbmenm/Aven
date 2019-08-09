@@ -77,6 +77,9 @@ const GoogleAnalyticsTag = `
 </script>
 `;
 
+const MetaInfo = `
+`;
+
 let authority = '';
 let useSSL = true;
 if (global.window) {
@@ -96,6 +99,21 @@ function SkynetAdmin(props) {
   );
 }
 SkynetAdmin.router = Admin.router;
+
+const defaultMetaImage = 'https://onofood.co/img/OnoLanding2.jpg';
+const defaultMetaDescription =
+  'Taste the future with Ono Blends. Brought to you by Ono Food Co.';
+
+function getMetaInfo({ screenOptions, navigation, title }) {
+  return `
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${screenOptions.metaDescription ||
+    defaultMetaDescription}">
+<meta property="og:image" content="${screenOptions.metaImage ||
+    defaultMetaImage}">
+  `;
+  // <meta property="og:url" content="https://onoblends.co">
+}
 
 const App = createSwitchNavigator(
   {
@@ -117,11 +135,14 @@ const App = createSwitchNavigator(
           navigation,
           screenProps,
         );
+        const title = screenOptions.title
+          ? `${screenOptions.title} | Ono Blends`
+          : 'Ono Blends';
         return {
           ...screenOptions,
-          title: screenOptions.title
-            ? `${screenOptions.title} | Ono Food Co.`
-            : 'Ono Food Co.',
+          title,
+          customHTMLHeaders: getMetaInfo({ screenOptions, title, navigation }),
+          customHTML: GoogleAnalyticsTag,
           customCSS: screenOptions.customCSS
             ? fontsCSS + '\n' + screenOptions.customCSS
             : fontsCSS,

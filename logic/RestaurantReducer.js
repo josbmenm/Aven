@@ -61,6 +61,8 @@ function RestaurantReducerFn(state = {}, action) {
   const defaultReturn = () => {
     return {
       ...state,
+      // lastAction: action,
+      // lastLastAction: state.lastAction,
       actionCount: (state.actionCount || 0) + 1,
     };
   };
@@ -168,7 +170,7 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'DidDispense': {
-      const sss = {
+      return {
         ...defaultReturn(),
         ingredientInventory: withdrawInventoryIngredient(
           state,
@@ -176,13 +178,24 @@ function RestaurantReducerFn(state = {}, action) {
           action.amount,
         ),
       };
-      console.log('2tf', sss);
-      return sss;
     }
     case 'DidDispenseCup': {
       return {
         ...defaultReturn(),
         cupInventory: withdrawInventoryCup(state),
+      };
+    }
+    case 'SetDryMode': {
+      return {
+        ...defaultReturn(),
+        isDryRunning: action.isDryRunning,
+      };
+    }
+    case 'SetFoodMonitoring': {
+      // diff previous monitors in state.foodMonitoring, create history with time
+      return {
+        ...defaultReturn(),
+        foodMonitoring: action.foodMonitoring,
       };
     }
     case 'DidPretendFill': {
@@ -264,15 +277,6 @@ function RestaurantReducerFn(state = {}, action) {
             ...(ingredientInventory[action.slotId] || {}),
             estimatedRemaining: action.estimatedRemaining,
           },
-        },
-      };
-    }
-    case 'DidFillCups': {
-      return {
-        ...defaultReturn(),
-        cupInventory: {
-          ...(state.cupInventory || {}),
-          estimatedRemaining: action.estimatedRemaining,
         },
       };
     }

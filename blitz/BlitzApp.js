@@ -57,7 +57,7 @@ let SKYNET_IS_DEV = process.env.NODE_ENV !== 'production';
 
 // uncomment to test prod mode:
 // VERSE_IS_DEV = false;
-// SKYNET_IS_DEV = false;
+SKYNET_IS_DEV = false;
 
 const VERSE_HOST_CONFIG = VERSE_IS_DEV
   ? {

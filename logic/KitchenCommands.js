@@ -147,6 +147,20 @@ const KitchenCommands = {
       return kitchenState.FillSystem_PositionAndDispenseAmountReady_READ;
     },
   },
+  PositionToSystemSlot: {
+    subsystem: 'FillSystem',
+    pulse: ['PositionOnly'],
+    valueParamNames: {
+      DispenseSystem: 'system',
+      SlotToDispense: 'slot',
+    },
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.FillSystem_PositionOnlyReady_READ;
+    },
+  },
   PassToBlender: {
     subsystem: 'FillSystem',
     pulse: ['DeliverToBlender'],

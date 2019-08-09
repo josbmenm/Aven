@@ -185,6 +185,19 @@ function ModeView({ restaurantState, dispatch }) {
           });
         }}
       />
+      <Button
+        title={
+          restaurantState.isDryRunning
+            ? 'disable DRY RUN mode'
+            : 'enable DRY RUN mode'
+        }
+        onPress={() => {
+          dispatch({
+            type: 'SetDryMode',
+            isDryRunning: !restaurantState.isDryRunning,
+          });
+        }}
+      />
       {restaurantState.manualMode && (
         <ManualControl restaurantState={restaurantState} dispatch={dispatch} />
       )}

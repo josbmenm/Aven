@@ -111,6 +111,7 @@ export function connectMachine({
   onDispatcherAction,
   plcIP,
   logBehavior,
+  computeSideEffects,
 }) {
   let readyPLC = null;
   let connectingPLC = null;
@@ -208,27 +209,38 @@ export function connectMachine({
             resolve(results);
           })
           .catch(err => {
-            console.error(
-              'Failed to read tags. Retrying with debug read.',
-              err,
-            );
+            console.error('PLC read Hiccup. Retrying in 250ms...', err);
+            setTimeout(() => {
+              PLC.readTagGroup(schema.allTagsGroup)
+                .then(results => {
+                  clearTimeout(timer);
+                  resolve(results);
+                })
+                .catch(err => {
+                  console.error(
+                    'PLC reads failing! Trying individual tags...',
+                    err,
+                  );
+
+                  slowDebugRead()
+                    .then(failedTags => {
+                      console.error(
+                        `On slow read, ${
+                          failedTags.length
+                        } tags failed to read`,
+                      );
+                      if (failedTags.length) {
+                        console.error('Failed tags: ' + failedTags.join(', '));
+                      }
+                    })
+                    .catch(e => {
+                      console.error('Error on the DEBUG tag read!');
+                      console.error('==SLOW DEBUG ERROR:', e);
+                      console.error('==FAST READ ERROR', err);
+                    });
+                });
+            }, 250);
             // failed to read all the tags.. read each individually to see which fail, and report the result
-            slowDebugRead()
-              .then(failedTags => {
-                console.error(
-                  `Failing to read tags quickly! On slow read, ${
-                    failedTags.length
-                  } tags failed to read`,
-                );
-                if (failedTags.length) {
-                  console.error('Failed tags: ' + failedTags.join(', '));
-                }
-              })
-              .catch(e => {
-                console.error('Error on the DEBUG tag read!');
-                console.error('==SLOW DEBUG ERROR:', e);
-                console.error('==FAST READ ERROR', err);
-              });
 
             clearTimeout(timer);
             reject(err);
@@ -460,8 +472,36 @@ export function connectMachine({
     kitchenState,
     kitchenConfig,
   ) {
+    let sideEffectActions = null;
     if (restaurantState !== undefined) _restaurantState = restaurantState;
-    if (kitchenState !== undefined) _kitchenState = kitchenState;
+    if (kitchenState !== undefined) {
+      if (_kitchenState !== kitchenState) {
+        const lastKitchenState = _kitchenState;
+        _kitchenState = kitchenState;
+        sideEffectActions = computeSideEffects(
+          lastKitchenState,
+          kitchenState,
+          restaurantState,
+        );
+        if (sideEffectActions && sideEffectActions.length) {
+          console.log('Applying side effect actions: ', sideEffectActions);
+
+          let promise = Promise.resolve();
+          sideEffectActions.forEach(action => {
+            promise = promise.then(async () => {
+              await onDispatcherAction(action);
+            });
+          });
+          promise.catch(error => {
+            console.error(
+              'Error performing side effect(s)!',
+              sideEffectActions,
+            );
+            console.error(error);
+          });
+        }
+      }
+    }
     if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
     if (!restaurantState) return verboseLog('Missing RestaurantState');
     if (!kitchenState) return verboseLog('Missing KitchenState');

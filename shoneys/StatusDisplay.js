@@ -152,27 +152,45 @@ function IngredientFillingCup({ fillLevel, currentFill }) {
   const [toDotValue] = React.useState(new Animated.Value(0));
   const [moveToCup] = React.useState(new Animated.Value(0));
   const [moveDownInCup] = React.useState(new Animated.Value(0));
-  React.useEffect(() => {
-    setTimeout(() => {
-      Animated.timing(toDotValue, {
-        toValue: 1,
-        duration: 700,
-        easing: Easing.inOut(Easing.poly(5)),
-      }).start(() => {
-        Animated.timing(moveToCup, {
+  const [dotOpacity] = React.useState(new Animated.Value(0));
+  toDotValue.interpolate({
+    inputRange: [0.7, 1],
+    outputRange: [0, 1],
+  }),
+    React.useEffect(() => {
+      setTimeout(() => {
+        setTimeout(() => {
+          Animated.timing(dotOpacity, {
+            toValue: 1,
+            duration: 190,
+            easing: Easing.inOut(Easing.poly(5)),
+          }).start();
+        }, 500);
+        Animated.timing(toDotValue, {
           toValue: 1,
-          duration: 1500,
+          duration: 700,
           easing: Easing.inOut(Easing.poly(5)),
         }).start(() => {
-          Animated.timing(moveDownInCup, {
+          Animated.timing(moveToCup, {
             toValue: 1,
-            duration: 700,
+            duration: 1500,
             easing: Easing.inOut(Easing.poly(5)),
-          }).start(() => {});
+          }).start(() => {
+            Animated.timing(moveDownInCup, {
+              toValue: 1,
+              duration: 700,
+              easing: Easing.inOut(Easing.poly(5)),
+            }).start(() => {
+              Animated.timing(dotOpacity, {
+                toValue: 0,
+                duration: 200,
+                easing: Easing.inOut(Easing.poly(5)),
+              }).start();
+            });
+          });
         });
-      });
-    }, 2000);
-  }, []);
+      }, 2000);
+    }, []);
   return (
     <View style={{ flexDirection: 'row' }}>
       {currentFill && (
@@ -200,10 +218,7 @@ function IngredientFillingCup({ fillLevel, currentFill }) {
               borderRadius: 40,
               backgroundColor: currentFill.ingredientColor,
               opacity: 0.5,
-              opacity: toDotValue.interpolate({
-                inputRange: [0.7, 1],
-                outputRange: [0, 1],
-              }),
+              opacity: dotOpacity,
               transform: [
                 {
                   translateY: moveDownInCup.interpolate({
@@ -267,13 +282,12 @@ function TaskRow({ task, status, fill, queuedIndex }) {
   if (status === 'filling' && fill) {
     let fillLevel = 0;
     let currentFill = null;
-    if (fill.fillsCompleted && fill.fillsRemaining) {
-      const remaining = fill.fillsRemaining.length;
-      const completed = fill.fillsCompleted.length;
-      fillLevel = completed / (completed + remaining + 1);
-      if (fill.fillsRemaining[0]) {
-        currentFill = fill.fillsRemaining[0];
-      }
+    const remainingCount = fill.fillsRemaining ? fill.fillsRemaining.length : 0;
+    const completedCount = fill.fillsCompleted ? fill.fillsCompleted.length : 0;
+    fillLevel = completedCount / (completedCount + remainingCount + 1);
+    fillLevel += 0.2;
+    if (fill.fillsRemaining && fill.fillsRemaining[0]) {
+      currentFill = fill.fillsRemaining[0];
     }
     right = (
       <IngredientFillingCup currentFill={currentFill} fillLevel={fillLevel} />

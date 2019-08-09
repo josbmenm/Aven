@@ -153,12 +153,6 @@ function useInventoryState() {
               type: 'DidDispenseCup',
             });
           },
-          onSetEstimatedRemaining: value => {
-            return dispatch({
-              type: 'DidFillCups',
-              estimatedRemaining: value,
-            });
-          },
         },
       ],
     },
