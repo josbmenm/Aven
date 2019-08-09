@@ -54,7 +54,7 @@ function BlendDisplay({ menuItem, companyConfig }) {
       <Text>{`
 Ingredients: ${computed.ingredientsVolume}ml
 Enhancements: ${computed.enhancementsVolume}ml
-Liquid: ${computed.liquidVolume}ml
+Beverage Base: ${computed.liquidVolume}ml
 ===
 Final Volume: ${computed.finalVolume}ml
 `}</Text>
