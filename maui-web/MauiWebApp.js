@@ -10,6 +10,7 @@ import BookUs from './BookUsPage';
 import Schedule from './SchedulePage';
 import RequestLocation from './RequestLocationPage';
 import Subscribe from './SubscribePage';
+import SubscribeConfirm from './SubscribeConfirmPage';
 import OnoTheme from '../logic/OnoTheme';
 import { ThemeProvider } from '../dashboard/Theme';
 
@@ -58,6 +59,15 @@ const App = createFullscreenSwitchNavigator(
     Subscribe: {
       path: 'subscribe',
       screen: Subscribe,
+    },
+    SubscribeConfirm: {
+      // todo, move mailchimp over to this one
+      path: 'subscription-confirmed',
+      screen: SubscribeConfirm,
+    },
+    SubscribeConfirmLegacy: {
+      path: 'confirmed',
+      screen: SubscribeConfirm,
     },
   },
   {

@@ -1,22 +1,13 @@
 import React from 'react';
-import { Image } from 'react-native';
-import { useTheme } from '../dashboard/Theme';
 import GenericPage from './GenericPage';
 import PageFooter from './PageFooter';
-import Container from '../dashboard/Container';
 import BookUsWizard from './BookUsWizard';
+import GenericImageHeader from './GenericImageHeader';
 
 function BookUsPage() {
-  const theme = useTheme();
   return (
     <GenericPage>
-      <Container style={{ position: 'relative' }}>
-        <Image
-          source={require('./public/img/book-with-us.png')}
-          style={{ flex: 1, paddingBottom: '20%', alignSelf: 'stretch' }}
-        />
-      </Container>
-
+      <GenericImageHeader />
       <BookUsWizard />
       <PageFooter />
     </GenericPage>

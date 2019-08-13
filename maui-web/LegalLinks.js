@@ -1,18 +1,59 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import Link from '../navigation-web/Link';
+import { titleStyle, monsterra, monsterra80 } from '../components/Styles';
 
-export default function LegalLinks() {
+function LinkBar({ children }) {
   return (
     <View
       style={{
-        borderWidth: 1,
+        marginVertical: 16,
         flexDirection: 'row',
+        justifyContent: 'center',
       }}
     >
-      <Link routeName="Terms">Terms of Service</Link>
-      <Link routeName="Privacy">Privacy Policy</Link>
+      <View
+        style={{
+          borderWidth: 2,
+          borderColor: monsterra80,
+          borderRadius: 4,
+          flexDirection: 'row',
+        }}
+      >
+        {children}
+      </View>
     </View>
+  );
+}
+
+function LinkBarLink({ routeName, label }) {
+  const { state } = useNavigation();
+  const linkStyle = { ...titleStyle };
+  const isActive = state.routeName === routeName;
+  if (isActive) {
+    linkStyle.color = 'white';
+  }
+  return (
+    <Link routeName={routeName}>
+      <View
+        style={{
+          backgroundColor: isActive ? monsterra80 : null,
+          padding: 8,
+          paddingHorizontal: 20,
+        }}
+      >
+        <Text style={linkStyle}>{label}</Text>
+      </View>
+    </Link>
+  );
+}
+
+export default function LegalLinks() {
+  return (
+    <LinkBar>
+      <LinkBarLink routeName="Terms" label="Terms of Service" />
+      <LinkBarLink routeName="Privacy" label="Privacy Policy" />
+    </LinkBar>
   );
 }

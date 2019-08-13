@@ -35,8 +35,13 @@ function HomeSlider() {
         }}
       >
         <ScrollView horizontal pagingEnabled style={{ paddingBottom: 80 }}>
-          <Slide
+          {/* <Slide
             source={require('./public/img/Blend_Mango_Turmeric.png')}
+            width={292}
+            height={520}
+          /> */}
+          <Slide
+            source={require('./public/img/Papaya-Pineapple.jpg')}
             width={292}
             height={520}
           />
@@ -46,10 +51,32 @@ function HomeSlider() {
             height={520}
           />
           <Slide
-            source={require('./public/img/Blend_Straw_Dragonfruit.png')}
+            source={require('./public/img/Mint-Chip-Protein.jpg')}
             width={292}
             height={520}
           />
+          <Slide
+            source={require('./public/img/Strawberry-Dragon-Fruit.jpg')}
+            width={292}
+            height={520}
+          />
+
+          <Slide
+            source={require('./public/img/RestaurantBeachClose.jpg')}
+            width={700}
+            height={520}
+          />
+          <Slide
+            source={require('./public/img/Mango-Turmeric.jpg')}
+            width={292}
+            height={520}
+          />
+
+          {/* <Slide
+            source={require('./public/img/Blend_Straw_Dragonfruit.png')}
+            width={292}
+            height={520}
+          /> */}
         </ScrollView>
       </Container>
     </View>

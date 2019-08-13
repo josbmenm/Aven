@@ -439,7 +439,7 @@ function BlendPage() {
               lineHeight: [32, 44],
             }}
           >
-            our blends
+            all our blends
           </Heading>
           <BlendsCarousel style={{ alignSelf: 'flex-start' }} />
         </Container>

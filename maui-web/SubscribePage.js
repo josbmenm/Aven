@@ -1,20 +1,33 @@
 import React from 'react';
 import { View } from 'react-native';
+import Heading from '../dashboard/Heading';
+import BodyText from '../dashboard/BodyText';
 import GenericPage from './GenericPage';
-import GenericHeroHeader from './GenericHeroHeader'
+import GenericImageHeader from './GenericImageHeader';
+import GenericHeroHeader from './GenericHeroHeader';
+import SubscriptionForm from './SubscriptionForm';
 import PageFooter from './PageFooter';
-import { useTheme } from '../dashboard/Theme'
+import { useTheme } from '../dashboard/Theme';
 
 function SubscribePage() {
   const theme = useTheme();
   return (
     <GenericPage>
       <View style={{ flex: 1, paddingBottom: 40 }}>
-        <GenericHeroHeader
-          backgroundColor={theme.colors.lightGrey}
-          title="Subscribe"
-          bodyText="WIP"
-        />
+        <GenericImageHeader />
+        <Heading
+          size="large"
+          style={{ textAlign: 'center', marginVertical: 16, marginTop: 32 }}
+        >
+          Subscribe to updates
+        </Heading>
+        <BodyText style={{ textAlign: 'center', marginVertical: 16 }}>
+          Looking for Ono Blends in LA? Sign up for our occasional email
+          announcements.
+        </BodyText>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <SubscriptionForm />
+        </View>
       </View>
       <PageFooter />
     </GenericPage>
