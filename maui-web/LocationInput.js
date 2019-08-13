@@ -23,17 +23,15 @@ export function LocationInputWithRef(
   const theme = useTheme();
   const [inputText, setInputText] = React.useState(inputValue);
   const [results, setResults] = React.useState([]);
-  console.log("TCL: results", results)
+  console.log('TCL: results', results);
   // const type = 'city'; // or, address
   const ref = React.useRef({});
   const refs = React.useRef(results.map(i => React.createRef()));
-  console.log("TCL: refs", refs)
-
+  console.log('TCL: refs', refs);
 
   React.useEffect(() => {
-    refs.current = results.map(i => React.createRef())
-  }, [results])
-
+    refs.current = results.map(i => React.createRef());
+  }, [results]);
 
   function queryResults() {
     clearTimeout(ref.current.fast);
@@ -114,13 +112,13 @@ export function LocationInputWithRef(
             >
               {results.map((result, index) => {
                 const ref = refs.current[index];
-                console.log("TCL: ref", ref)
+                console.log('TCL: ref', ref);
                 return (
                   <TouchableOpacity
                     key={result.id}
                     onPress={() => {
                       onSelectedResult(result);
-                      setResults(null);
+                      setResults([]);
                       setInputText(result.place_name);
                     }}
                     accesible="true"

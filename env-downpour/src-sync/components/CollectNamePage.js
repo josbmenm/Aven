@@ -42,12 +42,13 @@ export default function CollectNamePage({ onSubmit, backBehavior, ...props }) {
   });
   return (
     <ShortBlockFormPage backBehavior={backBehavior} {...props}>
-      <BlockForm>
+      <BlockForm style={{flex: 1, justifyContent: 'center'}}>
         <BlockFormMessage message="You're almost ready to go..." />
         <BlockFormTitle title="what's the name for the order?" />
         <BlockFormRow>{inputs}</BlockFormRow>
         <BlockFormRow>
           <BlockFormButton
+            size="large"
             title="pay now"
             disabled={firstName === '' || lastName === ''}
             onPress={handleSubmit}

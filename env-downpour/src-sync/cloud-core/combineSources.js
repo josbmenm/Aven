@@ -353,18 +353,6 @@ export default function combineSources({
     ]);
   }
 
-  async function CollectGarbage() {
-    async function dispatchCollectGarbage(source) {
-      return await source.dispatch({
-        type: 'CollectGarbage',
-      });
-    }
-    await Promise.all([
-      dispatchCollectGarbage(fastSource),
-      dispatchCollectGarbage(slowSource),
-    ]);
-  }
-
   async function MoveDoc({ domain, from, to }) {
     const isFromFastStorage = isFastOnly(domain, from);
     const isToFastStorage = isFastOnly(domain, to);
@@ -545,7 +533,6 @@ export default function combineSources({
         ListDomains,
         ListDocs,
         DestroyDoc,
-        CollectGarbage,
         MoveDoc,
       },
       combinedDispatch,

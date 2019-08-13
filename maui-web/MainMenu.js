@@ -121,18 +121,12 @@ export function DesktopMenu() {
               flexDirection: 'row',
             }}
           >
-            <MenuLink
-              routeName="Menu"
-              title="menu"
-            />
-            <MenuLink
+            <MenuLink routeName="Menu" title="menu" />
+            {/* <MenuLink
               routeName="Schedule"
               title="schedule"
-            />
-            <MenuLink
-              routeName="OurStory"
-              title="our story"
-            />
+            /> */}
+            <MenuLink routeName="OurStory" title="our story" />
             <ButtonLink
               type="outline"
               title="book with us"
@@ -205,7 +199,7 @@ export function MobileMenu() {
               }}
             >
               <MobileMenuLink routeName="Menu" title="menu" />
-              <MobileMenuLink routeName="Schedule" title="schedule" />
+              {/* <MobileMenuLink routeName="Schedule" title="schedule" /> */}
               <MobileMenuLink routeName="OurStory" title="our story" />
               <MobileMenuLink routeName="BookUs" title="book with us" />
             </View>
@@ -220,8 +214,8 @@ export function MobileMenu() {
               <Link
                 noActive
                 size="small"
-                url="#press-kit"
-                title="press kit"
+                url="#media-kit"
+                title="media kit"
                 titleStyle={{ textAlign: 'left' }}
               />
               <Text>

@@ -111,10 +111,13 @@ function OurStoryPage() {
       >
         <View>
           <Container
-            style={{
-              borderBottomColor: theme.colors.border,
-              borderBottomWidth: StyleSheet.hairlineWidth,
-            }}
+            style={
+              {
+                //  todo: re-enable this when the schedule section is enabled
+                // borderBottomColor: theme.colors.border,
+                // borderBottomWidth: StyleSheet.hairlineWidth,
+              }
+            }
           >
             <FeatureSection
               title="Real food. Real good. Real fast."
@@ -196,7 +199,7 @@ function OurStoryPage() {
           </Container>
         </View>
       </Responsive>
-      <TheTeam />
+      {/* <TheTeam /> */}
       <PageFooter />
     </GenericPage>
   );

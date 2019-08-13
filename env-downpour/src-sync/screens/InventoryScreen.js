@@ -3,47 +3,30 @@ import RootAuthenticationSection from './RootAuthenticationSection';
 import RowSection from '../components/RowSection';
 import { Text, View } from 'react-native';
 import SimplePage from '../components/SimplePage';
+import Tag from '../components/Tag';
 import Button from '../components/Button';
 import Row from '../components/Row';
-import Spinner from '../components/Spinner';
-import { Easing } from 'react-native-reanimated';
-import BitRow from '../components/BitRow';
+import useKeyboardPopover from '../components/useKeyboardPopover';
 import {
-  rowStyle,
-  rowTitleStyle,
   titleStyle,
   proseFontFace,
-  monsterraLight,
   standardTextColor,
+  prettyShadowSmall,
 } from '../components/Styles';
-import {
-  useCloudReducer,
-  useCloud,
-  useCloudValue,
-} from '../cloud-core/KiteReact';
-import DevicesReducer from '../logic/DevicesReducer';
-import BlockForm from '../components/BlockForm';
-import Title from '../components/Title';
-import BlockFormButton from '../components/BlockFormButton';
-import BlockFormMessage from '../components/BlockFormMessage';
-import BlockFormInput from '../components/BlockFormInput';
-import KeyboardPopover from '../components/KeyboardPopover';
+import { useCloud } from '../cloud-core/KiteReact';
 import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
-import useAsyncError from '../react-utils/useAsyncError';
-import RestaurantReducer from '../logic/RestaurantReducer';
-
-import { usePopover } from '../views/Popover';
+import { useRestaurantState } from '../ono-cloud/Kitchen';
+import MultiSelect from '../components/MultiSelect';
+import { white } from 'ansi-colors';
 
 function useInventoryState() {
+  const cloud = useCloud();
   const config = useCompanyConfig();
-  const [restaurantState, dispatch] = useCloudReducer(
-    'RestaurantActions',
-    RestaurantReducer,
-  );
+  const [restaurantState, dispatch] = useRestaurantState();
   const tables = config && config.baseTables;
   if (!tables || !restaurantState) {
-    return null;
+    return [null, dispatch];
   }
   const slotsWithIngredients = Object.values(tables.KitchenSlots)
     .sort((a, b) => {
@@ -52,20 +35,22 @@ function useInventoryState() {
     .map(slot => {
       const Ingredient =
         tables.Ingredients[slot.Ingredient && slot.Ingredient[0]];
+      const KitchenSystem =
+        tables.KitchenSystems[slot.KitchenSystem && slot.KitchenSystem[0]];
       return {
         ...slot,
         Ingredient,
+        KitchenSystem,
       };
     });
   const systemSections = {};
   slotsWithIngredients.forEach(slot => {
-    const systemId = slot.KitchenSystem[0];
+    const systemId = slot.KitchenSystem.id;
     if (!systemSections[systemId]) {
-      const system = tables.KitchenSystems[systemId];
       systemSections[systemId] = {
-        id: system.id,
-        name: system.Name,
-        icon: system.Icon,
+        id: slot.KitchenSystem.id,
+        name: slot.KitchenSystem.Name,
+        icon: slot.KitchenSystem.Icon,
         slots: [],
       };
     }
@@ -74,10 +59,64 @@ function useInventoryState() {
       restaurantState.ingredientInventory[slot.id];
     systemSections[systemId].slots.push({
       ...slot,
+      settings:
+        (restaurantState.slotSettings &&
+          restaurantState.slotSettings[slot.id]) ||
+        {},
       estimatedRemaining: invState && invState.estimatedRemaining,
       name: slot.Ingredient.Name,
       photo: slot.Ingredient.Icon,
       color: slot.Ingredient.Color,
+      onDispenseOne: async () => {
+        await cloud.dispatch({
+          type: 'KitchenCommand',
+          command: 'DispenseOnly',
+          params: {
+            amount: 1,
+            slot: slot.Slot,
+            system: slot.KitchenSystem.FillSystemID,
+          },
+        });
+        await dispatch({
+          type: 'DidDispense',
+          slotId: slot.id,
+          amount: 1,
+        });
+      },
+      onPurgeSmall: async () => {
+        const amount = 40;
+        await cloud.dispatch({
+          type: 'KitchenCommand',
+          command: 'DispenseOnly',
+          params: {
+            amount,
+            slot: slot.Slot,
+            system: slot.KitchenSystem.FillSystemID,
+          },
+        });
+        await dispatch({
+          type: 'DidDispense',
+          slotId: slot.id,
+          amount,
+        });
+      },
+      onPurgeLarge: async () => {
+        const amount = 120;
+        await cloud.dispatch({
+          type: 'KitchenCommand',
+          command: 'DispenseOnly',
+          params: {
+            amount,
+            slot: slot.Slot,
+            system: slot.KitchenSystem.FillSystemID,
+          },
+        });
+        await dispatch({
+          type: 'DidDispense',
+          slotId: slot.id,
+          amount,
+        });
+      },
       onSetEstimatedRemaining: value => {
         return dispatch({
           type: 'DidFillSlot',
@@ -97,15 +136,21 @@ function useInventoryState() {
         {
           id: 'cups',
           name: 'Cups',
+          settings: {},
+          disableFilling: true,
+          isCups: true,
           estimatedRemaining:
             restaurantState.cupInventory &&
             restaurantState.cupInventory.estimatedRemaining,
-          ShotCapacity: 150,
-          ShotsAfterLow: 15,
-          onSetEstimatedRemaining: value => {
-            return dispatch({
-              type: 'DidFillCups',
-              estimatedRemaining: value,
+          ShotCapacity: 50,
+          ShotsAfterLow: 18,
+          onDispenseOne: async () => {
+            await cloud.dispatch({
+              type: 'KitchenCommand',
+              command: 'DispenseCup',
+            });
+            await dispatch({
+              type: 'DidDispenseCup',
             });
           },
         },
@@ -113,7 +158,7 @@ function useInventoryState() {
     },
     ...Object.values(systemSections),
   ];
-  return { inventorySections };
+  return [{ inventorySections }, dispatch];
 }
 
 function PopoverTitle({ children }) {
@@ -173,16 +218,6 @@ function SetFillForm({ slot, onClose }) {
   );
 }
 
-function SlotRunButtons({ slot, onClose }) {
-  return (
-    <View>
-      <PopoverTitle>Run {slot.name}</PopoverTitle>
-      <Button title="Dispense One" onPress={() => {}} />
-      <Button title="Dispense Until Empty" onPress={() => {}} />
-    </View>
-  );
-}
-
 function InfoText({ children }) {
   return (
     <Text style={{ ...proseFontFace, color: standardTextColor }}>
@@ -190,34 +225,28 @@ function InfoText({ children }) {
     </Text>
   );
 }
-function InventoryRow({ slot }) {
-  const { onPopover: onFillPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
-      return (
-        <KeyboardPopover onClose={onClose}>
-          <SetFillForm onClose={onClose} slot={slot} />
-        </KeyboardPopover>
-      );
-    },
-    { easing: Easing.linear, duration: 1 },
-  );
+function InventoryRow({ slot, dispatch }) {
+  const { onPopover: onFillPopover } = useKeyboardPopover(({ onClose }) => (
+    <SetFillForm onClose={onClose} slot={slot} />
+  ));
 
-  const { onPopover: onRunPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
-      return (
-        <KeyboardPopover onClose={onClose}>
-          <SlotRunButtons onClose={onClose} slot={slot} />
-        </KeyboardPopover>
-      );
-    },
-    { easing: Easing.linear, duration: 1 },
-  );
   const estimatedRemaining = slot.estimatedRemaining;
   const percentFull =
     estimatedRemaining &&
     Math.floor((estimatedRemaining / slot.ShotCapacity) * 100);
+  const isBeverage =
+    !!slot.KitchenSystem && slot.KitchenSystem.Name === 'Beverage';
+  const isCups = !!slot.isCups;
   return (
-    <Row>
+    <View
+      style={{
+        ...prettyShadowSmall,
+        backgroundColor: 'white',
+        padding: 12,
+        marginVertical: 15,
+        borderRadius: 4,
+      }}
+    >
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row' }}>
           {slot.photo && (
@@ -234,28 +263,77 @@ function InventoryRow({ slot }) {
               tintColor={slot.color}
             />
           )}
-          <Text style={{ ...titleStyle, fontSize: 24 }}>{slot.name}</Text>
+          <Text style={{ ...titleStyle, fontSize: 24 }}>
+            {slot.name} (slot {slot.Slot})
+          </Text>
         </View>
+        {isCups && <Tag color={Tag.positiveColor} title="20+ remaining" />}
         <InfoText>
           Capacity: {slot.ShotCapacity}. Has {slot.ShotsAfterLow} shots after
           low.
         </InfoText>
-        {estimatedRemaining && (
+        {estimatedRemaining != null && (
           <InfoText>{estimatedRemaining} remaining</InfoText>
         )}
-        {percentFull && <InfoText>{percentFull}% full</InfoText>}
+        {percentFull != null && <InfoText>{percentFull}% full</InfoText>}
       </View>
 
+      {!isCups && (
+        <View
+          style={{
+            marginTop: 30,
+            flex: 1,
+          }}
+        >
+          <MultiSelect
+            options={[
+              { name: 'enable', value: true },
+              { name: 'disable', value: false },
+            ]}
+            onValue={enabled => {
+              dispatch({
+                type: 'SetSlotSettings',
+                slotId: slot.id,
+                enabled,
+              });
+            }}
+            value={!!slot.settings.enabled}
+          />
+          <MultiSelect
+            options={[
+              { name: 'mandatory', value: true },
+              { name: 'optional', value: false },
+            ]}
+            onValue={mandatory => {
+              dispatch({
+                type: 'SetSlotSettings',
+                slotId: slot.id,
+                mandatory,
+              });
+            }}
+            value={!!slot.settings.mandatory}
+          />
+        </View>
+      )}
+
       <View style={{ flexDirection: 'row' }}>
-        <Button title="Run.." onPress={onRunPopover} />
-        <Button title="Fill.." secondary onPress={onFillPopover} />
+        <Button title="dispense one" onPress={slot.onDispenseOne} />
+        {isBeverage && (
+          <Button title="purge small" onPress={slot.onPurgeSmall} />
+        )}
+        {isBeverage && (
+          <Button title="purge large" onPress={slot.onPurgeLarge} />
+        )}
+        {!slot.disableFilling && (
+          <Button title="fill.." secondary onPress={onFillPopover} />
+        )}
       </View>
-    </Row>
+    </View>
   );
 }
 
 function Inventory() {
-  const inventoryState = useInventoryState();
+  const [inventoryState, dispatch] = useInventoryState();
   if (!inventoryState) {
     return null;
   }
@@ -265,7 +343,7 @@ function Inventory() {
     return (
       <RowSection title={`${section.icon} ${section.name}`} key={section.id}>
         {section.slots.map(slot => {
-          return <InventoryRow slot={slot} key={slot.id} />;
+          return <InventoryRow slot={slot} key={slot.id} dispatch={dispatch} />;
         })}
       </RowSection>
     );
@@ -274,7 +352,7 @@ function Inventory() {
 
 export default function InventoryScreen(props) {
   return (
-    <SimplePage title="Inventory" icon="🍍" {...props}>
+    <SimplePage hideBackButton {...props}>
       <RootAuthenticationSection>
         <Inventory />
       </RootAuthenticationSection>

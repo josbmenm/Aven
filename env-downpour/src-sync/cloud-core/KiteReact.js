@@ -1,15 +1,24 @@
 import React from 'react';
-import xs from 'xstream';
 import { streamGet } from './StreamValue';
+import { streamOf, combineStreams } from './createMemoryStream';
+import { createReducerStream, valueMap } from './Kite';
 
 export const CloudContext = React.createContext(null);
 
-export function useCloud() {
+export function useCloudClient() {
   return React.useContext(CloudContext);
 }
 
+export function useCloud() {
+  const cloudClient = useCloudClient();
+  if (!cloudClient) {
+    throw new Error('No Cloud Client found in context!');
+  }
+  return cloudClient.getCloud ? cloudClient.getCloud() : cloudClient; // hacky temp.. should always .getCloud on a real client..
+}
+
 export function useStream(stream) {
-  const isStream = !!stream && !!stream.subscribe;
+  const isStream = !!stream && !!stream.addListener;
 
   const [value, setValue] = React.useState(
     isStream ? streamGet(stream) : stream,
@@ -57,7 +66,9 @@ export function useStream(stream) {
 
   return value;
 }
-
+export function useValue(value) {
+  return useStream(value && value.stream);
+}
 export function useCloudValue(cloudValueInput) {
   let cloudVal = cloudValueInput;
   const cloud = useCloud();
@@ -71,32 +82,78 @@ export function useCloudValue(cloudValueInput) {
   return useStream(cloudVal.stream);
 }
 
-export function createReducerStream(doc, reducerFn, initialState) {
-  function streamReduced(val) {
-    if (!val) {
-      return xs.of(undefined);
-    }
-    let lastStateStream = undefined;
-    if (val.on === null) {
-      lastStateStream = xs.of(initialState);
-    } else if (val.on.id) {
-      lastStateStream = doc
-        .getBlock(val.on.id)
-        .value.stream.map(childVal => {
-          return streamReduced(childVal);
-        })
-        .flatten();
-    } else {
-      return xs.of(undefined);
-    }
-    return lastStateStream.map(lastState => {
-      return reducerFn(lastState, val.value);
-    });
+export function useCloudSmartReducer(
+  actionDocName,
+  answersDocName,
+  cloudReducer,
+) {
+  if (cloudReducer.type !== 'CloudReducer') {
+    throw new Error(
+      'Invalid cloud reducer provided to useCloudReducer. Create one with defineCloudReducer',
+    );
   }
-  return doc.value.stream.map(streamReduced).flatten();
+  const cloud = useCloud();
+  const actionsDoc = cloud.get(actionDocName);
+  const answersDoc = cloud.get(answersDocName);
+
+  const answerStateStreams = new Map();
+
+  const fullReducedStream = React.useMemo(
+    () =>
+      createReducerStream(
+        actionsDoc,
+        cloudReducer.reducerFn,
+        cloudReducer.initialState,
+        cloudReducer.reducerName,
+        id => {
+          return answerStateStreams.get(id);
+        },
+      ),
+    [answerStateStreams, actionsDoc, cloudReducer],
+  );
+  const outputStream = combineStreams({
+    actionDoc: actionsDoc.idAndValue.stream,
+    answersDoc: answersDoc.idAndValue.stream,
+  })
+    .map(({ actionDoc, answersDoc }) => {
+      if (answerStateStreams.has(actionDoc.id)) {
+        return answerStateStreams.get(actionDoc.id);
+      }
+      if (
+        answersDoc.context &&
+        actionDoc.id === answersDoc.context.docId &&
+        actionDocName === answersDoc.context.docName
+      ) {
+        const [stream] = streamOf(answersDoc, {
+          type: 'PrecomputedDocState',
+          id: answersDoc.id,
+          context: answersDoc.context,
+        });
+        answerStateStreams.set(actionDoc.id, stream);
+        return stream;
+      }
+      return fullReducedStream;
+    })
+    .flatten()
+    .dropRepeats((a, b) => {
+      return (
+        a.id === b.id && (a.value === undefined) === (b.value === undefined)
+      );
+    }, 'DropRepeatedReducedValues');
+  const reducedState = useStream(valueMap(outputStream));
+
+  if (reducedState === undefined) {
+    return [undefined, actionsDoc.putTransactionValue];
+  }
+  return [reducedState, actionsDoc.putTransactionValue];
 }
 
 export function useCloudReducer(actionDocName, cloudReducer) {
+  if (cloudReducer.type !== 'CloudReducer') {
+    throw new Error(
+      'Invalid cloud reducer provided to useCloudReducer. Create one with defineCloudReducer',
+    );
+  }
   const cloud = useCloud();
   const actionsDoc = cloud.get(actionDocName);
 
@@ -106,6 +163,7 @@ export function useCloudReducer(actionDocName, cloudReducer) {
         actionsDoc,
         cloudReducer.reducerFn,
         cloudReducer.initialState,
+        cloudReducer.reducerName,
       ),
     [actionsDoc, cloudReducer],
   );

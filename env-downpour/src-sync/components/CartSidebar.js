@@ -21,6 +21,7 @@ import {
   monsterra80,
   monsterra5,
   monsterraLight,
+  buttonHeight,
 } from './Styles';
 import formatCurrency from '../utils/formatCurrency';
 import Button from './Button';
@@ -38,7 +39,7 @@ import BlockFormMessage from './BlockFormMessage';
 import BlockFormInput from './BlockFormInput';
 import BlockFormButton from './BlockFormButton';
 import BlockFormRow from './BlockFormRow';
-import useCloud from '../cloud-core/useCloud';
+import { useCloud } from '../cloud-core/KiteReact';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { Easing } from 'react-native-reanimated';
 import ListAnimation from './ListAnimation';
@@ -343,7 +344,7 @@ function PromoCodeForm({ onClose, order, cloud }) {
       <BlockFormRow>{inputs}</BlockFormRow>
       <BlockFormErrorRow error={error} />
       <BlockFormRow>
-        <BlockFormButton title="cancel" secondary onPress={onClose} />
+        <BlockFormButton title="cancel" type="outline" onPress={onClose} />
         <BlockFormButton title="add code" onPress={handleSubmit} />
       </BlockFormRow>
     </View>
@@ -355,9 +356,9 @@ function usePromoPopover() {
   const cloud = useCloud();
 
   const { onPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <PromoCodeForm onClose={onClose} order={order} cloud={cloud} />
         </KeyboardPopover>
       );
@@ -476,7 +477,15 @@ export default function Cart({ summary }) {
       </View>
       <Button
         title="checkout"
-        style={{ margin: 20 }}
+        style={{
+          flex: 1,
+          marginHorizontal: 10,
+          marginVertical: 12,
+          maxWidth: 488,
+          margin: 20,
+        }}
+        buttonStyle={{ height: buttonHeight }}
+        titleStyle={{ fontSize: 24 }}
         onPress={() => {
           navigate('CollectName');
         }}

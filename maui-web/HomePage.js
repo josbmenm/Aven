@@ -30,7 +30,7 @@ function HomePage() {
       />
       <HomeSlider />
       <HowItWorks />
-      <HomeSchedule />
+      {/* <HomeSchedule /> */}
       <PageFooter />
     </GenericPage>
   );

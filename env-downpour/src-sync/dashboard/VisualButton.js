@@ -36,6 +36,16 @@ function VisualButton({
       ? theme.colors.secondaryBg
       : theme.colors.lightGrey;
 
+  let minHeight = 44;
+  let paddingHorizontal = 12;
+  if (size === 'large') {
+    minHeight = 56;
+    paddingHorizontal = 16;
+  } else if (size === 'small') {
+    minHeight = 32;
+    paddingHorizontal = 8;
+  }
+
   return (
     <Responsive
       breakpoints={breakpoints}
@@ -43,11 +53,11 @@ function VisualButton({
         paddingVertical:
           buttonStyle.paddingVertical !== undefined
             ? [buttonStyle.paddingVertical, buttonStyle.paddingVertical]
-            : [9, 12],
+            : [9, 9],
         paddingHorizontal:
           buttonStyle.paddingHorizontal !== undefined
             ? [buttonStyle.paddingHorizontal, buttonStyle.paddingHorizontal]
-            : [20, 24],
+            : [16, 20],
         ...responsiveStyle,
       }}
     >
@@ -59,6 +69,8 @@ function VisualButton({
           borderColor: type === 'outline' ? buttonColor : 'transparent',
           backgroundColor: type === 'solid' ? buttonColor : 'transparent',
           opacity: disabled ? 0.5 : 1,
+          minHeight,
+          paddingHorizontal,
           ...linkStyle,
           ...buttonStyle,
         }}
@@ -69,12 +81,12 @@ function VisualButton({
           <Text
             style={{
               fontFamily: theme.fonts.bold,
-              fontSize: 20,
+              fontSize: size === 'large' ? 24 : size === 'small' ? 16 : 20,
               lineHeight: 24,
               textAlign: 'center',
               color:
                 type === 'solid'
-                  ? theme.colors.white
+                  ? theme.colors.invertedText
                   : theme.colors[appearance],
               ...titleStyle,
             }}

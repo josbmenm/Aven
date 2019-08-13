@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import StripeTerminal, {
-  useStripeTerminalState,
-  useStripeTerminalCreatePayment,
-  useStripeTerminalConnectionManager,
-} from './terminal';
+import StripeTerminal from 'react-native-stripe-terminal';
+import createHooks from './terminal/hooks';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 const USE_SIMULATOR = false;
+
+const hooks = createHooks(StripeTerminal);
 
 let dispatch = null;
 
@@ -92,7 +91,7 @@ async function capturePayment(paymentIntentId, context) {
   });
 }
 
-async function prepareReader() {
+async function prepareReader(options) {
   return stripeTerminalService.connect();
 }
 
@@ -139,7 +138,7 @@ export function useCardPaymentCapture({
     readerInputOptions,
     readerInputPrompt,
     readerError,
-  } = (state = useStripeTerminalCreatePayment({
+  } = (state = hooks.useStripeTerminalCreatePayment({
     amount: request.amount,
     description: request.description,
     context: request.context,
@@ -172,13 +171,13 @@ export function useCardPaymentCapture({
   };
 }
 
-export function useCardReader() {
+export function useCardReader(options) {
   const {
     connectionStatus,
     connectedReader,
     paymentStatus,
     cardInserted,
-  } = (state = useStripeTerminalState());
+  } = (state = hooks.useStripeTerminalState());
 
   return {
     readerIsReady:
@@ -186,13 +185,13 @@ export function useCardReader() {
     readerHasCardInserted: cardInserted,
     readerState: state,
     cancelPayment: cancelPayment,
-    collectPayment: () => collectPayment(state),
-    prepareReader: () => prepareReader(state),
+    collectPayment: () => collectPayment(state, options),
+    prepareReader: () => prepareReader(state, options),
   };
 }
 
 export function useCardReaderConnectionManager() {
-  return useStripeTerminalConnectionManager({
+  return hooks.useStripeTerminalConnectionManager({
     service: stripeTerminalService,
   });
 }

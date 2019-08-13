@@ -79,11 +79,10 @@ function BookUsWizard() {
   });
 
   React.useEffect(() => {
-    console.log('enter useEffect')
+    console.log('enter useEffect');
     if (enterKeyPress && !stepValidation[stepsState.current].disabled) {
-
       if (stepsState.current === TOTAL_STEPS) {
-        console.log('stepsState.current === TOTAL_STEPS')
+        console.log('stepsState.current === TOTAL_STEPS');
         onSubmit();
       } else {
         stepsDispatch({ type: 'GO_NEXT' });
@@ -93,9 +92,9 @@ function BookUsWizard() {
 
   React.useEffect(() => {
     if (upKeyPress || downKeyPress) {
-      console.log('arrow keys pressed!')
+      console.log('arrow keys pressed!');
     }
-  })
+  });
 
   const firstNameRef = React.useRef(null);
   const lastNameRef = React.useRef(null);
@@ -297,7 +296,7 @@ function BookUsWizard() {
           <FormRow>
             <FormInput
               mode="name"
-              label="select an event type"
+              label="describe your event"
               ref={eventTypeRef}
               value={formState.fields.eventType}
               onValue={value =>

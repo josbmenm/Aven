@@ -34,12 +34,18 @@ export default function createHooks(StripeTerminal) {
         StripeTerminal.addDidReportReaderEventListener(({ event }) =>
           setLastReaderEvent(event),
         ),
-        StripeTerminal.addDidBeginWaitingForReaderInputListener(({ text }) =>
-          setReaderInputOptions(text),
-        ),
-        StripeTerminal.addDidRequestReaderInputPromptListener(({ text }) =>
-          setReaderInputPrompt(text),
-        ),
+        // StripeTerminal.addDidBeginWaitingForReaderInputListener(({ text }) => setReaderInputOptions(text)),
+        // StripeTerminal.addDidRequestReaderInputPromptListener(({ text }) => setReaderInputPrompt(text))
+
+        StripeTerminal.addDidRequestReaderInputListener(evt => {
+          debugger;
+        }),
+
+        // addDidReportLowBatteryWarningListener: (listener)
+        // addDidReportUnexpectedReaderDisconnectListener: (listener)
+        // addDidRequestReaderDisplayMessageListener: (listener)
+        // addLogListener: (listener)
+        // addReaderSoftwareUpdateProgressListener: (listener)
       ];
 
       // Cleanup: remove listeners
@@ -102,7 +108,7 @@ export default function createHooks(StripeTerminal) {
           .then(intent => {
             if (onCapture) {
               return onCapture(intent)
-                .then(() => onSuccess(intent))
+                .then(onSuccess)
                 .catch(onFailure);
             }
 

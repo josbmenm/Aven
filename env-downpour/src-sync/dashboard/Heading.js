@@ -1,6 +1,6 @@
 import React from 'react';
 import Text from '../views/Text';
-import { useTheme, createVariant } from './Theme';
+import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 
 function Heading({
@@ -26,6 +26,8 @@ function Heading({
       <Text
         style={{
           color: color,
+          WebkitFontSmoothing: "antialiased",
+          MozOsxFontSmoothing: "grayscale",
           fontFamily: theme.fonts.bold,
           ...style,
         }}

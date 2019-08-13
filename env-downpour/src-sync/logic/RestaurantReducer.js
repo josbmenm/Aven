@@ -1,44 +1,138 @@
 import { defineCloudReducer } from '../cloud-core/KiteReact';
 
+const PRIMING_TASKS = [
+  {
+    id: 'purge-0',
+    deliveryMode: 'ditch',
+    skipBlend: true,
+    name: 'Mr. Purge',
+    blendName: 'Do not eat',
+    fills: [
+      { system: 4, slot: 3, amount: 10 },
+      { system: 3, slot: 0, amount: 2 }, // powder. 20g/shot, powdery
+    ],
+  },
+  {
+    id: 'purge-1',
+    deliveryMode: 'ditch',
+    skipBlend: true,
+    name: 'Mr. Purge',
+    blendName: 'Do not eat',
+    fills: [
+      { system: 4, slot: 3, amount: 10 },
+      { system: 3, slot: 1, amount: 1 }, // marine collagen. 12g/shot, runny
+      { system: 3, slot: 2, amount: 10 }, // matcha. 3g/shot, powdery
+    ],
+  },
+];
+
+function withdrawInventoryIngredient(state, slotId, amount) {
+  let ingredientInventory = state.ingredientInventory;
+  if (ingredientInventory && slotId) {
+    const slotInventoryState = ingredientInventory[slotId] || {};
+    const estimatedRemaining = slotInventoryState.estimatedRemaining;
+    const newEstimatedRemaining =
+      estimatedRemaining == null ? null : estimatedRemaining - amount;
+    ingredientInventory = {
+      ...(state.ingredientInventory || {}),
+      [slotId]: {
+        ...slotInventoryState,
+        estimatedRemaining: newEstimatedRemaining,
+      },
+    };
+  }
+  return ingredientInventory;
+}
+
+function withdrawInventoryCup(state) {
+  const lastInventory = state.cupInventory || {};
+  const estimatedRemaining = lastInventory.estimatedRemaining;
+  const newEstimatedRemaining =
+    estimatedRemaining == null ? null : estimatedRemaining - 1;
+
+  const cupInventory = {
+    ...lastInventory,
+    estimatedRemaining: newEstimatedRemaining,
+  };
+  return cupInventory;
+}
+
 function RestaurantReducerFn(state = {}, action) {
+  const defaultReturn = () => {
+    return {
+      ...state,
+      // lastAction: action,
+      // lastLastAction: state.lastAction,
+      actionCount: (state.actionCount || 0) + 1,
+    };
+  };
+
   switch (action.type) {
     case 'WipeState': {
-      return {};
-    }
-    case 'QueueOrderItem': {
       return {
-        ...state,
-        queue: [...(state.queue || []), action.item],
+        actionCount: 0,
       };
     }
-    case 'CancelOrder': {
+    case 'QueueTasks': {
       return {
-        ...state,
+        ...defaultReturn(),
+        queue: [...(state.queue || []), ...action.tasks],
+      };
+    }
+    case 'PrimeDispensers': {
+      return {
+        ...defaultReturn(),
+        queue: [...PRIMING_TASKS, ...(state.queue || [])],
+      };
+    }
+    case 'CancelTask': {
+      return {
+        ...defaultReturn(),
         queue: (state.queue || []).filter(order => order.id !== action.id),
       };
     }
-    case 'DidGetCup': {
-      const cupInventory = state.cupInventory || {};
-      const estimatedRemaining = cupInventory.estimatedRemaining;
-      const newEstimatedRemaining =
-        estimatedRemaining == null ? null : estimatedRemaining - 1;
+    case 'SetSlotSettings': {
+      const { type, slotId, ...slotSettings } = action;
+      const lastSlotSettings = state.slotSettings || {};
+      return {
+        ...defaultReturn(),
+        slotSettings: {
+          ...lastSlotSettings,
+          [action.slotId]: {
+            ...(lastSlotSettings[action.slotId] || {}),
+            ...slotSettings,
+          },
+        },
+      };
+    }
+    case 'InvalidateQueuedTask': {
+      const invalidTask = (state.queue || []).find(
+        task => task.id === action.taskId,
+      );
+      if (!invalidTask) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        queue: (state.queue || []).filter(t => t !== invalidTask),
+        invalidTasks: [invalidTask, ...(state.invalidTasks || [])],
+      };
+    }
+    case 'DidStartCup': {
       if (!state.queue || !state.queue.length) {
         return {
-          ...state,
-          fill: {},
+          ...defaultReturn(),
+          fill: null,
         };
       }
-      const topOrder = state.queue[0];
+      const topTask = state.queue[0];
       return {
-        ...state,
-        cupInventory: {
-          ...cupInventory,
-          estimatedRemaining: newEstimatedRemaining,
-        },
+        ...defaultReturn(),
+        cupInventory: withdrawInventoryCup(state),
         fill: {
-          order: topOrder,
-          orderStartTime: Date.now(),
-          fillsRemaining: topOrder.fills,
+          task: topTask,
+          taskStartTime: Date.now(),
+          fillsRemaining: topTask.fills,
           fillsCompleted: [],
         },
         queue: state.queue.slice(1),
@@ -46,32 +140,105 @@ function RestaurantReducerFn(state = {}, action) {
     }
     case 'RequestFillDrop': {
       if (!state.fill) {
-        return state;
+        return defaultReturn();
       }
       return {
-        ...state,
+        ...defaultReturn(),
         fill: { ...state.fill, requestedDropTime: Date.now() },
       };
     }
-    case 'DidDropCup': {
+    case 'DidLooseFillCup': {
       if (!state.fill) {
-        return state;
+        return defaultReturn();
       }
       let queue = state.queue;
-      if (state.fill.order) {
-        queue = [state.fill.order, ...state.queue];
+      if (!action.didCompleteJob && state.fill && state.fill.task) {
+        queue = [state.fill.task, ...state.queue];
       }
       return {
-        ...state,
+        ...defaultReturn(),
         fill: null,
         queue,
+        lostFills: [
+          ...(state.lostFills || []),
+          {
+            ...(state.fill || {}),
+            didCompleteJob: action.didCompleteJob,
+            fillLossTime: Date.now(),
+          },
+        ],
+      };
+    }
+    case 'DidDispense': {
+      return {
+        ...defaultReturn(),
+        ingredientInventory: withdrawInventoryIngredient(
+          state,
+          action.slotId,
+          action.amount,
+        ),
+      };
+    }
+    case 'DidDispenseCup': {
+      return {
+        ...defaultReturn(),
+        cupInventory: withdrawInventoryCup(state),
+      };
+    }
+    case 'SetDryMode': {
+      return {
+        ...defaultReturn(),
+        isDryRunning: action.isDryRunning,
+      };
+    }
+    case 'SetFoodMonitoring': {
+      // diff previous monitors in state.foodMonitoring, create history with time
+      return {
+        ...defaultReturn(),
+        foodMonitoring: action.foodMonitoring,
+      };
+    }
+    case 'DidPretendFill': {
+      if (!state.fill) {
+        return defaultReturn();
+      }
+      let completedFill = {
+        system: action.system,
+        amount: action.amount,
+        slot: action.slot,
+        completedFillTime: Date.now(),
+        isPretendDispense: true,
+      };
+      let fillsRemaining = (state.fill.fillsRemaining || []).filter(fill => {
+        const isTheFill =
+          action.system === fill.system &&
+          action.amount === fill.amount &&
+          action.slot === fill.slot;
+        if (isTheFill) {
+          completedFill = {
+            ...fill,
+            completedFillTime: Date.now(),
+            isPretendDispense: true,
+          };
+        }
+        return !isTheFill;
+      });
+
+      return {
+        ...defaultReturn(),
+        fill: {
+          ...state.fill,
+          fillsCompleted: [...(state.fill.fillsCompleted || []), completedFill],
+          fillsRemaining,
+        },
       };
     }
     case 'DidFill': {
       if (!state.fill) {
-        return state;
+        return defaultReturn();
       }
       let completedFill = {
+        completedFillTime: Date.now(),
         system: action.system,
         amount: action.amount,
         slot: action.slot,
@@ -82,30 +249,17 @@ function RestaurantReducerFn(state = {}, action) {
           action.amount === fill.amount &&
           action.slot === fill.slot;
         if (isTheFill) {
-          completedFill = fill;
+          completedFill = { ...fill, completedFillTime: Date.now() };
         }
         return !isTheFill;
       });
-      let ingredientInventory = state.ingredientInventory;
-      if (ingredientInventory && completedFill.slotId) {
-        const slotInventoryState =
-          ingredientInventory[completedFill.slotId] || {};
-        const estimatedRemaining = slotInventoryState.estimatedRemaining;
-        const newEstimatedRemaining =
-          estimatedRemaining == null
-            ? null
-            : estimatedRemaining - completedFill.amount;
-        ingredientInventory = {
-          ...(state.ingredientInventory || {}),
-          [completedFill.slotId]: {
-            ...slotInventoryState,
-            estimatedRemaining: newEstimatedRemaining,
-          },
-        };
-      }
       return {
-        ...state,
-        ingredientInventory,
+        ...defaultReturn(),
+        ingredientInventory: withdrawInventoryIngredient(
+          state,
+          completedFill.slotId,
+          completedFill.amount,
+        ),
         fill: {
           ...state.fill,
           fillsCompleted: [...(state.fill.fillsCompleted || []), completedFill],
@@ -116,7 +270,7 @@ function RestaurantReducerFn(state = {}, action) {
     case 'DidFillSlot': {
       const ingredientInventory = state.ingredientInventory || {};
       return {
-        ...state,
+        ...defaultReturn(),
         ingredientInventory: {
           ...ingredientInventory,
           [action.slotId]: {
@@ -126,22 +280,13 @@ function RestaurantReducerFn(state = {}, action) {
         },
       };
     }
-    case 'DidFillCups': {
-      return {
-        ...state,
-        cupInventory: {
-          ...(state.cupInventory || {}),
-          estimatedRemaining: action.estimatedRemaining,
-        },
-      };
-    }
     case 'DidPassToBlender': {
       if (!state.fill) {
-        return state;
+        return defaultReturn();
       }
       const fillState = state.fill;
       return {
-        ...state,
+        ...defaultReturn(),
         blend: {
           ...fillState,
           passToBlenderTime: Date.now(),
@@ -151,10 +296,10 @@ function RestaurantReducerFn(state = {}, action) {
     }
     case 'DidBlend': {
       if (!state.blend) {
-        return state;
+        return defaultReturn();
       }
       return {
-        ...state,
+        ...defaultReturn(),
         blend: {
           ...state.blend,
           blendCompleteTime: Date.now(),
@@ -163,82 +308,113 @@ function RestaurantReducerFn(state = {}, action) {
     }
     case 'DidPassToDelivery': {
       if (!state.blend) {
-        return state;
+        return defaultReturn();
       }
       const blendState = state.blend;
       return {
-        ...state,
-        blend: 'dirty',
-        deliveryA: {
+        ...defaultReturn(),
+        blend: action.didDirtyBlender ? 'dirty' : null,
+        delivery: {
           ...blendState,
-          deliverTime: Date.now(),
+          passToDeliveryTime: Date.now(),
         },
+      };
+    }
+    case 'DidDeliveryDropCup': {
+      if (!state.delivery) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        delivery: null,
+        completedTasks: [
+          ...(state.completedTasks || []),
+          { ...state.delivery, deliveryType: 'drop', deliveryTime: Date.now() },
+        ],
       };
     }
     case 'DidClean': {
       if (state.blend !== 'dirty') {
-        return state;
+        return defaultReturn();
       }
       return {
-        ...state,
+        ...defaultReturn(),
         blend: null,
       };
     }
     case 'ClearDeliveryBay': {
       if (action.bayId === 'deliveryA') {
-        return { ...state, deliveryA: null };
+        return { ...defaultReturn(), deliveryA: null };
       }
       if (action.bayId === 'deliveryB') {
-        return { ...state, deliveryB: null };
+        return { ...defaultReturn(), deliveryB: null };
       }
-      return state;
+      return defaultReturn();
     }
     case 'StartAutorun': {
       return {
-        ...state,
+        ...defaultReturn(),
         isAutoRunning: true,
       };
     }
     case 'PauseAutorun': {
       return {
-        ...state,
+        ...defaultReturn(),
         isAutoRunning: false,
       };
     }
     case 'SetManualMode': {
       return {
-        ...state,
+        ...defaultReturn(),
         isManualMode: action.isManualMode,
       };
     }
     case 'Attach': {
       return {
-        ...state,
+        ...defaultReturn(),
         isAttached: true,
       };
     }
     case 'Detach': {
       return {
-        ...state,
+        ...defaultReturn(),
         isAttached: false,
       };
     }
     case 'EnableManualMode': {
       return {
-        ...state,
+        ...defaultReturn(),
         isAttached: false,
         manualMode: true,
       };
     }
     case 'DisableManualMode': {
       return {
-        ...state,
+        ...defaultReturn(),
         manualMode: false,
       };
     }
-
+    case 'CloseRestaurant': {
+      return {
+        ...defaultReturn(),
+        isClosed: true,
+      };
+    }
+    case 'ScheduleRestaurantClose': {
+      return {
+        ...defaultReturn(),
+        scheduledCloseTime: action.scheduledCloseTime,
+      };
+    }
+    case 'OpenRestaurant': {
+      return {
+        ...defaultReturn(),
+        isClosed: false,
+        scheduledCloseTime: action.scheduledCloseTime || null,
+      };
+    }
     default: {
-      return state;
+      return defaultReturn();
     }
   }
 }

@@ -1,15 +1,6 @@
 import mapObject from 'fbjs/lib/mapObject';
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useMemo,
-  useEffect,
-} from 'react';
-import { useCloud, useCloudValue, CloudContext } from '../cloud-core/KiteReact';
-import useObservable from '../cloud-core/useObservable';
-import withObservables from '@nozbe/with-observables';
-import observeNull from '../cloud-core/observeNull';
+import React, { createContext, useContext, useState, useMemo } from 'react';
+import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import {
   getOrderItemMapper,
   sortByField as getSortedByField,
@@ -27,6 +18,11 @@ import {
 } from '../logic/configLogic';
 
 const OrderContext = createContext(null);
+
+function getLocalName(name) {
+  const locals = name.split('/');
+  return locals[locals.length - 1];
+}
 
 export const sortByField = getSortedByField;
 
@@ -52,6 +48,53 @@ function doConfirmOrder(lastOrder) {
     return lastOrder;
   }
   return { ...lastOrder, isConfirmed: true, confirmedTime: Date.now() };
+}
+
+export function getSubsystemAlarms(system) {
+  // copy-pasted from getSubsystemFaults!!
+  let alarms = null;
+
+  if (system.reads.NoAlarms && system.reads.NoAlarms.value !== true) {
+    // system has alarming behavior
+    alarms = [];
+    let alarmsUnreadable;
+    const alarmed = Array(4)
+      .fill(0)
+      .map((_, alarmIntIndex) => {
+        if (!system.reads[`Alarm${alarmIntIndex}`]) {
+          return Array(16).fill(0);
+        }
+        try {
+          return system.reads[`Alarm${alarmIntIndex}`].value
+            .toString(2)
+            .split('')
+            .reverse()
+            .map(v => v === '1');
+        } catch (e) {
+          alarmsUnreadable = true;
+          return false;
+        }
+      });
+
+    alarmsUnreadable && alarms.push(`Unable to read alarms of ${system.name}`);
+    if (alarmed[0][0]) {
+      alarms.push(
+        'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
+      );
+    }
+    system.alarms &&
+      system.alarms.forEach(f => {
+        const faultDintArray = alarmed[f.intIndex];
+        const isAlarmed = faultDintArray && faultDintArray[f.bitIndex];
+        if (isAlarmed) {
+          alarms.push(f.description);
+        }
+      });
+  }
+  if (alarms && !alarms.length) {
+    alarms.push('Unknown Alarm');
+  }
+  return alarms;
 }
 
 export function getSubsystemFaults(system) {
@@ -94,6 +137,13 @@ export function getSubsystemFaults(system) {
         }
       });
   }
+  if (system.reads.Homed && system.reads.Homed.value === false) {
+    if (!faults) {
+      faults = ['Not Homed'];
+    } else if (!faults.length) {
+      faults.push('Not Homed');
+    }
+  }
   if (faults && !faults.length) {
     faults.push('Unknown Fault');
   }
@@ -101,7 +151,7 @@ export function getSubsystemFaults(system) {
 }
 
 export function OrderContextProvider({ children }) {
-  let cloud = useContext(CloudContext);
+  let cloud = useCloud();
   let [currentOrder, setCurrentOrder] = useState(null);
   let [asyncError, setAsyncError] = useState(null);
 
@@ -118,9 +168,9 @@ export function OrderContextProvider({ children }) {
       });
   }
 
-  useEffect(() => {
-    guardAsync(cloud.establishAnonymousSession());
-  }, []);
+  // useEffect(() => {
+  //   guardAsync(cloud.establishAnonymousSession());
+  // }, []);
 
   let orderContext = {
     order: currentOrder,
@@ -162,24 +212,19 @@ export function OrderContextProvider({ children }) {
       await o.transact(doConfirmOrder);
       await cloud.dispatch({
         type: 'PlaceOrder',
-        orderId: o.getName(),
+        orderId: getLocalName(o.getName()),
         paymentIntent,
       });
     },
     startOrder: () =>
       guardAsync(
         (async () => {
-          const order = cloud.get('PendingOrders').post();
+          const order = cloud.get('PendingOrders').children.post();
           setCurrentOrder(order);
-          await order.put({
+          await order.putValue({
             startTime: Date.now(),
             items: [],
           });
-          // order.observeValue.subscribe({
-          //   next: oo => {
-          //     console.log('Lol ok, order changed!', oo);
-          //   },
-          // });
         })(),
       ),
   };
@@ -191,13 +236,6 @@ export function OrderContextProvider({ children }) {
 }
 
 export function useCompanyConfig() {
-  // const cloud = useCloud();
-  // const theValue = cloud.get('Airtable').expand((folder, doc) => {
-  //   if (!folder) {
-  //     return null;
-  //   }
-  //   return doc.getBlock(folder.files['db.json']);
-  // });
   return useCloudValue('CompanyConfig');
 }
 
@@ -239,11 +277,10 @@ export function addMenuItemToCartItem({
 
 export function useCurrentOrder() {
   let { order } = useContext(OrderContext);
-  const observedOrder = useObservable(order ? order.observeValue : observeNull);
+  const observedOrder = useValue(order ? order.value : null);
   if (!observedOrder) {
     return observedOrder;
   }
-
   return { ...observedOrder, orderId: order && order.getName() };
 }
 
@@ -280,20 +317,17 @@ export function useOrderItem(orderItemId) {
       });
     }
     const itemMapper = menu && getOrderItemMapper(menu);
+    const orderState = order && order.value.get();
+
     const orderItem =
-      itemMapper &&
-      order &&
-      order.map(orderState => {
-        const item =
-          orderState &&
-          orderState.items &&
-          orderState.items.find(i => i.id === orderItemId);
-        return item && itemMapper(item);
-      });
+      orderState &&
+      orderState.items &&
+      orderState.items.find(i => i.id === orderItemId);
+    const fullOrderItem = orderItem && itemMapper(orderItem);
 
     return {
       orderItemId,
-      orderItem,
+      orderItem: fullOrderItem,
       setItemState,
       removeItem,
       order,
@@ -401,7 +435,7 @@ export function useOrderSummary() {
 export function useOrderIdSummary(orderId) {
   const cloud = useCloud();
   const order = useMemo(() => cloud.get(`PendingOrders/${orderId}`), [orderId]);
-  const orderState = useObservable(order ? order.observeValue : observeNull);
+  const orderState = useValue(order ? order.value : null);
   const companyConfig = useCompanyConfig();
   return getOrderSummary(orderState, companyConfig);
 }
@@ -435,6 +469,7 @@ export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {
     noFaults,
     reads,
     faults: ss.faults,
+    alarms: ss.alarms,
   };
 };
 

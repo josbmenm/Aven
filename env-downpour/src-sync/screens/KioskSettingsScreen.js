@@ -4,7 +4,7 @@ import SimplePage from '../components/SimplePage';
 import RowSection from '../components/RowSection';
 import LinkRow from '../components/LinkRow';
 import AppInfoText from '../components/AppInfoText';
-import useCloud from '../cloud-core/useCloud';
+import { useCloud } from '../cloud-core/KiteReact';
 import codePush from 'react-native-code-push';
 
 function UpdateAirtableRow() {

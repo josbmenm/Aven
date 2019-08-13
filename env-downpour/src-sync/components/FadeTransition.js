@@ -1,5 +1,6 @@
 import React from 'react';
 import Animated, { Easing } from 'react-native-reanimated';
+import { ThemeProvider } from '../dashboard/Theme';
 
 import { StyleSheet } from 'react-native';
 const { Value, timing, interpolate, View } = Animated;
@@ -40,6 +41,7 @@ export default class FadeTransition extends React.Component {
       transitionRef,
       disableTransform,
       children,
+      themeOverride,
     } = this.props;
     let progress = 1;
     if (transition) {
@@ -56,7 +58,7 @@ export default class FadeTransition extends React.Component {
         },
       ];
     }
-    return (
+    const innards = (
       <View
         style={{
           ...StyleSheet.absoluteFillObject,
@@ -90,5 +92,10 @@ export default class FadeTransition extends React.Component {
         </View>
       </View>
     );
+
+    if (themeOverride) {
+      return <ThemeProvider value={themeOverride}>{innards}</ThemeProvider>;
+    }
+    return innards;
   }
 }

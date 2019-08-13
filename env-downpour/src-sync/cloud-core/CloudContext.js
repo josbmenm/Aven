@@ -1,5 +1,3 @@
-import { createContext } from 'react';
-
-const CloudContext = createContext(null);
+import { CloudContext } from './KiteReact';
 
 export default CloudContext;

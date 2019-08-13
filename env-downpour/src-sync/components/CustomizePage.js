@@ -31,7 +31,7 @@ import {
 
 const tagSize = {
   width: 100,
-  height: 76,
+  height: 68,
 };
 
 export function MenuHLayout({ side, children }) {
@@ -523,8 +523,6 @@ function getCustomizationSections(
   const activeLiquidBase =
     (customizationState && customizationState.liquidBase) ||
     menuItem.Recipe.LiquidBaseIngredient[0];
-
-  console.log('zoom', customizationState);
 
   const sections = [
     {

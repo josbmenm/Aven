@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import useObservable from '../cloud-core/useObservable';
-import useCloud from '../cloud-core/useCloud';
+import { useCloud } from '../cloud-core/KiteReact';
 import Title from '../components/Title';
 import BlockFormButton from '../components/BlockFormButton';
 import BlockFormRow from '../components/BlockFormRow';

@@ -2,12 +2,9 @@ import {
   createBlock,
   createDoc,
   createDocSet,
-  createAuthenticatedClient,
-  createReducerStream,
-  createClient,
+  createSessionClient,
 } from '../Kite';
 import createMemoryStorageSource from '../createMemoryStorageSource';
-import xs from 'xstream';
 import sourceTests from './sourceTests';
 
 async function justASec(duration) {
@@ -262,7 +259,7 @@ describe('kite doc', () => {
       });
       expect(resp.value.on).toEqual(null);
       expect(resp.value.value.x).toEqual(42);
-      expect(doc.value.get().value.x).toEqual(42);
+      expect(doc.idAndValue.get().value.value.x).toEqual(42);
       expect(typeof doc.get().lastPutTime).toEqual('number');
     });
   });
@@ -300,6 +297,7 @@ describe('kite doc', () => {
       await justASec();
       expect(lastValue.foo).toEqual('a');
       doc.value.stream.removeListener(listener);
+      await justASec();
       const obj3 = await m.dispatch({
         type: 'PutDocValue',
         domain: 'test',
@@ -308,7 +306,8 @@ describe('kite doc', () => {
       });
       await justASec();
       expect(lastValue.foo).toEqual('a');
-      await doc.value.load();
+      const res = await doc.value.load();
+      expect(res.foo).toBe('b');
       expect(doc.value.get().foo).toBe('b');
     });
 
@@ -340,6 +339,7 @@ describe('kite doc', () => {
       await justASec();
       expect(lastValue.foo).toEqual('a');
       listenDoc.value.stream.removeListener(listener);
+      await justASec();
       await doc.putValue({ foo: 'b' });
 
       await justASec();
@@ -404,94 +404,6 @@ describe('kite doc set', () => {
     );
     const mappedDoc = docSet.get('foobar');
     expect(await mappedDoc.value.load()).toBe('bar');
-  });
-
-  it('handles reducer stream', async () => {
-    const m = createMemoryStorageSource({ domain: 'test' });
-
-    const docSet = createDocSet({
-      source: m,
-      onGetName: () => null,
-      domain: 'test',
-    });
-    const foo = docSet.get('foo');
-    const initialState = {
-      items: [],
-    };
-    function reducerFn(state, action) {
-      if (action.add) {
-        return {
-          items: [...state.items, action.add],
-        };
-      } else if (action.remove) {
-        return {
-          items: state.items.filter(i => i !== action.remove),
-        };
-      }
-      return state;
-    }
-
-    const fooReducedStream = createReducerStream(foo, reducerFn, initialState);
-    let lastObserved = null;
-    const listener = {
-      next: v => {
-        lastObserved = v;
-      },
-    };
-    fooReducedStream.addListener(listener);
-    expect(lastObserved).toBe(null);
-    await justASec();
-    expect(lastObserved).toBe(undefined);
-    await foo.putTransactionValue({ add: 'a' });
-    expect(lastObserved).toMatchObject({ items: ['a'] });
-    await foo.putTransactionValue({ add: 'b' });
-    expect(lastObserved).toMatchObject({ items: ['a', 'b'] });
-  });
-
-  it('handles reducer stream override docs', async () => {
-    const m = createMemoryStorageSource({ domain: 'test' });
-    const docSet = createDocSet({
-      source: m,
-      onGetName: () => null,
-      domain: 'test',
-    });
-    const foo = docSet.get('foo');
-    const initialState = {
-      items: [],
-    };
-    function reducerFn(state, action) {
-      if (action.add) {
-        return {
-          items: [...state.items, action.add],
-        };
-      } else if (action.remove) {
-        return {
-          items: state.items.filter(i => i !== action.remove),
-        };
-      }
-      return state;
-    }
-    const streamReduced = createReducerStream(foo, reducerFn, initialState);
-    const fooReduced = docSet.setOverrideStream('fooReduced', streamReduced);
-    const loaded = await fooReduced.value.load();
-    expect(loaded).toBe(undefined);
-    await foo.putTransactionValue({ add: 'a' });
-    const loaded2 = await fooReduced.value.load();
-    expect(loaded2).toMatchObject({ items: ['a'] });
-    let lastObserved = null;
-    const listener = {
-      next: v => {
-        lastObserved = v;
-      },
-    };
-    fooReduced.value.stream.addListener(listener);
-    await justASec();
-    expect(lastObserved).toMatchObject({ items: ['a'] });
-    await foo.putTransactionValue({ add: 'b' });
-    const loaded3 = await fooReduced.value.load();
-    expect(loaded3).toMatchObject({ items: ['a', 'b'] });
-    await justASec();
-    expect(lastObserved).toMatchObject({ items: ['a', 'b'] });
   });
 
   it('posts at root', async () => {
@@ -588,7 +500,7 @@ describe('authenticated client behaves as source', () => {
       domain: options.domain,
       ...options,
     });
-    const client = createAuthenticatedClient({
+    const client = createSessionClient({
       source,
       domain: options.domain,
     });

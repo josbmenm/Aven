@@ -1,3 +1,8 @@
+function delay(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
 function checkKitchenState(kitchenState, kitchenConfig) {
   if (!kitchenState) {
     return {
@@ -57,15 +62,28 @@ const SEQUENCER_STEPS = [
       command: 'GetCup',
     }),
     getSuccessRestaurantAction: () => ({
-      type: 'DidGetCup',
+      type: 'DidStartCup',
     }),
+    // getFailureRestaurantAction: (intent) => ({
+    //   type: 'KitchenFailure',
+    //   intent
+    // })
   },
   {
     // drop cup (fill system)
     getDescription: intent => 'Drop Cup',
     getRestaurantStateIntent: restaurantState => {
       if (restaurantState.fill && !!restaurantState.fill.requestedDropTime) {
-        return {};
+        return { didCompleteJob: false };
+      }
+      if (
+        restaurantState.fill &&
+        restaurantState.fill.task &&
+        restaurantState.fill.task.deliveryMode === 'drop' &&
+        restaurantState.fill.task.skipBlend &&
+        restaurantState.fill.fillsRemaining.length === 0
+      ) {
+        return { didCompleteJob: true };
       }
       return null;
     },
@@ -75,14 +93,41 @@ const SEQUENCER_STEPS = [
     getKitchenCommand: intent => ({
       command: 'DropCup',
     }),
-    getSuccessRestaurantAction: () => ({
-      type: 'DidDropCup',
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidLooseFillCup',
+      didCompleteJob: intent.didCompleteJob,
     }),
   },
-
+  {
+    // drop cup (delivery system)
+    getDescription: intent => 'Delivery Drop Cup',
+    getRestaurantStateIntent: restaurantState => {
+      if (restaurantState.delivery) {
+        return {};
+      }
+      return null;
+    },
+    getKitchenStateReady: (kitchenState, intent) => {
+      return (
+        !!kitchenState &&
+        !kitchenState.System_VanPluggedIn_READ &&
+        !kitchenState.System_SkidPositionSensors_READ &&
+        kitchenState.Delivery_DropCupReady_READ
+      );
+    },
+    getKitchenCommand: intent => ({
+      command: 'DeliveryDropCup',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidDeliveryDropCup',
+    }),
+  },
   {
     // do fill
-    getDescription: ({ amount, system, slot }) => {
+    getDescription: ({ amount, system, slot, pretendDispense }) => {
+      if (pretendDispense) {
+        return `Pretend to Fill Cup ${system}.${slot}x${amount}`;
+      }
       return `Fill Cup ${system}.${slot}x${amount}`;
     },
     getRestaurantStateIntent: restaurantState => {
@@ -94,19 +139,29 @@ const SEQUENCER_STEPS = [
         return null;
       }
       const nextFill = restaurantState.fill.fillsRemaining[0];
-      return {
+      const intent = {
         ...nextFill,
+        pretendDispense: restaurantState.isDryRunning,
       };
+      return intent;
     },
     getKitchenStateReady: (kitchenState, intent) => {
       return !!kitchenState && kitchenState.FillSystem_DropCupReady_READ;
     },
-    getKitchenCommand: intent => ({
-      command: 'PositionAndDispenseAmount',
-      params: intent,
-    }),
+    getKitchenCommand: intent => {
+      if (intent.pretendDispense) {
+        return {
+          command: 'PositionToSystemSlot',
+          params: intent,
+        };
+      }
+      return {
+        command: 'PositionAndDispenseAmount',
+        params: intent,
+      };
+    },
     getSuccessRestaurantAction: intent => ({
-      type: 'DidFill',
+      type: intent.pretendDispense ? 'DidPretendFill' : 'DidFill',
       ...intent,
     }),
   },
@@ -118,9 +173,13 @@ const SEQUENCER_STEPS = [
     },
     getRestaurantStateIntent: restaurantState => {
       if (
+        !!restaurantState.blend ||
         !restaurantState.fill ||
         !restaurantState.fill.fillsRemaining ||
-        restaurantState.fill.fillsRemaining.length !== 0
+        restaurantState.fill.fillsRemaining.length !== 0 ||
+        restaurantState.fill.requestedDropTime ||
+        (restaurantState.fill.task.skipBlend &&
+          restaurantState.fill.task.deliveryMode !== 'deliver')
       ) {
         return null;
       }
@@ -145,7 +204,12 @@ const SEQUENCER_STEPS = [
       return 'Blend';
     },
     getRestaurantStateIntent: restaurantState => {
-      if (!restaurantState.blend || restaurantState.blend.blendCompleteTime) {
+      if (
+        !restaurantState.blend ||
+        restaurantState.blend === 'dirty' ||
+        restaurantState.blend.blendCompleteTime ||
+        restaurantState.blend.task.skipBlend
+      ) {
         return null;
       }
       return {};
@@ -167,10 +231,16 @@ const SEQUENCER_STEPS = [
       return 'Pass from blender to delivery system';
     },
     getRestaurantStateIntent: restaurantState => {
-      if (!restaurantState.blend || !restaurantState.blend.blendCompleteTime) {
+      if (!restaurantState.blend || restaurantState.blend === 'dirty') {
         return null;
       }
-      return {};
+      if (restaurantState.blend.blendCompleteTime) {
+        return { didDirtyBlender: true };
+      }
+      if (restaurantState.blend.task.skipBlend) {
+        return { didDirtyBlender: false };
+      }
+      return null;
     },
     getKitchenStateReady: (kitchenState, intent) => {
       return (
@@ -182,11 +252,11 @@ const SEQUENCER_STEPS = [
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidPassToDelivery',
+      didDirtyBlender: intent.didDirtyBlender,
     }),
   },
   {
     // clean
-
     getDescription: () => {
       return 'Clean Blender';
     },
@@ -206,21 +276,84 @@ const SEQUENCER_STEPS = [
       type: 'DidClean',
     }),
   },
+  {
+    // drop cup from delivery
+
+    getDescription: () => {
+      return 'Drop from delivery system';
+    },
+    getRestaurantStateIntent: restaurantState => {
+      if (!restaurantState.blend || restaurantState.blend === 'dirty') {
+        return null;
+      }
+      if (restaurantState.blend.blendCompleteTime) {
+        return { didDirtyBlender: true };
+      }
+      if (restaurantState.blend.task.skipBlend) {
+        return { didDirtyBlender: false };
+      }
+      return null;
+    },
+    getKitchenStateReady: (kitchenState, intent) => {
+      return (
+        !!kitchenState && kitchenState.BlendSystem_DeliverWithoutCleanReady_READ
+      );
+    },
+    getKitchenCommand: intent => ({
+      command: 'PassToDeliveryWithoutClean',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidPassToDelivery',
+      didDirtyBlender: intent.didDirtyBlender,
+    }),
+  },
+  {
+    // ditch cup (fill system)
+    getDescription: intent => 'Ditch Cup',
+    getRestaurantStateIntent: restaurantState => {
+      if (restaurantState.fill === null) {
+        return {
+          didCompleteJob: false,
+        };
+      }
+      if (
+        restaurantState.fill &&
+        restaurantState.fill.task.skipBlend &&
+        restaurantState.fill.task.deliveryMode === 'ditch' &&
+        restaurantState.fill.fillsRemaining.length === 0
+      ) {
+        return {
+          didCompleteJob: true,
+        };
+      }
+      return null;
+    },
+    getKitchenStateReady: (kitchenState, intent) => {
+      return !!kitchenState && kitchenState.FillSystem_DitchCupReady_READ;
+    },
+    getKitchenCommand: intent => ({
+      command: 'DitchCup',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidLooseFillCup',
+      didCompleteJob: intent.didCompleteJob,
+    }),
+  },
 ];
 
 export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
   if (!restaurantState || !kitchenConfig || !kitchenState) {
     return null;
   }
-  if (kitchenState.isAttached) {
-    const { isFaulted, isRunning } = checkKitchenState(
-      kitchenState,
-      kitchenConfig,
-    );
-    if (isFaulted || isRunning) {
-      return null;
-    }
-  }
+  // if (restaurantState.isAttached) {
+  //   const { isFaulted, isRunning } = checkKitchenState(
+  //     kitchenState,
+  //     kitchenConfig,
+  //   );
+  //   if (isFaulted || isRunning) {
+  //     return null;
+  //   }
+  // }
   return SEQUENCER_STEPS.map(STEP => {
     const {
       getDescription,
@@ -236,10 +369,7 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
       return false;
     }
 
-    if (
-      kitchenState.isAttached &&
-      !getKitchenStateReady(kitchenState, intent)
-    ) {
+    if (!getKitchenStateReady(kitchenState, intent)) {
       return false;
     }
     const command = getKitchenCommand(intent);
@@ -257,43 +387,19 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
       startingRestaurantAction,
       subsystem: command.subsystem,
       description: getDescription(intent),
-      perform: async (cloud, handleCommand) => {
+      perform: async (onDispatcherAction, kitchenCommand) => {
         let resp = null;
-        const startTime = Date.now();
         startingRestaurantAction &&
-          (await cloud
-            .get('RestaurantActions')
-            .putTransaction(startingRestaurantAction));
-        // await cloud.get('KitchenLog').putTransaction({
-        //   type: 'StartKitchenAction',
-        //   intent,
-        //   command,
-        // });
+          (await onDispatcherAction(startingRestaurantAction));
         try {
-          resp = await handleCommand(command);
+          resp = await kitchenCommand(command);
           successRestaurantAction &&
-            (await cloud
-              .get('RestaurantActions')
-              .putTransaction(successRestaurantAction));
-          // await cloud.get('KitchenLog').putTransaction({
-          //   type: 'CompleteKitchenAction',
-          //   intent,
-          //   command,
-          //   duration: Date.now() - startTime,
-          // });
+            (await onDispatcherAction(successRestaurantAction));
+          await delay(30);
         } catch (e) {
           console.error('Failed to perform command', e);
           failureRestaurantAction &&
-            (await cloud
-              .get('RestaurantActions')
-              .putTransaction(failureRestaurantAction));
-          // await cloud.get('KitchenLog').putTransaction({
-          //   type: 'CompleteFailureAction',
-          //   intent,
-          //   command,
-          //   error: e,
-          //   duration: Date.now() - startTime,
-          // });
+            (await onDispatcherAction(failureRestaurantAction));
         }
         return resp;
       },

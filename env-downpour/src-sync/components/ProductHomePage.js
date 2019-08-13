@@ -1,9 +1,8 @@
-import React, { memo } from 'react';
+import React from 'react';
 import GenericPage from './GenericPage';
 import { Image, StyleSheet } from 'react-native';
 import FoodMenu from './FoodMenu';
 import BlendMenu from './BlendMenu';
-import loadImages from '../components/Image';
 import { usePreloadedImages } from './AirtableImage';
 
 function ProductHomePage({ menu, ...props }) {

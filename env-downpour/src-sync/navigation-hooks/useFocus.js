@@ -13,10 +13,14 @@ export default function useFocus({ inputRenderers, onSubmit }) {
       activeInputRef && activeInputRef.current && activeInputRef.current.blur();
     }
   });
-  useNavigationDidFocusEffect(() => {
-    const firstInput = refs.current[0].current;
-    firstInput && firstInput.focus();
-  });
+  const focusEventHandler = React.useMemo(
+    () => () => {
+      const firstInput = refs.current[0].current;
+      firstInput && firstInput.focus();
+    },
+    [],
+  );
+  useNavigationDidFocusEffect(focusEventHandler);
 
   function handleSubmit(index) {
     if (index === refs.length - 1) {
@@ -25,11 +29,11 @@ export default function useFocus({ inputRenderers, onSubmit }) {
       onSubmit();
     } else {
       const nextInputRef = refs.current[index + 1];
-      nextInputRef && nextInputRef.current.focus();
+      nextInputRef && nextInputRef.current && nextInputRef.current.focus();
     }
   }
   return {
-    inputs: inputRenderers.map((renderInput, index) => {
+    inputs: inputRenderers.filter(Boolean).map((renderInput, index) => {
       const ref = refs.current[index];
       return renderInput({
         key: index,

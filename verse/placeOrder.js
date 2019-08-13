@@ -8,7 +8,10 @@ import {
 } from '../logic/configLogic';
 import cuid from 'cuid';
 
-export default async function placeOrder(cloud, { orderId, paymentIntent }) {
+export default async function placeOrder(
+  cloud,
+  { isLive, orderId, paymentIntent },
+) {
   const orderState = await cloud
     .get(`PendingOrders/${orderId}`)
     .idAndValue.load();
@@ -39,7 +42,7 @@ export default async function placeOrder(cloud, { orderId, paymentIntent }) {
   const stripeIntentId = paymentIntent && paymentIntent.stripeId;
   let stripeIntent = null;
   if (stripeIntentId) {
-    stripeIntent = await getPaymentIntent(stripeIntentId);
+    stripeIntent = await getPaymentIntent(stripeIntentId, isLive);
   }
   let isOrderValid = false;
   if (stripeIntent && stripeIntent.amount === summary.total) {

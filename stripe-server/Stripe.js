@@ -1,22 +1,37 @@
 import { getSecretConfig } from '../aven-web/config';
 const Stripe = require('stripe');
 const TOKEN = getSecretConfig('STRIPE_TOKEN');
-const stripe = Stripe(TOKEN);
+const LIVE_TOKEN = getSecretConfig('STRIPE_LIVE_TOKEN');
+const stripeDevelopment = Stripe(TOKEN);
+const stripeProduction = !!LIVE_TOKEN && Stripe(LIVE_TOKEN);
+
+function getStripe(isLive) {
+  if (isLive) {
+    if (!stripeProduction) {
+      throw new Error('No Stripe production token');
+    }
+    return stripeProduction;
+  }
+  return stripeDevelopment;
+}
 
 export const getConnectionToken = async action => {
+  const stripe = getStripe(action.isLive);
   const result = await stripe.terminal.connectionTokens.create();
   return result;
 };
 
 export const capturePayment = async action => {
   const { paymentIntentId } = action;
+  const stripe = getStripe(action.isLive);
 
   await stripe.paymentIntents.capture(paymentIntentId);
 
   return {};
 };
 
-export async function getPaymentIntent(intentId) {
+export async function getPaymentIntent(intentId, isLive) {
+  const stripe = getStripe(isLive);
   const paymentIntent = await stripe.paymentIntents.retrieve(intentId);
 
   const source = await stripe.sources.retrieve(paymentIntent.source);

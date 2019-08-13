@@ -1,4 +1,4 @@
-import defineCloudReducer from '../cloud-core/defineCloudReducer';
+import { defineCloudReducer } from '../cloud-core/KiteReact';
 
 function DevicesReducerFn(state = {}, action) {
   console.log('devices reducer', state, action);

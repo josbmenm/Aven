@@ -26,7 +26,7 @@ export default function BlendMenu({ menu, large, title }) {
           tag: item.DefaultBenefitName,
           photo: item.Recipe && item.Recipe['Recipe Image'],
           onPress: () => {
-            const currentOrder = order && order.getValue();
+            const currentOrder = order && order.value.get();
             const currentItems = currentOrder && currentOrder.items;
             const currentItem =
               currentItems &&

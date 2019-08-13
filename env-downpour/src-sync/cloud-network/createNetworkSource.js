@@ -1,7 +1,11 @@
-import { Observable, BehaviorSubject } from 'rxjs-compat';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import Err from '../utils/Err';
 import xs from 'xstream';
+import { createStreamValue } from '../cloud-core/StreamValue';
+import {
+  streamOf,
+  createProducerStream,
+} from '../cloud-core/createMemoryStream';
 
 let idIndex = 0;
 const idBase = Date.now();
@@ -22,26 +26,7 @@ export default function createNetworkSource(opts) {
   const wsEndpoint = `${opts.useSSL === false ? 'ws' : 'wss'}://${
     opts.authority
   }`;
-  let isCurrentlyConnected = false;
-  let updateIsConnected = null;
-  const isConnectedStream = xs.createWithMemory({
-    start: listener => {
-      listener.next(isCurrentlyConnected);
-      updateIsConnected = listener.next;
-    },
-    stop: () => {
-      updateIsConnected = null;
-    },
-  });
-
-  //  #legacy
-  const isConnected = new BehaviorSubject(false);
-  function setConnectionState(isConn) {
-    isCurrentlyConnected = isConn;
-    updateIsConnected && updateIsConnected(isConn);
-    //  #legacy
-    isConnected.getValue() !== isConn && isConnected.next(isConn);
-  }
+  const [isConnectedStream, updateIsConnected] = streamOf(false);
 
   let ws = null;
 
@@ -99,7 +84,8 @@ export default function createNetworkSource(opts) {
 
   function subscribeStream(subsSpec) {
     let id = getClientId();
-    return xs.createWithMemory({
+    return createProducerStream({
+      crumb: { type: 'NetworkStream', spec: subsSpec },
       start: listener => {
         const finalSpec = { ...subsSpec, id };
         socketSendIfConnected({
@@ -119,28 +105,6 @@ export default function createNetworkSource(opts) {
         delete subscriptions[id];
       },
     });
-  }
-
-  function subscribe(subsSpec) {
-    const id = getClientId();
-    return new Observable(observer => {
-      const finalSpec = { ...subsSpec, id };
-      socketSendIfConnected({
-        type: 'Subscribe',
-        subscriptions: [finalSpec],
-      });
-      subscriptions[id] = {
-        spec: finalSpec,
-        observer,
-      };
-      return () => {
-        socketSendIfConnected({
-          type: 'Unsubscribe',
-          subscriptionIds: [id],
-        });
-        delete subscriptions[id];
-      };
-    }).share();
   }
 
   function connectWS() {
@@ -163,11 +127,11 @@ export default function createNetworkSource(opts) {
       // actually we're going to wait for the server to say hello with ClientId
     };
     ws.onclose = () => {
-      setConnectionState(false);
+      updateIsConnected(false);
       !quiet && log('Socket closed.');
     };
     ws.onerror = e => {
-      setConnectionState(false);
+      updateIsConnected(false);
       !quiet && log('Socket errored: ', e);
     };
     ws.onmessage = msg => {
@@ -177,7 +141,7 @@ export default function createNetworkSource(opts) {
       switch (evt.type) {
         case 'ClientId': {
           wsClientId = evt.clientId;
-          setConnectionState(true);
+          updateIsConnected(true);
           const subscriptionIds = Object.keys(subscriptions);
           subscriptionIds.length &&
             socketSendIfConnected({
@@ -217,16 +181,6 @@ export default function createNetworkSource(opts) {
 
   connectWS();
 
-  //  #legacy
-  async function observeDoc(domain, name, auth) {
-    return subscribe({ domain, auth, doc: name });
-  }
-
-  //  #legacy
-  async function observeDocChildren(domain, name, auth) {
-    return subscribe({ domain, auth, docChildren: name });
-  }
-
   function getDocStream(domain, name, auth) {
     return subscribeStream({ domain, auth, doc: name });
   }
@@ -240,16 +194,9 @@ export default function createNetworkSource(opts) {
 
     id: `network-${opts.authority}`,
 
-    //  #legacy
-    observeDoc,
-    //  #legacy
-    observeDocChildren,
-    //  #legacy
-    isConnected,
-    // new stream API:
     getDocStream,
     getDocChildrenEventStream,
-    connected: isConnectedStream,
+    connected: createStreamValue(isConnectedStream, () => `NetworkConnected`),
 
     close: () => {
       ws && ws.close();

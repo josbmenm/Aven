@@ -1,8 +1,13 @@
 import React, { useContext, useState, useRef } from 'react';
-import { View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import {
+  View,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  Animated,
+  Easing,
+} from 'react-native';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import NavigationContext from '../navigation-core/views/NavigationContext';
-import Animated, { Easing } from 'react-native-reanimated';
 
 const PopoverContext = React.createContext(null);
 
@@ -45,8 +50,8 @@ export function usePopover(renderPopover, timing) {
 }
 
 const defaultTiming = {
-  duration: 600,
-  easing: Easing.inOut(Easing.quad),
+  duration: 3000,
+  easing: Easing.linear,
 };
 
 export function PopoverContainer({ children }) {

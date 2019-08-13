@@ -47,10 +47,10 @@ const App = createFullscreenSwitchNavigator(
       path: 'book-us',
       screen: BookUs,
     },
-    Schedule: {
-      path: 'schedule',
-      screen: Schedule,
-    },
+    // Schedule: {
+    //   path: 'schedule',
+    //   screen: Schedule,
+    // },
     RequestLocation: {
       path: 'request-location',
       screen: RequestLocation,

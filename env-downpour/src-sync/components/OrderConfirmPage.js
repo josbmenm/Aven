@@ -8,6 +8,7 @@ import Animated, { Easing } from 'react-native-reanimated';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import FadeTransition from './FadeTransition';
 import { boldPrimaryFontFace } from './Styles';
+import { OnoThemeDark } from '../logic/OnoTheme';
 
 const cardHeight = 516;
 
@@ -220,7 +221,7 @@ export default function OrderConfirmPage({
     message = 'thanks.';
   }
   if (!message) {
-    message = '...';
+    message = '';
   }
 
   let bottomContent = (
@@ -242,7 +243,7 @@ export default function OrderConfirmPage({
           alignItems: 'center',
         }}
       >
-        <Button title="Confirm Order" onPress={skipPayment} />
+        <Button title="confirm order" size="large" onPress={skipPayment} />
       </View>
     );
   }
@@ -251,6 +252,7 @@ export default function OrderConfirmPage({
     return (
       <FadeTransition
         backgroundColor={'#00000040'}
+        themeOverride={OnoThemeDark}
         background={
           <BlurView
             style={StyleSheet.absoluteFill}

@@ -55,6 +55,14 @@ function FeatureImage({ source, floatingImageStyle }) {
   );
 }
 
+function BodyLink({ children, ...props }) {
+  return (
+    <FunctionalLink {...props}>
+      <BodyText bold>{children}</BodyText>
+    </FunctionalLink>
+  );
+}
+
 function HowItWorks() {
   const theme = useTheme();
   return (
@@ -65,10 +73,13 @@ function HowItWorks() {
     >
       <View>
         <Container
-          style={{
-            borderBottomWidth: 1,
-            borderBottomColor: theme.colors.border,
-          }}
+          style={
+            {
+              //  todo: re-enable this when the schedule section is enabled
+              // borderBottomWidth: 1,
+              // borderBottomColor: theme.colors.border,
+            }
+          }
           responsiveStyle={{
             paddingBottom: [48, 200],
           }}
@@ -91,15 +102,20 @@ function HowItWorks() {
             title="Find Us"
             bodyText={
               <BodyText>
-                Check out the{' '}
-                <FunctionalLink routeName="Schedule">
-                  <BodyText bold>schedule</BodyText>{' '}
-                </FunctionalLink>
-                to find us. Not seeing your neighborhood?{' '}
-                <FunctionalLink routeName="Schedule">
-                  <BodyText bold>Request us here.</BodyText>
-                </FunctionalLink>
+                We will release our schedule soon. To be the first to know where
+                we are,{' '}
+                <BodyLink routeName="Subscribe">subscribe here.</BodyLink>
               </BodyText>
+              // <BodyText>
+              //   Check out the{' '}
+              //   <FunctionalLink routeName="Schedule">
+              //     <BodyText bold>schedule</BodyText>{' '}
+              //   </FunctionalLink>
+              //   to find us. Not seeing your neighborhood?{' '}
+              //   <FunctionalLink routeName="Schedule">
+              //     <BodyText bold>Request us here.</BodyText>
+              //   </FunctionalLink>
+              // </BodyText>
             }
             image={
               <FeatureImage

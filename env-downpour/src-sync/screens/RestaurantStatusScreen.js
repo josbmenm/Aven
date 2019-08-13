@@ -2,6 +2,8 @@ import React from 'react';
 import RootAuthenticationSection from './RootAuthenticationSection';
 import { Text, View } from 'react-native';
 import SimplePage from '../components/SimplePage';
+import { useCloudValue } from '../cloud-core/KiteReact';
+import Row from '../components/Row';
 import Tag from '../components/Tag';
 import Button from '../components/Button';
 import { Easing } from 'react-native-reanimated';
@@ -13,6 +15,10 @@ import {
 } from '../components/Styles';
 import KeyboardPopover from '../components/KeyboardPopover';
 import { usePopover } from '../views/Popover';
+import { useRestaurantState, useIsRestaurantOpen } from '../ono-cloud/Kitchen';
+import useTimeSeconds from '../utils/useTimeSeconds';
+import RowSection from '../components/RowSection';
+import Subtitle from '../components/Subtitle';
 
 function PopoverTitle({ children }) {
   return (
@@ -30,12 +36,41 @@ function PopoverTitle({ children }) {
 }
 
 function CloseRestaurantButtons({ onClose }) {
+  const [restaurantState, dispatch] = useRestaurantState();
+
   return (
     <View>
       <PopoverTitle>Close Restaurant..</PopoverTitle>
-      <Button title="gracefully, in 10 minutes" onPress={() => {}} />
-      <Button title="now. finish queued orders" onPress={() => {}} />
-      <Button title="immediately. cancel queued orders" onPress={() => {}} />
+      <Button
+        title="gracefully, in 10 minutes"
+        onPress={() => {
+          dispatch({
+            type: 'ScheduleRestaurantClose',
+            scheduledCloseTime: Date.now() + 1000 * 60 * 10,
+          });
+          onClose();
+        }}
+      />
+      <Button
+        title="now. finish queued orders"
+        onPress={() => {
+          dispatch({
+            type: 'CloseRestaurant',
+            immediate: false,
+          });
+          onClose();
+        }}
+      />
+      <Button
+        title="immediately. cancel queued orders"
+        onPress={() => {
+          dispatch({
+            type: 'CloseRestaurant',
+            immediate: true,
+          });
+          onClose();
+        }}
+      />
     </View>
   );
 }
@@ -48,20 +83,44 @@ function InfoText({ children }) {
   );
 }
 
-function StatusSection({ title, children }) {
+function ButtonStack({ buttons }) {
   return (
-    <View style={{ marginBottom: 40 }}>
-      <Text style={{ ...titleStyle, fontSize: 24 }}>{title}</Text>
-      {children}
+    <View>
+      {buttons.map((button, buttonIndex) => (
+        <View
+          style={{ marginBottom: buttonIndex === buttons.length - 1 ? 0 : 12 }}
+        >
+          {button}
+        </View>
+      ))}
     </View>
   );
 }
 
 function StatusView() {
+  const [restaurantState, dispatch] = useRestaurantState();
+  const { isOpen, closingSoon } = useIsRestaurantOpen(restaurantState);
+  const timeSeconds = useTimeSeconds();
+  console.log('wtf', { isOpen, timeSeconds, closingSoon });
+  let tagText = 'restaurant open';
+  if (closingSoon) {
+    const totalSecRemaining = Math.floor(
+      closingSoon.scheduledCloseTime / 1000 - timeSeconds,
+    );
+    const minsRemaining = Math.floor(totalSecRemaining / 60);
+    const minSecRemaining = totalSecRemaining % 60;
+    tagText = `restaurant closing in \n${minsRemaining}:${String(
+      minSecRemaining,
+    ).padStart(2, '0')}`;
+  }
+  if (!isOpen) {
+    tagText = 'restaurant closed';
+  }
+
   const { onPopover: onCloseRestaurantPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <CloseRestaurantButtons onClose={onClose} />
         </KeyboardPopover>
       );
@@ -69,104 +128,80 @@ function StatusView() {
     { easing: Easing.linear, duration: 1 },
   );
   return (
-    <StatusSection title="Status Display & Kiosks">
-      <Button title="Open Restaurant" onPress={() => {}} />
-      <Button title="Close Restaurant" onPress={onCloseRestaurantPopover} />
-    </StatusSection>
-  );
-}
-function TempCell({ title, value, button }) {
-  return (
-    <View style={{ flex: 1 }}>
-      <Text style={{ ...titleStyle, color: monsterra, fontSize: 20 }}>
-        {title}
-      </Text>
-      <Text style={{ ...proseFontFace, color: monsterra, fontSize: 62 }}>
-        {value}
-      </Text>
-      {button}
-    </View>
-  );
-}
-function TemperatureView() {
-  return (
-    <StatusSection title="Food Safety">
-      <View style={{ flexDirection: 'row' }}>
-        <TempCell
-          title="Frozen Food"
-          value="0°F"
-          button={
-            <Button
-              title="clear alarm. frozen food is fresh."
-              onPress={() => {}}
-              disabled
-            />
-          }
+    <RowSection>
+      <Row title="restaurant status">
+        <View style={{ flex: 1 }}>
+          <Subtitle title={tagText} />
+        </View>
+        <ButtonStack
+          buttons={[
+            isOpen ? (
+              <Button
+                title="close restaurant"
+                onPress={onCloseRestaurantPopover}
+              />
+            ) : (
+              <Button
+                title="open restaurant"
+                onPress={() => {
+                  dispatch({
+                    type: 'OpenRestaurant',
+                  });
+                }}
+              />
+            ),
+            closingSoon && (
+              <Button
+                title="clear close schedule"
+                type="outline"
+                onPress={() => {
+                  dispatch({
+                    type: 'ScheduleRestaurantClose',
+                    scheduledCloseTime: null,
+                  });
+                }}
+              />
+            ),
+          ]}
         />
-        <TempCell
-          title="Piston Fridge"
-          value="42°F"
-          button={
-            <Button
-              title="clear alarm. cold piston filler is fresh."
-              onPress={() => {}}
-              disabled
-            />
-          }
-        />
-      </View>
-      <View style={{ flexDirection: 'row' }}>
-        <TempCell
-          title="Beverage Fridge"
-          value="42°F"
-          button={
-            <Button
-              title="clear alarm. beverages are fresh."
-              onPress={() => {}}
-              disabled
-            />
-          }
-        />
-        <TempCell title="Warm Truck" value="80°F" button={null} />
-      </View>
-    </StatusSection>
+      </Row>
+    </RowSection>
   );
 }
 
 function AirPressureView() {
   return (
-    <StatusSection title="Air Pressure">
+    <RowSection title="Air Pressure">
       <Tag title="Pressurized" color={Tag.positiveColor} />
       <Button title="Disable and Depressureize" onPress={() => {}} />
       <Button title="Enable" disabled onPress={() => {}} />
-    </StatusSection>
+    </RowSection>
   );
 }
 
 function PowerView() {
   return (
-    <StatusSection title="Generator Power">
+    <RowSection title="Generator Power">
       <Tag title="Disabled" color={Tag.negativeColor} />
       <Button title="Enable" onPress={() => {}} />
-    </StatusSection>
+    </RowSection>
   );
 }
 
 function SkidView() {
   return (
-    <StatusSection title="Machine Loading">
+    <RowSection title="Machine Loading">
       <Tag title="Locked" color={Tag.positiveColor} />
       <Button title="Unlock Skid" onPress={() => {}} />
-    </StatusSection>
+    </RowSection>
   );
 }
 
 export default function RestaurantStatusScreen(props) {
   return (
-    <SimplePage title="Restaurant Status" icon="🚐" {...props}>
+    <SimplePage {...props} hideBackButton>
       <RootAuthenticationSection>
         <StatusView />
-        <TemperatureView />
         <AirPressureView />
         <PowerView />
         <SkidView />

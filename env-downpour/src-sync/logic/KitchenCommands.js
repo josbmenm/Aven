@@ -15,6 +15,50 @@ const KitchenCommands = {
       return kitchenState.FillSystem_PickUpNewCupReady_READ;
     },
   },
+
+  DispenseCup: {
+    subsystem: 'Denester',
+    pulse: ['DispenseAmount'],
+    values: {},
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.Denester_DispenseAmount_READ;
+    },
+  },
+  DispenseOnly: {
+    subsystem: 'FillSystem',
+    pulse: ['DispenseAmountSystem'],
+    valueParamNames: {
+      DispenseAmount: 'amount',
+      DispenseSystem: 'system',
+      SlotToDispense: 'slot',
+    },
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.FillSystem_DispenseAmountReady_READ;
+    },
+  },
+
+  // PrepareForBlender: {
+  //   subsystem: 'FillPositioner',
+  //   pulse: ['GoToPosition'],
+  //   values:
+  //   checkReady: kitchenState => {
+  //     if (!kitchenState) {
+  //       return false;
+  //     }
+  //     return kitchenState.FillPositioner_GoToPosition_READ && FillSystem_PrgStep_READ === 0;
+  //   },
+  // },
+  // PrepareForNewCup: {
+  //   system: 'FillPositioner',
+  //   pulse: ['GoToPosition'],
+  //   values: {}
+  // },
   DropCup: {
     subsystem: 'FillSystem',
     pulse: ['DropCup'],
@@ -33,6 +77,16 @@ const KitchenCommands = {
         return false;
       }
       return kitchenState.FillSystem_DitchCupReady_READ;
+    },
+  },
+  DeliveryDropCup: {
+    subsystem: 'Delivery',
+    pulse: ['DropCup'],
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.Delivery_DropCupReady_READ;
     },
   },
   Blend: {
@@ -91,6 +145,20 @@ const KitchenCommands = {
         return false;
       }
       return kitchenState.FillSystem_PositionAndDispenseAmountReady_READ;
+    },
+  },
+  PositionToSystemSlot: {
+    subsystem: 'FillSystem',
+    pulse: ['PositionOnly'],
+    valueParamNames: {
+      DispenseSystem: 'system',
+      SlotToDispense: 'slot',
+    },
+    checkReady: kitchenState => {
+      if (!kitchenState) {
+        return false;
+      }
+      return kitchenState.FillSystem_PositionOnlyReady_READ;
     },
   },
   PassToBlender: {

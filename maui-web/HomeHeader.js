@@ -12,6 +12,7 @@ import {
 } from '../dashboard/Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import { absoluteElement } from '../components/Styles';
+import SubscriptionForm from './SubscriptionForm';
 import { useTheme } from '../dashboard/Theme';
 
 const breakpoints = [1024, 1400];
@@ -103,18 +104,28 @@ function HomeHeader() {
                         textAlign: ['center', 'left'],
                       }}
                     >
-                      We’re making healthy food accessible to everyone.
+                      We’re moving food forward.
                     </Heading>
                     <BodyText
                       responsiveStyle={{
                         marginBottom: [20, 45],
                       }}
                     >
-                      Using organic fruits and vegetables, we create blends that
-                      focus on the best ingredients for you. All of our blends
-                      are customizable and designed with your best self in mind.
+                      By reimagining the mobile dining experience, we make
+                      healthy food accessible to everyone. We use organic fruits
+                      and vegetables to create blends that focus on the best
+                      ingredients for you.
                     </BodyText>
-                    <ButtonLink
+                    <BodyText
+                      responsiveStyle={{
+                        marginBottom: [15, 25],
+                      }}
+                      bold
+                    >
+                      See you soon, Los Angeles.
+                    </BodyText>
+                    <SubscriptionForm />
+                    {/* <ButtonLink
                       title="find us"
                       routeName="Schedule"
                       buttonStyle={{
@@ -123,7 +134,7 @@ function HomeHeader() {
                       titleStyle={{
                         textAlign: 'center',
                       }}
-                    />
+                    /> */}
                   </View>
                 </Responsive>
               </ColumnToRowChild>

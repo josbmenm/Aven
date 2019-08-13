@@ -6,13 +6,15 @@ import AppInfoText from './AppInfoText';
 import { usePopover } from '../views/Popover';
 
 import { Easing } from 'react-native-reanimated';
+import { useNavigation } from '../navigation-hooks/Hooks';
 
 import codePush from 'react-native-code-push';
 
 export const AppEnvContext = React.createContext();
 
-function BlitzDebug() {
+function BlitzDebug({ onClose }) {
   const { isSkynet, setIsSkynet } = React.useContext(AppEnvContext);
+  const { navigate } = useNavigation();
   return (
     <React.Fragment>
       <AppInfoText />
@@ -31,15 +33,23 @@ function BlitzDebug() {
         title={`Set to ${isSkynet ? 'Verse' : 'Skynet'}`}
         secondary
       />
+      <Button
+        onPress={() => {
+          onClose();
+          navigate('PaymentDebug');
+        }}
+        title={`Debug Card Reader`}
+        type="outline"
+      />
     </React.Fragment>
   );
 }
 
 export default function useBlitzDebugPopover() {
   const { onPopover } = usePopover(
-    ({ onClose, popoverOpenValue }) => {
+    ({ onClose, ...props }) => {
       return (
-        <KeyboardPopover onClose={onClose}>
+        <KeyboardPopover onClose={onClose} {...props}>
           <BlitzDebug onClose={onClose} />
         </KeyboardPopover>
       );

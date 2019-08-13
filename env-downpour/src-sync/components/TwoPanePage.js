@@ -27,7 +27,7 @@ export default function TwoPanePage({
         <View style={{ flex: 1, backgroundColor: pageBackgroundColor }} />
       }
     >
-      <Hero title={title} icon={icon} />
+      {(title || icon) && <Hero title={title} icon={icon} />}
       <View style={{ flex: 1, flexDirection: 'row' }}>
         <View style={{ flex: 1 }}>
           <ScrollView

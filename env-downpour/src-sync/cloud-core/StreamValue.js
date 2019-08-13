@@ -12,11 +12,11 @@ export function streamGet(stream) {
   return val;
 }
 
-export async function streamLoad(stream) {
+export async function streamLoad(stream, onGetContext) {
   return new Promise((resolve, reject) => {
     let loadTimeout = setTimeout(() => {
-      reject(new Error('Timed out loading..'));
-    }, 30000);
+      reject(new Error(`Timed out loading "${onGetContext()}".`));
+    }, 3000);
 
     let loadListener = null;
 
@@ -44,9 +44,12 @@ export async function streamLoad(stream) {
   });
 }
 
-export function createStreamValue(inputStream, onGetContext) {
-  const stream = inputStream.remember();
+export function createStreamValue(stream, onGetContext) {
+  // const stream = inputStream.remember().debug(v => {
+  //   // console.log(`See the stream value ${onGetContext()}..`, !!v);
+  // });
   return {
+    type: 'StreamValue-DEPRECATE-ME',
     get: () => streamGet(stream),
     load: () => streamLoad(stream, onGetContext),
     stream,

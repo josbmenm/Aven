@@ -8,7 +8,9 @@ const Button = ({
   title,
   secondary,
   buttonStyle,
+  appearance,
   titleStyle,
+  size,
   disabled,
   style,
   ...rest
@@ -22,8 +24,10 @@ const Button = ({
     >
       <VisualButton
         title={title}
+        appearance={appearance}
         buttonStyle={buttonStyle}
         titleStyle={titleStyle}
+        size={size}
         disabled={disabled}
         {...rest}
       />

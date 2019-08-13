@@ -1,14 +1,20 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Button from '../components/Button';
-import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
-import useObservable from '../cloud-core/useObservable';
+import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import { useNavigation } from '../navigation-hooks/Hooks';
-import { prettyShadow, titleStyle } from '../components/Styles';
+import {
+  prettyShadow,
+  titleStyle,
+  primaryFontFace,
+  monsterra,
+  boldPrimaryFontFace,
+} from '../components/Styles';
 import { computeNextSteps } from '../logic/KitchenSequence';
 import { getSubsystem, getSubsystemFaults } from '../ono-cloud/OnoKitchen';
 
 import useAsyncError from '../react-utils/useAsyncError';
+import Spinner from '../components/Spinner';
 
 function StatusPuck({ status }) {
   let statusColor = null;
@@ -21,13 +27,14 @@ function StatusPuck({ status }) {
       statusColor = 'yellow';
       break;
     }
+    case 'detached':
     case 'ready': {
-      statusColor = '#2a4';
+      statusColor = '#00990D';
       break;
     }
     case 'disconnected':
     default: {
-      statusColor = '#888';
+      statusColor = '#ddd';
       break;
     }
   }
@@ -38,9 +45,13 @@ function StatusPuck({ status }) {
         backgroundColor: statusColor,
         width: 50,
         height: 100,
-        borderRadius: 14,
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
-    />
+    >
+      {status === 'disconnected' && <Spinner />}
+    </View>
   );
 }
 
@@ -68,12 +79,23 @@ function FaultRow({ fault }) {
   );
 }
 
+function ControlPanelButton({ ...props }) {
+  return (
+    <Button
+      {...props}
+      style={{ marginVertical: 16, marginHorizontal: 8 }}
+      size="large"
+    />
+  );
+}
+
 export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   const cloud = useCloud();
   // const isConnected = useObservable(cloud.isConnected);
-  const isConnected = true; // uh....
+  const isConnected = useValue(cloud.connected); // uh....
   const kitchenState = useCloudValue('KitchenState');
   const kitchenConfig = useCloudValue('KitchenConfig');
+
   const isPLCConnected = React.useMemo(
     () => kitchenState && kitchenState.isPLCConnected,
     [kitchenState],
@@ -92,43 +114,47 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   let allFaults = [];
   if (!isConnected) {
     status = 'disconnected';
-    message = 'App disconnected from server..';
-  } else if (!kitchenState || !restaurantState) {
+    message = 'Control panel disconnected.';
+  } else if (restaurantState === undefined) {
     status = 'disconnected';
     message = 'Loading state..';
+  } else if (!kitchenState) {
+    status = 'disconnected';
+    message = 'Disconnected from machine.';
   } else if (!isPLCConnected) {
     status = 'disconnected';
-    message = 'Server disconnected from machine..';
-  } else if (restaurantState.manualMode) {
-    status = 'manual mode';
+    message = 'Server disconnected from machine.';
+    // } else if (restaurantState.manualMode) {
+    //   status = 'manual mode';
   } else if (!restaurantState.isAttached) {
-    status = 'disconnected';
-    message = 'Detached.';
+    status = 'detached';
+    message = 'Disabled';
   } else {
     sequencerNames &&
       sequencerNames.forEach(systemName => {
         const system = getSubsystem(systemName, kitchenConfig, kitchenState);
-        if (kitchenState[`${systemName}_NoFaults_READ`] === false) {
-          const faults = getSubsystemFaults(system);
-          if (faults) {
-            allFaults = [
-              ...allFaults,
-              ...faults.map(desc => ({
-                description: `${systemName} - ${desc}`,
-                systemName,
-              })),
-            ];
-          }
-          if (status !== 'fault') {
-            status = 'fault';
-            message = `Faulted. ${systemName}`;
-          } else {
-            message += `, ${systemName}`;
-          }
+        const faults = getSubsystemFaults(system);
+        if (faults) {
+          allFaults = [
+            ...allFaults,
+            ...faults.map(desc => ({
+              description: `${systemName} - ${desc}`,
+              isFaulted: desc !== 'Not Homed',
+              systemName,
+            })),
+          ];
         }
       });
+    if (allFaults.length) {
+      status = 'fault';
+      if (allFaults.find(f => f.isFaulted)) {
+        message = 'Faulted';
+      } else {
+        message = 'Not Homed';
+      }
+    }
   }
-  if (status === 'ready') {
+  if (status === 'ready' || status === 'detached') {
     sequencerNames &&
       sequencerNames.forEach(systemName => {
         if (kitchenState[`${systemName}_PrgStep_READ`] !== 0) {
@@ -146,14 +172,14 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   if (restaurantState && !restaurantState.isAutoRunning) {
     nextSteps = computeNextSteps(restaurantState, kitchenConfig, kitchenState);
     if (nextSteps && nextSteps.length) {
-      subMessage = 'Next Step: ' + nextSteps.map(s => s.description).join(', ');
+      subMessage = `${nextSteps.length} steps ready`;
     }
   }
 
-  async function handleKitchenAction(action) {
+  async function handleKitchenCommand(action) {
     await cloud.dispatch({
       ...action,
-      type: 'KitchenAction',
+      type: 'KitchenCommand',
     });
   }
   return (
@@ -166,26 +192,76 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
           ...prettyShadow,
           height: 120,
           alignSelf: 'stretch',
-          backgroundColor: '#fff8ee',
+          backgroundColor: 'white',
           flexDirection: 'row',
         }}
       >
         <StatusPuck status={status} />
 
         <View style={{ flex: 1, padding: 16 }}>
-          {message && <Text style={{ fontSize: 32 }}>{message}</Text>}
-          {subMessage && <Text>{subMessage}</Text>}
+          {message && (
+            <Text style={{ fontSize: 32, ...titleStyle }}>{message}</Text>
+          )}
+          {subMessage && (
+            <Text style={{ ...primaryFontFace, color: monsterra }}>
+              {subMessage}
+            </Text>
+          )}
         </View>
-        <View style={{ flexDirection: 'row' }}>
-          {restaurantState && (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-end',
+            paddingHorizontal: 8,
+          }}
+        >
+          {restaurantState &&
+            restaurantState.isAttached &&
+            nextSteps &&
+            nextSteps.map((step, i) => (
+              <View key={i}>
+                <ControlPanelButton
+                  title="go step"
+                  onPress={() => {
+                    step
+                      .perform(
+                        cloud.get('RestaurantActions').putTransactionValue,
+                        handleKitchenCommand,
+                      )
+                      .then(resp => {
+                        console.log('ACTION RESP', step.description, resp);
+                      });
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: 'white',
+                      marginVertical: 8,
+                      fontSize: 18,
+                      ...primaryFontFace,
+                    }}
+                  >
+                    {step.description}
+                  </Text>
+                </ControlPanelButton>
+              </View>
+            ))}
+          {restaurantState && restaurantState.isAttached && (
             <View style={{}}>
-              <Text style={{ textAlign: 'center', paddingTop: 8 }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  paddingTop: 8,
+                  ...boldPrimaryFontFace,
+                  color: '#111',
+                }}
+              >
                 {restaurantState.isAutoRunning
-                  ? 'Auto: Running'
-                  : 'Auto: Paused'}
+                  ? 'auto: RUNNING'
+                  : 'auto: PAUSED'}
               </Text>
-              <Button
-                title={restaurantState.isAutoRunning ? 'Pause' : 'Start'}
+              <ControlPanelButton
+                title={restaurantState.isAutoRunning ? 'pause' : 'start'}
                 onPress={() => {
                   if (restaurantState.isAutoRunning) {
                     errorHandler(restaurantDispatch({ type: 'PauseAutorun' }));
@@ -197,9 +273,45 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
               />
             </View>
           )}
+
+          {status === 'fault' && (
+            <ControlPanelButton
+              title="Home System"
+              onPress={() => {
+                handleKitchenCommand({ command: 'Home' });
+              }}
+            />
+          )}
+          {restaurantState && restaurantState.manualMode && (
+            <ControlPanelButton
+              title="disable manual mode"
+              onPress={() => {
+                restaurantDispatch({
+                  type: 'DisableManualMode',
+                });
+              }}
+            />
+          )}
+          {restaurantState &&
+            !restaurantState.manualMode &&
+            !restaurantState.isAttached && (
+              <ControlPanelButton
+                title="enable manual mode"
+                disabled={restaurantState.isAttached}
+                onPress={() => {
+                  restaurantDispatch({
+                    type: 'EnableManualMode',
+                  });
+                }}
+              />
+            )}
           {restaurantState && (
-            <Button
-              title={restaurantState.isAttached ? 'Detach' : 'Attach'}
+            <ControlPanelButton
+              title={
+                restaurantState.isAttached
+                  ? 'disable sequencer'
+                  : 'enable sequencer'
+              }
               disabled={restaurantState.manualMode}
               onPress={() => {
                 if (restaurantState.isAttached) {
@@ -207,20 +319,6 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
                 } else if (!restaurantState.manualMode) {
                   errorHandler(restaurantDispatch({ type: 'Attach' }));
                 }
-              }}
-              secondary
-            />
-          )}
-          {restaurantState && !restaurantState.isAutoRunning && (
-            <Button
-              title="Step"
-              disabled={!nextSteps || !nextSteps.length}
-              onPress={() => {
-                nextSteps.forEach(step => {
-                  step.perform(cloud, handleKitchenAction).then(resp => {
-                    console.log('ACTION RESP', step.description, resp);
-                  });
-                });
               }}
               secondary
             />

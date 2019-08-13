@@ -11,8 +11,7 @@
       "rxjs",
       "rxjs-compat",
       "json-stable-stringify",
-      "crypto-js",
-      "@nozbe/with-observables"
+      "crypto-js"
     ]
   },
   "srcChecksum": "a2f8793520c50663535de99ce53fe7672c62e8554b617eb57b3b672802724eab"

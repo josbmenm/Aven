@@ -117,8 +117,8 @@ export default function PageFooter() {
                 <View style={{ flex: 1 }}>
                   <Link
                     titleStyle={{ textAlign: 'left' }}
-                    title="press kit"
-                    url="#press-kit"
+                    title="media kit"
+                    url="#media-kit"
                   />
                   <View
                     style={{
@@ -161,11 +161,6 @@ export default function PageFooter() {
                     titleStyle={{ textAlign: 'left' }}
                     title="contact us"
                     url="mailto:aloha@onofood.co"
-                  />
-                  <Link
-                    titleStyle={{ textAlign: 'left' }}
-                    title="subscribe to updates"
-                    routeName="Subscribe"
                   />
                 </View>
               </ColumnToRowChild>
