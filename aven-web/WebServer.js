@@ -242,6 +242,10 @@ export default async function WebServer({
             display: flex;
             flex-direction: column;
           }
+          input, textarea {
+            -webkit-appearance: none;
+            -webkit-border-radius: 0;
+          }
           ${options.customCSS ? options.customCSS : ''}
           </style>
           ${options.customHTMLHeaders ? options.customHTMLHeaders : ''}
