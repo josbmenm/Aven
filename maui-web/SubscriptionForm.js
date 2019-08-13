@@ -9,14 +9,11 @@ import { Responsive } from '../dashboard/Responsive';
 import Spinner from '../dashboard/Spinner';
 import { useTheme } from '../dashboard/Theme';
 import FormInput from '../components/BlockFormInput';
+import { monsterra80 } from '../components/Styles';
 
 function SubscriptionForm({ breakpoints }) {
-  const theme = useTheme();
   const [email, setEmail] = React.useState(null);
   const [isDone, setIsDone] = React.useState(false);
-  const cloud = useCloud();
-  const handleErrors = useAsyncError();
-  const [loading, setLoading] = React.useState(false);
 
   function handleSubmit() {
     setLoading(true);
@@ -28,7 +25,9 @@ function SubscriptionForm({ breakpoints }) {
   if (isDone) {
     return (
       <View>
-        <BodyText bold>Whoops, subscription coming soon!</BodyText>
+        <BodyText bold>
+          thanks for subscribing! we will reach out soon.
+        </BodyText>
       </View>
     );
   }
@@ -39,14 +38,55 @@ function SubscriptionForm({ breakpoints }) {
         flexDirection: ['column', 'row'],
       }}
     >
-      <View>
+      <form
+        action="https://onofood.us18.list-manage.com/subscribe/post?u=87f353e4bf17adebb83d8db1a&amp;id=cdd5752309"
+        method="post"
+        id="mc-embedded-subscribe-form"
+        name="mc-embedded-subscribe-form"
+        target="_blank"
+        onSubmit={() => {
+          setIsDone(true);
+        }}
+      >
         <FormInput
-          value={email}
-          onValue={setEmail}
           type="email"
           label="your email"
+          required
+          name="EMAIL"
+          value={email}
+          onValue={setEmail}
         />
-        <Button
+        <input
+          type="submit"
+          value="keep me updated"
+          name="subscribe"
+          id="mc-embedded-subscribe"
+          style={{
+            display: 'flex',
+            backgroundColor: monsterra80,
+            borderRadius: 4,
+            paddingTop: 12,
+            paddingBottom: 14,
+            paddingLeft: 16,
+            paddingRight: 16,
+            color: 'white',
+            fontFamily: 'Maax-Bold',
+            fontSize: 24,
+            border: 0,
+          }}
+        />
+        <div style={{ position: 'absolute', left: -5000 }} aria-hidden="true">
+          <input
+            type="text"
+            value=""
+            onChange={() => {}}
+            name="b_87f353e4bf17adebb83d8db1a_cdd5752309"
+            tabIndex="-1"
+            value=""
+          />
+        </div>
+
+        {/* <Button
           breakpoints={breakpoints}
           onPress={handleSubmit}
           buttonStyle={{
@@ -71,8 +111,8 @@ function SubscriptionForm({ breakpoints }) {
               keep me updated
             </BaseText>
           )}
-        </Button>
-      </View>
+        </Button> */}
+      </form>
     </Responsive>
   );
 }
