@@ -28,7 +28,7 @@ function SubscriptionForm({ breakpoints }) {
   if (isDone) {
     return (
       <View>
-        <BodyText bold>Thanks, you are subscribed!</BodyText>
+        <BodyText bold>Whoops, subscription coming soon!</BodyText>
       </View>
     );
   }
