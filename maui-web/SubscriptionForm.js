@@ -21,7 +21,7 @@ function SubscriptionForm({}) {
           name="EMAIL"
           value={email}
           onValue={setEmail}
-          style={{}}
+          style={{ zIndex: 5 }}
         />
         <input
           type="submit"
@@ -30,7 +30,6 @@ function SubscriptionForm({}) {
           style={{
             display: 'flex',
             backgroundColor: monsterra80,
-            borderRadius: 4,
             paddingTop: 12,
             paddingBottom: 14,
             paddingLeft: 16,
@@ -40,7 +39,8 @@ function SubscriptionForm({}) {
             color: 'white',
             fontFamily: 'Maax-Bold',
             fontSize: 24,
-            border: 0,
+            border: 'none',
+            borderRadius: 4,
             letterSpacing: 0.3,
             textAlign: 'center',
           }}
