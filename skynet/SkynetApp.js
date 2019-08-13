@@ -104,7 +104,7 @@ const defaultMetaImage = 'https://onofood.co/img/OnoLanding2.png';
 const defaultMetaDescription =
   'Taste the future with Ono Blends. Brought to you by Ono Food Co.';
 
-function getMetaInfo({ screenOptions, navigation, title }) {
+function getHTMLHeaders({ screenOptions, navigation, title }) {
   return `
 <meta property="og:site_name" content="Ono Blends"/>
 <meta property="og:title" content="${title}">
@@ -112,7 +112,9 @@ function getMetaInfo({ screenOptions, navigation, title }) {
     defaultMetaDescription}">
 <meta property="og:image" content="${screenOptions.metaImage ||
     defaultMetaImage}">
-  `;
+
+${screenOptions.customHTMLHeaders ? screenOptions.customHTMLHeaders : ''}
+`;
   // <meta property="og:url" content="https://onoblends.co">
 }
 
@@ -142,7 +144,11 @@ const App = createSwitchNavigator(
         return {
           ...screenOptions,
           title,
-          customHTMLHeaders: getMetaInfo({ screenOptions, title, navigation }),
+          customHTMLHeaders: getHTMLHeaders({
+            screenOptions,
+            title,
+            navigation,
+          }),
           customHTML: GoogleAnalyticsTag,
           customCSS: screenOptions.customCSS
             ? fontsCSS + '\n' + screenOptions.customCSS

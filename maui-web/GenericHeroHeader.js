@@ -18,12 +18,18 @@ export default function GenericHeroHeader({
 }) {
   return (
     <View className={className}>
-      <Container style={{ position: 'relative' }}>
+      <Container
+        style={{ position: 'relative' }}
+        responsiveStyle={{
+          width: ['100% !important', '100%'],
+        }}
+      >
         <View
           style={{
             flex: 1,
             backgroundColor,
             alignItems: 'center',
+            paddingHorizontal: 16,
           }}
         >
           <Responsive style={responsiveStyle}>

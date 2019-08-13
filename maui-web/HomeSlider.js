@@ -2,6 +2,7 @@ import React from 'react';
 import { Image, ScrollView, StyleSheet } from 'react-native';
 import View from '../views/View';
 import { useTheme } from '../dashboard/Theme';
+import { Responsive } from '../dashboard/Responsive';
 import Container from '../dashboard/Container';
 
 function Slide({ source, width, height }) {
@@ -12,7 +13,16 @@ function Slide({ source, width, height }) {
         margin: 20,
       }}
     >
-      <Image source={source} style={{ width, height }} />
+      <Responsive
+        style={{
+          width: [width / 2, width],
+          height: [height / 2, height],
+        }}
+      >
+        <View>
+          <Image source={source} style={{ flex: 1 }} />
+        </View>
+      </Responsive>
     </View>
   );
 }

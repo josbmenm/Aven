@@ -81,9 +81,9 @@ function HomeHeader() {
                 <Responsive
                   breakpoints={breakpoints}
                   style={{
-                    paddingTop: [40, 240],
+                    paddingTop: [40, 230],
                     paddingRight: [20, 20],
-                    paddingBottom: [40, 200],
+                    paddingBottom: [70, 200],
                     paddingLeft: [20, 100],
                     alignItems: ['center', 'flex-start'],
                   }}
@@ -100,7 +100,7 @@ function HomeHeader() {
                       size="large"
                       breakpoints={breakpoints}
                       responsiveStyle={{
-                        marginBottom: [16, 6],
+                        marginBottom: [36, 26],
                         textAlign: ['center', 'left'],
                       }}
                     >

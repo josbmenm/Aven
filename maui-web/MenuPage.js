@@ -12,9 +12,11 @@ function Menu() {
   const theme = useTheme();
   return (
     <GenericPage>
-      <Responsive style={{
-        marginBottom: [120, 160]
-      }}>
+      <Responsive
+        style={{
+          marginBottom: [120, 160],
+        }}
+      >
         <View style={{ flex: 1, position: 'relative' }}>
           <GenericHeroHeader
             backgroundColor={theme.colors.lightGrey}
