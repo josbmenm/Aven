@@ -73,13 +73,12 @@ function HowItWorks() {
     >
       <View>
         <Container
-          style={
-            {
-              //  todo: re-enable this when the schedule section is enabled
-              // borderBottomWidth: 1,
-              // borderBottomColor: theme.colors.border,
-            }
-          }
+          style={{
+            zIndex: 12,
+            //  todo: re-enable this when the schedule section is enabled
+            // borderBottomWidth: 1,
+            // borderBottomColor: theme.colors.border,
+          }}
           responsiveStyle={{
             paddingBottom: [48, 200],
           }}
@@ -128,16 +127,18 @@ function HowItWorks() {
             }
           />
 
-          <View style={{ position: 'relative' }}>
+          <View style={{ position: 'relative', zIndex: 1 }}>
             <Image
               source={require('./public/img/mango.png')}
+              pointerEvents="none"
               style={{
                 ...absoluteElement,
                 width: 520,
                 height: 611,
                 right: -410,
                 top: -270,
-                zIndex: 10,
+                zIndex: 1,
+                pointerEvents: 'none',
               }}
             />
 

@@ -16,7 +16,7 @@ import MauiWebApp from '../maui-web/MauiWebApp';
 import { monsterra } from '../components/Styles';
 import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
 
-const Main = () => (
+const NotFoundPage = () => (
   <View
     style={{
       flex: 1,
@@ -121,17 +121,16 @@ ${screenOptions.customHTMLHeaders ? screenOptions.customHTMLHeaders : ''}
 const App = createSwitchNavigator(
   {
     Main: {
-      screen: Main,
+      screen: NotFoundPage,
       navigationOptions: {
         backgroundColor: '#FFFFFF',
         title: 'ono food co',
         customCSS: fontsCSS,
         customHTML: GoogleAnalyticsTag,
       },
-      path: '',
     },
     PreviewApp: {
-      path: 'maui-preview',
+      path: '',
       screen: MauiWebApp,
       navigationOptions: ({ navigation, screenProps }) => {
         const screenOptions = getActiveChildNavigationOptions(
