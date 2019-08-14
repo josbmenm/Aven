@@ -21,6 +21,8 @@ import ProductHomeScreen from '../screens/ProductHomeScreen';
 import KitchenEngScreen from '../screens/KitchenEngScreen';
 import RestaurantStatusScreen from '../screens/RestaurantStatusScreen';
 import KitchenEngSubScreen from '../screens/KitchenEngSubScreen';
+import PaymentDebugScreen from '../screens/PaymentDebugScreen';
+import OrderConfirmTestScreen from '../screens/OrderConfirmTestScreen';
 import KioskSettingsScreen from '../screens/KioskSettingsScreen';
 import KioskHomeScreen from '../screens/KioskHomeScreen';
 import BlendScreen from '../screens/BlendScreen';
@@ -175,10 +177,8 @@ const PortalHome = createSwitchNavigator({
   Inventory: { screen: InventoryScreen },
   Sequencer: { screen: SequencerScreen },
   Orders: { screen: OrdersScreen },
-  DeviceManager: DeviceManagerScreen,
   Status: { screen: RestaurantStatusScreen },
   Alarms: { screen: AlarmsScreen },
-  Settings: { screen: KioskSettingsScreen },
 });
 
 function PortalHomeApp({ navigation }) {
@@ -200,12 +200,14 @@ const App = createStackTransitionNavigator({
   OrderComplete: OrderCompletePortalScreen,
   Kiosk: KioskApp,
   ComponentPlayground: ComponentPlaygroundScreen,
+  Settings: { screen: KioskSettingsScreen },
+  DeviceManager: DeviceManagerScreen,
+  PaymentDebug: PaymentDebugScreen,
 
   // Inventory: InventoryScreen,
   // DeviceManager: DeviceManagerScreen,
   // RestaurantStatus: RestaurantStatusScreen,
-  // PaymentDebug: PaymentDebugScreen,
-  // OrderConfirmTest: OrderConfirmTestScreen,
+  OrderConfirmTest: OrderConfirmTestScreen,
   // Sequencer: SequencerScreen,
   // EngDashboard: EngDashboardScreen,
   // Orders: OrdersScreen,
