@@ -77,7 +77,7 @@ class LinkWithNavigation extends Component {
         style={{ textDecoration: 'none', color: 'inherit', ...overrideATagCSS }}
         href={href}
         onClick={e => {
-          if (navAction.type === NavigationActions.URL) {
+          if (e.metaKey || navAction.type === NavigationActions.URL) {
             // correct behavior is default
           } else {
             navigation.dispatch(navAction);
