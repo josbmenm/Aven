@@ -441,7 +441,10 @@ function BlendPage() {
           >
             all our blends
           </Heading>
-          <BlendsCarousel style={{ alignSelf: 'flex-start' }} />
+          <BlendsCarousel
+            style={{ alignSelf: 'flex-start' }}
+            activeBlendSlug={blendSlug}
+          />
         </Container>
       </View>
       <PageFooter />

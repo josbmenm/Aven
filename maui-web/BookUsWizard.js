@@ -171,7 +171,7 @@ function BookUsWizard() {
   function onSubmit() {
     setLoading(true);
     cloud
-      .dispatch({ type: 'RequestBooking', request: formState })
+      .dispatch({ type: 'RequestBooking', request: formState.fields })
       .then(() => {
         setLoading(false);
         setIsDone(true);
@@ -239,42 +239,37 @@ function BookUsWizard() {
             <Heading size="large">First thing’s first</Heading>
             <BodyText>We’d love to know who we are speaking to.</BodyText>
           </StepHeader>
-          <Responsive
-            style={{
-              flexDirection: ['column', 'row'],
-            }}
-          >
-            <FormRow direction="row">
-              <FormInput
-                label="first name"
-                mode="name"
-                ref={firstNameRef}
-                value={formState.fields.firstName}
-                onValue={value =>
-                  formDispatch({
-                    type: 'UPDATE_FIELD',
-                    key: 'firstName',
-                    value,
-                  })
-                }
-                style={formInputStyle}
-              />
-              <FormInput
-                label="last name"
-                mode="name"
-                ref={lastNameRef}
-                value={formState.fields.lastName}
-                onValue={value =>
-                  formDispatch({
-                    type: 'UPDATE_FIELD',
-                    key: 'lastName',
-                    value,
-                  })
-                }
-                style={formInputStyle}
-              />
-            </FormRow>
-          </Responsive>
+
+          <FormRow direction="row">
+            <FormInput
+              label="first name"
+              mode="name"
+              ref={firstNameRef}
+              value={formState.fields.firstName}
+              onValue={value =>
+                formDispatch({
+                  type: 'UPDATE_FIELD',
+                  key: 'firstName',
+                  value,
+                })
+              }
+              style={formInputStyle}
+            />
+            <FormInput
+              label="last name"
+              mode="name"
+              ref={lastNameRef}
+              value={formState.fields.lastName}
+              onValue={value =>
+                formDispatch({
+                  type: 'UPDATE_FIELD',
+                  key: 'lastName',
+                  value,
+                })
+              }
+              style={formInputStyle}
+            />
+          </FormRow>
         </Step>
         <Step active={stepsState.current === 2}>
           <StepHeader>
@@ -510,7 +505,7 @@ function ProgressBar({ step, ...rest }) {
       >
         <View
           style={{
-            width: `${(step / TOTAL_STEPS) * 100}%`, // use step here
+            width: `${(step / (TOTAL_STEPS + 1)) * 100}%`, // use step here
             height: 4,
             backgroundColor: theme.colors.primary,
             borderRadius: 2,

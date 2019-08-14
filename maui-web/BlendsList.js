@@ -173,7 +173,7 @@ function BlendsCarouselItem({ blend, active }) {
   );
 }
 
-export function BlendsCarousel() {
+export function BlendsCarousel({ activeBlendSlug }) {
   const menu = useMenu();
   const theme = useTheme();
   const [visibleIndex, setVisibleIndex] = React.useState(-1);
@@ -183,8 +183,7 @@ export function BlendsCarousel() {
     const { layoutMeasurement, contentOffset } = nativeEvent;
     const scrollValue = contentOffset.x + layoutMeasurement.width / 2;
     // console.log('TCL: handleScroll -> scrollValue', scrollValue);
-    // this is the wrong behavior..
-    // setVisibleIndex(Math.round(scrollValue / 200) - 1);
+    setVisibleIndex(Math.round(scrollValue / 200) - 1);
   }
 
   return menu ? (
@@ -202,7 +201,7 @@ export function BlendsCarousel() {
         >
           {menu.blends.map((item, i) => (
             <BlendsCarouselItem
-              active={visibleIndex === i}
+              active={activeBlendSlug === getMenuItemSlug(item)}
               key={i}
               blend={item}
             />

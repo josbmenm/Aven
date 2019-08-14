@@ -84,9 +84,9 @@ function HomeHeader() {
                   breakpoints={breakpoints}
                   style={{
                     paddingTop: [40, 230],
-                    paddingRight: [20, 20],
+                    paddingRight: [32, 32],
                     paddingBottom: [70, 200],
-                    paddingLeft: [20, 100],
+                    paddingLeft: [32, 100],
                     // alignItems: ['center', 'flex-start'],
                   }}
                 >

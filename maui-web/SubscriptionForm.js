@@ -26,7 +26,9 @@ function SubscriptionForm({}) {
         />
         <Responsive
           style={{
-            fontSize: [6, 24],
+            fontSize: [15, 24],
+            paddingLeft: [18, 24],
+            paddingRight: [18, 24],
             textAlign: 'center',
           }}
         >
@@ -39,17 +41,13 @@ function SubscriptionForm({}) {
               backgroundColor: monsterra80,
               paddingTop: 12,
               paddingBottom: 14,
-              paddingLeft: 16,
-              paddingRight: 16,
-              marginLeft: 8,
-              marginRight: 8,
+              marginLeft: 16,
               color: 'white',
               fontFamily: 'Maax-Bold',
               border: 'none',
               borderRadius: 4,
               letterSpacing: 0.3,
               textAlign: 'center',
-              // flexGrow: 0.15,
             }}
           />
         </Responsive>

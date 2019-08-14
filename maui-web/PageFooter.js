@@ -73,6 +73,7 @@ export default function PageFooter() {
                     fontSize: 11,
                     lineHeight: 18,
                     fontFamily: theme.fonts.regular,
+                    maxWidth: 178,
                   }}
                 >
                   © Copyright {new Date().getFullYear()} Ono Food Co. All Rights

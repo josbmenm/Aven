@@ -35,9 +35,6 @@ const pathJoin = require('path').join;
 const md5 = require('crypto-js/md5');
 const geoip = require('geoip-lite');
 
-// const ip = request.headers['x-forwarded-for']
-// geoip.lookup(ip);
-
 const fs = require('fs');
 const getEnv = c => process.env[c];
 
@@ -223,12 +220,12 @@ const startSkynetServer = async () => {
     rootPasswordHash: await hashSecureString(ONO_ROOT_PASSWORD),
   });
 
-  const kiteSource = createSessionClient({
+  const cloud = createSessionClient({
     source: storageSource,
     domain: 'onofood.co',
     auth: null,
   });
-  const airtableFolder = kiteSource.docs.get('Airtable');
+  const airtableFolder = cloud.docs.get('Airtable');
   const companyConfigStream = airtableFolder.value.stream
     .map(folder => {
       if (!folder) {
@@ -275,13 +272,13 @@ const startSkynetServer = async () => {
       });
     })
     .flatten();
-  const companyConfig = kiteSource.docs.setOverrideValueStream(
+  const companyConfig = cloud.docs.setOverrideValueStream(
     'CompanyConfig',
     companyConfigStream,
   );
-  const restaurantActions = kiteSource.docs.get('RestaurantActions');
+  const restaurantActions = cloud.docs.get('RestaurantActions');
 
-  const restaurantState = kiteSource.docs.setOverrideStream(
+  const restaurantState = cloud.docs.setOverrideStream(
     'RestaurantState',
     createReducerStream(
       restaurantActions,
@@ -290,21 +287,21 @@ const startSkynetServer = async () => {
     ),
   );
 
-  const kitchenConfig = kiteSource.docs.setOverrideValueStream(
+  const kitchenConfig = cloud.docs.setOverrideValueStream(
     'KitchenConfig',
     companyConfigStream.map(companyConfig => {
       return companyConfigToKitchenConfig(companyConfig);
     }),
   );
 
-  const menu = kiteSource.docs.setOverrideValueStream(
+  const menu = cloud.docs.setOverrideValueStream(
     'Menu',
     companyConfigStream.map(companyConfigToMenu),
   );
   const logger = createLogger(storageSource, 'onofood.co', 'SkynetEvents');
 
   const protectedSource = createProtectedSource({
-    source: kiteSource,
+    source: cloud,
     staticPermissions: {
       'onofood.co': {
         CompanyConfig: { defaultRule: { canRead: true } },
@@ -328,10 +325,10 @@ const startSkynetServer = async () => {
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
-  const fsClient = createFSClient({ client: kiteSource });
+  const fsClient = createFSClient({ client: cloud });
 
   const context = new Map();
-  context.set(CloudContext, kiteSource); // bad idea, must have independent client for authentication!!!
+  context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
   context.set(HostContext, { authority: 'onofood.co', useSSL: !IS_DEV });
 
   async function placeOrder({ orderId }, logger) {
@@ -371,14 +368,47 @@ const startSkynetServer = async () => {
     10 * 60 * 1000, // 10 minutes
   );
 
+  const bookingRequests = cloud.get('BookingRequests');
   async function requestBooking(action, logger) {
-    console.log('booking request!', action.request);
+    await bookingRequests.putTransactionValue(action);
+    const {
+      firstName,
+      lastName,
+      email,
+      eventType,
+      date,
+      address,
+      comments,
+    } = action.request;
+    await emailAgent.actions.SendEmail({
+      to: 'aloha@onofood.co',
+      subject: 'New booking request on onoblends.co',
+      message: `
+Name: ${firstName} ${lastName}
+
+Email: ${email}
+
+Event Type: ${eventType}
+
+Date: ${date}
+
+Place: ${address && address.place_name}
+
+
+Comments: ${comments}
+
+
+Any issues with this report? Contact eric@onofood.co
+
+Debug: ${JSON.stringify(action)}
+`,
+    });
   }
   const dispatch = async action => {
     switch (action.type) {
       case 'SendReceipt':
         return await sendReceipt({
-          cloud: kiteSource,
+          cloud: cloud,
           smsAgent,
           emailAgent,
           action,
@@ -386,7 +416,7 @@ const startSkynetServer = async () => {
         });
       case 'RefundOrder': // todo check for root/employee auth. right now this is top secret!
         return await refundOrder({
-          cloud: kiteSource,
+          cloud: cloud,
           smsAgent,
           emailAgent,
           action,
@@ -401,9 +431,9 @@ const startSkynetServer = async () => {
       case 'StripeCapturePayment':
         return capturePayment(action);
       case 'ValidatePromoCode':
-        return validatePromoCode(kiteSource, action, logger);
+        return validatePromoCode(cloud, action, logger);
       case 'SubmitFeedback':
-        return submitFeedback(kiteSource, emailAgent, action, logger);
+        return submitFeedback(cloud, emailAgent, action, logger);
       case 'UpdateAirtable': {
         scrapeAirTable(fsClient, logger)
           .then(() => {
@@ -415,7 +445,7 @@ const startSkynetServer = async () => {
         return {};
       }
       default:
-        return await kiteSource.dispatch(action);
+        return await cloud.dispatch(action);
       // return await protectedSource.dispatch(action);
     }
   };
@@ -427,8 +457,15 @@ const startSkynetServer = async () => {
     App,
     source: {
       // ...protectedSource,
-      ...kiteSource,
+      ...cloud,
       dispatch,
+    },
+    augmentRequestDispatchAction: (req, action) => {
+      const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      return {
+        ...action,
+        geoip: geoip.lookup(ip),
+      };
     },
     serverListenLocation,
     assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
@@ -441,7 +478,7 @@ const startSkynetServer = async () => {
   return {
     close: async () => {
       await protectedSource.close();
-      await kiteSource.close();
+      await cloud.close();
       await webService.close();
     },
   };
