@@ -12,7 +12,7 @@ import {
 } from '../dashboard/Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import { absoluteElement } from '../components/Styles';
-import SubscriptionForm from './SubscriptionForm';
+import UnholyHackSubscriptionForm from './UnholyHackSubscriptionForm';
 import { useTheme } from '../dashboard/Theme';
 
 const breakpoints = [1024, 1400];
@@ -87,7 +87,6 @@ function HomeHeader() {
                     paddingRight: [32, 32],
                     paddingBottom: [70, 200],
                     paddingLeft: [32, 100],
-                    // alignItems: ['center', 'flex-start'],
                   }}
                 >
                   <View
@@ -126,17 +125,7 @@ function HomeHeader() {
                     >
                       See you soon, Los Angeles.
                     </BodyText>
-                    <SubscriptionForm />
-                    {/* <ButtonLink
-                      title="find us"
-                      routeName="Schedule"
-                      buttonStyle={{
-                        width: 210,
-                      }}
-                      titleStyle={{
-                        textAlign: 'center',
-                      }}
-                    /> */}
+                    <UnholyHackSubscriptionForm />
                   </View>
                 </Responsive>
               </ColumnToRowChild>

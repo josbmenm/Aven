@@ -153,8 +153,8 @@ export function companyConfigToKitchenConfig(companyConfig) {
           type: 'boolean',
           subTag: `Slot[${slotIndex}].SlotState.IsLow`,
         };
-        readTags[`Slot_${slotIndex}_SinceLow`] = {
-          name: `Slot_${slotIndex}_SinceLow`,
+        readTags[`Slot_${slotIndex}_DispensedSinceLow`] = {
+          name: `Slot_${slotIndex}_DispensedSinceLow`,
           type: 'integer',
           subTag: `Slot[${slotIndex}].SlotState.DispensedSinceLow.ACC`,
         };
