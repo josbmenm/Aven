@@ -38,13 +38,6 @@
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
 			remoteInfo = "downpour-tvOS";
 		};
-		A91392A822FE33C200C66873 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A91392A422FE33C200C66873 /* RNStripeTerminal.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNStripeTerminal;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -68,7 +61,6 @@
 		696F99DC0421F2F78B540402 /* Pods-downpour-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-downpour-tvOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-downpour-tvOSTests/Pods-downpour-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		7B90BDD7B482763F2765FE67 /* Pods-downpourTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-downpourTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-downpourTests/Pods-downpourTests.release.xcconfig"; sourceTree = "<group>"; };
 		843FACA133A0482CFC16F44B /* libPods-downpour-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-downpour-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A91392A422FE33C200C66873 /* RNStripeTerminal.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNStripeTerminal.xcodeproj; path = "../node_modules/react-native-stripe-terminal/ios/RNStripeTerminal.xcodeproj"; sourceTree = "<group>"; };
 		A95CA56422FE382200852765 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		ABEAFF1D9E38DF7DDB23447A /* libPods-downpour-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-downpour-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA6F70C28427BA60D2DCC328 /* Pods-downpour-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-downpour-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-downpour-tvOS/Pods-downpour-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -177,7 +169,6 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				A91392A422FE33C200C66873 /* RNStripeTerminal.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -205,14 +196,6 @@
 				00E356EE1AD99517003FC87E /* downpourTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* downpour-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* downpour-tvOSTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		A91392A522FE33C200C66873 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A91392A922FE33C200C66873 /* libRNStripeTerminal.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -341,12 +324,6 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = A91392A522FE33C200C66873 /* Products */;
-					ProjectRef = A91392A422FE33C200C66873 /* RNStripeTerminal.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* downpour */,
@@ -356,16 +333,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		A91392A922FE33C200C66873 /* libRNStripeTerminal.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNStripeTerminal.a;
-			remoteRef = A91392A822FE33C200C66873 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		00E356EC1AD99517003FC87E /* Resources */ = {
@@ -665,7 +632,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/downpour.app/downpour";
@@ -688,7 +655,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/downpour.app/downpour";
@@ -712,7 +679,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = downpour;
 				PROVISIONING_PROFILE_SPECIFIER = BlitzDevelopment;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -736,7 +703,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = downpour;
 				PROVISIONING_PROFILE_SPECIFIER = BlitzDistribution;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -764,7 +731,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -792,7 +759,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -819,7 +786,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/downpour-tvOS.app/downpour-tvOS";
@@ -846,7 +813,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/downpour-tvOS.app/downpour-tvOS";

@@ -1,20 +1,16 @@
 {
-  "main": "PortalApp",
+  "main": "BlitzApp",
   "aven": {
     "env": "env-downpour",
     "envOptions": {
-      "bundleId": "co.onofood.portal",
-      "displayName": "Control",
-      "appcenterSecret": "52542d85-9a56-4246-956d-ffd8f22b7788",
-      "codePushKey": "_3pcIaFvPpBPLkUNdCILthOOP-fqry0UbYIiN",
-      "codePushApp": "OnoFoodCo/Portal",
+      "bundleId": "co.onofood.blitz",
+      "displayName": "Kiosk",
+      "appcenterSecret": "fcbff580-2407-4baf-9c56-1f3a49d8d828",
+      "codePushKey": "VtoT-iEfykogiriAIOlvE55G6r0eBJvTELwT7",
+      "codePushApp": "OnoFoodCo/Blitz",
       "codePushChannel": "Production"
     },
     "srcDependencies": [
-      "dashboard",
-      "navigation-core",
-      "navigation-native",
-      "navigation-stack",
       "views",
       "logic",
       "screens",
@@ -25,6 +21,9 @@
       "react-utils",
       "components",
       "card-reader",
+      "navigation-core",
+      "navigation-native",
+      "navigation-stack",
       "navigation-transitioner",
       "navigation-hooks"
     ],
