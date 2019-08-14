@@ -108,6 +108,7 @@ export default async function WebServer({
   assets,
   onLogEvent,
   domainAppOverrides,
+  augmentRequestDispatchAction,
 }) {
   let appIdCount = 0;
   function registerDomainApp(DomainApp) {
@@ -270,5 +271,6 @@ export default async function WebServer({
     listenLocation: serverListenLocation,
     expressRouting: doExpressRouting,
     fallbackExpressRouting: doFallbackExpressRouting,
+    augmentRequestDispatchAction,
   });
 }

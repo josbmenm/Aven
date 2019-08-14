@@ -13,6 +13,7 @@ export default async function startSourceServer({
   expressRouting = undefined,
   fallbackExpressRouting = undefined,
   quiet = false,
+  augmentRequestDispatchAction = undefined,
 }) {
   const expressApp = express();
   const jsonParser = bodyParser.json();
@@ -20,8 +21,12 @@ export default async function startSourceServer({
   expressRouting && expressRouting(expressApp);
 
   expressApp.post('/dispatch', jsonParser, (req, res) => {
+    let actionToDispatch = req.body;
+    if (augmentRequestDispatchAction) {
+      actionToDispatch = augmentRequestDispatchAction(req, actionToDispatch);
+    }
     source
-      .dispatch(req.body)
+      .dispatch(actionToDispatch)
       .then(result => {
         if (result === undefined) {
           return res.send({});
