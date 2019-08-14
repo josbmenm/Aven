@@ -26,6 +26,7 @@ import BenefitDetails from './BenefitDetails';
 
 function BlendContent({ displayName, blend, recipe }) {
   const theme = useTheme();
+  const navigation = useNavigation();
   const dietaryInfos = dietaryInfosOfMenuItem(
     blend,
     recipe.ingredients.map(i => i.id),
@@ -34,6 +35,7 @@ function BlendContent({ displayName, blend, recipe }) {
     `${blend.Recipe.DisplayCalories} Calories`,
     blend.Recipe['Nutrition Detail'],
   ];
+  const isTropical = navigation.getParam('tropical') !== undefined;
   return (
     <React.Fragment>
       <Responsive
@@ -80,7 +82,11 @@ function BlendContent({ displayName, blend, recipe }) {
                       }}
                     >
                       <AirtableImage
-                        image={blend.Recipe.DecorationImage}
+                        image={
+                          isTropical
+                            ? blend.Recipe.StandaloneImage
+                            : blend.Recipe.DecorationImage
+                        }
                         resizeMode="contain"
                         responsiveStyle={{
                           maxWidth: ['100%', 1024],

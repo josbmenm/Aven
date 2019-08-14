@@ -123,8 +123,6 @@ export default function BenefitDetails({ benefit }) {
     <View>
       <Container
         style={{
-          // alignItems: 'center',
-          // paddingVertical: 10,
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.border,
         }}
@@ -147,7 +145,7 @@ export default function BenefitDetails({ benefit }) {
         <ColumnToRow style={{ alignSelf: 'center' }}>
           <ColumnToRowChild
             style={{
-              flex: 'none',
+              flex: null,
               alignItems: 'center',
               justifyContent: 'center',
             }}
