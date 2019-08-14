@@ -58,6 +58,7 @@ function HomeHeader() {
                     width: 521,
                     height: 383,
                   }}
+                  pointerEvents="none"
                 />
               </Responsive>
               <Responsive
@@ -75,6 +76,7 @@ function HomeHeader() {
                     height: 383,
                     zIndex: 0,
                   }}
+                  pointerEvents="none"
                 />
               </Responsive>
               <ColumnToRowChild>
@@ -85,7 +87,7 @@ function HomeHeader() {
                     paddingRight: [20, 20],
                     paddingBottom: [70, 200],
                     paddingLeft: [20, 100],
-                    alignItems: ['center', 'flex-start'],
+                    // alignItems: ['center', 'flex-start'],
                   }}
                 >
                   <View
@@ -100,8 +102,7 @@ function HomeHeader() {
                       size="large"
                       breakpoints={breakpoints}
                       responsiveStyle={{
-                        marginBottom: [36, 26],
-                        textAlign: ['center', 'left'],
+                        marginBottom: [16, 26],
                       }}
                     >
                       We’re moving food forward.
@@ -119,6 +120,7 @@ function HomeHeader() {
                     <BodyText
                       responsiveStyle={{
                         marginBottom: [15, 25],
+                        flex: [1, 1],
                       }}
                       bold
                     >
@@ -169,6 +171,7 @@ function HomeHeader() {
                     top: -250,
                     left: -290,
                   }}
+                  pointerEvents="none"
                 />
               </Responsive>
               <Responsive
@@ -185,12 +188,13 @@ function HomeHeader() {
                     bottom: -172,
                     left: -100,
                   }}
+                  pointerEvents="none"
                 />
               </Responsive>
               <Responsive
                 breakpoints={breakpoints}
                 style={{
-                  right: [-125, -250],
+                  right: [-125, -400],
                   bottom: [-140, -290],
                   width: [284, 568],
                   height: [302, 604],
@@ -201,6 +205,7 @@ function HomeHeader() {
                   style={{
                     ...absoluteElement,
                   }}
+                  pointerEvents="none"
                 />
               </Responsive>
             </ColumnToRow>

@@ -13,7 +13,7 @@
     "test-verse": "VERSE_TEST=true PORT=8830 ./node_modules/@aven-cloud/aven/aven-tools/cli.js start verse",
     "start-blitz": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start blitz",
     "start-blitz-app": "cd env-blitz-ios && react-native run-ios --simulator=\"iPad Pro (12.9-inch) (3rd generation)\"",
-    "open-xcode": "open env-kiosk/ios/kiosk.xcworkspace",
+    "open-xcode": "open env-downpour/ios/downpour.xcworkspace",
     "start-portal": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start portal",
     "clean": "./node_modules/@aven-cloud/aven/aven-tools/cli.js clean",
     "test": "jest"
@@ -36,6 +36,7 @@
     "ethernet-ip": "^1.2.2",
     "fbjs": "^1.0.0",
     "fs-extra": "^7.0.0",
+    "geoip-lite": "^1.3.7",
     "helmet": "^3.13.0",
     "json-stable-stringify": "^1.0.1",
     "knex": "^0.16.3",

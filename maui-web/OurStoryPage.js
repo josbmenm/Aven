@@ -82,11 +82,12 @@ function OurStoryPage() {
                 bottom: [0, -120],
                 alignSelf: ['inherit', 'center'],
                 maxWidth: [1200, 640],
+                paddingRight: [32, 80],
+                paddingLeft: [32, 80],
               }}
             >
               <View
                 style={{
-                  paddingHorizontal: 80,
                   paddingVertical: 40,
                   backgroundColor: theme.colors.lightGrey,
                   width: '100%',
@@ -123,7 +124,6 @@ function OurStoryPage() {
               title="Real food. Real good. Real fast."
               style={{ marginBottom: 80 }}
               responsiveStyles={{
-                textAlign: ['center', 'left'],
                 paddingLeft: [0, 120],
               }}
               bodyText={

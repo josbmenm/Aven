@@ -4,7 +4,18 @@ import { monsterra60 } from './Styles';
 import { useTheme } from '../dashboard/Theme';
 
 function BlockFormInputWithRef(
-  { value, onValue, label, mode, onSubmit, onFocus, onBlur, upperCase, style },
+  {
+    value,
+    onValue,
+    label,
+    mode,
+    onSubmit,
+    onFocus,
+    onBlur,
+    style,
+    name,
+    required,
+  },
   ref,
   ...rest
 ) {
@@ -159,6 +170,8 @@ function BlockFormInputWithRef(
           onSubmitEditing={onSubmit}
           accesible="true"
           accessibilityLabel="Location Input"
+          name={name}
+          required={required}
           style={{
             fontSize: 18,
             outline: 'none',

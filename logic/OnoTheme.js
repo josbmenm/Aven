@@ -30,7 +30,7 @@ const headingStyles = {
     lineHeight: [32, 48],
     letterSpacing: ['auto', 0.44],
   },
-  mmedium: {
+  medium: {
     fontSize: [24, 36],
     lineHeight: [32, 44],
   },

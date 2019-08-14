@@ -12,8 +12,8 @@ export default function GenericHeroHeader({
   children,
   className,
   responsiveStyle = {
-    paddingTop: [80, 128],
-    paddingBottom: [112, 128],
+    paddingTop: [80, 168],
+    paddingBottom: [112, 168],
   },
 }) {
   return (
@@ -29,7 +29,7 @@ export default function GenericHeroHeader({
             flex: 1,
             backgroundColor,
             alignItems: 'center',
-            paddingHorizontal: 16,
+            paddingHorizontal: 20,
           }}
         >
           <Responsive style={responsiveStyle}>
@@ -45,7 +45,7 @@ export default function GenericHeroHeader({
                   size="large"
                   style={{ textAlign: 'center' }}
                   responsiveStyle={{
-                    marginBottom: [8, 16],
+                    marginBottom: [16, 24],
                   }}
                 >
                   {title}

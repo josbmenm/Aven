@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, Animated, Easing } from 'react-native';
 import { monsterra60 } from './Styles';
 import { useTheme } from '../dashboard/Theme';
+import { Responsive } from '../dashboard/Responsive';
 
 function BlockFormInputWithRef(
   {
@@ -112,77 +113,89 @@ function BlockFormInputWithRef(
         ...style,
       }}
     >
-      <View
+      <Responsive
         style={{
-          flex: 1,
-          borderRadius: 4,
-          borderColor: monsterra60,
-          borderWidth: 3,
-          paddingTop: 14,
-          paddingBottom: 12,
-          paddingHorizontal: 20,
-          backgroundColor: 'white',
+          paddingBottom: [2, 12],
+          paddingTop: [2, 14],
         }}
-        {...rest}
       >
-        <Animated.Text
+        <View
           style={{
-            fontFamily: theme.fonts.regular,
-            position: 'absolute',
-            color: theme.colors.monsterras[1],
-            left: 20,
-            right: 20,
-            zIndex: -1,
-            fontSize: placeholderOpenProgress.interpolate({
-              inputRange: [0, 1],
-              outputRange: [12, 18],
-            }),
-            transform: [
-              {
-                translateY: placeholderOpenProgress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [-12, 0],
-                }),
-              },
-            ],
+            flex: 1,
+            borderRadius: 4,
+            borderColor: monsterra60,
+            borderWidth: 3,
+            paddingTop: 14,
+            paddingBottom: 12,
+            paddingHorizontal: 20,
+            backgroundColor: 'white',
           }}
-          accesible="true"
-          accessibilityLabel={`input label: ${label}`}
-          accessibilityRole="label"
+          {...rest}
         >
-          {label}
-        </Animated.Text>
-        <Input
-          enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
-          keyboardAppearance="dark"
-          keyboardType={keyboardType}
-          autoCorrect={autoCorrect}
-          secureTextEntry={secureTextEntry}
-          autoCapitalize={autoCapitalize}
-          ref={inputRef}
-          multiline={multiline}
-          value={value}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onChangeText={valueHandler}
-          options={inputOptions}
-          type={inputType}
-          onSubmitEditing={onSubmit}
-          accesible="true"
-          accessibilityLabel="Location Input"
-          name={name}
-          required={required}
-          style={{
-            fontSize: 18,
-            outline: 'none',
-            lineHeight: 28,
-            color: theme.colors.monsterra,
-            // ...textInputStyle,
-            ...(mode === 'description' ? { height: 120 } : {}),
-            ...(mode === 'textarea' ? { height: 200 } : {}),
-          }}
-        />
-      </View>
+          <Animated.Text
+            style={{
+              fontFamily: theme.fonts.regular,
+              position: 'absolute',
+              color: theme.colors.monsterras[1],
+              left: 20,
+              right: 20,
+              zIndex: -1,
+              fontSize: placeholderOpenProgress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [12, 18],
+              }),
+              transform: [
+                {
+                  translateY: placeholderOpenProgress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-12, 0],
+                  }),
+                },
+              ],
+            }}
+            accesible="true"
+            accessibilityLabel={`input label: ${label}`}
+            accessibilityRole="label"
+          >
+            {label}
+          </Animated.Text>
+          <Responsive
+            style={{
+              fontSize: [6, 18],
+              lineHeight: [12, 28],
+            }}
+          >
+            <Input
+              enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
+              keyboardAppearance="dark"
+              keyboardType={keyboardType}
+              autoCorrect={autoCorrect}
+              secureTextEntry={secureTextEntry}
+              autoCapitalize={autoCapitalize}
+              ref={inputRef}
+              multiline={multiline}
+              value={value}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onChangeText={valueHandler}
+              options={inputOptions}
+              type={inputType}
+              onSubmitEditing={onSubmit}
+              accesible="true"
+              accessibilityLabel="Location Input"
+              name={name}
+              required={required}
+              style={{
+                outline: 'none',
+                color: theme.colors.monsterra,
+                // ...textInputStyle,
+                ...(mode === 'description' ? { height: 120 } : {}),
+                ...(mode === 'textarea' ? { height: 200 } : {}),
+              }}
+            />
+          </Responsive>
+        </View>
+      </Responsive>
     </Animated.View>
   );
 }

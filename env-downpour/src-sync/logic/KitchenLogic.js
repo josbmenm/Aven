@@ -127,6 +127,7 @@ export function companyConfigToKitchenConfig(companyConfig) {
       bitIndex: row['Alarm Bit'],
       intIndex: row['Alarm Integer'],
     }));
+
     const readTags = {
       ...((kitchenSystem.HasSequencer && sequencerSystemReadTags) || {}),
     };
@@ -136,6 +137,29 @@ export function companyConfigToKitchenConfig(companyConfig) {
     const valueCommands = {
       ...((kitchenSystem.HasSequencer && sequencerSystemValueCommands) || {}),
     };
+    if (kitchenSystem.FillSystemSlotCount) {
+      for (
+        let slotIndex = 0;
+        slotIndex < kitchenSystem.FillSystemSlotCount;
+        slotIndex += 1
+      ) {
+        readTags[`Slot_${slotIndex}_Error`] = {
+          name: `Slot_${slotIndex}_Error`,
+          type: 'integer',
+          subTag: `Slot[${slotIndex}].SlotState.Error`,
+        };
+        readTags[`Slot_${slotIndex}_IsLow`] = {
+          name: `Slot_${slotIndex}_IsLow`,
+          type: 'boolean',
+          subTag: `Slot[${slotIndex}].SlotState.IsLow`,
+        };
+        readTags[`Slot_${slotIndex}_SinceLow`] = {
+          name: `Slot_${slotIndex}_SinceLow`,
+          type: 'integer',
+          subTag: `Slot[${slotIndex}].SlotState.DispensedSinceLow.ACC`,
+        };
+      }
+    }
     tags.forEach(tag => {
       if (tag.Type === 'Command DINT') {
         valueCommands[tag['Internal Name']] = {

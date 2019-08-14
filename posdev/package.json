@@ -1,7 +1,7 @@
 {
   "main": "App",
   "aven": {
-    "env": "env-kiosk",
+    "env": "env-downpour",
     "envOptions": {
       "bundleId": "co.onofood.posdev",
       "displayName": "POS Dev"

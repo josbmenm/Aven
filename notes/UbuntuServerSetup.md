@@ -1,5 +1,5 @@
-New ubuntu 18.04 desktop install user ono, pw..
-Computer name: ono-status
+New ubuntu 18.04 desktop install. minimum install. install 3rd party etc. user ono, pw in confluence
+Computer name: restautant0-a (b, c, etc..)
 set auto login
 apt update and upgrade
 sudo apt-get install chromium-browser unclutter -y

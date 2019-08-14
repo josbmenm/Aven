@@ -111,6 +111,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   let message = 'Ready and Idle';
   let subMessage = null;
   let isRunning = false;
+  let mainFaultMessage = null;
   let allFaults = [];
   if (!isConnected) {
     status = 'disconnected';
@@ -124,17 +125,20 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   } else if (!isPLCConnected) {
     status = 'disconnected';
     message = 'Server disconnected from machine.';
-    // } else if (restaurantState.manualMode) {
-    //   status = 'manual mode';
-  } else if (!restaurantState.isAttached) {
-    status = 'detached';
-    message = 'Disabled';
   } else {
+    if (!restaurantState.isAttached) {
+      status = 'detached';
+      message = 'Disabled';
+    }
+
     sequencerNames &&
       sequencerNames.forEach(systemName => {
         const system = getSubsystem(systemName, kitchenConfig, kitchenState);
         const faults = getSubsystemFaults(system);
         if (faults) {
+          if (systemName === 'FillSystem') {
+            mainFaultMessage = faults.join(',');
+          }
           allFaults = [
             ...allFaults,
             ...faults.map(desc => ({
@@ -149,20 +153,27 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
       status = 'fault';
       if (allFaults.find(f => f.isFaulted)) {
         message = 'Faulted';
+        if (mainFaultMessage) {
+          message += ` - ${mainFaultMessage}`;
+        }
       } else {
         message = 'Not Homed';
       }
     }
   }
-  if (status === 'ready' || status === 'detached') {
+  if (status === 'ready' || status === 'detached' || status === 'fault') {
     sequencerNames &&
       sequencerNames.forEach(systemName => {
         if (kitchenState[`${systemName}_PrgStep_READ`] !== 0) {
           if (!isRunning) {
             isRunning = true;
-            message = `Running ${systemName}`;
+            message = `Running ${systemName}(${
+              kitchenState[`${systemName}_PrgStep_READ`]
+            })`;
           } else {
-            message += `, ${systemName}`;
+            message += `, ${systemName}(${
+              kitchenState[`${systemName}_PrgStep_READ`]
+            })`;
           }
         }
       });
@@ -200,7 +211,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
 
         <View style={{ flex: 1, padding: 16 }}>
           {message && (
-            <Text style={{ fontSize: 32, ...titleStyle }}>{message}</Text>
+            <Text style={{ fontSize: 26, ...titleStyle }}>{message}</Text>
           )}
           {subMessage && (
             <Text style={{ ...primaryFontFace, color: monsterra }}>
@@ -277,6 +288,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
           {status === 'fault' && (
             <ControlPanelButton
               title="Home System"
+              disabled={kitchenState.FillSystem_PrgStep_READ !== 0}
               onPress={() => {
                 handleKitchenCommand({ command: 'Home' });
               }}

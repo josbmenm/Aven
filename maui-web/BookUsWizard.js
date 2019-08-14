@@ -7,6 +7,7 @@ import BlockForm from '../components/BlockForm';
 import FormInput from '../components/BlockFormInput';
 import Button from '../dashboard/Button';
 import { useTheme } from '../dashboard/Theme';
+import { useCloud } from '../cloud-core/KiteReact';
 import { LocationInput } from './LocationInput';
 import { Responsive } from '../dashboard/Responsive';
 import FormRow from './FormRow';
@@ -66,6 +67,7 @@ function formReducer(state, action) {
 }
 
 function BookUsWizard() {
+  const cloud = useCloud();
   const [loading, setLoading] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
   const [error] = React.useState(null);
@@ -168,12 +170,22 @@ function BookUsWizard() {
 
   function onSubmit() {
     setLoading(true);
-    console.log('TCL: onSubmit -> ', formState);
-    setTimeout(() => {
-      setLoading(false);
-      setIsDone(true);
-      // setError({ message: 'ups, something went wrong. please try again later'});
-    }, 2000);
+    cloud
+      .dispatch({ type: 'RequestBooking', request: formState })
+      .then(() => {
+        setLoading(false);
+        setIsDone(true);
+      })
+      .catch(e => {
+        alert('oh no');
+        setLoading(false);
+      });
+    // console.log('TCL: onSubmit -> ', formState);
+    // setTimeout(() => {
+    //   setLoading(false);
+    //   setIsDone(true);
+    //   // setError({ message: 'ups, something went wrong. please try again later'});
+    // }, 2000);
   }
 
   if (isDone) {

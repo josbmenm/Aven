@@ -33,6 +33,10 @@ import { Storage } from '@google-cloud/storage';
 const path = require('path');
 const pathJoin = require('path').join;
 const md5 = require('crypto-js/md5');
+const geoip = require('geoip-lite');
+
+// const ip = request.headers['x-forwarded-for']
+// geoip.lookup(ip);
 
 const fs = require('fs');
 const getEnv = c => process.env[c];
@@ -367,6 +371,9 @@ const startSkynetServer = async () => {
     10 * 60 * 1000, // 10 minutes
   );
 
+  async function requestBooking(action, logger) {
+    console.log('booking request!', action.request);
+  }
   const dispatch = async action => {
     switch (action.type) {
       case 'SendReceipt':
@@ -385,6 +392,8 @@ const startSkynetServer = async () => {
           action,
           logger,
         });
+      case 'RequestBooking':
+        return requestBooking(action, logger);
       case 'PlaceOrder':
         return placeOrder(action, logger);
       case 'StripeGetConnectionToken':

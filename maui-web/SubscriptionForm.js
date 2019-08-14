@@ -1,6 +1,7 @@
 import React from 'react';
 import View from '../views/View';
 import FormInput from '../components/BlockFormInput';
+import { Responsive } from '../dashboard/Responsive';
 import { monsterra80 } from '../components/Styles';
 
 function SubscriptionForm({}) {
@@ -23,28 +24,35 @@ function SubscriptionForm({}) {
           onValue={setEmail}
           style={{ zIndex: 5 }}
         />
-        <input
-          type="submit"
-          value="get updates"
-          name="subscribe"
+        <Responsive
           style={{
-            display: 'flex',
-            backgroundColor: monsterra80,
-            paddingTop: 12,
-            paddingBottom: 14,
-            paddingLeft: 16,
-            paddingRight: 16,
-            marginLeft: 8,
-            marginRight: 8,
-            color: 'white',
-            fontFamily: 'Maax-Bold',
-            fontSize: 24,
-            border: 'none',
-            borderRadius: 4,
-            letterSpacing: 0.3,
+            fontSize: [6, 24],
             textAlign: 'center',
           }}
-        />
+        >
+          <input
+            type="submit"
+            value="get updates"
+            name="subscribe"
+            style={{
+              display: 'flex',
+              backgroundColor: monsterra80,
+              paddingTop: 12,
+              paddingBottom: 14,
+              paddingLeft: 16,
+              paddingRight: 16,
+              marginLeft: 8,
+              marginRight: 8,
+              color: 'white',
+              fontFamily: 'Maax-Bold',
+              border: 'none',
+              borderRadius: 4,
+              letterSpacing: 0.3,
+              textAlign: 'center',
+              // flexGrow: 0.15,
+            }}
+          />
+        </Responsive>
         <div style={{ position: 'absolute', left: -5000 }} aria-hidden="true">
           <input
             type="text"

@@ -10,13 +10,13 @@ function Slide({ source, width, height }) {
     <View
       style={{
         borderRadius: 4,
-        margin: 20,
       }}
     >
       <Responsive
         style={{
           width: [width / 2, width],
           height: [height / 2, height],
+          margin: [10, 20],
         }}
       >
         <View>
