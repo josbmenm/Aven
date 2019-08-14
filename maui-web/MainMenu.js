@@ -214,7 +214,8 @@ export function MobileMenu() {
               <Link
                 noActive
                 size="small"
-                url="#media-kit"
+                url="https://www.dropbox.com/sh/pqovhpomd86tkwv/AAAlWNK8M737FghzfDawT4T7a?dl=0"
+                target="_blank"
                 title="media kit"
                 titleStyle={{ textAlign: 'left' }}
               />

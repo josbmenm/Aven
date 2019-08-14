@@ -9,6 +9,7 @@ function Link({
   title = 'link',
   size = 'small',
   routeName,
+  target,
   url,
   noActive = false,
   ...rest
@@ -18,6 +19,7 @@ function Link({
     <FunctionalLink
       routeName={routeName}
       url={url}
+      target={target}
       renderContent={active => (
         <VisualButton
           type="outline"

@@ -113,8 +113,8 @@ function HomeHeader() {
                     >
                       By reimagining the mobile dining experience, we make
                       healthy food accessible to everyone. We use organic fruits
-                      and vegetables to create blends that focus on the best
-                      ingredients for you.
+                      and vegetables to create delicious blends that focus on
+                      the best ingredients for you.
                     </BodyText>
                     <BodyText
                       responsiveStyle={{

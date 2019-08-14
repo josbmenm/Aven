@@ -3,6 +3,8 @@ import React from 'react';
 const css = `
 
 #mc_embed_signup {
+  margin-left: -8px;
+  margin-right: -8px;
   display: flex;
 }
 #mc_embed_signup_scroll {
@@ -13,12 +15,12 @@ const css = `
 }
 .mc-field-group {
   position: relative;
-  margin-right: 12px;
+  padding-right: 42px;
   flex: 6 1 auto;
 }
 @media (min-width: 640px) {
   .mc-field-group {
-    margin-right: 16px;
+    padding-right: 56px;
   }
 }
 label[for='mce-EMAIL'] {
@@ -150,6 +152,30 @@ const html = `
 </form>
 </div>
 
+<script>
+// For input label
+var input = document.querySelector("#mce-EMAIL");
+
+input.addEventListener('change', function(e) {
+  if (e.target.value.length > 0) {
+    e.target.classList.add('filled');
+  } else {
+    if (e.target.classList.contains('filled')) { e.target.classList.remove('filled'); }
+  }
+})
+
+// For proper height on mobile
+var doSetHeight = function() {
+  var vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', \`\${vh}px\`);
+}
+
+doSetHeight();
+
+window.addEventListener('resize', () => {
+  doSetHeight();
+});
+</script>
 `;
 
 export default function UnholyHackSubscriptionForm() {

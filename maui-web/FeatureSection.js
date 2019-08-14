@@ -6,6 +6,7 @@ import { Responsive } from '../dashboard/Responsive';
 function FeatureSection({
   title,
   bodyText,
+  titleStyle,
   image,
   inverted = false,
   style,
@@ -46,7 +47,9 @@ function FeatureSection({
             justifyContent: 'center',
           }}
         >
-          <Heading size="small">{title}</Heading>
+          <Heading size="small" style={titleStyle}>
+            {title}
+          </Heading>
           {bodyText}
         </ColumnToRowChild>
       </Responsive>

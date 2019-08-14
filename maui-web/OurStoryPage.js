@@ -58,7 +58,7 @@ function OurStoryPage() {
             responsiveStyle={{
               width: ['100% !important', '100%'],
               marginHorizontal: [0, 28],
-              marginBottom: [80, 230],
+              marginBottom: [40, 230],
             }}
           >
             <Responsive
@@ -107,7 +107,7 @@ function OurStoryPage() {
       </View>
       <Responsive
         style={{
-          marginBottom: [40, 80],
+          marginBottom: [0, 80],
         }}
       >
         <View>
@@ -122,16 +122,17 @@ function OurStoryPage() {
           >
             <FeatureSection
               title="Real food. Real good. Real fast."
-              style={{ marginBottom: 80 }}
+              titleStyle={{ fontSize: 22 }}
+              style={{ marginBottom: 30 }}
               responsiveStyles={{
                 paddingLeft: [0, 120],
               }}
               bodyText={
                 <BodyText>
-                  Ono, a local Hawaiian term for “delicious” is exactly what our
-                  smoothies are. With flavors like avocado & matcha, strawberry
-                  & dragonfruit, and mint chip greens - our blends are crafted
-                  by hand and perfected with technology.
+                  Ono, a Hawaiian term for “delicious”, is exactly what our
+                  smoothies are. With flavors like Avocado + Matcha, Strawberry
+                  + Dragonfruit, and Mint Chip Greens + Protein - our blends are
+                  crafted by hand and perfected with technology.
                 </BodyText>
               }
               image={
@@ -146,8 +147,8 @@ function OurStoryPage() {
             />
             <FeatureSection
               inverted
-              title="Powered by robotics"
-              style={{ marginBottom: 80 }}
+              title="Powered by robotics."
+              style={{ marginBottom: 30 }}
               responsiveStyles={{
                 paddingRight: [0, 120],
               }}
@@ -170,8 +171,8 @@ function OurStoryPage() {
               }
             />
             <FeatureSection
-              title="Blends with benefits"
-              style={{ marginBottom: 80 }}
+              title="Blends with benefits."
+              style={{ marginBottom: 30 }}
               responsiveStyles={{
                 paddingLeft: [0, 120],
               }}

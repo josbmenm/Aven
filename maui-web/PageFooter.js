@@ -119,7 +119,8 @@ export default function PageFooter() {
                   <Link
                     titleStyle={{ textAlign: 'left' }}
                     title="media kit"
-                    url="#media-kit"
+                    target="_blank"
+                    url="https://www.dropbox.com/sh/pqovhpomd86tkwv/AAAlWNK8M737FghzfDawT4T7a?dl=0"
                   />
                   <View
                     style={{

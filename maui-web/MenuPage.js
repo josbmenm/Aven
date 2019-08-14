@@ -21,7 +21,7 @@ function Menu() {
           <GenericHeroHeader
             backgroundColor={theme.colors.lightGrey}
             title="Our Blends"
-            bodyText="All of our blends are made with certified organic fruits and vegetables. Each blend has been thoughtfully designed to provide you with a healthy, balanced, and nutritious meal. They are fully customizable and are 100% accurate to ensure no cross contamination."
+            bodyText="All of our blends are made with certified organic fruits and vegetables. Each blend has been thoughtfully designed to provide you with a healthy, balanced, and nutritious meal. They are fully customizable and are 100% accurate to ensure you receive a perfect blend every time you order."
           >
             <Responsive
               style={{

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text } from 'react-native';
 import createFullscreenSwitchNavigator from '../navigation-web/createFullscreenSwitchNavigator';
 import Home from './HomePage';
 import Menu from './MenuPage';
@@ -77,7 +78,20 @@ const App = createFullscreenSwitchNavigator(
   },
 );
 
+const IS_BROWSER =
+  typeof process !== 'undefined' &&
+  typeof process.versions.node !== 'undefined';
+
 function Root(props) {
+  if (false) {
+    return (
+      <ThemeProvider value={OnoTheme}>
+        <React.Suspense fallback={<Text>suspensee...</Text>}>
+          <App {...props} />
+        </React.Suspense>
+      </ThemeProvider>
+    );
+  }
   return (
     <ThemeProvider value={OnoTheme}>
       <App {...props} />

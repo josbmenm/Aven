@@ -336,8 +336,8 @@ function BlendContent({ displayName, blend, recipe }) {
               marginBottom: [60, 90],
             }}
           >
-            All of our ingredients for our drinks are locally sourced, fully
-            organic, and guarenteed to taste amazing.
+            All of the ingredients in our drinks are sustainably sourced, fully
+            organic, and guaranteed to taste amazing.
           </BodyText>
           <View
             style={{
