@@ -151,7 +151,7 @@ function HowItWorks() {
               title="Order"
               bodyText={
                 <BodyText>
-                  Select a blend or personalize oned based on your nutritional
+                  Select a blend or personalize one based on your nutritional
                   preferences or dietary restrictions through our ordering
                   kiosk. Ono Guides are on-site to ensure the best possible
                   experience.
