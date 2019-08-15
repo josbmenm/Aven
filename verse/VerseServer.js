@@ -162,7 +162,7 @@ const startVerseServer = async () => {
     ),
   );
   const deviceActions = cloud.get('DeviceActions');
-  const restaurantState = cloud.docs.setOverrideStream(
+  const devicesState = cloud.docs.setOverrideStream(
     'Devices',
     createReducerStream(
       deviceActions,
