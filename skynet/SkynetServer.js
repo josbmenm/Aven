@@ -329,7 +329,7 @@ const startSkynetServer = async () => {
 
   const context = new Map();
   context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
-  context.set(HostContext, { authority: 'onofood.co', useSSL: !IS_DEV });
+  context.set(HostContext, { authority: 'onoblends.co', useSSL: !IS_DEV });
 
   async function placeOrder({ orderId }, logger) {
     throw new Error('Cannot place order on skynet! Use verse');

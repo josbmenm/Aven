@@ -18,6 +18,7 @@ import placeOrder from './placeOrder';
 import { connectMachine } from './Machine';
 import { handleStripeAction } from '../stripe-server/Stripe';
 import { computeNextSteps } from '../logic/KitchenSequence';
+import DevicesReducer from '../logic/DevicesReducer';
 
 let lastT = null;
 function logBehavior(msg) {
@@ -58,7 +59,7 @@ const startVerseServer = async () => {
         useSSL: false,
       }
     : {
-        authority: 'onofood.co',
+        authority: 'onoblends.co',
         useSSL: true,
       };
 
@@ -160,6 +161,15 @@ const startVerseServer = async () => {
       RestaurantReducer.initialState,
     ),
   );
+  const deviceActions = cloud.get('DeviceActions');
+  const restaurantState = cloud.docs.setOverrideStream(
+    'Devices',
+    createReducerStream(
+      deviceActions,
+      DevicesReducer.reducerFn,
+      DevicesReducer.initialState,
+    ),
+  );
 
   const protectedSource = createProtectedSource({
     source: cloud,
@@ -203,7 +213,6 @@ const startVerseServer = async () => {
           isBeverageCold: System_BevTemp_READ < 42,
           isFreezerCold: System_FreezerTemp_READ < 42,
           isYogurtCold: System_YogurtZoneTemp_READ < 42,
-          cupsLow: !!Denester_DispensedSinceLow_READ,
         };
         const lastMonitoredState = restaurantState.foodMonitoring || {};
 
@@ -216,6 +225,10 @@ const startVerseServer = async () => {
         ) {
           sideEffects.push({ type: 'SetFoodMonitoring', foodMonitoring });
         }
+
+        // if (Denester_DispensedSinceLow_READ && resta) {
+
+        // }
         return sideEffects;
       },
       logBehavior,

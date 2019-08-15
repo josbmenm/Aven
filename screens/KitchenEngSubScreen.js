@@ -284,7 +284,7 @@ function SystemView({ system, systemId, kitchenCommand }) {
                     >
                       <Text
                         style={{
-                          fontSize: 32,
+                          fontSize: 28,
                           ...genericText,
                         }}
                       >
@@ -293,9 +293,9 @@ function SystemView({ system, systemId, kitchenCommand }) {
                       <Text
                         style={{
                           marginHorizontal: 10,
-                          fontSize: 42,
+                          fontSize: 28,
                           ...genericText,
-                          color: '#414',
+                          color: '#229',
                         }}
                       >
                         {val.value ? 'True' : 'False'}
@@ -322,7 +322,7 @@ function SystemView({ system, systemId, kitchenCommand }) {
                   >
                     <Text
                       style={{
-                        fontSize: 32,
+                        fontSize: 28,
                         ...genericText,
                       }}
                     >
@@ -331,9 +331,9 @@ function SystemView({ system, systemId, kitchenCommand }) {
                     <Text
                       style={{
                         marginHorizontal: 10,
-                        fontSize: 42,
+                        fontSize: 28,
                         ...genericText,
-                        color: '#414',
+                        color: '#229',
                       }}
                     >
                       {val.value}

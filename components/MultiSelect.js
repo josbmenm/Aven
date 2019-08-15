@@ -23,9 +23,9 @@ export default function MultiSelect({ options, value, onValue }) {
             }}
             style={{
               backgroundColor: isActive ? monsterra80 : null,
-              flex: 1,
-              alignSelf: 'stretch',
+              // alignSelf: 'stretch',
               padding: 10,
+              height: '100%',
             }}
           >
             <Text

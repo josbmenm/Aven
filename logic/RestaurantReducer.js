@@ -71,6 +71,7 @@ function RestaurantReducerFn(state = {}, action) {
     case 'WipeState': {
       return {
         actionCount: 0,
+        ...(action.resetState || {}),
       };
     }
     case 'QueueTasks': {

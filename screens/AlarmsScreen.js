@@ -67,7 +67,7 @@ export default function AlarmsScreen(props) {
     <SimplePage hideBackButton {...props}>
       <RootAuthenticationSection>
         <TemperatureView />
-        <StatusView />
+        {/* <StatusView /> */}
       </RootAuthenticationSection>
     </SimplePage>
   );

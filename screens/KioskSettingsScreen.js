@@ -30,12 +30,7 @@ function UpdateAirtableRow() {
 
 export default function KioskSettingsScreen({ navigation, ...props }) {
   return (
-    <SimplePage
-      {...props}
-      navigation={navigation}
-      icon="⚙️"
-      title="Kiosk Settings"
-    >
+    <SimplePage {...props} navigation={navigation} hideBackButton>
       <RowSection>
         <LinkRow
           onPress={() => {

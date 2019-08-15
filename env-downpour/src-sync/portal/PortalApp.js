@@ -29,6 +29,7 @@ import BlendScreen from '../screens/BlendScreen';
 import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
 import FoodScreen from '../screens/FoodScreen';
 import OrdersScreen from '../screens/OrdersScreen';
+import TasksScreen from '../screens/TasksScreen';
 import useCloudProvider from '../components/useCloudProvider';
 import SequencerScreen from '../screens/SequencerScreen';
 import Button from '../components/Button';
@@ -164,21 +165,23 @@ KioskApp.navigationOptions = KioskNavigator.navigationOptions;
 process.env.REACT_NAV_LOGGING = true;
 
 const TABS = [
-  { routeName: 'PortalHome', title: 'Home' },
   { routeName: 'Status', title: 'System' },
   { routeName: 'Sequencer', title: 'Machine' },
+  { routeName: 'Tasks', title: 'Tasks' },
   { routeName: 'Orders', title: 'Orders' },
   { routeName: 'Inventory', title: 'Inventory' },
   { routeName: 'Alarms', title: 'Alarms' },
+  { routeName: 'Settings', title: 'Settings' },
 ];
 
 const PortalHome = createSwitchNavigator({
-  PortalHome: { screen: PortalHomeScreen },
   Inventory: { screen: InventoryScreen },
   Sequencer: { screen: SequencerScreen },
+  Tasks: { screen: TasksScreen },
   Orders: { screen: OrdersScreen },
   Status: { screen: RestaurantStatusScreen },
   Alarms: { screen: AlarmsScreen },
+  Settings: { screen: KioskSettingsScreen },
 });
 
 function PortalHomeApp({ navigation }) {
@@ -200,7 +203,6 @@ const App = createStackTransitionNavigator({
   OrderComplete: OrderCompletePortalScreen,
   Kiosk: KioskApp,
   ComponentPlayground: ComponentPlaygroundScreen,
-  Settings: { screen: KioskSettingsScreen },
   DeviceManager: DeviceManagerScreen,
   PaymentDebug: PaymentDebugScreen,
 

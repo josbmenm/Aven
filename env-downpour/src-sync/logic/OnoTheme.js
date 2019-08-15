@@ -29,15 +29,18 @@ const headingStyles = {
     fontSize: [24, 28],
     lineHeight: [32, 48],
     letterSpacing: ['auto', 0.44],
+    zIndex: 22,
   },
   medium: {
     fontSize: [24, 36],
     lineHeight: [32, 44],
+    zIndex: 22,
   },
   large: {
     fontSize: [24, 38],
     lineHeight: [32, 48],
     letterSpacing: ['auto', 0.5],
+    zIndex: 22,
   },
 };
 
@@ -45,15 +48,18 @@ const textStyles = {
   small: {
     fontSize: [10, 10],
     lineHeight: [12, 12],
+    zIndex: 22,
   },
   medium: {
     fontSize: [13, 13],
     lineHeight: [20, 20],
+    zIndex: 22,
   },
   large: {
     fontSize: [15, 18],
     lineHeight: [24, 28],
     letterSpacing: [0.25, 0.3],
+    zIndex: 22,
   },
 };
 

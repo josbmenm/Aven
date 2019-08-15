@@ -51,6 +51,8 @@ import { titleStyle } from '../components/Styles';
 import { AppEnvContext } from '../components/useBlitzDebugPopover';
 import { ThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
+import cuid from 'cuid';
+import useAsyncStorage, { isStateUnloaded } from '../screens/useAsyncStorage';
 
 let VERSE_IS_DEV = process.env.NODE_ENV !== 'production';
 let SKYNET_IS_DEV = process.env.NODE_ENV !== 'production';
@@ -79,7 +81,7 @@ const SKYNET_HOST_CONFIG = SKYNET_IS_DEV
   : {
       // Skynet prod:
       useSSL: true,
-      authority: 'onofood.co',
+      authority: 'onoblends.co',
     };
 
 const verseSource = createNativeNetworkSource(VERSE_HOST_CONFIG);
@@ -286,17 +288,14 @@ function SelectModeApp() {
 }
 
 function useControlledApp(cloud) {
-  // const isReady = !!cloud && !!cloud.observeSession.getValue();
-  // React.useEffect(() => {
-  //   if (!isReady) {
-  //     return;
-  //   }
-  //   const deviceId = cloud.observeSession.getValue().accountId;
-  //   cloud.get('DeviceActions').putTransactionValue({
-  //     type: 'DeviceOnline',
-  //     deviceId,
-  //   });
-  // }, [cloud, isReady]);
+  const [deviceId, setDeviceId] = useAsyncStorage('DeviceID', cuid());
+  React.useEffect(() => {
+    if (isStateUnloaded(deviceId)) return;
+    cloud.get('DeviceActions').putTransactionValue({
+      type: 'DeviceOnline',
+      deviceId,
+    });
+  }, [isStateUnloaded(deviceId)]);
 }
 
 function FullApp() {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Button from '../components/Button';
+import Tag from '../components/Tag';
 import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import {
@@ -20,16 +21,16 @@ function StatusPuck({ status }) {
   let statusColor = null;
   switch (status) {
     case 'fault': {
-      statusColor = '#a33';
-      break;
-    }
-    case 'alarm': {
-      statusColor = 'yellow';
+      statusColor = Tag.negativeColor;
       break;
     }
     case 'detached':
+    case 'alarm': {
+      statusColor = Tag.warningColor;
+      break;
+    }
     case 'ready': {
-      statusColor = '#00990D';
+      statusColor = Tag.positiveColor;
       break;
     }
     case 'disconnected':
@@ -128,7 +129,10 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   } else {
     if (!restaurantState.isAttached) {
       status = 'detached';
-      message = 'Disabled';
+      message = 'Sequencer Disabled';
+    } else if (!restaurantState.isAutoRunning) {
+      status = 'detached';
+      message = 'Paused';
     }
 
     sequencerNames &&
@@ -161,7 +165,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
       }
     }
   }
-  if (status === 'ready' || status === 'detached' || status === 'fault') {
+  if (status !== 'disconnected') {
     sequencerNames &&
       sequencerNames.forEach(systemName => {
         if (kitchenState[`${systemName}_PrgStep_READ`] !== 0) {

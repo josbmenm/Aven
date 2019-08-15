@@ -122,20 +122,17 @@ export const rowStyle = {
   backgroundColor: highlightBackgroundColor,
   // borderBottomWidth: rowBorderWidth,
   // borderColor: hairlineColor,
-  padding: 20,
-  paddingHorizontal: 30,
-  marginVertical: 10,
+  padding: 8,
+  paddingHorizontal: 16,
+  // marginVertical: 10,
   overflow: 'hidden',
-  ...prettyShadow,
+  ...prettyShadowSmall,
 };
 export const rowTitleStyle = {
   fontSize: 20,
   ...boldPrimaryFontFace,
   color: '#222',
   marginBottom: 12,
-};
-export const linkRowStyle = {
-  ...rowStyle,
 };
 export const bitRowStyle = {
   ...rowStyle,
@@ -157,17 +154,6 @@ export const rowSectionStyle = {
   marginTop: 16,
   paddingHorizontal: 20,
   ...prettyShadow,
-};
-
-export const linkRowIconTextStyle = {
-  fontSize: 42,
-};
-export const linkRowTitleTextStyle = {
-  ...primaryFontFace,
-  flex: 1,
-  color: monsterra80,
-  paddingLeft: 30,
-  fontSize: 42,
 };
 
 export const rowSectionInnerStyle = {

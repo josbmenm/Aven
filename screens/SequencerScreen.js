@@ -1,9 +1,8 @@
 import React from 'react';
 import TwoPanePage from '../components/TwoPanePage';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import Button from '../components/Button';
-import { Easing } from 'react-native-reanimated';
-import KitchenCommands from '../logic/KitchenCommands';
+import { useSubsystemOverview } from '../ono-cloud/OnoKitchen';
 
 import RowSection from '../components/RowSection';
 import Subtitle from '../components/Subtitle';
@@ -13,11 +12,36 @@ import {
   primaryFontFace,
   monsterra80,
 } from '../components/Styles';
-import RestaurantReducer from '../logic/RestaurantReducer';
-import useAsyncError from '../react-utils/useAsyncError';
 import ControlPanel from './ControlPanel';
 import ManualControl from './ManualControl';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
+import { useNavigation } from '../navigation-hooks/Hooks';
+import LinkRow from '../components/LinkRow';
+
+function Subsystems() {
+  const subsystems = useSubsystemOverview();
+  const navigation = useNavigation();
+  return (
+    <RowSection>
+      {subsystems.map(system => (
+        <LinkRow
+          key={system.name}
+          onPress={() => {
+            navigation.navigate({
+              routeName: 'KitchenEngSub',
+              params: { system: system.name },
+            });
+          }}
+          icon={system.icon}
+          title={system.name}
+          rightIcon={
+            system.noFaults === null ? '' : system.noFaults ? '👍' : '🚨'
+          }
+        />
+      ))}
+    </RowSection>
+  );
+}
 
 function TaskInfoText({ taskState }) {
   if (!taskState) {
@@ -177,14 +201,7 @@ function ModeView({ restaurantState, dispatch }) {
   }
   return (
     <View>
-      <Button
-        title="prime dispensers"
-        onPress={() => {
-          dispatch({
-            type: 'PrimeDispensers',
-          });
-        }}
-      />
+      <Subsystems />
       <Button
         title={
           restaurantState.isDryRunning

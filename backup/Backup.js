@@ -5,7 +5,7 @@ import fs from 'fs-extra';
 
 const domain = 'onofood.co';
 const source = createNodeNetworkSource({
-  authority: 'onofood.co',
+  authority: 'onoblends.co',
   useSSL: true,
   quiet: true,
 });

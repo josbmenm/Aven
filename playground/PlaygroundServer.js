@@ -20,19 +20,19 @@ const startSkynetServer = async () => {
 
   console.log('Starting Node Network connection');
   const networkSource = await createNodeNetworkSource({
-    authority: 'onofood.co',
+    authority: 'onoblends.co',
     useSSL: true,
     quiet: true,
   });
 
   const cloud = createClient({
     source: [networkSource],
-    domain: 'onofood.co',
+    domain,
   });
 
   const context = new Map();
   context.set(CloudContext, cloud);
-  context.set(HostContext, { authority: 'onofood.co', useSSL: !IS_DEV });
+  context.set(HostContext, { authority: 'onoblends.co', useSSL: !IS_DEV });
 
   const emailAgent = EmailAgent({
     defaultFromEmail: 'Ono Blends <aloha@onofood.co>',

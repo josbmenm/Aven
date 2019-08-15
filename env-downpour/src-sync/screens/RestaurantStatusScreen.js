@@ -2,10 +2,11 @@ import React from 'react';
 import RootAuthenticationSection from './RootAuthenticationSection';
 import { Text, View } from 'react-native';
 import SimplePage from '../components/SimplePage';
-import { useCloudValue } from '../cloud-core/KiteReact';
+import { useCloud } from '../cloud-core/KiteReact';
 import Row from '../components/Row';
 import Tag from '../components/Tag';
 import Button from '../components/Button';
+import useAsyncError from '../react-utils/useAsyncError';
 import { Easing } from 'react-native-reanimated';
 import {
   titleStyle,
@@ -19,6 +20,8 @@ import { useRestaurantState, useIsRestaurantOpen } from '../ono-cloud/Kitchen';
 import useTimeSeconds from '../utils/useTimeSeconds';
 import RowSection from '../components/RowSection';
 import Subtitle from '../components/Subtitle';
+import MultiSelect from '../components/MultiSelect';
+import { useKitchenState } from '../ono-cloud/OnoKitchen';
 
 function PopoverTitle({ children }) {
   return (
@@ -101,7 +104,6 @@ function StatusView() {
   const [restaurantState, dispatch] = useRestaurantState();
   const { isOpen, closingSoon } = useIsRestaurantOpen(restaurantState);
   const timeSeconds = useTimeSeconds();
-  console.log('wtf', { isOpen, timeSeconds, closingSoon });
   let tagText = 'restaurant open';
   if (closingSoon) {
     const totalSecRemaining = Math.floor(
@@ -197,14 +199,50 @@ function SkidView() {
   );
 }
 
+function FridgeView() {
+  const kitchenState = useKitchenState();
+  const fridgeEnabled =
+    !!kitchenState && !!kitchenState.System_EnableRefrigerationSystem_VALUE;
+  const cloud = useCloud();
+  const handleError = useAsyncError();
+  return (
+    <Row title="Main Refridgeration">
+      <Tag
+        title={fridgeEnabled ? 'Enabled' : 'Disabled'}
+        color={fridgeEnabled ? Tag.positiveColor : Tag.negativeColor}
+      />
+      <MultiSelect
+        options={[
+          { name: 'Enable', value: true },
+          { name: 'Disable', value: false },
+        ]}
+        value={fridgeEnabled}
+        onValue={value => {
+          handleError(
+            cloud.dispatch({
+              type: 'KitchenWriteMachineValues',
+              subsystem: 'System',
+              pulse: [],
+              values: {
+                EnableRefrigerationSystem: value,
+              },
+            }),
+          );
+        }}
+      />
+    </Row>
+  );
+}
+
 export default function RestaurantStatusScreen(props) {
   return (
     <SimplePage {...props} hideBackButton>
       <RootAuthenticationSection>
         <StatusView />
-        <AirPressureView />
+        <FridgeView />
+        {/* <AirPressureView />
         <PowerView />
-        <SkidView />
+        <SkidView /> */}
       </RootAuthenticationSection>
     </SimplePage>
   );
