@@ -12,7 +12,7 @@ import { useRestaurantState } from '../ono-cloud/Kitchen';
 
 function TaskRow({ onCancel, taskState }) {
   if (!taskState) {
-    return;
+    return null;
   }
   return (
     <View

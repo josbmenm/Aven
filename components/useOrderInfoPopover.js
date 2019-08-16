@@ -9,12 +9,10 @@ import useFocus from '../navigation-hooks/useFocus';
 
 function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
   const [orderName, setOrderName] = React.useState(initialInfo.orderName);
-  const [orderBlendName, setOrderBlendName] = React.useState(
-    initialInfo.orderBlendName,
-  );
+  const [blendName, setBlendName] = React.useState(initialInfo.blendName);
 
   function handleSubmit() {
-    onSubmit({ orderName, orderBlendName });
+    onSubmit({ orderName, blendName });
     onClose();
   }
 
@@ -38,8 +36,8 @@ function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
               <BlockFormInput
                 {...inputProps}
                 label="Blend Name"
-                onValue={setOrderBlendName}
-                value={orderBlendName}
+                onValue={setBlendName}
+                value={blendName}
               />
             </View>
           ),
@@ -56,7 +54,7 @@ function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
 
 export default function useOrderInfoPopover({
   orderName,
-  orderBlendName,
+  blendName,
   onOrderInfo,
   hideBlendName,
 }) {
@@ -65,7 +63,7 @@ export default function useOrderInfoPopover({
       return (
         <KeyboardPopover onClose={onClose} {...props}>
           <SetInfoForm
-            initialInfo={{ orderName, orderBlendName }}
+            initialInfo={{ orderName, blendName }}
             onClose={onClose}
             hideBlendName={hideBlendName}
             onSubmit={onOrderInfo}

@@ -134,6 +134,13 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
       status = 'detached';
       message = 'Paused';
     }
+    if (
+      kitchenState.FillSystem_PrgStep_READ >= 106 &&
+      kitchenState.FillSystem_PrgStep_READ <= 165
+    ) {
+      status = 'detached';
+      message = 'Homing';
+    }
 
     sequencerNames &&
       sequencerNames.forEach(systemName => {

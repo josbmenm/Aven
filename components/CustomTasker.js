@@ -102,7 +102,7 @@ function AddFillForm({ onSubmit, onClose }) {
             onPress={() => {
               onSubmit({
                 amount: 1,
-                amountVolumeRatio: slot.Ingredient.amountVolumeRatio,
+                amountVolumeRatio: slot.Ingredient['ShotSize(ml)'],
                 ingredientId: slot.Ingredient.id,
                 ingredientName: slot.Ingredient.Name,
                 ingredientColor: slot.Ingredient.Color,
@@ -163,21 +163,15 @@ function usePutTransactionValue(docName) {
 export default function CustomTasker() {
   const [savedTask, setSavedTask] = useAsyncStorage('OnoSavedBlend', {
     orderName: 'Tester O.',
-    orderBlendName: 'Test Blend',
+    blendName: 'Test Blend',
     deliveryMode: 'deliver',
     skipBlend: null,
     fills: [],
   });
-  const {
-    orderName,
-    orderBlendName,
-    deliveryMode,
-    skipBlend,
-    fills,
-  } = savedTask;
+  const { orderName, blendName, deliveryMode, skipBlend, fills } = savedTask;
   const openOrderInfo = useOrderInfoPopover({
     orderName,
-    orderBlendName,
+    blendName,
     onOrderInfo: orderInfo => {
       setSavedTask({ ...savedTask, ...orderInfo });
     },
@@ -202,7 +196,7 @@ export default function CustomTasker() {
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View style={{ flex: 1 }}>
-            <TaskInfo task={{ name: orderName, blendName: orderBlendName }} />
+            <TaskInfo task={{ name: orderName, blendName: blendName }} />
             <Button
               title="set order info"
               type="outline"
@@ -220,26 +214,34 @@ export default function CustomTasker() {
             <Button title="add fill" secondary onPress={openAddFill} />
           </View>
         </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            marginVertical: 8,
+          }}
+        >
+          <MultiSelect
+            value={deliveryMode}
+            onValue={deliveryMode =>
+              setSavedTask({ ...savedTask, deliveryMode })
+            }
+            options={[
+              { name: 'deliver', value: 'deliver' },
+              { name: 'drop in trash', value: 'ditch' },
+              { name: 'drop when done', value: 'drop' },
+            ]}
+          />
 
-        <MultiSelect
-          value={deliveryMode}
-          onValue={deliveryMode => setSavedTask({ ...savedTask, deliveryMode })}
-          options={[
-            { name: 'deliver', value: 'deliver' },
-            { name: 'drop in trash', value: 'ditch' },
-            { name: 'drop when done', value: 'drop' },
-          ]}
-        />
-
-        <MultiSelect
-          value={skipBlend}
-          onValue={skipBlend => setSavedTask({ ...savedTask, skipBlend })}
-          options={[
-            { name: 'blend', value: null },
-            { name: 'skip blend', value: true },
-          ]}
-        />
-
+          <MultiSelect
+            value={skipBlend}
+            onValue={skipBlend => setSavedTask({ ...savedTask, skipBlend })}
+            options={[
+              { name: 'blend', value: null },
+              { name: 'skip blend', value: true },
+            ]}
+          />
+        </View>
         <Button
           title="queue task"
           onPress={() => {
@@ -249,7 +251,7 @@ export default function CustomTasker() {
                 {
                   id: cuid(),
                   name: savedTask.orderName, // lame
-                  blendName: savedTask.orderBlendName, // name
+                  blendName: savedTask.blendName, // name
                   ...savedTask,
                 },
               ],

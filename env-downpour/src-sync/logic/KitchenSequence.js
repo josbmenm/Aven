@@ -74,7 +74,7 @@ const SEQUENCER_STEPS = [
     getDescription: intent => 'Drop Cup',
     getRestaurantStateIntent: restaurantState => {
       if (restaurantState.fill && !!restaurantState.fill.requestedDropTime) {
-        return { didCompleteJob: false };
+        return { didCompleteTask: false };
       }
       if (
         restaurantState.fill &&
@@ -83,7 +83,7 @@ const SEQUENCER_STEPS = [
         restaurantState.fill.task.skipBlend &&
         restaurantState.fill.fillsRemaining.length === 0
       ) {
-        return { didCompleteJob: true };
+        return { didCompleteTask: true };
       }
       return null;
     },
@@ -95,7 +95,7 @@ const SEQUENCER_STEPS = [
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidLooseFillCup',
-      didCompleteJob: intent.didCompleteJob,
+      didCompleteTask: intent.didCompleteTask,
     }),
   },
   {
@@ -313,7 +313,7 @@ const SEQUENCER_STEPS = [
     getRestaurantStateIntent: restaurantState => {
       if (restaurantState.fill === null) {
         return {
-          didCompleteJob: false,
+          didCompleteTask: false,
         };
       }
       if (
@@ -323,7 +323,7 @@ const SEQUENCER_STEPS = [
         restaurantState.fill.fillsRemaining.length === 0
       ) {
         return {
-          didCompleteJob: true,
+          didCompleteTask: true,
         };
       }
       return null;
@@ -336,7 +336,7 @@ const SEQUENCER_STEPS = [
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidLooseFillCup',
-      didCompleteJob: intent.didCompleteJob,
+      didCompleteTask: intent.didCompleteTask,
     }),
   },
 ];

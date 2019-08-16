@@ -153,19 +153,20 @@ function RestaurantReducerFn(state = {}, action) {
         return defaultReturn();
       }
       let queue = state.queue;
-      if (!action.didCompleteJob && state.fill && state.fill.task) {
+      if (!action.didCompleteTask && state.fill && state.fill.task) {
         queue = [state.fill.task, ...state.queue];
       }
       return {
         ...defaultReturn(),
         fill: null,
         queue,
-        lostFills: [
-          ...(state.lostFills || []),
+        completedTasks: [
+          ...(state.completedTasks || []),
           {
-            ...(state.fill || {}),
-            didCompleteJob: action.didCompleteJob,
-            fillLossTime: Date.now(),
+            ...state.fill,
+            deliveryType: 'drop-fill',
+            deliveryTime: Date.now(),
+            taskCompleteTime: Date.now(),
           },
         ],
       };
@@ -330,7 +331,12 @@ function RestaurantReducerFn(state = {}, action) {
         delivery: null,
         completedTasks: [
           ...(state.completedTasks || []),
-          { ...state.delivery, deliveryType: 'drop', deliveryTime: Date.now() },
+          {
+            ...state.delivery,
+            deliveryType: 'drop',
+            deliveryTime: Date.now(),
+            taskCompleteTime: Date.now(),
+          },
         ],
       };
     }
