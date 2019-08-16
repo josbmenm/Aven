@@ -146,9 +146,16 @@ function FillRow({ restaurantState, dispatch }) {
           {task && <TaskInfoText taskState={task} />}
         </View>
         <Button
-          title="drop"
+          title="drop (and remake)"
           onPress={() => {
-            dispatch({ type: 'RequestFillDrop' });
+            dispatch({ type: 'RequestFillDrop', remake: true });
+          }}
+        />
+
+        <Button
+          title="discard"
+          onPress={() => {
+            dispatch({ type: 'RequestFillDrop', remake: false });
           }}
         />
       </View>

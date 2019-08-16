@@ -74,7 +74,7 @@ const SEQUENCER_STEPS = [
     getDescription: intent => 'Drop Cup',
     getRestaurantStateIntent: restaurantState => {
       if (restaurantState.fill && !!restaurantState.fill.requestedDropTime) {
-        return { didCompleteTask: false };
+        return { didCompleteTask: !restaurantState.fill.requestedDropRemake };
       }
       if (
         restaurantState.fill &&

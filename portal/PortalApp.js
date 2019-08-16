@@ -58,7 +58,7 @@ import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
 
 let IS_DEV = process.env.NODE_ENV !== 'production';
-IS_DEV = false;
+// IS_DEV = false;
 
 const windowSize = Dimensions.get('window');
 

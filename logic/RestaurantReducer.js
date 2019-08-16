@@ -145,7 +145,11 @@ function RestaurantReducerFn(state = {}, action) {
       }
       return {
         ...defaultReturn(),
-        fill: { ...state.fill, requestedDropTime: Date.now() },
+        fill: {
+          ...state.fill,
+          requestedDropTime: Date.now(),
+          requestedDropRemake: action.remake,
+        },
       };
     }
     case 'DidLooseFillCup': {
