@@ -22,35 +22,102 @@ export default function createHooks(StripeTerminal) {
       StripeTerminal.getLastReaderEvent().then(e => setLastReaderEvent(e));
       StripeTerminal.getConnectedReader().then(r => setConnectedReader(r));
 
-      // Setup listeners
-      const listeners = [
-        StripeTerminal.addDidChangeConnectionStatusListener(({ status }) => {
-          setConnectionStaus(status);
-          StripeTerminal.getConnectedReader().then(r => setConnectedReader(r));
-        }),
-        StripeTerminal.addDidChangePaymentStatusListener(({ status }) =>
-          setPaymentStatus(status),
-        ),
-        StripeTerminal.addDidReportReaderEventListener(({ event }) =>
-          setLastReaderEvent(event),
-        ),
-        // StripeTerminal.addDidBeginWaitingForReaderInputListener(({ text }) => setReaderInputOptions(text)),
-        // StripeTerminal.addDidRequestReaderInputPromptListener(({ text }) => setReaderInputPrompt(text))
+      function handleLog(event) {}
+      function handleReadersDiscovered(event) {}
+      function handleReaderSoftwareUpdateProgress(event) {}
+      function handleDidRequestReaderInput(event) {}
+      function handleDidRequestReaderDisplayMessage(event) {}
+      function handleDidReportReaderEvent(event) {
+        setLastReaderEvent(event);
+      }
+      function handleDidReportLowBatteryWarning(event) {}
+      function handleDidChangePaymentStatus(event) {
+        setPaymentStatus(event.status);
+      }
+      function handleDidChangeConnectionStatus(event) {
+        setConnectionStaus(event.status);
+        StripeTerminal.getConnectedReader().then(r => {
+          if (connectedReader !== r) setConnectedReader(r);
+        });
+      }
+      function handleDidReportUnexpectedReaderDisconnect(event) {}
 
-        StripeTerminal.addDidRequestReaderInputListener(evt => {
-          debugger;
-        }),
+      StripeTerminal.addLogListener('LogListener', handleLog);
+      StripeTerminal.addReadersDiscoveredListener(
+        'ReadersDiscoveredListener',
+        handleReadersDiscovered,
+      );
+      StripeTerminal.addReaderSoftwareUpdateProgressListener(
+        'ReaderSoftwareUpdateProgressListener',
+        handleReaderSoftwareUpdateProgress,
+      );
+      StripeTerminal.addDidRequestReaderInputListener(
+        'DidRequestReaderInputListener',
+        handleDidRequestReaderInput,
+      );
+      StripeTerminal.addDidRequestReaderDisplayMessageListener(
+        'DidRequestReaderDisplayMessageListener',
+        handleDidRequestReaderDisplayMessage,
+      );
+      StripeTerminal.addDidReportReaderEventListener(
+        'DidReportReaderEventListener',
+        handleDidReportReaderEvent,
+      );
+      StripeTerminal.addDidReportLowBatteryWarningListener(
+        'DidReportLowBatteryWarningListener',
+        handleDidReportLowBatteryWarning,
+      );
+      StripeTerminal.addDidChangePaymentStatusListener(
+        'DidChangePaymentStatusListener',
+        handleDidChangePaymentStatus,
+      );
+      StripeTerminal.addDidChangeConnectionStatusListener(
+        'DidChangeConnectionStatusListener',
+        handleDidChangeConnectionStatus,
+      );
+      StripeTerminal.addDidReportUnexpectedReaderDisconnectListener(
+        'DidReportUnexpectedReaderDisconnectListener',
+        handleDidReportUnexpectedReaderDisconnect,
+      );
 
-        // addDidReportLowBatteryWarningListener: (listener)
-        // addDidReportUnexpectedReaderDisconnectListener: (listener)
-        // addDidRequestReaderDisplayMessageListener: (listener)
-        // addLogListener: (listener)
-        // addReaderSoftwareUpdateProgressListener: (listener)
-      ];
-
-      // Cleanup: remove listeners
       return () => {
-        listeners.forEach(l => l.remove());
+        StripeTerminal.removeLogListener('LogListener', handleLog);
+        StripeTerminal.removeReadersDiscoveredListener(
+          'ReadersDiscoveredListener',
+          handleReadersDiscovered,
+        );
+        StripeTerminal.removeReaderSoftwareUpdateProgressListener(
+          'ReaderSoftwareUpdateProgressListener',
+          handleReaderSoftwareUpdateProgress,
+        );
+        StripeTerminal.removeDidRequestReaderInputListener(
+          'DidRequestReaderInputListener',
+          handleDidRequestReaderInput,
+        );
+        StripeTerminal.removeDidRequestReaderDisplayMessageListener(
+          'DidRequestReaderDisplayMessageListener',
+          handleDidRequestReaderDisplayMessage,
+        );
+        StripeTerminal.removeDidReportReaderEventListener(
+          'DidReportReaderEventListener',
+          handleDidReportReaderEvent,
+        );
+        StripeTerminal.removeDidReportLowBatteryWarningListener(
+          'DidReportLowBatteryWarningListener',
+          handleDidReportLowBatteryWarning,
+        );
+        StripeTerminal.removeDidChangePaymentStatusListener(
+          'DidChangePaymentStatusListener',
+          handleDidChangePaymentStatus,
+        );
+        StripeTerminal.removeDidChangeConnectionStatusListener(
+          'DidChangeConnectionStatusListener',
+          handleDidChangeConnectionStatus,
+        );
+        StripeTerminal.removeDidReportUnexpectedReaderDisconnectListener(
+          'DidReportUnexpectedReaderDisconnectListener',
+          handleDidReportUnexpectedReaderDisconnect,
+        );
       };
     }, []);
 

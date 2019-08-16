@@ -236,7 +236,7 @@ export default function CustomTasker() {
             options={[
               { name: 'deliver', value: 'deliver' },
               { name: 'drop in trash', value: 'ditch' },
-              { name: 'drop when done', value: 'drop' },
+              { name: 'drop after filling', value: 'drop' },
             ]}
           />
           <MultiSelect

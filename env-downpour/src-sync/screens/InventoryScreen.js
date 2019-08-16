@@ -124,12 +124,12 @@ function useInventoryState() {
         name: slot.Ingredient.Name,
         photo: slot.Ingredient.Icon,
         color: slot.Ingredient.Color,
-        onDispenseOne: async () => {
+        onDispense: async amount => {
           await cloud.dispatch({
             type: 'KitchenCommand',
             command: 'DispenseOnly',
             params: {
-              amount: 1,
+              amount: amount,
               slot: slot.Slot,
               system: slot.KitchenSystem.FillSystemID,
             },
@@ -137,7 +137,7 @@ function useInventoryState() {
           await dispatch({
             type: 'DidDispense',
             slotId: slot.id,
-            amount: 1,
+            amount: amount,
           });
         },
         onPurgeSmall: async () => {
@@ -245,7 +245,7 @@ function SetFillForm({ slot, onClose }) {
   );
 }
 
-function DispenseForm({ slot, onClose }) {
+function DispenseForm({ slot, onClose, onDispense }) {
   const [amount, setAmount] = React.useState(1);
   function handleSubmit() {}
   const { inputs } = useFocus({
@@ -265,9 +265,19 @@ function DispenseForm({ slot, onClose }) {
   return (
     <View>
       <PopoverTitle>Dispense {slot.name}</PopoverTitle>
-      {inputs}
-      <Button title="dispense one" onPress={() => {}} />
-      <Button title={`dispense ${amount}`} onPress={() => {}} />
+      <View style={{ flexDirection: 'row' }}>{inputs}</View>
+      <Button
+        title="dispense one"
+        onPress={() => {
+          onDispense(1);
+        }}
+      />
+      <Button
+        title={`dispense ${amount}`}
+        onPress={() => {
+          onDispense(amount);
+        }}
+      />
       <Button
         title={`task cup of ${slot.name} x ${amount}`}
         onPress={() => {}}
@@ -289,7 +299,7 @@ function InventoryRow({ slot, dispatch }) {
   ));
 
   const { onPopover: onDispensePopover } = useKeyboardPopover(({ onClose }) => (
-    <DispenseForm onClose={onClose} slot={slot} />
+    <DispenseForm onClose={onClose} slot={slot} onDispense={slot.onDispense} />
   ));
 
   const estimatedRemaining = slot.estimatedRemaining;
