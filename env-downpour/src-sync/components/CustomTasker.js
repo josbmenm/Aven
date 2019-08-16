@@ -195,7 +195,7 @@ export default function CustomTasker() {
     <Row title="custom blend task">
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, margin: 8 }}>
             <TaskInfo task={{ name: orderName, blendName: blendName }} />
             <Button
               title="set order info"
@@ -203,7 +203,7 @@ export default function CustomTasker() {
               onPress={openOrderInfo}
             />
           </View>
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, margin: 8 }}>
             <View style={{ flex: 1, padding: 0 }}>
               <Subtitle title="custom fills" />
               <FillList
@@ -244,6 +244,7 @@ export default function CustomTasker() {
         </View>
         <Button
           title="queue task"
+          style={{ marginVertical: 8 }}
           onPress={() => {
             restaurantDispatch({
               type: 'QueueTasks',

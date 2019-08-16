@@ -64,6 +64,7 @@ export default function BlendTasker() {
 
         <Button
           title="queue task"
+          style={{ marginVertical: 8 }}
           disabled={blendId === null}
           onPress={() => {
             restaurantDispatch({
