@@ -9,6 +9,8 @@ import { View, Text } from 'react-native';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import JSONView from '../components/JSONView';
 import Button from '../components/Button';
+import { ThemeProvider } from '../dashboard/Theme';
+import OnoTheme from '../logic/OnoTheme';
 
 let HOST_CONFIG = {};
 if (global.window) {
@@ -186,9 +188,11 @@ function FullApp(props) {
     return () => cloud.connected.stream.removeListener(listener);
   }, [cloud]);
   return (
-    <HostContextContainer {...HOST_CONFIG}>
-      <App {...props} />
-    </HostContextContainer>
+    <ThemeProvider value={OnoTheme}>
+      <HostContextContainer {...HOST_CONFIG}>
+        <App {...props} />
+      </HostContextContainer>
+    </ThemeProvider>
   );
 }
 

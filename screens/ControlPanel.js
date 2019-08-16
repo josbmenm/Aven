@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Button from '../components/Button';
 import Tag from '../components/Tag';
 import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
@@ -56,7 +56,7 @@ function StatusPuck({ status }) {
   );
 }
 
-function FaultRow({ fault }) {
+function FaultCell({ fault }) {
   const { navigate } = useNavigation();
   return (
     <TouchableOpacity
@@ -64,13 +64,31 @@ function FaultRow({ fault }) {
         navigate('KitchenEngSub', { system: fault.systemName });
       }}
     >
-      <View style={{ backgroundColor: '#900', padding: 6 }}>
+      <View
+        style={{
+          marginHorizontal: 8,
+          backgroundColor: 'white',
+          // borderWidth: 3,
+          borderRadius: 4,
+          // borderColor: Tag.negativeColor,
+          padding: 8,
+          paddingHorizontal: 12,
+        }}
+      >
         <Text
           style={{
             ...titleStyle,
-            color: 'white',
+            color: Tag.negativeColor,
             fontSize: 22,
-            textAlign: 'center',
+          }}
+        >
+          {fault.systemName}
+          {fault.isFaulted ? ' Fault' : ''}
+        </Text>
+        <Text
+          style={{
+            ...primaryFontFace,
+            fontSize: 22,
           }}
         >
           {fault.description}
@@ -87,6 +105,38 @@ function ControlPanelButton({ ...props }) {
       style={{ marginVertical: 16, marginHorizontal: 8 }}
       size="large"
     />
+  );
+}
+
+function FaultZone({ faults }) {
+  const hasActuallyFaulted = faults.find(f => f.isFaulted);
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={{
+        alignSelf: 'stretch',
+        backgroundColor: '#333',
+        ...prettyShadow,
+        // flex: 1,
+      }}
+      contentContainerStyle={{
+        flexDirection: 'row',
+        paddingVertical: 8,
+      }}
+    >
+      {faults.map(fault => {
+        if (!hasActuallyFaulted || fault.isFaulted) {
+          return (
+            <FaultCell
+              fault={fault}
+              key={fault.systemName + fault.description}
+            />
+          );
+        }
+        return null;
+      })}
+    </ScrollView>
   );
 }
 
@@ -152,17 +202,18 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
           }
           allFaults = [
             ...allFaults,
-            ...faults.map(desc => ({
-              description: `${systemName} - ${desc}`,
-              isFaulted: desc !== 'Not Homed',
+            ...faults.map(description => ({
+              description,
+              isFaulted: description !== 'Not Homed',
               systemName,
             })),
           ];
         }
       });
+    const hasActuallyFaulted = allFaults.find(f => f.isFaulted);
     if (allFaults.length) {
       status = 'fault';
-      if (allFaults.find(f => f.isFaulted)) {
+      if (hasActuallyFaulted) {
         message = 'Faulted';
         if (mainFaultMessage) {
           message += ` - ${mainFaultMessage}`;
@@ -205,10 +256,8 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
     });
   }
   return (
-    <View style={{}}>
-      {allFaults.map(fault => (
-        <FaultRow fault={fault} key={fault.systemName + fault.description} />
-      ))}
+    <View style={{ backgroundColor: 'transparent' }}>
+      {allFaults && allFaults.length > 0 && <FaultZone faults={allFaults} />}
       <View
         style={{
           ...prettyShadow,
@@ -298,7 +347,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
 
           {status === 'fault' && (
             <ControlPanelButton
-              title="Home System"
+              title="home system"
               disabled={kitchenState.FillSystem_PrgStep_READ !== 0}
               onPress={() => {
                 handleKitchenCommand({ command: 'Home' });

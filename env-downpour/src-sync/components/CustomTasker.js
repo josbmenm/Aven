@@ -224,7 +224,14 @@ export default function CustomTasker() {
           <MultiSelect
             value={deliveryMode}
             onValue={deliveryMode =>
-              setSavedTask({ ...savedTask, deliveryMode })
+              setSavedTask({
+                ...savedTask,
+                deliveryMode,
+                skipBlend:
+                  deliveryMode !== 'deliver' && !savedTask.skipBlend
+                    ? true
+                    : savedTask.skipBlend,
+              })
             }
             options={[
               { name: 'deliver', value: 'deliver' },
@@ -232,12 +239,20 @@ export default function CustomTasker() {
               { name: 'drop when done', value: 'drop' },
             ]}
           />
-
           <MultiSelect
-            value={skipBlend}
-            onValue={skipBlend => setSavedTask({ ...savedTask, skipBlend })}
+            value={skipBlend || false}
+            onValue={skipBlend =>
+              setSavedTask({
+                ...savedTask,
+                skipBlend,
+                deliveryMode:
+                  savedTask.deliveryMode !== 'deliver' && !skipBlend
+                    ? 'deliver'
+                    : savedTask.deliveryMode,
+              })
+            }
             options={[
-              { name: 'blend', value: null },
+              { name: 'blend', value: false },
               { name: 'skip blend', value: true },
             ]}
           />

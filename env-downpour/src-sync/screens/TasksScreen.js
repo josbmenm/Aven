@@ -5,7 +5,6 @@ import Button from '../components/Button';
 import BlendTasker from '../components/BlendTasker';
 import CustomTasker from '../components/CustomTasker';
 import TaskInfo from '../components/TaskInfo';
-import Row from '../components/Row';
 import RowSection from '../components/RowSection';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
@@ -115,14 +114,6 @@ export default function TasksScreen(props) {
     >
       <BlendTasker />
       <CustomTasker />
-      <Row title="kiosk app">
-        <Button
-          title="start order"
-          onPress={() => {
-            navigation.navigate({ routeName: 'ProductHome' });
-          }}
-        />
-      </Row>
     </TwoPanePage>
   );
 }
