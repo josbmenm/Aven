@@ -22,7 +22,9 @@ export default function createHooks(StripeTerminal) {
       StripeTerminal.getLastReaderEvent().then(e => setLastReaderEvent(e));
       StripeTerminal.getConnectedReader().then(r => setConnectedReader(r));
 
-      function handleLog(event) {}
+      function handleLog(event) {
+        console.log('readerevt', event);
+      }
       function handleReadersDiscovered(event) {}
       function handleReaderSoftwareUpdateProgress(event) {}
       function handleDidRequestReaderInput(event) {}
@@ -42,80 +44,58 @@ export default function createHooks(StripeTerminal) {
       }
       function handleDidReportUnexpectedReaderDisconnect(event) {}
 
-      StripeTerminal.addLogListener('LogListener', handleLog);
-      StripeTerminal.addReadersDiscoveredListener(
-        'ReadersDiscoveredListener',
-        handleReadersDiscovered,
-      );
+      StripeTerminal.addLogListener(handleLog);
+      StripeTerminal.addReadersDiscoveredListener(handleReadersDiscovered);
       StripeTerminal.addReaderSoftwareUpdateProgressListener(
-        'ReaderSoftwareUpdateProgressListener',
         handleReaderSoftwareUpdateProgress,
       );
       StripeTerminal.addDidRequestReaderInputListener(
-        'DidRequestReaderInputListener',
         handleDidRequestReaderInput,
       );
       StripeTerminal.addDidRequestReaderDisplayMessageListener(
-        'DidRequestReaderDisplayMessageListener',
         handleDidRequestReaderDisplayMessage,
       );
       StripeTerminal.addDidReportReaderEventListener(
-        'DidReportReaderEventListener',
         handleDidReportReaderEvent,
       );
       StripeTerminal.addDidReportLowBatteryWarningListener(
-        'DidReportLowBatteryWarningListener',
         handleDidReportLowBatteryWarning,
       );
       StripeTerminal.addDidChangePaymentStatusListener(
-        'DidChangePaymentStatusListener',
         handleDidChangePaymentStatus,
       );
       StripeTerminal.addDidChangeConnectionStatusListener(
-        'DidChangeConnectionStatusListener',
         handleDidChangeConnectionStatus,
       );
       StripeTerminal.addDidReportUnexpectedReaderDisconnectListener(
-        'DidReportUnexpectedReaderDisconnectListener',
         handleDidReportUnexpectedReaderDisconnect,
       );
 
       return () => {
-        StripeTerminal.removeLogListener('LogListener', handleLog);
-        StripeTerminal.removeReadersDiscoveredListener(
-          'ReadersDiscoveredListener',
-          handleReadersDiscovered,
-        );
+        StripeTerminal.removeLogListener(handleLog);
+        StripeTerminal.removeReadersDiscoveredListener(handleReadersDiscovered);
         StripeTerminal.removeReaderSoftwareUpdateProgressListener(
-          'ReaderSoftwareUpdateProgressListener',
           handleReaderSoftwareUpdateProgress,
         );
         StripeTerminal.removeDidRequestReaderInputListener(
-          'DidRequestReaderInputListener',
           handleDidRequestReaderInput,
         );
         StripeTerminal.removeDidRequestReaderDisplayMessageListener(
-          'DidRequestReaderDisplayMessageListener',
           handleDidRequestReaderDisplayMessage,
         );
         StripeTerminal.removeDidReportReaderEventListener(
-          'DidReportReaderEventListener',
           handleDidReportReaderEvent,
         );
         StripeTerminal.removeDidReportLowBatteryWarningListener(
-          'DidReportLowBatteryWarningListener',
           handleDidReportLowBatteryWarning,
         );
         StripeTerminal.removeDidChangePaymentStatusListener(
-          'DidChangePaymentStatusListener',
           handleDidChangePaymentStatus,
         );
         StripeTerminal.removeDidChangeConnectionStatusListener(
-          'DidChangeConnectionStatusListener',
           handleDidChangeConnectionStatus,
         );
         StripeTerminal.removeDidReportUnexpectedReaderDisconnectListener(
-          'DidReportUnexpectedReaderDisconnectListener',
           handleDidReportUnexpectedReaderDisconnect,
         );
       };
@@ -226,11 +206,8 @@ export default function createHooks(StripeTerminal) {
   const ConnectionManagerStatusScanning = 'scanning';
 
   function useStripeTerminalConnectionManager({ service }) {
-    const {
-      connectionStatus,
-      connectedReader,
-      paymentStatus,
-    } = (state = useStripeTerminalState());
+    const state = useStripeTerminalState();
+    const { connectionStatus, connectedReader, paymentStatus } = state;
 
     const [managerConnectionStatus, setManagerConnectionStatus] = useState(
       ConnectionManagerStatusDisconnected,

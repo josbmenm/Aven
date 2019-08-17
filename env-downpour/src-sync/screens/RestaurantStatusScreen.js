@@ -8,6 +8,7 @@ import Tag from '../components/Tag';
 import Button from '../components/Button';
 import useAsyncError from '../react-utils/useAsyncError';
 import { Easing } from 'react-native-reanimated';
+import useFocus from '../navigation-hooks/useFocus';
 import {
   titleStyle,
   proseFontFace,
@@ -19,8 +20,10 @@ import { usePopover } from '../views/Popover';
 import { useRestaurantState, useIsRestaurantOpen } from '../ono-cloud/Kitchen';
 import useTimeSeconds from '../utils/useTimeSeconds';
 import RowSection from '../components/RowSection';
+import BlockFormInput from '../components/BlockFormInput';
 import Subtitle from '../components/Subtitle';
 import MultiSelect from '../components/MultiSelect';
+import TemperatureView from '../components/TemperatureView';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
 
 function PopoverTitle({ children }) {
@@ -198,6 +201,98 @@ function SkidView() {
     </RowSection>
   );
 }
+function SetFridgeTempForm({ onClose, onValues, initialValues }) {
+  const [low, setLow] = React.useState(String(initialValues.low));
+  const [high, setHigh] = React.useState(String(initialValues.high));
+
+  function handleSubmit() {
+    onClose();
+    onValues({ low, high });
+  }
+  const { inputs } = useFocus({
+    onSubmit: handleSubmit,
+    inputRenderers: [
+      inputProps => (
+        <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
+          <BlockFormInput
+            {...inputProps}
+            label="Fridge Temp Low"
+            onValue={setLow}
+            value={low}
+          />
+        </View>
+      ),
+      inputProps => (
+        <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
+          <BlockFormInput
+            {...inputProps}
+            label="Fridge Temp High"
+            onValue={setHigh}
+            value={high}
+          />
+        </View>
+      ),
+    ],
+  });
+
+  return (
+    <View>
+      {inputs}
+      <Button onPress={handleSubmit} title="Save" />
+    </View>
+  );
+}
+
+function SetFridgeTemp() {
+  const kitchenState = useKitchenState() || {};
+  console.log(kitchenState);
+  const cloud = useCloud();
+  const handleError = useAsyncError();
+
+  const { onPopover: onSetFridgeTemp } = usePopover(
+    ({ onClose, ...props }) => {
+      return (
+        <KeyboardPopover onClose={onClose} {...props}>
+          <SetFridgeTempForm
+            onClose={onClose}
+            onValues={({ low, high }) => {
+              handleError(
+                cloud.dispatch({
+                  type: 'KitchenWriteMachineValues',
+                  subsystem: 'System',
+                  pulse: [],
+                  values: {
+                    FreezerLowSetPoint: low,
+                    FreezerHighSetPoint: high,
+                  },
+                }),
+              );
+            }}
+            initialValues={{
+              high: kitchenState.System_FreezerHighSetPoint_VALUE,
+              low: kitchenState.System_FreezerLowSetPoint_VALUE,
+            }}
+          />
+        </KeyboardPopover>
+      );
+    },
+    { easing: Easing.linear, duration: 1 },
+  );
+  if (
+    kitchenState.System_FreezerHighSetPoint_VALUE == null ||
+    kitchenState.System_FreezerLowSetPoint_VALUE == null
+  ) {
+    return null;
+  }
+  return (
+    <Button
+      title={`Set point [${kitchenState.System_FreezerLowSetPoint_VALUE}° - ${
+        kitchenState.System_FreezerHighSetPoint_VALUE
+      }°]`}
+      onPress={onSetFridgeTemp}
+    />
+  );
+}
 
 function FridgeView() {
   const kitchenState = useKitchenState();
@@ -230,6 +325,7 @@ function FridgeView() {
           );
         }}
       />
+      <SetFridgeTemp />
     </Row>
   );
 }
@@ -240,6 +336,8 @@ export default function RestaurantStatusScreen(props) {
       <RootAuthenticationSection>
         <StatusView />
         <FridgeView />
+        <TemperatureView />
+
         {/* <AirPressureView />
         <PowerView />
         <SkidView /> */}

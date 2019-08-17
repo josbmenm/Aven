@@ -73,6 +73,7 @@ function useInventoryState() {
         KitchenSystem,
       };
     });
+  const cupInventory = inventoryState.cups || {};
   const inventorySlots = [
     {
       id: 'cups',
@@ -80,9 +81,9 @@ function useInventoryState() {
       settings: {},
       disableFilling: true,
       isCups: true,
-      estimatedRemaining: inventoryState.cups.estimatedRemaining,
-      isEmpty: inventoryState.cups.isEmpty,
-      isErrored: inventoryState.cups.isErrored,
+      estimatedRemaining: cupInventory.estimatedRemaining,
+      isEmpty: cupInventory.isEmpty,
+      isErrored: cupInventory.isErrored,
       ShotCapacity: 50,
       ShotsAfterLow: 18,
       onDispenseOne: async () => {
