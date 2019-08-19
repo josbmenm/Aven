@@ -230,7 +230,7 @@ function BlendContent({ displayName, blend, recipe }) {
                             key={index}
                             style={{
                               borderRightColor:
-                                index + 1 === dietary.length
+                                index + 1 === dietaryMessages.length
                                   ? 'transparent'
                                   : theme.colors.primary,
                               borderRightWidth: 1,
