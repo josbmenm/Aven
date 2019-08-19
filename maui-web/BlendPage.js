@@ -31,10 +31,11 @@ function BlendContent({ displayName, blend, recipe }) {
     blend,
     recipe.ingredients.map(i => i.id),
   );
-  const dietary = [
-    `${blend.Recipe.DisplayCalories} Calories`,
-    blend.Recipe['Nutrition Detail'],
-  ];
+  // const dietaryMessages = [
+  //   `${blend.Recipe.DisplayCalories} Calories`,
+  //   blend.Recipe['Nutrition Detail'],
+  // ];
+  const dietaryMessages = null;
   const isTropical = navigation.getParam('tropical') !== undefined;
   return (
     <React.Fragment>
@@ -213,45 +214,47 @@ function BlendContent({ displayName, blend, recipe }) {
                   >
                     {blend['Display Description']}
                   </BodyText>
-                  <Responsive
-                    style={{
-                      marginBottom: [44, 24],
-                    }}
-                  >
-                    <View
+                  {dietaryMessages && (
+                    <Responsive
                       style={{
-                        flexDirection: 'row',
+                        marginBottom: [44, 24],
                       }}
                     >
-                      {dietary.map((dietaryMessage, index) => (
-                        <View
-                          key={index}
-                          style={{
-                            borderRightColor:
-                              index + 1 === dietary.length
-                                ? 'transparent'
-                                : theme.colors.primary,
-                            borderRightWidth: 1,
-                            justifyContent: 'center',
-                            marginRight: 8,
-                            paddingRight: 8,
-                            height: 16,
-                          }}
-                        >
-                          <BaseText
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                        }}
+                      >
+                        {dietaryMessages.map((dietaryMessage, index) => (
+                          <View
+                            key={index}
                             style={{
-                              marginBottom: 0,
-                              fontSize: 12,
-                              letterSpacing: 0.3,
-                              fontFamily: theme.fonts.regular,
+                              borderRightColor:
+                                index + 1 === dietary.length
+                                  ? 'transparent'
+                                  : theme.colors.primary,
+                              borderRightWidth: 1,
+                              justifyContent: 'center',
+                              marginRight: 8,
+                              paddingRight: 8,
+                              height: 16,
                             }}
                           >
-                            {dietaryMessage}
-                          </BaseText>
-                        </View>
-                      ))}
-                    </View>
-                  </Responsive>
+                            <BaseText
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 12,
+                                letterSpacing: 0.3,
+                                fontFamily: theme.fonts.regular,
+                              }}
+                            >
+                              {dietaryMessage}
+                            </BaseText>
+                          </View>
+                        ))}
+                      </View>
+                    </Responsive>
+                  )}
                   <View
                     style={{
                       flexDirection: 'row',
