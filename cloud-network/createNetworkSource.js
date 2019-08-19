@@ -44,7 +44,8 @@ export default function createNetworkSource(opts) {
         body: JSON.stringify(action),
       });
     } catch (e) {
-      console.error(action, e);
+      console.error(e);
+      console.error(action);
       throw new Err('Server Connection Error', 'NetworkConnection', {});
     }
 
