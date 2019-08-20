@@ -317,6 +317,37 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
                 </ControlPanelButton>
               </View>
             ))}
+          {restaurantState &&
+            !restaurantState.isAttached &&
+            nextSteps &&
+            nextSteps.map((step, i) => (
+              <View key={i}>
+                <ControlPanelButton
+                  title="go FAKE step"
+                  onPress={() => {
+                    step
+                      .performFake(
+                        cloud.get('RestaurantActions').putTransactionValue,
+                        handleKitchenCommand,
+                      )
+                      .then(resp => {
+                        console.log('ACTION RESP', step.description, resp);
+                      });
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: 'white',
+                      marginVertical: 8,
+                      fontSize: 18,
+                      ...primaryFontFace,
+                    }}
+                  >
+                    {step.description}
+                  </Text>
+                </ControlPanelButton>
+              </View>
+            ))}
           {restaurantState && restaurantState.isAttached && (
             <View style={{}}>
               <Text

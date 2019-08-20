@@ -403,6 +403,16 @@ export function computeNextSteps(restaurantState, kitchenConfig, kitchenState) {
         }
         return resp;
       },
+      performFake: async (onDispatcherAction, kitchenCommand) => {
+        startingRestaurantAction &&
+          (await onDispatcherAction(startingRestaurantAction));
+        await delay(1000);
+        successRestaurantAction &&
+          (await onDispatcherAction(successRestaurantAction));
+        await delay(30);
+
+        return null;
+      },
     };
   }).filter(Boolean);
 }

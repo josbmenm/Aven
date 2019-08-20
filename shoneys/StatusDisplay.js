@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Animated,
-  Button,
-  Image,
-  StyleSheet,
-  Easing,
-} from 'react-native';
+import { View, Text, Animated, Image, StyleSheet, Easing } from 'react-native';
 
 import { useCloudValue } from '../cloud-core/KiteReact';
 
@@ -130,67 +122,46 @@ function ETAText({ queuedIndex }) {
   );
 }
 
-function Cup({ isFilled }) {
-  if (isFilled) {
-    return (
-      <Image
-        source={require('./assets/cupFilled.png')}
-        style={{ width: 48, height: 63 }}
-      />
-    );
-  } else {
-    return (
-      <Image
-        source={require('./assets/cupEmpty.png')}
-        style={{ width: 48, height: 63 }}
-      />
-    );
-  }
-}
-
 function IngredientFillingCup({ fillLevel, currentFill }) {
   const [toDotValue] = React.useState(new Animated.Value(0));
   const [moveToCup] = React.useState(new Animated.Value(0));
   const [moveDownInCup] = React.useState(new Animated.Value(0));
   const [dotOpacity] = React.useState(new Animated.Value(0));
-  toDotValue.interpolate({
-    inputRange: [0.7, 1],
-    outputRange: [0, 1],
-  }),
-    React.useEffect(() => {
+
+  React.useEffect(() => {
+    setTimeout(() => {
       setTimeout(() => {
-        setTimeout(() => {
-          Animated.timing(dotOpacity, {
-            toValue: 1,
-            duration: 190,
-            easing: Easing.inOut(Easing.poly(5)),
-          }).start();
-        }, 500);
-        Animated.timing(toDotValue, {
+        Animated.timing(dotOpacity, {
           toValue: 1,
-          duration: 700,
+          duration: 190,
+          easing: Easing.inOut(Easing.poly(5)),
+        }).start();
+      }, 500);
+      Animated.timing(toDotValue, {
+        toValue: 1,
+        duration: 700,
+        easing: Easing.inOut(Easing.poly(5)),
+      }).start(() => {
+        Animated.timing(moveToCup, {
+          toValue: 1,
+          duration: 1500,
           easing: Easing.inOut(Easing.poly(5)),
         }).start(() => {
-          Animated.timing(moveToCup, {
+          Animated.timing(moveDownInCup, {
             toValue: 1,
-            duration: 1500,
+            duration: 700,
             easing: Easing.inOut(Easing.poly(5)),
           }).start(() => {
-            Animated.timing(moveDownInCup, {
-              toValue: 1,
-              duration: 700,
+            Animated.timing(dotOpacity, {
+              toValue: 0,
+              duration: 200,
               easing: Easing.inOut(Easing.poly(5)),
-            }).start(() => {
-              Animated.timing(dotOpacity, {
-                toValue: 0,
-                duration: 200,
-                easing: Easing.inOut(Easing.poly(5)),
-              }).start();
-            });
+            }).start();
           });
         });
-      }, 2000);
-    }, []);
+      });
+    }, 2000);
+  }, []);
   return (
     <View style={{ flexDirection: 'row' }}>
       {currentFill && (
@@ -217,7 +188,6 @@ function IngredientFillingCup({ fillLevel, currentFill }) {
               width: 80,
               borderRadius: 40,
               backgroundColor: currentFill.ingredientColor,
-              opacity: 0.5,
               opacity: dotOpacity,
               transform: [
                 {
@@ -275,6 +245,9 @@ function IngredientFillingCup({ fillLevel, currentFill }) {
 }
 
 function TaskRow({ task, status, fill, queuedIndex }) {
+  if (!task) {
+    return null;
+  }
   let right = null;
   if (status === 'queued') {
     right = <ETAText queuedIndex={queuedIndex} />;

@@ -10,7 +10,9 @@ export default function AppInfoText() {
       .then(m => {
         setUpdateMetadata(m);
       })
-      .catch(() => {});
+      .catch(err => {
+        alert(err);
+      });
     return () => {};
   }, []);
   return (
