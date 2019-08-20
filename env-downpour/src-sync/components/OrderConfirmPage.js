@@ -7,7 +7,7 @@ import { BlurView } from 'react-native-blur';
 import Animated, { Easing } from 'react-native-reanimated';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import FadeTransition from './FadeTransition';
-import { boldPrimaryFontFace } from './Styles';
+import { boldPrimaryFontFace, primaryFontFace } from './Styles';
 import { OnoThemeDark } from '../logic/OnoTheme';
 
 const cardHeight = 516;
@@ -148,10 +148,21 @@ export default function OrderConfirmPage({
     isCollecting,
     cardInserted,
     paymentStatus,
+    readerError,
+    connectionStatus,
+    connectedReader,
+    readerInputOptions,
+    readerInputPrompt,
   } = paymentState;
-  const shouldRemoveCard =
-    paymentDisplayMessage === 'Remove Card' && cardInserted;
-
+  console.log('========= paymentState');
+  console.log({
+    readerState,
+    paymentState,
+    paymentSuccessful,
+    paymentCompleted,
+    paymentErrorMessage,
+    paymentDisplayMessage,
+  });
   // function hasInputOption(name) {
   //   return (
   //     status === 'CollectingPaymentMethod' &&
@@ -188,28 +199,16 @@ export default function OrderConfirmPage({
 
   let message = null;
 
-  if (
-    !message &&
-    !paymentCompleted &&
-    paymentState.paymentStatus === 2 &&
-    !cardInserted
-  ) {
+  if (!message && !paymentCompleted && paymentStatus === 2 && !cardInserted) {
     message = 'insert card or tap payment';
   }
 
-  if (!message && shouldRemoveCard) {
-    message = 'remove card';
+  if (!message && cardInserted && paymentSuccessful && !paymentCompleted) {
+    message = 'thanks, please remove card';
   }
 
-  if (!message && paymentErrorMessage) {
-    message = JSON.stringify({
-      paymentErrorMessage,
-      paymentState: {
-        ...paymentState,
-        capturedPaymentIntent: !!paymentState.capturedPaymentIntent,
-      },
-      paymentDisplayMessage,
-    });
+  if (!message && !paymentSuccessful && !paymentCompleted && readerError) {
+    message = readerError;
   }
 
   // message = `p: ${
@@ -218,8 +217,14 @@ export default function OrderConfirmPage({
   // }
 
   if (!message && paymentCompleted) {
-    message = 'thanks.';
+    message = 'placing order..';
   }
+
+  if (!message && paymentStatus === 3) {
+    // message = 'please wait..';
+    message = cardInserted ? 'thanks, please remove card' : 'placing order..';
+  }
+
   if (!message) {
     message = '';
   }
@@ -305,14 +310,15 @@ export default function OrderConfirmPage({
           right: 0,
           height: 70,
           textAlign: 'center',
-          bottom: 300,
+          bottom: 270,
         }}
       >
         <Text
           style={{
             color: 'white',
-            fontSize: 16,
-            ...boldPrimaryFontFace,
+            textAlign: 'center',
+            fontSize: message.length > 40 ? 22 : 36,
+            ...primaryFontFace,
           }}
         >
           {message}

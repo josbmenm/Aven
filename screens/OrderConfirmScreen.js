@@ -26,7 +26,9 @@ export default function OrderConfirmScreen({
   async function handleCompletion(paymentIntent) {
     setIsCompleted(true);
     await confirmOrder(paymentIntent);
-    navigation.navigate('Receipt', { orderId: order.getName() });
+    setTimeout(() => {
+      navigation.navigate('Receipt', { orderId: order.getName() });
+    }, 1000);
   }
   const paymentDetails =
     summary && summary.total > 0

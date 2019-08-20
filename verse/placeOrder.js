@@ -41,15 +41,18 @@ export default async function placeOrder(
   } = summary;
   const stripeIntentId = paymentIntent && paymentIntent.stripeId;
   let stripeIntent = null;
+  console.log('looking up ', stripeIntentId);
   if (stripeIntentId) {
     stripeIntent = await getPaymentIntent(stripeIntentId, isLive);
   }
+  console.log('looking ', stripeIntent);
   let isOrderValid = false;
   if (stripeIntent && stripeIntent.amount === summary.total) {
     isOrderValid = true;
   } else if (summary.total === 0) {
     isOrderValid = true;
   }
+  console.log('comparison', { summary, stripeIntent, paymentIntent });
   const confirmedOrder = {
     ...order,
     subTotal,

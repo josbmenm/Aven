@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import StripeTerminal from 'react-native-stripe-terminal';
-import createHooks from './terminal/hooks';
-import { BehaviorSubject, Subject } from 'rxjs';
+import StripeTerminal, {
+  useStripeTerminalCreatePayment,
+  useStripeTerminalState,
+  useStripeTerminalConnectionManager,
+} from './StripeTerminal/StripeTerminal';
+import { BehaviorSubject } from 'rxjs';
 
 const USE_SIMULATOR = false;
-
-const hooks = createHooks(StripeTerminal);
 
 let dispatch = null;
 
@@ -57,7 +58,7 @@ const stripeTerminalService = StripeTerminal.startService({
     : StripeTerminal.DeviceTypeChipper2X,
 });
 
-stripeTerminalService.addListener('persistedReaderNotFound', readers => {
+stripeTerminalService.addPersistedReaderNotFoundListener(readers => {
   addCardReaderLogEvent(
     `[StripeTerminalService] persistedReaderNotFound, found readers: ${readers
       .map(r => r.serialNumber)
@@ -65,13 +66,13 @@ stripeTerminalService.addListener('persistedReaderNotFound', readers => {
   );
 });
 
-stripeTerminalService.addListener('connectionError', e => {
+stripeTerminalService.addConnectionErrorListener(e => {
   addCardReaderLogEvent(
     `[StripeTerminalService] connectionError, error: ${JSON.stringify(e)}`,
   );
 });
 
-stripeTerminalService.addListener('log', message => {
+stripeTerminalService.addLogListener(message => {
   addCardReaderLogEvent(`[StripeTerminalService] ${message}`);
 });
 
@@ -138,16 +139,18 @@ export function useCardPaymentCapture({
     readerInputOptions,
     readerInputPrompt,
     readerError,
-  } = (state = hooks.useStripeTerminalCreatePayment({
+  } = (state = useStripeTerminalCreatePayment({
     amount: request.amount,
     description: request.description,
     context: request.context,
     currency: 'usd',
     autoRetry: true,
-    onCapture: intent => capturePayment(intent.stripeId, request.context),
-    onSuccess: intent => {
-      setPaymentSuccessful(true);
+    onCapture: intent => {
       setCapturedPaymentIntent(intent);
+      return capturePayment(intent.stripeId, request.context);
+    },
+    onSuccess: () => {
+      setPaymentSuccessful(true);
     },
     onFailure: handleError,
   }));
@@ -177,7 +180,7 @@ export function useCardReader(options) {
     connectedReader,
     paymentStatus,
     cardInserted,
-  } = (state = hooks.useStripeTerminalState());
+  } = (state = useStripeTerminalState());
 
   return {
     readerIsReady:
@@ -191,7 +194,7 @@ export function useCardReader(options) {
 }
 
 export function useCardReaderConnectionManager() {
-  return hooks.useStripeTerminalConnectionManager({
+  return useStripeTerminalConnectionManager({
     service: stripeTerminalService,
   });
 }

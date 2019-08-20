@@ -1,7 +1,6 @@
 import { defineCloudReducer } from '../cloud-core/KiteReact';
 
 function DevicesReducerFn(state = {}, action) {
-  console.log('devices reducer', state, action);
   function devicesExcludingId(devices, id) {
     return (devices || []).filter(d => d.deviceId !== id);
   }
@@ -10,6 +9,12 @@ function DevicesReducerFn(state = {}, action) {
       return {};
     }
     case 'DeviceOnline': {
+      if (
+        state.devices &&
+        state.devices.find(d => d.deviceId === action.deviceId)
+      ) {
+        return state;
+      }
       return {
         ...state,
         devices: [
@@ -17,6 +22,11 @@ function DevicesReducerFn(state = {}, action) {
           { deviceId: action.deviceId, onlineTime: Date.now() },
         ],
       };
+    }
+    case 'SetMode': {
+      // action.deviceId
+      // action.mode
+      // return {}
     }
     case 'ForgetDevice': {
       return {

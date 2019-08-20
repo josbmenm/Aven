@@ -51,7 +51,7 @@ const startVerseServer = async () => {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  USE_DEV_SERVER = false;
+  // USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -148,6 +148,8 @@ const startVerseServer = async () => {
   });
 
   cloud.get('KitchenState').setLocalOnly();
+  cloud.get('DeviceActions').setLocalOnly();
+  cloud.get('DevicesState').setLocalOnly();
   cloud.get('RestaurantActions').setLocalOnly();
   // cloud.get('RestaurantState').setLocalOnly();
 
@@ -163,7 +165,7 @@ const startVerseServer = async () => {
   );
   const deviceActions = cloud.get('DeviceActions');
   const devicesState = cloud.docs.setOverrideStream(
-    'Devices',
+    'DevicesState',
     createReducerStream(
       deviceActions,
       DevicesReducer.reducerFn,

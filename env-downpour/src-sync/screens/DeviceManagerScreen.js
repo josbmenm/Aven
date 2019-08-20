@@ -18,19 +18,15 @@ import KeyboardPopover from '../components/KeyboardPopover';
 import { usePopover } from '../views/Popover';
 import useAsyncError from '../react-utils/useAsyncError';
 
-function ModeForm({ onClose, deviceDoc }) {
-  const deviceState = useCloudValue(deviceDoc);
+function ModeForm({ onClose, device, dispatch }) {
   const handleErrors = useAsyncError();
 
   function getModeSetter(mode) {
     return () => {
       handleErrors(
-        deviceDoc
-          .putValue({
-            ...(deviceState || {}),
-            mode,
-          })
-          .then(onClose),
+        dispatch({ type: 'SetMode', deviceId: device.deviceId, mode }).then(
+          onClose,
+        ),
       );
     };
   }
@@ -47,16 +43,14 @@ function ModeForm({ onClose, deviceDoc }) {
 
 function DeviceRow({ device }) {
   const cloud = useCloud();
-  const deviceDoc = cloud.get(`@${device.deviceId}/ScreenControl`);
   const dispatch = cloud.get('DeviceActions').putTransaction;
-  const deviceState = useCloudValue(deviceDoc);
   const handleErrors = useAsyncError();
 
   const { onPopover } = usePopover(
     ({ onClose, ...props }) => {
       return (
         <KeyboardPopover onClose={onClose} {...props}>
-          <ModeForm onClose={onClose} deviceDoc={deviceDoc} />
+          <ModeForm onClose={onClose} device={device} dispatch={dispatch} />
         </KeyboardPopover>
       );
     },
@@ -66,18 +60,12 @@ function DeviceRow({ device }) {
   return (
     <Row
       title={
-        deviceState == undefined
-          ? 'Loading..'
-          : (deviceState && deviceState.name) || 'Unnamed'
+        device == undefined ? 'Loading..' : (device && device.name) || 'Unnamed'
       }
     >
       <View style={{ flexDirection: 'row' }}>
         <Button
-          title={
-            deviceState && deviceState.mode
-              ? `Mode: ${deviceState.mode}`
-              : 'Mode'
-          }
+          title={device && device.mode ? `Mode: ${device.mode}` : 'Mode'}
           onPress={onPopover}
         />
         <Button
@@ -113,10 +101,11 @@ function DeviceRow({ device }) {
 }
 
 function DeviceManager() {
-  const [devicesState, dispatch] = useCloudReducer(
-    'DeviceActions',
-    DevicesReducer,
-  );
+  const devicesState = useCloudValue('DevicesState');
+  // const [devicesState, dispatch] = useCloudReducer(
+  //   'DeviceActions',
+  //   DevicesReducer,
+  // );
   const devices = (devicesState && devicesState.devices) || [];
   if (!devices) {
     return <Spinner />;

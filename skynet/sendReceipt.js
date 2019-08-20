@@ -418,7 +418,7 @@ export default async function sendReceipt({
   logger,
 }) {
   const order = cloud.get(`ConfirmedOrders/${action.orderId}`);
-  const orderValue = await order.loadValue();
+  const orderValue = await order.value.load();
   if (!orderValue) {
     throw new Error('Cannot find this order ' + action.orderId);
   }

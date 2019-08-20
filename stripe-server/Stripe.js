@@ -33,8 +33,15 @@ export const capturePayment = async action => {
 export async function getPaymentIntent(intentId, isLive) {
   const stripe = getStripe(isLive);
   const paymentIntent = await stripe.paymentIntents.retrieve(intentId);
-
-  const source = await stripe.sources.retrieve(paymentIntent.source);
+  console.log(
+    'well well well',
+    JSON.stringify(paymentIntent, null, 2),
+    isLive,
+    intentId,
+  );
+  const source =
+    paymentIntent.source &&
+    (await stripe.sources.retrieve(paymentIntent.source));
 
   // const charges = await Promise.all(
   //   paymentIntent.charges.data.map(async chargeId => {

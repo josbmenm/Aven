@@ -141,7 +141,6 @@ export default class ConnectionService {
   };
 
   async connect(serialNumber) {
-    console.log('--- service connecting..');
     this.emitter.emit(
       'log',
       `Connecting to reader: "${serialNumber || 'any'}"...`,
@@ -163,7 +162,6 @@ export default class ConnectionService {
 
     await this._terminal.abortDiscoverReaders(); // end any pending search
     await this._terminal.disconnectReader(); // cancel any existing non-matching reader
-    console.log('--- fml', this.discoveryMode);
     return this._terminal.discoverReaders(
       this.deviceType,
       this.discoveryMode,

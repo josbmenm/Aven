@@ -24,6 +24,8 @@ import Row from '../components/Row';
 import BitRow from '../components/BitRow';
 import { rowStyle, rowTitleStyle } from '../components/Styles';
 import SimplePage from '../components/SimplePage';
+import MultiSelect from '../components/MultiSelect';
+import useAsyncStorage from './useAsyncStorage';
 
 function ObservableBitRow({ value, title }) {
   // const currentValue = useObservable(value);
@@ -38,6 +40,7 @@ function ObservableJSONRow({ value, title }) {
 function PaymentManagerScreen() {
   const {
     managerConnectionStatus, // connected | connecting | disconnected | scanning
+    connectionStatus,
     readersAvailable,
     connectedReader,
     persistedReaderSerialNumber,
@@ -48,6 +51,7 @@ function PaymentManagerScreen() {
 
   return (
     <React.Fragment>
+      <TextRow title="Connection status" text={connectionStatus} />
       <TextRow
         title="Manager connection status"
         text={managerConnectionStatus}
@@ -257,6 +261,10 @@ export default function PaymentDebugScreen(props) {
   const [isShowingManager, setManager] = useState(false);
   const [isShowingFullExample, setFullExample] = useState(false);
   const [isShowingUseCard, setUseCard] = useState(false);
+  const [isLiveMode, setIsLiveMode] = useAsyncStorage(
+    'PaymentsIsLiveMode',
+    false,
+  );
   return (
     <SimplePage title="Card Reader Debugging" icon="💸" {...props}>
       <RowSection>
@@ -289,7 +297,14 @@ export default function PaymentDebugScreen(props) {
           }}
         />
         {isShowingUseCard && <UseCardExample />}
-
+        <MultiSelect
+          value={isLiveMode}
+          onValue={setIsLiveMode}
+          options={[
+            { name: 'Live Mode', value: true },
+            { name: 'Test Mode', value: false },
+          ]}
+        />
         <ReaderEvents />
       </RowSection>
     </SimplePage>

@@ -14,7 +14,9 @@ export default function OrderConfirmTestScreen({ navigation, ...props }) {
   const handleError = useAsyncError(handleCaughtError);
   const summary = { ...exampleOrderSummary };
   async function handleCompletion(paymentIntent) {
-    navigation.goBack();
+    setTimeout(() => {
+      navigation.goBack();
+    }, 1000);
   }
   const paymentDetails =
     summary && summary.total > 0

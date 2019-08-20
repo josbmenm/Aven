@@ -1,15 +1,29 @@
 import { useEffect, useState, useRef } from 'react';
 
-export default function createHooks(StripeTerminal) {
+export default function createTerminalHooks(StripeTerminal) {
+  function stringOfConnectionStatus(status) {
+    switch (status) {
+      case StripeTerminal.ConnectionStatusNotConnected:
+        return 'disconnected';
+      case StripeTerminal.ConnectionStatusConnected:
+        return 'connected';
+      case StripeTerminal.ConnectionStatusConnecting:
+        return 'connecting';
+      default:
+        return null;
+    }
+  }
+
   function useStripeTerminalState() {
-    const [connectionStatus, setConnectionStaus] = useState(
+    const [connectionStatus, setConnectionStatus] = useState(
       StripeTerminal.ConnectionStatusNotConnected,
     );
     const [paymentStatus, setPaymentStatus] = useState(
       StripeTerminal.PaymentStatusNotReady,
     );
-    const [lastReaderEvent, setLastReaderEvent] = useState(
-      StripeTerminal.ReaderEventCardRemoved,
+    const stripeService = StripeTerminal.getService();
+    const [cardInserted, setCardInserted] = useState(
+      stripeService.isCardInserted,
     );
     const [connectedReader, setConnectedReader] = useState(null);
     const [readerInputOptions, setReaderInputOptions] = useState(null);
@@ -17,32 +31,35 @@ export default function createHooks(StripeTerminal) {
 
     useEffect(() => {
       // Populate initial values
-      StripeTerminal.getConnectionStatus().then(s => setConnectionStaus(s));
+      StripeTerminal.getConnectionStatus().then(s => setConnectionStatus(s));
       StripeTerminal.getPaymentStatus().then(s => setPaymentStatus(s));
-      StripeTerminal.getLastReaderEvent().then(e => setLastReaderEvent(e));
       StripeTerminal.getConnectedReader().then(r => setConnectedReader(r));
 
-      function handleLog(event) {
-        console.log('readerevt', event);
+      function handleLog(event) {}
+      function handleDidReportReaderEvent(event) {
+        if (event.event === StripeTerminal.ReaderEventCardInserted) {
+          setCardInserted(true);
+        } else if (event.event === StripeTerminal.ReaderEventCardRemoved) {
+          setCardInserted(false);
+        }
       }
       function handleReadersDiscovered(event) {}
       function handleReaderSoftwareUpdateProgress(event) {}
       function handleDidRequestReaderInput(event) {}
       function handleDidRequestReaderDisplayMessage(event) {}
-      function handleDidReportReaderEvent(event) {
-        setLastReaderEvent(event);
-      }
       function handleDidReportLowBatteryWarning(event) {}
       function handleDidChangePaymentStatus(event) {
         setPaymentStatus(event.status);
       }
       function handleDidChangeConnectionStatus(event) {
-        setConnectionStaus(event.status);
+        setConnectionStatus(event.status);
         StripeTerminal.getConnectedReader().then(r => {
           if (connectedReader !== r) setConnectedReader(r);
         });
       }
-      function handleDidReportUnexpectedReaderDisconnect(event) {}
+      function handleDidReportUnexpectedReaderDisconnect(event) {
+        setConnectionStatus(StripeTerminal.ConnectionStatusNotConnected);
+      }
 
       StripeTerminal.addLogListener(handleLog);
       StripeTerminal.addReadersDiscoveredListener(handleReadersDiscovered);
@@ -101,9 +118,6 @@ export default function createHooks(StripeTerminal) {
       };
     }, []);
 
-    const cardInserted =
-      lastReaderEvent === StripeTerminal.ReaderEventCardInserted;
-
     return {
       connectionStatus,
       connectedReader,
@@ -155,7 +169,7 @@ export default function createHooks(StripeTerminal) {
           .then(intent => {
             if (onCapture) {
               return onCapture(intent)
-                .then(onSuccess)
+                .then(() => onSuccess(intent))
                 .catch(onFailure);
             }
 
@@ -200,31 +214,21 @@ export default function createHooks(StripeTerminal) {
     };
   }
 
-  const ConnectionManagerStatusConnected = 'connected';
   const ConnectionManagerStatusConnecting = 'connecting';
-  const ConnectionManagerStatusDisconnected = 'disconnected';
   const ConnectionManagerStatusScanning = 'scanning';
+  const ConnectionManagerStatusEmpty = null;
 
-  function useStripeTerminalConnectionManager({ service }) {
+  function useStripeTerminalConnectionManager({ service, onError }) {
     const state = useStripeTerminalState();
-    const { connectionStatus, connectedReader, paymentStatus } = state;
-
+    const { connectionStatus } = state;
     const [managerConnectionStatus, setManagerConnectionStatus] = useState(
-      ConnectionManagerStatusDisconnected,
+      ConnectionManagerStatusEmpty,
     );
     const [readersAvailable, setReadersAvailable] = useState([]);
     const [
       persistedReaderSerialNumber,
       setPersistedReaderSerialNumber,
     ] = useState(null);
-
-    useEffect(() => {
-      setManagerConnectionStatus(
-        !!connectedReader
-          ? ConnectionManagerStatusConnected
-          : ConnectionManagerStatusDisconnected,
-      );
-    }, [connectedReader]);
 
     useEffect(() => {
       // Populate initial values
@@ -243,19 +247,41 @@ export default function createHooks(StripeTerminal) {
 
     return {
       ...state,
+      connectionStatus: stringOfConnectionStatus(connectionStatus),
       managerConnectionStatus,
       readersAvailable,
       persistedReaderSerialNumber,
       connectReader: serialNumber => {
         setManagerConnectionStatus(ConnectionManagerStatusConnecting);
-        service.connect(serialNumber);
+        service
+          .connect(serialNumber)
+          .then(() => {
+            setManagerConnectionStatus(null);
+          })
+          .catch(err => {
+            setManagerConnectionStatus(null);
+            if (onError) {
+              onError(err);
+            } else {
+              console.error(err);
+            }
+          });
       },
       discoverReaders: () => {
         setManagerConnectionStatus(ConnectionManagerStatusScanning);
         service.discover();
       },
       disconnectReader: () => {
-        service.disconnect();
+        service
+          .disconnect()
+          .then(() => {})
+          .catch(err => {
+            if (onError) {
+              onError(err);
+            } else {
+              console.error(err);
+            }
+          });
       },
     };
   }

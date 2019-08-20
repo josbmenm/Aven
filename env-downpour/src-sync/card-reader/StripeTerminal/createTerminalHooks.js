@@ -1,8 +1,21 @@
 import { useEffect, useState, useRef } from 'react';
 
 export default function createTerminalHooks(StripeTerminal) {
+  function stringOfConnectionStatus(status) {
+    switch (status) {
+      case StripeTerminal.ConnectionStatusNotConnected:
+        return 'disconnected';
+      case StripeTerminal.ConnectionStatusConnected:
+        return 'connected';
+      case StripeTerminal.ConnectionStatusConnecting:
+        return 'connecting';
+      default:
+        return null;
+    }
+  }
+
   function useStripeTerminalState() {
-    const [connectionStatus, setConnectionStaus] = useState(
+    const [connectionStatus, setConnectionStatus] = useState(
       StripeTerminal.ConnectionStatusNotConnected,
     );
     const [paymentStatus, setPaymentStatus] = useState(
@@ -18,13 +31,11 @@ export default function createTerminalHooks(StripeTerminal) {
 
     useEffect(() => {
       // Populate initial values
-      StripeTerminal.getConnectionStatus().then(s => setConnectionStaus(s));
+      StripeTerminal.getConnectionStatus().then(s => setConnectionStatus(s));
       StripeTerminal.getPaymentStatus().then(s => setPaymentStatus(s));
       StripeTerminal.getConnectedReader().then(r => setConnectedReader(r));
 
-      function handleLog(event) {
-        console.log('---log:', event);
-      }
+      function handleLog(event) {}
       function handleDidReportReaderEvent(event) {
         if (event.event === StripeTerminal.ReaderEventCardInserted) {
           setCardInserted(true);
@@ -41,12 +52,14 @@ export default function createTerminalHooks(StripeTerminal) {
         setPaymentStatus(event.status);
       }
       function handleDidChangeConnectionStatus(event) {
-        setConnectionStaus(event.status);
+        setConnectionStatus(event.status);
         StripeTerminal.getConnectedReader().then(r => {
           if (connectedReader !== r) setConnectedReader(r);
         });
       }
-      function handleDidReportUnexpectedReaderDisconnect(event) {}
+      function handleDidReportUnexpectedReaderDisconnect(event) {
+        setConnectionStatus(StripeTerminal.ConnectionStatusNotConnected);
+      }
 
       StripeTerminal.addLogListener(handleLog);
       StripeTerminal.addReadersDiscoveredListener(handleReadersDiscovered);
@@ -156,7 +169,7 @@ export default function createTerminalHooks(StripeTerminal) {
           .then(intent => {
             if (onCapture) {
               return onCapture(intent)
-                .then(onSuccess)
+                .then(() => onSuccess(intent))
                 .catch(onFailure);
             }
 
@@ -201,36 +214,21 @@ export default function createTerminalHooks(StripeTerminal) {
     };
   }
 
-  const ConnectionManagerStatusConnected = 'connected';
   const ConnectionManagerStatusConnecting = 'connecting';
-  const ConnectionManagerStatusDisconnected = 'disconnected';
   const ConnectionManagerStatusScanning = 'scanning';
+  const ConnectionManagerStatusEmpty = null;
 
   function useStripeTerminalConnectionManager({ service, onError }) {
     const state = useStripeTerminalState();
-    const { connectionStatus, connectedReader, paymentStatus } = state;
-    // const [connectionError, setConnectionError] = useState(null)
-    // const [connectionError, setConnectionError] = useState(null)
+    const { connectionStatus } = state;
     const [managerConnectionStatus, setManagerConnectionStatus] = useState(
-      ConnectionManagerStatusDisconnected,
+      ConnectionManagerStatusEmpty,
     );
     const [readersAvailable, setReadersAvailable] = useState([]);
     const [
       persistedReaderSerialNumber,
       setPersistedReaderSerialNumber,
     ] = useState(null);
-
-    useEffect(() => {
-      setManagerConnectionStatus(
-        !!connectedReader
-          ? ConnectionManagerStatusConnected
-          : ConnectionManagerStatusDisconnected,
-      );
-      if (!connectedReader) {
-        console.log('--- auto discovering');
-        service.discover();
-      }
-    }, [connectedReader]);
 
     useEffect(() => {
       // Populate initial values
@@ -249,18 +247,25 @@ export default function createTerminalHooks(StripeTerminal) {
 
     return {
       ...state,
+      connectionStatus: stringOfConnectionStatus(connectionStatus),
       managerConnectionStatus,
       readersAvailable,
       persistedReaderSerialNumber,
       connectReader: serialNumber => {
         setManagerConnectionStatus(ConnectionManagerStatusConnecting);
-        service.connect(serialNumber).catch(err => {
-          if (onError) {
-            onError(err);
-          } else {
-            console.error(err);
-          }
-        });
+        service
+          .connect(serialNumber)
+          .then(() => {
+            setManagerConnectionStatus(null);
+          })
+          .catch(err => {
+            setManagerConnectionStatus(null);
+            if (onError) {
+              onError(err);
+            } else {
+              console.error(err);
+            }
+          });
       },
       discoverReaders: () => {
         setManagerConnectionStatus(ConnectionManagerStatusScanning);
@@ -269,9 +274,7 @@ export default function createTerminalHooks(StripeTerminal) {
       disconnectReader: () => {
         service
           .disconnect()
-          .then(() => {
-            setManagerConnectionStatus(ConnectionManagerStatusDisconnected);
-          })
+          .then(() => {})
           .catch(err => {
             if (onError) {
               onError(err);
