@@ -7,12 +7,12 @@ import FeedbackHomeScreen from '../screens/FeedbackHomeScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';
 import FeedbackRatingScreen from '../screens/FeedbackRatingScreen';
 import FeedbackReceiptScreen from '../screens/FeedbackReceiptScreen';
-import FeedbackContext from '../components/FeedbackContext';
+import FeedbackContext from './FeedbackContext';
 
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
 import { PopoverContainer } from '../views/Popover';
 
-const FeedbackAppNavigator = createStackTransitionNavigator({
+const FeedbackAppTransitionNavigator = createStackTransitionNavigator({
   FeedbackHome: FeedbackHomeScreen,
   Feedback: FeedbackScreen,
   FeedbackRating: FeedbackRatingScreen,
@@ -20,29 +20,34 @@ const FeedbackAppNavigator = createStackTransitionNavigator({
   FeedbackComplete: FeedbackCompleteScreen,
 });
 
+export function FeedbackAppNavigator(props) {
+  const cloud = useCloud();
+  const feedbackDoc = null;
+  function submit(values) {
+    console.log('todo submit feedback', values);
+    // throw new Error('Not yet');
+  }
+  function reset() {
+    console.log('todo reset feedback');
+    // throw new Error('Not yet');
+  }
+  return (
+    <FeedbackContext.Provider value={{ submit, reset, feedbackDoc }}>
+      <FeedbackAppTransitionNavigator {...props} />
+    </FeedbackContext.Provider>
+  );
+}
+
+FeedbackAppNavigator.navigationOptions =
+  FeedbackAppTransitionNavigator.navigationOptions;
+FeedbackAppNavigator.router = FeedbackAppTransitionNavigator.router;
+
 const FeedbackAppContainer = createAppContainer(FeedbackAppNavigator);
 
 export default function FeedbackApp() {
-  const cloud = useCloud();
-  const [feedbackDoc, setFeedbackDoc] = React.useState();
-  function submit() {
-    if (feedbackDoc) {
-      feedbackDoc
-        .transact(f => ({ ...f, isSubmitted: true }))
-        .then(() => {
-          setFeedbackDoc(null);
-        });
-    }
-  }
-  function reset() {
-    const feedback = cloud.get('CustomerFeedback').children.post();
-    setFeedbackDoc(feedback);
-  }
   return (
     <PopoverContainer>
-      <FeedbackContext.Provider value={{ submit, reset, feedbackDoc }}>
-        <FeedbackAppContainer />
-      </FeedbackContext.Provider>
+      <FeedbackAppContainer />
     </PopoverContainer>
   );
 }

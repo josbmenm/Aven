@@ -10,7 +10,7 @@ export default function ShortBlockFormPage({
   hideBackButton,
   ...props
 }) {
-  const { goBack } = useNavigation();
+  const { goBack, navigate, dangerouslyGetParent } = useNavigation();
   return (
     <FadeTransition
       backgroundColor={pageBackgroundColor}
@@ -40,6 +40,13 @@ export default function ShortBlockFormPage({
         <BackButton
           backBehavior={() => {
             goBack(null);
+          }}
+          onLongPress={() => {
+            // for the purpose of leaving feedback experience in portal
+            const parentNav = dangerouslyGetParent();
+            const parentState = parentNav && parentNav.state;
+            const parentKey = parentState && parentState.key;
+            parentKey && goBack(parentKey);
           }}
         />
       )}

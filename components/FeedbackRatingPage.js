@@ -25,21 +25,23 @@ export default function FeedbackRatingPage({
   const feedbackContext = React.useContext(FeedbackContext);
   const [isSpinning, setIsSpinning] = React.useState(false);
   function handleRating(r) {
-    if (!feedbackContext || !feedbackContext.feedbackDoc) {
-      return; // hope this never happens.. otherwise the stars will be unresponsive
-    }
-    setIsSpinning(true);
-    setRating(r);
-    feedbackContext.feedbackDoc
-      .transact(f => ({ ...(f || {}), rating: r }))
-      .then(() => {
-        navigate('Feedback');
-        setIsSpinning(false);
-      }, 1500)
-      .catch(e => {
-        console.error(e);
-        setIsSpinning(false);
-      });
+    navigate('Feedback');
+
+    // if (!feedbackContext || !feedbackContext.feedbackDoc) {
+    //   return; // hope this never happens.. otherwise the stars will be unresponsive
+    // }
+    // setIsSpinning(true);
+    // setRating(r);
+    // feedbackContext.feedbackDoc
+    //   .transact(f => ({ ...(f || {}), rating: r }))
+    //   .then(() => {
+    //     navigate('Feedback');
+    //     setIsSpinning(false);
+    //   }, 1500)
+    //   .catch(e => {
+    //     console.error(e);
+    //     setIsSpinning(false);
+    //   });
   }
   return (
     <ShortBlockFormPage hideBackButton={hideBackButton} {...props}>

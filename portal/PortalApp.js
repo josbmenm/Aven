@@ -15,7 +15,6 @@ import {
 import { createAppContainer } from '../navigation-native';
 import { createSwitchNavigator } from '../navigation-core';
 import codePush from 'react-native-code-push';
-import PortalHomeScreen from '../screens/PortalHomeScreen';
 import ComponentPlaygroundScreen from '../screens/ComponentPlaygroundScreen';
 import ProductHomeScreen from '../screens/ProductHomeScreen';
 import KitchenEngScreen from '../screens/KitchenEngScreen';
@@ -31,6 +30,7 @@ import FoodScreen from '../screens/FoodScreen';
 import OrdersScreen from '../screens/OrdersScreen';
 import TasksScreen from '../screens/TasksScreen';
 import useCloudProvider from '../components/useCloudProvider';
+import { FeedbackAppNavigator } from '../components/FeedbackApp';
 import SequencerScreen from '../screens/SequencerScreen';
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
@@ -64,8 +64,7 @@ const windowSize = Dimensions.get('window');
 
 const RESTAURANT_DEV = {
   useSSL: false,
-  // quiet: false,
-  quiet: true,
+  // quiet: true,
 
   authority: 'localhost:8830',
   // authority: '192.168.1.81:8830',
@@ -206,6 +205,8 @@ const App = createStackTransitionNavigator({
   ComponentPlayground: ComponentPlaygroundScreen,
   DeviceManager: DeviceManagerScreen,
   PaymentDebug: PaymentDebugScreen,
+
+  FeedbackApp: FeedbackAppNavigator,
 
   // Inventory: InventoryScreen,
   // DeviceManager: DeviceManagerScreen,

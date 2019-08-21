@@ -10,17 +10,18 @@ export default function FeedbackScreen({ ...props }) {
     <FeedbackPage
       {...props}
       onSubmit={response => {
-        if (!feedbackContext || !feedbackContext.feedbackDoc) {
-          return;
-        }
-        feedbackContext.feedbackDoc
-          .transact(f => ({
-            ...(f || {}),
-            comment: response.comment,
-          }))
-          .then(() => {
-            navigate('FeedbackReceipt');
-          });
+        // if (!feedbackContext || !feedbackContext.feedbackDoc) {
+        //   return;
+        // }
+        navigate('FeedbackReceipt');
+        // feedbackContext.feedbackDoc
+        //   .transact(f => ({
+        //     ...(f || {}),
+        //     comment: response.comment,
+        //   }))
+        //   .then(() => {
+        //     navigate('FeedbackReceipt');
+        //   });
       }}
     />
   );

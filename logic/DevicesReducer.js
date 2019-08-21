@@ -23,10 +23,27 @@ function DevicesReducerFn(state = {}, action) {
         ],
       };
     }
-    case 'SetMode': {
-      // action.deviceId
-      // action.mode
-      // return {}
+    case 'SetDevice': {
+      const lastDevice = (state.devices || []).find(
+        d => d.deviceId === action.deviceId,
+      );
+      if (!lastDevice) {
+        return state;
+      }
+      const newDevice = {
+        ...lastDevice,
+        mode: action.mode ? action.mode : lastDevice.mode,
+        name: action.name ? action.name : lastDevice.name,
+      };
+      return {
+        ...state,
+        devices: state.devices.map(device => {
+          if (action.deviceId === device.deviceId) {
+            return newDevice;
+          }
+          return device;
+        }),
+      };
     }
     case 'ForgetDevice': {
       return {

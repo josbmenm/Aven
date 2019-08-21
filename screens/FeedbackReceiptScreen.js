@@ -19,23 +19,25 @@ export default function FeedbackReceiptScreen({ ...props }) {
     <FeedbackReceiptPage
       {...props}
       onSubmit={info => {
+        navigate('FeedbackComplete');
+
         console.log('info is..', info.email);
-        cloud
-          .dispatch({
-            type: 'SubmitFeedback',
-            feedbackId:
-              feedbackContext &&
-              feedbackContext.feedbackDoc &&
-              feedbackContext.feedbackDoc.getName(),
-            email: info.email,
-          })
-          .then(result => {
-            console.log('haz result', result);
-            navigate('FeedbackComplete');
-          })
-          .catch(e => {
-            console.error(e);
-          });
+        // cloud
+        //   .dispatch({
+        //     type: 'SubmitFeedback',
+        //     feedbackId:
+        //       feedbackContext &&
+        //       feedbackContext.feedbackDoc &&
+        //       feedbackContext.feedbackDoc.getName(),
+        //     email: info.email,
+        //   })
+        //   .then(result => {
+        //     console.log('haz result', result);
+        //     navigate('FeedbackComplete');
+        //   })
+        //   .catch(e => {
+        //     console.error(e);
+        //   });
       }}
     />
   );

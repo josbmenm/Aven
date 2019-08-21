@@ -8,7 +8,7 @@ import {
   monsterra40,
 } from './Styles';
 
-export default function BackButton({ style, backBehavior }) {
+export default function BackButton({ style, onLongPress, backBehavior }) {
   const { goBack } = useNavigation();
 
   return (
@@ -29,6 +29,7 @@ export default function BackButton({ style, backBehavior }) {
         left: 100,
       }}
       onPress={backBehavior || goBack}
+      onLongPress={onLongPress}
     >
       <Image
         style={{ width: 12, height: 20, tintColor: monsterra40 }}

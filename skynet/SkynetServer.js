@@ -8,6 +8,7 @@ import { CloudContext } from '../cloud-core/KiteReact';
 import createFSClient from '../cloud-server/createFSClient';
 
 import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
+import DevicesReducer from '../logic/DevicesReducer';
 
 import sendReceipt from './sendReceipt';
 import refundOrder from './refundOrder';
@@ -298,6 +299,17 @@ const startSkynetServer = async () => {
     'Menu',
     companyConfigStream.map(companyConfigToMenu),
   );
+
+  const deviceActions = cloud.get('DeviceActions');
+  const devicesState = cloud.docs.setOverrideStream(
+    'DevicesState',
+    createReducerStream(
+      deviceActions,
+      DevicesReducer.reducerFn,
+      DevicesReducer.initialState,
+    ),
+  );
+
   const logger = createLogger(storageSource, 'onofood.co', 'SkynetEvents');
 
   const protectedSource = createProtectedSource({

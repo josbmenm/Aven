@@ -34,6 +34,13 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
       <RowSection>
         <LinkRow
           onPress={() => {
+            navigation.navigate({ routeName: 'FeedbackApp' });
+          }}
+          icon="💬"
+          title="Feedback App"
+        />
+        <LinkRow
+          onPress={() => {
             navigation.navigate({ routeName: 'DeviceManager' });
           }}
           icon="📱"
@@ -67,6 +74,7 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
           icon="♻️"
           title="Refresh App"
         />
+
         <UpdateAirtableRow />
       </RowSection>
       <AppInfoText />

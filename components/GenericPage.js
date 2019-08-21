@@ -14,7 +14,7 @@ export default function GenericPage({
   disableScrollView,
   ...props
 }) {
-  const { goBack } = useNavigation();
+  const { goBack, dangerouslyGetParent } = useNavigation();
   return (
     <FadeTransition
       {...props}
@@ -55,6 +55,13 @@ export default function GenericPage({
         <BackButton
           backBehavior={() => {
             goBack(null);
+          }}
+          onLongPress={() => {
+            // for the purpose of leaving feedback experience in portal
+            const parentNav = dangerouslyGetParent();
+            const parentState = parentNav && parentNav.state;
+            const parentKey = parentState && parentState.key;
+            parentKey && goBack(parentKey);
           }}
         />
       )}

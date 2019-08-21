@@ -23,7 +23,7 @@ import {
 import DevicesReducer from '../logic/DevicesReducer';
 import codePush from 'react-native-code-push';
 
-import FeedbackApp from './FeedbackApp';
+import FeedbackApp from '../components/FeedbackApp';
 import ProductHomeScreen from '../screens/ProductHomeScreen';
 import KioskHomeScreen from '../screens/KioskHomeScreen';
 import BlendScreen from '../screens/BlendScreen';
@@ -72,8 +72,9 @@ const VERSE_HOST_CONFIG = VERSE_IS_DEV
   : {
       // Verse prod:
       useSSL: false,
-      authority: 'restaurant0.maui.onofood.co:8830',
+      authority: '10.10.1.200:8830',
     };
+
 const SKYNET_HOST_CONFIG = SKYNET_IS_DEV
   ? {
       // Skynet dev:
@@ -208,19 +209,15 @@ function KioskApp({ mode }) {
   }
 
   return (
-    <ThemeProvider value={OnoTheme}>
-      <HostContextContainer {...hostConfig}>
-        <AppEnvContext.Provider value={{ isSkynet, setIsSkynet }}>
-          <CloudContext.Provider value={cloud}>
-            <PopoverContainer>
-              <OrderContextProvider>
-                <KioskAppContainer />
-              </OrderContextProvider>
-            </PopoverContainer>
-          </CloudContext.Provider>
-        </AppEnvContext.Provider>
-      </HostContextContainer>
-    </ThemeProvider>
+    <HostContextContainer {...hostConfig}>
+      <CloudContext.Provider value={cloud}>
+        <PopoverContainer>
+          <OrderContextProvider>
+            <KioskAppContainer />
+          </OrderContextProvider>
+        </PopoverContainer>
+      </CloudContext.Provider>
+    </HostContextContainer>
   );
 }
 
@@ -244,7 +241,7 @@ function WaitingPage({ title, name }) {
       <View style={{ marginVertical: 30 }}>
         <Spinner />
       </View>
-      {name && (
+      {!!name && (
         <Text
           style={{ ...titleStyle, textAlign: 'center', marginVertical: 10 }}
         >
@@ -268,41 +265,36 @@ function SelectModeApp() {
   const devicesState = useCloudValue('DevicesState');
   const devices = (devicesState && devicesState.devices) || [];
   React.useEffect(() => {
-    const deviceNotActiveYet =
-      !!devicesState && !devices.find(d => d.deviceId !== deviceId);
     const isDeviceIdReady = !!deviceId && !isStateUnloaded(deviceId);
-    if (isDeviceIdReady && deviceNotActiveYet) {
+    if (isDeviceIdReady) {
       dispatch({ type: 'DeviceOnline', deviceId });
     }
-  }, [devicesState, deviceId]);
+  }, [deviceId]);
   const controlState = devices.find(d => d.deviceId !== deviceId);
   const mode = controlState && controlState.mode;
-  const name = (controlState && controlState.name) || deviceId;
+  const name = controlState && controlState.name;
+
+  let content = <WaitingPage name={name} title="Kiosk Closed" />;
 
   if (mode === 'feedback') {
-    return <FeedbackApp />;
+    content = <FeedbackApp />;
   }
   if (mode === 'kiosk' || mode === 'testKiosk') {
-    return <KioskApp mode={mode} />;
+    content = <KioskApp mode={mode} />;
   }
   if (mode === 'cardreader') {
-    return <SettingsApp />;
+    content = <SettingsApp />;
   }
-
-  if (!mode || !controlState) {
-    return <KioskApp mode={'testKiosk'} />;
-  }
-
-  if (!isConnected || isStateUnloaded(deviceId)) {
-    return <WaitingPage name={name} title="Kiosk Disconnected" />;
-  }
-
-  return <WaitingPage name={name} title="Kiosk Closed" />;
+  return (
+    <AppEnvContext.Provider value={{ mode, deviceId }}>
+      {content}
+    </AppEnvContext.Provider>
+  );
 }
 
 function FullApp() {
   const cloud = useCloudProvider({
-    source: verseSource,
+    source: skynetSource,
     domain: 'onofood.co',
     establishAnonymousSession: true,
   });
@@ -310,9 +302,11 @@ function FullApp() {
     return null;
   }
   return (
-    <CloudContext.Provider value={cloud}>
-      <SelectModeApp />
-    </CloudContext.Provider>
+    <ThemeProvider value={OnoTheme}>
+      <CloudContext.Provider value={cloud}>
+        <SelectModeApp />
+      </CloudContext.Provider>
+    </ThemeProvider>
   );
 }
 

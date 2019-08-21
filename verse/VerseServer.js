@@ -18,7 +18,6 @@ import placeOrder from './placeOrder';
 import { connectMachine } from './Machine';
 import { handleStripeAction } from '../stripe-server/Stripe';
 import { computeNextSteps } from '../logic/KitchenSequence';
-import DevicesReducer from '../logic/DevicesReducer';
 
 let lastT = null;
 function logBehavior(msg) {
@@ -148,8 +147,6 @@ const startVerseServer = async () => {
   });
 
   cloud.get('KitchenState').setLocalOnly();
-  cloud.get('DeviceActions').setLocalOnly();
-  cloud.get('DevicesState').setLocalOnly();
   cloud.get('RestaurantActions').setLocalOnly();
   // cloud.get('RestaurantState').setLocalOnly();
 
@@ -163,15 +160,6 @@ const startVerseServer = async () => {
       RestaurantReducer.initialState,
     ),
   );
-  const deviceActions = cloud.get('DeviceActions');
-  const devicesState = cloud.docs.setOverrideStream(
-    'DevicesState',
-    createReducerStream(
-      deviceActions,
-      DevicesReducer.reducerFn,
-      DevicesReducer.initialState,
-    ),
-  );
 
   const protectedSource = createProtectedSource({
     source: cloud,
@@ -180,7 +168,6 @@ const startVerseServer = async () => {
         KitchenState: { defaultRule: { canRead: true } },
         KitchenConfig: { defaultRule: { canRead: true } },
         RestaurantActions: { defaultRule: { canRead: true } },
-        DeviceActions: { defaultRule: { canWrite: true } },
         RestaurantState: { defaultRule: { canRead: true } },
         CompanyConfig: { defaultRule: { canRead: true } },
         PendingOrders: { defaultRule: { canPost: true } },

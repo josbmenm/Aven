@@ -5,29 +5,64 @@ import Button from '../components/Button';
 import RootAuthenticationSection from './RootAuthenticationSection';
 import RowSection from '../components/RowSection';
 import TextRow from '../components/TextRow';
+import BlockFormInput from '../components/BlockFormInput';
 import SimplePage from '../components/SimplePage';
 import Row from '../components/Row';
 import Spinner from '../components/Spinner';
-import {
-  useCloudReducer,
-  useCloud,
-  useCloudValue,
-} from '../cloud-core/KiteReact';
-import DevicesReducer from '../logic/DevicesReducer';
-import KeyboardPopover from '../components/KeyboardPopover';
-import { usePopover } from '../views/Popover';
+import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
+import useKeyboardPopover from '../components/useKeyboardPopover';
 import useAsyncError from '../react-utils/useAsyncError';
+import useFocus from '../navigation-hooks/useFocus';
+
+function RenameForm({ onClose, device, dispatch }) {
+  const [name, setName] = React.useState(device.name);
+  const handleErrors = useAsyncError();
+  async function saveName(name) {
+    await dispatch({
+      type: 'SetDevice',
+      deviceId: device.deviceId,
+      name,
+    });
+    onClose();
+  }
+  function handleSubmit() {
+    handleErrors(saveName(name));
+  }
+  const { inputs } = useFocus({
+    onSubmit: handleSubmit,
+    inputRenderers: [
+      props => (
+        <BlockFormInput
+          {...props}
+          label="name"
+          value={name}
+          onValue={setName}
+        />
+      ),
+    ],
+  });
+
+  return (
+    <View>
+      <View style={{ flexDirection: 'row' }}>{inputs}</View>
+      <Button title="save" onPress={handleSubmit} />
+    </View>
+  );
+}
 
 function ModeForm({ onClose, device, dispatch }) {
   const handleErrors = useAsyncError();
-
+  async function setMode(mode) {
+    await dispatch({
+      type: 'SetDevice',
+      deviceId: device.deviceId,
+      mode,
+    });
+    onClose();
+  }
   function getModeSetter(mode) {
     return () => {
-      handleErrors(
-        dispatch({ type: 'SetMode', deviceId: device.deviceId, mode }).then(
-          onClose,
-        ),
-      );
+      handleErrors(setMode(mode));
     };
   }
   return (
@@ -43,16 +78,16 @@ function ModeForm({ onClose, device, dispatch }) {
 
 function DeviceRow({ device }) {
   const cloud = useCloud();
-  const dispatch = cloud.get('DeviceActions').putTransaction;
+  const dispatch = cloud.get('DeviceActions').putTransactionValue;
   const handleErrors = useAsyncError();
 
-  const { onPopover } = usePopover(
-    ({ onClose, ...props }) => {
-      return (
-        <KeyboardPopover onClose={onClose} {...props}>
-          <ModeForm onClose={onClose} device={device} dispatch={dispatch} />
-        </KeyboardPopover>
-      );
+  const { onPopover: onRenamePopover } = useKeyboardPopover(({ onClose }) => (
+    <RenameForm onClose={onClose} device={device} dispatch={dispatch} />
+  ));
+
+  const { onPopover: onModePopover } = useKeyboardPopover(
+    ({ onClose }) => {
+      return <ModeForm onClose={onClose} device={device} dispatch={dispatch} />;
     },
     { easing: Easing.linear, duration: 1 },
   );
@@ -66,7 +101,7 @@ function DeviceRow({ device }) {
       <View style={{ flexDirection: 'row' }}>
         <Button
           title={device && device.mode ? `Mode: ${device.mode}` : 'Mode'}
-          onPress={onPopover}
+          onPress={onModePopover}
         />
         <Button
           title="Forget"
@@ -81,20 +116,7 @@ function DeviceRow({ device }) {
           }}
         />
 
-        <Button
-          title="Rename"
-          secondary
-          onPress={() => {
-            AlertIOS.prompt('New Device Name', null, name => {
-              handleErrors(
-                deviceDoc.docValue({
-                  ...(deviceState || {}),
-                  name,
-                }),
-              );
-            });
-          }}
-        />
+        <Button title="Rename" secondary onPress={onRenamePopover} />
       </View>
     </Row>
   );
@@ -102,10 +124,6 @@ function DeviceRow({ device }) {
 
 function DeviceManager() {
   const devicesState = useCloudValue('DevicesState');
-  // const [devicesState, dispatch] = useCloudReducer(
-  //   'DeviceActions',
-  //   DevicesReducer,
-  // );
   const devices = (devicesState && devicesState.devices) || [];
   if (!devices) {
     return <Spinner />;
