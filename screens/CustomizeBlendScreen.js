@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useOrderItem, useMenuItem } from '../ono-cloud/OnoKitchen';
+import { useMenuItem } from '../ono-cloud/OnoKitchen';
+import { useOrderItem } from '../ono-cloud/OrderContext';
 import useObservable from '../cloud-core/useObservable';
 import CustomizePage from '../components/CustomizePage';
 

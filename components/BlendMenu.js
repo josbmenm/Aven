@@ -2,8 +2,8 @@ import React, { memo } from 'react';
 import {
   sellPriceOfMenuItem,
   displayNameOfMenuItem,
-  useOrder,
 } from '../ono-cloud/OnoKitchen';
+import { useOrder } from '../ono-cloud/OrderContext';
 import cuid from 'cuid';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { MenuCardCarousel } from '../components/MenuCard';

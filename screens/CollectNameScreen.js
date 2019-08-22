@@ -1,6 +1,6 @@
 import React from 'react';
 import CollectNamePage from '../components/CollectNamePage';
-import { useOrder } from '../ono-cloud/OnoKitchen';
+import { useOrder } from '../ono-cloud/OrderContext';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import useEmptyOrderEscape from './useEmptyOrderEscape';
 

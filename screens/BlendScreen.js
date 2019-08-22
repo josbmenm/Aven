@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { useOrderItem, useMenuItem, useMenu } from '../ono-cloud/OnoKitchen';
+import { useMenuItem, useMenu } from '../ono-cloud/OnoKitchen';
+import { useOrderItem } from '../ono-cloud/OrderContext';
 
 import useEmptyOrderEscape from './useEmptyOrderEscape';
 import BlendPage from '../components/BlendPage';

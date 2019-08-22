@@ -25,10 +25,8 @@ import {
 } from './Styles';
 import formatCurrency from '../utils/formatCurrency';
 import Button from './Button';
+import { useOrder, useOrderItem } from '../ono-cloud/OrderContext';
 import {
-  useOrder,
-  useOrderItem,
-  sellPriceOfMenuItem,
   displayNameOfOrderItem,
   getItemCustomizationSummary,
 } from '../ono-cloud/OnoKitchen';

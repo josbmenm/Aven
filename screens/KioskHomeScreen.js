@@ -12,7 +12,7 @@ import {
   highlightPrimaryColor,
 } from '../components/Styles';
 
-import { useOrder } from '../ono-cloud/OnoKitchen';
+import { useOrder } from '../ono-cloud/OrderContext';
 import FadeTransition from '../components/FadeTransition';
 
 export default function KioskHomeScreen({ navigation, ...props }) {

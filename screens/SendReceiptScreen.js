@@ -3,7 +3,8 @@ import SendReceiptPage from '../components/SendReceiptPage';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { useCloud } from '../cloud-core/KiteReact';
 import useEmptyOrderEscape from './useEmptyOrderEscape';
-import { useOrder, getLocalName } from '../ono-cloud/OnoKitchen';
+import { useOrder } from '../ono-cloud/OrderContext';
+import { getLocalName } from '../ono-cloud/OnoKitchen';
 
 function usePromiseState(onResult) {
   const [error, setError] = React.useState(null);

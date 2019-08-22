@@ -1,5 +1,5 @@
 import React from 'react';
-import { useOrder, useOrderSummary } from '../ono-cloud/OnoKitchen';
+import { useOrder, useOrderSummary } from '../ono-cloud/OrderContext';
 import useEmptyOrderEscape from './useEmptyOrderEscape';
 import { useCardPaymentCapture } from '../card-reader/CardReader';
 import OrderConfirmPage from '../components/OrderConfirmPage';

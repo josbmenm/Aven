@@ -41,7 +41,7 @@ import ReceiptScreen from '../screens/ReceiptScreen';
 import AppUpsellScreen from '../screens/AppUpsellScreen';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
 import LinearGradient from 'react-native-linear-gradient';
-import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
+import { OrderContextProvider } from '../ono-cloud/OrderContext';
 import OrderSidebarPage from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
 import { registerDispatcher } from '../card-reader/CardReader';
@@ -67,8 +67,8 @@ const VERSE_HOST_CONFIG = VERSE_IS_DEV
   ? {
       // Verse dev:
       useSSL: false,
-      // authority: 'localhost:8830',
-      authority: '10.10.10.40:8830',
+      authority: 'localhost:8830',
+      // authority: '10.10.10.40:8830',
     }
   : {
       // Verse prod:
@@ -80,8 +80,8 @@ const SKYNET_HOST_CONFIG = SKYNET_IS_DEV
   ? {
       // Skynet dev:
       useSSL: false,
-      // authority: 'localhost:8840',
-      authority: '10.10.10.40:8840',
+      authority: 'localhost:8840',
+      // authority: '10.10.10.40:8840',
     }
   : {
       // Skynet prod:

@@ -1,5 +1,5 @@
 import mapObject from 'fbjs/lib/mapObject';
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import {
   getOrderItemMapper,
@@ -16,9 +16,6 @@ import {
   getMenuItemSlug,
   companyConfigToFoodMenu,
 } from '../logic/configLogic';
-import { getIsLiveMode } from '../card-reader/CardReader';
-
-const OrderContext = createContext(null);
 
 export function getLocalName(name) {
   const locals = name.split('/');
@@ -33,70 +30,6 @@ export const displayNameOfOrderItem = getDisplayNameOfOrderItem;
 export const sellPriceOfMenuItem = getSellPriceOfMenuItem;
 export const getItemCustomizationSummary = doGetItemCustomizationSummary;
 export const getSellPriceOfItem = doGetSellPriceOfItem;
-
-function doCancelOrderIfNotConfirmed(lastOrder) {
-  if (lastOrder.isConfirmed) {
-    return lastOrder;
-  }
-  if (lastOrder.isCancelled) {
-    return lastOrder;
-  }
-  return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
-}
-
-function doConfirmOrder(lastOrder) {
-  if (lastOrder.isConfirmed) {
-    return lastOrder;
-  }
-  return { ...lastOrder, isConfirmed: true, confirmedTime: Date.now() };
-}
-
-export function getSubsystemAlarms(system) {
-  // copy-pasted from getSubsystemFaults!!
-  let alarms = null;
-
-  if (system.reads.NoAlarms && system.reads.NoAlarms.value !== true) {
-    // system has alarming behavior
-    alarms = [];
-    let alarmsUnreadable;
-    const alarmed = Array(4)
-      .fill(0)
-      .map((_, alarmIntIndex) => {
-        if (!system.reads[`Alarm${alarmIntIndex}`]) {
-          return Array(16).fill(0);
-        }
-        try {
-          return system.reads[`Alarm${alarmIntIndex}`].value
-            .toString(2)
-            .split('')
-            .reverse()
-            .map(v => v === '1');
-        } catch (e) {
-          alarmsUnreadable = true;
-          return false;
-        }
-      });
-
-    alarmsUnreadable && alarms.push(`Unable to read alarms of ${system.name}`);
-    if (alarmed[0][0]) {
-      alarms.push(
-        'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
-      );
-    }
-    system.alarms &&
-      system.alarms.forEach(f => {
-        const faultDintArray = alarmed[f.intIndex];
-        const isAlarmed = faultDintArray && faultDintArray[f.bitIndex];
-        if (isAlarmed) {
-          alarms.push(f.description);
-        }
-      });
-  }
-  if (alarms && !alarms.length) {
-    alarms.push('Unknown Alarm');
-  }
-  return alarms;
-}
 
 export function getSubsystemFaults(system) {
   let faults = null;
@@ -151,93 +84,6 @@ export function getSubsystemFaults(system) {
   return faults;
 }
 
-export function OrderContextProvider({ children }) {
-  let cloud = useCloud();
-  let [currentOrder, setCurrentOrder] = useState(null);
-  let [asyncError, setAsyncError] = useState(null);
-
-  if (asyncError) {
-    setAsyncError(null);
-    throw asyncError;
-  }
-
-  function guardAsync(promise) {
-    return promise
-      .then(() => {})
-      .catch(e => {
-        setAsyncError(e);
-      });
-  }
-
-  // useEffect(() => {
-  //   guardAsync(cloud.establishAnonymousSession());
-  // }, []);
-
-  let orderContext = {
-    order: currentOrder,
-    setOrderName: name => {
-      guardAsync(
-        currentOrder.transact(lastOrder => ({
-          ...lastOrder,
-          orderName: name,
-        })),
-      );
-    },
-    resetOrder: () => {
-      if (!currentOrder) {
-        return;
-      }
-      guardAsync(currentOrder.transact(doCancelOrderIfNotConfirmed));
-      setCurrentOrder(null);
-    },
-    cancelOrder: () => {
-      currentOrder &&
-        guardAsync(
-          currentOrder.transact(lastOrder => {
-            if (lastOrder.isCancelled) {
-              return lastOrder;
-            }
-            return {
-              ...lastOrder,
-              isCancelled: true,
-              cancelledTime: Date.now(),
-            };
-          }),
-        );
-    },
-    confirmOrder: async paymentIntent => {
-      let o = currentOrder;
-      if (!o) {
-        return;
-      }
-      await o.transact(doConfirmOrder);
-      const isLive = await getIsLiveMode();
-      await cloud.dispatch({
-        type: 'PlaceOrder',
-        orderId: getLocalName(o.getName()),
-        paymentIntent,
-        isLive,
-      });
-    },
-    startOrder: () =>
-      guardAsync(
-        (async () => {
-          const order = cloud.get('PendingOrders').children.post();
-          setCurrentOrder(order);
-          await order.putValue({
-            startTime: Date.now(),
-            items: [],
-          });
-        })(),
-      ),
-  };
-  return (
-    <OrderContext.Provider value={orderContext}>
-      {children}
-    </OrderContext.Provider>
-  );
-}
-
 export function useCompanyConfig() {
   return useCloudValue('CompanyConfig');
 }
@@ -246,11 +92,6 @@ export function useSelectedIngredients(menuItem, item) {
   const companyConfig = useCompanyConfig();
 
   return getSelectedIngredients(menuItem, item, companyConfig);
-}
-
-export function useOrder() {
-  let orderContext = useContext(OrderContext);
-  return orderContext;
 }
 
 export function addMenuItemToCartItem({
@@ -276,66 +117,6 @@ export function addMenuItemToCartItem({
         customization,
         quantity: 1,
       };
-}
-
-export function useCurrentOrder() {
-  let { order } = useContext(OrderContext);
-  const observedOrder = useValue(order ? order.value : null);
-  if (!observedOrder) {
-    return observedOrder;
-  }
-  return { ...observedOrder, orderId: order && order.getName() };
-}
-
-export function useOrderItem(orderItemId) {
-  let { order } = useOrder();
-
-  const menu = useMenu();
-
-  return useMemo(() => {
-    async function setItemState(item) {
-      await order.transact(lastOrder => {
-        const lastItems = (lastOrder && lastOrder.items) || [];
-        const items = [...lastItems];
-        const itemIndex = items.findIndex(i => i.id === item.id);
-        if (itemIndex === -1) {
-          items.push(item);
-        } else {
-          items[itemIndex] = item;
-        }
-        return {
-          ...lastOrder,
-          items,
-        };
-      });
-    }
-    async function removeItem() {
-      await order.transact(lastOrder => {
-        const lastItems = (lastOrder && lastOrder.items) || [];
-        const items = lastItems.filter(i => i.id !== orderItemId);
-        return {
-          ...lastOrder,
-          items,
-        };
-      });
-    }
-    const itemMapper = menu && getOrderItemMapper(menu);
-    const orderState = order && order.value.get();
-
-    const orderItem =
-      orderState &&
-      orderState.items &&
-      orderState.items.find(i => i.id === orderItemId);
-    const fullOrderItem = orderItem && itemMapper(orderItem);
-
-    return {
-      orderItemId,
-      orderItem: fullOrderItem,
-      setItemState,
-      removeItem,
-      order,
-    };
-  }, [orderItemId, order, menu]);
 }
 
 export function useKitchenConfig() {
@@ -426,13 +207,6 @@ export function useMenu() {
     return companyConfigToMenu(companyConfig);
   }, [companyConfig]);
   return fullMenu;
-}
-
-export function useOrderSummary() {
-  const currentOrder = useCurrentOrder();
-  const companyConfig = useCompanyConfig();
-  const summary = getOrderSummary(currentOrder, companyConfig);
-  return summary;
 }
 
 export function useOrderIdSummary(orderId) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext } from 'react';
 import { View } from 'react-native';
 import TextButton from './TextButton';
-import { useOrderSummary, useOrder } from '../ono-cloud/OnoKitchen';
+import { useOrderSummary, useOrder } from '../ono-cloud/OrderContext';
 import CartSidebar from './CartSidebar';
 import useBlitzDebugPopover from '../components/useBlitzDebugPopover';
 
@@ -22,7 +22,7 @@ export const SidebarOverlayContext = createContext({});
 function SidebarPage({ children, isPortal, ...props }) {
   const { navigate } = useNavigation();
   const summary = useOrderSummary();
-  const { cancelOrder, order } = useOrder();
+  const { cancelOrder } = useOrder();
   const [openProgress] = useState(new Animated.Value(0));
   const shouldBeOpen = !!summary && summary.items && summary.items.length >= 1;
   useEffect(() => {

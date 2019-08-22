@@ -1,5 +1,5 @@
 import React from 'react';
-import { useOrder } from '../ono-cloud/OnoKitchen';
+import { useOrder } from '../ono-cloud/OrderContext';
 import useEmptyOrderEscape from './useEmptyOrderEscape';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import ReceiptPage from '../components/ReceiptPage';

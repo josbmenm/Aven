@@ -46,7 +46,7 @@ import createStackTransitionNavigator from '../navigation-transitioner/createSta
 import LinearGradient from 'react-native-linear-gradient';
 import { CloudContext } from '../cloud-core/KiteReact';
 import ErrorContainer from '../cloud-react/ErrorContainer';
-import { OrderContextProvider } from '../ono-cloud/OnoKitchen';
+import { OrderContextProvider } from '../ono-cloud/OrderContext';
 import { PortalOrderSidebarPage } from '../components/OrderSidebarPage';
 import TabsScreen from '../components/TabsScreen';
 import { PopoverContainer } from '../views/Popover';

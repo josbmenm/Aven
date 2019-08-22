@@ -1,5 +1,6 @@
 import React from 'react';
-import { useFoodItem, useOrderItem, useMenu } from '../ono-cloud/OnoKitchen';
+import { useFoodItem, useMenu } from '../ono-cloud/OnoKitchen';
+import { useOrderItem } from '../ono-cloud/OrderContext';
 import FoodPage from '../components/FoodPage';
 import useObservable from '../cloud-core/useObservable';
 import { useNavigation } from '../navigation-hooks/Hooks';

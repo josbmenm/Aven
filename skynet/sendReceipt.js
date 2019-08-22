@@ -339,8 +339,8 @@ async function sendSMSReceipt(smsAgent, action, logger, order) {
   logger.log('SMS Sent', 'SendSMS');
   await smsAgent.actions.SendSMS({
     to: action.contact.value,
-    message: `Thanks for visting Ono Blends! Your receipt is here: https://preview.onoblends.co/receipt/${
-      order.orderId
+    message: `Thanks for visting Ono Blends! Your receipt is here: https://onoblends.co/receipt/${
+      order.id
     } \n\nWe hope to see you again soon ❤️`,
   });
 }
@@ -373,8 +373,8 @@ async function sendEmailReceipt(emailAgent, action, logger, order) {
             <MjmlText>Total: {formatCurrency(order.total)}</MjmlText>
             <MjmlText>
               Your receipt can also be accessed here:
-              <a href={`https://preview.onoblends.co/receipt/${order.id}`}>
-                https://preview.onoblends.co/receipt/{order.id}
+              <a href={`https://onoblends.co/receipt/${order.id}`}>
+                https://onoblends.co/receipt/{order.id}
               </a>
             </MjmlText>
             <MjmlButton
@@ -405,8 +405,6 @@ async function sendEmailReceipt(emailAgent, action, logger, order) {
     subject: 'Your purchase from Ono Blends',
     message: 'Thanks for your order! \n\n -The Ono Blends Team',
     messageHTML: html,
-    // from
-    // fromName
   });
 }
 
