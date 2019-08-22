@@ -16,6 +16,7 @@ import {
   getMenuItemSlug,
   companyConfigToFoodMenu,
 } from '../logic/configLogic';
+import { getIsLiveMode } from '../card-reader/CardReader';
 
 const OrderContext = createContext(null);
 
@@ -210,10 +211,12 @@ export function OrderContextProvider({ children }) {
         return;
       }
       await o.transact(doConfirmOrder);
+      const isLive = await getIsLiveMode();
       await cloud.dispatch({
         type: 'PlaceOrder',
         orderId: getLocalName(o.getName()),
         paymentIntent,
+        isLive,
       });
     },
     startOrder: () =>

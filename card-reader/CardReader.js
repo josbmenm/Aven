@@ -25,10 +25,14 @@ function getDispatcher() {
   return dispatch;
 }
 
+export async function getIsLiveMode() {
+  return await get('PaymentsIsLiveMode');
+}
+
 StripeTerminal.initialize({
   fetchConnectionToken: () =>
     (async () => {
-      const isLive = await get('PaymentsIsLiveMode');
+      const isLive = await getIsLiveMode();
       console.log('=== initializing payments', isLive);
       const result = await getDispatcher()({
         type: 'StripeGetConnectionToken',

@@ -266,7 +266,7 @@ export default function PaymentDebugScreen(props) {
     true,
   );
   return (
-    <SimplePage title="Card Reader Debugging" icon="💸" {...props}>
+    <SimplePage title="Card Reader Connection" icon="📡" {...props}>
       <RowSection>
         <Button
           title="Sample Checkout"
@@ -274,6 +274,13 @@ export default function PaymentDebugScreen(props) {
             props.navigation.navigate('OrderConfirmTest');
           }}
         />
+        <Button
+          title="crash app"
+          onPress={() => {
+            throw new Error('requested crash');
+          }}
+        />
+
         <Button
           title="Test useCardReaderConnectionManager"
           onPress={() => {

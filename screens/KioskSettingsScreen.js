@@ -58,7 +58,7 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
             navigation.navigate({ routeName: 'PaymentDebug' });
           }}
           icon="💸"
-          title="Card Reader Debugging"
+          title="Card Reader Connection"
         />
         <LinkRow
           onPress={() => {

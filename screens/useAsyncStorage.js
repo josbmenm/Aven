@@ -37,7 +37,7 @@ export default function useAsyncStorage(storageKey, defaultValue) {
     const lastState = storageState;
     setInternalStorageState(newState);
     try {
-      await put(storageKey, defaultValue);
+      await put(storageKey, newState);
     } catch (e) {
       setInternalStorageState(lastState);
       throw e;
