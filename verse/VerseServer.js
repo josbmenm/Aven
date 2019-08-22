@@ -16,7 +16,6 @@ import createProtectedSource from '../cloud-auth/createProtectedSource';
 import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
 import { connectMachine } from './Machine';
-import { handleStripeAction } from '../stripe-server/Stripe';
 import { computeNextSteps } from '../logic/KitchenSequence';
 
 let lastT = null;
@@ -230,10 +229,6 @@ const startVerseServer = async () => {
   }
 
   const dispatch = async action => {
-    let stripeResponse = await handleStripeAction(action);
-    if (stripeResponse) {
-      return stripeResponse;
-    }
     switch (action.type) {
       case 'KitchenCommand':
         return await kitchen.command(action);

@@ -5,6 +5,7 @@ import StripeTerminal, {
   useStripeTerminalConnectionManager,
 } from './StripeTerminal/StripeTerminal';
 import { BehaviorSubject } from 'rxjs';
+import { get } from '../screens/useAsyncStorage';
 
 const USE_SIMULATOR = false;
 
@@ -25,13 +26,16 @@ function getDispatcher() {
 }
 
 StripeTerminal.initialize({
-  fetchConnectionToken: () => {
-    return getDispatcher()({ type: 'StripeGetConnectionToken' }).then(
-      result => {
-        return result.secret;
-      },
-    );
-  },
+  fetchConnectionToken: () =>
+    (async () => {
+      const isLive = await get('PaymentsIsLiveMode');
+      console.log('=== initializing payments', isLive);
+      const result = await getDispatcher()({
+        type: 'StripeGetConnectionToken',
+        isLive,
+      });
+      return result.secret;
+    })().catch(console.error),
 });
 
 export const CardReaderLog = new BehaviorSubject([]);
@@ -85,10 +89,13 @@ async function cancelPayment() {
 }
 
 async function capturePayment(paymentIntentId, context) {
+  const isLive = await get('PaymentsIsLiveMode');
+  console.log('---capturing', isLive);
   return getDispatcher()({
     type: 'StripeCapturePayment',
     paymentIntentId,
     context,
+    isLive,
   });
 }
 

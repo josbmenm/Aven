@@ -263,7 +263,7 @@ export default function PaymentDebugScreen(props) {
   const [isShowingUseCard, setUseCard] = useState(false);
   const [isLiveMode, setIsLiveMode] = useAsyncStorage(
     'PaymentsIsLiveMode',
-    false,
+    true,
   );
   return (
     <SimplePage title="Card Reader Debugging" icon="💸" {...props}>

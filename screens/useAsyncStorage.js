@@ -8,33 +8,47 @@ export function isStateUnloaded(s) {
   return s === UNLOADED_STATE;
 }
 
+export async function get(storageKey, defaultValue) {
+  const stored = await AsyncStorage.getItem(storageKey);
+  if (stored === null) {
+    return defaultValue;
+  } else {
+    return JSON.parse(stored);
+  }
+}
+
+export async function put(storageKey, newState) {
+  console.log('putting!', newState, storageKey);
+  await AsyncStorage.setItem(storageKey, JSON.stringify(newState));
+  console.log('putted');
+}
+
 export default function useAsyncStorage(storageKey, defaultValue) {
   const unloadedValue = UNLOADED_STATE;
   const [storageState, setInternalStorageState] = useState(unloadedValue);
   const handleErrors = useAsyncError();
 
+  async function doGet(storageKey) {
+    const state = await get(storageKey, defaultValue);
+    setInternalStorageState(state);
+  }
+  async function doPut(storageKey, newState) {
+    console.log('doPut', storageKey, newState);
+    const lastState = storageState;
+    setInternalStorageState(newState);
+    try {
+      await put(storageKey, defaultValue);
+    } catch (e) {
+      setInternalStorageState(lastState);
+      throw e;
+    }
+  }
   useEffect(() => {
-    handleErrors(
-      AsyncStorage.getItem(storageKey).then(stored => {
-        if (stored === null) {
-          setInternalStorageState(defaultValue);
-        } else {
-          setInternalStorageState(JSON.parse(stored));
-        }
-      }),
-    );
+    handleErrors(doGet(storageKey));
   }, [storageKey]);
 
   function setStorageState(newState) {
-    if (isStateUnloaded(storageState)) {
-      throw new Error(
-        'Cannot merge storage state if it has not been loaded yet!',
-      );
-    }
-    setInternalStorageState(newState);
-    AsyncStorage.setItem(storageKey, JSON.stringify(newState)).catch(
-      console.error,
-    );
+    handleErrors(doPut(storageKey, newState));
   }
 
   return [storageState, setStorageState];
