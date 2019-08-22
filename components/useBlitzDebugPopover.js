@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 import Button from './Button';
 import KeyboardPopover from './KeyboardPopover';
 import AppInfoText from './AppInfoText';
@@ -13,12 +13,38 @@ import codePush from 'react-native-code-push';
 
 export const AppEnvContext = React.createContext();
 
+function ButtonRow({ children }) {
+  return <View style={{ flexDirection: 'row' }}>{children}</View>;
+}
+function HiddenButton({ label }) {
+  return (
+    <TouchableOpacity onPress={() => {}}>
+      <Text>{label}</Text>
+    </TouchableOpacity>
+  );
+}
 function BlitzDebug({ onClose }) {
   const { mode, deviceId } = React.useContext(AppEnvContext);
   const { navigate } = useNavigation();
   return (
     <React.Fragment>
-      <Text style={{ ...titleStyle }}>Secret Buttons</Text>
+      <Text style={{ ...titleStyle }}>You found the secret buttons!</Text>
+      <ButtonRow>
+        <HiddenButton label="Coconut" />
+        <HiddenButton label="Ginger" />
+        <HiddenButton label="Coffee" />
+      </ButtonRow>
+      <ButtonRow>
+        <HiddenButton label="Papaya" />
+        <HiddenButton label="Greens" />
+        <HiddenButton label="Mango" />
+      </ButtonRow>
+      <ButtonRow>
+        <HiddenButton label="Strawberry" />
+        <HiddenButton label="Banana" />
+        <HiddenButton label="Cashew Butter" />
+      </ButtonRow>
+
       <Text style={{ ...primaryFontFace }}>Mode: {mode}</Text>
       <Text style={{ ...primaryFontFace }}>Device Id: {deviceId}</Text>
       <AppInfoText />

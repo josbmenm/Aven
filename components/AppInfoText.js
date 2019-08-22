@@ -1,5 +1,5 @@
 import React from 'react';
-import TextRow from './TextRow';
+import { Text } from 'react-native';
 import codePush from 'react-native-code-push';
 
 export default function AppInfoText() {
@@ -17,11 +17,9 @@ export default function AppInfoText() {
   }, []);
   return (
     (updateMetadata || null) && (
-      <TextRow
-        text={`Native v${updateMetadata.appVersion} App ${
-          updateMetadata.label
-        }`}
-      />
+      <Text>{`Native v${updateMetadata.appVersion} App ${
+        updateMetadata.label
+      }`}</Text>
     )
   );
 }
