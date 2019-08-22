@@ -347,6 +347,7 @@ async function sendSMSReceipt(smsAgent, action, logger, order) {
 async function sendEmailReceipt(emailAgent, action, logger, order) {
   const cardPresentMeta =
     order.stripeIntent &&
+    order.stripeIntent.charges.data[0].source &&
     order.stripeIntent.charges.data[0].source.card_present;
 
   logger.log('Email Sent', 'SendEmail');

@@ -31,6 +31,53 @@ export const sellPriceOfMenuItem = getSellPriceOfMenuItem;
 export const getItemCustomizationSummary = doGetItemCustomizationSummary;
 export const getSellPriceOfItem = doGetSellPriceOfItem;
 
+export function getSubsystemAlarms(system) {
+  // copy-pasted from getSubsystemFaults!!
+  let alarms = null;
+
+  if (system.reads.NoAlarms && system.reads.NoAlarms.value !== true) {
+    // system has alarming behavior
+    alarms = [];
+    let alarmsUnreadable;
+    const alarmed = Array(4)
+      .fill(0)
+      .map((_, alarmIntIndex) => {
+        if (!system.reads[`Alarm${alarmIntIndex}`]) {
+          return Array(16).fill(0);
+        }
+        try {
+          return system.reads[`Alarm${alarmIntIndex}`].value
+            .toString(2)
+            .split('')
+            .reverse()
+            .map(v => v === '1');
+        } catch (e) {
+          alarmsUnreadable = true;
+          return false;
+        }
+      });
+
+    alarmsUnreadable && alarms.push(`Unable to read alarms of ${system.name}`);
+    if (alarmed[0][0]) {
+      alarms.push(
+        'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
+      );
+    }
+    system.alarms &&
+      system.alarms.forEach(f => {
+        const faultDintArray = alarmed[f.intIndex];
+        const isAlarmed = faultDintArray && faultDintArray[f.bitIndex];
+        if (isAlarmed) {
+          alarms.push(f.description);
+        }
+      });
+  }
+  if (alarms && !alarms.length) {
+    alarms.push('Unknown Alarm');
+  }
+  return alarms;
+}
+
 export function getSubsystemFaults(system) {
   let faults = null;
 
