@@ -218,6 +218,7 @@ export default function CustomTasker() {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-evenly',
+            flexWrap: 'wrap',
             marginVertical: 8,
           }}
         >

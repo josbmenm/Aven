@@ -3,7 +3,7 @@ import SendReceiptPage from '../components/SendReceiptPage';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { useCloud } from '../cloud-core/KiteReact';
 import useEmptyOrderEscape from './useEmptyOrderEscape';
-import { useOrder } from '../ono-cloud/OnoKitchen';
+import { useOrder, getLocalName } from '../ono-cloud/OnoKitchen';
 
 function usePromiseState(onResult) {
   const [error, setError] = React.useState(null);
@@ -48,7 +48,7 @@ export default function SendReceiptScreen(props) {
           cloud.dispatch({
             type: 'SendReceipt',
             contact: resp,
-            orderId: order.getName(),
+            orderId: getLocalName(order.getName()),
           }),
         );
       }}

@@ -20,7 +20,7 @@ import { getIsLiveMode } from '../card-reader/CardReader';
 
 const OrderContext = createContext(null);
 
-function getLocalName(name) {
+export function getLocalName(name) {
   const locals = name.split('/');
   return locals[locals.length - 1];
 }
