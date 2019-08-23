@@ -50,7 +50,7 @@ function TaskQueue({ restaurantState, dispatch }) {
             />
           ))}
       </RowSection>
-      {restaurantState.fill && (
+      {restaurantState.fill && restaurantState.fill !== 'ready' && (
         <RowSection title="filling">
           <TaskRow
             key={restaurantState.fill.id}

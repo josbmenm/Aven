@@ -89,6 +89,26 @@ const KitchenCommands = {
       return kitchenState.Delivery_DropCupReady_READ;
     },
   },
+  FillGoToCup: {
+    subsystem: 'FillPositioner',
+    pulse: ['GoToPosition'],
+    values: {
+      PositionDest: 125,
+    },
+    checkReady: kitchenState => {
+      return kitchenState.FillPositioner_GoToPositionReady_READ;
+    },
+  },
+  FillGoToHandoff: {
+    subsystem: 'FillPositioner',
+    pulse: ['GoToPosition'],
+    values: {
+      PositionDest: 66570,
+    },
+    checkReady: kitchenState => {
+      return kitchenState.FillPositioner_GoToPositionReady_READ;
+    },
+  },
   Blend: {
     subsystem: 'BlendSystem',
     pulse: ['Blend'],

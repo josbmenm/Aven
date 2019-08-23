@@ -31,7 +31,32 @@ export default function ManualControl() {
         }}
       />
       <Button
+        title="position under new cup"
+        disabled={!KitchenCommands.FillGoToCup.checkReady(kitchenState)}
+        onPress={() => {
+          handleErrors(
+            cloud.dispatch({
+              type: 'KitchenCommand',
+              command: 'FillGoToCup',
+            }),
+          );
+        }}
+      />
+      <Button
+        title="position blender handoff"
+        disabled={!KitchenCommands.FillGoToHandoff.checkReady(kitchenState)}
+        onPress={() => {
+          handleErrors(
+            cloud.dispatch({
+              type: 'KitchenCommand',
+              command: 'FillGoToHandoff',
+            }),
+          );
+        }}
+      />
+      <Button
         title="grab new cup"
+        disabled={!KitchenCommands.GetCup.checkReady(kitchenState)}
         onPress={() => {
           handleErrors(
             cloud.dispatch({

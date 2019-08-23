@@ -182,7 +182,7 @@ function RestaurantStateList({ restaurantState, dispatch }) {
   return (
     <RowSection>
       <Row title={`${count} task${count === 1 ? '' : 's'} in queue`} />
-      {restaurantState.fill && (
+      {restaurantState.fill && restaurantState.fill !== 'ready' && (
         <Row title="filling">
           <FillRow restaurantState={restaurantState} dispatch={dispatch} />
         </Row>

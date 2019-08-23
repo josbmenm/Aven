@@ -312,6 +312,24 @@ function RestaurantReducerFn(state = {}, action) {
         },
       };
     }
+    case 'DidFillGoToCup': {
+      if (state.fill != null) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        fill: 'ready',
+      };
+    }
+    case 'DidFillGoToHandoff': {
+      // if (state.fill != null) {
+      return defaultReturn();
+      // }
+      // return {
+      //   ...defaultReturn(),
+      //   fill: 'ready',
+      // };
+    }
     case 'DidPassToDelivery': {
       if (!state.blend) {
         return defaultReturn();
