@@ -14,7 +14,9 @@ import FeedbackContext from './FeedbackContext';
 
 const STAR_EMPTY = require('./assets/StarEmpty.png');
 const STAR_FULL = require('./assets/StarFull.png');
-
+function SubmitButton({ onPress }) {
+  return <BlockFormButton onPress={onPress} title="submit" />;
+}
 export default function FeedbackRatingPage({
   onSubmit,
   hideBackButton,
@@ -25,13 +27,12 @@ export default function FeedbackRatingPage({
   const feedbackContext = React.useContext(FeedbackContext);
   const [isSpinning, setIsSpinning] = React.useState(false);
   function handleRating(r) {
-    navigate('Feedback');
+    setRating(r);
 
     // if (!feedbackContext || !feedbackContext.feedbackDoc) {
     //   return; // hope this never happens.. otherwise the stars will be unresponsive
     // }
     // setIsSpinning(true);
-    // setRating(r);
     // feedbackContext.feedbackDoc
     //   .transact(f => ({ ...(f || {}), rating: r }))
     //   .then(() => {
@@ -43,9 +44,12 @@ export default function FeedbackRatingPage({
     //     setIsSpinning(false);
     //   });
   }
+  function handleSubmit() {
+    navigate('FeedbackReceipt');
+  }
   return (
     <ShortBlockFormPage hideBackButton={hideBackButton} {...props}>
-      <BlockForm>
+      <BlockForm style={{ flex: 1 }}>
         <BlockFormMessage message="Tap Rating" />
         <BlockFormTitle message="free blend on the way" />
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
@@ -62,10 +66,10 @@ export default function FeedbackRatingPage({
                   <Image
                     style={{
                       resizeMode: 'contain',
-                      width: 155,
-                      width: 155,
+                      width: 100,
+                      width: 100,
                       margin: 30,
-                      tintColor: '#FF9B18',
+                      tintColor: '#FFD518',
                     }}
                     source={rating > index ? STAR_FULL : STAR_EMPTY}
                   />
@@ -73,6 +77,7 @@ export default function FeedbackRatingPage({
               );
             })}
         </View>
+        {rating !== 0 && <SubmitButton onPress={handleSubmit} />}
         <Spinner isSpinning={isSpinning} />
       </BlockForm>
     </ShortBlockFormPage>

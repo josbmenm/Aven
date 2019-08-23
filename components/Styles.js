@@ -111,7 +111,7 @@ export const cardLargeWidth = 340;
 export const splashText = {
   color: highlightPrimaryColor,
   fontSize: 28,
-  fontFamily: 'Maax-Bold',
+  ...boldPrimaryFontFace,
 };
 
 export const pageBackgroundColor = '#fff';

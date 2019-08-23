@@ -4,7 +4,6 @@ import { createAppContainer } from '../navigation-native';
 import { useCloud } from '../cloud-core/KiteReact';
 import FeedbackCompleteScreen from '../screens/FeedbackCompleteScreen';
 import FeedbackHomeScreen from '../screens/FeedbackHomeScreen';
-import FeedbackScreen from '../screens/FeedbackScreen';
 import FeedbackRatingScreen from '../screens/FeedbackRatingScreen';
 import FeedbackReceiptScreen from '../screens/FeedbackReceiptScreen';
 import FeedbackContext from './FeedbackContext';
@@ -14,7 +13,6 @@ import { PopoverContainer } from '../views/Popover';
 
 const FeedbackAppTransitionNavigator = createStackTransitionNavigator({
   FeedbackHome: FeedbackHomeScreen,
-  Feedback: FeedbackScreen,
   FeedbackRating: FeedbackRatingScreen,
   FeedbackReceipt: FeedbackReceiptScreen,
   FeedbackComplete: FeedbackCompleteScreen,

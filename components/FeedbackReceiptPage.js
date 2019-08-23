@@ -36,7 +36,7 @@ export default function FeedbackReceiptPage({
   });
   return (
     <ShortBlockFormPage hideBackButton={hideBackButton} {...props}>
-      <BlockForm>
+      <BlockForm style={{ flex: 1, justifyContent: 'center' }}>
         <BlockFormMessage message="Email please" />
         <BlockFormTitle message="free blend on the way" />
         {inputs}

@@ -58,6 +58,9 @@ export default function TabSectionScrollView({
 }) {
   const [sectionMeasurements, setSectionMeasurements] = useState({});
   const [scrollViewLayout, setScrollViewLayout] = useState(null);
+  const [expectedActiveSection, setExpectedActiveSection] = useState(
+    activeSection,
+  );
   const scrollRef = useRef();
   const lastSectionName = sections[sections.length - 1].name;
   const spacerHeight = useAnimatedValue(
@@ -73,13 +76,14 @@ export default function TabSectionScrollView({
     }
   }
   const meta = useRef({});
-  // useEffect(() => {
-  //   if (sectionMeasurements[activeSection.name] != null && scrollRef.current) {
-  //     scrollRef.current
-  //       .getScrollResponder()
-  //       .scrollTo({ y: sectionMeasurements[activeSection.name].y });
-  //   }
-  // }, [activeSection, sectionMeasurements]);
+  useEffect(() => {
+    if (activeSection === expectedActiveSection) return;
+    if (sectionMeasurements[activeSection.name] != null && scrollRef.current) {
+      scrollRef.current
+        .getScrollResponder()
+        .scrollTo({ y: sectionMeasurements[activeSection.name].y });
+    }
+  }, [activeSection, sectionMeasurements, expectedActiveSection]);
   return (
     <React.Fragment>
       <View
@@ -116,6 +120,7 @@ export default function TabSectionScrollView({
                   .getScrollResponder()
                   .scrollTo({ y: sectionMeasurements[section.name].y });
               }
+              setExpectedActiveSection(section.name);
               onActiveSection({ name: section.name });
             }}
             title={section.title}

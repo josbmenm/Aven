@@ -58,7 +58,7 @@ import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
 
 let IS_DEV = process.env.NODE_ENV !== 'production';
-IS_DEV = false;
+// IS_DEV = false;
 
 const windowSize = Dimensions.get('window');
 
@@ -233,7 +233,7 @@ function renderAppError({ error, errorInfo, onRetry }) {
   );
 }
 
-const NAV_STORAGE_KEY = 'NavigationState-N3e2u121o';
+const NAV_STORAGE_KEY = 'NavigationState-N3e2u1212o';
 function FullApp() {
   const cloud = useCloudProvider({
     source: cloudSource,
