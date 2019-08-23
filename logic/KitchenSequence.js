@@ -110,7 +110,7 @@ const SEQUENCER_STEPS = [
     getKitchenStateReady: (kitchenState, intent) => {
       return (
         !!kitchenState &&
-        !kitchenState.System_VanPluggedIn_READ &&
+        // !kitchenState.System_VanPluggedIn_READ &&
         !kitchenState.System_SkidPositionSensors_READ &&
         kitchenState.Delivery_DropCupReady_READ
       );
