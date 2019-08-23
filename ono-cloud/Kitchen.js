@@ -24,14 +24,22 @@ export function useIsRestaurantOpen(state) {
     state.scheduledCloseTime &&
     state.scheduledCloseTime / 1000 < timeSeconds;
   if (!state || state.isClosed) {
-    return { isOpen: false, closingSoon: null };
+    return {
+      isOpen: false,
+      closingSoon: null,
+      isTraveling: (state && state.isTraveling) || false,
+    };
   }
   const { scheduledCloseTime } = state;
   if (isPastClosed) {
-    return { isOpen: false, closingSoon: null };
+    return { isOpen: false, closingSoon: null, isTraveling: false };
   }
   if (scheduledCloseTime) {
-    return { isOpen: true, closingSoon: { scheduledCloseTime } };
+    return {
+      isOpen: true,
+      closingSoon: { scheduledCloseTime },
+      isTraveling: false,
+    };
   }
-  return { isOpen: true, closingSoon: null };
+  return { isOpen: true, closingSoon: null, isTraveling: false };
 }

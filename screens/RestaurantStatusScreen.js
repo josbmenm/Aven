@@ -105,7 +105,9 @@ function ButtonStack({ buttons }) {
 
 function StatusView() {
   const [restaurantState, dispatch] = useRestaurantState();
-  const { isOpen, closingSoon } = useIsRestaurantOpen(restaurantState);
+  const { isOpen, isTraveling, closingSoon } = useIsRestaurantOpen(
+    restaurantState,
+  );
   const timeSeconds = useTimeSeconds();
   let tagText = 'restaurant open';
   if (closingSoon) {
@@ -120,6 +122,9 @@ function StatusView() {
   }
   if (!isOpen) {
     tagText = 'restaurant closed';
+  }
+  if (isTraveling) {
+    tagText = 'traveling';
   }
 
   const { onPopover: onCloseRestaurantPopover } = usePopover(
@@ -145,15 +150,34 @@ function StatusView() {
                 title="close restaurant"
                 onPress={onCloseRestaurantPopover}
               />
-            ) : (
+            ) : isTraveling ? (
               <Button
-                title="open restaurant"
+                title="park restaurant"
                 onPress={() => {
                   dispatch({
-                    type: 'OpenRestaurant',
+                    type: 'ParkRestaurant',
                   });
                 }}
               />
+            ) : (
+              <React.Fragment>
+                <Button
+                  title="travel restaurant"
+                  onPress={() => {
+                    dispatch({
+                      type: 'TravelRestaurant',
+                    });
+                  }}
+                />
+                <Button
+                  title="open restaurant"
+                  onPress={() => {
+                    dispatch({
+                      type: 'OpenRestaurant',
+                    });
+                  }}
+                />
+              </React.Fragment>
             ),
             closingSoon && (
               <Button

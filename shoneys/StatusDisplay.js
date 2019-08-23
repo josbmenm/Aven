@@ -571,7 +571,10 @@ function StoreSign({ title, subtitle }) {
 }
 
 function StatusDisplay({ state }) {
-  const { isOpen, closingSoon } = useIsRestaurantOpen(state);
+  const { isOpen, closingSoon, isTraveling } = useIsRestaurantOpen(state);
+  if (isTraveling) {
+    return <View style={{ flex: 1, backgroundColor: 'black' }} />;
+  }
   if (!isOpen) {
     return (
       <FullScreenBackground>

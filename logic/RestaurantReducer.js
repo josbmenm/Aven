@@ -322,13 +322,29 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'DidFillGoToHandoff': {
-      // if (state.fill != null) {
-      return defaultReturn();
-      // }
-      // return {
-      //   ...defaultReturn(),
-      //   fill: 'ready',
-      // };
+      if (!state.fill) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        fill: {
+          ...state.fill,
+          moveToBlenderTime: Date.now(),
+        },
+      };
+    }
+    case 'TravelRestaurant': {
+      return {
+        ...defaultReturn(),
+        isClosed: true,
+        isTraveling: true,
+      };
+    }
+    case 'ParkRestaurant': {
+      return {
+        ...defaultReturn(),
+        isTraveling: false,
+      };
     }
     case 'DidPassToDelivery': {
       if (!state.blend) {
