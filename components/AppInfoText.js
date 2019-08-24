@@ -2,7 +2,7 @@ import React from 'react';
 import { Text } from 'react-native';
 import codePush from 'react-native-code-push';
 
-export default function AppInfoText() {
+export function useAppInfoText() {
   let [updateMetadata, setUpdateMetadata] = React.useState(null);
   React.useEffect(() => {
     codePush
@@ -15,11 +15,13 @@ export default function AppInfoText() {
       });
     return () => {};
   }, []);
-  return (
-    (updateMetadata || null) && (
-      <Text>{`Native v${updateMetadata.appVersion} App ${
-        updateMetadata.label
-      }`}</Text>
-    )
-  );
+  if (!updateMetadata) {
+    return null;
+  }
+  return `Native v${updateMetadata.appVersion} App ${updateMetadata.label}`;
+}
+
+export default function AppInfoText() {
+  const appInfoText = useAppInfoText();
+  return appInfoText && <Text>{appInfoText}</Text>;
 }

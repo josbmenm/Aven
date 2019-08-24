@@ -29,14 +29,14 @@ export default function TemperatureView() {
   return (
     <React.Fragment>
       <View style={{ flexDirection: 'row' }}>
-        {kitchenState.System_FreezerTemp_READ && (
+        {kitchenState.System_FreezerTemp_READ != null && (
           <TempCell
             title="Frozen Food"
             value={formatTemp(kitchenState.System_FreezerTemp_READ)}
             button={null}
           />
         )}
-        {kitchenState.System_YogurtZoneTemp_READ && (
+        {kitchenState.System_YogurtZoneTemp_READ != null && (
           <TempCell
             title="Piston Fridge"
             value={formatTemp(kitchenState.System_YogurtZoneTemp_READ)}
@@ -45,21 +45,21 @@ export default function TemperatureView() {
         )}
       </View>
       <View style={{ flexDirection: 'row' }}>
-        {kitchenState.System_BevTemp_READ && (
+        {kitchenState.System_BevTemp_READ != null && (
           <TempCell
             title="Beverage Fridge"
             value={formatTemp(kitchenState.System_BevTemp_READ)}
             button={null}
           />
         )}
-        {kitchenState.System_AmbientTemp_READ && (
+        {kitchenState.System_AmbientTemp_READ != null && (
           <TempCell
             title="Ambient"
             value={formatTemp(kitchenState.System_AmbientTemp_READ)}
             button={null}
           />
         )}
-        {kitchenState.System_PsuTemp_READ && (
+        {kitchenState.System_PsuTemp_READ != null && (
           <TempCell
             title="Power Box"
             value={formatTemp(kitchenState.System_PsuTemp_READ)}

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import Button from './Button';
 import KeyboardPopover from './KeyboardPopover';
-import AppInfoText from './AppInfoText';
+import { useAppInfoText } from './AppInfoText';
 import { usePopover } from '../views/Popover';
 import { titleStyle, primaryFontFace } from './Styles';
 
@@ -16,36 +16,121 @@ export const AppEnvContext = React.createContext();
 function ButtonRow({ children }) {
   return <View style={{ flexDirection: 'row' }}>{children}</View>;
 }
-function HiddenButton({ label }) {
+
+function HiddenButton({ label, onPress }) {
   return (
-    <TouchableOpacity onPress={() => {}}>
-      <Text>{label}</Text>
+    <TouchableOpacity style={{ flex: 1, padding: 8 }} onPress={onPress}>
+      <Text
+        style={{
+          ...primaryFontFace,
+          color: '#111',
+          textAlign: 'center',
+          fontSize: 18,
+        }}
+      >
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 }
 function BlitzDebug({ onClose }) {
   const { mode, deviceId } = React.useContext(AppEnvContext);
   const { navigate } = useNavigation();
+  const [code, setCode] = React.useState('');
+  function sendResetValue(char) {
+    setCode(char);
+  }
+  function sendValue(char) {
+    setCode(code + char);
+  }
+  const appInfoText = useAppInfoText();
+  React.useEffect(() => {
+    if (code === 'b12') {
+      onClose();
+      navigate('PaymentDebug');
+    } else if (code === 'a4545') {
+      codePush.restartApp();
+    } else if (code === 'b5555') {
+      throw new Error('User-requested crash');
+    } else if (code === 'a03') {
+      onClose();
+      Alert.alert(
+        'Insider stuff',
+        `
+${appInfoText}
+Mode: ${mode}
+Device id: ${deviceId}
+`,
+      );
+    }
+  }, [code, appInfoText]);
   return (
-    <React.Fragment>
-      <Text style={{ ...titleStyle }}>You found the secret buttons!</Text>
+    <View style={{ padding: 30 }}>
+      <Text style={{ ...titleStyle, fontSize: 22, marginBottom: 16 }}>
+        ssh.. you found the secret buttons!
+      </Text>
       <ButtonRow>
-        <HiddenButton label="Coconut" />
-        <HiddenButton label="Ginger" />
-        <HiddenButton label="Coffee" />
+        <HiddenButton
+          label="Coconut"
+          onPress={() => {
+            sendResetValue('a');
+          }}
+        />
+        <HiddenButton
+          label="Ginger"
+          onPress={() => {
+            sendResetValue('b');
+          }}
+        />
+        <HiddenButton
+          label="Coffee"
+          onPress={() => {
+            sendResetValue('c');
+          }}
+        />
       </ButtonRow>
       <ButtonRow>
-        <HiddenButton label="Papaya" />
-        <HiddenButton label="Greens" />
-        <HiddenButton label="Mango" />
+        <HiddenButton
+          label="Papaya"
+          onPress={() => {
+            sendValue('0');
+          }}
+        />
+        <HiddenButton
+          label="Greens"
+          onPress={() => {
+            sendValue('1');
+          }}
+        />
+        <HiddenButton
+          label="Mango"
+          onPress={() => {
+            sendValue('2');
+          }}
+        />
       </ButtonRow>
       <ButtonRow>
-        <HiddenButton label="Strawberry" />
-        <HiddenButton label="Banana" />
-        <HiddenButton label="Cashew Butter" />
+        <HiddenButton
+          label="Chia"
+          onPress={() => {
+            sendValue('3');
+          }}
+        />
+        <HiddenButton
+          label="Banana"
+          onPress={() => {
+            sendValue('4');
+          }}
+        />
+        <HiddenButton
+          label="Cashew"
+          onPress={() => {
+            sendValue('5');
+          }}
+        />
       </ButtonRow>
 
-      <Text style={{ ...primaryFontFace }}>Mode: {mode}</Text>
+      {/* <Text style={{ ...primaryFontFace }}>Mode: {mode}</Text>
       <Text style={{ ...primaryFontFace }}>Device Id: {deviceId}</Text>
       <AppInfoText />
       <Button
@@ -62,8 +147,8 @@ function BlitzDebug({ onClose }) {
         }}
         title={`Debug Card Reader`}
         type="outline"
-      />
-    </React.Fragment>
+      /> */}
+    </View>
   );
 }
 

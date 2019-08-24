@@ -13,13 +13,60 @@ import {
 } from '../components/Styles';
 
 import { useOrder } from '../ono-cloud/OrderContext';
+import { useRestaurantState, useIsRestaurantOpen } from '../ono-cloud/Kitchen';
 import FadeTransition from '../components/FadeTransition';
+import { useNavigation } from '../navigation-hooks/Hooks';
+
+function KioskHomeContent({ isOpen }) {
+  const { navigate } = useNavigation();
+  const message = isOpen
+    ? 'tap to start your order'
+    : 'now closed. come find us again soon!';
+  return (
+    <TouchableWithoutFeedback
+      onPress={
+        isOpen
+          ? () => {
+              navigate('ProductHome');
+            }
+          : () => {}
+      }
+    >
+      <View style={{ flex: 1, justifyContent: 'center', ...genericPageStyle }}>
+        {isOpen && (
+          <Image
+            style={{
+              width: '100%',
+              height: 200,
+              resizeMode: 'contain',
+              tintColor: highlightPrimaryColor,
+            }}
+            source={require('../components/assets/OnoBlendsLogo.png')}
+          />
+        )}
+
+        <Text
+          style={{
+            ...splashText,
+            textAlign: 'center',
+            marginVertical: 40,
+          }}
+        >
+          {message}
+        </Text>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+}
 
 export default function KioskHomeScreen({ navigation, ...props }) {
   const { resetOrder } = useOrder();
   useEffect(() => {
     resetOrder();
   }, []);
+  const [restaurantState] = useRestaurantState();
+  const { isOpen, closingSoon } = useIsRestaurantOpen(restaurantState);
+
   return (
     <FadeTransition
       {...props}
@@ -37,35 +84,7 @@ export default function KioskHomeScreen({ navigation, ...props }) {
         />
       }
     >
-      <TouchableWithoutFeedback
-        onPress={async () => {
-          navigation.navigate('ProductHome');
-        }}
-      >
-        <View
-          style={{ flex: 1, justifyContent: 'center', ...genericPageStyle }}
-        >
-          <Image
-            style={{
-              width: '100%',
-              height: 200,
-              resizeMode: 'contain',
-              tintColor: highlightPrimaryColor,
-            }}
-            source={require('../components/assets/OnoBlendsLogo.png')}
-          />
-
-          <Text
-            style={{
-              ...splashText,
-              textAlign: 'center',
-              marginVertical: 40,
-            }}
-          >
-            tap to start your order
-          </Text>
-        </View>
-      </TouchableWithoutFeedback>
+      <KioskHomeContent isOpen={isOpen} closingSoon={closingSoon} />
     </FadeTransition>
   );
 }

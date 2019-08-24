@@ -55,13 +55,14 @@ import { ThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
 import cuid from 'cuid';
 import useAsyncStorage, { isStateUnloaded } from '../screens/useAsyncStorage';
+import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
 
 let VERSE_IS_DEV = process.env.NODE_ENV !== 'production';
 let SKYNET_IS_DEV = process.env.NODE_ENV !== 'production';
 
 // uncomment to test prod mode:
-// VERSE_IS_DEV = false;
-// SKYNET_IS_DEV = false;
+VERSE_IS_DEV = false;
+SKYNET_IS_DEV = false;
 
 const VERSE_HOST_CONFIG = VERSE_IS_DEV
   ? {
@@ -137,7 +138,6 @@ const OrderNavigator = createStackTransitionNavigator(
 
 const KioskAppNavigator = createStackTransitionNavigator(
   {
-    OrderComplete: OrderCompleteScreen,
     KioskHome: KioskHomeScreen,
     OrderConfirm: OrderConfirmScreen,
     OrderComplete: OrderCompleteScreen,
@@ -147,6 +147,7 @@ const KioskAppNavigator = createStackTransitionNavigator(
     PaymentDebug: PaymentDebugScreen,
     AppUpsell: AppUpsellScreen,
     OrderNavigator,
+    OrderComplete: OrderCompleteScreen,
   },
   {
     ContainerView: FadeTransition,
@@ -155,7 +156,7 @@ const KioskAppNavigator = createStackTransitionNavigator(
 
 process.env.REACT_NAV_LOGGING = true;
 
-const KioskAppContainer = createAppContainer(KioskAppNavigator);
+const KioskAppContainer = React.memo(createAppContainer(KioskAppNavigator));
 
 function RetryButton({ onRetry }) {
   return <Button title="Try again.." onPress={onRetry} />;
@@ -169,6 +170,18 @@ function renderAppError({ error, errorInfo, onRetry }) {
       <RetryButton onRetry={onRetry} />
     </ScrollView>
   );
+}
+
+function ClosableKioskContainer({ children }) {
+  const [restaurantState] = useRestaurantState();
+  const { isTraveling, isClosed, closingSoon } = useIsRestaurantOpen(
+    restaurantState,
+  );
+
+  if (isTraveling) {
+    return <View style={{ flex: 1, backgroundColor: 'black' }} />;
+  }
+  return children;
 }
 
 const NAV_STORAGE_KEY = 'NavigationState-N3e26u1o';
@@ -214,9 +227,11 @@ function KioskApp({ mode }) {
     <HostContextContainer {...hostConfig}>
       <CloudContext.Provider value={cloud}>
         <PopoverContainer>
-          <OrderContextProvider>
-            <KioskAppContainer />
-          </OrderContextProvider>
+          <ClosableKioskContainer>
+            <OrderContextProvider>
+              <KioskAppContainer />
+            </OrderContextProvider>
+          </ClosableKioskContainer>
         </PopoverContainer>
       </CloudContext.Provider>
     </HostContextContainer>
