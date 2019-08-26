@@ -7,7 +7,17 @@ import Animated, { Easing } from 'react-native-reanimated';
 const textInputFontSize = 26;
 
 function BlockFormInputWithRef(
-  { value, onValue, label, mode, onSubmit, onFocus, onBlur, upperCase },
+  {
+    value,
+    onValue,
+    label,
+    mode,
+    onSubmit,
+    onFocus,
+    onBlur,
+    maxLength,
+    upperCase,
+  },
   ref,
 ) {
   const desiredPlaceholderOpen = value ? 0 : 1;
@@ -102,6 +112,7 @@ function BlockFormInputWithRef(
         autoCapitalize={autoCapitalize}
         ref={inputRef}
         value={value}
+        maxLength={maxLength}
         onFocus={onFocus}
         onBlur={onBlur}
         onChangeText={valueHandler}

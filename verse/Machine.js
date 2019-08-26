@@ -441,6 +441,7 @@ export function connectMachine({
     await new Promise((resolve, reject) => {
       let watchKittyTimeout = setTimeout(() => {
         delete subsystemResolvers[subsystem];
+        console.error('MEOW!', { actionId, subsystem, pulse, values });
         reject(
           new Error(`Watch kitty timeout on "${subsystem}" system, meow!`),
         );

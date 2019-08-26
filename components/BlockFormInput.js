@@ -16,6 +16,7 @@ function BlockFormInputWithRef(
     style,
     name,
     required,
+    maxLength,
   },
   ref,
   ...rest
@@ -185,6 +186,7 @@ function BlockFormInputWithRef(
               onBlur={handleBlur}
               onChangeText={valueHandler}
               options={inputOptions}
+              maxLength={maxLength}
               type={inputType}
               onSubmitEditing={onSubmit}
               accesible="true"

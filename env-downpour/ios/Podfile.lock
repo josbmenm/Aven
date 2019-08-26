@@ -113,6 +113,8 @@ PODS:
   - RNStripeTerminal (1.1.0):
     - React
     - StripeTerminal
+  - RNSVG (9.7.0):
+    - React
   - SDWebImage (5.1.0):
     - SDWebImage/Core (= 5.1.0)
   - SDWebImage/Core (5.1.0)
@@ -152,6 +154,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNStripeTerminal (from `../node_modules/react-native-stripe-terminal`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - StripeTerminal (= 1.0.0)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -223,6 +226,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNStripeTerminal:
     :path: "../node_modules/react-native-stripe-terminal"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -259,6 +264,7 @@ SPEC CHECKSUMS:
   RNReanimated: 9f7976535c5cde50189acd84751871f5414190b9
   RNScreens: 354046589421edc3d83d5c6212475bf1fb9a731d
   RNStripeTerminal: 0ed3c9fafe89c96d1ee3c87641cf48f7e1ebd08d
+  RNSVG: 2e097b92aaa6d4e0f354fd7c49cbf3b17f8b3920
   SDWebImage: fb387001955223213dde14bc08c8b73f371f8d8f
   SDWebImageWebPCoder: 7568737603c50f6237850afedd7e9e28e5917e6b
   SSZipArchive: fa16b8cc4cdeceb698e5e5d9f67e9558532fbf23

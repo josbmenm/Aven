@@ -21,6 +21,7 @@ export default function CollectNamePage({ onSubmit, backBehavior, ...props }) {
       <BlockFormInput
         label="first name"
         mode="name"
+        maxLength={24}
         onValue={setFirstName}
         value={firstName}
         {...inputProps}
@@ -30,6 +31,7 @@ export default function CollectNamePage({ onSubmit, backBehavior, ...props }) {
       <BlockFormInput
         label="last initial"
         mode="name"
+        maxLength={1}
         onValue={setLastName}
         value={lastName}
         {...inputProps}
@@ -42,7 +44,7 @@ export default function CollectNamePage({ onSubmit, backBehavior, ...props }) {
   });
   return (
     <ShortBlockFormPage backBehavior={backBehavior} {...props}>
-      <BlockForm style={{flex: 1, justifyContent: 'center'}}>
+      <BlockForm style={{ flex: 1, justifyContent: 'center' }}>
         <BlockFormMessage message="You're almost ready to go..." />
         <BlockFormTitle title="what's the name for the order?" />
         <BlockFormRow>{inputs}</BlockFormRow>

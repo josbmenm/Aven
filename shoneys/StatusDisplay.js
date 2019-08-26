@@ -351,16 +351,20 @@ function PresentationSection({ closingSoon }) {
 
 function QueueSection({ queue = [], fill, blend, delivery }) {
   const renderQueue = [
-    ...queue.map((task, taskIndex) => (
-      <TaskRow
-        key={task.id}
-        task={task}
-        status={'queued'}
-        queuedIndex={queue.length - taskIndex}
-      />
-    )),
+    ...queue.map(
+      (task, taskIndex) =>
+        task && (
+          <TaskRow
+            key={task.id}
+            task={task}
+            status={'queued'}
+            queuedIndex={queue.length - taskIndex}
+          />
+        ),
+    ),
   ];
   fill &&
+    fill.task &&
     renderQueue.push(
       <TaskRow
         key={fill.task.id}
@@ -370,6 +374,7 @@ function QueueSection({ queue = [], fill, blend, delivery }) {
       />,
     );
   blend &&
+    blend.task &&
     renderQueue.push(
       <TaskRow
         key={blend.task && blend.task.id}
@@ -378,6 +383,7 @@ function QueueSection({ queue = [], fill, blend, delivery }) {
       />,
     );
   delivery &&
+    delivery.task &&
     renderQueue.push(
       <TaskRow
         key={delivery.task.id}
