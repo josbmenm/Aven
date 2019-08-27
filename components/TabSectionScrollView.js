@@ -59,7 +59,7 @@ export default function TabSectionScrollView({
   const [sectionMeasurements, setSectionMeasurements] = useState({});
   const [scrollViewLayout, setScrollViewLayout] = useState(null);
   const [expectedActiveSection, setExpectedActiveSection] = useState(
-    activeSection,
+    activeSection.name,
   );
   const scrollRef = useRef();
   const lastSectionName = sections[sections.length - 1].name;
@@ -76,14 +76,22 @@ export default function TabSectionScrollView({
     }
   }
   const meta = useRef({});
-  // useEffect(() => {
-  //   if (activeSection === expectedActiveSection) return;
-  //   if (sectionMeasurements[activeSection.name] != null && scrollRef.current) {
-  //     scrollRef.current
-  //       .getScrollResponder()
-  //       .scrollTo({ y: sectionMeasurements[activeSection.name].y });
-  //   }
-  // }, [activeSection, sectionMeasurements, expectedActiveSection]);
+  const activeSectionName = activeSection.name;
+  useEffect(() => {
+    console.log(activeSection, sectionMeasurements, expectedActiveSection);
+    if (activeSectionName === expectedActiveSection) return;
+    if (sectionMeasurements[activeSectionName] != null && scrollRef.current) {
+      console.log(
+        'scroll to!!!',
+        sectionMeasurements[activeSection.name].y,
+        activeSectionName,
+      );
+      // scrollRef.current
+      //   .getScrollResponder()
+      //   .scrollTo({ y: sectionMeasurements[activeSection.name].y });
+    }
+  }, [activeSectionName, expectedActiveSection, sectionMeasurements]);
+
   return (
     <React.Fragment>
       <View
@@ -136,7 +144,7 @@ export default function TabSectionScrollView({
         onLayout={e => {
           setScrollViewLayout(e.nativeEvent.layout);
         }}
-        scrollEventThrottle={90}
+        scrollEventThrottle={32}
         onScroll={e => {
           const offsetY = e.nativeEvent.contentOffset.y;
           let closestSection = null;
@@ -158,8 +166,9 @@ export default function TabSectionScrollView({
                 closestSection = calculation;
               }
             });
-          if (!meta.current.isScrollingTo) {
-            closestSection && onActiveSection({ name: closestSection.name });
+          if (closestSection && !meta.current.isScrollingTo) {
+            setExpectedActiveSection(closestSection.name);
+            onActiveSection({ name: closestSection.name });
           }
         }}
       >

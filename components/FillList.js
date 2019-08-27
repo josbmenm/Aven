@@ -171,19 +171,17 @@ export default function FillList({ fills, inventoryIngredients, onFills }) {
               image={fill.ingredientImage}
               style={{ width: 50, height: 50 }}
             />
-            <View
-              style={{ flex: 1, alignItems: 'center', flexDirection: 'row' }}
-            >
+            <View style={{ flex: 1, alignItems: 'center' }}>
               <FillText color={fillTextColor}>{fill.ingredientName}</FillText>
               {inv && (
                 <Text
                   style={{
                     color: '#333',
                     ...primaryFontFace,
-                    marginHorizontal: 6,
+                    marginVertical: 6,
                   }}
                 >
-                  ({inv.estimatedRemaining} remain)
+                  {inv.estimatedRemaining} shots remaining
                 </Text>
               )}
             </View>
