@@ -542,8 +542,29 @@ export function createDoc({
     }
   }
 
+  async function _remotePutTransactionValue(value) {
+    // an implementation of putTransactionValue, where the change is not expected to be optimistic. This is used by putTransactionValue when the current id of a doc is not known
+
+    const result = await source.dispatch({
+      type: 'PutTransactionValue',
+      domain,
+      auth,
+      name: getName(),
+      value,
+    });
+    setState({
+      id: result.id,
+      lastFetchTime: getNow(),
+      lastPut: getNow(),
+    });
+
+    return result;
+  }
+
   async function putTransactionValue(value) {
-    let onCleanup = null;
+    if (docState.id === undefined && !docState.isLocalOnly) {
+      return _remotePutTransactionValue(value);
+    }
     const prevId = docState.id;
     const on = prevId ? { id: prevId, type: 'BlockReference' } : null;
     const expectedTransactionValue = {
@@ -583,8 +604,6 @@ export function createDoc({
       );
     }
     setState(stateUpdates);
-
-    onCleanup && onCleanup();
     return result;
   }
 
