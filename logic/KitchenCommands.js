@@ -2,7 +2,9 @@ const KitchenCommands = {
   Home: {
     subsystem: 'FillSystem',
     pulse: ['Home'],
-    checkReady: () => true,
+    checkReady: kitchenState => {
+      return kitchenState.FillSystem_PrgStep_READ === 0;
+    },
   },
   GetCup: {
     subsystem: 'FillSystem',

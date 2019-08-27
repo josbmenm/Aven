@@ -48,7 +48,7 @@ const KitchenSteps = [
       const task = restaurantState.queue && restaurantState.queue[0];
       console.log(
         'checking for inventory',
-        task.fills,
+        task,
         restaurantState.ingredientInventory,
       );
       if (
