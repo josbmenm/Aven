@@ -164,21 +164,20 @@ export default function FillList({ fills, inventoryIngredients, onFills }) {
       return (
         <View
           key={fillIndex}
-          style={{ flexDirection: 'row', marginVertical: 2 }}
+          style={{ flexDirection: 'row', marginVertical: 6 }}
         >
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
             <AirtableImage
               image={fill.ingredientImage}
               style={{ width: 50, height: 50 }}
             />
-            <View style={{ flex: 1, alignItems: 'center' }}>
+            <View style={{ flex: 1 }}>
               <FillText color={fillTextColor}>{fill.ingredientName}</FillText>
               {inv && (
                 <Text
                   style={{
                     color: '#333',
                     ...primaryFontFace,
-                    marginVertical: 6,
                   }}
                 >
                   {inv.estimatedRemaining} shots remaining

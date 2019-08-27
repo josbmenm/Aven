@@ -232,9 +232,7 @@ const KitchenSteps = [
       return {};
     },
     getKitchenStateReady: (kitchenState, intent) => {
-      return (
-        !!kitchenState && kitchenState.FillPositioner_GoToPositionReady_READ
-      );
+      return kitchenState.FillPositioner_GoToPositionReady_READ;
     },
     getKitchenCommand: intent => ({
       commandType: 'FillGoToHandoff',
@@ -400,9 +398,7 @@ const KitchenSteps = [
       return null;
     },
     getKitchenStateReady: (kitchenState, intent) => {
-      return (
-        !!kitchenState && kitchenState.FillPositioner_GoToPositionReady_READ
-      );
+      return kitchenState.FillPositioner_GoToPositionReady_READ;
     },
     getKitchenCommand: intent => ({
       commandType: 'FillGoToCup',

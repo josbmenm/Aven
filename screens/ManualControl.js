@@ -17,6 +17,9 @@ export default function ManualControl() {
     system: 3,
     slot: 1,
   };
+  if (!kitchenState) {
+    return null;
+  }
   return (
     <RowSection title="Manual Actions">
       <Button
