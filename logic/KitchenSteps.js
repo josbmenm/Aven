@@ -52,11 +52,10 @@ const KitchenSteps = [
         restaurantState.ingredientInventory,
       );
       if (
-        (restaurantState.queue &&
-          restaurantState.queue.length &&
-          // hasEstimatedInventoryForTask(restaurantState, task),
-          !restaurantState.fill) ||
-        restaurantState.fill === 'ready'
+        restaurantState.queue &&
+        restaurantState.queue.length &&
+        // hasEstimatedInventoryForTask(restaurantState, task),
+        (!restaurantState.fill || restaurantState.fill === 'ready')
       ) {
         return {};
       }
