@@ -49,10 +49,6 @@ const summaryRowLabelStyle = {
   fontSize: 15,
   ...primaryFontFace,
 };
-const summaryRowCurrencyStyle = {
-  ...summaryRowLabelStyle,
-  ...boldPrimaryFontFace,
-};
 const cartRowCurrencyStyle = {
   marginTop: 20,
   marginBottom: 5,
@@ -81,19 +77,25 @@ function SummaryRow({ label, amount, fakeAmount }) {
       <View style={{}}>
         <Text style={summaryRowLabelStyle}>{label}</Text>
       </View>
-      <View style={{}}>
-        <Text style={summaryRowCurrencyStyle}>
-          {fakeAmount && fakeAmount !== amount && (
-            <Text
-              style={{
-                textDecorationLine: 'line-through',
-                paddingHorizontal: 5,
-              }}
-            >
-              {formatCurrency(fakeAmount)}
-            </Text>
-          )}
-          <Text style={{}}>{formatCurrency(amount)}</Text>
+      <View style={{ flexDirection: 'row' }}>
+        {!!fakeAmount && fakeAmount !== amount && (
+          <Text
+            style={{
+              textDecorationLine: 'line-through',
+              marginHorizontal: 8,
+              ...summaryRowLabelStyle,
+            }}
+          >
+            {formatCurrency(fakeAmount)}
+          </Text>
+        )}
+        <Text
+          style={{
+            ...summaryRowLabelStyle,
+            ...boldPrimaryFontFace,
+          }}
+        >
+          {formatCurrency(amount)}
         </Text>
       </View>
     </View>
