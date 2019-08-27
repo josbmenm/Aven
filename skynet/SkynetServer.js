@@ -22,7 +22,7 @@ import createProtectedSource from '../cloud-auth/createProtectedSource';
 import submitFeedback from './submitFeedback';
 import validatePromoCode from './validatePromoCode';
 import { HostContext } from '../components/AirtableImage';
-import { companyConfigToKitchenConfig } from '../logic/KitchenLogic';
+import { companyConfigToKitchenConfig } from '../logic/MachineLogic';
 import RestaurantReducer from '../logic/RestaurantReducer';
 import { companyConfigToMenu } from '../logic/configLogic';
 import {

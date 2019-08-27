@@ -16,7 +16,7 @@ import createProtectedSource from '../cloud-auth/createProtectedSource';
 import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
 import { connectMachine } from './Machine';
-import { computeNextSteps } from '../logic/KitchenSequence';
+import KitchenSteps from '../logic/KitchenSteps';
 
 let lastT = null;
 function logBehavior(msg) {
@@ -189,7 +189,7 @@ const startVerseServer = async () => {
     console.log('Connecting to Maui Kitchen');
     kitchen = connectMachine({
       commands: KitchenCommands,
-      computeSequencerNextSteps: computeNextSteps,
+      sequencerSteps: KitchenSteps,
       computeSideEffects: (prevKitchenState, kitchenState, restaurantState) => {
         const {
           System_FreezerTemp_READ,
@@ -231,6 +231,9 @@ const startVerseServer = async () => {
   const dispatch = async action => {
     switch (action.type) {
       case 'KitchenCommand':
+        if (!kitchen) {
+          return;
+        }
         return await kitchen.command(action);
       case 'KitchenWriteMachineValues': {
         // low level thing

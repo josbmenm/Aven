@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { View, Text } from 'react-native';
 import {
   sellPriceOfMenuItem,
   displayNameOfMenuItem,
@@ -13,12 +14,22 @@ import PerformanceDebugging from '../navigation-transitioner/PerformanceDebuggin
 export default function BlendMenu({ menu, large, title }) {
   const { navigate } = useNavigation();
   const { order } = useOrder();
+
+  // const inStockItems = menu.filter(item => !item.isOutOfStock);
+  const inStockItems = menu;
+
+  if (!inStockItems.length) {
+    return (
+      <MenuZone title={'we are out of stock of all blends!'} small={!large} />
+    );
+  }
+
   return (
     <MenuZone title={title || 'choose a blend'} small={!large}>
       <MenuCardCarousel
         style={{}}
         large={large}
-        items={menu.map(item => ({
+        items={inStockItems.map(item => ({
           key: item.id,
           title: displayNameOfMenuItem(item),
           price: sellPriceOfMenuItem(item),

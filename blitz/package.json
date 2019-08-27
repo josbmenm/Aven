@@ -4,7 +4,7 @@
     "env": "env-downpour",
     "envOptions": {
       "bundleId": "co.onofood.blitz",
-      "displayName": "Kiosk",
+      "displayName": "Blitz",
       "appcenterSecret": "fcbff580-2407-4baf-9c56-1f3a49d8d828",
       "codePushKey": "VtoT-iEfykogiriAIOlvE55G6r0eBJvTELwT7",
       "codePushApp": "OnoFoodCo/Blitz",

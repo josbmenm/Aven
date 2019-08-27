@@ -48,14 +48,20 @@ export default function SendReceiptPage({
       : 'what is your email address?';
   return (
     <ShortBlockFormPage backBehavior={backBehavior} {...props}>
-      <BlockForm style={{flex: 1, justifyContent: 'center'}}>
+      <BlockForm style={{ flex: 1, justifyContent: 'center' }}>
         <BlockFormMessage message="We just need to know..." />
         {error && <BlockFormTitle title="Uh oh! Try again please." />}
-        {isProgressing && <BlockFormTitle title="wait for it" />}
         <BlockFormTitle title={title} />
         <BlockFormRow>{inputs}</BlockFormRow>
         <BlockFormRow>
-          <BlockFormButton title="send receipt" onPress={handleSubmit} />
+          <BlockFormButton
+            title={isProgressing ? '' : 'send receipt'}
+            onPress={handleSubmit}
+          >
+            {isProgressing && (
+              <Spinner color="white" style={{ alignSelf: 'center', top: 4 }} />
+            )}
+          </BlockFormButton>
         </BlockFormRow>
       </BlockForm>
     </ShortBlockFormPage>

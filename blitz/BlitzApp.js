@@ -86,8 +86,10 @@ const SKYNET_HOST_CONFIG = SKYNET_IS_DEV
     }
   : {
       // Skynet prod:
-      useSSL: true,
-      authority: 'onoblends.co',
+      // useSSL: true,
+      // authority: 'onoblends.co',
+      useSSL: false,
+      authority: '192.168.1.81:8840',
     };
 
 const verseSource = createNativeNetworkSource(VERSE_HOST_CONFIG);

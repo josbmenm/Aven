@@ -55,9 +55,11 @@ export function sellPriceOfMenuItem(menuItem) {
   return sellPrice * 100;
 }
 
-export function getFillsOfOrder(menuItem, item, companyConfig) {
+export function getFillsOfOrderItem(menuItem, item, companyConfig) {
+  if (!menuItem || !companyConfig) {
+    return [];
+  }
   const { ingredients } = getSelectedIngredients(menuItem, item, companyConfig);
-
   const KitchenSlots = companyConfig.baseTables.KitchenSlots;
   const KitchenSystems = companyConfig.baseTables.KitchenSystems;
   const requestedFills = ingredients
@@ -75,7 +77,6 @@ export function getFillsOfOrder(menuItem, item, companyConfig) {
           index: 0,
         };
       }
-      console.log(kitchenSlot);
       const kitchenSystemId =
         kitchenSlot.KitchenSystem && kitchenSlot.KitchenSystem[0];
       const kitchenSystem = kitchenSystemId && KitchenSystems[kitchenSystemId];

@@ -11,11 +11,13 @@ import {
   monsterra,
   boldPrimaryFontFace,
 } from '../components/Styles';
-import { computeNextSteps } from '../logic/KitchenSequence';
+import { computeNextSteps } from '../logic/MachineLogic';
+import KitchenSteps from '../logic/KitchenSteps';
 import { getSubsystem, getSubsystemFaults } from '../ono-cloud/OnoKitchen';
 
 import useAsyncError from '../react-utils/useAsyncError';
 import Spinner from '../components/Spinner';
+import KitchenCommands from '../logic/KitchenCommands';
 
 function StatusPuck({ status }) {
   let statusColor = null;
@@ -142,7 +144,6 @@ function FaultZone({ faults }) {
 
 export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   const cloud = useCloud();
-  // const isConnected = useObservable(cloud.isConnected);
   const isConnected = useValue(cloud.connected); // uh....
   const kitchenState = useCloudValue('KitchenState');
   const kitchenConfig = useCloudValue('KitchenConfig');
@@ -243,7 +244,13 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
 
   let nextSteps = null;
   if (restaurantState && !restaurantState.isAutoRunning) {
-    nextSteps = computeNextSteps(restaurantState, kitchenConfig, kitchenState);
+    nextSteps = computeNextSteps(
+      KitchenSteps,
+      restaurantState,
+      kitchenConfig,
+      kitchenState,
+      KitchenCommands,
+    );
     if (nextSteps && nextSteps.length) {
       subMessage = `${nextSteps.length} steps ready`;
     }
@@ -293,6 +300,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
               <View key={i}>
                 <ControlPanelButton
                   title="go step"
+                  disabled={!step.isReady}
                   onPress={() => {
                     step
                       .perform(
@@ -381,7 +389,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
               title="home system"
               disabled={kitchenState.FillSystem_PrgStep_READ !== 0}
               onPress={() => {
-                handleKitchenCommand({ command: 'Home' });
+                handleKitchenCommand({ commandType: 'Home' });
               }}
             />
           )}

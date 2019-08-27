@@ -8,8 +8,9 @@ import TaskInfo from '../components/TaskInfo';
 import RowSection from '../components/RowSection';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
+import cuid from 'cuid';
 
-function TaskRow({ onCancel, taskState }) {
+function TaskRow({ onCancel, onDoNext, taskState, onRemake }) {
   if (!taskState) {
     return null;
   }
@@ -27,7 +28,9 @@ function TaskRow({ onCancel, taskState }) {
           {taskState.fills.length} fills
         </Text>
       )}
-      {onCancel && <Button onPress={onCancel} title="Cancel" />}
+      {onCancel && <Button onPress={onCancel} title="cancel" type="outline" />}
+      {onDoNext && <Button onPress={onDoNext} title="do next" type="outline" />}
+      {onRemake && <Button onPress={onRemake} title="re-make" type="outline" />}
     </View>
   );
 }
@@ -38,7 +41,7 @@ function TaskQueue({ restaurantState, dispatch }) {
   }
   return (
     <React.Fragment>
-      <RowSection title="upcoming tasks">
+      <RowSection title="queued tasks">
         {restaurantState.queue &&
           restaurantState.queue.filter(Boolean).map(taskState => (
             <TaskRow
@@ -46,6 +49,21 @@ function TaskQueue({ restaurantState, dispatch }) {
               taskState={taskState}
               onCancel={() => {
                 dispatch({ type: 'CancelTask', id: taskState.id });
+              }}
+              onDoNext={() => {
+                dispatch({ type: 'DoTaskNext', id: taskState.id });
+              }}
+              onRemake={() => {
+                dispatch({
+                  type: 'QueueTasks',
+                  tasks: [
+                    {
+                      ...taskState,
+                      id: cuid(),
+                      remakeOfTaskId: taskState.id,
+                    },
+                  ],
+                });
               }}
             />
           ))}
@@ -90,13 +108,48 @@ function TaskQueue({ restaurantState, dispatch }) {
           )}
         </RowSection>
       )}
+      <RowSection title="failed tasks">
+        {restaurantState.failedTasks &&
+          restaurantState.failedTasks.filter(Boolean).map(taskState => (
+            <TaskRow
+              key={taskState.id}
+              taskState={taskState}
+              onRemake={() => {
+                dispatch({
+                  type: 'QueueTasks',
+                  tasks: [
+                    {
+                      ...taskState,
+                      id: cuid(),
+                      remakeOfTaskId: taskState.id,
+                    },
+                  ],
+                });
+              }}
+            />
+          ))}
+      </RowSection>
+
       <RowSection title="completed tasks">
         {restaurantState.completedTasks &&
-          restaurantState.completedTasks
-            .filter(Boolean)
-            .map(taskState => (
-              <TaskRow key={taskState.id} taskState={taskState.task} />
-            ))}
+          restaurantState.completedTasks.filter(Boolean).map(completed => (
+            <TaskRow
+              key={completed.id}
+              taskState={completed.task}
+              onRemake={() => {
+                dispatch({
+                  type: 'QueueTasks',
+                  tasks: [
+                    {
+                      ...completed.task,
+                      id: cuid(),
+                      remakeOfTask: completed.task.id,
+                    },
+                  ],
+                });
+              }}
+            />
+          ))}
       </RowSection>
     </React.Fragment>
   );

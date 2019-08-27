@@ -2,7 +2,7 @@ import Animated, { Easing } from 'react-native-reanimated';
 import React from 'react';
 import { monsterra } from './Styles';
 
-export default function Spinner({ color, isSpinning = true }) {
+export default function Spinner({ color, isSpinning = true, style }) {
   const [spinPosition] = React.useState(new Animated.Value(0));
   const [opacity] = React.useState(new Animated.Value(0));
   React.useEffect(() => {
@@ -26,6 +26,7 @@ export default function Spinner({ color, isSpinning = true }) {
         width: 36,
         height: 36,
         tintColor: color || monsterra,
+        ...style,
         transform: [
           {
             rotateZ: Animated.interpolate(spinPosition, {

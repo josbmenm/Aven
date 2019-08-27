@@ -291,6 +291,7 @@ export default function OrderConfirmPage({
   return (
     <FadeTransition
       backgroundColor={'#00000040'}
+      themeOverride={OnoThemeDark}
       background={
         <BlurView
           style={StyleSheet.absoluteFill}

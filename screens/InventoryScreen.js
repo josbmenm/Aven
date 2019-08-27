@@ -17,177 +17,9 @@ import {
 import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
 import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
-import { useRestaurantState } from '../ono-cloud/Kitchen';
+import { useInventoryState } from '../ono-cloud/OnoKitchen';
 import MultiSelect from '../components/MultiSelect';
 import BlockFormInput from '../components/BlockFormInput';
-
-function getCupsInventoryState(restaurantState, kitchenState) {
-  let isEmpty = false;
-  let isErrored = !kitchenState.Denester_NoFaults_READ;
-  let estimatedRemaining = '20+';
-  if (kitchenState.Denester_DispensedSinceLow_READ) {
-    estimatedRemaining = 19 - kitchenState.Denester_DispensedSinceLow_READ;
-    isEmpty = estimatedRemaining <= 0;
-  }
-  return {
-    estimatedRemaining,
-    isEmpty,
-    isErrored,
-  };
-}
-
-function getInventoryState(restaurantState, kitchenState) {
-  if (!kitchenState || !restaurantState) {
-    return {};
-  }
-  const slots = {};
-
-  return {
-    cups: getCupsInventoryState(restaurantState, kitchenState),
-    slots,
-  };
-}
-
-function useInventoryState() {
-  const cloud = useCloud();
-  const config = useCompanyConfig();
-  const kitchenState = useCloudValue('KitchenState');
-  const [restaurantState, dispatch] = useRestaurantState();
-  const inventoryState = getInventoryState(restaurantState, kitchenState);
-  const tables = config && config.baseTables;
-  if (!tables || !restaurantState) {
-    return [null, dispatch];
-  }
-  const ingredientSlots = Object.values(tables.KitchenSlots)
-    .sort((a, b) => {
-      a._index - b._index;
-    })
-    .map(slot => {
-      const Ingredient =
-        tables.Ingredients[slot.Ingredient && slot.Ingredient[0]];
-      const KitchenSystem =
-        tables.KitchenSystems[slot.KitchenSystem && slot.KitchenSystem[0]];
-      return {
-        ...slot,
-        Ingredient,
-        KitchenSystem,
-      };
-    });
-  const cupInventory = inventoryState.cups || {};
-  const inventorySlots = [
-    {
-      id: 'cups',
-      name: 'Cups',
-      settings: {},
-      disableFilling: true,
-      isCups: true,
-      estimatedRemaining: cupInventory.estimatedRemaining,
-      isEmpty: cupInventory.isEmpty,
-      isErrored: cupInventory.isErrored,
-      ShotCapacity: 50,
-      ShotsAfterLow: 18,
-      onDispenseOne: async () => {
-        await cloud.dispatch({
-          type: 'KitchenCommand',
-          command: 'DispenseCup',
-        });
-        await dispatch({
-          type: 'DidDispenseCup',
-        });
-      },
-    },
-    ...ingredientSlots.map(slot => {
-      const invState =
-        restaurantState.ingredientInventory &&
-        restaurantState.ingredientInventory[slot.id];
-      const dispensedSinceLow =
-        kitchenState &&
-        kitchenState[
-          `${slot.KitchenSystem.Name}_Slot_${slot.Slot}_DispensedSinceLow_READ`
-        ];
-      const isLowSensed =
-        kitchenState &&
-        kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_IsLow_READ`];
-      const isErrored =
-        kitchenState &&
-        kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_Error_READ`];
-      return {
-        ...slot,
-        settings:
-          (restaurantState.slotSettings &&
-            restaurantState.slotSettings[slot.id]) ||
-          {},
-        estimatedRemaining: invState && invState.estimatedRemaining,
-        dispensedSinceLow,
-        isEmpty: false,
-        isErrored,
-        isLowSensed,
-        name: slot.Ingredient.Name,
-        photo: slot.Ingredient.Icon,
-        color: slot.Ingredient.Color,
-        onDispense: async amount => {
-          await cloud.dispatch({
-            type: 'KitchenCommand',
-            command: 'DispenseOnly',
-            params: {
-              amount: amount,
-              slot: slot.Slot,
-              system: slot.KitchenSystem.FillSystemID,
-            },
-          });
-          await dispatch({
-            type: 'DidDispense',
-            slotId: slot.id,
-            amount: amount,
-          });
-        },
-        onPurgeSmall: async () => {
-          const amount = 40;
-          await cloud.dispatch({
-            type: 'KitchenCommand',
-            command: 'DispenseOnly',
-            params: {
-              amount,
-              slot: slot.Slot,
-              system: slot.KitchenSystem.FillSystemID,
-            },
-          });
-          await dispatch({
-            type: 'DidDispense',
-            slotId: slot.id,
-            amount,
-          });
-        },
-        onPurgeLarge: async () => {
-          const amount = 120;
-          await cloud.dispatch({
-            type: 'KitchenCommand',
-            command: 'DispenseOnly',
-            params: {
-              amount,
-              slot: slot.Slot,
-              system: slot.KitchenSystem.FillSystemID,
-            },
-          });
-          await dispatch({
-            type: 'DidDispense',
-            slotId: slot.id,
-            amount,
-          });
-        },
-        onSetEstimatedRemaining: value => {
-          return dispatch({
-            type: 'DidFillSlot',
-            slotId: slot.id,
-            estimatedRemaining: value,
-          });
-        },
-      };
-    }),
-  ];
-
-  return [{ inventorySlots }, dispatch];
-}
 
 function PopoverTitle({ children }) {
   return (
@@ -247,7 +79,7 @@ function SetFillForm({ slot, onClose }) {
 }
 
 function DispenseForm({ slot, onClose, onDispense }) {
-  const [amount, setAmount] = React.useState(1);
+  const [amount, setAmount] = React.useState('2');
   function handleSubmit() {}
   const { inputs } = useFocus({
     onSubmit: handleSubmit,
@@ -336,33 +168,41 @@ function InventoryRow({ slot, dispatch }) {
               tintColor={slot.color}
             />
           )}
-          <Text style={{ ...titleStyle, fontSize: 24 }}>
+          <Text style={{ ...titleStyle, fontSize: 24, marginHorizontal: 8 }}>
             {slot.name}
             {slot.Slot != null &&
               ` (${slot.KitchenSystem.Name} slot ${slot.Slot})`}
           </Text>
         </View>
-        {!!estimatedRemaining && (
-          <Tag
-            color={Tag.positiveColor}
-            title={`${estimatedRemaining} remaining`}
-          />
-        )}
-        {!!slot.isErrored && (
-          <Tag color={Tag.negativeColor} title={`Errored`} />
-        )}
-        {!!slot.isEmpty && <Tag color={Tag.negativeColor} title={`Empty`} />}
-        {!!slot.dispensedSinceLow && (
-          <Tag
-            color={Tag.warningColor}
-            title={`${slot.dispensedSinceLow} since low`}
-          />
-        )}
-        <InfoText>
-          Capacity: {slot.ShotCapacity}. Has {slot.ShotsAfterLow} shots after
-          low.
-        </InfoText>
-        {percentFull != null && <InfoText>{percentFull}% full</InfoText>}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+          {estimatedRemaining != null && (
+            <Tag
+              color={
+                estimatedRemaining > 0 ? Tag.positiveColor : Tag.negativeColor
+              }
+              title={`${estimatedRemaining} remaining`}
+            />
+          )}
+          {slot.settings && slot.settings.disabledMode === true && (
+            <Tag color={Tag.negativeColor} title="Disabled" />
+          )}
+          {slot.settings && slot.settings.disabledMode === 'hard' && (
+            <Tag color={Tag.warningColor} title="Hard Enabled" />
+          )}
+          {slot.settings && slot.settings.optional && (
+            <Tag color={Tag.warningColor} title="Optional Ingredient" />
+          )}
+          {!!slot.isErrored && (
+            <Tag color={Tag.negativeColor} title={`Errored`} />
+          )}
+          {!!slot.isEmpty && <Tag color={Tag.negativeColor} title={`Empty`} />}
+          {!!slot.dispensedSinceLow && (
+            <Tag
+              color={Tag.warningColor}
+              title={`${slot.dispensedSinceLow} since low`}
+            />
+          )}
+        </View>
       </View>
 
       <View
@@ -399,31 +239,32 @@ function InventoryRow({ slot, dispatch }) {
         >
           <MultiSelect
             options={[
-              { name: 'enable', value: true },
-              { name: 'disable', value: false },
+              { name: 'disable', value: true },
+              { name: 'hard enable', value: 'hard' },
+              { name: 'enable', value: false },
             ]}
-            onValue={enabled => {
+            onValue={disabledMode => {
               dispatch({
                 type: 'SetSlotSettings',
                 slotId: slot.id,
-                enabled,
+                disabledMode,
               });
             }}
-            value={!!slot.settings.enabled}
+            value={slot.settings.disabledMode || false}
           />
           <MultiSelect
             options={[
-              { name: 'mandatory', value: true },
-              { name: 'optional', value: false },
+              { name: 'optional', value: true },
+              { name: 'mandatory', value: false },
             ]}
-            onValue={mandatory => {
+            onValue={optional => {
               dispatch({
                 type: 'SetSlotSettings',
                 slotId: slot.id,
-                mandatory,
+                optional,
               });
             }}
-            value={!!slot.settings.mandatory}
+            value={!!slot.settings.optional}
           />
         </View>
       )}

@@ -104,7 +104,7 @@ export const OnoThemeDark = {
   ...OnoTheme,
   colors: {
     ...colors,
-    invertedText: '#111111',
+    invertedText: '#222',
     primary: 'white',
     primaryBg: '#FFFFFFDD',
   },

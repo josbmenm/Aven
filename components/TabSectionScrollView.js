@@ -76,14 +76,14 @@ export default function TabSectionScrollView({
     }
   }
   const meta = useRef({});
-  useEffect(() => {
-    if (activeSection === expectedActiveSection) return;
-    if (sectionMeasurements[activeSection.name] != null && scrollRef.current) {
-      scrollRef.current
-        .getScrollResponder()
-        .scrollTo({ y: sectionMeasurements[activeSection.name].y });
-    }
-  }, [activeSection, sectionMeasurements, expectedActiveSection]);
+  // useEffect(() => {
+  //   if (activeSection === expectedActiveSection) return;
+  //   if (sectionMeasurements[activeSection.name] != null && scrollRef.current) {
+  //     scrollRef.current
+  //       .getScrollResponder()
+  //       .scrollTo({ y: sectionMeasurements[activeSection.name].y });
+  //   }
+  // }, [activeSection, sectionMeasurements, expectedActiveSection]);
   return (
     <React.Fragment>
       <View

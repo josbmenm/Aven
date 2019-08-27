@@ -1,24 +1,18 @@
 import React from 'react';
-import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
-import Button from './Button';
+import { ScrollView, Text, TouchableOpacity } from 'react-native';
 import { Easing } from 'react-native-reanimated';
-import BlockFormInput from './BlockFormInput';
 import { usePopover } from '../views/Popover';
 import AirtableImage from './AirtableImage';
 import KeyboardPopover from './KeyboardPopover';
-import useFocus from '../navigation-hooks/useFocus';
-import { useMenu, useCompanyConfig } from '../ono-cloud/OnoKitchen';
-import { titleStyle } from './Styles';
-import { getFillsOfOrder } from '../logic/configLogic';
+import { useMenu } from '../ono-cloud/OnoKitchen';
+import { titleStyle, monsterra } from './Styles';
 
 export default function useBlendPickPopover({
   blendId,
   setBlendId,
   setBlendName,
-  setBlendFills,
 }) {
   const menu = useMenu();
-  const companyConfig = useCompanyConfig();
   const { onPopover } = usePopover(
     ({ onClose, ...props }) => {
       return (
@@ -34,12 +28,6 @@ export default function useBlendPickPopover({
                   }}
                   onPress={() => {
                     setBlendName(blend.Recipe.Name);
-                    const fills = getFillsOfOrder(
-                      blend,
-                      { customization: null },
-                      companyConfig,
-                    );
-                    setBlendFills(fills);
                     setBlendId(blend.id);
                     onClose();
                   }}
@@ -48,7 +36,13 @@ export default function useBlendPickPopover({
                     style={{ width: 100, height: 100 }}
                     image={blend.Recipe['Recipe Image']}
                   />
-                  <Text style={{ ...titleStyle, alignSelf: 'center' }}>
+                  <Text
+                    style={{
+                      ...titleStyle,
+                      color: blendId === blend.id ? 'black' : monsterra,
+                      alignSelf: 'center',
+                    }}
+                  >
                     {blend.Recipe.Name}
                   </Text>
                 </TouchableOpacity>

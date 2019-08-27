@@ -11,6 +11,7 @@ import Subtitle from './Subtitle';
 import useFocus from '../navigation-hooks/useFocus';
 import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
+import Tag from './Tag';
 
 function useSlotsWithIngredients() {
   const config = useCompanyConfig();
@@ -119,12 +120,12 @@ function useSetFillPopover({ fill, fills, onFills }) {
   return onFillPopover;
 }
 
-function FillText({ children }) {
+function FillText({ children, color }) {
   return (
     <Text
       style={{
         ...primaryFontFace,
-        color: '#111',
+        color: color || '#111',
         fontSize: 16,
       }}
     >
@@ -145,10 +146,21 @@ function SetFillButton({ fill, fills, onFills }) {
     />
   );
 }
-export default function FillList({ fills, onFills }) {
+export default function FillList({ fills, inventoryIngredients, onFills }) {
   return (
     fills &&
     fills.map((fill, fillIndex) => {
+      const inv =
+        inventoryIngredients && inventoryIngredients[fill.ingredientId];
+      let fillTextColor = Tag.positiveColor;
+      if (!inv || !inv.settings) {
+      } else if (inv.settings.disabledMode === 'hard') {
+        fillTextColor = '#111';
+      } else if (inv.settings.disabledMode) {
+        fillTextColor = Tag.negativeColor;
+      } else if (inv.estimatedRemaining < fill.amount) {
+        fillTextColor = Tag.negativeColor;
+      }
       return (
         <View
           key={fillIndex}
@@ -159,8 +171,21 @@ export default function FillList({ fills, onFills }) {
               image={fill.ingredientImage}
               style={{ width: 50, height: 50 }}
             />
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-              <FillText>{fill.ingredientName}</FillText>
+            <View
+              style={{ flex: 1, alignItems: 'center', flexDirection: 'row' }}
+            >
+              <FillText color={fillTextColor}>{fill.ingredientName}</FillText>
+              {inv && (
+                <Text
+                  style={{
+                    color: '#333',
+                    ...primaryFontFace,
+                    marginHorizontal: 6,
+                  }}
+                >
+                  ({inv.estimatedRemaining} remain)
+                </Text>
+              )}
             </View>
 
             <SetFillButton fill={fill} fills={fills} onFills={onFills} />

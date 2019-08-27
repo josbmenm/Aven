@@ -92,7 +92,6 @@ export default class FadeTransition extends React.Component {
         </View>
       </View>
     );
-
     if (themeOverride) {
       return <ThemeProvider value={themeOverride}>{innards}</ThemeProvider>;
     }

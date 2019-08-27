@@ -4,7 +4,7 @@ import {
   getOrderSummary,
   displayNameOfOrderItem,
   getItemCustomizationSummary,
-  getFillsOfOrder,
+  getFillsOfOrderItem,
 } from '../logic/configLogic';
 import cuid from 'cuid';
 
@@ -106,7 +106,7 @@ export default async function placeOrder(
       }
       const { menuItemId } = item;
       const menuItem = blends.find(b => b.id === menuItemId);
-      const fills = getFillsOfOrder(menuItem, item, companyConfig);
+      const fills = getFillsOfOrderItem(menuItem, item, companyConfig);
       const orderName =
         order.orderName.firstName + ' ' + order.orderName.lastName;
       const blendName = displayNameOfOrderItem(item, item.menuItem);

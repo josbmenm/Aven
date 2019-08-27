@@ -133,6 +133,17 @@ function FillsDisplay({ state }) {
             </Text>
           ))}
       </View>
+      {state.fillsFailed && (
+        <View style={{ flex: 1 }}>
+          <Subtitle title="Failed Fills" />
+          {state.fillsFailed &&
+            state.fillsFailed.map((fill, i) => (
+              <Text key={i}>
+                {fill.system}.{fill.slot} x {fill.amount}
+              </Text>
+            ))}
+        </View>
+      )}
     </View>
   );
 }

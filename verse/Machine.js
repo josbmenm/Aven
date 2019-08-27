@@ -4,6 +4,8 @@ const { Controller, Tag, EthernetIP, TagGroup } = require('ethernet-ip');
 const { INT, BOOL } = EthernetIP.CIP.DataTypes.Types;
 const shallowEqual = require('fbjs/lib/shallowEqual');
 
+import { computeNextSteps } from '../logic/MachineLogic';
+
 const getTypeOfSchema = typeName => {
   switch (typeName) {
     case 'boolean':
@@ -107,7 +109,7 @@ export function connectMachine({
   configStream,
   kitchenStateDoc,
   restaurantStateStream,
-  computeSequencerNextSteps,
+  sequencerSteps,
   onDispatcherAction,
   plcIP,
   logBehavior,
@@ -323,15 +325,24 @@ export function connectMachine({
         const endedActionId = currentState[`${subsystem}_ActionIdEnded_READ`];
         const isSystemIdle = currentState[`${subsystem}_PrgStep_READ`] === 0;
         const isActionReceived = startedActionId === resolver.actionId;
-        const isActionComplete = endedActionId === resolver.actionId;
+        const isActionComplete =
+          noFaults && endedActionId === resolver.actionId;
         if (isActionReceived && (isSystemIdle || isActionComplete)) {
           logBehavior(
-            `${noFaults ? 'Done with' : 'FAULTED on'} ${resolver.actionId}`,
+            `${isActionComplete ? 'Done with' : 'FAULTED OR ERRORED on'} ${
+              resolver.actionId
+            }`,
           );
-          if (noFaults) {
+          if (isActionComplete) {
             resolver.resolve();
           } else {
-            resolver.reject(new Error(`System "${subsystem}" has faulted`));
+            if (noFaults) {
+              resolver.reject(
+                new Error(`System "${subsystem}" has experienced a soft error`),
+              );
+            } else {
+              resolver.reject(new Error(`System "${subsystem}" has faulted`));
+            }
           }
         }
       });
@@ -408,10 +419,10 @@ export function connectMachine({
   }
 
   async function command(action) {
-    const commandType = commands[action.command];
+    const commandType = commands[action.commandType];
 
     if (!commandType) {
-      throw new Error(`Unknown kitchen command "${action.command}"`);
+      throw new Error(`Unknown kitchen command "${action.commandType}"`);
     }
     const { valueParamNames, pulse, subsystem } = commandType;
     const values = { ...commandType.values };
@@ -510,17 +521,38 @@ export function connectMachine({
     if (!restaurantState.isAutoRunning)
       return verboseLog('Is not auto-running');
     if (!restaurantState.isAttached) return verboseLog('Is not attached');
-    const nextSteps = computeSequencerNextSteps(
+    const nextSteps = computeNextSteps(
+      sequencerSteps,
       restaurantState,
       kitchenConfig,
       kitchenState,
+      commands,
     );
     if (!nextSteps || !nextSteps.length) {
       return verboseLog('No steps available to take');
     }
 
     nextSteps.forEach(nextStep => {
-      const commandType = commands[nextStep.command.command];
+      if (!nextStep.isSequencerStateReady) {
+        console.log(
+          'Command waiting for restaurant state to be ready',
+          nextStep.command,
+        );
+        return;
+      }
+
+      if (!nextStep.isCommandReady) {
+        console.log(
+          'Command waiting for machine to be ready',
+          nextStep.command,
+        );
+        return;
+      }
+
+      if (!nextStep.isReady) {
+        return;
+      }
+      const commandType = commands[nextStep.command.commandType];
       const subsystem = commandType.subsystem;
       if (currentStepPromises[subsystem]) {
         return;

@@ -55,14 +55,14 @@ function BackgroundLayout({ children, background, photoHasMargin }) {
       </View>
       {children}
 
-      <View
+      {/* <View
         style={{
           height: 1,
           alignSelf: 'stretch',
           marginHorizontal: largeHorizontalPadding,
           backgroundColor: '#00000014',
         }}
-      />
+      /> */}
     </View>
   );
 }

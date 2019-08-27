@@ -42,6 +42,7 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 import { Easing } from 'react-native-reanimated';
 import ListAnimation from './ListAnimation';
 import useFocus from '../navigation-hooks/useFocus';
+import Spinner from './Spinner';
 
 const summaryRowLabelStyle = {
   color: highlightPrimaryColor,
@@ -293,6 +294,7 @@ function BlockFormErrorRow({ error }) {
 
 function PromoCodeForm({ onClose, order, cloud }) {
   const [error, setError] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [promoCode, setPromoCode] = React.useState('');
   const inputRenderers = [
     inputProps => (
@@ -309,12 +311,14 @@ function PromoCodeForm({ onClose, order, cloud }) {
 
   function handleSubmit() {
     setError(null);
+    setIsLoading(true);
     cloud
       .dispatch({
         type: 'ValidatePromoCode',
         promoCode,
       })
       .then(validPromo => {
+        setIsLoading(false);
         if (!validPromo) {
           setError({
             message: 'This promo code is invalid. Please try again.',
@@ -328,6 +332,7 @@ function PromoCodeForm({ onClose, order, cloud }) {
         }));
       })
       .catch(e => {
+        setIsLoading(false);
         setError(e);
       });
   }
@@ -343,7 +348,14 @@ function PromoCodeForm({ onClose, order, cloud }) {
       <BlockFormErrorRow error={error} />
       <BlockFormRow>
         <BlockFormButton title="cancel" type="outline" onPress={onClose} />
-        <BlockFormButton title="add code" onPress={handleSubmit} />
+        <BlockFormButton
+          title={isLoading ? '' : 'add code'}
+          onPress={handleSubmit}
+        >
+          {isLoading && (
+            <Spinner color="white" style={{ alignSelf: 'center', top: 4 }} />
+          )}
+        </BlockFormButton>
       </BlockFormRow>
     </View>
   );

@@ -89,7 +89,18 @@ function RestaurantReducerFn(state = {}, action) {
     case 'CancelTask': {
       return {
         ...defaultReturn(),
-        queue: (state.queue || []).filter(order => order.id !== action.id),
+        queue: (state.queue || []).filter(task => task.id !== action.id),
+      };
+    }
+    case 'DoTaskNext': {
+      const lastQueue = state.queue || [];
+      const task = lastQueue.find(t => t.id === action.id);
+      if (!task) {
+        return defaultReturn;
+      }
+      return {
+        ...defaultReturn(),
+        queue: [task, ...lastQueue.filter(task => task.id !== action.id)],
       };
     }
     case 'SetSlotSettings': {
@@ -235,6 +246,35 @@ function RestaurantReducerFn(state = {}, action) {
         fill: {
           ...state.fill,
           fillsCompleted: [...(state.fill.fillsCompleted || []), completedFill],
+          fillsRemaining,
+        },
+      };
+    }
+    case 'DidFailFill': {
+      if (!state.fill) {
+        return defaultReturn();
+      }
+      let failedFill = {
+        failedFillTime: Date.now(),
+        system: action.system,
+        amount: action.amount,
+        slot: action.slot,
+      };
+      let fillsRemaining = (state.fill.fillsRemaining || []).filter(fill => {
+        const isTheFill =
+          action.system === fill.system &&
+          action.amount === fill.amount &&
+          action.slot === fill.slot;
+        if (isTheFill) {
+          failedFill = { ...fill, failedFillTime: Date.now() };
+        }
+        return !isTheFill;
+      });
+      return {
+        ...defaultReturn(),
+        fill: {
+          ...state.fill,
+          fillsFailed: [...(state.fill.fillsFailed || []), failedFill],
           fillsRemaining,
         },
       };
