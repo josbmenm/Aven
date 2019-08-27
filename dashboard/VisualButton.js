@@ -18,7 +18,6 @@ function VisualButton({
   ...rest
 }) {
   const theme = useTheme();
-
   let linkStyle =
     type === 'link'
       ? {
@@ -71,6 +70,7 @@ function VisualButton({
           opacity: disabled ? 0.5 : 1,
           minHeight,
           paddingHorizontal,
+          alignItems: 'center',
           ...linkStyle,
           ...buttonStyle,
         }}
@@ -82,7 +82,7 @@ function VisualButton({
             style={{
               fontFamily: theme.fonts.bold,
               fontSize: size === 'large' ? 24 : size === 'small' ? 16 : 20,
-              lineHeight: 24,
+              lineHeight: size === 'large' ? 28 : 24,
               textAlign: 'center',
               color:
                 type === 'solid'
