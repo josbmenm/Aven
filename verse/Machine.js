@@ -1,10 +1,9 @@
 import { combineStreams } from '../cloud-core/createMemoryStream';
+import { computeNextSteps } from '../logic/MachineLogic';
 
 const { Controller, Tag, EthernetIP, TagGroup } = require('ethernet-ip');
 const { INT, BOOL } = EthernetIP.CIP.DataTypes.Types;
 const shallowEqual = require('fbjs/lib/shallowEqual');
-
-import { computeNextSteps } from '../logic/MachineLogic';
 
 const getTypeOfSchema = typeName => {
   switch (typeName) {
