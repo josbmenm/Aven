@@ -156,6 +156,7 @@ export default function createTerminalHooks(StripeTerminal) {
     const [hasRetried, setHasRetried] = useState(false);
 
     useEffect(() => {
+      if (!options.amount) return;
       if (
         paymentStatus !== StripeTerminal.PaymentStatusNotReady &&
         (!hasCreatedPayment || (readerError && !hasRetried && !cardInserted))
@@ -202,11 +203,11 @@ export default function createTerminalHooks(StripeTerminal) {
     // Cleanup: abort if unmounted midway through payment intent creation process.
     useEffect(() => {
       return () => {
-        if (!isCompleted) {
+        if (hasCreatedPayment && !isCompleted) {
           StripeTerminal.abortCreatePayment();
         }
       };
-    }, []);
+    }, [hasCreatedPayment, isCompleted]);
 
     return {
       ...state,

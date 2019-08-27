@@ -6,13 +6,14 @@ import useEmptyOrderEscape from './useEmptyOrderEscape';
 
 export default function CollectNameScreen(props) {
   const { navigate } = useNavigation();
-  const { setOrderName } = useOrder();
+  const { setOrderName, order } = useOrder();
   useEmptyOrderEscape();
   return (
     <CollectNamePage
       {...props}
+      onChangeName={setOrderName}
+      initialName={(order && order.value.get().orderName) || {}}
       onSubmit={name => {
-        setOrderName(name);
         navigate('OrderConfirm');
       }}
     />

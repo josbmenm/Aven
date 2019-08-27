@@ -86,6 +86,7 @@ function RollupRow({ label, amount, fakeAmount, textStyle }) {
               <Text
                 style={{
                   textDecorationLine: 'line-through',
+                  marginHorizontal: 16,
                   ...primaryFontFace,
                 }}
               >

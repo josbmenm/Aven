@@ -84,7 +84,8 @@ YellowBox.ignoreWarnings([
   'background tab',
   'Async Storage has been',
   'with an invalid bridge',
-  'CardReaderLog',
+  // 'CardReaderLog',
+  'following components: AnimatedCom',
 ]);
 
 registerDispatcher(cloudSource.dispatch);

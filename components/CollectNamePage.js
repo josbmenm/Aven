@@ -8,13 +8,26 @@ import BlockFormButton from './BlockFormButton';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import useFocus from '../navigation-hooks/useFocus';
 
-export default function CollectNamePage({ onSubmit, backBehavior, ...props }) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+export default function CollectNamePage({
+  onSubmit,
+  onChangeName,
+  backBehavior,
+  initialName,
+  ...props
+}) {
+  const [firstName, setFirstName] = useState(initialName.firstName || '');
+  const [lastName, setLastName] = useState(initialName.lastName || '');
 
   function handleSubmit() {
-    onSubmit({ firstName, lastName });
+    const finalResult = { firstName, lastName };
+    onChangeName(finalResult);
+    onSubmit(finalResult);
   }
+
+  React.useEffect(() => {
+    onChangeName({ firstName, lastName });
+    // we are doing this asyncronously because the submit button handles the sync saving, and saving the name in the background is less important than the core form experience
+  }, [firstName, lastName]);
 
   const inputRenderers = [
     inputProps => (
