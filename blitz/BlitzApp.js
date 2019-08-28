@@ -287,7 +287,7 @@ function SelectModeApp() {
       dispatch({ type: 'DeviceOnline', deviceId });
     }
   }, [deviceId]);
-  const controlState = devices.find(d => d.deviceId !== deviceId);
+  const controlState = devices.find(d => d.deviceId === deviceId);
   const mode = controlState && controlState.mode;
   const name = controlState && controlState.name;
 
