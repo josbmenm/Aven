@@ -11,9 +11,13 @@
     "aven:start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
+    "appcenter": "^2.3.0",
+    "appcenter-analytics": "^2.3.0",
+    "appcenter-crashes": "^2.3.0",
     "react": "16.9.0",
     "react-native": "0.60.5",
     "react-native-blur": "^3.2.2",
+    "react-native-code-push": "^5.6.1",
     "react-native-fast-image": "^7.0.2",
     "react-native-gesture-handler": "^1.1.0",
     "react-native-linear-gradient": "^2.5.4",
@@ -32,7 +36,6 @@
     "jest": "^24.8.0",
     "metro-react-native-babel-preset": "^0.55.0",
     "react-test-renderer": "16.8.6",
-    "react-native-code-push": "^5.6.1",
     "reactotron-react-native": "^2.1.5"
   },
   "jest": {

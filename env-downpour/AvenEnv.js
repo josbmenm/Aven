@@ -26,6 +26,7 @@ module.exports = {
     const {
       bundleId,
       displayName,
+      appcenterSecret,
       codePushKey,
       codePushChannel,
       codePushApp,
@@ -49,7 +50,13 @@ module.exports = {
     await fs.writeFile(xprojPath, xprojOut);
 
     const infoPath = `${location}/ios/downpour/Info.plist`;
-    const infoData = fs.readFileSync(infoPath, { encoding: 'utf8' });
+    const infoTemplatePath = `${location}/ios/downpour/Info.template.plist`;
+    const appCenterInfoPath = `${location}/ios/downpour/AppCenter-Config.plist`;
+    const appCenterInfoTemplatePath = `${location}/ios/downpour/AppCenter-Config.template.plist`;
+    const infoData = fs.readFileSync(infoTemplatePath, { encoding: 'utf8' });
+    const appCenterInfoData = fs.readFileSync(appCenterInfoTemplatePath, {
+      encoding: 'utf8',
+    });
     const infoOut = infoData
       .replace(
         /<key>CFBundleDisplayName<\/key>\n	<string>.*<\/string>/,
@@ -61,7 +68,13 @@ module.exports = {
         `<key>CodePushDeploymentKey</key>
 	<string>${codePushKey}</string>`,
       );
+    const appCenterInfoOut = appCenterInfoData.replace(
+      /<key>AppSecret<\/key>\n	<string>.*<\/string>/,
+      `<key>AppSecret</key>
+	<string>${appcenterSecret}</string>`,
+    );
     await fs.writeFile(infoPath, infoOut);
+    await fs.writeFile(appCenterInfoPath, appCenterInfoOut);
 
     await fs.writeFile(
       pathJoin(location, 'index.js'),
