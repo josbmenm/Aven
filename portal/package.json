@@ -4,11 +4,12 @@
     "env": "env-downpour",
     "envOptions": {
       "bundleId": "co.onofood.portal",
-      "displayName": "Control",
+      "displayName": "Portal",
       "appcenterSecret": "52542d85-9a56-4246-956d-ffd8f22b7788",
       "codePushKey": "_3pcIaFvPpBPLkUNdCILthOOP-fqry0UbYIiN",
       "codePushApp": "OnoFoodCo/Portal",
-      "codePushChannel": "Production"
+      "codePushChannel": "Production",
+      "appIcon": "PortalIcon.png"
     },
     "srcDependencies": [
       "dashboard",

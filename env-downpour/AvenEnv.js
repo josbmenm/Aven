@@ -30,6 +30,7 @@ module.exports = {
       codePushKey,
       codePushChannel,
       codePushApp,
+      appIcon,
     } = appPkg.aven.envOptions;
     const distPkgPath = pathJoin(location, 'package.json');
     let outDistPkg = {
@@ -49,6 +50,9 @@ module.exports = {
     );
     await fs.writeFile(xprojPath, xprojOut);
 
+    const appIconPath = appIcon
+      ? `${srcDir}/${appName}/${appIcon}`
+      : `${location}/DefaultIcon.png`;
     const infoPath = `${location}/ios/downpour/Info.plist`;
     const infoTemplatePath = `${location}/ios/downpour/Info.template.plist`;
     const appCenterInfoPath = `${location}/ios/downpour/AppCenter-Config.plist`;
@@ -57,6 +61,37 @@ module.exports = {
     const appCenterInfoData = fs.readFileSync(appCenterInfoTemplatePath, {
       encoding: 'utf8',
     });
+    const IMAGE_TARGETS = {
+      'IconArtwork.png': 1024,
+      'icon_20pt@2x.png': 40,
+      'icon_60pt@3x.png': 180,
+      'icon_20pt@3x.png': 60,
+      'icon_29pt@2x.png': 58,
+      'icon_40pt@2x.png': 80,
+      'icon_76pt.png': 76,
+      'icon_20pt.png': 20,
+      'icon_29pt@3x.png': 87,
+      'icon_40pt@3x.png': 120,
+      'icon_76pt@2x.png': 152,
+      'icon_29pt.png': 29,
+      'icon_40pt.png': 40,
+      'icon_60pt@2x.png': 120,
+      'icon_83.5@2x.png': 167,
+    };
+    await Promise.all(
+      Object.entries(IMAGE_TARGETS).map(async ([iconName, size]) => {
+        const iconDest = `${location}/ios/downpour/Images.xcassets/AppIcon.appiconset/${iconName}`;
+        await spawn('convert', [
+          '-resize',
+          `${size}X${size}`,
+          appIconPath,
+          iconDest,
+        ]);
+      }),
+    );
+    console.log(
+      `Did resize app icons and install to ${location}/ios/downpour/Images.xcassets/AppIcon.appiconset`,
+    );
     const infoOut = infoData
       .replace(
         /<key>CFBundleDisplayName<\/key>\n	<string>.*<\/string>/,
