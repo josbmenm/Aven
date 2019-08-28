@@ -350,6 +350,7 @@ async function sync(appEnv, location, appName, appPkg, srcDir) {
     appName,
     appPkg,
     distPkg,
+    srcDir,
   });
 
   return { srcDeps };
@@ -365,9 +366,7 @@ async function runStart(argv) {
   appState = await getAppLocation(appName, appPkg, appEnv, appState);
   const goSync = async () => {
     console.log(
-      `🌐 🏹 Syncronizing Workspace to App "${appName}" at ${
-        appState.location
-      }`,
+      `🌐 🏹 Syncronizing Workspace to App "${appName}" at ${appState.location}`,
     );
     return await sync(appEnv, appState.location, appName, appPkg, srcDir);
   };
