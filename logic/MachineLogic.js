@@ -78,9 +78,9 @@ export function computeNextSteps(
               (await onDispatcherAction(successRestaurantAction));
             await delay(30);
           } catch (e) {
-            console.error('Failed to perform command', e);
             failureRestaurantAction &&
               (await onDispatcherAction(failureRestaurantAction));
+            throw e;
           }
           return resp;
         },

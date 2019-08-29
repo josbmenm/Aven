@@ -21,19 +21,6 @@ import { log, error, setLoggerMode } from '../logger/logger';
 
 setLoggerMode(process.env.NODE_ENV === 'production' ? 'json' : 'debug');
 
-let lastT = null;
-function logBehavior(msg) {
-  const t = Date.now();
-  let outMsg = `${t} `;
-  if (lastT) {
-    const deltaT = t - lastT;
-    outMsg += `(${deltaT} ms since last) `;
-  }
-  outMsg += ' - ' + msg;
-  lastT = t;
-  console.log(outMsg);
-}
-
 const getEnv = c => process.env[c];
 
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
@@ -220,7 +207,6 @@ const startVerseServer = async () => {
         // }
         return sideEffects;
       },
-      logBehavior,
       configStream: kitchenConfigStream,
       restaurantStateStream: cloud.get('RestaurantState').value.stream,
       onDispatcherAction: cloud.get('RestaurantActions').putTransactionValue,
@@ -296,7 +282,6 @@ const startVerseServer = async () => {
       await cloud.close();
       await webService.close();
       kitchen && (await kitchen.close());
-      console.log('😵 Server Closed');
     },
   };
 };

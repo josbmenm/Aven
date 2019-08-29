@@ -1,5 +1,6 @@
 import { combineStreams } from '../cloud-core/createMemoryStream';
 import { computeNextSteps } from '../logic/MachineLogic';
+import { log, error, fatal } from '../logger/logger';
 
 const { Controller, Tag, EthernetIP, TagGroup } = require('ethernet-ip');
 const { INT, BOOL } = EthernetIP.CIP.DataTypes.Types;
@@ -111,7 +112,6 @@ export function connectMachine({
   sequencerSteps,
   onDispatcherAction,
   plcIP,
-  logBehavior,
   computeSideEffects,
 }) {
   let readyPLC = null;
@@ -142,14 +142,15 @@ export function connectMachine({
         mainPLC.destroy();
         return;
       }
-      logBehavior(
-        'PLC Connected. (' + mainPLC.properties.name + ' at ' + plcIP + ')',
-      );
+      log('MachineConnected', {
+        plcName: mainPLC.properties.name,
+        ipAddress: plcIP,
+      });
       readyPLC = mainPLC;
       Array.from(readyHandlers).forEach(h => h());
     });
     connectingPLC.catch(err => {
-      console.error('PLC Connection Error', err);
+      error('MachineError', { code: 'CannotConnectPLC' });
       readyPLC = null;
       connectingPLC = null;
     });
@@ -159,6 +160,7 @@ export function connectMachine({
     connectPLC();
     await waitForConnection();
     if (!readyPLC) {
+      error('MachineError', { code: 'CannotGetPLC' });
       throw new Error('PLC not ready!');
     }
     return readyPLC;
@@ -189,7 +191,10 @@ export function connectMachine({
 
     await new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
-        console.error(`Tag read timeout after ${PLC_READ_TIMEOUT_SEC} seconds`);
+        error('MachineError', {
+          code: 'TagReadTimeout',
+          seconds: PLC_READ_TIMEOUT_SEC,
+        });
         reject(new Error('Error reading tags in time'));
         readyPLC = null;
       }, PLC_READ_TIMEOUT_SEC * 1000);
@@ -197,11 +202,11 @@ export function connectMachine({
         slowDebugRead()
           .then(failedTags => {
             if (failedTags.length) {
-              console.error('Failing to read tags: ' + failedTags.join(', '));
+              error('MachineError', { code: 'TagReadsFailing', failedTags });
             }
           })
           .catch(e => {
-            console.error('Error on the DEBUG tag read!');
+            error('MachineError', { code: 'DebugTagReadError', error: e });
           });
       } else {
         PLC.readTagGroup(schema.allTagsGroup)
@@ -210,7 +215,8 @@ export function connectMachine({
             resolve(results);
           })
           .catch(err => {
-            console.error('PLC read Hiccup. Retrying in 250ms...', err);
+            error('MachineError', { code: 'AllReadsFailedOnce', error: err });
+
             setTimeout(() => {
               PLC.readTagGroup(schema.allTagsGroup)
                 .then(results => {
@@ -218,26 +224,25 @@ export function connectMachine({
                   resolve(results);
                 })
                 .catch(err => {
-                  console.error(
-                    'PLC reads failing! Trying individual tags...',
-                    err,
-                  );
-
+                  error('MachineError', {
+                    code: 'AllReadsFailing',
+                    fastError: err,
+                  });
                   slowDebugRead()
                     .then(failedTags => {
-                      console.error(
-                        `On slow read, ${
-                          failedTags.length
-                        } tags failed to read`,
-                      );
                       if (failedTags.length) {
-                        console.error('Failed tags: ' + failedTags.join(', '));
+                        error('MachineError', {
+                          code: 'FailedReads',
+                          failedReads: failedTags,
+                        });
                       }
                     })
                     .catch(e => {
-                      console.error('Error on the DEBUG tag read!');
-                      console.error('==SLOW DEBUG ERROR:', e);
-                      console.error('==FAST READ ERROR', err);
+                      error('MachineError', {
+                        code: 'AllReadsFailing',
+                        fastError: err,
+                        debugError: e,
+                      });
                     });
                 });
             }, 250);
@@ -270,7 +275,6 @@ export function connectMachine({
       tag.value = values[tagAlias];
       outputGroup.add(tag);
     });
-    logBehavior('Kitchen Write Tags ' + JSON.stringify(values));
     const PLC = await getReadyPLC();
     await PLC.writeTagGroup(outputGroup);
   };
@@ -283,13 +287,15 @@ export function connectMachine({
 
   async function connectKitchenClient() {
     console.log('Waiting for Kitchen Configuration...');
+    let lastConfig = undefined;
     configStream.addListener({
       next: config => {
-        if (!config) {
-          return;
-        }
-        console.log('Loaded Kitchen Configuration!', !!config);
+        log('MachineConfigured', {
+          hadConfig: !!lastConfig,
+          hasConfig: !!config,
+        });
         mainRobotSchema = createSchema(config);
+        lastConfig = config;
       },
     });
 
@@ -327,20 +333,31 @@ export function connectMachine({
         const isActionComplete =
           noFaults && endedActionId === resolver.actionId;
         if (isActionReceived && (isSystemIdle || isActionComplete)) {
-          logBehavior(
-            `${isActionComplete ? 'Done with' : 'FAULTED OR ERRORED on'} ${
-              resolver.actionId
-            }`,
-          );
           if (isActionComplete) {
             resolver.resolve();
           } else {
             if (noFaults) {
+              error('MachineError', {
+                code: 'SoftError',
+                subsystem,
+                noFaults,
+                isActionReceived,
+                isActionComplete,
+              });
               resolver.reject(
-                new Error(`System "${subsystem}" has experienced a soft error`),
+                new Error(
+                  `System "${subsystem}" has experienced a soft error. No faults, but the action did not succeed.`,
+                ),
               );
             } else {
-              resolver.reject(new Error(`System "${subsystem}" has faulted`));
+              error('MachineError', {
+                code: 'Fault',
+                subsystem,
+                noFaults,
+                isActionReceived,
+                isActionComplete,
+              });
+              resolver.reject(new Error(`"${subsystem}" system faulted!`));
             }
           }
         }
@@ -355,8 +372,9 @@ export function connectMachine({
       updateTags()
         .then(() => {})
         .catch(async e => {
-          console.error('Error updating tags!');
-          console.error(e);
+          // error is presumably logged elsewhere, but to be safe..
+          error('MachineError', { code: 'TagUpdateError', error: e });
+
           await kitchenStateDoc.putValue({
             isPLCConnected: false,
           });
@@ -393,13 +411,13 @@ export function connectMachine({
     })()
       .then(() => {})
       .catch(err => {
-        console.error('Error writing machine value for pulse clearing..');
-        console.error({
+        error('MachineError', {
+          code: 'PulseClearWrite',
+          error: err,
           clearPulseOutput,
           actionId,
           subsystem: action.subsystem,
         });
-        console.error(err);
       });
 
     return { ...immediateOutput, ...clearPulseOutput, ...(tagOutput || {}) };
@@ -408,14 +426,9 @@ export function connectMachine({
   connectKitchenClient()
     .then(() => {})
     .catch(e => {
-      console.error(e);
+      fatal('MachineError', { code: 'InitialMachineConnection', error: e });
       process.exit();
     });
-
-  function verboseLog(msg) {
-    console.log(msg);
-    return;
-  }
 
   async function command(action) {
     const commandType = commands[action.commandType];
@@ -434,7 +447,11 @@ export function connectMachine({
         }
       });
     const actionId = getFreshActionId();
-    logBehavior(`Start Action ${actionId} : ${JSON.stringify(action)}`);
+
+    log('MachineCommandStart', {
+      actionId,
+      action,
+    });
 
     if (subsystemResolvers[subsystem]) {
       throw new Error(
@@ -451,7 +468,13 @@ export function connectMachine({
     await new Promise((resolve, reject) => {
       let watchKittyTimeout = setTimeout(() => {
         delete subsystemResolvers[subsystem];
-        console.error('MEOW!', { actionId, subsystem, pulse, values });
+        error('MachineError', {
+          code: 'WatchKittyTimeout',
+          actionId,
+          subsystem,
+          pulse,
+          values,
+        });
         reject(
           new Error(`Watch kitty timeout on "${subsystem}" system, meow!`),
         );
@@ -469,6 +492,11 @@ export function connectMachine({
         },
         actionId,
       };
+    });
+
+    log('MachineCommandEnd', {
+      actionId,
+      action,
     });
     return action;
   }
@@ -495,31 +523,36 @@ export function connectMachine({
           restaurantState,
         );
         if (sideEffectActions && sideEffectActions.length) {
-          console.log('Applying side effect actions: ', sideEffectActions);
-
+          log('MachineEffects', {
+            actions: sideEffectActions,
+          });
           let promise = Promise.resolve();
           sideEffectActions.forEach(action => {
-            promise = promise.then(async () => {
-              await onDispatcherAction(action);
-            });
-          });
-          promise.catch(error => {
-            console.error(
-              'Error performing side effect(s)!',
-              sideEffectActions,
-            );
-            console.error(error);
+            promise = promise
+              .then(async () => {
+                await onDispatcherAction(action);
+              })
+              .catch(error => {
+                error('MachineError', {
+                  code: 'SideEffectPerformError',
+                  error,
+                  action,
+                });
+              });
           });
         }
       }
     }
     if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
-    if (!restaurantState) return verboseLog('Missing RestaurantState');
-    if (!kitchenState) return verboseLog('Missing KitchenState');
-    if (!kitchenConfig) return verboseLog('Missing kitchenConfig');
-    if (!restaurantState.isAutoRunning)
-      return verboseLog('Is not auto-running');
-    if (!restaurantState.isAttached) return verboseLog('Is not attached');
+    if (!restaurantState)
+      return error('MachineError', { code: 'MissingRestaurantState' });
+    if (!kitchenState)
+      return error('MachineError', { code: 'MissingKitchenState' });
+    if (!kitchenConfig)
+      return error('MachineError', { code: 'MissingkitchenConfig' });
+    if (!restaurantState.isAutoRunning) return; // the sequencer only goes when it is "running"
+    if (!restaurantState.isAttached) return; // the sequencer only goes when it is "attached"
+
     const nextSteps = computeNextSteps(
       sequencerSteps,
       restaurantState,
@@ -527,27 +560,14 @@ export function connectMachine({
       kitchenState,
       commands,
     );
-    if (!nextSteps || !nextSteps.length) {
-      return verboseLog('No steps available to take');
-    }
 
     nextSteps.forEach(nextStep => {
       if (!nextStep.isSequencerStateReady) {
-        console.log(
-          'Command waiting for restaurant state to be ready',
-          nextStep.command,
-        );
         return;
       }
-
       if (!nextStep.isCommandReady) {
-        console.log(
-          'Command waiting for machine to be ready',
-          nextStep.command,
-        );
         return;
       }
-
       if (!nextStep.isReady) {
         return;
       }
@@ -560,7 +580,11 @@ export function connectMachine({
       if (!kitchenState.isPLCConnected) {
         return;
       }
-      logBehavior(`Performing ${subsystem} ${nextStep.description}`);
+      log('StepStart', {
+        description: nextStep.description,
+        command: nextStep.command,
+      });
+
       currentStepPromises[subsystem] = nextStep.perform(
         onDispatcherAction,
         command,
@@ -569,7 +593,10 @@ export function connectMachine({
       currentStepPromises[subsystem]
         .then(() => {
           currentStepPromises[subsystem] = null;
-          console.log(`Done with ${nextStep.description}`);
+          log('StepComplete', {
+            description: nextStep.description,
+            command: nextStep.command,
+          });
           setTimeout(() => {
             if (
               kitchenState !== _kitchenState ||
@@ -586,12 +613,11 @@ export function connectMachine({
         })
         .catch(e => {
           currentStepPromises[subsystem] = null;
-          console.error(
-            `Failed to perform Kitchen Action: ${
-              nextStep.description
-            }. JS is basically faulted now??`,
-            e,
-          );
+          error('StepError', {
+            error: e,
+            stepDescription: nextStep.description,
+            command: nextStep.command,
+          });
         });
     });
   }
@@ -606,8 +632,7 @@ export function connectMachine({
       handleSequencerUpdates(restaurantState, kitchenState, kitchenConfig);
     },
     error: e => {
-      console.error('Failure in sequencer state stream');
-      console.error(e);
+      fatal('MachineError', { code: 'SequencerStateStream', error: e });
       process.exit(1);
     },
   };
