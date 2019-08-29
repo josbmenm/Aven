@@ -26,7 +26,8 @@
       "cloud-postgres",
       "ono-cloud",
       "components",
-      "skynet"
+      "skynet",
+      "logger"
     ],
     "moduleDependencies": [
       "mjml-react",

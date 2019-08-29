@@ -17,6 +17,9 @@ import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
 import { connectMachine } from './Machine';
 import KitchenSteps from '../logic/KitchenSteps';
+import { log, error, setLoggerMode } from '../logger/logger';
+
+setLoggerMode(process.env.NODE_ENV === 'production' ? 'json' : 'debug');
 
 let lastT = null;
 function logBehavior(msg) {
@@ -33,12 +36,10 @@ function logBehavior(msg) {
 
 const getEnv = c => process.env[c];
 
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
 const startVerseServer = async () => {
-  console.log(`☁️ Starting Restaurant Server in ${process.env.NODE_ENV} 💨 `);
+  log('WillStartServer', { serverType: 'verse' });
 
   const pgConfig = {
     ssl: !!getEnv('VERSE_SQL_USE_SSL'),
@@ -186,7 +187,7 @@ const startVerseServer = async () => {
 
   let kitchen = null;
   if (!process.env.DISABLE_ONO_KITCHEN) {
-    console.log('Connecting to Maui Kitchen');
+    log('ConnectToMachine');
     kitchen = connectMachine({
       commands: KitchenCommands,
       sequencerSteps: KitchenSteps,
@@ -228,7 +229,7 @@ const startVerseServer = async () => {
     });
   }
 
-  const dispatch = async action => {
+  async function silentDispatch(action) {
     switch (action.type) {
       case 'KitchenCommand':
         if (!kitchen) {
@@ -249,10 +250,17 @@ const startVerseServer = async () => {
         return await cloud.dispatch(action);
       }
     }
-  };
+  }
 
-  if (process.env.TEST_VERSE) {
-    console.log('VERSE TEST RUNNING?');
+  async function dispatch(action) {
+    try {
+      const response = await silentDispatch(action);
+      log('DispatchedAction', { action, response });
+      return response;
+    } catch (e) {
+      error('DispatchedAction', { action, error: e });
+      throw e;
+    }
   }
 
   const serverListenLocation = getEnv('PORT');
@@ -271,10 +279,19 @@ const startVerseServer = async () => {
     serverListenLocation,
     assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
   });
-  console.log('☁️️ Web Ready 🕸');
+
+  log('ServerStarted', {
+    serverType: 'verse',
+    hasKitchen: !!kitchen,
+    nodeEnv: process.env.NODE_ENV,
+  });
 
   return {
     close: async () => {
+      log('VerseWillClose', {
+        hasKitchen: !!kitchen,
+        nodeEnv: process.env.NODE_ENV,
+      });
       await protectedSource.close();
       await cloud.close();
       await webService.close();

@@ -46,11 +46,11 @@ const KitchenSteps = [
     getDescription: intent => 'Pickup Cup',
     getRestaurantStateIntent: restaurantState => {
       const task = restaurantState.queue && restaurantState.queue[0];
-      console.log(
-        'checking for inventory',
-        task,
-        restaurantState.ingredientInventory,
-      );
+      // console.log(
+      //   'checking for inventory',
+      //   task,
+      //   restaurantState.ingredientInventory,
+      // );
       if (
         restaurantState.queue &&
         restaurantState.queue.length &&

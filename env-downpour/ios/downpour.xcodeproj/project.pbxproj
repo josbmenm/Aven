@@ -685,7 +685,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = downpour;
-				PROVISIONING_PROFILE_SPECIFIER = BlitzDevelopment;
+				PROVISIONING_PROFILE_SPECIFIER = PortalDevelopment;
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -709,7 +709,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
 				PRODUCT_NAME = downpour;
-				PROVISIONING_PROFILE_SPECIFIER = BlitzDistribution;
+				PROVISIONING_PROFILE_SPECIFIER = PortalDistribution;
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

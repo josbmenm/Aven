@@ -167,7 +167,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   let allFaults = [];
   if (!isConnected) {
     status = 'disconnected';
-    message = 'Control panel disconnected.';
+    message = 'Portal Disconnected from Restaurant.';
   } else if (restaurantState === undefined) {
     status = 'disconnected';
     message = 'Loading state..';

@@ -30,6 +30,9 @@ import {
   combineStreams,
 } from '../cloud-core/createMemoryStream';
 import { Storage } from '@google-cloud/storage';
+import { log, error, setLoggerMode } from '../logger/logger';
+
+setLoggerMode(process.env.NODE_ENV === 'production' ? 'json' : 'debug');
 
 const path = require('path');
 const pathJoin = require('path').join;
@@ -49,83 +52,10 @@ const gcsBucket = gcsStorage.bucket(getEnv('GCS_BUCKET'));
 
 const ONO_ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
-function createLogger(source, domain, logName) {
-  let queue = [];
-  let slowTimeout = null;
-  let fastTimeout = null;
-
-  function writeLogs() {
-    clearTimeout(slowTimeout);
-    clearTimeout(fastTimeout);
-    if (!queue.length) {
-      return;
-    }
-    const queueSnapshot = queue;
-    queue = [];
-    source
-      .dispatch({
-        type: 'PutTransactionValue',
-        domain,
-        name: logName,
-        value: {
-          type: 'Logs',
-          logs: queueSnapshot,
-        },
-      })
-      .then(() => {
-        if (queue.length) {
-          enqueueWrite();
-        }
-      })
-      .catch(e => {
-        queue = [...queueSnapshot, ...queue];
-      });
-  }
-
-  function enqueueWrite() {
-    if (queue.length > 50) {
-      writeLogs();
-    } else {
-      clearTimeout(fastTimeout);
-      slowTimeout = setTimeout(writeLogs, 400);
-      fastTimeout = setTimeout(writeLogs, 32);
-    }
-  }
-
-  function log(message, type, details) {
-    queue = [
-      ...queue,
-      { message, type, details, level: 'log', time: Date.now() },
-    ];
-    enqueueWrite();
-  }
-  function warn(message, type, details) {
-    queue = [
-      ...queue,
-      { message, type, details, level: 'warn', time: Date.now() },
-    ];
-    enqueueWrite();
-  }
-  function error(message, type, details) {
-    queue = [
-      ...queue,
-      { message, type, details, level: 'error', time: Date.now() },
-    ];
-    enqueueWrite();
-  }
-
-  return {
-    log,
-    warn,
-    error,
-  };
-}
-
 const startSkynetServer = async () => {
-  console.log('☁️ Starting Website 💨');
+  log('WillStartServer', { serverType: 'skynet' });
 
   const domain = 'onofood.co';
-  console.log('☁️ Starting Cloud 💨');
 
   const pgConfig = {
     ssl: true,
@@ -135,7 +65,6 @@ const startSkynetServer = async () => {
     host: getEnv('SQL_HOST'),
   };
 
-  console.log('Starting PG connection');
   const storageSource = await startPostgresStorageSource({
     domains: [domain],
     config: {
@@ -310,8 +239,6 @@ const startSkynetServer = async () => {
     ),
   );
 
-  const logger = createLogger(storageSource, 'onofood.co', 'SkynetEvents');
-
   const protectedSource = createProtectedSource({
     source: cloud,
     staticPermissions: {
@@ -343,7 +270,7 @@ const startSkynetServer = async () => {
   context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
   context.set(HostContext, { authority: 'onoblends.co', useSSL: !IS_DEV });
 
-  async function placeOrder({ orderId }, logger) {
+  async function placeOrder({ orderId }) {
     throw new Error('Cannot place order on skynet! Use verse');
   }
 
@@ -356,7 +283,7 @@ const startSkynetServer = async () => {
       (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
         'MB Memory Consumption',
     );
-    scrapeAirTable(fsClient, logger)
+    scrapeAirTable(fsClient)
       .then(() => {
         console.log('Airtable Update complete!');
         console.log(
@@ -381,7 +308,7 @@ const startSkynetServer = async () => {
   );
 
   const bookingRequests = cloud.get('BookingRequests');
-  async function requestBooking(action, logger) {
+  async function requestBooking(action) {
     await bookingRequests.putTransactionValue(action);
     const {
       firstName,
@@ -416,7 +343,7 @@ Debug: ${JSON.stringify(action)}
 `,
     });
   }
-  const dispatch = async action => {
+  async function silentDispatch(action) {
     switch (action.type) {
       case 'SendReceipt':
         return await sendReceipt({
@@ -424,7 +351,6 @@ Debug: ${JSON.stringify(action)}
           smsAgent,
           emailAgent,
           action,
-          logger,
         });
       case 'RefundOrder': // todo check for root/employee auth. right now this is top secret!
         return await refundOrder({
@@ -432,22 +358,21 @@ Debug: ${JSON.stringify(action)}
           smsAgent,
           emailAgent,
           action,
-          logger,
         });
       case 'RequestBooking':
-        return requestBooking(action, logger);
+        return requestBooking(action);
       case 'PlaceOrder':
-        return placeOrder(action, logger);
+        return placeOrder(action);
       case 'StripeGetConnectionToken':
         return getConnectionToken(action);
       case 'StripeCapturePayment':
         return capturePayment(action);
       case 'ValidatePromoCode':
-        return validatePromoCode(cloud, action, logger);
+        return validatePromoCode(cloud, action);
       case 'SubmitFeedback':
-        return submitFeedback(cloud, emailAgent, action, logger);
+        return submitFeedback(cloud, emailAgent, action);
       case 'UpdateAirtable': {
-        scrapeAirTable(fsClient, logger)
+        scrapeAirTable(fsClient)
           .then(() => {
             console.log('Done with user-requested Airtable update');
           })
@@ -460,7 +385,18 @@ Debug: ${JSON.stringify(action)}
         return await cloud.dispatch(action);
       // return await protectedSource.dispatch(action);
     }
-  };
+  }
+
+  async function dispatch(action) {
+    try {
+      const response = await silentDispatch(action);
+      log('DispatchedAction', { action, response });
+      return response;
+    } catch (e) {
+      error('DispatchedAction', { action, error: e });
+      throw e;
+    }
+  }
 
   const serverListenLocation = getEnv('PORT');
   const webService = await WebServer({
@@ -481,9 +417,6 @@ Debug: ${JSON.stringify(action)}
     },
     serverListenLocation,
     assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
-    onLogEvent: (level, message) => {
-      console.log(level + '=' + message);
-    },
   });
   console.log('☁️️ Web Ready 🕸');
 
