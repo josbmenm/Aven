@@ -6,6 +6,7 @@ import startSourceServer from '../cloud-server/startSourceServer';
 import NavigationContext from '../navigation-core/views/NavigationContext';
 import handleServerRequest from '../navigation-web/handleServerRequest';
 import Buffer from '../utils/Buffer';
+import { debug, error } from '../logger/logger';
 const yes = require('yes-https');
 const helmet = require('helmet');
 const path = require('path');
@@ -106,7 +107,6 @@ export default async function WebServer({
   serverListenLocation,
   expressRouting = undefined,
   assets,
-  onLogEvent,
   domainAppOverrides,
   augmentRequestDispatchAction,
 }) {
@@ -145,20 +145,15 @@ export default async function WebServer({
       )
     : {};
 
-  function reportInfo(message) {
-    onLogEvent && onLogEvent(2, message);
-  }
-  function reportWarning(message) {
-    onLogEvent && onLogEvent(1, message);
-  }
-  function reportError(message) {
-    onLogEvent && onLogEvent(0, message);
-  }
   function doExpressRouting(app) {
     process.env.ENFORCE_HTTPS && app.use(yes());
     app.use(helmet());
     app.use((req, res, next) => {
-      reportInfo(`${req.method} request to ${req.headers.host} ${req.path}`);
+      debug('HttpRequest', {
+        method: req.method,
+        host: req.headers.host,
+        path: req.path,
+      });
       next();
     });
     app.use(function(req, res, next) {
@@ -194,7 +189,12 @@ export default async function WebServer({
         })
         .catch(e => {
           res.status(500);
-          console.error(e);
+          error('WebDataInterfaceError', {
+            domain,
+            docName,
+            docPath,
+            error: e,
+          });
           res.send(JSON.stringify(e.toJSON ? e.toJSON() : e));
         });
     });

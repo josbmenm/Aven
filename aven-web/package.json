@@ -7,7 +7,8 @@
       "cloud-server",
       "navigation-core",
       "navigation-web",
-      "utils"
+      "utils",
+      "logger"
     ],
     "moduleDependencies": [
       "yes-https",

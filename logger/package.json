@@ -1,0 +1,8 @@
+{
+  "name": "@aven-cloud/logger",
+  "version": "1.0.0",
+  "aven": {
+    "srcDependencies": [],
+    "moduleDependencies": []
+  }
+}
