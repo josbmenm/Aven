@@ -42,6 +42,20 @@ const KitchenCommands = {
       return kitchenState.FillSystem_EnterServiceModeReady_READ;
     },
   },
+  DeliverBay0: {
+    subsystem: 'Delivery',
+    pulse: ['DeliverBay0'],
+    checkReady: kitchenState => {
+      return kitchenState.Delivery_DeliverBay0Ready_READ;
+    },
+  },
+  DeliverBay1: {
+    subsystem: 'Delivery',
+    pulse: ['DeliverBay1'],
+    checkReady: kitchenState => {
+      return kitchenState.Delivery_DeliverBay1Ready_READ;
+    },
+  },
 
   // PrepareForBlender: {
   //   subsystem: 'FillPositioner',

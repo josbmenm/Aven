@@ -185,6 +185,30 @@ export default function ManualControl() {
           );
         }}
       />
+      <Button
+        title="deliver 0"
+        disabled={!KitchenCommands.DeliverBay0.checkReady(kitchenState)}
+        onPress={() => {
+          handleErrors(
+            cloud.dispatch({
+              type: 'KitchenCommand',
+              commandType: 'DeliverBay0',
+            }),
+          );
+        }}
+      />
+      <Button
+        title="deliver 1"
+        disabled={!KitchenCommands.DeliverBay1.checkReady(kitchenState)}
+        onPress={() => {
+          handleErrors(
+            cloud.dispatch({
+              type: 'KitchenCommand',
+              commandType: 'DeliverBay1',
+            }),
+          );
+        }}
+      />
     </RowSection>
   );
 }
