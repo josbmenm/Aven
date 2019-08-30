@@ -1,4 +1,5 @@
 import { getPaymentIntent } from '../stripe-server/Stripe';
+import { log, error } from '../logger/logger';
 import {
   companyConfigToBlendMenu,
   getOrderSummary,
@@ -12,6 +13,7 @@ export default async function placeOrder(
   cloud,
   { isLive, orderId, paymentIntent },
 ) {
+  log('AttemptPlaceOrder', { isLive, orderId, paymentIntent });
   const orderState = await cloud
     .get(`PendingOrders/${orderId}`)
     .idAndValue.load();
@@ -22,14 +24,24 @@ export default async function placeOrder(
   const blends = companyConfigToBlendMenu(companyConfig);
   const summary = getOrderSummary(order, companyConfig);
   if (!summary) {
-    console.error({
+    error('PlaceOrderContextFailure', {
       summary,
-      order,
       orderId,
       paymentIntent,
+      order: orderState,
+      companyConfigId: companyConfigState.id,
     });
     throw new Error('Invalid order summary retrieved!');
   }
+  log('PlaceOrderContext', {
+    ...summary,
+    companyConfigId: companyConfigState.id,
+    menu: null,
+    summary,
+    order,
+    orderId,
+    paymentIntent,
+  });
   const {
     total,
     subTotal,
@@ -41,18 +53,46 @@ export default async function placeOrder(
   } = summary;
   const stripeIntentId = paymentIntent && paymentIntent.stripeId;
   let stripeIntent = null;
-  console.log('looking up ', stripeIntentId);
   if (stripeIntentId) {
     stripeIntent = await getPaymentIntent(stripeIntentId, isLive);
+    log('LookupStripeIntent', {
+      stripeIntent,
+      stripeIntentId,
+      ...summary,
+      menu: null,
+    });
   }
-  console.log('looking ', stripeIntent);
   let isOrderValid = false;
   if (stripeIntent && stripeIntent.amount === summary.total) {
     isOrderValid = true;
   } else if (summary.total === 0) {
     isOrderValid = true;
   }
-  console.log('comparison', { summary, stripeIntent, paymentIntent });
+
+  const allTasks = await Promise.all(
+    summary.items.map(async item => {
+      if (item.type !== 'blend') {
+        return;
+      }
+      const { menuItemId } = item;
+      const menuItem = blends.find(b => b.id === menuItemId);
+      const fills = getFillsOfOrderItem(menuItem, item, companyConfig);
+      const orderName =
+        order.orderName.firstName + ' ' + order.orderName.lastName;
+      const blendName = displayNameOfOrderItem(item, item.menuItem);
+      return [...Array(item.quantity)].map((_, quantityIndex) => ({
+        id: cuid(),
+        quantityIndex,
+        orderItemId: item.id,
+        orderId,
+        name: orderName,
+        blendName,
+        fills,
+      }));
+    }),
+  );
+  const orderTasks = allTasks.flat(1);
+
   const confirmedOrder = {
     ...order,
     subTotal,
@@ -88,46 +128,37 @@ export default async function placeOrder(
       };
     }),
     id: orderId,
+    orderId, // yes this is redundant.. if anything, we should remove the ambiguous `id`
     stripeIntentId,
     stripeIntent,
     isOrderValid,
+    orderTasks,
   };
 
   if (!isOrderValid) {
+    error('OrderValidationError', {
+      isOrderValid,
+      stripeIntent,
+      ...summary,
+      orderId,
+      stripeIntentId,
+      menu: null,
+    });
     throw new Error('Could not verify payment intent! Order has failed.');
   }
 
   await cloud.get(`ConfirmedOrders/${orderId}`).putValue(confirmedOrder);
-
-  const allTasks = await Promise.all(
-    summary.items.map(async item => {
-      if (item.type !== 'blend') {
-        return;
-      }
-      const { menuItemId } = item;
-      const menuItem = blends.find(b => b.id === menuItemId);
-      const fills = getFillsOfOrderItem(menuItem, item, companyConfig);
-      const orderName =
-        order.orderName.firstName + ' ' + order.orderName.lastName;
-      const blendName = displayNameOfOrderItem(item, item.menuItem);
-      return [...Array(item.quantity)].map((_, quantityIndex) => ({
-        id: cuid(),
-        quantityIndex,
-        orderItemId: item.id,
-        orderId,
-        name: orderName,
-        blendName,
-        fills,
-      }));
-    }),
-  );
-  const tasks = allTasks.flat(1);
+  await cloud.get('CompanyActivity').putTransactionValue({
+    type: 'KioskOrder',
+    confirmedOrder,
+  });
   await cloud.get('RestaurantActions').putTransactionValue({
     type: 'QueueTasks',
-    tasks,
+    tasks: orderTasks,
   });
 
-  console.log(`Order Placed. Queued ${tasks.length} tasks for kitchen.`);
+  log('OrderTasksQueued', { tasks });
+  log('OrderPlacedSuccess', confirmedOrder);
 
   return {};
 }

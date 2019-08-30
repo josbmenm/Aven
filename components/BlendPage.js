@@ -11,7 +11,7 @@ import {
   largeHorizontalPadding,
 } from './Styles';
 import { MenuCard, Tag } from '../components/MenuCard';
-import { MenuZone, MenuHLayout } from '../components/MenuZone';
+import { MenuHLayout } from '../components/MenuZone';
 import formatCurrency from '../utils/formatCurrency';
 import { dietaryInfosOfMenuItem } from '../logic/configLogic';
 import {

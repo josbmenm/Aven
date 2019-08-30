@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import AirtableImage from './AirtableImage';
 import {
   prettyShadow,
@@ -17,7 +17,6 @@ import {
   rightSidebarWidth,
   midPageHorizPadding,
 } from './Styles';
-import { MenuZone } from './MenuZone';
 import TabSectionScrollView from './TabSectionScrollView';
 import ListAnimation from './ListAnimation';
 import { EnhancementDetail } from './Enhancements';
@@ -28,19 +27,18 @@ const tagSize = {
   height: 68,
 };
 
-export function MenuHLayout({ side, children }) {
+export function CustomizeLayout({ side, children }) {
   return (
     <View
       style={{
         flex: 1,
         flexDirection: 'row',
-        paddingLeft: largeHorizontalPadding,
-        marginRight: rightSidebarWidth + midPageHorizPadding,
+        paddingHorizontal: 56,
+        paddingTop: 32,
       }}
     >
       <View
         style={{
-          marginRight: midPageHorizPadding,
           width: 248,
         }}
       >
@@ -886,33 +884,31 @@ export default function BlendCustomization({
   });
 
   return (
-    <MenuZone>
-      <MenuHLayout
-        side={
-          <CustomizationSidebar
-            menuItem={menuItem}
-            setCustomization={setCustomization}
-            customizationState={customizationState}
-            onScrollToSection={section =>
-              setActiveSection({ name: section.name })
-            }
-          />
-        }
-      >
-        <TabSectionScrollView
-          style={{}}
-          contentContainerStyle={{ paddingLeft: 30, paddingTop: 30 }}
-          activeSection={activeSection}
-          onActiveSection={setActiveSection}
-          sections={sections.map(section => {
-            return {
-              name: section.name,
-              title: section.displayName,
-              content: <CustomizationMainSection section={section} />,
-            };
-          })}
+    <CustomizeLayout
+      side={
+        <CustomizationSidebar
+          menuItem={menuItem}
+          setCustomization={setCustomization}
+          customizationState={customizationState}
+          onScrollToSection={section =>
+            setActiveSection({ name: section.name })
+          }
         />
-      </MenuHLayout>
-    </MenuZone>
+      }
+    >
+      <TabSectionScrollView
+        style={{}}
+        contentContainerStyle={{ paddingLeft: 30, paddingTop: 30 }}
+        activeSection={activeSection}
+        onActiveSection={setActiveSection}
+        sections={sections.map(section => {
+          return {
+            name: section.name,
+            title: section.displayName,
+            content: <CustomizationMainSection section={section} />,
+          };
+        })}
+      />
+    </CustomizeLayout>
   );
 }

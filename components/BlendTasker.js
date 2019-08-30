@@ -85,12 +85,14 @@ export default function BlendTasker() {
 
   const openBlendChooser = useBlendPickPopover({
     blendId,
-    setBlendId,
+    setBlendId: blendId => {
+      setBlendId(blendId);
+      setCustomization(null);
+    },
     setBlendName,
   });
 
   const { menuItem, inventoryIngredients } = useInventoryMenuItem(blendId);
-  // debugger;
 
   const openOrderInfo = useOrderInfoPopover({
     hideBlendName: true,

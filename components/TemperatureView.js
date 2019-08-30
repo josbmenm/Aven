@@ -18,7 +18,7 @@ function TempCell({ title, value, button }) {
   );
 }
 function formatTemp(value) {
-  if (!value || value === 1562) {
+  if (value == null || value === 1562) {
     return '?';
   }
   return `${value}°F`;

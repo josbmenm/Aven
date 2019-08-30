@@ -138,7 +138,6 @@ function HowItWorks() {
                 right: -410,
                 top: -270,
                 zIndex: 1,
-                pointerEvents: 'none',
               }}
             />
 
