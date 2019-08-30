@@ -26,7 +26,11 @@ function getDispatcher() {
 }
 
 export async function getIsLiveMode() {
-  return await get('PaymentsIsLiveMode');
+  const isLiveMode = await get('PaymentsIsLiveMode');
+  if (isLiveMode == null) {
+    return true;
+  }
+  return isLiveMode;
 }
 
 StripeTerminal.initialize({
@@ -93,8 +97,7 @@ async function cancelPayment() {
 }
 
 async function capturePayment(paymentIntentId, context) {
-  const isLive = await get('PaymentsIsLiveMode');
-  console.log('---capturing', isLive);
+  const isLive = await getIsLiveMode();
   return getDispatcher()({
     type: 'StripeCapturePayment',
     paymentIntentId,
