@@ -386,7 +386,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		2909A041A546018E6A045EC7 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -685,7 +685,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = downpour;
-				PROVISIONING_PROFILE_SPECIFIER = PortalDevelopment;
+				PROVISIONING_PROFILE_SPECIFIER = BlitzDevelopment;
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -709,7 +709,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = downpour;
-				PROVISIONING_PROFILE_SPECIFIER = PortalDistribution;
+				PROVISIONING_PROFILE_SPECIFIER = BlitzDistribution;
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

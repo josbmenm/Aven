@@ -74,7 +74,7 @@ const RESTAURANT_DEV = {
 };
 const RESTAURANT_PROD = {
   useSSL: false,
-  // authority: '10.10.1.200:8830',
+  authority: '10.10.1.200:8830',
 };
 
 const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;

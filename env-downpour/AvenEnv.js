@@ -94,19 +94,16 @@ module.exports = {
     );
     const infoOut = infoData
       .replace(
-        /<key>CFBundleDisplayName<\/key>\n	<string>.*<\/string>/,
-        `<key>CFBundleDisplayName</key>
-	<string>${displayName}</string>`,
+        /<key>CFBundleDisplayName<\/key><string>.*<\/string>/,
+        `<key>CFBundleDisplayName</key><string>${displayName}</string>`,
       )
       .replace(
-        /<key>CodePushDeploymentKey<\/key>\n	<string>.*<\/string>/,
-        `<key>CodePushDeploymentKey</key>
-	<string>${codePushKey}</string>`,
+        /<key>CodePushDeploymentKey<\/key><string>.*<\/string>/,
+        `<key>CodePushDeploymentKey</key><string>${codePushKey}</string>`,
       );
     const appCenterInfoOut = appCenterInfoData.replace(
-      /<key>AppSecret<\/key>\n	<string>.*<\/string>/,
-      `<key>AppSecret</key>
-	<string>${appcenterSecret}</string>`,
+      /<key>AppSecret<\/key><string>.*<\/string>/,
+      `<key>AppSecret</key><string>${appcenterSecret}</string>`,
     );
     await fs.writeFile(infoPath, infoOut);
     await fs.writeFile(appCenterInfoPath, appCenterInfoOut);
