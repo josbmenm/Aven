@@ -79,30 +79,30 @@ function BayInfo({ bayState, name, dispatch, bayId }) {
     <View style={{ flex: 1 }}>
       <Subtitle title={name} />
       {content}
-      {/* <Button
+      <Button
         title="Clear"
         onPress={() => {
           dispatch({ type: 'ClearDeliveryBay', bayId });
         }}
         disabled={!bayState}
-      /> */}
+      />
     </View>
   );
 }
 
 function DeliveryBayRow({ restaurantState, dispatch }) {
   return (
-    ((restaurantState.deliveryA || restaurantState.deliveryB) && (
+    ((restaurantState.delivery0 || restaurantState.delivery1) && (
       <Row>
         <BayInfo
-          bayState={restaurantState.deliveryA}
-          bayId="deliveryA"
+          bayState={restaurantState.delivery0}
+          bayId="delivery0"
           name="deliver left"
           dispatch={dispatch}
         />
         <BayInfo
-          bayState={restaurantState.deliveryB}
-          bayId="deliveryB"
+          bayState={restaurantState.delivery1}
+          bayId="delivery1"
           name="deliver right"
           dispatch={dispatch}
         />

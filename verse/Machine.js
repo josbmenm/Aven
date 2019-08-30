@@ -562,7 +562,7 @@ export function connectMachine({
     );
 
     nextSteps.forEach(nextStep => {
-      if (!nextStep.isSequencerStateReady) {
+      if (!nextStep.isMachineReady) {
         return;
       }
       if (!nextStep.isCommandReady) {

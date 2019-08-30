@@ -1,50 +1,8 @@
-function delay(ms) {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
-}
-// function checkKitchenState(kitchenState, kitchenConfig) {
-//   if (!kitchenState) {
-//     return {
-//       isFaulted: true,
-//       faultedSystems: [],
-//       isRunning: false,
-//       runningSystems: [],
-//     };
-//   }
-//   let isFaulted = false;
-//   let isRunning = false;
-//   const runningSystems = [];
-//   const faultedSystems = [];
-//   const sequencerNames =
-//     kitchenConfig &&
-//     Object.keys(kitchenConfig.subsystems)
-//       .map(k => kitchenConfig.subsystems[k])
-//       .filter(subsystem => subsystem.hasSequencer)
-//       .map(s => s.name);
-//   if (!sequencerNames) {
-//     return { isFaulted, faultedSystems, isRunning, runningSystems };
-//   }
-//   sequencerNames.forEach(systemName => {
-//     if (kitchenState[`${systemName}_NoFaults_READ`] === false) {
-//       isFaulted = true;
-//       faultedSystems.push(systemName);
-//     }
-//   });
-//   sequencerNames.forEach(systemName => {
-//     if (kitchenState[`${systemName}_PrgStep_READ`] !== 0) {
-//       isRunning = true;
-//       runningSystems.push(systemName);
-//     }
-//   });
-//   return { isFaulted, faultedSystems, isRunning, runningSystems };
-// }
-
 const KitchenSteps = [
   {
     // pickup cup
     getDescription: intent => 'Pickup Cup',
-    getRestaurantStateIntent: restaurantState => {
+    getStateIntent: restaurantState => {
       const task = restaurantState.queue && restaurantState.queue[0];
       // console.log(
       //   'checking for inventory',
@@ -61,9 +19,6 @@ const KitchenSteps = [
       }
       return null;
     },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return !!kitchenState && kitchenState.FillSystem_PickUpNewCupReady_READ;
-    },
     getKitchenCommand: intent => ({
       commandType: 'GetCup',
     }),
@@ -78,7 +33,7 @@ const KitchenSteps = [
   {
     // drop cup (fill system)
     getDescription: intent => 'Drop Cup',
-    getRestaurantStateIntent: restaurantState => {
+    getStateIntent: restaurantState => {
       if (restaurantState.fill && !!restaurantState.fill.requestedDropTime) {
         return { didCompleteTask: !restaurantState.fill.requestedDropRemake };
       }
@@ -94,9 +49,6 @@ const KitchenSteps = [
       }
       return null;
     },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return !!kitchenState && kitchenState.FillSystem_DropCupReady_READ;
-    },
     getKitchenCommand: intent => ({
       commandType: 'DropCup',
     }),
@@ -108,18 +60,16 @@ const KitchenSteps = [
   {
     // drop cup (delivery system)
     getDescription: intent => 'Delivery Drop Cup',
-    getRestaurantStateIntent: restaurantState => {
+    getStateIntent: restaurantState => {
       if (restaurantState.delivery) {
         return {};
       }
       return null;
     },
-    getKitchenStateReady: (kitchenState, intent) => {
+    getMachineReady: (kitchenState, intent) => {
       return (
-        !!kitchenState &&
         // !kitchenState.System_VanPluggedIn_READ &&
-        !kitchenState.System_SkidPositionSensors_READ &&
-        kitchenState.Delivery_DropCupReady_READ
+        !kitchenState.System_SkidPositionSensors_READ
       );
     },
     getKitchenCommand: intent => ({
@@ -131,6 +81,50 @@ const KitchenSteps = [
   },
 
   {
+    // deliver cup to 0 (delivery system)
+    getDescription: intent => 'Deliver to 0',
+    getStateIntent: restaurantState => {
+      if (restaurantState.delivery && !restaurantState.delivery0) {
+        return {};
+      }
+      return null;
+    },
+    getMachineReady: (kitchenState, intent) => {
+      return (
+        kitchenState.System_VanPluggedIn_READ &&
+        kitchenState.System_SkidPositionSensors_READ
+      );
+    },
+    getKitchenCommand: intent => ({ commandType: 'DeliverBay0' }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidDeliver',
+      bayId: 'delivery0',
+    }),
+  },
+
+  {
+    // deliver cup to 1 (delivery system)
+    getDescription: intent => 'Deliver to 1',
+    getStateIntent: restaurantState => {
+      if (restaurantState.delivery && !restaurantState.delivery1) {
+        return {};
+      }
+      return null;
+    },
+    getMachineReady: (kitchenState, intent) => {
+      return (
+        kitchenState.System_VanPluggedIn_READ &&
+        kitchenState.System_SkidPositionSensors_READ
+      );
+    },
+    getKitchenCommand: intent => ({ commandType: 'DeliverBay1' }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidDeliver',
+      bayId: 'delivery1',
+    }),
+  },
+
+  {
     // do fill
     getDescription: ({ amount, system, slot, pretendDispense }) => {
       if (pretendDispense) {
@@ -138,7 +132,7 @@ const KitchenSteps = [
       }
       return `Fill Cup ${system}.${slot}x${amount}`;
     },
-    getRestaurantStateIntent: restaurantState => {
+    getStateIntent: restaurantState => {
       if (
         !restaurantState.fill ||
         !restaurantState.fill.fillsRemaining ||
@@ -152,9 +146,6 @@ const KitchenSteps = [
         pretendDispense: restaurantState.isDryRunning,
       };
       return intent;
-    },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return !!kitchenState && kitchenState.FillSystem_DropCupReady_READ;
     },
     getKitchenCommand: intent => {
       if (intent.pretendDispense) {
@@ -183,7 +174,7 @@ const KitchenSteps = [
     getDescription: () => {
       return 'Pass filled cup to blender';
     },
-    getRestaurantStateIntent: restaurantState => {
+    getStateIntent: restaurantState => {
       if (
         !!restaurantState.blend ||
         !restaurantState.fill ||
@@ -197,11 +188,6 @@ const KitchenSteps = [
       }
       return {};
     },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return (
-        !!kitchenState && kitchenState.FillSystem_DeliverToBlenderReady_READ
-      );
-    },
     getKitchenCommand: intent => ({
       commandType: 'PassToBlender',
     }),
@@ -212,10 +198,11 @@ const KitchenSteps = [
   {
     // go get ready to deliver cup to blender
 
+    // this step is intentionally _below_ "pass filled cup to blender", which means the handoff will be prioritized rather than this step
     getDescription: () => {
       return 'Go to handoff position';
     },
-    getRestaurantStateIntent: restaurantState => {
+    getStateIntent: restaurantState => {
       if (
         !restaurantState.blend ||
         !restaurantState.fill ||
@@ -230,9 +217,6 @@ const KitchenSteps = [
       }
       return {};
     },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return kitchenState.FillPositioner_GoToPositionReady_READ;
-    },
     getKitchenCommand: intent => ({
       commandType: 'FillGoToHandoff',
     }),
@@ -246,7 +230,7 @@ const KitchenSteps = [
     getDescription: () => {
       return 'Blend';
     },
-    getRestaurantStateIntent: restaurantState => {
+    getStateIntent: restaurantState => {
       if (
         !restaurantState.blend ||
         restaurantState.blend === 'dirty' ||
@@ -256,9 +240,6 @@ const KitchenSteps = [
         return null;
       }
       return {};
-    },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return !!kitchenState && kitchenState.BlendSystem_BlendReady_READ;
     },
     getKitchenCommand: intent => ({
       commandType: 'Blend',
@@ -273,7 +254,7 @@ const KitchenSteps = [
     getDescription: () => {
       return 'Pass from blender to delivery system';
     },
-    getRestaurantStateIntent: restaurantState => {
+    getStateIntent: restaurantState => {
       if (!restaurantState.blend || restaurantState.blend === 'dirty') {
         return null;
       }
@@ -284,11 +265,6 @@ const KitchenSteps = [
         return { didDirtyBlender: false };
       }
       return null;
-    },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return (
-        !!kitchenState && kitchenState.BlendSystem_DeliverWithoutCleanReady_READ
-      );
     },
     getKitchenCommand: intent => ({
       commandType: 'PassToDeliveryWithoutClean',
@@ -303,14 +279,11 @@ const KitchenSteps = [
     getDescription: () => {
       return 'Clean Blender';
     },
-    getRestaurantStateIntent: restaurantState => {
+    getStateIntent: restaurantState => {
       if (restaurantState.blend !== 'dirty') {
         return null;
       }
       return {};
-    },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return !!kitchenState && kitchenState.BlendSystem_CleanOnlyReady_READ;
     },
     getKitchenCommand: intent => ({
       commandType: 'Clean',
@@ -319,42 +292,12 @@ const KitchenSteps = [
       type: 'DidClean',
     }),
   },
-  {
-    // drop cup from delivery
 
-    getDescription: () => {
-      return 'Drop from delivery system';
-    },
-    getRestaurantStateIntent: restaurantState => {
-      if (!restaurantState.blend || restaurantState.blend === 'dirty') {
-        return null;
-      }
-      if (restaurantState.blend.blendCompleteTime) {
-        return { didDirtyBlender: true };
-      }
-      if (restaurantState.blend.task.skipBlend) {
-        return { didDirtyBlender: false };
-      }
-      return null;
-    },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return (
-        !!kitchenState && kitchenState.BlendSystem_DeliverWithoutCleanReady_READ
-      );
-    },
-    getKitchenCommand: intent => ({
-      commandType: 'PassToDeliveryWithoutClean',
-    }),
-    getSuccessRestaurantAction: intent => ({
-      type: 'DidPassToDelivery',
-      didDirtyBlender: intent.didDirtyBlender,
-    }),
-  },
   {
     // ditch cup (fill system)
     getDescription: intent => 'Ditch Cup',
-    getRestaurantStateIntent: restaurantState => {
-      if (restaurantState.fill === null) {
+    getStateIntent: restaurantState => {
+      if (restaurantState.fill === null || restaurantState.fill === 'ready') {
         return {
           didCompleteTask: false,
         };
@@ -372,8 +315,8 @@ const KitchenSteps = [
       }
       return null;
     },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return !!kitchenState && kitchenState.FillSystem_DitchCupReady_READ;
+    getMachineReady: kitchenState => {
+      return kitchenState.FillPositioner_CupPresent_READ;
     },
     getKitchenCommand: intent => ({
       commandType: 'DitchCup',
@@ -387,7 +330,7 @@ const KitchenSteps = [
   {
     // prepare pickup cup
     getDescription: intent => 'Go to cup position',
-    getRestaurantStateIntent: restaurantState => {
+    getStateIntent: restaurantState => {
       if (restaurantState.queue && restaurantState.queue.length) {
         return null;
       }
@@ -395,9 +338,6 @@ const KitchenSteps = [
         return {};
       }
       return null;
-    },
-    getKitchenStateReady: (kitchenState, intent) => {
-      return kitchenState.FillPositioner_GoToPositionReady_READ;
     },
     getKitchenCommand: intent => ({
       commandType: 'FillGoToCup',

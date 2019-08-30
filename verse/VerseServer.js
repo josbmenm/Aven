@@ -202,9 +202,20 @@ const startVerseServer = async () => {
           sideEffects.push({ type: 'SetFoodMonitoring', foodMonitoring });
         }
 
-        // if (Denester_DispensedSinceLow_READ && resta) {
+        if (
+          restaurantState.delivery0 &&
+          !kitchenState.Delivery_Bay0CupPresent_READ
+        ) {
+          sideEffects.push({ type: 'ClearDeliveryBay', bayId: 'delivery0' });
+        }
 
-        // }
+        if (
+          restaurantState.delivery1 &&
+          !kitchenState.Delivery_Bay1CupPresent_READ
+        ) {
+          sideEffects.push({ type: 'ClearDeliveryBay', bayId: 'delivery1' });
+        }
+
         return sideEffects;
       },
       configStream: kitchenConfigStream,

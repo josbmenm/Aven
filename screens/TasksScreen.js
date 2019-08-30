@@ -92,18 +92,18 @@ function TaskQueue({ restaurantState, dispatch }) {
           />
         </RowSection>
       )}
-      {(restaurantState.deliveryA || restaurantState.deliveryB) && (
+      {(restaurantState.delivery0 || restaurantState.delivery1) && (
         <RowSection title="ready for pickup">
-          {restaurantState.deliveryA && (
+          {restaurantState.delivery0 && (
             <TaskRow
-              key={restaurantState.deliveryA.id}
-              taskState={restaurantState.deliveryA.task}
+              key={restaurantState.delivery0.id}
+              taskState={restaurantState.delivery0.task}
             />
           )}
-          {restaurantState.deliveryB && (
+          {restaurantState.delivery1 && (
             <TaskRow
-              key={restaurantState.deliveryB.id}
-              taskState={restaurantState.deliveryB.task}
+              key={restaurantState.delivery1.id}
+              taskState={restaurantState.delivery1.task}
             />
           )}
         </RowSection>

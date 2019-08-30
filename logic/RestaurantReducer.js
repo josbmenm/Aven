@@ -418,6 +418,36 @@ function RestaurantReducerFn(state = {}, action) {
         ],
       };
     }
+    case 'DidDeliver': {
+      if (!state.delivery) {
+        return defaultReturn();
+      }
+      const deliveredState = {
+        ...state.delivery,
+        deliveryType: 'delivered',
+        bayId: action.bayId,
+        deliveryTime: Date.now(),
+        taskCompleteTime: Date.now(),
+      };
+      const returnState = {
+        ...defaultReturn(),
+        delivery: null,
+        completedTasks: [...(state.completedTasks || []), deliveredState],
+      };
+      if (action.bayId === 'delivery0') {
+        return {
+          ...returnState,
+          delivery0: deliveredState,
+        };
+      }
+      if (action.bayId === 'delivery1') {
+        return {
+          ...returnState,
+          delivery1: deliveredState,
+        };
+      }
+      return returnState;
+    }
     case 'DidClean': {
       if (state.blend !== 'dirty') {
         return defaultReturn();
@@ -428,11 +458,11 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'ClearDeliveryBay': {
-      if (action.bayId === 'deliveryA') {
-        return { ...defaultReturn(), deliveryA: null };
+      if (action.bayId === 'delivery0') {
+        return { ...defaultReturn(), delivery0: null };
       }
-      if (action.bayId === 'deliveryB') {
-        return { ...defaultReturn(), deliveryB: null };
+      if (action.bayId === 'delivery1') {
+        return { ...defaultReturn(), delivery1: null };
       }
       return defaultReturn();
     }

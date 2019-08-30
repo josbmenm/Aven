@@ -447,7 +447,7 @@ function PickupCell({ state }) {
   );
 }
 
-function PickupSection({ deliveryA, deliveryB }) {
+function PickupSection({ delivery0, delivery1 }) {
   return (
     <View style={{ backgroundColor: 'white' }}>
       <StatusDisplayTitleRow title="now serving:" />
@@ -457,7 +457,7 @@ function PickupSection({ deliveryA, deliveryB }) {
           height: 192,
         }}
       >
-        <PickupCell state={deliveryA} />
+        <PickupCell state={delivery0} />
         <View style={{ padding: 28 }}>
           <View
             style={{
@@ -468,7 +468,7 @@ function PickupSection({ deliveryA, deliveryB }) {
             }}
           />
         </View>
-        <PickupCell state={deliveryB} />
+        <PickupCell state={delivery1} />
       </View>
     </View>
   );

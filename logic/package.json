@@ -1,7 +1,8 @@
 {
   "aven": {
     "srcDependencies": [
-      "utils"
+      "utils",
+      "logger"
     ]
   }
 }

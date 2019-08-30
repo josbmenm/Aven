@@ -1,3 +1,5 @@
+import { log } from '../logger/logger';
+
 function delay(ms) {
   return new Promise(resolve => {
     setTimeout(resolve, ms);
@@ -27,18 +29,21 @@ export function computeNextSteps(
     .map(STEP => {
       const {
         getDescription,
-        getRestaurantStateIntent,
-        getKitchenStateReady,
+        getStateIntent,
+        getMachineReady,
         getKitchenCommand,
         getFailureRestaurantAction,
         getStartingRestaurantAction,
         getSuccessRestaurantAction,
       } = STEP;
-      const intent = getRestaurantStateIntent(restaurantState);
+      const intent = getStateIntent(restaurantState, kitchenState);
       if (!intent) {
         return false;
       }
-      const isSequencerStateReady = getKitchenStateReady(kitchenState, intent);
+      // isMachineReady is used to augment the ready check.. isCommandReady is the main check.
+      const isMachineReady = getMachineReady
+        ? getMachineReady(kitchenState, intent)
+        : true;
       const command = getKitchenCommand(intent);
       const commandType = machineCommands[command.commandType];
       const isSystemIdle =
@@ -58,11 +63,11 @@ export function computeNextSteps(
       return {
         intent,
         command,
-        isSequencerStateReady,
+        isMachineReady,
         isCommandReady,
         isSystemIdle,
         isSystemNotFaulted,
-        isReady: isSequencerStateReady && isCommandReady,
+        isReady: isMachineReady && isCommandReady,
         successRestaurantAction,
         failureRestaurantAction,
         startingRestaurantAction,
@@ -74,6 +79,10 @@ export function computeNextSteps(
             (await onDispatcherAction(startingRestaurantAction));
           try {
             resp = await kitchenCommand(command);
+            log('MachineCommandPerformed', {
+              successRestaurantAction,
+              command,
+            });
             successRestaurantAction &&
               (await onDispatcherAction(successRestaurantAction));
             await delay(30);
