@@ -114,6 +114,7 @@ function VanView() {
   }
 
   // kitchenState.System_LockSkid_VALUE
+  const bypassKey = kitchenState.System_SafetyBypassKey_READ;
   const lockSkid = kitchenState.System_LockSkid_VALUE;
   const isSkidLocked = kitchenState.System_SkidLocked_READ;
   const skidIn = kitchenState.System_SkidPositionSensors_READ;
@@ -123,7 +124,7 @@ function VanView() {
   const readyToEnterServiceMode =
     kitchenState.FillSystem_EnterServiceModeReady_READ;
   const isFillSystemIdle = kitchenState.FillSystem_PrgStep_READ === 0;
-
+  const vanPowerEnable = kitchenState.System_VanPowerEnable_VALUE;
   return (
     <Row title="Van / Servicing">
       {isVanPluggedIn ? (
@@ -140,6 +141,11 @@ function VanView() {
         <Tag title="Machine Locked" color={Tag.positiveColor} />
       ) : (
         <Tag title="Machine Unlocked" color={Tag.warningColor} />
+      )}
+      {bypassKey ? (
+        <Tag title="SAFETY BYPASSED" color={Tag.negativeColor} />
+      ) : (
+        <Tag title="Safety Enabled" color={Tag.positiveColor} />
       )}
       {isInServiceMode ? (
         <Tag
@@ -168,6 +174,25 @@ function VanView() {
         options={[
           { value: true, name: 'Lock Skid' },
           { value: false, name: 'Unlock Skid' },
+        ]}
+      />
+      <MultiSelect
+        value={vanPowerEnable}
+        onValue={value => {
+          handleError(
+            cloud.dispatch({
+              type: 'KitchenWriteMachineValues',
+              subsystem: 'System',
+              pulse: [],
+              values: {
+                EnableVanPower: value,
+              },
+            }),
+          );
+        }}
+        options={[
+          { value: true, name: 'Enable Van Power' },
+          { value: false, name: 'Disable Van Power' },
         ]}
       />
       <Button
