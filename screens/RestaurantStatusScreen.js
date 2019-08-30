@@ -185,7 +185,7 @@ function VanView() {
               subsystem: 'System',
               pulse: [],
               values: {
-                EnableVanPower: value,
+                VanPowerEnable: value,
               },
             }),
           );
