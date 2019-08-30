@@ -35,6 +35,13 @@ const KitchenCommands = {
       return kitchenState.FillSystem_DispenseAmountReady_READ;
     },
   },
+  EnterServiceMode: {
+    subsystem: 'FillSystem',
+    pulse: ['EnterServiceMode'],
+    checkReady: kitchenState => {
+      return kitchenState.FillSystem_EnterServiceModeReady_READ;
+    },
+  },
 
   // PrepareForBlender: {
   //   subsystem: 'FillPositioner',

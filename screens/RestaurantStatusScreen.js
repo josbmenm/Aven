@@ -103,6 +103,101 @@ function ButtonStack({ buttons }) {
   );
 }
 
+function VanView() {
+  const [restaurantState] = useRestaurantState();
+  const cloud = useCloud();
+  const kitchenState = useKitchenState();
+  const handleError = useAsyncError();
+
+  if (!kitchenState || !restaurantState) {
+    return null;
+  }
+
+  // kitchenState.System_LockSkid_VALUE
+  const lockSkid = kitchenState.System_LockSkid_VALUE;
+  const isSkidLocked = kitchenState.System_SkidLocked_READ;
+  const skidIn = kitchenState.System_SkidPositionSensors_READ;
+  const isVanPluggedIn = kitchenState.System_VanPluggedIn_READ;
+  const isHomed = kitchenState.FillSystem_Homed_READ;
+  const isInServiceMode = kitchenState.FillSystem_InServiceMode_READ;
+  const readyToEnterServiceMode =
+    kitchenState.FillSystem_EnterServiceModeReady_READ;
+  const isFillSystemIdle = kitchenState.FillSystem_PrgStep_READ === 0;
+
+  return (
+    <Row title="Van / Servicing">
+      {isVanPluggedIn ? (
+        <Tag title="Van plugged in" color={Tag.positiveColor} />
+      ) : (
+        <Tag title="Van not plugged in" color={Tag.warningColor} />
+      )}
+      {skidIn ? (
+        <Tag title="Machine in Van" color={Tag.positiveColor} />
+      ) : (
+        <Tag title="Machine out of Van" color={Tag.warningColor} />
+      )}
+      {isSkidLocked ? (
+        <Tag title="Machine Locked" color={Tag.positiveColor} />
+      ) : (
+        <Tag title="Machine Unlocked" color={Tag.warningColor} />
+      )}
+      {isInServiceMode ? (
+        <Tag
+          title={`Service Mode (${isHomed ? 'homed' : 'not homed'})`}
+          color={Tag.warningColor}
+        />
+      ) : isHomed ? (
+        <Tag title="Active Mode, Homed" color={Tag.positiveColor} />
+      ) : (
+        <Tag title="Not Homed" color={Tag.negativeColor} />
+      )}
+      <MultiSelect
+        value={lockSkid}
+        onValue={value => {
+          handleError(
+            cloud.dispatch({
+              type: 'KitchenWriteMachineValues',
+              subsystem: 'System',
+              pulse: [],
+              values: {
+                LockSkid: value,
+              },
+            }),
+          );
+        }}
+        options={[
+          { value: true, name: 'Lock Skid' },
+          { value: false, name: 'Unlock Skid' },
+        ]}
+      />
+      <Button
+        title="home system"
+        disabled={!isFillSystemIdle}
+        onPress={() => {
+          handleError(
+            cloud.dispatch({
+              type: 'KitchenCommand',
+              commandType: 'Home',
+            }),
+          );
+        }}
+      />
+      <Button
+        title="enter service mode"
+        disabled={!readyToEnterServiceMode}
+        onPress={() => {
+          handleError(
+            cloud.dispatch({
+              type: 'KitchenCommand',
+              commandType: 'EnterServiceMode',
+            }),
+          );
+        }}
+      />
+    </Row>
+  );
+}
+
 function StatusView() {
   const [restaurantState, dispatch] = useRestaurantState();
   const { isOpen, isTraveling, closingSoon } = useIsRestaurantOpen(
@@ -217,14 +312,6 @@ function PowerView() {
   );
 }
 
-function SkidView() {
-  return (
-    <RowSection title="Machine Loading">
-      <Tag title="Locked" color={Tag.positiveColor} />
-      <Button title="Unlock Skid" onPress={() => {}} />
-    </RowSection>
-  );
-}
 function SetFridgeTempForm({ onClose, onValues, initialValues }) {
   const [low, setLow] = React.useState(String(initialValues.low));
   const [high, setHigh] = React.useState(String(initialValues.high));
@@ -269,7 +356,6 @@ function SetFridgeTempForm({ onClose, onValues, initialValues }) {
 
 function SetFridgeTemp() {
   const kitchenState = useKitchenState() || {};
-  console.log(kitchenState);
   const cloud = useCloud();
   const handleError = useAsyncError();
 
@@ -359,6 +445,7 @@ export default function RestaurantStatusScreen(props) {
     <SimplePage {...props} hideBackButton>
       <RootAuthenticationSection>
         <StatusView />
+        <VanView />
         <FridgeView />
         <TemperatureView />
 
