@@ -290,10 +290,10 @@ export function connectMachine({
     let lastConfig = undefined;
     configStream.addListener({
       next: config => {
-        log('MachineConfigured', {
-          hadConfig: !!lastConfig,
-          hasConfig: !!config,
-        });
+        // log('MachineConfigured', {
+        //   hadConfig: !!lastConfig,
+        //   hasConfig: !!config,
+        // });
         mainRobotSchema = createSchema(config);
         lastConfig = config;
       },

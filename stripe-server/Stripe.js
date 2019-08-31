@@ -1,9 +1,15 @@
 import { getSecretConfig } from '../aven-web/config';
+import { log } from '../logger/logger';
 const Stripe = require('stripe');
 const TOKEN = getSecretConfig('STRIPE_TOKEN');
 const LIVE_TOKEN = getSecretConfig('STRIPE_LIVE_TOKEN');
-const stripeDevelopment = Stripe(TOKEN);
+const stripeDevelopment = !!TOKEN && Stripe(TOKEN);
 const stripeProduction = !!LIVE_TOKEN && Stripe(LIVE_TOKEN);
+
+log('StripeStartup', {
+  hasDev: !!stripeDevelopment,
+  hasLive: !!stripeProduction,
+});
 
 function getStripe(isLive) {
   if (isLive) {
@@ -11,6 +17,9 @@ function getStripe(isLive) {
       throw new Error('No Stripe production token');
     }
     return stripeProduction;
+  }
+  if (!stripeDevelopment) {
+    throw new Error('No Stripe dev token');
   }
   return stripeDevelopment;
 }

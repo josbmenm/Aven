@@ -229,12 +229,16 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
     Animated.timing(openProgress, {
       toValue: Number(isReady),
       easing: Easing.inOut(Easing.quad),
-      duration: 600,
+      duration: 2000,
     }).start();
   }, [isReady]);
   function handleSubmit() {
     navigate('FeedbackReceipt');
   }
+  const invertedOpenProgress = Animated.interpolate(openProgress, {
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+  });
   return (
     <FadeTransition
       {...props}
@@ -268,7 +272,9 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
       }
     >
       <View style={{ flex: 1, justifyContent: 'center' }}>
-        {rating === 0 && (
+        <Animated.View
+          style={{ opacity: invertedOpenProgress, position: 'absolute' }}
+        >
           <Text
             style={{
               ...boldPrimaryFontFace,
@@ -279,8 +285,9 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
           >
             food for thought
           </Text>
-        )}
-        {rating >= 1 && (
+        </Animated.View>
+
+        <Animated.View style={{ opacity: openProgress }}>
           <Text
             style={{
               ...boldPrimaryFontFace,
@@ -291,22 +298,9 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
           >
             {FEEDBACK_TITLES[rating]}
           </Text>
-        )}
-        {rating === 0 && (
-          <Text
-            style={{
-              ...proseFontFace,
-              fontSize: 32,
-              color: monsterra,
-              textAlign: 'center',
-              marginVertical: 24,
-            }}
-          >
-            Rate your experience, and your next blend is free.
-          </Text>
-        )}
+        </Animated.View>
 
-        {rating >= 1 && (
+        <Animated.View style={{ opacity: openProgress }}>
           <Text
             style={{
               ...proseFontFace,
@@ -318,10 +312,10 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
           >
             Select all that apply
           </Text>
-        )}
+        </Animated.View>
 
         <RatingStars rating={rating} onRating={handleRating} />
-        {rating >= 1 && (
+        <Animated.View style={{ opacity: openProgress }}>
           <TagsGroup>
             {FEEDBACK_TAGS.map(tagSpec => {
               const tagId = `${ratingSentiment}-${tagSpec.name}`;
@@ -344,8 +338,10 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
               );
             })}
           </TagsGroup>
-        )}
-        {isReady && <SubmitButton onPress={handleSubmit} />}
+        </Animated.View>
+        <Animated.View style={{ opacity: openProgress }}>
+          <SubmitButton onPress={handleSubmit} />
+        </Animated.View>
       </View>
     </FadeTransition>
   );
