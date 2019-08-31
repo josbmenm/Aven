@@ -67,8 +67,8 @@ const RESTAURANT_DEV = {
   // quiet: true,
   // authority: '10.10.1.200:8830',
 
-  authority: 'localhost:8830',
-  // authority: '192.168.1.81:8830',
+  // authority: 'localhost:8830',
+  authority: '192.168.1.81:8830',
   // authority: '192.168.1.76:8830',
   // authority: '10.10.10.40:8830',
 };

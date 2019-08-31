@@ -1,26 +1,14 @@
 import React from 'react';
+import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 import {
-  View,
-  StyleSheet,
-  Image,
-  TouchableWithoutFeedback,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
-import {
-  genericPageStyle,
   proseFontFace,
   monsterra,
   boldPrimaryFontFace,
-  prettyShadow,
   prettyShadowSmall,
   titleStyle,
 } from '../components/Styles';
-import { useNavigation } from '../navigation-hooks/Hooks';
 import FadeTransition from '../components/FadeTransition';
 import BlockFormButton from '../components/BlockFormButton';
-import Spinner from './Spinner';
-import FeedbackContext from './FeedbackContext';
 import Animated, {
   Transitioning,
   Transition,
@@ -213,7 +201,6 @@ function sentimentOfRating(r) {
 }
 
 export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
-  const { navigate } = useNavigation();
   const [rating, setRating] = React.useState(0);
   const [tags, setTags] = React.useState([]);
   const [openProgress] = React.useState(new Animated.Value(0));
@@ -233,7 +220,12 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
     }).start();
   }, [isReady]);
   function handleSubmit() {
-    navigate('FeedbackReceipt');
+    onSubmit({
+      rating,
+      tags,
+    });
+    setTags([]);
+    setRating(0);
   }
   const invertedOpenProgress = Animated.interpolate(openProgress, {
     inputRange: [0, 1],

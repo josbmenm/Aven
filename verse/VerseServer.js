@@ -26,7 +26,10 @@ const getEnv = c => process.env[c];
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
 const startVerseServer = async () => {
-  log('WillStartServer', { serverType: 'verse' });
+  log('WillStartServer', {
+    serverType: 'verse',
+    nodeEnv: process.env.NODE_ENV,
+  });
 
   const pgConfig = {
     ssl: !!getEnv('VERSE_SQL_USE_SSL'),

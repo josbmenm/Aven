@@ -20,17 +20,22 @@ const FeedbackAppTransitionNavigator = createStackTransitionNavigator({
 
 export function FeedbackAppNavigator(props) {
   const cloud = useCloud();
-  const feedbackDoc = null;
-  function submit(values) {
-    console.log('todo submit feedback', values);
-    // throw new Error('Not yet');
+  const feedbackState = React.useRef({});
+  function startFeedback(data) {
+    feedbackState.current = data;
   }
-  function reset() {
-    console.log('todo reset feedback');
-    // throw new Error('Not yet');
+  function sendWithContactInfo(info) {
+    const results = {
+      ...info,
+      ...feedbackState.current,
+    };
+    cloud.get('CompanyActivity').putTransactionValue({
+      type: 'Feedback',
+      feedback: results,
+    });
   }
   return (
-    <FeedbackContext.Provider value={{ submit, reset, feedbackDoc }}>
+    <FeedbackContext.Provider value={{ startFeedback, sendWithContactInfo }}>
       <FeedbackAppTransitionNavigator {...props} />
     </FeedbackContext.Provider>
   );

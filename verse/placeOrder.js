@@ -157,7 +157,7 @@ export default async function placeOrder(
     tasks: orderTasks,
   });
 
-  log('OrderTasksQueued', { tasks });
+  log('OrderTasksQueued', { orderTasks, orderId });
   log('OrderPlacedSuccess', confirmedOrder);
 
   return {};

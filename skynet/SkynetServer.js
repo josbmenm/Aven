@@ -53,7 +53,10 @@ const gcsBucket = gcsStorage.bucket(getEnv('GCS_BUCKET'));
 const ONO_ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
 const startSkynetServer = async () => {
-  log('WillStartServer', { serverType: 'skynet' });
+  log('WillStartServer', {
+    serverType: 'skynet',
+    nodeEnv: process.env.NODE_ENV,
+  });
 
   const domain = 'onofood.co';
 
