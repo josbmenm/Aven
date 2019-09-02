@@ -339,10 +339,15 @@ function Header({ title, metaTitle }) {
 async function sendSMSReceipt(smsAgent, action, order) {
   log('ReceiptSMSWillSend', { ...order, ...action });
   await smsAgent.actions.SendSMS({
-    to: action.contact.value,
+    to: `1${action.contact.value}`,
     message: `Thanks for visting Ono Blends! Your receipt is here: https://onoblends.co/receipt/${order.id} \n\nWe hope to see you again soon ❤️`,
   });
   log('ReceiptSMSDidSend', { ...order, ...action });
+  return {
+    sendTime: Date.now(),
+    type: 'sms',
+    contact: action.contact,
+  };
 }
 async function sendEmailReceipt(emailAgent, action, order) {
   const cardPresentMeta =
@@ -408,6 +413,11 @@ async function sendEmailReceipt(emailAgent, action, order) {
     messageHTML: html,
   });
   log('ReceiptEmailDidSend', { ...order, ...action });
+  return {
+    sendTime: Date.now(),
+    type: 'email',
+    contact: action.contact,
+  };
 }
 
 export default async function sendReceipt({
@@ -425,10 +435,18 @@ export default async function sendReceipt({
     throw new Error('Invalid SendReceipt action');
   }
   if (action.contact.type === 'sms') {
-    return await sendSMSReceipt(smsAgent, action, orderValue);
+    const sent = await sendSMSReceipt(smsAgent, action, orderValue);
+    await order.transact(o => ({
+      ...o,
+      receipts: [...(o.receipts || []), sent],
+    }));
   }
   if (action.contact.type === 'email') {
-    return await sendEmailReceipt(emailAgent, action, orderValue);
+    const sent = await sendEmailReceipt(emailAgent, action, orderValue);
+    await order.transact(o => ({
+      ...o,
+      receipts: [...(o.receipts || []), sent],
+    }));
   }
   return;
 }

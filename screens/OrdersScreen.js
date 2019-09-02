@@ -54,7 +54,7 @@ function OrdersList({ restaurantState, dispatch }) {
   }
   return (
     <RowSection title="recent orders">
-      {recentOrders.orders.map(order => {
+      {recentOrders.orders.reverse().map(order => {
         return <OrderRow order={order} key={order.orderId} />;
       })}
     </RowSection>

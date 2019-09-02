@@ -37,7 +37,11 @@ export default async function validatePromoCode(cloud, { promoCode }) {
 
   const promoValue = await promoDoc.value.load();
 
-  if (promoValue && promoValue.usedForOrder == null) {
+  if (promoValue) {
+    const promoUsedTimes = promoValue.uses || [];
+    if (promoUsedTimes.length) {
+      return null;
+    }
     return promoValue;
   }
 

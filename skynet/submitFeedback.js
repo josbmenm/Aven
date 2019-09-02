@@ -1,4 +1,5 @@
 import React from 'react';
+import { log } from '../logger/logger';
 import {
   render,
   Mjml,
@@ -37,16 +38,9 @@ const getCode = () =>
 export default async function submitFeedback(
   cloud,
   emailAgent,
-  { email, feedbackId },
+  { email, feedback },
 ) {
-  const feedback = cloud.get(`CustomerFeedback/${feedbackId}`);
-  const feedbackValue = feedback.load();
-  if (!feedbackValue) {
-    throw new Error(`Feedback ID "${feedbackId}" could not be found.`);
-  }
-  if (!feedbackValue.rating) {
-    throw new Error(`Feedback "${feedbackId}" rating is missing.`);
-  }
+  log('CustomerFeedbackWillSubmit', { email, feedback });
   const promoCode = getCode();
 
   const { html, errors } = render(
@@ -89,22 +83,14 @@ Your promo code is ${promoCode}
 
 -The Ono Blends Team`,
     messageHTML: html,
-    // from
-    // fromName
   });
-  console.log(
-    'submitting feeedddbaccckkk!?!?',
-    email,
-    feedback.getValue(),
-    feedbackId,
-  );
 
   const now = Date.now();
+  const companyActivity = cloud.get('CompanyActivity');
 
-  await cloud.get('FeedbackSubmissions').putTransactionValue({
-    type: 'FeedbackSubmission',
-    rating1to5: feedbackValue.rating,
-    comment: feedbackValue.comment,
+  const result = await companyActivity.putTransactionValue({
+    type: 'CustomerFeedback',
+    feedback,
     email,
     promoCode,
     time: now,
@@ -115,11 +101,17 @@ Your promo code is ${promoCode}
     count: 1,
     promoCode: promoCode,
     context: {
-      type: 'Feedback',
-      id: feedbackId,
+      type: 'ThanksToken',
+      tag: 'FeedbackKiosk',
+      id: result.id,
     },
   });
+  log('CustomerFeedbackDidSubmit', {
+    email,
+    feedback,
+    promoCode,
+    resultId: result.id,
+  });
+
   return {};
 }
-
-// }

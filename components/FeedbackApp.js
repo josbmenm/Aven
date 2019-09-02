@@ -22,18 +22,15 @@ export function FeedbackAppNavigator(props) {
   function startFeedback(data) {
     feedbackState.current = data;
   }
-  function sendWithContactInfo(info) {
-    const results = {
-      ...info,
-      ...feedbackState.current,
-    };
-    cloud.get('CompanyActivity').putTransactionValue({
-      type: 'Feedback',
-      feedback: results,
+  async function sendWithEmail(email) {
+    await cloud.dispatch({
+      type: 'SubmitFeedback',
+      email,
+      feedback: feedbackState.current,
     });
   }
   return (
-    <FeedbackContext.Provider value={{ startFeedback, sendWithContactInfo }}>
+    <FeedbackContext.Provider value={{ startFeedback, sendWithEmail }}>
       <FeedbackAppTransitionNavigator {...props} />
     </FeedbackContext.Provider>
   );

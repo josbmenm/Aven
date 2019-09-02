@@ -23,11 +23,6 @@ function TaskRow({ onCancel, onDoNext, taskState, onRemake }) {
       }}
     >
       <TaskInfo task={taskState} />
-      {taskState.fills && (
-        <Text style={{ alignSelf: 'center', margin: 10 }}>
-          {taskState.fills.length} fills
-        </Text>
-      )}
       {onCancel && <Button onPress={onCancel} title="cancel" type="outline" />}
       {onDoNext && <Button onPress={onDoNext} title="do next" type="outline" />}
       {onRemake && <Button onPress={onRemake} title="re-make" type="outline" />}

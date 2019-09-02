@@ -10,9 +10,9 @@ export default function FeedbackReceiptScreen({ ...props }) {
   return (
     <FeedbackReceiptPage
       {...props}
-      onSubmit={info => {
+      onSubmit={async email => {
         navigate('FeedbackComplete');
-        feedbackContext.sendWithContactInfo(info);
+        await feedbackContext.sendWithEmail(email);
       }}
     />
   );

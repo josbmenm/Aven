@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableHighlight, View, Text } from 'react-native';
 import { rowStyle, rowTitleStyle } from './Styles';
 
-const Row = ({ children, title }) => {
+const Row = ({ children, title, containerStyle }) => {
   return (
     <View style={{ ...rowStyle }}>
       {title && <Text style={rowTitleStyle}>{title}</Text>}
@@ -11,6 +11,7 @@ const Row = ({ children, title }) => {
           flexDirection: 'row',
           flexWrap: 'wrap',
           justifyContent: 'space-evenly',
+          ...containerStyle,
         }}
       >
         {children}

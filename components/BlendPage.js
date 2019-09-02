@@ -1,26 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text } from 'react-native';
 import ActionPage from './ActionPage';
 import AirtableImage from './AirtableImage';
-import {
-  boldPrimaryFontFace,
-  monsterra,
-  prettyShadow,
-  titleStyle,
-  proseFontFace,
-  largeHorizontalPadding,
-} from './Styles';
-import { MenuCard, Tag } from '../components/MenuCard';
+import { boldPrimaryFontFace, monsterra, titleStyle } from './Styles';
+import { Tag } from '../components/MenuCard';
 import { MenuHLayout } from '../components/MenuZone';
 import formatCurrency from '../utils/formatCurrency';
 import { dietaryInfosOfMenuItem } from '../logic/configLogic';
 import {
   displayNameOfOrderItem,
   addMenuItemToCartItem,
-  getActiveEnhancement,
-  getSelectedIngredients,
-  useCompanyConfig,
-  sellPriceOfMenuItem,
   getSellPriceOfItem,
   useSelectedIngredients,
 } from '../ono-cloud/OnoKitchen';
@@ -29,8 +18,6 @@ import DetailsSection from './DetailsSection';
 import MainTitle from './MainTitle';
 import DescriptionText from './DescriptionText';
 import DetailText from './DetailText';
-import FoodMenu from './FoodMenu';
-import { EnhancementSelector } from './Enhancements';
 
 function BackgroundLayout({ children, background, photoHasMargin }) {
   return (
@@ -221,16 +208,27 @@ function BlendPageContentPure({
           >
             {dietaryInfos &&
               dietaryInfos.map(d => (
-                <AirtableImage
-                  key={d.id}
-                  image={d.Icon}
-                  style={{
-                    width: 32,
-                    marginRight: 8,
-                    height: 32,
-                  }}
-                  tintColor={monsterra}
-                />
+                <View style={{ alignItems: 'center', marginRight: 16 }}>
+                  <AirtableImage
+                    key={d.id}
+                    image={d.Icon}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      marginBottom: 4,
+                    }}
+                    tintColor={monsterra}
+                  />
+                  <Text
+                    style={{
+                      ...titleStyle,
+                      fontSize: 12,
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {d.Name}
+                  </Text>
+                </View>
               ))}
           </View>
           <SmallTitle>organic ingredients</SmallTitle>

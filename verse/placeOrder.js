@@ -68,6 +68,36 @@ export default async function placeOrder(
     isOrderValid = true;
   }
 
+  if (promo) {
+    // promo code verification
+    if (promo.context.type === 'Seasonal') {
+      // todo, verify seasonal promo using companyConfig.baseTables.PromoCodes[promo.context.id]
+    } else if (promo.context.type === 'ThanksToken') {
+      const promoDoc = cloud.get(`PromoCodes/${promo.promoCode}`);
+      const promoState = await promoDoc.idAndValue.load();
+      const promoValue = promoState.value;
+      if (promoValue.uses && promoValue.uses.length >= 1) {
+        error('PromoCodeVerificationFailure', {
+          promo,
+          error: 'Already Used Token',
+          orderId,
+        });
+        throw new Error('PromoCodeVerification');
+      }
+      await promoDoc.transact(p => ({
+        ...p,
+        uses: [...(p.uses || []), { orderId, time: Date.now() }],
+      }));
+    } else {
+      error('PromoCodeVerificationFailure', {
+        promo,
+        error: 'Unknown context type',
+        orderId,
+      });
+      throw new Error('PromoCodeVerification');
+    }
+  }
+
   const allTasks = await Promise.all(
     summary.items.map(async item => {
       if (item.type !== 'blend') {

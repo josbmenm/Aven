@@ -1,4 +1,4 @@
-import { refundCharge } from '../stripe-server/Stripe';
+import { refundPaymentIntent } from '../stripe-server/Stripe';
 
 export default async function refundOrder({
   cloud,
@@ -19,15 +19,13 @@ export default async function refundOrder({
   if (!orderState.value.stripeIntent) {
     throw new Error('Cannot refund without a stripe payment intent');
   }
-  const refund = await refundCharge(
-    orderState.value.stripeIntent.charges.data[0],
-  );
+  const refund = await refundPaymentIntent(orderState.value.stripeIntent);
   const newOrder = {
     ...orderState.value,
     refundTime: Date.now(),
     refund,
   };
   order.putValue(newOrder);
-  console.log('REFUNDING', newOrder);
+
   return newOrder;
 }
