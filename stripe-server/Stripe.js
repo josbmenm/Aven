@@ -42,34 +42,24 @@ export const capturePayment = async action => {
 export async function getPaymentIntent(intentId, isLive) {
   const stripe = getStripe(isLive);
   const paymentIntent = await stripe.paymentIntents.retrieve(intentId);
-  console.log(
-    'well well well',
-    JSON.stringify(paymentIntent, null, 2),
-    isLive,
-    intentId,
-  );
   const source =
     paymentIntent.source &&
     (await stripe.sources.retrieve(paymentIntent.source));
-
-  // const charges = await Promise.all(
-  //   paymentIntent.charges.data.map(async chargeId => {
-  //     return await stripe.charges.retrieve(chargeId);
-  //   }),
-  // );
-
+  const charge = paymentIntent.charges.data[0];
+  const cardFingerprint =
+    charge.payment_method_details.card_present.fingerprint;
   return {
     ...paymentIntent,
+    cardFingerprint,
     sourceId: paymentIntent.source,
     source,
-    // charges,
-    // chargesMeta: paymentIntent.charges,
   };
 }
 
 export async function refundCharge(charge) {
   console.log('STRIPE REFUNDING: ', charge);
   const stripe = getStripe(charge.isLive);
+
   const refund = await stripe.refunds.create({
     charge: charge.id,
   });

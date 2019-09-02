@@ -58,8 +58,7 @@ export default async function placeOrder(
     log('LookupStripeIntent', {
       stripeIntent,
       stripeIntentId,
-      ...summary,
-      menu: null,
+      orderId,
     });
   }
   let isOrderValid = false;
@@ -93,6 +92,32 @@ export default async function placeOrder(
   );
   const orderTasks = allTasks.flat(1);
 
+  const itemsRollup = summary.items.map(i => {
+    const customizationSummary = getItemCustomizationSummary(i);
+    const {
+      itemPrice,
+      recipeBasePrice,
+      sellPrice,
+      quantity,
+      id,
+      type,
+      menuItemId,
+      customization,
+    } = i;
+    return {
+      displayName: displayNameOfOrderItem(i, i.menuItem),
+      itemPrice,
+      recipeBasePrice,
+      sellPrice,
+      quantity,
+      id,
+      type,
+      menuItemId,
+      customization,
+      customizationSummary,
+    };
+  });
+
   const confirmedOrder = {
     ...order,
     subTotal,
@@ -102,31 +127,7 @@ export default async function placeOrder(
     totalBeforeDiscount,
     taxRate,
     promo,
-    items: summary.items.map(i => {
-      const customizationSummary = getItemCustomizationSummary(i);
-      const {
-        itemPrice,
-        recipeBasePrice,
-        sellPrice,
-        quantity,
-        id,
-        type,
-        menuItemId,
-        customization,
-      } = i;
-      return {
-        displayName: displayNameOfOrderItem(i, i.menuItem),
-        itemPrice,
-        recipeBasePrice,
-        sellPrice,
-        quantity,
-        id,
-        type,
-        menuItemId,
-        customization,
-        customizationSummary,
-      };
-    }),
+    items: itemsRollup,
     id: orderId,
     orderId, // yes this is redundant.. if anything, we should remove the ambiguous `id`
     stripeIntentId,
@@ -139,10 +140,9 @@ export default async function placeOrder(
     error('OrderValidationError', {
       isOrderValid,
       stripeIntent,
-      ...summary,
       orderId,
       stripeIntentId,
-      menu: null,
+      order: confirmedOrder,
     });
     throw new Error('Could not verify payment intent! Order has failed.');
   }

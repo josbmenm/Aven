@@ -23,7 +23,7 @@ import submitFeedback from './submitFeedback';
 import validatePromoCode from './validatePromoCode';
 import { HostContext } from '../components/AirtableImage';
 import { companyConfigToKitchenConfig } from '../logic/MachineLogic';
-import RestaurantReducer from '../logic/RestaurantReducer';
+import RecentOrders from '../logic/RecentOrders';
 import { companyConfigToMenu } from '../logic/configLogic';
 import {
   streamOfValue,
@@ -209,14 +209,14 @@ const startSkynetServer = async () => {
     'CompanyConfig',
     companyConfigStream,
   );
-  const restaurantActions = cloud.docs.get('RestaurantActions');
+  const companyActivity = cloud.docs.get('CompanyActivity');
 
-  const restaurantState = cloud.docs.setOverrideStream(
-    'RestaurantState',
+  const recentOrders = cloud.docs.setOverrideStream(
+    'RecentOrders',
     createReducerStream(
-      restaurantActions,
-      RestaurantReducer.reducerFn,
-      RestaurantReducer.initialState,
+      companyActivity,
+      RecentOrders.reducerFn,
+      RecentOrders.initialState,
     ),
   );
 
@@ -249,8 +249,6 @@ const startSkynetServer = async () => {
         CompanyConfig: { defaultRule: { canRead: true } },
         KitchenConfig: { defaultRule: { canRead: true } },
         DeviceActions: { defaultRule: { canWrite: true } },
-        RestaurantActions: { defaultRule: { canWrite: true } },
-        RestaurantState: { defaultRule: { canWrite: true } },
         Menu: { defaultRule: { canRead: true } },
         PendingOrders: {
           defaultRule: {
@@ -396,7 +394,7 @@ Debug: ${JSON.stringify(action)}
       log('DispatchedAction', { action, response });
       return response;
     } catch (e) {
-      error('DispatchedAction', { action, error: e });
+      error('DispatchedAction', { action, error: e.message, stack: e.stack });
       throw e;
     }
   }

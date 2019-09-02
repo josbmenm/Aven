@@ -25,6 +25,15 @@ function SocialText(props) {
   );
 }
 
+function FooterLink({ ...children }) {
+  return (
+    <Link
+      {...children}
+      titleStyle={{ textAlign: 'left', alignSelf: 'flex-start' }}
+    />
+  );
+}
+
 export default function PageFooter() {
   const theme = useTheme();
   return (
@@ -99,24 +108,24 @@ export default function PageFooter() {
                 }}
               >
                 <View style={{ flex: 1 }}>
-                  <Link
+                  <FooterLink
                     titleStyle={{ textAlign: 'left' }}
                     title="menu"
                     routeName="Menu"
                   />
-                  <Link
+                  <FooterLink
                     titleStyle={{ textAlign: 'left' }}
                     title="our story"
                     routeName="OurStory"
                   />
-                  <Link
+                  <FooterLink
                     titleStyle={{ textAlign: 'left' }}
                     title="book with us"
                     routeName="BookUs"
                   />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Link
+                  <FooterLink
                     titleStyle={{ textAlign: 'left' }}
                     title="media kit"
                     target="_blank"
@@ -129,7 +138,7 @@ export default function PageFooter() {
                       alignItems: 'baseline',
                     }}
                   >
-                    <Link
+                    <FooterLink
                       titleStyle={{ textAlign: 'left' }}
                       title="terms"
                       routeName="Terms"
@@ -148,7 +157,7 @@ export default function PageFooter() {
                     >
                       &
                     </BodyText>
-                    <Link
+                    <FooterLink
                       titleStyle={{ textAlign: 'left' }}
                       title="privacy"
                       routeName="Privacy"
@@ -159,8 +168,7 @@ export default function PageFooter() {
                     />
                   </View>
 
-                  <Link
-                    titleStyle={{ textAlign: 'left' }}
+                  <FooterLink
                     title="contact us"
                     url="mailto:aloha@onofood.co"
                   />

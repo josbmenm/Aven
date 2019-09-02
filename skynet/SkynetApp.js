@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { createSwitchNavigator } from '../navigation-core';
 import Admin from '../admin/Admin';
-import ReceiptPage from './ReceiptPage';
 import InternalBlendMenu from './InternalBlendMenu';
 import MauiWebApp from '../maui-web/MauiWebApp';
 import { monsterra } from '../components/Styles';
@@ -159,7 +158,6 @@ const App = createSwitchNavigator(
       screen: SkynetAdmin,
       path: 'admin',
     },
-    Receipt: ReceiptPage,
     InternalBlendMenu2: {
       screen: InternalBlendMenu,
       path: 'secrets/blendmenu',

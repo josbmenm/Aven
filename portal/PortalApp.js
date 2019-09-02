@@ -34,6 +34,7 @@ import { FeedbackAppNavigator } from '../components/FeedbackApp';
 import SequencerScreen from '../screens/SequencerScreen';
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
+import InternalOrderScreen from '../screens/InternalOrderScreen';
 import DeviceManagerScreen from '../screens/DeviceManagerScreen';
 import { OrderCompletePortalScreen } from '../screens/OrderCompleteScreen';
 import CollectNameScreen from '../screens/CollectNameScreen';
@@ -71,6 +72,7 @@ const RESTAURANT_DEV = {
   authority: '192.168.1.81:8830',
   // authority: '192.168.1.76:8830',
   // authority: '10.10.10.40:8830',
+  // authority: '10.10.10.200:8830',
 };
 const RESTAURANT_PROD = {
   useSSL: false,
@@ -208,6 +210,7 @@ const App = createStackTransitionNavigator({
   ComponentPlayground: ComponentPlaygroundScreen,
   DeviceManager: DeviceManagerScreen,
   PaymentDebug: PaymentDebugScreen,
+  InternalOrder: InternalOrderScreen,
 
   FeedbackApp: FeedbackAppNavigator,
 

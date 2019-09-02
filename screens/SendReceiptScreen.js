@@ -45,6 +45,10 @@ export default function SendReceiptScreen(props) {
       error={error}
       isProgressing={isProgressing}
       onSubmit={resp => {
+        if (!order) {
+          alert('Whoops! Ask your guide to send your receipt.');
+          return;
+        }
         handlePromise(
           cloud.dispatch({
             type: 'SendReceipt',

@@ -258,7 +258,7 @@ const startVerseServer = async () => {
       log('DispatchedAction', { action, response });
       return response;
     } catch (e) {
-      error('DispatchedAction', { action, error: e });
+      error('DispatchedAction', { action, error: e.message, stack: e.stack });
       throw e;
     }
   }

@@ -13,6 +13,7 @@ import {
   MjmlText,
 } from 'mjml-react';
 import formatCurrency from '../utils/formatCurrency';
+import { log, error } from '../logger/logger';
 
 function Header({ title, metaTitle }) {
   return (
@@ -335,22 +336,21 @@ function Header({ title, metaTitle }) {
 //   }
 // }
 
-async function sendSMSReceipt(smsAgent, action, logger, order) {
-  logger.log('SMS Sent', 'SendSMS');
+async function sendSMSReceipt(smsAgent, action, order) {
+  log('ReceiptSMSWillSend', { ...order, ...action });
   await smsAgent.actions.SendSMS({
     to: action.contact.value,
-    message: `Thanks for visting Ono Blends! Your receipt is here: https://onoblends.co/receipt/${
-      order.id
-    } \n\nWe hope to see you again soon ❤️`,
+    message: `Thanks for visting Ono Blends! Your receipt is here: https://onoblends.co/receipt/${order.id} \n\nWe hope to see you again soon ❤️`,
   });
+  log('ReceiptSMSDidSend', { ...order, ...action });
 }
-async function sendEmailReceipt(emailAgent, action, logger, order) {
+async function sendEmailReceipt(emailAgent, action, order) {
   const cardPresentMeta =
     order.stripeIntent &&
     order.stripeIntent.charges.data[0].source &&
     order.stripeIntent.charges.data[0].source.card_present;
 
-  logger.log('Email Sent', 'SendEmail');
+  log('ReceiptEmailWillSend', { ...order, ...action });
   const { html, errors } = render(
     <Mjml>
       <Header
@@ -398,7 +398,7 @@ async function sendEmailReceipt(emailAgent, action, logger, order) {
     { validationLevel: 'soft' },
   );
   if (errors.length) {
-    console.error(errors);
+    error('ReceiptMJMLError', { errors });
     throw new Error('Cannot construct email!', errors);
   }
   await emailAgent.actions.SendEmail({
@@ -407,6 +407,7 @@ async function sendEmailReceipt(emailAgent, action, logger, order) {
     message: 'Thanks for your order! \n\n -The Ono Blends Team',
     messageHTML: html,
   });
+  log('ReceiptEmailDidSend', { ...order, ...action });
 }
 
 export default async function sendReceipt({
@@ -414,7 +415,6 @@ export default async function sendReceipt({
   smsAgent,
   emailAgent,
   action,
-  logger,
 }) {
   const order = cloud.get(`ConfirmedOrders/${action.orderId}`);
   const orderValue = await order.value.load();
@@ -425,10 +425,10 @@ export default async function sendReceipt({
     throw new Error('Invalid SendReceipt action');
   }
   if (action.contact.type === 'sms') {
-    return await sendSMSReceipt(smsAgent, action, logger, orderValue);
+    return await sendSMSReceipt(smsAgent, action, orderValue);
   }
   if (action.contact.type === 'email') {
-    return await sendEmailReceipt(emailAgent, action, logger, orderValue);
+    return await sendEmailReceipt(emailAgent, action, orderValue);
   }
   return;
 }

@@ -14,6 +14,7 @@ import Subscribe from './SubscribePage';
 import SubscribeConfirm from './SubscribeConfirmPage';
 import OnoTheme from '../logic/OnoTheme';
 import { ThemeProvider } from '../dashboard/Theme';
+import Receipt from './ReceiptPage';
 
 const customHTMLHeaders = `
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -69,6 +70,10 @@ const App = createFullscreenSwitchNavigator(
     SubscribeConfirmLegacy: {
       path: 'confirmed',
       screen: SubscribeConfirm,
+    },
+    Receipt: {
+      path: 'receipt/:orderId',
+      screen: Receipt,
     },
   },
   {
