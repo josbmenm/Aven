@@ -28,7 +28,7 @@ const LOGGERS = {
   debug: logDebug,
 };
 
-let activeLogger = logDebug;
+let activeLogger = process.env.NODE_ENV === 'production' ? logJSON : logDebug;
 
 export function setLoggerMode(mode) {
   if (!LOGGERS[mode]) {
