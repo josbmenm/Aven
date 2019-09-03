@@ -19,6 +19,7 @@ function logJSON(message, fields, level) {
       '@version': 1,
       level: LOG_LEVELS[level],
       '@fields': fields,
+      host: process.env.HOSTNAME,
     }),
   );
 }
