@@ -295,3 +295,5 @@ export default function InventoryScreen(props) {
 }
 
 InventoryScreen.navigationOptions = SimplePage.navigationOptions;
+
+// InventoryScreen.stateStreamHook = useInventoryState

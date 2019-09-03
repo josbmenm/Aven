@@ -286,7 +286,7 @@ export function connectMachine({
   const subsystemResolvers = {};
 
   async function connectKitchenClient() {
-    console.log('Waiting for Kitchen Configuration...');
+    log('ConnectingKitchenClient');
     let lastConfig = undefined;
     configStream.addListener({
       next: config => {

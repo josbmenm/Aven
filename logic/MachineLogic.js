@@ -80,6 +80,7 @@ export function computeNextSteps(
           try {
             resp = await kitchenCommand(command);
             log('MachineCommandPerformed', {
+              intent,
               successRestaurantAction,
               command,
             });
@@ -87,6 +88,11 @@ export function computeNextSteps(
               (await onDispatcherAction(successRestaurantAction));
             await delay(30);
           } catch (e) {
+            log('MachineCommandFailure', {
+              intent,
+              failureRestaurantAction,
+              command,
+            });
             failureRestaurantAction &&
               (await onDispatcherAction(failureRestaurantAction));
             throw e;
