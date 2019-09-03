@@ -607,23 +607,6 @@ export function createDoc({
     return result;
   }
 
-  const docValue = createStreamValue(
-    docStream
-      .dropRepeats((a, b) => a.id === b.id, 'DropRepeatedIds')
-      .map(state => {
-        if (state.id === undefined) {
-          return xs.never();
-        }
-        if (state.id === null) {
-          return xs.of(undefined);
-        }
-        const block = getBlock(state.id);
-        return block.value.stream;
-      }, 'GetBlockValueStream-' + _subsToName)
-      .flatten(),
-    () => `Doc(${getName()}).value`,
-  );
-
   const docIdAndValue = createStreamValue(
     docStream
       .dropRepeats((a, b) => a.id === b.id, 'DropRepeatedIds')
@@ -645,11 +628,17 @@ export function createDoc({
       })
       .flatten()
       .dropRepeats((a, b) => {
-        return (
-          a.id === b.id && (a.value === undefined) === (b.value === undefined)
-        );
+        return a.id === b.id
       }, 'DropRepeatedIdValues'),
     () => `Doc(${getName()}).idValue`,
+  );
+
+  const docValue = createStreamValue(
+    docIdAndValue.stream
+      .map(idAndValue => {
+        return idAndValue.value;
+      }, 'DocValueStream'),
+    () => `Doc(${getName()}).value`,
   );
 
   const children = createDocSet({
