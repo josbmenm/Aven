@@ -78,7 +78,11 @@ export default function OrderCompletePage({
     };
   }, []);
   return (
-    <ShortBlockFormPage backBehavior={backBehavior} {...props}>
+    <ShortBlockFormPage
+      backBehavior={backBehavior}
+      {...props}
+      hideBackButton={true}
+    >
       <View
         style={{
           flex: 1,

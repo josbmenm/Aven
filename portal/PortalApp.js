@@ -40,7 +40,6 @@ import { OrderCompletePortalScreen } from '../screens/OrderCompleteScreen';
 import CollectNameScreen from '../screens/CollectNameScreen';
 import SendReceiptScreen from '../screens/SendReceiptScreen';
 import InventoryScreen from '../screens/InventoryScreen';
-import AlarmsScreen from '../screens/AlarmsScreen';
 import ReceiptScreen from '../screens/ReceiptScreen';
 import AppUpsellScreen from '../screens/AppUpsellScreen';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
@@ -174,8 +173,11 @@ const TABS = [
   { routeName: 'Sequencer', title: 'Machine' },
   { routeName: 'Tasks', title: 'Tasks' },
   { routeName: 'Orders', title: 'Orders' },
-  { routeName: 'Inventory', title: 'Inventory' },
-  { routeName: 'Alarms', title: 'Alarms' },
+  {
+    routeName: 'Inventory',
+    title: 'Inventory',
+    stateStreamHook: InventoryScreen.useStateStream,
+  },
   { routeName: 'Settings', title: 'Settings' },
 ];
 
@@ -185,7 +187,6 @@ const PortalHome = createSwitchNavigator({
   Tasks: { screen: TasksScreen },
   Orders: { screen: OrdersScreen },
   Status: { screen: RestaurantStatusScreen },
-  Alarms: { screen: AlarmsScreen },
   Settings: { screen: KioskSettingsScreen },
 });
 
@@ -211,16 +212,8 @@ const App = createStackTransitionNavigator({
   DeviceManager: DeviceManagerScreen,
   PaymentDebug: PaymentDebugScreen,
   InternalOrder: InternalOrderScreen,
-
   FeedbackApp: FeedbackAppNavigator,
-
-  // Inventory: InventoryScreen,
-  // DeviceManager: DeviceManagerScreen,
-  // RestaurantStatus: RestaurantStatusScreen,
   OrderConfirmTest: OrderConfirmTestScreen,
-  // Sequencer: SequencerScreen,
-  // EngDashboard: EngDashboardScreen,
-  // Orders: OrdersScreen,
 });
 
 const AppContainer = createAppContainer(App);

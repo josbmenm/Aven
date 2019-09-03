@@ -1,6 +1,20 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { boldPrimaryFontFace, monsterra, prettyShadow } from './Styles';
+
+function TabIndicator({ stateStream }) {
+  return (
+    <Image
+      source={require('./assets/Positive.png')}
+      style={{
+        width: 25,
+        height: 25,
+        marginHorizontal: 8,
+        tintColor: isActive ? 'white' : null,
+      }}
+    />
+  );
+}
 
 export default function TabsScreen({ tabs, navigation, children }) {
   const activeRoute = navigation.state.routes[navigation.state.index];
@@ -23,7 +37,14 @@ export default function TabsScreen({ tabs, navigation, children }) {
                 onPress={() => {
                   navigation.navigate(tab.routeName);
                 }}
-                style={{ padding: 10, alignSelf: 'stretch' }}
+                style={{
+                  padding: 10,
+                  alignSelf: 'stretch',
+                  flex: 1,
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                }}
               >
                 <Text
                   style={{
@@ -35,6 +56,9 @@ export default function TabsScreen({ tabs, navigation, children }) {
                 >
                   {tab.title}
                 </Text>
+                {tab.stateStream && (
+                  <TabIndicator stateStream={tab.stateStream} />
+                )}
               </TouchableOpacity>
             </View>
           );
