@@ -1,5 +1,6 @@
 import React from 'react';
 import ActionPage from '../components/ActionPage';
+import { View } from 'react-native';
 import BlendCustomization from './BlendCustomization';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
@@ -82,7 +83,9 @@ Final Volume: ${results.finalVolume}ml
   ];
   return (
     <ActionPage actions={actions.reverse()} {...props} disableScrollView>
-      {customizeContent}
+      <View style={{ marginTop: 76, marginRight: 230, flex: 1 }}>
+        {customizeContent}
+      </View>
     </ActionPage>
   );
 }

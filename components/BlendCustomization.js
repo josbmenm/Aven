@@ -644,8 +644,8 @@ function getCustomizationSections(
   ];
   return sections;
 }
-const xButtonSize = 22;
-const xButtonInset = 3;
+const xButtonSize = 27;
+const xButtonInset = 6;
 function XButton({ onPress }) {
   return (
     <TouchableOpacity
@@ -674,8 +674,9 @@ function XButton({ onPress }) {
           width: 9,
           height: 9,
           tintColor: monsterra40,
-          marginLeft: 5,
-          marginTop: 5,
+          marginLeft: 8,
+          marginTop: 8,
+          tintColor: '#c66',
         }}
         source={require('./assets/CustomizeCross.png')}
       />
