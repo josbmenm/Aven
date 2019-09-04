@@ -7,6 +7,7 @@ const PRIMING_TASKS = [
     skipBlend: true,
     name: 'Mr. Purge',
     blendName: 'Do not eat',
+    blendColor: 'black',
     fills: [
       { system: 4, slot: 3, amount: 10 },
       { system: 3, slot: 0, amount: 2 }, // powder. 20g/shot, powdery
@@ -18,6 +19,7 @@ const PRIMING_TASKS = [
     skipBlend: true,
     name: 'Mr. Purge',
     blendName: 'Do not eat',
+    blendColor: 'black',
     fills: [
       { system: 4, slot: 3, amount: 10 },
       { system: 3, slot: 1, amount: 1 }, // marine collagen. 12g/shot, runny

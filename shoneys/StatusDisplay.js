@@ -122,13 +122,39 @@ function ETAText({ queuedIndex }) {
   );
 }
 
-function IngredientFillingCup({ fillLevel, currentFill }) {
+function IngredientFillingCup({ fillLevel, currentFill, blendTintColor }) {
+  const [ingredientMessageOpacity] = React.useState(new Animated.Value(0));
   const [toDotValue] = React.useState(new Animated.Value(0));
   const [moveToCup] = React.useState(new Animated.Value(0));
   const [moveDownInCup] = React.useState(new Animated.Value(0));
   const [dotOpacity] = React.useState(new Animated.Value(0));
-
+  const [shownFillLevel, setShownFillLevel] = React.useState(0);
+  const currentIngredient = currentFill && currentFill.ingredientId;
   React.useEffect(() => {
+    toDotValue.setValue(0);
+    moveToCup.setValue(0);
+    moveDownInCup.setValue(0);
+    dotOpacity.setValue(0);
+
+    const baseDelay = 4000;
+
+    Animated.timing(ingredientMessageOpacity, {
+      toValue: 1,
+      duration: 500,
+      easing: Easing.inOut(Easing.poly(5)),
+    }).start();
+    setTimeout(() => {
+      Animated.timing(ingredientMessageOpacity, {
+        toValue: 0,
+        duration: 500,
+        easing: Easing.inOut(Easing.poly(5)),
+      }).start();
+    }, baseDelay + 2000);
+
+    setTimeout(() => {
+      setShownFillLevel(fillLevel);
+    }, baseDelay + 2500);
+
     setTimeout(() => {
       setTimeout(() => {
         Animated.timing(dotOpacity, {
@@ -136,7 +162,7 @@ function IngredientFillingCup({ fillLevel, currentFill }) {
           duration: 190,
           easing: Easing.inOut(Easing.poly(5)),
         }).start();
-      }, 500);
+      }, 480);
       Animated.timing(toDotValue, {
         toValue: 1,
         duration: 700,
@@ -156,28 +182,29 @@ function IngredientFillingCup({ fillLevel, currentFill }) {
               toValue: 0,
               duration: 200,
               easing: Easing.inOut(Easing.poly(5)),
-            }).start();
+            }).start(() => {});
           });
         });
       });
-    }, 2000);
-  }, []);
+    }, baseDelay);
+  }, [currentIngredient, fillLevel]);
   return (
     <View style={{ flexDirection: 'row' }}>
       {currentFill && (
         <View style={{ flexDirection: 'row' }}>
           {currentFill.ingredientName && (
-            <Text
+            <Animated.Text
               style={{
                 ...primaryFontFace,
                 color: monsterra,
                 fontSize: 32,
                 marginTop: 10,
                 marginRight: 100,
+                opacity: ingredientMessageOpacity,
               }}
             >
               adding {currentFill.ingredientName.toLowerCase()}..
-            </Text>
+            </Animated.Text>
           )}
           <Animated.View
             style={{
@@ -217,7 +244,7 @@ function IngredientFillingCup({ fillLevel, currentFill }) {
               right: 20,
               opacity: toDotValue.interpolate({
                 inputRange: [0.8, 1],
-                outputRange: [1, 0],
+                outputRange: [0, -1],
               }),
               transform: [
                 {
@@ -230,16 +257,18 @@ function IngredientFillingCup({ fillLevel, currentFill }) {
               ],
             }}
           >
-            <AirtableImage
-              style={{ width: 66, height: 66 }}
-              tintColor={currentFill.ingredientColor}
-              resizeMode="center"
-              image={currentFill.ingredientIcon}
-            />
+            <Animated.View style={{ opacity: ingredientMessageOpacity }}>
+              <AirtableImage
+                style={{ width: 66, height: 66 }}
+                tintColor={currentFill.ingredientColor}
+                resizeMode="center"
+                image={currentFill.ingredientIcon}
+              />
+            </Animated.View>
           </Animated.View>
         </View>
       )}
-      <AnimatedCup fillLevel={fillLevel} />
+      <AnimatedCup fillLevel={shownFillLevel} tintColor={blendTintColor} />
     </View>
   );
 }
@@ -258,19 +287,23 @@ function TaskRow({ task, status, fill, queuedIndex }) {
     const remainingCount = fill.fillsRemaining ? fill.fillsRemaining.length : 0;
     const completedCount = fill.fillsCompleted ? fill.fillsCompleted.length : 0;
     fillLevel = completedCount / (completedCount + remainingCount + 1);
-    fillLevel += 0.2;
+    fillLevel += 0.25;
     if (fill.fillsRemaining && fill.fillsRemaining[0]) {
       currentFill = fill.fillsRemaining[0];
     }
     right = (
-      <IngredientFillingCup currentFill={currentFill} fillLevel={fillLevel} />
+      <IngredientFillingCup
+        currentFill={currentFill}
+        fillLevel={fillLevel}
+        blendTintColor={task.blendColor}
+      />
     );
   }
   if (status === 'blending') {
-    right = <AnimatedCup fillLevel={1} />;
+    right = <AnimatedCup fillLevel={1} blendTintColor={task.blendColor} />;
   }
   if (status === 'delivering') {
-    right = <AnimatedCup fillLevel={1} />;
+    right = <AnimatedCup fillLevel={1} blendTintColor={task.blendColor} />;
   }
   return (
     <StatusDisplayRow
@@ -425,7 +458,7 @@ function ReadyPickupCell({ state }) {
           {state.task.blendName}
         </Text>
       </View>
-      <AnimatedCup fillLevel={1} />
+      <AnimatedCup fillLevel={1} blendTintColor={state.task.blendColor} />
     </View>
   );
 }
@@ -476,7 +509,7 @@ function PickupSection({ delivery0, delivery1 }) {
 
 const ANIM_INC = 0.01;
 
-function AnimatedCup({ fillLevel }) {
+function AnimatedCup({ fillLevel, tintColor }) {
   let [shownFillLevel, setShownFillLevel] = React.useState(fillLevel);
   let zz = React.useRef({ animationFrame: null, ff: fillLevel });
   React.useEffect(() => {
@@ -523,6 +556,7 @@ function AnimatedCup({ fillLevel }) {
             position: 'absolute',
             top: 0,
             left: 0,
+            tintColor,
           }}
         />
       </div>

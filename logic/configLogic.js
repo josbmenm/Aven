@@ -314,7 +314,7 @@ export function companyConfigToBlendMenu(atData) {
       .filter(Boolean);
 
     const LiquidOptions = Object.values(Ingredients).filter(
-      ing => ing.IsLiquid,
+      ing => ing.IsBeverageBase,
     );
 
     return {

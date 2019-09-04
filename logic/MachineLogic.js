@@ -13,9 +13,6 @@ export function computeNextSteps(
   kitchenState,
   machineCommands,
 ) {
-  if (!restaurantState || !kitchenConfig || !kitchenState) {
-    return null;
-  }
   // if (restaurantState.isAttached) {
   //   const { isFaulted, isRunning } = checkKitchenState(
   //     kitchenState,
@@ -41,19 +38,23 @@ export function computeNextSteps(
         return false;
       }
       // isMachineReady is used to augment the ready check.. isCommandReady is the main check.
-      const isMachineReady = getMachineReady
-        ? getMachineReady(kitchenState, intent)
-        : true;
+      const isMachineReady =
+        kitchenState && getMachineReady
+          ? getMachineReady(kitchenState, intent)
+          : true;
       const command = getKitchenCommand(intent);
       const commandType = machineCommands[command.commandType];
-      const isSystemIdle =
-        kitchenState[`${commandType.subsystem}_PrgStep_READ`] === 0;
-      const isSystemNotFaulted =
-        kitchenState[`${commandType.subsystem}_NoFaults_READ`] === true;
+      const isSystemIdle = kitchenState
+        ? kitchenState[`${commandType.subsystem}_PrgStep_READ`] === 0
+        : true;
+      const isSystemNotFaulted = kitchenState
+        ? kitchenState[`${commandType.subsystem}_NoFaults_READ`] === true
+        : true;
+      const commandPermissive = kitchenState
+        ? commandType.checkReady(kitchenState, command)
+        : true;
       const isCommandReady =
-        isSystemNotFaulted &&
-        isSystemIdle &&
-        commandType.checkReady(kitchenState, command);
+        isSystemNotFaulted && isSystemIdle && commandPermissive;
       const successRestaurantAction =
         getSuccessRestaurantAction && getSuccessRestaurantAction(intent);
       const failureRestaurantAction =

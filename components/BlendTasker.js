@@ -155,6 +155,7 @@ export default function BlendTasker() {
                   id: cuid(),
                   name: orderName,
                   blendName,
+                  blendColor: menuItem.Recipe.Color,
                   skipBlend: false,
                   deliveryMode: 'deliver',
                   fills,

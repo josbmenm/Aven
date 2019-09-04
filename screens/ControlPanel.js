@@ -171,13 +171,16 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   } else if (restaurantState === undefined) {
     status = 'disconnected';
     message = 'Loading state..';
-  } else if (!kitchenState) {
-    status = 'disconnected';
-    message = 'Disconnected from machine.';
   } else if (!isPLCConnected) {
     status = 'disconnected';
     message = 'Server disconnected from machine.';
   } else {
+    if (!kitchenState) {
+      status = 'disconnected';
+      message = restaurantState.isAttached
+        ? 'Disconnected Sequencer'
+        : 'Machine Disconnected';
+    }
     if (!restaurantState.isAttached) {
       status = 'detached';
       message = 'Sequencer Disabled';
@@ -185,42 +188,44 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
       status = 'detached';
       message = 'Paused';
     }
-    if (
-      kitchenState.FillSystem_PrgStep_READ >= 106 &&
-      kitchenState.FillSystem_PrgStep_READ <= 165
-    ) {
-      status = 'detached';
-      message = 'Homing';
-    }
+    if (kitchenState) {
+      if (
+        kitchenState.FillSystem_PrgStep_READ >= 106 &&
+        kitchenState.FillSystem_PrgStep_READ <= 165
+      ) {
+        status = 'detached';
+        message = 'Homing';
+      }
 
-    sequencerNames &&
-      sequencerNames.forEach(systemName => {
-        const system = getSubsystem(systemName, kitchenConfig, kitchenState);
-        const faults = getSubsystemFaults(system);
-        if (faults) {
-          if (systemName === 'FillSystem') {
-            mainFaultMessage = faults.join(',');
+      sequencerNames &&
+        sequencerNames.forEach(systemName => {
+          const system = getSubsystem(systemName, kitchenConfig, kitchenState);
+          const faults = getSubsystemFaults(system);
+          if (faults) {
+            if (systemName === 'FillSystem') {
+              mainFaultMessage = faults.join(',');
+            }
+            allFaults = [
+              ...allFaults,
+              ...faults.map(description => ({
+                description,
+                isFaulted: description !== 'Not Homed',
+                systemName,
+              })),
+            ];
           }
-          allFaults = [
-            ...allFaults,
-            ...faults.map(description => ({
-              description,
-              isFaulted: description !== 'Not Homed',
-              systemName,
-            })),
-          ];
+        });
+      const hasActuallyFaulted = allFaults.find(f => f.isFaulted);
+      if (allFaults.length) {
+        status = 'fault';
+        if (hasActuallyFaulted) {
+          message = 'Faulted';
+          if (mainFaultMessage) {
+            message += ` - ${mainFaultMessage}`;
+          }
+        } else {
+          message = 'Not Homed';
         }
-      });
-    const hasActuallyFaulted = allFaults.find(f => f.isFaulted);
-    if (allFaults.length) {
-      status = 'fault';
-      if (hasActuallyFaulted) {
-        message = 'Faulted';
-        if (mainFaultMessage) {
-          message += ` - ${mainFaultMessage}`;
-        }
-      } else {
-        message = 'Not Homed';
       }
     }
   }

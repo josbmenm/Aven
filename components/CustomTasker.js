@@ -164,6 +164,7 @@ export default function CustomTasker() {
   const [savedTask, setSavedTask] = useAsyncStorage('OnoSavedBlend', {
     orderName: 'Tester O.',
     blendName: 'Test Blend',
+    blendColor: 'blue',
     deliveryMode: 'deliver',
     skipBlend: null,
     fills: [],
