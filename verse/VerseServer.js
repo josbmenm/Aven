@@ -229,6 +229,16 @@ const startVerseServer = async () => {
     });
   }
 
+  if (kitchen) {
+    setInterval(() => {
+      const kitchenState = kitchenStateDoc.value.get();
+      kitchenState &&
+        log('KitchenMonitor', {
+          ...kitchenState,
+        });
+    }, 60000);
+  }
+
   async function silentDispatch(action) {
     switch (action.type) {
       case 'KitchenCommand':
