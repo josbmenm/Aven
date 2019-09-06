@@ -437,8 +437,10 @@ export function getOrderSummary(orderState, companyConfig) {
     menu,
     items,
     subTotal,
+    subTotalDollars: subTotal / 100, // logging convenience
     tax,
     total,
+    totalDollars: total / 100, // logging convenience
     discountTotal,
     totalBeforeDiscount,
     taxRate: TAX_RATE,

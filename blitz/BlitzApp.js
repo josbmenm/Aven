@@ -291,7 +291,8 @@ function SelectModeApp() {
   const mode = controlState && controlState.mode;
   const name = controlState && controlState.name;
 
-  let content = <WaitingPage name={name} title="Kiosk Closed" />;
+  let content = <KioskApp mode={'kiosk'} />;
+  // let content = <WaitingPage name={name} title="Kiosk Closed" />;
 
   if (mode === 'feedback') {
     content = <FeedbackApp />;
