@@ -1,6 +1,7 @@
 import formatCurrency from '../utils/formatCurrency';
 
 export const TAX_RATE = 0.09;
+export const MAX_CUP_VOLUME = 590;
 
 function mapObject(inObj, mapper) {
   const out = {};
@@ -12,7 +13,6 @@ function mapObject(inObj, mapper) {
 function applyTax(amount) {
   return Math.floor(amount * TAX_RATE);
 }
-const MAX_CUP_VOLUME = 560;
 
 export function displayNameOfMenuItem(menuItem) {
   if (!menuItem) {

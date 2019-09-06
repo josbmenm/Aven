@@ -490,6 +490,7 @@ function RestaurantReducerFn(state = {}, action) {
       return {
         ...defaultReturn(),
         isAttached: true,
+        isAutoRunning: false,
       };
     }
     case 'Detach': {
