@@ -5,6 +5,6 @@ npx appcenter codepush release-react -a $CODE_PUSH_APP -d $CODE_PUSH_CHANNEL --p
 
 export SENTRY_PROPERTIES=./ios/sentry.properties
 
-echo "Will run: sentry-cli react-native appcenter $CODE_PUSH_APP ios ./codepush-build/codePush"
+echo "Will run: sentry-cli react-native appcenter $CODE_PUSH_APP ios ./codepush-build/codePush --deployment $CODE_PUSH_CHANNEL --bundle-id $BUNDLE_ID"
 
-sentry-cli react-native appcenter $CODE_PUSH_APP ios ./codepush-build/codePush --deployment $CODE_PUSH_CHANNEL
+sentry-cli react-native appcenter $CODE_PUSH_APP ios ./codepush-build/codePush --deployment $CODE_PUSH_CHANNEL --bundle-id $BUNDLE_ID-Wat
