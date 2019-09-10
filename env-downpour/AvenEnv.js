@@ -3,6 +3,7 @@
 
 const pathJoin = require('path').join;
 const fs = require('fs-extra');
+const plist = require('plist');
 const spawn = require('@expo/spawn-async');
 
 const runPlatformCommand = async (cwd, cmdName) => {
@@ -28,19 +29,31 @@ module.exports = {
       displayName,
       appcenterSecret,
       codePushKey,
-      codePushChannel,
-      codePushApp,
       appIcon,
+      sentryPropertiesFile,
     } = appPkg.aven.envOptions;
     const distPkgPath = pathJoin(location, 'package.json');
     let outDistPkg = {
       ...distPkg,
       scripts: {
         ...distPkg.scripts,
-        'aven:deploy': `CODE_PUSH_APP=${codePushApp} CODE_PUSH_CHANNEL=${codePushChannel} BUNDLE_ID=${bundleId} ./scripts/release.sh`,
       },
     };
     await fs.writeFile(distPkgPath, JSON.stringify(outDistPkg, null, 2));
+
+    if (appPkg.aven.appDistPackage) {
+      await fs.writeFile(
+        pathJoin(location, 'src-sync/app.json'),
+        JSON.stringify(appPkg.aven.appDistPackage, null, 2),
+      );
+    }
+
+    if (sentryPropertiesFile) {
+      await fs.copy(
+        pathJoin(`${srcDir}/${appName}`, sentryPropertiesFile),
+        `${location}/ios/sentry.properties`,
+      );
+    }
 
     const xprojPath = `${location}/ios/downpour.xcodeproj/project.pbxproj`;
     const xprojData = fs.readFileSync(xprojPath, { encoding: 'utf8' });
@@ -140,13 +153,94 @@ AppRegistry.registerComponent('downpour', () => App);
     });
     await runPlatformCommand(location, 'build');
   },
-  deploy: async ({ location }) => {
+  deploy: async ({ location, appPkg }) => {
     console.log('Before deploy, running yarn install in ' + location);
     await spawn('yarn', ['install'], {
       cwd: location,
       stdio: 'inherit',
     });
-    await runPlatformCommand(location, 'deploy');
+
+    const { codePushChannel, codePushApp, bundleId } = appPkg.aven.envOptions;
+    console.log(`Performing codepush deploy to ${codePushApp}`);
+
+    const infoPlistLocation = `${location}/ios/downpour/Info.plist`;
+
+    const infoPlist = plist.parse(
+      await fs.readFile(infoPlistLocation, {
+        encoding: 'utf8',
+      }),
+    );
+    await spawn(
+      'npx',
+      [
+        'appcenter',
+        'codepush',
+        'release-react',
+        '-a',
+        codePushApp,
+        '-d',
+        codePushChannel,
+        '--plist-file',
+        infoPlistLocation,
+        '--output-dir',
+        './codepush-build',
+      ],
+      {
+        cwd: location,
+        stdio: 'inherit',
+      },
+    );
+    const results = await spawn(
+      'npx',
+      [
+        'appcenter',
+        'codepush',
+        'deployment',
+        'list',
+        '-a',
+        codePushApp,
+        '--output',
+        'json',
+      ],
+      {
+        cwd: location,
+      },
+    );
+    const deployments = JSON.parse(results.stdout);
+    const prod = deployments.find(d => d[0] === 'Production')[1];
+    const versionLabel = prod.match(/Label:\s(.*)\n/)[1];
+    console.log(
+      'Done with codepush deploy. Most recently deployed version is: ' +
+        versionLabel,
+    );
+    const nativeVersion = infoPlist.CFBundleShortVersionString;
+    console.log('Uploading bundle to sentry. Native version: ', nativeVersion);
+    await spawn(
+      'npx',
+      [
+        'sentry-cli',
+        'react-native',
+        'appcenter',
+        codePushApp,
+        'ios',
+        './codepush-build/codePush',
+        '--deployment',
+        codePushChannel,
+        '--bundle-id',
+        bundleId,
+        '--version-name',
+        nativeVersion,
+      ],
+      {
+        cwd: location,
+        stdio: 'inherit',
+        env: {
+          ...process.env,
+          SENTRY_PROPERTIES: './ios/sentry.properties',
+        },
+      },
+    );
+    console.log('RN build, codepush, and sentry asset upload complete!');
   },
   runInPlace: true,
 };

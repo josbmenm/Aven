@@ -9,7 +9,11 @@
       "codePushKey": "_3pcIaFvPpBPLkUNdCILthOOP-fqry0UbYIiN",
       "codePushApp": "OnoFoodCo/Portal",
       "codePushChannel": "Production",
-      "appIcon": "PortalIcon.png"
+      "appIcon": "assets/PortalIcon.png",
+      "sentryPropertiesFile": "assets/sentry.properties"
+    },
+    "appDistPackage": {
+      "sentryDSN": "https://66da2c808e6f4bb792bd380527cfb1ba@sentry.io/1722567"
     },
     "srcDependencies": [
       "dashboard",

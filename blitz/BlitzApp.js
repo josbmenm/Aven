@@ -59,13 +59,15 @@ import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
 
 import * as Sentry from '@sentry/react-native';
 
+const appPackage = require('../app.json');
+
 Sentry.init({
-  dsn: 'https://66da2c808e6f4bb792bd380527cfb1ba@sentry.io/1722567',
+  dsn: appPackage.sentryDSN,
 });
-codePush.getUpdateMetadata().then(m => {
-  if (!m) return;
-  Sentry.setRelease(`${m.appVersion}_${m.label}`);
-  Sentry.setDist('blitz');
+codePush.getUpdateMetadata().then(update => {
+  if (update) {
+    Sentry.setRelease(update.appVersion + '-codepush:' + update.label);
+  }
 });
 
 let VERSE_IS_DEV = process.env.NODE_ENV !== 'production';

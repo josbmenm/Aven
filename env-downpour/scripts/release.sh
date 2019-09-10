@@ -7,4 +7,4 @@ export SENTRY_PROPERTIES=./ios/sentry.properties
 
 echo "Will run: sentry-cli react-native appcenter $CODE_PUSH_APP ios ./codepush-build/codePush --deployment $CODE_PUSH_CHANNEL --bundle-id $BUNDLE_ID"
 
-sentry-cli react-native appcenter $CODE_PUSH_APP ios ./codepush-build/codePush --deployment $CODE_PUSH_CHANNEL --bundle-id $BUNDLE_ID-Wat
+sentry-cli react-native appcenter $CODE_PUSH_APP ios ./codepush-build/codePush --deployment $CODE_PUSH_CHANNEL --bundle-id $BUNDLE_ID --version-name 

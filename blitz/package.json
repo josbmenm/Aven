@@ -9,7 +9,11 @@
       "codePushKey": "VtoT-iEfykogiriAIOlvE55G6r0eBJvTELwT7",
       "codePushApp": "OnoFoodCo/Blitz",
       "codePushChannel": "Production",
-      "appIcon": "BlitzIcon.png"
+      "appIcon": "assets/BlitzIcon.png",
+      "sentryPropertiesFile": "assets/sentry.properties"
+    },
+    "appDistPackage": {
+      "sentryDSN": "https://1f887b6b7bea4917ab613649619df483@sentry.io/1722572"
     },
     "srcDependencies": [
       "views",
