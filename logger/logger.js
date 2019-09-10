@@ -2,7 +2,7 @@ function logDebug(message, fields, level) {
   console.log(`(${level}) - ${message}`, fields);
 }
 
-const LOG_LEVELS = {
+export const LOG_LEVELS = {
   trace: 'TRACE',
   debug: 'DEBUG',
   log: 'INFO',
