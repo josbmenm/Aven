@@ -30,7 +30,7 @@ import {
   combineStreams,
 } from '../cloud-core/createMemoryStream';
 import { Storage } from '@google-cloud/storage';
-import { log, error, setLogger } from '../logger/logger';
+import { log, error, setLogger, LOG_LEVELS } from '../logger/logger';
 
 function logJSON(message, fields, level) {
   const logLine = JSON.stringify({
