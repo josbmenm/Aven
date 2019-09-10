@@ -1,6 +1,7 @@
 import express from 'express';
 import startServer from './startServer';
 import startSourceSocketServer from './startSourceSocketServer';
+import { log } from '../logger/logger';
 const http = require('http');
 const bodyParser = require('body-parser');
 const WebSocket = require('ws');
@@ -55,7 +56,7 @@ export default async function startSourceServer({
 
   const wsServer = await startSourceSocketServer(wss, source);
 
-  !quiet && console.log('Listening on ' + listenLocation);
+  !quiet && log('ServerStarted', { listenLocation, host: process.env.HOST });
   !quiet && IS_DEV && console.log(`http://localhost:${listenLocation}`);
 
   return {

@@ -20,21 +20,6 @@ function logJSON(message, fields, level) {
     '@fields': fields,
     host: process.env.HOSTNAME,
   });
-  if (Buffer.from(logLine).length > 10000) {
-    console.log(
-      JSON.stringify({
-        '@timestamp': new Date().toISOString(),
-        '@message': 'LoggerOverflow',
-        '@version': 1,
-        level: LOG_LEVELS[level],
-        '@fields': {
-          fieldKeys: Object.keys(fields),
-          message,
-        },
-        host: process.env.HOSTNAME,
-      }),
-    );
-  }
   console.log(logLine);
 }
 
@@ -50,6 +35,10 @@ export function setLoggerMode(mode) {
     throw new Error(`No such logger "${mode}"`);
   }
   activeLogger = LOGGERS[mode];
+}
+
+export function setLogger(logger) {
+  activeLogger = logger;
 }
 
 export function log(message, fields, level = 'log') {
