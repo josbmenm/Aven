@@ -57,6 +57,17 @@ import cuid from 'cuid';
 import useAsyncStorage, { isStateUnloaded } from '../screens/useAsyncStorage';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
 
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://66da2c808e6f4bb792bd380527cfb1ba@sentry.io/1722567',
+});
+codePush.getUpdateMetadata().then(m => {
+  if (!m) return;
+  Sentry.setRelease(`${m.appVersion}_${m.label}`);
+  Sentry.setDist('blitz');
+});
+
 let VERSE_IS_DEV = process.env.NODE_ENV !== 'production';
 let SKYNET_IS_DEV = process.env.NODE_ENV !== 'production';
 
@@ -278,7 +289,7 @@ function SelectModeApp() {
       setDeviceId(cuid());
     }
   }, [deviceId]);
-  const dispatch = useCloud().get('DeviceActions').putTransactionValue;
+  const dispatch = useCloud().get('DeviceActions2').putTransactionValue;
   const devicesState = useCloudValue('DevicesState');
   const devices = (devicesState && devicesState.devices) || [];
   React.useEffect(() => {
@@ -291,8 +302,8 @@ function SelectModeApp() {
   const mode = controlState && controlState.mode;
   const name = controlState && controlState.name;
 
-  let content = <KioskApp mode={'kiosk'} />;
-  // let content = <WaitingPage name={name} title="Kiosk Closed" />;
+  // let content = <KioskApp mode={'kiosk'} />;
+  let content = <WaitingPage name={name} title="Kiosk Closed" />;
 
   if (mode === 'feedback') {
     content = <FeedbackApp />;

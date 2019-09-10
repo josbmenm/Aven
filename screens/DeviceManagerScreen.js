@@ -78,7 +78,7 @@ function ModeForm({ onClose, device, dispatch }) {
 
 function DeviceRow({ device }) {
   const cloud = useCloud();
-  const dispatch = cloud.get('DeviceActions').putTransactionValue;
+  const dispatch = cloud.get('DeviceActions2').putTransactionValue;
   const handleErrors = useAsyncError();
 
   const { onPopover: onRenamePopover } = useKeyboardPopover(({ onClose }) => (

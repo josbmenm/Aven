@@ -30,9 +30,38 @@ import {
   combineStreams,
 } from '../cloud-core/createMemoryStream';
 import { Storage } from '@google-cloud/storage';
-import { log, error, setLoggerMode } from '../logger/logger';
+import { log, error, setLogger } from '../logger/logger';
 
-setLoggerMode(process.env.NODE_ENV === 'production' ? 'json' : 'debug');
+function logJSON(message, fields, level) {
+  const logLine = JSON.stringify({
+    '@timestamp': new Date().toISOString(),
+    '@message': message,
+    '@version': 1,
+    level: LOG_LEVELS[level],
+    '@fields': fields,
+    host: process.env.HOSTNAME,
+  });
+  if (Buffer.from(logLine).length > 10000) {
+    console.log(
+      JSON.stringify({
+        '@timestamp': new Date().toISOString(),
+        '@message': 'LoggerOverflow',
+        '@version': 1,
+        level: LOG_LEVELS[level],
+        '@fields': {
+          fieldKeys: Object.keys(fields),
+          message,
+        },
+        host: process.env.HOSTNAME,
+      }),
+    );
+  }
+  console.log(logLine);
+}
+
+if (process.env.NODE_ENV === 'production') {
+  setLogger(logJSON);
+}
 
 const path = require('path');
 const pathJoin = require('path').join;
@@ -232,7 +261,7 @@ const startSkynetServer = async () => {
     companyConfigStream.map(companyConfigToMenu),
   );
 
-  const deviceActions = cloud.get('DeviceActions');
+  const deviceActions = cloud.get('DeviceActions2');
   const devicesState = cloud.docs.setOverrideStream(
     'DevicesState',
     createReducerStream(
@@ -248,7 +277,7 @@ const startSkynetServer = async () => {
       'onofood.co': {
         CompanyConfig: { defaultRule: { canRead: true } },
         KitchenConfig: { defaultRule: { canRead: true } },
-        DeviceActions: { defaultRule: { canWrite: true } },
+        DeviceActions2: { defaultRule: { canWrite: true } },
         Menu: { defaultRule: { canRead: true } },
         PendingOrders: {
           defaultRule: {

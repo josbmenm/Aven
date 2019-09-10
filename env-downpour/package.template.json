@@ -11,6 +11,7 @@
     "aven:start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
+    "@sentry/react-native": "^1.0.4",
     "appcenter": "^2.3.0",
     "appcenter-analytics": "^2.3.0",
     "appcenter-crashes": "^2.3.0",

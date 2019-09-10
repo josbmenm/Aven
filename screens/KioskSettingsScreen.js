@@ -69,6 +69,13 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
         />
         <LinkRow
           onPress={() => {
+            console.error('User-forced soft error!');
+          }}
+          icon="⚠️"
+          title="Test Soft Error"
+        />
+        <LinkRow
+          onPress={() => {
             codePush.restartApp();
           }}
           icon="♻️"

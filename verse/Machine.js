@@ -447,9 +447,10 @@ export function connectMachine({
         }
       });
     const actionId = getFreshActionId();
-
+    const commandStartTimeMS = Date.now();
     log('MachineCommandStart', {
       actionId,
+      commandStartTimeMS,
       action,
     });
 
@@ -468,13 +469,20 @@ export function connectMachine({
     await new Promise((resolve, reject) => {
       let watchKittyTimeout = setTimeout(() => {
         delete subsystemResolvers[subsystem];
-        error('MachineError', {
+        const commandErrorTimeMS = Date.now();
+        const errorDetails = {
           code: 'WatchKittyTimeout',
+          action,
           actionId,
           subsystem,
           pulse,
           values,
-        });
+          commandStartTimeMS,
+          commandErrorTimeMS,
+          commandDurationMS: commandErrorTimeMS - commandStartTimeMS,
+        };
+        error('MachineError', errorDetails);
+        error('MachineCommandFailed', errorDetails);
         reject(
           new Error(`Watch kitty timeout on "${subsystem}" system, meow!`),
         );
@@ -487,6 +495,19 @@ export function connectMachine({
         },
         reject: err => {
           delete subsystemResolvers[subsystem];
+          const commandErrorTimeMS = Date.now();
+          error('MachineCommandFailed', {
+            code: err.message,
+            details: err.details,
+            action,
+            actionId,
+            subsystem,
+            pulse,
+            values,
+            commandStartTimeMS,
+            commandErrorTimeMS,
+            commandDurationMS: commandErrorTimeMS - commandStartTimeMS,
+          });
           clearTimeout(watchKittyTimeout);
           reject(err);
         },
@@ -494,8 +515,13 @@ export function connectMachine({
       };
     });
 
+    const commandEndTimeMS = Date.now();
+
     log('MachineCommandEnd', {
       actionId,
+      commandEndTimeMS,
+      commandStartTimeMS,
+      commandDurationMS: commandEndTimeMS - commandStartTimeMS,
       action,
     });
     return action;

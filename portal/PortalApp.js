@@ -57,25 +57,45 @@ import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
 
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://66da2c808e6f4bb792bd380527cfb1ba@sentry.io/1722567',
+});
+codePush.getUpdateMetadata().then(m => {
+  if (!m) return;
+  Sentry.setRelease(`${m.appVersion}_${m.label}`);
+  Sentry.setDist('portal');
+});
+
 let IS_DEV = process.env.NODE_ENV !== 'production';
 // IS_DEV = false;
 
 const windowSize = Dimensions.get('window');
 
 const RESTAURANT_DEV = {
-  useSSL: false,
   // quiet: true,
+  useSSL: false,
+  // authority: 'localhost:8830',
+
+  // prod server (connect to maui wifi first..)
   // authority: '10.10.1.200:8830',
 
-  // authority: 'localhost:8830',
-  authority: '192.168.1.81:8830',
+  // prod server from ono wifi
   // authority: '192.168.1.76:8830',
-  // authority: '10.10.10.40:8830',
+
+  // ono wifi (eric mbp addresses)
+  authority: '192.168.1.81:8830',
   // authority: '10.10.10.200:8830',
 };
 const RESTAURANT_PROD = {
   useSSL: false,
-  authority: '10.10.1.200:8830',
+  // authority: '10.10.1.200:8830',
+
+  // DEV tests:
+  // authority: 'localhost:8830',
+  authority: '192.168.1.81:8830',
+  // authority: '10.10.10.200:8830',
 };
 
 const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
@@ -96,7 +116,10 @@ let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
 const isProduction = process.env.NODE_ENV !== 'development';
 
-isProduction &&
+let shouldAutoUpdate = isProduction;
+// shouldAutoUpdate = false; // use this to test release mode without code push stomping on your local JS bundle
+
+shouldAutoUpdate &&
   setInterval(() => {
     codePush
       .sync({

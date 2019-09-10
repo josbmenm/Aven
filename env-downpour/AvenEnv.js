@@ -37,7 +37,7 @@ module.exports = {
       ...distPkg,
       scripts: {
         ...distPkg.scripts,
-        'aven:deploy': `npx appcenter codepush release-react -a ${codePushApp} -d ${codePushChannel} --plist-file ios/downpour/Info.plist`,
+        'aven:deploy': `CODE_PUSH_APP=${codePushApp} CODE_PUSH_CHANNEL=${codePushChannel} ./scripts/release.sh`,
       },
     };
     await fs.writeFile(distPkgPath, JSON.stringify(outDistPkg, null, 2));
