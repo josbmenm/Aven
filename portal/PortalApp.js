@@ -61,24 +61,6 @@ import * as Sentry from '@sentry/react-native';
 
 const appPackage = require('../app.json');
 
-Sentry.init({
-  dsn: appPackage.sentryDSN,
-});
-codePush
-  .getUpdateMetadata()
-  .then(update => {
-    console.log('Codepush metadata: ', update);
-    if (update) {
-      const releaseString = `${update.appVersion}-codepush:${update.label}`;
-      Sentry.setRelease(releaseString);
-      console.log('Set Sentry release string to: ' + releaseString);
-    }
-  })
-  .catch(err => {
-    console.error('Failed to get codepush metadata!');
-    console.error(err);
-  });
-
 let IS_DEV = process.env.NODE_ENV !== 'production';
 // IS_DEV = false;
 
@@ -112,6 +94,26 @@ const RESTAURANT_PROD = {
 const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
 
 const cloudSource = createNativeNetworkSource(HOST_CONFIG);
+
+if (!IS_DEV) {
+  Sentry.init({
+    dsn: appPackage.sentryDSN,
+  });
+  codePush
+    .getUpdateMetadata()
+    .then(update => {
+      console.log('Codepush metadata: ', update);
+      if (update) {
+        const releaseString = `${update.appVersion}-codepush:${update.label}`;
+        Sentry.setRelease(releaseString);
+        console.log('Set Sentry release string to: ' + releaseString);
+      }
+    })
+    .catch(err => {
+      console.error('Failed to get codepush metadata!');
+      console.error(err);
+    });
+}
 
 YellowBox.ignoreWarnings([
   'background tab',

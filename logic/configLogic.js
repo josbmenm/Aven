@@ -35,7 +35,10 @@ export function displayNameOfOrderItem(orderItem, menuItem) {
   }
   const { customization } = orderItem;
   const name = menuItem['Display Name'] || menuItem['Name'];
-  if (customization) {
+  if (
+    customization &&
+    (customization.enhancements || customization.ingredients)
+  ) {
     return `custom ${name}`;
   }
   return name;

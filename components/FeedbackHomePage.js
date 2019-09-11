@@ -221,6 +221,7 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
   }, [isReady]);
   function handleSubmit() {
     onSubmit({
+      ...Object.fromEntries(tags.map(tag => [tag, 1])),
       rating,
       tags,
     });

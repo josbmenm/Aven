@@ -61,15 +61,6 @@ import * as Sentry from '@sentry/react-native';
 
 const appPackage = require('../app.json');
 
-Sentry.init({
-  dsn: appPackage.sentryDSN,
-});
-codePush.getUpdateMetadata().then(update => {
-  if (update) {
-    Sentry.setRelease(update.appVersion + '-codepush:' + update.label);
-  }
-});
-
 let VERSE_IS_DEV = process.env.NODE_ENV !== 'production';
 let SKYNET_IS_DEV = process.env.NODE_ENV !== 'production';
 
@@ -106,6 +97,26 @@ const SKYNET_HOST_CONFIG = SKYNET_IS_DEV
 const verseSource = createNativeNetworkSource(VERSE_HOST_CONFIG);
 
 const skynetSource = createNativeNetworkSource(SKYNET_HOST_CONFIG);
+
+if (!IS_DEV) {
+  Sentry.init({
+    dsn: appPackage.sentryDSN,
+  });
+  codePush
+    .getUpdateMetadata()
+    .then(update => {
+      console.log('Codepush metadata: ', update);
+      if (update) {
+        const releaseString = `${update.appVersion}-codepush:${update.label}`;
+        Sentry.setRelease(releaseString);
+        console.log('Set Sentry release string to: ' + releaseString);
+      }
+    })
+    .catch(err => {
+      console.error('Failed to get codepush metadata!');
+      console.error(err);
+    });
+}
 
 YellowBox.ignoreWarnings([
   'background tab',
