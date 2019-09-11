@@ -13,12 +13,11 @@ export const LOG_LEVELS = {
 
 function logJSON(message, fields, level) {
   const logLine = JSON.stringify({
+    ...fields,
     '@timestamp': new Date().toISOString(),
     '@message': message,
     '@version': 1,
     level: LOG_LEVELS[level],
-    '@fields': fields,
-    host: process.env.HOSTNAME,
   });
   console.log(logLine);
 }
