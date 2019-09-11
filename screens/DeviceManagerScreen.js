@@ -50,6 +50,58 @@ function RenameForm({ onClose, device, dispatch }) {
   );
 }
 
+function SetMDMIdForm({ onClose, device, dispatch }) {
+  const [mdmId, setMdmId] = React.useState(device.mdmId);
+  const handleErrors = useAsyncError();
+  async function saveId(mdmId) {
+    await dispatch({
+      type: 'SetDevice',
+      deviceId: device.deviceId,
+      mdmId,
+    });
+    onClose();
+  }
+  function handleSubmit() {
+    handleErrors(saveId(mdmId));
+  }
+  const { inputs } = useFocus({
+    onSubmit: handleSubmit,
+    inputRenderers: [
+      props => (
+        <BlockFormInput
+          {...props}
+          label="mdm id"
+          value={mdmId}
+          onValue={setMdmId}
+        />
+      ),
+    ],
+  });
+
+  return (
+    <View>
+      <View style={{ flexDirection: 'row' }}>{inputs}</View>
+      <Button title="save" onPress={handleSubmit} />
+    </View>
+  );
+}
+
+function RestartButton({ mdmId }) {
+  const cloud = useCloud();
+  return (
+    <Button
+      title="Restart"
+      secondary
+      onPress={() => {
+        cloud.dispatch({
+          type: 'RestartDevice',
+          mdmId,
+        });
+      }}
+    />
+  );
+}
+
 function ModeForm({ onClose, device, dispatch }) {
   const handleErrors = useAsyncError();
   async function setMode(mode) {
@@ -69,9 +121,7 @@ function ModeForm({ onClose, device, dispatch }) {
     <React.Fragment>
       <Button title="Closed" onPress={getModeSetter('closed')} />
       <Button title="Kiosk" onPress={getModeSetter('kiosk')} />
-      <Button title="Kiosk (Skynet)" onPress={getModeSetter('testKiosk')} />
       <Button title="Feedback" onPress={getModeSetter('feedback')} />
-      <Button title="Card Reader" onPress={getModeSetter('cardreader')} />
     </React.Fragment>
   );
 }
@@ -80,6 +130,10 @@ function DeviceRow({ device }) {
   const cloud = useCloud();
   const dispatch = cloud.get('DeviceActions2').putTransactionValue;
   const handleErrors = useAsyncError();
+
+  const { onPopover: onMdmIdPopover } = useKeyboardPopover(({ onClose }) => (
+    <SetMDMIdForm onClose={onClose} device={device} dispatch={dispatch} />
+  ));
 
   const { onPopover: onRenamePopover } = useKeyboardPopover(({ onClose }) => (
     <RenameForm onClose={onClose} device={device} dispatch={dispatch} />
@@ -116,7 +170,14 @@ function DeviceRow({ device }) {
           }}
         />
 
-        <Button title="Rename" secondary onPress={onRenamePopover} />
+        <Button
+          title="Rename"
+          secondary
+          onPress={onRenamePopover}
+          onLongPress={onMdmIdPopover}
+        />
+
+        {device.mdmId && <RestartButton mdmId={device.mdmId} />}
       </View>
     </Row>
   );

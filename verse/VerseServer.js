@@ -19,6 +19,8 @@ import { connectMachine } from './Machine';
 import KitchenSteps from '../logic/KitchenSteps';
 import { log, error, setLoggerMode } from '../logger/logger';
 
+const fetch = require('node-fetch');
+
 setLoggerMode(process.env.NODE_ENV === 'production' ? 'json' : 'debug');
 
 const getEnv = c => process.env[c];
@@ -256,6 +258,20 @@ const startVerseServer = async () => {
       }
       case 'PlaceOrder':
         return placeOrder(cloud, action);
+      case 'RestartDevice':
+        await fetch(
+          `https://${process.env.HEXNODE_HOST}/api/v1/actions/reboot/`,
+          {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: process.env.HEXNODE_TOKEN,
+            },
+            body: JSON.stringify({ devices: [action.mdmId] }),
+          },
+        );
+        log('DeviceRestarted', { mdmId: action.mdmId });
+        return;
       default: {
         return await cloud.dispatch(action);
       }

@@ -30,6 +30,7 @@
       "logger"
     ],
     "moduleDependencies": [
+      "node-fetch",
       "mjml-react",
       "mjml",
       "fbjs",

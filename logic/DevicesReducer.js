@@ -34,6 +34,7 @@ function DevicesReducerFn(state = {}, action) {
         ...lastDevice,
         mode: action.mode ? action.mode : lastDevice.mode,
         name: action.name ? action.name : lastDevice.name,
+        mdmId: action.mdmId ? action.mdmId : lastDevice.mdmId,
       };
       return {
         ...state,

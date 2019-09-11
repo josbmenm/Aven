@@ -87,7 +87,7 @@ const windowSize = Dimensions.get('window');
 const RESTAURANT_DEV = {
   // quiet: true,
   useSSL: false,
-  // authority: 'localhost:8830',
+  authority: 'localhost:8830',
 
   // prod server (connect to maui wifi first..)
   // authority: '10.10.1.200:8830',
