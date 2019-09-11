@@ -33,33 +33,6 @@ import { Storage } from '@google-cloud/storage';
 import { log, error, setLogger } from '../logger/logger';
 import { logElastic } from './ElasticLogger';
 
-// function logJSON(message, fields, level) {
-//   const logLine = JSON.stringify({
-//     '@timestamp': new Date().toISOString(),
-//     '@message': message,
-//     '@version': 1,
-//     level: LOG_LEVELS[level],
-//     '@fields': fields,
-//     host: process.env.HOSTNAME,
-//   });
-//   if (Buffer.from(logLine).length > 10000) {
-//     console.log(
-//       JSON.stringify({
-//         '@timestamp': new Date().toISOString(),
-//         '@message': 'LoggerOverflow',
-//         '@version': 1,
-//         level: LOG_LEVELS[level],
-//         '@fields': {
-//           fieldKeys: Object.keys(fields),
-//           message,
-//         },
-//         host: process.env.HOSTNAME,
-//       }),
-//     );
-//   }
-//   console.log(logLine);
-// }
-
 if (process.env.NODE_ENV === 'production') {
   setLogger(logElastic);
 }

@@ -96,13 +96,12 @@ async function saveLogs(logValues) {
 
 export function logElastic(message, fields, level) {
   const logValue = {
+    ...fields,
     '@eventId': cuid(),
     '@timestamp': new Date().toISOString(),
     '@message': message,
     '@version': 1,
     level: LOG_LEVELS[level],
-    '@fields': fields,
-    host: process.env.HOSTNAME,
   };
   const logLine = JSON.stringify(logValue);
   console.log(logLine);
