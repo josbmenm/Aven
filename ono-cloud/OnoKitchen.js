@@ -311,6 +311,7 @@ export function useInventoryState() {
       };
     });
   const cupInventory = inventoryState.cups || {};
+
   const inventorySlots = [
     {
       id: 'cups',
@@ -348,6 +349,26 @@ export function useInventoryState() {
       const isErrored =
         kitchenState &&
         kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_Error_READ`];
+      async function dispenseSlotAmount(amount) {
+        await cloud.dispatch({
+          type: 'KitchenCommand',
+          commandType: 'DispenseOnly',
+          params: {
+            slotId: slot.id,
+            amount: amount,
+            slot: slot.Slot,
+            system: slot.KitchenSystem.FillSystemID,
+            ingredientId: slot.Ingredient.id,
+            ingredientName: slot.Ingredient.Name,
+            systemName: slot.KitchenSystem.Name,
+          },
+        });
+        await dispatch({
+          type: 'DidDispense',
+          slotId: slot.id,
+          amount: amount,
+        });
+      }
       return {
         ...slot,
         settings:
@@ -363,55 +384,14 @@ export function useInventoryState() {
         photo: slot.Ingredient.Icon,
         color: slot.Ingredient.Color,
         ingredientId: slot.Ingredient.id,
-        onDispense: async amount => {
-          await cloud.dispatch({
-            type: 'KitchenCommand',
-            commandType: 'DispenseOnly',
-            params: {
-              amount: amount,
-              slot: slot.Slot,
-              system: slot.KitchenSystem.FillSystemID,
-            },
-          });
-          await dispatch({
-            type: 'DidDispense',
-            slotId: slot.id,
-            amount: amount,
-          });
-        },
+        onDispense: dispenseSlotAmount,
         onPurgeSmall: async () => {
           const amount = 40;
-          await cloud.dispatch({
-            type: 'KitchenCommand',
-            commandType: 'DispenseOnly',
-            params: {
-              amount,
-              slot: slot.Slot,
-              system: slot.KitchenSystem.FillSystemID,
-            },
-          });
-          await dispatch({
-            type: 'DidDispense',
-            slotId: slot.id,
-            amount,
-          });
+          await dispenseSlotAmount(amount);
         },
         onPurgeLarge: async () => {
           const amount = 120;
-          await cloud.dispatch({
-            type: 'KitchenCommand',
-            commandType: 'DispenseOnly',
-            params: {
-              amount,
-              slot: slot.Slot,
-              system: slot.KitchenSystem.FillSystemID,
-            },
-          });
-          await dispatch({
-            type: 'DidDispense',
-            slotId: slot.id,
-            amount,
-          });
+          await dispenseSlotAmount(amount);
         },
         onSetEstimatedRemaining: value => {
           return dispatch({

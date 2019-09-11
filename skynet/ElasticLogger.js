@@ -23,6 +23,9 @@ function startLogSave() {
     });
     return;
   }
+  if (pendingLogs.length === 0) {
+    return;
+  }
   const savingLogs = pendingLogs;
   pendingLogs = [];
   savingPromise = saveLogs(savingLogs);
@@ -34,6 +37,9 @@ function startLogSave() {
       console.error(e);
       pendingLogs = [...savingLogs, ...pendingLogs];
       console.log('Now has ' + pendingLogs.length + ' logs in queue');
+    })
+    .finally(() => {
+      savingPromise = null;
     });
 }
 

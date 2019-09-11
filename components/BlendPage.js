@@ -253,8 +253,10 @@ export default function BlendPage({
 }) {
   const { navigate } = navigation;
 
+  const isCustomizable = menuItem && menuItem.Recipe.Customizable;
+
   const actions = [
-    {
+    isCustomizable && {
       secondary: true,
       title: 'customize',
       onPress: () => {
@@ -282,7 +284,11 @@ export default function BlendPage({
   ];
 
   return (
-    <ActionPage actions={actions} {...props} navigation={navigation}>
+    <ActionPage
+      actions={actions.filter(Boolean)}
+      {...props}
+      navigation={navigation}
+    >
       <BlendPageContent
         item={item}
         menuItem={menuItem}

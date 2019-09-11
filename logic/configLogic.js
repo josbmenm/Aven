@@ -1,4 +1,5 @@
 import formatCurrency from '../utils/formatCurrency';
+import { error } from '../logger/logger';
 
 export const TAX_RATE = 0.09;
 export const MAX_CUP_VOLUME = 590;
@@ -98,6 +99,7 @@ export function getFillsOfOrderItem(menuItem, item, companyConfig) {
         ingredientIcon: ing.Icon,
         ingredientImage: ing.Image,
         slotId: kitchenSlotId,
+        systemName: kitchenSystem.Name,
         systemId: kitchenSystemId,
         slot: kitchenSlot.Slot,
         system: kitchenSystem.FillSystemID,
@@ -467,7 +469,6 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
   let origRecipeVolume = menuItem.Recipe.Ingredients.reduce((acc, rI) => {
     return acc + rI.DispenseCount * rI.Ingredient['ShotSize(ml)'];
   }, 0);
-  const invalidReasons = [];
   let enhancementIngredients = [
     {
       ...menuItem.DefaultBenefitIngredient,
@@ -546,14 +547,19 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
   const baseLiquidIngId =
     customBaseLiquidIngId || menuItem.Recipe.LiquidBaseIngredient[0];
   const baseLiquidIng = allIngredients[baseLiquidIngId];
-  if (!baseLiquidIng) {
-    console.warn('Missing base liquid');
-    console.log(baseLiquidIngId, menuItem.Recipe);
+  const shouldFillCupWithLiquidBase =
+    !!baseLiquidIng && !!menuItem.Recipe.Customizable;
+  if (!shouldFillCupWithLiquidBase) {
+    if (menuItem.Recipe.Customizable && !!baseLiquidIng) {
+      error('BaseLiquidMissing', {
+        baseLiquidIngId,
+        recipeId: menuItem.Recipe.id,
+      });
+    }
     return {
       enhancementIngredients,
       standardIngredients,
-      baseLiquidIngredient,
-      ingredients: outputIngredients,
+      ingredients: [...enhancementIngredients, ...standardIngredients],
       origRecipeVolume,
       finalVolume: finalVolumeBeforeLiquid,
       liquidVolume: 0,
