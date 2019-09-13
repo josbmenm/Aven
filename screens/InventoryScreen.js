@@ -41,8 +41,8 @@ function SetFillForm({ slot, onClose }) {
   const shotVolume = slot.Ingredient['ShotSize(ml)'];
 
   if (
-    slot.KitchenSystem.name === 'Powder' ||
-    slot.KitchenSystem.name === 'Granules'
+    slot.KitchenSystem.Name === 'Powder' ||
+    slot.KitchenSystem.Name === 'Granules'
   ) {
     unit = { name: 'kg', factor: 1000 / shotMass };
   } else if (
