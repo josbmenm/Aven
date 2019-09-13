@@ -29,14 +29,7 @@ const PRIMING_TASKS = [
 ];
 
 function restaurantStateHasInventory(state, ingredientId, amount) {
-  // if (nextFill.)
-  console.log(
-    'checking inventory of',
-    ingredientId,
-    amount,
-    Object.keys(state),
-  );
-
+  // todo!
   return true;
 }
 

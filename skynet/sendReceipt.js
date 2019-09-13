@@ -358,12 +358,6 @@ async function sendEmailReceipt(emailAgent, action, order) {
 
   log('ReceiptEmailWillSend', { ...order, ...action });
 
-  console.log(
-    'Alright baby the order is...\n\n\n' +
-      JSON.stringify(order, null, 2) +
-      '\n\n',
-  );
-
   await emailAgent.actions.SendEmailTemplate(
     SendReceiptEmail,
     action.contact.value,

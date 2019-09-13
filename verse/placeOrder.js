@@ -153,8 +153,10 @@ export default async function placeOrder(
   const confirmedOrder = {
     ...order,
     subTotal,
+    subTotalDollars,
     tax,
     total,
+    totalDollars: total / 100,
     discountTotal,
     totalBeforeDiscount,
     taxRate,

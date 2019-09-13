@@ -287,7 +287,10 @@ const startVerseServer = async () => {
   async function dispatch(action) {
     try {
       const response = await silentDispatch(action);
-      log('DispatchedAction', { action, response });
+      log('DispatchedAction', {
+        actionType: action.type,
+        hasResponse: !!response,
+      });
       return response;
     } catch (e) {
       error('DispatchedAction', { action, error: e.message, stack: e.stack });
