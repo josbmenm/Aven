@@ -13,7 +13,7 @@ import Header from './components/Header';
 import GenericFooter from './components/GenericFooter';
 import theme from './theme';
 
-function getBodyHTML({ promocode }) {
+function getBodyHTML({ promoCode }) {
   const { html, errors } = render(
     <Layout title="Thank you" metaTitle="ONO food - Thank you">
       <Header />
@@ -42,7 +42,7 @@ function getBodyHTML({ promocode }) {
           <Text variant="body">
             We appreciate the feedback. As a token of our appreciation, we want
             to give you&nbsp;
-            <span style={{ textDecoration: 'line-through',  }}>food</span> a blend
+            <span style={{ textDecoration: 'line-through' }}>food</span> a blend
             for thought.
           </Text>
           <Text variant="body">
@@ -74,7 +74,7 @@ function getBodyHTML({ promocode }) {
             borderRadius="3px"
             fontFamily="Maax-Bold"
           >
-            {promocode}
+            {promoCode}
           </MjmlButton>
         </MjmlColumn>
       </MjmlSection>
@@ -91,14 +91,22 @@ function getBodyHTML({ promocode }) {
   return html;
 }
 
-function getBodyText(params) {
-  return `Thanks for ordering from ono blends!
+function getBodyText({ promoCode }) {
+  return `We appreciate the feedback. As a token of our appreciation, we want to give you a blend for thought.
 
-Ono Blends`;
+Next time you order, use the promo code below to redeem a free blend.
+
+${promoCode}
+
+-Ono Blends
+
+Questions?
+Contact us at lucy@onofood.co
+`;
 }
 
-function getSubject(params) {
-  return 'Thanks! Order Complete from Ono Blends';
+function getSubject() {
+  return 'Thanks for the feedback!';
 }
 
 export default {

@@ -261,7 +261,6 @@ function IngredientFillingCup({ fillLevel, currentFill, blendTintColor }) {
               <AirtableImage
                 style={{ width: 66, height: 66 }}
                 tintColor={currentFill.ingredientColor}
-                resizeMode="center"
                 image={currentFill.ingredientIcon}
               />
             </Animated.View>

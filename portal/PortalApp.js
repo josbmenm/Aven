@@ -69,7 +69,7 @@ const windowSize = Dimensions.get('window');
 const RESTAURANT_DEV = {
   // quiet: true,
   useSSL: false,
-  authority: 'localhost:8830',
+  // authority: 'localhost:8830',
 
   // prod server (connect to maui wifi first..)
   // authority: '10.10.1.200:8830',
@@ -78,16 +78,16 @@ const RESTAURANT_DEV = {
   // authority: '192.168.1.76:8830',
 
   // ono wifi (eric mbp addresses)
-  // authority: '192.168.1.81:8830',
+  authority: '192.168.1.81:8830',
   // authority: '10.10.10.200:8830',
 };
 const RESTAURANT_PROD = {
   useSSL: false,
-  authority: '10.10.1.200:8830',
+  // authority: '10.10.1.200:8830',
 
   // DEV tests:
   // authority: 'localhost:8830',
-  // authority: '192.168.1.81:8830',
+  authority: '192.168.1.81:8830',
   // authority: '10.10.10.200:8830',
 };
 
@@ -115,18 +115,18 @@ if (isProduction) {
       console.error('Failed to get codepush metadata!');
       console.error(err);
     });
-  setInterval(() => {
-    codePush
-      .sync({
-        updateDialog: false,
-        installMode: codePush.InstallMode.IMMEDIATE,
-      })
-      .then(() => {})
-      .catch(e => {
-        console.error('Code update check failed');
-        console.error(e);
-      });
-  }, 10000);
+  // setInterval(() => {
+  //   codePush
+  //     .sync({
+  //       updateDialog: false,
+  //       installMode: codePush.InstallMode.IMMEDIATE,
+  //     })
+  //     .then(() => {})
+  //     .catch(e => {
+  //       console.error('Code update check failed');
+  //       console.error(e);
+  //     });
+  // }, 10000);
 }
 
 YellowBox.ignoreWarnings([

@@ -10,6 +10,7 @@
       "mainClient": "MainClient.js"
     },
     "srcDependencies": [
+      "emails",
       "utils",
       "stripe-server",
       "aven-web",

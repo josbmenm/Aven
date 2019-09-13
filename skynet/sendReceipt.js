@@ -13,6 +13,7 @@ import {
   MjmlText,
 } from 'mjml-react';
 import formatCurrency from '../utils/formatCurrency';
+import SendReceiptEmail from '../emails/SendReceiptEmail';
 import { log, error } from '../logger/logger';
 
 function Header({ title, metaTitle }) {
@@ -356,62 +357,56 @@ async function sendEmailReceipt(emailAgent, action, order) {
     order.stripeIntent.charges.data[0].source.card_present;
 
   log('ReceiptEmailWillSend', { ...order, ...action });
-  const { html, errors } = render(
-    <Mjml>
-      <Header
-        title="Thank you for ordering from Ono Blends"
-        metaTitle={`Your receipt for ${formatCurrency(order.total)}`}
-      />
-      <MjmlBody width={500}>
-        <MjmlSection fullWidth backgroundColor="#f7f7f7">
-          <MjmlColumn>
-            <MjmlImage src="https://onofood.co/img/icons.svg" />
-          </MjmlColumn>
-        </MjmlSection>
-        <MjmlSection>
-          <MjmlColumn>
-            <MjmlText>
-              {order.orderName.firstName} {order.orderName.lastName}
-            </MjmlText>
-            <MjmlText>Order Id: {order.id}</MjmlText>
-            <MjmlText>Subtotal: {formatCurrency(order.subTotal)}</MjmlText>
-            <MjmlText>Tax: {formatCurrency(order.tax)}</MjmlText>
-            <MjmlText>Total: {formatCurrency(order.total)}</MjmlText>
-            <MjmlText>
-              Your receipt can also be accessed here:
-              <a href={`https://onoblends.co/receipt/${order.id}`}>
-                https://onoblends.co/receipt/{order.id}
-              </a>
-            </MjmlText>
-            <MjmlButton
-              padding="20px"
-              backgroundColor="#346DB7"
-              href="https://onofood.co"
-            >
-              sign up for updates from ono
-            </MjmlButton>
-            {cardPresentMeta && (
-              <MjmlText>
-                Application Name: {cardPresentMeta.application_preferred_name},
-                AID: {cardPresentMeta.dedicated_file_name}
-              </MjmlText>
-            )}
-          </MjmlColumn>
-        </MjmlSection>
-      </MjmlBody>
-    </Mjml>,
-    { validationLevel: 'soft' },
+
+  console.log(
+    'Alright baby the order is...\n\n\n' +
+      JSON.stringify(order, null, 2) +
+      '\n\n',
   );
-  if (errors.length) {
-    error('ReceiptMJMLError', { errors });
-    throw new Error('Cannot construct email!', errors);
-  }
-  await emailAgent.actions.SendEmail({
-    to: action.contact.value,
-    subject: 'Your purchase from Ono Blends',
-    message: 'Thanks for your order! \n\n -The Ono Blends Team',
-    messageHTML: html,
-  });
+
+  await emailAgent.actions.SendEmailTemplate(
+    SendReceiptEmail,
+    action.contact.value,
+    {
+      cardPresentMeta,
+      orderId: order.id,
+      orderName: `${order.orderName.firstName} ${order.orderName.lastName}`,
+      // subTotal: order.subTotal,
+      // total: order.total,
+      // tax: {
+      //   label: 'taxx',
+      //   amount: order.tax
+      // },
+      // promoCode: 'ABCD',
+      displayItems: order.items.map(item => {
+        return {
+          label:
+            item.quantity > 1
+              ? `${item.displayName} (${item.quantity}x)`
+              : item.displayName,
+          amount: item.itemPrice,
+        };
+      }),
+      subTotal: {
+        label: 'Subtotal',
+        amount: order.subTotal,
+      },
+      tax: {
+        label: 'Tax',
+        amount: order.tax,
+      },
+      total: {
+        label: 'Amount Charged',
+        amount: order.total,
+      },
+      paymentMethod: {
+        methodName: 'basic-card',
+        network: 'VISA',
+        cardNumber: 'XXXX',
+      },
+    },
+  );
+
   log('ReceiptEmailDidSend', { ...order, ...action });
   return {
     sendTime: Date.now(),

@@ -8,22 +8,32 @@ import {
 } from 'mjml-react';
 import Layout from './components/Layout';
 import Header from './components/Header';
-import PromoCodeSection from './components/PromoCodeSection';
 import theme from './theme';
 import formatCurrency from '../utils/formatCurrency';
+import GenericFooter from './components/GenericFooter';
 
-function getBodyHTML({ orderDetails, promocode }) {
-  const { displayItems, subTotal, total, tax, paymentMethod } = orderDetails;
+function getBodyHTML({
+  orderName,
+  orderId,
+  displayItems,
+  subTotal,
+  total,
+  tax,
+  paymentMethod,
+  cardPresentMeta,
+}) {
+  const emailTitle = `Order Receipt for ${orderName}`;
   const { html, errors } = render(
-    <Layout title="Receipt email" metaTitle="ONO food - Blend Receipt">
+    <Layout title={emailTitle} metaTitle="We hope you enjoyed Ono Blends">
       <Header />
       <MjmlSection
-        backgroundUrl="https://onofood.co/img/blend_avo-matcha.jpg"
+        padding="0px"
+        backgroundUrl="https://onofood.co/img/blend_thankyou.jpg"
         backgroundSize="cover"
         backgroundRepeat="no-repeat"
       >
-        <MjmlColumn>
-          <mj-spacer height="410px" />
+        <MjmlColumn padding="0px">
+          <MjmlSpacer height="410px" />
         </MjmlColumn>
       </MjmlSection>
       <MjmlSection
@@ -167,8 +177,14 @@ function getBodyHTML({ orderDetails, promocode }) {
           </MjmlTable>
         </MjmlColumn>
       </MjmlSection>
-      {promocode && <PromoCodeSection promocode={promocode} />}
-      {/* <SocialFooter /> */}
+      {/* {promoCode && <PromoCodeSection promoCode={promoCode} />} */}
+      <GenericFooter />
+      {cardPresentMeta && (
+        <MjmlText>
+          Application Name: {cardPresentMeta.application_preferred_name}, AID:{' '}
+          {cardPresentMeta.dedicated_file_name}
+        </MjmlText>
+      )}
     </Layout>,
     { validationLevel: 'soft' },
   );

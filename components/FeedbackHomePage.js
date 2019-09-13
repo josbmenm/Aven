@@ -216,8 +216,8 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
   React.useEffect(() => {
     Animated.timing(openProgress, {
       toValue: Number(isReady),
-      easing: Easing.inOut(Easing.quad),
-      duration: 800,
+      easing: Easing.poly(5),
+      duration: 500,
     }).start();
   }, [isReady]);
   function handleSubmit() {
@@ -293,7 +293,7 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
         <Animated.View
           style={{
             opacity: openProgress.interpolate({
-              inputRange: [0.4, 0.7],
+              inputRange: [0.4, 0.9],
               outputRange: [0, 1],
             }),
           }}
@@ -338,7 +338,7 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
         <Animated.View
           style={{
             opacity: openProgress.interpolate({
-              inputRange: [0.5, 1],
+              inputRange: [0.6, 1],
               outputRange: [0, 1],
             }),
           }}

@@ -1,5 +1,7 @@
 import React from 'react';
 import { log } from '../logger/logger';
+import ThankyouEmail from '../emails/ThankyouEmail';
+
 import {
   render,
   Mjml,
@@ -43,46 +45,8 @@ export default async function submitFeedback(
   log('CustomerFeedbackWillSubmit', { email, feedback });
   const promoCode = getCode();
 
-  const { html, errors } = render(
-    <Mjml>
-      <Header
-        title="Free blend from Ono Blends"
-        metaTitle={`Your promo code is ${promoCode}`}
-      />
-      <MjmlBody width={500}>
-        <MjmlSection fullWidth backgroundColor="#f7f7f7">
-          <MjmlColumn>
-            <MjmlImage src="https://onofood.co/img/icons.svg" />
-          </MjmlColumn>
-        </MjmlSection>
-        <MjmlSection>
-          <MjmlColumn>
-            <MjmlButton
-              padding="20px"
-              backgroundColor="#346DB7"
-              href="https://onofood.co"
-            >
-              sign up for updates from ono
-            </MjmlButton>
-          </MjmlColumn>
-        </MjmlSection>
-      </MjmlBody>
-    </Mjml>,
-    { validationLevel: 'soft' },
-  );
-  if (errors.length) {
-    throw new Error('Cannot construct email!', errors);
-  }
-  await emailAgent.actions.SendEmail({
-    to: email,
-    subject: 'Free blend from Ono Blends',
-    message: `Thanks for your feedback!
-
-Your promo code is ${promoCode}
-
-
--The Ono Blends Team`,
-    messageHTML: html,
+  await emailAgent.actions.SendEmailTemplate(ThankyouEmail, email, {
+    promoCode,
   });
 
   const now = Date.now();
