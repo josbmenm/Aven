@@ -235,7 +235,7 @@ const startSkynetServer = async () => {
     companyConfigStream.map(companyConfigToMenu),
   );
 
-  const deviceActions = cloud.get('DeviceActions2');
+  const deviceActions = cloud.get('DeviceActions3');
   const devicesState = cloud.docs.setOverrideStream(
     'DevicesState',
     createReducerStream(
@@ -251,7 +251,7 @@ const startSkynetServer = async () => {
       'onofood.co': {
         CompanyConfig: { defaultRule: { canRead: true } },
         KitchenConfig: { defaultRule: { canRead: true } },
-        DeviceActions2: { defaultRule: { canWrite: true } },
+        DeviceActions3: { defaultRule: { canWrite: true } },
         Menu: { defaultRule: { canRead: true } },
         PendingOrders: {
           defaultRule: {

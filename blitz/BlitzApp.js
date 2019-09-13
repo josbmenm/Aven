@@ -302,7 +302,7 @@ function SelectModeApp() {
       setDeviceId(cuid());
     }
   }, [deviceId]);
-  const dispatch = useCloud().get('DeviceActions2').putTransactionValue;
+  const dispatch = useCloud().get('DeviceActions3').putTransactionValue;
   const devicesState = useCloudValue('DevicesState');
   const devices = (devicesState && devicesState.devices) || [];
   React.useEffect(() => {
