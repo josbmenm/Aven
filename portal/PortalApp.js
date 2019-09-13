@@ -95,7 +95,9 @@ const HOST_CONFIG = IS_DEV ? RESTAURANT_DEV : RESTAURANT_PROD;
 
 const cloudSource = createNativeNetworkSource(HOST_CONFIG);
 
-if (!IS_DEV) {
+const isProduction = process.env.NODE_ENV !== 'development'; // same as IS_DEV
+
+if (isProduction) {
   Sentry.init({
     dsn: appPackage.sentryDSN,
   });
@@ -113,6 +115,18 @@ if (!IS_DEV) {
       console.error('Failed to get codepush metadata!');
       console.error(err);
     });
+  setInterval(() => {
+    codePush
+      .sync({
+        updateDialog: false,
+        installMode: codePush.InstallMode.IMMEDIATE,
+      })
+      .then(() => {})
+      .catch(e => {
+        console.error('Code update check failed');
+        console.error(e);
+      });
+  }, 10000);
 }
 
 YellowBox.ignoreWarnings([
@@ -126,25 +140,6 @@ YellowBox.ignoreWarnings([
 registerDispatcher(cloudSource.dispatch);
 
 let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
-
-const isProduction = process.env.NODE_ENV !== 'development';
-
-let shouldAutoUpdate = isProduction;
-// shouldAutoUpdate = false; // use this to test release mode without code push stomping on your local JS bundle
-
-shouldAutoUpdate &&
-  setInterval(() => {
-    codePush
-      .sync({
-        updateDialog: false,
-        installMode: codePush.InstallMode.IMMEDIATE,
-      })
-      .then(() => {})
-      .catch(e => {
-        console.error('Code update check failed');
-        console.error(e);
-      });
-  }, 10000);
 
 StatusBar.setHidden(true, 'none');
 
