@@ -10,3 +10,6 @@ set startup items:
 chromium-browser --password-store=basic --no-default-browser-check --kiosk --disable-infobars --app=http://10.10.1.200:8830/Kitchen
 
 unclutter -idle 1 -root
+
+copy pub key to ~/.ssh/authorized_keys
+ono sudo/admin group

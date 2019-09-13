@@ -98,7 +98,9 @@ const verseSource = createNativeNetworkSource(VERSE_HOST_CONFIG);
 
 const skynetSource = createNativeNetworkSource(SKYNET_HOST_CONFIG);
 
-if (!IS_DEV) {
+const isProduction = process.env.NODE_ENV !== 'development';
+
+if (isProduction) {
   Sentry.init({
     dsn: appPackage.sentryDSN,
   });
@@ -116,22 +118,6 @@ if (!IS_DEV) {
       console.error('Failed to get codepush metadata!');
       console.error(err);
     });
-}
-
-YellowBox.ignoreWarnings([
-  'background tab',
-  'Async Storage has been',
-  'with an invalid bridge',
-  'CardReaderLog',
-]);
-
-registerDispatcher(verseSource.dispatch);
-
-let codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
-
-const isProduction = process.env.NODE_ENV !== 'development';
-
-isProduction &&
   setInterval(() => {
     codePush
       .sync({
@@ -144,6 +130,18 @@ isProduction &&
         console.error(e);
       });
   }, 10000);
+}
+
+YellowBox.ignoreWarnings([
+  'background tab',
+  'Async Storage has been',
+  'with an invalid bridge',
+  'CardReaderLog',
+]);
+
+registerDispatcher(verseSource.dispatch);
+
+const codePushOptions = { checkFrequency: codePush.CheckFrequency.MANUAL };
 
 StatusBar.setHidden(true, 'none');
 
