@@ -539,36 +539,39 @@ export function connectMachine({
   ) {
     let sideEffectActions = null;
     if (restaurantState !== undefined) _restaurantState = restaurantState;
-    if (kitchenState !== undefined) {
-      if (_kitchenState !== kitchenState) {
-        const lastKitchenState = _kitchenState;
-        _kitchenState = kitchenState;
-        sideEffectActions = computeSideEffects(
-          lastKitchenState,
-          kitchenState,
-          restaurantState,
-        );
-        if (sideEffectActions && sideEffectActions.length) {
-          log('MachineEffects', {
-            actions: sideEffectActions,
-          });
-          let promise = Promise.resolve();
-          sideEffectActions.forEach(action => {
-            promise = promise
-              .then(async () => {
-                await onDispatcherAction(action);
-              })
-              .catch(error => {
-                error('MachineError', {
-                  code: 'SideEffectPerformError',
-                  error,
-                  action,
-                });
+    if (kitchenState !== undefined && _kitchenState !== kitchenState) {
+      const lastKitchenState = _kitchenState;
+      _kitchenState = kitchenState;
+      sideEffectActions = computeSideEffects(
+        lastKitchenState,
+        kitchenState,
+        restaurantState,
+      );
+      if (
+        sideEffectActions &&
+        sideEffectActions.length &&
+        restaurantState.isAttached
+      ) {
+        log('MachineEffects', {
+          actions: sideEffectActions,
+        });
+        let promise = Promise.resolve();
+        sideEffectActions.forEach(action => {
+          promise = promise
+            .then(async () => {
+              await onDispatcherAction(action);
+            })
+            .catch(error => {
+              error('MachineError', {
+                code: 'SideEffectPerformError',
+                error,
+                action,
               });
-          });
-        }
+            });
+        });
       }
     }
+
     if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
     if (!restaurantState)
       return error('MachineError', { code: 'MissingRestaurantState' });
