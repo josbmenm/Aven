@@ -15,7 +15,9 @@ const KitchenSteps = [
         // hasEstimatedInventoryForTask(restaurantState, task),
         (!restaurantState.fill || restaurantState.fill === 'ready')
       ) {
-        return {};
+        return {
+          taskId: restaurantState.queue[0].id,
+        };
       }
       return null;
     },
@@ -45,7 +47,7 @@ const KitchenSteps = [
         restaurantState.fill.task.skipBlend &&
         restaurantState.fill.fillsRemaining.length === 0
       ) {
-        return { didCompleteTask: true };
+        return { didCompleteTask: true, taskId: restaurantState.fill.task.id };
       }
       return null;
     },
@@ -62,7 +64,9 @@ const KitchenSteps = [
     getDescription: intent => 'Delivery Drop Cup',
     getStateIntent: restaurantState => {
       if (restaurantState.delivery) {
-        return {};
+        return {
+          taskId: restaurantState.delivery.task.id,
+        };
       }
       return null;
     },
@@ -85,7 +89,9 @@ const KitchenSteps = [
     getDescription: intent => 'Deliver to 0',
     getStateIntent: restaurantState => {
       if (restaurantState.delivery && !restaurantState.delivery0) {
-        return {};
+        return {
+          taskId: restaurantState.delivery.task.id,
+        };
       }
       return null;
     },
@@ -107,7 +113,9 @@ const KitchenSteps = [
     getDescription: intent => 'Deliver to 1',
     getStateIntent: restaurantState => {
       if (restaurantState.delivery && !restaurantState.delivery1) {
-        return {};
+        return {
+          taskId: restaurantState.delivery.task.id,
+        };
       }
       return null;
     },
@@ -143,6 +151,7 @@ const KitchenSteps = [
       const nextFill = restaurantState.fill.fillsRemaining[0];
       const intent = {
         ...nextFill,
+        taskId: restaurantState.fill.task.id,
         pretendDispense: restaurantState.isDryRunning,
       };
       return intent;
@@ -186,7 +195,9 @@ const KitchenSteps = [
       ) {
         return null;
       }
-      return {};
+      return {
+        taskId: restaurantState.fill.task.id,
+      };
     },
     getKitchenCommand: intent => ({
       commandType: 'PassToBlender',
@@ -202,7 +213,7 @@ const KitchenSteps = [
     getDescription: () => {
       return 'Go to handoff position';
     },
-    getStateIntent: restaurantState => {
+    getStateIntent: (restaurantState, kitchenState) => {
       if (
         !restaurantState.blend ||
         !restaurantState.fill ||
@@ -215,7 +226,10 @@ const KitchenSteps = [
       ) {
         return null;
       }
-      return {};
+      return {
+        position: kitchenState.FillSystem_Blender_Pos_READ,
+        taskId: restaurantState.fill.task.id,
+      };
     },
     getKitchenCommand: intent => ({
       commandType: 'FillGoToHandoff',
@@ -239,10 +253,16 @@ const KitchenSteps = [
       ) {
         return null;
       }
-      return {};
+      return {
+        blendProfile: restaurantState.blend.task.blendProfile,
+        taskId: restaurantState.blend.task.id,
+      };
     },
     getKitchenCommand: intent => ({
       commandType: 'Blend',
+      params: {
+        profile: intent.blendProfile,
+      },
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidBlend',
@@ -259,10 +279,16 @@ const KitchenSteps = [
         return null;
       }
       if (restaurantState.blend.blendCompleteTime) {
-        return { didDirtyBlender: true };
+        return {
+          didDirtyBlender: true,
+          taskId: restaurantState.blend.task.id,
+        };
       }
       if (restaurantState.blend.task.skipBlend) {
-        return { didDirtyBlender: false };
+        return {
+          didDirtyBlender: false,
+          taskId: restaurantState.blend.task.id,
+        };
       }
       return null;
     },
@@ -311,6 +337,7 @@ const KitchenSteps = [
       ) {
         return {
           didCompleteTask: true,
+          taskId: restaurantState.fill.task.id,
         };
       }
       return null;
@@ -330,12 +357,14 @@ const KitchenSteps = [
   {
     // prepare pickup cup
     getDescription: intent => 'Go to cup position',
-    getStateIntent: restaurantState => {
+    getStateIntent: (restaurantState, kitchenState) => {
       if (restaurantState.queue && restaurantState.queue.length) {
         return null;
       }
       if (restaurantState.fill == null) {
-        return {};
+        return {
+          position: kitchenState.FillSystem_Cup_Pos_READ,
+        };
       }
       return null;
     },

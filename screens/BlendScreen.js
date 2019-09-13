@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { useMenuItem, useMenu } from '../ono-cloud/OnoKitchen';
+import { useInventoryMenuItem, useMenu } from '../ono-cloud/OnoKitchen';
 import { useOrderItem } from '../ono-cloud/OrderContext';
 
 import useEmptyOrderEscape from './useEmptyOrderEscape';
@@ -11,7 +11,7 @@ function BlendScreenMemo({ navigation, ...props }) {
   const menuItemId = getParam('menuItemId');
 
   let { order, setItemState, orderItem } = useOrderItem(orderItemId);
-  const menuItem = useMenuItem(menuItemId);
+  const { menuItem } = useInventoryMenuItem(menuItemId);
   const menu = useMenu();
 
   useEmptyOrderEscape();

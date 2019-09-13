@@ -1,11 +1,9 @@
 import React from 'react';
 import RootAuthenticationSection from './RootAuthenticationSection';
-import RowSection from '../components/RowSection';
 import { Text, View } from 'react-native';
 import SimplePage from '../components/SimplePage';
 import Tag from '../components/Tag';
 import Button from '../components/Button';
-import Row from '../components/Row';
 import useFocus from '../navigation-hooks/useFocus';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import {
@@ -14,8 +12,6 @@ import {
   standardTextColor,
   prettyShadowSmall,
 } from '../components/Styles';
-import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
-import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
 import { useInventoryState } from '../ono-cloud/OnoKitchen';
 import MultiSelect from '../components/MultiSelect';
@@ -37,43 +33,50 @@ function PopoverTitle({ children }) {
 }
 
 function SetFillForm({ slot, onClose }) {
-  function setAmount(amount) {
-    slot.onSetEstimatedRemaining(Math.ceil(amount * slot.ShotCapacity));
-    onClose();
+  const [amount, setAmount] = React.useState('10');
+
+  let unit = { name: 'shots', factor: 1 };
+
+  const shotMass = slot.Ingredient['Mass (g/shot)'];
+  const shotVolume = slot.Ingredient['ShotSize(ml)'];
+
+  if (
+    slot.KitchenSystem.name === 'Powder' ||
+    slot.KitchenSystem.name === 'Granules'
+  ) {
+    unit = { name: 'kg', factor: 1000 / shotMass };
+  } else if (
+    slot.KitchenSystem.Name === 'FrozenFood' ||
+    slot.KitchenSystem.Name === 'Piston'
+  ) {
+    unit = { name: 'Lbs', factor: 453.6 / shotMass };
+  } else if (slot.KitchenSystem.Name === 'Beverage') {
+    unit = { name: 'L', factor: 1000 / shotVolume };
   }
+  function handleSubmit() {
+    onClose();
+    slot.onSetEstimatedRemaining(Math.floor(amount * unit.factor));
+  }
+
+  const { inputs } = useFocus({
+    onSubmit: handleSubmit,
+    inputRenderers: [
+      props => (
+        <BlockFormInput
+          {...props}
+          label="amount"
+          value={amount}
+          onValue={setAmount}
+        />
+      ),
+    ],
+  });
+
   return (
     <View>
-      <PopoverTitle>Set {slot.name} fill state</PopoverTitle>
-      <Button
-        title="100%"
-        onPress={() => {
-          setAmount(1);
-        }}
-      />
-      <Button
-        title="75%"
-        onPress={() => {
-          setAmount(0.75);
-        }}
-      />
-      <Button
-        title="50%"
-        onPress={() => {
-          setAmount(0.5);
-        }}
-      />
-      <Button
-        title="25%"
-        onPress={() => {
-          setAmount(0.25);
-        }}
-      />
-      <Button
-        title="Empty"
-        onPress={() => {
-          setAmount(0);
-        }}
-      />
+      <PopoverTitle>Fill {slot.name}</PopoverTitle>
+      <View style={{ flexDirection: 'row' }}>{inputs}</View>
+      <Button title={`fill ${amount} ${unit.name}`} onPress={handleSubmit} />
     </View>
   );
 }
@@ -111,10 +114,10 @@ function DispenseForm({ slot, onClose, onDispense }) {
           onDispense(amount);
         }}
       />
-      <Button
+      {/* <Button
         title={`task cup of ${slot.name} x ${amount}`}
         onPress={() => {}}
-      />
+      /> */}
     </View>
   );
 }

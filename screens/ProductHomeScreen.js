@@ -1,10 +1,10 @@
 import React from 'react';
-import { useInventoryMenu } from '../ono-cloud/OnoKitchen';
+import { useInStockInventoryMenu } from '../ono-cloud/OnoKitchen';
 import ProductHomePage from '../components/ProductHomePage';
 import { useOrder } from '../ono-cloud/OrderContext';
 
 function ProductHomeScreen({ ...props }) {
-  const menu = useInventoryMenu();
+  const menu = useInStockInventoryMenu();
 
   const { startOrder } = useOrder();
 

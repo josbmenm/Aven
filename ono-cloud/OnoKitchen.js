@@ -425,14 +425,17 @@ function getMenuItemInventory(menuItem, companyConfig, kitchenInventory) {
     companyConfig,
   );
   let isOutOfStock = false;
+
   const stockItemFillsWithInventory = stockItemFills.map(fillSpec => {
     const ing = inventoryIngredients[fillSpec.ingredientId];
     let isIngredientOutOfStock = false;
     // if (ing.settings) ...
     // ing.settings && console.log('hey ok ing.settings', ing);
     if (fillSpec.amount > ing.estimatedRemaining) {
-      isOutOfStock = true;
       isIngredientOutOfStock = true;
+    }
+    if (isIngredientOutOfStock && !ing.settings.optional) {
+      isOutOfStock = true;
     }
     return {
       ...fillSpec,
@@ -440,10 +443,12 @@ function getMenuItemInventory(menuItem, companyConfig, kitchenInventory) {
       isOutOfStock: isIngredientOutOfStock,
     };
   });
-
   return {
     ...menuItem,
     stockItemFills: stockItemFillsWithInventory,
+    inStockFills: stockItemFillsWithInventory.filter(
+      fillSpec => !fillSpec.isOutOfStock,
+    ),
     isOutOfStock,
     inventoryIngredients,
   };
@@ -453,7 +458,12 @@ export function useInventoryMenuItem(menuItemId) {
   const config = useCompanyConfig();
   const [inventoryState, dispatch] = useInventoryState();
   return useMemo(() => {
-    if (!config || !menuItemId || !inventoryState.inventoryIngredients)
+    if (
+      !config ||
+      !menuItemId ||
+      !inventoryState ||
+      !inventoryState.inventoryIngredients
+    )
       return {};
     const menuItem = companyConfigToBlendMenuItemMapper(menuItemId)(config);
     return {
@@ -476,6 +486,19 @@ export function useInventoryMenu() {
       return getMenuItemInventory(menuItem, companyConfig, inventoryState);
     }),
   };
+}
+
+export function useInStockInventoryMenu() {
+  const menu = useInventoryMenu();
+  return React.useMemo(() => {
+    if (!menu) return menu;
+    return {
+      ...menu,
+      blends: menu.blends.filter(
+        blend => !blend.isOutOfStock || blend['Forced Available'],
+      ),
+    };
+  }, [menu]);
 }
 
 export function useOrderIdSummary(orderId) {

@@ -273,7 +273,9 @@ export function companyConfigToBlendMenu(atData) {
   });
 
   const MenuItems = sortByField(MenuItemsUnordered, '_index');
-  const ActiveMenuItems = MenuItems.filter(i => i['Active in Kiosk']);
+  const ActiveMenuItems = MenuItems.filter(
+    i => i['Available'] || i['Forced Available'],
+  );
   const ActiveItemsWithRecipe = ActiveMenuItems.map(item => {
     const recipeId = item.Recipe[0];
     const Recipe = Recipes && item.Recipe && Recipes[recipeId];
@@ -552,39 +554,33 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
   const baseLiquidIng = allIngredients[baseLiquidIngId];
   const shouldFillCupWithLiquidBase =
     !!baseLiquidIng && !!menuItem.Recipe.Customizable;
-  if (!shouldFillCupWithLiquidBase) {
-    if (menuItem.Recipe.Customizable && !!baseLiquidIng) {
-      error('BaseLiquidMissing', {
-        baseLiquidIngId,
-        recipeId: menuItem.Recipe.id,
-      });
-    }
-    return {
-      enhancementIngredients,
-      standardIngredients,
-      ingredients: [...enhancementIngredients, ...standardIngredients],
-      origRecipeVolume,
-      finalVolume: finalVolumeBeforeLiquid,
-      liquidVolume: 0,
-      enhancementsVolume,
-      ingredientsVolume,
+  let baseLiquidIngredient = null;
+  let outputIngredients = [...enhancementIngredients, ...standardIngredients];
+  let liquidVolume = 0;
+  if (shouldFillCupWithLiquidBase) {
+    const baseLiquidShotSize = baseLiquidIng['ShotSize(ml)'];
+    const volumeRemaining = MAX_CUP_VOLUME - finalVolumeBeforeLiquid;
+    const liquidShotCount = Math.floor(volumeRemaining / baseLiquidShotSize);
+    liquidVolume = baseLiquidShotSize * liquidShotCount;
+    baseLiquidIngredient = {
+      ...baseLiquidIng,
+      amount: liquidShotCount,
+      amountVolumeRatio: baseLiquidShotSize,
     };
+    outputIngredients = [
+      ...enhancementIngredients,
+      ...standardIngredients,
+      baseLiquidIngredient,
+    ];
+  } else if (menuItem.Recipe.Customizable && !!baseLiquidIng) {
+    error('BaseLiquidMissing', {
+      baseLiquidIngId,
+      recipeId: menuItem.Recipe.id,
+    });
   }
-  const baseLiquidShotSize = baseLiquidIng['ShotSize(ml)'];
-  const volumeRemaining = MAX_CUP_VOLUME - finalVolumeBeforeLiquid;
-  const liquidShotCount = Math.floor(volumeRemaining / baseLiquidShotSize);
-  const liquidVolume = baseLiquidShotSize * liquidShotCount;
+
   const finalVolume = liquidVolume + finalVolumeBeforeLiquid;
-  const baseLiquidIngredient = {
-    ...baseLiquidIng,
-    amount: liquidShotCount,
-    amountVolumeRatio: baseLiquidShotSize,
-  };
-  const outputIngredients = [
-    ...enhancementIngredients,
-    ...standardIngredients,
-    baseLiquidIngredient,
-  ];
+
   return {
     enhancementIngredients,
     standardIngredients,

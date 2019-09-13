@@ -56,23 +56,6 @@ const KitchenCommands = {
       return kitchenState.Delivery_DeliverBay1Ready_READ;
     },
   },
-
-  // PrepareForBlender: {
-  //   subsystem: 'FillPositioner',
-  //   pulse: ['GoToPosition'],
-  //   values:
-  //   checkReady: kitchenState => {
-  //     if (!kitchenState) {
-  //       return false;
-  //     }
-  //     return kitchenState.FillPositioner_GoToPosition_READ && FillSystem_PrgStep_READ === 0;
-  //   },
-  // },
-  // PrepareForNewCup: {
-  //   system: 'FillPositioner',
-  //   pulse: ['GoToPosition'],
-  //   values: {}
-  // },
   DropCup: {
     subsystem: 'FillSystem',
     pulse: ['DropCup'],
@@ -98,7 +81,10 @@ const KitchenCommands = {
     subsystem: 'FillPositioner',
     pulse: ['GoToPosition'],
     values: {
-      PositionDest: 125,
+      PositionDest: 375, // this value will be used as a fallback! it will generally be determined by the position param
+    },
+    valueParamNames: {
+      PositionDest: 'position',
     },
     checkReady: kitchenState => {
       return kitchenState.FillPositioner_GoToPositionReady_READ;
@@ -108,7 +94,10 @@ const KitchenCommands = {
     subsystem: 'FillPositioner',
     pulse: ['GoToPosition'],
     values: {
-      PositionDest: 66570,
+      PositionDest: 199710, // this value will be used as a fallback! it will generally be determined by the position param
+    },
+    valueParamNames: {
+      PositionDest: 'position',
     },
     checkReady: kitchenState => {
       return kitchenState.FillPositioner_GoToPositionReady_READ;
@@ -118,7 +107,7 @@ const KitchenCommands = {
     subsystem: 'BlendSystem',
     pulse: ['Blend'],
     valueParamNames: {
-      BlendDuration: 'duration',
+      BlendProfile: 'profile',
     },
     checkReady: kitchenState => {
       return kitchenState.BlendSystem_BlendReady_READ;

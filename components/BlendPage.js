@@ -107,21 +107,17 @@ function Ingredients({ selectedIngredients }) {
   );
 }
 
-function BlendPageContentPure({
-  menuItem,
-  setItemState,
-  item,
-  foodMenu,
-  order,
-}) {
-  const usedIng = useSelectedIngredients(menuItem, item);
-  if (!usedIng) {
+function BlendPageContentPure({ menuItem, setItemState, item, order }) {
+  if (!menuItem) {
     return null;
   }
-  const { ingredients } = usedIng;
-  if (!ingredients) {
-    return null;
+  let fills = menuItem.inStockFills;
+  if (menuItem['Forced Available']) {
+    fills = menuItem.stockItemFills;
   }
+  const ingredients = fills.map(fill => {
+    return fill.inventory.Ingredient;
+  });
   const selectedIngredientIds = ingredients.map(i => i.id);
   const benefits = (menuItem ? Object.keys(menuItem.AllBenefits) : [])
     .map(benefitId => {
@@ -253,7 +249,8 @@ export default function BlendPage({
 }) {
   const { navigate } = navigation;
 
-  const isCustomizable = menuItem && menuItem.Recipe.Customizable;
+  const isCustomizable =
+    menuItem && menuItem.Recipe && menuItem.Recipe.Customizable;
 
   const actions = [
     isCustomizable && {

@@ -247,7 +247,13 @@ const startVerseServer = async () => {
         if (!kitchen) {
           return;
         }
-        return await kitchen.command(action);
+        return await kitchen.command({
+          ...action,
+          context: {
+            ...(action.context || {}),
+            via: 'ManualDispatch',
+          },
+        });
       case 'KitchenWriteMachineValues': {
         // low level thing
         if (!kitchen) {

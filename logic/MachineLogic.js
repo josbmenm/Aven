@@ -33,7 +33,7 @@ export function computeNextSteps(
         getStartingRestaurantAction,
         getSuccessRestaurantAction,
       } = STEP;
-      const intent = getStateIntent(restaurantState, kitchenState);
+      const intent = getStateIntent(restaurantState, kitchenState || {}); // CAREFUL, KITCHEN STATE IS HERE BUT EMPTY
       if (!intent) {
         return false;
       }
@@ -42,7 +42,7 @@ export function computeNextSteps(
         kitchenState && getMachineReady
           ? getMachineReady(kitchenState, intent)
           : true;
-      const command = getKitchenCommand(intent);
+      const command = getKitchenCommand(intent, kitchenState || {}); // CAREFUL, KITCHEN STATE IS HERE BUT EMPTY
       const commandType = machineCommands[command.commandType];
       const isSystemIdle = kitchenState
         ? kitchenState[`${commandType.subsystem}_PrgStep_READ`] === 0
@@ -79,7 +79,14 @@ export function computeNextSteps(
           startingRestaurantAction &&
             (await onDispatcherAction(startingRestaurantAction));
           try {
-            resp = await kitchenCommand(command);
+            resp = await kitchenCommand({
+              ...command,
+              context: {
+                ...(command.context || {}),
+                via: 'Sequencer',
+                intent,
+              },
+            });
             log('MachineCommandPerformed', {
               intent,
               successRestaurantAction,

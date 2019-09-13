@@ -117,6 +117,7 @@ export default async function placeOrder(
         name: orderName,
         blendName,
         blendColor: item.menuItem.Recipe.Color,
+        blendProfile: item.menuItem.Recipe['Blend Profile'],
         fills,
       }));
     }),
