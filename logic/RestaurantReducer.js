@@ -28,22 +28,59 @@ const PRIMING_TASKS = [
   },
 ];
 
+function restaurantStateHasInventory(state, ingredientId, amount) {
+  // if (nextFill.)
+  console.log(
+    'checking inventory of',
+    ingredientId,
+    amount,
+    Object.keys(state),
+  );
+
+  return true;
+}
+
+function handleDisabledFills(state) {
+  if (!state.fill) {
+    return state;
+  }
+  const { fillsCompleted, fillsRemaining, fillsFailed } = state.fill;
+  const nextFill = fillsRemaining[0];
+  if (!nextFill) {
+    return state;
+  }
+  const { ingredientId, amount } = nextFill;
+
+  if (restaurantStateHasInventory(state, ingredientId, amount)) {
+    return state;
+  }
+
+  return handleDisabledFills({
+    ...state,
+    fill: {
+      ...state.fill,
+      fillsRemaining: fillsRemaining.slice(1),
+      fillsFailed: [...(fillsFailed || []), nextFill],
+    },
+  });
+}
+
 function withdrawInventoryIngredient(state, slotId, amount) {
-  let ingredientInventory = state.ingredientInventory;
-  if (ingredientInventory && slotId) {
-    const slotInventoryState = ingredientInventory[slotId] || {};
+  let slotInventory = state.slotInventory;
+  if (slotInventory && slotId) {
+    const slotInventoryState = slotInventory[slotId] || {};
     const estimatedRemaining = slotInventoryState.estimatedRemaining;
     const newEstimatedRemaining =
       estimatedRemaining == null ? null : estimatedRemaining - amount;
-    ingredientInventory = {
-      ...(state.ingredientInventory || {}),
+    slotInventory = {
+      ...(state.slotInventory || {}),
       [slotId]: {
         ...slotInventoryState,
         estimatedRemaining: newEstimatedRemaining,
       },
     };
   }
-  return ingredientInventory;
+  return slotInventory;
 }
 
 function withdrawInventoryCup(state) {
@@ -140,7 +177,7 @@ function RestaurantReducerFn(state = {}, action) {
         };
       }
       const topTask = state.queue[0];
-      return {
+      return handleDisabledFills({
         ...defaultReturn(),
         cupInventory: withdrawInventoryCup(state),
         fill: {
@@ -150,7 +187,7 @@ function RestaurantReducerFn(state = {}, action) {
           fillsCompleted: [],
         },
         queue: state.queue.slice(1),
-      };
+      });
     }
     case 'RequestFillDrop': {
       if (!state.fill) {
@@ -191,7 +228,7 @@ function RestaurantReducerFn(state = {}, action) {
     case 'DidDispense': {
       return {
         ...defaultReturn(),
-        ingredientInventory: withdrawInventoryIngredient(
+        slotInventory: withdrawInventoryIngredient(
           state,
           action.slotId,
           action.amount,
@@ -243,14 +280,14 @@ function RestaurantReducerFn(state = {}, action) {
         return !isTheFill;
       });
 
-      return {
+      return handleDisabledFills({
         ...defaultReturn(),
         fill: {
           ...state.fill,
           fillsCompleted: [...(state.fill.fillsCompleted || []), completedFill],
           fillsRemaining,
         },
-      };
+      });
     }
     case 'DidFailFill': {
       if (!state.fill) {
@@ -272,14 +309,14 @@ function RestaurantReducerFn(state = {}, action) {
         }
         return !isTheFill;
       });
-      return {
+      return handleDisabledFills({
         ...defaultReturn(),
         fill: {
           ...state.fill,
           fillsFailed: [...(state.fill.fillsFailed || []), failedFill],
           fillsRemaining,
         },
-      };
+      });
     }
     case 'DidFill': {
       if (!state.fill) {
@@ -301,9 +338,9 @@ function RestaurantReducerFn(state = {}, action) {
         }
         return !isTheFill;
       });
-      return {
+      return handleDisabledFills({
         ...defaultReturn(),
-        ingredientInventory: withdrawInventoryIngredient(
+        slotInventory: withdrawInventoryIngredient(
           state,
           completedFill.slotId,
           completedFill.amount,
@@ -313,16 +350,16 @@ function RestaurantReducerFn(state = {}, action) {
           fillsCompleted: [...(state.fill.fillsCompleted || []), completedFill],
           fillsRemaining,
         },
-      };
+      });
     }
     case 'DidFillSlot': {
-      const ingredientInventory = state.ingredientInventory || {};
+      const slotInventory = state.slotInventory || {};
       return {
         ...defaultReturn(),
-        ingredientInventory: {
-          ...ingredientInventory,
+        slotInventory: {
+          ...slotInventory,
           [action.slotId]: {
-            ...(ingredientInventory[action.slotId] || {}),
+            ...(slotInventory[action.slotId] || {}),
             estimatedRemaining: action.estimatedRemaining,
           },
         },

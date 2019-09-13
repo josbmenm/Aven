@@ -7,7 +7,7 @@ const KitchenSteps = [
       // console.log(
       //   'checking for inventory',
       //   task,
-      //   restaurantState.ingredientInventory,
+      //   restaurantState.slotInventory,
       // );
       if (
         restaurantState.queue &&

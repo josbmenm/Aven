@@ -336,8 +336,7 @@ export function useInventoryState() {
     },
     ...ingredientSlots.map(slot => {
       const invState =
-        restaurantState.ingredientInventory &&
-        restaurantState.ingredientInventory[slot.id];
+        restaurantState.slotInventory && restaurantState.slotInventory[slot.id];
       const dispensedSinceLow =
         kitchenState &&
         kitchenState[

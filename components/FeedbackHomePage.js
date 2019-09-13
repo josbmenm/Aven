@@ -6,6 +6,7 @@ import {
   boldPrimaryFontFace,
   prettyShadowSmall,
   titleStyle,
+  monsterra80,
 } from '../components/Styles';
 import FadeTransition from '../components/FadeTransition';
 import BlockFormButton from '../components/BlockFormButton';
@@ -216,7 +217,7 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
     Animated.timing(openProgress, {
       toValue: Number(isReady),
       easing: Easing.inOut(Easing.quad),
-      duration: 2000,
+      duration: 800,
     }).start();
   }, [isReady]);
   function handleSubmit() {
@@ -228,10 +229,6 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
     setTags([]);
     setRating(0);
   }
-  const invertedOpenProgress = Animated.interpolate(openProgress, {
-    inputRange: [0, 1],
-    outputRange: [1, 0],
-  });
   return (
     <FadeTransition
       {...props}
@@ -266,21 +263,41 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
     >
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <Animated.View
-          style={{ opacity: invertedOpenProgress, position: 'absolute' }}
+          style={{
+            opacity: openProgress.interpolate({
+              inputRange: [0, 0.5],
+              outputRange: [1, 0],
+            }),
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 300,
+            alignItems: 'center',
+          }}
         >
           <Text
             style={{
               ...boldPrimaryFontFace,
-              textAlign: 'center',
+              flex: 1,
               color: monsterra,
               fontSize: 52,
             }}
           >
             food for thought
           </Text>
+          <Text style={{ color: monsterra, ...proseFontFace, fontSize: 32 }}>
+            Rate your experience, and your next blend is free.
+          </Text>
         </Animated.View>
 
-        <Animated.View style={{ opacity: openProgress }}>
+        <Animated.View
+          style={{
+            opacity: openProgress.interpolate({
+              inputRange: [0.4, 0.7],
+              outputRange: [0, 1],
+            }),
+          }}
+        >
           <Text
             style={{
               ...boldPrimaryFontFace,
@@ -291,9 +308,6 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
           >
             {FEEDBACK_TITLES[rating]}
           </Text>
-        </Animated.View>
-
-        <Animated.View style={{ opacity: openProgress }}>
           <Text
             style={{
               ...proseFontFace,
@@ -306,9 +320,29 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
             Select all that apply
           </Text>
         </Animated.View>
-
-        <RatingStars rating={rating} onRating={handleRating} />
-        <Animated.View style={{ opacity: openProgress }}>
+        <Animated.View
+          style={{
+            zIndex: 12,
+            transform: [
+              {
+                translateY: openProgress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [240, 0],
+                }),
+              },
+            ],
+          }}
+        >
+          <RatingStars rating={rating} onRating={handleRating} />
+        </Animated.View>
+        <Animated.View
+          style={{
+            opacity: openProgress.interpolate({
+              inputRange: [0.5, 1],
+              outputRange: [0, 1],
+            }),
+          }}
+        >
           <TagsGroup>
             {FEEDBACK_TAGS.map(tagSpec => {
               const tagId = `${ratingSentiment}-${tagSpec.name}`;
@@ -331,8 +365,6 @@ export default function FeedbackHomePage({ navigation, onSubmit, ...props }) {
               );
             })}
           </TagsGroup>
-        </Animated.View>
-        <Animated.View style={{ opacity: openProgress }}>
           <SubmitButton onPress={handleSubmit} />
         </Animated.View>
       </View>

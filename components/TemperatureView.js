@@ -67,9 +67,9 @@ export default function TemperatureView() {
             value={formatTemp(kitchenState.System_PsuTemp_READ)}
           />
         )}
-        <Svg width="200" height="200">
+        {/* <Svg width="200" height="200">
           <Path d="M 40 60 A 10 10 0 0 0 60 60" stroke="black" />
-        </Svg>
+        </Svg> */}
       </View>
     </React.Fragment>
   );
