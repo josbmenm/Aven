@@ -5,6 +5,7 @@ import {
   MjmlColumn,
   MjmlTable,
   MjmlSpacer,
+  MjmlText,
 } from 'mjml-react';
 import Layout from './components/Layout';
 import Header from './components/Header';
