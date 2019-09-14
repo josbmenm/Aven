@@ -156,6 +156,7 @@ export default function BlendTasker() {
                   name: orderName,
                   blendName,
                   blendColor: menuItem.Recipe.Color,
+                  blendProfile: menuItem.Recipe['Blend Profile'],
                   skipBlend: false,
                   deliveryMode: 'deliver',
                   fills,

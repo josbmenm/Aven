@@ -64,9 +64,15 @@ const appPackage = require('../app.json');
 let VERSE_IS_DEV = process.env.NODE_ENV !== 'production';
 let SKYNET_IS_DEV = process.env.NODE_ENV !== 'production';
 
-// uncomment to test prod mode:
+// uncomment to test prod mode while developing
 // VERSE_IS_DEV = false;
 // SKYNET_IS_DEV = false;
+// ^^ ALWAYS COMMENT THIS OUT BEFORE COMMIT AND DEPLOY! ^^
+
+// uncomment to test dev server in release mode:
+// VERSE_IS_DEV = true;
+// SKYNET_IS_DEV = true;
+// ^^ ALWAYS COMMENT THIS OUT BEFORE COMMIT AND DEPLOY! ^^
 
 const VERSE_HOST_CONFIG = VERSE_IS_DEV
   ? {
@@ -88,7 +94,7 @@ const SKYNET_HOST_CONFIG = SKYNET_IS_DEV
       useSSL: false,
       // authority: 'localhost:8840',
       // authority: '10.10.10.40:8840',
-      authority: '192.168.1.81:8830',
+      authority: '192.168.1.81:8830', // ev laptop
     }
   : {
       // Skynet prod:
