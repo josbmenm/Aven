@@ -8,25 +8,42 @@ export default function EmailAgent({ config, defaultFromEmail, name }) {
 
   sg.setApiKey(sendgridAPIKey);
 
-  const actions = {
-    SendEmail: async ({
+  async function SendEmail({
+    to,
+    subject,
+    message,
+    messageHTML,
+    from,
+    fromName,
+  }) {
+    const finalFromEmail = from ? `${fromName} <${from}>` : defaultFromEmail;
+
+    await sg.send({
       to,
+      from: finalFromEmail,
+      subject,
+      text: message,
+      html: messageHTML,
+    });
+  }
+
+  async function SendEmailTemplate(template, recipient, params, opts = {}) {
+    const messageHTML = template.getBodyHTML(params);
+    const message = template.getBodyText(params);
+    const subject = template.getSubject(params);
+    await SendEmail({
+      to: recipient,
       subject,
       message,
       messageHTML,
-      from,
-      fromName,
-    }) => {
-      const finalFromEmail = from ? `${fromName} <${from}>` : defaultFromEmail;
+      from: opts.from,
+      fromName: opts.fromName,
+    });
+  }
 
-      await sg.send({
-        to,
-        from: finalFromEmail,
-        subject,
-        text: message,
-        html: messageHTML,
-      });
-    },
+  const actions = {
+    SendEmail,
+    SendEmailTemplate,
   };
 
   return { actions, remove: () => {}, name };
