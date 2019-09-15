@@ -224,7 +224,7 @@ function CartRow({ itemId, item }) {
           <View
             style={{ flexDirection: 'row', marginBottom: 20, marginTop: 4 }}
           >
-            {item.type === 'blend' && (
+            {item.type === 'blend' && false && (
               <SmallButton
                 title="customize"
                 icon={require('./assets/EditIcon.png')}
