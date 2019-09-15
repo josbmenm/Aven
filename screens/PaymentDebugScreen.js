@@ -280,7 +280,16 @@ export default function PaymentDebugScreen(props) {
             throw new Error('requested crash');
           }}
         />
+        <Button
+          title="request location"
+          onPress={() => {
+            const geolocation = navigator.geolocation;
 
+            if (geolocation.requestAuthorization) {
+              geolocation.requestAuthorization();
+            }
+          }}
+        />
         <Button
           title="Test useCardReaderConnectionManager"
           onPress={() => {
