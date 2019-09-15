@@ -153,7 +153,7 @@ export default async function placeOrder(
   const confirmedOrder = {
     ...order,
     subTotal,
-    subTotalDollars,
+    subTotalDollars: subTotal / 100,
     tax,
     total,
     totalDollars: total / 100,
@@ -191,7 +191,8 @@ export default async function placeOrder(
     tasks: orderTasks,
   });
 
-  log('OrderTasksQueued', { orderTasks, orderId });
+  orderTasks.forEach(task => log('OrderTask', { task, orderId }));
+  log('OrderTasksPlaced', { orderId, taskCount: orderTasks.length });
   log('OrderPlacedSuccess', confirmedOrder);
 
   return {};

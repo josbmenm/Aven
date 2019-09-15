@@ -110,7 +110,7 @@ export function connectMachine({
   kitchenStateDoc,
   restaurantStateStream,
   sequencerSteps,
-  onDispatcherAction,
+  restaurantStateDispatch,
   plcIP,
   computeSideEffects,
 }) {
@@ -559,7 +559,7 @@ export function connectMachine({
         sideEffectActions.forEach(action => {
           promise = promise
             .then(async () => {
-              await onDispatcherAction(action);
+              await restaurantStateDispatch(action);
             })
             .catch(error => {
               error('MachineError', {
@@ -615,7 +615,7 @@ export function connectMachine({
       });
 
       currentStepPromises[subsystem] = nextStep.perform(
-        onDispatcherAction,
+        restaurantStateDispatch,
         command,
       );
 

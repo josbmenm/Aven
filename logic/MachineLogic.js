@@ -74,10 +74,10 @@ export function computeNextSteps(
         startingRestaurantAction,
         subsystem: command.subsystem,
         description: getDescription(intent),
-        perform: async (onDispatcherAction, kitchenCommand) => {
+        perform: async (restaurantStateDispatch, kitchenCommand) => {
           let resp = null;
           startingRestaurantAction &&
-            (await onDispatcherAction(startingRestaurantAction));
+            (await restaurantStateDispatch(startingRestaurantAction));
           try {
             resp = await kitchenCommand({
               ...command,
@@ -93,7 +93,7 @@ export function computeNextSteps(
               command,
             });
             successRestaurantAction &&
-              (await onDispatcherAction(successRestaurantAction));
+              (await restaurantStateDispatch(successRestaurantAction));
             await delay(30);
           } catch (e) {
             log('MachineCommandFailure', {
@@ -102,17 +102,17 @@ export function computeNextSteps(
               command,
             });
             failureRestaurantAction &&
-              (await onDispatcherAction(failureRestaurantAction));
+              (await restaurantStateDispatch(failureRestaurantAction));
             throw e;
           }
           return resp;
         },
-        performFake: async (onDispatcherAction, kitchenCommand) => {
+        performFake: async (restaurantStateDispatch, kitchenCommand) => {
           startingRestaurantAction &&
-            (await onDispatcherAction(startingRestaurantAction));
+            (await restaurantStateDispatch(startingRestaurantAction));
           await delay(1000);
           successRestaurantAction &&
-            (await onDispatcherAction(successRestaurantAction));
+            (await restaurantStateDispatch(successRestaurantAction));
           await delay(30);
 
           return null;

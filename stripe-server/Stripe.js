@@ -57,14 +57,15 @@ export async function getPaymentIntent(intentId, isLive) {
 }
 
 export async function refundPaymentIntent(paymentIntent) {
+  log('WillRefundPayment', { paymentIntent });
   const charge = paymentIntent.charges.data[0];
 
-  console.log('STRIPE REFUNDING: ', charge);
   const stripe = getStripe(paymentIntent.livemode);
 
   const refund = await stripe.refunds.create({
     charge: charge.id,
   });
+  log('DidRefundPayment', { paymentIntent, charge, refund });
   return refund;
 }
 export async function handleStripeAction(action) {

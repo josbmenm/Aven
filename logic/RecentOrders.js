@@ -16,7 +16,7 @@ function RecentOrdersFn(state = {}, action) {
     case 'KioskOrder': {
       return {
         ...defaultReturn(),
-        orders: [...(state.orders || []).slice(-99), action.confirmedOrder],
+        orders: [...(state.orders || []).slice(-24), action.confirmedOrder],
       };
     }
     default: {

@@ -13,17 +13,22 @@ import theme from './theme';
 import formatCurrency from '../utils/formatCurrency';
 import GenericFooter from './components/GenericFooter';
 
-function getBodyHTML({
-  orderName,
-  orderId,
-  displayItems,
-  subTotal,
-  total,
-  tax,
-  paymentMethod,
-  cardPresentMeta,
-}) {
-  const emailTitle = `Order Receipt for ${orderName}`;
+function getSubject(params) {
+  return `Order Receipt for ${orderName}`;
+}
+
+function getBodyHTML(params) {
+  const {
+    orderName,
+    orderId,
+    displayItems,
+    subTotal,
+    total,
+    tax,
+    paymentMethod,
+    cardPresentMeta,
+  } = params;
+  const emailTitle = getSubject(params);
   const { html, errors } = render(
     <Layout title={emailTitle} metaTitle="We hope you enjoyed Ono Blends">
       <Header />
@@ -204,10 +209,6 @@ function getBodyText(params) {
 Your total is ${params.total}
 
 Ono Blends`;
-}
-
-function getSubject(params) {
-  return 'Your receipt from Ono Blends';
 }
 
 export default {

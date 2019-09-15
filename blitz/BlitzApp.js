@@ -31,7 +31,7 @@ import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
 import FoodScreen from '../screens/FoodScreen';
 import PaymentDebugScreen from '../screens/PaymentDebugScreen';
 import Spinner from '../components/Spinner';
-
+import ErrorContainer from '../cloud-react/ErrorContainer';
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
 import OrderCompleteScreen from '../screens/OrderCompleteScreen';
@@ -193,11 +193,28 @@ function RetryButton({ onRetry }) {
 }
 
 function renderAppError({ error, errorInfo, onRetry }) {
+  let message = IS_DEV
+    ? error.message
+    : 'The app broke. Please retry or ask your guide to help';
   return (
     <ScrollView style={{ flex: 1 }}>
-      <Text>O, no!</Text>
-      <Text>{error.message}</Text>
-      <RetryButton onRetry={onRetry} />
+      <Text style={{ ...titleStyle, fontSize: 48, marginTop: 100 }}>
+        uh oh!
+      </Text>
+      <Text
+        style={{
+          ...proseFontFace,
+          fontSize: 32,
+          color: monsterra,
+          textAlign: 'center',
+          marginVertical: 40,
+        }}
+      >
+        {message}
+      </Text>
+      <View>
+        <RetryButton onRetry={onRetry} />
+      </View>
     </ScrollView>
   );
 }
@@ -215,24 +232,6 @@ function ClosableKioskContainer({ children }) {
 }
 
 const NAV_STORAGE_KEY = 'NavigationState-N3e26u1o';
-// function FullApp() {
-//   return (
-//     <PopoverContainer>
-//       <CloudContext.Provider value={cloud}>
-//         <ErrorContainer
-//           renderError={renderAppError}
-//           onCatch={async () => {
-//             await AsyncStorage.removeItem(NAV_STORAGE_KEY);
-//           }}
-//         >
-//           <OrderContextProvider>
-//             <AppContainer persistenceKey={NAV_STORAGE_KEY} />
-//           </OrderContextProvider>
-//         </ErrorContainer>
-//       </CloudContext.Provider>
-//     </PopoverContainer>
-//   );
-// }
 
 const PRELOAD_IMAGES = [
   require('../components/assets/BgHome.png'),
@@ -351,9 +350,16 @@ function FullApp() {
   }
   return (
     <ThemeProvider value={OnoTheme}>
-      <CloudContext.Provider value={cloud}>
-        <SelectModeApp />
-      </CloudContext.Provider>
+      <ErrorContainer
+        renderError={renderAppError}
+        onCatch={async () => {
+          await AsyncStorage.removeItem(NAV_STORAGE_KEY);
+        }}
+      >
+        <CloudContext.Provider value={cloud}>
+          <SelectModeApp />
+        </CloudContext.Provider>
+      </ErrorContainer>
     </ThemeProvider>
   );
 }

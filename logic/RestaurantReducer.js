@@ -174,6 +174,7 @@ function RestaurantReducerFn(state = {}, action) {
         ...defaultReturn(),
         cupInventory: withdrawInventoryCup(state),
         fill: {
+          id: topTask.id,
           task: topTask,
           taskStartTime: Date.now(),
           fillsRemaining: topTask.fills,
@@ -559,6 +560,17 @@ function RestaurantReducerFn(state = {}, action) {
         ...defaultReturn(),
         isClosed: false,
         scheduledCloseTime: action.scheduledCloseTime || null,
+      };
+    }
+    case 'CleanupTask': {
+      return {
+        ...defaultReturn(),
+        completedTasks: (state.completedTasks || []).filter(
+          task => task.id !== action.taskId,
+        ),
+        failedTasks: (state.failedTasks || []).filter(
+          task => task.id !== action.taskId,
+        ),
       };
     }
     default: {

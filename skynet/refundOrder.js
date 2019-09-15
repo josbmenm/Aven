@@ -1,4 +1,5 @@
 import { refundPaymentIntent } from '../stripe-server/Stripe';
+import { log } from '../logger/logger';
 
 export default async function refundOrder({
   cloud,
@@ -7,6 +8,7 @@ export default async function refundOrder({
   action,
   logger,
 }) {
+  log('WillRefundOrder', { orderId: action.orderId });
   const order = cloud.get(`ConfirmedOrders/${action.orderId}`);
   const orderState = await order.idAndValue.load();
 
@@ -26,6 +28,6 @@ export default async function refundOrder({
     refund,
   };
   order.putValue(newOrder);
-
+  log('DidRefundOrder', { order: newOrder });
   return newOrder;
 }

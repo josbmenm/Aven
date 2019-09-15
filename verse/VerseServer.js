@@ -176,6 +176,10 @@ const startVerseServer = async () => {
   const kitchenConfigStream = cloud.get('KitchenConfig').value.stream;
 
   const kitchenStateDoc = cloud.get('KitchenState');
+  const restaurantStateStream = cloud.get('RestaurantState').value.stream;
+
+  const restaurantStateDispatch = cloud.get('RestaurantActions')
+    .putTransactionValue;
 
   let kitchen = null;
   if (!process.env.DISABLE_ONO_KITCHEN) {
@@ -224,12 +228,42 @@ const startVerseServer = async () => {
         return sideEffects;
       },
       configStream: kitchenConfigStream,
-      restaurantStateStream: cloud.get('RestaurantState').value.stream,
-      onDispatcherAction: cloud.get('RestaurantActions').putTransactionValue,
+      restaurantStateStream,
+      restaurantStateDispatch,
       kitchenStateDoc,
       plcIP: '10.10.1.122',
     });
   }
+
+  let completeTaskIds = [];
+
+  function completeTask(task) {
+    if (completeTaskIds.indexOf(task.id) !== -1) return;
+    completeTaskIds.push(task.id);
+    log('TaskComplete', { task, taskCompleteIndex: completeTaskIds.length });
+    restaurantStateDispatch({
+      type: 'CleanupTask',
+      taskId: task.id,
+    }).catch(err => {
+      error('CleanupTaskFailure', { error: err, task });
+    });
+  }
+
+  const restaurantStateListener = {
+    next: state => {
+      if (state && state.completedTasks && state.completedTasks.length) {
+        state.completedTasks.forEach(completeTask);
+      }
+    },
+    error: e => {
+      fatal('RestaurantStateError', {
+        code: 'RestaurantStateStream',
+        error: e,
+      });
+      process.exit(1);
+    },
+  };
+  restaurantStateStream.addListener(restaurantStateListener);
 
   if (kitchen) {
     setInterval(() => {
