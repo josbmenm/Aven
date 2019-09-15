@@ -241,12 +241,12 @@ const startVerseServer = async () => {
     if (completeTaskIds.indexOf(task.id) !== -1) return;
     completeTaskIds.push(task.id);
     log('TaskComplete', { task, taskCompleteIndex: completeTaskIds.length });
-    restaurantStateDispatch({
-      type: 'CleanupTask',
-      taskId: task.id,
-    }).catch(err => {
-      error('CleanupTaskFailure', { error: err, task });
-    });
+    // restaurantStateDispatch({
+    //   type: 'CleanupTask',
+    //   taskId: task.id,
+    // }).catch(err => {
+    //   error('CleanupTaskFailure', { error: err, task });
+    // });
   }
 
   const restaurantStateListener = {
