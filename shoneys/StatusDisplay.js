@@ -267,7 +267,7 @@ function IngredientFillingCup({ fillLevel, currentFill, blendTintColor }) {
           </Animated.View>
         </View>
       )}
-      <AnimatedCup fillLevel={shownFillLevel} tintColor={blendTintColor} />
+      <AnimatedCup fillLevel={shownFillLevel} blendTintColor={blendTintColor} />
     </View>
   );
 }
@@ -508,11 +508,11 @@ function PickupSection({ delivery0, delivery1 }) {
 
 const ANIM_INC = 0.01;
 
-function AnimatedCup({ fillLevel, tintColor }) {
+function AnimatedCup({ fillLevel, blendTintColor }) {
   let [shownFillLevel, setShownFillLevel] = React.useState(fillLevel);
-  let zz = React.useRef({ animationFrame: null, ff: fillLevel });
+  let zz = React.useRef({ timeout: null, ff: fillLevel });
   React.useEffect(() => {
-    window.cancelAnimationFrame(zz.current.animationFrame);
+    clearTimeout(zz.current.timeout);
     function performUpdate() {
       let n = null;
       let lastFillLevel = zz.current.ff;
@@ -526,9 +526,12 @@ function AnimatedCup({ fillLevel, tintColor }) {
       }
       zz.current.ff = n;
       setShownFillLevel(n);
-      zz.current.animationFrame = window.requestAnimationFrame(performUpdate);
+      zz.current.timeout = setTimeout(performUpdate, 50);
     }
-    zz.current.animationFrame = window.requestAnimationFrame(performUpdate);
+    zz.current.timeout = setTimeout(performUpdate, 50);
+    return () => {
+      clearTimeout(zz.current.timeout);
+    };
   }, [fillLevel]);
   return (
     <View style={{ width: 49, height: 64 }}>
@@ -555,8 +558,8 @@ function AnimatedCup({ fillLevel, tintColor }) {
             position: 'absolute',
             top: 0,
             left: 0,
-            tintColor,
           }}
+          tintColor={blendTintColor}
         />
       </div>
       <Image
