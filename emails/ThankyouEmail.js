@@ -13,9 +13,16 @@ import Header from './components/Header';
 import GenericFooter from './components/GenericFooter';
 import theme from './theme';
 
+function getSubject() {
+  return 'Thanks for the feedback!';
+}
+
 function getBodyHTML({ promoCode }) {
   const { html, errors } = render(
-    <Layout title="Thank you" metaTitle="ONO food - Thank you">
+    <Layout
+      title="As a token of our appreciation,"
+      metaTitle={`Your free blend code is ${promoCode}`}
+    >
       <Header />
       <MjmlSection
         padding="0px"
@@ -103,10 +110,6 @@ ${promoCode}
 Questions?
 Contact us at lucy@onofood.co
 `;
-}
-
-function getSubject() {
-  return 'Thanks for the feedback!';
 }
 
 export default {

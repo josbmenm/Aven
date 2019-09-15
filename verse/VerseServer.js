@@ -17,7 +17,7 @@ import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
 import { connectMachine } from './Machine';
 import KitchenSteps from '../logic/KitchenSteps';
-import { log, error, setLoggerMode } from '../logger/logger';
+import { log, error, fatal, setLoggerMode } from '../logger/logger';
 
 const fetch = require('node-fetch');
 
