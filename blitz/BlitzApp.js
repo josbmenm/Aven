@@ -49,7 +49,7 @@ import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import useCloudProvider from '../components/useCloudProvider';
 import FadeTransition from '../components/FadeTransition';
-import { titleStyle } from '../components/Styles';
+import { titleStyle, proseFontFace, monsterra } from '../components/Styles';
 import { AppEnvContext } from '../components/useBlitzDebugPopover';
 import { ThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
