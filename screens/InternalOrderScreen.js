@@ -16,6 +16,7 @@ import Spinner from '../components/Spinner';
 import BlockFormInput from '../components/BlockFormInput';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import useFocus from '../navigation-hooks/useFocus';
+import { error } from '../logger/logger';
 
 function OrderTasks({ order }) {
   if (!order) return null;
@@ -142,9 +143,9 @@ function RefundSection({ order }) {
               setIsLoading(false);
             })
             .catch(e => {
-              alert('Failure!');
-              console.error(e);
-              setIsLoading(False);
+              alert('Failure refunding this order. Please try again.');
+              error('RefundOrderFailure', { error: e });
+              setIsLoading(false);
             });
         }}
       >

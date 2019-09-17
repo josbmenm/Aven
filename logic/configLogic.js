@@ -2,7 +2,7 @@ import formatCurrency from '../utils/formatCurrency';
 import { error } from '../logger/logger';
 
 export const TAX_RATE = 0.09;
-export const MAX_CUP_VOLUME = 590;
+export const MAX_CUP_VOLUME = 530;
 
 function mapObject(inObj, mapper) {
   const out = {};
