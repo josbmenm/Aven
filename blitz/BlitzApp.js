@@ -64,6 +64,9 @@ const appPackage = require('../app.json');
 let VERSE_IS_DEV = process.env.NODE_ENV !== 'production';
 let SKYNET_IS_DEV = process.env.NODE_ENV !== 'production';
 
+let IS_DEV = process.env.NODE_ENV !== 'production';
+// IS_DEV = false;
+
 // uncomment to test prod mode while developing
 // VERSE_IS_DEV = false;
 // SKYNET_IS_DEV = false;
