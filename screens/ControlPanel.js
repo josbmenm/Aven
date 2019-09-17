@@ -270,7 +270,8 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   return (
     <View style={{ backgroundColor: 'transparent' }}>
       {allFaults && allFaults.length > 0 && <FaultZone faults={allFaults} />}
-      <View
+      <ScrollView
+        horizontal
         style={{
           ...prettyShadow,
           height: 120,
@@ -440,7 +441,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
             />
           )}
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
