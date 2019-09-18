@@ -3,7 +3,6 @@ import { Text } from 'react-native';
 import cuid from 'cuid';
 
 import {
-  useCloudSmartReducer,
   useCloud,
   defineCloudReducer,
   useCloudReducer,
@@ -49,8 +48,7 @@ function useTaskActions() {
 }
 function useTasks() {
   // const [tasks, dispatch] = React.useReducer(TaskReducer, []);
-  const [tasks, dispatch] = useCloudSmartReducer(
-    // const [tasks, dispatch] = useCloudReducer(
+  const [tasks, dispatch] = useCloudReducer(
     'TaskActions',
     'Tasks',
     TaskReducer,
