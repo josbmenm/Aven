@@ -432,6 +432,8 @@ function QueueSection({ queue = [], fill, blend, delivery }) {
 }
 
 function ReadyPickupCell({ state }) {
+  const name = state.task ? state.task.name : 'Unknown';
+  const blendName = state.task ? state.task.blendName : 'please discard cup';
   return (
     <View
       style={{
@@ -451,13 +453,16 @@ function ReadyPickupCell({ state }) {
             color: monsterra,
           }}
         >
-          {state.task.name}
+          {name}
         </Text>
         <Text style={{ ...primaryFontFace, color: monsterra, fontSize: 16 }}>
-          {state.task.blendName}
+          {blendName}
         </Text>
       </View>
-      <AnimatedCup fillLevel={1} blendTintColor={state.task.blendColor} />
+      <AnimatedCup
+        fillLevel={1}
+        blendTintColor={state.task && state.task.blendColor}
+      />
     </View>
   );
 }

@@ -224,7 +224,19 @@ const startVerseServer = async () => {
         ) {
           sideEffects.push({ type: 'ClearDeliveryBay', bayId: 'delivery1' });
         }
-
+        if (
+          (restaurantState.blend == null ||
+            restaurantState.blend === 'dirty') &&
+          kitchenState.BlendSystem_HasCup_READ
+        ) {
+          sideEffects.push({ type: 'ObserveUnknownBlenderCup' });
+        }
+        if (
+          restaurantState.delivery == null &&
+          kitchenState.Delivery_ArmHasCup_READ
+        ) {
+          sideEffects.push({ type: 'ObserveUnknownDeliveryCup' });
+        }
         return sideEffects;
       },
       configStream: kitchenConfigStream,

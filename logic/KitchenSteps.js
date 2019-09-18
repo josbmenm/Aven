@@ -65,7 +65,8 @@ const KitchenSteps = [
     getStateIntent: restaurantState => {
       if (restaurantState.delivery) {
         return {
-          taskId: restaurantState.delivery.task.id,
+          taskId:
+            restaurantState.delivery.task && restaurantState.delivery.task.id,
         };
       }
       return null;
@@ -90,7 +91,8 @@ const KitchenSteps = [
     getStateIntent: restaurantState => {
       if (restaurantState.delivery && !restaurantState.delivery0) {
         return {
-          taskId: restaurantState.delivery.task.id,
+          taskId:
+            restaurantState.delivery.task && restaurantState.delivery.task.id,
         };
       }
       return null;
@@ -114,7 +116,8 @@ const KitchenSteps = [
     getStateIntent: restaurantState => {
       if (restaurantState.delivery && !restaurantState.delivery1) {
         return {
-          taskId: restaurantState.delivery.task.id,
+          taskId:
+            restaurantState.delivery.task && restaurantState.delivery.task.id,
         };
       }
       return null;
@@ -249,7 +252,7 @@ const KitchenSteps = [
         !restaurantState.blend ||
         restaurantState.blend === 'dirty' ||
         restaurantState.blend.blendCompleteTime ||
-        restaurantState.blend.task.skipBlend
+        (!restaurantState.blend.task || restaurantState.blend.task.skipBlend)
       ) {
         return null;
       }
@@ -284,10 +287,10 @@ const KitchenSteps = [
           taskId: restaurantState.blend.task.id,
         };
       }
-      if (restaurantState.blend.task.skipBlend) {
+      if (!restaurantState.blend.task || restaurantState.blend.task.skipBlend) {
         return {
           didDirtyBlender: false,
-          taskId: restaurantState.blend.task.id,
+          taskId: restaurantState.blend.task && restaurantState.blend.task.id,
         };
       }
       return null;

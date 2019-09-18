@@ -1,4 +1,5 @@
 import { defineCloudReducer } from '../cloud-core/KiteReact';
+import cuid from 'cuid';
 
 const PRIMING_TASKS = [
   {
@@ -433,8 +434,32 @@ function RestaurantReducerFn(state = {}, action) {
         },
       };
     }
+    case 'ObserveUnknownBlenderCup': {
+      if (state.blend && state.blend !== 'dirty') {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        blend: {
+          id: cuid(),
+          task: null,
+        },
+      };
+    }
+    case 'ObserveUnknownDeliveryCup': {
+      if (state.delivery) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        delivery: {
+          id: cuid(),
+          task: null,
+        },
+      };
+    }
     case 'DidDeliveryDropCup': {
-      if (!state.delivery) {
+      if (!state.delivery || !state.delivery.task) {
         return defaultReturn();
       }
       return {
@@ -452,7 +477,7 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'DidDeliver': {
-      if (!state.delivery) {
+      if (!state.delivery || !state.delivery.task) {
         return defaultReturn();
       }
       const deliveredState = {
