@@ -66,7 +66,7 @@ export default function OrderConfirmScreen({
         goBack();
       }}
       skipPayment={async () => {
-        handleError(handleSkippedPayment());
+        await handleError(handleSkippedPayment());
       }}
       navigation={navigation}
       {...props}

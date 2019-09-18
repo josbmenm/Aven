@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 import GenericPage from './GenericPage';
-import Button from './Button';
+import SpinnerButton from './SpinnerButton';
 import Receipt from './Receipt';
 import { BlurView } from 'react-native-blur';
 import Animated, { Easing } from 'react-native-reanimated';
@@ -30,6 +30,18 @@ function waveIndefinitely(position) {
       });
     }
   });
+}
+function AsyncButton({ onPress, ...props }) {
+  const [isLoading, setIsLoading] = React.useState(false);
+  function handlePress() {
+    setIsLoading(true);
+    onPress().finally(() => {
+      setIsLoading(true);
+    });
+  }
+  return (
+    <SpinnerButton {...props} onPress={handlePress} isLoading={isLoading} />
+  );
 }
 
 function AnimateyCreditCard({ ready, isDone, isCardInserted }) {
@@ -248,7 +260,7 @@ export default function OrderConfirmPage({
           alignItems: 'center',
         }}
       >
-        <Button title="confirm order" size="large" onPress={skipPayment} />
+        <AsyncButton title="confirm order" size="large" onPress={skipPayment} />
       </View>
     );
   }

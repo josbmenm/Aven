@@ -1,15 +1,15 @@
 import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
-import Button from './Button';
+import SpinnerButton from './SpinnerButton';
 
 export default function BlockFormButton({
   buttonStyle,
   style,
   type,
+  isLoading,
   ...props
 }) {
   return (
-    <Button
+    <SpinnerButton
       {...props}
       type={type || 'solid'}
       size="large"
@@ -19,6 +19,7 @@ export default function BlockFormButton({
         marginVertical: 0,
         ...style,
       }}
+      isLoading={isLoading}
       buttonStyle={{
         ...buttonStyle,
       }}

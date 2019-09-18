@@ -351,13 +351,10 @@ function PromoCodeForm({ onClose, order, cloud }) {
       <BlockFormRow>
         <BlockFormButton title="cancel" type="outline" onPress={onClose} />
         <BlockFormButton
-          title={isLoading ? '' : 'add code'}
+          title="add code"
+          isLoading={isLoading}
           onPress={handleSubmit}
-        >
-          {isLoading && (
-            <Spinner color="white" style={{ alignSelf: 'center', top: 4 }} />
-          )}
-        </BlockFormButton>
+        />
       </BlockFormRow>
     </View>
   );
