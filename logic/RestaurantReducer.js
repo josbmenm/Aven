@@ -198,7 +198,7 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'DidLooseFillCup': {
-      if (!state.fill) {
+      if (!state.fill || state.fill === 'ready') {
         return defaultReturn();
       }
       let queue = state.queue;
