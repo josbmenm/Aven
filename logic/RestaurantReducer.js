@@ -480,7 +480,7 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'DidDeliveryDropCup': {
-      if (!state.delivery || !state.delivery.task) {
+      if (!state.delivery) {
         return defaultReturn();
       }
       return {
