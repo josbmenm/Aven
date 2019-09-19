@@ -7,7 +7,12 @@ import cuid from 'cuid';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import bindCommitDeepBlock from './bindCommitDeepBlock';
 import { createStreamValue } from './StreamValue';
-import { createProducerStream, streamOf } from './createMemoryStream';
+import {
+  createProducerStream,
+  streamOf,
+  streamNever,
+  combineStreams,
+} from './createMemoryStream';
 
 /*
 
@@ -612,7 +617,7 @@ export function createDoc({
       .dropRepeats((a, b) => a.id === b.id, 'DropRepeatedIds')
       .map(state => {
         if (state.id === undefined) {
-          return xs.never();
+          return streamNever('UndefinedId');
         }
         if (state.id === null) {
           return xs.of({ id: null, value: undefined });
@@ -628,16 +633,15 @@ export function createDoc({
       })
       .flatten()
       .dropRepeats((a, b) => {
-        return a.id === b.id
+        return a.id === b.id;
       }, 'DropRepeatedIdValues'),
     () => `Doc(${getName()}).idValue`,
   );
 
   const docValue = createStreamValue(
-    docIdAndValue.stream
-      .map(idAndValue => {
-        return idAndValue.value;
-      }, 'DocValueStream'),
+    docIdAndValue.stream.map(idAndValue => {
+      return idAndValue.value;
+    }, 'DocValueStream'),
     () => `Doc(${getName()}).value`,
   );
 
@@ -819,7 +823,7 @@ export function createDocSet({
     childDocs.clear();
   }
 
-  function setOverrideStream(name, stream, context) {
+  function setOverrideStream(name, stream) {
     const streamDoc = createStreamDoc(stream, name);
     childDocs.set(name, streamDoc);
     return streamDoc;
@@ -1048,12 +1052,15 @@ export function createReducerStream(
   reducerFn,
   initialState,
   reducerName,
-  onRequestDocStateStream,
+  { snapshotsDoc } = { snapshotsDoc: null },
 ) {
   const docStateStreams = new Map();
 
   function getDocStateStream(id) {
-    if (id == null) {
+    if (id === undefined) {
+      return streamNever('UndefinedId');
+    }
+    if (id === null) {
       const [stream] = streamOf(
         { value: initialState, id: getIdOfValue(initialState).id },
         'NoActionStateStream',
@@ -1062,15 +1069,6 @@ export function createReducerStream(
     }
     if (docStateStreams.has(id)) {
       return docStateStreams.get(id);
-    }
-    let requestedDocStateStream = null;
-    if (
-      onRequestDocStateStream &&
-      (requestedDocStateStream = onRequestDocStateStream(id))
-    ) {
-      docStateStreams.set(id, requestedDocStateStream);
-
-      return requestedDocStateStream;
     }
     const actionBlock = doc.getBlock(id);
 
@@ -1099,6 +1097,7 @@ export function createReducerStream(
               docName: doc.getName(),
               docId: actionDocId,
               prevStateId: lastState.id,
+              gen: (lastState.context ? lastState.context.gen : 0) + 1,
             },
           };
         });
@@ -1108,9 +1107,26 @@ export function createReducerStream(
     docStateStreams.set(id, docStateStream);
     return docStateStream;
   }
-  return doc.stream
-    .map(docState => {
-      return getDocStateStream(docState.id);
+  if (!snapshotsDoc) {
+    return doc.stream
+      .map(docState => {
+        return getDocStateStream(docState.id);
+      })
+      .flatten();
+  }
+  return combineStreams({
+    sourceDoc: doc.stream,
+    snapshotValue: snapshotsDoc.value.stream,
+  })
+    .map(({ snapshotValue, sourceDoc }) => {
+      if (snapshotValue && snapshotValue.context) {
+        const { docId } = snapshotValue.context;
+        if (!docStateStreams.has(docId)) {
+          const [docStateStream] = streamOf(snapshotValue);
+          docStateStreams.set(docId, docStateStream);
+        }
+      }
+      return getDocStateStream(sourceDoc.id);
     })
     .flatten();
 }
@@ -1124,14 +1140,31 @@ export function createSessionClient({ domain, source, auth }) {
     nameChangeNotifiers: null,
   });
 
-  function setReducer(actionDocName, answersDocName, cloudReducer) {
-    const actionDoc = docs.get(actionDocName);
+  function setReducer(
+    resultStateDocName,
+    { reducer, actionsDoc, snapshotInterval, snapshotsDoc },
+  ) {
     const stream = createReducerStream(
-      actionDoc,
-      cloudReducer.reducerFn,
-      cloudReducer.initialState,
-    );
-    docs.setOverrideStream(answersDocName, stream, { well: 'well, well..' });
+      actionsDoc,
+      reducer.reducerFn,
+      reducer.initialState,
+      reducer.reducerName,
+      {
+        snapshotsDoc,
+      },
+    ).spy(async update => {
+      if (update.next) {
+        const { context, id, value } = update.next;
+        const lastSnapshot = await snapshotsDoc.value.load();
+        if (
+          lastSnapshot === undefined ||
+          lastSnapshot.context.gen <= context.gen - snapshotInterval
+        ) {
+          await snapshotsDoc.putValue({ context, id, value });
+        }
+      }
+    });
+    docs.setOverrideStream(resultStateDocName, stream);
   }
   return {
     type: 'AuthenticatedClient',

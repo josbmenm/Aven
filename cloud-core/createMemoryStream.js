@@ -34,6 +34,28 @@ export function streamOf(initialValue, crumb) {
   return [stream, updateStream];
 }
 
+export function streamNever(crumb) {
+  function addListener() {}
+  function removeListener() {}
+
+  const stream = {
+    type: 'NeverStream',
+    crumb,
+    addListener,
+    removeListener,
+    get: () => undefined,
+    compose: composeFn => composeFn(stream),
+    map: (mapper, mapDescriptor) => mapStream(stream, mapper, mapDescriptor),
+    filter: (filterFn, filterDescriptor) =>
+      filterStream(stream, filterFn, filterDescriptor),
+    dropRepeats: (repeatComparator, dropRepeatsDescriptor) =>
+      dropRepeatsStream(stream, repeatComparator, dropRepeatsDescriptor),
+    flatten: () => flattenStream(stream),
+    spy: spier => spyStream(stream, spier),
+  };
+  return stream;
+}
+
 export function streamOfValue(staticValue) {
   const [stream] = streamOf(staticValue);
   return stream;
