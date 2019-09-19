@@ -76,6 +76,11 @@ export function computeNextSteps(
         description: getDescription(intent),
         perform: async (restaurantStateDispatch, kitchenCommand) => {
           let resp = null;
+          log('MachineCommandStarting', {
+            intent,
+            startingRestaurantAction,
+            command,
+          });
           startingRestaurantAction &&
             (await restaurantStateDispatch(startingRestaurantAction));
           try {
@@ -108,6 +113,13 @@ export function computeNextSteps(
           return resp;
         },
         performFake: async (restaurantStateDispatch, kitchenCommand) => {
+          log('FakeSequencerCommand', {
+            intent,
+            command,
+            failureRestaurantAction,
+            startingRestaurantAction,
+            successRestaurantAction,
+          });
           startingRestaurantAction &&
             (await restaurantStateDispatch(startingRestaurantAction));
           await delay(1000);
