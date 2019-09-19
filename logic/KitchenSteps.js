@@ -213,6 +213,9 @@ const KitchenSteps = [
     getKitchenCommand: intent => ({
       commandType: 'PassToBlender',
     }),
+    getStartingRestaurantAction: intent => ({
+      type: 'WillPassToBlender',
+    }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidPassToBlender',
     }),
@@ -305,6 +308,9 @@ const KitchenSteps = [
     },
     getKitchenCommand: intent => ({
       commandType: 'PassToDeliveryWithoutClean',
+    }),
+    getStartingRestaurantAction: intent => ({
+      type: 'WillPassToDelivery',
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidPassToDelivery',

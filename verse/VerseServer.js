@@ -227,13 +227,15 @@ const startVerseServer = async () => {
         if (
           (restaurantState.blend == null ||
             restaurantState.blend === 'dirty') &&
-          kitchenState.BlendSystem_HasCup_READ
+          kitchenState.BlendSystem_HasCup_READ &&
+          (!restaurantState.fill || !restaurantState.fill.willPassToBlender)
         ) {
           sideEffects.push({ type: 'ObserveUnknownBlenderCup' });
         }
         if (
           restaurantState.delivery == null &&
-          kitchenState.Delivery_ArmHasCup_READ
+          kitchenState.Delivery_ArmHasCup_READ &&
+          (!restaurantState.blend || !restaurantState.blend.willPassToDelivery)
         ) {
           sideEffects.push({ type: 'ObserveUnknownDeliveryCup' });
         }

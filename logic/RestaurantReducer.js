@@ -360,6 +360,15 @@ function RestaurantReducerFn(state = {}, action) {
         },
       };
     }
+    case 'WillPassToBlender': {
+      if (!state.fill) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        fill: { ...state.fill, willPassToBlender: Date.now() },
+      };
+    }
     case 'DidPassToBlender': {
       if (!state.fill) {
         return defaultReturn();
@@ -418,6 +427,18 @@ function RestaurantReducerFn(state = {}, action) {
       return {
         ...defaultReturn(),
         isTraveling: false,
+      };
+    }
+    case 'WillPassToDelivery': {
+      if (!state.blend) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        blend: {
+          ...state.blend,
+          willPassToDelivery: Date.now(),
+        },
       };
     }
     case 'DidPassToDelivery': {
