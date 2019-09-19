@@ -102,6 +102,14 @@ export default function OrderCompletePage({
           source={require('./assets/Shaka.png')}
         />
       </View>
+      {/* <CountdownDoneButton
+          onLongPress={() => {
+            navigate('Home');
+          }}
+          onPress={() => {
+            navigate(backRouteName);
+          }}
+        /> */}
       <View
         style={{
           position: 'absolute',

@@ -260,7 +260,12 @@ export default function OrderConfirmPage({
           alignItems: 'center',
         }}
       >
-        <AsyncButton title="confirm order" size="large" onPress={skipPayment} />
+        <AsyncButton
+          title="confirm order"
+          size="large"
+          onPress={skipPayment}
+          style={{ width: 200 }}
+        />
       </View>
     );
   }
