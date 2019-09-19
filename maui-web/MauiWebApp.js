@@ -20,7 +20,7 @@ const customHTMLHeaders = `
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 `;
 
-const App = createFullscreenSwitchNavigator(
+const AppNavigator = createFullscreenSwitchNavigator(
   {
     Home: {
       path: '',
@@ -83,28 +83,15 @@ const App = createFullscreenSwitchNavigator(
   },
 );
 
-const IS_BROWSER =
-  typeof process !== 'undefined' &&
-  typeof process.versions.node !== 'undefined';
-
-function Root(props) {
-  if (false) {
-    return (
-      <ThemeProvider value={OnoTheme}>
-        <React.Suspense fallback={<Text>suspensee...</Text>}>
-          <App {...props} />
-        </React.Suspense>
-      </ThemeProvider>
-    );
-  }
+function App(props) {
   return (
     <ThemeProvider value={OnoTheme}>
-      <App {...props} />
+      <AppNavigator {...props} />
     </ThemeProvider>
   );
 }
 
-Root.router = App.router;
-Root.navigationOptions = App.navigationOptions;
+App.router = AppNavigator.router;
+App.navigationOptions = AppNavigator.navigationOptions;
 
-export default Root;
+export default App;

@@ -2,6 +2,7 @@ import App from './SkynetApp';
 import WebServer from '../aven-web/WebServer';
 import { IS_DEV } from '../aven-web/config';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
+import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
 import scrapeAirTable from './scrapeAirTable';
 import { createSessionClient, createReducerStream } from '../cloud-core/Kite';
 import { CloudContext } from '../cloud-core/KiteReact';
@@ -70,6 +71,8 @@ const startSkynetServer = async () => {
     database: getEnv('SQL_DATABASE'),
     host: getEnv('SQL_HOST'),
   };
+
+  // const storageSource = createMemoryStorageSource({ domain });
 
   const storageSource = await startPostgresStorageSource({
     domains: [domain],
@@ -214,14 +217,12 @@ const startSkynetServer = async () => {
   );
   const companyActivity = cloud.docs.get('CompanyActivity');
 
-  const recentOrders = cloud.docs.setOverrideStream(
-    'RecentOrders',
-    createReducerStream(
-      companyActivity,
-      RecentOrders.reducerFn,
-      RecentOrders.initialState,
-    ),
-  );
+  cloud.setReducer('RecentOrders', {
+    actionsDoc: companyActivity,
+    reducer: RecentOrders,
+    snapshotInterval: 10,
+    snapshotsDoc: cloud.get('RecentOrdersSnapshot'),
+  });
 
   const kitchenConfig = cloud.docs.setOverrideValueStream(
     'KitchenConfig',
@@ -235,15 +236,22 @@ const startSkynetServer = async () => {
     companyConfigStream.map(companyConfigToMenu),
   );
 
-  const deviceActions = cloud.get('DeviceActions3');
-  const devicesState = cloud.docs.setOverrideStream(
-    'DevicesState',
-    createReducerStream(
-      deviceActions,
-      DevicesReducer.reducerFn,
-      DevicesReducer.initialState,
-    ),
-  );
+  cloud.setReducer('DevicesState', {
+    actionsDoc: cloud.get('DeviceActions'),
+    reducer: DevicesReducer,
+    snapshotInterval: 10,
+    snapshotsDoc: cloud.get('DevicesStateSnapshot'),
+  });
+
+  // const deviceActions = cloud.get('DeviceActions');
+  // const devicesState = cloud.docs.setOverrideStream(
+  //   'DevicesState',
+  //   createReducerStream(
+  //     deviceActions,
+  //     DevicesReducer.reducerFn,
+  //     DevicesReducer.initialState,
+  //   ),
+  // );
 
   const protectedSource = createProtectedSource({
     source: cloud,
@@ -251,7 +259,7 @@ const startSkynetServer = async () => {
       'onofood.co': {
         CompanyConfig: { defaultRule: { canRead: true } },
         KitchenConfig: { defaultRule: { canRead: true } },
-        DeviceActions3: { defaultRule: { canWrite: true } },
+        DeviceActions: { defaultRule: { canWrite: true } },
         Menu: { defaultRule: { canRead: true } },
         PendingOrders: {
           defaultRule: {

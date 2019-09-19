@@ -75,9 +75,17 @@ function StatusDisplayTitleRow({ title }) {
   );
 }
 
-function StatusDisplayRow({ title, subTitle, right }) {
+function StatusDisplayRow({ title, subTitle, right, isFadingAway }) {
+  const [fadeAwayProgress] = React.useState(new Animated.Value(0));
+  React.useEffect(() => {
+    Animated.timing(fadeAwayProgress, {
+      toValue: Number(isFadingAway || 0),
+      duration: 1000,
+      easing: Easing.linear,
+    }).start();
+  }, [isFadingAway]);
   return (
-    <View
+    <Animated.View
       style={{
         flexDirection: 'row',
         paddingHorizontal: 60,
@@ -85,6 +93,18 @@ function StatusDisplayRow({ title, subTitle, right }) {
         paddingBottom: 19,
         borderBottomWidth: 1,
         borderBottomColor: black10,
+        opacity: fadeAwayProgress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [1, 0],
+        }),
+        transform: [
+          {
+            translateY: fadeAwayProgress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 50],
+            }),
+          },
+        ],
       }}
     >
       <View style={{ flex: 1 }}>
@@ -103,7 +123,49 @@ function StatusDisplayRow({ title, subTitle, right }) {
         </Text>
       </View>
       {right}
-    </View>
+    </Animated.View>
+  );
+}
+
+function BlendOverlay({ isBlending }) {
+  const [spinPosition] = React.useState(new Animated.Value(0));
+  const [opacity] = React.useState(new Animated.Value(0));
+  React.useEffect(() => {
+    Animated.timing(opacity, {
+      toValue: isBlending ? 1 : 0,
+      duration: 500,
+      easing: Easing.inOut(Easing.quad),
+    }).start();
+  }, [isBlending]);
+  React.useEffect(() => {
+    Animated.timing(spinPosition, {
+      toValue: 1,
+      duration: 18000000,
+      easing: Easing.linear,
+    }).start(() => {});
+  }, []);
+  return (
+    <Animated.Image
+      style={{
+        opacity,
+        width: 30,
+        height: 30,
+        left: 9,
+        top: 16,
+        transform: [
+          {
+            rotateX: '70deg',
+          },
+          {
+            rotateZ: spinPosition.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['0deg', '3600000deg'],
+            }),
+          },
+        ],
+      }}
+      source={require('./assets/Spinner.png')}
+    />
   );
 }
 
@@ -117,12 +179,17 @@ function ETAText({ queuedIndex }) {
         marginTop: 22,
       }}
     >
-      {queuedIndex} min
+      {queuedIndex + 2} min
     </Text>
   );
 }
 
-function IngredientFillingCup({ fillLevel, currentFill, blendTintColor }) {
+function IngredientFillingCup({
+  fillLevel,
+  currentFill,
+  blendTintColor,
+  isBlending,
+}) {
   const [ingredientMessageOpacity] = React.useState(new Animated.Value(0));
   const [toDotValue] = React.useState(new Animated.Value(0));
   const [moveToCup] = React.useState(new Animated.Value(0));
@@ -159,10 +226,10 @@ function IngredientFillingCup({ fillLevel, currentFill, blendTintColor }) {
       setTimeout(() => {
         Animated.timing(dotOpacity, {
           toValue: 1,
-          duration: 190,
+          duration: 250,
           easing: Easing.inOut(Easing.poly(5)),
         }).start();
-      }, 480);
+      }, 250);
       Animated.timing(toDotValue, {
         toValue: 1,
         duration: 700,
@@ -180,7 +247,7 @@ function IngredientFillingCup({ fillLevel, currentFill, blendTintColor }) {
           }).start(() => {
             Animated.timing(dotOpacity, {
               toValue: 0,
-              duration: 200,
+              duration: 400,
               easing: Easing.inOut(Easing.poly(5)),
             }).start(() => {});
           });
@@ -199,7 +266,7 @@ function IngredientFillingCup({ fillLevel, currentFill, blendTintColor }) {
                 color: monsterra,
                 fontSize: 32,
                 marginTop: 10,
-                marginRight: 100,
+                marginRight: 110,
                 opacity: ingredientMessageOpacity,
               }}
             >
@@ -209,7 +276,7 @@ function IngredientFillingCup({ fillLevel, currentFill, blendTintColor }) {
           <Animated.View
             style={{
               position: 'absolute',
-              right: 14,
+              right: 20,
               top: -5,
               height: 80,
               width: 80,
@@ -226,7 +293,7 @@ function IngredientFillingCup({ fillLevel, currentFill, blendTintColor }) {
                 {
                   translateX: moveToCup.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, 77.5],
+                    outputRange: [0, 83.5],
                   }),
                 },
                 {
@@ -259,7 +326,7 @@ function IngredientFillingCup({ fillLevel, currentFill, blendTintColor }) {
           >
             <Animated.View style={{ opacity: ingredientMessageOpacity }}>
               <AirtableImage
-                style={{ width: 66, height: 66 }}
+                style={{ width: 75, height: 75 }}
                 tintColor={currentFill.ingredientColor}
                 image={currentFill.ingredientIcon}
               />
@@ -267,12 +334,16 @@ function IngredientFillingCup({ fillLevel, currentFill, blendTintColor }) {
           </Animated.View>
         </View>
       )}
-      <AnimatedCup fillLevel={shownFillLevel} blendTintColor={blendTintColor} />
+      <AnimatedCup
+        fillLevel={shownFillLevel}
+        blendTintColor={blendTintColor}
+        isBlending={isBlending}
+      />
     </View>
   );
 }
 
-function TaskRow({ task, status, fill, queuedIndex }) {
+function TaskRow({ task, status, fill, queuedIndex, isFadingAway }) {
   if (!task) {
     return null;
   }
@@ -299,13 +370,20 @@ function TaskRow({ task, status, fill, queuedIndex }) {
     );
   }
   if (status === 'blending') {
-    right = <AnimatedCup fillLevel={1} blendTintColor={task.blendColor} />;
+    right = (
+      <AnimatedCup
+        fillLevel={1}
+        blendTintColor={task.blendColor}
+        isBlending={true}
+      />
+    );
   }
   if (status === 'delivering') {
     right = <AnimatedCup fillLevel={1} blendTintColor={task.blendColor} />;
   }
   return (
     <StatusDisplayRow
+      isFadingAway={isFadingAway}
       title={task.name}
       subTitle={task.blendName}
       right={right}
@@ -390,11 +468,11 @@ function QueueSection({ queue = [], fill, blend, delivery }) {
             key={task.id}
             task={task}
             status={'queued'}
-            queuedIndex={queue.length - taskIndex}
+            queuedIndex={taskIndex}
           />
         ),
     ),
-  ];
+  ].reverse();
   fill &&
     fill.task &&
     renderQueue.push(
@@ -421,6 +499,7 @@ function QueueSection({ queue = [], fill, blend, delivery }) {
         key={delivery.task.id}
         task={delivery.task}
         status="delivering"
+        isFadingAway={!!delivery.willDeliverTo}
       />,
     );
   return (
@@ -431,13 +510,16 @@ function QueueSection({ queue = [], fill, blend, delivery }) {
   );
 }
 
-function ReadyPickupCell({ state }) {
+function PickupCellContent({ state }) {
+  if (!state) {
+    return null;
+  }
   const name = state.task ? state.task.name : 'Unknown';
   const blendName = state.task ? state.task.blendName : 'please discard cup';
   return (
     <View
       style={{
-        width: '50%',
+        flex: 1,
         height: 192,
         flexDirection: 'row',
         padding: 30,
@@ -468,23 +550,31 @@ function ReadyPickupCell({ state }) {
 }
 
 function PickupCell({ state }) {
-  if (state) {
-    return <ReadyPickupCell state={state} />;
-  }
+  const [openProgress] = React.useState(new Animated.Value(0));
+  React.useEffect(() => {
+    Animated.timing(openProgress, {
+      toValue: Number(!!state),
+      duration: 1000,
+      timing: Easing.linear,
+    }).start();
+  }, [!!state]);
   return (
-    <View
+    <Animated.View
       style={{
-        width: '50%',
-        height: 192,
-        flexDirection: 'row',
-        padding: 30,
-        paddingVertical: 50,
+        flex: 1,
+        opacity: openProgress,
       }}
-    />
+    >
+      <PickupCellContent state={state} />
+    </Animated.View>
   );
 }
 
-function PickupSection({ delivery0, delivery1 }) {
+function PickupSection({ delivery0, delivery1, delivery }) {
+  let state0 =
+    delivery && delivery.willDeliverTo === 'delivery0' ? delivery : delivery0;
+  let state1 =
+    delivery && delivery.willDeliverTo === 'delivery1' ? delivery : delivery1;
   return (
     <View style={{ backgroundColor: 'white' }}>
       <StatusDisplayTitleRow title="now serving:" />
@@ -494,7 +584,7 @@ function PickupSection({ delivery0, delivery1 }) {
           height: 192,
         }}
       >
-        <PickupCell state={delivery0} />
+        <PickupCell state={state0} />
         <View style={{ padding: 28 }}>
           <View
             style={{
@@ -505,7 +595,7 @@ function PickupSection({ delivery0, delivery1 }) {
             }}
           />
         </View>
-        <PickupCell state={delivery1} />
+        <PickupCell state={state1} />
       </View>
     </View>
   );
@@ -513,7 +603,7 @@ function PickupSection({ delivery0, delivery1 }) {
 
 const ANIM_INC = 0.01;
 
-function AnimatedCup({ fillLevel, blendTintColor }) {
+function AnimatedCup({ fillLevel, blendTintColor, isBlending }) {
   let [shownFillLevel, setShownFillLevel] = React.useState(fillLevel);
   let zz = React.useRef({ timeout: null, ff: fillLevel });
   React.useEffect(() => {
@@ -531,9 +621,9 @@ function AnimatedCup({ fillLevel, blendTintColor }) {
       }
       zz.current.ff = n;
       setShownFillLevel(n);
-      zz.current.timeout = setTimeout(performUpdate, 50);
+      zz.current.timeout = setTimeout(performUpdate, 30);
     }
-    zz.current.timeout = setTimeout(performUpdate, 50);
+    zz.current.timeout = setTimeout(performUpdate, 30);
     return () => {
       clearTimeout(zz.current.timeout);
     };
@@ -562,11 +652,12 @@ function AnimatedCup({ fillLevel, blendTintColor }) {
             height: 64,
             position: 'absolute',
             top: 0,
+            tintColor: blendTintColor,
             left: 0,
           }}
-          tintColor={blendTintColor}
         />
       </div>
+      <BlendOverlay isBlending={isBlending} />
       <Image
         source={require('./assets/CupOutline.svg')}
         style={{ width: 49, height: 64, position: 'absolute', top: 0, left: 0 }}

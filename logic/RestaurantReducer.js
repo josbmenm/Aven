@@ -476,6 +476,18 @@ function RestaurantReducerFn(state = {}, action) {
         ],
       };
     }
+    case 'WillDeliver': {
+      if (!state.delivery) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        delivery: {
+          ...state.delivery,
+          willDeliverTo: state.bayId,
+        },
+      };
+    }
     case 'DidDeliver': {
       if (!state.delivery || !state.delivery.task) {
         return defaultReturn();

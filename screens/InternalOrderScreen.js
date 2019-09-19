@@ -17,13 +17,37 @@ import BlockFormInput from '../components/BlockFormInput';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import useFocus from '../navigation-hooks/useFocus';
 import { error } from '../logger/logger';
+import useAsyncError from '../react-utils/useAsyncError';
+import cuid from 'cuid';
 
 function OrderTasks({ order }) {
+  const handleErrors = useAsyncError();
+  const cloud = useCloud();
+  const restaurantDispatch = cloud.get('RestaurantActions').putTransactionValue;
   if (!order) return null;
   return (
     <View>
       {order.orderTasks.map(task => {
-        return <Row title={task.id} key={task.id} />;
+        return (
+          <Row title={task.id} key={task.id}>
+            <Button
+              title="re-make"
+              onPress={() => {
+                handleErrors(
+                  restaurantDispatch({
+                    type: 'QueueTasks',
+                    tasks: [
+                      {
+                        ...task,
+                        id: cuid(),
+                      },
+                    ],
+                  }),
+                );
+              }}
+            />
+          </Row>
+        );
       })}
     </View>
   );

@@ -104,6 +104,10 @@ const KitchenSteps = [
       );
     },
     getKitchenCommand: intent => ({ commandType: 'DeliverBay0' }),
+    getStartingRestaurantAction: intent => ({
+      type: 'WillDeliver',
+      bayId: 'delivery0',
+    }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidDeliver',
       bayId: 'delivery0',
@@ -129,6 +133,10 @@ const KitchenSteps = [
       );
     },
     getKitchenCommand: intent => ({ commandType: 'DeliverBay1' }),
+    getStartingRestaurantAction: intent => ({
+      type: 'WillDeliver',
+      bayId: 'delivery1',
+    }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidDeliver',
       bayId: 'delivery1',

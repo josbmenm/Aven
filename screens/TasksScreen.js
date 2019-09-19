@@ -38,30 +38,33 @@ function TaskQueue({ restaurantState, dispatch }) {
     <React.Fragment>
       <RowSection title="queued tasks">
         {restaurantState.queue &&
-          restaurantState.queue.filter(Boolean).map(taskState => (
-            <TaskRow
-              key={taskState.id}
-              taskState={taskState}
-              onCancel={() => {
-                dispatch({ type: 'CancelTask', id: taskState.id });
-              }}
-              onDoNext={() => {
-                dispatch({ type: 'DoTaskNext', id: taskState.id });
-              }}
-              onRemake={() => {
-                dispatch({
-                  type: 'QueueTasks',
-                  tasks: [
-                    {
-                      ...taskState,
-                      id: cuid(),
-                      remakeOfTaskId: taskState.id,
-                    },
-                  ],
-                });
-              }}
-            />
-          ))}
+          restaurantState.queue
+            .filter(Boolean)
+            .reverse()
+            .map(taskState => (
+              <TaskRow
+                key={taskState.id}
+                taskState={taskState}
+                onCancel={() => {
+                  dispatch({ type: 'CancelTask', id: taskState.id });
+                }}
+                onDoNext={() => {
+                  dispatch({ type: 'DoTaskNext', id: taskState.id });
+                }}
+                onRemake={() => {
+                  dispatch({
+                    type: 'QueueTasks',
+                    tasks: [
+                      {
+                        ...taskState,
+                        id: cuid(),
+                        remakeOfTaskId: taskState.id,
+                      },
+                    ],
+                  });
+                }}
+              />
+            ))}
       </RowSection>
       {restaurantState.fill && restaurantState.fill !== 'ready' && (
         <RowSection title="filling">

@@ -128,7 +128,7 @@ function ModeForm({ onClose, device, dispatch }) {
 
 function DeviceRow({ device }) {
   const cloud = useCloud();
-  const dispatch = cloud.get('DeviceActions3').putTransactionValue;
+  const dispatch = cloud.get('DeviceActions').putTransactionValue;
   const handleErrors = useAsyncError();
 
   const { onPopover: onMdmIdPopover } = useKeyboardPopover(({ onClose }) => (
