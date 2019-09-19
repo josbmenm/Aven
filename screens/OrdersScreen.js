@@ -13,6 +13,7 @@ import {
   primaryFontFace,
   monsterra80,
 } from '../components/Styles';
+import formatTime from '../utils/formatTime';
 
 function OrderRow({ order }) {
   const { navigate } = useNavigation();
@@ -28,13 +29,15 @@ function OrderRow({ order }) {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigate('InternalOrder', { orderId: order.orderId });
+        navigate('InternalOrder', { orderId: order.id });
       }}
     >
       <Row>
         <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
           <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
             {order.orderName.firstName} {order.orderName.lastName}
+            {' - '}
+            {formatTime(order.confirmedTime)}
           </Text>
           <Text style={{ fontSize: 24, ...primaryFontFace, color: '#282828' }}>
             {order.orderTasks.length} blend
@@ -54,9 +57,11 @@ function OrdersList({ restaurantState, dispatch }) {
   }
   return (
     <RowSection title="recent orders">
-      {recentOrders.orders.reverse().map(order => {
-        return <OrderRow order={order} key={order.orderId} />;
-      })}
+      {recentOrders.orders
+        .map(order => {
+          return <OrderRow order={order} key={order.id} />;
+        })
+        .reverse()}
     </RowSection>
   );
 }

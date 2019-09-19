@@ -22,7 +22,6 @@ export default function OrderConfirmScreen({
   }
   const handleError = useAsyncError(handleCaughtError);
   const summary = useOrderSummary();
-  console.log(JSON.stringify(summary));
   async function handleCompletion(paymentIntent) {
     setIsCompleted(true);
     await confirmOrder(paymentIntent);
@@ -51,6 +50,17 @@ export default function OrderConfirmScreen({
   async function handleSkippedPayment() {
     await confirmOrder();
     navigation.navigate('Receipt', { orderId: order.getName() });
+    setTimeout(() => {});
+  }
+  let skipOnceRef = React.useRef(false);
+  async function handleOnceSkippedPayment() {
+    if (skipOnceRef.current) return;
+    skipOnceRef.current = true;
+    try {
+      await handleSkippedPayment();
+    } catch (e) {
+      skipOnceRef.current = false;
+    }
   }
   return (
     <OrderConfirmPage
@@ -66,7 +76,7 @@ export default function OrderConfirmScreen({
         goBack();
       }}
       skipPayment={async () => {
-        await handleError(handleSkippedPayment());
+        await handleError(handleOnceSkippedPayment());
       }}
       navigation={navigation}
       {...props}

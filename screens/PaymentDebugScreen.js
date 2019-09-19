@@ -281,16 +281,6 @@ export default function PaymentDebugScreen(props) {
           }}
         />
         <Button
-          title="request location"
-          onPress={() => {
-            const geolocation = navigator.geolocation;
-
-            if (geolocation.requestAuthorization) {
-              geolocation.requestAuthorization();
-            }
-          }}
-        />
-        <Button
           title="Test useCardReaderConnectionManager"
           onPress={() => {
             setManager(!isShowingManager);

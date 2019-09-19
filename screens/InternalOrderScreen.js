@@ -120,12 +120,12 @@ function ReceiptSection({ order }) {
         </View>
         <View style={{ flexDirection: 'row' }}>
           <Button
-            title="Send SMS receipt"
+            title="send phone receipt"
             onPress={onSMSPopover}
             style={{ marginHorizontal: 8 }}
           />
           <Button
-            title="Send Email receipt"
+            title="send email receipt"
             onPress={onEmailPopover}
             style={{ marginHorizontal: 8 }}
           />
@@ -157,7 +157,9 @@ function RefundSection({ order }) {
   return (
     <Row title="Refund">
       <Button
-        title={isLoading ? null : 'Refund Charge'}
+        style={{ width: 250 }}
+        type="outline"
+        title={isLoading ? null : 'refund charge'}
         disabled={!canRefund || isLoading}
         onPress={() => {
           setIsLoading(true);

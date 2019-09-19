@@ -4,27 +4,47 @@ function RecentOrdersFn(state = {}, action) {
   const defaultReturn = () => {
     return {
       ...state,
-
       // lastAction: action,
       // lastLastAction: state.lastAction,
 
       // actionCount: (state.actionCount || 0) + 1,
     };
   };
-
   switch (action.type) {
     case 'KioskOrder': {
-      if (
-        !action.confirmedOrder ||
-        !action.confirmedOrder.id ||
-        (state.orders &&
-          state.orders.find(o => o.id === action.confirmedOrder.id))
-      ) {
-        return defaultReturn();
-      }
+      const {
+        id,
+        orderName,
+        startTime,
+        confirmedTime,
+        isConfirmed,
+        isOrderValid,
+        total,
+        subTotal,
+        discountTotal,
+        orderTasks,
+      } = action.confirmedOrder;
       return {
         ...defaultReturn(),
-        orders: [...(state.orders || []).slice(-9), action.confirmedOrder],
+        orders: [
+          ...(state.orders ? state.orders.slice(-99) : []),
+          {
+            id,
+            orderName,
+            startTime,
+            confirmedTime,
+            isConfirmed,
+            isOrderValid,
+            total,
+            subTotal,
+            discountTotal,
+            orderTasks:
+              orderTasks &&
+              orderTasks.map(({ id, blendName }) => {
+                return { id, blendName };
+              }),
+          },
+        ],
       };
     }
     default: {
@@ -33,6 +53,6 @@ function RecentOrdersFn(state = {}, action) {
   }
 }
 
-const RecentOrders = defineCloudReducer('RecentOrders', RecentOrdersFn, {});
+const RecentOrders = defineCloudReducer('RecentOrders5', RecentOrdersFn, {});
 
 export default RecentOrders;
