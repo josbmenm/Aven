@@ -6,8 +6,8 @@ import {
   displayNameOfOrderItem,
   getItemCustomizationSummary,
   getFillsOfOrderItem,
+  getNewBlendTask,
 } from '../logic/configLogic';
-import cuid from 'cuid';
 
 export default async function placeOrder(
   cloud,
@@ -109,17 +109,14 @@ export default async function placeOrder(
       const orderName =
         order.orderName.firstName + ' ' + order.orderName.lastName;
       const blendName = displayNameOfOrderItem(item, item.menuItem);
-      return [...Array(item.quantity)].map((_, quantityIndex) => ({
-        id: cuid(),
-        quantityIndex,
-        orderItemId: item.id,
-        orderId,
-        name: orderName,
-        blendName,
-        blendColor: item.menuItem.Recipe.Color,
-        blendProfile: item.menuItem.Recipe['Blend Profile'],
-        fills,
-      }));
+      return [...Array(item.quantity)].map((_, quantityIndex) =>
+        getNewBlendTask(item.menuItem, fills, orderName, {
+          quantityIndex,
+          blendName,
+          orderItemId: item.id,
+          orderId,
+        }),
+      );
     }),
   );
   const orderTasks = allTasks.flat(1);

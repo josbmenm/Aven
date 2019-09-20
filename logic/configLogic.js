@@ -1,5 +1,6 @@
 import formatCurrency from '../utils/formatCurrency';
 import { error } from '../logger/logger';
+import cuid from 'cuid';
 
 export const TAX_RATE = 0.09;
 export const MAX_CUP_VOLUME = 530;
@@ -57,6 +58,21 @@ export function sellPriceOfMenuItem(menuItem) {
     ? menuItem.Recipe['Sell Price']
     : menuItem['Sell Price'];
   return sellPrice * 100;
+}
+
+export function getNewBlendTask(menuItem, fills, orderName, etc) {
+  return {
+    id: cuid(),
+    name: orderName,
+    blendColor: menuItem.Recipe.Color,
+    recipeId: menuItem.Recipe.id,
+    blendSlug: menuItem.Slug,
+    blendProfile: menuItem.Recipe['Blend Profile'],
+    skipBlend: false,
+    deliveryMode: 'deliver',
+    fills,
+    ...etc,
+  };
 }
 
 export function getFillsOfOrderItem(menuItem, item, companyConfig) {

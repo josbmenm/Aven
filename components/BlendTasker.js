@@ -7,14 +7,13 @@ import { useCloud } from '../cloud-core/KiteReact';
 import Row from './Row';
 import TaskInfo from './TaskInfo';
 import FillList from './FillList';
-import cuid from 'cuid';
 import {
   useInventoryMenuItem,
   useCompanyConfig,
 } from '../ono-cloud/OnoKitchen';
 import { usePopover } from '../views/Popover';
 import BlendCustomization from './BlendCustomization';
-import { getFillsOfOrderItem } from '../logic/configLogic';
+import { getFillsOfOrderItem, getNewBlendTask } from '../logic/configLogic';
 import { Easing } from 'react-native-reanimated';
 
 function usePutTransactionValue(docName) {
@@ -151,16 +150,9 @@ export default function BlendTasker() {
             restaurantDispatch({
               type: 'QueueTasks',
               tasks: [
-                {
-                  id: cuid(),
-                  name: orderName,
+                getNewBlendTask(menuItem, fills, orderName, {
                   blendName,
-                  blendColor: menuItem.Recipe.Color,
-                  blendProfile: menuItem.Recipe['Blend Profile'],
-                  skipBlend: false,
-                  deliveryMode: 'deliver',
-                  fills,
-                },
+                }),
               ],
             })
               .then(() => {
