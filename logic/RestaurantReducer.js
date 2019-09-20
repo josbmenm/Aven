@@ -34,6 +34,17 @@ function restaurantStateHasInventory(state, ingredientId, amount) {
   return true;
 }
 
+function taskCompleteTime(prevState) {
+  const taskCompleteTime = Date.now();
+  const duration = prevState
+    ? (taskCompleteTime - prevState.taskStartTime) / 1000
+    : undefined;
+  return {
+    taskCompleteTime,
+    duration,
+  };
+}
+
 function handleDisabledFills(state) {
   if (!state.fill) {
     return state;
@@ -215,7 +226,7 @@ function RestaurantReducerFn(state = {}, action) {
             ...state.fill,
             deliveryType: 'drop-fill',
             deliveryTime: Date.now(),
-            taskCompleteTime: Date.now(),
+            ...taskCompleteTime(state.fill),
           },
         ],
       };
@@ -492,7 +503,7 @@ function RestaurantReducerFn(state = {}, action) {
             ...state.delivery,
             deliveryType: 'drop',
             deliveryTime: Date.now(),
-            taskCompleteTime: Date.now(),
+            ...taskCompleteTime(state.delivery),
           },
         ],
       };
@@ -518,7 +529,7 @@ function RestaurantReducerFn(state = {}, action) {
         deliveryType: 'delivered',
         bayId: action.bayId,
         deliveryTime: Date.now(),
-        taskCompleteTime: Date.now(),
+        ...taskCompleteTime(state.delivery),
       };
       const returnState = {
         ...defaultReturn(),
