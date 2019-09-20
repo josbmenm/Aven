@@ -1119,7 +1119,11 @@ export function createReducerStream(
     snapshotValue: snapshotsDoc.value.stream,
   })
     .map(({ snapshotValue, sourceDoc }) => {
-      if (snapshotValue && snapshotValue.context) {
+      if (
+        snapshotValue &&
+        snapshotValue.context &&
+        snapshotValue.context.reducerName === reducerName
+      ) {
         const { docId } = snapshotValue.context;
         if (!docStateStreams.has(docId)) {
           const [docStateStream] = streamOf(snapshotValue);

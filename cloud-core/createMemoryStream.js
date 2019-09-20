@@ -96,8 +96,9 @@ export function combineStreams(inputs) {
           },
           complete: () => {},
           error: e => {
+            // todo.. one error should stop all other combined streams.. correct? otherwise the combined stream may fire again when a non-error input stream has a next
             console.error('Error within combined stream', inputStream.crumb);
-            notifier.error(e);
+            notifier.error(e); // todo, pass crumb and inputStream.crumb into error
           },
         };
         inputStream.addListener(listener);
