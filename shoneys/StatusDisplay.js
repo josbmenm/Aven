@@ -80,8 +80,8 @@ function StatusDisplayRow({ title, subTitle, right, isFadingAway }) {
   React.useEffect(() => {
     Animated.timing(fadeAwayProgress, {
       toValue: Number(isFadingAway || 0),
-      duration: 1000,
-      easing: Easing.linear,
+      duration: 500,
+      easing: Easing.poly(5),
     }).start();
   }, [isFadingAway]);
   return (

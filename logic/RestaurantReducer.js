@@ -516,7 +516,7 @@ function RestaurantReducerFn(state = {}, action) {
         ...defaultReturn(),
         delivery: {
           ...state.delivery,
-          willDeliverTo: state.bayId,
+          willDeliverTo: action.bayId,
         },
       };
     }
