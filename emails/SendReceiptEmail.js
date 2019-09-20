@@ -14,7 +14,7 @@ import formatCurrency from '../utils/formatCurrency';
 import GenericFooter from './components/GenericFooter';
 
 function getSubject(params) {
-  return `Order Receipt for ${orderName}`;
+  return `Order Receipt for ${params.orderName}`;
 }
 
 function getBodyHTML(params) {
