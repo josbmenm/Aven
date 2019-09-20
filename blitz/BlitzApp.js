@@ -192,7 +192,9 @@ process.env.REACT_NAV_LOGGING = true;
 const KioskAppContainer = React.memo(createAppContainer(KioskAppNavigator));
 
 function RetryButton({ onRetry }) {
-  return <Button title="Try again.." onPress={onRetry} />;
+  return (
+    <Button title="try again.." onPress={onRetry} style={{ alignSelf: 'ce' }} />
+  );
 }
 
 function renderAppError({ error, errorInfo, onRetry }) {
@@ -200,23 +202,32 @@ function renderAppError({ error, errorInfo, onRetry }) {
     ? error.message
     : 'The app broke. Please retry or ask your guide to help';
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <Text style={{ ...titleStyle, fontSize: 48, marginTop: 100 }}>
-        uh oh!
-      </Text>
-      <Text
-        style={{
-          ...proseFontFace,
-          fontSize: 32,
-          color: monsterra,
-          textAlign: 'center',
-          marginVertical: 40,
-        }}
-      >
-        {message}
-      </Text>
-      <View>
-        <RetryButton onRetry={onRetry} />
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <Text
+          style={{
+            ...titleStyle,
+            fontSize: 48,
+            marginTop: 100,
+            textAlign: 'center',
+          }}
+        >
+          uh oh!
+        </Text>
+        <Text
+          style={{
+            ...proseFontFace,
+            fontSize: 32,
+            color: monsterra,
+            textAlign: 'center',
+            marginVertical: 40,
+          }}
+        >
+          {message}
+        </Text>
+        <View style={{ flexDirection: 'row' }}>
+          <RetryButton onRetry={onRetry} />
+        </View>
       </View>
     </ScrollView>
   );
