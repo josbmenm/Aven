@@ -22,7 +22,7 @@ const COUNT_MAX = 32767;
 // This max is because we have experienced: RangeError [ERR_OUT_OF_RANGE] [ERR_OUT_OF_RANGE]: The value of "value" is out of range. It must be >= -32768 and <= 32767. Received 1005538255
 let tagCounter = Math.floor(Math.random() * COUNT_MAX);
 
-export function getFreshActionId() {
+export function getFreshCommandId() {
   tagCounter += 1;
   if (tagCounter > COUNT_MAX) {
     tagCounter = 0;
@@ -56,12 +56,12 @@ const createSchema = config => {
   return { config, tags, allTagsGroup };
 };
 
-const extractActionValues = ({
+const extractMachineValues = ({
   subSystemConfig,
   pulse,
   values,
   systemName,
-  actionId,
+  commandId,
 }) => {
   const pulseCommands = subSystemConfig.pulseCommands || {};
   const valueCommands = subSystemConfig.valueCommands || {};
@@ -90,9 +90,9 @@ const extractActionValues = ({
     tagOutput[internalTagName] = value;
   });
 
-  // actionId
-  if (actionId != null && systemName !== 'System') {
-    tagOutput[`${systemName}_ActionIdIn_VALUE`] = actionId;
+  // command Id (actionId, as known in the plc)
+  if (commandId != null && systemName !== 'System') {
+    tagOutput[`${systemName}_ActionIdIn_VALUE`] = commandId;
   }
   return { immediateOutput, clearPulseOutput, tagOutput };
 };
@@ -203,47 +203,42 @@ export function connectMachine({
           .then(failedTags => {
             if (failedTags.length) {
               error('MachineError', { code: 'TagReadsFailing', failedTags });
+              clearTimeout(timer);
+              reject(new Error('Could not read debug tags'));
+            } else {
+              clearTimeout(timer);
+              resolve();
             }
           })
           .catch(e => {
             error('MachineError', { code: 'DebugTagReadError', error: e });
+            clearTimeout(timer);
+            reject(new Error('Could not read debug tags'));
           });
       } else {
         PLC.readTagGroup(schema.allTagsGroup)
-          .then(results => {
+          .then(() => {
             clearTimeout(timer);
-            resolve(results);
+            resolve();
           })
           .catch(err => {
             error('MachineError', { code: 'AllReadsFailedOnce', error: err });
 
             setTimeout(() => {
               PLC.readTagGroup(schema.allTagsGroup)
-                .then(results => {
+                .then(() => {
                   clearTimeout(timer);
-                  resolve(results);
+                  resolve();
                 })
                 .catch(err => {
-                  error('MachineError', {
-                    code: 'AllReadsFailing',
-                    fastError: err,
-                  });
-                  slowDebugRead()
-                    .then(failedTags => {
-                      if (failedTags.length) {
-                        error('MachineError', {
-                          code: 'FailedReads',
-                          failedReads: failedTags,
-                        });
-                      }
-                    })
-                    .catch(e => {
+                  slowDebugRead().then(failedTags => {
+                    if (failedTags.length) {
                       error('MachineError', {
-                        code: 'AllReadsFailing',
-                        fastError: err,
-                        debugError: e,
+                        code: 'FailedReads',
+                        failedReads: failedTags,
                       });
-                    });
+                    }
+                  });
                 });
             }, 250);
             // failed to read all the tags.. read each individually to see which fail, and report the result
@@ -325,37 +320,44 @@ export function connectMachine({
 
       Object.entries(subsystemResolvers).forEach(([subsystem, resolver]) => {
         const noFaults = currentState[`${subsystem}_NoFaults_READ`];
-        const startedActionId =
+        const startedCommandId =
           currentState[`${subsystem}_ActionIdStarted_READ`];
-        const endedActionId = currentState[`${subsystem}_ActionIdEnded_READ`];
+        const endedCommandId = currentState[`${subsystem}_ActionIdEnded_READ`];
         const isSystemIdle = currentState[`${subsystem}_PrgStep_READ`] === 0;
-        const isActionReceived = startedActionId === resolver.actionId;
-        const isActionComplete =
-          noFaults && endedActionId === resolver.actionId;
-        if (isActionReceived && (isSystemIdle || isActionComplete)) {
-          if (isActionComplete) {
+        const isCommandReceived = startedCommandId === resolver.commandId;
+        const isCommandComplete =
+          noFaults && endedCommandId === resolver.commandId;
+        if (isCommandReceived && (isSystemIdle || isCommandComplete)) {
+          if (isCommandComplete) {
             resolver.resolve();
           } else {
             if (noFaults) {
               error('MachineError', {
+                ..._kitchenState,
                 code: 'SoftError',
                 subsystem,
                 noFaults,
-                isActionReceived,
-                isActionComplete,
+                startedCommandId,
+                endedCommandId,
+                commandId: resolver.commandId,
+                command: resolver.command,
+                isCommandReceived,
+                isCommandComplete,
               });
+
               resolver.reject(
                 new Error(
-                  `System "${subsystem}" has experienced a soft error. No faults, but the action did not succeed.`,
+                  `System "${subsystem}" has experienced a soft error. No faults, but the command did not succeed.`,
                 ),
               );
             } else {
               error('MachineError', {
+                ..._kitchenState,
                 code: 'Fault',
                 subsystem,
                 noFaults,
-                isActionReceived,
-                isActionComplete,
+                isCommandReceived,
+                isCommandComplete,
               });
               resolver.reject(new Error(`"${subsystem}" system faulted!`));
             }
@@ -378,6 +380,7 @@ export function connectMachine({
           await kitchenStateDoc.putValue({
             isPLCConnected: false,
           });
+          await delay(2000); // give the PLC and network 2 seconds to come to senses. (avoid spamming the logs)
         })
         .finally(() => {
           updateTagsForever();
@@ -387,7 +390,7 @@ export function connectMachine({
   }
 
   async function writeMachineValues(action) {
-    const actionId = action.actionId || getFreshActionId();
+    const commandId = action.commandId || getFreshCommandId();
     if (!mainRobotSchema) {
       return;
     }
@@ -396,12 +399,12 @@ export function connectMachine({
       immediateOutput,
       clearPulseOutput,
       tagOutput,
-    } = extractActionValues({
+    } = extractMachineValues({
       subSystemConfig: subsystem,
       systemName: action.subsystem,
       pulse: action.pulse,
       values: action.values,
-      actionId,
+      commandId,
     });
     await writeTags(mainRobotSchema, tagOutput);
     await writeTags(mainRobotSchema, immediateOutput);
@@ -412,10 +415,11 @@ export function connectMachine({
       .then(() => {})
       .catch(err => {
         error('MachineError', {
+          ..._kitchenState,
           code: 'PulseClearWrite',
-          error: err,
+          code: err.message,
           clearPulseOutput,
-          actionId,
+          commandId,
           subsystem: action.subsystem,
         });
       });
@@ -430,38 +434,38 @@ export function connectMachine({
       process.exit();
     });
 
-  async function command(action) {
-    const commandType = commands[action.commandType];
+  async function runCommand(command) {
+    const commandType = commands[command.commandType];
 
     if (!commandType) {
-      throw new Error(`Unknown kitchen command "${action.commandType}"`);
+      throw new Error(`Unknown kitchen command "${command.commandType}"`);
     }
     const { valueParamNames, pulse, subsystem } = commandType;
     const values = { ...commandType.values };
     valueParamNames &&
       Object.keys(valueParamNames).forEach(valueCommandName => {
         const provided =
-          action.params && action.params[valueParamNames[valueCommandName]];
+          command.params && command.params[valueParamNames[valueCommandName]];
         if (provided != null) {
           values[valueCommandName] = provided;
         }
       });
-    const actionId = getFreshActionId();
+    const commandId = getFreshCommandId();
     const commandStartTimeMS = Date.now();
     log('MachineCommandStart', {
-      actionId,
+      commandId,
       commandStartTimeMS,
-      action,
+      command,
     });
 
     if (subsystemResolvers[subsystem]) {
       throw new Error(
-        `Already waiting for an action to resolve on the "${subsystem}" subsystem.`,
+        `Already waiting for a command to resolve on the "${subsystem}" subsystem.`,
       );
     }
 
     await writeMachineValues({
-      actionId,
+      commandId,
       subsystem,
       pulse,
       values,
@@ -471,9 +475,10 @@ export function connectMachine({
         delete subsystemResolvers[subsystem];
         const commandErrorTimeMS = Date.now();
         const errorDetails = {
+          ..._kitchenState,
           code: 'WatchKittyTimeout',
-          action,
-          actionId,
+          command,
+          commandId,
           subsystem,
           pulse,
           values,
@@ -481,7 +486,6 @@ export function connectMachine({
           commandErrorTimeMS,
           commandDurationMS: commandErrorTimeMS - commandStartTimeMS,
         };
-        error('MachineError', errorDetails);
         error('MachineCommandFailed', errorDetails);
         reject(
           new Error(`Watch kitty timeout on "${subsystem}" system, meow!`),
@@ -497,10 +501,11 @@ export function connectMachine({
           delete subsystemResolvers[subsystem];
           const commandErrorTimeMS = Date.now();
           error('MachineCommandFailed', {
+            ..._kitchenState,
             code: err.message,
             details: err.details,
-            action,
-            actionId,
+            command,
+            commandId,
             subsystem,
             pulse,
             values,
@@ -511,20 +516,21 @@ export function connectMachine({
           clearTimeout(watchKittyTimeout);
           reject(err);
         },
-        actionId,
+        commandId,
+        command,
       };
     });
 
     const commandEndTimeMS = Date.now();
 
     log('MachineCommandEnd', {
-      actionId,
+      commandId,
       commandEndTimeMS,
       commandStartTimeMS,
       commandDurationMS: commandEndTimeMS - commandStartTimeMS,
-      action,
+      command,
     });
-    return action;
+    return command;
   }
 
   let _restaurantState = null;
@@ -532,13 +538,11 @@ export function connectMachine({
   let _kitchenConfig = null;
   let currentStepPromises = {};
 
-  function handleSequencerUpdates(
-    restaurantState,
-    kitchenState,
-    kitchenConfig,
-  ) {
+  function updateSequencerValues(restaurantState, kitchenState, kitchenConfig) {
     let sideEffectActions = null;
     if (restaurantState !== undefined) _restaurantState = restaurantState;
+    if (kitchenState !== undefined) _kitchenState = kitchenState;
+    if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
     if (kitchenState !== undefined && _kitchenState !== kitchenState) {
       const lastKitchenState = _kitchenState;
       _kitchenState = kitchenState;
@@ -562,8 +566,7 @@ export function connectMachine({
               await restaurantStateDispatch(action);
             })
             .catch(error => {
-              error('MachineError', {
-                code: 'SideEffectPerformError',
+              error('SideEffectPerformError', {
                 error,
                 action,
               });
@@ -571,84 +574,106 @@ export function connectMachine({
         });
       }
     }
+    scheduleSequencerStep();
+  }
 
-    if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
-    if (!restaurantState)
-      return error('MachineError', { code: 'MissingRestaurantState' });
-    if (!kitchenState)
-      return error('MachineError', { code: 'MissingKitchenState' });
-    if (!kitchenConfig)
-      return error('MachineError', { code: 'MissingkitchenConfig' });
-    if (!restaurantState.isAutoRunning) return; // the sequencer only goes when it is "running"
-    if (!restaurantState.isAttached) return; // the sequencer only goes when it is "attached"
+  let scheduledSequencerStep = null;
+
+  function scheduleSequencerStep() {
+    clearTimeout(scheduledSequencerStep);
+    scheduledSequencerStep = setTimeout(handleSequencerStep, 5);
+  }
+
+  function handleSequencerStep() {
+    if (!_restaurantState) {
+      error('SequencerError', { code: 'MissingRestaurantState' });
+      return;
+    }
+    if (!_kitchenState) {
+      error('SequencerError', { code: 'MissingKitchenState' });
+      return;
+    }
+    if (!_kitchenConfig) {
+      error('SequencerError', { code: 'MissingKitchenConfig' });
+      return;
+    }
+    if (!_kitchenState.isPLCConnected) return; // machine must be attached
+    if (!_restaurantState.isAutoRunning) return; // the sequencer only goes when it is "running"
+    if (!_restaurantState.isAttached) return; // the sequencer only goes when it is "attached"
 
     const nextSteps = computeNextSteps(
       sequencerSteps,
-      restaurantState,
-      kitchenConfig,
-      kitchenState,
+      _restaurantState,
+      _kitchenConfig,
+      _kitchenState,
       commands,
     );
 
-    nextSteps.forEach(nextStep => {
+    const stepToStart = nextSteps.find(nextStep => {
       if (!nextStep.isMachineReady) {
-        return;
+        return false;
       }
       if (!nextStep.isCommandReady) {
-        return;
+        return false;
       }
       if (!nextStep.isReady) {
-        return;
+        return false;
       }
       const commandType = commands[nextStep.command.commandType];
       const subsystem = commandType.subsystem;
       if (currentStepPromises[subsystem]) {
-        return;
+        return false;
       }
+      return true;
+    });
 
-      if (!kitchenState.isPLCConnected) {
-        return;
-      }
+    if (stepToStart) {
+      const commandType = commands[stepToStart.command.commandType];
+      const subsystem = commandType.subsystem;
+
       log('StepStart', {
-        description: nextStep.description,
-        command: nextStep.command,
+        description: stepToStart.description,
+        command: stepToStart.command,
       });
 
-      currentStepPromises[subsystem] = nextStep.perform(
+      currentStepPromises[subsystem] = stepToStart.perform(
         restaurantStateDispatch,
-        command,
+        runCommand,
       );
 
       currentStepPromises[subsystem]
         .then(() => {
           currentStepPromises[subsystem] = null;
           log('StepComplete', {
-            description: nextStep.description,
-            command: nextStep.command,
+            description: stepToStart.description,
+            command: stepToStart.command,
           });
-          setTimeout(() => {
-            if (
-              kitchenState !== _kitchenState ||
-              kitchenConfig !== _kitchenConfig ||
-              restaurantState !== _restaurantState
-            ) {
-              handleSequencerUpdates(
-                _restaurantState,
-                _kitchenState,
-                _kitchenConfig,
-              );
-            }
-          }, 50);
+          scheduleSequencerStep();
+          // setTimeout(() => {
+          //   if (
+          //     kitchenState !== _kitchenState ||
+          //     kitchenConfig !== _kitchenConfig ||
+          //     restaurantState !== _restaurantState
+          //   ) {
+          //     handleSequencerUpdates(
+          //       _restaurantState,
+          //       _kitchenState,
+          //       _kitchenConfig,
+          //     );
+          //   }
+          // }, 50);
         })
         .catch(e => {
           currentStepPromises[subsystem] = null;
           error('StepError', {
-            error: e,
-            stepDescription: nextStep.description,
-            command: nextStep.command,
+            code: e.message,
+            stepDescription: stepToStart.description,
+            command: stepToStart.command,
           });
+          // something went wrong, but the sequencer is still meant to run:
+          scheduleSequencerStep();
         });
-    });
+    }
   }
 
   const sequencerStateStream = combineStreams({
@@ -658,7 +683,7 @@ export function connectMachine({
   });
   const sequencerStateStreamListener = {
     next: ({ restaurantState, kitchenState, kitchenConfig }) => {
-      handleSequencerUpdates(restaurantState, kitchenState, kitchenConfig);
+      updateSequencerValues(restaurantState, kitchenState, kitchenConfig);
     },
     error: e => {
       fatal('MachineError', { code: 'SequencerStateStream', error: e });
@@ -675,7 +700,7 @@ export function connectMachine({
   }
 
   return {
-    command,
+    runCommand,
     close,
     writeMachineValues,
   };

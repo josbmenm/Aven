@@ -36,9 +36,6 @@ const KitchenSteps = [
     // drop cup (fill system)
     getDescription: intent => 'Drop Cup',
     getStateIntent: restaurantState => {
-      if (restaurantState.fill && !!restaurantState.fill.requestedDropTime) {
-        return { didCompleteTask: !restaurantState.fill.requestedDropRemake };
-      }
       if (
         restaurantState.fill &&
         restaurantState.fill !== 'ready' &&
@@ -53,6 +50,62 @@ const KitchenSteps = [
     },
     getKitchenCommand: intent => ({
       commandType: 'DropCup',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidLooseFillCup',
+      didCompleteTask: intent.didCompleteTask,
+    }),
+  },
+  {
+    // ditch unknown cup (fill system)
+    getDescription: intent => 'Ditch Unknown Cup',
+    getStateIntent: restaurantState => {
+      if (restaurantState.fill == null || restaurantState.fill === 'ready') {
+        return {};
+      }
+      return null;
+    },
+    getMachineReady: kitchenState => {
+      console.log('WAAA', kitchenState.FillPositioner_CupPresent_READ);
+      return kitchenState.FillPositioner_CupPresent_READ;
+    },
+    getKitchenCommand: intent => ({
+      commandType: 'DitchCup',
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidLooseFillCup',
+      didCompleteTask: false,
+    }),
+  },
+  {
+    // ditch requested cup (fill system)
+    getDescription: intent => 'Ditch Cup',
+    getStateIntent: restaurantState => {
+      if (restaurantState.fill && restaurantState.fill.requestedDropTime) {
+        return {
+          didCompleteTask: false,
+          taskId: restaurantState.fill.task.id,
+        };
+      }
+      if (
+        restaurantState.fill &&
+        restaurantState.fill !== 'ready' &&
+        restaurantState.fill.task.skipBlend &&
+        restaurantState.fill.task.deliveryMode === 'ditch' &&
+        restaurantState.fill.fillsRemaining.length === 0
+      ) {
+        return {
+          didCompleteTask: true,
+          taskId: restaurantState.fill.task.id,
+        };
+      }
+      return null;
+    },
+    getMachineReady: kitchenState => {
+      return kitchenState.FillPositioner_CupPresent_READ;
+    },
+    getKitchenCommand: intent => ({
+      commandType: 'DitchCup',
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidLooseFillCup',
@@ -145,9 +198,9 @@ const KitchenSteps = [
 
   {
     // do fill
-    getDescription: ({ amount, system, slot, pretendDispense }) => {
-      if (pretendDispense) {
-        return `Pretend to Fill Cup ${system}.${slot}x${amount}`;
+    getDescription: ({ amount, system, slot, dryRunDispense }) => {
+      if (dryRunDispense) {
+        return `Dry/Fake Fill Cup ${system}.${slot}x${amount}`;
       }
       return `Fill Cup ${system}.${slot}x${amount}`;
     },
@@ -163,12 +216,12 @@ const KitchenSteps = [
       const intent = {
         ...nextFill,
         taskId: restaurantState.fill.task.id,
-        pretendDispense: restaurantState.isDryRunning,
+        dryRunDispense: restaurantState.isDryRunning,
       };
       return intent;
     },
     getKitchenCommand: intent => {
-      if (intent.pretendDispense) {
+      if (intent.dryRunDispense) {
         return {
           commandType: 'PositionToSystemSlot',
           params: intent,
@@ -180,7 +233,7 @@ const KitchenSteps = [
       };
     },
     getSuccessRestaurantAction: intent => ({
-      type: intent.pretendDispense ? 'DidPretendFill' : 'DidFill',
+      type: intent.dryRunDispense ? 'DidPretendFill' : 'DidFill',
       ...intent,
     }),
     getFailureRestaurantAction: intent => ({
@@ -335,42 +388,6 @@ const KitchenSteps = [
       type: 'DidClean',
     }),
   },
-
-  {
-    // ditch cup (fill system)
-    getDescription: intent => 'Ditch Cup',
-    getStateIntent: restaurantState => {
-      if (restaurantState.fill === null || restaurantState.fill === 'ready') {
-        return {
-          didCompleteTask: false,
-        };
-      }
-      if (
-        restaurantState.fill &&
-        restaurantState.fill !== 'ready' &&
-        restaurantState.fill.task.skipBlend &&
-        restaurantState.fill.task.deliveryMode === 'ditch' &&
-        restaurantState.fill.fillsRemaining.length === 0
-      ) {
-        return {
-          didCompleteTask: true,
-          taskId: restaurantState.fill.task.id,
-        };
-      }
-      return null;
-    },
-    getMachineReady: kitchenState => {
-      return kitchenState.FillPositioner_CupPresent_READ;
-    },
-    getKitchenCommand: intent => ({
-      commandType: 'DitchCup',
-    }),
-    getSuccessRestaurantAction: intent => ({
-      type: 'DidLooseFillCup',
-      didCompleteTask: intent.didCompleteTask,
-    }),
-  },
-
   {
     // prepare pickup cup
     getDescription: intent => 'Go to cup position',

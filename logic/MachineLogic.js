@@ -42,7 +42,11 @@ export function computeNextSteps(
         kitchenState && getMachineReady
           ? getMachineReady(kitchenState, intent)
           : true;
-      const command = getKitchenCommand(intent, kitchenState || {}); // CAREFUL, KITCHEN STATE IS HERE BUT EMPTY
+      const rawKitchenCommand = getKitchenCommand(intent, kitchenState || {}); // CAREFUL, KITCHEN STATE IS HERE BUT EMPTY
+      const command = {
+        ...rawKitchenCommand,
+        context: { ...(rawKitchenCommand.context || {}), intent },
+      };
       const commandType = machineCommands[command.commandType];
       const isSystemIdle = kitchenState
         ? kitchenState[`${commandType.subsystem}_PrgStep_READ`] === 0
@@ -74,7 +78,7 @@ export function computeNextSteps(
         startingRestaurantAction,
         subsystem: command.subsystem,
         description: getDescription(intent),
-        perform: async (restaurantStateDispatch, kitchenCommand) => {
+        perform: async (restaurantStateDispatch, runCommand) => {
           let resp = null;
           log('MachineCommandStarting', {
             intent,
@@ -84,7 +88,7 @@ export function computeNextSteps(
           startingRestaurantAction &&
             (await restaurantStateDispatch(startingRestaurantAction));
           try {
-            resp = await kitchenCommand({
+            resp = await runCommand({
               ...command,
               context: {
                 ...(command.context || {}),
@@ -112,7 +116,7 @@ export function computeNextSteps(
           }
           return resp;
         },
-        performFake: async (restaurantStateDispatch, kitchenCommand) => {
+        performFake: async restaurantStateDispatch => {
           log('FakeSequencerCommand', {
             intent,
             command,

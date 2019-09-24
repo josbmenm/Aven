@@ -204,7 +204,6 @@ function RestaurantReducerFn(state = {}, action) {
         fill: {
           ...state.fill,
           requestedDropTime: Date.now(),
-          requestedDropRemake: action.remake,
         },
       };
     }
@@ -212,14 +211,9 @@ function RestaurantReducerFn(state = {}, action) {
       if (!state.fill || state.fill === 'ready') {
         return defaultReturn();
       }
-      let queue = state.queue;
-      if (!action.didCompleteTask && state.fill && state.fill.task) {
-        queue = [state.fill.task, ...state.queue];
-      }
       return {
         ...defaultReturn(),
         fill: null,
-        queue,
         completedTasks: [
           ...(state.completedTasks || []),
           {
@@ -269,7 +263,7 @@ function RestaurantReducerFn(state = {}, action) {
         amount: action.amount,
         slot: action.slot,
         completedFillTime: Date.now(),
-        isPretendDispense: true,
+        isDryRunDispense: true,
       };
       let fillsRemaining = (state.fill.fillsRemaining || []).filter(fill => {
         const isTheFill =
@@ -280,7 +274,7 @@ function RestaurantReducerFn(state = {}, action) {
           completedFill = {
             ...fill,
             completedFillTime: Date.now(),
-            isPretendDispense: true,
+            isDryRunDispense: true,
           };
         }
         return !isTheFill;

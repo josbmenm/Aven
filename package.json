@@ -16,6 +16,7 @@
     "open-xcode": "open env-downpour/ios/downpour.xcworkspace",
     "start-portal": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start portal",
     "clean": "./node_modules/@aven-cloud/aven/aven-tools/cli.js clean",
+    "process": "node process/goProcess.js",
     "test": "jest"
   },
   "devDependencies": {

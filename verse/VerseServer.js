@@ -255,16 +255,26 @@ const startVerseServer = async () => {
     if (completeTaskIds.indexOf(task.id) !== -1) return;
     completeTaskIds.push(task.id);
     log('TaskComplete', { task, taskCompleteIndex: completeTaskIds.length });
-    // restaurantStateDispatch({
-    //   type: 'CleanupTask',
-    //   taskId: task.id,
-    // }).catch(err => {
-    //   error('CleanupTaskFailure', { error: err, task });
-    // });
+    cloud
+      .get(`Tasks/${task.id}`)
+      .putValue(task)
+      .then(() => {
+        restaurantStateDispatch({
+          type: 'CleanupTask',
+          taskId: task.id,
+        }).catch(err => {
+          error('CleanupTaskFailure', { error: err, task });
+        });
+      })
+      .catch(err => {
+        error('TaskArchiveFailure', { task, taskId: task.id, error: err });
+      });
   }
 
+  let lastRestaurantState = null;
   const restaurantStateListener = {
     next: state => {
+      lastRestaurantState = state;
       if (state && state.completedTasks && state.completedTasks.length) {
         state.completedTasks.forEach(completeTask);
       }
@@ -278,6 +288,10 @@ const startVerseServer = async () => {
     },
   };
   restaurantStateStream.addListener(restaurantStateListener);
+
+  setInterval(() => {
+    log('RestaurantStateMonitor', lastRestaurantState);
+  }, 60000);
 
   if (kitchen) {
     setInterval(() => {
@@ -295,7 +309,7 @@ const startVerseServer = async () => {
         if (!kitchen) {
           return;
         }
-        return await kitchen.command({
+        return await kitchen.runCommand({
           ...action,
           context: {
             ...(action.context || {}),
@@ -314,12 +328,12 @@ const startVerseServer = async () => {
         return placeOrder(cloud, action);
       case 'RestartDevice':
         await fetch(
-          `https://${process.env.HEXNODE_HOST}/api/v1/actions/reboot/`,
+          `https://${getEnv('HEXNODE_HOST')}/api/v1/actions/reboot/`,
           {
             method: 'post',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: process.env.HEXNODE_TOKEN,
+              Authorization: getEnv('HEXNODE_TOKEN'),
             },
             body: JSON.stringify({ devices: [action.mdmId] }),
           },
@@ -339,6 +353,14 @@ const startVerseServer = async () => {
         actionType: action.type,
         hasResponse: !!response,
       });
+      if (
+        action.type === 'PutTransactionValue' &&
+        action.name === 'RestaurantActions'
+      ) {
+        log('RestaurantDispatch', {
+          action,
+        });
+      }
       return response;
     } catch (e) {
       error('DispatchedAction', { action, error: e.message, stack: e.stack });
@@ -354,6 +376,7 @@ const startVerseServer = async () => {
   const webService = await WebServer({
     App,
     context,
+    screenProps: { cloud },
     source: {
       // ...protectedSource,
       ...cloud,
