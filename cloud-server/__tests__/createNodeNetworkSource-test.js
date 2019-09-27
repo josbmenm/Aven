@@ -1,7 +1,7 @@
 import createMemoryStorageSource from '../../cloud-core/createMemoryStorageSource';
 import sourceTests from '../../cloud-core/__tests__/sourceTests';
 import createNodeNetworkSource from '../createNodeNetworkSource';
-import startSourceServer from '../startSourceServer';
+import attachSourceServer from '../attachSourceServer';
 
 beforeAll(async () => {});
 
@@ -13,7 +13,7 @@ async function startTestDataSource(options = {}) {
   const ds = createMemoryStorageSource({ domain: 'test', ...options });
   portOffset += 1;
   let port = 9900 + portOffset;
-  const server = await startSourceServer({
+  const server = await attachSourceServer({
     source: ds,
     listenLocation: port,
     quiet: true,

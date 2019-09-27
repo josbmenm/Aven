@@ -2,7 +2,8 @@ import express from 'express';
 import ReactDOMServer from 'react-dom/server';
 import { AppRegistry } from 'react-native-web';
 import React from 'react';
-import startSourceServer from '../cloud-server/startSourceServer';
+import attachSourceServer from '../cloud-server/attachSourceServer';
+
 import NavigationContext from '../navigation-core/views/NavigationContext';
 import handleServerRequest from '../navigation-web/handleServerRequest';
 import Buffer from '../utils/Buffer';
@@ -100,7 +101,8 @@ window.addEventListener('error', function(evt) {
 </script>
 `;
 
-export default async function WebServer({
+export default async function attachWebServer({
+  httpServer,
   App,
   source,
   context,
@@ -109,6 +111,7 @@ export default async function WebServer({
   assets,
   domainAppOverrides,
   augmentRequestDispatchAction,
+  screenProps,
 }) {
   let appIdCount = 0;
   function registerDomainApp(DomainApp) {
@@ -210,27 +213,28 @@ export default async function WebServer({
       let options = {};
       const router = domainApp.AppComponent.router;
       if (router) {
-        const response = handleServerRequest(router, path, query);
+        const response = handleServerRequest(router, path, query, screenProps);
         navigation = response.navigation;
         title = response.title;
         options = response.options;
       }
 
-      const { element, getStyleElement } = AppRegistry.getApplication(
-        domainApp.appId,
-        {
-          initialProps: {
-            navigation,
-            env: 'server',
+      function goResponse() {
+        const { element, getStyleElement } = AppRegistry.getApplication(
+          domainApp.appId,
+          {
+            initialProps: {
+              navigation,
+              env: 'server',
+            },
           },
-        },
-      );
+        );
 
-      const html = ReactDOMServer.renderToString(element);
-      const css = ReactDOMServer.renderToStaticMarkup(getStyleElement());
+        const html = ReactDOMServer.renderToString(element);
+        const css = ReactDOMServer.renderToStaticMarkup(getStyleElement());
 
-      res.send(
-        `<!doctype html>
+        res.send(
+          `<!doctype html>
       <html lang="">
       <head>
           <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -263,10 +267,21 @@ export default async function WebServer({
           ${options.customHTML || ''}
       </body>
   </html>`,
-      );
+        );
+      }
+      if (options.loadData)
+        options
+          .loadData()
+          .then(goResponse)
+          .catch(err => {
+            error('DataLoadFailure', { code: err.message });
+            goResponse();
+          });
+      else goResponse();
     });
   }
-  return await startSourceServer({
+  return await attachSourceServer({
+    httpServer,
     source,
     listenLocation: serverListenLocation,
     expressRouting: doExpressRouting,

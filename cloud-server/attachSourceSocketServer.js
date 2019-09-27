@@ -2,7 +2,7 @@ import cuid from 'cuid';
 
 const WebSocket = require('ws');
 
-export default function startSourceSocketServer(wss, source) {
+export default function attachSourceSocketServer(wss, source) {
   const connections = {};
 
   wss.on('connection', ws => {

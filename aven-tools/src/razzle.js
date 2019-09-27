@@ -20,9 +20,9 @@ const applyPackage = async ({ location, appName, appPkg, distPkg }) => {
   const serverAppPath = pathJoin(location, 'src', 'server.js');
   const envOptions = appPkg.aven.envOptions || {};
   const serverAppFileData = `
-import Server from './sync/${appName}/${envOptions.mainServer}';
+import startServer from './sync/${appName}/${envOptions.mainServer}';
 
-export default Server;
+export default startServer;
 `;
   await fs.writeFile(serverAppPath, serverAppFileData);
 

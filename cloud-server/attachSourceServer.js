@@ -1,6 +1,6 @@
 import express from 'express';
 import startServer from './startServer';
-import startSourceSocketServer from './startSourceSocketServer';
+import attachSourceSocketServer from './attachSourceSocketServer';
 import { log } from '../logger/logger';
 const http = require('http');
 const bodyParser = require('body-parser');
@@ -8,7 +8,8 @@ const WebSocket = require('ws');
 
 const IS_DEV = process.env.NODE_ENV !== 'production';
 
-export default async function startSourceServer({
+export default async function attachSourceServer({
+  httpServer,
   source,
   listenLocation,
   expressRouting = undefined,
@@ -48,20 +49,29 @@ export default async function startSourceServer({
 
   fallbackExpressRouting && fallbackExpressRouting(expressApp);
 
-  const httpServer = http.createServer(expressApp);
+  let outputServer = httpServer;
+  if (outputServer) {
+    outputServer.on('request', expressApp);
+    console.log('attaching to existing http server..');
+  } else {
+    const freshHttpServer = http.createServer(expressApp);
+    outputServer = freshHttpServer;
+    await startServer(freshHttpServer, listenLocation);
 
-  const wss = new WebSocket.Server({ server: httpServer });
+    !quiet && log('ServerStarted', { listenLocation, host: process.env.HOST });
+    !quiet && IS_DEV && console.log(`http://localhost:${listenLocation}`);
+  }
 
-  await startServer(httpServer, listenLocation);
+  const wss = new WebSocket.Server({ server: outputServer });
 
-  const wsServer = await startSourceSocketServer(wss, source);
-
-  !quiet && log('ServerStarted', { listenLocation, host: process.env.HOST });
-  !quiet && IS_DEV && console.log(`http://localhost:${listenLocation}`);
+  const wsServer = await attachSourceSocketServer(wss, source);
 
   return {
+    httpServer: outputServer,
     close: async () => {
-      httpServer.close();
+      // warning.. actual http server must be closed independently! this is because of HMR behavior on the server
+      outputServer.removeListener('request', expressApp);
+
       wsServer && wsServer.close();
     },
   };
