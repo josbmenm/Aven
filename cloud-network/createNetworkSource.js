@@ -1,6 +1,5 @@
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import Err from '../utils/Err';
-import xs from 'xstream';
 import { createStreamValue } from '../cloud-core/StreamValue';
 import {
   streamOf,

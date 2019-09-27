@@ -491,6 +491,7 @@ export default (routeConfigs, stackConfig = {}) => {
       if (action.type === StackActions.RESET) {
         // Only handle reset actions that are unspecified or match this state key
 
+        // eslint-disable-next-line eqeqeq
         if (action.key != null && action.key != state.key) {
           // Deliberately use != instead of !== so we can match null with
           // undefined on either the state or the action

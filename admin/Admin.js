@@ -26,8 +26,8 @@ import {
 import { useNavigation, useNavigationState } from '../navigation-hooks/Hooks';
 
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
-import { CloudContext, useCloudValue } from '../cloud-core/KiteReact';
-import { useCloud } from '../cloud-core/KiteReact';
+import { CloudContext, useCloud, useCloudValue } from '../cloud-core/KiteReact';
+import { createClient } from '../cloud-core/Kite';
 import useObservable from '../cloud-core/useObservable';
 import ErrorContainer from '../cloud-react/ErrorContainer';
 import Animated from '../views/Animated';
@@ -1552,6 +1552,12 @@ function AdminApp({ defaultSession = {}, descriptors }) {
   );
 
   let client = useMemo(() => {
+    console.log(
+      'soooo',
+      isStateUnloaded(clientConfig),
+      isStateUnloaded(sessionState),
+      clientConfig,
+    );
     if (
       isStateUnloaded(clientConfig) ||
       isStateUnloaded(sessionState) ||
@@ -1564,12 +1570,11 @@ function AdminApp({ defaultSession = {}, descriptors }) {
       authority,
       useSSL,
     });
-    const client = null;
-    // const client = createCloudClient({
-    //   initialSession: sessionState,
-    //   source,
-    //   domain,
-    // });
+    const client = createClient({
+      initialSession: sessionState,
+      source,
+      domain,
+    });
 
     return client;
   }, [clientConfig, sessionState]);
@@ -1604,7 +1609,9 @@ function AdminApp({ defaultSession = {}, descriptors }) {
   if (!client && activeRoute.routeName !== 'Login') {
     return <Text>Wait..</Text>;
   }
-
+  if (!client) {
+    return <Text>Go log in.</Text>;
+  }
   function handleCatch(e, i, onRetry) {
     if (e.type === 'SessionInvalid') {
       client.destroySession({ ignoreRemoteError: true });

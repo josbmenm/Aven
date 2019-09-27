@@ -74,6 +74,9 @@ export function createStreamDoc(idAndValueStream, docName) {
       type: 'StreamDoc',
       name: docName,
     }),
+    putValue: () => {
+      throw new Error('Cannot PutValue of a stream doc');
+    },
     isDestroyed: () => false,
     putTransactionValue: () => {
       throw new Error(`Cannot putTransactionValue on "${docName}"`);
@@ -684,10 +687,10 @@ export function createDoc({
     // todo.. uh, do this safely by putting a TransactionValue!
     let lastValue = undefined;
     if (docState.isPosted) {
-      const { value, id } = await docIdAndValue.load();
+      const { value } = await docIdAndValue.load();
       lastValue = value;
     } else {
-      const { value, id } = docIdAndValue.get();
+      const { value } = docIdAndValue.get();
       lastValue = value;
     }
     const newValue = transactionFn(lastValue);
