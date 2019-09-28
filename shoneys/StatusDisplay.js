@@ -504,7 +504,7 @@ function QueueSection({ queue = [], fill, blend, delivery }) {
     );
   return (
     <React.Fragment>
-      <StatusDisplayTitleRow title="orders in progress:" />
+      <StatusDisplayTitleRow title="orders i progress:" />
       <View style={{ flex: 1 }}>{renderQueue}</View>
     </React.Fragment>
   );

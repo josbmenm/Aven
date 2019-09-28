@@ -221,7 +221,7 @@ export function MenuCard({
   );
 }
 
-export function MenuCardCarousel({ items, large, style }) {
+export function MenuCardCarousel({ items, large, style, hidePrice }) {
   let [scrollPosition] = useState(new Animated.Value(0));
   let [scrollWidth, setScrollWidth] = useState(1366);
 
@@ -317,7 +317,12 @@ export function MenuCardCarousel({ items, large, style }) {
               ],
             }}
           >
-            <MenuCard {...item} style={{}} isPhotoZoomed={large} />
+            <MenuCard
+              {...item}
+              style={{}}
+              isPhotoZoomed={large}
+              price={hidePrice ? null : item.price}
+            />
           </Animated.View>
         );
       })}

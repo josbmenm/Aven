@@ -4,6 +4,7 @@ import { useOrderItem } from '../ono-cloud/OrderContext';
 
 import useEmptyOrderEscape from './useEmptyOrderEscape';
 import BlendPage from '../components/BlendPage';
+import { useRestaurantConfig } from '../logic/RestaurantConfig';
 
 function BlendScreenMemo({ navigation, ...props }) {
   const { getParam } = navigation;
@@ -12,6 +13,7 @@ function BlendScreenMemo({ navigation, ...props }) {
 
   let { order, setItemState, orderItem } = useOrderItem(orderItemId);
   const { menuItem } = useInventoryMenuItem(menuItemId);
+  const restaurantConfig = useRestaurantConfig();
   const menu = useMenu();
 
   useEmptyOrderEscape();
@@ -23,6 +25,7 @@ function BlendScreenMemo({ navigation, ...props }) {
       setItemState={setItemState}
       order={order}
       navigation={navigation}
+      restaurantConfig={restaurantConfig}
       orderItemId={orderItemId}
       {...props}
     />

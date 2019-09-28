@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  Button,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import { View, Text } from 'react-native';
 import { createSwitchNavigator } from '../navigation-core';
 import Admin from '../admin/Admin';
 import InternalBlendMenu from './InternalBlendMenu';
@@ -76,9 +68,6 @@ const GoogleAnalyticsTag = `
 </script>
 `;
 
-const MetaInfo = `
-`;
-
 let authority = '';
 let useSSL = true;
 if (global.window) {
@@ -106,7 +95,7 @@ const defaultMetaDescription =
 function getHTMLHeaders({ screenOptions, navigation, title }) {
   return `
 <meta property="og:site_name" content="Ono Blends"/>
-<meta property="og:title" content="${title}">
+<meta property="og:title" content="${screenOptions.metaTitle || title}">
 <meta property="og:description" content="${screenOptions.metaDescription ||
     defaultMetaDescription}">
 <meta property="og:image" content="${screenOptions.metaImage ||
@@ -137,7 +126,7 @@ const App = createSwitchNavigator(
           screenProps,
         );
         const title = screenOptions.title
-          ? `${screenOptions.title} | Ono Blends`
+          ? `${screenOptions.title}`
           : 'Ono Blends';
         return {
           ...screenOptions,

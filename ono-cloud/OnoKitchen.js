@@ -3,7 +3,6 @@ import React, { useMemo } from 'react';
 import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import { useRestaurantState } from './Kitchen';
 import {
-  getOrderItemMapper,
   sortByField as getSortedByField,
   sellPriceOfMenuItem as getSellPriceOfMenuItem,
   displayNameOfMenuItem as getDisplayNameOfMenuItem,
@@ -296,9 +295,7 @@ export function useInventoryState() {
     return [null, dispatch];
   }
   const ingredientSlots = Object.values(tables.KitchenSlots)
-    .sort((a, b) => {
-      a._index - b._index;
-    })
+    .sort((a, b) => a._index - b._index)
     .map(slot => {
       const Ingredient =
         tables.Ingredients[slot.Ingredient && slot.Ingredient[0]];
@@ -455,7 +452,7 @@ function getMenuItemInventory(menuItem, companyConfig, kitchenInventory) {
 
 export function useInventoryMenuItem(menuItemId) {
   const config = useCompanyConfig();
-  const [inventoryState, dispatch] = useInventoryState();
+  const [inventoryState] = useInventoryState();
   return useMemo(() => {
     if (
       !config ||
@@ -475,7 +472,7 @@ export function useInventoryMenuItem(menuItemId) {
 export function useInventoryMenu() {
   const companyConfig = useCompanyConfig();
   const menu = companyConfigToMenu(companyConfig);
-  const [inventoryState, dispatch] = useInventoryState();
+  const [inventoryState] = useInventoryState();
   if (!inventoryState) {
     return menu;
   }

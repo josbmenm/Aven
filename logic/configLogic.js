@@ -522,16 +522,16 @@ export function getSelectedIngredients(menuItem, cartItem, companyConfig) {
       const category = Object.keys(customizationCategories)
         .map(id => customizationCategories[id])
         .find(c => c.Name === customCategoryName);
-      const dispensesInOrigRecipe = menuItem.Recipe.Ingredients.reduce(
-        (dispenseCount, recipeIngredient) => {
-          const ingredient = recipeIngredient.Ingredient;
-          if (category.Ingredients.indexOf(ingredient.id) !== -1) {
-            return dispenseCount + recipeIngredient.DispenseCount;
-          }
-          return dispenseCount;
-        },
-        0,
-      );
+      // const dispensesInOrigRecipe = menuItem.Recipe.Ingredients.reduce(
+      //   (dispenseCount, recipeIngredient) => {
+      //     const ingredient = recipeIngredient.Ingredient;
+      //     if (category.Ingredients.indexOf(ingredient.id) !== -1) {
+      //       return dispenseCount + recipeIngredient.DispenseCount;
+      //     }
+      //     return dispenseCount;
+      //   },
+      //   0,
+      // );
       const ingredientIdCounts = {};
       categoryIngredientIds.forEach(ingId => {
         if (ingredientIdCounts[ingId] == null) {

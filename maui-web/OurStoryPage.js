@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Image } from 'react-native';
+import { Image } from 'react-native';
 import View from '../views/View';
 import GenericPage from './GenericPage';
 import Container from '../dashboard/Container';
@@ -7,7 +7,7 @@ import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
 import { useTheme } from '../dashboard/Theme';
 import FeatureSection from './FeatureSection';
-import TheTeam from './TheTeam';
+// import TheTeam from './TheTeam';
 import PageFooter from './PageFooter';
 import {
   aspectRatio169,

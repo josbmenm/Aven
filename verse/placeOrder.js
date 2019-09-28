@@ -19,6 +19,12 @@ export default async function placeOrder(
     .idAndValue.load();
   const companyConfigState = await cloud.get('CompanyConfig').idAndValue.load();
   const companyConfig = companyConfigState.value;
+  const restaurantConfigState = await cloud
+    .get('RestaurantConfig')
+    .idAndValue.load();
+  const restaurantConfig = restaurantConfigState.value;
+  const isCateringMode =
+    restaurantConfig && restaurantConfig.mode === 'catering';
   const order = orderState.value;
 
   const blends = companyConfigToBlendMenu(companyConfig);
@@ -62,7 +68,9 @@ export default async function placeOrder(
     });
   }
   let isOrderValid = false;
-  if (stripeIntent && stripeIntent.amount === summary.total) {
+  if (isCateringMode) {
+    isOrderValid = true;
+  } else if (stripeIntent && stripeIntent.amount === summary.total) {
     isOrderValid = true;
   } else if (summary.total === 0) {
     isOrderValid = true;

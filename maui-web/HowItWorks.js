@@ -1,7 +1,6 @@
 import React from 'react';
 import { Image } from 'react-native';
 import View from '../views/View';
-import { useTheme } from '../dashboard/Theme';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
@@ -11,7 +10,6 @@ import FeatureSection from './FeatureSection';
 import { absoluteElement } from '../components/Styles';
 
 function FeatureImage({ source, floatingImageStyle }) {
-  const theme = useTheme();
   return (
     <Responsive
       style={{
@@ -64,7 +62,6 @@ function BodyLink({ children, ...props }) {
 }
 
 function HowItWorks() {
-  const theme = useTheme();
   return (
     <Responsive
       style={{

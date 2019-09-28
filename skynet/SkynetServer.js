@@ -1,5 +1,5 @@
 import App from './SkynetApp';
-import WebServer from '../aven-web/WebServer';
+import attachWebServer from '../aven-web/attachWebServer';
 import { IS_DEV } from '../aven-web/config';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
 import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
@@ -56,7 +56,7 @@ const gcsBucket = gcsStorage.bucket(getEnv('GCS_BUCKET'));
 
 const ONO_ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
-const startSkynetServer = async () => {
+export default async function startSkynetServer(httpServer) {
   log('WillStartServer', {
     serverType: 'skynet',
     nodeEnv: process.env.NODE_ENV,
@@ -414,8 +414,10 @@ Debug: ${JSON.stringify(action)}
   }
 
   const serverListenLocation = getEnv('PORT');
-  const webService = await WebServer({
+  const webService = await attachWebServer({
+    httpServer,
     context,
+    screenProps: { cloud },
     mainDomain: domain,
     App,
     source: {
@@ -436,12 +438,11 @@ Debug: ${JSON.stringify(action)}
   console.log('☁️️ Web Ready 🕸');
 
   return {
+    ...webService,
     close: async () => {
       await protectedSource.close();
       await cloud.close();
       await webService.close();
     },
   };
-};
-
-export default startSkynetServer;
+}

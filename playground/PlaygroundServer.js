@@ -1,5 +1,5 @@
 import App from './PlaygroundApp';
-import WebServer from '../aven-web/WebServer';
+import attachWebServer from '../aven-web/attachWebServer';
 import { IS_DEV } from '../aven-web/config';
 
 import { createClient } from '../cloud-core/Kite';
@@ -12,7 +12,7 @@ import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 
 const getEnv = c => process.env[c];
 
-const startSkynetServer = async () => {
+export default async function startPlaygroundServer(httpServer) {
   console.log('☁️ Starting Website 💨');
 
   const domain = 'onofood.co';
@@ -52,7 +52,8 @@ const startSkynetServer = async () => {
   };
 
   const serverListenLocation = getEnv('PORT');
-  const webService = await WebServer({
+  const webService = await attachWebServer({
+    httpServer,
     context,
     mainDomain: domain,
     App,
@@ -71,6 +72,4 @@ const startSkynetServer = async () => {
       await webService.close();
     },
   };
-};
-
-export default startSkynetServer;
+}

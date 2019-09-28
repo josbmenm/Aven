@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, Image } from 'react-native';
+import { Image } from 'react-native';
 import View from '../views/View';
 import Heading from '../dashboard/Heading';
 import BaseText from '../dashboard/BaseText';
@@ -9,7 +9,6 @@ import Button from '../dashboard/Button';
 import { useTheme } from '../dashboard/Theme';
 import { useCloud } from '../cloud-core/KiteReact';
 import { LocationInput } from './LocationInput';
-import { Responsive } from '../dashboard/Responsive';
 import FormRow from './FormRow';
 import BodyText from '../dashboard/BodyText';
 import Spinner from '../dashboard/Spinner';

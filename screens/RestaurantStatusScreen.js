@@ -25,6 +25,7 @@ import Subtitle from '../components/Subtitle';
 import MultiSelect from '../components/MultiSelect';
 import TemperatureView from '../components/TemperatureView';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
+import { useRestaurantConfig } from '../logic/RestaurantConfig';
 
 function PopoverTitle({ children }) {
   return (
@@ -58,7 +59,7 @@ function CloseRestaurantButtons({ onClose }) {
         }}
       />
       <Button
-        title="now. finish queued orders"
+        title="now. leave orders queued"
         onPress={() => {
           dispatch({
             type: 'CloseRestaurant',
@@ -421,9 +422,7 @@ function SetFridgeTemp() {
   }
   return (
     <Button
-      title={`Set point [${kitchenState.System_FreezerLowSetPoint_VALUE}° - ${
-        kitchenState.System_FreezerHighSetPoint_VALUE
-      }°]`}
+      title={`Set point [${kitchenState.System_FreezerLowSetPoint_VALUE}° - ${kitchenState.System_FreezerHighSetPoint_VALUE}°]`}
       onPress={onSetFridgeTemp}
     />
   );
@@ -436,7 +435,7 @@ function FridgeView() {
   const cloud = useCloud();
   const handleError = useAsyncError();
   return (
-    <Row title="Main Refridgeration">
+    <Row title="main refridgeration">
       <Tag
         title={fridgeEnabled ? 'Enabled' : 'Disabled'}
         color={fridgeEnabled ? Tag.positiveColor : Tag.negativeColor}
@@ -465,6 +464,38 @@ function FridgeView() {
   );
 }
 
+function CateringMode() {
+  const restaurantConfig = useRestaurantConfig();
+  const isCateringMode =
+    !!restaurantConfig && restaurantConfig.mode === 'catering';
+  const cloud = useCloud();
+  const handleError = useAsyncError();
+  return (
+    <Row title="catering mode">
+      <Tag
+        title={isCateringMode ? 'Free Blends' : 'Regular Mode'}
+        color={isCateringMode ? Tag.warningColor : Tag.positiveColor}
+      />
+      <MultiSelect
+        options={[
+          { name: 'Catering', value: true },
+          { name: 'Regular', value: false },
+        ]}
+        value={isCateringMode}
+        onValue={value => {
+          handleError(
+            cloud.get('RestaurantConfig').transact(config => ({
+              ...config,
+              mode: value ? 'catering' : 'regular',
+            })),
+          );
+        }}
+      />
+      <SetFridgeTemp />
+    </Row>
+  );
+}
+
 export default function RestaurantStatusScreen(props) {
   return (
     <SimplePage {...props} hideBackButton>
@@ -473,6 +504,7 @@ export default function RestaurantStatusScreen(props) {
         <VanView />
         <FridgeView />
         <TemperatureView />
+        <CateringMode />
 
         {/* <AirPressureView />
         <PowerView />

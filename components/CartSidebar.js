@@ -38,6 +38,7 @@ import BlockFormInput from './BlockFormInput';
 import BlockFormButton from './BlockFormButton';
 import BlockFormRow from './BlockFormRow';
 import { useCloud } from '../cloud-core/KiteReact';
+import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { Easing } from 'react-native-reanimated';
 import ListAnimation from './ListAnimation';
@@ -149,7 +150,7 @@ function StepperButton({ onPress, disabled, isDown }) {
   );
 }
 
-function CartRow({ itemId, item }) {
+function CartRow({ itemId, item, hideMoney }) {
   let { navigate } = useNavigation();
   let { setItemState, removeItem } = useOrderItem(itemId);
   if (!item || !item.menuItem) {
@@ -199,7 +200,12 @@ function CartRow({ itemId, item }) {
         }}
       >
         <View style={{ flex: 1 }}>
-          <Text style={cartRowCurrencyStyle}>
+          <Text
+            style={{
+              ...cartRowCurrencyStyle,
+              opacity: hideMoney ? 0 : 1,
+            }}
+          >
             {formatCurrency(item.itemPrice)}
           </Text>
           <View style={{}}>
@@ -458,9 +464,12 @@ function PromoCode({ promo }) {
 
 export default function Cart({ summary }) {
   const { navigate } = useNavigation();
+  const restaurantConfig = useRestaurantConfig();
   if (!summary) {
     return null;
   }
+  const shouldHideMoney =
+    restaurantConfig && restaurantConfig.mode === 'catering';
   return (
     <ScrollView
       style={{ marginTop: headerHeight, maxWidth: rightSidebarWidth }}
@@ -470,22 +479,29 @@ export default function Cart({ summary }) {
         <ListAnimation
           list={summary.items}
           renderItem={item => (
-            <CartRow key={item.id} item={item} itemId={item.id} />
+            <CartRow
+              key={item.id}
+              item={item}
+              itemId={item.id}
+              hideMoney={shouldHideMoney}
+            />
           )}
         />
-        <View style={{ marginTop: 9, marginBottom: 4 }}>
-          <PromoCode promo={summary.promo} />
-          <SummaryRow label="taxes" amount={summary.tax} />
-          <SummaryRow
-            label="total"
-            amount={summary.total}
-            fakeAmount={summary.totalBeforeDiscount}
-            emphasize
-          />
-        </View>
+        {!shouldHideMoney && (
+          <View style={{ marginTop: 9, marginBottom: 4 }}>
+            <PromoCode promo={summary.promo} />
+            <SummaryRow label="taxes" amount={summary.tax} />
+            <SummaryRow
+              label="total"
+              amount={summary.total}
+              fakeAmount={summary.totalBeforeDiscount}
+              emphasize
+            />
+          </View>
+        )}
       </View>
       <Button
-        title="checkout"
+        title={shouldHideMoney ? 'place order' : 'checkout'}
         style={{
           flex: 1,
           marginHorizontal: 10,

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Text } from 'react-native';
 import createFullscreenSwitchNavigator from '../navigation-web/createFullscreenSwitchNavigator';
 import Home from './HomePage';
 import Menu from './MenuPage';
@@ -8,13 +7,14 @@ import OurStory from './OurStoryPage';
 import Privacy from './PrivacyPage';
 import Terms from './TermsPage';
 import BookUs from './BookUsPage';
-import Schedule from './SchedulePage';
+// import Schedule from './SchedulePage';
 import RequestLocation from './RequestLocationPage';
 import Subscribe from './SubscribePage';
 import SubscribeConfirm from './SubscribeConfirmPage';
 import OnoTheme from '../logic/OnoTheme';
 import { ThemeProvider } from '../dashboard/Theme';
 import Receipt from './ReceiptPage';
+import { CloudContext } from '../cloud-core/KiteReact';
 
 const customHTMLHeaders = `
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -84,9 +84,10 @@ const AppNavigator = createFullscreenSwitchNavigator(
 );
 
 function App(props) {
+  const cloud = React.useContext(CloudContext);
   return (
     <ThemeProvider value={OnoTheme}>
-      <AppNavigator {...props} />
+      <AppNavigator {...props} screenProps={{ cloud }} />
     </ThemeProvider>
   );
 }

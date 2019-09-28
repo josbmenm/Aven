@@ -44,12 +44,7 @@ function PageTitle({ title }) {
   );
 }
 
-export default function OrderCompletePage({
-  backBehavior,
-  backRouteName,
-  ...props
-}) {
-  const { navigate } = useNavigation();
+function CountdownDoneButton({ duration, onLongPress, onPress }) {
   let [countdown, setCountdown] = useState(10);
   let countRef = useRef({
     count: 10,
@@ -62,7 +57,7 @@ export default function OrderCompletePage({
     function doCount() {
       let count = countRef.current.count;
       if (count === 0) {
-        navigate(backRouteName);
+        onPress();
         return;
       } else if (count > 0) {
         const nextCount = count - 1;
@@ -77,6 +72,35 @@ export default function OrderCompletePage({
       clearTimeout(countRef.current.timout);
     };
   }, []);
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        height: headerHeight,
+        width: rightSidebarWidth,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+      }}
+      pointerEvents="box-none"
+    >
+      <TextButton
+        title={`done (${countdown})`}
+        onLongPress={onLongPress}
+        onPress={onPress}
+      />
+    </View>
+  );
+}
+
+export default function OrderCompletePage({
+  backBehavior,
+  backRouteName,
+  ...props
+}) {
+  const { navigate } = useNavigation();
+
   return (
     <ShortBlockFormPage
       backBehavior={backBehavior}
@@ -102,36 +126,14 @@ export default function OrderCompletePage({
           source={require('./assets/Shaka.png')}
         />
       </View>
-      {/* <CountdownDoneButton
-          onLongPress={() => {
-            navigate('Home');
-          }}
-          onPress={() => {
-            navigate(backRouteName);
-          }}
-        /> */}
-      <View
-        style={{
-          position: 'absolute',
-          right: 0,
-          top: 0,
-          height: headerHeight,
-          width: rightSidebarWidth,
-          flexDirection: 'row',
-          justifyContent: 'flex-end',
+      <CountdownDoneButton
+        onLongPress={() => {
+          navigate('Home');
         }}
-        pointerEvents="box-none"
-      >
-        <TextButton
-          title={`done (${countdown})`}
-          onLongPress={() => {
-            navigate('Home');
-          }}
-          onPress={() => {
-            navigate(backRouteName);
-          }}
-        />
-      </View>
+        onPress={() => {
+          navigate(backRouteName);
+        }}
+      />
     </ShortBlockFormPage>
   );
 }

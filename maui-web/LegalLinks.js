@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import Link from '../navigation-web/Link';
-import { titleStyle, monsterra, monsterra80 } from '../components/Styles';
+import { titleStyle, monsterra80 } from '../components/Styles';
 
 function LinkBar({ children }) {
   return (

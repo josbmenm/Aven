@@ -107,10 +107,17 @@ function Ingredients({ selectedIngredients }) {
   );
 }
 
-function BlendPageContentPure({ menuItem, setItemState, item, order }) {
+function BlendPageContentPure({
+  menuItem,
+  setItemState,
+  item,
+  order,
+  restaurantConfig,
+}) {
   if (!menuItem) {
     return null;
   }
+  const hidePrice = !!restaurantConfig && restaurantConfig.mode === 'catering';
   let fills = menuItem.inStockFills;
   if (menuItem['Forced Available']) {
     fills = menuItem.stockItemFills;
@@ -158,7 +165,11 @@ function BlendPageContentPure({ menuItem, setItemState, item, order }) {
             <Tag tag={menuItem.DefaultBenefitName} />
           </View>
           <MainTitle
-            subtitle={formatCurrency(getSellPriceOfItem(item, menuItem))}
+            subtitle={
+              hidePrice
+                ? null
+                : formatCurrency(getSellPriceOfItem(item, menuItem))
+            }
           >
             {displayNameOfOrderItem(item, menuItem)}
           </MainTitle>
@@ -245,6 +256,7 @@ export default function BlendPage({
   orderItemId,
   order,
   foodMenu,
+  restaurantConfig,
   ...props
 }) {
   const { navigate } = navigation;
@@ -292,6 +304,7 @@ export default function BlendPage({
         foodMenu={foodMenu}
         order={order}
         setItemState={setItemState}
+        restaurantConfig={restaurantConfig}
       />
     </ActionPage>
   );

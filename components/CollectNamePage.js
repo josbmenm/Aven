@@ -13,6 +13,7 @@ export default function CollectNamePage({
   onChangeName,
   backBehavior,
   initialName,
+  isCateringMode,
   ...props
 }) {
   const [firstName, setFirstName] = useState(initialName.firstName || '');
@@ -64,7 +65,7 @@ export default function CollectNamePage({
         <BlockFormRow>
           <BlockFormButton
             size="large"
-            title="pay now"
+            title={isCateringMode ? 'confirm order' : 'pay now'}
             disabled={firstName === '' || lastName === ''}
             onPress={handleSubmit}
           />

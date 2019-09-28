@@ -75,7 +75,7 @@ export function LocationInputWithRef(
           aria-haspopup={true}
           accesible="true"
           accessibilityLabel="Location Input"
-          aria-control="location-input-list"
+          aria-controls="location-input-list"
         />
         {results && inputText !== '' ? (
           <React.Fragment>

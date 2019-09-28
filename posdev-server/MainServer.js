@@ -1,11 +1,11 @@
 import App from './App';
-import WebServer from '../aven-web/WebServer';
+import attachWebServer from '../aven-web/attachWebServer';
 
 import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
 
 const getEnv = c => process.env[c];
 
-const runServer = async () => {
+const runServer = async httpServer => {
   console.log('☁️ Starting Restaurant Server 💨 ');
 
   const dispatch = async action => {
@@ -22,7 +22,8 @@ const runServer = async () => {
   const serverListenLocation = getEnv('PORT');
 
   const context = new Map();
-  const webService = await WebServer({
+  const webService = await attachWebServer({
+    httpServer,
     App,
     context,
     source: {

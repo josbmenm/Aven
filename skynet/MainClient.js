@@ -1,11 +1,9 @@
-import React from 'react';
 import App from './SkynetApp';
 
 import startWebClient from '../aven-web/WebClient';
 import { CloudContext } from '../cloud-core/KiteReact';
 import { createClient } from '../cloud-core/Kite';
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
-import RestaurantReducer from '../logic/RestaurantReducer';
 import { HostContext } from '../components/AirtableImage';
 
 const hostConfig = {
@@ -27,5 +25,5 @@ context.set(CloudContext, cloud);
 context.set(HostContext, hostConfig);
 
 export default function startClient() {
-  startWebClient(App, context);
+  startWebClient(App, context, { cloud });
 }

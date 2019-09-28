@@ -5,13 +5,10 @@ import BodyText from '../dashboard/BodyText';
 import Container from '../dashboard/Container';
 import GenericPage from './GenericPage';
 import GenericImageHeader from './GenericImageHeader';
-import GenericHeroHeader from './GenericHeroHeader';
 import SubscriptionForm from './SubscriptionForm';
 import PageFooter from './PageFooter';
-import { useTheme } from '../dashboard/Theme';
 
 function SubscribePage() {
-  const theme = useTheme();
   return (
     <GenericPage>
       <View style={{ flex: 1, paddingBottom: 40 }}>

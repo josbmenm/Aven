@@ -13,8 +13,11 @@ import { useTheme } from '../dashboard/Theme';
 import { aspectRatio169 } from '../components/Styles';
 import { useMenuItemSlug, useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from '../components/AirtableImage';
-import { dietaryInfosOfMenuItem } from '../logic/configLogic';
-
+import {
+  dietaryInfosOfMenuItem,
+  getMenuItemSlug,
+  companyConfigToBlendMenu,
+} from '../logic/configLogic';
 import {
   displayNameOfMenuItem,
   getSelectedIngredients,
@@ -461,8 +464,32 @@ function BlendPage() {
   );
 }
 
-BlendPage.navigationOptions = {
-  title: 'Blend',
+BlendPage.navigationOptions = ({
+  navigationOptions,
+  navigation,
+  screenProps,
+}) => {
+  const cloud = screenProps.cloud;
+  const slug = navigation.getParam('slug');
+  const companyConfigDoc = cloud && cloud.get('CompanyConfig');
+  const companyConfigState =
+    companyConfigDoc &&
+    companyConfigDoc.idAndValue &&
+    companyConfigDoc.idAndValue.get();
+  const companyConfig = companyConfigState && companyConfigState.value;
+  const blends = companyConfigState && companyConfigToBlendMenu(companyConfig);
+  const blend = blends && blends.find(blend => getMenuItemSlug(blend) === slug);
+  const blendName = blend && blend['Display Name'];
+  const blendDescription = blend && blend['Display Description'];
+  return {
+    title: blendName
+      ? `${blendName} - Organic Smoothies from Ono Blends`
+      : 'Organic Smoothies from Ono Blends',
+    metaDescription: blendDescription,
+    // loadData: async blankCloud => {
+    //   await blankCloud.get('CompanyConfig').load();
+    // },
+  };
 };
 
 export default BlendPage;

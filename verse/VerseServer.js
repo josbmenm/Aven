@@ -1,5 +1,5 @@
 import App from './App';
-import WebServer from '../aven-web/WebServer';
+import attachWebServer from '../aven-web/attachWebServer';
 import { CloudContext } from '../cloud-core/KiteReact';
 import { createReducerStream } from '../cloud-core/Kite';
 import RestaurantReducer from '../logic/RestaurantReducer';
@@ -27,7 +27,7 @@ const getEnv = c => process.env[c];
 
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
-const startVerseServer = async () => {
+export default async function startVerseServer(httpServer) {
   log('WillStartServer', {
     serverType: 'verse',
     nodeEnv: process.env.NODE_ENV,
@@ -373,7 +373,9 @@ const startVerseServer = async () => {
   const context = new Map();
 
   context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
-  const webService = await WebServer({
+  console.log('== verse', !!httpServer);
+  const webService = await attachWebServer({
+    httpServer,
     App,
     context,
     screenProps: { cloud },
@@ -393,6 +395,7 @@ const startVerseServer = async () => {
   });
 
   return {
+    ...webService,
     close: async () => {
       log('VerseWillClose', {
         hasKitchen: !!kitchen,
@@ -404,6 +407,4 @@ const startVerseServer = async () => {
       kitchen && (await kitchen.close());
     },
   };
-};
-
-export default startVerseServer;
+}

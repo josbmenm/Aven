@@ -1,9 +1,4 @@
-import {
-  useCloud,
-  useCloudReducer,
-  useCloudValue,
-} from '../cloud-core/KiteReact';
-import React from 'react';
+import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
 import useTimeSeconds from '../utils/useTimeSeconds';
 
 export function useRestaurantState() {

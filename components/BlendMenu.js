@@ -10,8 +10,11 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 import { MenuCardCarousel } from '../components/MenuCard';
 import { MenuZone } from '../components/MenuZone';
 import PerformanceDebugging from '../navigation-transitioner/PerformanceDebugging';
+import { useRestaurantConfig } from '../logic/RestaurantConfig';
 
 export default function BlendMenu({ menu, large, title }) {
+  const restaurantConfig = useRestaurantConfig();
+  const hidePrice = !!restaurantConfig && restaurantConfig.mode === 'catering';
   const { navigate } = useNavigation();
   const { order } = useOrder();
 
@@ -29,6 +32,7 @@ export default function BlendMenu({ menu, large, title }) {
       <MenuCardCarousel
         style={{}}
         large={large}
+        hidePrice={hidePrice}
         items={inStockItems.map(item => ({
           key: item.id,
           title: displayNameOfMenuItem(item),

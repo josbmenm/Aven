@@ -7,7 +7,7 @@ import Container from '../dashboard/Container';
 import PageFooter from './PageFooter';
 import HomeSlider from './HomeSlider';
 import HowItWorks from './HowItWorks';
-import HomeSchedule from './HomeSchedule';
+// import HomeSchedule from './HomeSchedule';
 import { aspectRatio169 } from '../components/Styles';
 import GenericHeroHeader from './GenericHeroHeader';
 
@@ -37,7 +37,9 @@ function HomePage() {
 }
 
 HomePage.navigationOptions = {
-  title: 'The perfect grab-and-go meal for busy professionals',
+  title: 'Organic smoothies from Ono Blends',
+  metaDescription:
+    "With advanced robotics, thoughtful food sourcing, and nutritious ingredients, we're moving food forward with delicious smoothies that will help you get through your day.",
 };
 
 export default HomePage;

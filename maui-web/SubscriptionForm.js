@@ -4,7 +4,7 @@ import FormInput from '../components/BlockFormInput';
 import { Responsive } from '../dashboard/Responsive';
 import { monsterra80 } from '../components/Styles';
 
-function SubscriptionForm({}) {
+function SubscriptionForm() {
   const [email, setEmail] = React.useState('');
   return (
     <form
@@ -58,7 +58,6 @@ function SubscriptionForm({}) {
             onChange={() => {}}
             name="b_87f353e4bf17adebb83d8db1a_cdd5752309"
             tabIndex="-1"
-            value=""
           />
         </div>
       </View>

@@ -340,11 +340,8 @@ function SelectModeApp() {
   if (mode === 'feedback') {
     content = <FeedbackApp />;
   }
-  if (mode === 'kiosk' || mode === 'testKiosk') {
+  if (true || mode === 'kiosk' || mode === 'testKiosk') {
     content = <KioskApp mode={mode} />;
-  }
-  if (mode === 'cardreader') {
-    content = <SettingsApp />;
   }
   return (
     <AppEnvContext.Provider value={{ mode, deviceId }}>
