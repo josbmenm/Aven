@@ -56,8 +56,8 @@ export function streamNever(crumb) {
   return stream;
 }
 
-export function streamOfValue(staticValue) {
-  const [stream] = streamOf(staticValue);
+export function streamOfValue(staticValue, crumb) {
+  const [stream] = streamOf(staticValue, crumb);
   return stream;
 }
 

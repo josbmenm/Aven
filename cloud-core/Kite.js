@@ -1,6 +1,5 @@
 // Kite - The lightweight Aven Cloud Client
 
-import xs from 'xstream';
 import getIdOfValue from '../cloud-utils/getIdOfValue';
 import Err from '../utils/Err';
 import cuid from 'cuid';
@@ -10,6 +9,7 @@ import { createStreamValue } from './StreamValue';
 import {
   createProducerStream,
   streamOf,
+  streamOfValue,
   streamNever,
   combineStreams,
 } from './createMemoryStream';
@@ -95,6 +95,8 @@ export function createBlock({
   source,
   id,
   value,
+  onReport,
+  onInitialLoad,
 }) {
   let observedBlockId = null;
 
@@ -132,7 +134,7 @@ export function createBlock({
 
   let notifyStateChange = null;
 
-  function setState(stateUpdates) {
+  function setBlockState(stateUpdates) {
     blockState = {
       ...blockState,
       ...stateUpdates,
@@ -148,30 +150,61 @@ export function createBlock({
         notify.next(blockState);
       };
       notifyStateChange();
-      if (blockState.value === undefined) {
-        source
-          .dispatch({
-            type: 'GetBlock',
-            domain,
-            auth,
-            name: onGetName(),
-            id: blockId,
-          })
-          .then(resp => {
-            if (!resp) {
-              throw new Error('Could not load block');
+
+      const docName = onGetName();
+
+      if (blockState.value !== undefined) {
+        return; // no need to load, the value is already here
+      }
+
+      let promiseChain = Promise.resolve();
+
+      if (onInitialLoad) {
+        promiseChain = promiseChain
+          .then(() => onInitialLoad('Block', domain, docName, blockId))
+          .then(initState => {
+            if (initState) {
+              setBlockState({
+                value: initState.value,
+              });
             }
-            blockState = {
-              ...blockState,
-              value: resp.value,
-              lastFetchTime: getNow(),
-            };
-            notify.next(blockState);
           })
           .catch(err => {
-            notify.error(err);
+            console.error(
+              'Failure of onInitialLoad of block state',
+              { domain, docName, blockId },
+              err,
+            );
           });
       }
+
+      promiseChain
+        .then(() => {
+          if (blockState.value === undefined) {
+            return source.dispatch({
+              type: 'GetBlock',
+              domain,
+              auth,
+              name: docName,
+              id: blockId,
+            });
+          }
+        })
+        .then(resp => {
+          if (blockState.value !== undefined) {
+            return;
+          }
+          if (!resp) {
+            throw new Error('Could not load block');
+          }
+          setBlockState({
+            value: resp.value,
+            lastFetchTime: getNow(),
+          });
+        })
+        .catch(err => {
+          notify.error(err);
+        });
     },
     stop: () => {
       if (onStop) {
@@ -220,13 +253,13 @@ export function createBlock({
 
   function shamefullySetPutTime() {
     // internal use only please
-    setState({
+    setBlockState({
       lastPutTime: getNow(),
     });
   }
 
   function shamefullySetFetchedValue(value) {
-    setState({
+    setBlockState({
       lastFetchTime: getNow(),
       value,
     });
@@ -239,6 +272,7 @@ export function createBlock({
     if (blockState.value === undefined) {
       throw new Err('Cannot put empty block');
     }
+    onReport && onReport('PutBlock', { id: blockId, value: blockState.value });
     const name = onGetName;
     const resp = await source.dispatch({
       type: 'PutBlock',
@@ -284,6 +318,8 @@ export function createDoc({
   isUnposted,
   onDidRename,
   onDidDestroy,
+  onReport,
+  onInitialLoad,
 }) {
   function getName() {
     return onGetName();
@@ -303,7 +339,7 @@ export function createDoc({
     lastFetchTime: null,
     lastPutTime: null,
     id: undefined,
-    context: undefined,
+    context: { gen: 0 },
   };
 
   async function getReference() {
@@ -318,7 +354,7 @@ export function createDoc({
 
   let notifyStateChange = null;
 
-  function setState(updates) {
+  function setDocState(updates) {
     docState = {
       ...docState,
       ...updates,
@@ -326,11 +362,11 @@ export function createDoc({
     notifyStateChange && notifyStateChange();
   }
 
-  let _subsToName = onGetName();
+  let docName = onGetName();
   let doStop = null;
   let performNotification = null;
   const docProducer = {
-    crumb: 'DocState-' + _subsToName,
+    crumb: 'DocState-' + docName,
     start: listen => {
       // todo.. add listener to nameChangeNotifiers, then unsubscribe and re-subscribe using new name
       performNotification = () => {
@@ -340,10 +376,36 @@ export function createDoc({
       notifyStateChange = () => {
         performNotification && performNotification();
       };
+
+      if (onInitialLoad && docState.id === undefined) {
+        onInitialLoad('Doc', domain, docName)
+          .then(initState => {
+            if (initState && initState.id) {
+              if (initState.value) {
+                commitBlock(initState.value);
+              }
+              setDocState({
+                id: initState.id,
+              });
+            } else {
+              setDocState({
+                id: null,
+              });
+            }
+          })
+          .catch(err => {
+            console.error(
+              'Failure of onInitialLoad of doc state',
+              { domain, docName },
+              err,
+            );
+          });
+      }
+
       if (docState.isLocalOnly) {
         return;
       }
-      const upStream = source.getDocStream(domain, _subsToName, auth);
+      const upStream = source.getDocStream(domain, docName, auth);
       const internalListener = {
         next: v => {
           if (!v) {
@@ -353,7 +415,7 @@ export function createDoc({
             const block = getBlock(v.id);
             block.shamefullySetFetchedValue(v.value);
           }
-          setState({
+          setDocState({
             lastFetchTime: getNow(),
             context: v.context,
             id: v.id || null,
@@ -389,6 +451,8 @@ export function createDoc({
       onGetName,
       nameChangeNotifiers,
       value,
+      onReport,
+      onInitialLoad,
     });
     if (docBlocks[block.id]) {
       return docBlocks[block.id];
@@ -407,6 +471,8 @@ export function createDoc({
       onGetName,
       nameChangeNotifiers,
       id,
+      onReport,
+      onInitialLoad,
     });
 
     return docBlocks[id];
@@ -429,7 +495,8 @@ export function createDoc({
   async function putValue(value) {
     const committed = await commitDeepBlock(value);
     const block = getBlockOfValue(committed.value);
-    await putBlock(block);
+    onReport && onReport('PutDocValue', { value, id: block.id });
+    await quietlyPutBlock(block);
   }
 
   function isBlockPublished(block) {
@@ -442,16 +509,16 @@ export function createDoc({
     return blockState.value !== undefined;
   }
 
-  async function putBlock(block) {
+  async function quietlyPutBlock(block) {
     if (docState.isLocalOnly) {
-      setState({ id: block.id });
+      setDocState({ id: block.id });
       return;
     }
     const lastId = docState.id;
     const isPosted = docState.isPosted;
 
     if (!isPosted) {
-      setState({
+      setDocState({
         puttingFromId: lastId,
         id: block.id,
       });
@@ -479,13 +546,13 @@ export function createDoc({
             ? postResp.name
             : postResp.name.slice(parentName.length + 1);
         await onDidRename(resultingChildName);
-        setState({
+        setDocState({
           lastPutTime: getNow(),
           isPosted: true,
         });
         block.shamefullySetPutTime();
       } catch (e) {
-        setState({
+        setDocState({
           id: lastId,
           puttingFromId: null,
         });
@@ -500,7 +567,7 @@ export function createDoc({
       !isBlockValueLoaded(block)
     ) {
       const putId = block === null ? null : block.id;
-      setState({
+      setDocState({
         puttingFromId: lastId,
         id: putId,
       });
@@ -512,18 +579,18 @@ export function createDoc({
           name: getName(),
           id: putId,
         });
-        setState({
+        setDocState({
           lastPutTime: getNow(),
         });
       } catch (e) {
-        setState({
+        setDocState({
           id: lastId,
           puttingFromId: null,
         });
         throw e;
       }
     } else {
-      setState({
+      setDocState({
         puttingFromId: lastId,
         id: block.id,
       });
@@ -536,18 +603,26 @@ export function createDoc({
           id: block.id,
           value: block.value.get(),
         });
-        setState({
+        setDocState({
           lastPutTime: getNow(),
         });
         block.shamefullySetPutTime();
       } catch (e) {
-        setState({
+        setDocState({
           id: lastId,
           puttingFromId: null,
         });
         throw e;
       }
     }
+  }
+
+  async function putBlock(block) {
+    onReport &&
+      onReport('PutDoc', {
+        id: block.id,
+      });
+    await quietlyPutBlock(block);
   }
 
   async function _remotePutTransactionValue(value) {
@@ -560,14 +635,25 @@ export function createDoc({
       name: getName(),
       value,
     });
-    setState({
+    setDocState({
       id: result.id,
       lastFetchTime: getNow(),
       lastPut: getNow(),
     });
-
+    onReport &&
+      onReport('PutDoc', {
+        id: result.id,
+      });
     return result;
   }
+
+  const emptyIdValueStream = streamOfValue(
+    {
+      id: null,
+      value: undefined,
+    },
+    'StaticEmptyIdValue',
+  );
 
   async function putTransactionValue(value) {
     if (docState.id === undefined && !docState.isLocalOnly) {
@@ -581,13 +667,20 @@ export function createDoc({
       value,
     };
     const expectedBlock = getBlockOfValue(expectedTransactionValue);
+
+    onReport &&
+      onReport('PutDocValue', {
+        id: expectedBlock.id,
+        value: expectedTransactionValue,
+      });
+
     if (docState.isLocalOnly) {
-      setState({
+      setDocState({
         id: expectedBlock.id,
       });
       return { id: expectedBlock.id };
     }
-    setState({
+    setDocState({
       id: expectedBlock.id,
       puttingFromId: prevId,
     });
@@ -607,11 +700,15 @@ export function createDoc({
       id: result.id,
     };
     if (result.id !== expectedBlock.id) {
+      onReport &&
+        onReport('PutDoc', {
+          id: result.id,
+        });
       console.warn(
         `Expected to put block id "${expectedBlock.id}", but actually put id "${result.id}"`,
       );
     }
-    setState(stateUpdates);
+    setDocState(stateUpdates);
     return result;
   }
 
@@ -623,7 +720,7 @@ export function createDoc({
           return streamNever('UndefinedId');
         }
         if (state.id === null) {
-          return xs.of({ id: null, value: undefined });
+          return emptyIdValueStream;
         }
         const block = getBlock(state.id);
         return block.value.stream.map(val => {
@@ -654,10 +751,11 @@ export function createDoc({
     source,
     onGetName,
     nameChangeNotifiers,
+    onInitialLoad,
   });
 
   async function destroy() {
-    setState({ id: null, isDestroyed: true });
+    setDocState({ id: null, isDestroyed: true });
     onDidDestroy();
     children.shamefullyDestroyAll();
     await source.dispatch({
@@ -676,10 +774,9 @@ export function createDoc({
     return docState.isDestroyed;
   }
 
-  function setLocalOnly() {
-    setState({
-      isLocalOnly: true,
-      id: docState.id || null,
+  function setLocalOnly(isLocalOnly = true) {
+    setDocState({
+      isLocalOnly,
     });
   }
 
@@ -736,6 +833,8 @@ export function createDocSet({
   source,
   onGetName,
   nameChangeNotifiers,
+  onReport,
+  onInitialLoad,
 }) {
   const childDocs = new Map();
 
@@ -754,6 +853,12 @@ export function createDocSet({
     }
 
     function handleRename(newLocalName) {
+      onReport &&
+        onReport('DocRename', {
+          name: prevName,
+          newName: currentDocFullName,
+        });
+      const prevName = currentDocName;
       const childDoc = childDocs.get(currentDocName);
       childDocs.delete(currentDocName);
       currentDocName = newLocalName;
@@ -777,6 +882,16 @@ export function createDocSet({
         childNameChangeNotifiers.clear(); // this probably won't be needed because the whole thing should be GC'd
         childDocs.delete(currentDocName);
       },
+      onReport: (reportType, report) => {
+        onReport &&
+          onReport(reportType, {
+            ...report,
+            name: report.name
+              ? `${currentDocName}/${report.name}`
+              : currentDocName,
+          });
+      },
+      onInitialLoad,
     });
     childDocs.set(name, newDoc);
     childDocMovers.set(newDoc, handleRename);
@@ -1115,7 +1230,10 @@ export function createReducerStream(
       .map(docState => {
         return getDocStateStream(docState.id);
       })
-      .flatten();
+      .flatten()
+      .dropRepeats((a, b) => {
+        return a.id === b.id;
+      }, 'DropRepeatedIdValues');
   }
   return combineStreams({
     sourceDoc: doc.stream,
@@ -1135,16 +1253,29 @@ export function createReducerStream(
       }
       return getDocStateStream(sourceDoc.id);
     })
-    .flatten();
+    .flatten()
+    .dropRepeats((a, b) => {
+      return a.id === b.id;
+    }, 'DropRepeatedIdValues');
 }
 
-export function createSessionClient({ domain, source, auth }) {
+export function createSessionClient({
+  domain,
+  source,
+  auth,
+  onReport,
+  onInitialLoad,
+}) {
   const docs = createDocSet({
     domain,
     source,
     auth,
     onGetName: () => null,
     nameChangeNotifiers: null,
+    onReport: (reportType, report) => {
+      onReport && onReport(reportType, { ...report, domain });
+    },
+    onInitialLoad,
   });
 
   function setReducer(
@@ -1165,6 +1296,7 @@ export function createSessionClient({ domain, source, auth }) {
         const lastSnapshot = await snapshotsDoc.value.load();
         if (
           lastSnapshot === undefined ||
+          lastSnapshot.context == undefined ||
           lastSnapshot.context.gen <= context.gen - snapshotInterval
         ) {
           await snapshotsDoc.putValue({ context, id, value });
@@ -1183,12 +1315,72 @@ export function createSessionClient({ domain, source, auth }) {
   };
 }
 
-export function createClient({ domain, source }) {
+export function createLocalSessionClient({
+  onReport,
+  localSource,
+  ...clientOpts
+}) {
+  function handleAsyncStorageFailure(err, ctx) {
+    console.error('Failed to save locally.', err, ctx);
+  }
+
+  function clientReport(reportName, report) {
+    const { id, name, domain, value } = report;
+    if (reportName === 'PutDocValue') {
+      localSource
+        .dispatch({ type: 'PutDocValue', domain, name, id, value })
+        .catch(err => handleAsyncStorageFailure(err, { reportName, report }));
+    } else if (reportName === 'PutDoc') {
+      localSource
+        .dispatch({ type: 'PutDoc', domain, name, id })
+        .catch(err => handleAsyncStorageFailure(err, { reportName, report }));
+    } else if (reportName === 'PutBlock') {
+      localSource
+        .dispatch({ type: 'PutBlock', domain, name, id, value })
+        .catch(err => handleAsyncStorageFailure(err, { reportName, report }));
+    }
+    onReport && onReport(reportName, report);
+  }
+
+  const sessionClient = createSessionClient({
+    ...clientOpts,
+    onReport: clientReport,
+    onInitialLoad: async (blockOrDoc, domain, name, blockId) => {
+      if (blockOrDoc === 'Doc') {
+        const result = await localSource.dispatch({
+          type: 'GetDocValue',
+          domain,
+          name,
+        });
+        return result;
+      }
+      if (blockOrDoc === 'Block') {
+        const result = await localSource.dispatch({
+          type: 'GetBlock',
+          domain,
+          name,
+          id: blockId,
+        });
+        return result;
+      }
+      return null;
+    },
+  });
+
+  return sessionClient;
+}
+
+export function createClient({ domain, source, onReport }) {
   let clientState = {};
 
   let performStateNotification = null;
 
-  let sessionClient = createSessionClient({ domain, source, auth: null });
+  let sessionClient = createSessionClient({
+    domain,
+    source,
+    auth: null,
+    onReport,
+  });
 
   function setClientState(updates) {
     let prevClientState = clientState;
@@ -1201,6 +1393,7 @@ export function createClient({ domain, source }) {
         domain,
         source,
         auth: clientState.session,
+        onReport,
       });
     }
     performStateNotification && performStateNotification();
