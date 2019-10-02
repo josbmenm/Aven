@@ -2,6 +2,7 @@ import { createClient } from '../cloud-core/Kite';
 import createFSClient from '../cloud-server/createFSClient';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import fs from 'fs-extra';
+import cuid from 'cuid';
 
 const domain = 'onofood.co';
 const source = createNodeNetworkSource({
@@ -9,16 +10,15 @@ const source = createNodeNetworkSource({
   useSSL: true,
   quiet: true,
 });
-const client = createClient({
-  source,
-  domain,
-});
+// const client = createClient({
+//   source,
+//   domain,
+// });
 const auth = {
   accountId: 'root',
   verificationInfo: {},
   verificationResponse: { password: process.env.ONO_ROOT_PASSWORD },
 };
-const fsClient = createFSClient({ client });
 
 const BACKUP_DIR = process.env.ONO_BACKUP_DIR;
 
@@ -45,9 +45,9 @@ function extractBlockRefs(value) {
   }, []);
 }
 
-const jobs = [];
-function queueJob(type, params) {
-  jobs.push({ type, params });
+const tasks = [];
+function queueTask(type, params) {
+  tasks.push({ type, params });
 }
 
 async function listAllDocs(parentName) {
@@ -87,7 +87,7 @@ async function handleBackupDocNode({ name, jobId }) {
 
   children.forEach(childName => {
     const childFullName = name ? `${name}/${childName}` : childName;
-    queueJob('BackupDocNode', { name: childFullName, jobId });
+    queueTask('BackupDocNode', { name: childFullName, jobId });
   });
   const jobResultNode = jobResults[jobId] || (jobResults[jobId] = {});
   let outputNode = name ? dig(jobResultNode, name) : jobResultNode;
@@ -100,7 +100,7 @@ async function handleBackupDocNode({ name, jobId }) {
       name,
     });
     if (res && res.id) {
-      queueJob('BackupBlockNode', { name, id: res.id });
+      queueTask('BackupBlockNode', { name, id: res.id });
       outputNode.id = res.id;
     }
   }
@@ -109,9 +109,21 @@ async function handleBackupDocNode({ name, jobId }) {
 fs.mkdirpSync(`${BACKUP_DIR}/blocks`);
 fs.mkdirpSync(`${BACKUP_DIR}/docs`);
 
+const CHECK_DEEP = true;
+
 async function handleBackupBlockNode({ name, id }) {
   const blockPath = `${BACKUP_DIR}/blocks/${id}.json`;
   if (await fs.exists(blockPath)) {
+    if (CHECK_DEEP) {
+      const data = await fs.readFile(blockPath);
+      const blockValue = JSON.parse(data);
+      const children = extractBlockRefs(blockValue);
+      if (children) {
+        children.forEach(childId => {
+          queueTask('BackupBlockNode', { name, id: childId });
+        });
+      }
+    }
     return;
   }
   const res = await source.dispatch({
@@ -124,50 +136,56 @@ async function handleBackupBlockNode({ name, id }) {
   const children = extractBlockRefs(res.value);
   if (children) {
     children.forEach(childId => {
-      queueJob('BackupBlockNode', { name, id: childId });
+      queueTask('BackupBlockNode', { name, id: childId });
     });
   }
   await fs.writeFile(blockPath, JSON.stringify(res.value));
 }
 
-async function handleJob(job) {
+async function handleTask(task) {
   console.log(
-    `Handling ${job.type}.. ${Object.entries(job.params)
+    `Handling ${task.type}.. ${Object.entries(task.params)
       .map(([k, v]) => `${k}:${v}`)
       .join(',')}`,
   );
-  switch (job.type) {
-    case 'BackupDocNode': {
-      return await handleBackupDocNode(job.params);
+  try {
+    switch (task.type) {
+      case 'BackupDocNode': {
+        return await handleBackupDocNode(task.params);
+      }
+      case 'BackupBlockNode': {
+        return await handleBackupBlockNode(task.params);
+      }
     }
-    case 'BackupBlockNode': {
-      return await handleBackupBlockNode(job.params);
-    }
+  } catch (e) {
+    console.error('Task failed!', task, e);
+    console.log('Will retry..');
+    queueTask(task.type, task.params);
   }
 }
 
-async function handleJobRollup(jobId) {
+async function handleRollup(jobId) {
   const docsFile = `${BACKUP_DIR}/docs/${domain}_${jobId}.json`;
   await fs.writeFile(docsFile, JSON.stringify(jobResults[jobId]));
 }
 
-const doneJobs = [];
+const doneTasks = [];
 
 async function runBackup() {
-  const jobId = new Date().toISOString();
-  queueJob('BackupDocNode', { name: null, jobId });
-  while (jobs.length > 0) {
-    const job = jobs.shift();
-    await handleJob(job);
-    doneJobs.push(job);
+  const jobId = cuid();
+  queueTask('BackupDocNode', { name: null, jobId });
+  while (tasks.length > 0) {
+    const task = tasks.shift();
+    await handleTask(task);
+    doneTasks.push(task);
   }
-  await handleJobRollup(jobId);
+  await handleRollup(jobId);
 }
 
 runBackup()
   .then(() => {
     console.log('Backup run done.');
-    console.log(`(in ${doneJobs.length} jobs)`);
+    console.log(`(in ${doneTasks.length} tasks)`);
   })
   .catch(e => {
     console.error(e);

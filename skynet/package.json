@@ -35,7 +35,6 @@
       "xstream",
       "mjml",
       "mjml-react",
-      "@react-navigation/core",
       "@google-cloud/storage",
       "airtable",
       "wget-improved",

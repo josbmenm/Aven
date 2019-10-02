@@ -1,0 +1,12 @@
+{
+  "aven": {
+    "env": "env-node",
+    "envOptions": {
+      "startFile": "Answer"
+    },
+    "srcDependencies": [
+      "cloud-core",
+      "cloud-server"
+    ]
+  }
+}

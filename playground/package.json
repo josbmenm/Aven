@@ -36,7 +36,6 @@
     "moduleDependencies": [
       "mjml",
       "mjml-react",
-      "@react-navigation/core",
       "airtable",
       "wget-improved",
       "square-connect",

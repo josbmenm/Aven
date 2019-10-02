@@ -78,7 +78,7 @@ const RESTAURANT_DEV = {
   // authority: '10.10.1.200:8830',
 
   // prod server from ono wifi
-  // authority: '192.168.1.76:8830',
+  // authority: '192.168.1.106:8830',
 
   // ono wifi (eric mbp addresses)
   // authority: '192.168.1.81:8830',

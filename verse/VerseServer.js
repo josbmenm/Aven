@@ -9,9 +9,10 @@ import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
 import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
 import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
-import { createSessionClient } from '../cloud-core/Kite';
+import { createLocalSessionClient } from '../cloud-core/Kite';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
+import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
@@ -42,7 +43,7 @@ export default async function startVerseServer(httpServer) {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  // USE_DEV_SERVER = false;
+  USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -68,13 +69,14 @@ export default async function startVerseServer(httpServer) {
       verificationResponse: { password: ROOT_PASSWORD }, // careful! here we assume that skynet's root pw is the same as the one here for verse!
     },
   );
-  // const storageSource = await startPostgresStorageSource({
-  //   domains: ['onofood.co'],
-  //   config: {
-  //     client: 'pg',
-  //     connection: pgConfig,
-  //   },
-  // });
+  const storageSource = await startPostgresStorageSource({
+    domains: ['onofood.co'],
+    config: {
+      client: 'pg',
+      connection: pgConfig,
+    },
+  });
+  console.log('has storage source!');
 
   // const combinedStorageSource = combineSources({
   //   fastSource: storageSource,
@@ -132,26 +134,35 @@ export default async function startVerseServer(httpServer) {
     verificationResponse: { password: ROOT_PASSWORD },
   };
 
-  const cloud = createSessionClient({
+  const cloud = createLocalSessionClient({
     auth: rootAuth,
     source: authenticatedRemoteSource,
+    localSource: storageSource,
     domain: 'onofood.co',
   });
 
   cloud.get('KitchenState').setLocalOnly();
   cloud.get('RestaurantActions').setLocalOnly();
+  cloud.get('RestaurantStateSnapshot').setLocalOnly();
   // cloud.get('RestaurantState').setLocalOnly();
 
   const restaurantActions = cloud.get('RestaurantActions');
 
-  const restaurantState = cloud.docs.setOverrideStream(
-    'RestaurantState',
-    createReducerStream(
-      restaurantActions,
-      RestaurantReducer.reducerFn,
-      RestaurantReducer.initialState,
-    ),
-  );
+  cloud.setReducer('RestaurantState', {
+    actionsDoc: restaurantActions,
+    reducer: RestaurantReducer,
+    snapshotInterval: 10,
+    snapshotsDoc: cloud.get('RestaurantStateSnapshot'),
+  });
+
+  // const restaurantState = cloud.docs.setOverrideStream(
+  //   'RestaurantState',
+  //   createReducerStream(
+  //     restaurantActions,
+  //     RestaurantReducer.reducerFn,
+  //     RestaurantReducer.initialState,
+  //   ),
+  // );
 
   const protectedSource = createProtectedSource({
     source: cloud,
@@ -373,7 +384,7 @@ export default async function startVerseServer(httpServer) {
   const context = new Map();
 
   context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
-  console.log('== verse', !!httpServer);
+
   const webService = await attachWebServer({
     httpServer,
     App,
@@ -402,6 +413,7 @@ export default async function startVerseServer(httpServer) {
         nodeEnv: process.env.NODE_ENV,
       });
       await protectedSource.close();
+      await storageSource.close();
       await cloud.close();
       await webService.close();
       kitchen && (await kitchen.close());
