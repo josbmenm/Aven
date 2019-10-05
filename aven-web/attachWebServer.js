@@ -204,80 +204,71 @@ export default async function attachWebServer({
 
     app.get('/*', (req, res) => {
       const { path, query, headers } = req;
-
       const domain = headers.host;
       const domainApp = appsByDomain[domain] || defaultApp;
-
-      let navigation = {};
-      let title = '';
-      let options = {};
       const router = domainApp.AppComponent.router;
-      if (router) {
-        const response = handleServerRequest(router, path, query, screenProps);
-        navigation = response.navigation;
-        title = response.title;
-        options = response.options;
-      }
-
-      function goResponse() {
-        const { element, getStyleElement } = AppRegistry.getApplication(
-          domainApp.appId,
-          {
-            initialProps: {
-              navigation,
-              env: 'server',
+      handleServerRequest(router, path, query, screenProps)
+        .then(({ navigation, title, options, dataPayload }) => {
+          const { element, getStyleElement } = AppRegistry.getApplication(
+            domainApp.appId,
+            {
+              initialProps: {
+                navigation,
+                env: 'server',
+              },
             },
-          },
-        );
+          );
 
-        const html = ReactDOMServer.renderToString(element);
-        const css = ReactDOMServer.renderToStaticMarkup(getStyleElement());
+          const html = ReactDOMServer.renderToString(element);
+          const css = ReactDOMServer.renderToStaticMarkup(getStyleElement());
 
-        res.send(
-          `<!doctype html>
-      <html lang="">
-      <head>
-          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-          <meta charSet='utf-8' />
-          <title>${title}</title>
-          <style id="root-stylesheet">
-          html, body, #root {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-          }
-          input, textarea {
-            -webkit-appearance: none;
-            -webkit-border-radius: 0;
-          }
-          ${options.customCSS ? options.customCSS : ''}
-          </style>
-          ${options.customHTMLHeaders ? options.customHTMLHeaders : ''}
-          ${isProd ? '' : devErrorSupresser}
-          ${css}
-          ${
-            isProd
-              ? `<script src="${assets.client.js}" defer></script>`
-              : `<script src="${assets.client.js}" defer crossorigin></script>`
-          }
-      </head>
-      <body>
-          <div id="root">${html}</div>
-          ${options.customHTML || ''}
-      </body>
-  </html>`,
-        );
-      }
-      if (options.loadData)
-        options
-          .loadData()
-          .then(goResponse)
-          .catch(err => {
-            error('DataLoadFailure', { code: err.message });
-            goResponse();
-          });
-      else goResponse();
+          res.send(
+            `<!doctype html>
+        <html lang="">
+        <head>
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta charSet='utf-8' />
+            <title>${title}</title>
+            <style id="root-stylesheet">
+            html, body, #root {
+              width: 100%;
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+            }
+            input, textarea {
+              -webkit-appearance: none;
+              -webkit-border-radius: 0;
+            }
+            ${options.customCSS ? options.customCSS : ''}
+            </style>
+            ${options.customHTMLHeaders ? options.customHTMLHeaders : ''}
+            ${isProd ? '' : devErrorSupresser}
+            ${css}
+            
+        </head>
+        <body>
+            <div id="root">${html}</div>
+            ${options.customHTML || ''}
+            ${
+              isProd
+                ? `<script src="${assets.client.js}" defer></script>`
+                : `<script src="${assets.client.js}" defer crossorigin></script>`
+            }
+            ${
+              dataPayload
+                ? `<script>window.remotePayload = ${JSON.stringify(
+                    dataPayload,
+                  )};</script>`
+                : ''
+            }
+        </body>
+    </html>`,
+          );
+        })
+        .catch(err => {
+          res.status(500).send(err.message);
+        });
     });
   }
   return await attachSourceServer({

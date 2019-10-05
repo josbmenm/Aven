@@ -49,13 +49,12 @@ function logNavigation(action, result, prevState) {
   }
 }
 
-export default function createBrowserApp(App) {
+export default function createBrowserApp(App, screenProps) {
   const initAction =
     App.router.getActionForPathAndParams(
       currentPathAndParams.path,
       currentPathAndParams.params,
     ) || NavigationActions.init();
-
   const setHistoryListener = dispatch => {
     history.listen(location => {
       const pathAndParams = getPathAndParamsFromLocation(location);
@@ -98,7 +97,7 @@ export default function createBrowserApp(App) {
       const { state } = this._navigation;
       const childKey = state.routes[state.index].key;
       const activeNav = this._navigation.getChildNavigation(childKey);
-      const opts = App.router.getScreenOptions(activeNav);
+      const opts = App.router.getScreenOptions(activeNav, screenProps);
       this._title = opts.title || opts.headerTitle;
       document.title = this._title;
     }

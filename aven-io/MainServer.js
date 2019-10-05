@@ -1,11 +1,11 @@
 import App from './App';
-import WebServer from '../aven-web/WebServer';
+import attachWebServer from '../aven-web/WebServer';
 import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
 import startFSStorageSource from '../cloud-fs/startFSStorageSource';
 import createCloudClient from '../cloud-core/createCloudClient';
 import CloudContext from '../cloud-core/CloudContext';
 
-const runServer = async () => {
+export default async function startAvenServer(httpServer) {
   console.log('☁️ Starting Cloud 💨');
 
   // const source = await startFSStorageSource({
@@ -26,7 +26,8 @@ const runServer = async () => {
   const serverListenLocation = getEnv('PORT');
   const context = new Map();
   context.set(CloudContext, cloud);
-  const webService = await WebServer({
+  const webService = await attachWebServer({
+    httpServer,
     App,
     context,
     source,
@@ -41,6 +42,4 @@ const runServer = async () => {
       await source.close();
     },
   };
-};
-
-export default runServer;
+}
