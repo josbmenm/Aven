@@ -19,69 +19,67 @@ import { CloudContext } from '../cloud-core/KiteReact';
 const customHTMLHeaders = `
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 `;
+export const MauiWebRoutes = {
+  Home: {
+    path: '',
+    screen: Home,
+  },
+  Menu: {
+    path: 'menu',
+    screen: Menu,
+  },
+  Blend: {
+    path: 'menu/:slug',
+    screen: BlendPage,
+  },
+  OurStory: {
+    path: 'our-story',
+    screen: OurStory,
+  },
+  Privacy: {
+    path: 'legal/privacy',
+    screen: Privacy,
+  },
+  Terms: {
+    path: 'legal/terms',
+    screen: Terms,
+  },
+  BookUs: {
+    path: 'book-us',
+    screen: BookUs,
+  },
+  // Schedule: {
+  //   path: 'schedule',
+  //   screen: Schedule,
+  // },
+  RequestLocation: {
+    path: 'request-location',
+    screen: RequestLocation,
+  },
+  Subscribe: {
+    path: 'subscribe',
+    screen: Subscribe,
+  },
+  SubscribeConfirm: {
+    // todo, move mailchimp over to this one
+    path: 'subscription-confirmed',
+    screen: SubscribeConfirm,
+  },
+  SubscribeConfirmLegacy: {
+    path: 'confirmed',
+    screen: SubscribeConfirm,
+  },
+  Receipt: {
+    path: 'receipt/:orderId',
+    screen: Receipt,
+  },
+};
 
-const AppNavigator = createFullscreenSwitchNavigator(
-  {
-    Home: {
-      path: '',
-      screen: Home,
-    },
-    Menu: {
-      path: 'menu',
-      screen: Menu,
-    },
-    Blend: {
-      path: 'menu/:slug',
-      screen: BlendPage,
-    },
-    OurStory: {
-      path: 'our-story',
-      screen: OurStory,
-    },
-    Privacy: {
-      path: 'legal/privacy',
-      screen: Privacy,
-    },
-    Terms: {
-      path: 'legal/terms',
-      screen: Terms,
-    },
-    BookUs: {
-      path: 'book-us',
-      screen: BookUs,
-    },
-    // Schedule: {
-    //   path: 'schedule',
-    //   screen: Schedule,
-    // },
-    RequestLocation: {
-      path: 'request-location',
-      screen: RequestLocation,
-    },
-    Subscribe: {
-      path: 'subscribe',
-      screen: Subscribe,
-    },
-    SubscribeConfirm: {
-      // todo, move mailchimp over to this one
-      path: 'subscription-confirmed',
-      screen: SubscribeConfirm,
-    },
-    SubscribeConfirmLegacy: {
-      path: 'confirmed',
-      screen: SubscribeConfirm,
-    },
-    Receipt: {
-      path: 'receipt/:orderId',
-      screen: Receipt,
-    },
+const AppNavigator = createFullscreenSwitchNavigator(MauiWebRoutes, {
+  defaultNavigationOptions: {
+    customHTMLHeaders,
   },
-  {
-    defaultNavigationOptions: {
-      customHTMLHeaders,
-    },
-  },
-);
+});
 
 function App(props) {
   const cloud = React.useContext(CloudContext);

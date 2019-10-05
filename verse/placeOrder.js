@@ -106,27 +106,25 @@ export default async function placeOrder(
     }
   }
 
-  const allTasks = await Promise.all(
-    summary.items.map(async item => {
-      if (item.type !== 'blend') {
-        return;
-      }
-      const { menuItemId } = item;
-      const menuItem = blends.find(b => b.id === menuItemId);
-      const fills = getFillsOfOrderItem(menuItem, item, companyConfig);
-      const orderName =
-        order.orderName.firstName + ' ' + order.orderName.lastName;
-      const blendName = displayNameOfOrderItem(item, item.menuItem);
-      return [...Array(item.quantity)].map((_, quantityIndex) =>
-        getNewBlendTask(item.menuItem, fills, orderName, {
-          quantityIndex,
-          blendName,
-          orderItemId: item.id,
-          orderId,
-        }),
-      );
-    }),
-  );
+  const allTasks = summary.items.map(item => {
+    if (item.type !== 'blend') {
+      return;
+    }
+    const { menuItemId } = item;
+    const menuItem = blends.find(b => b.id === menuItemId);
+    const fills = getFillsOfOrderItem(menuItem, item, companyConfig);
+    const orderName =
+      order.orderName.firstName + ' ' + order.orderName.lastName;
+    const blendName = displayNameOfOrderItem(item, item.menuItem);
+    return [...Array(item.quantity)].map((_, quantityIndex) =>
+      getNewBlendTask(item.menuItem, fills, orderName, {
+        quantityIndex,
+        blendName,
+        orderItemId: item.id,
+        orderId,
+      }),
+    );
+  });
   const orderTasks = allTasks.flat(1);
 
   const itemsRollup = summary.items.map(i => {

@@ -464,11 +464,7 @@ function BlendPage() {
   );
 }
 
-BlendPage.navigationOptions = ({
-  navigationOptions,
-  navigation,
-  screenProps,
-}) => {
+BlendPage.navigationOptions = ({ navigation, screenProps }) => {
   const cloud = screenProps.cloud;
   const slug = navigation.getParam('slug');
   const companyConfigDoc = cloud && cloud.get('CompanyConfig');
@@ -480,15 +476,17 @@ BlendPage.navigationOptions = ({
   const blends = companyConfigState && companyConfigToBlendMenu(companyConfig);
   const blend = blends && blends.find(blend => getMenuItemSlug(blend) === slug);
   const blendName = blend && blend['Display Name'];
-  const blendDescription = blend && blend['Display Description'];
+  const metaDescription = blend && blend['Display Description'];
   return {
     title: blendName
       ? `${blendName} - Organic Smoothies from Ono Blends`
       : 'Organic Smoothies from Ono Blends',
-    metaDescription: blendDescription,
-    // loadData: async blankCloud => {
-    //   await blankCloud.get('CompanyConfig').load();
-    // },
+    metaDescription,
+    loadData: async () => {
+      if (cloud) {
+        return [await companyConfigDoc.export()];
+      }
+    },
   };
 };
 

@@ -1,11 +1,14 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { createSwitchNavigator } from '../navigation-core';
+import createFullscreenSwitchNavigator from '../navigation-web/createFullscreenSwitchNavigator';
 import Admin from '../admin/Admin';
 import InternalBlendMenu from './InternalBlendMenu';
-import MauiWebApp from '../maui-web/MauiWebApp';
+import { MauiWebRoutes } from '../maui-web/MauiWebApp';
 import { monsterra } from '../components/Styles';
 import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
+import { CloudContext } from '../cloud-core/KiteReact';
+import { ThemeProvider } from '../dashboard/Theme';
+import OnoTheme from '../logic/OnoTheme';
 
 const NotFoundPage = () => (
   <View
@@ -101,12 +104,14 @@ function getHTMLHeaders({ screenOptions, navigation, title }) {
 <meta property="og:image" content="${screenOptions.metaImage ||
     defaultMetaImage}">
 
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
 ${screenOptions.customHTMLHeaders ? screenOptions.customHTMLHeaders : ''}
 `;
   // <meta property="og:url" content="https://onoblends.co">
 }
 
-const App = createSwitchNavigator(
+const AppNavigator = createFullscreenSwitchNavigator(
   {
     Main: {
       screen: NotFoundPage,
@@ -117,32 +122,34 @@ const App = createSwitchNavigator(
         customHTML: GoogleAnalyticsTag,
       },
     },
-    PreviewApp: {
-      path: '',
-      screen: MauiWebApp,
-      navigationOptions: ({ navigation, screenProps }) => {
-        const screenOptions = getActiveChildNavigationOptions(
-          navigation,
-          screenProps,
-        );
-        const title = screenOptions.title
-          ? `${screenOptions.title}`
-          : 'Ono Blends';
-        return {
-          ...screenOptions,
-          title,
-          customHTMLHeaders: getHTMLHeaders({
-            screenOptions,
+    ...Object.fromEntries(
+      Object.entries(MauiWebRoutes).map(([routeName, routeConfig]) => {
+        const navigationOptions = ({ navigation, screenProps }) => {
+          const screenNavOptionSpec =
+            routeConfig.screen.navigationOptions || {};
+          const screenOptions =
+            typeof screenNavOptionSpec === 'function'
+              ? screenNavOptionSpec({ navigation, screenProps })
+              : screenNavOptionSpec;
+
+          const title = screenOptions.title
+            ? `${screenOptions.title}`
+            : 'Ono Blends';
+          return {
+            ...screenOptions,
             title,
-            navigation,
-          }),
-          customHTML: GoogleAnalyticsTag,
-          customCSS: screenOptions.customCSS
-            ? fontsCSS + '\n' + screenOptions.customCSS
-            : fontsCSS,
+            customHTMLHeaders: getHTMLHeaders({
+              screenOptions,
+              title,
+              navigation,
+            }),
+            customHTML: GoogleAnalyticsTag,
+            customCSS: fontsCSS,
+          };
         };
-      },
-    },
+        return [routeName, { ...routeConfig, navigationOptions }];
+      }),
+    ),
     Admin: {
       screen: SkynetAdmin,
       path: 'admin',
@@ -154,5 +161,17 @@ const App = createSwitchNavigator(
   },
   {},
 );
+
+function App(props) {
+  const cloud = React.useContext(CloudContext);
+  return (
+    <ThemeProvider value={OnoTheme}>
+      <AppNavigator {...props} screenProps={{ cloud }} />
+    </ThemeProvider>
+  );
+}
+
+App.router = AppNavigator.router;
+App.navigationOptions = AppNavigator.navigationOptions;
 
 export default App;

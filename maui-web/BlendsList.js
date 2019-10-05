@@ -124,8 +124,8 @@ function BlendsCarouselItem({ blend, active }) {
         backgroundColor: 'white',
         overflow: 'hidden',
         borderRadius: 8,
-        borderWidth: 3,
-        borderColor: active ? theme.colors.monsterras : 'transparent',
+        borderWidth: active ? 3 : 0,
+        borderColor: theme.colors.monsterras,
         ...theme.shadows.medium,
       }}
     >

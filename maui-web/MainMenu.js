@@ -57,6 +57,7 @@ function MenuLink({
   titleStyle,
   active,
   routeName,
+  alternateActiveCheck,
   ...rest
 }) {
   const theme = useTheme();
@@ -66,6 +67,7 @@ function MenuLink({
       accesible="true"
       accessibilityRole="button"
       accessibilityLabel={title}
+      alternateActiveCheck={alternateActiveCheck}
       renderContent={active => (
         <VisualButton
           title={title}
@@ -121,7 +123,14 @@ export function DesktopMenu() {
               flexDirection: 'row',
             }}
           >
-            <MenuLink routeName="Menu" title="menu" />
+            <MenuLink
+              routeName="Menu"
+              title="menu"
+              alternateActiveCheck={state => {
+                if (state.routeName === 'Blend') return true;
+                return false;
+              }}
+            />
             {/* <MenuLink
               routeName="Schedule"
               title="schedule"
