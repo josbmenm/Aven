@@ -332,7 +332,6 @@ export function createProducerStream(producer) {
           subscribers.clear();
           isListening = false;
           hasEmitted = false;
-          lastValue = undefined;
         },
       });
     }
@@ -345,7 +344,6 @@ export function createProducerStream(producer) {
     removeListenerTimeout = setTimeout(() => {
       if (subscribers.size === 0 && isListening) {
         hasEmitted = false;
-        lastValue = undefined;
         if (isListening) {
           isListening = false;
           producer.stop();
