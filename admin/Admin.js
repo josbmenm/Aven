@@ -44,12 +44,6 @@ const prettyShadow = {
   shadowOpacity: 0.1,
   shadowRadius: 22,
 };
-const prettyShadowSmall = {
-  shadowOffset: { width: 0, height: 0 },
-  shadowColor: 'black',
-  shadowOpacity: 0.06,
-  shadowRadius: 11,
-};
 
 const pathJoin = require('path').join;
 
@@ -469,13 +463,16 @@ function LoginForm({ onSession, onClientConfig, defaultSession }) {
   const [isWorking, setIsWorking] = useState(false);
   const [loginInfo, setLoginInfo] = useState(null);
   const [verificationChallenge, setVerificationChallenge] = useState(null);
-  const { navigate } = useNavigation();
+  // const { navigate } = useNavigation();
   const cloud = useCloud();
 
   const [authority, setAuthority] = useState(defaultSession.authority);
   const [domain, setDomain] = useState(defaultSession.domain);
   const [useSSL, setUseSSL] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
+  const [
+    isConnecting,
+    //setIsConnecting
+  ] = useState(false);
   if (isConnecting) {
     return <Text>One moment..</Text>;
   }
@@ -794,8 +791,8 @@ function LogoutButton() {
   );
 }
 
-function DocsPane({ onClientConfig, onSession }) {
-  const { domain, destroySession } = useCloud();
+function DocsPane() {
+  const { domain } = useCloud();
   const { navigate, state } = useNavigation();
   const docRoute =
     state.routes && state.routes.find(r => r.routeName === 'Doc');
@@ -897,31 +894,31 @@ function PrimitiveView({ value, onValue }) {
   );
 }
 
-const PopoverContext = createContext(null);
+// const PopoverContext = createContext(null);
 
-function PopoverOverlay({ children, location, onClose }) {
-  console.log('location, location', location);
-  return (
-    <React.Fragment>
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View
-          style={{ backgroundColor: '#2228', ...StyleSheet.absoluteFillObject }}
-        />
-      </TouchableWithoutFeedback>
-      <View
-        style={{
-          width: 400,
-          height: 400,
-          position: 'absolute',
-          left: location.pageX,
-          top: location.pageY,
-        }}
-      >
-        {children}
-      </View>
-    </React.Fragment>
-  );
-}
+// function PopoverOverlay({ children, location, onClose }) {
+//   console.log('location, location', location);
+//   return (
+//     <React.Fragment>
+//       <TouchableWithoutFeedback onPress={onClose}>
+//         <View
+//           style={{ backgroundColor: '#2228', ...StyleSheet.absoluteFillObject }}
+//         />
+//       </TouchableWithoutFeedback>
+//       <View
+//         style={{
+//           width: 400,
+//           height: 400,
+//           position: 'absolute',
+//           left: location.pageX,
+//           top: location.pageY,
+//         }}
+//       >
+//         {children}
+//       </View>
+//     </React.Fragment>
+//   );
+// }
 
 process.env.REACT_NAV_LOGGING = true;
 
