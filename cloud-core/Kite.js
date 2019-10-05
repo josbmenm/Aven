@@ -62,14 +62,14 @@ function valuePluck(o) {
 export function valueMap(idAndValue) {
   return idAndValue.map(valuePluck, 'GetValue');
 }
-export function createStreamDoc(idAndValueStream, docName) {
-  const idAndValue = createStreamValue(idAndValueStream, () => docName);
+export function createStreamDoc(idAndValueStream, domain, docName) {
+  const streamIdAndValue = createStreamValue(idAndValueStream, () => docName);
   const value = createStreamValue(valueMap(idAndValueStream), () => docName);
 
   return {
     type: 'StreamDoc',
     value,
-    idAndValue,
+    idAndValue: streamIdAndValue,
     getReference: () => ({
       type: 'StreamDoc',
       name: docName,
@@ -77,6 +77,24 @@ export function createStreamDoc(idAndValueStream, docName) {
     putValue: () => {
       throw new Error('Cannot PutValue of a stream doc');
     },
+    export: async () => {
+      const idAndValue = await streamIdAndValue.load();
+      if (!idAndValue) {
+        return {
+          type: 'Doc',
+          domain,
+          name: docName,
+        };
+      }
+      return {
+        type: 'Doc',
+        domain,
+        name: docName,
+        id: idAndValue.id,
+        value: idAndValue.value,
+      };
+    },
+
     isDestroyed: () => false,
     putTransactionValue: () => {
       throw new Error(`Cannot putTransactionValue on "${docName}"`);
@@ -301,6 +319,24 @@ export function createBlock({
     getReference,
     value: blockValue,
     idAndValue: blockIdAndValue,
+    export: async () => {
+      const name = onGetName();
+      const idAndValue = await blockIdAndValue.load();
+      if (!idAndValue) {
+        return {
+          type: 'Block',
+          domain,
+          name,
+        };
+      }
+      return {
+        type: 'Block',
+        domain,
+        name,
+        id: idAndValue.id,
+        value: idAndValue.value,
+      };
+    },
     put,
     shamefullySetPutTime,
     shamefullySetFetchedValue,
@@ -625,6 +661,18 @@ export function createDoc({
     await quietlyPutBlock(block);
   }
 
+  function hydrate(id, value) {
+    const block = getBlockOfValue(value);
+    if (block.id !== id) {
+      console.error('Hydration failed');
+      return;
+    }
+    setDocState({
+      id,
+      lastFetchTime: getNow(),
+    });
+  }
+
   async function _remotePutTransactionValue(value) {
     // an implementation of putTransactionValue, where the change is not expected to be optimistic. This is used by putTransactionValue when the current id of a doc is not known
 
@@ -815,6 +863,25 @@ export function createDoc({
     putValue,
     putTransactionValue,
     putBlock,
+    export: async () => {
+      const name = getName();
+      const idAndValue = await docIdAndValue.load();
+      if (!idAndValue) {
+        return {
+          type: 'Doc',
+          domain,
+          name,
+        };
+      }
+      return {
+        type: 'Doc',
+        domain,
+        name,
+        id: idAndValue.id,
+        value: idAndValue.value,
+      };
+    },
+    hydrate,
     children,
   };
   return cloudDoc;
@@ -853,12 +920,12 @@ export function createDocSet({
     }
 
     function handleRename(newLocalName) {
+      const prevName = currentDocName;
       onReport &&
         onReport('DocRename', {
           name: prevName,
           newName: currentDocFullName,
         });
-      const prevName = currentDocName;
       const childDoc = childDocs.get(currentDocName);
       childDocs.delete(currentDocName);
       currentDocName = newLocalName;
@@ -917,7 +984,6 @@ export function createDocSet({
     if (childDocs.has(localName)) {
       returningCloudValue = childDocs.get(localName);
     }
-
     if (!returningCloudValue) {
       const newDoc = _createChildDoc(localName);
       returningCloudValue = newDoc;
@@ -942,7 +1008,7 @@ export function createDocSet({
   }
 
   function setOverrideStream(name, stream) {
-    const streamDoc = createStreamDoc(stream, name);
+    const streamDoc = createStreamDoc(stream, domain, name);
     childDocs.set(name, streamDoc);
     return streamDoc;
   }
@@ -1296,7 +1362,8 @@ export function createSessionClient({
         const lastSnapshot = await snapshotsDoc.value.load();
         if (
           lastSnapshot === undefined ||
-          lastSnapshot.context == undefined ||
+          lastSnapshot.context === undefined ||
+          lastSnapshot.context === null ||
           lastSnapshot.context.gen <= context.gen - snapshotInterval
         ) {
           await snapshotsDoc.putValue({ context, id, value });
@@ -1305,14 +1372,35 @@ export function createSessionClient({
     });
     docs.setOverrideStream(resultStateDocName, stream);
   }
-  return {
-    type: 'AuthenticatedClient',
+
+  function hydrateDoc(hydrateDomain, name, id, value) {
+    if (hydrateDomain !== domain) {
+      return;
+    }
+    const doc = docs.get(name);
+    doc.hydrate(id, value);
+  }
+
+  function hydrateValue({ type, domain, name, id, value }) {
+    if (type === 'Doc') {
+      hydrateDoc(domain, name, id, value);
+    } else if (type === 'Block') {
+      throw new Error('Block hydrating yet implemented');
+    }
+  }
+  const cloudSessionClient = {
+    type: 'SesionClient',
     docs,
     connected: source.connected,
     get: docs.get,
+    hydrate: values => {
+      values.forEach(hydrateValue);
+    },
+    hydrateValue,
     setReducer,
     ...sourceFromRootDocSet(docs, domain, source, auth),
   };
+  return cloudSessionClient;
 }
 
 export function createLocalSessionClient({
@@ -1399,7 +1487,7 @@ export function createClient({ domain, source, onReport }) {
     performStateNotification && performStateNotification();
   }
 
-  const clientStateValue = createStreamValue(
+  const clientStateStream = createStreamValue(
     createProducerStream({
       crumb: 'ClientState',
       start: listen => {
@@ -1413,6 +1501,7 @@ export function createClient({ domain, source, onReport }) {
       },
     }),
   );
+
   async function establishAnonymousSession() {
     if (clientState.session) {
       return clientState.session;
@@ -1428,11 +1517,16 @@ export function createClient({ domain, source, onReport }) {
     }
     return created;
   }
-  return {
+
+  const cloudClient = {
     type: 'Client',
     establishAnonymousSession,
     getCloud: () => sessionClient,
     connected: source.connected,
-    ...clientStateValue,
+    hydrate: sessionClient.hydrate,
+    clientStateStream,
+    get: docName => sessionClient.get(docName),
   };
+
+  return cloudClient;
 }
