@@ -45,6 +45,7 @@
     "path": "^0.12.7",
     "pg-format": "^1.0.4",
     "react": "^16.8.6",
+    "react-calendar": "^2.19.2",
     "react-dom": "^16.8.6",
     "react-native": "^0.58.5",
     "react-native-fast-image": "^5.1.2",
