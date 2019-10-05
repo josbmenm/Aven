@@ -28,6 +28,7 @@ class LinkWithNavigation extends Component {
       navigation,
       action,
       url,
+      alternateActiveCheck,
       renderContent,
       overrideATagCSS, // ugh, escape hatches get long ugly names. css is applied directly, not RN style!
     } = this.props;
@@ -71,7 +72,9 @@ class LinkWithNavigation extends Component {
           )}`
         : `/${pathAndParams.path}`;
     }
-    const isActive = navActionResponse === null;
+    const isActive =
+      navActionResponse === null ||
+      (alternateActiveCheck && alternateActiveCheck(navigation.state));
     return (
       <a
         style={{ textDecoration: 'none', color: 'inherit', ...overrideATagCSS }}
