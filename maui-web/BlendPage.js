@@ -477,11 +477,16 @@ BlendPage.navigationOptions = ({ navigation, screenProps }) => {
   const blend = blends && blends.find(blend => getMenuItemSlug(blend) === slug);
   const blendName = blend && blend['Display Name'];
   const metaDescription = blend && blend['Display Description'];
+  const primaryImage = blend && blend.Recipe['StandaloneImage'][0];
+  const imageURI =
+    primaryImage &&
+    `https://storage.googleapis.com/onofoodco/${primaryImage.ref.id}`;
   return {
     title: blendName
-      ? `${blendName} - Organic Smoothies from Ono Blends`
-      : 'Organic Smoothies from Ono Blends',
+      ? `${blendName} - Organic smoothies from Ono Blends`
+      : 'Organic smoothies from Ono Blends',
     metaDescription,
+    metaImage: imageURI,
     loadData: async () => {
       if (cloud) {
         return [await companyConfigDoc.export()];

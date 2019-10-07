@@ -137,9 +137,7 @@ function BookUsWizard() {
       email: '',
       eventType: '',
       date: '',
-      address: {
-        place_name_en: '',
-      },
+      address: '',
       comments: '',
     },
   });
@@ -224,7 +222,7 @@ function BookUsWizard() {
         <Step active={stepsState.current === 0}>
           <StepHeader>
             <Heading size="large" style={{ textAlign: 'center' }}>
-              Book with us.
+              Book with us, Los Angeles.
             </Heading>
             <BodyText style={{ textAlign: 'center' }}>
               Hosting an event, have smoothie lovers in the office, or simply
@@ -275,7 +273,6 @@ function BookUsWizard() {
             <Heading size="large">
               What’s the best email to get in contact with you?
             </Heading>
-            <BodyText>Email</BodyText>
           </StepHeader>
           <FormRow>
             <FormInput
@@ -319,12 +316,12 @@ function BookUsWizard() {
         <Step active={stepsState.current === 4}>
           <StepHeader>
             <Heading size="large">When would you like us there?</Heading>
-            <BodyText>Just let us know when would be best.</BodyText>
+            <BodyText>Tell us your preferred dates.</BodyText>
           </StepHeader>
           <FormRow>
             <FormInput
               mode="name"
-              label="event date"
+              label="event day(s)"
               ref={dateRef}
               value={formState.fields.date}
               onValue={value =>
@@ -341,16 +338,22 @@ function BookUsWizard() {
         <Step active={stepsState.current === 5}>
           <StepHeader>
             <Heading size="large">Almost done…</Heading>
-            <BodyText>Where would you like us to be?</BodyText>
+            <BodyText>What is your address?</BodyText>
           </StepHeader>
           <FormRow>
-            {/* mapbox autocomplete */}
-            <LocationInput
-              inputValue={formState.fields.address.place_name_en}
+            <FormInput
+              mode="name"
+              label="event address"
               ref={addressRef}
-              onSelectedResult={value => {
-                formDispatch({ type: 'UPDATE_FIELD', key: 'address', value });
-              }}
+              value={formState.fields.address}
+              onValue={value =>
+                formDispatch({
+                  type: 'UPDATE_FIELD',
+                  key: 'address',
+                  value,
+                })
+              }
+              style={formInputStyle}
             />
           </FormRow>
         </Step>

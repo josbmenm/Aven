@@ -88,7 +88,7 @@ Menu.navigationOptions = ({ screenProps }) => {
   const cloud = screenProps.cloud;
   const companyConfigDoc = cloud && cloud.get('CompanyConfig');
   return {
-    title: 'Organic Smoothies from Ono Blends',
+    title: 'Organic smoothies from Ono Blends',
     loadData: async () => {
       if (cloud) {
         return [await companyConfigDoc.export()];

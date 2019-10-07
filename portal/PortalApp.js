@@ -266,7 +266,7 @@ function renderAppError({ error, errorInfo, onRetry }) {
   );
 }
 
-const NAV_STORAGE_KEY = 'NavigationState-N3e2u123212o';
+const NAV_STORAGE_KEY = 'NavigationState-N3e2u1232asdfas12o';
 function FullApp() {
   const cloud = useCloudProvider({
     source: cloudSource,

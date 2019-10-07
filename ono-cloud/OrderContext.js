@@ -16,13 +16,6 @@ function doCancelOrderIfNotConfirmed(lastOrder) {
   return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
 }
 
-function doConfirmOrder(lastOrder) {
-  if (lastOrder.isConfirmed) {
-    return lastOrder;
-  }
-  return { ...lastOrder, isConfirmed: true, confirmedTime: Date.now() };
-}
-
 export function OrderContextProvider({ children }) {
   let cloud = useCloud();
   let [currentOrder, setCurrentOrder] = useState(null);
@@ -74,15 +67,16 @@ export function OrderContextProvider({ children }) {
         );
     },
     confirmOrder: async paymentIntent => {
-      let o = currentOrder;
-      if (!o) {
+      let order = currentOrder;
+      if (!order) {
         return;
       }
-      await o.transact(doConfirmOrder);
+      const orderState = order.idAndValue.get();
       const isLive = await getIsLiveMode();
       await cloud.dispatch({
         type: 'PlaceOrder',
-        orderId: getLocalName(o.getName()),
+        orderId: getLocalName(order.getName()),
+        order: orderState.value,
         paymentIntent,
         isLive,
       });

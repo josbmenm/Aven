@@ -66,7 +66,6 @@ const KitchenSteps = [
       return null;
     },
     getMachineReady: kitchenState => {
-      console.log('WAAA', kitchenState.FillPositioner_CupPresent_READ);
       return kitchenState.FillPositioner_CupPresent_READ;
     },
     getKitchenCommand: intent => ({

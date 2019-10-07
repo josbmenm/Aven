@@ -153,7 +153,8 @@ function PromoSection({ order }) {
 function RefundSection({ order }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const cloud = useCloud();
-  const canRefund = order.total > 0 && !order.refundTime;
+  const canRefund =
+    order.total > 0 && !order.refundTime && !!order.stripeIntent;
   return (
     <Row title="Refund">
       <Button

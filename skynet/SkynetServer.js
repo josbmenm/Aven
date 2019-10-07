@@ -343,7 +343,7 @@ Event Type: ${eventType}
 
 Date: ${date}
 
-Place: ${address && address.place_name}
+Place: ${address}
 
 
 Comments: ${comments}

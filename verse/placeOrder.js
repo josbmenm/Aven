@@ -11,12 +11,9 @@ import {
 
 export default async function placeOrder(
   cloud,
-  { isLive, orderId, paymentIntent },
+  { isLive, order, orderId, paymentIntent },
 ) {
-  log('AttemptPlaceOrder', { isLive, orderId, paymentIntent });
-  const orderState = await cloud
-    .get(`PendingOrders/${orderId}`)
-    .idAndValue.load();
+  log('AttemptPlaceOrder', { isLive, order, orderId, paymentIntent });
   const companyConfigState = await cloud.get('CompanyConfig').idAndValue.load();
   const companyConfig = companyConfigState.value;
   const restaurantConfigState = await cloud
@@ -25,7 +22,6 @@ export default async function placeOrder(
   const restaurantConfig = restaurantConfigState.value;
   const isCateringMode =
     restaurantConfig && restaurantConfig.mode === 'catering';
-  const order = orderState.value;
 
   const blends = companyConfigToBlendMenu(companyConfig);
   const summary = getOrderSummary(order, companyConfig);
@@ -34,7 +30,7 @@ export default async function placeOrder(
       summary,
       orderId,
       paymentIntent,
-      order: orderState,
+      order,
       companyConfigId: companyConfigState.id,
     });
     throw new Error('Invalid order summary retrieved!');
@@ -60,12 +56,20 @@ export default async function placeOrder(
   const stripeIntentId = paymentIntent && paymentIntent.stripeId;
   let stripeIntent = null;
   if (stripeIntentId) {
-    stripeIntent = await getPaymentIntent(stripeIntentId, isLive);
-    log('LookupStripeIntent', {
-      stripeIntent,
-      stripeIntentId,
-      orderId,
-    });
+    try {
+      stripeIntent = await getPaymentIntent(stripeIntentId, isLive);
+      log('LookupStripeIntent', {
+        stripeIntent,
+        stripeIntentId,
+        orderId,
+      });
+    } catch (err) {
+      error('LookupStripeIntentFailure', {
+        code: err.message,
+        paymentIntent,
+        orderId,
+      });
+    }
   }
   let isOrderValid = false;
   if (isCateringMode) {
@@ -92,10 +96,18 @@ export default async function placeOrder(
         });
         throw new Error('PromoCodeVerification');
       }
-      await promoDoc.transact(p => ({
-        ...p,
-        uses: [...(p.uses || []), { orderId, time: Date.now() }],
-      }));
+      promoDoc
+        .transact(p => ({
+          ...p,
+          uses: [...(p.uses || []), { orderId, time: Date.now() }],
+        }))
+        .catch(err => {
+          error('PromoCodeVerificationUseWriteFailure', {
+            code: err.message,
+            promoValue,
+            promoCode: promo.promoCode,
+          });
+        });
     } else {
       error('PromoCodeVerificationFailure', {
         promo,
@@ -156,6 +168,7 @@ export default async function placeOrder(
   const confirmedOrder = {
     ...order,
     subTotal,
+    confirmedTime: Date.now(),
     subTotalDollars: subTotal / 100,
     tax,
     total,
@@ -171,28 +184,35 @@ export default async function placeOrder(
     stripeIntent,
     isOrderValid,
     orderTasks,
+    isCateringMode,
   };
 
   if (!isOrderValid) {
-    error('OrderValidationError', {
-      isOrderValid,
-      stripeIntent,
-      orderId,
-      stripeIntentId,
-      order: confirmedOrder,
+    // oh its not valid.. whatever, right now!
+    error('OrderValidationFailure', {
+      confirmedOrder,
     });
-    throw new Error('Could not verify payment intent! Order has failed.');
+
+    // error('OrderValidationError', {
+    //   isOrderValid,
+    //   stripeIntent,
+    //   orderId,
+    //   stripeIntentId,
+    //   order: confirmedOrder,
+    // });
+    // throw new Error('Could not verify payment intent! Order has failed.');
   }
 
-  await cloud.get(`ConfirmedOrders/${orderId}`).putValue(confirmedOrder);
+  // await cloud.get(`ConfirmedOrders/${orderId}`).putValue(confirmedOrder)
   await cloud.get('CompanyActivity').putTransactionValue({
     type: 'KioskOrder',
     confirmedOrder,
   });
-  await cloud.get('RestaurantActions').putTransactionValue({
-    type: 'QueueTasks',
-    tasks: orderTasks,
-  });
+
+  // await cloud.get('RestaurantActions').putTransactionValue({
+  //   type: 'QueueTasks',
+  //   tasks: orderTasks,
+  // });
 
   orderTasks.forEach(task => log('OrderTask', { task, orderId }));
   log('OrderTasksPlaced', { orderId, taskCount: orderTasks.length });
