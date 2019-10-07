@@ -15,7 +15,7 @@ function BookUsPage() {
 }
 
 BookUsPage.navigationOptions = {
-  title: 'Book with Us',
+  title: 'Book with Ono Blends',
 };
 
 export default BookUsPage;

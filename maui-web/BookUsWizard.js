@@ -224,12 +224,12 @@ function BookUsWizard() {
         <Step active={stepsState.current === 0}>
           <StepHeader>
             <Heading size="large" style={{ textAlign: 'center' }}>
-              Book with us
+              Book with us.
             </Heading>
             <BodyText style={{ textAlign: 'center' }}>
-              Are you interested in having Ono Blends cater for an event? We’d
-              love to! All we need from you are a few details about your event,
-              so we can provide you with the best experience possible.
+              Hosting an event, have smoothie lovers in the office, or simply
+              want 20 blends for yourself (we’re not judging)? Click here to
+              bring our nutritious blends right to you.
             </BodyText>
           </StepHeader>
         </Step>
@@ -272,10 +272,10 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 2}>
           <StepHeader>
-            <Heading size="large">How do we contact you?</Heading>
-            <BodyText>
-              Please let us know a good email to follow up with you.
-            </BodyText>
+            <Heading size="large">
+              What’s the best email to get in contact with you?
+            </Heading>
+            <BodyText>Email</BodyText>
           </StepHeader>
           <FormRow>
             <FormInput
@@ -297,7 +297,7 @@ function BookUsWizard() {
         <Step active={stepsState.current === 3}>
           <StepHeader>
             <Heading size="large">What sort of event is this?</Heading>
-            <BodyText>Let us know so we can best cater to it.</BodyText>
+            <BodyText>Let us know so we can cater to your demands.</BodyText>
           </StepHeader>
           <FormRow>
             <FormInput
@@ -319,7 +319,7 @@ function BookUsWizard() {
         <Step active={stepsState.current === 4}>
           <StepHeader>
             <Heading size="large">When would you like us there?</Heading>
-            <BodyText>Just let us know to when would be best.</BodyText>
+            <BodyText>Just let us know when would be best.</BodyText>
           </StepHeader>
           <FormRow>
             <FormInput
@@ -340,7 +340,7 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 5}>
           <StepHeader>
-            <Heading size="large">Almost done…..</Heading>
+            <Heading size="large">Almost done…</Heading>
             <BodyText>Where would you like us to be?</BodyText>
           </StepHeader>
           <FormRow>
