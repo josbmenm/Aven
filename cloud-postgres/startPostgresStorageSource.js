@@ -388,7 +388,7 @@ export default async function startPostgresStorageSource({
     } catch (e) {
       if (e.message.match(/docs_currentblock_foreign/)) {
         throw new Err(
-          `Could not PutDoc because doc id "${currentBlockId}" is unknown.`,
+          `Could not PutDoc because block id "${currentBlockId}" is unknown.`,
           'UknownBlock',
           { blockId: currentBlockId },
         );
