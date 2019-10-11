@@ -100,7 +100,9 @@ export function createStreamDoc(idAndValueStream, domain, docName) {
       throw new Error(`Cannot putTransactionValue on "${docName}"`);
     },
     getId: () => {
-      return undefined;
+      throw new Error(
+        'Cannot getId of a stream doc. Instead, go load doc.idAndValue',
+      );
     },
   };
 }
@@ -378,6 +380,21 @@ export function createDoc({
     context: { gen: 0 },
   };
 
+  const docReportHandlers = new Set();
+  function handleReports(reportHandler) {
+    docReportHandlers.add(reportHandler);
+    return {
+      remove: () => {
+        docReportHandlers.delete(reportHandler);
+      },
+    };
+  }
+
+  function performReport(reportType, report) {
+    onReport && onReport(reportType, report);
+    docReportHandlers.forEach(handler => handler(reportType, report));
+  }
+
   async function getReference() {
     // why is this async? good question. Eventually, we should make block checksumming lazy, so unlike the current implementation, the id may not be ready yet
     return {
@@ -412,7 +429,6 @@ export function createDoc({
       notifyStateChange = () => {
         performNotification && performNotification();
       };
-
       if (onInitialLoad && docState.id === undefined) {
         onInitialLoad('Doc', domain, docName)
           .then(initState => {
@@ -423,7 +439,7 @@ export function createDoc({
               setDocState({
                 id: initState.id,
               });
-            } else {
+            } else if (docState.isLocalOnly) {
               setDocState({
                 id: null,
               });
@@ -487,7 +503,7 @@ export function createDoc({
       onGetName,
       nameChangeNotifiers,
       value,
-      onReport,
+      onReport: performReport,
       onInitialLoad,
     });
     if (docBlocks[block.id]) {
@@ -507,7 +523,7 @@ export function createDoc({
       onGetName,
       nameChangeNotifiers,
       id,
-      onReport,
+      onReport: performReport,
       onInitialLoad,
     });
 
@@ -531,7 +547,7 @@ export function createDoc({
   async function putValue(value) {
     const committed = await commitDeepBlock(value);
     const block = getBlockOfValue(committed.value);
-    onReport && onReport('PutDocValue', { value, id: block.id });
+    performReport('PutDocValue', { value, id: block.id });
     await quietlyPutBlock(block);
   }
 
@@ -688,10 +704,9 @@ export function createDoc({
       lastFetchTime: getNow(),
       lastPut: getNow(),
     });
-    onReport &&
-      onReport('PutDoc', {
-        id: result.id,
-      });
+    performReport('PutDoc', {
+      id: result.id,
+    });
     return result;
   }
 
@@ -704,6 +719,10 @@ export function createDoc({
   );
 
   async function putTransactionValue(value) {
+    const fullValue =
+      typeof value === 'object' && value.dispatchTime === undefined
+        ? { ...value, dispatchTime: Date.now() }
+        : value;
     if (docState.id === undefined && !docState.isLocalOnly) {
       return _remotePutTransactionValue(value);
     }
@@ -712,15 +731,14 @@ export function createDoc({
     const expectedTransactionValue = {
       type: 'TransactionValue',
       on,
-      value,
+      value: fullValue,
     };
     const expectedBlock = getBlockOfValue(expectedTransactionValue);
 
-    onReport &&
-      onReport('PutDocValue', {
-        id: expectedBlock.id,
-        value: expectedTransactionValue,
-      });
+    performReport('PutDocValue', {
+      id: expectedBlock.id,
+      value: expectedTransactionValue,
+    });
 
     if (docState.isLocalOnly) {
       setDocState({
@@ -748,10 +766,9 @@ export function createDoc({
       id: result.id,
     };
     if (result.id !== expectedBlock.id) {
-      onReport &&
-        onReport('PutDoc', {
-          id: result.id,
-        });
+      performReport('PutDoc', {
+        id: result.id,
+      });
       console.warn(
         `Expected to put block id "${expectedBlock.id}", but actually put id "${result.id}"`,
       );
@@ -800,6 +817,7 @@ export function createDoc({
     onGetName,
     nameChangeNotifiers,
     onInitialLoad,
+    onReport: performReport,
   });
 
   async function destroy() {
@@ -823,6 +841,9 @@ export function createDoc({
   }
 
   function setLocalOnly(isLocalOnly = true) {
+    if (docState.isLocalOnly === isLocalOnly) {
+      return;
+    }
     setDocState({
       isLocalOnly,
     });
@@ -859,6 +880,7 @@ export function createDoc({
     getBlockOfValue,
     publishValue,
     setLocalOnly,
+    handleReports,
     destroy,
     putValue,
     putTransactionValue,
@@ -1357,20 +1379,22 @@ export function createSessionClient({
         snapshotsDoc,
       },
     ).spy(async update => {
-      if (update.next) {
+      if (update.next && snapshotsDoc) {
         const { context, id, value } = update.next;
         const lastSnapshot = await snapshotsDoc.value.load();
         if (
           lastSnapshot === undefined ||
           lastSnapshot.context === undefined ||
           lastSnapshot.context === null ||
-          lastSnapshot.context.gen <= context.gen - snapshotInterval
+          (context &&
+            lastSnapshot.context.gen <= context.gen - snapshotInterval)
         ) {
           await snapshotsDoc.putValue({ context, id, value });
         }
       }
     });
     docs.setOverrideStream(resultStateDocName, stream);
+    return docs.get(resultStateDocName);
   }
 
   function hydrateDoc(hydrateDomain, name, id, value) {
@@ -1449,8 +1473,10 @@ export function createLocalSessionClient({
           name,
           id: blockId,
         });
+
         return result;
       }
+
       return null;
     },
   });
