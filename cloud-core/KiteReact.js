@@ -81,32 +81,6 @@ export function useCloudValue(cloudValueInput) {
   return useStream(cloudVal.stream);
 }
 
-export function useCloudReducer(actionDocName, cloudReducer) {
-  if (cloudReducer.type !== 'CloudReducer') {
-    throw new Error(
-      'Invalid cloud reducer provided to useCloudReducer. Create one with defineCloudReducer',
-    );
-  }
-  const cloud = useCloud();
-  const actionsDoc = cloud.get(actionDocName);
-
-  const reducedStream = React.useMemo(
-    () =>
-      createReducerStream(
-        actionsDoc,
-        cloudReducer.reducerFn,
-        cloudReducer.initialState,
-        cloudReducer.reducerName,
-      ),
-    [actionsDoc, cloudReducer],
-  );
-  const reducedState = useStream(reducedStream);
-
-  if (reducedState === undefined) {
-    return [undefined, actionsDoc.putTransactionValue];
-  }
-  return [reducedState, actionsDoc.putTransactionValue];
-}
 
 export function defineCloudFunction(name, fn, versionId) {
   return {

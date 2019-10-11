@@ -85,57 +85,6 @@ function DocPage() {
         />
         <Body>Provide the doc name and initial state to `useCloudState`</Body>
       </Section>
-      <Section title="useCloudReducer" id="useCloudReducer">
-        <Body>
-          Like React's "useReducer" hook, except the reducer may also run on the
-          back-end.
-        </Body>
-        <Snippet
-          code={`import useCloudReducer, {
-  defineCloudReducer,
-} from '@aven-cloud/cloud/useCloudReducer';
-
-export const TaskReducer = defineCloudReducer(
-  'TaskReducer', // name, as referenced on client+server
-  (state, action) => ..., // reducer function
-  [], // initial state
-);
-
-// in your app:
-function TaskList() {
-  const [tasks, dispatch] = useCloudReducer('TaskActions', TaskReducer);
-  ...
-  // tasks is the current output of the reducer
-  // dispatch allows you to send actions
-}
-
-// on the server, set up an eval source that will handle the execution
-const source = createEvalSource({
-  source: storageSource,
-  functions: [ TaskReducer ]
-});
-
-// finally, configure the client to delegate the initial fetch to the server:
-cloud.get('TaskReducer').markRemoteLambda(true);
-
-`}
-        />
-        <Body>
-          To configure the server, you currently need to set up an eval source
-          with the same reducer:
-        </Body>
-        <Snippet
-          code={`// on the server, set up an eval source that will handle the execution
-const source = createEvalSource({
-  source: storageSource,
-  functions: [ TaskReducer ]
-});
-
-// finally, configure the client to delegate the initial fetch to the server:
-cloud.get('TaskReducer').markRemoteLambda(true);
-`}
-        />
-      </Section>
     </Page>
   );
 }

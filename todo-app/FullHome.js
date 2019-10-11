@@ -2,11 +2,7 @@ import React from 'react';
 import { Text } from 'react-native';
 import cuid from 'cuid';
 
-import {
-  useCloud,
-  defineCloudReducer,
-  useCloudReducer,
-} from '../cloud-core/KiteReact';
+import { useCloud, defineCloudReducer } from '../cloud-core/KiteReact';
 
 import Screen from './components/Screen';
 import TextInput from './components/TextInput';
@@ -48,12 +44,12 @@ function useTaskActions() {
 }
 function useTasks() {
   // const [tasks, dispatch] = React.useReducer(TaskReducer, []);
-  const [tasks, dispatch] = useCloudReducer(
-    'TaskActions',
-    'Tasks',
-    TaskReducer,
-    // [],
-  );
+  // const [tasks, dispatch] = useCloudReducer(
+  //   'TaskActions',
+  //   'Tasks',
+  //   TaskReducer,
+  //   // [],
+  // );
   console.log('ok haz tasks', tasks);
   return {
     tasks,
