@@ -250,10 +250,7 @@ export function getSellPriceOfItem(item, menuItem) {
 
 export function getOrderItemMapper(menu) {
   return item => {
-    const menuItem =
-      item.type === 'blend'
-        ? menu.blends.find(i => i.id === item.menuItemId)
-        : menu.food.find(i => i.id === item.menuItemId);
+    const menuItem = menu.blends.find(i => i.id === item.menuItemId);
     const recipeBasePrice = sellPriceOfMenuItem(menuItem);
     const sellPrice = getSellPriceOfItem(item, menuItem);
     const itemPrice = sellPrice * item.quantity;
@@ -419,7 +416,7 @@ export function companyConfigToMenu(companyConfig) {
 
 export function getOrderSummary(orderState, companyConfig) {
   const menu = companyConfigToMenu(companyConfig);
-  if (!orderState) {
+  if (!orderState || !orderState.items) {
     return null;
   }
   if (!menu) {
@@ -445,15 +442,14 @@ export function getOrderSummary(orderState, companyConfig) {
   const subTotal = subTotalBeforeDiscount - discountTotal;
   const tax = applyTax(subTotal);
   const total = subTotal + tax;
-  const { isConfirmed, isCancelled, orderId } = orderState;
-  let state = isConfirmed ? 'confirmed' : 'pending';
+  const { isCancelled, orderId } = orderState;
+  let state = 'pending';
   if (isCancelled) {
     state = 'cancelled';
   }
   return {
     isCancelled,
     orderId,
-    isConfirmed,
     name: orderState.orderName || 'No Name',
     state,
     order: orderState,

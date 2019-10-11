@@ -2,12 +2,8 @@ import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
 import useTimeSeconds from '../utils/useTimeSeconds';
 
 export function useRestaurantState() {
-  // const [restaurantState, dispatch] = useCloudReducer(
-  //   'RestaurantActions',
-  //   RestaurantReducer,
-  // );
   const cloud = useCloud();
-  const dispatch = cloud.docs.get('RestaurantActions').putTransactionValue;
+  const dispatch = cloud.docs.get('RestaurantActions2').putTransactionValue;
   const restaurantState = useCloudValue('RestaurantState');
   return [restaurantState, dispatch];
 }

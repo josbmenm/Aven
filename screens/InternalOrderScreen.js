@@ -23,7 +23,7 @@ import cuid from 'cuid';
 function OrderTasks({ order }) {
   const handleErrors = useAsyncError();
   const cloud = useCloud();
-  const restaurantDispatch = cloud.get('RestaurantActions').putTransactionValue;
+  const restaurantDispatch = cloud.get('RestaurantActions2').putTransactionValue;
   if (!order) return null;
   return (
     <View>

@@ -15,6 +15,7 @@
     "start-blitz-app": "cd env-blitz-ios && react-native run-ios --simulator=\"iPad Pro (12.9-inch) (3rd generation)\"",
     "open-xcode": "open env-downpour/ios/downpour.xcworkspace",
     "start-portal": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start portal",
+    "answer": "./node_modules/@aven-cloud/aven/aven-tools/cli.js start answer",
     "clean": "./node_modules/@aven-cloud/aven/aven-tools/cli.js clean",
     "process": "node process/goProcess.js",
     "test": "jest"

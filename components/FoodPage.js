@@ -1,9 +1,6 @@
 import React from 'react';
 import ActionPage from '../components/ActionPage';
-import {
-  addMenuItemToCartItem,
-  displayNameOfOrderItem,
-} from '../ono-cloud/OnoKitchen';
+import { displayNameOfOrderItem } from '../ono-cloud/OnoKitchen';
 import { MenuCard } from '../components/MenuCard';
 import DetailsSection from './DetailsSection';
 import MainTitle from './MainTitle';
@@ -51,23 +48,13 @@ export default function FoodPage({
   orderItem,
   orderItemId,
   menuItem,
-  setItemState,
   blendsMenu,
   ...props
 }) {
   let actions = [
     {
       title: 'add to cart',
-      onPress: () => {
-        setItemState(
-          addMenuItemToCartItem({
-            menuItem,
-            orderItemId,
-            item: orderItem && orderItem.state,
-            itemType: 'food',
-          }),
-        );
-      },
+      onPress: () => {},
     },
   ];
   return (

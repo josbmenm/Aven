@@ -22,7 +22,7 @@ export const SidebarOverlayContext = createContext({});
 function SidebarPage({ children, isPortal, ...props }) {
   const { navigate } = useNavigation();
   const summary = useOrderSummary();
-  const { cancelOrder } = useOrder();
+  const { resetOrder } = useOrder();
   const [openProgress] = useState(new Animated.Value(0));
   const shouldBeOpen = !!summary && summary.items && summary.items.length >= 1;
   useEffect(() => {
@@ -89,7 +89,7 @@ function SidebarPage({ children, isPortal, ...props }) {
           title="cancel order"
           onLongPress={openPopover}
           onPress={async () => {
-            await cancelOrder();
+            resetOrder();
             if (isPortal) {
               navigate('Home');
             } else {

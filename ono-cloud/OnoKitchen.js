@@ -142,31 +142,6 @@ export function useSelectedIngredients(menuItem, item) {
   return getSelectedIngredients(menuItem, item, companyConfig);
 }
 
-export function addMenuItemToCartItem({
-  menuItem,
-  orderItemId,
-  item,
-  itemType,
-  customization = null,
-}) {
-  return item
-    ? {
-        ...item,
-        quantity: item.quantity + 1,
-        customization: {
-          ...item.customization,
-          ...customization,
-        },
-      }
-    : {
-        id: orderItemId,
-        type: itemType,
-        menuItemId: menuItem.id,
-        customization,
-        quantity: 1,
-      };
-}
-
 export function useKitchenConfig() {
   const kitchenConfig = useCloudValue('KitchenConfig');
   return kitchenConfig;

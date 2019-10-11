@@ -7,7 +7,7 @@ import Container from '../dashboard/Container';
 import PageFooter from './PageFooter';
 import HomeSlider from './HomeSlider';
 import HowItWorks from './HowItWorks';
-// import HomeSchedule from './HomeSchedule';
+import HomeSchedule from './HomeSchedule';
 import { aspectRatio169 } from '../components/Styles';
 import GenericHeroHeader from './GenericHeroHeader';
 

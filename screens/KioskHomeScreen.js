@@ -17,21 +17,12 @@ import { useRestaurantState, useIsRestaurantOpen } from '../ono-cloud/Kitchen';
 import FadeTransition from '../components/FadeTransition';
 import { useNavigation } from '../navigation-hooks/Hooks';
 
-function KioskHomeContent({ isOpen }) {
-  const { navigate } = useNavigation();
+function KioskHomeContent({ isOpen, onStartOrder }) {
   const message = isOpen
     ? 'tap to start your order'
     : 'now closed. come find us again soon!';
   return (
-    <TouchableWithoutFeedback
-      onPress={
-        isOpen
-          ? () => {
-              navigate('ProductHome');
-            }
-          : () => {}
-      }
-    >
+    <TouchableWithoutFeedback onPress={onStartOrder}>
       <View style={{ flex: 1, justifyContent: 'center', ...genericPageStyle }}>
         {isOpen && (
           <Image
@@ -60,7 +51,7 @@ function KioskHomeContent({ isOpen }) {
 }
 
 export default function KioskHomeScreen({ navigation, ...props }) {
-  const { resetOrder } = useOrder();
+  const { resetOrder, startOrder } = useOrder();
   useEffect(() => {
     resetOrder();
   }, []);
@@ -84,7 +75,16 @@ export default function KioskHomeScreen({ navigation, ...props }) {
         />
       }
     >
-      <KioskHomeContent isOpen={isOpen} closingSoon={closingSoon} />
+      <KioskHomeContent
+        isOpen={isOpen}
+        onStartOrder={() => {
+          if (isOpen) {
+            startOrder();
+            navigation.navigate('ProductHome');
+          }
+        }}
+        closingSoon={closingSoon}
+      />
     </FadeTransition>
   );
 }

@@ -3,23 +3,24 @@ import { useCloud, useValue } from '../cloud-core/KiteReact';
 import { getOrderItemMapper, getOrderSummary } from '../logic/configLogic';
 import { useMenu, getLocalName, useCompanyConfig } from './OnoKitchen';
 import { getIsLiveMode } from '../card-reader/CardReader';
+import OrderReducer from '../logic/OrderReducer';
 
 const OrderContext = createContext(null);
 
-function doCancelOrderIfNotConfirmed(lastOrder) {
-  if (lastOrder.isConfirmed) {
-    return lastOrder;
-  }
-  if (lastOrder.isCancelled) {
-    return lastOrder;
-  }
-  return { ...lastOrder, isCancelled: true, cancelledTime: Date.now() };
-}
-
 export function OrderContextProvider({ children }) {
-  let cloud = useCloud();
-  let [currentOrder, setCurrentOrder] = useState(null);
-  let [asyncError, setAsyncError] = useState(null);
+  const cloud = useCloud();
+  const draftActions = cloud.get('DraftOrderActions');
+
+  const draftOrder = React.useMemo(() => {
+    draftActions.setLocalOnly();
+
+    return cloud.setReducer('DraftOrder', {
+      reducer: OrderReducer,
+      actionsDoc: draftActions,
+    });
+  }, [cloud, draftActions]);
+
+  const [asyncError, setAsyncError] = useState(null);
 
   if (asyncError) {
     setAsyncError(null);
@@ -33,65 +34,50 @@ export function OrderContextProvider({ children }) {
         setAsyncError(e);
       });
   }
-
-  let orderContext = {
-    order: currentOrder,
+  const orderDispatch = draftActions.putTransactionValue;
+  const orderContext = {
+    order: draftOrder,
+    orderDispatch,
     setOrderName: name => {
       guardAsync(
-        currentOrder.transact(lastOrder => ({
-          ...lastOrder,
+        orderDispatch({
+          type: 'SetOrderName',
           orderName: name,
-        })),
+        }),
       );
     },
     resetOrder: () => {
-      if (!currentOrder) {
-        return;
-      }
-      guardAsync(currentOrder.transact(doCancelOrderIfNotConfirmed));
-      setCurrentOrder(null);
-    },
-    cancelOrder: () => {
-      currentOrder &&
-        guardAsync(
-          currentOrder.transact(lastOrder => {
-            if (lastOrder.isCancelled) {
-              return lastOrder;
-            }
-            return {
-              ...lastOrder,
-              isCancelled: true,
-              cancelledTime: Date.now(),
-            };
-          }),
-        );
+      guardAsync(
+        orderDispatch({
+          type: 'CancelOrder',
+        }),
+      );
     },
     confirmOrder: async paymentIntent => {
-      let order = currentOrder;
-      if (!order) {
-        return;
-      }
-      const orderState = order.idAndValue.get();
+      // const newOrder = cloud.get('Orders').children.post();
+      // const orderBlockId = await draftActions.getId();
+      // const orderBlock = newOrder.getBlock(orderBlockId);
+      // await newOrder.putBlock(orderBlock);
+
+      const orderState = cloud.get('DraftOrder').idAndValue.get();
       const isLive = await getIsLiveMode();
       await cloud.dispatch({
         type: 'PlaceOrder',
-        orderId: getLocalName(order.getName()),
+        orderId: orderState.value.orderId,
         order: orderState.value,
         paymentIntent,
         isLive,
       });
     },
-    startOrder: () =>
+    startOrder: () => {
       guardAsync(
-        (async () => {
-          const order = cloud.get('PendingOrders').children.post();
-          setCurrentOrder(order);
-          await order.putValue({
-            startTime: Date.now(),
-            items: [],
-          });
-        })(),
-      ),
+        cloud.get('DraftOrderActions').putValue({
+          type: 'TransactionValue',
+          on: null,
+          value: { type: 'StartOrder' },
+        }),
+      );
+    },
   };
   return (
     <OrderContext.Provider value={orderContext}>
@@ -105,69 +91,41 @@ export function useOrder() {
   return orderContext;
 }
 
-export function useCurrentOrder() {
-  let { order } = useContext(OrderContext);
-  const observedOrder = useValue(order ? order.value : null);
-  if (!observedOrder) {
-    return observedOrder;
-  }
-  return { ...observedOrder, orderId: order && order.getName() };
+export function useOrderState() {
+  let { order, ...orderStuff } = useContext(OrderContext);
+  const orderState = useValue(order ? order.value : null);
+  return {
+    ...orderStuff,
+    orderState,
+  };
 }
 
 export function useOrderItem(orderItemId) {
-  let { order } = useOrder();
+  let { order, orderDispatch } = useOrder();
 
   const menu = useMenu();
 
   return useMemo(() => {
-    async function setItemState(item) {
-      await order.transact(lastOrder => {
-        const lastItems = (lastOrder && lastOrder.items) || [];
-        const items = [...lastItems];
-        const itemIndex = items.findIndex(i => i.id === item.id);
-        if (itemIndex === -1) {
-          items.push(item);
-        } else {
-          items[itemIndex] = item;
-        }
-        return {
-          ...lastOrder,
-          items,
-        };
-      });
-    }
-    async function removeItem() {
-      await order.transact(lastOrder => {
-        const lastItems = (lastOrder && lastOrder.items) || [];
-        const items = lastItems.filter(i => i.id !== orderItemId);
-        return {
-          ...lastOrder,
-          items,
-        };
-      });
-    }
     const itemMapper = menu && getOrderItemMapper(menu);
-    const orderState = order && order.value.get();
+    const orderState = order && order.idAndValue.get();
 
     const orderItem =
-      orderState &&
-      orderState.items &&
-      orderState.items.find(i => i.id === orderItemId);
-    const fullOrderItem = orderItem && itemMapper(orderItem);
+      orderState.value &&
+      orderState.value.items &&
+      orderState.value.items.find(i => i.id === orderItemId);
+    const fullOrderItem = orderItem && itemMapper && itemMapper(orderItem);
 
     return {
+      orderDispatch,
       orderItemId,
       orderItem: fullOrderItem,
-      setItemState,
-      removeItem,
-      order,
     };
   }, [orderItemId, order, menu]);
 }
 
 export function useOrderSummary() {
-  const currentOrder = useCurrentOrder();
+  const { orderState } = useOrderState();
   const companyConfig = useCompanyConfig();
-  const summary = getOrderSummary(currentOrder, companyConfig);
+  const summary = getOrderSummary(orderState, companyConfig);
   return summary;
 }

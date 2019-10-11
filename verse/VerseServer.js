@@ -13,6 +13,7 @@ import { createLocalSessionClient } from '../cloud-core/Kite';
 import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
+import startFSStorageSource from '../cloud-fs/startFSStorageSource';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
@@ -69,6 +70,11 @@ export default async function startVerseServer(httpServer) {
       verificationResponse: { password: ROOT_PASSWORD }, // careful! here we assume that skynet's root pw is the same as the one here for verse!
     },
   );
+
+  // const storageSource = await startFSStorageSource({
+  //   domain: 'onofood.co',
+  //   dataDir: process.env.HOME + '/ono-store',
+  // });
   const storageSource = await startPostgresStorageSource({
     domains: ['onofood.co'],
     config: {
@@ -76,7 +82,6 @@ export default async function startVerseServer(httpServer) {
       connection: pgConfig,
     },
   });
-  console.log('has storage source!');
 
   // const combinedStorageSource = combineSources({
   //   fastSource: storageSource,
@@ -142,11 +147,15 @@ export default async function startVerseServer(httpServer) {
   });
 
   cloud.get('KitchenState').setLocalOnly();
-  cloud.get('RestaurantActions').setLocalOnly();
+  cloud.get('Orders').handleReports((reportType, report) => {
+    console.log('some orderz!!@@!', reportType, report);
+  });
+
+  cloud.get('RestaurantActions2').setLocalOnly();
   cloud.get('RestaurantStateSnapshot').setLocalOnly();
   // cloud.get('RestaurantState').setLocalOnly();
 
-  const restaurantActions = cloud.get('RestaurantActions');
+  const restaurantActions = cloud.get('RestaurantActions2');
 
   cloud.setReducer('RestaurantState', {
     actionsDoc: restaurantActions,
@@ -170,14 +179,14 @@ export default async function startVerseServer(httpServer) {
       'onofood.co': {
         KitchenState: { defaultRule: { canRead: true } },
         KitchenConfig: { defaultRule: { canRead: true } },
-        RestaurantActions: { defaultRule: { canRead: true } },
+        RestaurantActions2: { defaultRule: { canRead: true } },
         RestaurantState: { defaultRule: { canRead: true } },
         CompanyConfig: { defaultRule: { canRead: true } },
         PendingOrders: { defaultRule: { canPost: true } },
 
         // 'OnoState^Inventory': { defaultRule: { canRead: true } },
         // 'OnoState^Menu': { defaultRule: { canRead: true } },
-        // 'RestaurantActions^RestaurantReducer': {
+        // 'RestaurantActions2^RestaurantReducer': {
         //   defaultRule: { canRead: true },
         // },
       },
@@ -185,11 +194,13 @@ export default async function startVerseServer(httpServer) {
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
   const kitchenConfigStream = cloud.get('KitchenConfig').value.stream;
+  const companyConfigStream = cloud.get('CompanyConfig').idAndValue;
+  const restaurantConfigStream = cloud.get('RestaurantConfig').idAndValue;
 
   const kitchenStateDoc = cloud.get('KitchenState');
   const restaurantStateStream = cloud.get('RestaurantState').value.stream;
 
-  const restaurantStateDispatch = cloud.get('RestaurantActions')
+  const restaurantStateDispatch = cloud.get('RestaurantActions2')
     .putTransactionValue;
 
   let kitchen = null;
@@ -292,13 +303,38 @@ export default async function startVerseServer(httpServer) {
     },
     error: e => {
       fatal('RestaurantStateError', {
-        code: 'RestaurantStateStream',
-        error: e,
+        code: e.message,
       });
       process.exit(1);
     },
   };
   restaurantStateStream.addListener(restaurantStateListener);
+
+  const configListener = {
+    next: state => {
+      log('CompanyConfigUpdated', { id: state.id });
+    },
+    error: e => {
+      fatal('CompanyConfigError', {
+        code: e.message,
+      });
+      process.exit(1);
+    },
+  };
+  companyConfigStream.stream.addListener(configListener);
+
+  const restConfigListener = {
+    next: state => {
+      log('RestaurantConfigUpdated', { id: state.id });
+    },
+    error: e => {
+      fatal('RestaurantConfigError', {
+        code: e.message,
+      });
+      process.exit(1);
+    },
+  };
+  restaurantConfigStream.stream.addListener(restConfigListener);
 
   setInterval(() => {
     log('RestaurantStateMonitor', lastRestaurantState);
@@ -336,7 +372,12 @@ export default async function startVerseServer(httpServer) {
         return await kitchen.writeMachineValues(action);
       }
       case 'PlaceOrder':
-        return placeOrder(cloud, action);
+        return placeOrder(
+          cloud,
+          companyConfigStream,
+          restaurantConfigStream,
+          action,
+        );
       case 'RestartDevice':
         await fetch(
           `https://${getEnv('HEXNODE_HOST')}/api/v1/actions/reboot/`,
@@ -366,7 +407,7 @@ export default async function startVerseServer(httpServer) {
       });
       if (
         action.type === 'PutTransactionValue' &&
-        action.name === 'RestaurantActions'
+        action.name === 'RestaurantActions2'
       ) {
         log('RestaurantDispatch', {
           action,

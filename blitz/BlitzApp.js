@@ -12,14 +12,7 @@ import {
   YellowBox,
 } from 'react-native';
 import { createAppContainer } from '../navigation-native';
-import {
-  useStreamValue,
-  useValue,
-  useCloudValue,
-  useCloud,
-  useCloudReducer,
-  CloudContext,
-} from '../cloud-core/KiteReact';
+import { useCloudValue, useCloud, CloudContext } from '../cloud-core/KiteReact';
 import DevicesReducer from '../logic/DevicesReducer';
 import codePush from 'react-native-code-push';
 

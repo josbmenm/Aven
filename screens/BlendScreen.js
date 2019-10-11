@@ -11,7 +11,7 @@ function BlendScreenMemo({ navigation, ...props }) {
   const orderItemId = getParam('orderItemId');
   const menuItemId = getParam('menuItemId');
 
-  let { order, setItemState, orderItem } = useOrderItem(orderItemId);
+  let { setItemState, orderItem, orderDispatch } = useOrderItem(orderItemId);
   const { menuItem } = useInventoryMenuItem(menuItemId);
   const restaurantConfig = useRestaurantConfig();
   const menu = useMenu();
@@ -23,9 +23,9 @@ function BlendScreenMemo({ navigation, ...props }) {
       item={orderItem || null} // this is to avoid re-rendering when item becomes known as undefined
       foodMenu={menu && menu.food}
       setItemState={setItemState}
-      order={order}
       navigation={navigation}
       restaurantConfig={restaurantConfig}
+      orderDispatch={orderDispatch}
       orderItemId={orderItemId}
       {...props}
     />

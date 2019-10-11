@@ -310,7 +310,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
                   onPress={() => {
                     step
                       .perform(
-                        cloud.get('RestaurantActions').putTransactionValue,
+                        cloud.get('RestaurantActions2').putTransactionValue,
                         handleKitchenCommand,
                       )
                       .then(resp => {
@@ -341,7 +341,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
                   onPress={() => {
                     step
                       .performFake(
-                        cloud.get('RestaurantActions').putTransactionValue,
+                        cloud.get('RestaurantActions2').putTransactionValue,
                         handleKitchenCommand,
                       )
                       .then(resp => {

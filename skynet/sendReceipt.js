@@ -425,17 +425,17 @@ export default async function sendReceipt({
   }
   if (action.contact.type === 'sms') {
     const sent = await sendSMSReceipt(smsAgent, action, orderValue);
-    await order.transact(o => ({
-      ...o,
-      receipts: [...(o.receipts || []), sent],
-    }));
+    await order.putTransactionValue({
+      type: 'SentReceipt',
+      receipt: sent,
+    });
   }
   if (action.contact.type === 'email') {
     const sent = await sendEmailReceipt(emailAgent, action, orderValue);
-    await order.transact(o => ({
-      ...o,
-      receipts: [...(o.receipts || []), sent],
-    }));
+    await order.putTransactionValue({
+      type: 'SentReceipt',
+      receipt: sent,
+    });
   }
   return;
 }

@@ -107,13 +107,7 @@ function Ingredients({ selectedIngredients }) {
   );
 }
 
-function BlendPageContentPure({
-  menuItem,
-  setItemState,
-  item,
-  order,
-  restaurantConfig,
-}) {
+function BlendPageContentPure({ menuItem, item, restaurantConfig }) {
   if (!menuItem) {
     return null;
   }
@@ -252,9 +246,8 @@ export default function BlendPage({
   navigation,
   menuItem,
   item,
-  setItemState,
+  orderDispatch,
   orderItemId,
-  order,
   foodMenu,
   restaurantConfig,
   ...props
@@ -279,15 +272,16 @@ export default function BlendPage({
     {
       title: 'add to cart',
       onPress: () => {
-        setItemState(
-          addMenuItemToCartItem({
-            item: item && item.state,
-            orderItemId,
-            menuItem,
-            itemType: 'blend',
-            customization: null,
-          }),
-        );
+        orderDispatch({
+          type: 'AddItem',
+          menuItemId: menuItem.id,
+          orderItemId,
+          customization: null,
+        })
+          .then(() => {
+            console.log('hiho');
+          })
+          .catch(console.error);
       },
     },
   ];
@@ -302,8 +296,7 @@ export default function BlendPage({
         item={item}
         menuItem={menuItem}
         foodMenu={foodMenu}
-        order={order}
-        setItemState={setItemState}
+        orderDispatch={orderDispatch}
         restaurantConfig={restaurantConfig}
       />
     </ActionPage>

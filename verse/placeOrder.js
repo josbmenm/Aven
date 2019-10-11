@@ -11,14 +11,14 @@ import {
 
 export default async function placeOrder(
   cloud,
-  { isLive, order, orderId, paymentIntent },
+  companyConfigStream,
+  restaurantConfigStream,
+  { isLive, order, orderId, paymentIntent, type },
 ) {
   log('AttemptPlaceOrder', { isLive, order, orderId, paymentIntent });
-  const companyConfigState = await cloud.get('CompanyConfig').idAndValue.load();
+  const companyConfigState = await companyConfigStream.load();
   const companyConfig = companyConfigState.value;
-  const restaurantConfigState = await cloud
-    .get('RestaurantConfig')
-    .idAndValue.load();
+  const restaurantConfigState = await restaurantConfigStream.load();
   const restaurantConfig = restaurantConfigState.value;
   const isCateringMode =
     restaurantConfig && restaurantConfig.mode === 'catering';
@@ -117,11 +117,7 @@ export default async function placeOrder(
       throw new Error('PromoCodeVerification');
     }
   }
-
   const allTasks = summary.items.map(item => {
-    if (item.type !== 'blend') {
-      return;
-    }
     const { menuItemId } = item;
     const menuItem = blends.find(b => b.id === menuItemId);
     const fills = getFillsOfOrderItem(menuItem, item, companyConfig);
@@ -203,16 +199,16 @@ export default async function placeOrder(
     // throw new Error('Could not verify payment intent! Order has failed.');
   }
 
-  // await cloud.get(`ConfirmedOrders/${orderId}`).putValue(confirmedOrder)
+  await cloud.get(`Orders/${orderId}`).putValue(confirmedOrder);
   await cloud.get('CompanyActivity').putTransactionValue({
     type: 'KioskOrder',
     confirmedOrder,
   });
 
-  // await cloud.get('RestaurantActions').putTransactionValue({
-  //   type: 'QueueTasks',
-  //   tasks: orderTasks,
-  // });
+  await cloud.get('RestaurantActions2').putTransactionValue({
+    type: 'QueueTasks',
+    tasks: orderTasks,
+  });
 
   orderTasks.forEach(task => log('OrderTask', { task, orderId }));
   log('OrderTasksPlaced', { orderId, taskCount: orderTasks.length });

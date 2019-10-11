@@ -1,5 +1,5 @@
 import React from 'react';
-import { useOrder, useOrderSummary } from '../ono-cloud/OrderContext';
+import { useOrderState, useOrderSummary } from '../ono-cloud/OrderContext';
 import useEmptyOrderEscape from './useEmptyOrderEscape';
 import { useCardPaymentCapture } from '../card-reader/CardReader';
 import OrderConfirmPage from '../components/OrderConfirmPage';
@@ -13,18 +13,19 @@ export default function OrderConfirmScreen({
   navigation,
   ...props
 }) {
-  const { confirmOrder, order } = useOrder();
+  const { confirmOrder, orderState } = useOrderState();
+  const orderId = orderState && orderState.orderId;
   const [error, setError] = React.useState(null);
   function handleCaughtError(e) {
     setError(e);
     return true;
   }
   const handleError = useAsyncError(handleCaughtError);
-  const summary = useOrderSummary();
+  const summary = useOrderSummary(); // todo, dedupe this hook from useOrderState above
   async function handleCompletion(paymentIntent) {
     await confirmOrder(paymentIntent);
     setTimeout(() => {
-      navigation.navigate('Receipt', { orderId: order.getName() });
+      navigation.navigate('Receipt', { orderId });
     }, 1000);
   }
   const paymentDetails =
@@ -32,7 +33,7 @@ export default function OrderConfirmScreen({
       ? {
           amount: summary.total,
           description: 'Ono Blends',
-          context: { id: order && order.getName() },
+          context: { orderId },
           onCompletion: paymentIntent =>
             handleError(handleCompletion(paymentIntent)),
         }
@@ -47,7 +48,7 @@ export default function OrderConfirmScreen({
   useEmptyOrderEscape();
   async function handleSkippedPayment() {
     await confirmOrder();
-    navigation.navigate('Receipt', { orderId: order.getName() });
+    navigation.navigate('Receipt', { orderId });
   }
   let skipOnceRef = React.useRef(false);
   async function handleOnceSkippedPayment() {

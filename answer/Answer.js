@@ -7,7 +7,9 @@ if (!BACKUP_DIR) {
   throw new Error('Set env ONO_BACKUP_DIR');
 }
 
-async function getAnswers() {
+const question = process.env.Q;
+
+async function queryOrders() {
   const listing = await fs.readdir(`${BACKUP_DIR}/docs`);
   const latestDocFile = listing[listing.length - 1];
   const docFileData = await fs.readFile(`${BACKUP_DIR}/docs/${latestDocFile}`);
@@ -93,11 +95,42 @@ async function getAnswers() {
     ),
   );
 }
+async function dbFileExport() {
+  const listing = await fs.readdir(`${BACKUP_DIR}/blocks`);
+  let examineBlockFile = false;
+  while ((examineBlockFile = listing.shift())) {
+    const blockData = await fs.readFile(
+      `${BACKUP_DIR}/blocks/${examineBlockFile}`,
+      { encoding: 'utf8' },
+    );
+    const block = JSON.parse(blockData);
+    if (block.type === 'BinaryFileHex') {
+      const binaryData = Buffer.from(block.data, 'hex');
+      const destFile = `${BACKUP_DIR}/files/${
+        examineBlockFile.split('.')[0]
+      }.png`;
+      fs.writeFile(destFile, binaryData);
+      console.log('Writing ' + destFile);
+    }
+  }
+}
 
-getAnswers()
-  .then(() => {
-    console.log('Done.');
-  })
-  .catch(e => {
-    console.error(e);
-  });
+if (question === 'Orders') {
+  queryOrders()
+    .then(() => {
+      console.log('Done.');
+    })
+    .catch(e => {
+      console.error(e);
+    });
+}
+
+if (question === 'DbFileExport') {
+  dbFileExport()
+    .then(() => {
+      console.log('Done.');
+    })
+    .catch(e => {
+      console.error(e);
+    });
+}

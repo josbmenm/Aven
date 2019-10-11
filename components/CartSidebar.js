@@ -152,7 +152,7 @@ function StepperButton({ onPress, disabled, isDown }) {
 
 function CartRow({ itemId, item, hideMoney }) {
   let { navigate } = useNavigation();
-  let { setItemState, removeItem } = useOrderItem(itemId);
+  let { orderDispatch } = useOrderItem(itemId);
   if (!item || !item.menuItem) {
     return null;
   }
@@ -240,7 +240,12 @@ function CartRow({ itemId, item, hideMoney }) {
             <SmallButton
               title="remove"
               icon={require('./assets/DeleteIcon.png')}
-              onPress={removeItem}
+              onPress={() => {
+                orderDispatch({
+                  type: 'RemoveItem',
+                  itemId,
+                });
+              }}
             />
           </View>
         </View>
@@ -254,9 +259,10 @@ function CartRow({ itemId, item, hideMoney }) {
           <StepperButton
             disabled={false}
             onPress={() => {
-              setItemState({
-                ...item.state,
-                quantity: item.quantity + 1,
+              orderDispatch({
+                type: 'IncrementQuantity',
+                itemId,
+                increment: 1,
               });
             }}
           />
@@ -276,9 +282,10 @@ function CartRow({ itemId, item, hideMoney }) {
             isDown
             disabled={item.quantity <= 1}
             onPress={() => {
-              setItemState({
-                ...item.state,
-                quantity: item.quantity - 1,
+              orderDispatch({
+                type: 'IncrementQuantity',
+                itemId,
+                increment: -1,
               });
             }}
           />
@@ -300,7 +307,7 @@ function BlockFormErrorRow({ error }) {
   );
 }
 
-function PromoCodeForm({ onClose, order, cloud }) {
+function PromoCodeForm({ onClose, orderDispatch, cloud }) {
   const [error, setError] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [promoCode, setPromoCode] = React.useState('');
@@ -333,12 +340,12 @@ function PromoCodeForm({ onClose, order, cloud }) {
           });
           return;
         }
-        onClose();
-        return order.transact(lastOrder => ({
-          ...lastOrder,
+        return orderDispatch({
+          type: 'SetPromo',
           promo: validPromo,
-        }));
+        });
       })
+      .then(onClose)
       .catch(e => {
         setIsLoading(false);
         setError(e);
@@ -367,14 +374,18 @@ function PromoCodeForm({ onClose, order, cloud }) {
 }
 
 function usePromoPopover() {
-  const { order } = useOrder();
+  const { orderDispatch } = useOrder();
   const cloud = useCloud();
 
   const { onPopover } = usePopover(
     ({ onClose, ...props }) => {
       return (
         <KeyboardPopover onClose={onClose} {...props}>
-          <PromoCodeForm onClose={onClose} order={order} cloud={cloud} />
+          <PromoCodeForm
+            onClose={onClose}
+            orderDispatch={orderDispatch}
+            cloud={cloud}
+          />
         </KeyboardPopover>
       );
     },
@@ -384,7 +395,7 @@ function usePromoPopover() {
 }
 
 function PromoCode({ promo }) {
-  const { order } = useOrder();
+  const { orderDispatch } = useOrder();
   const onPopover = usePromoPopover();
   if (promo) {
     return (
@@ -423,10 +434,12 @@ function PromoCode({ promo }) {
           style={{ padding: 8 }}
           hitSlop={{ top: 15, right: 15, left: 15, right: 15 }}
           onPress={() => {
-            order.transact(o => ({
-              ...o,
+            orderDispatch({
+              type: 'SetPromo',
               promo: null,
-            }));
+            }).catch(e => {
+              error('ClearPromoFailure', { code: e.message });
+            });
           }}
         >
           <Image
