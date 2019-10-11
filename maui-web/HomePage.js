@@ -17,11 +17,21 @@ function HomePage() {
       <HomeHeader />
       <View>
         <Container>
-          <Image
-            source={require('./public/img/OnoLanding2.png')}
-            resizeMode="cover"
-            style={{ ...aspectRatio169 }}
-          />
+          <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+            <iframe
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+              }}
+              src="https://www.youtube.com/embed/ppqbNbQ2tB0"
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
         </Container>
       </View>
       <GenericHeroHeader
@@ -31,6 +41,19 @@ function HomePage() {
       <HomeSlider />
       <HowItWorks />
       {/* <HomeSchedule /> */}
+
+      {/* Don't ask why this is necessary. JUST MOVE ON! */}
+      <div style={{ position: 'relative' }} />
+
+      <View>
+        <Container>
+          <Image
+            source={require('./public/img/OnoLanding2.png')}
+            resizeMode="cover"
+            style={{ ...aspectRatio169 }}
+          />
+        </Container>
+      </View>
       <PageFooter />
     </GenericPage>
   );
