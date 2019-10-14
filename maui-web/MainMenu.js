@@ -220,7 +220,24 @@ export function MobileMenu() {
                 paddingBottom: 24,
               }}
             >
-              <MobileMenuLink routeName="Terms" title="terms & privacy" />
+              <Link
+                noActive
+                size="small"
+                url="https://www.dropbox.com/sh/pqovhpomd86tkwv/AAAlWNK8M737FghzfDawT4T7a?dl=0"
+                target="_blank"
+                title="media kit"
+                titleStyle={{ textAlign: 'left' }}
+              />
+              <Link
+                titleStyle={{ textAlign: 'left' }}
+                title="terms & privacy"
+                size="small"
+                routeName="Terms"
+                buttonStyle={{
+                  paddingHorizontal: 0,
+                  paddingLeft: 8,
+                }}
+              />
               <Link
                 titleStyle={{ textAlign: 'left' }}
                 noActive
