@@ -425,6 +425,15 @@ Debug: ${JSON.stringify(action)}
       ...cloud,
       dispatch,
     },
+    expressRouting: app => {
+      app.use((req, res, next) => {
+        if (req.headers.host === 'onofood.co') {
+          res.redirect(`https://onoblends.co/${req.originalUrl}`);
+          return;
+        }
+        next();
+      });
+    },
     augmentRequestDispatchAction: (req, action) => {
       const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
       return {
