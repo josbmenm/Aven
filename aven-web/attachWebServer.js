@@ -108,6 +108,7 @@ export default async function attachWebServer({
   context,
   serverListenLocation,
   expressRouting = undefined,
+  fallbackExpressRouting = undefined,
   assets,
   domainAppOverrides,
   augmentRequestDispatchAction,
@@ -149,6 +150,7 @@ export default async function attachWebServer({
     : {};
 
   function doExpressRouting(app) {
+    expressRouting && expressRouting(app);
     process.env.ENFORCE_HTTPS && app.use(yes());
     app.use(helmet());
     app.use((req, res, next) => {
@@ -174,7 +176,7 @@ export default async function attachWebServer({
     app.use(express.static(publicDir));
   }
   function doFallbackExpressRouting(app) {
-    expressRouting && expressRouting(app);
+    fallbackExpressRouting && fallbackExpressRouting(app);
 
     app.get('/_/:domain/:docName*', (req, res) => {
       const docName = req.params.docName;
