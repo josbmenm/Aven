@@ -211,7 +211,6 @@ export function MobileMenu() {
               {/* <MobileMenuLink routeName="Schedule" title="schedule" /> */}
               <MobileMenuLink routeName="OurStory" title="our story" />
               <MobileMenuLink routeName="BookUs" title="book with us" />
-              <MobileMenuLink routeName="Terms" title="terms & privacy" />
             </View>
             <View
               style={{
@@ -221,6 +220,7 @@ export function MobileMenu() {
                 paddingBottom: 24,
               }}
             >
+              <MobileMenuLink routeName="Terms" title="terms & privacy" />
               <Link
                 titleStyle={{ textAlign: 'left' }}
                 noActive
