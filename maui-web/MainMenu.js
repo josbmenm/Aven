@@ -211,6 +211,7 @@ export function MobileMenu() {
               {/* <MobileMenuLink routeName="Schedule" title="schedule" /> */}
               <MobileMenuLink routeName="OurStory" title="our story" />
               <MobileMenuLink routeName="BookUs" title="book with us" />
+              <MobileMenuLink routeName="Terms" title="terms & privacy" />
             </View>
             <View
               style={{
@@ -220,46 +221,6 @@ export function MobileMenu() {
                 paddingBottom: 24,
               }}
             >
-              <Link
-                noActive
-                size="small"
-                url="https://www.dropbox.com/sh/pqovhpomd86tkwv/AAAlWNK8M737FghzfDawT4T7a?dl=0"
-                target="_blank"
-                title="media kit"
-                titleStyle={{ textAlign: 'left' }}
-              />
-              <Text>
-                <Link
-                  titleStyle={{ textAlign: 'left' }}
-                  title="terms"
-                  size="small"
-                  routeName="Terms"
-                  buttonStyle={{
-                    paddingHorizontal: 0,
-                    paddingLeft: 8,
-                  }}
-                />
-                <Text
-                  style={{
-                    fontFamily: theme.fonts.bold,
-                    fontSize: 16,
-                    lineHeight: 24,
-                    color: theme.colors.monsterra,
-                  }}
-                >
-                  &
-                </Text>
-                <Link
-                  size="small"
-                  titleStyle={{ textAlign: 'left' }}
-                  title="privacy"
-                  routeName="Privacy"
-                  buttonStyle={{
-                    paddingHorizontal: 0,
-                    paddingRight: 8,
-                  }}
-                />
-              </Text>
               <Link
                 titleStyle={{ textAlign: 'left' }}
                 noActive
