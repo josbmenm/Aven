@@ -1314,7 +1314,10 @@ export function createReducerStream(
     return docStateStream;
   }
   if (!snapshotsDoc) {
-    return doc.stream
+    return actionsDoc.stream
+      .dropRepeats((a, b) => {
+        return a.id === b.id;
+      }, 'DropRepeatedIdActions')
       .map(docState => {
         return getDocStateStream(docState.id);
       })
