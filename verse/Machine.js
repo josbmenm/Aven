@@ -327,6 +327,23 @@ export function connectMachine({
         const isCommandReceived = startedCommandId === resolver.commandId;
         const isCommandComplete =
           noFaults && endedCommandId === resolver.commandId;
+        if (!isCommandReceived && resolver.startTime + 400 < Date.now()) {
+          error('MachineError', {
+            ..._kitchenState,
+            code: 'CommandNotReceived',
+            subsystem,
+            noFaults,
+            startedCommandId,
+            endedCommandId,
+            commandId: resolver.commandId,
+            command: resolver.command,
+            isCommandReceived,
+            isCommandComplete,
+          });
+          resolver.reject(
+            new Error(`System "${subsystem}" did not receive this command id.`),
+          );
+        }
         if (isCommandReceived && (isSystemIdle || isCommandComplete)) {
           if (isCommandComplete) {
             resolver.resolve();
@@ -471,7 +488,8 @@ export function connectMachine({
       values,
     });
     await new Promise((resolve, reject) => {
-      let watchKittyTimeout = setTimeout(() => {
+      const watchKittyTimeout = setTimeout(() => {
+        clearTimeout(commandReceptionTimeout);
         delete subsystemResolvers[subsystem];
         const commandErrorTimeMS = Date.now();
         const errorDetails = {
@@ -491,14 +509,38 @@ export function connectMachine({
           new Error(`Watch kitty timeout on "${subsystem}" system, meow!`),
         );
       }, 2 * 60 * 1000);
+      const commandReceptionTimeout = setTimeout(() => {
+        clearTimeout(watchKittyTimeout);
+        delete subsystemResolvers[subsystem];
+        const commandErrorTimeMS = Date.now();
+        const errorDetails = {
+          ..._kitchenState,
+          code: 'CommandReceptionError',
+          command,
+          commandId,
+          subsystem,
+          pulse,
+          values,
+          commandStartTimeMS,
+          commandErrorTimeMS,
+          commandDurationMS: commandErrorTimeMS - commandStartTimeMS,
+        };
+        error('MachineCommandFailed', errorDetails);
+        reject(
+          new Error(`Watch kitty timeout on "${subsystem}" system, meow!`),
+        );
+      }, 350); // this is really worst case performance, due to network congestion to the PLC. the command should be accepted by the PLC within 6ms, and should be read back within the next 100ms
       subsystemResolvers[subsystem] = {
         resolve: value => {
           delete subsystemResolvers[subsystem];
+          clearTimeout(commandReceptionTimeout);
           clearTimeout(watchKittyTimeout);
           resolve(value);
         },
         reject: err => {
           delete subsystemResolvers[subsystem];
+          clearTimeout(commandReceptionTimeout);
+          clearTimeout(watchKittyTimeout);
           const commandErrorTimeMS = Date.now();
           error('MachineCommandFailed', {
             ..._kitchenState,
@@ -513,11 +555,11 @@ export function connectMachine({
             commandErrorTimeMS,
             commandDurationMS: commandErrorTimeMS - commandStartTimeMS,
           });
-          clearTimeout(watchKittyTimeout);
           reject(err);
         },
         commandId,
         command,
+        commandReceptionTimeout,
       };
     });
 

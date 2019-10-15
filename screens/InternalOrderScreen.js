@@ -23,7 +23,7 @@ import cuid from 'cuid';
 function OrderTasks({ order }) {
   const handleErrors = useAsyncError();
   const cloud = useCloud();
-  const restaurantDispatch = cloud.get('RestaurantActions2').putTransactionValue;
+  const restaurantDispatch = cloud.get('RestaurantActions').putTransactionValue;
   if (!order) return null;
   return (
     <View>
@@ -212,12 +212,13 @@ function OrderPage({ order }) {
 
 function InternalOrderScreen({ ...props }) {
   const orderId = props.navigation.getParam('orderId');
-  const order = useCloudValue(`ConfirmedOrders/${orderId}`);
+  const order = useCloudValue(`OrderState/${orderId}`);
+  console.log(order);
   return (
     <TwoPanePage
       {...props}
       title={
-        order
+        order && order.orderName
           ? `Order for ${order.orderName.firstName} ${order.orderName.lastName}`
           : 'Order'
       }

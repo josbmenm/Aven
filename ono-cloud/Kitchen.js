@@ -3,7 +3,7 @@ import useTimeSeconds from '../utils/useTimeSeconds';
 
 export function useRestaurantState() {
   const cloud = useCloud();
-  const dispatch = cloud.docs.get('RestaurantActions2').putTransactionValue;
+  const dispatch = cloud.docs.get('RestaurantActions').putTransactionValue;
   const restaurantState = useCloudValue('RestaurantState');
   return [restaurantState, dispatch];
 }

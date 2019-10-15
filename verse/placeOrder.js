@@ -199,15 +199,10 @@ export default async function placeOrder(
     // throw new Error('Could not verify payment intent! Order has failed.');
   }
 
-  await cloud.get(`Orders/${orderId}`).putValue(confirmedOrder);
-  await cloud.get('CompanyActivity').putTransactionValue({
-    type: 'KioskOrder',
-    confirmedOrder,
-  });
-
-  await cloud.get('RestaurantActions2').putTransactionValue({
-    type: 'QueueTasks',
-    tasks: orderTasks,
+  await cloud.get(`Orders/${orderId}`).putTransactionValue({
+    type: 'PlaceOrder',
+    orderId: confirmedOrder.orderId,
+    order: confirmedOrder,
   });
 
   orderTasks.forEach(task => log('OrderTask', { task, orderId }));

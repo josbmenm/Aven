@@ -2,17 +2,22 @@ import { defineCloudReducer } from '../cloud-core/KiteReact';
 import cuid from 'cuid';
 
 function OrderReducerFn(state = {}, action) {
+  if (!action.type) {
+    console.log('Handling LEGACY order');
+    return action;
+  }
   switch (action.type) {
-    case 'WipeState': {
-      return {};
-    }
-    case 'StartOrder': {
+    case 'PlaceOrder': {
+      if (state.orderId && action.orderId !== state.orderId) {
+        // just a precaution.. this shouldn't ever happen!
+        return state;
+      }
       return {
-        ...state,
-        items: [],
-        orderId: cuid(),
-        startTime: action.dispatchTime,
+        ...action.order,
       };
+    }
+    case 'PaymentRefund': {
+      return { ...state, refundTime: action.refundTime, refund: action.refund };
     }
     case 'SentReceipt': {
       return {
@@ -20,72 +25,7 @@ function OrderReducerFn(state = {}, action) {
         receipts: [...(state.receipts || []), action.receipt],
       };
     }
-    case 'CancelOrder': {
-      return {
-        ...state,
-        cancelledTime: action.dispatchTime,
-        isCancelled: true,
-      };
-    }
-    case 'AddItem': {
-      if (
-        state.items &&
-        state.items.find(item => action.orderItemId === item.id)
-      ) {
-        return {
-          ...state,
-          items: state.items.map(item => {
-            if (item.id !== action.orderItemId) return item;
-            return { ...item, quantity: item.quantity + 1 };
-          }),
-        };
-      }
-      return {
-        ...state,
-        items: [
-          ...(state.items || []),
-          {
-            id: action.orderItemId || cuid(),
-            menuItemId: action.menuItemId,
-            quantity: 1,
-          },
-        ],
-      };
-    }
-    case 'SetOrderName': {
-      return {
-        ...state,
-        orderName: action.orderName,
-      };
-    }
-    case 'IncrementQuantity': {
-      const items = state.items.map(item => {
-        if (item.id !== action.itemId) return item;
-        return {
-          ...item,
-          quantity: item.quantity + action.increment,
-        };
-      });
-      return {
-        ...state,
-        items,
-      };
-    }
-    case 'RemoveItem': {
-      items = state.items.filter(item => {
-        return item.id !== action.itemId;
-      });
-      return {
-        ...state,
-        items,
-      };
-    }
-    case 'SetPromo': {
-      return {
-        ...state,
-        promo: action.promo,
-      };
-    }
+
     default: {
       return state;
     }

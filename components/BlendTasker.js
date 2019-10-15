@@ -98,7 +98,7 @@ export default function BlendTasker() {
     orderName,
     onOrderInfo: ({ orderName }) => setOrderName(orderName),
   });
-  const restaurantDispatch = usePutTransactionValue('RestaurantActions2');
+  const restaurantDispatch = usePutTransactionValue('RestaurantActions');
   const companyConfig = useCompanyConfig();
   const fills = getFillsOfOrderItem(menuItem, { customization }, companyConfig);
   const blendDisplayName = customization ? `custom ${blendName}` : blendName;

@@ -415,8 +415,9 @@ export default async function sendReceipt({
   emailAgent,
   action,
 }) {
-  const order = cloud.get(`ConfirmedOrders/${action.orderId}`);
-  const orderValue = await order.value.load();
+  const orderActions = cloud.get(`Orders/${action.orderId}`);
+  const orderState = cloud.get(`OrderState/${action.orderId}`);
+  const orderValue = await orderState.value.load();
   if (!orderValue) {
     throw new Error('Cannot find this order ' + action.orderId);
   }
@@ -425,14 +426,14 @@ export default async function sendReceipt({
   }
   if (action.contact.type === 'sms') {
     const sent = await sendSMSReceipt(smsAgent, action, orderValue);
-    await order.putTransactionValue({
+    await orderActions.putTransactionValue({
       type: 'SentReceipt',
       receipt: sent,
     });
   }
   if (action.contact.type === 'email') {
     const sent = await sendEmailReceipt(emailAgent, action, orderValue);
-    await order.putTransactionValue({
+    await orderActions.putTransactionValue({
       type: 'SentReceipt',
       receipt: sent,
     });

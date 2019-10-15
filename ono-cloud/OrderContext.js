@@ -3,7 +3,7 @@ import { useCloud, useValue } from '../cloud-core/KiteReact';
 import { getOrderItemMapper, getOrderSummary } from '../logic/configLogic';
 import { useMenu, getLocalName, useCompanyConfig } from './OnoKitchen';
 import { getIsLiveMode } from '../card-reader/CardReader';
-import OrderReducer from '../logic/OrderReducer';
+import OrderDraftReducer from '../logic/OrderDraftReducer';
 
 const OrderContext = createContext(null);
 
@@ -15,7 +15,7 @@ export function OrderContextProvider({ children }) {
     draftActions.setLocalOnly();
 
     return cloud.setReducer('DraftOrder', {
-      reducer: OrderReducer,
+      reducer: OrderDraftReducer,
       actionsDoc: draftActions,
     });
   }, [cloud, draftActions]);
@@ -74,7 +74,7 @@ export function OrderContextProvider({ children }) {
         cloud.get('DraftOrderActions').putValue({
           type: 'TransactionValue',
           on: null,
-          value: { type: 'StartOrder' },
+          value: { type: 'StartOrderDraft' },
         }),
       );
     },

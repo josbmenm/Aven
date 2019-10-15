@@ -9,8 +9,10 @@ export default async function refundOrder({
   logger,
 }) {
   log('WillRefundOrder', { orderId: action.orderId });
-  const order = cloud.get(`ConfirmedOrders/${action.orderId}`);
-  const orderState = await order.idAndValue.load();
+  const orderActions = cloud.get(`Orders/${action.orderId}`);
+  const orderState = await cloud
+    .get(`OrderState/${action.orderId}`)
+    .idAndValue.load();
 
   if (!orderState.value) {
     throw new Error('Cannot find this order ' + action.orderId);
@@ -22,12 +24,13 @@ export default async function refundOrder({
     throw new Error('Cannot refund without a stripe payment intent');
   }
   const refund = await refundPaymentIntent(orderState.value.stripeIntent);
-  const newOrder = {
-    ...orderState.value,
+  const refundTime = Date.now();
+  await orderActions.putTransactionValue({
+    type: 'PaymentRefund',
     refundTime: Date.now(),
     refund,
-  };
-  order.putValue(newOrder);
+  });
+  const newOrder = { ...orderState.value, refundTime, refund };
   log('DidRefundOrder', { order: newOrder });
   return newOrder;
 }

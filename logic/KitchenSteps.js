@@ -299,6 +299,7 @@ const KitchenSteps = [
     },
     getKitchenCommand: intent => ({
       commandType: 'FillGoToHandoff',
+      ...intent,
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidFillGoToHandoff',
@@ -403,6 +404,7 @@ const KitchenSteps = [
     },
     getKitchenCommand: intent => ({
       commandType: 'FillGoToCup',
+      ...intent,
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidFillGoToCup',

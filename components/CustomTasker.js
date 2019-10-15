@@ -186,7 +186,7 @@ export default function CustomTasker() {
       });
     },
   });
-  const restaurantDispatch = usePutTransactionValue('RestaurantActions2');
+  const restaurantDispatch = usePutTransactionValue('RestaurantActions');
 
   if (isStateUnloaded(savedTask)) {
     return null;

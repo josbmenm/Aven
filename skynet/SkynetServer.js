@@ -4,11 +4,17 @@ import { IS_DEV } from '../aven-web/config';
 import startPostgresStorageSource from '../cloud-postgres/startPostgresStorageSource';
 import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
 import scrapeAirTable from './scrapeAirTable';
-import { createSessionClient, createReducerStream } from '../cloud-core/Kite';
+import {
+  createSessionClient,
+  createReducerStream,
+  createReducedDoc,
+  createSyntheticDoc,
+} from '../cloud-core/Kite';
 import { CloudContext } from '../cloud-core/KiteReact';
 import createFSClient from '../cloud-server/createFSClient';
 
 import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
+import OrderReducer from '../logic/OrderReducer';
 import DevicesReducer from '../logic/DevicesReducer';
 
 import sendReceipt from './sendReceipt';
@@ -164,6 +170,21 @@ export default async function startSkynetServer(httpServer) {
     domain: 'onofood.co',
     auth: null,
   });
+
+  cloud.docs.setOverride(
+    'OrderState',
+    createSyntheticDoc({
+      onCreateChild: orderId => {
+        return createReducedDoc({
+          actions: cloudOrders.children.get(orderId),
+          reducer: OrderReducer,
+          onGetName: () => `OrderState/${orderId}`,
+          domain: 'onofood.co',
+        });
+      },
+    }),
+  );
+
   const airtableFolder = cloud.docs.get('Airtable');
   const companyConfigStream = airtableFolder.value.stream
     .map(folder => {
@@ -216,6 +237,35 @@ export default async function startSkynetServer(httpServer) {
     companyConfigStream,
   );
   const companyActivity = cloud.docs.get('CompanyActivity');
+
+  const cloudOrders = cloud.get('Orders');
+
+  cloudOrders.handleReports((reportType, report) => {
+    if (reportType === 'PutDoc') {
+      const doc = cloudOrders.children.get(report.name);
+      doc.idAndValue
+        .load()
+        .then(orderDocState => {
+          if (orderDocState.value.on === null) {
+            // this is a new order
+            const { order } = orderDocState.value.value;
+            return {
+              type: 'KioskOrder',
+              confirmedOrder: order,
+            };
+          }
+          return null;
+        })
+        .then(async action => {
+          if (action) {
+            await companyActivity.putTransactionValue(action);
+          }
+        })
+        .catch(e => {
+          error('OrderActivityError', { code: e.message, ...report });
+        });
+    }
+  });
 
   cloud.setReducer('RecentOrders', {
     actionsDoc: companyActivity,

@@ -44,7 +44,7 @@ export default async function startVerseServer(httpServer) {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  USE_DEV_SERVER = false;
+  // USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -147,15 +147,38 @@ export default async function startVerseServer(httpServer) {
   });
 
   cloud.get('KitchenState').setLocalOnly();
-  cloud.get('Orders').handleReports((reportType, report) => {
-    console.log('some orderz!!@@!', reportType, report);
+  const cloudOrders = cloud.get('Orders');
+  const restaurantActions = cloud.get('RestaurantActions');
+
+  cloudOrders.handleReports((reportType, report) => {
+    if (reportType === 'PutDoc') {
+      const doc = cloudOrders.children.get(report.name);
+      doc.idAndValue
+        .load()
+        .then(orderDocState => {
+          if (orderDocState.value.on === null) {
+            // this is a new order
+            const { order } = orderDocState.value.value;
+            return {
+              type: 'QueueTasks',
+              tasks: order.orderTasks,
+            };
+          }
+          return null;
+        })
+        .then(async action => {
+          if (action) {
+            await restaurantActions.putTransactionValue(action);
+          }
+        })
+        .catch(e => {
+          error('TaskPlacementError', { code: e.message, ...report });
+        });
+    }
   });
 
-  cloud.get('RestaurantActions2').setLocalOnly();
+  cloud.get('RestaurantActions').setLocalOnly();
   cloud.get('RestaurantStateSnapshot').setLocalOnly();
-  // cloud.get('RestaurantState').setLocalOnly();
-
-  const restaurantActions = cloud.get('RestaurantActions2');
 
   cloud.setReducer('RestaurantState', {
     actionsDoc: restaurantActions,
@@ -179,14 +202,14 @@ export default async function startVerseServer(httpServer) {
       'onofood.co': {
         KitchenState: { defaultRule: { canRead: true } },
         KitchenConfig: { defaultRule: { canRead: true } },
-        RestaurantActions2: { defaultRule: { canRead: true } },
+        RestaurantActions: { defaultRule: { canRead: true } },
         RestaurantState: { defaultRule: { canRead: true } },
         CompanyConfig: { defaultRule: { canRead: true } },
         PendingOrders: { defaultRule: { canPost: true } },
 
         // 'OnoState^Inventory': { defaultRule: { canRead: true } },
         // 'OnoState^Menu': { defaultRule: { canRead: true } },
-        // 'RestaurantActions2^RestaurantReducer': {
+        // 'RestaurantActions^RestaurantReducer': {
         //   defaultRule: { canRead: true },
         // },
       },
@@ -200,7 +223,7 @@ export default async function startVerseServer(httpServer) {
   const kitchenStateDoc = cloud.get('KitchenState');
   const restaurantStateStream = cloud.get('RestaurantState').value.stream;
 
-  const restaurantStateDispatch = cloud.get('RestaurantActions2')
+  const restaurantStateDispatch = cloud.get('RestaurantActions')
     .putTransactionValue;
 
   let kitchen = null;
@@ -407,7 +430,7 @@ export default async function startVerseServer(httpServer) {
       });
       if (
         action.type === 'PutTransactionValue' &&
-        action.name === 'RestaurantActions2'
+        action.name === 'RestaurantActions'
       ) {
         log('RestaurantDispatch', {
           action,

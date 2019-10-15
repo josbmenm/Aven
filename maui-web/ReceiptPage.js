@@ -42,7 +42,7 @@ function Receipt({ orderValue, orderId }) {
 export default function ReceiptPage() {
   const { getParam } = useNavigation();
   const orderId = getParam('orderId');
-  const orderValue = useCloudValue(`ConfirmedOrders/${orderId}`);
+  const orderValue = useCloudValue(`OrderState/${orderId}`);
 
   return (
     <GenericPage>
