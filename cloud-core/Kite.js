@@ -62,9 +62,9 @@ function valuePluck(o) {
 export function valueMap(idAndValue) {
   return idAndValue.map(valuePluck, 'GetValue');
 }
-export function createStreamDoc(idAndValueStream, domain, docName) {
-  const streamIdAndValue = createStreamValue(idAndValueStream, () => docName);
-  const value = createStreamValue(valueMap(idAndValueStream), () => docName);
+export function createStreamDoc(idAndValueStream, domain, onGetName) {
+  const streamIdAndValue = createStreamValue(idAndValueStream, onGetName);
+  const value = createStreamValue(valueMap(idAndValueStream), onGetName);
 
   return {
     type: 'StreamDoc',
@@ -72,7 +72,7 @@ export function createStreamDoc(idAndValueStream, domain, docName) {
     idAndValue: streamIdAndValue,
     getReference: () => ({
       type: 'StreamDoc',
-      name: docName,
+      name: onGetName(),
     }),
     putValue: () => {
       throw new Error('Cannot PutValue of a stream doc');
@@ -83,13 +83,13 @@ export function createStreamDoc(idAndValueStream, domain, docName) {
         return {
           type: 'Doc',
           domain,
-          name: docName,
+          name: onGetName(),
         };
       }
       return {
         type: 'Doc',
         domain,
-        name: docName,
+        name: onGetName(),
         id: idAndValue.id,
         value: idAndValue.value,
       };
@@ -97,7 +97,7 @@ export function createStreamDoc(idAndValueStream, domain, docName) {
 
     isDestroyed: () => false,
     putTransactionValue: () => {
-      throw new Error(`Cannot putTransactionValue on "${docName}"`);
+      throw new Error(`Cannot putTransactionValue on "${onGetName()}"`);
     },
     getId: () => {
       throw new Error(
@@ -1029,10 +1029,13 @@ export function createDocSet({
     childDocs.clear();
   }
 
+  function setOverride(name, doc) {
+    childDocs.set(name, doc);
+    return doc;
+  }
   function setOverrideStream(name, stream) {
-    const streamDoc = createStreamDoc(stream, domain, name);
-    childDocs.set(name, streamDoc);
-    return streamDoc;
+    const streamDoc = createStreamDoc(stream, domain, () => name);
+    return setOverride(name, streamDoc);
   }
 
   async function move(fromName, toName) {
@@ -1082,6 +1085,7 @@ export function createDocSet({
     get,
     post,
     move,
+    setOverride,
     setOverrideStream,
     setOverrideValueStream,
     shamefullyDestroyAll,
@@ -1254,7 +1258,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
 }
 
 export function createReducerStream(
-  doc,
+  actionsDoc,
   reducerFn,
   initialState,
   reducerName,
@@ -1276,13 +1280,13 @@ export function createReducerStream(
     if (docStateStreams.has(id)) {
       return docStateStreams.get(id);
     }
-    const actionBlock = doc.getBlock(id);
+    const actionBlock = actionsDoc.getBlock(id);
 
     const docStateStream = actionBlock.idAndValue.stream
       .map(actionDocState => {
         const actionDocId = actionDocState.id;
         const actionDocValue = actionDocState.value;
-        const actionValue = actionDocValue.value;
+        const actionValue = actionDocValue.value || actionDocValue;
 
         let [prevStateStream] = streamOf({
           value: initialState,
@@ -1300,7 +1304,7 @@ export function createReducerStream(
             context: {
               type: 'ReducedStream',
               reducerName,
-              docName: doc.getName(),
+              docName: actionsDoc.getName(),
               docId: actionDocId,
               prevStateId: lastState.id,
               gen: (lastState.context ? lastState.context.gen : 0) + 1,
@@ -1327,7 +1331,7 @@ export function createReducerStream(
       }, 'DropRepeatedIdValues');
   }
   return combineStreams({
-    sourceDoc: doc.stream,
+    sourceDoc: actionsDoc.stream,
     snapshotValue: snapshotsDoc.value.stream,
   })
     .map(({ snapshotValue, sourceDoc }) => {
@@ -1485,6 +1489,36 @@ export function createLocalSessionClient({
   });
 
   return sessionClient;
+}
+
+export function createSyntheticDoc({ onCreateChild }) {
+  const children = new Map();
+  function getChild(name) {
+    if (children.has(name)) {
+      return children.get(name);
+    }
+    const child = onCreateChild(name);
+    children.set(name, child);
+    return child;
+  }
+
+  return {
+    children: {
+      get: getChild,
+    },
+  };
+}
+
+export function createReducedDoc({ actions, reducer, domain, onGetName }) {
+  const reducerStream = createReducerStream(
+    actions,
+    reducer.reducerFn,
+    reducer.initialState,
+    reducer.reducerName,
+    {},
+  );
+  const streamDoc = createStreamDoc(reducerStream, domain, onGetName);
+  return streamDoc;
 }
 
 export function createClient({ domain, source, onReport }) {
