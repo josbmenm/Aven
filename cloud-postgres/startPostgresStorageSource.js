@@ -346,12 +346,20 @@ export default async function startPostgresStorageSource({
     docName,
     currentBlockId,
     valueForNotification,
+    valueSize,
   ) {
     const channelId = getDocChannel(domain, parentId, docName);
-    const payload = JSON.stringify({
-      id: currentBlockId,
-      value: valueForNotification,
-    });
+    let payload = null;
+    if (!valueSize || valueSize < 7900) {
+      // pg max notif is 8000.. this leaves 100 for the id and outer object
+      payload = JSON.stringify({
+        id: currentBlockId,
+        value: valueForNotification,
+      });
+    }
+    if (!payload || payload.length > 8000) {
+      payload = JSON.stringify({ id: currentBlockId });
+    }
     await notifyChannel(channelId, payload);
   }
 
@@ -361,6 +369,7 @@ export default async function startPostgresStorageSource({
     localName,
     currentBlockId,
     valueForNotification,
+    valueSize,
   ) {
     const internalParentId = getInternalParentId(parentId);
     try {
@@ -383,6 +392,7 @@ export default async function startPostgresStorageSource({
           localName,
           currentBlockId,
           valueForNotification,
+          valueSize,
         );
       }
     } catch (e) {
@@ -514,14 +524,7 @@ export default async function startPostgresStorageSource({
       return { name, id: block.id };
     }
     const block = await putBlock(value);
-    const smallEnoughForNotification = block.size && block.size < 1000;
-    await writeDoc(
-      domain,
-      parentId,
-      localName,
-      block.id,
-      smallEnoughForNotification ? value : undefined,
-    );
+    await writeDoc(domain, parentId, localName, block.id, value, block.size);
     return {
       name,
       id: block.id,
