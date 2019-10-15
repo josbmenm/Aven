@@ -481,6 +481,8 @@ export function connectMachine({
       );
     }
 
+    subsystemResolvers[subsystem] = {}; // use this to lock subsystem temporarily while writing values. todo: action id reception timeout
+
     await writeMachineValues({
       commandId,
       subsystem,
@@ -489,7 +491,6 @@ export function connectMachine({
     });
     await new Promise((resolve, reject) => {
       const watchKittyTimeout = setTimeout(() => {
-        clearTimeout(commandReceptionTimeout);
         delete subsystemResolvers[subsystem];
         const commandErrorTimeMS = Date.now();
         const errorDetails = {
@@ -509,37 +510,15 @@ export function connectMachine({
           new Error(`Watch kitty timeout on "${subsystem}" system, meow!`),
         );
       }, 2 * 60 * 1000);
-      const commandReceptionTimeout = setTimeout(() => {
-        clearTimeout(watchKittyTimeout);
-        delete subsystemResolvers[subsystem];
-        const commandErrorTimeMS = Date.now();
-        const errorDetails = {
-          ..._kitchenState,
-          code: 'CommandReceptionError',
-          command,
-          commandId,
-          subsystem,
-          pulse,
-          values,
-          commandStartTimeMS,
-          commandErrorTimeMS,
-          commandDurationMS: commandErrorTimeMS - commandStartTimeMS,
-        };
-        error('MachineCommandFailed', errorDetails);
-        reject(
-          new Error(`Watch kitty timeout on "${subsystem}" system, meow!`),
-        );
-      }, 350); // this is really worst case performance, due to network congestion to the PLC. the command should be accepted by the PLC within 6ms, and should be read back within the next 100ms
+
       subsystemResolvers[subsystem] = {
         resolve: value => {
           delete subsystemResolvers[subsystem];
-          clearTimeout(commandReceptionTimeout);
           clearTimeout(watchKittyTimeout);
           resolve(value);
         },
         reject: err => {
           delete subsystemResolvers[subsystem];
-          clearTimeout(commandReceptionTimeout);
           clearTimeout(watchKittyTimeout);
           const commandErrorTimeMS = Date.now();
           error('MachineCommandFailed', {
@@ -559,7 +538,6 @@ export function connectMachine({
         },
         commandId,
         command,
-        commandReceptionTimeout,
       };
     });
 
