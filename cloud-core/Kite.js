@@ -1437,6 +1437,7 @@ export function createSessionClient({
 export function createLocalSessionClient({
   onReport,
   localSource,
+  rehydrateIgnoreList,
   ...clientOpts
 }) {
   function handleAsyncStorageFailure(err, ctx) {
@@ -1465,6 +1466,13 @@ export function createLocalSessionClient({
     ...clientOpts,
     onReport: clientReport,
     onInitialLoad: async (blockOrDoc, domain, name, blockId) => {
+      if (
+        rehydrateIgnoreList &&
+        rehydrateIgnoreList[domain] &&
+        rehydrateIgnoreList[domain][name]
+      ) {
+        return;
+      }
       if (blockOrDoc === 'Doc') {
         const result = await localSource.dispatch({
           type: 'GetDocValue',
