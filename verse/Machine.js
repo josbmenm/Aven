@@ -492,12 +492,17 @@ export function connectMachine({
 
     subsystemResolvers[subsystem] = {}; // use this to lock subsystem temporarily while writing values. todo: action id reception timeout
 
-    await writeMachineValues({
-      commandId,
-      subsystem,
-      pulse,
-      values,
-    });
+    try {
+      await writeMachineValues({
+        commandId,
+        subsystem,
+        pulse,
+        values,
+      });
+    } catch (e) {
+      subsystemResolvers[subsystem] = null;
+      throw e;
+    }
     await new Promise((resolve, reject) => {
       const watchKittyTimeout = setTimeout(() => {
         delete subsystemResolvers[subsystem];
