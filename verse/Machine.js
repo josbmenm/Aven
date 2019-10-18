@@ -120,6 +120,15 @@ export function connectMachine({
 
   let hasClosed = false;
 
+  let _kitchenState = null;
+
+  async function updateKitchenState(state) {
+    _kitchenState = state;
+    observeSideEffects();
+    scheduleSequencerStep();
+    await kitchenStateDoc.putValue(state);
+  }
+
   const waitForConnection = () => {
     if (readyPLC) {
       return;
@@ -294,7 +303,7 @@ export function connectMachine({
       },
     });
 
-    await kitchenStateDoc.putValue({
+    await updateKitchenState({
       isPLCConnected: false,
     });
 
@@ -313,7 +322,7 @@ export function connectMachine({
         await delay(250);
         return;
       }
-      await kitchenStateDoc.putValue({
+      await updateKitchenState({
         ...currentState,
         isPLCConnected,
       });
@@ -394,7 +403,7 @@ export function connectMachine({
           // error is presumably logged elsewhere, but to be safe..
           error('MachineError', { code: 'TagUpdateError', error: e });
 
-          await kitchenStateDoc.putValue({
+          await updateKitchenState({
             isPLCConnected: false,
           });
           await delay(2000); // give the PLC and network 2 seconds to come to senses. (avoid spamming the logs)
@@ -554,46 +563,45 @@ export function connectMachine({
   }
 
   let _restaurantState = null;
-  let _kitchenState = null;
   let _kitchenConfig = null;
   let currentStepPromises = {};
 
-  function updateSequencerValues(restaurantState, kitchenState, kitchenConfig) {
-    let sideEffectActions = null;
-    if (restaurantState !== undefined) _restaurantState = restaurantState;
-    if (kitchenState !== undefined) _kitchenState = kitchenState;
-    if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
-    if (kitchenState !== undefined && _kitchenState !== kitchenState) {
-      const lastKitchenState = _kitchenState;
-      _kitchenState = kitchenState;
-      sideEffectActions = computeSideEffects(
-        lastKitchenState,
-        kitchenState,
-        restaurantState,
-      );
-      if (
-        sideEffectActions &&
-        sideEffectActions.length &&
-        restaurantState.isAttached
-      ) {
-        log('MachineEffects', {
-          actions: sideEffectActions,
-        });
-        let promise = Promise.resolve();
-        sideEffectActions.forEach(action => {
-          promise = promise
-            .then(async () => {
-              await restaurantStateDispatch(action);
-            })
-            .catch(error => {
-              error('SideEffectPerformError', {
-                error,
-                action,
-              });
-            });
-        });
-      }
+  function observeSideEffects() {
+    if (!_restaurantState || !_kitchenState) {
+      return;
     }
+    const sideEffectActions = computeSideEffects(
+      _kitchenState,
+      _restaurantState,
+    );
+    if (
+      sideEffectActions &&
+      sideEffectActions.length &&
+      _restaurantState.isAttached
+    ) {
+      log('MachineEffects', {
+        actions: sideEffectActions,
+      });
+      let promise = Promise.resolve();
+      sideEffectActions.forEach(action => {
+        promise = promise
+          .then(async () => {
+            await restaurantStateDispatch(action);
+          })
+          .catch(error => {
+            error('SideEffectPerformError', {
+              error,
+              action,
+            });
+          });
+      });
+    }
+  }
+
+  function updateCloudValues(kitchenConfig, restaurantState) {
+    if (restaurantState !== undefined) _restaurantState = restaurantState;
+    if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
+    observeSideEffects();
     scheduleSequencerStep();
   }
 
@@ -669,19 +677,6 @@ export function connectMachine({
             command: stepToStart.command,
           });
           scheduleSequencerStep();
-          // setTimeout(() => {
-          //   if (
-          //     kitchenState !== _kitchenState ||
-          //     kitchenConfig !== _kitchenConfig ||
-          //     restaurantState !== _restaurantState
-          //   ) {
-          //     handleSequencerUpdates(
-          //       _restaurantState,
-          //       _kitchenState,
-          //       _kitchenConfig,
-          //     );
-          //   }
-          // }, 50);
         })
         .catch(e => {
           currentStepPromises[subsystem] = null;
@@ -698,12 +693,11 @@ export function connectMachine({
 
   const sequencerStateStream = combineStreams({
     restaurantState: restaurantStateStream,
-    kitchenState: kitchenStateDoc.value.stream,
     kitchenConfig: configStream,
   });
   const sequencerStateStreamListener = {
-    next: ({ restaurantState, kitchenState, kitchenConfig }) => {
-      updateSequencerValues(restaurantState, kitchenState, kitchenConfig);
+    next: ({ restaurantState, kitchenConfig }) => {
+      updateCloudValues(kitchenConfig, restaurantState);
     },
     error: e => {
       fatal('MachineError', { code: 'SequencerStateStream', error: e });

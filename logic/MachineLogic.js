@@ -109,6 +109,7 @@ export function computeNextSteps(
               intent,
               failureRestaurantAction,
               command,
+              code: e.message,
             });
             failureRestaurantAction &&
               (await restaurantStateDispatch(failureRestaurantAction));

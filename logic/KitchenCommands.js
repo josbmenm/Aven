@@ -63,11 +63,18 @@ const KitchenCommands = {
       return kitchenState.FillSystem_DropCupReady_READ;
     },
   },
+  // DitchCup: {
+  //   subsystem: 'FillSystem',
+  //   pulse: ['DitchCup'],
+  //   checkReady: kitchenState => {
+  //     return kitchenState.FillSystem_DitchCupReady_READ;
+  //   },
+  // },
   DitchCup: {
     subsystem: 'FillSystem',
-    pulse: ['DitchCup'],
+    pulse: ['DropCup'],
     checkReady: kitchenState => {
-      return kitchenState.FillSystem_DitchCupReady_READ;
+      return kitchenState.FillSystem_DropCupReady_READ;
     },
   },
   DeliveryDropCup: {

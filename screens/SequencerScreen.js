@@ -226,6 +226,14 @@ function ModeView({ restaurantState, dispatch }) {
           });
         }}
       />
+      <Button
+        title="Clear"
+        onPress={() => {
+          dispatch({
+            type: 'WipeState',
+          });
+        }}
+      />
       {restaurantState.manualMode && (
         <ManualControl restaurantState={restaurantState} dispatch={dispatch} />
       )}

@@ -232,7 +232,7 @@ export default async function startVerseServer(httpServer) {
     kitchen = connectMachine({
       commands: KitchenCommands,
       sequencerSteps: KitchenSteps,
-      computeSideEffects: (prevKitchenState, kitchenState, restaurantState) => {
+      computeSideEffects: (kitchenState, restaurantState) => {
         const {
           System_FreezerTemp_READ,
           System_BevTemp_READ,

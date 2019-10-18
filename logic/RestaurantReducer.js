@@ -34,8 +34,8 @@ function restaurantStateHasInventory(state, ingredientId, amount) {
   return true;
 }
 
-function taskCompleteTime(prevState) {
-  const taskCompleteTime = Date.now();
+function taskCompleteTime(prevState, action) {
+  const taskCompleteTime = action.dispatchTime;
   const duration = prevState
     ? (taskCompleteTime - prevState.taskStartTime) / 1000
     : undefined;
@@ -188,7 +188,7 @@ function RestaurantReducerFn(state = {}, action) {
         fill: {
           id: topTask.id,
           task: topTask,
-          taskStartTime: Date.now(),
+          taskStartTime: action.dispatchTime,
           fillsRemaining: topTask.fills,
           fillsCompleted: [],
         },
@@ -203,7 +203,7 @@ function RestaurantReducerFn(state = {}, action) {
         ...defaultReturn(),
         fill: {
           ...state.fill,
-          requestedDropTime: Date.now(),
+          requestedDropTime: action.dispatchTime,
         },
       };
     }
@@ -219,8 +219,8 @@ function RestaurantReducerFn(state = {}, action) {
           {
             ...state.fill,
             deliveryType: 'drop-fill',
-            deliveryTime: Date.now(),
-            ...taskCompleteTime(state.fill),
+            deliveryTime: action.dispatchTime,
+            ...taskCompleteTime(state.fill, action),
           },
         ],
       };
@@ -262,7 +262,7 @@ function RestaurantReducerFn(state = {}, action) {
         system: action.system,
         amount: action.amount,
         slot: action.slot,
-        completedFillTime: Date.now(),
+        completedFillTime: action.dispatchTime,
         isDryRunDispense: true,
       };
       let fillsRemaining = (state.fill.fillsRemaining || []).filter(fill => {
@@ -273,7 +273,7 @@ function RestaurantReducerFn(state = {}, action) {
         if (isTheFill) {
           completedFill = {
             ...fill,
-            completedFillTime: Date.now(),
+            completedFillTime: action.dispatchTime,
             isDryRunDispense: true,
           };
         }
@@ -294,7 +294,7 @@ function RestaurantReducerFn(state = {}, action) {
         return defaultReturn();
       }
       let failedFill = {
-        failedFillTime: Date.now(),
+        failedFillTime: action.dispatchTime,
         system: action.system,
         amount: action.amount,
         slot: action.slot,
@@ -305,7 +305,7 @@ function RestaurantReducerFn(state = {}, action) {
           action.amount === fill.amount &&
           action.slot === fill.slot;
         if (isTheFill) {
-          failedFill = { ...fill, failedFillTime: Date.now() };
+          failedFill = { ...fill, failedFillTime: action.dispatchTime };
         }
         return !isTheFill;
       });
@@ -323,7 +323,7 @@ function RestaurantReducerFn(state = {}, action) {
         return defaultReturn();
       }
       let completedFill = {
-        completedFillTime: Date.now(),
+        completedFillTime: action.dispatchTime,
         system: action.system,
         amount: action.amount,
         slot: action.slot,
@@ -334,7 +334,7 @@ function RestaurantReducerFn(state = {}, action) {
           action.amount === fill.amount &&
           action.slot === fill.slot;
         if (isTheFill) {
-          completedFill = { ...fill, completedFillTime: Date.now() };
+          completedFill = { ...fill, completedFillTime: action.dispatchTime };
         }
         return !isTheFill;
       });
@@ -371,7 +371,7 @@ function RestaurantReducerFn(state = {}, action) {
       }
       return {
         ...defaultReturn(),
-        fill: { ...state.fill, willPassToBlender: Date.now() },
+        fill: { ...state.fill, willPassToBlender: action.dispatchTime },
       };
     }
     case 'DidPassToBlender': {
@@ -383,7 +383,7 @@ function RestaurantReducerFn(state = {}, action) {
         ...defaultReturn(),
         blend: {
           ...fillState,
-          passToBlenderTime: Date.now(),
+          passToBlenderTime: action.dispatchTime,
         },
         fill: null,
       };
@@ -396,7 +396,7 @@ function RestaurantReducerFn(state = {}, action) {
         ...defaultReturn(),
         blend: {
           ...state.blend,
-          blendCompleteTime: Date.now(),
+          blendCompleteTime: action.dispatchTime,
         },
       };
     }
@@ -417,7 +417,7 @@ function RestaurantReducerFn(state = {}, action) {
         ...defaultReturn(),
         fill: {
           ...state.fill,
-          moveToBlenderTime: Date.now(),
+          moveToBlenderTime: action.dispatchTime,
         },
       };
     }
@@ -442,7 +442,7 @@ function RestaurantReducerFn(state = {}, action) {
         ...defaultReturn(),
         blend: {
           ...state.blend,
-          willPassToDelivery: Date.now(),
+          willPassToDelivery: action.dispatchTime,
         },
       };
     }
@@ -453,10 +453,10 @@ function RestaurantReducerFn(state = {}, action) {
       const blendState = state.blend;
       return {
         ...defaultReturn(),
-        blend: action.didDirtyBlender ? 'dirty' : null,
+        blend: blendState.blendCompleteTime ? 'dirty' : null,
         delivery: {
           ...blendState,
-          passToDeliveryTime: Date.now(),
+          passToDeliveryTime: action.dispatchTime,
         },
       };
     }
@@ -496,8 +496,8 @@ function RestaurantReducerFn(state = {}, action) {
           {
             ...state.delivery,
             deliveryType: 'drop',
-            deliveryTime: Date.now(),
-            ...taskCompleteTime(state.delivery),
+            deliveryTime: action.dispatchTime,
+            ...taskCompleteTime(state.delivery, action),
           },
         ],
       };
@@ -522,8 +522,8 @@ function RestaurantReducerFn(state = {}, action) {
         ...state.delivery,
         deliveryType: 'delivered',
         bayId: action.bayId,
-        deliveryTime: Date.now(),
-        ...taskCompleteTime(state.delivery),
+        deliveryTime: action.dispatchTime,
+        ...taskCompleteTime(state.delivery, action),
       };
       const returnState = {
         ...defaultReturn(),
