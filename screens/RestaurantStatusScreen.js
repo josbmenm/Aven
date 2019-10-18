@@ -491,7 +491,6 @@ function CateringMode() {
           );
         }}
       />
-      <SetFridgeTemp />
     </Row>
   );
 }
