@@ -2,6 +2,7 @@ import React from 'react';
 import TwoPanePage from '../components/TwoPanePage';
 import Button from '../components/Button';
 import Row from '../components/Row';
+import StatusBar from '../components/StatusBar';
 import RowSection from '../components/RowSection';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
@@ -74,6 +75,7 @@ export default function OrdersScreen(props) {
       {...props}
       afterSide={null}
       hideBackButton
+      footer={<StatusBar />}
       side={
         <OrdersList restaurantState={restaurantState} dispatch={dispatch} />
       }

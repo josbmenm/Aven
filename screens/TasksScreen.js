@@ -4,6 +4,7 @@ import TwoPanePage from '../components/TwoPanePage';
 import Button from '../components/Button';
 import BlendTasker from '../components/BlendTasker';
 import CustomTasker from '../components/CustomTasker';
+import StatusBar from '../components/StatusBar';
 import TaskInfo from '../components/TaskInfo';
 import RowSection from '../components/RowSection';
 import { useNavigation } from '../navigation-hooks/Hooks';
@@ -162,6 +163,7 @@ export default function TasksScreen(props) {
       afterSide={null}
       hideBackButton
       side={<TaskQueue restaurantState={restaurantState} dispatch={dispatch} />}
+      footer={<StatusBar />}
     >
       <BlendTasker />
       <CustomTasker />

@@ -464,33 +464,29 @@ function FridgeView() {
   );
 }
 
-function CateringMode() {
-  const restaurantConfig = useRestaurantConfig();
-  const isCateringMode =
-    !!restaurantConfig && restaurantConfig.mode === 'catering';
-  const cloud = useCloud();
-  const handleError = useAsyncError();
+function TanksView() {
+  const kitchenState = useKitchenState();
+  let waterTagColor = Tag.positiveColor;
+  let waterTagTitle = 'Water: Not Full or Low';
+
+  if (kitchenState && kitchenState.System_FreshWaterFull_READ) {
+    waterTagColor = Tag.positiveColor;
+    waterTagTitle = 'Water: Filled';
+  }
+  if (kitchenState && !kitchenState.System_FreshWaterAboveLow_READ) {
+    waterTagColor = Tag.negativeColor;
+    waterTagTitle = 'Water: Low';
+  }
+  let wasteTagColor = Tag.positiveColor;
+  let wasteTagTitle = 'Waste: Not Full';
+  if (kitchenState && kitchenState.System_WasteWaterFull_READ) {
+    wasteTagColor = Tag.negativeColor;
+    wasteTagTitle = 'Waste: Full';
+  }
   return (
-    <Row title="catering mode">
-      <Tag
-        title={isCateringMode ? 'Free Blends' : 'Regular Mode'}
-        color={isCateringMode ? Tag.warningColor : Tag.positiveColor}
-      />
-      <MultiSelect
-        options={[
-          { name: 'Catering', value: true },
-          { name: 'Regular', value: false },
-        ]}
-        value={isCateringMode}
-        onValue={value => {
-          handleError(
-            cloud.get('RestaurantConfig').transact(config => ({
-              ...config,
-              mode: value ? 'catering' : 'regular',
-            })),
-          );
-        }}
-      />
+    <Row title="tanks">
+      <Tag title={waterTagTitle} color={waterTagColor} />
+      <Tag title={wasteTagTitle} color={wasteTagColor} />
     </Row>
   );
 }
@@ -502,12 +498,8 @@ export default function RestaurantStatusScreen(props) {
         <StatusView />
         <VanView />
         <FridgeView />
+        <TanksView />
         <TemperatureView />
-        <CateringMode />
-
-        {/* <AirPressureView />
-        <PowerView />
-        <SkidView /> */}
       </RootAuthenticationSection>
     </SimplePage>
   );

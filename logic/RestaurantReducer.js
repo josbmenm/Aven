@@ -636,6 +636,34 @@ function RestaurantReducerFn(state = {}, action) {
         ),
       };
     }
+    case 'SetAlarm': {
+      return {
+        ...defaultReturn(),
+        isAutoRunning: false,
+        alarms: [
+          ...(state.alarms || []),
+          {
+            alarmType: action.alarmType,
+            time: action.dispatchTime,
+            key: action.dispatchId,
+          },
+        ],
+      };
+    }
+    case 'ClearAlarm': {
+      return {
+        ...defaultReturn(),
+        alarms: (state.alarms || []).filter(alarm => {
+          return !!alarm.key && alarm.key !== action.key;
+        }),
+      };
+    }
+    case 'SetAlarmMute': {
+      return {
+        ...defaultReturn(),
+        isMutingAlarms: action.isMutingAlarms,
+      };
+    }
     default: {
       return defaultReturn();
     }

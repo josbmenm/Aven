@@ -238,11 +238,14 @@ export default async function startVerseServer(httpServer) {
           System_BevTemp_READ,
           System_YogurtZoneTemp_READ,
           Denester_DispensedSinceLow_READ,
+          Delivery_Bay0CupPresent_READ,
+          System_WasteWaterFull_READ,
+          System_FreshWaterAboveLow_READ,
         } = kitchenState;
         const foodMonitoring = {
-          isBeverageCold: System_BevTemp_READ < 42,
-          isFreezerCold: System_FreezerTemp_READ < 42,
-          isYogurtCold: System_YogurtZoneTemp_READ < 42,
+          isBeverageCold: System_BevTemp_READ <= 41,
+          isFreezerCold: System_FreezerTemp_READ <= 5,
+          isYogurtCold: System_YogurtZoneTemp_READ <= 41,
         };
         const lastMonitoredState = restaurantState.foodMonitoring || {};
 
@@ -256,10 +259,42 @@ export default async function startVerseServer(httpServer) {
           sideEffects.push({ type: 'SetFoodMonitoring', foodMonitoring });
         }
 
-        if (
-          restaurantState.delivery0 &&
-          !kitchenState.Delivery_Bay0CupPresent_READ
-        ) {
+        if (restaurantState.isAutoRunning && !restaurantState.isMutingAlarms) {
+          if (!foodMonitoring.isBeverageCold) {
+            sideEffects.push({
+              type: 'SetAlarm',
+              alarmType: 'BevTemp',
+              temp: System_BevTemp_READ,
+            });
+          }
+          if (!foodMonitoring.isFreezerCold) {
+            sideEffects.push({
+              type: 'SetAlarm',
+              alarmType: 'FreezerTemp',
+              temp: System_FreezerTemp_READ,
+            });
+          }
+          if (!foodMonitoring.isYogurtCold) {
+            sideEffects.push({
+              type: 'SetAlarm',
+              alarmType: 'YogurtTemp',
+              temp: System_YogurtZoneTemp_READ,
+            });
+          }
+          if (System_WasteWaterFull_READ) {
+            sideEffects.push({
+              type: 'SetAlarm',
+              alarmType: 'WasteFull',
+            });
+          }
+          if (!System_FreshWaterAboveLow_READ) {
+            sideEffects.push({
+              type: 'SetAlarm',
+              alarmType: 'WaterEmpty',
+            });
+          }
+        }
+        if (restaurantState.delivery0 && !Delivery_Bay0CupPresent_READ) {
           sideEffects.push({ type: 'ClearDeliveryBay', bayId: 'delivery0' });
         }
 

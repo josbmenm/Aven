@@ -2,21 +2,23 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { boldPrimaryFontFace } from './Styles';
 
-export default function Tag({ title, color }) {
+export default function Tag({ title, color, style }) {
   return (
     <View
       style={{
         borderRadius: 4,
         backgroundColor: color,
-        padding: 10,
-        width: 150,
+        padding: 7,
+        paddingHorizontal: 14,
+        minWidth: 150,
+        ...style,
       }}
     >
       <Text
         style={{
           ...boldPrimaryFontFace,
           color: 'white',
-          fontSize: 24,
+          fontSize: 22,
           fontWeight: 'bold',
           textAlign: 'center',
         }}

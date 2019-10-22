@@ -16,6 +16,7 @@ import AirtableImage from '../components/AirtableImage';
 import { useInventoryState } from '../ono-cloud/OnoKitchen';
 import MultiSelect from '../components/MultiSelect';
 import BlockFormInput from '../components/BlockFormInput';
+import StatusBar from '../components/StatusBar';
 
 function PopoverTitle({ children }) {
   return (
@@ -289,7 +290,7 @@ function Inventory() {
 
 export default function InventoryScreen(props) {
   return (
-    <SimplePage hideBackButton {...props}>
+    <SimplePage hideBackButton {...props} footer={<StatusBar />}>
       <RootAuthenticationSection>
         <Inventory />
       </RootAuthenticationSection>
