@@ -721,7 +721,7 @@ export function createDoc({
   async function putTransactionValue(value) {
     const fullValue =
       typeof value === 'object' && value.dispatchTime === undefined
-        ? { ...value, dispatchTime: Date.now() }
+        ? { ...value, dispatchTime: Date.now(), dispatchId: cuid() }
         : value;
     if (docState.id === undefined && !docState.isLocalOnly) {
       return _remotePutTransactionValue(value);
