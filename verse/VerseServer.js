@@ -244,8 +244,8 @@ export default async function startVerseServer(httpServer) {
         } = kitchenState;
         const foodMonitoring = {
           isBeverageCold: System_BevTemp_READ <= 41,
-          isFreezerCold: System_FreezerTemp_READ <= 65,
-          isYogurtCold: System_YogurtZoneTemp_READ <= 89,
+          isFreezerCold: System_FreezerTemp_READ <= 5,
+          isYogurtCold: System_YogurtZoneTemp_READ <= 41,
         };
         const lastMonitoredState = restaurantState.foodMonitoring || {};
 
@@ -287,12 +287,12 @@ export default async function startVerseServer(httpServer) {
               alarmType: 'WasteFull',
             });
           }
-          // if (!System_FreshWaterAboveLow_READ) {
-          //   sideEffects.push({
-          //     type: 'SetAlarm',
-          //     alarmType: 'WaterEmpty',
-          //   });
-          // }
+          if (!System_FreshWaterAboveLow_READ) {
+            sideEffects.push({
+              type: 'SetAlarm',
+              alarmType: 'WaterEmpty',
+            });
+          }
         }
         if (restaurantState.delivery0 && !Delivery_Bay0CupPresent_READ) {
           sideEffects.push({ type: 'ClearDeliveryBay', bayId: 'delivery0' });
