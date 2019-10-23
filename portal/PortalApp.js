@@ -204,7 +204,6 @@ process.env.REACT_NAV_LOGGING = true;
 
 const TABS = [
   { routeName: 'Status', title: 'System' },
-  { routeName: 'Sequencer', title: 'Machine' },
   { routeName: 'Tasks', title: 'Tasks' },
   { routeName: 'Orders', title: 'Orders' },
   {
@@ -217,7 +216,6 @@ const TABS = [
 
 const PortalHome = createSwitchNavigator({
   Inventory: { screen: InventoryScreen },
-  Sequencer: { screen: SequencerScreen },
   Tasks: { screen: TasksScreen },
   Orders: { screen: OrdersScreen },
   Status: { screen: RestaurantStatusScreen },
@@ -246,6 +244,7 @@ const App = createStackTransitionNavigator({
   DeviceManager: DeviceManagerScreen,
   PaymentDebug: PaymentDebugScreen,
   InternalOrder: InternalOrderScreen,
+  Sequencer: { screen: SequencerScreen },
   FeedbackApp: FeedbackAppNavigator,
   OrderConfirmTest: OrderConfirmTestScreen,
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { View } from 'react-native';
 import SimplePage from '../components/SimplePage';
 import RowSection from '../components/RowSection';
 import LinkRow from '../components/LinkRow';
@@ -7,14 +7,85 @@ import Button from '../components/Button';
 import AppInfoText from '../components/AppInfoText';
 import { useCloud } from '../cloud-core/KiteReact';
 import codePush from 'react-native-code-push';
-
+import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import Row from '../components/Row';
 import Tag from '../components/Tag';
 import useAsyncError from '../react-utils/useAsyncError';
-
 import MultiSelect from '../components/MultiSelect';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
+import useKeyboardPopover from '../components/useKeyboardPopover';
+
+function FridgeView() {
+  const kitchenState = useKitchenState();
+  const fridgeEnabled =
+    !!kitchenState && !!kitchenState.System_EnableRefrigerationSystem_VALUE;
+  const cloud = useCloud();
+  const handleError = useAsyncError();
+  return (
+    <Row title="main refridgeration">
+      <Tag
+        title={fridgeEnabled ? 'Enabled' : 'Disabled'}
+        color={fridgeEnabled ? Tag.positiveColor : Tag.negativeColor}
+      />
+      <MultiSelect
+        options={[
+          { name: 'Enable', value: true },
+          { name: 'Disable', value: false },
+        ]}
+        value={fridgeEnabled}
+        onValue={value => {
+          handleError(
+            cloud.dispatch({
+              type: 'KitchenWriteMachineValues',
+              subsystem: 'System',
+              pulse: [],
+              values: {
+                EnableRefrigerationSystem: value,
+              },
+            }),
+          );
+        }}
+      />
+      <SetFridgeTemp />
+    </Row>
+  );
+}
+
+function CompressorView() {
+  const kitchenState = useKitchenState();
+  const fridgeEnabled =
+    !!kitchenState && !!kitchenState.System_EnableAirSystem_VALUE;
+  const cloud = useCloud();
+  const handleError = useAsyncError();
+  return (
+    <Row title="air compressor">
+      <Tag
+        title={fridgeEnabled ? 'Enabled' : 'Disabled'}
+        color={fridgeEnabled ? Tag.positiveColor : Tag.negativeColor}
+      />
+      <MultiSelect
+        options={[
+          { name: 'Enable', value: true },
+          { name: 'Disable', value: false },
+        ]}
+        value={fridgeEnabled}
+        onValue={value => {
+          handleError(
+            cloud.dispatch({
+              type: 'KitchenWriteMachineValues',
+              subsystem: 'System',
+              pulse: [],
+              values: {
+                EnableAirSystem: value,
+              },
+            }),
+          );
+        }}
+      />
+    </Row>
+  );
+}
 
 function UpdateAirtableRow() {
   const cloud = useCloud();
@@ -116,12 +187,123 @@ function AlarmMode() {
   );
 }
 
+function SetFridgeTemp() {
+  const kitchenState = useKitchenState() || {};
+  const cloud = useCloud();
+  const handleError = useAsyncError();
+
+  const { onPopover: onSetFridgeTemp } = useKeyboardPopover(({ onClose }) => {
+    return (
+      <SetFridgeTempForm
+        onClose={onClose}
+        onValues={({ low, high }) => {
+          handleError(
+            cloud.dispatch({
+              type: 'KitchenWriteMachineValues',
+              subsystem: 'System',
+              pulse: [],
+              values: {
+                FreezerLowSetPoint: low,
+                FreezerHighSetPoint: high,
+              },
+            }),
+          );
+        }}
+        initialValues={{
+          high: kitchenState.System_FreezerHighSetPoint_VALUE,
+          low: kitchenState.System_FreezerLowSetPoint_VALUE,
+        }}
+      />
+    );
+  });
+  if (
+    kitchenState.System_FreezerHighSetPoint_VALUE == null ||
+    kitchenState.System_FreezerLowSetPoint_VALUE == null
+  ) {
+    return null;
+  }
+  return (
+    <Button
+      title={`Set point [${kitchenState.System_FreezerLowSetPoint_VALUE}° - ${kitchenState.System_FreezerHighSetPoint_VALUE}°]`}
+      onPress={onSetFridgeTemp}
+    />
+  );
+}
+
+function DryRunMode() {
+  const [restaurantState, dispatch] = useRestaurantState();
+  const handleError = useAsyncError();
+  const dryMode = (restaurantState && restaurantState.isDryRunning) || false;
+  const isFillEnabled = !dryMode;
+  const isBlendEnabled = dryMode !== true;
+  return (
+    <React.Fragment>
+      <Row title="dry run machine">
+        <Tag
+          title={isFillEnabled ? 'Filling Enabled' : 'Filling Disabled'}
+          color={isFillEnabled ? Tag.positiveColor : Tag.negativeColor}
+        />
+        <Tag
+          title={isBlendEnabled ? 'Blending Enabled' : 'Blending Disabled'}
+          color={isBlendEnabled ? Tag.positiveColor : Tag.negativeColor}
+        />
+      </Row>
+      <View style={{ alignSelf: 'center' }}>
+        <MultiSelect
+          options={[
+            { name: 'Dry run', value: true },
+            { name: 'Dry with blend and rinse', value: 'withBlend' },
+            { name: 'Regular fills and blend', value: false },
+          ]}
+          value={dryMode}
+          onValue={value => {
+            handleError(
+              dispatch({
+                type: 'SetDryMode',
+                isDryRunning: value,
+              }),
+            );
+          }}
+        />
+      </View>
+    </React.Fragment>
+  );
+}
+
+function ClearMapButton() {
+  const [_, dispatch] = useRestaurantState();
+  return (
+    <Row title="clear material map">
+      <Button
+        title="Clear"
+        onPress={() => {
+          dispatch({
+            type: 'WipeState',
+          });
+        }}
+      />
+    </Row>
+  );
+}
+
 export default function KioskSettingsScreen({ navigation, ...props }) {
   return (
     <SimplePage {...props} navigation={navigation} hideBackButton>
       <CateringMode />
       <AlarmMode />
+      <DryRunMode />
+
+      <FridgeView />
+      <CompressorView />
+      <ClearMapButton />
       <RowSection>
+        <LinkRow
+          onPress={() => {
+            navigation.navigate({ routeName: 'Sequencer' });
+          }}
+          icon="⚙️"
+          title="Technician Control"
+        />
         <LinkRow
           onPress={() => {
             navigation.navigate({ routeName: 'FeedbackApp' });

@@ -147,6 +147,9 @@ function SetFillButton({ fill, fills, onFills }) {
   );
 }
 export default function FillList({ fills, inventoryIngredients, onFills }) {
+  if (!fills) {
+    return null;
+  }
   return (
     fills &&
     fills.map((fill, fillIndex) => {

@@ -313,7 +313,7 @@ const KitchenSteps = [
     },
     getStateIntent: restaurantState => {
       if (
-        restaurantState.isDryRunning ||
+        restaurantState.isDryRunning === true ||
         !restaurantState.blend ||
         restaurantState.blend === 'dirty' ||
         restaurantState.blend.blendCompleteTime ||

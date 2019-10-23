@@ -88,7 +88,7 @@ export default function StatusBar() {
         } else if (type === 'YogurtTemp') {
           alarmData = {
             title: 'Yogurt Temperature',
-            description: `Yogurt fridge has gone above 85°F`,
+            description: `Yogurt fridge has gone above 89°F`,
           };
         } else if (type === 'WasteFull') {
           alarmData = {

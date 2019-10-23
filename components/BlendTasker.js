@@ -15,6 +15,7 @@ import { usePopover } from '../views/Popover';
 import BlendCustomization from './BlendCustomization';
 import { getFillsOfOrderItem, getNewBlendTask } from '../logic/configLogic';
 import { Easing } from 'react-native-reanimated';
+import useAsyncStorage, { isStateUnloaded } from '../screens/useAsyncStorage';
 
 function usePutTransactionValue(docName) {
   const cloud = useCloud();
@@ -77,18 +78,19 @@ function CustomizeButton({ menuItem, setCustomization, customization }) {
 }
 
 export default function BlendTasker() {
-  const [orderName, setOrderName] = React.useState('Friend');
-  const [blendId, setBlendId] = React.useState(null);
-  const [blendName, setBlendName] = React.useState(null);
-  const [customization, setCustomization] = React.useState(null);
+  const [savedTask, setSavedTask] = useAsyncStorage('OnoSavedBlend', {
+    orderName: 'Tester O.',
+    blendName: null,
+    blendId: null,
+    customization: null,
+  });
+  const { orderName, blendId, blendName, customization } = savedTask;
 
   const openBlendChooser = useBlendPickPopover({
     blendId,
-    setBlendId: blendId => {
-      setBlendId(blendId);
-      setCustomization(null);
+    onBlendPick: ({ blendId, blendName }) => {
+      setSavedTask({ ...savedTask, blendId, blendName });
     },
-    setBlendName,
   });
 
   const { menuItem, inventoryIngredients } = useInventoryMenuItem(blendId);
@@ -96,7 +98,7 @@ export default function BlendTasker() {
   const openOrderInfo = useOrderInfoPopover({
     hideBlendName: true,
     orderName,
-    onOrderInfo: ({ orderName }) => setOrderName(orderName),
+    onOrderInfo: ({ orderName }) => setSavedTask({ ...savedTask, orderName }),
   });
   const restaurantDispatch = usePutTransactionValue('RestaurantActions');
   const companyConfig = useCompanyConfig();
@@ -117,7 +119,9 @@ export default function BlendTasker() {
               <CustomizeButton
                 menuItem={menuItem}
                 customization={customization}
-                setCustomization={setCustomization}
+                setCustomization={customization =>
+                  setSavedTask({ ...savedTask, customization })
+                }
               />
             )}
             <Button

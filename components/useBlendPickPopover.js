@@ -8,7 +8,7 @@ import { useMenu } from '../ono-cloud/OnoKitchen';
 import { titleStyle, monsterra } from './Styles';
 import Spinner from './Spinner';
 
-function BlendsPicker({ menu, blendId, setBlendId, setBlendName, onClose }) {
+function BlendsPicker({ menu, blendId, onBlendPick, onClose }) {
   if (!menu) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -27,8 +27,10 @@ function BlendsPicker({ menu, blendId, setBlendId, setBlendName, onClose }) {
               marginHorizontal: 12,
             }}
             onPress={() => {
-              setBlendName(blend.Recipe.Name);
-              setBlendId(blend.id);
+              onBlendPick({
+                blendId: blend.id,
+                blendName: blend.Recipe.Name,
+              });
               onClose();
             }}
           >
@@ -52,11 +54,7 @@ function BlendsPicker({ menu, blendId, setBlendId, setBlendName, onClose }) {
   );
 }
 
-export default function useBlendPickPopover({
-  blendId,
-  setBlendId,
-  setBlendName,
-}) {
+export default function useBlendPickPopover({ blendId, onBlendPick }) {
   const menu = useMenu();
   const { onPopover } = usePopover(
     ({ onClose, ...props }) => {
@@ -65,8 +63,7 @@ export default function useBlendPickPopover({
           <BlendsPicker
             menu={menu}
             blendId={blendId}
-            setBlendId={setBlendId}
-            setBlendName={setBlendName}
+            onBlendPick={onBlendPick}
             onClose={onClose}
           />
         </KeyboardPopover>

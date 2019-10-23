@@ -12,7 +12,6 @@ import useFocus from '../navigation-hooks/useFocus';
 import {
   titleStyle,
   proseFontFace,
-  monsterra,
   standardTextColor,
 } from '../components/Styles';
 import KeyboardPopover from '../components/KeyboardPopover';
@@ -26,6 +25,7 @@ import MultiSelect from '../components/MultiSelect';
 import TemperatureView from '../components/TemperatureView';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
+import useKeyboardPopover from '../components/useKeyboardPopover';
 
 function PopoverTitle({ children }) {
   return (
@@ -46,37 +46,41 @@ function CloseRestaurantButtons({ onClose }) {
   const [restaurantState, dispatch] = useRestaurantState();
 
   return (
-    <View>
-      <PopoverTitle>Close Restaurant..</PopoverTitle>
-      <Button
-        title="gracefully, in 10 minutes"
-        onPress={() => {
-          dispatch({
-            type: 'ScheduleRestaurantClose',
-            scheduledCloseTime: Date.now() + 1000 * 60 * 10,
-          });
-          onClose();
-        }}
-      />
-      <Button
-        title="now. leave orders queued"
-        onPress={() => {
-          dispatch({
-            type: 'CloseRestaurant',
-            immediate: false,
-          });
-          onClose();
-        }}
-      />
-      <Button
-        title="immediately. cancel queued orders"
-        onPress={() => {
-          dispatch({
-            type: 'CloseRestaurant',
-            immediate: true,
-          });
-          onClose();
-        }}
+    <View style={{ padding: 10 }}>
+      <PopoverTitle>close restaurant..</PopoverTitle>
+      <ButtonStack
+        buttons={[
+          <Button
+            title="gracefully, in 10 minutes"
+            onPress={() => {
+              dispatch({
+                type: 'ScheduleRestaurantClose',
+                scheduledCloseTime: Date.now() + 1000 * 60 * 10,
+              });
+              onClose();
+            }}
+          />,
+          <Button
+            title="now. leave orders queued"
+            onPress={() => {
+              dispatch({
+                type: 'CloseRestaurant',
+                immediate: false,
+              });
+              onClose();
+            }}
+          />,
+          <Button
+            title="immediately. cancel queued orders"
+            onPress={() => {
+              dispatch({
+                type: 'CloseRestaurant',
+                immediate: true,
+              });
+              onClose();
+            }}
+          />,
+        ]}
       />
     </View>
   );
@@ -104,6 +108,23 @@ function ButtonStack({ buttons }) {
   );
 }
 
+function SafetyView() {
+  const kitchenState = useKitchenState();
+  if (!kitchenState) {
+    return null;
+  }
+  const bypassKey = kitchenState.System_SafetyBypassKey_READ;
+  return (
+    <Row title="safety">
+      {bypassKey ? (
+        <Tag title="SAFETY BYPASSED" color={Tag.negativeColor} />
+      ) : (
+        <Tag title="Safety Enabled" color={Tag.positiveColor} />
+      )}
+    </Row>
+  );
+}
+
 function VanView() {
   const [restaurantState] = useRestaurantState();
   const cloud = useCloud();
@@ -115,7 +136,6 @@ function VanView() {
   }
 
   // kitchenState.System_LockSkid_VALUE
-  const bypassKey = kitchenState.System_SafetyBypassKey_READ;
   const lockSkid = kitchenState.System_LockSkid_VALUE;
   const isSkidLocked = kitchenState.System_SkidLocked_READ;
   const skidIn = kitchenState.System_SkidPositionSensors_READ;
@@ -127,7 +147,7 @@ function VanView() {
   const isFillSystemIdle = kitchenState.FillSystem_PrgStep_READ === 0;
   const vanPowerEnable = kitchenState.System_VanPowerEnable_VALUE;
   return (
-    <Row title="Van / Servicing">
+    <Row title="machine in van / servicing">
       {isVanPluggedIn ? (
         <Tag title="Van plugged in" color={Tag.positiveColor} />
       ) : (
@@ -143,21 +163,7 @@ function VanView() {
       ) : (
         <Tag title="Machine Unlocked" color={Tag.warningColor} />
       )}
-      {bypassKey ? (
-        <Tag title="SAFETY BYPASSED" color={Tag.negativeColor} />
-      ) : (
-        <Tag title="Safety Enabled" color={Tag.positiveColor} />
-      )}
-      {isInServiceMode ? (
-        <Tag
-          title={`Service Mode (${isHomed ? 'homed' : 'not homed'})`}
-          color={Tag.warningColor}
-        />
-      ) : isHomed ? (
-        <Tag title="Active Mode, Homed" color={Tag.positiveColor} />
-      ) : (
-        <Tag title="Not Homed" color={Tag.negativeColor} />
-      )}
+
       <MultiSelect
         value={lockSkid}
         onValue={value => {
@@ -196,6 +202,44 @@ function VanView() {
           { value: false, name: 'Disable Van Power' },
         ]}
       />
+    </Row>
+  );
+}
+
+function ServicingView() {
+  const [restaurantState] = useRestaurantState();
+  const cloud = useCloud();
+  const kitchenState = useKitchenState();
+  const handleError = useAsyncError();
+
+  if (!kitchenState || !restaurantState) {
+    return null;
+  }
+
+  // kitchenState.System_LockSkid_VALUE
+  const bypassKey = kitchenState.System_SafetyBypassKey_READ;
+  const lockSkid = kitchenState.System_LockSkid_VALUE;
+  const isSkidLocked = kitchenState.System_SkidLocked_READ;
+  const skidIn = kitchenState.System_SkidPositionSensors_READ;
+  const isVanPluggedIn = kitchenState.System_VanPluggedIn_READ;
+  const isHomed = kitchenState.FillSystem_Homed_READ;
+  const isInServiceMode = kitchenState.FillSystem_InServiceMode_READ;
+  const readyToEnterServiceMode =
+    kitchenState.FillSystem_EnterServiceModeReady_READ;
+  const isFillSystemIdle = kitchenState.FillSystem_PrgStep_READ === 0;
+  const vanPowerEnable = kitchenState.System_VanPowerEnable_VALUE;
+  return (
+    <Row title="service mode">
+      {isInServiceMode ? (
+        <Tag
+          title={`Service Mode (${isHomed ? 'homed' : 'not homed'})`}
+          color={Tag.warningColor}
+        />
+      ) : isHomed ? (
+        <Tag title="Active Mode, Homed" color={Tag.positiveColor} />
+      ) : (
+        <Tag title="Not Homed" color={Tag.negativeColor} />
+      )}
       <Button
         title="home system"
         disabled={!isFillSystemIdle}
@@ -231,6 +275,7 @@ function StatusView() {
   );
   const timeSeconds = useTimeSeconds();
   let tagText = 'restaurant open';
+  let tagColor = Tag.positiveColor;
   if (closingSoon) {
     const totalSecRemaining = Math.floor(
       closingSoon.scheduledCloseTime / 1000 - timeSeconds,
@@ -242,80 +287,75 @@ function StatusView() {
     ).padStart(2, '0')}`;
   }
   if (!isOpen) {
+    tagColor = Tag.warningColor;
     tagText = 'restaurant closed';
   }
   if (isTraveling) {
+    tagColor = Tag.positiveColor;
     tagText = 'traveling';
   }
 
-  const { onPopover: onCloseRestaurantPopover } = usePopover(
-    ({ onClose, ...props }) => {
-      return (
-        <KeyboardPopover onClose={onClose} {...props}>
-          <CloseRestaurantButtons onClose={onClose} />
-        </KeyboardPopover>
-      );
+  const { onPopover: onCloseRestaurantPopover } = useKeyboardPopover(
+    ({ onClose }) => {
+      return <CloseRestaurantButtons onClose={onClose} />;
     },
-    { easing: Easing.linear, duration: 1 },
   );
   return (
-    <RowSection>
-      <Row title="restaurant status">
-        <View style={{ flex: 1 }}>
-          <Subtitle title={tagText} />
-        </View>
-        <ButtonStack
-          buttons={[
-            isOpen ? (
+    <Row title="restaurant opening">
+      <View>
+        <Tag title={tagText} color={tagColor} />
+      </View>
+      <ButtonStack
+        buttons={[
+          isOpen ? (
+            <Button
+              title="close restaurant"
+              onPress={onCloseRestaurantPopover}
+            />
+          ) : isTraveling ? (
+            <Button
+              title="park restaurant"
+              onPress={() => {
+                dispatch({
+                  type: 'ParkRestaurant',
+                });
+              }}
+            />
+          ) : (
+            <React.Fragment>
               <Button
-                title="close restaurant"
-                onPress={onCloseRestaurantPopover}
-              />
-            ) : isTraveling ? (
-              <Button
-                title="park restaurant"
+                title="travel restaurant"
                 onPress={() => {
                   dispatch({
-                    type: 'ParkRestaurant',
+                    type: 'TravelRestaurant',
                   });
                 }}
               />
-            ) : (
-              <React.Fragment>
-                <Button
-                  title="travel restaurant"
-                  onPress={() => {
-                    dispatch({
-                      type: 'TravelRestaurant',
-                    });
-                  }}
-                />
-                <Button
-                  title="open restaurant"
-                  onPress={() => {
-                    dispatch({
-                      type: 'OpenRestaurant',
-                    });
-                  }}
-                />
-              </React.Fragment>
-            ),
-            closingSoon && (
               <Button
-                title="clear close schedule"
-                type="outline"
+                title="open restaurant"
                 onPress={() => {
                   dispatch({
-                    type: 'ScheduleRestaurantClose',
-                    scheduledCloseTime: null,
+                    type: 'OpenRestaurant',
                   });
                 }}
               />
-            ),
-          ]}
-        />
-      </Row>
-    </RowSection>
+            </React.Fragment>
+          ),
+          closingSoon && (
+            <Button
+              title="clear close schedule"
+              type="outline"
+              onPress={() => {
+                dispatch({
+                  type: 'ScheduleRestaurantClose',
+                  scheduledCloseTime: null,
+                });
+              }}
+            />
+          ),
+        ]}
+      />
+    </Row>
   );
 }
 
@@ -380,90 +420,6 @@ function SetFridgeTempForm({ onClose, onValues, initialValues }) {
   );
 }
 
-function SetFridgeTemp() {
-  const kitchenState = useKitchenState() || {};
-  const cloud = useCloud();
-  const handleError = useAsyncError();
-
-  const { onPopover: onSetFridgeTemp } = usePopover(
-    ({ onClose, ...props }) => {
-      return (
-        <KeyboardPopover onClose={onClose} {...props}>
-          <SetFridgeTempForm
-            onClose={onClose}
-            onValues={({ low, high }) => {
-              handleError(
-                cloud.dispatch({
-                  type: 'KitchenWriteMachineValues',
-                  subsystem: 'System',
-                  pulse: [],
-                  values: {
-                    FreezerLowSetPoint: low,
-                    FreezerHighSetPoint: high,
-                  },
-                }),
-              );
-            }}
-            initialValues={{
-              high: kitchenState.System_FreezerHighSetPoint_VALUE,
-              low: kitchenState.System_FreezerLowSetPoint_VALUE,
-            }}
-          />
-        </KeyboardPopover>
-      );
-    },
-    { easing: Easing.linear, duration: 1 },
-  );
-  if (
-    kitchenState.System_FreezerHighSetPoint_VALUE == null ||
-    kitchenState.System_FreezerLowSetPoint_VALUE == null
-  ) {
-    return null;
-  }
-  return (
-    <Button
-      title={`Set point [${kitchenState.System_FreezerLowSetPoint_VALUE}° - ${kitchenState.System_FreezerHighSetPoint_VALUE}°]`}
-      onPress={onSetFridgeTemp}
-    />
-  );
-}
-
-function FridgeView() {
-  const kitchenState = useKitchenState();
-  const fridgeEnabled =
-    !!kitchenState && !!kitchenState.System_EnableRefrigerationSystem_VALUE;
-  const cloud = useCloud();
-  const handleError = useAsyncError();
-  return (
-    <Row title="main refridgeration">
-      <Tag
-        title={fridgeEnabled ? 'Enabled' : 'Disabled'}
-        color={fridgeEnabled ? Tag.positiveColor : Tag.negativeColor}
-      />
-      <MultiSelect
-        options={[
-          { name: 'Enable', value: true },
-          { name: 'Disable', value: false },
-        ]}
-        value={fridgeEnabled}
-        onValue={value => {
-          handleError(
-            cloud.dispatch({
-              type: 'KitchenWriteMachineValues',
-              subsystem: 'System',
-              pulse: [],
-              values: {
-                EnableRefrigerationSystem: value,
-              },
-            }),
-          );
-        }}
-      />
-      <SetFridgeTemp />
-    </Row>
-  );
-}
-
 function TanksView() {
   const kitchenState = useKitchenState();
   let waterTagColor = Tag.positiveColor;
@@ -495,9 +451,10 @@ export default function RestaurantStatusScreen(props) {
   return (
     <SimplePage {...props} hideBackButton>
       <RootAuthenticationSection>
+        <SafetyView />
+        <ServicingView />
         <StatusView />
         <VanView />
-        <FridgeView />
         <TanksView />
         <TemperatureView />
       </RootAuthenticationSection>

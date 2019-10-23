@@ -184,7 +184,7 @@ function RestaurantStateList({ restaurantState, dispatch }) {
   }
   const count = restaurantState.queue ? restaurantState.queue.length : 0;
   return (
-    <RowSection>
+    <RowSection title="material map" style={{ marginTop: 42 }}>
       <Row title={`${count} task${count === 1 ? '' : 's'} in queue`} />
       {restaurantState.fill && restaurantState.fill !== 'ready' && (
         <Row title="filling">
@@ -213,27 +213,6 @@ function ModeView({ restaurantState, dispatch }) {
   return (
     <View>
       <Subsystems />
-      <Button
-        title={
-          restaurantState.isDryRunning
-            ? 'disable DRY RUN mode'
-            : 'enable DRY RUN mode'
-        }
-        onPress={() => {
-          dispatch({
-            type: 'SetDryMode',
-            isDryRunning: !restaurantState.isDryRunning,
-          });
-        }}
-      />
-      <Button
-        title="Clear"
-        onPress={() => {
-          dispatch({
-            type: 'WipeState',
-          });
-        }}
-      />
       {restaurantState.manualMode && (
         <ManualControl restaurantState={restaurantState} dispatch={dispatch} />
       )}
@@ -246,7 +225,6 @@ export default function SequencerScreen(props) {
   return (
     <TwoPanePage
       {...props}
-      hideBackButton={true}
       footer={
         <ControlPanel
           restaurantState={restaurantState}

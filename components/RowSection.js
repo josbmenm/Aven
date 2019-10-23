@@ -6,9 +6,9 @@ import {
   boldPrimaryFontFace,
 } from './Styles';
 
-const RowSection = ({ children, title }) => {
+const RowSection = ({ children, title, style }) => {
   return (
-    <React.Fragment>
+    <View style={{ ...style }}>
       {title && (
         <Text
           style={{
@@ -24,7 +24,7 @@ const RowSection = ({ children, title }) => {
       <View style={{ ...rowSectionStyle }}>
         <View style={{ ...rowSectionInnerStyle }}>{children}</View>
       </View>
-    </React.Fragment>
+    </View>
   );
 };
 
