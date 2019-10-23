@@ -287,12 +287,12 @@ export default async function startVerseServer(httpServer) {
               alarmType: 'WasteFull',
             });
           }
-          if (!System_FreshWaterAboveLow_READ) {
-            sideEffects.push({
-              type: 'SetAlarm',
-              alarmType: 'WaterEmpty',
-            });
-          }
+          // if (!System_FreshWaterAboveLow_READ) {
+          //   sideEffects.push({
+          //     type: 'SetAlarm',
+          //     alarmType: 'WaterEmpty',
+          //   });
+          // }
         }
         if (restaurantState.delivery0 && !Delivery_Bay0CupPresent_READ) {
           sideEffects.push({ type: 'ClearDeliveryBay', bayId: 'delivery0' });
