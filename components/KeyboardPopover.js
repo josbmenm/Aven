@@ -40,7 +40,7 @@ export default function KeyboardPopover({ children, onClose, openValue }) {
               {
                 translateY: Animated.interpolate(openValue, {
                   inputRange: [0, 1],
-                  outputRange: [300, 0],
+                  outputRange: [100, 0],
                 }),
               },
             ],

@@ -566,6 +566,7 @@ function RestaurantReducerFn(state = {}, action) {
       return {
         ...defaultReturn(),
         isAutoRunning: true,
+        alarms: action.clearAlarms ? [] : state.alarms,
       };
     }
     case 'PauseAutorun': {

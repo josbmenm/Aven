@@ -77,12 +77,13 @@ export default function StatusBar() {
         if (type === 'FreezerTemp') {
           alarmData = {
             title: 'Freezer Temperature',
-            description: `Freezer has gone above 5°F`,
+            // description: `Freezer has gone above 5°F`,
+            description: `Freezer has gone above 65°F`,
           };
         } else if (type === 'BevTemp') {
           alarmData = {
             title: 'Beverage Temperature',
-            description: `Beverage fridge has gone above 41°F`,
+            description: `Beverage fridge has gone above 75°F`,
           };
         } else if (type === 'YogurtTemp') {
           alarmData = {
