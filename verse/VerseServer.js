@@ -245,7 +245,7 @@ export default async function startVerseServer(httpServer) {
         const foodMonitoring = {
           isBeverageCold: System_BevTemp_READ <= 41,
           isFreezerCold: System_FreezerTemp_READ <= 65,
-          isYogurtCold: System_YogurtZoneTemp_READ <= 75,
+          isYogurtCold: System_YogurtZoneTemp_READ <= 85,
         };
         const lastMonitoredState = restaurantState.foodMonitoring || {};
 

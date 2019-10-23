@@ -83,12 +83,12 @@ export default function StatusBar() {
         } else if (type === 'BevTemp') {
           alarmData = {
             title: 'Beverage Temperature',
-            description: `Beverage fridge has gone above 75°F`,
+            description: `Beverage fridge has gone above 41°F`,
           };
         } else if (type === 'YogurtTemp') {
           alarmData = {
             title: 'Yogurt Temperature',
-            description: `Yogurt fridge has gone above 41°F`,
+            description: `Yogurt fridge has gone above 85°F`,
           };
         } else if (type === 'WasteFull') {
           alarmData = {
