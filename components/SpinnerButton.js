@@ -14,11 +14,15 @@ export default function SpinnerButton({
   return (
     <Button
       {...props}
-      title={isLoading ? '' : title}
+      title={title}
+      titleStyle={{ opacity: isLoading ? 0.2 : 1 }}
       disabled={disabled || isLoading}
     >
       {isLoading && (
-        <Spinner color={colors.invertedText} style={{ alignSelf: 'center' }} />
+        <Spinner
+          color={colors.invertedText}
+          style={{ alignSelf: 'center', position: 'absolute' }}
+        />
       )}
       {children}
     </Button>

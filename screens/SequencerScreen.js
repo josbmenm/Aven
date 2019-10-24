@@ -213,9 +213,6 @@ function ModeView({ restaurantState, dispatch }) {
   return (
     <View>
       <Subsystems />
-      {restaurantState.manualMode && (
-        <ManualControl restaurantState={restaurantState} dispatch={dispatch} />
-      )}
     </View>
   );
 }
@@ -232,10 +229,17 @@ export default function SequencerScreen(props) {
         />
       }
       side={
-        <RestaurantStateList
-          restaurantState={restaurantState}
-          dispatch={dispatch}
-        />
+        restaurantState && restaurantState.manualMode ? (
+          <ManualControl
+            restaurantState={restaurantState}
+            dispatch={dispatch}
+          />
+        ) : (
+          <RestaurantStateList
+            restaurantState={restaurantState}
+            dispatch={dispatch}
+          />
+        )
       }
     >
       <ModeView restaurantState={restaurantState} dispatch={dispatch} />

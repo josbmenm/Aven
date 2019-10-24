@@ -149,7 +149,8 @@ const KitchenCommands = {
       DispenseSystem: 'system',
       SlotToDispense: 'slot',
     },
-    checkReady: kitchenState => {
+    checkReady: (kitchenState, commandParams) => {
+      // todo, check the slot for errors!
       return kitchenState.FillSystem_PositionAndDispenseAmountReady_READ;
     },
   },

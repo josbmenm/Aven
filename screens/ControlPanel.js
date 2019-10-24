@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Button from '../components/Button';
+import AsyncButton from '../components/AsyncButton';
 import Tag from '../components/Tag';
 import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import { useNavigation } from '../navigation-hooks/Hooks';
@@ -19,7 +20,7 @@ import useAsyncError from '../react-utils/useAsyncError';
 import Spinner from '../components/Spinner';
 import KitchenCommands from '../logic/KitchenCommands';
 
-function StatusPuck({ status }) {
+function StatusPuck({ status, isRunning }) {
   let statusColor = null;
   switch (status) {
     case 'fault': {
@@ -53,7 +54,7 @@ function StatusPuck({ status }) {
         justifyContent: 'center',
       }}
     >
-      {status === 'disconnected' && <Spinner />}
+      {(status === 'disconnected' || isRunning) && <Spinner />}
     </View>
   );
 }
@@ -182,21 +183,13 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
         : 'Machine Disconnected';
     }
     if (!restaurantState.isAttached) {
-      status = 'detached';
+      status = 'fault';
       message = 'Sequencer Disabled';
     } else if (!restaurantState.isAutoRunning) {
       status = 'detached';
       message = 'Paused';
     }
     if (kitchenState) {
-      if (
-        kitchenState.FillSystem_PrgStep_READ >= 106 &&
-        kitchenState.FillSystem_PrgStep_READ <= 165
-      ) {
-        status = 'detached';
-        message = 'Homing';
-      }
-
       sequencerNames &&
         sequencerNames.forEach(systemName => {
           const system = getSubsystem(systemName, kitchenConfig, kitchenState);
@@ -270,8 +263,51 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   return (
     <View style={{ backgroundColor: 'transparent' }}>
       {allFaults && allFaults.length > 0 && <FaultZone faults={allFaults} />}
-      <ScrollView
-        horizontal
+      {restaurantState && !restaurantState.manualMode && (
+        <ScrollView
+          horizontal
+          style={{
+            height: 65,
+            backgroundColor: restaurantState.isAttached ? '#dee' : '#eed',
+          }}
+        >
+          <Text
+            style={{
+              ...titleStyle,
+              color: restaurantState.isAttached
+                ? Tag.positiveColor
+                : Tag.negativeColor,
+              margin: 10,
+              marginTop: 16,
+              fontSize: 18,
+            }}
+          >
+            {restaurantState.isAttached
+              ? 'Manual Run Step:'
+              : 'Detached (Pretend) Steps:'}
+          </Text>
+          {nextSteps &&
+            nextSteps.map((step, i) => (
+              <View key={i}>
+                <AsyncButton
+                  title={step.description}
+                  style={{ marginTop: 10, marginRight: 10 }}
+                  disabled={restaurantState.isAttached && !step.isReady}
+                  onPress={() => {
+                    const stepPerformer = restaurantState.isAttached
+                      ? step.perform
+                      : step.performFake;
+                    return stepPerformer(
+                      cloud.get('RestaurantActions').putTransactionValue,
+                      handleKitchenCommand,
+                    );
+                  }}
+                />
+              </View>
+            ))}
+        </ScrollView>
+      )}
+      <View
         style={{
           ...prettyShadow,
           height: 120,
@@ -280,11 +316,11 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
           flexDirection: 'row',
         }}
       >
-        <StatusPuck status={status} />
+        <StatusPuck status={status} isRunning={isRunning} />
 
         <View style={{ flex: 1, padding: 16 }}>
           {message && (
-            <Text style={{ fontSize: 26, ...titleStyle }}>{message}</Text>
+            <Text style={{ fontSize: 20, ...titleStyle }}>{message}</Text>
           )}
           {subMessage && (
             <Text style={{ ...primaryFontFace, color: monsterra }}>
@@ -299,69 +335,6 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
             paddingHorizontal: 8,
           }}
         >
-          {restaurantState &&
-            restaurantState.isAttached &&
-            nextSteps &&
-            nextSteps.map((step, i) => (
-              <View key={i}>
-                <ControlPanelButton
-                  title="go step"
-                  disabled={!step.isReady}
-                  onPress={() => {
-                    step
-                      .perform(
-                        cloud.get('RestaurantActions').putTransactionValue,
-                        handleKitchenCommand,
-                      )
-                      .then(resp => {
-                        console.log('ACTION RESP', step.description, resp);
-                      });
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: 'white',
-                      marginVertical: 8,
-                      fontSize: 18,
-                      ...primaryFontFace,
-                    }}
-                  >
-                    {step.description}
-                  </Text>
-                </ControlPanelButton>
-              </View>
-            ))}
-          {restaurantState &&
-            !restaurantState.isAttached &&
-            nextSteps &&
-            nextSteps.map((step, i) => (
-              <View key={i}>
-                <ControlPanelButton
-                  title="go FAKE step"
-                  onPress={() => {
-                    step
-                      .performFake(
-                        cloud.get('RestaurantActions').putTransactionValue,
-                        handleKitchenCommand,
-                      )
-                      .then(resp => {
-                        console.log('ACTION RESP', step.description, resp);
-                      });
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: 'white',
-                      marginVertical: 8,
-                      fontSize: 18,
-                      ...primaryFontFace,
-                    }}
-                  >
-                    {step.description}
-                  </Text>
-                </ControlPanelButton>
-              </View>
-            ))}
           {restaurantState && restaurantState.isAttached && (
             <View style={{}}>
               <Text
@@ -399,29 +372,28 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
               }}
             />
           )}
-          {restaurantState && restaurantState.manualMode && (
+
+          {restaurantState && (
             <ControlPanelButton
-              title="disable manual mode"
+              title={
+                restaurantState.manualMode
+                  ? 'disable manual mode'
+                  : 'enable manual mode'
+              }
+              disabled={restaurantState.isAttached}
               onPress={() => {
-                restaurantDispatch({
-                  type: 'DisableManualMode',
-                });
-              }}
-            />
-          )}
-          {restaurantState &&
-            !restaurantState.manualMode &&
-            !restaurantState.isAttached && (
-              <ControlPanelButton
-                title="enable manual mode"
-                disabled={restaurantState.isAttached}
-                onPress={() => {
+                if (restaurantState.manualMode) {
+                  restaurantDispatch({
+                    type: 'DisableManualMode',
+                  });
+                } else {
                   restaurantDispatch({
                     type: 'EnableManualMode',
                   });
-                }}
-              />
-            )}
+                }
+              }}
+            />
+          )}
           {restaurantState && (
             <ControlPanelButton
               title={
@@ -441,7 +413,7 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
             />
           )}
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 }

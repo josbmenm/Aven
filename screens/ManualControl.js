@@ -1,214 +1,53 @@
 import React from 'react';
-import TwoPanePage from '../components/TwoPanePage';
-import Button from '../components/Button';
-import KitchenCommands from '../logic/KitchenCommands';
-import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
-import { View } from 'react-native';
+import KitchenCommandButton from '../components/KitchenCommandButton';
+import { useCloudValue } from '../cloud-core/KiteReact';
 import RowSection from '../components/RowSection';
-import { useRestaurantState } from '../ono-cloud/Kitchen';
-import useAsyncError from '../react-utils/useAsyncError';
 
 export default function ManualControl() {
-  const cloud = useCloud();
-  const handleErrors = useAsyncError();
   const kitchenState = useCloudValue('KitchenState');
-  const fillParams = {
-    amount: 2,
-    system: 3,
-    slot: 1,
-  };
   if (!kitchenState) {
     return null;
   }
   return (
-    <RowSection title="Manual Actions">
-      <Button
-        title="home system"
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'Home',
-            }),
-          );
-        }}
-      />
-      <Button
+    <RowSection title="manual actions" style={{ marginTop: 42 }}>
+      <KitchenCommandButton commandType="Home" title="home system" />
+      <KitchenCommandButton
+        commandType="FillGoToCup"
         title="position under new cup"
-        disabled={!KitchenCommands.FillGoToCup.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'FillGoToCup',
-            }),
-          );
-        }}
       />
-      <Button
+      <KitchenCommandButton
         title="position blender handoff"
-        disabled={!KitchenCommands.FillGoToHandoff.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'FillGoToHandoff',
-            }),
-          );
-        }}
+        commandType="FillGoToHandoff"
       />
-      <Button
-        title="grab new cup"
-        disabled={!KitchenCommands.GetCup.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'GetCup',
-            }),
-          );
-        }}
-      />
-      <Button
+      <KitchenCommandButton title="grab new cup" commandType="GetCup" />
+      <KitchenCommandButton
         title="drop cup (from fill system)"
-        disabled={!KitchenCommands.DropCup.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'DropCup',
-            }),
-          );
-        }}
+        commandType="DropCup"
       />
-      <Button
+      <KitchenCommandButton
         title="drop cup (from delivery system)"
-        disabled={!KitchenCommands.DeliveryDropCup.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'DeliveryDropCup',
-            }),
-          );
-        }}
+        commandType="DeliveryDropCup"
       />
-      <Button
+      <KitchenCommandButton
         title="ditch cup (from fill system)"
-        disabled={!KitchenCommands.DitchCup.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'DitchCup',
-            }),
-          );
-        }}
+        commandType="DitchCup"
       />
-      <Button
-        title="dispense 2 cocoa powder"
-        disabled={
-          !KitchenCommands.PositionAndDispenseAmount.checkReady(
-            kitchenState,
-            fillParams,
-          )
-        }
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'PositionAndDispenseAmount',
-              params: fillParams,
-            }),
-          );
-        }}
-      />
-      <Button
+      <KitchenCommandButton
         title="pass to blender"
-        disabled={!KitchenCommands.PassToBlender.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'PassToBlender',
-            }),
-          );
-        }}
+        commandType="PassToBlender"
       />
-      <Button
-        title="blend"
-        disabled={!KitchenCommands.Blend.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'Blend',
-            }),
-          );
-        }}
+      <KitchenCommandButton title="blend" commandType="Blend" />
+      <KitchenCommandButton
+        title="pass to delivery and clean"
+        commandType="PassToDelivery"
       />
-      <Button
+      <KitchenCommandButton
         title="pass to delivery"
-        disabled={!KitchenCommands.PassToDelivery.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'PassToDelivery',
-            }),
-          );
-        }}
+        commandType="PassToDeliveryWithoutClean"
       />
-      <Button
-        title="pass to delivery without clean"
-        disabled={
-          !KitchenCommands.PassToDeliveryWithoutClean.checkReady(kitchenState)
-        }
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'PassToDeliveryWithoutClean',
-            }),
-          );
-        }}
-      />
-      <Button
-        title="clean"
-        disabled={!KitchenCommands.Clean.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'Clean',
-            }),
-          );
-        }}
-      />
-      <Button
-        title="deliver 0"
-        disabled={!KitchenCommands.DeliverBay0.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'DeliverBay0',
-            }),
-          );
-        }}
-      />
-      <Button
-        title="deliver 1"
-        disabled={!KitchenCommands.DeliverBay1.checkReady(kitchenState)}
-        onPress={() => {
-          handleErrors(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'DeliverBay1',
-            }),
-          );
-        }}
-      />
+      <KitchenCommandButton title="clean" commandType="Clean" />
+      <KitchenCommandButton title="deliver 0" commandType="DeliverBay0" />
+      <KitchenCommandButton title="deliver 1" commandType="DeliverBay1" />
     </RowSection>
   );
 }

@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 import SimplePage from '../components/SimplePage';
 import Tag from '../components/Tag';
 import Button from '../components/Button';
+import AsyncButton from '../components/AsyncButton';
 import useFocus from '../navigation-hooks/useFocus';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import {
@@ -17,6 +18,7 @@ import { useInventoryState } from '../ono-cloud/OnoKitchen';
 import MultiSelect from '../components/MultiSelect';
 import BlockFormInput from '../components/BlockFormInput';
 import StatusBar from '../components/StatusBar';
+import ButtonStack from '../components/ButtonStack';
 
 function PopoverTitle({ children }) {
   return (
@@ -103,22 +105,23 @@ function DispenseForm({ slot, onClose, onDispense }) {
     <View>
       <PopoverTitle>Dispense {slot.name}</PopoverTitle>
       <View style={{ flexDirection: 'row' }}>{inputs}</View>
-      <Button
-        title="dispense one"
-        onPress={() => {
-          onDispense(1);
-        }}
+      <ButtonStack
+        style={{ margin: 10 }}
+        buttons={[
+          <AsyncButton
+            title="dispense one"
+            onPress={async () => {
+              await onDispense(1);
+            }}
+          />,
+          <AsyncButton
+            title={`dispense ${amount}`}
+            onPress={async () => {
+              await onDispense(amount);
+            }}
+          />,
+        ]}
       />
-      <Button
-        title={`dispense ${amount}`}
-        onPress={() => {
-          onDispense(amount);
-        }}
-      />
-      {/* <Button
-        title={`task cup of ${slot.name} x ${amount}`}
-        onPress={() => {}}
-      /> */}
     </View>
   );
 }
@@ -217,18 +220,18 @@ function InventoryRow({ slot, dispatch }) {
         }}
       >
         {isCups ? (
-          <Button title="dispense one" onPress={slot.onDispenseOne} />
+          <AsyncButton title="dispense one" onPress={slot.onDispenseOne} />
         ) : (
-          <Button title="dispense.." onPress={onDispensePopover} />
+          <AsyncButton title="dispense.." onPress={onDispensePopover} />
         )}
         {isBeverage && (
-          <Button title="purge small" onPress={slot.onPurgeSmall} />
+          <AsyncButton title="purge small" onPress={slot.onPurgeSmall} />
         )}
         {isBeverage && (
-          <Button title="purge large" onPress={slot.onPurgeLarge} />
+          <AsyncButton title="purge large" onPress={slot.onPurgeLarge} />
         )}
         {!slot.disableFilling && (
-          <Button title="fill.." secondary onPress={onFillPopover} />
+          <AsyncButton title="fill.." secondary onPress={onFillPopover} />
         )}
       </View>
 

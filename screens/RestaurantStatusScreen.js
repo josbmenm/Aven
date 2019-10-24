@@ -7,25 +7,55 @@ import Row from '../components/Row';
 import Tag from '../components/Tag';
 import Button from '../components/Button';
 import useAsyncError from '../react-utils/useAsyncError';
-import { Easing } from 'react-native-reanimated';
 import useFocus from '../navigation-hooks/useFocus';
-import {
-  titleStyle,
-  proseFontFace,
-  standardTextColor,
-} from '../components/Styles';
-import KeyboardPopover from '../components/KeyboardPopover';
-import { usePopover } from '../views/Popover';
-import { useRestaurantState, useIsRestaurantOpen } from '../ono-cloud/Kitchen';
+import { titleStyle } from '../components/Styles';
 import useTimeSeconds from '../utils/useTimeSeconds';
 import RowSection from '../components/RowSection';
 import BlockFormInput from '../components/BlockFormInput';
-import Subtitle from '../components/Subtitle';
+import SpinnerButton from '../components/SpinnerButton';
+import ButtonStack from '../components/ButtonStack';
 import MultiSelect from '../components/MultiSelect';
 import TemperatureView from '../components/TemperatureView';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
-import useKeyboardPopover from '../components/useKeyboardPopover';
+import KitchenCommands from '../logic/KitchenCommands';
+
+function KitchenCommandButton({ commandType, params, title }) {
+  const [isLoading, setIsLoading] = React.useState(false);
+  let isDisabled = true;
+  const cloud = useCloud();
+  const kitchenState = useKitchenState();
+  const handleError = useAsyncError();
+
+  if (kitchenState) {
+    const command = KitchenCommands[commandType];
+    const isReady = command.checkReady(kitchenState);
+    if (isReady) isDisabled = false;
+  }
+  function handlePress() {
+    setIsLoading(true);
+    handleError(
+      cloud
+        .dispatch({
+          type: 'KitchenCommand',
+          commandType,
+        })
+        .finally(() => {
+          setIsLoading(false);
+        }),
+    );
+  }
+
+  return (
+    <SpinnerButton
+      command="Home"
+      onPress={handlePress}
+      isLoading={isLoading}
+      disabled={isDisabled}
+      title={title}
+    />
+  );
+}
 
 function PopoverTitle({ children }) {
   return (
@@ -86,28 +116,6 @@ function CloseRestaurantButtons({ onClose }) {
   );
 }
 
-function InfoText({ children }) {
-  return (
-    <Text style={{ ...proseFontFace, color: standardTextColor }}>
-      {children}
-    </Text>
-  );
-}
-
-function ButtonStack({ buttons }) {
-  return (
-    <View>
-      {buttons.map((button, buttonIndex) => (
-        <View
-          style={{ marginBottom: buttonIndex === buttons.length - 1 ? 0 : 12 }}
-        >
-          {button}
-        </View>
-      ))}
-    </View>
-  );
-}
-
 function SafetyView() {
   const kitchenState = useKitchenState();
   if (!kitchenState) {
@@ -126,25 +134,16 @@ function SafetyView() {
 }
 
 function VanView() {
-  const [restaurantState] = useRestaurantState();
   const cloud = useCloud();
   const kitchenState = useKitchenState();
   const handleError = useAsyncError();
-
-  if (!kitchenState || !restaurantState) {
+  if (!kitchenState) {
     return null;
   }
-
-  // kitchenState.System_LockSkid_VALUE
   const lockSkid = kitchenState.System_LockSkid_VALUE;
   const isSkidLocked = kitchenState.System_SkidLocked_READ;
   const skidIn = kitchenState.System_SkidPositionSensors_READ;
   const isVanPluggedIn = kitchenState.System_VanPluggedIn_READ;
-  const isHomed = kitchenState.FillSystem_Homed_READ;
-  const isInServiceMode = kitchenState.FillSystem_InServiceMode_READ;
-  const readyToEnterServiceMode =
-    kitchenState.FillSystem_EnterServiceModeReady_READ;
-  const isFillSystemIdle = kitchenState.FillSystem_PrgStep_READ === 0;
   const vanPowerEnable = kitchenState.System_VanPowerEnable_VALUE;
   return (
     <Row title="machine in van / servicing">
@@ -207,62 +206,34 @@ function VanView() {
 }
 
 function ServicingView() {
-  const [restaurantState] = useRestaurantState();
-  const cloud = useCloud();
   const kitchenState = useKitchenState();
-  const handleError = useAsyncError();
-
-  if (!kitchenState || !restaurantState) {
+  if (!kitchenState) {
     return null;
   }
-
-  // kitchenState.System_LockSkid_VALUE
-  const bypassKey = kitchenState.System_SafetyBypassKey_READ;
-  const lockSkid = kitchenState.System_LockSkid_VALUE;
-  const isSkidLocked = kitchenState.System_SkidLocked_READ;
-  const skidIn = kitchenState.System_SkidPositionSensors_READ;
-  const isVanPluggedIn = kitchenState.System_VanPluggedIn_READ;
   const isHomed = kitchenState.FillSystem_Homed_READ;
   const isInServiceMode = kitchenState.FillSystem_InServiceMode_READ;
-  const readyToEnterServiceMode =
-    kitchenState.FillSystem_EnterServiceModeReady_READ;
-  const isFillSystemIdle = kitchenState.FillSystem_PrgStep_READ === 0;
-  const vanPowerEnable = kitchenState.System_VanPowerEnable_VALUE;
   return (
     <Row title="service mode">
-      {isInServiceMode ? (
-        <Tag
-          title={`Service Mode (${isHomed ? 'homed' : 'not homed'})`}
-          color={Tag.warningColor}
-        />
-      ) : isHomed ? (
-        <Tag title="Active Mode, Homed" color={Tag.positiveColor} />
-      ) : (
-        <Tag title="Not Homed" color={Tag.negativeColor} />
-      )}
-      <Button
-        title="home system"
-        disabled={!isFillSystemIdle}
-        onPress={() => {
-          handleError(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'Home',
-            }),
-          );
-        }}
-      />
-      <Button
-        title="enter service mode"
-        disabled={!readyToEnterServiceMode}
-        onPress={() => {
-          handleError(
-            cloud.dispatch({
-              type: 'KitchenCommand',
-              commandType: 'EnterServiceMode',
-            }),
-          );
-        }}
+      <View>
+        {isInServiceMode ? (
+          <Tag
+            title={`Service Mode (${isHomed ? 'homed' : 'not homed'})`}
+            color={Tag.warningColor}
+          />
+        ) : isHomed ? (
+          <Tag title="Active Mode, Homed" color={Tag.positiveColor} />
+        ) : (
+          <Tag title="Not Homed" color={Tag.negativeColor} />
+        )}
+      </View>
+      <ButtonStack
+        buttons={[
+          <KitchenCommandButton commandType="Home" title="home system" />,
+          <KitchenCommandButton
+            commandType="EnterServiceMode"
+            title="enter service mode"
+          />,
+        ]}
       />
     </Row>
   );
