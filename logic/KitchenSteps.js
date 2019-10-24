@@ -351,7 +351,7 @@ const KitchenSteps = [
         restaurantState.isDryRunning
       ) {
         return {
-          taskId: restaurantState.blend.task.id,
+          taskId: restaurantState.blend.task && restaurantState.blend.task.id,
         };
       }
       if (!restaurantState.blend.task || restaurantState.blend.task.skipBlend) {
