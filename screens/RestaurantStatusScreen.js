@@ -17,8 +17,9 @@ import ButtonStack from '../components/ButtonStack';
 import MultiSelect from '../components/MultiSelect';
 import TemperatureView from '../components/TemperatureView';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
-import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import KitchenCommands from '../logic/KitchenCommands';
+import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
+import useKeyboardPopover from '../components/useKeyboardPopover';
 
 function KitchenCommandButton({ commandType, params, title }) {
   const [isLoading, setIsLoading] = React.useState(false);

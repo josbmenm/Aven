@@ -15,6 +15,7 @@ import MultiSelect from '../components/MultiSelect';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import useKeyboardPopover from '../components/useKeyboardPopover';
+import ButtonStack from '../components/ButtonStack';
 
 function FridgeView() {
   const kitchenState = useKitchenState();
@@ -287,6 +288,26 @@ function ClearMapButton() {
 }
 
 export default function KioskSettingsScreen({ navigation, ...props }) {
+  const [state, dispatch] = useRestaurantState();
+
+  const { onPopover } = useKeyboardPopover(({ onClose }) => (
+    <ButtonStack
+      buttons={[
+        <Button
+          title="alarm empty fresh"
+          onPress={() => {
+            dispatch({ type: 'SetAlarm', alarmType: 'WaterEmpty' });
+          }}
+        />,
+        <Button
+          title="alarm full waste"
+          onPress={() => {
+            dispatch({ type: 'SetAlarm', alarmType: 'WasteFull' });
+          }}
+        />,
+      ]}
+    />
+  ));
   return (
     <SimplePage {...props} navigation={navigation} hideBackButton>
       <CateringMode />
@@ -353,7 +374,13 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
           icon="♻️"
           title="Refresh App"
         />
-
+        <LinkRow
+          onPress={() => {
+            onPopover();
+          }}
+          icon="🌎"
+          title="Network Debug"
+        />
         <UpdateAirtableRow />
       </RowSection>
       <AppInfoText />
