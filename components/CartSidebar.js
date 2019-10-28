@@ -343,9 +343,8 @@ function PromoCodeForm({ onClose, orderDispatch, cloud }) {
         return orderDispatch({
           type: 'SetPromo',
           promo: validPromo,
-        });
+        }).then(onClose);
       })
-      .then(onClose)
       .catch(e => {
         setIsLoading(false);
         setError(e);

@@ -69,15 +69,14 @@ export function OrderContextProvider({ children }) {
         isLive,
       });
     },
-    startOrder: () => {
+    startOrder: () =>
       guardAsync(
         cloud.get('DraftOrderActions').putValue({
           type: 'TransactionValue',
           on: null,
           value: { type: 'StartOrderDraft' },
         }),
-      );
-    },
+      ),
   };
   return (
     <OrderContext.Provider value={orderContext}>
