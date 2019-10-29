@@ -54,7 +54,7 @@ function StatusPuck({ status, isRunning }) {
         justifyContent: 'center',
       }}
     >
-      {(status === 'disconnected' || isRunning) && <Spinner />}
+      {(status === 'disconnected' || isRunning) && <Spinner color="white" />}
     </View>
   );
 }
@@ -263,50 +263,52 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
   return (
     <View style={{ backgroundColor: 'transparent' }}>
       {allFaults && allFaults.length > 0 && <FaultZone faults={allFaults} />}
-      {restaurantState && !restaurantState.manualMode && (
-        <ScrollView
-          horizontal
-          style={{
-            height: 65,
-            backgroundColor: restaurantState.isAttached ? '#dee' : '#eed',
-          }}
-        >
-          <Text
+      {restaurantState &&
+        !restaurantState.manualMode &&
+        !restaurantState.isAutoRunning && (
+          <ScrollView
+            horizontal
             style={{
-              ...titleStyle,
-              color: restaurantState.isAttached
-                ? Tag.positiveColor
-                : Tag.negativeColor,
-              margin: 10,
-              marginTop: 16,
-              fontSize: 18,
+              height: 65,
+              backgroundColor: restaurantState.isAttached ? '#dee' : '#eed',
             }}
           >
-            {restaurantState.isAttached
-              ? 'Manual Run Step:'
-              : 'Detached (Pretend) Steps:'}
-          </Text>
-          {nextSteps &&
-            nextSteps.map((step, i) => (
-              <View key={i}>
-                <AsyncButton
-                  title={step.description}
-                  style={{ marginTop: 10, marginRight: 10 }}
-                  disabled={restaurantState.isAttached && !step.isReady}
-                  onPress={() => {
-                    const stepPerformer = restaurantState.isAttached
-                      ? step.perform
-                      : step.performFake;
-                    return stepPerformer(
-                      cloud.get('RestaurantActions').putTransactionValue,
-                      handleKitchenCommand,
-                    );
-                  }}
-                />
-              </View>
-            ))}
-        </ScrollView>
-      )}
+            <Text
+              style={{
+                ...titleStyle,
+                color: restaurantState.isAttached
+                  ? Tag.positiveColor
+                  : Tag.negativeColor,
+                margin: 10,
+                marginTop: 16,
+                fontSize: 18,
+              }}
+            >
+              {restaurantState.isAttached
+                ? 'Manual Run Step:'
+                : 'Detached (Pretend) Steps:'}
+            </Text>
+            {nextSteps &&
+              nextSteps.map((step, i) => (
+                <View key={i}>
+                  <AsyncButton
+                    title={step.description}
+                    style={{ marginTop: 10, marginRight: 10 }}
+                    disabled={restaurantState.isAttached && !step.isReady}
+                    onPress={() => {
+                      const stepPerformer = restaurantState.isAttached
+                        ? step.perform
+                        : step.performFake;
+                      return stepPerformer(
+                        cloud.get('RestaurantActions').putTransactionValue,
+                        handleKitchenCommand,
+                      );
+                    }}
+                  />
+                </View>
+              ))}
+          </ScrollView>
+        )}
       <View
         style={{
           ...prettyShadow,

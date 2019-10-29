@@ -318,8 +318,8 @@ export function connectMachine({
         currentState = getTagValues(readings);
       }
       if (shallowEqual(lastState, currentState)) {
-        // the state doesn't appear to be changing. cool off and wait a 1/4 sec..
-        await delay(250);
+        // the state doesn't appear to be changing. cool off and wait a bit
+        await delay(50);
         return;
       }
       await updateKitchenState({

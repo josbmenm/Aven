@@ -12,10 +12,12 @@ import Row from '../components/Row';
 import Tag from '../components/Tag';
 import useAsyncError from '../react-utils/useAsyncError';
 import MultiSelect from '../components/MultiSelect';
+import BlockFormInput from '../components/BlockFormInput';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import ButtonStack from '../components/ButtonStack';
+import useFocus from '../navigation-hooks/useFocus';
 
 function FridgeView() {
   const kitchenState = useKitchenState();
@@ -185,6 +187,48 @@ function AlarmMode() {
       />
       {isMuteAlarms && false && <AlarmFakeButtons />}
     </Row>
+  );
+}
+
+function SetFridgeTempForm({ onClose, onValues, initialValues }) {
+  const [low, setLow] = React.useState(String(initialValues.low));
+  const [high, setHigh] = React.useState(String(initialValues.high));
+
+  function handleSubmit() {
+    onClose();
+    onValues({ low, high });
+  }
+  const { inputs } = useFocus({
+    onSubmit: handleSubmit,
+    inputRenderers: [
+      inputProps => (
+        <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
+          <BlockFormInput
+            {...inputProps}
+            label="Fridge Temp Low"
+            onValue={setLow}
+            value={low}
+          />
+        </View>
+      ),
+      inputProps => (
+        <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
+          <BlockFormInput
+            {...inputProps}
+            label="Fridge Temp High"
+            onValue={setHigh}
+            value={high}
+          />
+        </View>
+      ),
+    ],
+  });
+
+  return (
+    <View>
+      {inputs}
+      <Button onPress={handleSubmit} title="Save" />
+    </View>
   );
 }
 

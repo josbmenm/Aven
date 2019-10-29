@@ -195,6 +195,42 @@ function RestaurantReducerFn(state = {}, action) {
         queue: state.queue.slice(1),
       });
     }
+    case 'WipeBlendTaskState': {
+      if (!state.blend) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        blend: null,
+        completedTasks: [
+          ...(state.completedTasks || []),
+          {
+            ...state.blend,
+            deliveryType: 'wiped-blend-state',
+            deliveryTime: action.dispatchTime,
+            ...taskCompleteTime(state.blend, action),
+          },
+        ],
+      };
+    }
+    case 'WipeFillTaskState': {
+      if (!state.fill || state.fill === 'ready') {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        fill: null,
+        completedTasks: [
+          ...(state.completedTasks || []),
+          {
+            ...state.fill,
+            deliveryType: 'wiped-fill-state',
+            deliveryTime: action.dispatchTime,
+            ...taskCompleteTime(state.fill, action),
+          },
+        ],
+      };
+    }
     case 'RequestFillDrop': {
       if (!state.fill) {
         return defaultReturn();

@@ -156,22 +156,42 @@ function FillRow({ restaurantState, dispatch }) {
         <View style={{ flex: 1 }}>
           {task && <TaskInfoText taskState={task} />}
         </View>
-        <Button
-          title="discard"
-          onPress={() => {
-            dispatch({ type: 'RequestFillDrop' });
-          }}
-        />
+        {!restaurantState.isAttached && (
+          <Button
+            type="outline"
+            title="wipe filling task state"
+            onPress={() => {
+              dispatch({ type: 'WipeFillTaskState' });
+            }}
+          />
+        )}
       </View>
       <FillsDisplay state={restaurantState.fill} />
     </View>
   );
 }
-function BlendRow({ state }) {
-  if (state === 'dirty') {
+function BlendRow({ restaurantState, dispatch }) {
+  if (restaurantState.blend === 'dirty') {
     return <Text>Dirty Blender</Text>;
   }
-  return <TaskInfoText taskState={state.task} />;
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={{ flexDirection: 'row' }}>
+        <View style={{ flex: 1 }}>
+          <TaskInfoText taskState={restaurantState.blend.task} />
+        </View>
+        {!restaurantState.isAttached && (
+          <Button
+            type="outline"
+            title="wipe blender task state"
+            onPress={() => {
+              dispatch({ type: 'WipeBlendTaskState' });
+            }}
+          />
+        )}
+      </View>
+    </View>
+  );
 }
 
 function DeliverySystemRow({ state }) {
@@ -193,7 +213,7 @@ function RestaurantStateList({ restaurantState, dispatch }) {
       )}
       {restaurantState.blend && (
         <Row title="blender">
-          <BlendRow state={restaurantState.blend} />
+          <BlendRow restaurantState={restaurantState} dispatch={dispatch} />
         </Row>
       )}
       {restaurantState.delivery && (

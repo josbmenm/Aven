@@ -245,7 +245,7 @@ export default async function startVerseServer(httpServer) {
         const foodMonitoring = {
           isBeverageCold: System_BevTemp_READ <= 41,
           isFreezerCold: System_FreezerTemp_READ <= 5,
-          isYogurtCold: System_YogurtZoneTemp_READ <= 41,
+          isPistonCold: System_YogurtZoneTemp_READ <= 41,
         };
         const lastMonitoredState = restaurantState.foodMonitoring || {};
 
@@ -274,10 +274,10 @@ export default async function startVerseServer(httpServer) {
               temp: System_FreezerTemp_READ,
             });
           }
-          if (!foodMonitoring.isYogurtCold) {
+          if (!foodMonitoring.isPistonCold) {
             sideEffects.push({
               type: 'SetAlarm',
-              alarmType: 'YogurtTemp',
+              alarmType: 'PistonTemp',
               temp: System_YogurtZoneTemp_READ,
             });
           }

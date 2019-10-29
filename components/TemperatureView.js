@@ -38,10 +38,10 @@ export default function TemperatureView() {
             button={null}
           />
         )}
-        {kitchenState.System_YogurtZoneTemp_READ != null && (
+        {kitchenState.System_PistonZoneTemp_READ != null && (
           <TempCell
             title="Piston Fridge"
-            value={formatTemp(kitchenState.System_YogurtZoneTemp_READ)}
+            value={formatTemp(kitchenState.System_PistonZoneTemp_READ)}
             button={null}
           />
         )}

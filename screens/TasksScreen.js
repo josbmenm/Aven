@@ -10,10 +10,28 @@ import RowSection from '../components/RowSection';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import cuid from 'cuid';
+import { primaryFontFace, standardTextColor } from '../components/Styles';
 
-function TaskRow({ onCancel, onDoNext, taskState, onRemake }) {
+function TaskRow({ onCancel, isDropping, onDoNext, taskState, onRemake }) {
   if (!taskState) {
     return null;
+  }
+  let cancelButton = onCancel && (
+    <Button onPress={onCancel} title="cancel" type="outline" />
+  );
+  if (isDropping) {
+    cancelButton = (
+      <Text
+        style={{
+          ...primaryFontFace,
+          color: standardTextColor,
+          fontSize: 18,
+          marginTop: 16,
+        }}
+      >
+        Dropping..
+      </Text>
+    );
   }
   return (
     <View
@@ -24,7 +42,7 @@ function TaskRow({ onCancel, onDoNext, taskState, onRemake }) {
       }}
     >
       <TaskInfo task={taskState} />
-      {onCancel && <Button onPress={onCancel} title="cancel" type="outline" />}
+      {cancelButton}
       {onDoNext && <Button onPress={onDoNext} title="do next" type="outline" />}
       {onRemake && <Button onPress={onRemake} title="re-make" type="outline" />}
     </View>
@@ -72,6 +90,10 @@ function TaskQueue({ restaurantState, dispatch }) {
           <TaskRow
             key={restaurantState.fill.id}
             taskState={restaurantState.fill.task}
+            onCancel={() => {
+              dispatch({ type: 'RequestFillDrop' });
+            }}
+            isDropping={!!restaurantState.fill.requestedDropTime}
           />
         </RowSection>
       )}
