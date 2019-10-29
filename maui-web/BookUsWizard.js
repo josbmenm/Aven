@@ -226,7 +226,7 @@ function BookUsWizard() {
             </Heading>
             <BodyText style={{ textAlign: 'center' }}>
               Hosting an event, have smoothie lovers in the office, or simply
-              want 20 blends for yourself (we’re not judging)? Click here to
+              want 20 blends for yourself (we’re not judging)? Start booking to
               bring our nutritious blends right to you.
             </BodyText>
           </StepHeader>
