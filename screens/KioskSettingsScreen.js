@@ -55,6 +55,41 @@ function FridgeView() {
   );
 }
 
+function VanInTruckOverride() {
+  const kitchenState = useKitchenState();
+  const machineInVan =
+    !!kitchenState && !!kitchenState.System_MachineInVanBypass_VALUE;
+  const cloud = useCloud();
+  const handleError = useAsyncError();
+  return (
+    <Row title="override machine in van">
+      <Tag
+        title={machineInVan ? 'In Van' : 'Out of Van'}
+        color={machineInVan ? Tag.positiveColor : Tag.negativeColor}
+      />
+      <MultiSelect
+        options={[
+          { name: 'Enable', value: true },
+          { name: 'Disable', value: false },
+        ]}
+        value={machineInVan}
+        onValue={value => {
+          handleError(
+            cloud.dispatch({
+              type: 'KitchenWriteMachineValues',
+              subsystem: 'System',
+              pulse: [],
+              values: {
+                MachineInVanBypass: value,
+              },
+            }),
+          );
+        }}
+      />
+    </Row>
+  );
+}
+
 function CompressorView() {
   const kitchenState = useKitchenState();
   const fridgeEnabled =
@@ -142,50 +177,53 @@ function CateringMode() {
   );
 }
 
-function AlarmFakeButtons() {
-  const [state, dispatch] = useRestaurantState();
-
-  return (
-    <React.Fragment>
-      <Button
-        title="Temp"
-        onPress={() => {
-          dispatch({
-            type: 'SetAlarm',
-            alarmType: 'FreezerTemp',
-          });
-        }}
-      />
-    </React.Fragment>
-  );
-}
-
+const NAMED_FAULTS = {
+  bevTemp: 'Beverage Fridge Temperature',
+  freezerTemp: 'Freezer Temperature',
+  pistonTemp: 'Piston Fridge Temperature',
+  wasteFull: 'Waste Tank Full',
+  waterEmpty: 'Water Tank Empty',
+};
 function AlarmMode() {
   const [state, dispatch] = useRestaurantState();
-  const isMuteAlarms = !!state && !!state.isMutingAlarms;
   const handleError = useAsyncError();
   return (
-    <Row title="disable restaurant alarms">
-      <Tag
-        title={isMuteAlarms ? 'Alarms Disabled' : 'Alarms Enabled'}
-        color={isMuteAlarms ? Tag.warningColor : Tag.positiveColor}
-      />
-      <MultiSelect
-        options={[
-          { name: 'Disable', value: true },
-          { name: 'Regular Operation', value: false },
-        ]}
-        value={isMuteAlarms}
-        onValue={value => {
-          handleError(
-            dispatch({
-              type: 'SetAlarmMute',
-              isMutingAlarms: value,
-            }),
+    <Row title="disable restaurant faults">
+      <View style={{ flex: 1 }}>
+        {Object.entries(NAMED_FAULTS).map(([faultName, faultLabel]) => {
+          const isMuteAlarms =
+            state && state.faultMuting && !!state.faultMuting[faultName];
+          return (
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginBottom: 8,
+              }}
+            >
+              <Tag
+                title={faultLabel}
+                color={isMuteAlarms ? Tag.warningColor : Tag.positiveColor}
+              />
+              <MultiSelect
+                options={[
+                  { name: 'Disable', value: true },
+                  { name: 'Armed', value: false },
+                ]}
+                value={isMuteAlarms || false}
+                onValue={value => {
+                  handleError(
+                    dispatch({
+                      type: 'SetFaultMuting',
+                      faultMuting: { [faultName]: value },
+                    }),
+                  );
+                }}
+              />
+            </View>
           );
-        }}
-      />
-      {isMuteAlarms && false && <AlarmFakeButtons />}
+        })}
+      </View>
     </Row>
   );
 }
@@ -318,9 +356,9 @@ function DryRunMode() {
 function ClearMapButton() {
   const [_, dispatch] = useRestaurantState();
   return (
-    <Row title="clear material map">
+    <Row title="wipe entire restaurant state (danger)">
       <Button
-        title="Clear"
+        title="Wipe State"
         onPress={() => {
           dispatch({
             type: 'WipeState',
@@ -332,26 +370,6 @@ function ClearMapButton() {
 }
 
 export default function KioskSettingsScreen({ navigation, ...props }) {
-  const [state, dispatch] = useRestaurantState();
-
-  const { onPopover } = useKeyboardPopover(({ onClose }) => (
-    <ButtonStack
-      buttons={[
-        <Button
-          title="alarm empty fresh"
-          onPress={() => {
-            dispatch({ type: 'SetAlarm', alarmType: 'WaterEmpty' });
-          }}
-        />,
-        <Button
-          title="alarm full waste"
-          onPress={() => {
-            dispatch({ type: 'SetAlarm', alarmType: 'WasteFull' });
-          }}
-        />,
-      ]}
-    />
-  ));
   return (
     <SimplePage {...props} navigation={navigation} hideBackButton>
       <CateringMode />
@@ -359,6 +377,7 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
       <DryRunMode />
 
       <FridgeView />
+      <VanInTruckOverride />
       <CompressorView />
       <ClearMapButton />
       <RowSection>
@@ -417,13 +436,6 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
           }}
           icon="♻️"
           title="Refresh App"
-        />
-        <LinkRow
-          onPress={() => {
-            onPopover();
-          }}
-          icon="🌎"
-          title="Network Debug"
         />
         <UpdateAirtableRow />
       </RowSection>

@@ -1,7 +1,7 @@
 import React from 'react';
 import RootAuthenticationSection from './RootAuthenticationSection';
-import { Text, View } from 'react-native';
-import SimplePage from '../components/SimplePage';
+import { Text, View, ScrollView } from 'react-native';
+import GenericPage from '../components/GenericPage';
 import Tag from '../components/Tag';
 import Button from '../components/Button';
 import AsyncButton from '../components/AsyncButton';
@@ -79,7 +79,11 @@ function SetFillForm({ slot, onClose }) {
     <View>
       <PopoverTitle>Fill {slot.name}</PopoverTitle>
       <View style={{ flexDirection: 'row' }}>{inputs}</View>
-      <Button title={`fill ${amount} ${unit.name}`} onPress={handleSubmit} />
+      <Button
+        title={`fill ${amount} ${unit.name}`}
+        onPress={handleSubmit}
+        style={{ margin: 8 }}
+      />
     </View>
   );
 }
@@ -133,7 +137,7 @@ function InfoText({ children }) {
     </Text>
   );
 }
-function InventoryRow({ slot, dispatch }) {
+function InventorySlot({ slot, dispatch }) {
   const { onPopover: onFillPopover } = useKeyboardPopover(({ onClose }) => (
     <SetFillForm onClose={onClose} slot={slot} />
   ));
@@ -150,100 +154,84 @@ function InventoryRow({ slot, dispatch }) {
     !!slot.KitchenSystem && slot.KitchenSystem.Name === 'Beverage';
   const isCups = !!slot.isCups;
   return (
-    <View
+    <ScrollView
       style={{
         ...prettyShadowSmall,
         backgroundColor: 'white',
         padding: 12,
         marginVertical: 15,
         borderRadius: 4,
+        width: 340,
       }}
     >
-      <View style={{ flex: 1 }}>
-        <View style={{ flexDirection: 'row' }}>
-          {slot.photo && (
-            <AirtableImage
-              image={slot.photo}
-              style={{
-                width: 36,
-                height: 36,
-                resizeMode: 'contain',
-                tintColor: slot.color,
-                marginRight: 4,
-              }}
-              resizeMode="contain"
-              tintColor={slot.color}
-            />
-          )}
-          <Text style={{ ...titleStyle, fontSize: 24, marginHorizontal: 8 }}>
-            {slot.name}
-            {slot.Slot != null &&
-              ` (${slot.KitchenSystem.Name} slot ${slot.Slot})`}
-          </Text>
-        </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-          {estimatedRemaining != null && (
-            <Tag
-              color={
-                estimatedRemaining > 0 ? Tag.positiveColor : Tag.negativeColor
-              }
-              title={`${estimatedRemaining} remaining`}
-            />
-          )}
-          {slot.settings && slot.settings.disabledMode === true && (
-            <Tag color={Tag.negativeColor} title="Disabled" />
-          )}
-          {slot.settings && slot.settings.disabledMode === 'hard' && (
-            <Tag color={Tag.warningColor} title="Hard Enabled" />
-          )}
-          {slot.settings && slot.settings.optional && (
-            <Tag color={Tag.warningColor} title="Optional Ingredient" />
-          )}
-          {!!slot.isErrored && (
-            <Tag color={Tag.negativeColor} title={`Errored`} />
-          )}
-          {!!slot.isEmpty && <Tag color={Tag.negativeColor} title={`Empty`} />}
-          {!!slot.dispensedSinceLow && (
-            <Tag
-              color={Tag.warningColor}
-              title={`${slot.dispensedSinceLow} since low`}
-            />
-          )}
-        </View>
-      </View>
+      {slot.Slot != null && (
+        <Text style={{ ...titleStyle, fontSize: 24, marginHorizontal: 8 }}>
+          {slot.KitchenSystem.Name}
+          {slot.Slot}
+        </Text>
+      )}
+      {slot.photo && (
+        <AirtableImage
+          image={slot.photo}
+          style={{
+            width: 36,
+            height: 36,
+            resizeMode: 'contain',
+            tintColor: slot.color,
+            marginRight: 4,
+          }}
+          resizeMode="contain"
+          tintColor={slot.color}
+        />
+      )}
+      <Text style={{ ...titleStyle, fontSize: 24, marginHorizontal: 8 }}>
+        {slot.name}
+      </Text>
+      {estimatedRemaining != null && (
+        <Tag
+          color={
+            typeof estimatedRemaining === 'string' || estimatedRemaining > 0
+              ? Tag.positiveColor
+              : Tag.negativeColor
+          }
+          title={`${estimatedRemaining} remaining`}
+        />
+      )}
+      {slot.settings && slot.settings.disabledMode === true && (
+        <Tag color={Tag.negativeColor} title="Disabled" />
+      )}
+      {slot.settings && slot.settings.disabledMode === 'hard' && (
+        <Tag color={Tag.warningColor} title="Hard Enabled" />
+      )}
+      {slot.settings && slot.settings.optional && (
+        <Tag color={Tag.warningColor} title="Optional Ingredient" />
+      )}
+      {!!slot.isErrored && <Tag color={Tag.negativeColor} title={`Errored`} />}
+      {!!slot.isEmpty && <Tag color={Tag.negativeColor} title={`Empty`} />}
+      {!!slot.dispensedSinceLow && (
+        <Tag
+          color={Tag.warningColor}
+          title={`${slot.dispensedSinceLow} since low`}
+        />
+      )}
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-evenly',
-          marginVertical: 16,
-        }}
-      >
-        {isCups ? (
-          <AsyncButton title="dispense one" onPress={slot.onDispenseOne} />
-        ) : (
-          <AsyncButton title="dispense.." onPress={onDispensePopover} />
-        )}
-        {isBeverage && (
-          <AsyncButton title="purge small" onPress={slot.onPurgeSmall} />
-        )}
-        {isBeverage && (
-          <AsyncButton title="purge large" onPress={slot.onPurgeLarge} />
-        )}
-        {!slot.disableFilling && (
-          <AsyncButton title="fill.." secondary onPress={onFillPopover} />
-        )}
-      </View>
+      {isCups ? (
+        <AsyncButton title="dispense one" onPress={slot.onDispenseOne} />
+      ) : (
+        <AsyncButton title="dispense.." onPress={onDispensePopover} />
+      )}
+      {isBeverage && (
+        <AsyncButton title="purge small" onPress={slot.onPurgeSmall} />
+      )}
+      {isBeverage && (
+        <AsyncButton title="purge large" onPress={slot.onPurgeLarge} />
+      )}
+      {!slot.disableFilling && (
+        <AsyncButton title="fill.." secondary onPress={onFillPopover} />
+      )}
 
       {!isCups && (
-        <View
-          style={{
-            marginVertical: 16,
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-          }}
-        >
+        <React.Fragment>
           <MultiSelect
             options={[
               { name: 'disable', value: true },
@@ -273,9 +261,9 @@ function InventoryRow({ slot, dispatch }) {
             }}
             value={!!slot.settings.optional}
           />
-        </View>
+        </React.Fragment>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -286,21 +274,32 @@ function Inventory() {
   }
   const { inventorySlots } = inventoryState;
 
-  return inventorySlots.map(slot => {
-    return <InventoryRow slot={slot} key={slot.id} dispatch={dispatch} />;
-  });
+  return (
+    <View style={{ flexDirection: 'row' }}>
+      {inventorySlots.map(slot => {
+        return <InventorySlot slot={slot} key={slot.id} dispatch={dispatch} />;
+      })}
+    </View>
+  );
 }
 
 export default function InventoryScreen(props) {
   return (
-    <SimplePage hideBackButton {...props} footer={<StatusBar />}>
-      <RootAuthenticationSection>
-        <Inventory />
-      </RootAuthenticationSection>
-    </SimplePage>
+    <GenericPage
+      hideBackButton
+      {...props}
+      afterScrollView={<StatusBar />}
+      disableScrollView
+    >
+      <ScrollView horizontal style={{ flex: 1 }}>
+        <RootAuthenticationSection>
+          <Inventory />
+        </RootAuthenticationSection>
+      </ScrollView>
+    </GenericPage>
   );
 }
 
-InventoryScreen.navigationOptions = SimplePage.navigationOptions;
+InventoryScreen.navigationOptions = GenericPage.navigationOptions;
 
 // InventoryScreen.stateStreamHook = useInventoryState

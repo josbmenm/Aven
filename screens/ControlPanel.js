@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Button from '../components/Button';
 import AsyncButton from '../components/AsyncButton';
+import { useCloud } from '../cloud-core/KiteReact';
 import Tag from '../components/Tag';
-import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import {
   prettyShadow,
@@ -14,11 +14,11 @@ import {
 } from '../components/Styles';
 import { computeNextSteps } from '../logic/MachineLogic';
 import KitchenSteps from '../logic/KitchenSteps';
-import { getSubsystem, getSubsystemFaults } from '../ono-cloud/OnoKitchen';
 
 import useAsyncError from '../react-utils/useAsyncError';
 import Spinner from '../components/Spinner';
 import KitchenCommands from '../logic/KitchenCommands';
+import useKitchenStatus from '../components/useKitchenStatus';
 
 function StatusPuck({ status, isRunning }) {
   let statusColor = null;
@@ -27,7 +27,7 @@ function StatusPuck({ status, isRunning }) {
       statusColor = Tag.negativeColor;
       break;
     }
-    case 'detached':
+    case 'paused':
     case 'alarm': {
       statusColor = Tag.warningColor;
       break;
@@ -144,101 +144,18 @@ function FaultZone({ faults }) {
 }
 
 export default function ControlPanel({ restaurantState, restaurantDispatch }) {
-  const cloud = useCloud();
-  const isConnected = useValue(cloud.connected); // uh....
-  const kitchenState = useCloudValue('KitchenState');
-  const kitchenConfig = useCloudValue('KitchenConfig');
-
-  const isPLCConnected = React.useMemo(
-    () => kitchenState && kitchenState.isPLCConnected,
-    [kitchenState],
-  );
-  const sequencerNames =
-    kitchenConfig &&
-    Object.keys(kitchenConfig.subsystems)
-      .map(k => kitchenConfig.subsystems[k])
-      .filter(subsystem => subsystem.hasSequencer)
-      .map(s => s.name);
   const errorHandler = useAsyncError();
-  let status = 'ready';
-  let message = 'Ready and Idle';
+  const cloud = useCloud();
+
+  const {
+    status,
+    message,
+    isRunning,
+    allFaults,
+    kitchenConfig,
+    kitchenState,
+  } = useKitchenStatus(restaurantState);
   let subMessage = null;
-  let isRunning = false;
-  let mainFaultMessage = null;
-  let allFaults = [];
-  if (!isConnected) {
-    status = 'disconnected';
-    message = 'Portal Disconnected from Restaurant.';
-  } else if (restaurantState === undefined) {
-    status = 'disconnected';
-    message = 'Loading state..';
-  } else if (!isPLCConnected) {
-    status = 'disconnected';
-    message = 'Server disconnected from machine.';
-  } else {
-    if (!kitchenState) {
-      status = 'disconnected';
-      message = restaurantState.isAttached
-        ? 'Disconnected Sequencer'
-        : 'Machine Disconnected';
-    }
-    if (!restaurantState.isAttached) {
-      status = 'fault';
-      message = 'Sequencer Disabled';
-    } else if (!restaurantState.isAutoRunning) {
-      status = 'detached';
-      message = 'Paused';
-    }
-    if (kitchenState) {
-      sequencerNames &&
-        sequencerNames.forEach(systemName => {
-          const system = getSubsystem(systemName, kitchenConfig, kitchenState);
-          const faults = getSubsystemFaults(system);
-          if (faults) {
-            if (systemName === 'FillSystem') {
-              mainFaultMessage = faults.join(',');
-            }
-            allFaults = [
-              ...allFaults,
-              ...faults.map(description => ({
-                description,
-                isFaulted: description !== 'Not Homed',
-                systemName,
-              })),
-            ];
-          }
-        });
-      const hasActuallyFaulted = allFaults.find(f => f.isFaulted);
-      if (allFaults.length) {
-        status = 'fault';
-        if (hasActuallyFaulted) {
-          message = 'Faulted';
-          if (mainFaultMessage) {
-            message += ` - ${mainFaultMessage}`;
-          }
-        } else {
-          message = 'Not Homed';
-        }
-      }
-    }
-  }
-  if (status !== 'disconnected') {
-    sequencerNames &&
-      sequencerNames.forEach(systemName => {
-        if (kitchenState[`${systemName}_PrgStep_READ`] !== 0) {
-          if (!isRunning) {
-            isRunning = true;
-            message = `Running ${systemName}(${
-              kitchenState[`${systemName}_PrgStep_READ`]
-            })`;
-          } else {
-            message += `, ${systemName}(${
-              kitchenState[`${systemName}_PrgStep_READ`]
-            })`;
-          }
-        }
-      });
-  }
 
   let nextSteps = null;
   if (restaurantState && !restaurantState.isAutoRunning) {
@@ -357,7 +274,9 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
                   if (restaurantState.isAutoRunning) {
                     errorHandler(restaurantDispatch({ type: 'PauseAutorun' }));
                   } else {
-                    errorHandler(restaurantDispatch({ type: 'StartAutorun' }));
+                    errorHandler(
+                      restaurantDispatch({ type: 'StartAutorun', force: true }),
+                    );
                   }
                 }}
                 secondary
@@ -382,7 +301,6 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
                   ? 'disable manual mode'
                   : 'enable manual mode'
               }
-              disabled={restaurantState.isAttached}
               onPress={() => {
                 if (restaurantState.manualMode) {
                   restaurantDispatch({
@@ -403,11 +321,10 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
                   ? 'disable sequencer'
                   : 'enable sequencer'
               }
-              disabled={restaurantState.manualMode}
               onPress={() => {
                 if (restaurantState.isAttached) {
                   errorHandler(restaurantDispatch({ type: 'Detach' }));
-                } else if (!restaurantState.manualMode) {
+                } else {
                   errorHandler(restaurantDispatch({ type: 'Attach' }));
                 }
               }}

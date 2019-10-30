@@ -50,6 +50,9 @@ function handleDisabledFills(state) {
     return state;
   }
   const { fillsCompleted, fillsRemaining, fillsFailed } = state.fill;
+  if (!fillsRemaining) {
+    return state;
+  }
   const nextFill = fillsRemaining[0];
   if (!nextFill) {
     return state;
@@ -599,10 +602,19 @@ function RestaurantReducerFn(state = {}, action) {
       return defaultReturn();
     }
     case 'StartAutorun': {
+      const unacknowledgedFaults = (state.restaurantFaults || []).filter(
+        f => f.ackTime === 0,
+      );
+      if (!action.force && unacknowledgedFaults.length) {
+        return {
+          ...defaultReturn(),
+          restaurantFaults: unacknowledgedFaults,
+        };
+      }
       return {
         ...defaultReturn(),
         isAutoRunning: true,
-        alarms: action.clearAlarms ? [] : state.alarms,
+        restaurantFaults: [],
       };
     }
     case 'PauseAutorun': {
@@ -622,6 +634,7 @@ function RestaurantReducerFn(state = {}, action) {
         ...defaultReturn(),
         isAttached: true,
         isAutoRunning: false,
+        manualMode: false,
       };
     }
     case 'Detach': {
@@ -643,10 +656,14 @@ function RestaurantReducerFn(state = {}, action) {
         manualMode: false,
       };
     }
+    case 'SetMaintenanceMode': {
+      return { ...defaultReturn(), maintenanceMode: action.maintenanceMode };
+    }
     case 'CloseRestaurant': {
       return {
         ...defaultReturn(),
         isClosed: true,
+        maintenanceMode: false,
       };
     }
     case 'ScheduleRestaurantClose': {
@@ -659,6 +676,7 @@ function RestaurantReducerFn(state = {}, action) {
       return {
         ...defaultReturn(),
         isClosed: false,
+        maintenanceMode: false,
         scheduledCloseTime: action.scheduledCloseTime || null,
       };
     }
@@ -673,32 +691,41 @@ function RestaurantReducerFn(state = {}, action) {
         ),
       };
     }
-    case 'SetAlarm': {
+    case 'SetRestaurantFault': {
       return {
         ...defaultReturn(),
         isAutoRunning: false,
-        alarms: [
-          ...(state.alarms || []),
+        restaurantFaults: [
+          ...(state.restaurantFaults || []),
           {
-            alarmType: action.alarmType,
+            restaurantFaultType: action.restaurantFaultType,
+            ackTime: action.requiresAck ? 0 : undefined,
             time: action.dispatchTime,
             key: action.dispatchId,
           },
         ],
       };
     }
-    case 'ClearAlarm': {
+    case 'AckFault': {
       return {
         ...defaultReturn(),
-        alarms: (state.alarms || []).filter(alarm => {
-          return !!alarm.key && alarm.key !== action.key;
+        restaurantFaults: (state.restaurantFaults || []).map(fault => {
+          if (action.key !== fault.key) return fault;
+          return {
+            ...fault,
+            ackTime: action.dispatchTime,
+          };
         }),
       };
     }
-    case 'SetAlarmMute': {
+    case 'SetFaultMuting': {
+      const faultMuting = { ...state.faultMuting };
+      Object.entries(action.faultMuting).forEach(([alarmKey, isMuted]) => {
+        faultMuting[alarmKey] = isMuted ? true : undefined;
+      });
       return {
         ...defaultReturn(),
-        isMutingAlarms: action.isMutingAlarms,
+        faultMuting,
       };
     }
     default: {

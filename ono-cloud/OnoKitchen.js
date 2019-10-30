@@ -17,6 +17,7 @@ import {
   companyConfigToFoodMenu,
   getFillsOfOrderItem,
 } from '../logic/configLogic';
+import { getCupsInventoryState } from '../logic/KitchenState';
 
 export function getLocalName(name) {
   const locals = name.split('/');
@@ -232,21 +233,6 @@ export function useMenu() {
   return fullMenu;
 }
 
-function getCupsInventoryState(restaurantState, kitchenState) {
-  let isEmpty = false;
-  let isErrored = !kitchenState.Denester_NoFaults_READ;
-  let estimatedRemaining = '20+';
-  if (kitchenState.Denester_DispensedSinceLow_READ) {
-    estimatedRemaining = 19 - kitchenState.Denester_DispensedSinceLow_READ;
-    isEmpty = estimatedRemaining <= 0;
-  }
-  return {
-    estimatedRemaining,
-    isEmpty,
-    isErrored,
-  };
-}
-
 function getInventoryState(restaurantState, kitchenState) {
   if (!kitchenState || !restaurantState) {
     return {};
@@ -254,7 +240,7 @@ function getInventoryState(restaurantState, kitchenState) {
   const slots = {};
 
   return {
-    cups: getCupsInventoryState(restaurantState, kitchenState),
+    cups: getCupsInventoryState(kitchenState),
     slots,
   };
 }

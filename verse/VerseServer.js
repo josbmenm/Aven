@@ -233,6 +233,9 @@ export default async function startVerseServer(httpServer) {
       commands: KitchenCommands,
       sequencerSteps: KitchenSteps,
       computeSideEffects: (kitchenState, restaurantState) => {
+        if (!kitchenState.isPLCConnected) {
+          return [];
+        }
         const {
           System_FreezerTemp_READ,
           System_BevTemp_READ,
@@ -259,40 +262,44 @@ export default async function startVerseServer(httpServer) {
           sideEffects.push({ type: 'SetFoodMonitoring', foodMonitoring });
         }
 
-        if (restaurantState.isAutoRunning && !restaurantState.isMutingAlarms) {
-          if (!foodMonitoring.isBeverageCold) {
+        if (restaurantState.isAutoRunning) {
+          const faultMuting = restaurantState.faultMuting || {};
+          if (!foodMonitoring.isBeverageCold && !faultMuting.bevTemp) {
             sideEffects.push({
-              type: 'SetAlarm',
-              alarmType: 'BevTemp',
-              temp: System_BevTemp_READ,
+              type: 'SetRestaurantFault',
+              restaurantFaultType: 'BevTemp',
+              requiresAck: true,
+              params: { temp: System_BevTemp_READ },
             });
           }
-          if (!foodMonitoring.isFreezerCold) {
+          if (!foodMonitoring.isFreezerCold && !faultMuting.freezerTemp) {
             sideEffects.push({
-              type: 'SetAlarm',
-              alarmType: 'FreezerTemp',
-              temp: System_FreezerTemp_READ,
+              type: 'SetRestaurantFault',
+              restaurantFaultType: 'FreezerTemp',
+              requiresAck: true,
+              params: { temp: System_FreezerTemp_READ },
             });
           }
-          if (!foodMonitoring.isPistonCold) {
+          if (!foodMonitoring.isPistonCold && !faultMuting.pistonTemp) {
             sideEffects.push({
-              type: 'SetAlarm',
-              alarmType: 'PistonTemp',
-              temp: System_YogurtZoneTemp_READ,
+              type: 'SetRestaurantFault',
+              restaurantFaultType: 'PistonTemp',
+              requiresAck: true,
+              params: { temp: System_YogurtZoneTemp_READ },
             });
           }
-          // if (System_WasteWaterFull_READ) {
-          //   sideEffects.push({
-          //     type: 'SetAlarm',
-          //     alarmType: 'WasteFull',
-          //   });
-          // }
-          // if (!System_FreshWaterAboveLow_READ) {
-          //   sideEffects.push({
-          //     type: 'SetAlarm',
-          //     alarmType: 'WaterEmpty',
-          //   });
-          // }
+          if (System_WasteWaterFull_READ && !faultMuting.wasteFull) {
+            sideEffects.push({
+              type: 'SetRestaurantFault',
+              restaurantFaultType: 'WasteFull',
+            });
+          }
+          if (!System_FreshWaterAboveLow_READ && !faultMuting.waterEmpty) {
+            sideEffects.push({
+              type: 'SetRestaurantFault',
+              restaurantFaultType: 'WaterEmpty',
+            });
+          }
         }
         if (restaurantState.delivery0 && !Delivery_Bay0CupPresent_READ) {
           sideEffects.push({ type: 'ClearDeliveryBay', bayId: 'delivery0' });

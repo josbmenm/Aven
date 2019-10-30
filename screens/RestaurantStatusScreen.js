@@ -245,6 +245,7 @@ function StatusView() {
   const { isOpen, isTraveling, closingSoon } = useIsRestaurantOpen(
     restaurantState,
   );
+  const isMaintenanceMode = restaurantState && restaurantState.maintenanceMode;
   const timeSeconds = useTimeSeconds();
   let tagText = 'restaurant open';
   let tagColor = Tag.positiveColor;
@@ -266,67 +267,88 @@ function StatusView() {
     tagColor = Tag.positiveColor;
     tagText = 'traveling';
   }
+  if (isMaintenanceMode) {
+    tagColor = Tag.negativeColor;
+    tagText = 'Maintenance Mode';
+  }
 
   const { onPopover: onCloseRestaurantPopover } = useKeyboardPopover(
     ({ onClose }) => {
       return <CloseRestaurantButtons onClose={onClose} />;
     },
   );
+
+  const buttons = [];
+  if (isOpen) {
+    buttons.push(
+      <Button title="close restaurant" onPress={onCloseRestaurantPopover} />,
+    );
+    buttons.push(
+      <Button
+        title={
+          isMaintenanceMode ? 'exit maintenance mode' : 'enter maintenance mode'
+        }
+        onPress={() => {
+          dispatch({
+            type: 'SetMaintenanceMode',
+            maintenanceMode: !isMaintenanceMode,
+          });
+        }}
+      />,
+    );
+  } else if (isTraveling) {
+    buttons.push(
+      <Button
+        title="park restaurant"
+        onPress={() => {
+          dispatch({
+            type: 'ParkRestaurant',
+          });
+        }}
+      />,
+    );
+  } else {
+    buttons.push(
+      <Button
+        title="travel restaurant"
+        onPress={() => {
+          dispatch({
+            type: 'TravelRestaurant',
+          });
+        }}
+      />,
+    );
+    buttons.push(
+      <Button
+        title="open restaurant"
+        onPress={() => {
+          dispatch({
+            type: 'OpenRestaurant',
+          });
+        }}
+      />,
+    );
+  }
+  if (closingSoon) {
+    buttons.push(
+      <Button
+        title="clear close schedule"
+        type="outline"
+        onPress={() => {
+          dispatch({
+            type: 'ScheduleRestaurantClose',
+            scheduledCloseTime: null,
+          });
+        }}
+      />,
+    );
+  }
   return (
     <Row title="restaurant opening">
       <View>
         <Tag title={tagText} color={tagColor} />
       </View>
-      <ButtonStack
-        buttons={[
-          isOpen ? (
-            <Button
-              title="close restaurant"
-              onPress={onCloseRestaurantPopover}
-            />
-          ) : isTraveling ? (
-            <Button
-              title="park restaurant"
-              onPress={() => {
-                dispatch({
-                  type: 'ParkRestaurant',
-                });
-              }}
-            />
-          ) : (
-            <React.Fragment>
-              <Button
-                title="travel restaurant"
-                onPress={() => {
-                  dispatch({
-                    type: 'TravelRestaurant',
-                  });
-                }}
-              />
-              <Button
-                title="open restaurant"
-                onPress={() => {
-                  dispatch({
-                    type: 'OpenRestaurant',
-                  });
-                }}
-              />
-            </React.Fragment>
-          ),
-          closingSoon && (
-            <Button
-              title="clear close schedule"
-              type="outline"
-              onPress={() => {
-                dispatch({
-                  type: 'ScheduleRestaurantClose',
-                  scheduledCloseTime: null,
-                });
-              }}
-            />
-          ),
-        ]}
-      />
+      <ButtonStack buttons={buttons} />
     </Row>
   );
 }

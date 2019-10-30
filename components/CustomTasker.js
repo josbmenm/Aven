@@ -182,7 +182,7 @@ export default function CustomTasker() {
     onAddFill: fill => {
       setSavedTask({
         ...savedTask,
-        fills: [...savedTask.fills, fill],
+        fills: [...(savedTask.fills || []), fill],
       });
     },
   });

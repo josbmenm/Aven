@@ -1,3 +1,5 @@
+import { getCupsInventoryState } from './KitchenState';
+
 const KitchenSteps = [
   {
     // pickup cup
@@ -7,6 +9,7 @@ const KitchenSteps = [
       // console.log(
       //   'checking for inventory',
       //   task,
+
       //   restaurantState.slotInventory,
       // );
       if (
@@ -27,6 +30,10 @@ const KitchenSteps = [
     getSuccessRestaurantAction: () => ({
       type: 'DidStartCup',
     }),
+    getMachineReady: kitchenState => {
+      const { isEmpty } = getCupsInventoryState(kitchenState);
+      return !isEmpty;
+    },
     // getFailureRestaurantAction: (intent) => ({
     //   type: 'KitchenFailure',
     //   intent
@@ -42,7 +49,8 @@ const KitchenSteps = [
         restaurantState.fill.task &&
         restaurantState.fill.task.deliveryMode === 'drop' &&
         restaurantState.fill.task.skipBlend &&
-        restaurantState.fill.fillsRemaining.length === 0
+        (!restaurantState.fill.fillsRemaining ||
+          restaurantState.fill.fillsRemaining.length === 0)
       ) {
         return { didCompleteTask: true, taskId: restaurantState.fill.task.id };
       }
@@ -89,9 +97,11 @@ const KitchenSteps = [
       if (
         restaurantState.fill &&
         restaurantState.fill !== 'ready' &&
+        restaurantState.fill.task &&
         restaurantState.fill.task.skipBlend &&
         restaurantState.fill.task.deliveryMode === 'ditch' &&
-        restaurantState.fill.fillsRemaining.length === 0
+        (!restaurantState.fill.fillsRemaining ||
+          restaurantState.fill.fillsRemaining.length === 0)
       ) {
         return {
           didCompleteTask: true,
@@ -250,16 +260,17 @@ const KitchenSteps = [
       if (
         !!restaurantState.blend ||
         !restaurantState.fill ||
-        !restaurantState.fill.fillsRemaining ||
-        restaurantState.fill.fillsRemaining.length !== 0 ||
+        (restaurantState.fill.fillsRemaining &&
+          restaurantState.fill.fillsRemaining.length !== 0) ||
         restaurantState.fill.requestedDropTime ||
-        (restaurantState.fill.task.skipBlend &&
+        (restaurantState.fill.task &&
+          restaurantState.fill.task.skipBlend &&
           restaurantState.fill.task.deliveryMode !== 'deliver')
       ) {
         return null;
       }
       return {
-        taskId: restaurantState.fill.task.id,
+        taskId: restaurantState.fill.task && restaurantState.fill.task.id,
       };
     },
     getKitchenCommand: intent => ({
@@ -287,7 +298,8 @@ const KitchenSteps = [
         restaurantState.fill.moveToBlenderTime ||
         restaurantState.fill.fillsRemaining.length !== 0 ||
         restaurantState.fill.requestedDropTime ||
-        (restaurantState.fill.task.skipBlend &&
+        (restaurantState.fill.task &&
+          restaurantState.fill.task.skipBlend &&
           restaurantState.fill.task.deliveryMode !== 'deliver')
       ) {
         return null;
@@ -394,7 +406,9 @@ const KitchenSteps = [
     getDescription: intent => 'Go to cup position',
     getStateIntent: (restaurantState, kitchenState) => {
       if (restaurantState.queue && restaurantState.queue.length) {
-        return null;
+        // here we say that we don't want to go to the cup position when we have a queued blend and we have cups in stock. This is to avoid a race condition with GetCup, which happens on the fill system instead of the positioner. Because they are on different systems, a race condition is likely
+        const { isEmpty } = getCupsInventoryState(kitchenState);
+        if (!isEmpty) return null;
       }
       if (restaurantState.fill == null) {
         return {

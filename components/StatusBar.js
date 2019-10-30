@@ -1,36 +1,67 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import { prettyShadow, titleStyle, standardTextColor } from './Styles';
+import { Text, View, Image } from 'react-native';
+import {
+  prettyShadow,
+  titleStyle,
+  standardTextColor,
+  primaryFontFace,
+} from './Styles';
 import TagButton from './TagButton';
 import Button from './Button';
 import { Easing } from 'react-native-reanimated';
 import { usePopover } from '../views/Popover';
 import KeyboardPopover from './KeyboardPopover';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
+import useKitchenStatus from '../components/useKitchenStatus';
+import Tag from './Tag';
+import Spinner from './Spinner';
+import AsyncButton from './AsyncButton';
+import { useCloud } from '../cloud-core/KiteReact';
+import { getCupsInventoryState } from '../logic/KitchenState';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '../navigation-hooks/Hooks';
 
-function AlarmButton({ alarm, onReset }) {
+function FaultButton({ fault, isWarningColor, onReset }) {
   const { onPopover } = usePopover(
     ({ onClose, ...props }) => {
       return (
         <KeyboardPopover onClose={onClose} {...props}>
-          <View style={{ flex: 1, padding: 10 }}>
-            <Text
+          <View style={{ padding: 10, width: 320 }}>
+            <Text style={{ ...titleStyle, fontSize: 18 }}>{fault.title}</Text>
+            <View
               style={{
-                ...titleStyle,
-                fontSize: 16,
-                color: standardTextColor,
+                flexDirection: 'column',
               }}
             >
-              {alarm.description}
-            </Text>
+              <Text
+                style={{
+                  ...primaryFontFace,
+                  fontSize: 16,
+                  color: standardTextColor,
+                }}
+              >
+                {fault.description}
+              </Text>
+            </View>
           </View>
+          {onReset && (
+            <View style={{ padding: 10, paddingBottom: 0, paddingTop: 32 }}>
+              <Button
+                onPress={() => {
+                  onReset();
+                  onClose();
+                }}
+                title="reset"
+              />
+            </View>
+          )}
           <View style={{ padding: 10 }}>
             <Button
+              type="outline"
               onPress={() => {
-                onReset();
                 onClose();
               }}
-              title="reset alarm"
+              title="ok"
             />
           </View>
         </KeyboardPopover>
@@ -40,8 +71,8 @@ function AlarmButton({ alarm, onReset }) {
   );
   return (
     <TagButton
-      title={alarm.title}
-      color={TagButton.negativeColor}
+      title={fault.title}
+      color={isWarningColor ? TagButton.warningColor : TagButton.negativeColor}
       onPress={onPopover}
       style={{ marginHorizontal: 5 }}
     />
@@ -49,69 +80,156 @@ function AlarmButton({ alarm, onReset }) {
 }
 
 export default function StatusBar() {
+  const cloud = useCloud();
+  const { navigate } = useNavigation();
   const [restaurantState, dispatch] = useRestaurantState();
 
+  const { status, message, isRunning, kitchenState } = useKitchenStatus(
+    restaurantState,
+  );
+  let areCupsEmpty = false;
+  let areCupsLow = false;
+  if (kitchenState) {
+    const { estimatedRemaining, isEmpty } = getCupsInventoryState(kitchenState);
+    areCupsLow =
+      typeof estimatedRemaining === 'number' && estimatedRemaining <= 10;
+    areCupsEmpty = isEmpty;
+  }
   if (!restaurantState) {
     return null;
   }
-  const alarms = restaurantState.alarms || [];
+  const restaurantFaults = restaurantState.restaurantFaults || [];
 
   return (
     <View
       style={{
         borderRadius: 4,
         backgroundColor: 'white',
-        padding: 7,
-        paddingHorizontal: 14,
+        paddingRight: 14,
         height: 60,
         flexDirection: 'row',
+        justifyContent: 'space-between',
         ...prettyShadow,
       }}
     >
-      {alarms.map(alarm => {
-        const type = alarm.alarmType;
-        let alarmData = {
-          title: 'Unknown',
-          description: `Unidentified alarm - ${JSON.stringify(alarm)}`,
-        };
-        if (type === 'FreezerTemp') {
-          alarmData = {
-            title: 'Freezer Temperature',
-            description: `Freezer has gone above 5°F`,
-          };
-        } else if (type === 'BevTemp') {
-          alarmData = {
-            title: 'Beverage Temperature',
-            description: `Beverage fridge has gone above 41°F`,
-          };
-        } else if (type === 'YogurtTemp') {
-          alarmData = {
-            title: 'Yogurt Temperature',
-            description: `Yogurt fridge has gone above 41°F`,
-          };
-        } else if (type === 'WasteFull') {
-          alarmData = {
-            title: 'Waste Full',
-            description: `Liquid waste tank is full`,
-          };
-        } else if (type === 'WaterEmpty') {
-          alarmData = {
-            title: 'Water Empty',
-            description: `Fresh water tank is low or empty.`,
-          };
-        }
-        return (
-          <AlarmButton
-            alarm={alarmData}
-            onReset={() => {
-              dispatch({
-                type: 'ClearAlarm',
-                key: alarm.key,
-              });
+      <View
+        style={{
+          flexDirection: 'row',
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            navigate('Sequencer');
+          }}
+          style={{ margin: 7 }}
+        >
+          <View
+            style={{
+              width: 50,
+              height: 50,
+              borderRadius: 25,
+              marginRight: 8,
+              paddingTop: 7,
+              paddingLeft: 7,
+              backgroundColor:
+                status === 'ready' ? Tag.positiveColor : Tag.negativeColor,
+            }}
+          >
+            {isRunning && <Spinner color="white" />}
+          </View>
+        </TouchableOpacity>
+        {status !== 'paused' && status !== 'ready' && (
+          <FaultButton
+            fault={{
+              title: message,
+              status,
             }}
           />
-        );
-      })}
+        )}
+        {(areCupsEmpty || areCupsLow) && (
+          <FaultButton
+            fault={{ title: 'Cups Low' }}
+            isWarningColor={!areCupsEmpty}
+          />
+        )}
+        {restaurantFaults.map(fault => {
+          const type = fault.restaurantFaultType;
+          let faultData = {
+            title: 'Unknown',
+            description: `Unidentified fault - ${JSON.stringify(fault)}`,
+          };
+          if (type === 'FreezerTemp') {
+            faultData = {
+              title: 'Freezer Temperature',
+              description: `Freezer has gone above 5°F. Press "reset" once freezer is cleaned and food is replaced, then press start.`,
+            };
+          } else if (type === 'BevTemp') {
+            faultData = {
+              title: 'Beverage Temperature',
+              description: `Beverage fridge has gone above 41°F. Press "reset" once the beverage fridge is cleaned and food is replaced, then press start.`,
+            };
+          } else if (type === 'PistonTemp') {
+            faultData = {
+              title: 'Piston Temperature',
+              description: `Piston fridge has gone above 41°F. Press "reset" once the piston fridge is cleaned and food is replaced, then press start.`,
+            };
+          } else if (type === 'WasteFull') {
+            faultData = {
+              title: 'Waste Full',
+              description: `Liquid waste tank is full`,
+            };
+          } else if (type === 'WaterEmpty') {
+            faultData = {
+              title: 'Water Empty',
+              description: `Fresh water tank is low or empty.`,
+            };
+          }
+          return (
+            <FaultButton
+              key={fault.key}
+              fault={faultData}
+              onReset={
+                fault.ackTime === 0 &&
+                (() => {
+                  dispatch({
+                    type: 'AckFault',
+                    key: fault.key,
+                  });
+                })
+              }
+            />
+          );
+        })}
+      </View>
+      <View style={{ margin: 7 }}>
+        {status === 'paused' && (
+          <Button
+            title="start"
+            onPress={() => {
+              dispatch({ type: 'StartAutorun' });
+            }}
+          />
+        )}
+        {status === 'ready' && (
+          <Button
+            title="pause"
+            onPress={() => {
+              dispatch({ type: 'PauseAutorun' });
+            }}
+          />
+        )}
+        {status === 'fault' && (
+          <AsyncButton
+            title="home system"
+            onPress={() =>
+              cloud.dispatch({
+                type: 'KitchenCommand',
+                commandType: 'Home',
+              })
+            }
+          />
+        )}
+      </View>
     </View>
   );
 }
