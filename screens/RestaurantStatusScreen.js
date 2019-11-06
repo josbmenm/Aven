@@ -8,11 +8,13 @@ import Tag from '../components/Tag';
 import Button from '../components/Button';
 import useAsyncError from '../react-utils/useAsyncError';
 import useFocus from '../navigation-hooks/useFocus';
-import { titleStyle } from '../components/Styles';
+import { titleStyle, primaryFontFace } from '../components/Styles';
 import useTimeSeconds from '../utils/useTimeSeconds';
+import StatusBar from '../components/StatusBar';
 import RowSection from '../components/RowSection';
 import BlockFormInput from '../components/BlockFormInput';
 import SpinnerButton from '../components/SpinnerButton';
+import AsyncButton from '../components/AsyncButton';
 import ButtonStack from '../components/ButtonStack';
 import MultiSelect from '../components/MultiSelect';
 import TemperatureView from '../components/TemperatureView';
@@ -53,7 +55,7 @@ function KitchenCommandButton({ commandType, params, title }) {
       onPress={handlePress}
       isLoading={isLoading}
       disabled={isDisabled}
-      title={title}
+      title={title || commandType}
     />
   );
 }
@@ -124,7 +126,7 @@ function SafetyView() {
   }
   const bypassKey = kitchenState.System_SafetyBypassKey_READ;
   return (
-    <Row title="safety">
+    <Row title="Safety">
       {bypassKey ? (
         <Tag title="SAFETY BYPASSED" color={Tag.negativeColor} />
       ) : (
@@ -147,24 +149,14 @@ function VanView() {
   const isVanPluggedIn = kitchenState.System_VanPluggedIn_READ;
   const vanPowerEnable = kitchenState.System_VanPowerEnable_VALUE;
   return (
-    <Row title="machine in van / servicing">
-      {isVanPluggedIn ? (
-        <Tag title="Van plugged in" color={Tag.positiveColor} />
-      ) : (
-        <Tag title="Van not plugged in" color={Tag.warningColor} />
-      )}
-      {skidIn ? (
-        <Tag title="Machine in Van" color={Tag.positiveColor} />
-      ) : (
-        <Tag title="Machine out of Van" color={Tag.warningColor} />
-      )}
-      {isSkidLocked ? (
+    <Row title="Van System Power">
+      {/* {isSkidLocked ? (
         <Tag title="Machine Locked" color={Tag.positiveColor} />
       ) : (
         <Tag title="Machine Unlocked" color={Tag.warningColor} />
-      )}
+      )} */}
 
-      <MultiSelect
+      {/* <MultiSelect
         value={lockSkid}
         onValue={value => {
           handleError(
@@ -182,7 +174,7 @@ function VanView() {
           { value: true, name: 'Lock Skid' },
           { value: false, name: 'Unlock Skid' },
         ]}
-      />
+      /> */}
       <MultiSelect
         value={vanPowerEnable}
         onValue={value => {
@@ -214,7 +206,7 @@ function ServicingView() {
   const isHomed = kitchenState.FillSystem_Homed_READ;
   const isInServiceMode = kitchenState.FillSystem_InServiceMode_READ;
   return (
-    <Row title="service mode">
+    <Row title="Service Mode">
       <View>
         {isInServiceMode ? (
           <Tag
@@ -238,6 +230,49 @@ function ServicingView() {
       />
     </Row>
   );
+}
+
+function OpenRestaurantForm({ onClose }) {
+  const [_, dispatch] = useRestaurantState();
+  const [sessionName, setSessionName] = React.useState('');
+  async function handleOpen() {
+    await dispatch({
+      type: 'OpenRestaurant',
+      sessionName,
+    });
+    onClose();
+  }
+  const { inputs } = useFocus({
+    onSubmit: handleOpen,
+    inputRenderers: [
+      inputProps => (
+        <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
+          <BlockFormInput
+            {...inputProps}
+            label="Session Name"
+            onValue={setSessionName}
+            value={sessionName}
+          />
+        </View>
+      ),
+    ],
+  });
+
+  return (
+    <View>
+      {inputs}
+      <View style={{ padding: 10 }}>
+        <AsyncButton onPress={handleOpen} title="Open Restaurant" />
+      </View>
+    </View>
+  );
+}
+
+function useRestaurantOpenPopover() {
+  const { onPopover } = useKeyboardPopover(({ onClose }) => {
+    return <OpenRestaurantForm onClose={onClose} />;
+  });
+  return onPopover;
 }
 
 function StatusView() {
@@ -277,6 +312,7 @@ function StatusView() {
       return <CloseRestaurantButtons onClose={onClose} />;
     },
   );
+  const onOpenRestaurantPopover = useRestaurantOpenPopover();
 
   const buttons = [];
   if (isOpen) {
@@ -319,14 +355,7 @@ function StatusView() {
       />,
     );
     buttons.push(
-      <Button
-        title="open restaurant"
-        onPress={() => {
-          dispatch({
-            type: 'OpenRestaurant',
-          });
-        }}
-      />,
+      <Button title="open restaurant" onPress={onOpenRestaurantPopover} />,
     );
   }
   if (closingSoon) {
@@ -344,73 +373,17 @@ function StatusView() {
     );
   }
   return (
-    <Row title="restaurant opening">
+    <Row title="Restaurant Opening">
       <View>
         <Tag title={tagText} color={tagColor} />
+        {restaurantState && !!restaurantState.sessionName && (
+          <Text style={{ ...primaryFontFace, fontSize: 20 }}>
+            {restaurantState.sessionName}
+          </Text>
+        )}
       </View>
       <ButtonStack buttons={buttons} />
     </Row>
-  );
-}
-
-function AirPressureView() {
-  return (
-    <RowSection title="Air Pressure">
-      <Tag title="Pressurized" color={Tag.positiveColor} />
-      <Button title="Disable and Depressureize" onPress={() => {}} />
-      <Button title="Enable" disabled onPress={() => {}} />
-    </RowSection>
-  );
-}
-
-function PowerView() {
-  return (
-    <RowSection title="Generator Power">
-      <Tag title="Disabled" color={Tag.negativeColor} />
-      <Button title="Enable" onPress={() => {}} />
-    </RowSection>
-  );
-}
-
-function SetFridgeTempForm({ onClose, onValues, initialValues }) {
-  const [low, setLow] = React.useState(String(initialValues.low));
-  const [high, setHigh] = React.useState(String(initialValues.high));
-
-  function handleSubmit() {
-    onClose();
-    onValues({ low, high });
-  }
-  const { inputs } = useFocus({
-    onSubmit: handleSubmit,
-    inputRenderers: [
-      inputProps => (
-        <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
-          <BlockFormInput
-            {...inputProps}
-            label="Fridge Temp Low"
-            onValue={setLow}
-            value={low}
-          />
-        </View>
-      ),
-      inputProps => (
-        <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
-          <BlockFormInput
-            {...inputProps}
-            label="Fridge Temp High"
-            onValue={setHigh}
-            value={high}
-          />
-        </View>
-      ),
-    ],
-  });
-
-  return (
-    <View>
-      {inputs}
-      <Button onPress={handleSubmit} title="Save" />
-    </View>
   );
 }
 
@@ -434,23 +407,60 @@ function TanksView() {
     wasteTagTitle = 'Waste: Full';
   }
   return (
-    <Row title="tanks">
-      <Tag title={waterTagTitle} color={waterTagColor} />
-      <Tag title={wasteTagTitle} color={wasteTagColor} />
+    <Row title="Tanks">
+      <ButtonStack
+        buttons={[
+          <Tag title={waterTagTitle} color={waterTagColor} />,
+          <KitchenCommandButton
+            commandType="FillWaterTank"
+            title="fill tank for 30sec"
+          />,
+        ]}
+      />
+      <ButtonStack
+        buttons={[<Tag title={wasteTagTitle} color={wasteTagColor} />]}
+      />
+    </Row>
+  );
+}
+
+function BlenderView() {
+  const kitchenState = useKitchenState();
+  const hasCup = kitchenState && kitchenState.BlendSystem_HasCup_READ;
+  return (
+    <Row title="Blender">
+      {/* <Tag title={hasCup ? 'Has Cup' : 'No Cup'} color={Tag.positiveColor} /> */}
+      <ButtonStack
+        buttons={[
+          <KitchenCommandButton commandType="RetractArm" />,
+          <KitchenCommandButton commandType="ExtendArm" />,
+          <KitchenCommandButton commandType="LowerBlenderElevator" />,
+          <KitchenCommandButton commandType="RaiseBlenderElevator" />,
+        ]}
+      />
+      <ButtonStack
+        buttons={[
+          <KitchenCommandButton commandType="FlipCupPlate" />,
+          <KitchenCommandButton commandType="ReturnCupPlate" />,
+          <KitchenCommandButton commandType="FlipBladePlate" />,
+          <KitchenCommandButton commandType="ReturnBladePlate" />,
+        ]}
+      />
     </Row>
   );
 }
 
 export default function RestaurantStatusScreen(props) {
   return (
-    <SimplePage {...props} hideBackButton>
+    <SimplePage {...props} hideBackButton footer={<StatusBar />}>
       <RootAuthenticationSection>
-        <SafetyView />
+        <TemperatureView />
+        {/* <SafetyView /> */}
         <ServicingView />
         <StatusView />
         <VanView />
-        <TanksView />
-        <TemperatureView />
+        {/* <TanksView /> */}
+        <BlenderView />
       </RootAuthenticationSection>
     </SimplePage>
   );

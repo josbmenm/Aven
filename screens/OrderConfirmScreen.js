@@ -4,6 +4,7 @@ import useEmptyOrderEscape from './useEmptyOrderEscape';
 import { useCardPaymentCapture } from '../card-reader/CardReader';
 import OrderConfirmPage from '../components/OrderConfirmPage';
 import useAsyncError from '../react-utils/useAsyncError';
+import usePromoPopover from '../components/usePromoPopover';
 
 export default function OrderConfirmScreen({
   paymentRequest,
@@ -14,6 +15,7 @@ export default function OrderConfirmScreen({
   ...props
 }) {
   const { confirmOrder, orderState } = useOrderState();
+  const onPromoCode = usePromoPopover();
   const orderId = orderState && orderState.orderId;
   const [error, setError] = React.useState(null);
   function handleCaughtError(e) {
@@ -65,6 +67,7 @@ export default function OrderConfirmScreen({
     <OrderConfirmPage
       summary={summary}
       paymentState={state}
+      onPromoCode={summary && summary.total === 0 ? null : onPromoCode}
       paymentSuccessful={paymentSuccessful}
       paymentCompleted={paymentCompleted}
       paymentErrorMessage={paymentErrorMessage}

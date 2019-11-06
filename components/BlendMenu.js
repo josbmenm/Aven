@@ -18,10 +18,7 @@ export default function BlendMenu({ menu, large, title }) {
   const { navigate } = useNavigation();
   const { order } = useOrder();
 
-  // const inStockItems = menu.filter(item => !item.isOutOfStock);
-  const inStockItems = menu;
-
-  if (!inStockItems.length) {
+  if (!menu.length) {
     return (
       <MenuZone title={'we are out of stock of all blends!'} small={!large} />
     );
@@ -33,7 +30,7 @@ export default function BlendMenu({ menu, large, title }) {
         style={{}}
         large={large}
         hidePrice={hidePrice}
-        items={inStockItems.map(item => ({
+        items={menu.map(item => ({
           key: item.id,
           title: displayNameOfMenuItem(item),
           price: sellPriceOfMenuItem(item),

@@ -1,6 +1,7 @@
 import { combineStreams } from '../cloud-core/createMemoryStream';
 import { computeNextSteps } from '../logic/MachineLogic';
 import { log, error, fatal } from '../logger/logger';
+import Err from '../utils/Err';
 
 const { Controller, Tag, EthernetIP, TagGroup } = require('ethernet-ip');
 const { INT, BOOL } = EthernetIP.CIP.DataTypes.Types;
@@ -84,7 +85,9 @@ const extractMachineValues = ({
   Object.entries(values).forEach(([valueName, value]) => {
     const valueSpec = valueCommands[valueName];
     if (!valueSpec) {
-      throw new Error('Invalid value name: ' + valueName);
+      throw new Error(
+        'Invalid value name on ' + systemName + ' system: ' + valueName,
+      );
     }
     const internalTagName = `${systemName}_${valueName}_VALUE`;
     tagOutput[internalTagName] = value;
@@ -113,6 +116,7 @@ export function connectMachine({
   restaurantStateDispatch,
   plcIP,
   computeSideEffects,
+  deriveAppliedMachineState,
 }) {
   let readyPLC = null;
   let connectingPLC = null;
@@ -268,24 +272,28 @@ export function connectMachine({
     return readings;
   }
 
-  const writeTags = async (schema, values) => {
+  let currentMachineSchema = null;
+
+  async function writeTags(values) {
+    if (!currentMachineSchema) {
+      throw new Error('Cannot write tags without the machine schema');
+      return;
+    }
     const outputGroup = new TagGroup();
-    const robotTags = schema.config.tags;
+    const robotTags = currentMachineSchema.config.tags;
     Object.keys(values).forEach(tagAlias => {
       if (!robotTags[tagAlias] || !robotTags[tagAlias].enableOutput) {
         throw new Error(`Output is not configured for "${tagAlias}"`);
       }
-      const tag = schema.tags[tagAlias];
+      const tag = currentMachineSchema.tags[tagAlias];
       tag.value = values[tagAlias];
       outputGroup.add(tag);
     });
     const PLC = await getReadyPLC();
     await PLC.writeTagGroup(outputGroup);
-  };
+  }
 
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-  let mainRobotSchema = null;
 
   const subsystemResolvers = {};
 
@@ -298,7 +306,7 @@ export function connectMachine({
         //   hadConfig: !!lastConfig,
         //   hasConfig: !!config,
         // });
-        mainRobotSchema = createSchema(config);
+        currentMachineSchema = createSchema(config);
         lastConfig = config;
       },
     });
@@ -312,8 +320,8 @@ export function connectMachine({
     const updateTags = async () => {
       const lastState = currentState;
       let isPLCConnected = false;
-      if (mainRobotSchema) {
-        const readings = await doReadTags(mainRobotSchema, {});
+      if (currentMachineSchema) {
+        const readings = await doReadTags(currentMachineSchema, {});
         isPLCConnected = true;
         currentState = getTagValues(readings);
       }
@@ -328,6 +336,7 @@ export function connectMachine({
       });
 
       Object.entries(subsystemResolvers).forEach(([subsystem, resolver]) => {
+        if (!resolver) return;
         const noFaults = currentState[`${subsystem}_NoFaults_READ`];
         const startedCommandId =
           currentState[`${subsystem}_ActionIdStarted_READ`];
@@ -385,7 +394,11 @@ export function connectMachine({
                 isCommandReceived,
                 isCommandComplete,
               });
-              resolver.reject(new Error(`"${subsystem}" system faulted!`));
+              resolver.reject(
+                new Err(`"${subsystem}" system faulted!`, 'SystemFault', {
+                  subsystem,
+                }),
+              );
             }
           }
         }
@@ -417,10 +430,10 @@ export function connectMachine({
 
   async function writeMachineValues(action) {
     const commandId = action.commandId || getFreshCommandId();
-    if (!mainRobotSchema) {
+    if (!currentMachineSchema) {
       return;
     }
-    const subsystem = mainRobotSchema.config.subsystems[action.subsystem];
+    const subsystem = currentMachineSchema.config.subsystems[action.subsystem];
     const {
       immediateOutput,
       clearPulseOutput,
@@ -432,11 +445,11 @@ export function connectMachine({
       values: action.values,
       commandId,
     });
-    await writeTags(mainRobotSchema, tagOutput);
-    await writeTags(mainRobotSchema, immediateOutput);
+    await writeTags(tagOutput);
+    await writeTags(immediateOutput);
     (async () => {
       await delay(250);
-      await writeTags(mainRobotSchema, clearPulseOutput);
+      await writeTags(clearPulseOutput);
     })()
       .then(() => {})
       .catch(err => {
@@ -603,11 +616,34 @@ export function connectMachine({
     }
   }
 
+  let lastAppliedMachineState = {};
+
+  function applyDerivedState(restaurantState) {
+    if (!deriveAppliedMachineState) return;
+    const machineState = deriveAppliedMachineState(restaurantState);
+    const newMachineState = {};
+    Object.entries(machineState).forEach(([k, v]) => {
+      if (v == null) {
+        //a
+      } else if (lastAppliedMachineState[k] !== v) {
+        newMachineState[k] = v;
+      }
+    });
+    console.log('Writing Machine Values..', newMachineState);
+
+    lastAppliedMachineState = {
+      ...lastAppliedMachineState,
+      ...newMachineState,
+    };
+    // return machineState
+  }
+
   function updateCloudValues(kitchenConfig, restaurantState) {
     if (restaurantState !== undefined) _restaurantState = restaurantState;
     if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
     observeSideEffects();
     scheduleSequencerStep();
+    applyDerivedState(restaurantState);
   }
 
   let scheduledSequencerStep = null;
@@ -643,26 +679,24 @@ export function connectMachine({
     );
 
     const stepToStart = nextSteps.find(nextStep => {
-      if (!nextStep.isMachineReady) {
-        return false;
-      }
-      if (!nextStep.isCommandReady) {
-        return false;
-      }
       if (!nextStep.isReady) {
         return false;
       }
-      const commandType = commands[nextStep.command.commandType];
-      const subsystem = commandType.subsystem;
-      if (currentStepPromises[subsystem]) {
+      const commandType =
+        nextStep.command && commands[nextStep.command.commandType];
+      const subsystem =
+        (commandType && commandType.subsystem) || 'UnknownSystem';
+      if (subsystem && currentStepPromises[subsystem]) {
         return false;
       }
       return true;
     });
 
     if (stepToStart) {
-      const commandType = commands[stepToStart.command.commandType];
-      const subsystem = commandType.subsystem;
+      const commandType =
+        stepToStart.command && commands[stepToStart.command.commandType];
+      const subsystem =
+        (commandType && commandType.subsystem) || 'UnknownSystem';
 
       log('StepStart', {
         description: stepToStart.description,

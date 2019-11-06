@@ -74,9 +74,9 @@ const VERSE_HOST_CONFIG = VERSE_IS_DEV
   ? {
       // Verse dev:
       useSSL: false,
-      authority: 'localhost:8830',
+      // authority: 'localhost:8830',
       // authority: '10.10.10.40:8830',
-      // authority: '192.168.1.81:8830',
+      authority: '192.168.1.81:8830',
     }
   : {
       // Verse prod:
@@ -87,10 +87,12 @@ const VERSE_HOST_CONFIG = VERSE_IS_DEV
 const SKYNET_HOST_CONFIG = SKYNET_IS_DEV
   ? {
       // Skynet dev:
-      useSSL: false,
+      // useSSL: false,
       // authority: 'localhost:8840',
       // authority: '10.10.10.40:8840',
-      authority: '192.168.1.81:8830', // ev laptop
+      // authority: '192.168.1.81:8830', // ev laptop
+      useSSL: true,
+      authority: 'onoblends.co',
     }
   : {
       // Skynet prod:

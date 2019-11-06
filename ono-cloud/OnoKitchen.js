@@ -255,127 +255,243 @@ export function useInventoryState() {
   if (!tables || !restaurantState) {
     return [null, dispatch];
   }
-  const ingredientSlots = Object.values(tables.KitchenSlots)
-    .sort((a, b) => a._index - b._index)
-    .map(slot => {
-      const Ingredient =
-        tables.Ingredients[slot.Ingredient && slot.Ingredient[0]];
-      const KitchenSystem =
-        tables.KitchenSystems[slot.KitchenSystem && slot.KitchenSystem[0]];
-      return {
-        ...slot,
-        Ingredient,
-        KitchenSystem,
-      };
-    });
+  const kitchenSlots = Object.values(tables.KitchenSlots).map(slot => {
+    const Ingredient =
+      tables.Ingredients[slot.Ingredient && slot.Ingredient[0]];
+    const KitchenSystem =
+      tables.KitchenSystems[slot.KitchenSystem && slot.KitchenSystem[0]];
+    return {
+      ...slot,
+      Ingredient,
+      KitchenSystem,
+    };
+  });
   const cupInventory = inventoryState.cups || {};
-
-  const inventorySlots = [
+  function slotOfSlot(systemName, index) {
+    const slot = kitchenSlots.find(
+      s => s.KitchenSystem.Name === systemName && index === s.Slot,
+    );
+    const settings =
+      (restaurantState.slotSettings && restaurantState.slotSettings[slot.id]) ||
+      {};
+    const invState =
+      restaurantState.slotInventory && restaurantState.slotInventory[slot.id];
+    const dispensedSinceLow =
+      kitchenState &&
+      kitchenState[
+        `${slot.KitchenSystem.Name}_Slot_${slot.Slot}_DispensedSinceLow_READ`
+      ];
+    const isLowSensed =
+      kitchenState &&
+      kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_IsLow_READ`];
+    const isErrored =
+      kitchenState &&
+      kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_Error_READ`];
+    const estimatedRemaining = (invState && invState.estimatedRemaining) || 0;
+    async function dispenseSlotAmount(amount) {
+      await cloud.dispatch({
+        type: 'KitchenCommand',
+        commandType: 'DispenseOnly',
+        params: {
+          slotId: slot.id,
+          amount: amount,
+          slot: slot.Slot,
+          system: slot.KitchenSystem.FillSystemID,
+          ingredientId: slot.Ingredient.id,
+          ingredientName: slot.Ingredient.Name,
+          systemName: slot.KitchenSystem.Name,
+        },
+      });
+      await dispatch({
+        type: 'DidDispense',
+        slotId: slot.id,
+        amount: amount,
+      });
+    }
+    return {
+      ...slot,
+      estimatedRemaining,
+      settings,
+      isLowSensed,
+      isErrored,
+      isEmpty: estimatedRemaining <= 0,
+      dispensedSinceLow,
+      name: `${slot.KitchenSystem.Name} ${slot.Slot}`,
+      ingredientName: slot.Ingredient.Name,
+      ingredientId: slot.Ingredient.id,
+      trackFilling: true,
+      onDispense: dispenseSlotAmount,
+      onPurgeSmall: async () => {
+        const amount = 40;
+        await dispenseSlotAmount(amount);
+      },
+      onPurgeLarge: async () => {
+        const amount = 120;
+        await dispenseSlotAmount(amount);
+      },
+      onAddToEstimatedRemaining: value => {
+        return dispatch({
+          type: 'DidFillSlot',
+          slotId: slot.id,
+          estimatedRemaining: estimatedRemaining + value,
+        });
+      },
+      onSetEstimatedRemaining: value => {
+        return dispatch({
+          type: 'DidFillSlot',
+          slotId: slot.id,
+          estimatedRemaining: value,
+        });
+      },
+    };
+  }
+  const inventorySystems = [
     {
-      id: 'cups',
+      id: 'Cups',
       name: 'Cups',
-      settings: {},
-      disableFilling: true,
-      isCups: true,
       estimatedRemaining: cupInventory.estimatedRemaining,
       isEmpty: cupInventory.isEmpty,
       isErrored: cupInventory.isErrored,
-      ShotCapacity: 50,
-      ShotsAfterLow: 18,
-      onDispenseOne: async () => {
-        await cloud.dispatch({
-          type: 'KitchenCommand',
-          commandType: 'DispenseCup',
-        });
-        await dispatch({
-          type: 'DidDispenseCup',
-        });
-      },
     },
-    ...ingredientSlots.map(slot => {
-      const invState =
-        restaurantState.slotInventory && restaurantState.slotInventory[slot.id];
-      const dispensedSinceLow =
-        kitchenState &&
-        kitchenState[
-          `${slot.KitchenSystem.Name}_Slot_${slot.Slot}_DispensedSinceLow_READ`
-        ];
-      const isLowSensed =
-        kitchenState &&
-        kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_IsLow_READ`];
-      const isErrored =
-        kitchenState &&
-        kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_Error_READ`];
-      async function dispenseSlotAmount(amount) {
-        await cloud.dispatch({
-          type: 'KitchenCommand',
-          commandType: 'DispenseOnly',
-          params: {
-            slotId: slot.id,
-            amount: amount,
-            slot: slot.Slot,
-            system: slot.KitchenSystem.FillSystemID,
-            ingredientId: slot.Ingredient.id,
-            ingredientName: slot.Ingredient.Name,
-            systemName: slot.KitchenSystem.Name,
-          },
-        });
-        await dispatch({
-          type: 'DidDispense',
-          slotId: slot.id,
-          amount: amount,
-        });
-      }
-      return {
-        ...slot,
-        settings:
-          (restaurantState.slotSettings &&
-            restaurantState.slotSettings[slot.id]) ||
-          {},
-        estimatedRemaining: (invState && invState.estimatedRemaining) || 0,
-        dispensedSinceLow,
-        isEmpty: false,
-        isErrored,
-        isLowSensed,
-        name: slot.Ingredient.Name,
-        photo: slot.Ingredient.Icon,
-        color: slot.Ingredient.Color,
-        ingredientId: slot.Ingredient.id,
-        onDispense: dispenseSlotAmount,
-        onPurgeSmall: async () => {
-          const amount = 40;
-          await dispenseSlotAmount(amount);
-        },
-        onPurgeLarge: async () => {
-          const amount = 120;
-          await dispenseSlotAmount(amount);
-        },
-        onSetEstimatedRemaining: value => {
-          return dispatch({
-            type: 'DidFillSlot',
-            slotId: slot.id,
-            estimatedRemaining: value,
-          });
-        },
-      };
-    }),
+    {
+      id: 'Beverage',
+      name: 'Beverage',
+      slots: Array(4)
+        .fill()
+        .map((_, i) => {
+          const slotData = slotOfSlot('Beverage', i);
+          return {
+            ...slotData,
+          };
+        }),
+    },
+    {
+      id: 'Powder',
+      name: 'Powder',
+      slots: Array(3)
+        .fill()
+        .map((_, i) => {
+          const slotData = slotOfSlot('Powder', i);
+          return {
+            ...slotData,
+          };
+        }),
+    },
+    {
+      id: 'Piston',
+      name: 'Piston',
+      slots: Array(2)
+        .fill()
+        .map((_, i) => {
+          const slotData = slotOfSlot('Piston', i);
+          return {
+            ...slotData,
+          };
+        }),
+    },
+
+    {
+      id: 'FrozenFood',
+      name: 'FrozenFood',
+      slots: Array(9)
+        .fill()
+        .map((_, i) => {
+          const slotData = slotOfSlot('FrozenFood', i);
+          return {
+            ...slotData,
+          };
+        }),
+    },
+
+    {
+      id: 'Granules',
+      name: 'Granules',
+      slots: Array(6)
+        .fill()
+        .map((_, i) => {
+          const slotData = slotOfSlot('Granules', i);
+          return {
+            ...slotData,
+          };
+        }),
+    },
   ];
+  // const inventorySlots = [
+  //   {
+  //     id: 'cups',
+  //     name: 'Cups',
+  //     settings: {},
+  //     disableFilling: true,
+  //     isCups: true,
+  //     estimatedRemaining: cupInventory.estimatedRemaining,
+  //     isEmpty: cupInventory.isEmpty,
+  //     isErrored: cupInventory.isErrored,
+  //     ShotCapacity: 50,
+  //     ShotsAfterLow: 18,
+  //     onDispenseOne: async () => {
+  //       await cloud.dispatch({
+  //         type: 'KitchenCommand',
+  //         commandType: 'DispenseCup',
+  //       });
+  //       await dispatch({
+  //         type: 'DidDispenseCup',
+  //       });
+  //     },
+  //   },
+
+  //   ...ingredientSlots.map(slot => {
+  //     const invState =
+  //       restaurantState.slotInventory && restaurantState.slotInventory[slot.id];
+  //     const dispensedSinceLow =
+  //       kitchenState &&
+  //       kitchenState[
+  //         `${slot.KitchenSystem.Name}_Slot_${slot.Slot}_DispensedSinceLow_READ`
+  //       ];
+  //     const isLowSensed =
+  //       kitchenState &&
+  //       kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_IsLow_READ`];
+  //     const isErrored =
+  //       kitchenState &&
+  //       kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_Error_READ`];
+
+  //     const estimatedRemaining = (invState && invState.estimatedRemaining) || 0;
+  //     return {
+  //       ...slot,
+  //       settings:
+  //         (restaurantState.slotSettings &&
+  //           restaurantState.slotSettings[slot.id]) ||
+  //         {},
+  //       estimatedRemaining,
+  //       dispensedSinceLow,
+  //       isEmpty: false,
+  //       isErrored,
+  //       isLowSensed,
+  //       name: slot.Ingredient.Name,
+  //       photo: slot.Ingredient.Icon,
+  //       color: slot.Ingredient.Color,
+  //       ingredientId: slot.Ingredient.id,
+
+  //     };
+  //   }),
+  // ];
 
   const inventoryIngredients = {};
-  inventorySlots.forEach(invState => {
-    if (invState.ingredientId) {
-      inventoryIngredients[invState.ingredientId] = invState;
-    }
+  inventorySystems.forEach(invSystem => {
+    invSystem.slots &&
+      invSystem.slots.forEach(invState => {
+        if (invState.ingredientId) {
+          inventoryIngredients[invState.ingredientId] = invState;
+        }
+      });
   });
 
-  return [{ inventorySlots, inventoryIngredients }, dispatch];
+  return [{ inventorySystems, inventoryIngredients }, dispatch];
 }
 
-function getMenuItemInventory(menuItem, companyConfig, kitchenInventory) {
-  if (!kitchenInventory) {
+function getMenuItemInventory(menuItem, companyConfig, inventoryIngredients) {
+  if (!inventoryIngredients) {
     return menuItem;
   }
-  const { inventoryIngredients } = kitchenInventory;
   const stockItemFills = getFillsOfOrderItem(
     menuItem,
     { customization: null },
@@ -386,12 +502,10 @@ function getMenuItemInventory(menuItem, companyConfig, kitchenInventory) {
   const stockItemFillsWithInventory = stockItemFills.map(fillSpec => {
     const ing = inventoryIngredients[fillSpec.ingredientId];
     let isIngredientOutOfStock = false;
-    // if (ing.settings) ...
-    // ing.settings && console.log('hey ok ing.settings', ing);
-    if (fillSpec.amount > ing.estimatedRemaining) {
+    if (!ing || fillSpec.amount > ing.estimatedRemaining) {
       isIngredientOutOfStock = true;
     }
-    if (isIngredientOutOfStock && !ing.settings.optional) {
+    if (isIngredientOutOfStock && (!ing || !ing.settings.optional)) {
       isOutOfStock = true;
     }
     return {
@@ -411,36 +525,39 @@ function getMenuItemInventory(menuItem, companyConfig, kitchenInventory) {
   };
 }
 
+export function useInventoryIngredients() {
+  const [invState] = useInventoryState();
+  return invState && invState.inventoryIngredients;
+}
+
 export function useInventoryMenuItem(menuItemId) {
   const config = useCompanyConfig();
-  const [inventoryState] = useInventoryState();
+  const inventoryIngredients = useInventoryIngredients();
   return useMemo(() => {
-    if (
-      !config ||
-      !menuItemId ||
-      !inventoryState ||
-      !inventoryState.inventoryIngredients
-    )
-      return {};
+    if (!config || !menuItemId || !inventoryIngredients) return {};
     const menuItem = companyConfigToBlendMenuItemMapper(menuItemId)(config);
     return {
-      menuItem: getMenuItemInventory(menuItem, config, inventoryState),
-      inventoryIngredients: inventoryState.inventoryIngredients,
+      menuItem: getMenuItemInventory(menuItem, config, inventoryIngredients),
+      inventoryIngredients,
     };
-  }, [config, menuItemId, inventoryState]);
+  }, [config, menuItemId, inventoryIngredients]);
 }
 
 export function useInventoryMenu() {
   const companyConfig = useCompanyConfig();
   const menu = companyConfigToMenu(companyConfig);
-  const [inventoryState] = useInventoryState();
-  if (!inventoryState) {
+  const inventoryIngredients = useInventoryIngredients();
+  if (!inventoryIngredients) {
     return menu;
   }
   return {
     ...menu,
     blends: menu.blends.map(menuItem => {
-      return getMenuItemInventory(menuItem, companyConfig, inventoryState);
+      return getMenuItemInventory(
+        menuItem,
+        companyConfig,
+        inventoryIngredients,
+      );
     }),
   };
 }

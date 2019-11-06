@@ -57,7 +57,7 @@ export default function KioskHomeScreen({ navigation, ...props }) {
   }, []);
   const [restaurantState] = useRestaurantState();
   const { isOpen, closingSoon } = useIsRestaurantOpen(restaurantState);
-
+  let isKioskOpen = isOpen && !restaurantState.maintenanceMode;
   return (
     <FadeTransition
       {...props}
@@ -76,9 +76,9 @@ export default function KioskHomeScreen({ navigation, ...props }) {
       }
     >
       <KioskHomeContent
-        isOpen={isOpen}
+        isOpen={isKioskOpen}
         onStartOrder={() => {
-          if (isOpen) {
+          if (isKioskOpen) {
             startOrder().then(() => {
               navigation.navigate('ProductHome');
             });

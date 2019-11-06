@@ -18,6 +18,7 @@ import { useRestaurantState } from '../ono-cloud/Kitchen';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import ButtonStack from '../components/ButtonStack';
 import useFocus from '../navigation-hooks/useFocus';
+import StatusBar from '../components/StatusBar';
 
 function FridgeView() {
   const kitchenState = useKitchenState();
@@ -195,6 +196,7 @@ function AlarmMode() {
             state && state.faultMuting && !!state.faultMuting[faultName];
           return (
             <View
+              key={faultName}
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -371,7 +373,12 @@ function ClearMapButton() {
 
 export default function KioskSettingsScreen({ navigation, ...props }) {
   return (
-    <SimplePage {...props} navigation={navigation} hideBackButton>
+    <SimplePage
+      {...props}
+      navigation={navigation}
+      hideBackButton
+      footer={<StatusBar />}
+    >
       <CateringMode />
       <AlarmMode />
       <DryRunMode />
@@ -405,6 +412,9 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
         <LinkRow
           onPress={() => {
             navigation.navigate({ routeName: 'ComponentPlayground' });
+          }}
+          onLongPress={() => {
+            navigation.navigate({ routeName: 'Organization' });
           }}
           icon="🧱"
           title="Component Playground"

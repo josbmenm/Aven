@@ -5,9 +5,11 @@ import Button from '../components/Button';
 import BlendTasker from '../components/BlendTasker';
 import CustomTasker from '../components/CustomTasker';
 import StatusBar from '../components/StatusBar';
+import { FillsDisplay } from './SequencerScreen';
 import TaskInfo from '../components/TaskInfo';
 import RowSection from '../components/RowSection';
 import { useNavigation } from '../navigation-hooks/Hooks';
+import { useCloudValue } from '../cloud-core/KiteReact';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import cuid from 'cuid';
 import { primaryFontFace, standardTextColor } from '../components/Styles';
@@ -17,7 +19,12 @@ function TaskRow({ onCancel, isDropping, onDoNext, taskState, onRemake }) {
     return null;
   }
   let cancelButton = onCancel && (
-    <Button onPress={onCancel} title="cancel" type="outline" />
+    <Button
+      onPress={onCancel}
+      title="cancel"
+      type="outline"
+      style={{ marginLeft: 8 }}
+    />
   );
   if (isDropping) {
     cancelButton = (
@@ -41,12 +48,57 @@ function TaskRow({ onCancel, isDropping, onDoNext, taskState, onRemake }) {
         alignSelf: 'stretch',
       }}
     >
-      <TaskInfo task={taskState} />
-      {cancelButton}
-      {onDoNext && <Button onPress={onDoNext} title="do next" type="outline" />}
-      {onRemake && <Button onPress={onRemake} title="re-make" type="outline" />}
+      <TaskInfo
+        task={taskState}
+        buttons={
+          <View style={{ flexDirection: 'row' }}>
+            {onDoNext && (
+              <Button
+                onPress={onDoNext}
+                title="do next"
+                type="outline"
+                style={{ marginLeft: 8 }}
+              />
+            )}
+            {cancelButton}
+            {onRemake && (
+              <Button
+                onPress={onRemake}
+                title="re-make"
+                type="outline"
+                style={{ marginLeft: 8 }}
+              />
+            )}
+          </View>
+        }
+      />
     </View>
   );
+}
+
+function CompletedTasks({ dispatch }) {
+  const resp = useCloudValue('RecentCompletedTasks');
+  console.log(resp);
+  if (!resp || !resp.tasks) return null;
+
+  return resp.tasks.map(taskReceipt => (
+    <TaskRow
+      key={taskReceipt.id}
+      taskState={taskReceipt.task}
+      onRemake={() => {
+        dispatch({
+          type: 'QueueTasks',
+          tasks: [
+            {
+              ...taskReceipt.task,
+              id: cuid(),
+              remakeOfTaskId: taskReceipt.task.id,
+            },
+          ],
+        });
+      }}
+    />
+  ));
 }
 
 function TaskQueue({ restaurantState, dispatch }) {
@@ -70,18 +122,6 @@ function TaskQueue({ restaurantState, dispatch }) {
                 onDoNext={() => {
                   dispatch({ type: 'DoTaskNext', id: taskState.id });
                 }}
-                onRemake={() => {
-                  dispatch({
-                    type: 'QueueTasks',
-                    tasks: [
-                      {
-                        ...taskState,
-                        id: cuid(),
-                        remakeOfTaskId: taskState.id,
-                      },
-                    ],
-                  });
-                }}
               />
             ))}
       </RowSection>
@@ -95,6 +135,7 @@ function TaskQueue({ restaurantState, dispatch }) {
             }}
             isDropping={!!restaurantState.fill.requestedDropTime}
           />
+          <FillsDisplay state={restaurantState.fill} />
         </RowSection>
       )}
       {restaurantState.blend && (
@@ -129,29 +170,7 @@ function TaskQueue({ restaurantState, dispatch }) {
           )}
         </RowSection>
       )}
-      <RowSection title="failed tasks">
-        {restaurantState.failedTasks &&
-          restaurantState.failedTasks.filter(Boolean).map(taskState => (
-            <TaskRow
-              key={taskState.id}
-              taskState={taskState}
-              onRemake={() => {
-                dispatch({
-                  type: 'QueueTasks',
-                  tasks: [
-                    {
-                      ...taskState,
-                      id: cuid(),
-                      remakeOfTaskId: taskState.id,
-                    },
-                  ],
-                });
-              }}
-            />
-          ))}
-      </RowSection>
-
-      <RowSection title="completed tasks">
+      <RowSection title="past tasks">
         {restaurantState.completedTasks &&
           restaurantState.completedTasks.filter(Boolean).map(completed => (
             <TaskRow
@@ -171,6 +190,7 @@ function TaskQueue({ restaurantState, dispatch }) {
               }}
             />
           ))}
+        <CompletedTasks dispatch={dispatch} />
       </RowSection>
     </React.Fragment>
   );

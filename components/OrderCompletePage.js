@@ -1,20 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import ShortBlockFormPage from './ShortBlockFormPage';
-import BlockForm from './BlockForm';
-import BlockFormRow from './BlockFormRow';
-import BlockFormButton from './BlockFormButton';
+import CountdownDoneButton from './CountdownDoneButton';
 import { View, Text, Image } from 'react-native';
-import BlockFormInput from './BlockFormInput';
-import BlockFormHorizontalRule from './BlockFormHorizontalRule';
-import TextButton from './TextButton';
-import { headerHeight, rightSidebarWidth, pinkColor } from './Styles';
+import { useNavigation } from '../navigation-hooks/Hooks';
 import {
-  useNavigation,
-  useNavigationWillBlurEffect,
-} from '../navigation-hooks/Hooks';
-
-import { blockFormMessageTextStyle } from './Styles';
-import { blockFormTitleTextStyle } from './Styles';
+  blockFormTitleTextStyle,
+  blockFormMessageTextStyle,
+  pinkColor,
+} from './Styles';
 
 function PageMessage({ message }) {
   return (
@@ -41,56 +34,6 @@ function PageTitle({ title }) {
     >
       {title}
     </Text>
-  );
-}
-
-function CountdownDoneButton({ duration, onLongPress, onPress }) {
-  let [countdown, setCountdown] = useState(10);
-  let countRef = useRef({
-    count: 10,
-  });
-  useNavigationWillBlurEffect(() => {
-    countRef.current = -1;
-    clearTimeout(countRef.current.timout);
-  });
-  useEffect(() => {
-    function doCount() {
-      let count = countRef.current.count;
-      if (count === 0) {
-        onPress();
-        return;
-      } else if (count > 0) {
-        const nextCount = count - 1;
-        countRef.current.count = nextCount;
-        setCountdown(nextCount);
-        countRef.current.timeout = setTimeout(doCount, 1000);
-      }
-    }
-    countRef.current.timeout = setTimeout(doCount, 1000);
-    return () => {
-      countRef.current.count = -1;
-      clearTimeout(countRef.current.timout);
-    };
-  }, []);
-  return (
-    <View
-      style={{
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        height: headerHeight,
-        width: rightSidebarWidth,
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-      }}
-      pointerEvents="box-none"
-    >
-      <TextButton
-        title={`done (${countdown})`}
-        onLongPress={onLongPress}
-        onPress={onPress}
-      />
-    </View>
   );
 }
 

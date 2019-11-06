@@ -39,6 +39,7 @@ import DeviceManagerScreen from '../screens/DeviceManagerScreen';
 import { OrderCompletePortalScreen } from '../screens/OrderCompleteScreen';
 import CollectNameScreen from '../screens/CollectNameScreen';
 import SendReceiptScreen from '../screens/SendReceiptScreen';
+import OrganizationScreen from '../screens/OrganizationScreen';
 import InventoryScreen from '../screens/InventoryScreen';
 import ReceiptScreen from '../screens/ReceiptScreen';
 import AppUpsellScreen from '../screens/AppUpsellScreen';
@@ -72,10 +73,10 @@ const windowSize = Dimensions.get('window');
 const RESTAURANT_DEV = {
   quiet: true,
   useSSL: false,
-  // authority: 'localhost:8830',
+  authority: 'localhost:8830',
 
   // prod server (connect to maui wifi first..)
-  authority: '10.10.1.200:8830',
+  // authority: '10.10.1.200:8830',
 
   // prod server from ono wifi
   // authority: '192.168.1.106:8830',
@@ -247,6 +248,7 @@ const App = createStackTransitionNavigator({
   Sequencer: { screen: SequencerScreen },
   FeedbackApp: FeedbackAppNavigator,
   OrderConfirmTest: OrderConfirmTestScreen,
+  Organization: OrganizationScreen,
 });
 
 const AppContainer = createAppContainer(App);

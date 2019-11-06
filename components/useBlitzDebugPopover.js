@@ -10,6 +10,7 @@ import { Easing } from 'react-native-reanimated';
 import { useNavigation } from '../navigation-hooks/Hooks';
 
 import codePush from 'react-native-code-push';
+import useKeyboardPopover from './useKeyboardPopover';
 
 export const AppEnvContext = React.createContext();
 
@@ -33,10 +34,22 @@ function HiddenButton({ label, onPress }) {
     </TouchableOpacity>
   );
 }
+
+function CardReaderPopover({ onClose }) {
+  return <View style={{ padding: 8 }}></View>;
+}
+
+function useCardReaderPopover() {
+  const { onPopover } = useKeyboardPopover(({ onClose }) => (
+    <CardReaderPopover onClose={onClose} />
+  ));
+  return onPopover;
+}
 function BlitzDebug({ onClose }) {
   const { mode, deviceId } = React.useContext(AppEnvContext);
   const { navigate } = useNavigation();
   const [code, setCode] = React.useState('');
+  const onCardReaderPopover = useCardReaderPopover();
   function sendResetValue(char) {
     setCode(char);
   }
@@ -46,9 +59,15 @@ function BlitzDebug({ onClose }) {
   const appInfoText = useAppInfoText();
   React.useEffect(() => {
     if (code === 'b12') {
+      // ginger - greens - mango
       onClose();
       navigate('PaymentDebug');
-    } else if (code === 'a4545') {
+    } else if (code === 'b13') {
+      // ginger - greens - chia = card reader settings
+      onClose();
+      onCardReaderPopover();
+    } else if (code === 'a45') {
+      // coconut - banana - cashew = restart app
       codePush.restartApp();
     } else if (code === 'b5555') {
       throw new Error('User-requested crash');
@@ -129,25 +148,6 @@ Device id: ${deviceId}
           }}
         />
       </ButtonRow>
-
-      {/* <Text style={{ ...primaryFontFace }}>Mode: {mode}</Text>
-      <Text style={{ ...primaryFontFace }}>Device Id: {deviceId}</Text>
-      <AppInfoText />
-      <Button
-        onPress={() => {
-          codePush.restartApp();
-        }}
-        title="Reload"
-        secondary
-      />
-      <Button
-        onPress={() => {
-          onClose();
-          navigate('PaymentDebug');
-        }}
-        title={`Debug Card Reader`}
-        type="outline"
-      /> */}
     </View>
   );
 }

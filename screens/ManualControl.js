@@ -45,6 +45,7 @@ export default function ManualControl() {
         title="pass to delivery"
         commandType="PassToDeliveryWithoutClean"
       />
+      <KitchenCommandButton title="dispense cup" commandType="DispenseCup" />
       <KitchenCommandButton title="clean" commandType="Clean" />
       <KitchenCommandButton title="deliver 0" commandType="DeliverBay0" />
       <KitchenCommandButton title="deliver 1" commandType="DeliverBay1" />

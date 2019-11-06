@@ -1,18 +1,22 @@
 import React from 'react';
-import useAsyncError from '../react-utils/useAsyncError';
 import SpinnerButton from '../components/SpinnerButton';
+import useKeyboardPopover from './useKeyboardPopover';
 
 export default function AsyncButton({ onPress, ...props }) {
   const [isLoading, setIsLoading] = React.useState(false);
-  const handleError = useAsyncError();
-
+  const { onPopover } = useKeyboardPopover(({ onClose, openArguments }) => (
+    <View style={{ minHeight: 100, minWidth: 100, backgroundColor: 'red' }} />
+  ));
   function handlePress() {
     setIsLoading(true);
-    handleError(
-      onPress().finally(() => {
+    onPress()
+      .then(() => {})
+      .catch(err => {
+        onPopover(err);
+      })
+      .finally(() => {
         setIsLoading(false);
-      }),
-    );
+      });
   }
 
   return (

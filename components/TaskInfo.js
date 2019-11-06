@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { proseFontFace, primaryFontFace, monsterra80 } from './Styles';
 
-export default function TaskInfo({ task }) {
+export default function TaskInfo({ task, buttons }) {
   if (!task) {
     return (
       <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
@@ -14,9 +14,12 @@ export default function TaskInfo({ task }) {
   }
   return (
     <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
-      <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
-        {task.name}
-      </Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
+          {task.name}
+        </Text>
+        {buttons}
+      </View>
       <Text style={{ fontSize: 24, ...primaryFontFace, color: '#282828' }}>
         {task.blendName}
       </Text>

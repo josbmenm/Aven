@@ -5,11 +5,13 @@ import BlockFormTitle from '../components/BlockFormTitle';
 import BlockFormMessage from '../components/BlockFormMessage';
 import BlockFormRow from '../components/BlockFormRow';
 import BlockFormButton from '../components/BlockFormButton';
+import CountdownDoneButton from './CountdownDoneButton';
 
 export default function ReceiptPage({
   onSms,
   onEmail,
   onNoReceipt,
+  onComplete,
   hideBackButton,
   ...props
 }) {
@@ -26,6 +28,7 @@ export default function ReceiptPage({
           <BlockFormButton title="no, thanks" onPress={onNoReceipt} />
         </BlockFormRow>
       </BlockForm>
+      <CountdownDoneButton onPress={onComplete} duration={20} />
     </ShortBlockFormPage>
   );
 }

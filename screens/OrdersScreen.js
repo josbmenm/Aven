@@ -37,13 +37,9 @@ function OrderRow({ order }) {
         <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
           <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
             {order.orderName.firstName} {order.orderName.lastName}
-            {' - '}
-            {formatTime(order.confirmedTime)}
           </Text>
           <Text style={{ fontSize: 24, ...primaryFontFace, color: '#282828' }}>
-            {order.orderTasks.length} blend
-            {order.orderTasks.length === 1 ? '' : 's'} -{' '}
-            {formatCurrency(order.total)}
+            {formatTime(order.confirmedTime)}
           </Text>
         </View>
       </Row>

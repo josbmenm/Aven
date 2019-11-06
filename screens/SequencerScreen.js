@@ -17,6 +17,7 @@ import ManualControl from './ManualControl';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import LinkRow from '../components/LinkRow';
+import Tag from '../components/Tag';
 
 function Subsystems() {
   const subsystems = useSubsystemOverview();
@@ -43,8 +44,8 @@ function Subsystems() {
   );
 }
 
-function TaskInfoText({ taskState }) {
-  if (!taskState) {
+function TaskInfoText({ state }) {
+  if (!state || !state.task) {
     return (
       <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
         <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
@@ -56,10 +57,11 @@ function TaskInfoText({ taskState }) {
   return (
     <View style={{ flex: 1, alignSelf: 'stretch', padding: 10 }}>
       <Text style={{ fontSize: 32, ...proseFontFace, color: monsterra80 }}>
-        {taskState.name}
+        {state.task.name}
       </Text>
       <Text style={{ fontSize: 24, ...primaryFontFace, color: '#282828' }}>
-        {taskState.blendName}
+        {state.task.blendName}
+        {state.fillsFailed.length ? ' (failed)' : ''}
       </Text>
     </View>
   );
@@ -70,7 +72,7 @@ function BayInfo({ bayState, name, dispatch, bayId }) {
   if (bayState) {
     content = (
       <View style={{ flex: 1 }}>
-        <TaskInfoText taskState={bayState.task} />
+        <TaskInfoText state={bayState} />
       </View>
     );
   }
@@ -112,49 +114,41 @@ function DeliveryBayRow({ restaurantState, dispatch }) {
   );
 }
 
-function FillsDisplay({ state }) {
+export function FillsDisplay({ state }) {
   return (
-    <View style={{ flexDirection: 'row' }}>
-      <View style={{ flex: 1 }}>
-        <Subtitle title="Remaining Fills" />
-        {state.fillsRemaining &&
-          state.fillsRemaining.map((fill, i) => (
-            <Text key={i}>
-              {fill.system}.{fill.slot} x {fill.amount}
-            </Text>
-          ))}
-      </View>
-      <View style={{ flex: 1 }}>
-        <Subtitle title="Completed Fills" />
-        {state.fillsCompleted &&
-          state.fillsCompleted.map((fill, i) => (
-            <Text key={i}>
-              {fill.system}.{fill.slot} x {fill.amount}
-            </Text>
-          ))}
-      </View>
-      {state.fillsFailed && (
-        <View style={{ flex: 1 }}>
-          <Subtitle title="Failed Fills" />
-          {state.fillsFailed &&
-            state.fillsFailed.map((fill, i) => (
-              <Text key={i}>
-                {fill.system}.{fill.slot} x {fill.amount}
-              </Text>
-            ))}
-        </View>
-      )}
+    <View style={{}}>
+      {state.fillsFailed &&
+        state.fillsFailed.map((fill, i) => (
+          <Text key={i} style={{ color: Tag.negativeColor }}>
+            {fill.systemName} {fill.slot} - {fill.ingredientName} (
+            {fill.isDisabled ? 'disabled' : fill.isEmpty ? 'empty' : 'errored'})
+          </Text>
+        ))}
+
+      {state.fillsCompleted &&
+        state.fillsCompleted.map((fill, i) => (
+          <Text key={i} style={{ color: Tag.positiveColor }}>
+            {fill.systemName} {fill.slot} - {fill.ingredientName} (done)
+          </Text>
+        ))}
+      {state.fillsRemaining &&
+        state.fillsRemaining.map((fill, i) => (
+          <Text key={i} style={{ color: Tag.neutralColor }}>
+            {fill.systemName} {fill.slot} - {fill.ingredientName}
+          </Text>
+        ))}
     </View>
   );
 }
 
 function FillRow({ restaurantState, dispatch }) {
-  const { task } = restaurantState.fill;
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flexDirection: 'row' }}>
         <View style={{ flex: 1 }}>
-          {task && <TaskInfoText taskState={task} />}
+          {restaurantState.fill && (
+            <TaskInfoText state={restaurantState.fill} />
+          )}
         </View>
         {!restaurantState.isAttached && (
           <Button
@@ -178,7 +172,7 @@ function BlendRow({ restaurantState, dispatch }) {
     <View style={{ flex: 1 }}>
       <View style={{ flexDirection: 'row' }}>
         <View style={{ flex: 1 }}>
-          <TaskInfoText taskState={restaurantState.blend.task} />
+          <TaskInfoText state={restaurantState.blend} />
         </View>
         {!restaurantState.isAttached && (
           <Button
@@ -195,7 +189,7 @@ function BlendRow({ restaurantState, dispatch }) {
 }
 
 function DeliverySystemRow({ state }) {
-  return <TaskInfoText taskState={state.task} />;
+  return <TaskInfoText state={state} />;
 }
 
 function RestaurantStateList({ restaurantState, dispatch }) {

@@ -14,13 +14,20 @@ const KitchenCommands = {
       return kitchenState.FillSystem_PickUpNewCupReady_READ;
     },
   },
-
+  FillWaterTank: {
+    subsystem: 'FillSystem',
+    pulse: ['FillWaterTank'],
+    values: {},
+    checkReady: kitchenState => {
+      return kitchenState.FillSystem_FillWaterTankReady_READ;
+    },
+  },
   DispenseCup: {
     subsystem: 'Denester',
     pulse: ['DispenseAmount'],
     values: {},
     checkReady: kitchenState => {
-      return kitchenState.Denester_DispenseAmount_READ;
+      return kitchenState.Denester_DispenseAmountReady_READ;
     },
   },
   DispenseOnly: {
@@ -85,16 +92,14 @@ const KitchenCommands = {
     },
   },
   FillGoToCup: {
-    subsystem: 'FillPositioner',
-    pulse: ['GoToPosition'],
+    subsystem: 'FillSystem',
+    pulse: ['PositionOnly'],
     values: {
-      PositionDest: 375, // this value will be used as a fallback! it will generally be determined by the position param
-    },
-    valueParamNames: {
-      PositionDest: 'position',
+      DispenseSystem: 5,
+      SlotToDispense: 0,
     },
     checkReady: kitchenState => {
-      return kitchenState.FillPositioner_GoToPositionReady_READ;
+      return kitchenState.FillSystem_PositionOnlyReady_READ;
     },
   },
   FillGoToHandoff: {
@@ -139,6 +144,84 @@ const KitchenCommands = {
     pulse: ['CleanOnly'],
     checkReady: kitchenState => {
       return kitchenState.BlendSystem_CleanOnlyReady_READ;
+    },
+  },
+  RetractArm: {
+    subsystem: 'BlendSystem',
+    pulse: ['RetractArm'],
+    checkReady: kitchenState => {
+      return kitchenState.BlendSystem_RetractArmReady_READ;
+    },
+  },
+  ExtendArm: {
+    subsystem: 'BlendSystem',
+    pulse: ['ExtendArm'],
+    checkReady: kitchenState => {
+      return kitchenState.BlendSystem_ExtendArmReady_READ;
+    },
+  },
+  LowerBlenderElevator: {
+    subsystem: 'BlendSystem',
+    pulse: ['LowerBlenderElevator'],
+    checkReady: kitchenState => {
+      return kitchenState.BlendSystem_LowerBlenderElevatorReady_READ;
+    },
+  },
+  RaiseBlenderElevator: {
+    subsystem: 'BlendSystem',
+    pulse: ['RaiseBlenderElevator'],
+    checkReady: kitchenState => {
+      return kitchenState.BlendSystem_RaiseBlenderElevatorReady_READ;
+    },
+  },
+  FlipCupPlate: {
+    subsystem: 'BlendSystem',
+    pulse: ['FlipCupPlate'],
+    checkReady: kitchenState => {
+      return kitchenState.BlendSystem_FlipCupPlateReady_READ;
+    },
+  },
+  ReturnCupPlate: {
+    subsystem: 'BlendSystem',
+    pulse: ['ReturnCupPlate'],
+    checkReady: kitchenState => {
+      return kitchenState.BlendSystem_ReturnCupPlateReady_READ;
+    },
+  },
+  FlipBladePlate: {
+    subsystem: 'BlendSystem',
+    pulse: ['FlipBladePlate'],
+    checkReady: kitchenState => {
+      return kitchenState.BlendSystem_FlipBladePlateReady_READ;
+    },
+  },
+  ReturnBladePlate: {
+    subsystem: 'BlendSystem',
+    pulse: ['ReturnBladePlate'],
+    checkReady: kitchenState => {
+      return kitchenState.BlendSystem_ReturnBladePlateReady_READ;
+    },
+  },
+  FrozenPurgeAll: {
+    subsystem: 'FrozenFood',
+    pulse: ['PurgeAll'],
+    checkReady: kitchenState => {
+      return kitchenState.FrozenFood_PurgeAllReady_READ;
+    },
+  },
+  FrozenVibrateAll: {
+    subsystem: 'FrozenFood',
+    pulse: ['VibrateAll'],
+    checkReady: kitchenState => {
+      return kitchenState.FrozenFood_VibrateAllReady_READ;
+    },
+  },
+  FrozenStopVibrateAll: {
+    subsystem: 'FrozenFood',
+    pulse: ['StopVibrateAll'],
+    checkReady: kitchenState => {
+      return true;
+      // return kitchenState.FrozenFood_StopVibrateAllReady_READ;
     },
   },
   PositionAndDispenseAmount: {

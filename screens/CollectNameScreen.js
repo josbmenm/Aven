@@ -8,12 +8,15 @@ import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { Alert } from 'react-native';
 
 export default function CollectNameScreen(props) {
-  const { navigate, goBack } = useNavigation();
+  const { navigate, goBack, getParam, dangerouslyGetParent } = useNavigation();
   const { setOrderName, order, confirmOrder } = useOrder();
   const restaurantConfig = useRestaurantConfig();
 
   const isCateringMode =
     restaurantConfig && restaurantConfig.mode === 'catering';
+  const parentNav = dangerouslyGetParent();
+  const isPortal = !!parentNav && parentNav.state.routeName === 'Kiosk';
+  const isFreePendantOrder = !!getParam('freePendantOrder') && isPortal;
   useEmptyOrderEscape();
 
   async function handleSkippedPayment() {
@@ -38,7 +41,7 @@ export default function CollectNameScreen(props) {
       isCateringMode={isCateringMode}
       initialName={(order && order.value.get().orderName) || {}}
       onSubmit={name => {
-        if (isCateringMode) {
+        if (isFreePendantOrder || isCateringMode) {
           navigate('OrderComplete');
 
           handleOnceSkippedPayment()

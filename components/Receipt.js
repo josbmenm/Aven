@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, ScrollView } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import {
   sellPriceOfMenuItem,
   displayNameOfOrderItem,
@@ -127,7 +127,7 @@ function HorizontalRule() {
     />
   );
 }
-export default function Receipt({ summary }) {
+export default function Receipt({ summary, onPromoCode }) {
   if (!summary) {
     return null;
   }
@@ -138,7 +138,7 @@ export default function Receipt({ summary }) {
       <SummarySubTitle title={getOrderName(summary)} />
       <SummaryTitle title="order summary" />
       <HorizontalRule />
-      <ScrollView style={{ height: 320 }}>
+      <ScrollView style={{ height: 280 }}>
         {summary.items.map(item => (
           <ReceiptRow
             label={displayNameOfOrderItem(item, item.menuItem)}
@@ -149,6 +149,32 @@ export default function Receipt({ summary }) {
           />
         ))}
       </ScrollView>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+        }}
+      >
+        {onPromoCode && (
+          <TouchableOpacity onPress={onPromoCode}>
+            <View
+              style={{
+                borderRadius: 4,
+                borderWidth: 1,
+                borderColor: 'white',
+                padding: 6,
+                paddingHorizontal: 14,
+              }}
+            >
+              <Text
+                style={{ ...primaryFontFace, fontSize: 13, color: 'white' }}
+              >
+                Have a promo code?
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
+      </View>
       <HorizontalRule />
       <RollupRow
         label="Tax"

@@ -87,6 +87,7 @@ const Components = {
       summary: orderSummary,
       cancelPayment: () => alert('Payment Cancelled'),
       skipPayment: () => alert('Payment Skipped'),
+      onPromoCode: () => alert('promo'),
     },
     icon: '💸',
   },

@@ -21,6 +21,10 @@ export default function ReceiptScreen({ ...props }) {
         resetOrder();
         navigate('OrderComplete');
       }}
+      onComplete={() => {
+        resetOrder();
+        navigate('KioskHome');
+      }}
       {...props}
     />
   );

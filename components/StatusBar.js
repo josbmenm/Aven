@@ -8,6 +8,7 @@ import {
 } from './Styles';
 import TagButton from './TagButton';
 import Button from './Button';
+import { useInStockInventoryMenu } from '../ono-cloud/OnoKitchen';
 import { Easing } from 'react-native-reanimated';
 import { usePopover } from '../views/Popover';
 import KeyboardPopover from './KeyboardPopover';
@@ -83,6 +84,8 @@ export default function StatusBar() {
   const cloud = useCloud();
   const { navigate } = useNavigation();
   const [restaurantState, dispatch] = useRestaurantState();
+  const menu = useInStockInventoryMenu();
+  const inStockCount = (menu && menu.blends && menu.blends.length) || 0;
 
   const { status, message, isRunning, kitchenState } = useKitchenStatus(
     restaurantState,
@@ -138,70 +141,78 @@ export default function StatusBar() {
             {isRunning && <Spinner color="white" />}
           </View>
         </TouchableOpacity>
-        {status !== 'paused' && status !== 'ready' && (
-          <FaultButton
-            fault={{
-              title: message,
-              status,
-            }}
-          />
-        )}
-        {(areCupsEmpty || areCupsLow) && (
-          <FaultButton
-            fault={{ title: 'Cups Low' }}
-            isWarningColor={!areCupsEmpty}
-          />
-        )}
-        {restaurantFaults.map(fault => {
-          const type = fault.restaurantFaultType;
-          let faultData = {
-            title: 'Unknown',
-            description: `Unidentified fault - ${JSON.stringify(fault)}`,
-          };
-          if (type === 'FreezerTemp') {
-            faultData = {
-              title: 'Freezer Temperature',
-              description: `Freezer has gone above 5°F. Press "reset" once freezer is cleaned and food is replaced, then press start.`,
-            };
-          } else if (type === 'BevTemp') {
-            faultData = {
-              title: 'Beverage Temperature',
-              description: `Beverage fridge has gone above 41°F. Press "reset" once the beverage fridge is cleaned and food is replaced, then press start.`,
-            };
-          } else if (type === 'PistonTemp') {
-            faultData = {
-              title: 'Piston Temperature',
-              description: `Piston fridge has gone above 41°F. Press "reset" once the piston fridge is cleaned and food is replaced, then press start.`,
-            };
-          } else if (type === 'WasteFull') {
-            faultData = {
-              title: 'Waste Full',
-              description: `Liquid waste tank is full`,
-            };
-          } else if (type === 'WaterEmpty') {
-            faultData = {
-              title: 'Water Empty',
-              description: `Fresh water tank is low or empty.`,
-            };
-          }
-          return (
+        <View style={{ padding: 8, flexDirection: 'row' }}>
+          {status !== 'paused' && status !== 'ready' && !isRunning && (
             <FaultButton
-              key={fault.key}
-              fault={faultData}
-              onReset={
-                fault.ackTime === 0 &&
-                (() => {
-                  dispatch({
-                    type: 'AckFault',
-                    key: fault.key,
-                  });
-                })
-              }
+              fault={{
+                title: message,
+                status,
+              }}
             />
-          );
-        })}
+          )}
+          {(areCupsEmpty || areCupsLow) && (
+            <FaultButton
+              fault={{ title: 'Cups Low' }}
+              isWarningColor={!areCupsEmpty}
+            />
+          )}
+          {inStockCount < 3 && (
+            <FaultButton
+              fault={{ title: `${inStockCount} blends in stock` }}
+              isWarningColor={inStockCount > 1}
+            />
+          )}
+          {restaurantFaults.map(fault => {
+            const type = fault.restaurantFaultType;
+            let faultData = {
+              title: 'Unknown',
+              description: `Unidentified fault - ${JSON.stringify(fault)}`,
+            };
+            if (type === 'FreezerTemp') {
+              faultData = {
+                title: 'Freezer Temperature',
+                description: `Freezer has gone above 5°F. Press "reset" once freezer is cleaned and food is replaced, then press start.`,
+              };
+            } else if (type === 'BevTemp') {
+              faultData = {
+                title: 'Beverage Temperature',
+                description: `Beverage fridge has gone above 41°F. Press "reset" once the beverage fridge is cleaned and food is replaced, then press start.`,
+              };
+            } else if (type === 'PistonTemp') {
+              faultData = {
+                title: 'Piston Temperature',
+                description: `Piston fridge has gone above 41°F. Press "reset" once the piston fridge is cleaned and food is replaced, then press start.`,
+              };
+            } else if (type === 'WasteFull') {
+              faultData = {
+                title: 'Waste Full',
+                description: `Liquid waste tank is full`,
+              };
+            } else if (type === 'WaterEmpty') {
+              faultData = {
+                title: 'Water Empty',
+                description: `Fresh water tank is low or empty.`,
+              };
+            }
+            return (
+              <FaultButton
+                key={fault.key}
+                fault={faultData}
+                onReset={
+                  fault.ackTime === 0 &&
+                  (() => {
+                    dispatch({
+                      type: 'AckFault',
+                      key: fault.key,
+                    });
+                  })
+                }
+              />
+            );
+          })}
+        </View>
       </View>
-      <View style={{ margin: 7 }}>
+      <View style={{ padding: 8 }}>
         {status === 'paused' && (
           <Button
             title="start"

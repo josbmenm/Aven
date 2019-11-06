@@ -89,7 +89,7 @@ export default function BlendTasker() {
   const openBlendChooser = useBlendPickPopover({
     blendId,
     onBlendPick: ({ blendId, blendName }) => {
-      setSavedTask({ ...savedTask, blendId, blendName });
+      setSavedTask({ ...savedTask, blendId, blendName, customization: {} });
     },
   });
 
@@ -103,7 +103,10 @@ export default function BlendTasker() {
   const restaurantDispatch = usePutTransactionValue('RestaurantActions');
   const companyConfig = useCompanyConfig();
   const fills = getFillsOfOrderItem(menuItem, { customization }, companyConfig);
-  const blendDisplayName = customization ? `custom ${blendName}` : blendName;
+  const blendDisplayName =
+    customization && (customization.enhancements || customization.ingredients)
+      ? `custom ${blendName}`
+      : blendName;
   return (
     <Row title="free blend">
       <View style={{ flex: 1 }}>

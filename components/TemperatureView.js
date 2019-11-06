@@ -2,12 +2,12 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import { titleStyle, proseFontFace, monsterra } from '../components/Styles';
-import Svg, { Path } from 'react-native-svg';
+import Tag from './Tag';
 
-function TempCell({ title, value, button }) {
+export function TempCell({ title, value, button }) {
   return (
-    <View style={{ flex: 1 }}>
-      <Text style={{ ...titleStyle, color: monsterra, fontSize: 20 }}>
+    <View style={{ flex: 1, paddingHorizontal: 16 }}>
+      <Text style={{ ...titleStyle, color: Tag.neutralColor, fontSize: 20 }}>
         {title}
       </Text>
       <Text style={{ ...proseFontFace, color: monsterra, fontSize: 62 }}>
@@ -17,7 +17,7 @@ function TempCell({ title, value, button }) {
     </View>
   );
 }
-function formatTemp(value) {
+export function formatTemp(value) {
   if (value == null || value === 1562) {
     return '?';
   }

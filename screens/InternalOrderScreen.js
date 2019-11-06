@@ -29,7 +29,7 @@ function OrderTasks({ order }) {
     <View>
       {order.orderTasks.map(task => {
         return (
-          <Row title={task.id} key={task.id}>
+          <Row title={task.blendName} key={task.id}>
             <Button
               title="re-make"
               onPress={() => {
@@ -122,11 +122,13 @@ function ReceiptSection({ order }) {
           <Button
             title="send phone receipt"
             onPress={onSMSPopover}
+            type="outline"
             style={{ marginHorizontal: 8 }}
           />
           <Button
             title="send email receipt"
             onPress={onEmailPopover}
+            type="outline"
             style={{ marginHorizontal: 8 }}
           />
         </View>
@@ -140,7 +142,7 @@ function PromoSection({ order }) {
     return null;
   }
   return (
-    <Row title="promo code">
+    <Row title="Promo Code">
       <Text style={{ ...boldPrimaryFontFace }}>{order.promo.promoCode}</Text>
       {order.promo.type === 'FreeBlends' && (
         <Text style={{ ...boldPrimaryFontFace }}>
@@ -159,7 +161,6 @@ function RefundSection({ order }) {
     <Row title="Refund">
       <Button
         style={{ width: 250 }}
-        type="outline"
         title={isLoading ? null : 'refund charge'}
         disabled={!canRefund || isLoading}
         onPress={() => {

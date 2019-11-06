@@ -43,22 +43,27 @@ export function computeNextSteps(
           ? getMachineReady(kitchenState, intent)
           : true;
       const rawKitchenCommand = getKitchenCommand(intent, kitchenState || {}); // CAREFUL, KITCHEN STATE IS HERE BUT EMPTY
-      const command = {
+
+      const command = rawKitchenCommand && {
         ...rawKitchenCommand,
         context: { ...(rawKitchenCommand.context || {}), intent },
       };
-      const commandType = machineCommands[command.commandType];
-      const isSystemIdle = kitchenState
-        ? kitchenState[`${commandType.subsystem}_PrgStep_READ`] === 0
-        : true;
-      const isSystemNotFaulted = kitchenState
-        ? kitchenState[`${commandType.subsystem}_NoFaults_READ`] === true
-        : true;
-      const commandPermissive = kitchenState
-        ? commandType.checkReady(kitchenState, command)
-        : true;
+
+      const commandType = command && machineCommands[command.commandType];
+      const isSystemIdle =
+        kitchenState && commandType
+          ? kitchenState[`${commandType.subsystem}_PrgStep_READ`] === 0
+          : true;
+      const isSystemNotFaulted =
+        kitchenState && commandType
+          ? kitchenState[`${commandType.subsystem}_NoFaults_READ`] === true
+          : true;
+      const commandPermissive =
+        kitchenState && command
+          ? commandType.checkReady(kitchenState, command)
+          : true;
       const isCommandReady =
-        isSystemNotFaulted && isSystemIdle && commandPermissive;
+        !!command && isSystemNotFaulted && isSystemIdle && commandPermissive;
       const successRestaurantAction =
         getSuccessRestaurantAction && getSuccessRestaurantAction(intent);
       const failureRestaurantAction =
@@ -72,35 +77,28 @@ export function computeNextSteps(
         isCommandReady,
         isSystemIdle,
         isSystemNotFaulted,
-        isReady: isMachineReady && isCommandReady,
+        isReady: !command || (isMachineReady && isCommandReady),
         successRestaurantAction,
         failureRestaurantAction,
         startingRestaurantAction,
-        subsystem: command.subsystem,
+        subsystem: command && command.subsystem,
         description: getDescription(intent),
         perform: async (restaurantStateDispatch, runCommand) => {
           let resp = null;
-          log('MachineCommandStarting', {
-            intent,
-            startingRestaurantAction,
-            command,
-          });
+
           startingRestaurantAction &&
             (await restaurantStateDispatch(startingRestaurantAction));
           try {
-            resp = await runCommand({
-              ...command,
-              context: {
-                ...(command.context || {}),
-                via: 'Sequencer',
-                intent,
-              },
-            });
-            log('MachineCommandPerformed', {
-              intent,
-              successRestaurantAction,
-              command,
-            });
+            if (command) {
+              resp = await runCommand({
+                ...command,
+                context: {
+                  ...(command.context || {}),
+                  via: 'Sequencer',
+                  intent,
+                },
+              });
+            }
             successRestaurantAction &&
               (await restaurantStateDispatch(successRestaurantAction));
             await delay(30);

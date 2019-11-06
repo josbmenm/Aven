@@ -3,6 +3,7 @@ import attachWebServer from '../aven-web/attachWebServer';
 import { CloudContext } from '../cloud-core/KiteReact';
 import { createReducerStream } from '../cloud-core/Kite';
 import RestaurantReducer from '../logic/RestaurantReducer';
+import RecentCompletedTasksReducer from '../logic/RecentCompletedTasksReducer';
 import KitchenCommands from '../logic/KitchenCommands';
 import { hashSecureString } from '../cloud-utils/Crypto';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
@@ -19,7 +20,9 @@ import authenticateSource from '../cloud-core/authenticateSource';
 import placeOrder from './placeOrder';
 import { connectMachine } from './Machine';
 import KitchenSteps from '../logic/KitchenSteps';
-import { log, error, fatal, setLoggerMode } from '../logger/logger';
+import KitchenEffects from './KitchenEffects';
+import { log, trace, error, fatal, setLoggerMode } from '../logger/logger';
+import getRestaurantKitchenState from './getRestaurantKitchenState';
 
 const fetch = require('node-fetch');
 
@@ -44,7 +47,7 @@ export default async function startVerseServer(httpServer) {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  // USE_DEV_SERVER = false;
+  USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -82,16 +85,6 @@ export default async function startVerseServer(httpServer) {
       connection: pgConfig,
     },
   });
-
-  // const combinedStorageSource = combineSources({
-  //   fastSource: storageSource,
-  //   slowSource: authenticatedRemoteSource,
-  //   fastSourceOnlyMapping: {
-  //     'onofood.co': {
-  //       KitchenState: true,
-  //     },
-  //   },
-  // });
 
   const emailAgent = EmailAgent({
     defaultFromEmail: 'Ono Blends <aloha@onofood.co>',
@@ -186,15 +179,13 @@ export default async function startVerseServer(httpServer) {
     snapshotInterval: 10,
     snapshotsDoc: cloud.get('RestaurantStateSnapshot'),
   });
-
-  // const restaurantState = cloud.docs.setOverrideStream(
-  //   'RestaurantState',
-  //   createReducerStream(
-  //     restaurantActions,
-  //     RestaurantReducer.reducerFn,
-  //     RestaurantReducer.initialState,
-  //   ),
-  // );
+  const restaurantActivity = cloud.get('RestaurantActivity');
+  cloud.setReducer('RecentCompletedTasks', {
+    actionsDoc: restaurantActivity,
+    reducer: RecentCompletedTasksReducer,
+    snapshotInterval: 10,
+    snapshotsDoc: cloud.get('RecentCompletedTasksSnapshot'),
+  });
 
   const protectedSource = createProtectedSource({
     source: cloud,
@@ -206,12 +197,6 @@ export default async function startVerseServer(httpServer) {
         RestaurantState: { defaultRule: { canRead: true } },
         CompanyConfig: { defaultRule: { canRead: true } },
         PendingOrders: { defaultRule: { canPost: true } },
-
-        // 'OnoState^Inventory': { defaultRule: { canRead: true } },
-        // 'OnoState^Menu': { defaultRule: { canRead: true } },
-        // 'RestaurantActions^RestaurantReducer': {
-        //   defaultRule: { canRead: true },
-        // },
       },
     },
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
@@ -232,102 +217,8 @@ export default async function startVerseServer(httpServer) {
     kitchen = connectMachine({
       commands: KitchenCommands,
       sequencerSteps: KitchenSteps,
-      computeSideEffects: (kitchenState, restaurantState) => {
-        if (!kitchenState.isPLCConnected) {
-          return [];
-        }
-        const {
-          System_FreezerTemp_READ,
-          System_BevTemp_READ,
-          System_YogurtZoneTemp_READ,
-          Denester_DispensedSinceLow_READ,
-          Delivery_Bay0CupPresent_READ,
-          System_WasteWaterFull_READ,
-          System_FreshWaterAboveLow_READ,
-        } = kitchenState;
-        const foodMonitoring = {
-          isBeverageCold: System_BevTemp_READ <= 41,
-          isFreezerCold: System_FreezerTemp_READ <= 5,
-          isPistonCold: System_YogurtZoneTemp_READ <= 41,
-        };
-        const lastMonitoredState = restaurantState.foodMonitoring || {};
-
-        const sideEffects = [];
-        if (
-          Object.entries(foodMonitoring).find(
-            ([monitorKey, monitorValue]) =>
-              monitorValue !== lastMonitoredState[monitorKey],
-          )
-        ) {
-          sideEffects.push({ type: 'SetFoodMonitoring', foodMonitoring });
-        }
-
-        if (restaurantState.isAutoRunning) {
-          const faultMuting = restaurantState.faultMuting || {};
-          if (!foodMonitoring.isBeverageCold && !faultMuting.bevTemp) {
-            sideEffects.push({
-              type: 'SetRestaurantFault',
-              restaurantFaultType: 'BevTemp',
-              requiresAck: true,
-              params: { temp: System_BevTemp_READ },
-            });
-          }
-          if (!foodMonitoring.isFreezerCold && !faultMuting.freezerTemp) {
-            sideEffects.push({
-              type: 'SetRestaurantFault',
-              restaurantFaultType: 'FreezerTemp',
-              requiresAck: true,
-              params: { temp: System_FreezerTemp_READ },
-            });
-          }
-          if (!foodMonitoring.isPistonCold && !faultMuting.pistonTemp) {
-            sideEffects.push({
-              type: 'SetRestaurantFault',
-              restaurantFaultType: 'PistonTemp',
-              requiresAck: true,
-              params: { temp: System_YogurtZoneTemp_READ },
-            });
-          }
-          if (System_WasteWaterFull_READ && !faultMuting.wasteFull) {
-            sideEffects.push({
-              type: 'SetRestaurantFault',
-              restaurantFaultType: 'WasteFull',
-            });
-          }
-          if (!System_FreshWaterAboveLow_READ && !faultMuting.waterEmpty) {
-            sideEffects.push({
-              type: 'SetRestaurantFault',
-              restaurantFaultType: 'WaterEmpty',
-            });
-          }
-        }
-        if (restaurantState.delivery0 && !Delivery_Bay0CupPresent_READ) {
-          sideEffects.push({ type: 'ClearDeliveryBay', bayId: 'delivery0' });
-        }
-
-        if (
-          restaurantState.delivery1 &&
-          !kitchenState.Delivery_Bay1CupPresent_READ
-        ) {
-          sideEffects.push({ type: 'ClearDeliveryBay', bayId: 'delivery1' });
-        }
-        if (
-          (restaurantState.blend == null ||
-            restaurantState.blend === 'dirty') &&
-          kitchenState.BlendSystem_HasCup_READ &&
-          (!restaurantState.fill || !restaurantState.fill.willPassToBlender)
-        ) {
-          sideEffects.push({ type: 'ObserveUnknownBlenderCup' });
-        }
-        if (
-          restaurantState.delivery == null &&
-          kitchenState.Delivery_ArmHasCup_READ &&
-          (!restaurantState.blend || !restaurantState.blend.willPassToDelivery)
-        ) {
-          sideEffects.push({ type: 'ObserveUnknownDeliveryCup' });
-        }
-        return sideEffects;
-      },
+      computeSideEffects: KitchenEffects,
+      deriveAppliedMachineState: getRestaurantKitchenState,
       configStream: kitchenConfigStream,
       restaurantStateStream,
       restaurantStateDispatch,
@@ -342,9 +233,11 @@ export default async function startVerseServer(httpServer) {
     if (completeTaskIds.indexOf(task.id) !== -1) return;
     completeTaskIds.push(task.id);
     log('TaskComplete', { task, taskCompleteIndex: completeTaskIds.length });
-    cloud
-      .get(`Tasks/${task.id}`)
-      .putValue(task)
+    restaurantActivity
+      .putTransactionValue({
+        type: 'TaskCompletion',
+        task,
+      })
       .then(() => {
         restaurantStateDispatch({
           type: 'CleanupTask',
@@ -402,14 +295,14 @@ export default async function startVerseServer(httpServer) {
   restaurantConfigStream.stream.addListener(restConfigListener);
 
   setInterval(() => {
-    log('RestaurantStateMonitor', lastRestaurantState);
+    trace('RestaurantStateMonitor', lastRestaurantState);
   }, 60000);
 
   if (kitchen) {
     setInterval(() => {
       const kitchenState = kitchenStateDoc.value.get();
       kitchenState &&
-        log('KitchenMonitor', {
+        trace('KitchenMonitor', {
           ...kitchenState,
         });
     }, 60000);

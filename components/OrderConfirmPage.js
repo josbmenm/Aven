@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
-import GenericPage from './GenericPage';
 import SpinnerButton from './SpinnerButton';
 import Receipt from './Receipt';
 import { BlurView } from 'react-native-blur';
 import Animated, { Easing } from 'react-native-reanimated';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import FadeTransition from './FadeTransition';
+import usePromoPopover from './usePromoPopover';
 import { boldPrimaryFontFace, primaryFontFace } from './Styles';
 import { OnoThemeDark } from '../logic/OnoTheme';
 
@@ -137,6 +137,7 @@ export default function OrderConfirmPage({
   paymentCompleted,
   paymentErrorMessage,
   paymentDisplayMessage,
+  onPromoCode,
   ...props
 }) {
   // console.log('---- =======');
@@ -319,8 +320,9 @@ export default function OrderConfirmPage({
       {...props}
     >
       <CloseButton />
-      <Receipt summary={summary} />
+      <Receipt summary={summary} onPromoCode={onPromoCode} />
       {bottomContent}
+
       <View
         style={{
           position: 'absolute',

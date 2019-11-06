@@ -207,7 +207,21 @@ const KitchenSteps = [
 
   {
     // do fill
-    getDescription: ({ amount, system, slot, dryRunDispense }) => {
+    getDescription: ({
+      amount,
+      ingredientName,
+      system,
+      slot,
+      dryRunDispense,
+      isInvalid,
+      isDisabled,
+      isEmpty,
+    }) => {
+      if (isInvalid) {
+        if (isDisabled) return `Skip filling ${ingredientName} - Disabled`;
+        if (isEmpty) return `Skip filling ${ingredientName} - Empty`;
+        return `Skip filling ${ingredientName} - Invalid`;
+      }
       if (dryRunDispense) {
         return `Dry/Fake Fill Cup ${system}.${slot}x${amount}`;
       }
@@ -222,14 +236,32 @@ const KitchenSteps = [
         return null;
       }
       const nextFill = restaurantState.fill.fillsRemaining[0];
+      const slotId = nextFill.slotId;
+      const slotInventory =
+        restaurantState.slotInventory && restaurantState.slotInventory[slotId];
+      const estimatedRemaining =
+        (slotInventory && slotInventory.estimatedRemaining) || 0;
+      const isEmpty = nextFill.amount > estimatedRemaining;
+      const disabledMode = (settings && settings.disabledMode) || false; // 'hard', false, true
+      const isDisabled = disabledMode === true;
+      const isInvalid = isEmpty || isDisabled;
+      const settings =
+        restaurantState.slotSettings && restaurantState.slotSettings[slotId];
+      // const isOptional = (settings && settings.optional) || false;
       const intent = {
         ...nextFill,
+        isInvalid,
+        isDisabled,
+        isEmpty,
         taskId: restaurantState.fill.task.id,
         dryRunDispense: restaurantState.isDryRunning,
       };
       return intent;
     },
     getKitchenCommand: intent => {
+      if (intent.isInvalid) {
+        return null;
+      }
       if (intent.dryRunDispense) {
         return {
           commandType: 'PositionToSystemSlot',
@@ -241,10 +273,24 @@ const KitchenSteps = [
         params: intent,
       };
     },
-    getSuccessRestaurantAction: intent => ({
-      type: intent.dryRunDispense ? 'DidPretendFill' : 'DidFill',
-      ...intent,
-    }),
+    getSuccessRestaurantAction: intent => {
+      if (intent.isInvalid) {
+        return {
+          ...intent, // (we need system,amount,slot)
+          type: 'DidFailFill',
+        };
+      }
+      if (intent.dryRunDispense) {
+        return {
+          ...intent, // (we need system,amount,slot)
+          type: 'DidPretendFill',
+        };
+      }
+      return {
+        ...intent, // (we need system,amount,slot)
+        type: 'DidFill',
+      };
+    },
     getFailureRestaurantAction: intent => ({
       type: 'DidFailFill',
       ...intent,

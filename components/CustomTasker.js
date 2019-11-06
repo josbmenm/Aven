@@ -110,6 +110,7 @@ function AddFillForm({ onSubmit, onClose }) {
                 ingredientImage: slot.Ingredient.Image,
                 slotId: slot.id,
                 systemId: slot.KitchenSystem.id,
+                systemName: slot.KitchenSystem.Name,
                 slot: slot.Slot,
                 system: slot.KitchenSystem.FillSystemID,
                 index: slot._index,

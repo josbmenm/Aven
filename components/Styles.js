@@ -131,7 +131,7 @@ export const rowStyle = {
 export const rowTitleStyle = {
   fontSize: 20,
   ...boldPrimaryFontFace,
-  color: '#222',
+  color: '#444',
   marginBottom: 12,
 };
 export const bitRowStyle = {

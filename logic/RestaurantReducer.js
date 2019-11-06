@@ -63,6 +63,8 @@ function handleDisabledFills(state) {
     return state;
   }
 
+  console.log('checking fill');
+
   return handleDisabledFills({
     ...state,
     fill: {
@@ -89,19 +91,6 @@ function withdrawInventoryIngredient(state, slotId, amount) {
     };
   }
   return slotInventory;
-}
-
-function withdrawInventoryCup(state) {
-  const lastInventory = state.cupInventory || {};
-  const estimatedRemaining = lastInventory.estimatedRemaining;
-  const newEstimatedRemaining =
-    estimatedRemaining == null ? null : estimatedRemaining - 1;
-
-  const cupInventory = {
-    ...lastInventory,
-    estimatedRemaining: newEstimatedRemaining,
-  };
-  return cupInventory;
 }
 
 function RestaurantReducerFn(state = {}, action) {
@@ -187,7 +176,6 @@ function RestaurantReducerFn(state = {}, action) {
       const topTask = state.queue[0];
       return handleDisabledFills({
         ...defaultReturn(),
-        cupInventory: withdrawInventoryCup(state),
         fill: {
           id: topTask.id,
           task: topTask,
@@ -274,12 +262,6 @@ function RestaurantReducerFn(state = {}, action) {
         ),
       };
     }
-    case 'DidDispenseCup': {
-      return {
-        ...defaultReturn(),
-        cupInventory: withdrawInventoryCup(state),
-      };
-    }
     case 'SetDryMode': {
       return {
         ...defaultReturn(),
@@ -337,6 +319,9 @@ function RestaurantReducerFn(state = {}, action) {
         system: action.system,
         amount: action.amount,
         slot: action.slot,
+        isInvalid: action.isInvalid,
+        isDisabled: action.isDisabled,
+        isEmpty: action.isEmpty,
       };
       let fillsRemaining = (state.fill.fillsRemaining || []).filter(fill => {
         const isTheFill =
@@ -662,6 +647,7 @@ function RestaurantReducerFn(state = {}, action) {
     case 'CloseRestaurant': {
       return {
         ...defaultReturn(),
+        sessionName: null,
         isClosed: true,
         maintenanceMode: false,
       };
@@ -677,6 +663,7 @@ function RestaurantReducerFn(state = {}, action) {
         ...defaultReturn(),
         isClosed: false,
         maintenanceMode: false,
+        sessionName: action.sessionName,
         scheduledCloseTime: action.scheduledCloseTime || null,
       };
     }

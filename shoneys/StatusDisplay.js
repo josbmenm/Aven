@@ -13,7 +13,7 @@ import {
 } from '../components/Styles';
 import AirtableImage from '../components/AirtableImage';
 import useTimeSeconds from '../utils/useTimeSeconds';
-import { useIsRestaurantOpen } from '../ono-cloud/Kitchen';
+import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
 const SCREEN_WIDTH = 1080;
 const ASPECT_RATIO = 16 / 9;
 
@@ -710,8 +710,16 @@ function StoreSign({ title, subtitle }) {
 
 function StatusDisplay({ state }) {
   const { isOpen, closingSoon, isTraveling } = useIsRestaurantOpen(state);
+  const [restaurantState, dispatched] = useRestaurantState();
   if (isTraveling) {
     return <View style={{ flex: 1, backgroundColor: 'black' }} />;
+  }
+  if (restaurantState.maintenanceMode) {
+    return (
+      <FullScreenBackground>
+        <StoreSign title="hang tight" subtitle="we'll be back soon!" />
+      </FullScreenBackground>
+    );
   }
   if (!isOpen) {
     return (

@@ -278,9 +278,7 @@ export default function BlendPage({
           orderItemId,
           customization: null,
         })
-          .then(() => {
-            console.log('hiho');
-          })
+          .then(() => {})
           .catch(console.error);
       },
     },
