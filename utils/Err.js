@@ -1,14 +1,17 @@
 export default class Err extends Error {
-  constructor(message, type, detail) {
+  constructor(message, name, detail) {
     super(message);
-    this.type = type;
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, Err);
+    }
+    this.name = name;
     this.detail = detail;
   }
 
   toJSON() {
     return {
       detail: this.detail,
-      type: this.type,
+      name: this.name,
       message: this.message,
     };
   }

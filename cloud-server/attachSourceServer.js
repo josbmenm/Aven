@@ -40,7 +40,7 @@ export default async function attachSourceServer({
         res.status(500).send(
           JSON.stringify({
             message: String(err),
-            type: err.type,
+            name: err.name,
             detail: err.detail,
           }),
         );
