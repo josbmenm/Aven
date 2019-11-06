@@ -673,9 +673,6 @@ function RestaurantReducerFn(state = {}, action) {
         completedTasks: (state.completedTasks || []).filter(
           task => task.id !== action.taskId,
         ),
-        failedTasks: (state.failedTasks || []).filter(
-          task => task.id !== action.taskId,
-        ),
       };
     }
     case 'SetRestaurantFault': {

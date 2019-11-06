@@ -61,7 +61,7 @@ function TaskInfoText({ state }) {
       </Text>
       <Text style={{ fontSize: 24, ...primaryFontFace, color: '#282828' }}>
         {state.task.blendName}
-        {state.fillsFailed.length ? ' (failed)' : ''}
+        {state.fillsFailed && state.fillsFailed.length ? ' (failed)' : ''}
       </Text>
     </View>
   );

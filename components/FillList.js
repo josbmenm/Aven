@@ -139,7 +139,7 @@ function SetFillButton({ fill, fills, onFills }) {
   return (
     <Button
       type="outline"
-      title={`${fill.amount} shots`}
+      title={`${fill.amount}`}
       disabled={!onFills}
       onPress={onFillPopover}
       size="small"

@@ -16,6 +16,7 @@ import BlendCustomization from './BlendCustomization';
 import { getFillsOfOrderItem, getNewBlendTask } from '../logic/configLogic';
 import { Easing } from 'react-native-reanimated';
 import useAsyncStorage, { isStateUnloaded } from '../screens/useAsyncStorage';
+import ButtonStack from './ButtonStack';
 
 function usePutTransactionValue(docName) {
   const cloud = useCloud();
@@ -107,33 +108,31 @@ export default function BlendTasker() {
     customization && (customization.enhancements || customization.ingredients)
       ? `custom ${blendName}`
       : blendName;
+  const buttons = [
+    <Button title="set order info" type="outline" onPress={openOrderInfo} />,
+  ];
+  blendId &&
+    buttons.push(
+      <CustomizeButton
+        menuItem={menuItem}
+        customization={customization}
+        setCustomization={customization =>
+          setSavedTask({ ...savedTask, customization })
+        }
+      />,
+    );
+  buttons.push(
+    <Button title="choose blend" type="outline" onPress={openBlendChooser} />,
+  );
   return (
     <Row title="free blend">
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+          <View style={{ flex: 2, justifyContent: 'flex-start' }}>
             <TaskInfo task={{ name: orderName, blendName: blendDisplayName }} />
-            <Button
-              title="set order info"
-              type="outline"
-              onPress={openOrderInfo}
-            />
-            {blendId && (
-              <CustomizeButton
-                menuItem={menuItem}
-                customization={customization}
-                setCustomization={customization =>
-                  setSavedTask({ ...savedTask, customization })
-                }
-              />
-            )}
-            <Button
-              title="choose blend"
-              type="outline"
-              onPress={openBlendChooser}
-            />
+            <ButtonStack buttons={buttons} />
           </View>
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 3, paddingLeft: 20 }}>
             {fills && (
               <FillList
                 fills={fills}

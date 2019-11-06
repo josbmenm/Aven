@@ -39,9 +39,10 @@ export default function DisconnectedPage() {
         justifyContent: 'center',
         alignItems: 'center',
         opacity,
+        alignSelf: 'stretch',
       }}
     >
-      <PageTitle title="connecting to the restaurant.." />
+      <PageTitle title="diconnected from machine.." />
       <View style={{ marginTop: 60 }}>
         <Spinner />
       </View>
