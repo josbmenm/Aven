@@ -86,12 +86,11 @@ export function getNewBlendTask(
   etc,
   companyConfig,
 ) {
-  const blendProfile =
-    (profileId && allProfiles[profileId]) || blankBlendProfile;
   const allProfiles = companyConfig.baseTables.BlendProfiles;
   const profileId =
     menuItem.Recipe.BlendProfile && menuItem.Recipe.BlendProfile[0];
-  console.log('has blendProfile in task', blendProfile);
+  const blendProfile =
+    (profileId && allProfiles[profileId]) || blankBlendProfile;
   return {
     id: cuid(),
     name: orderName,
@@ -99,6 +98,7 @@ export function getNewBlendTask(
     recipeId: menuItem.Recipe.id,
     blendSlug: menuItem.Slug,
     blendProfileId: menuItem.Recipe.BlendProfile[0],
+    blendProfileName: blendProfile.Name,
     blendProfile,
     skipBlend: false,
     deliveryMode: 'deliver',

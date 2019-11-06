@@ -387,7 +387,18 @@ const KitchenSteps = [
     getKitchenCommand: intent => ({
       commandType: 'Blend',
       params: {
-        profile: intent.blendProfile,
+        Timer1: intent.blendProfile.Timer1,
+        Speed1: intent.blendProfile.Speed1,
+        Pulse1: intent.blendProfile.Pulse1,
+        Timer2: intent.blendProfile.Timer2,
+        Speed2: intent.blendProfile.Speed2,
+        Pulse2: intent.blendProfile.Pulse2,
+        Timer3: intent.blendProfile.Timer3,
+        Speed3: intent.blendProfile.Speed3,
+        Pulse3: intent.blendProfile.Pulse3,
+        Timer4: intent.blendProfile.Timer4,
+        Speed4: intent.blendProfile.Speed4,
+        Pulse4: intent.blendProfile.Pulse4,
       },
     }),
     getSuccessRestaurantAction: intent => ({

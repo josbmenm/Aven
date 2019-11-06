@@ -158,26 +158,32 @@ function usePutTransactionValue(docName) {
 function BlendProfileForm({ onClose, onBlendProfile, blendProfileId }) {
   const config = useCompanyConfig();
   const allProfiles = (config && config.baseTables.BlendProfiles) || {};
-  console.log({ config });
   return (
     <ScrollView style={{ flex: 1 }}>
       {Object.values(allProfiles).map(profile => (
         <TouchableOpacity
           onPress={() => {
+            onBlendProfile(profile);
             onClose();
           }}
           style={{ flexDirection: 'row', alignItems: 'center' }}
         >
           <Text
             style={{
+              padding: 16,
               flex: 1,
               ...primaryFontFace,
-
-              color: '#111',
+              color: blendProfileId === profile.id ? '#111' : '#444',
               fontSize: 22,
             }}
           >
-            {profile.Name}
+            {profile.Name} (
+            {(profile.Timer1 +
+              profile.Timer2 +
+              profile.Timer3 +
+              profile.Timer4) /
+              1000}{' '}
+            sec)
           </Text>
         </TouchableOpacity>
       ))}
@@ -189,7 +195,7 @@ function useBlendProfilePopover({ blendProfileId, onBlendProfile }) {
     return (
       <BlendProfileForm
         onClose={onClose}
-        onSubmit={onBlendProfile}
+        onBlendProfile={onBlendProfile}
         blendProfileId={blendProfileId}
       />
     );
@@ -205,13 +211,19 @@ export default function CustomTasker() {
     skipBlend: null,
     blendProfileId: null,
     blendProfileName: 'None',
+    blendProfile: null,
     fills: [],
   });
   const { orderName, blendName, deliveryMode, skipBlend, fills } = savedTask;
   const onBlendProfile = useBlendProfilePopover({
     blendProfileId: savedTask.blendProfileId,
-    onBlendProfile: ({ blendProfileId, blendProfileName }) => {
-      setSavedTask({ ...savedTask, blendProfileName, blendProfileId });
+    onBlendProfile: blendProfile => {
+      setSavedTask({
+        ...savedTask,
+        blendProfile,
+        blendProfileName: blendProfile.Name,
+        blendProfileId: blendProfile.id,
+      });
     },
   });
   const openOrderInfo = useOrderInfoPopover({
@@ -248,7 +260,8 @@ export default function CustomTasker() {
               onPress={openOrderInfo}
             />
             <Button
-              title={`Blend Profile: ${savedTask.blendProfileName || 'None'}`}
+              style={{ marginTop: 8 }}
+              title={`blend profile: ${savedTask.blendProfileName || 'None'}`}
               type="outline"
               onPress={onBlendProfile}
             />

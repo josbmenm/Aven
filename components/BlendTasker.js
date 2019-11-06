@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import Button from './Button';
 import useOrderInfoPopover from './useOrderInfoPopover';
 import useBlendPickPopover from './useBlendPickPopover';
@@ -17,6 +17,7 @@ import { getFillsOfOrderItem, getNewBlendTask } from '../logic/configLogic';
 import { Easing } from 'react-native-reanimated';
 import useAsyncStorage, { isStateUnloaded } from '../screens/useAsyncStorage';
 import ButtonStack from './ButtonStack';
+import { primaryFontFace } from './Styles';
 
 function usePutTransactionValue(docName) {
   const cloud = useCloud();
@@ -130,6 +131,9 @@ export default function BlendTasker() {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View style={{ flex: 2, justifyContent: 'flex-start' }}>
             <TaskInfo task={{ name: orderName, blendName: blendDisplayName }} />
+            <Text style={{ ...primaryFontFace }}>
+              Blend Profile: {savedTask && savedTask.blendProfileName}
+            </Text>
             <ButtonStack buttons={buttons} />
           </View>
           <View style={{ flex: 3, paddingLeft: 20 }}>
@@ -167,9 +171,7 @@ export default function BlendTasker() {
                 ),
               ],
             })
-              .then(() => {
-                console.log('order placed!');
-              })
+              .then(() => {})
               .catch(console.error);
           }}
         />
