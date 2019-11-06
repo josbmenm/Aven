@@ -769,9 +769,9 @@ export function createDoc({
       performReport('PutDoc', {
         id: result.id,
       });
-      console.warn(
-        `Expected to put block id "${expectedBlock.id}", but actually put id "${result.id}"`,
-      );
+      // console.warn(
+      //   `Expected to put block id "${expectedBlock.id}", but actually put id "${result.id}"`,
+      // );
     }
     setDocState(stateUpdates);
     return result;

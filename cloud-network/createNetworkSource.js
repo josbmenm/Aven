@@ -57,7 +57,7 @@ export default function createNetworkSource(opts) {
       }
       log('📣', action);
       log('🚨', result);
-      throw new Err(result.message, result.type, result.detail);
+      throw new Err(result.message, result.name, result.detail);
     }
     let result = await res.text();
     try {
