@@ -125,6 +125,10 @@ export default function BlendTasker() {
   buttons.push(
     <Button title="choose blend" type="outline" onPress={openBlendChooser} />,
   );
+  const allProfiles = companyConfig.baseTables.BlendProfiles;
+  const profileId =
+    menuItem.Recipe.BlendProfile && menuItem.Recipe.BlendProfile[0];
+  const blendProfile = (profileId && allProfiles[profileId]) || {};
   return (
     <Row title="free blend">
       <View style={{ flex: 1 }}>
@@ -132,7 +136,7 @@ export default function BlendTasker() {
           <View style={{ flex: 2, justifyContent: 'flex-start' }}>
             <TaskInfo task={{ name: orderName, blendName: blendDisplayName }} />
             <Text style={{ ...primaryFontFace }}>
-              Blend Profile: {savedTask && savedTask.blendProfileName}
+              Blend Profile: {(blendProfile && blendProfile.Name) || 'None'}
             </Text>
             <ButtonStack buttons={buttons} />
           </View>
