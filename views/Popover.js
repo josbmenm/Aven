@@ -43,8 +43,8 @@ export function useTargetPopover(renderPopover, timing) {
 export function usePopover(renderPopover, timing) {
   const ctx = useContext(PopoverContext);
   const navigation = useNavigation();
-  async function onPopover() {
-    ctx.openPopover(renderPopover, null, timing, navigation);
+  async function onPopover(...args) {
+    ctx.openPopover(renderPopover, null, timing, navigation, args);
   }
   return { onPopover };
 }
@@ -67,7 +67,7 @@ export function PopoverContainer({ children }) {
       setPopover(null);
     });
   }
-  function openPopover(renderPopover, location, timing, navigation) {
+  function openPopover(renderPopover, location, timing, navigation, args) {
     timingConfig.current = timing;
     setPopover(
       <NavigationContext.Provider value={navigation}>
@@ -76,6 +76,7 @@ export function PopoverContainer({ children }) {
           location,
           containerLayout,
           openValue,
+          openArguments: args,
         })}
       </NavigationContext.Provider>,
     );
