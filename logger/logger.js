@@ -1,5 +1,8 @@
+let logLevel = process.env.AVEN_LOG_LEVEL || 'trace';
+
 function logDebug(message, fields, level) {
-  console.log(`(${level}) - ${message}`, fields);
+  if (LOG_LEVEL_PRIORITY.indexOf(logLevel) <= LOG_LEVEL_PRIORITY.indexOf(level))
+    console.log(`(${level}) - ${message}`, fields);
 }
 
 export const LOG_LEVELS = {
@@ -10,6 +13,15 @@ export const LOG_LEVELS = {
   error: 'ERROR',
   fatal: 'FATAL',
 };
+
+export const LOG_LEVEL_PRIORITY = [
+  'trace',
+  'debug',
+  'log',
+  'warn',
+  'error',
+  'fatal',
+];
 
 function logJSON(message, fields, level) {
   const logLine = JSON.stringify({
@@ -38,6 +50,10 @@ export function setLoggerMode(mode) {
 
 export function setLogger(logger) {
   activeLogger = logger;
+}
+
+export function setLogLevel(level) {
+  logLevel = level;
 }
 
 export function log(message, fields, level = 'log') {
