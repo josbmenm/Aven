@@ -97,6 +97,7 @@ export default async function scrapeAirTable(fsClient) {
     'KioskBlendMenu',
     'KioskFoodMenu',
     'Recipes',
+    'BlendProfiles',
     'RecipeIngredients',
     'Ingredients',
     'Benefits',

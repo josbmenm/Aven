@@ -17,6 +17,7 @@ import AirtableImage from './AirtableImage';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import { primaryFontFace } from './Styles';
 import useAsyncStorage, { isStateUnloaded } from '../screens/useAsyncStorage';
+import useKeyboardPopover from './useKeyboardPopover';
 
 function useSlotsWithIngredients() {
   const config = useCompanyConfig();
@@ -95,7 +96,7 @@ function AddFillForm({ onSubmit, onClose }) {
   // });
 
   return (
-    <ScrollView style={{ height: 880 }}>
+    <ScrollView style={{ flex: 1 }}>
       {slots.map(slot => (
         <View style={{}}>
           <TouchableOpacity
@@ -143,16 +144,9 @@ function AddFillForm({ onSubmit, onClose }) {
 }
 
 function useFillAddPopover({ onAddFill }) {
-  const { onPopover } = usePopover(
-    ({ onClose, ...props }) => {
-      return (
-        <KeyboardPopover onClose={onClose} {...props}>
-          <AddFillForm onClose={onClose} onSubmit={onAddFill} />
-        </KeyboardPopover>
-      );
-    },
-    { easing: Easing.linear, duration: 100 },
-  );
+  const { onPopover } = useKeyboardPopover(({ onClose }) => {
+    return <AddFillForm onClose={onClose} onSubmit={onAddFill} />;
+  });
   return onPopover;
 }
 function usePutTransactionValue(docName) {
@@ -161,6 +155,47 @@ function usePutTransactionValue(docName) {
   return doc.putTransactionValue;
 }
 
+function BlendProfileForm({ onClose, onBlendProfile, blendProfileId }) {
+  const config = useCompanyConfig();
+  const allProfiles = (config && config.baseTables.BlendProfiles) || {};
+  console.log({ config });
+  return (
+    <ScrollView style={{ flex: 1 }}>
+      {Object.values(allProfiles).map(profile => (
+        <TouchableOpacity
+          onPress={() => {
+            onClose();
+          }}
+          style={{ flexDirection: 'row', alignItems: 'center' }}
+        >
+          <Text
+            style={{
+              flex: 1,
+              ...primaryFontFace,
+
+              color: '#111',
+              fontSize: 22,
+            }}
+          >
+            {profile.Name}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
+}
+function useBlendProfilePopover({ blendProfileId, onBlendProfile }) {
+  const { onPopover } = useKeyboardPopover(({ onClose }) => {
+    return (
+      <BlendProfileForm
+        onClose={onClose}
+        onSubmit={onBlendProfile}
+        blendProfileId={blendProfileId}
+      />
+    );
+  });
+  return onPopover;
+}
 export default function CustomTasker() {
   const [savedTask, setSavedTask] = useAsyncStorage('OnoSavedBlend', {
     orderName: 'Tester O.',
@@ -168,9 +203,17 @@ export default function CustomTasker() {
     blendColor: 'blue',
     deliveryMode: 'deliver',
     skipBlend: null,
+    blendProfileId: null,
+    blendProfileName: 'None',
     fills: [],
   });
   const { orderName, blendName, deliveryMode, skipBlend, fills } = savedTask;
+  const onBlendProfile = useBlendProfilePopover({
+    blendProfileId: savedTask.blendProfileId,
+    onBlendProfile: ({ blendProfileId, blendProfileName }) => {
+      setSavedTask({ ...savedTask, blendProfileName, blendProfileId });
+    },
+  });
   const openOrderInfo = useOrderInfoPopover({
     orderName,
     blendName,
@@ -203,6 +246,11 @@ export default function CustomTasker() {
               title="set order info"
               type="outline"
               onPress={openOrderInfo}
+            />
+            <Button
+              title={`Blend Profile: ${savedTask.blendProfileName || 'None'}`}
+              type="outline"
+              onPress={onBlendProfile}
             />
           </View>
           <View style={{ flex: 1, margin: 8 }}>
@@ -275,9 +323,7 @@ export default function CustomTasker() {
                 },
               ],
             })
-              .then(() => {
-                console.log('order placed!');
-              })
+              .then(() => {})
               .catch(console.error);
           }}
         />

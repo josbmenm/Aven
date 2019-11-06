@@ -156,9 +156,15 @@ export default function BlendTasker() {
             restaurantDispatch({
               type: 'QueueTasks',
               tasks: [
-                getNewBlendTask(menuItem, fills, orderName, {
-                  blendName,
-                }),
+                getNewBlendTask(
+                  menuItem,
+                  fills,
+                  orderName,
+                  {
+                    blendName,
+                  },
+                  companyConfig,
+                ),
               ],
             })
               .then(() => {

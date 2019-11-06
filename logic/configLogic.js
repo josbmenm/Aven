@@ -60,14 +60,46 @@ export function sellPriceOfMenuItem(menuItem) {
   return sellPrice * 100;
 }
 
-export function getNewBlendTask(menuItem, fills, orderName, etc) {
+const BLEND_PROFILE_PARAMS = [
+  'Timer1',
+  'Speed1',
+  'Pulse1',
+  'Timer2',
+  'Speed2',
+  'Pulse2',
+  'Timer3',
+  'Speed3',
+  'Pulse3',
+  'Timer4',
+  'Speed4',
+  'Pulse4',
+];
+const blankBlendProfile = {};
+BLEND_PROFILE_PARAMS.forEach(paramName => {
+  blankBlendProfile[paramName] = 0;
+});
+
+export function getNewBlendTask(
+  menuItem,
+  fills,
+  orderName,
+  etc,
+  companyConfig,
+) {
+  const blendProfile =
+    (profileId && allProfiles[profileId]) || blankBlendProfile;
+  const allProfiles = companyConfig.baseTables.BlendProfiles;
+  const profileId =
+    menuItem.Recipe.BlendProfile && menuItem.Recipe.BlendProfile[0];
+  console.log('has blendProfile in task', blendProfile);
   return {
     id: cuid(),
     name: orderName,
     blendColor: menuItem.Recipe.Color,
     recipeId: menuItem.Recipe.id,
     blendSlug: menuItem.Slug,
-    blendProfile: menuItem.Recipe['Blend Profile'],
+    blendProfileId: menuItem.Recipe.BlendProfile[0],
+    blendProfile,
     skipBlend: false,
     deliveryMode: 'deliver',
     fills,

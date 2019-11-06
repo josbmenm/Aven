@@ -125,12 +125,18 @@ export default async function placeOrder(
       order.orderName.firstName + ' ' + order.orderName.lastName;
     const blendName = displayNameOfOrderItem(item, item.menuItem);
     return [...Array(item.quantity)].map((_, quantityIndex) =>
-      getNewBlendTask(item.menuItem, fills, orderName, {
-        quantityIndex,
-        blendName,
-        orderItemId: item.id,
-        orderId,
-      }),
+      getNewBlendTask(
+        item.menuItem,
+        fills,
+        orderName,
+        {
+          quantityIndex,
+          blendName,
+          orderItemId: item.id,
+          orderId,
+        },
+        companyConfig,
+      ),
     );
   });
   const orderTasks = allTasks.flat(1);

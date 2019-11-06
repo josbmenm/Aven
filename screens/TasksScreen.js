@@ -81,24 +81,27 @@ function CompletedTasks({ dispatch }) {
   console.log(resp);
   if (!resp || !resp.tasks) return null;
 
-  return resp.tasks.map(taskReceipt => (
-    <TaskRow
-      key={taskReceipt.id}
-      taskState={taskReceipt.task}
-      onRemake={() => {
-        dispatch({
-          type: 'QueueTasks',
-          tasks: [
-            {
-              ...taskReceipt.task,
-              id: cuid(),
-              remakeOfTaskId: taskReceipt.task.id,
-            },
-          ],
-        });
-      }}
-    />
-  ));
+  return resp.tasks
+    .slice()
+    .reverse()
+    .map(taskReceipt => (
+      <TaskRow
+        key={taskReceipt.id}
+        taskState={taskReceipt.task}
+        onRemake={() => {
+          dispatch({
+            type: 'QueueTasks',
+            tasks: [
+              {
+                ...taskReceipt.task,
+                id: cuid(),
+                remakeOfTaskId: taskReceipt.task.id,
+              },
+            ],
+          });
+        }}
+      />
+    ));
 }
 
 function TaskQueue({ restaurantState, dispatch }) {

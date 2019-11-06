@@ -119,7 +119,18 @@ const KitchenCommands = {
     subsystem: 'BlendSystem',
     pulse: ['Blend'],
     valueParamNames: {
-      BlendProfile: 'profile',
+      Timer1: 'Timer1',
+      Speed1: 'Speed1',
+      Pulse1: 'Pulse1',
+      Timer2: 'Timer2',
+      Speed2: 'Speed2',
+      Pulse2: 'Pulse2',
+      Timer3: 'Timer3',
+      Speed3: 'Speed3',
+      Pulse3: 'Pulse3',
+      Timer4: 'Timer4',
+      Speed4: 'Speed4',
+      Pulse4: 'Pulse4',
     },
     checkReady: kitchenState => {
       return kitchenState.BlendSystem_BlendReady_READ;
