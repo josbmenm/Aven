@@ -925,11 +925,15 @@ export function createDocSet({
   onReport,
   onInitialLoad,
 }) {
-  const childDocs = new Map();
+  let childDocs = {};
+  let notifyChildDocsChange = null;
 
   const childDocMovers = new WeakMap();
 
   function _createChildDoc(name) {
+    if (childDocs[name]) {
+      return childDocs[name];
+    }
     let currentDocName = name;
     let currentDocFullName = parentChildName(onGetName(), currentDocName);
     const childNameChangeNotifiers = new Set();
@@ -948,11 +952,16 @@ export function createDocSet({
           name: prevName,
           newName: currentDocFullName,
         });
-      const childDoc = childDocs.get(currentDocName);
-      childDocs.delete(currentDocName);
+      const childDoc = childDocs[currentDocName];
       currentDocName = newLocalName;
       currentDocFullName = parentChildName(onGetName(), currentDocName);
-      childDocs.set(currentDocName, childDoc);
+      const nextChildDocs = {
+        ...childDocs,
+        [newLocalName]: childDoc,
+      };
+      delete nextChildDocs[prevName];
+      childDocs = nextChildDocs;
+      notifyChildDocsChange && notifyChildDocsChange();
     }
 
     nameChangeNotifiers && nameChangeNotifiers.add(handleParentRename);
@@ -969,7 +978,11 @@ export function createDocSet({
       onDidDestroy: () => {
         nameChangeNotifiers && nameChangeNotifiers.delete(handleParentRename);
         childNameChangeNotifiers.clear(); // this probably won't be needed because the whole thing should be GC'd
-        childDocs.delete(currentDocName);
+        const nextChildDocs = {
+          ...childDocs,
+        };
+        delete nextChildDocs[currentDocName];
+        childDocs = nextChildDocs;
       },
       onReport: (reportType, report) => {
         onReport &&
@@ -982,8 +995,9 @@ export function createDocSet({
       },
       onInitialLoad,
     });
-    childDocs.set(name, newDoc);
+    childDocs = { ...childDocs, [name]: newDoc };
     childDocMovers.set(newDoc, handleRename);
+    notifyChildDocsChange && notifyChildDocsChange();
     return newDoc;
   }
 
@@ -1003,8 +1017,8 @@ export function createDocSet({
     if (localName.length < name.length - 1) {
       restOfName = name.slice(localName.length + 1);
     }
-    if (childDocs.has(localName)) {
-      returningCloudValue = childDocs.get(localName);
+    if (childDocs[localName]) {
+      returningCloudValue = childDocs[localName];
     }
     if (!returningCloudValue) {
       const newDoc = _createChildDoc(localName);
@@ -1026,11 +1040,16 @@ export function createDocSet({
   }
 
   function shamefullyDestroyAll() {
-    childDocs.clear();
+    childDocs = {};
+    notifyChildDocsChange && notifyChildDocsChange();
   }
 
   function setOverride(name, doc) {
-    childDocs.set(name, doc);
+    childDocs = {
+      ...childDocs,
+      [name]: doc,
+    };
+    notifyChildDocsChange && notifyChildDocsChange();
     return doc;
   }
   function setOverrideStream(name, stream) {
@@ -1049,7 +1068,7 @@ export function createDocSet({
         `Cannot move to "${toName}" because it has a slash. Deep moves are not supported yet.`,
       );
     }
-    const docToMove = childDocs.get(fromName);
+    const docToMove = childDocs[fromName];
     const mover = childDocMovers.get(docToMove);
     if (!mover) {
       throw new Error(
@@ -1080,8 +1099,42 @@ export function createDocSet({
       context,
     );
   }
+  const allProducer = {
+    crumb: `${onGetName()}.all`,
+    start: notify => {
+      console.log('getting all!', domain, onGetName());
 
-  return {
+      notifyChildDocsChange = () => {
+        notify.next(childDocs);
+        console.log('notified!', childDocs);
+      };
+      notifyChildDocsChange();
+      source
+        .dispatch({
+          type: 'ListDocs',
+          domain,
+          parentName: onGetName(),
+        })
+        .then(resp => {
+          if (resp && resp.docs) {
+            resp.docs.forEach(docName => {
+              console.log('creating', docName);
+              _createChildDoc(docName);
+            });
+          }
+        })
+        .catch(e => {
+          console.error(e);
+        });
+    },
+    stop: () => {
+      notifyChildDocsChange = null;
+    },
+  };
+  const all = createProducerStream(allProducer);
+
+  const cloudDocSet = {
+    all,
     get,
     post,
     move,
@@ -1090,6 +1143,8 @@ export function createDocSet({
     setOverrideValueStream,
     shamefullyDestroyAll,
   };
+
+  return cloudDocSet;
 }
 
 function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
