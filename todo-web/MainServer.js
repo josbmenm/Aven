@@ -2,7 +2,7 @@ import { createSessionClient } from '../cloud-core/Kite';
 import { CloudContext } from '../cloud-core/KiteReact';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import startFSStorageSource from '../cloud-fs/startFSStorageSource';
-import WebServer from '../aven-web/WebServer';
+import attachWebServer from '../aven-web/attachWebServer';
 import SMSAgent from '../sms-agent-twilio/SMSAgent';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
@@ -123,7 +123,7 @@ const runServer = async () => {
 
   context.set(CloudContext, source);
 
-  const webService = await WebServer({
+  const webService = await attachWebServer({
     App,
     context,
     source,

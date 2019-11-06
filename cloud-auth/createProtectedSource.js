@@ -2,7 +2,6 @@ import { uuid, checksum } from '../cloud-utils/Crypto';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import { getAuthDocName } from '../cloud-utils/MetaDocNames';
 import Err from '../utils/Err';
-import xs from 'xstream';
 import { createProducerStream } from '../cloud-core/createMemoryStream';
 
 export default function createProtectedSource({

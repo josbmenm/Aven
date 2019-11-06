@@ -1,7 +1,7 @@
 import CloudContext from '../cloud-core/CloudContext';
-import createCloudClient from '../cloud-core/createCloudClient';
+import { createClient } from '../cloud-core/Kite';
 import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
-import WebServer from '../aven-web/WebServer';
+import attachWebServer from '../aven-web/attachWebServer';
 
 import App from './App';
 
@@ -11,7 +11,7 @@ const runServer = async () => {
   const source = await createMemoryStorageSource({
     domain: 'example.aven.cloud',
   });
-  const client = createCloudClient({
+  const client = createClient({
     source,
     domain: 'example.aven.cloud',
   });
@@ -20,12 +20,13 @@ const runServer = async () => {
   const serverListenLocation = getEnv('PORT');
   const context = new Map();
   context.set(CloudContext, client);
-  const webService = await WebServer({
+  const webService = await attachWebServer({
     App,
     context,
     source,
     serverListenLocation,
-    assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
+    // assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
+    assets: null,
   });
   console.log('☁️️ Web Ready 🕸');
 
