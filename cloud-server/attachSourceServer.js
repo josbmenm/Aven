@@ -1,7 +1,7 @@
 import express from 'express';
 import startServer from './startServer';
 import attachSourceSocketServer from './attachSourceSocketServer';
-import { log } from '../logger/logger';
+import { log, trace, error } from '../logger/logger';
 const http = require('http');
 const bodyParser = require('body-parser');
 const WebSocket = require('ws');
@@ -14,7 +14,6 @@ export default async function attachSourceServer({
   listenLocation,
   expressRouting = undefined,
   fallbackExpressRouting = undefined,
-  quiet = false,
   augmentRequestDispatchAction = undefined,
 }) {
   const expressApp = express();
@@ -27,6 +26,7 @@ export default async function attachSourceServer({
     if (augmentRequestDispatchAction) {
       actionToDispatch = augmentRequestDispatchAction(req, actionToDispatch);
     }
+    trace('SourceDispatchStart', { action: actionToDispatch });
     source
       .dispatch(actionToDispatch)
       .then(result => {
@@ -36,14 +36,16 @@ export default async function attachSourceServer({
         res.send(result);
       })
       .catch(err => {
-        !quiet && console.error(err);
-        res.status(500).send(
-          JSON.stringify({
-            message: String(err),
-            name: err.name,
-            detail: err.detail,
-          }),
-        );
+        const errorData = {
+          message: String(err),
+          name: err.name,
+          detail: err.detail,
+        };
+        error('SourceDispatchError', {
+          action: actionToDispatch,
+          error: errorData,
+        });
+        res.status(500).send(JSON.stringify(errorData));
       });
   });
 
@@ -58,8 +60,8 @@ export default async function attachSourceServer({
     outputServer = freshHttpServer;
     await startServer(freshHttpServer, listenLocation);
 
-    !quiet && log('ServerStarted', { listenLocation, host: process.env.HOST });
-    !quiet && IS_DEV && console.log(`http://localhost:${listenLocation}`);
+    log('ServerStarted', { listenLocation, host: process.env.HOST });
+    IS_DEV && console.log(`http://localhost:${listenLocation}`);
   }
 
   const wss = new WebSocket.Server({ server: outputServer });
