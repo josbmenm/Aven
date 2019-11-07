@@ -1,15 +1,16 @@
 import React from 'react';
 import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import Button from './Button';
+import AsyncButton from './AsyncButton';
 import KeyboardPopover from './KeyboardPopover';
 import { useAppInfoText } from './AppInfoText';
 import { usePopover } from '../views/Popover';
 import { titleStyle, primaryFontFace } from './Styles';
-
 import { Easing } from 'react-native-reanimated';
 import { useNavigation } from '../navigation-hooks/Hooks';
-
 import codePush from 'react-native-code-push';
+import { useCardReaderConnectionManager } from '../card-reader/CardReader';
+import Spinner from './Spinner';
 import useKeyboardPopover from './useKeyboardPopover';
 
 export const AppEnvContext = React.createContext();
@@ -36,20 +37,90 @@ function HiddenButton({ label, onPress }) {
 }
 
 function CardReaderPopover({ onClose }) {
-  return <View style={{ padding: 8 }}></View>;
+  const {
+    persistedReaderSerialNumber,
+    connectionStatus,
+    managerConnectionStatus,
+    readersAvailable,
+    connectReader,
+    discoverReaders,
+    disconnectReader,
+  } = useCardReaderConnectionManager();
+
+  if (connectionStatus === 'connected') {
+    return (
+      <View style={{ padding: 12 }}>
+        <Text style={{ ...titleStyle, fontSize: 20, marginBottom: 16 }}>
+          Connected.{' '}
+          {persistedReaderSerialNumber && ` (${persistedReaderSerialNumber})`}
+        </Text>
+        <Button
+          title="disconnect"
+          onPress={() => {
+            disconnectReader();
+          }}
+        />
+      </View>
+    );
+  }
+  return (
+    <View style={{ padding: 12 }}>
+      <Text style={{ ...titleStyle, fontSize: 20, marginBottom: 16 }}>
+        Disconnected.
+      </Text>
+      {readersAvailable &&
+        managerConnectionStatus === 'scanning' &&
+        readersAvailable.map(reader => (
+          <AsyncButton
+            style={{ marginBottom: 8 }}
+            onPress={async () => {
+              await connectReader(reader.serialNumber);
+            }}
+            title={`Connect ${reader.serialNumber}`}
+          />
+        ))}
+      <View style={{ alignItems: 'center', height: 44 }}>
+        {connectionStatus !== 'connected' && (
+          <Spinner isSpinning={managerConnectionStatus === 'scanning'} />
+        )}
+      </View>
+      {connectionStatus === 'disconnected' && (
+        <Button
+          title="connect now"
+          onPress={() => {
+            discoverReaders();
+          }}
+        />
+      )}
+      {persistedReaderSerialNumber && (
+        <Button
+          style={{ marginTop: 8 }}
+          title={`forget ${persistedReaderSerialNumber}`}
+          onPress={() => {
+            disconnectReader();
+          }}
+        />
+      )}
+      <Button
+        style={{ marginTop: 32 }}
+        title="force restart app"
+        onPress={() => {
+          throw new Error('requested crash');
+        }}
+      />
+      {/* <Text>Persisted: {persistedReaderSerialNumber}</Text>
+      <Text>Status: {connectionStatus}</Text>
+      <Text>MgrStatus: {managerConnectionStatus}</Text>
+      <Text>Readers: {JSON.stringify(readersAvailable)}</Text> */}
+    </View>
+  );
 }
 
-function useCardReaderPopover() {
-  const { onPopover } = useKeyboardPopover(({ onClose }) => (
-    <CardReaderPopover onClose={onClose} />
-  ));
-  return onPopover;
-}
-function BlitzDebug({ onClose }) {
+function BlitzDebug({ onClose, initialMode }) {
+  const [debugMode, setDebugMode] = React.useState(initialMode);
   const { mode, deviceId } = React.useContext(AppEnvContext);
   const { navigate } = useNavigation();
   const [code, setCode] = React.useState('');
-  const onCardReaderPopover = useCardReaderPopover();
   function sendResetValue(char) {
     setCode(char);
   }
@@ -64,8 +135,9 @@ function BlitzDebug({ onClose }) {
       navigate('PaymentDebug');
     } else if (code === 'b13') {
       // ginger - greens - chia = card reader settings
-      onClose();
-      onCardReaderPopover();
+      // onClose();
+      setDebugMode('CardReader');
+      // onCardReaderPopover();
     } else if (code === 'a45') {
       // coconut - banana - cashew = restart app
       codePush.restartApp();
@@ -83,6 +155,9 @@ Device id: ${deviceId}
       );
     }
   }, [code, appInfoText]);
+  if (debugMode === 'CardReader') {
+    return <CardReaderPopover onClose={onClose} />;
+  }
   return (
     <View style={{ padding: 30 }}>
       <Text style={{ ...titleStyle, fontSize: 22, marginBottom: 16 }}>
@@ -152,16 +227,9 @@ Device id: ${deviceId}
   );
 }
 
-export default function useBlitzDebugPopover() {
-  const { onPopover } = usePopover(
-    ({ onClose, ...props }) => {
-      return (
-        <KeyboardPopover onClose={onClose} {...props}>
-          <BlitzDebug onClose={onClose} />
-        </KeyboardPopover>
-      );
-    },
-    { easing: Easing.linear, duration: 1 },
-  );
+export default function useBlitzDebugPopover(mode = 'switch') {
+  const { onPopover } = useKeyboardPopover(({ onClose }) => {
+    return <BlitzDebug onClose={onClose} initialMode={mode} />;
+  });
   return { openPopover: onPopover };
 }

@@ -9,6 +9,7 @@ import FadeTransition from './FadeTransition';
 import usePromoPopover from './usePromoPopover';
 import { boldPrimaryFontFace, primaryFontFace } from './Styles';
 import { OnoThemeDark } from '../logic/OnoTheme';
+import CardReaderConnectionAlert from './CardReaderConnectionAlert';
 
 const cardHeight = 516;
 
@@ -217,7 +218,7 @@ export default function OrderConfirmPage({
   }
 
   if (!message && cardInserted && paymentSuccessful && !paymentCompleted) {
-    message = 'thanks, please remove card';
+    message = 'please remove card';
   }
 
   if (!message && !paymentSuccessful && !paymentCompleted && readerError) {
@@ -235,7 +236,7 @@ export default function OrderConfirmPage({
 
   if (!message && paymentStatus === 3) {
     // message = 'please wait..';
-    message = cardInserted ? 'thanks, please remove card' : 'placing order..';
+    message = cardInserted ? 'please remove card' : 'placing order..';
   }
 
   if (!message) {
@@ -344,6 +345,7 @@ export default function OrderConfirmPage({
           {message}
         </Text>
       </View>
+      <CardReaderConnectionAlert tintColor="white" />
     </FadeTransition>
   );
 }

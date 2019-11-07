@@ -80,7 +80,7 @@ function CustomizeButton({ menuItem, setCustomization, customization }) {
 }
 
 export default function BlendTasker() {
-  const [savedTask, setSavedTask] = useAsyncStorage('OnoSavedBlend', {
+  const [savedTask, setSavedTask] = useAsyncStorage('OnoSavedBlend.2', {
     orderName: 'Tester O.',
     blendName: null,
     blendId: null,
@@ -125,9 +125,9 @@ export default function BlendTasker() {
   buttons.push(
     <Button title="choose blend" type="outline" onPress={openBlendChooser} />,
   );
-  const allProfiles = companyConfig.baseTables.BlendProfiles;
+  const allProfiles = companyConfig && companyConfig.baseTables.BlendProfiles;
   const profileId =
-    menuItem.Recipe.BlendProfile && menuItem.Recipe.BlendProfile[0];
+    menuItem && menuItem.Recipe.BlendProfile && menuItem.Recipe.BlendProfile[0];
   const blendProfile = (profileId && allProfiles[profileId]) || {};
   return (
     <Row title="free blend">

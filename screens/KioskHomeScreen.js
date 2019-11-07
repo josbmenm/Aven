@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -11,11 +11,10 @@ import {
   splashText,
   highlightPrimaryColor,
 } from '../components/Styles';
-
 import { useOrder } from '../ono-cloud/OrderContext';
 import { useRestaurantState, useIsRestaurantOpen } from '../ono-cloud/Kitchen';
+import CardReaderConnectionAlert from '../components/CardReaderConnectionAlert';
 import FadeTransition from '../components/FadeTransition';
-import { useNavigation } from '../navigation-hooks/Hooks';
 
 function KioskHomeContent({ isOpen, onStartOrder }) {
   const message = isOpen
@@ -45,6 +44,7 @@ function KioskHomeContent({ isOpen, onStartOrder }) {
         >
           {message}
         </Text>
+        <CardReaderConnectionAlert />
       </View>
     </TouchableWithoutFeedback>
   );

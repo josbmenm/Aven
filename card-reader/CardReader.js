@@ -48,19 +48,19 @@ StripeTerminal.initialize({
 
 export const CardReaderLog = new BehaviorSubject([]);
 
-export function clearReaderLog() {
-  CardReaderLog.next([]);
-}
+// export function clearReaderLog() {
+//   CardReaderLog.next([]);
+// }
 
-function addCardReaderLogEvent(e) {
-  const lastRecentLogs = CardReaderLog.getValue();
-  CardReaderLog.next([
-    { event: e, time: Date.now() },
-    ...lastRecentLogs.slice(0, 50),
-  ]);
-}
+// function addCardReaderLogEvent(e) {
+//   const lastRecentLogs = CardReaderLog.getValue();
+//   CardReaderLog.next([
+//     { event: e, time: Date.now() },
+//     ...lastRecentLogs.slice(0, 50),
+//   ]);
+// }
 
-StripeTerminal.addLogListener(addCardReaderLogEvent);
+// StripeTerminal.addLogListener(addCardReaderLogEvent);
 
 const stripeTerminalService = StripeTerminal.startService({
   policy: 'persist-manual',
@@ -70,23 +70,23 @@ const stripeTerminalService = StripeTerminal.startService({
     : StripeTerminal.DeviceTypeChipper2X,
 });
 
-stripeTerminalService.addPersistedReaderNotFoundListener(readers => {
-  addCardReaderLogEvent(
-    `[StripeTerminalService] persistedReaderNotFound, found readers: ${readers
-      .map(r => r.serialNumber)
-      .join(', ')}`,
-  );
-});
+// stripeTerminalService.addPersistedReaderNotFoundListener(readers => {
+//   addCardReaderLogEvent(
+//     `[StripeTerminalService] persistedReaderNotFound, found readers: ${readers
+//       .map(r => r.serialNumber)
+//       .join(', ')}`,
+//   );
+// });
 
-stripeTerminalService.addConnectionErrorListener(e => {
-  addCardReaderLogEvent(
-    `[StripeTerminalService] connectionError, error: ${JSON.stringify(e)}`,
-  );
-});
+// stripeTerminalService.addConnectionErrorListener(e => {
+//   addCardReaderLogEvent(
+//     `[StripeTerminalService] connectionError, error: ${JSON.stringify(e)}`,
+//   );
+// });
 
-stripeTerminalService.addLogListener(message => {
-  addCardReaderLogEvent(`[StripeTerminalService] ${message}`);
-});
+// stripeTerminalService.addLogListener(message => {
+//   addCardReaderLogEvent(`[StripeTerminalService] ${message}`);
+// });
 
 export async function disconnectReader() {
   return stripeTerminalService.disconnect();
@@ -113,9 +113,7 @@ async function prepareReader(options) {
 async function collectPayment(state, options) {
   if (state.paymentStatus !== StripeTerminal.PaymentStatusReady) {
     throw new Error(
-      `Could not 'collectPayment' since Terminal is not ready (status: ${
-        state.paymentStatus
-      }).`,
+      `Could not 'collectPayment' since Terminal is not ready (status: ${state.paymentStatus}).`,
     );
   }
 

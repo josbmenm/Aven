@@ -96,7 +96,7 @@ function AddFillForm({ onSubmit, onClose }) {
   // });
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView style={{ height: 650 }}>
       {slots.map(slot => (
         <View style={{}}>
           <TouchableOpacity
@@ -159,7 +159,7 @@ function BlendProfileForm({ onClose, onBlendProfile, blendProfileId }) {
   const config = useCompanyConfig();
   const allProfiles = (config && config.baseTables.BlendProfiles) || {};
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView style={{ height: 650 }}>
       {Object.values(allProfiles).map(profile => (
         <TouchableOpacity
           onPress={() => {
@@ -203,7 +203,7 @@ function useBlendProfilePopover({ blendProfileId, onBlendProfile }) {
   return onPopover;
 }
 export default function CustomTasker() {
-  const [savedTask, setSavedTask] = useAsyncStorage('OnoSavedBlend', {
+  const [savedTask, setSavedTask] = useAsyncStorage('OnoSavedCustomBlend', {
     orderName: 'Tester O.',
     blendName: 'Test Blend',
     blendColor: 'blue',
