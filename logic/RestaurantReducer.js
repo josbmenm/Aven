@@ -539,7 +539,7 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'DidDeliver': {
-      if (!state.delivery || !state.delivery.task) {
+      if (!state.delivery) {
         return defaultReturn();
       }
       const deliveredState = {
