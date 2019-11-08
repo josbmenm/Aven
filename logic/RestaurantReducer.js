@@ -186,7 +186,72 @@ function RestaurantReducerFn(state = {}, action) {
         queue: state.queue.slice(1),
       });
     }
-    case 'WipeBlendTaskState': {
+    case 'WipeMaterialState': {
+      const doneTasks = [];
+      state.fill &&
+        doneTasks.push({
+          ...state.fill,
+          deliveryType: 'wiped-state:fill',
+          deliveryTime: action.dispatchTime,
+          ...taskCompleteTime(state.fill, action),
+        });
+      state.blend &&
+        doneTasks.push({
+          ...state.blend,
+          deliveryType: 'wiped-state:blend',
+          deliveryTime: action.dispatchTime,
+          ...taskCompleteTime(state.blend, action),
+        });
+      state.delivery &&
+        doneTasks.push({
+          ...state.delivery,
+          deliveryType: 'wiped-state:delivery',
+          deliveryTime: action.dispatchTime,
+          ...taskCompleteTime(state.delivery, action),
+        });
+      state.delivery0 &&
+        doneTasks.push({
+          ...state.delivery0,
+          deliveryType: 'wiped-state:delivery0',
+          deliveryTime: action.dispatchTime,
+          ...taskCompleteTime(state.delivery0, action),
+        });
+      state.delivery1 &&
+        doneTasks.push({
+          ...state.delivery1,
+          deliveryType: 'wiped-state:delivery1',
+          deliveryTime: action.dispatchTime,
+          ...taskCompleteTime(state.delivery1, action),
+        });
+      return {
+        ...defaultReturn(),
+        fill: null,
+        blend: null,
+        delivery: null,
+        delivery0: null,
+        delivery1: null,
+        completedTasks: [...(state.completedTasks || []), ...doneTasks],
+      };
+    }
+    case 'WipeDeliveryState': {
+      if (!state.delivery) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        delivery: null,
+        completedTasks: [
+          ...(state.completedTasks || []),
+          {
+            ...state.delivery,
+            deliveryType: 'wiped-delivery-state',
+            deliveryTime: action.dispatchTime,
+            ...taskCompleteTime(state.delivery, action),
+          },
+        ],
+      };
+    }
+    case 'WipeBlendState': {
       if (!state.blend) {
         return defaultReturn();
       }
@@ -204,7 +269,7 @@ function RestaurantReducerFn(state = {}, action) {
         ],
       };
     }
-    case 'WipeFillTaskState': {
+    case 'WipeFillState': {
       if (!state.fill || state.fill === 'ready') {
         return defaultReturn();
       }

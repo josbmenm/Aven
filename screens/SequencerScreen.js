@@ -153,9 +153,9 @@ function FillRow({ restaurantState, dispatch }) {
         {!restaurantState.isAttached && (
           <Button
             type="outline"
-            title="wipe filling task state"
+            title="wipe filling state"
             onPress={() => {
-              dispatch({ type: 'WipeFillTaskState' });
+              dispatch({ type: 'WipeFillState' });
             }}
           />
         )}
@@ -177,9 +177,9 @@ function BlendRow({ restaurantState, dispatch }) {
         {!restaurantState.isAttached && (
           <Button
             type="outline"
-            title="wipe blender task state"
+            title="wipe blender state"
             onPress={() => {
-              dispatch({ type: 'WipeBlendTaskState' });
+              dispatch({ type: 'WipeBlendState' });
             }}
           />
         )}
@@ -188,8 +188,38 @@ function BlendRow({ restaurantState, dispatch }) {
   );
 }
 
-function DeliverySystemRow({ state }) {
-  return <TaskInfoText state={state} />;
+function DeliverySystemRow({ restaurantState }) {
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={{ flexDirection: 'row' }}>
+        <View style={{ flex: 1 }}>
+          <TaskInfoText state={restaurantState.delivery} />
+        </View>
+        {!restaurantState.isAttached && (
+          <Button
+            type="outline"
+            title="wipe delivery state"
+            onPress={() => {
+              dispatch({ type: 'WipeDeliveryState' });
+            }}
+          />
+        )}
+      </View>
+    </View>
+  );
+
+  {
+    !restaurantState.isAttached && (
+      <Button
+        type="outline"
+        title="wipe material map state"
+        onPress={() => {
+          dispatch({ type: 'WipeMaterialState' });
+        }}
+      />
+    );
+  }
+  return <TaskInfoText state={restaurantState.delivery} />;
 }
 
 function RestaurantStateList({ restaurantState, dispatch }) {
@@ -212,10 +242,19 @@ function RestaurantStateList({ restaurantState, dispatch }) {
       )}
       {restaurantState.delivery && (
         <Row title="delivery arm">
-          <DeliverySystemRow state={restaurantState.delivery} />
+          <DeliverySystemRow restaurantState={restaurantState} />
         </Row>
       )}
       <DeliveryBayRow restaurantState={restaurantState} dispatch={dispatch} />
+      {!restaurantState.isAttached && (
+        <Button
+          type="outline"
+          title="wipe material map state"
+          onPress={() => {
+            dispatch({ type: 'WipeMaterialState' });
+          }}
+        />
+      )}
     </RowSection>
   );
 }

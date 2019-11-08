@@ -386,7 +386,6 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
       <FridgeView />
       <VanInTruckOverride />
       <CompressorView />
-      <ClearMapButton />
       <RowSection>
         <LinkRow
           onPress={() => {
@@ -448,6 +447,7 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
           title="Refresh App"
         />
         <UpdateAirtableRow />
+        <ClearMapButton />
       </RowSection>
       <AppInfoText />
     </SimplePage>
