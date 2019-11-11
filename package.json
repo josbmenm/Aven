@@ -138,5 +138,8 @@
         }
       }
     }
+  },
+  "optionalDependencies": {
+    "win-node-env": "^0.4.0"
   }
 }
