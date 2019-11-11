@@ -78,21 +78,22 @@ function Title({ title, style }) {
         paddingHorizontal: 15,
       }}
     >
-      {title.split('.').map((t, i, a) => (
-        <Text
-          key={i}
-          style={{
-            fontSize: 36,
-            textAlign: 'center',
-            fontWeight: '300',
-            color: '#343',
-            ...style,
-          }}
-        >
-          {t}
-          {i === a.length - 1 ? '' : '.'}
-        </Text>
-      ))}
+      {title &&
+        title.split('.').map((t, i, a) => (
+          <Text
+            key={i}
+            style={{
+              fontSize: 36,
+              textAlign: 'center',
+              fontWeight: '300',
+              color: '#343',
+              ...style,
+            }}
+          >
+            {t}
+            {i === a.length - 1 ? '' : '.'}
+          </Text>
+        ))}
     </View>
   );
 }
