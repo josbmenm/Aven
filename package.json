@@ -1,6 +1,7 @@
 {
   "name": "@aven-cloud/aven",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "start": "node ./aven-tools/cli.js start",
     "build": "node ./aven-tools/cli.js build",
@@ -12,7 +13,15 @@
     "clean": "node ./aven-tools/cli.js clean",
     "import-vendor": "node ./aven-tools/importVendorCode.js",
     "test": "jest",
-    "test-sql": "cd cloud-postgres; ./test.sh startPostgresStorageSource"
+    "pg": "cd cloud-postgres; docker-compose up",
+    "test-sql": "cd cloud-postgres; ./test.sh startPostgresStorageSource",
+    "carriage": "node carriage/carriage.js",
+    "dev": "yarn workspace something start"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
   },
   "devDependencies": {
     "babel-jest": "^24.8.0",
@@ -25,7 +34,7 @@
     "metro-react-native-babel-preset": "^0.54.0",
     "pn": "^1.1.0",
     "prettier": "^1.17.0",
-    "react-native": "^0.58.2",
+    "react-native": "0.61.2",
     "react-test-renderer": "^16.6.3",
     "typescript": "^3.2.2"
   },
