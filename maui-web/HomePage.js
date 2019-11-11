@@ -141,7 +141,7 @@ function HomePage() {
         title="We believe that good food brings out the best in you."
         bodyText="We believe affordable nutrition should be accessible to everyone. With advanced robotics, thoughtful food sourcing, and nutritious ingredients we’re able to deliver this promise."
       />
-      <PressSection />
+      {/* <PressSection /> */}
       <HomeSlider />
       <HowItWorks />
       {/* <HomeSchedule /> */}
