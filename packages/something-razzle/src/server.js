@@ -3,6 +3,9 @@ import React from 'react';
 import express from 'express';
 import { renderToString } from 'react-dom/server';
 
+// Enable source map support for errors
+import 'source-map-support/register';
+
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 const server = express();
