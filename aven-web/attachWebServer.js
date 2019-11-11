@@ -7,7 +7,7 @@ import attachSourceServer from '../cloud-server/attachSourceServer';
 import NavigationContext from '../navigation-core/views/NavigationContext';
 import handleServerRequest from '../navigation-web/handleServerRequest';
 import Buffer from '../utils/Buffer';
-import { debug, error } from '../logger/logger';
+import { trace, error } from '../logger/logger';
 const yes = require('yes-https');
 const helmet = require('helmet');
 const path = require('path');
@@ -154,7 +154,7 @@ export default async function attachWebServer({
     process.env.ENFORCE_HTTPS && app.use(yes());
     app.use(helmet());
     app.use((req, res, next) => {
-      debug('HttpRequest', {
+      trace('HttpRequest', {
         method: req.method,
         host: req.headers.host,
         path: req.path,
