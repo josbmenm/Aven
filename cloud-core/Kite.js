@@ -190,11 +190,12 @@ export function createBlock({
             }
           })
           .catch(err => {
-            console.error(
-              'Failure of onInitialLoad of block state',
-              { domain, docName, blockId },
-              err,
-            );
+            // Initial load may fail
+            // console.error(
+            //   'Failure of onInitialLoad of block state',
+            //   { domain, docName, blockId },
+            //   err,
+            // );
           });
       }
 
