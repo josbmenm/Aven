@@ -718,7 +718,7 @@ export function createDoc({
     'StaticEmptyIdValue',
   );
 
-  async function putTransactionValue(value) {
+  async function finallyPutTransactionValue(value) {
     const fullValue =
       typeof value === 'object' && value.dispatchTime === undefined
         ? { ...value, dispatchTime: Date.now(), dispatchId: cuid() }
@@ -775,6 +775,14 @@ export function createDoc({
     }
     setDocState(stateUpdates);
     return result;
+  }
+
+  let transactionPutPromise = Promise.resolve();
+  function putTransactionValue(value) {
+    transactionPutPromise = transactionPutPromise.then(() =>
+      finallyPutTransactionValue(value),
+    );
+    return transactionPutPromise;
   }
 
   const docIdAndValue = createStreamValue(
