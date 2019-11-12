@@ -269,6 +269,18 @@ function RestaurantReducerFn(state = {}, action) {
         ],
       };
     }
+    case 'SetFrozenHoppersEnabled': {
+      return {
+        ...defaultReturn(),
+        disableFrozenHoppers: !action.isEnabled,
+      };
+    }
+    case 'SetBeveragePumpsEnabled': {
+      return {
+        ...defaultReturn(),
+        disableBeveragePumps: !action.isEnabled,
+      };
+    }
     case 'WipeFillState': {
       if (!state.fill || state.fill === 'ready') {
         return defaultReturn();

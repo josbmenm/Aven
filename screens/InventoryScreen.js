@@ -16,6 +16,7 @@ import StatusBar from '../components/StatusBar';
 import ButtonStack from '../components/ButtonStack';
 import { TempCell, formatTemp } from '../components/TemperatureView';
 import KitchenCommandButton from '../components/KitchenCommandButton';
+import { useRestaurantState } from '../ono-cloud/Kitchen';
 
 function PopoverTitle({ children }) {
   return (
@@ -171,11 +172,10 @@ function InventorySlot({ slot, systemName, dispatch }) {
   const { onPopover: onDispensePopover } = useKeyboardPopover(({ onClose }) => (
     <DispenseForm onClose={onClose} slot={slot} onDispense={slot.onDispense} />
   ));
-
+  if (!slot) {
+    return null;
+  }
   const estimatedRemaining = slot.estimatedRemaining;
-  const percentFull =
-    estimatedRemaining &&
-    Math.floor((estimatedRemaining / slot.ShotCapacity) * 100);
 
   return (
     <ScrollView
@@ -252,6 +252,22 @@ function InventorySlot({ slot, systemName, dispatch }) {
             size="small"
             color={Tag.negativeColor}
             title={`Errored`}
+            style={{ marginRight: 8, marginBottom: 8 }}
+          />
+        )}
+        {slot.hopperDisabled && (
+          <Tag
+            size="small"
+            color={Tag.negativeColor}
+            title={`Hopper Off`}
+            style={{ marginRight: 8, marginBottom: 8 }}
+          />
+        )}
+        {slot.pumpDisabled && (
+          <Tag
+            size="small"
+            color={Tag.negativeColor}
+            title={`Pump Off`}
             style={{ marginRight: 8, marginBottom: 8 }}
           />
         )}
@@ -345,10 +361,11 @@ function InventorySlot({ slot, systemName, dispatch }) {
 }
 
 function FrozenFoodSubsystem() {
+  const [restaurantState, dispatch] = useRestaurantState();
+  const isEnabled = !restaurantState.disableFrozenHoppers;
   return (
     <React.Fragment>
-      <AsyncButton title="Enable All Hoppers" onPress={() => {}} disabled />
-      <AsyncButton title="Disable All Hoppers" onPress={() => {}} disabled />
+      <TempGauge title="Freezer Temperature" tag="System_FreezerTemp_READ" />
       <KitchenCommandButton commandType="FrozenPurgeAll" title="purge all" />
       <SubTitle>Un-jamming</SubTitle>
       <KitchenCommandButton
@@ -359,18 +376,54 @@ function FrozenFoodSubsystem() {
         commandType="FrozenStopVibrateAll"
         title="stop vibrating all"
       />
-      <TempGauge title="Freezer Temperature" tag="System_FreezerTemp_READ" />
+      <SubTitle>Food Hoppers</SubTitle>
+      <View style={{ marginBottom: 12, flexDirection: 'row' }}>
+        <MultiSelect
+          options={[
+            { name: 'Enabled', value: true },
+            { name: 'Disabled', value: false },
+          ]}
+          onValue={isEnabled => {
+            dispatch({
+              type: 'SetFrozenHoppersEnabled',
+              isEnabled,
+            });
+          }}
+          value={isEnabled}
+        />
+      </View>
     </React.Fragment>
   );
 }
 
 function BeverageSubsystem() {
+  const [restaurantState, dispatch] = useRestaurantState();
+  const isEnabled = !restaurantState.disableBeveragePumps;
   return (
     <React.Fragment>
       <TempGauge title="Fridge Temperature" tag="System_BevTemp_READ" />
-      <AsyncButton title="Enable All Pumps" onPress={() => {}} disabled />
-      <AsyncButton title="Disable All Pumps" onPress={() => {}} disabled />
-      <AsyncButton title="Purge All" onPress={() => {}} disabled />
+      <SubTitle>Purging</SubTitle>
+      <KitchenCommandButton commandType="BeveragePurgeAll" title="purge all" />
+      <KitchenCommandButton
+        commandType="BeveragePurgeAll"
+        title="stop purge all"
+      />
+      <SubTitle>Pumps</SubTitle>
+      <View style={{ marginBottom: 12, flexDirection: 'row' }}>
+        <MultiSelect
+          options={[
+            { name: 'Enabled', value: true },
+            { name: 'Disabled', value: false },
+          ]}
+          onValue={isEnabled => {
+            dispatch({
+              type: 'SetBeveragePumpsEnabled',
+              isEnabled,
+            });
+          }}
+          value={isEnabled}
+        />
+      </View>
     </React.Fragment>
   );
 }

@@ -271,6 +271,9 @@ export function useInventoryState() {
     const slot = kitchenSlots.find(
       s => s.KitchenSystem.Name === systemName && index === s.Slot,
     );
+    if (!slot) {
+      return null;
+    }
     const settings =
       (restaurantState.slotSettings && restaurantState.slotSettings[slot.id]) ||
       {};
@@ -288,6 +291,14 @@ export function useInventoryState() {
       kitchenState &&
       kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_Error_READ`];
     const estimatedRemaining = (invState && invState.estimatedRemaining) || 0;
+    const hopperDisabled =
+      slot.KitchenSystem.Name === 'FrozenFood' &&
+      kitchenState &&
+      !kitchenState[`FrozenFood_Slot${slot.Slot}EnableHopper_VALUE`];
+    const pumpDisabled =
+      slot.KitchenSystem.Name === 'Beverage' &&
+      kitchenState &&
+      !kitchenState[`Beverage_Slot${slot.Slot}EnablePump_VALUE`];
     async function dispenseSlotAmount(amount) {
       await cloud.dispatch({
         type: 'KitchenCommand',
@@ -314,6 +325,8 @@ export function useInventoryState() {
       settings,
       isLowSensed,
       isErrored,
+      hopperDisabled,
+      pumpDisabled,
       isEmpty: estimatedRemaining <= 0,
       dispensedSinceLow,
       name: `${slot.KitchenSystem.Name} ${slot.Slot}`,
@@ -358,62 +371,40 @@ export function useInventoryState() {
       name: 'Beverage',
       slots: Array(4)
         .fill()
-        .map((_, i) => {
-          const slotData = slotOfSlot('Beverage', i);
-          return {
-            ...slotData,
-          };
-        }),
+        .map((_, i) => slotOfSlot('Beverage', i))
+        .filter(Boolean),
     },
     {
       id: 'Powder',
       name: 'Powder',
       slots: Array(3)
         .fill()
-        .map((_, i) => {
-          const slotData = slotOfSlot('Powder', i);
-          return {
-            ...slotData,
-          };
-        }),
+        .map((_, i) => slotOfSlot('Powder', i))
+        .filter(Boolean),
     },
     {
       id: 'Piston',
       name: 'Piston',
       slots: Array(2)
         .fill()
-        .map((_, i) => {
-          const slotData = slotOfSlot('Piston', i);
-          return {
-            ...slotData,
-          };
-        }),
+        .map((_, i) => slotOfSlot('Piston', i))
+        .filter(Boolean),
     },
-
     {
       id: 'FrozenFood',
       name: 'FrozenFood',
       slots: Array(9)
         .fill()
-        .map((_, i) => {
-          const slotData = slotOfSlot('FrozenFood', i);
-          return {
-            ...slotData,
-          };
-        }),
+        .map((_, i) => slotOfSlot('FrozenFood', i))
+        .filter(Boolean),
     },
-
     {
       id: 'Granules',
       name: 'Granules',
       slots: Array(6)
         .fill()
-        .map((_, i) => {
-          const slotData = slotOfSlot('Granules', i);
-          return {
-            ...slotData,
-          };
-        }),
+        .map((_, i) => slotOfSlot('Granules', i))
+        .filter(Boolean),
     },
   ];
   // const inventorySlots = [
@@ -479,7 +470,7 @@ export function useInventoryState() {
   inventorySystems.forEach(invSystem => {
     invSystem.slots &&
       invSystem.slots.forEach(invState => {
-        if (invState.ingredientId) {
+        if (invState && invState.ingredientId) {
           inventoryIngredients[invState.ingredientId] = invState;
         }
       });

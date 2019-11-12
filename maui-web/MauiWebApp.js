@@ -9,6 +9,7 @@ import Terms from './TermsPage';
 import BookUs from './BookUsPage';
 // import Schedule from './SchedulePage';
 import RequestLocation from './RequestLocationPage';
+import Press from './PressPage';
 import Subscribe from './SubscribePage';
 import SubscribeConfirm from './SubscribeConfirmPage';
 import OnoTheme from '../logic/OnoTheme';
@@ -55,6 +56,10 @@ export const MauiWebRoutes = {
   RequestLocation: {
     path: 'request-location',
     screen: RequestLocation,
+  },
+  Press: {
+    path: 'press',
+    screen: Press,
   },
   Subscribe: {
     path: 'subscribe',

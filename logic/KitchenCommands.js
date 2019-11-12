@@ -70,18 +70,11 @@ const KitchenCommands = {
       return kitchenState.FillSystem_DropCupReady_READ;
     },
   },
-  // DitchCup: {
-  //   subsystem: 'FillSystem',
-  //   pulse: ['DitchCup'],
-  //   checkReady: kitchenState => {
-  //     return kitchenState.FillSystem_DitchCupReady_READ;
-  //   },
-  // },
   DitchCup: {
     subsystem: 'FillSystem',
-    pulse: ['DropCup'],
+    pulse: ['DitchCup'],
     checkReady: kitchenState => {
-      return kitchenState.FillSystem_DropCupReady_READ;
+      return kitchenState.FillSystem_DitchCupReady_READ;
     },
   },
   DeliveryDropCup: {
@@ -211,6 +204,20 @@ const KitchenCommands = {
     pulse: ['ReturnBladePlate'],
     checkReady: kitchenState => {
       return kitchenState.BlendSystem_ReturnBladePlateReady_READ;
+    },
+  },
+  BeveragePurgeAll: {
+    subsystem: 'Beverage',
+    pulse: ['PurgeAll'],
+    checkReady: kitchenState => {
+      return kitchenState.Beverage_PurgeAllReady_READ;
+    },
+  },
+  BeverageStopPurgeAll: {
+    subsystem: 'Beverage',
+    pulse: ['StopPurgeAll'],
+    checkReady: kitchenState => {
+      return kitchenState.Beverage_StopPurgeAllReady_READ;
     },
   },
   FrozenPurgeAll: {

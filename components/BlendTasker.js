@@ -128,7 +128,8 @@ export default function BlendTasker() {
   const allProfiles = companyConfig && companyConfig.baseTables.BlendProfiles;
   const profileId =
     menuItem && menuItem.Recipe.BlendProfile && menuItem.Recipe.BlendProfile[0];
-  const blendProfile = (profileId && allProfiles[profileId]) || {};
+  const blendProfile =
+    (profileId && allProfiles && allProfiles[profileId]) || {};
   return (
     <Row title="free blend">
       <View style={{ flex: 1 }}>

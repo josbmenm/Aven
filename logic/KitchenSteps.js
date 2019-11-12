@@ -213,11 +213,11 @@ const KitchenSteps = [
       system,
       slot,
       dryRunDispense,
-      isInvalid,
+      isFillInvalid,
       isDisabled,
       isEmpty,
     }) => {
-      if (isInvalid) {
+      if (isFillInvalid) {
         if (isDisabled) return `Skip filling ${ingredientName} - Disabled`;
         if (isEmpty) return `Skip filling ${ingredientName} - Empty`;
         return `Skip filling ${ingredientName} - Invalid`;
@@ -242,15 +242,19 @@ const KitchenSteps = [
       const estimatedRemaining =
         (slotInventory && slotInventory.estimatedRemaining) || 0;
       const isEmpty = nextFill.amount > estimatedRemaining;
-      const disabledMode = (settings && settings.disabledMode) || false; // 'hard', false, true
-      const isDisabled = disabledMode === true;
-      const isInvalid = isEmpty || isDisabled;
       const settings =
         restaurantState.slotSettings && restaurantState.slotSettings[slotId];
-      // const isOptional = (settings && settings.optional) || false;
+      const disabledMode = (settings && settings.disabledMode) || false; // 'hard', false, true
+      const isDisabled = disabledMode === true;
+      const isForceEnabled = disabledMode === 'hard';
+      const isFillInvalid = isForceEnabled ? false : isEmpty || isDisabled;
+      const isFillOptional = (settings && settings.optional) || false;
       const intent = {
         ...nextFill,
-        isInvalid,
+        isFillInvalid,
+        isBlendInvalid: isFillInvalid && !isFillOptional,
+        isFillOptional,
+        isForceEnabled,
         isDisabled,
         isEmpty,
         taskId: restaurantState.fill.task.id,
@@ -259,7 +263,7 @@ const KitchenSteps = [
       return intent;
     },
     getKitchenCommand: intent => {
-      if (intent.isInvalid) {
+      if (intent.isFillInvalid) {
         return null;
       }
       if (intent.dryRunDispense) {
@@ -274,7 +278,7 @@ const KitchenSteps = [
       };
     },
     getSuccessRestaurantAction: intent => {
-      if (intent.isInvalid) {
+      if (intent.isFillInvalid) {
         return {
           ...intent, // (we need system,amount,slot)
           type: 'DidFailFill',
@@ -375,7 +379,8 @@ const KitchenSteps = [
         !restaurantState.blend ||
         restaurantState.blend === 'dirty' ||
         restaurantState.blend.blendCompleteTime ||
-        (!restaurantState.blend.task || restaurantState.blend.task.skipBlend)
+        !restaurantState.blend.task ||
+        restaurantState.blend.task.skipBlend
       ) {
         return null;
       }

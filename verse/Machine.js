@@ -622,14 +622,28 @@ export function connectMachine({
     if (!deriveAppliedMachineState) return;
     const machineState = deriveAppliedMachineState(restaurantState);
     const newMachineState = {};
+    let needsMachineWrite = false;
     Object.entries(machineState).forEach(([k, v]) => {
       if (v == null) {
-        //a
+        // this value is explicitly not being set anymore
       } else if (lastAppliedMachineState[k] !== v) {
         newMachineState[k] = v;
+        needsMachineWrite = true;
       }
     });
-    console.log('Writing Machine Values..', newMachineState);
+    if (!needsMachineWrite) {
+      return;
+    }
+    writeTags(newMachineState)
+      .then(() => {
+        log('WroteMachineValues', newMachineState);
+      })
+      .catch(e => {
+        error('MachineValueWriteError', {
+          values: newMachineState,
+          code: e.message,
+        });
+      });
 
     lastAppliedMachineState = {
       ...lastAppliedMachineState,

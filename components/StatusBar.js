@@ -135,7 +135,11 @@ export default function StatusBar() {
               paddingTop: 7,
               paddingLeft: 7,
               backgroundColor:
-                status === 'ready' ? Tag.positiveColor : Tag.negativeColor,
+                status === 'ready'
+                  ? Tag.positiveColor
+                  : status === 'paused'
+                  ? Tag.warningColor
+                  : Tag.negativeColor,
             }}
           >
             {isRunning && <Spinner color="white" />}

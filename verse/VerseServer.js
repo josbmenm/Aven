@@ -296,7 +296,7 @@ export default async function startVerseServer(httpServer) {
 
   setInterval(() => {
     trace('RestaurantStateMonitor', lastRestaurantState);
-  }, 60000);
+  }, 59000);
 
   if (kitchen) {
     setInterval(() => {
@@ -305,7 +305,7 @@ export default async function startVerseServer(httpServer) {
         trace('KitchenMonitor', {
           ...kitchenState,
         });
-    }, 60000);
+    }, 59000);
   }
 
   async function silentDispatch(action) {
@@ -328,6 +328,14 @@ export default async function startVerseServer(httpServer) {
         }
         // subsystem (eg 'FillSystem'), pulse (eg ['home']), values (eg: foo: 123)
         return await kitchen.writeMachineValues(action);
+      }
+      case 'TestServerError': {
+        throw new Error('User-requested server error');
+      }
+      case 'TestServerCrash': {
+        console.error('User-requested server crash');
+        process.exit(1);
+        return {};
       }
       case 'PlaceOrder':
         return placeOrder(

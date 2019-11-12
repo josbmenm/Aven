@@ -126,6 +126,30 @@ function CompressorView() {
   );
 }
 
+function ServerErrorTest() {
+  const cloud = useCloud();
+  const handleError = useAsyncError();
+  return (
+    <LinkRow
+      onPress={() => {
+        handleError(
+          cloud.dispatch({
+            type: 'TestServerError',
+          }),
+        );
+      }}
+      onLongPress={() => {
+        handleError(
+          cloud.dispatch({
+            type: 'TestServerCrash',
+          }),
+        );
+      }}
+      icon="⚠️"
+      title="Test Server Error"
+    />
+  );
+}
 function UpdateAirtableRow() {
   const cloud = useCloud();
   return (
@@ -439,6 +463,7 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
           icon="⚠️"
           title="Test Soft Error"
         />
+        <ServerErrorTest />
         <LinkRow
           onPress={() => {
             codePush.restartApp();
