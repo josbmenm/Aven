@@ -1102,11 +1102,12 @@ export function createDocSet({
   const allProducer = {
     crumb: `${onGetName()}.all`,
     start: notify => {
-      console.log('getting all!', domain, onGetName());
-
+      let notificationTimeout = null;
       notifyChildDocsChange = () => {
-        notify.next(childDocs);
-        console.log('notified!', childDocs);
+        clearTimeout(notificationTimeout);
+        notificationTimeout = setTimeout(() => {
+          notify.next(childDocs);
+        }, 1);
       };
       notifyChildDocsChange();
       source
@@ -1118,13 +1119,13 @@ export function createDocSet({
         .then(resp => {
           if (resp && resp.docs) {
             resp.docs.forEach(docName => {
-              console.log('creating', docName);
               _createChildDoc(docName);
             });
           }
         })
         .catch(e => {
-          console.error(e);
+          console.error('ListDocError', e);
+          notify.error(e);
         });
     },
     stop: () => {
