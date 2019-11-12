@@ -405,7 +405,7 @@ function BeverageSubsystem() {
       <SubTitle>Purging</SubTitle>
       <KitchenCommandButton commandType="BeveragePurgeAll" title="purge all" />
       <KitchenCommandButton
-        commandType="BeveragePurgeAll"
+        commandType="BeverageStopPurgeAll"
         title="stop purge all"
       />
       <SubTitle>Pumps</SubTitle>
