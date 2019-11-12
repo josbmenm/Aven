@@ -30,6 +30,7 @@ class LinkWithNavigation extends Component {
       url,
       alternateActiveCheck,
       renderContent,
+      target,
       overrideATagCSS, // ugh, escape hatches get long ugly names. css is applied directly, not RN style!
     } = this.props;
     const topNavigation = getTopNavigation(navigation);
@@ -87,6 +88,7 @@ class LinkWithNavigation extends Component {
             e.preventDefault();
           }
         }}
+        target={target}
       >
         {renderContent ? renderContent(isActive) : children}
       </a>

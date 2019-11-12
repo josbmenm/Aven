@@ -9,6 +9,7 @@ function ButtonLink({
   titleStyle,
   routeName,
   url,
+  target,
   ...rest
 }) {
   return (
@@ -18,6 +19,7 @@ function ButtonLink({
       accesible="true"
       accessibilityRole="link"
       accessibilityLabel={title}
+      target={target}
       renderContent={active => (
         <VisualButton
           type={type}
