@@ -102,7 +102,7 @@ function SetFillForm({ slot, onClose }) {
   );
 }
 
-function DispenseForm({ slot, onClose, onDispense }) {
+function DispenseForm({ slot, onClose, onDispense, onPositionAndDispense }) {
   const [amount, setAmount] = React.useState('2');
   function handleSubmit() {}
   const { inputs } = useFocus({
@@ -119,27 +119,36 @@ function DispenseForm({ slot, onClose, onDispense }) {
     ],
   });
 
+  const buttons = [
+    <AsyncButton
+      title="dispense one"
+      onPress={async () => {
+        await onDispense(1);
+      }}
+    />,
+    <AsyncButton
+      title={`dispense ${amount}`}
+      onPress={async () => {
+        await onDispense(amount);
+      }}
+    />,
+  ];
+  if (onPositionAndDispense) {
+    buttons.push(
+      <AsyncButton
+        title={`fill cup with ${amount}`}
+        onPress={async () => {
+          await onPositionAndDispense(amount);
+        }}
+      />,
+    );
+  }
+
   return (
     <View>
       <PopoverTitle>Dispense {slot.name}</PopoverTitle>
       <View style={{ flexDirection: 'row' }}>{inputs}</View>
-      <ButtonStack
-        style={{ margin: 10 }}
-        buttons={[
-          <AsyncButton
-            title="dispense one"
-            onPress={async () => {
-              await onDispense(1);
-            }}
-          />,
-          <AsyncButton
-            title={`dispense ${amount}`}
-            onPress={async () => {
-              await onDispense(amount);
-            }}
-          />,
-        ]}
-      />
+      <ButtonStack style={{ margin: 10 }} buttons={buttons} />
     </View>
   );
 }
@@ -164,13 +173,20 @@ function RemainderTag({ estimatedRemaining }) {
   );
 }
 
-function InventorySlot({ slot, systemName, dispatch }) {
+function InventorySlot({ slot, systemName, dispatch, restaurantState }) {
   const { onPopover: onFillPopover } = useKeyboardPopover(({ onClose }) => (
     <SetFillForm onClose={onClose} slot={slot} />
   ));
 
   const { onPopover: onDispensePopover } = useKeyboardPopover(({ onClose }) => (
-    <DispenseForm onClose={onClose} slot={slot} onDispense={slot.onDispense} />
+    <DispenseForm
+      onClose={onClose}
+      slot={slot}
+      onDispense={slot.onDispense}
+      onPositionAndDispense={
+        restaurantState.manualMode ? slot.onPositionAndDispense : null
+      }
+    />
   ));
   if (!slot) {
     return null;
@@ -427,11 +443,15 @@ function BeverageSubsystem() {
     </React.Fragment>
   );
 }
-function CupsSubsystem({ systemState }) {
+function CupsSubsystem({ systemState, restaurantState }) {
+  console.log('ah', restaurantState);
   return (
     <React.Fragment>
       <RemainderTag estimatedRemaining={systemState.estimatedRemaining} />
       <KitchenCommandButton commandType="DispenseCup" title="dispense cup" />
+      {restaurantState.manualMode && (
+        <KitchenCommandButton commandType="GetCup" title="grab new cup" />
+      )}
     </React.Fragment>
   );
 }
@@ -456,7 +476,7 @@ const SubsystemSections = {
   Piston: PistonSubsystem,
 };
 
-function InventorySystem({ system, dispatch }) {
+function InventorySystem({ system, dispatch, restaurantState }) {
   const SubsystemSection = SubsystemSections[system.id];
   return (
     <React.Fragment>
@@ -465,7 +485,11 @@ function InventorySystem({ system, dispatch }) {
           {system.name}
         </Text>
         {SubsystemSection && (
-          <SubsystemSection systemState={system} dispatch={dispatch} />
+          <SubsystemSection
+            systemState={system}
+            dispatch={dispatch}
+            restaurantState={restaurantState}
+          />
         )}
       </ScrollView>
       {system.slots &&
@@ -476,6 +500,7 @@ function InventorySystem({ system, dispatch }) {
               key={slot.id}
               systemName={system.name}
               dispatch={dispatch}
+              restaurantState={restaurantState}
             />
           );
         })}
@@ -484,7 +509,7 @@ function InventorySystem({ system, dispatch }) {
 }
 
 function Inventory() {
-  const [inventoryState, dispatch] = useInventoryState();
+  const [inventoryState, dispatch, restaurantState] = useInventoryState();
   if (!inventoryState) {
     return null;
   }
@@ -497,6 +522,7 @@ function Inventory() {
             system={system}
             key={system.id}
             dispatch={dispatch}
+            restaurantState={restaurantState}
           />
         );
       })}

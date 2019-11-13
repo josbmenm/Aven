@@ -312,9 +312,6 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'DidLooseFillCup': {
-      if (!state.fill || state.fill === 'ready') {
-        return defaultReturn();
-      }
       return {
         ...defaultReturn(),
         fill: null,
@@ -683,12 +680,6 @@ function RestaurantReducerFn(state = {}, action) {
       return {
         ...defaultReturn(),
         isAutoRunning: false,
-      };
-    }
-    case 'SetManualMode': {
-      return {
-        ...defaultReturn(),
-        isManualMode: action.isManualMode,
       };
     }
     case 'Attach': {

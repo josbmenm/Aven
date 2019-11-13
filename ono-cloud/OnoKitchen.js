@@ -253,7 +253,7 @@ export function useInventoryState() {
   const inventoryState = getInventoryState(restaurantState, kitchenState);
   const tables = config && config.baseTables;
   if (!tables || !restaurantState) {
-    return [null, dispatch];
+    return [null, dispatch, restaurantState];
   }
   const kitchenSlots = Object.values(tables.KitchenSlots).map(slot => {
     const Ingredient =
@@ -319,6 +319,26 @@ export function useInventoryState() {
         amount: amount,
       });
     }
+    async function positionAndDispenseAmount(amount) {
+      await cloud.dispatch({
+        type: 'KitchenCommand',
+        commandType: 'PositionAndDispenseAmount',
+        params: {
+          slotId: slot.id,
+          amount: amount,
+          slot: slot.Slot,
+          system: slot.KitchenSystem.FillSystemID,
+          ingredientId: slot.Ingredient.id,
+          ingredientName: slot.Ingredient.Name,
+          systemName: slot.KitchenSystem.Name,
+        },
+      });
+      await dispatch({
+        type: 'DidDispense',
+        slotId: slot.id,
+        amount: amount,
+      });
+    }
     return {
       ...slot,
       estimatedRemaining,
@@ -334,6 +354,7 @@ export function useInventoryState() {
       ingredientId: slot.Ingredient.id,
       trackFilling: true,
       onDispense: dispenseSlotAmount,
+      onPositionAndDispense: positionAndDispenseAmount,
       onPurgeSmall: async () => {
         const amount = 40;
         await dispenseSlotAmount(amount);
@@ -407,65 +428,6 @@ export function useInventoryState() {
         .filter(Boolean),
     },
   ];
-  // const inventorySlots = [
-  //   {
-  //     id: 'cups',
-  //     name: 'Cups',
-  //     settings: {},
-  //     disableFilling: true,
-  //     isCups: true,
-  //     estimatedRemaining: cupInventory.estimatedRemaining,
-  //     isEmpty: cupInventory.isEmpty,
-  //     isErrored: cupInventory.isErrored,
-  //     ShotCapacity: 50,
-  //     ShotsAfterLow: 18,
-  //     onDispenseOne: async () => {
-  //       await cloud.dispatch({
-  //         type: 'KitchenCommand',
-  //         commandType: 'DispenseCup',
-  //       });
-  //       await dispatch({
-  //         type: 'DidDispenseCup',
-  //       });
-  //     },
-  //   },
-
-  //   ...ingredientSlots.map(slot => {
-  //     const invState =
-  //       restaurantState.slotInventory && restaurantState.slotInventory[slot.id];
-  //     const dispensedSinceLow =
-  //       kitchenState &&
-  //       kitchenState[
-  //         `${slot.KitchenSystem.Name}_Slot_${slot.Slot}_DispensedSinceLow_READ`
-  //       ];
-  //     const isLowSensed =
-  //       kitchenState &&
-  //       kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_IsLow_READ`];
-  //     const isErrored =
-  //       kitchenState &&
-  //       kitchenState[`${slot.KitchenSystem.Name}_Slot_${slot.Slot}_Error_READ`];
-
-  //     const estimatedRemaining = (invState && invState.estimatedRemaining) || 0;
-  //     return {
-  //       ...slot,
-  //       settings:
-  //         (restaurantState.slotSettings &&
-  //           restaurantState.slotSettings[slot.id]) ||
-  //         {},
-  //       estimatedRemaining,
-  //       dispensedSinceLow,
-  //       isEmpty: false,
-  //       isErrored,
-  //       isLowSensed,
-  //       name: slot.Ingredient.Name,
-  //       photo: slot.Ingredient.Icon,
-  //       color: slot.Ingredient.Color,
-  //       ingredientId: slot.Ingredient.id,
-
-  //     };
-  //   }),
-  // ];
-
   const inventoryIngredients = {};
   inventorySystems.forEach(invSystem => {
     invSystem.slots &&
@@ -475,8 +437,11 @@ export function useInventoryState() {
         }
       });
   });
-
-  return [{ inventorySystems, inventoryIngredients }, dispatch];
+  return [
+    { inventorySystems, inventoryIngredients },
+    dispatch,
+    restaurantState,
+  ];
 }
 
 function getMenuItemInventory(menuItem, companyConfig, inventoryIngredients) {

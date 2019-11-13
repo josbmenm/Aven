@@ -66,7 +66,7 @@ function PressSection() {
           marginBottom: [16, 24],
         }}
       >
-        Some recent coverage
+        some recent coverage.
       </Heading>
       <Container
         responsiveStyle={{
@@ -210,20 +210,23 @@ function PressPage() {
                           marginBottom: [16, 26],
                         }}
                       >
-                        hello, journalists
+                        media kit
                       </Heading>
                       <BodyText
                         responsiveStyle={{
                           marginBottom: [20, 45],
                         }}
                       >
-                        Want to cover ono? Please email us at{' '}
+                        Thanks for your interest in Ono Food Co. You can find
+                        media assets by clicking the button below, but if you
+                        have any questions, feel free to email us at{' '}
                         <a
                           href="mailto:aloha@onofood.co"
                           style={{ fontWeight: 'bold' }}
                         >
                           aloha@onofood.co
                         </a>
+                        .
                       </BodyText>
 
                       <ButtonLink
