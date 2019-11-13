@@ -127,9 +127,12 @@ export default function PageFooter() {
                 <View style={{ flex: 1 }}>
                   <FooterLink
                     titleStyle={{ textAlign: 'left' }}
-                    title="media kit"
-                    target="_blank"
-                    url="https://www.dropbox.com/sh/pqovhpomd86tkwv/AAAlWNK8M737FghzfDawT4T7a?dl=0"
+                    title="press"
+                    routeName="Press"
+                    buttonStyle={{
+                      paddingHorizontal: 0,
+                      paddingLeft: 8,
+                    }}
                   />
                   <View
                     style={{

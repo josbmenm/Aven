@@ -70,7 +70,7 @@ function PressSection() {
       </Heading>
       <Container
         responsiveStyle={{
-          marginBottom: [32, 56],
+          paddingBottom: [60, 90],
         }}
         style={{
           flexDirection: 'row',
