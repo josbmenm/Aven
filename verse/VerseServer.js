@@ -211,6 +211,18 @@ export default async function startVerseServer(httpServer) {
   const restaurantStateDispatch = cloud.get('RestaurantActions')
     .putTransactionValue;
 
+  cloud.docs.setOverrideValueStream(
+    'Ingredients',
+    companyConfigStream.stream.map(config => {
+      const ing =
+        config &&
+        config.value &&
+        config.value.baseTables &&
+        config.value.baseTables['Ingredients'];
+      return ing;
+    }),
+  );
+
   let kitchen = null;
   if (!process.env.DISABLE_ONO_KITCHEN) {
     log('ConnectToMachine');

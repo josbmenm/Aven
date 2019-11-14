@@ -170,10 +170,12 @@ export default function FillList({ fills, inventoryIngredients, onFills }) {
           style={{ flexDirection: 'row', marginVertical: 6 }}
         >
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-            <AirtableImage
-              image={fill.ingredientImage}
-              style={{ width: 50, height: 50 }}
-            />
+            {inv && inv.Ingredient && inv.Ingredient.Image && (
+              <AirtableImage
+                image={inv.Ingredient.Image}
+                style={{ width: 50, height: 50 }}
+              />
+            )}
             <View style={{ flex: 1 }}>
               <FillText color={fillTextColor}>{fill.ingredientName}</FillText>
               {inv && (

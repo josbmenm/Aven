@@ -278,6 +278,7 @@ export default async function startSkynetServer(httpServer) {
             address: Address,
             start: scheduleRow['Start Time'],
             end: scheduleRow['End Time'],
+            addressLink: scheduleRow['Maps Link'],
             timeText: `${startHours}:${startMinutes} ${startAMPM} - ${endHours}:${endMinutes} ${endAMPM}`,
           });
         });

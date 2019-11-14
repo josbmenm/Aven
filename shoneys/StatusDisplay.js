@@ -187,6 +187,7 @@ function ETAText({ queuedIndex }) {
 function IngredientFillingCup({
   fillLevel,
   currentFill,
+  currentFillIngredient,
   blendTintColor,
   isBlending,
 }) {
@@ -281,7 +282,8 @@ function IngredientFillingCup({
               height: 80,
               width: 80,
               borderRadius: 40,
-              backgroundColor: currentFill.ingredientColor,
+              backgroundColor:
+                currentFillIngredient && currentFillIngredient.Color,
               opacity: dotOpacity,
               transform: [
                 {
@@ -325,11 +327,13 @@ function IngredientFillingCup({
             }}
           >
             <Animated.View style={{ opacity: ingredientMessageOpacity }}>
-              <AirtableImage
-                style={{ width: 75, height: 75 }}
-                tintColor={currentFill.ingredientColor}
-                image={currentFill.ingredientIcon}
-              />
+              {currentFillIngredient && currentFillIngredient.Icon && (
+                <AirtableImage
+                  style={{ width: 75, height: 75 }}
+                  tintColor={currentFillIngredient.Color}
+                  image={currentFillIngredient.Icon}
+                />
+              )}
             </Animated.View>
           </Animated.View>
         </View>
@@ -343,7 +347,14 @@ function IngredientFillingCup({
   );
 }
 
-function TaskRow({ task, status, fill, queuedIndex, isFadingAway }) {
+function TaskRow({
+  task,
+  status,
+  fill,
+  queuedIndex,
+  isFadingAway,
+  ingredients,
+}) {
   if (!task) {
     return null;
   }
@@ -361,10 +372,16 @@ function TaskRow({ task, status, fill, queuedIndex, isFadingAway }) {
     if (fill.fillsRemaining && fill.fillsRemaining[0]) {
       currentFill = fill.fillsRemaining[0];
     }
+    const currentFillIngredient =
+      currentFill &&
+      currentFill.ingredientId &&
+      ingredients &&
+      ingredients[currentFill.ingredientId];
     right = (
       <IngredientFillingCup
         currentFill={currentFill}
         fillLevel={fillLevel}
+        currentFillIngredient={currentFillIngredient}
         blendTintColor={task.blendColor}
       />
     );
@@ -459,7 +476,7 @@ function PresentationSection({ closingSoon }) {
   return <View style={{ height: 840, alignSelf: 'stretch' }}>{content}</View>;
 }
 
-function QueueSection({ queue = [], fill, blend, delivery }) {
+function QueueSection({ queue = [], fill, blend, delivery, ingredients }) {
   const renderQueue = [
     ...queue.map(
       (task, taskIndex) =>
@@ -480,6 +497,7 @@ function QueueSection({ queue = [], fill, blend, delivery }) {
         key={fill.task.id}
         task={fill.task}
         fill={fill}
+        ingredients={ingredients}
         status="filling"
       />,
     );
@@ -709,8 +727,14 @@ function StoreSign({ title, subtitle }) {
 }
 
 function StatusDisplay({ state }) {
-  const { isOpen, closingSoon, isTraveling } = useIsRestaurantOpen(state);
-  const [restaurantState, dispatched] = useRestaurantState();
+  const [restaurantState] = useRestaurantState();
+  const { isOpen, closingSoon, isTraveling } = useIsRestaurantOpen(
+    restaurantState,
+  );
+  const ingredients = useCloudValue('Ingredients');
+  if (!restaurantState) {
+    return null;
+  }
   if (isTraveling) {
     return <View style={{ flex: 1, backgroundColor: 'black' }} />;
   }
@@ -731,21 +755,16 @@ function StatusDisplay({ state }) {
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       <PresentationSection closingSoon={closingSoon} />
-      <QueueSection {...state} />
-      <PickupSection {...state} />
+      <QueueSection {...restaurantState} ingredients={ingredients} />
+      <PickupSection {...restaurantState} ingredients={ingredients} />
     </View>
   );
 }
 
 export default function StatusDisplayScreen() {
-  const restaurantState = useCloudValue('RestaurantState');
-
-  if (!restaurantState) {
-    return null;
-  }
   return (
     <StatusDisplayLayout>
-      <StatusDisplay state={restaurantState} />
+      <StatusDisplay />
     </StatusDisplayLayout>
   );
 }
