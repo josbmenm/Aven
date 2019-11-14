@@ -185,10 +185,14 @@ function DeviceRow({ device }) {
 
 function DeviceManager() {
   const devicesState = useCloudValue('DevicesState');
-  const devices = (devicesState && devicesState.devices) || [];
-  if (!devices) {
-    return <Spinner />;
+  if (!devicesState) {
+    return (
+      <View style={{ alignItems: 'center', marginTop: 100 }}>
+        <Spinner />
+      </View>
+    );
   }
+  const devices = devicesState.devices || [];
   if (devices.length === 0) {
     return (
       <RowSection>

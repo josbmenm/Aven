@@ -710,7 +710,11 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'SetMaintenanceMode': {
-      return { ...defaultReturn(), maintenanceMode: action.maintenanceMode };
+      return {
+        ...defaultReturn(),
+        maintenanceMode: action.maintenanceMode,
+        maintenanceReason: action.maintenanceReason,
+      };
     }
     case 'CloseRestaurant': {
       return {

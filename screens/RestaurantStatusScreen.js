@@ -268,6 +268,43 @@ function OpenRestaurantForm({ onClose }) {
   );
 }
 
+function MaintenanceModeForm({ onClose }) {
+  const [_, dispatch] = useRestaurantState();
+  const [maintenanceReason, setReason] = React.useState('');
+  async function handleOpen() {
+    await dispatch({
+      type: 'SetMaintenanceMode',
+      maintenanceMode: true,
+      maintenanceReason,
+    });
+    onClose();
+  }
+  const { inputs } = useFocus({
+    onSubmit: handleOpen,
+    inputRenderers: [
+      inputProps => (
+        <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
+          <BlockFormInput
+            {...inputProps}
+            label="what is wrong"
+            onValue={setReason}
+            value={maintenanceReason}
+          />
+        </View>
+      ),
+    ],
+  });
+
+  return (
+    <View>
+      {inputs}
+      <View style={{ padding: 10 }}>
+        <AsyncButton onPress={handleOpen} title="Enter Maintenance Mode" />
+      </View>
+    </View>
+  );
+}
+
 function useRestaurantOpenPopover() {
   const { onPopover } = useKeyboardPopover(({ onClose }) => {
     return <OpenRestaurantForm onClose={onClose} />;
@@ -306,7 +343,11 @@ function StatusView() {
     tagColor = Tag.negativeColor;
     tagText = 'Maintenance Mode';
   }
-
+  const { onPopover: onMaintenancePopover } = useKeyboardPopover(
+    ({ onClose }) => {
+      return <MaintenanceModeForm onClose={onClose} />;
+    },
+  );
   const { onPopover: onCloseRestaurantPopover } = useKeyboardPopover(
     ({ onClose }) => {
       return <CloseRestaurantButtons onClose={onClose} />;
@@ -320,15 +361,20 @@ function StatusView() {
       <Button title="close restaurant" onPress={onCloseRestaurantPopover} />,
     );
     buttons.push(
-      <Button
+      <AsyncButton
         title={
           isMaintenanceMode ? 'exit maintenance mode' : 'enter maintenance mode'
         }
-        onPress={() => {
-          dispatch({
-            type: 'SetMaintenanceMode',
-            maintenanceMode: !isMaintenanceMode,
-          });
+        onPress={async () => {
+          if (isMaintenanceMode) {
+            await dispatch({
+              type: 'SetMaintenanceMode',
+              maintenanceMode: false,
+              maintenanceReason: null,
+            });
+          } else {
+            onMaintenancePopover();
+          }
         }}
       />,
     );

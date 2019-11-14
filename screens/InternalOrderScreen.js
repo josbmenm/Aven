@@ -11,6 +11,7 @@ import {
 } from '../components/Styles';
 import formatCurrency from '../utils/formatCurrency';
 import Button from '../components/Button';
+import AsyncButton from '../components/AsyncButton';
 import Row from '../components/Row';
 import Spinner from '../components/Spinner';
 import BlockFormInput from '../components/BlockFormInput';
@@ -30,20 +31,18 @@ function OrderTasks({ order }) {
       {order.orderTasks.map(task => {
         return (
           <Row title={task.blendName} key={task.id}>
-            <Button
+            <AsyncButton
               title="re-make"
-              onPress={() => {
-                handleErrors(
-                  restaurantDispatch({
-                    type: 'QueueTasks',
-                    tasks: [
-                      {
-                        ...task,
-                        id: cuid(),
-                      },
-                    ],
-                  }),
-                );
+              onPress={async () => {
+                await restaurantDispatch({
+                  type: 'QueueTasks',
+                  tasks: [
+                    {
+                      ...task,
+                      id: cuid(),
+                    },
+                  ],
+                });
               }}
             />
           </Row>

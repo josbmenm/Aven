@@ -292,7 +292,9 @@ function FullApp() {
                 await AsyncStorage.removeItem(NAV_STORAGE_KEY);
               }}
             >
-              <AppContainer persistenceKey={NAV_STORAGE_KEY} />
+              <PopoverContainer>
+                <AppContainer persistenceKey={NAV_STORAGE_KEY} />
+              </PopoverContainer>
             </ErrorContainer>
           </PopoverContainer>
         </CloudContext.Provider>

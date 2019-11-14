@@ -320,6 +320,54 @@ export default async function startVerseServer(httpServer) {
     }, 59000);
   }
 
+  if (kitchen) {
+    setInterval(() => {
+      companyConfigStream.load().then(companyConfig => {
+        if (
+          !companyConfig ||
+          !companyConfig.value ||
+          !companyConfig.value.baseTables
+        ) {
+          return;
+        }
+        const allSlots = companyConfig.value.baseTables.KitchenSlots;
+        const ingredients = companyConfig.value.baseTables.Ingredients;
+        const systems = companyConfig.value.baseTables.KitchenSystems;
+
+        const slotInventory =
+          (lastRestaurantState && lastRestaurantState.slotInventory) || {};
+        const inventoryResults = Object.fromEntries(
+          Object.entries(slotInventory).map(([slotId, slotInvState]) => {
+            const slot = allSlots[slotId];
+            const ingredient = ingredients[slot.Ingredient[0]];
+            const slotLog = {
+              estimatedRemainingShots: slotInvState.estimatedRemaining,
+            };
+            const shotMass = ingredient['Mass (g/shot)'];
+            const shotVolume = ingredient['ShotSize(ml)'];
+            const systemName = systems[slot.KitchenSystem[0]].Name;
+            if (systemName === 'FrozenFood' || systemName === 'Piston') {
+              const factor = 453.6 / shotMass;
+              slotLog.lbs = slotInvState.estimatedRemaining / factor;
+            }
+            if (systemName === 'Powder' || systemName === 'Granules') {
+              const factor = 1000 / shotMass;
+              slotLog.kg = slotInvState.estimatedRemaining / factor;
+            }
+            if (systemName === 'Beverage') {
+              const factor = 1000 / shotVolume;
+              slotLog.liters = slotInvState.estimatedRemaining / factor;
+            }
+            return [ingredient.Name, slotLog];
+          }),
+        );
+        trace('InventoryMonitor', {
+          ...inventoryResults,
+        });
+      });
+    }, 59000);
+  }
+
   async function silentDispatch(action) {
     switch (action.type) {
       case 'KitchenCommand':

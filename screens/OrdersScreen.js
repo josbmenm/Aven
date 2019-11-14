@@ -2,6 +2,7 @@ import React from 'react';
 import TwoPanePage from '../components/TwoPanePage';
 import Button from '../components/Button';
 import Row from '../components/Row';
+import Spinner from '../components/Spinner';
 import StatusBar from '../components/StatusBar';
 import RowSection from '../components/RowSection';
 import { useNavigation } from '../navigation-hooks/Hooks';
@@ -50,7 +51,11 @@ function OrderRow({ order }) {
 function OrdersList({ restaurantState, dispatch }) {
   const recentOrders = useCloudValue('RecentOrders');
   if (!recentOrders || !recentOrders.orders) {
-    return null;
+    return (
+      <View style={{ alignItems: 'center', marginTop: 100 }}>
+        <Spinner />
+      </View>
+    );
   }
   return (
     <RowSection title="recent orders">

@@ -10,7 +10,7 @@ import codePush from 'react-native-code-push';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import Row from '../components/Row';
 import Tag from '../components/Tag';
-import useAsyncError from '../react-utils/useAsyncError';
+import useAsyncErrorPopover from '../components/useAsyncErrorPopover';
 import MultiSelect from '../components/MultiSelect';
 import BlockFormInput from '../components/BlockFormInput';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
@@ -25,7 +25,7 @@ function FridgeView() {
   const fridgeEnabled =
     !!kitchenState && !!kitchenState.System_EnableRefrigerationSystem_VALUE;
   const cloud = useCloud();
-  const handleError = useAsyncError();
+  const handleError = useAsyncErrorPopover();
   return (
     <Row title="main refridgeration">
       <Tag
@@ -61,7 +61,7 @@ function VanInTruckOverride() {
   const machineInVan =
     !!kitchenState && !!kitchenState.System_MachineInVanBypass_VALUE;
   const cloud = useCloud();
-  const handleError = useAsyncError();
+  const handleError = useAsyncErrorPopover();
   return (
     <Row title="override machine in van">
       <Tag
@@ -96,7 +96,7 @@ function CompressorView() {
   const fridgeEnabled =
     !!kitchenState && !!kitchenState.System_EnableAirSystem_VALUE;
   const cloud = useCloud();
-  const handleError = useAsyncError();
+  const handleError = useAsyncErrorPopover();
   return (
     <Row title="air compressor">
       <Tag
@@ -128,7 +128,7 @@ function CompressorView() {
 
 function ServerErrorTest() {
   const cloud = useCloud();
-  const handleError = useAsyncError();
+  const handleError = useAsyncErrorPopover();
   return (
     <LinkRow
       onPress={() => {
@@ -176,7 +176,7 @@ function CateringMode() {
   const isCateringMode =
     !!restaurantConfig && restaurantConfig.mode === 'catering';
   const cloud = useCloud();
-  const handleError = useAsyncError();
+  const handleError = useAsyncErrorPopover();
   return (
     <Row title="catering mode">
       <Tag
@@ -211,7 +211,7 @@ const NAMED_FAULTS = {
 };
 function AlarmMode() {
   const [state, dispatch] = useRestaurantState();
-  const handleError = useAsyncError();
+  const handleError = useAsyncErrorPopover();
   return (
     <Row title="disable restaurant faults">
       <View style={{ flex: 1 }}>
@@ -299,7 +299,7 @@ function SetFridgeTempForm({ onClose, onValues, initialValues }) {
 function SetFridgeTemp() {
   const kitchenState = useKitchenState() || {};
   const cloud = useCloud();
-  const handleError = useAsyncError();
+  const handleError = useAsyncErrorPopover();
 
   const { onPopover: onSetFridgeTemp } = useKeyboardPopover(({ onClose }) => {
     return (
@@ -341,7 +341,7 @@ function SetFridgeTemp() {
 
 function DryRunMode() {
   const [restaurantState, dispatch] = useRestaurantState();
-  const handleError = useAsyncError();
+  const handleError = useAsyncErrorPopover();
   const dryMode = (restaurantState && restaurantState.isDryRunning) || false;
   const isFillEnabled = !dryMode;
   const isBlendEnabled = dryMode !== true;
