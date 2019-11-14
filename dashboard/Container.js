@@ -3,7 +3,7 @@ import View from '../views/View';
 import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 
-function Container({ children, responsiveStyle, style = {} }) {
+function Container({ children, responsiveStyle, fullWidth, style = {} }) {
   const theme = useTheme();
   return (
     <Responsive
@@ -12,8 +12,9 @@ function Container({ children, responsiveStyle, style = {} }) {
       }}
     >
       <View
+        testID={fullWidth ? 'FullWidthContainer' : 'Container'}
         style={{
-          width: '90%',
+          width: fullWidth ? '100%' : '90%',
           maxWidth: theme.layouts.large,
           alignItems: 'stretch',
           alignSelf: 'center',
