@@ -389,23 +389,40 @@ const KitchenSteps = [
         taskId: restaurantState.blend.task.id,
       };
     },
-    getKitchenCommand: intent => ({
-      commandType: 'Blend',
-      params: {
-        Timer1: intent.blendProfile.Timer1,
-        Speed1: intent.blendProfile.Speed1,
-        Pulse1: intent.blendProfile.Pulse1,
-        Timer2: intent.blendProfile.Timer2,
-        Speed2: intent.blendProfile.Speed2,
-        Pulse2: intent.blendProfile.Pulse2,
-        Timer3: intent.blendProfile.Timer3,
-        Speed3: intent.blendProfile.Speed3,
-        Pulse3: intent.blendProfile.Pulse3,
-        Timer4: intent.blendProfile.Timer4,
-        Speed4: intent.blendProfile.Speed4,
-        Pulse4: intent.blendProfile.Pulse4,
-      },
-    }),
+    getKitchenCommand: intent => {
+      const params = {
+        Timer1: 0,
+        Speed1: 0,
+        Pulse1: 0,
+        Timer2: 0,
+        Speed2: 0,
+        Pulse2: 0,
+        Timer3: 0,
+        Speed3: 0,
+        Pulse3: 0,
+        Timer4: 0,
+        Speed4: 0,
+        Pulse4: 0,
+      };
+      if (intent.blendProfile) {
+        params.Timer1 = intent.blendProfile.Timer1;
+        params.Speed1 = intent.blendProfile.Speed1;
+        params.Pulse1 = intent.blendProfile.Pulse1;
+        params.Timer2 = intent.blendProfile.Timer2;
+        params.Speed2 = intent.blendProfile.Speed2;
+        params.Pulse2 = intent.blendProfile.Pulse2;
+        params.Timer3 = intent.blendProfile.Timer3;
+        params.Speed3 = intent.blendProfile.Speed3;
+        params.Pulse3 = intent.blendProfile.Pulse3;
+        params.Timer4 = intent.blendProfile.Timer4;
+        params.Speed4 = intent.blendProfile.Speed4;
+        params.Pulse4 = intent.blendProfile.Pulse4;
+      }
+      return {
+        commandType: 'Blend',
+        params,
+      };
+    },
     getSuccessRestaurantAction: intent => ({
       type: 'DidBlend',
     }),
