@@ -43,7 +43,7 @@ function HomePage() {
       />
       <HomeSlider />
       <HowItWorks />
-      <WeekSchedule />
+      {seeLaunchSchedule && <WeekSchedule />}
 
       {/* Don't ask why this is necessary. JUST MOVE ON! */}
       <div style={{ position: 'relative' }} />
