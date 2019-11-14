@@ -13,10 +13,11 @@ import { Responsive } from '../dashboard/Responsive';
 import { absoluteElement } from '../components/Styles';
 import UnholyHackSubscriptionForm from './UnholyHackSubscriptionForm';
 import { useTheme } from '../dashboard/Theme';
+import ButtonLink from '../dashboard/ButtonLink';
 
 const breakpoints = [1024, 1400];
 
-function HomeHeader() {
+function HomeHeader({ seeLaunchSchedule }) {
   const theme = useTheme();
   return (
     <Responsive
@@ -115,16 +116,24 @@ function HomeHeader() {
                       and vegetables to create delicious blends that focus on
                       the best ingredients for you.
                     </BodyText>
-                    <BodyText
-                      responsiveStyle={{
-                        marginBottom: [15, 25],
-                        flex: [1, 1],
-                      }}
-                      bold
-                    >
-                      See you soon, Los Angeles.
-                    </BodyText>
-                    <UnholyHackSubscriptionForm />
+                    {seeLaunchSchedule ? (
+                      <React.Fragment>
+                        <ButtonLink title="find us" url="#schedule" />
+                      </React.Fragment>
+                    ) : (
+                      <React.Fragment>
+                        <BodyText
+                          responsiveStyle={{
+                            marginBottom: [15, 25],
+                            flex: [1, 1],
+                          }}
+                          bold
+                        >
+                          See you soon, Los Angeles.
+                        </BodyText>
+                        <UnholyHackSubscriptionForm />
+                      </React.Fragment>
+                    )}
                   </View>
                 </Responsive>
               </ColumnToRowChild>

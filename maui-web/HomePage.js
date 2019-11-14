@@ -7,14 +7,17 @@ import Container from '../dashboard/Container';
 import PageFooter from './PageFooter';
 import HomeSlider from './HomeSlider';
 import HowItWorks from './HowItWorks';
-import HomeSchedule from './HomeSchedule';
+import WeekSchedule from './WeekSchedule';
 import { aspectRatio169 } from '../components/Styles';
 import GenericHeroHeader from './GenericHeroHeader';
+import { useNavigation } from '../navigation-hooks/Hooks';
 
 function HomePage() {
+  const { getParam } = useNavigation();
+  const seeLaunchSchedule = getParam('preview') === 'launch-schedule';
   return (
     <GenericPage>
-      <HomeHeader />
+      <HomeHeader seeLaunchSchedule={seeLaunchSchedule} />
       <View>
         <Container>
           <div style={{ position: 'relative', paddingTop: '56.25%' }}>
@@ -40,7 +43,7 @@ function HomePage() {
       />
       <HomeSlider />
       <HowItWorks />
-      {/* <HomeSchedule /> */}
+      <WeekSchedule />
 
       {/* Don't ask why this is necessary. JUST MOVE ON! */}
       <div style={{ position: 'relative' }} />

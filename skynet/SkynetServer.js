@@ -236,6 +236,56 @@ export default async function startSkynetServer(httpServer) {
     'CompanyConfig',
     companyConfigStream,
   );
+
+  const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const DAY_NAMES = {
+    Sun: 'Sunday',
+    Mon: 'Monday',
+    Tue: 'Tuesday',
+    Wed: 'Wednesday',
+    Thu: 'Thursday',
+    Fri: 'Friday',
+    Sat: 'Saturday',
+  };
+  cloud.docs.setOverrideValueStream(
+    'RestaurantSchedule',
+    companyConfigStream.map(config => {
+      const schedule =
+        config && config.baseTables && config.baseTables['Routing Schedule'];
+      if (!schedule) {
+        return [];
+      }
+      const days = {};
+      Object.values(schedule).forEach(scheduleRow => {
+        const { Enabled, Address, DaysOfWeek, Name } = scheduleRow;
+        if (!Enabled) return;
+        DaysOfWeek.forEach(dayId => {
+          days[dayId] = days[dayId] || {};
+          days[dayId].key = dayId;
+          days[dayId].name = DAY_NAMES[dayId];
+          days[dayId].stops = days[dayId].stops || [];
+          const start = new Date(scheduleRow['Start Time']);
+          const end = new Date(scheduleRow['End Time']);
+          const startHours = start.getHours() % 12;
+          const startMinutes = `${start.getMinutes()}`.padStart(2, '0');
+          const startAMPM = start.getHours() > 12 ? 'PM' : 'AM';
+          const endHours = end.getHours() % 12;
+          const endMinutes = `${end.getMinutes()}`.padStart(2, '0');
+          const endAMPM = end.getHours() > 12 ? 'PM' : 'AM';
+          days[dayId].stops.push({
+            id: scheduleRow.id,
+            name: Name,
+            address: Address,
+            start: scheduleRow['Start Time'],
+            end: scheduleRow['End Time'],
+            timeText: `${startHours}:${startMinutes} ${startAMPM} - ${endHours}:${endMinutes} ${endAMPM}`,
+          });
+        });
+      });
+      return DAYS.map(dayId => days[dayId]);
+    }),
+  );
+
   const companyActivity = cloud.docs.get('CompanyActivity');
 
   const cloudOrders = cloud.get('Orders');

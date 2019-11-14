@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, ScrollView, Image } from 'react-native';
 import View from '../views/View';
+import { useCloudValue } from '../cloud-core/KiteReact';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
 import BaseText from '../dashboard/BaseText';
@@ -31,7 +32,7 @@ function WeekSchedule() {
   }
   console.log('COMPONENT RENDERED');
   return (
-    <View style={{ paddingVertical: 80 }}>
+    <View style={{ paddingVertical: 80 }} nativeID="schedule">
       <Container
         style={{
           borderBottomWidth: StyleSheet.hairlineWidth,
@@ -43,7 +44,7 @@ function WeekSchedule() {
           size="small"
           style={{ textAlign: 'center', alignSelf: 'center' }}
         >
-          This Week
+          find us this week
         </Heading>
         {schedule && (
           <View style={{ paddingTop: 60, position: 'relative' }}>
@@ -51,10 +52,10 @@ function WeekSchedule() {
               horizontal
               onScroll={handleScroll}
               scrollEventThrottle={16}
-              style={{paddingBottom: 80}}
+              style={{ paddingBottom: 80 }}
             >
               {schedule.map(day => (
-                <DaySchedule key={day.id} day={day} />
+                <DaySchedule key={day.key} day={day} />
               ))}
             </ScrollView>
             {startGradient && (
@@ -93,8 +94,12 @@ function WeekSchedule() {
   );
 }
 
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
 function DaySchedule({ day }) {
-  const { today, label, schedule } = day;
+  const { key, name, stops } = day;
+  const today = key === DAYS[new Date().getDay()];
+
   const theme = useTheme();
   return (
     <View
@@ -131,126 +136,22 @@ function DaySchedule({ day }) {
           marginBottom: [20, 16],
         }}
       >
-        {label}
+        {name}
       </Heading>
-      {schedule.map(item => (
-        <ScheduleItem style={{ marginBottom: 20 }} key={item.id} item={item} />
+      {stops.map(item => (
+        <ScheduleItem
+          style={{ marginBottom: 20 }}
+          key={item.id}
+          item={item}
+          today={today}
+        />
       ))}
     </View>
   );
 }
 
 function useWeekSchedule() {
-  const [data, setData] = React.useState(null);
-
-  React.useEffect(() => {
-    setTimeout(() => {
-      setData([
-        {
-          id: 1,
-          today: true,
-          label: 'Monday',
-          schedule: [
-            {
-              id: 1,
-              time: '8:00 am - 2:00 pm',
-              address: '633 West 5th St.\nLos Angeles, CA 90071',
-              active: true,
-            },
-            {
-              id: 2,
-              time: '5:00 pm - 9:00 pm',
-              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
-              active: false,
-            },
-          ],
-        },
-        {
-          id: 2,
-          today: false,
-          label: 'Tuesday',
-          schedule: [
-            {
-              id: 1,
-              time: '8:00 am - 2:00 pm',
-              address: '633 West 5th St.\nLos Angeles, CA 90071',
-              active: false,
-            },
-            {
-              id: 2,
-              time: '5:00 pm - 9:00 pm',
-              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
-              active: false,
-            },
-            {
-              id: 3,
-              time: '5:00 pm - 9:00 pm',
-              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
-              active: false,
-            },
-          ],
-        },
-        {
-          id: 3,
-          today: false,
-          label: 'Wednesday',
-          schedule: [
-            {
-              id: 1,
-              time: '8:00 am - 2:00 pm',
-              address: '633 West 5th St.\nLos Angeles, CA 90071',
-              active: false,
-            },
-            {
-              id: 2,
-              time: '5:00 pm - 9:00 pm',
-              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
-              active: false,
-            },
-          ],
-        },
-        {
-          id: 4,
-          today: false,
-          label: 'Thursday',
-          schedule: [
-            {
-              id: 1,
-              time: '8:00 am - 2:00 pm',
-              address: '633 West 5th St.\nLos Angeles, CA 90071',
-              active: false,
-            },
-            {
-              id: 2,
-              time: '5:00 pm - 9:00 pm',
-              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
-              active: false,
-            },
-          ],
-        },
-        {
-          id: 5,
-          today: false,
-          label: 'Friday',
-          schedule: [
-            {
-              id: 1,
-              time: '8:00 am - 2:00 pm',
-              address: '633 West 5th St.\nLos Angeles, CA 90071',
-              active: false,
-            },
-            {
-              id: 2,
-              time: '5:00 pm - 9:00 pm',
-              address: '2738 Hyperion Ave.\nLos Angeles, CA 90027',
-              active: false,
-            },
-          ],
-        },
-      ]);
-    }, 1000);
-  }, []);
-
+  const data = useCloudValue('RestaurantSchedule');
   return data;
 }
 
