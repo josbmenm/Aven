@@ -4,16 +4,22 @@ import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 import fs from 'fs-extra';
 import cuid from 'cuid';
 
+// const serverTag = 'Skynet';
+// const domain = 'onofood.co';
+// const source = createNodeNetworkSource({
+//   authority: 'onoblends.co',
+//   useSSL: true,
+//   quiet: true,
+// });
+
+const serverTag = 'Verse';
 const domain = 'onofood.co';
 const source = createNodeNetworkSource({
-  authority: 'onoblends.co',
-  useSSL: true,
+  authority: '10.10.1.200:8830',
+  useSSL: false,
   quiet: true,
 });
-// const client = createClient({
-//   source,
-//   domain,
-// });
+
 const auth = {
   accountId: 'root',
   verificationInfo: {},
@@ -165,7 +171,7 @@ async function handleTask(task) {
 }
 
 async function handleRollup(jobId) {
-  const docsFile = `${BACKUP_DIR}/docs/${domain}_${jobId}.json`;
+  const docsFile = `${BACKUP_DIR}/docs/${domain}_${jobId}_${serverTag}.json`;
   await fs.writeFile(docsFile, JSON.stringify(jobResults[jobId]));
 }
 

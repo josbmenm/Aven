@@ -9,27 +9,7 @@ import { useTheme } from '../dashboard/Theme';
 import ScheduleItem from './ScheduleItem';
 
 function WeekSchedule() {
-  const theme = useTheme();
   const schedule = useWeekSchedule();
-  const [startGradient, setStartGradient] = React.useState(null);
-  const [endGradient, setEndGradient] = React.useState(true);
-
-  function handleScroll({ nativeEvent }) {
-    const { contentOffset, contentSize, layoutMeasurement } = nativeEvent;
-    const limitOffset = contentSize.width - 40;
-
-    if (contentOffset.x > 10) {
-      setStartGradient(true);
-    } else {
-      setStartGradient(false);
-    }
-
-    if (contentOffset.x + layoutMeasurement.width < limitOffset) {
-      setEndGradient(true);
-    } else {
-      setEndGradient(false);
-    }
-  }
   let todayIndex = 0;
   const scrollView = React.useRef(null);
   const days =
@@ -43,21 +23,11 @@ function WeekSchedule() {
     });
   React.useEffect(() => {
     const sv = scrollView.current;
-    // debugger;
-    sv && sv.scrollResponderScrollTo({ x: 328 * todayIndex });
-
-    // todayIndex;
-    // scrollView.current.scrollTo(todayIndex);
+    sv && sv.scrollResponderScrollTo({ x: 300 * todayIndex - 20 });
   }, [todayIndex, scrollView.current]);
   return (
     <View style={{ paddingVertical: 80 }} nativeID="schedule">
-      <Container
-        style={{
-          borderBottomWidth: StyleSheet.hairlineWidth,
-          borderBottomColor: theme.colors.border,
-          paddingBottom: 100,
-        }}
-      >
+      <Container fullWidth>
         <Heading
           size="small"
           style={{ textAlign: 'center', alignSelf: 'center' }}
@@ -66,44 +36,9 @@ function WeekSchedule() {
         </Heading>
         {schedule && (
           <View style={{ paddingTop: 60, position: 'relative' }}>
-            <ScrollView
-              horizontal
-              onScroll={handleScroll}
-              scrollEventThrottle={16}
-              style={{ paddingBottom: 80 }}
-              ref={scrollView}
-            >
+            <ScrollView horizontal style={{}} ref={scrollView}>
               {days}
             </ScrollView>
-            {startGradient && (
-              <Image
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: -4,
-                  bottom: 0,
-                  width: 88,
-                  height: '100%',
-                  transform: [{ rotate: '180deg' }],
-                }}
-                source={require('./public/img/white-gradient.png')}
-                resizeMode="repeat"
-              />
-            )}
-            {endGradient && (
-              <Image
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  bottom: 0,
-                  width: 88,
-                  height: '100%',
-                }}
-                source={require('./public/img/white-gradient.png')}
-                resizeMode="repeat"
-              />
-            )}
           </View>
         )}
       </Container>
@@ -121,8 +56,9 @@ function DaySchedule({ day, today }) {
     <View
       style={[
         {
-          width: 308,
+          width: 280,
           padding: 20,
+          paddingBottom: 40,
           marginHorizontal: 10,
           borderRadius: theme.radii[3],
           overflow: 'hidden',
