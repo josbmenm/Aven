@@ -720,35 +720,36 @@ export function createDoc({
   );
 
   async function finallyPutTransactionValue(value) {
-    const fullValue =
-      typeof value === 'object' && value.dispatchTime === undefined
-        ? { ...value, dispatchTime: Date.now(), dispatchId: cuid() }
-        : value;
     if (docState.id === undefined && !docState.isLocalOnly) {
       return _remotePutTransactionValue(value);
     }
+    const dispatchTime = Date.now();
+    const dispatchId = cuid();
+    const fullLocalValue =
+      typeof value === 'object'
+        ? { ...value, dispatchTime, dispatchId }
+        : value;
     const prevId = docState.id;
     const on = prevId ? { id: prevId, type: 'BlockReference' } : null;
-    const expectedTransactionValue = {
+    const localTransactionValue = {
       type: 'TransactionValue',
       on,
-      value: fullValue,
+      value: fullLocalValue,
     };
-    const expectedBlock = getBlockOfValue(expectedTransactionValue);
-
-    performReport('PutDocValue', {
-      id: expectedBlock.id,
-      value: expectedTransactionValue,
-    });
+    const localBlock = getBlockOfValue(localTransactionValue);
 
     if (docState.isLocalOnly) {
       setDocState({
-        id: expectedBlock.id,
+        id: localBlock.id,
       });
-      return { id: expectedBlock.id };
+      performReport('PutDocValue', {
+        id: localBlock.id,
+        value: localTransactionValue,
+      });
+      return { id: localBlock.id, prevId, dispatchTime, dispatchId };
     }
     setDocState({
-      id: expectedBlock.id,
+      id: localBlock.id,
       puttingFromId: prevId,
     });
 
@@ -759,28 +760,58 @@ export function createDoc({
       name: getName(),
       value,
     });
+    if (result.id === prevId) {
+      const finalValue =
+        typeof value === 'object'
+          ? {
+              ...value,
+              dispatchTime: result.dispatchTime,
+              dispatchId: result.dispatchId,
+            }
+          : value;
+      if (docState.id === undefined && !docState.isLocalOnly) {
+        return _remotePutTransactionValue(value);
+      }
+      const finalTransactionValue = {
+        type: 'TransactionValue',
+        on,
+        value: finalValue,
+      };
+      const finalBlock = getBlockOfValue(finalTransactionValue);
 
-    let stateUpdates = {
+      if (result.id !== finalBlock.id) {
+        setDocState({
+          id: result.id,
+          lastFetchTime: getNow(),
+          puttingFromId: null,
+        });
+        throw new Err('TransactionOptimisticFailure', {
+          id: result.id,
+          domain,
+          name: onGetName(),
+        });
+      }
+      performReport('PutDocValue', {
+        id: finalBlock.id,
+        value: finalTransactionValue,
+      });
+    } else {
+      performReport('PutDoc', {
+        id: result.id,
+      });
+    }
+    setDocState({
       lastPutTime: getNow(),
       puttingFromId: null,
       lastFetchTime: getNow(),
       id: result.id,
-    };
-    if (result.id !== expectedBlock.id) {
-      performReport('PutDoc', {
-        id: result.id,
-      });
-      // console.warn(
-      //   `Expected to put block id "${expectedBlock.id}", but actually put id "${result.id}"`,
-      // );
-    }
-    setDocState(stateUpdates);
+    });
     return result;
   }
 
   let transactionPutPromise = Promise.resolve();
   function putTransactionValue(value) {
-    transactionPutPromise = transactionPutPromise.then(() =>
+    transactionPutPromise = transactionPutPromise.finally(() =>
       finallyPutTransactionValue(value),
     );
     return transactionPutPromise;
@@ -1195,9 +1226,8 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
 
   async function PutTransactionValue({ name, value }) {
     const doc = rootDocSet.get(name);
-    await doc.putTransactionValue(value);
-    const id = await doc.get().id;
-    return { id, name, domain };
+    const result = await doc.putTransactionValue(value);
+    return { ...result, name, domain };
   }
 
   async function PostDoc({ name, value, id }) {
@@ -1516,9 +1546,25 @@ export function createLocalSessionClient({
         .dispatch({ type: 'PutDocValue', domain, name, id, value })
         .catch(err => handleAsyncStorageFailure(err, { reportName, report }));
     } else if (reportName === 'PutDoc') {
-      localSource
-        .dispatch({ type: 'PutDoc', domain, name, id })
-        .catch(err => handleAsyncStorageFailure(err, { reportName, report }));
+      localSource.dispatch({ type: 'PutDoc', domain, name, id }).catch(err => {
+        if (err.name === 'UnknownBlock') {
+          clientOpts.source
+            .dispatch({
+              type: 'GetBlock',
+              domain,
+              name,
+              id,
+            })
+            .then(blockData => {
+              console.log('iz re hydrating block!', domain, name, id);
+            })
+            .catch(err => {
+              handleAsyncStorageFailure(err, { reportName, report });
+            });
+          return;
+        }
+        handleAsyncStorageFailure(err, { reportName, report });
+      });
     } else if (reportName === 'PutBlock') {
       localSource
         .dispatch({ type: 'PutBlock', domain, name, id, value })

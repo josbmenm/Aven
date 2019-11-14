@@ -546,7 +546,9 @@ export default async function startPostgresStorageSource({
         { domain },
       );
     }
-    // technically this action has a race condition if the prevBlockId changes while we are transacting. But thanks to the "where" inside writeDocTransaction, we will never loose data, will only error occasionally when doing this action concurrently on a doc
+    const dispatchTime = Date.now();
+    const dispatchId = cuid();
+    // technically this action has a race condition if the prevId changes while we are transacting. But thanks to the "where" inside writeDocTransaction, we will never loose data, will only error occasionally when doing this action concurrently on a doc
     const { localName, parentId, id } = await getDocDBContext(
       domain,
       name,
@@ -556,25 +558,24 @@ export default async function startPostgresStorageSource({
       `SELECT "docId", "currentBlock" FROM docs WHERE "parentId" = :parentId AND "domainName" = :domain AND "name" = :name;`,
       { parentId: getInternalParentId(parentId), domain, name: localName },
     );
-    const prevBlockId =
-      (prevResp.rows[0] && prevResp.rows[0].currentBlock) || null;
-    const on = prevBlockId ? { id: prevBlockId, type: 'BlockReference' } : null;
-    const finalValue = {
+    const prevId = (prevResp.rows[0] && prevResp.rows[0].currentBlock) || null;
+    const on = prevId ? { id: prevId, type: 'BlockReference' } : null;
+    const finalValue =
+      typeof value === 'object'
+        ? { ...value, dispatchTime, dispatchId }
+        : value;
+    const block = await putBlock({
       type: 'TransactionValue',
       on,
-      value,
-    };
-    const block = await putBlock(finalValue);
-    await writeDocTransaction(
-      domain,
-      parentId,
-      localName,
-      block.id,
-      prevBlockId,
-    );
+      value: finalValue,
+    });
+    await writeDocTransaction(domain, parentId, localName, block.id, prevId);
     return {
       name,
       id: block.id,
+      prevId,
+      dispatchTime,
+      dispatchId,
     };
   }
 
