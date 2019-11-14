@@ -30,7 +30,25 @@ function WeekSchedule() {
       setEndGradient(false);
     }
   }
-  console.log('COMPONENT RENDERED');
+  let todayIndex = 0;
+  const scrollView = React.useRef(null);
+  const days =
+    schedule &&
+    schedule.map((day, index) => {
+      const today = day.key === DAYS[new Date().getDay()];
+      if (today) {
+        todayIndex = index;
+      }
+      return <DaySchedule key={day.key} day={day} today={today} />;
+    });
+  React.useEffect(() => {
+    const sv = scrollView.current;
+    // debugger;
+    sv && sv.scrollResponderScrollTo({ x: 328 * todayIndex });
+
+    // todayIndex;
+    // scrollView.current.scrollTo(todayIndex);
+  }, [todayIndex, scrollView.current]);
   return (
     <View style={{ paddingVertical: 80 }} nativeID="schedule">
       <Container
@@ -53,10 +71,9 @@ function WeekSchedule() {
               onScroll={handleScroll}
               scrollEventThrottle={16}
               style={{ paddingBottom: 80 }}
+              ref={scrollView}
             >
-              {schedule.map(day => (
-                <DaySchedule key={day.key} day={day} />
-              ))}
+              {days}
             </ScrollView>
             {startGradient && (
               <Image
@@ -96,9 +113,8 @@ function WeekSchedule() {
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-function DaySchedule({ day }) {
-  const { key, name, stops } = day;
-  const today = key === DAYS[new Date().getDay()];
+function DaySchedule({ day, today }) {
+  const { name, stops } = day;
 
   const theme = useTheme();
   return (
