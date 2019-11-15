@@ -171,11 +171,11 @@ const KitchenCommands = {
       return kitchenState.BlendSystem_LowerBlenderElevatorReady_READ;
     },
   },
-  RaiseBlenderElevator: {
+  LiftBlenderElevator: {
     subsystem: 'BlendSystem',
-    pulse: ['RaiseBlenderElevator'],
+    pulse: ['LiftBlenderElevator'],
     checkReady: kitchenState => {
-      return kitchenState.BlendSystem_RaiseBlenderElevatorReady_READ;
+      return kitchenState.BlendSystem_LiftBlenderElevatorReady_READ;
     },
   },
   FlipCupPlate: {

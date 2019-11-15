@@ -118,7 +118,7 @@ function CardReaderPopover({ onClose }) {
 
 function BlitzDebug({ onClose, initialMode }) {
   const [debugMode, setDebugMode] = React.useState(initialMode);
-  const { mode, deviceId } = React.useContext(AppEnvContext);
+  const { mode, deviceId, name } = React.useContext(AppEnvContext);
   const { navigate } = useNavigation();
   const [code, setCode] = React.useState('');
   function sendResetValue(char) {
@@ -162,7 +162,7 @@ Device id: ${deviceId}
   return (
     <View style={{ padding: 30 }}>
       <Text style={{ ...titleStyle, fontSize: 22, marginBottom: 16 }}>
-        ssh.. you found the secret buttons!
+        oh {name}.. you found the secret buttons!
       </Text>
       <ButtonRow>
         <HiddenButton

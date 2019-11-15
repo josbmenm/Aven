@@ -172,6 +172,7 @@ export default async function startVerseServer(httpServer) {
 
   cloud.get('RestaurantActions').setLocalOnly();
   cloud.get('RestaurantStateSnapshot').setLocalOnly();
+  cloud.get('RecentCompletedTasksSnapshot').setLocalOnly();
 
   cloud.setReducer('RestaurantState', {
     actionsDoc: restaurantActions,

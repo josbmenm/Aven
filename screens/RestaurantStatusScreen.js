@@ -481,7 +481,7 @@ function BlenderView() {
           <KitchenCommandButton commandType="RetractArm" />,
           <KitchenCommandButton commandType="ExtendArm" />,
           <KitchenCommandButton commandType="LowerBlenderElevator" />,
-          <KitchenCommandButton commandType="RaiseBlenderElevator" />,
+          <KitchenCommandButton commandType="LiftBlenderElevator" />,
         ]}
       />
       <ButtonStack

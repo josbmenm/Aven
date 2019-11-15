@@ -331,15 +331,14 @@ function SelectModeApp() {
 
   // let content = <KioskApp mode={'kiosk'} />;
   let content = <WaitingPage name={name} title="hang tight..." />;
-
-  if (mode === 'feedback') {
-    content = <FeedbackApp />;
-  }
   if (true || mode === 'kiosk' || mode === 'testKiosk') {
-    content = <KioskApp mode={mode} />;
+    content = <KioskApp mode={mode} name={name} />;
+  }
+  if (mode === 'feedback') {
+    content = <FeedbackApp name={name} />;
   }
   return (
-    <AppEnvContext.Provider value={{ mode, deviceId }}>
+    <AppEnvContext.Provider value={{ mode, deviceId, name }}>
       {content}
     </AppEnvContext.Provider>
   );

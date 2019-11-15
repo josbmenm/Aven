@@ -179,24 +179,22 @@ function ETAText({ queuedIndex }) {
         marginTop: 22,
       }}
     >
-      {queuedIndex + 2} min
+      {queuedIndex * 2 + 2} min
     </Text>
   );
 }
 
-function IngredientFillingCup({
-  fillLevel,
+function AnimatedFilling({
   currentFill,
   currentFillIngredient,
-  blendTintColor,
-  isBlending,
+  setShownFillLevel,
+  fillLevel,
 }) {
   const [ingredientMessageOpacity] = React.useState(new Animated.Value(0));
   const [toDotValue] = React.useState(new Animated.Value(0));
   const [moveToCup] = React.useState(new Animated.Value(0));
   const [moveDownInCup] = React.useState(new Animated.Value(0));
   const [dotOpacity] = React.useState(new Animated.Value(0));
-  const [shownFillLevel, setShownFillLevel] = React.useState(0);
   const currentIngredient = currentFill && currentFill.ingredientId;
   React.useEffect(() => {
     toDotValue.setValue(0);
@@ -256,87 +254,109 @@ function IngredientFillingCup({
       });
     }, baseDelay);
   }, [currentIngredient, fillLevel]);
+  if (!currentFill) {
+    return;
+  }
+  return (
+    <View style={{ flexDirection: 'row' }}>
+      {currentFill.ingredientName && (
+        <Animated.Text
+          style={{
+            ...primaryFontFace,
+            color: monsterra,
+            fontSize: 32,
+            marginTop: 10,
+            marginRight: 110,
+            opacity: ingredientMessageOpacity,
+          }}
+        >
+          adding {currentFill.ingredientName.toLowerCase()}..
+        </Animated.Text>
+      )}
+      <Animated.View
+        style={{
+          position: 'absolute',
+          right: 20,
+          top: -5,
+          height: 80,
+          width: 80,
+          borderRadius: 40,
+          backgroundColor: currentFillIngredient && currentFillIngredient.Color,
+          opacity: dotOpacity,
+          transform: [
+            {
+              translateY: moveDownInCup.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 15],
+              }),
+            },
+            {
+              translateX: moveToCup.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 83.5],
+              }),
+            },
+            {
+              scale: toDotValue.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.5, 0.16],
+              }),
+            },
+          ],
+        }}
+      />
+      <Animated.View
+        style={{
+          position: 'absolute',
+          right: 20,
+          opacity: toDotValue.interpolate({
+            inputRange: [0.8, 1],
+            outputRange: [0, -1],
+          }),
+          transform: [
+            {
+              scale: toDotValue.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, 0.3],
+              }),
+            },
+            { scale: 0.8 },
+          ],
+        }}
+      >
+        <Animated.View style={{ opacity: ingredientMessageOpacity }}>
+          {currentFillIngredient && currentFillIngredient.Icon && (
+            <AirtableImage
+              style={{ width: 75, height: 75 }}
+              tintColor={currentFillIngredient.Color}
+              image={currentFillIngredient.Icon}
+            />
+          )}
+        </Animated.View>
+      </Animated.View>
+    </View>
+  );
+}
+
+function IngredientFillingCup({
+  fillLevel,
+  currentFill,
+  currentFillIngredient,
+  blendTintColor,
+  isBlending,
+}) {
+  const [shownFillLevel, setShownFillLevel] = React.useState(0);
+
   return (
     <View style={{ flexDirection: 'row' }}>
       {currentFill && (
-        <View style={{ flexDirection: 'row' }}>
-          {currentFill.ingredientName && (
-            <Animated.Text
-              style={{
-                ...primaryFontFace,
-                color: monsterra,
-                fontSize: 32,
-                marginTop: 10,
-                marginRight: 110,
-                opacity: ingredientMessageOpacity,
-              }}
-            >
-              adding {currentFill.ingredientName.toLowerCase()}..
-            </Animated.Text>
-          )}
-          <Animated.View
-            style={{
-              position: 'absolute',
-              right: 20,
-              top: -5,
-              height: 80,
-              width: 80,
-              borderRadius: 40,
-              backgroundColor:
-                currentFillIngredient && currentFillIngredient.Color,
-              opacity: dotOpacity,
-              transform: [
-                {
-                  translateY: moveDownInCup.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 15],
-                  }),
-                },
-                {
-                  translateX: moveToCup.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 83.5],
-                  }),
-                },
-                {
-                  scale: toDotValue.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.5, 0.16],
-                  }),
-                },
-              ],
-            }}
-          />
-          <Animated.View
-            style={{
-              position: 'absolute',
-              right: 20,
-              opacity: toDotValue.interpolate({
-                inputRange: [0.8, 1],
-                outputRange: [0, -1],
-              }),
-              transform: [
-                {
-                  scale: toDotValue.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [1, 0.3],
-                  }),
-                },
-                { scale: 0.8 },
-              ],
-            }}
-          >
-            <Animated.View style={{ opacity: ingredientMessageOpacity }}>
-              {currentFillIngredient && currentFillIngredient.Icon && (
-                <AirtableImage
-                  style={{ width: 75, height: 75 }}
-                  tintColor={currentFillIngredient.Color}
-                  image={currentFillIngredient.Icon}
-                />
-              )}
-            </Animated.View>
-          </Animated.View>
-        </View>
+        <AnimatedFilling
+          currentFill={currentFill}
+          currentFillIngredient={currentFillIngredient}
+          fillLevel={fillLevel}
+          setShownFillLevel={setShownFillLevel}
+          key={currentFill.ingredientId}
+        />
       )}
       <AnimatedCup
         fillLevel={shownFillLevel}
@@ -379,6 +399,7 @@ function TaskRow({
       ingredients[currentFill.ingredientId];
     right = (
       <IngredientFillingCup
+        key={currentFill ? currentFill.ingredientId : 'filling-unknown'}
         currentFill={currentFill}
         fillLevel={fillLevel}
         currentFillIngredient={currentFillIngredient}
