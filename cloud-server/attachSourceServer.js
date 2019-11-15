@@ -17,37 +17,50 @@ export default async function attachSourceServer({
   augmentRequestDispatchAction = undefined,
 }) {
   const expressApp = express();
-  const jsonParser = bodyParser.json();
+  const jsonParser = bodyParser.json({ limit: '11mb' });
 
   expressRouting && expressRouting(expressApp);
 
-  expressApp.post('/dispatch', jsonParser, (req, res) => {
-    let actionToDispatch = req.body;
-    if (augmentRequestDispatchAction) {
-      actionToDispatch = augmentRequestDispatchAction(req, actionToDispatch);
-    }
-    trace('SourceDispatchStart', { action: actionToDispatch });
-    source
-      .dispatch(actionToDispatch)
-      .then(result => {
-        if (result === undefined) {
-          return res.send({});
-        }
-        res.send(result);
-      })
-      .catch(err => {
-        const errorData = {
-          message: String(err),
-          name: err.name,
-          detail: err.detail,
-        };
-        error('SourceDispatchError', {
-          action: actionToDispatch,
-          error: errorData,
+  expressApp.post(
+    '/dispatch',
+    (req, res, next) => {
+      if (req.socket.bytesRead > 1e7) {
+        error('LargeJSON', {
+          limit: 1e7,
+          bytes: req.socket.bytesRead,
         });
-        res.status(500).send(JSON.stringify(errorData));
-      });
-  });
+      }
+      next();
+    },
+    jsonParser,
+    (req, res) => {
+      let actionToDispatch = req.body;
+      if (augmentRequestDispatchAction) {
+        actionToDispatch = augmentRequestDispatchAction(req, actionToDispatch);
+      }
+      trace('SourceDispatchStart', { action: actionToDispatch });
+      source
+        .dispatch(actionToDispatch)
+        .then(result => {
+          if (result === undefined) {
+            return res.send({});
+          }
+          res.send(result);
+        })
+        .catch(err => {
+          const errorData = {
+            message: String(err),
+            name: err.name,
+            detail: err.detail,
+          };
+          error('SourceDispatchError', {
+            action: actionToDispatch,
+            error: errorData,
+          });
+          res.status(500).send(JSON.stringify(errorData));
+        });
+    },
+  );
 
   fallbackExpressRouting && fallbackExpressRouting(expressApp);
 

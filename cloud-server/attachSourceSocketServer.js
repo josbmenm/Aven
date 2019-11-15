@@ -68,7 +68,7 @@ export default function attachSourceSocketServer(wss, source) {
                 );
               }
               function sendError(error) {
-                console.error('Subscription Error', error);
+                console.error('Subscription Error', { ...subscription, error });
                 sendMessage({
                   type: 'SubscriptionError',
                   id: subscriptionId,
