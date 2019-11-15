@@ -26,8 +26,13 @@ import {
 import { useNavigation, useNavigationState } from '../navigation-hooks/Hooks';
 
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
-import { CloudContext, useCloud, useCloudValue } from '../cloud-core/KiteReact';
-import { createClient } from '../cloud-core/Kite';
+import {
+  CloudContext,
+  useCloud,
+  useCloudValue,
+  useStream,
+} from '../cloud-core/KiteReact';
+import { createClient, createSessionClient } from '../cloud-core/Kite';
 import useObservable from '../cloud-core/useObservable';
 import ErrorContainer from '../cloud-react/ErrorContainer';
 import Animated from '../views/Animated';
@@ -673,8 +678,9 @@ function LoadingIndicator() {
 function DocsListWithPermission({ parent, activeDoc }) {
   const cloud = useCloud();
   const { navigate } = useNavigation();
-  const listParent = parent ? cloud.get(parent) : cloud;
-  const docs = useObservable(listParent.observeChildren);
+  const docSet = parent ? cloud.get(parent).children : cloud.docs;
+  const docs = useStream(docSet.all);
+  console.log(docs);
   if (!docs) {
     return <LoadingIndicator />;
   }
@@ -1550,12 +1556,6 @@ function AdminApp({ defaultSession = {}, descriptors }) {
   );
 
   let client = useMemo(() => {
-    console.log(
-      'soooo',
-      isStateUnloaded(clientConfig),
-      isStateUnloaded(sessionState),
-      clientConfig,
-    );
     if (
       isStateUnloaded(clientConfig) ||
       isStateUnloaded(sessionState) ||
@@ -1568,8 +1568,8 @@ function AdminApp({ defaultSession = {}, descriptors }) {
       authority,
       useSSL,
     });
-    const client = createClient({
-      initialSession: sessionState,
+    const client = createSessionClient({
+      auth: sessionState,
       source,
       domain,
     });
