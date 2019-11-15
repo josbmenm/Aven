@@ -3,7 +3,13 @@ import View from '../views/View';
 import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 
-function Container({ children, responsiveStyle, fullWidth, style = {} }) {
+function Container({
+  children,
+  responsiveStyle,
+  fullWidth,
+  nativeID,
+  style = {},
+}) {
   const theme = useTheme();
   return (
     <Responsive
@@ -20,6 +26,7 @@ function Container({ children, responsiveStyle, fullWidth, style = {} }) {
           alignSelf: 'center',
           ...style,
         }}
+        nativeID={nativeID}
       >
         {children}
       </View>
