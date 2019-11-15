@@ -331,7 +331,7 @@ function AnimatedFilling({
         <Animated.View style={{ opacity: ingredientMessageOpacity }}>
           {currentFillIngredient && currentFillIngredient.Icon && (
             <AirtableImage
-              style={{ width: 75, height: 75 }}
+              style={{ width: 75, height: 75, resizeMode: 'contain' }}
               tintColor={currentFillIngredient.Color}
               image={currentFillIngredient.Icon}
             />
@@ -403,7 +403,6 @@ function TaskRow({
       ingredients[currentFill.ingredientId];
     right = (
       <IngredientFillingCup
-        key={currentFill ? currentFill.ingredientId : 'filling-unknown'}
         currentFill={currentFill}
         fillLevel={fillLevel}
         currentFillIngredient={currentFillIngredient}
