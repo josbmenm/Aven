@@ -23,10 +23,9 @@ import KitchenSteps from '../logic/KitchenSteps';
 import KitchenEffects from './KitchenEffects';
 import { log, trace, error, fatal, setLoggerMode } from '../logger/logger';
 import getRestaurantKitchenState from './getRestaurantKitchenState';
-import fs from 'fs-extra';
 
 const fetch = require('node-fetch');
-const AWS = require('aws-sdk');
+// const AWS = require('aws-sdk');
 
 setLoggerMode(process.env.NODE_ENV === 'production' ? 'json' : 'debug');
 
@@ -34,12 +33,12 @@ const getEnv = c => process.env[c];
 
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
 
-const spacesEndpoint = new AWS.Endpoint(getEnv('S3_ENDPOINT'));
-const s3 = new AWS.S3({
-  endpoint: spacesEndpoint,
-  accessKeyId: getEnv('S3_KEY_ID'),
-  secretAccessKey: getEnv('S3_ACCESS_KEY'),
-});
+// const spacesEndpoint = new AWS.Endpoint(getEnv('S3_ENDPOINT'));
+// const s3 = new AWS.S3({
+//   endpoint: spacesEndpoint,
+//   accessKeyId: getEnv('S3_KEY_ID'),
+//   secretAccessKey: getEnv('S3_ACCESS_KEY'),
+// });
 
 export default async function startVerseServer(httpServer) {
   log('WillStartServer', {
@@ -311,54 +310,54 @@ export default async function startVerseServer(httpServer) {
     return allValues;
   }
 
-  async function archiveState() {
-    log('ArchiveStateRequested', {});
+  // async function archiveState() {
+  //   log('ArchiveStateRequested', {});
 
-    const restaurantState = lastRestaurantState;
-    const restaurantActivity = await cloud
-      .get('RestaurantActivity')
-      .idAndValue.load();
-    const allRestaurantActivity = await getActionChain(
-      'RestaurantActivity',
-      restaurantActivity,
-    );
-    const restaurantActions = await cloud
-      .get('RestaurantActions')
-      .idAndValue.load();
-    const allRestaurantActions = await getActionChain(
-      'RestaurantActions',
-      restaurantActions,
-    );
-    const destName = `Archive-${new Date().toISOString()}.json`;
-    await s3
-      .putObject({
-        Bucket: 'ono',
-        Key: destName,
-        Body: JSON.stringify({
-          restaurantState,
-          allRestaurantActivity,
-          allRestaurantActions,
-          restaurantActions,
-          kitchenState: kitchenStateDoc.value.get(),
-        }),
-        ACL: 'public-read',
-      })
-      .promise();
+  //   const restaurantState = lastRestaurantState;
+  //   const restaurantActivity = await cloud
+  //     .get('RestaurantActivity')
+  //     .idAndValue.load();
+  //   const allRestaurantActivity = await getActionChain(
+  //     'RestaurantActivity',
+  //     restaurantActivity,
+  //   );
+  //   const restaurantActions = await cloud
+  //     .get('RestaurantActions')
+  //     .idAndValue.load();
+  //   const allRestaurantActions = await getActionChain(
+  //     'RestaurantActions',
+  //     restaurantActions,
+  //   );
+  //   const destName = `Archive-${new Date().toISOString()}.json`;
+  //   await s3
+  //     .putObject({
+  //       Bucket: 'ono',
+  //       Key: destName,
+  //       Body: JSON.stringify({
+  //         restaurantState,
+  //         allRestaurantActivity,
+  //         allRestaurantActions,
+  //         restaurantActions,
+  //         kitchenState: kitchenStateDoc.value.get(),
+  //       }),
+  //       ACL: 'public-read',
+  //     })
+  //     .promise();
 
-    // await cloud.get('RestaurantActivity').destroy();
-    // await cloud.get('RecentCompletedTasksSnapshot').destroy();
-    // await cloud.get('RestaurantActivity').putTransactionValue({
-    //   type: 'ResetState',
-    //   state: {},
-    // });
-    // await cloud.get('RestaurantActions').destroy();
-    // await cloud.get('RestaurantStateSnapshot').destroy();
-    // await cloud.get('RestaurantActions').putTransactionValue({
-    //   type: 'WipeState',
-    //   resetState: restaurantState,
-    // });
-    log('ArchiveStateComplete', { destName });
-  }
+  //   // await cloud.get('RestaurantActivity').destroy();
+  //   // await cloud.get('RecentCompletedTasksSnapshot').destroy();
+  //   // await cloud.get('RestaurantActivity').putTransactionValue({
+  //   //   type: 'ResetState',
+  //   //   state: {},
+  //   // });
+  //   // await cloud.get('RestaurantActions').destroy();
+  //   // await cloud.get('RestaurantStateSnapshot').destroy();
+  //   // await cloud.get('RestaurantActions').putTransactionValue({
+  //   //   type: 'WipeState',
+  //   //   resetState: restaurantState,
+  //   // });
+  //   log('ArchiveStateComplete', { destName });
+  // }
 
   const configListener = {
     next: state => {
@@ -450,8 +449,8 @@ export default async function startVerseServer(httpServer) {
 
   async function silentDispatch(action) {
     switch (action.type) {
-      case 'ArchiveState':
-        return await archiveState();
+      // case 'ArchiveState':
+      //   return await archiveState();
       case 'KitchenCommand':
         if (!kitchen) {
           return;
