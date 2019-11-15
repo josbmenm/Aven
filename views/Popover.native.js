@@ -34,7 +34,13 @@ export function PopoverContainer({ children }) {
       setPopover(null);
     });
   }
-  function openPopover(renderPopover, location, timing, navigation) {
+  function openPopover(
+    renderPopover,
+    location,
+    timing,
+    navigation,
+    openArguments,
+  ) {
     setConfiguredTiming(timing);
     setPopover(
       <NavigationContext.Provider value={navigation}>
@@ -43,6 +49,7 @@ export function PopoverContainer({ children }) {
           location,
           containerLayout,
           openValue,
+          openArguments,
         })}
       </NavigationContext.Provider>,
     );
