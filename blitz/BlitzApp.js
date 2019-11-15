@@ -18,7 +18,7 @@ import codePush from 'react-native-code-push';
 
 import FeedbackApp from '../components/FeedbackApp';
 import ProductHomeScreen from '../screens/ProductHomeScreen';
-import KioskHomeScreen from '../screens/KioskHomeScreen';
+import KioskHomeScreen, { ClosedKiosk } from '../screens/KioskHomeScreen';
 import BlendScreen from '../screens/BlendScreen';
 import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
 import FoodScreen from '../screens/FoodScreen';
@@ -49,7 +49,6 @@ import OnoTheme from '../logic/OnoTheme';
 import cuid from 'cuid';
 import useAsyncStorage, { isStateUnloaded } from '../screens/useAsyncStorage';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
-
 import * as Sentry from '@sentry/react-native';
 
 const appPackage = require('../app.json');
@@ -331,11 +330,14 @@ function SelectModeApp() {
 
   // let content = <KioskApp mode={'kiosk'} />;
   let content = <WaitingPage name={name} title="hang tight..." />;
-  if (true || mode === 'kiosk' || mode === 'testKiosk') {
+  if (mode === 'kiosk' || mode === 'testKiosk') {
     content = <KioskApp mode={mode} name={name} />;
   }
   if (mode === 'feedback') {
     content = <FeedbackApp name={name} />;
+  }
+  if (mode === 'closed') {
+    content = <ClosedKiosk />;
   }
   return (
     <AppEnvContext.Provider value={{ mode, deviceId, name }}>

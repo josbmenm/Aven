@@ -169,7 +169,7 @@ function BlendOverlay({ isBlending }) {
   );
 }
 
-function ETAText({ queuedIndex }) {
+function LightRightText({ children }) {
   return (
     <Text
       style={{
@@ -179,9 +179,13 @@ function ETAText({ queuedIndex }) {
         marginTop: 22,
       }}
     >
-      {queuedIndex * 2 + 2} min
+      {children}
     </Text>
   );
+}
+
+function ETAText({ queuedIndex }) {
+  return <LightRightText>{queuedIndex * 2 + 2} min</LightRightText>;
 }
 
 function AnimatedFilling({
@@ -497,9 +501,57 @@ function PresentationSection({ closingSoon }) {
   return <View style={{ height: 840, alignSelf: 'stretch' }}>{content}</View>;
 }
 
+function OverflowRow({ queueCountToDisplay, queue }) {
+  if (queueCountToDisplay >= queue.length) {
+    return null;
+  }
+  let title = queue
+    .slice(queueCountToDisplay)
+    .map(task => task.name)
+    .join(', ');
+  return (
+    <View
+      style={{
+        paddingHorizontal: 60,
+        paddingTop: 0,
+        paddingBottom: 16,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        borderBottomColor: black10,
+      }}
+    >
+      <Text
+        style={{
+          ...boldPrimaryFontFace,
+          fontSize: 28,
+          color: monsterra,
+          paddingTop: 20,
+        }}
+      >
+        {title}
+      </Text>
+      <LightRightText>{queueCountToDisplay * 2 + 2}+ min</LightRightText>
+    </View>
+  );
+}
+
 function QueueSection({ queue = [], fill, blend, delivery, ingredients }) {
+  let processingRowCount = 0;
+  if (delivery && !delivery.willDeliverTo) {
+    processingRowCount += 1;
+  }
+  if (fill) {
+    processingRowCount += 1;
+  }
+  if (blend) {
+    processingRowCount += 1;
+  }
+  // let totalRowCount = queue.length + processingRowCount
+  const queueCountToDisplay = 6 - processingRowCount;
+  const displayedQueue = queue.slice(0, queueCountToDisplay);
   const renderQueue = [
-    ...queue.map(
+    ...displayedQueue.map(
       (task, taskIndex) =>
         task && (
           <TaskRow
@@ -544,7 +596,10 @@ function QueueSection({ queue = [], fill, blend, delivery, ingredients }) {
   return (
     <React.Fragment>
       <StatusDisplayTitleRow title="orders in progress:" />
-      <View style={{ flex: 1 }}>{renderQueue}</View>
+      <View style={{ flex: 1 }}>
+        <OverflowRow queueCountToDisplay={queueCountToDisplay} queue={queue} />
+        {renderQueue}
+      </View>
     </React.Fragment>
   );
 }

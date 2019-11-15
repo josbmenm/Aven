@@ -118,7 +118,10 @@ function CardReaderPopover({ onClose }) {
 
 function BlitzDebug({ onClose, initialMode }) {
   const [debugMode, setDebugMode] = React.useState(initialMode);
-  const { mode, deviceId, name } = React.useContext(AppEnvContext);
+  const appEnvContext = React.useContext(AppEnvContext);
+  const mode = appEnvContext ? appEnvContext.mode : 'portal';
+  const name = appEnvContext ? appEnvContext.name : 'portal';
+  const deviceId = appEnvContext ? appEnvContext.deviceId : null;
   const { navigate } = useNavigation();
   const [code, setCode] = React.useState('');
   function sendResetValue(char) {

@@ -16,7 +16,7 @@ import { useRestaurantState, useIsRestaurantOpen } from '../ono-cloud/Kitchen';
 import CardReaderConnectionAlert from '../components/CardReaderConnectionAlert';
 import FadeTransition from '../components/FadeTransition';
 
-function KioskHomeContent({ isOpen, onStartOrder }) {
+export function KioskHomeContent({ isOpen, onStartOrder }) {
   const message = isOpen
     ? 'tap to start your order'
     : 'now closed. come find us again soon!';
@@ -48,6 +48,10 @@ function KioskHomeContent({ isOpen, onStartOrder }) {
       </View>
     </TouchableWithoutFeedback>
   );
+}
+
+export function ClosedKiosk() {
+  return <KioskHomeContent isOpen={false} onStartOrder={null} />;
 }
 
 export default function KioskHomeScreen({ navigation, ...props }) {
