@@ -26,23 +26,28 @@ function WeekSchedule() {
     sv && sv.scrollResponderScrollTo({ x: 300 * todayIndex - 20 });
   }, [todayIndex, scrollView.current]);
   return (
-    <View style={{ paddingVertical: 80 }} nativeID="schedule">
-      <Container fullWidth>
-        <Heading
-          size="small"
-          style={{ textAlign: 'center', alignSelf: 'center' }}
-        >
-          find us this week
-        </Heading>
-        {schedule && (
-          <View style={{ paddingTop: 60, position: 'relative' }}>
-            <ScrollView horizontal style={{}} ref={scrollView}>
-              {days}
-            </ScrollView>
-          </View>
-        )}
-      </Container>
-    </View>
+    <Container
+      fullWidth
+      nativeID="schedule"
+      style={{
+        paddingVertical: 80,
+        justifyContent: 'center',
+      }}
+    >
+      <Heading
+        size="small"
+        style={{ textAlign: 'center', alignSelf: 'center' }}
+      >
+        find us this week
+      </Heading>
+      {schedule && (
+        <View style={{ paddingTop: 60, position: 'relative' }}>
+          <ScrollView horizontal style={{}} ref={scrollView}>
+            {days}
+          </ScrollView>
+        </View>
+      )}
+    </Container>
   );
 }
 

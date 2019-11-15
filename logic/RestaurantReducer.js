@@ -63,8 +63,6 @@ function handleDisabledFills(state) {
     return state;
   }
 
-  console.log('checking fill');
-
   return handleDisabledFills({
     ...state,
     fill: {

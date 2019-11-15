@@ -2,6 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '../dashboard/Theme';
 import BaseText from '../dashboard/BaseText';
+import FunctionalLink from '../navigation-web/Link';
 
 function ScheduleItem({ item, style, today, ...rest }) {
   const now = new Date();
@@ -50,9 +51,18 @@ function ScheduleItem({ item, style, today, ...rest }) {
       >
         {item.timeText}
       </BaseText>
-      <BaseText style={{ marginBottom: 0, fontSize: 16, lineHeight: 24 }}>
-        {item.address}
-      </BaseText>
+      <FunctionalLink url={item.addressLink} target="_blank">
+        <BaseText
+          style={{
+            marginBottom: 0,
+            fontSize: 16,
+            lineHeight: 24,
+            textDecorationLine: 'underline',
+          }}
+        >
+          {item.address}
+        </BaseText>
+      </FunctionalLink>
     </View>
   );
 }

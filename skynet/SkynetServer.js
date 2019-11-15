@@ -37,7 +37,7 @@ import {
   combineStreams,
 } from '../cloud-core/createMemoryStream';
 import { Storage } from '@google-cloud/storage';
-import { log, error, setLogger } from '../logger/logger';
+import { log, trace, error, setLogger } from '../logger/logger';
 import { logElastic } from './ElasticLogger';
 
 if (process.env.NODE_ENV === 'production') {
@@ -292,6 +292,7 @@ export default async function startSkynetServer(httpServer) {
   const cloudOrders = cloud.get('Orders');
 
   cloudOrders.handleReports((reportType, report) => {
+    trace('OrdersDataReport', reportType, report);
     if (reportType === 'PutDoc') {
       const doc = cloudOrders.children.get(report.name);
       doc.idAndValue

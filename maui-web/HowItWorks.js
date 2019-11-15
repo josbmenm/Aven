@@ -65,7 +65,7 @@ function HowItWorks() {
   return (
     <Responsive
       style={{
-        marginBottom: [60, 100],
+        marginBottom: [0, 0],
       }}
     >
       <View>
@@ -77,7 +77,7 @@ function HowItWorks() {
             // borderBottomColor: theme.colors.border,
           }}
           responsiveStyle={{
-            paddingBottom: [48, 200],
+            paddingBottom: [30, 100],
           }}
         >
           <Heading
@@ -98,20 +98,14 @@ function HowItWorks() {
             title="Find Us"
             bodyText={
               <BodyText>
-                We will release our schedule soon. To be the first to know where
-                we are,{' '}
-                <BodyLink routeName="Subscribe">subscribe here.</BodyLink>
+                Currently, we’re only serving Los Angeles. You can{' '}
+                <BodyLink url="#schedule">click here</BodyLink> to find out
+                where we are, or you can{' '}
+                <FunctionalLink routeName="BookUs">
+                  <BodyText bold>book with us here</BodyText>
+                </FunctionalLink>
+                .
               </BodyText>
-              // <BodyText>
-              //   Check out the{' '}
-              //   <FunctionalLink routeName="Schedule">
-              //     <BodyText bold>schedule</BodyText>{' '}
-              //   </FunctionalLink>
-              //   to find us. Not seeing your neighborhood?{' '}
-              //   <FunctionalLink routeName="Schedule">
-              //     <BodyText bold>Request us here.</BodyText>
-              //   </FunctionalLink>
-              // </BodyText>
             }
             image={
               <FeatureImage

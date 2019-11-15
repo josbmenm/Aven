@@ -142,6 +142,7 @@ function BlitzDebug({ onClose, initialMode }) {
       // coconut - banana - cashew = restart app
       codePush.restartApp();
     } else if (code === 'b5555') {
+      // ginger - cashew - cashew - cashew - cashew
       throw new Error('User-requested crash');
     } else if (code === 'a03') {
       onClose();
