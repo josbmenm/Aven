@@ -30,6 +30,7 @@
       "logger"
     ],
     "moduleDependencies": [
+      "aws-sdk",
       "node-fetch",
       "mjml-react",
       "mjml",

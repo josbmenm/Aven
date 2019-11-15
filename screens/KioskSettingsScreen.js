@@ -11,6 +11,7 @@ import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import Row from '../components/Row';
 import Tag from '../components/Tag';
 import useAsyncErrorPopover from '../components/useAsyncErrorPopover';
+import AsyncButton from '../components/AsyncButton';
 import MultiSelect from '../components/MultiSelect';
 import BlockFormInput from '../components/BlockFormInput';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
@@ -382,12 +383,28 @@ function DryRunMode() {
 function ClearMapButton() {
   const [_, dispatch] = useRestaurantState();
   return (
-    <Row title="wipe entire restaurant state (danger)">
+    <Row title="wipe entire restaurant state (danger - long press)">
       <Button
         title="Wipe State"
-        onPress={() => {
+        onLongPress={() => {
           dispatch({
             type: 'WipeState',
+          });
+        }}
+      />
+    </Row>
+  );
+}
+
+function ArchiveStateRow() {
+  const cloud = useCloud();
+  return (
+    <Row title="archive restaurant state">
+      <AsyncButton
+        title="Archive"
+        onPress={async () => {
+          await cloud.dispatch({
+            type: 'ArchiveState',
           });
         }}
       />
@@ -472,6 +489,7 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
           title="Refresh App"
         />
         <UpdateAirtableRow />
+        <ArchiveStateRow />
         <ClearMapButton />
       </RowSection>
       <AppInfoText />

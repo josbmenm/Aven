@@ -17,6 +17,10 @@ let savingTimeoutFast = null;
 function startLogSave() {
   clearTimeout(savingTimeoutSlow);
   clearTimeout(savingTimeoutFast);
+
+  // todo remove me: this breaks it all
+  return;
+
   if (savingPromise) {
     savingPromise.then(() => {
       scheduleLogSave();

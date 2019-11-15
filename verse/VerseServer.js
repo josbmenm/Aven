@@ -23,14 +23,23 @@ import KitchenSteps from '../logic/KitchenSteps';
 import KitchenEffects from './KitchenEffects';
 import { log, trace, error, fatal, setLoggerMode } from '../logger/logger';
 import getRestaurantKitchenState from './getRestaurantKitchenState';
+import fs from 'fs-extra';
 
 const fetch = require('node-fetch');
+const AWS = require('aws-sdk');
 
 setLoggerMode(process.env.NODE_ENV === 'production' ? 'json' : 'debug');
 
 const getEnv = c => process.env[c];
 
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
+
+const spacesEndpoint = new AWS.Endpoint(getEnv('S3_ENDPOINT'));
+const s3 = new AWS.S3({
+  endpoint: spacesEndpoint,
+  accessKeyId: getEnv('S3_KEY_ID'),
+  secretAccessKey: getEnv('S3_ACCESS_KEY'),
+});
 
 export default async function startVerseServer(httpServer) {
   log('WillStartServer', {
@@ -281,6 +290,76 @@ export default async function startVerseServer(httpServer) {
   };
   restaurantStateStream.addListener(restaurantStateListener);
 
+  async function getActionChain(docName, idAndValue) {
+    let walkingIdAndValue = idAndValue;
+    const allValues = [];
+    while (walkingIdAndValue) {
+      allValues.push(walkingIdAndValue);
+      if (
+        walkingIdAndValue.value &&
+        walkingIdAndValue.value.on &&
+        walkingIdAndValue.value.on.id
+      ) {
+        walkingIdAndValue = await cloud
+          .get(docName)
+          .getBlock(walkingIdAndValue.value.on.id)
+          .idAndValue.load();
+      } else {
+        walkingIdAndValue = null;
+      }
+    }
+    return allValues;
+  }
+
+  async function archiveState() {
+    log('ArchiveStateRequested', {});
+
+    const restaurantState = lastRestaurantState;
+    const restaurantActivity = await cloud
+      .get('RestaurantActivity')
+      .idAndValue.load();
+    const allRestaurantActivity = await getActionChain(
+      'RestaurantActivity',
+      restaurantActivity,
+    );
+    const restaurantActions = await cloud
+      .get('RestaurantActions')
+      .idAndValue.load();
+    const allRestaurantActions = await getActionChain(
+      'RestaurantActions',
+      restaurantActions,
+    );
+    const destName = `Archive-${new Date().toISOString()}.json`;
+    await s3
+      .putObject({
+        Bucket: 'ono',
+        Key: destName,
+        Body: JSON.stringify({
+          restaurantState,
+          allRestaurantActivity,
+          allRestaurantActions,
+          restaurantActions,
+          kitchenState: kitchenStateDoc.value.get(),
+        }),
+        ACL: 'public-read',
+      })
+      .promise();
+
+    // await cloud.get('RestaurantActivity').destroy();
+    // await cloud.get('RecentCompletedTasksSnapshot').destroy();
+    // await cloud.get('RestaurantActivity').putTransactionValue({
+    //   type: 'ResetState',
+    //   state: {},
+    // });
+    // await cloud.get('RestaurantActions').destroy();
+    // await cloud.get('RestaurantStateSnapshot').destroy();
+    // await cloud.get('RestaurantActions').putTransactionValue({
+    //   type: 'WipeState',
+    //   resetState: restaurantState,
+    // });
+    log('ArchiveStateComplete', { destName });
+  }
+
   const configListener = {
     next: state => {
       log('CompanyConfigUpdated', { id: state.id });
@@ -371,6 +450,8 @@ export default async function startVerseServer(httpServer) {
 
   async function silentDispatch(action) {
     switch (action.type) {
+      case 'ArchiveState':
+        return await archiveState();
       case 'KitchenCommand':
         if (!kitchen) {
           return;

@@ -11,6 +11,11 @@ function RecentCompletedTasksFn(state = {}, action) {
     };
   };
   switch (action.type) {
+    case 'ResetState': {
+      return {
+        ...action.state,
+      };
+    }
     case 'TaskCompletion': {
       return {
         ...defaultReturn(),
