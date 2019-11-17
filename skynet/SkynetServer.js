@@ -259,11 +259,10 @@ export default async function startSkynetServer(httpServer) {
       Object.values(schedule).forEach(scheduleRow => {
         const { Enabled, Address, DaysOfWeek, Name } = scheduleRow;
         if (!Enabled) return;
+        DAYS.forEach(dayId => {
+          days[dayId] = { key: dayId, name: DAY_NAMES[dayId], stops: [] };
+        });
         DaysOfWeek.forEach(dayId => {
-          days[dayId] = days[dayId] || {};
-          days[dayId].key = dayId;
-          days[dayId].name = DAY_NAMES[dayId];
-          days[dayId].stops = days[dayId].stops || [];
           const start = new Date(scheduleRow['Start Time']);
           const end = new Date(scheduleRow['End Time']);
           const startHours = start.getHours() % 12;
