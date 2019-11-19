@@ -247,14 +247,6 @@ function InventorySlot({ slot, systemName, dispatch, restaurantState }) {
             style={{ marginRight: 8, marginBottom: 8 }}
           />
         )}
-        {slot.settings && slot.settings.disabledMode === 'hard' && (
-          <Tag
-            size="small"
-            color={Tag.warningColor}
-            title="Force Enabled"
-            style={{ marginRight: 8, marginBottom: 8 }}
-          />
-        )}
         {slot.settings && slot.settings.optional && (
           <Tag
             size="small"
@@ -343,7 +335,6 @@ function InventorySlot({ slot, systemName, dispatch, restaurantState }) {
         <MultiSelect
           options={[
             { name: 'disable', value: true },
-            { name: 'hard enable', value: 'hard' },
             { name: 'enable', value: false },
           ]}
           onValue={disabledMode => {

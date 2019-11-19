@@ -244,17 +244,15 @@ const KitchenSteps = [
       const isEmpty = nextFill.amount > estimatedRemaining;
       const settings =
         restaurantState.slotSettings && restaurantState.slotSettings[slotId];
-      const disabledMode = (settings && settings.disabledMode) || false; // 'hard', false, true
+      const disabledMode = (settings && settings.disabledMode) || false;
       const isDisabled = disabledMode === true;
-      const isForceEnabled = disabledMode === 'hard';
-      const isFillInvalid = isForceEnabled ? false : isEmpty || isDisabled;
+      const isFillInvalid = isEmpty || isDisabled;
       const isFillOptional = (settings && settings.optional) || false;
       const intent = {
         ...nextFill,
         isFillInvalid,
         isBlendInvalid: isFillInvalid && !isFillOptional,
         isFillOptional,
-        isForceEnabled,
         isDisabled,
         isEmpty,
         taskId: restaurantState.fill.task.id,

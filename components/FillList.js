@@ -157,8 +157,6 @@ export default function FillList({ fills, inventoryIngredients, onFills }) {
         inventoryIngredients && inventoryIngredients[fill.ingredientId];
       let fillTextColor = Tag.positiveColor;
       if (!inv || !inv.settings) {
-      } else if (inv.settings.disabledMode === 'hard') {
-        fillTextColor = '#111';
       } else if (inv.settings.disabledMode) {
         fillTextColor = Tag.negativeColor;
       } else if (inv.estimatedRemaining < fill.amount) {
