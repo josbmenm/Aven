@@ -71,7 +71,9 @@ export default async function startSkynetServer(httpServer) {
   const domain = 'onofood.co';
 
   const pgConfig = {
-    ssl: true,
+    ssl: {
+      rejectUnauthorized: false,
+    },
     user: getEnv('SQL_USER'),
     password: getEnv('SQL_PASSWORD'),
     database: getEnv('SQL_DATABASE'),
