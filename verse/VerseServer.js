@@ -47,7 +47,11 @@ export default async function startVerseServer(httpServer) {
   });
 
   const pgConfig = {
-    ssl: !!getEnv('VERSE_SQL_USE_SSL'),
+    ssl: getEnv('VERSE_SQL_USE_SSL')
+      ? {
+          rejectUnauthorized: false,
+        }
+      : false,
     user: getEnv('VERSE_SQL_USER'),
     password: getEnv('VERSE_SQL_PASSWORD'),
     database: getEnv('VERSE_SQL_DATABASE'),
