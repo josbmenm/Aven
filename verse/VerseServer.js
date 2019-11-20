@@ -178,6 +178,9 @@ export default async function startVerseServer(httpServer) {
     }
   });
 
+  cloud.get('RecentOrders').setRemoteOnly();
+  cloud.get('CompanyActivity').setRemoteOnly();
+
   cloud.get('RestaurantActions').setLocalOnly();
   cloud.get('RestaurantStateSnapshot').setLocalOnly();
   cloud.get('RecentCompletedTasksSnapshot').setLocalOnly();
