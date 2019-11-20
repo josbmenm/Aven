@@ -29,6 +29,7 @@ export function streamOf(initialValue, crumb) {
     dropRepeats: (repeatComparator, dropRepeatsDescriptor) =>
       dropRepeatsStream(stream, repeatComparator, dropRepeatsDescriptor),
     flatten: () => flattenStream(stream),
+    cacheFirst: () => cacheFirstStream(stream),
     spy: spier => spyStream(stream, spier),
   };
   return [stream, updateStream];
@@ -51,6 +52,7 @@ export function streamNever(crumb) {
     dropRepeats: (repeatComparator, dropRepeatsDescriptor) =>
       dropRepeatsStream(stream, repeatComparator, dropRepeatsDescriptor),
     flatten: () => flattenStream(stream),
+    cacheFirst: () => cacheFirstStream(stream),
     spy: spier => spyStream(stream, spier),
   };
   return stream;
@@ -128,6 +130,46 @@ function filterStream(stream, filterFn, filterDescriptor) {
           next: val => {
             if (filterFn(val)) {
               notifier.next(val);
+            }
+          },
+          complete: () => notifier.complete(),
+          error: err => notifier.error(err),
+        };
+        stream.addListener(listener);
+      }
+    },
+    stop: () => {
+      if (listener) {
+        stream.removeListener(listener);
+        listener = null;
+      }
+    },
+  });
+}
+
+function cacheFirstStream(stream) {
+  let listener = null;
+  let value = undefined;
+  return createProducerStream({
+    crumb: {
+      type: 'CacheFirstStream',
+      on: stream.crumb,
+    },
+    start: notifier => {
+      if (value !== undefined) {
+        notifier.next(value);
+        notifier.complete();
+        return;
+      }
+      if (!listener) {
+        listener = {
+          next: val => {
+            notifier.next(val);
+            if (val !== undefined) {
+              value = val;
+              notifier.complete();
+              stream.removeListener(listener);
+              listener = null;
             }
           },
           complete: () => notifier.complete(),
@@ -365,6 +407,7 @@ export function createProducerStream(producer) {
     dropRepeats: (repeatComparator, dropRepeatsDescriptor) =>
       dropRepeatsStream(stream, repeatComparator, dropRepeatsDescriptor),
     flatten: () => flattenStream(stream),
+    cacheFirst: () => cacheFirstStream(stream),
     spy: spier => spyStream(stream, spier),
   };
   return stream;

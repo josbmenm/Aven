@@ -14,41 +14,6 @@ import {
   combineStreams,
 } from './createMemoryStream';
 
-/*
-
-Pretend types:
-
-CloudSubscriber<V, E>:
-  next: (V) => void,
-  error: (E) => void,
-  complete: () => void,
-
-AttachmentSubscriber:
-  next: (isAttached: boolean) => void
-
-CloudValue<V, E>:
-  get: () => V,
-  stream: {
-    addListener: (s: CloudSubscriber<V, E>) => void,
-
-    removeListener: (s: CloudSubscriber<V, E>) => void,
-  }
-  getIsAttached: () => bool,
-  isAttachedStream: {
-    addListener: (s: AttachmentSubscriber) => void,
-    removeListener: (s: AttachmentSubscriber) => void,
-  }
-  load: () => Promise<void>
-
-Block
-  value: CloudValue()
-
-BlockState
-
-Doc
-
-*/
-
 function getNow() {
   return Math.floor(new Date().getTime() / 1000);
 }
@@ -430,7 +395,11 @@ export function createDoc({
       notifyStateChange = () => {
         performNotification && performNotification();
       };
-      if (onInitialLoad && docState.id === undefined) {
+      if (
+        onInitialLoad &&
+        !docState.isRemoteOnly &&
+        docState.id === undefined
+      ) {
         onInitialLoad('Doc', domain, docName)
           .then(initState => {
             if (initState && initState.id) {
@@ -548,7 +517,11 @@ export function createDoc({
   async function putValue(value) {
     const committed = await commitDeepBlock(value);
     const block = getBlockOfValue(committed.value);
-    performReport('PutDocValue', { value, id: block.id });
+    performReport('PutDocValue', {
+      value,
+      id: block.id,
+      isRemoteOnly: docState.isRemoteOnly,
+    });
     await quietlyPutBlock(block);
   }
 
@@ -707,6 +680,7 @@ export function createDoc({
     });
     performReport('PutDoc', {
       id: result.id,
+      isRemoteOnly: docState.isRemoteOnly,
     });
     return result;
   }
@@ -745,6 +719,7 @@ export function createDoc({
       performReport('PutDocValue', {
         id: localBlock.id,
         value: localTransactionValue,
+        isRemoteOnly: docState.isRemoteOnly,
       });
       return { id: localBlock.id, prevId, dispatchTime, dispatchId };
     }
@@ -794,10 +769,12 @@ export function createDoc({
       performReport('PutDocValue', {
         id: finalBlock.id,
         value: finalTransactionValue,
+        isRemoteOnly: docState.isRemoteOnly,
       });
     } else {
       performReport('PutDoc', {
         id: result.id,
+        isRemoteOnly: docState.isRemoteOnly,
       });
     }
     setDocState({
@@ -881,11 +858,22 @@ export function createDoc({
   }
 
   function setLocalOnly(isLocalOnly = true) {
-    if (docState.isLocalOnly === isLocalOnly) {
+    if (!docState.isRemoteOnly && docState.isLocalOnly === isLocalOnly) {
       return;
     }
     setDocState({
       isLocalOnly,
+      isRemoteOnly: false,
+    });
+  }
+
+  function setRemoteOnly(isRemoteOnly = true) {
+    if (!docState.isLocalOnly && docState.isRemoteOnly === isRemoteOnly) {
+      return;
+    }
+    setDocState({
+      isRemoteOnly,
+      isLocalOnly: false,
     });
   }
 
@@ -920,6 +908,7 @@ export function createDoc({
     getBlockOfValue,
     publishValue,
     setLocalOnly,
+    setRemoteOnly,
     handleReports,
     destroy,
     putValue,
@@ -1407,7 +1396,8 @@ export function createReducerStream(
           };
         });
       })
-      .flatten();
+      .flatten()
+      .cacheFirst();
 
     docStateStreams.set(id, docStateStream);
     return docStateStream;
@@ -1540,7 +1530,10 @@ export function createLocalSessionClient({
   }
 
   function clientReport(reportName, report) {
-    const { id, name, domain, value } = report;
+    const { id, name, domain, value, isRemoteOnly } = report;
+    if (isRemoteOnly) {
+      return;
+    }
     if (reportName === 'PutDocValue') {
       localSource
         .dispatch({ type: 'PutDocValue', domain, name, id, value })
