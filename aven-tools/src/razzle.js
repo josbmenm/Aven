@@ -154,6 +154,9 @@ const deploy = async ({ appName, appPkg, location, srcDir }) => {
     pg.defaults.ssl = true; // https://github.com/tgriesser/knex/issues/852
     const knex = new Knex({
       connection: connURL,
+      ssl: {
+        rejectUnauthorized: false,
+      },
       client: 'pg',
     });
     const migrator = new Migrator(knex);
