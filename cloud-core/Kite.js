@@ -1390,7 +1390,9 @@ export function createReducerStream(
               reducerName,
               docName: actionsDoc.getName(),
               docId: actionDocId,
-              prevStateId: lastState.id,
+              rootDocId: lastState.context
+                ? lastState.context.rootDocId
+                : actionDocId,
               gen: (lastState.context ? lastState.context.gen : 0) + 1,
             },
           };
@@ -1479,7 +1481,8 @@ export function createSessionClient({
           lastSnapshot.context === undefined ||
           lastSnapshot.context === null ||
           (context &&
-            lastSnapshot.context.gen <= context.gen - snapshotInterval)
+            lastSnapshot.context.gen <= context.gen - snapshotInterval) ||
+          lastSnapshot.context.rootDocId !== context.rootDocId
         ) {
           await snapshotsDoc.putValue({ context, id, value });
         }
