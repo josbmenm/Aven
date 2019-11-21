@@ -705,7 +705,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = downpour;
 				PROVISIONING_PROFILE_SPECIFIER = PortalDevelopment;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -729,7 +729,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = downpour;
 				PROVISIONING_PROFILE_SPECIFIER = PortalDistribution;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

@@ -4,6 +4,10 @@ import React from 'react';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import GenericPage from './GenericPage';
 import formatTime from '../utils/formatTime';
+import BaseText from '../dashboard/BaseText';
+import Heading from '../dashboard/Heading';
+import Container from '../dashboard/Container';
+import { useTheme } from '../dashboard/Theme';
 import formatCurrency from '../utils/formatCurrency';
 import GenericImageHeader from './GenericImageHeader';
 import PageFooter from './PageFooter';
@@ -12,30 +16,54 @@ function Receipt({ orderValue, orderId }) {
   if (!orderValue) {
     return <Text>Loading..</Text>;
   }
+  const theme = useTheme();
+  console.log();
   return (
-    <React.Fragment>
-      <Text>Order id {orderId}</Text>
-      <Text>{formatTime(orderValue.confirmedTime)}</Text>
-      <Text>
-        {orderValue.orderName.firstName} {orderValue.orderName.lastName}
-      </Text>
+    <Container>
+      <Heading>
+        Order for {orderValue.orderName.firstName}{' '}
+        {orderValue.orderName.lastName}
+      </Heading>
+      <BaseText>Order #{orderId}</BaseText>
+      <BaseText>{formatTime(orderValue.confirmedTime)}</BaseText>
 
       {orderValue.refundTime && (
-        <Text>
-          This order was refunded at {formatTime(orderValue.refundTime)}
-        </Text>
+        <View
+          style={{
+            padding: 20,
+            borderRadius: 8,
+            backgroundColor: theme.colors.lighterGrey,
+          }}
+        >
+          <BaseText>
+            This order was refunded at {formatTime(orderValue.refundTime)}
+          </BaseText>
+        </View>
+      )}
+      {orderValue.promo && (
+        <View
+          style={{
+            padding: 20,
+            borderRadius: 8,
+            backgroundColor: theme.colors.lighterGrey,
+          }}
+        >
+          <BaseText>Promo code used.</BaseText>
+        </View>
       )}
       {orderValue.items.map(item => {
         return (
-          <Text>
+          <BaseText>
             {item.displayName} - {item.quantity} x{' '}
             {formatCurrency(item.sellPrice)}
-          </Text>
+          </BaseText>
         );
       })}
-      <Text>Subtotal: {formatCurrency(orderValue.subTotal)}</Text>
-      <Text>Total: {formatCurrency(orderValue.total)}</Text>
-    </React.Fragment>
+      <View style={{ marginTop: 40 }}>
+        <BaseText>Subtotal: {formatCurrency(orderValue.subTotal)}</BaseText>
+        <BaseText>Total: {formatCurrency(orderValue.total)}</BaseText>
+      </View>
+    </Container>
   );
 }
 

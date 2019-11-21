@@ -8,13 +8,15 @@ import {
   getFillsOfOrderItem,
   getNewBlendTask,
 } from '../logic/configLogic';
+import cuid from 'cuid';
 
 export default async function placeOrder(
   cloud,
   companyConfigStream,
   restaurantConfigStream,
-  { isLive, order, orderId, paymentIntent, type },
+  { isLive, order, paymentIntent },
 ) {
+  const orderId = cuid();
   log('AttemptPlaceOrder', { isLive, order, orderId, paymentIntent });
   const companyConfigState = await companyConfigStream.load();
   const companyConfig = companyConfigState.value;
@@ -215,5 +217,8 @@ export default async function placeOrder(
   log('OrderTasksPlaced', { orderId, taskCount: orderTasks.length });
   log('OrderPlacedSuccess', confirmedOrder);
 
-  return {};
+  return {
+    orderId,
+    confirmedOrder,
+  };
 }

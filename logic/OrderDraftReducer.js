@@ -10,7 +10,7 @@ function OrderDraftReducerFn(state = {}, action) {
       return {
         ...state,
         items: [],
-        orderId: cuid(),
+        draftOrderId: cuid(),
         startTime: action.dispatchTime,
       };
     }

@@ -33,7 +33,7 @@ function usePromiseState(onResult) {
 export default function SendReceiptScreen(props) {
   const cloud = useCloud();
   const { getParam, navigate } = useNavigation();
-  const { orderState } = useOrderState();
+  const { confirmedOrderId } = useOrderState();
   const { error, isProgressing, handlePromise } = usePromiseState(resp => {
     navigate('OrderComplete');
   });
@@ -45,7 +45,7 @@ export default function SendReceiptScreen(props) {
       error={error}
       isProgressing={isProgressing}
       onSubmit={resp => {
-        if (!orderState) {
+        if (!confirmedOrderId) {
           alert('Whoops! Ask your guide to send your receipt.');
           return;
         }
@@ -53,7 +53,7 @@ export default function SendReceiptScreen(props) {
           cloud.dispatch({
             type: 'SendReceipt',
             contact: resp,
-            orderId: orderState.orderId,
+            orderId: confirmedOrderId,
           }),
         );
       }}

@@ -305,6 +305,8 @@ export default async function startSkynetServer(httpServer) {
             return {
               type: 'KioskOrder',
               confirmedOrder: order,
+              confirmedOrderId: orderDocState.id,
+              confirmedOrderDocName: report.name,
             };
           }
           return null;

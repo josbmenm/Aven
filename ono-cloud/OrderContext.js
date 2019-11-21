@@ -10,7 +10,7 @@ const OrderContext = createContext(null);
 export function OrderContextProvider({ children }) {
   const cloud = useCloud();
   const draftActions = cloud.get('DraftOrderActions');
-
+  const [confirmedOrderId, setConfirmedOrderId] = React.useState(null);
   const draftOrder = React.useMemo(() => {
     draftActions.setLocalOnly();
 
@@ -37,6 +37,7 @@ export function OrderContextProvider({ children }) {
   const orderDispatch = draftActions.putTransactionValue;
   const orderContext = {
     order: draftOrder,
+    confirmedOrderId,
     orderDispatch,
     setOrderName: name => {
       guardAsync(
@@ -54,29 +55,26 @@ export function OrderContextProvider({ children }) {
       );
     },
     confirmOrder: async paymentIntent => {
-      // const newOrder = cloud.get('Orders').children.post();
-      // const orderBlockId = await draftActions.getId();
-      // const orderBlock = newOrder.getBlock(orderBlockId);
-      // await newOrder.putBlock(orderBlock);
-
-      const orderState = cloud.get('DraftOrder').idAndValue.get();
+      const orderState = draftOrder.idAndValue.get();
       const isLive = await getIsLiveMode();
-      await cloud.dispatch({
+      const { orderId } = await cloud.dispatch({
         type: 'PlaceOrder',
-        orderId: orderState.value.orderId,
         order: orderState.value,
         paymentIntent,
         isLive,
       });
+      setConfirmedOrderId(orderId);
     },
-    startOrder: () =>
+    startOrder: () => {
+      setConfirmedOrderId(null);
       guardAsync(
         cloud.get('DraftOrderActions').putValue({
           type: 'TransactionValue',
           on: null,
           value: { type: 'StartOrderDraft' },
         }),
-      ),
+      );
+    },
   };
   return (
     <OrderContext.Provider value={orderContext}>

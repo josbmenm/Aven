@@ -21,10 +21,10 @@ export default function useKitchenStatus(restaurantState) {
   let allFaults = [];
   if (!isConnected) {
     status = 'disconnected';
-    message = 'App disconnected from restaurant.';
+    message = 'App disconnected from restaurant';
   } else if (restaurantState === undefined) {
     status = 'disconnected';
-    message = 'Loading state..';
+    message = 'Loading state';
   } else if (!isPLCConnected) {
     status = 'disconnected';
     message = 'Server disconnected from machine.';

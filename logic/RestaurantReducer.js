@@ -391,7 +391,6 @@ function RestaurantReducerFn(state = {}, action) {
         system: action.system,
         amount: action.amount,
         slot: action.slot,
-        isInvalid: action.isInvalid,
         isDisabled: action.isDisabled,
         isEmpty: action.isEmpty,
       };
@@ -423,6 +422,8 @@ function RestaurantReducerFn(state = {}, action) {
         system: action.system,
         amount: action.amount,
         slot: action.slot,
+        isDisabled: action.isDisabled,
+        isEmpty: action.isEmpty,
       };
       let fillsRemaining = (state.fill.fillsRemaining || []).filter(fill => {
         const isTheFill =
