@@ -246,7 +246,7 @@ const KitchenSteps = [
         restaurantState.slotSettings && restaurantState.slotSettings[slotId];
       const disabledMode = (settings && settings.disabledMode) || false;
       const isDisabled = disabledMode === true;
-      const isFillInvalid = isEmpty || isDisabled;
+      const isFillInvalid = isDisabled;
       const isFillOptional = (settings && settings.optional) || false;
       const intent = {
         ...nextFill,
@@ -307,6 +307,7 @@ const KitchenSteps = [
     getStateIntent: restaurantState => {
       if (
         !!restaurantState.blend ||
+        restaurantState.blend === 'dirty' ||
         !restaurantState.fill ||
         (restaurantState.fill.fillsRemaining &&
           restaurantState.fill.fillsRemaining.length !== 0) ||
