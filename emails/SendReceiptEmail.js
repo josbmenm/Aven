@@ -17,6 +17,18 @@ function getSubject(params) {
   return `Order Receipt for ${params.orderName}`;
 }
 
+const CARD_IMAGES = {
+  amex: 'https://onofood.co/img/CC_AmericanExpress.png',
+  diners: 'https://onofood.co/img/CC_DinersClub.png',
+  discover: 'https://onofood.co/img/CC_Discover.png',
+  interac: 'https://onofood.co/img/CC_Visa.png', // todo, fix me
+  jcb: 'https://onofood.co/img/CC_JCB.png',
+  mastercard: 'https://onofood.co/img/CC_MasterCard.png', // todo, fix me
+  unionpay: 'https://onofood.co/img/CC_UnionPay.png',
+  visa: 'https://onofood.co/img/CC_Visa.png',
+  unknown: 'https://onofood.co/img/CC_Visa.png', // todo, fix me
+};
+
 function getBodyHTML(params) {
   const {
     orderName,
@@ -25,7 +37,8 @@ function getBodyHTML(params) {
     subTotal,
     total,
     tax,
-    paymentMethod,
+    cardLast4,
+    cardBrand,
     cardPresentMeta,
   } = params;
   const emailTitle = getSubject(params);
@@ -160,36 +173,46 @@ function getBodyHTML(params) {
                 </p>
               </td>
             </tr>
-            <tr>
-              <td>
-                <img
-                  src="https://onofood.co/img/CC_Visa.png"
-                  width="30px"
-                  height="21px"
-                />
-                <p
-                  style={{
-                    ...theme.textStyles.body,
-                    margin: 0,
-                    padding: 0,
-                    marginLeft: 24,
-                    display: 'inline-block',
-                  }}
-                >
-                  **** {paymentMethod.cardNumber}
-                </p>
-              </td>
-            </tr>
+            {cardBrand && cardLast4 && (
+              <tr>
+                <td>
+                  <img
+                    src={CARD_IMAGES[cardBrand] || CARD_IMAGES.unknown}
+                    width="30px"
+                    height="21px"
+                  />
+                  <p
+                    style={{
+                      ...theme.textStyles.body,
+                      margin: 0,
+                      padding: 0,
+                      marginLeft: 24,
+                      display: 'inline-block',
+                    }}
+                  >
+                    {cardBrand.toUpperCase()} ****{cardLast4}
+                  </p>
+                </td>
+              </tr>
+            )}
           </MjmlTable>
         </MjmlColumn>
       </MjmlSection>
       {/* {promoCode && <PromoCodeSection promoCode={promoCode} />} */}
       <GenericFooter />
+
       {cardPresentMeta && (
-        <MjmlText>
-          Application Name: {cardPresentMeta.application_preferred_name}, AID:{' '}
-          {cardPresentMeta.dedicated_file_name}
-        </MjmlText>
+        <MjmlSection>
+          <MjmlColumn>
+            <MjmlText
+              {...theme.textStyles.small}
+              align="center"
+              color={theme.colors.secondary}
+            >
+              {cardPresentMeta}
+            </MjmlText>
+          </MjmlColumn>
+        </MjmlSection>
       )}
     </Layout>,
     { validationLevel: 'soft' },
@@ -204,11 +227,41 @@ function getBodyHTML(params) {
 }
 
 function getBodyText(params) {
-  return `Thanks for ordering from ono blends!
+  const {
+    orderName,
+    orderId,
+    displayItems,
+    subTotal,
+    total,
+    tax,
+    cardLast4,
+    cardBrand,
+    cardPresentMeta,
+  } = params;
+  return `Thanks for ordering from Ono Blends!
 
-Your total is ${params.total}
+${displayItems.map(
+  (item, idx) =>
+    `${idx + 1}. ${item.label} - ${formatCurrency(item.amount)}
+`,
+)}
 
-Ono Blends`;
+Tax: ${formatCurrency(tax.amount)}
+Total: ${formatCurrency(total.amount)}
+
+${cardBrand && cardLast4 && `${cardBrand.toUpperCase()} ****${cardLast4}`}
+
+- Ono Blends
+
+${cardPresentMeta}
+
+Questions?
+Contact us at lucy@onofood.co
+
+Ono Food Co.
+915 Venice Blvd. Los Angeles, CA 90015
+
+`;
 }
 
 export default {

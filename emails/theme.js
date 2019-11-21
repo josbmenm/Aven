@@ -1,5 +1,6 @@
 const colors = {
   primary: '#005151',
+  secondary: '#313131',
   background: '#F8F8F8',
 };
 const theme = {
@@ -29,7 +30,7 @@ const theme = {
       lineHeight: '48px',
       color: colors.primary,
     },
-  }
+  },
 };
 
 export default theme;

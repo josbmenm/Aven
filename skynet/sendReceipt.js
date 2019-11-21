@@ -353,11 +353,10 @@ async function sendSMSReceipt(smsAgent, action, order) {
 async function sendEmailReceipt(emailAgent, action, order) {
   const cardPresentMeta =
     order.stripeIntent &&
-    order.stripeIntent.charges.data[0].source &&
-    order.stripeIntent.charges.data[0].source.card_present;
-
+    order.stripeIntent.charges.data[0].payment_method_details &&
+    order.stripeIntent.charges.data[0].payment_method_details.card_present;
+  const charge = order.stripeIntent && order.stripeIntent.charges.data[0];
   log('ReceiptEmailWillSend', { ...order, ...action });
-
   await emailAgent.actions.SendEmailTemplate(
     SendReceiptEmail,
     action.contact.value,
@@ -393,11 +392,11 @@ async function sendEmailReceipt(emailAgent, action, order) {
         label: 'Amount Charged',
         amount: order.total,
       },
-      paymentMethod: {
-        methodName: 'basic-card',
-        network: 'VISA',
-        cardNumber: 'XXXX',
-      },
+      cardBrand: cardPresentMeta && cardPresentMeta.brand,
+      cardLast4: cardPresentMeta && cardPresentMeta.last4,
+      cardPresentMeta:
+        cardPresentMeta &&
+        `Application Name: ${cardPresentMeta.receipt.application_preferred_name}, AID: ${cardPresentMeta.receipt.dedicated_file_name}`,
     },
   );
 

@@ -4,11 +4,7 @@ import theme from '../theme';
 
 function Header() {
   return (
-    <MjmlSection
-      backgroundColor="white"
-      padding="0"
-      borderBottom={`1px solid ${theme.colors.primary}`}
-    >
+    <MjmlSection backgroundColor="white" padding="0">
       <MjmlColumn padding="0" verticalAlign="top">
         <MjmlImage
           align="left"
@@ -19,10 +15,7 @@ function Header() {
         />
       </MjmlColumn>
       <MjmlColumn padding="0" verticalAlign="middle">
-        <MjmlImage
-          width="150px"
-          src="https://onofood.co/img/email_logo.png"
-        />
+        <MjmlImage width="150px" src="https://onofood.co/img/email_logo.png" />
       </MjmlColumn>
       <MjmlColumn verticalAlign="bottom" padding="0">
         <MjmlImage
