@@ -361,8 +361,13 @@ export function connectMachine({
           resolver.reject(
             new Error(`System "${subsystem}" did not receive this command id.`),
           );
+          return;
         }
-        if (isCommandReceived && (isSystemIdle || isCommandComplete)) {
+        if (
+          isCommandReceived &&
+          (isCommandComplete ||
+            (isSystemIdle && resolver.startTime + 500 < Date.now()))
+        ) {
           if (isCommandComplete) {
             resolver.resolve();
           } else {
