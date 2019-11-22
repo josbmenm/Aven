@@ -458,7 +458,11 @@ function getMenuItemInventory(menuItem, companyConfig, inventoryIngredients) {
   const stockItemFillsWithInventory = stockItemFills.map(fillSpec => {
     const ing = inventoryIngredients[fillSpec.ingredientId];
     let isIngredientOutOfStock = false;
-    if (!ing || fillSpec.amount > ing.estimatedRemaining) {
+    if (
+      !ing ||
+      fillSpec.amount > ing.estimatedRemaining ||
+      ing.settings.disabledMode
+    ) {
       isIngredientOutOfStock = true;
     }
     if (isIngredientOutOfStock && (!ing || !ing.settings.optional)) {
