@@ -61,7 +61,6 @@ function getBodyHTML(params) {
         paddingTop="20px"
         paddingBottom="80px"
         backgroundColor="white"
-        borderBottom="1px solid #005151"
       >
         <MjmlColumn padding="0">
           <MjmlTable padding="0">
