@@ -83,9 +83,7 @@ export default function KioskHomeScreen({ navigation, ...props }) {
         isOpen={isKioskOpen}
         onStartOrder={() => {
           if (isKioskOpen) {
-            startOrder().then(() => {
-              navigation.navigate('ProductHome');
-            });
+            navigation.navigate('ProductHome');
           }
         }}
         closingSoon={closingSoon}
