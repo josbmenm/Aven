@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import createFullscreenSwitchNavigator from '../navigation-web/createFullscreenSwitchNavigator';
 import Admin from '../admin/Admin';
 import InternalBlendMenu from './InternalBlendMenu';
+import FeedbackDashboard from './FeedbackDashboard';
 import { MauiWebRoutes } from '../maui-web/MauiWebApp';
 import { monsterra } from '../components/Styles';
 import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
@@ -157,6 +158,10 @@ const AppNavigator = createFullscreenSwitchNavigator(
     InternalBlendMenu2: {
       screen: InternalBlendMenu,
       path: 'secrets/blendmenu',
+    },
+    FeedbackData: {
+      screen: FeedbackDashboard,
+      path: 'secrets/maui-feedback',
     },
   },
   {},

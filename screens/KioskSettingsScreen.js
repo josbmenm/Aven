@@ -20,6 +20,8 @@ import useKeyboardPopover from '../components/useKeyboardPopover';
 import ButtonStack from '../components/ButtonStack';
 import useFocus from '../navigation-hooks/useFocus';
 import StatusBar from '../components/StatusBar';
+import CardReaderConnectionManager from '../components/CardReaderConnectionManager';
+import { Audio } from 'expo-av';
 
 function FridgeView() {
   const kitchenState = useKitchenState();
@@ -412,6 +414,21 @@ function ArchiveStateRow() {
   );
 }
 
+function CardReaderRow() {
+  const { onPopover } = useKeyboardPopover(({ onClose }) => (
+    <CardReaderConnectionManager onClose={onClose} />
+  ));
+  return (
+    <LinkRow
+      onPress={() => {
+        onPopover();
+      }}
+      icon="💸"
+      title="Card Reader Connection"
+    />
+  );
+}
+
 export default function KioskSettingsScreen({ navigation, ...props }) {
   return (
     <SimplePage
@@ -459,19 +476,30 @@ export default function KioskSettingsScreen({ navigation, ...props }) {
           icon="🧱"
           title="Component Playground"
         />
-        <LinkRow
-          onPress={() => {
-            navigation.navigate({ routeName: 'PaymentDebug' });
-          }}
-          icon="💸"
-          title="Card Reader Connection"
-        />
+        <CardReaderRow />
         <LinkRow
           onPress={() => {
             throw new Error('User-forced error!');
           }}
           icon="⚠️"
           title="Test App Error"
+        />
+        <LinkRow
+          onPress={async () => {
+            const soundObject = new Audio.Sound();
+            try {
+              await soundObject.loadAsync(
+                require('../components/assets/train/CSnd.mp3'),
+              );
+              await soundObject.playAsync();
+              alert('Working');
+              // Your sound is playing!
+            } catch (error) {
+              // An error occurred!
+            }
+          }}
+          title="Sound test"
+          icon="🔔"
         />
         <LinkRow
           onPress={() => {

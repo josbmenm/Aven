@@ -36,6 +36,7 @@ import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
 import InternalOrderScreen from '../screens/InternalOrderScreen';
 import DeviceManagerScreen from '../screens/DeviceManagerScreen';
+import ConfiguratorScreen from '../screens/ConfiguratorScreen';
 import { OrderCompletePortalScreen } from '../screens/OrderCompleteScreen';
 import CollectNameScreen from '../screens/CollectNameScreen';
 import SendReceiptScreen from '../screens/SendReceiptScreen';
@@ -70,6 +71,8 @@ let IS_DEV = process.env.NODE_ENV !== 'production';
 
 const windowSize = Dimensions.get('window');
 
+const IS_DEVELOPING_CONFIGURATOR = false;
+
 const RESTAURANT_DEV = {
   quiet: true,
   useSSL: false,
@@ -82,9 +85,9 @@ const RESTAURANT_DEV = {
   // authority: '192.168.1.106:8830',
 
   // ono wifi (eric mbp addresses)
-  authority: '192.168.1.81:8830',
+  // authority: '192.168.1.81:8830',
 
-  // authority: '10.10.1.200:8830',
+  authority: '10.10.1.200:8830',
 };
 const RESTAURANT_PROD = {
   useSSL: false,
@@ -215,12 +218,19 @@ const TABS = [
   { routeName: 'Settings', title: 'Settings' },
 ];
 
+IS_DEVELOPING_CONFIGURATOR &&
+  TABS.push({
+    routeName: 'Configurator',
+    title: 'Config',
+  });
+
 const PortalHome = createSwitchNavigator({
   Inventory: { screen: InventoryScreen },
   Tasks: { screen: TasksScreen },
   Orders: { screen: OrdersScreen },
   Status: { screen: RestaurantStatusScreen },
   Settings: { screen: KioskSettingsScreen },
+  Configurator: { screen: ConfiguratorScreen },
 });
 
 function PortalHomeApp({ navigation }) {

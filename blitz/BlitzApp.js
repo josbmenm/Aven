@@ -73,9 +73,9 @@ const VERSE_HOST_CONFIG = VERSE_IS_DEV
   ? {
       // Verse dev:
       useSSL: false,
-      // authority: 'localhost:8830',
+      authority: 'localhost:8830',
       // authority: '10.10.10.40:8830',
-      authority: '192.168.1.81:8830',
+      // authority: '192.168.1.81:8830',
     }
   : {
       // Verse prod:
@@ -87,9 +87,9 @@ const SKYNET_HOST_CONFIG = SKYNET_IS_DEV
   ? {
       // Skynet dev:
       useSSL: false,
-      // authority: 'localhost:8840',
+      authority: 'localhost:8840',
       // authority: '10.10.10.40:8840',
-      authority: '192.168.1.81:8830', // ev laptop
+      // authority: '192.168.1.81:8830', // ev laptop
       // useSSL: true,
       // authority: 'onoblends.co',
     }
@@ -412,6 +412,8 @@ function withDevOverlay(FullApp) {
   return FullApp;
 }
 
+// to disable code push: (for testing release mode without getting JS stomped)..
+// const AutoUpdatingApp = withDevOverlay(FullApp);
 const AutoUpdatingApp = codePush(codePushOptions)(withDevOverlay(FullApp));
 
 export default AutoUpdatingApp;

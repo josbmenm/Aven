@@ -2,7 +2,7 @@ import formatCurrency from '../utils/formatCurrency';
 import { error } from '../logger/logger';
 import cuid from 'cuid';
 
-export const TAX_RATE = 0.09;
+export const TAX_RATE = 0.095;
 export const MAX_CUP_VOLUME = 530;
 
 function mapObject(inObj, mapper) {

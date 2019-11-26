@@ -31,6 +31,7 @@ import validatePromoCode from './validatePromoCode';
 import { HostContext } from '../components/AirtableImage';
 import { companyConfigToKitchenConfig } from '../logic/MachineLogic';
 import RecentOrders from '../logic/RecentOrders';
+import { defineCloudReducer } from '../cloud-core/KiteReact';
 import { companyConfigToMenu } from '../logic/configLogic';
 import {
   streamOfValue,
@@ -325,6 +326,50 @@ export default async function startSkynetServer(httpServer) {
   cloud.setReducer('RecentOrders', {
     actionsDoc: companyActivity,
     reducer: RecentOrders,
+    snapshotInterval: 10,
+    snapshotsDoc: cloud.get('RecentOrdersSnapshot'),
+  });
+
+  cloud.setReducer('FeedbackSummary', {
+    actionsDoc: companyActivity,
+    reducer: defineCloudReducer(
+      'FeedbackSummary_03',
+      (prevState = {}, action) => {
+        const lastCount = prevState.feedbackCount || 0;
+        const allFeedback = { ...prevState.allFeedback } || {};
+        if (action.type === 'CustomerFeedback') {
+          const t = new Date(action.time);
+          const dayString = `${t.getFullYear()}-${t.getMonth() +
+            1}-${t.getDate()}`;
+          const day = allFeedback[dayString] || {
+            year: t.getFullYear(),
+            date: t.getDate(),
+            month: t.getMonth() + 1,
+          };
+          const sums = day.sums ? { ...day.sums } : {};
+          Object.entries(action.feedback).map(([feedbackTagName, value]) => {
+            if (feedbackTagName === 'tags') return;
+            if (sums[feedbackTagName]) {
+              sums[feedbackTagName] += value;
+            } else {
+              sums[feedbackTagName] = value;
+            }
+          });
+          allFeedback[dayString] = {
+            ...day,
+            sums,
+            dayCount: 1 + (day.dayCount || 0),
+            feedbacks: [
+              ...(day.feedbacks || []),
+              { ...action.feedback, email: action.email, time: action.time },
+            ],
+          };
+          return { ...prevState, feedbackCount: lastCount + 1, allFeedback };
+        }
+        return prevState;
+      },
+      {},
+    ),
     snapshotInterval: 10,
     snapshotsDoc: cloud.get('RecentOrdersSnapshot'),
   });

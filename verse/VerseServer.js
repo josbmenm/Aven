@@ -32,6 +32,10 @@ setLoggerMode(process.env.NODE_ENV === 'production' ? 'json' : 'debug');
 const getEnv = c => process.env[c];
 
 const ROOT_PASSWORD = getEnv('ONO_ROOT_PASSWORD');
+const HEXNODE_HOST = getEnv('HEXNODE_HOST');
+const HEXNODE_TOKEN = getEnv('HEXNODE_TOKEN');
+
+const HAS_HEXNODE = !!HEXNODE_HOST && !!HEXNODE_TOKEN;
 
 // const spacesEndpoint = new AWS.Endpoint(getEnv('S3_ENDPOINT'));
 // const s3 = new AWS.S3({
@@ -558,6 +562,7 @@ export default async function startVerseServer(httpServer) {
     serverType: 'verse',
     hasKitchen: !!kitchen,
     nodeEnv: process.env.NODE_ENV,
+    HAS_HEXNODE,
   });
 
   return {

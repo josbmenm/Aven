@@ -470,23 +470,19 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-downpour/Pods-downpour-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-downpour/Pods-downpour-frameworks.sh",
 				"${PODS_ROOT}/StripeTerminal/Carthage/Build/iOS/StripeTerminal.framework",
 				"${PODS_ROOT}/StripeTerminal/Carthage/Build/iOS/StripeTerminal.framework.dSYM",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StripeTerminal.framework",
 				"${DWARF_DSYM_FOLDER_PATH}/StripeTerminal.framework.dSYM",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-downpour/Pods-downpour-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-downpour/Pods-downpour-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		ECA1BA38CC5DF51C5EF42BAB /* [CP] Check Pods Manifest.lock */ = {
@@ -690,13 +686,14 @@
 			baseConfigurationReference = 257A0721963DBC2B8A685D25 /* Pods-downpour.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 6U9HDNK4HD;
 				INFOPLIST_FILE = downpour/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.16;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -704,7 +701,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = downpour;
-				PROVISIONING_PROFILE_SPECIFIER = PortalDevelopment;
+				PROVISIONING_PROFILE_SPECIFIER = PortalDistribution;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -721,6 +718,7 @@
 				DEVELOPMENT_TEAM = 6U9HDNK4HD;
 				INFOPLIST_FILE = downpour/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.16;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
