@@ -371,7 +371,7 @@ export default async function startSkynetServer(httpServer) {
       {},
     ),
     snapshotInterval: 10,
-    snapshotsDoc: cloud.get('RecentOrdersSnapshot'),
+    snapshotsDoc: cloud.get('FeedbackSummarySnapshot'),
   });
 
   const kitchenConfig = cloud.docs.setOverrideValueStream(
