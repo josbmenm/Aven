@@ -3,9 +3,36 @@ import { Text, View } from 'react-native';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import GenericPage from '../maui-web/GenericPage';
 import Container from '../dashboard/Container';
+import Button from '../dashboard/Button';
+
+function openCSVdata(dataStr, name) {
+  let csvContent = 'data:text/csv;charset=utf-8,' + dataStr;
+
+  var encodedUri = encodeURI(csvContent);
+  var link = window.document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', name + '.csv');
+  window.document.body.appendChild(link); // Required for FF
+
+  link.click();
+}
 
 export default function FeedbackDashboard({}) {
   const summary = useCloudValue('FeedbackSummary');
+  function downloadCSV() {
+    const allFeedbacks = [];
+    Object.values(summary.allFeedback).forEach(feedbackDay => {
+      feedbackDay.feedbacks.forEach(f => allFeedbacks.push(f));
+    });
+    let csvData = 'time,rating,tags,email';
+    allFeedbacks.forEach(feedback => {
+      csvData += `
+${String(new Date(feedback.time))},${feedback.rating},${feedback.tags.join(
+        ' ',
+      )},${feedback.email}`;
+    });
+    openCSVdata(csvData, 'CustomerFeedback');
+  }
   if (!summary) {
     return (
       <GenericPage>
@@ -51,6 +78,7 @@ export default function FeedbackDashboard({}) {
             </View>
           );
         })}
+        <Button title="Download CSV" onPress={downloadCSV} />
       </Container>
     </GenericPage>
   );
