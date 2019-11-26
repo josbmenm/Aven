@@ -330,21 +330,32 @@ export default async function startSkynetServer(httpServer) {
     snapshotsDoc: cloud.get('RecentOrdersSnapshot'),
   });
 
+  function timeIntToPSTDate(timeInt) {
+    const tDefault = new Date(timeInt);
+    const pstMinuteOffset = 480 - tDefault.getTimezoneOffset();
+    const pstTime = new Date(timeInt - pstMinuteOffset * 1000 * 60);
+    return {
+      year: pstTime.getFullYear(),
+      month: pstTime.getMonth() + 1,
+      date: pstTime.getDate(),
+    };
+  }
+
   cloud.setReducer('FeedbackSummary', {
     actionsDoc: companyActivity,
     reducer: defineCloudReducer(
-      'FeedbackSummary_03',
+      'FeedbackSummary_04',
       (prevState = {}, action) => {
         const lastCount = prevState.feedbackCount || 0;
         const allFeedback = { ...prevState.allFeedback } || {};
         if (action.type === 'CustomerFeedback') {
           const t = new Date(action.time);
-          const dayString = `${t.getFullYear()}-${t.getMonth() +
-            1}-${t.getDate()}`;
+          const { year, month, date } = timeIntToPSTDate(action.time);
+          const dayString = `${year}-${month}-${date}`;
           const day = allFeedback[dayString] || {
-            year: t.getFullYear(),
-            date: t.getDate(),
-            month: t.getMonth() + 1,
+            year,
+            month,
+            date,
           };
           const sums = day.sums ? { ...day.sums } : {};
           Object.entries(action.feedback).map(([feedbackTagName, value]) => {
