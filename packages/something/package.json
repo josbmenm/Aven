@@ -1,5 +1,5 @@
 {
-  "name": "something",
+  "name": "@aven-cloud/something-mobile",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -11,16 +11,16 @@
   },
   "dependencies": {
     "@aven-cloud/dash": "^0.0.x",
-    "@react-native-community/masked-view": "^0.1.1",
-    "@react-navigation/core": "^5.0.0-alpha.19",
-    "@react-navigation/native": "^5.0.0-alpha.14",
-    "@react-navigation/stack": "^5.0.0-alpha.31",
-    "react": "16.8.1",
-    "react-native": "0.61.2",
-    "react-native-gesture-handler": "^1.4.1",
-    "react-native-reanimated": "^1.3.0",
-    "react-native-safe-area-context": "^0.5.0",
-    "react-native-screens": "^2.0.0-alpha.6"
+    "@react-native-community/masked-view": "^0.1.5",
+    "@react-navigation/core": "^5.0.0-alpha.24",
+    "@react-navigation/native": "^5.0.0-alpha.16",
+    "@react-navigation/stack": "^5.0.0-alpha.37",
+    "react": "16.9.0",
+    "react-native": "0.61.5",
+    "react-native-gesture-handler": "^1.5.1",
+    "react-native-reanimated": "^1.4.0",
+    "react-native-safe-area-context": "^0.6.1",
+    "react-native-screens": "^1.0.0-alpha.23"
   },
   "devDependencies": {
     "@babel/core": "^7.5.0",
