@@ -1,0 +1,24 @@
+{
+  "name": "@aven-cloud/utils",
+  "version": "1.4.0",
+  "main": "lib/commonjs/index.js",
+  "react-native": "src/index.js",
+  "module": "lib/module/index.js",
+  "types": "lib/typescript/index.d.ts",
+  "scripts": {
+    "prepare": "bob build",
+    "clean": "del lib"
+  },
+  "@react-native-community/bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
+  },
+  "dependencies": {
+    "rxjs-compat": "^6.3.3"
+  }
+}

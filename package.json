@@ -16,7 +16,8 @@
     "pg": "cd cloud-postgres; docker-compose up",
     "test-sql": "cd cloud-postgres; ./test.sh startPostgresStorageSource",
     "carriage": "node carriage/carriage.js",
-    "mobile": "yarn workspace @aven-cloud/something-mobile"
+    "mobile": "yarn workspace @aven-cloud/something-mobile",
+    "reset": "yarn rimraf node_modules yarn.lock packages/*/node_modules"
   },
   "workspaces": {
     "packages": [
@@ -35,6 +36,7 @@
     "pn": "^1.1.0",
     "prettier": "^1.17.0",
     "react-test-renderer": "^16.6.3",
+    "rimraf": "^3.0.0",
     "typescript": "^3.2.2"
   },
   "dependencies": {
@@ -73,12 +75,12 @@
     "prism-react-renderer": "^0.1.5",
     "query-string": "^6.2.0",
     "react": "16.9.0",
-    "react-native": "0.61.5",
     "react-art": "16.9.0",
     "react-dom": "16.9.0",
     "react-is": "^16.5.2",
     "react-konva": "^16.8.4",
     "react-lifecycles-compat": "^3.0.4",
+    "react-native": "0.61.5",
     "react-native-web": "^0.10.0",
     "reconnecting-websocket": "^4.0.0-rc5",
     "rxjs": "^6.3.3",

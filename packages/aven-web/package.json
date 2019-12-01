@@ -1,0 +1,30 @@
+{
+  "name": "@aven-cloud/aven-web",
+  "version": "1.8.0",
+  "main": "lib/commonjs/index.js",
+  "react-native": "src/index.tsx",
+  "module": "lib/module/index.js",
+  "types": "lib/typescript/index.d.ts",
+  "scripts": {
+    "prepare": "bob build",
+    "clean": "del lib"
+  },
+  "@react-native-community/bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
+  },
+  "dependencies": {
+    "yes-https": "^0.0.4",
+    "helmet": "^3.13.0",
+    "mime": "^2.4.4",
+    "body-parser": "^1.18.3",
+    "react-native-web": "^0.10.0",
+    "react-art": "16.9.0",
+    "express": "^4.16.4"
+  }
+}

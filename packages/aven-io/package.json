@@ -1,0 +1,27 @@
+{
+  "name": "@aven-cloud/aven-io",
+  "version": "1.0.0",
+  "private": true,
+  "main": "lib/commonjs/index.js",
+  "react-native": "src/index.tsx",
+  "module": "lib/module/index.js",
+  "types": "lib/typescript/index.d.ts",
+  "scripts": {
+    "prepare": "bob build",
+    "clean": "del lib"
+  },
+  "@react-native-community/bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
+  },
+  "dependencies": {
+    "prism-react-renderer": "^0.1.5",
+    "konva": "^3.2.1",
+    "react-konva": "^16.8.4"
+  }
+}

@@ -4,9 +4,11 @@ import * as React from 'react';
 import {View, Text, TextInput, ScrollView} from 'react-native';
 import {NavigationNativeContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import {NetworkCloudProvider} from '@aven-cloud/cloud-native';
 import {useNavigation, useFocusEffect} from '@react-navigation/core';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Animated, {Easing} from 'react-native-reanimated';
+import {useCloudValue} from '@aven-cloud/cloud-core';
 
 const defaultTheme = {
   backgroundColor: '#eaeaea',
@@ -419,7 +421,10 @@ function RowsLayout({children}) {
     </View>
   );
 }
-
+function TestView() {
+  const data = useCloudValue('RestaurantSchedule');
+  return <DashText>{JSON.stringify(data)}</DashText>;
+}
 function HomeScreen() {
   const navigation = useNavigation();
   const [textValue, setTextValue] = React.useState();
@@ -427,7 +432,7 @@ function HomeScreen() {
     <ScrollView style={{flex: 1}}>
       <RowsLayout>
         <DashHeading>Hello Dash</DashHeading>
-        <DashText>Text, normal</DashText>
+        <TestView />
         <DashButton
           onPress={() => {
             navigation.navigate('NewThing', {name: 'Goo'});
@@ -461,26 +466,32 @@ function TypesScreen({route}) {
 const Stack = createStackNavigator();
 
 function App() {
+  // const [] = useAsyncStorage()
   return (
-    <NavigationNativeContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen
-          name="Types"
-          component={TypesScreen}
-          options={({route}) => ({title: route.params.name})}
-        />
-        <Stack.Screen
-          name="NewThing"
-          component={NewThingScreen}
-          options={({route}) => ({
-            title: route.params.dataType
-              ? `New ${route.params.dataType.name}`
-              : 'New..',
-          })}
-        />
-      </Stack.Navigator>
-    </NavigationNativeContainer>
+    <NetworkCloudProvider
+      authority="onoblends.co"
+      useSSL={true}
+      domain="onofood.co">
+      <NavigationNativeContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen
+            name="Types"
+            component={TypesScreen}
+            options={({route}) => ({title: route.params.name})}
+          />
+          <Stack.Screen
+            name="NewThing"
+            component={NewThingScreen}
+            options={({route}) => ({
+              title: route.params.dataType
+                ? `New ${route.params.dataType.name}`
+                : 'New..',
+            })}
+          />
+        </Stack.Navigator>
+      </NavigationNativeContainer>
+    </NetworkCloudProvider>
   );
 }
 
