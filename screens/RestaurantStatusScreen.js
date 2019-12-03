@@ -22,43 +22,7 @@ import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import KitchenCommands from '../logic/KitchenCommands';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
 import useKeyboardPopover from '../components/useKeyboardPopover';
-
-function KitchenCommandButton({ commandType, params, title }) {
-  const [isLoading, setIsLoading] = React.useState(false);
-  let isDisabled = true;
-  const cloud = useCloud();
-  const kitchenState = useKitchenState();
-  const handleError = useAsyncError();
-
-  if (kitchenState) {
-    const command = KitchenCommands[commandType];
-    const isReady = command.checkReady(kitchenState);
-    if (isReady) isDisabled = false;
-  }
-  function handlePress() {
-    setIsLoading(true);
-    handleError(
-      cloud
-        .dispatch({
-          type: 'KitchenCommand',
-          commandType,
-        })
-        .finally(() => {
-          setIsLoading(false);
-        }),
-    );
-  }
-
-  return (
-    <SpinnerButton
-      command="Home"
-      onPress={handlePress}
-      isLoading={isLoading}
-      disabled={isDisabled}
-      title={title || commandType}
-    />
-  );
-}
+import KitchenCommandButton from '../components/KitchenCommandButton';
 
 function PopoverTitle({ children }) {
   return (
@@ -488,8 +452,8 @@ function BlenderView() {
         buttons={[
           <KitchenCommandButton commandType="FlipCupPlate" />,
           <KitchenCommandButton commandType="ReturnCupPlate" />,
-          <KitchenCommandButton commandType="FlipBladePlate" />,
-          <KitchenCommandButton commandType="ReturnBladePlate" />,
+          <KitchenCommandButton commandType="FlipBlade" />,
+          <KitchenCommandButton commandType="ReturnBlade" />,
         ]}
       />
     </Row>

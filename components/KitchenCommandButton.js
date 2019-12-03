@@ -11,7 +11,7 @@ export default function KitchenCommandButton({ commandType, params, title }) {
 
   if (kitchenState) {
     const command = KitchenCommands[commandType];
-    const isReady = command.checkReady(kitchenState);
+    const isReady = !!command && command.checkReady(kitchenState);
     if (isReady) isDisabled = false;
   }
 
@@ -24,6 +24,10 @@ export default function KitchenCommandButton({ commandType, params, title }) {
   }
 
   return (
-    <AsyncButton onPress={handlePress} disabled={isDisabled} title={title} />
+    <AsyncButton
+      onPress={handlePress}
+      disabled={isDisabled}
+      title={title || commandType}
+    />
   );
 }
