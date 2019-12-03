@@ -1539,7 +1539,14 @@ export function createLocalSessionClient({
     }
     if (reportName === 'PutDocValue') {
       localSource
-        .dispatch({ type: 'PutDocValue', domain, name, id, value })
+        .dispatch({
+          type: 'PutDocValue',
+          domain,
+          name,
+          id,
+          value,
+          force: true,
+        })
         .catch(err => handleAsyncStorageFailure(err, { reportName, report }));
     } else if (reportName === 'PutDoc') {
       localSource.dispatch({ type: 'PutDoc', domain, name, id }).catch(err => {

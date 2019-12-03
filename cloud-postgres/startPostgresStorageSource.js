@@ -486,7 +486,7 @@ export default async function startPostgresStorageSource({
     );
   }
 
-  async function PutDocValue({ domain, value, name }) {
+  async function PutDocValue({ domain, value, name, force }) {
     if (!name) {
       throw new Err('Invalid doc name for "PutDocValue"', 'InvalidDocName', {
         domain,
@@ -509,7 +509,8 @@ export default async function startPostgresStorageSource({
     if (
       value &&
       typeof value === 'object' &&
-      value.type === 'TransactionValue'
+      value.type === 'TransactionValue' &&
+      !force
     ) {
       const onId = value && value.on && value.on.id;
       const block = await putBlock(value);
