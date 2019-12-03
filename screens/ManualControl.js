@@ -38,10 +38,6 @@ export default function ManualControl() {
       />
       <KitchenCommandButton title="blend" commandType="Blend" />
       <KitchenCommandButton
-        title="pass to delivery and clean"
-        commandType="PassToDelivery"
-      />
-      <KitchenCommandButton
         title="pass to delivery"
         commandType="PassToDeliveryWithoutClean"
       />

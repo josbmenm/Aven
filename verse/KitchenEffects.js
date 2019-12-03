@@ -77,7 +77,7 @@ export default function computeSideEffects(kitchenState, restaurantState) {
   const willPassToBlender =
     restaurantState.fill && restaurantState.fill.willPassToBlender;
   const mayBePassingToBlender =
-    !!willPassToBlender && Date.now() < willPassToBlender + 20000;
+    !!willPassToBlender && Date.now() < willPassToBlender + 60000;
   if (
     (restaurantState.blend == null || restaurantState.blend === 'dirty') &&
     kitchenState.BlendSystem_HasCup_READ &&
@@ -88,7 +88,7 @@ export default function computeSideEffects(kitchenState, restaurantState) {
   const willPassToDelivery =
     restaurantState.blend && restaurantState.blend.willPassToDelivery;
   const mayBePassingToDelivery =
-    !!willPassToDelivery && Date.now() < willPassToDelivery + 20000;
+    !!willPassToDelivery && Date.now() < willPassToDelivery + 60000;
   if (
     restaurantState.delivery == null &&
     kitchenState.Delivery_ArmHasCup_READ &&
