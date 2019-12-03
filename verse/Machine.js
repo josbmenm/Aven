@@ -345,7 +345,11 @@ export function connectMachine({
         const isCommandReceived = startedCommandId === resolver.commandId;
         const isCommandComplete =
           noFaults && endedCommandId === resolver.commandId;
-        if (!isCommandReceived && resolver.startTime + 400 < Date.now()) {
+        const hasHadAChance = resolver.startTime + 400 < Date.now();
+        if (isCommandReceived || isCommandComplete) {
+          clearTimeout(resolver.commandReceivedTimeout);
+        }
+        if (!isCommandReceived && hasHadAChance) {
           error('MachineError', {
             ..._kitchenState,
             code: 'CommandNotReceived',
@@ -510,20 +514,11 @@ export function connectMachine({
 
     subsystemResolvers[subsystem] = {}; // use this to lock subsystem temporarily while writing values. todo: action id reception timeout
 
-    try {
-      await writeMachineValues({
-        commandId,
-        subsystem,
-        pulse,
-        values,
-      });
-    } catch (e) {
-      subsystemResolvers[subsystem] = null;
-      throw e;
-    }
-    await new Promise((resolve, reject) => {
+    const completionPromise = new Promise((resolve, reject) => {
       const watchKittyTimeout = setTimeout(() => {
         delete subsystemResolvers[subsystem];
+        clearTimeout(watchKittyTimeout);
+        clearTimeout(commandReceivedTimeout);
         const commandErrorTimeMS = Date.now();
         const errorDetails = {
           ..._kitchenState,
@@ -543,15 +538,41 @@ export function connectMachine({
         );
       }, 2 * 60 * 1000);
 
+      const commandReceivedTimeout = setTimeout(() => {
+        delete subsystemResolvers[subsystem];
+        clearTimeout(watchKittyTimeout);
+        clearTimeout(commandReceivedTimeout);
+        const commandErrorTimeMS = Date.now();
+        const errorDetails = {
+          ..._kitchenState,
+          code: 'CommandNotAcceptedChirp',
+          command,
+          commandId,
+          subsystem,
+          pulse,
+          values,
+          commandStartTimeMS,
+          commandErrorTimeMS,
+          commandDurationMS: commandErrorTimeMS - commandStartTimeMS,
+        };
+        error('MachineCommandFailed', errorDetails);
+
+        reject(
+          new Error(`Command not accepted on "${subsystem}" system, chirp!`),
+        );
+      }, 10 * 1000);
+
       subsystemResolvers[subsystem] = {
         resolve: value => {
           delete subsystemResolvers[subsystem];
           clearTimeout(watchKittyTimeout);
+          clearTimeout(commandReceivedTimeout);
           resolve(value);
         },
         reject: err => {
           delete subsystemResolvers[subsystem];
           clearTimeout(watchKittyTimeout);
+          clearTimeout(commandReceivedTimeout);
           const commandErrorTimeMS = Date.now();
           error('MachineCommandFailed', {
             ..._kitchenState,
@@ -569,9 +590,24 @@ export function connectMachine({
           reject(err);
         },
         commandId,
+        commandReceivedTimeout,
         command,
       };
     });
+
+    try {
+      await writeMachineValues({
+        commandId,
+        subsystem,
+        pulse,
+        values,
+      });
+    } catch (e) {
+      subsystemResolvers[subsystem] = null;
+      throw e;
+    }
+
+    await completionPromise;
 
     const commandEndTimeMS = Date.now();
 
