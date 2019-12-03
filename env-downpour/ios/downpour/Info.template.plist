@@ -16,7 +16,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.16</string>
+	<string>1.17</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -43,8 +43,6 @@
 	<string>Card reader requires Bluetooth to connect.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Card reader requires location.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Card reader requires access to the microphone.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>fonts/Caput.ttf</string>

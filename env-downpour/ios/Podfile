@@ -28,7 +28,7 @@ target 'downpour' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'StripeTerminal', '1.0.0'
+  pod 'StripeTerminal', '1.0.3'
 
   target 'downpourTests' do
     inherit! :search_paths

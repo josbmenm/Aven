@@ -144,9 +144,9 @@ Device id: ${deviceId}
   );
 }
 
-export default function useBlitzDebugPopover(mode = 'switch') {
-  const { onPopover } = useKeyboardPopover(({ onClose }) => {
-    return <BlitzDebug onClose={onClose} initialMode={mode} />;
+export default function useBlitzDebugPopover() {
+  const { onPopover } = useKeyboardPopover(({ onClose, openArguments }) => {
+    return <BlitzDebug onClose={onClose} initialMode={openArguments[0]} />;
   });
   return { openPopover: onPopover };
 }

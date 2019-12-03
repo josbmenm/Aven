@@ -63,7 +63,7 @@ export default async function startVerseServer(httpServer) {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  // USE_DEV_SERVER = false;
+  USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {

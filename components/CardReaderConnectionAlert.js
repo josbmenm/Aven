@@ -4,7 +4,7 @@ import useBlitzDebugPopover from '../components/useBlitzDebugPopover';
 import { useCardReaderConnectionManager } from '../card-reader/CardReader';
 
 export default function CardReaderConnectionAlert({ tintColor }) {
-  const { openPopover } = useBlitzDebugPopover('CardReader');
+  const { openPopover } = useBlitzDebugPopover();
   const {
     connectionStatus,
     persistedReaderSerialNumber,
@@ -23,8 +23,11 @@ export default function CardReaderConnectionAlert({ tintColor }) {
         left: 20,
         bottom: 20,
       }}
-      onLongPress={() => {
+      onPress={() => {
         openPopover();
+      }}
+      onLongPress={() => {
+        openPopover('CardReader');
       }}
     >
       <Image

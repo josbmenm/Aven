@@ -18,9 +18,7 @@ export async function get(storageKey, defaultValue) {
 }
 
 export async function put(storageKey, newState) {
-  console.log('putting!', newState, storageKey);
   await AsyncStorage.setItem(storageKey, JSON.stringify(newState));
-  console.log('putted');
 }
 
 export default function useAsyncStorage(storageKey, defaultValue) {
@@ -33,7 +31,6 @@ export default function useAsyncStorage(storageKey, defaultValue) {
     setInternalStorageState(state);
   }
   async function doPut(storageKey, newState) {
-    console.log('doPut', storageKey, newState);
     const lastState = storageState;
     setInternalStorageState(newState);
     try {

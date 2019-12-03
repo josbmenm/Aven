@@ -81,7 +81,7 @@ export default function CardReaderConnectionManager({ onClose }) {
           throw new Error('requested crash');
         }}
       />
-      <AsyncButton
+      {/* <AsyncButton
         style={{ marginTop: 16 }}
         title="request location"
         onPress={async () => {
@@ -90,7 +90,7 @@ export default function CardReaderConnectionManager({ onClose }) {
           );
           alert(JSON.stringify({ status, permissions }));
         }}
-      />
+      /> */}
       <Button
         title="done"
         style={{ marginTop: 32 }}

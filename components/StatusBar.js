@@ -236,6 +236,7 @@ export default function StatusBar() {
         {status === 'fault' && (
           <AsyncButton
             title="home system"
+            disabled={kitchenState.FillSystem_PrgStep_READ !== 0}
             onPress={() =>
               cloud.dispatch({
                 type: 'KitchenCommand',

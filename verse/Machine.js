@@ -625,6 +625,7 @@ export function connectMachine({
 
   function applyDerivedState(restaurantState) {
     if (!deriveAppliedMachineState) return;
+    if (!restaurantState.isAttached) return;
     const machineState = deriveAppliedMachineState(restaurantState);
     const newMachineState = {};
     let needsMachineWrite = false;

@@ -501,11 +501,11 @@ export default function RestaurantStatusScreen(props) {
     <SimplePage {...props} hideBackButton footer={<StatusBar />}>
       <RootAuthenticationSection>
         <TemperatureView />
-        {/* <SafetyView /> */}
+        <SafetyView />
         <ServicingView />
         <StatusView />
         <VanView />
-        {/* <TanksView /> */}
+        <TanksView />
         <BlenderView />
       </RootAuthenticationSection>
     </SimplePage>

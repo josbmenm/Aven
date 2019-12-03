@@ -435,13 +435,17 @@ function BeverageSubsystem() {
   );
 }
 function CupsSubsystem({ systemState, restaurantState }) {
-  console.log('ah', restaurantState);
   return (
     <React.Fragment>
       <RemainderTag estimatedRemaining={systemState.estimatedRemaining} />
-      <KitchenCommandButton commandType="DispenseCup" title="dispense cup" />
       {restaurantState.manualMode && (
-        <KitchenCommandButton commandType="GetCup" title="grab new cup" />
+        <>
+          <KitchenCommandButton
+            commandType="DispenseCup"
+            title="dispense cup"
+          />
+          <KitchenCommandButton commandType="GetCup" title="grab new cup" />
+        </>
       )}
     </React.Fragment>
   );

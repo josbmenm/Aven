@@ -159,7 +159,7 @@ PODS:
     - Sentry/Core (= 4.4.2)
   - Sentry/Core (4.4.2)
   - SSZipArchive (2.2.2)
-  - StripeTerminal (1.0.0)
+  - StripeTerminal (1.0.3)
   - UMBarCodeScannerInterface (4.0.0)
   - UMCameraInterface (4.0.0)
   - UMConstantsInterface (4.0.0)
@@ -216,7 +216,7 @@ DEPENDENCIES:
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNStripeTerminal (from `../node_modules/react-native-stripe-terminal`)
   - RNSVG (from `../node_modules/react-native-svg`)
-  - StripeTerminal (= 1.0.0)
+  - StripeTerminal (= 1.0.3)
   - UMBarCodeScannerInterface (from `../node_modules/unimodules-barcode-scanner-interface/ios`)
   - UMCameraInterface (from `../node_modules/unimodules-camera-interface/ios`)
   - UMConstantsInterface (from `../node_modules/unimodules-constants-interface/ios`)
@@ -242,9 +242,9 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - SSZipArchive
-    - StripeTerminal
   trunk:
     - Sentry
+    - StripeTerminal
 
 EXTERNAL SOURCES:
   appcenter:
@@ -416,7 +416,7 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: 7568737603c50f6237850afedd7e9e28e5917e6b
   Sentry: bba998b0fb157fdd6596aa73290a9d67ae47be79
   SSZipArchive: fa16b8cc4cdeceb698e5e5d9f67e9558532fbf23
-  StripeTerminal: e3e7bb513066c9adebba6e7cea8c798b4286ed40
+  StripeTerminal: ec7ecf250d87c6a8218234db6d35f9c46b81c237
   UMBarCodeScannerInterface: d5a6fdc98ed6241225b0a8432a7f4e2b397668bc
   UMCameraInterface: 68870a3197fee85bd5afca5609ba4a5b7257d19d
   UMConstantsInterface: d25b8e8887ca7aaf568c06caf08f4d40734ee4ef
@@ -431,6 +431,6 @@ SPEC CHECKSUMS:
   UMTaskManagerInterface: 1e70fe58b872355f0ecb44fb81bb1a16484047f0
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 
-PODFILE CHECKSUM: efc7adf0f457fe24d9dc6206846dc312aa84566c
+PODFILE CHECKSUM: 95e7aa58571bedc9c99b5543636771093a1469d6
 
 COCOAPODS: 1.8.4
