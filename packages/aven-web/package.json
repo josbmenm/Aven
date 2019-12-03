@@ -2,7 +2,7 @@
   "name": "@aven-cloud/aven-web",
   "version": "1.8.0",
   "main": "lib/commonjs/index.js",
-  "react-native": "src/index.tsx",
+  "react-native": "src/index.js",
   "module": "lib/module/index.js",
   "types": "lib/typescript/index.d.ts",
   "scripts": {

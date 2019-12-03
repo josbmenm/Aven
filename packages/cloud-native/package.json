@@ -1,5 +1,6 @@
 {
   "name": "@aven-cloud/cloud-native",
+  "version": "0.0.0",
   "main": "lib/commonjs/index.js",
   "react-native": "src/index.js",
   "module": "lib/module/index.js",

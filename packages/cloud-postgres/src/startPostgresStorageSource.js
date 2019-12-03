@@ -1,12 +1,12 @@
 import Knex from 'knex';
-import {createDispatcher} from '@aven-cloud/cloud-utils';
+import { Err, createDispatcher, getIdOfValue } from '@aven-cloud/cloud-utils';
 import cuid from 'cuid';
-import {getIdOfValue} from '@aven-cloud/cloud-utils';
-import { getMaxListDocs } from '../cloud-core/maxListDocs';
-import bindCommitDeepBlock from '../cloud-core/bindCommitDeepBlock';
-import {Err} from '@aven-cloud/utils';
+import {
+  getMaxListDocs,
+  bindCommitDeepBlock,
+  createStreamValue,
+} from '@aven-cloud/cloud-core';
 import xs from 'xstream';
-import { createStreamValue } from '@aven-cloud/cloud-core';
 
 const pgFormat = require('pg-format');
 

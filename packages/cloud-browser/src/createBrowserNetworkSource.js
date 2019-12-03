@@ -1,4 +1,4 @@
-import {createNetworkSource} from '@aven-cloud/cloud-network';
+import { createNetworkSource } from '@aven-cloud/cloud-network';
 
 const fetchFn = global.fetch && global.fetch.bind(window);
 

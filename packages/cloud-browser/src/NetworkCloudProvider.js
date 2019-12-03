@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
-import createCloudClient from '../cloud-core/createCloudClient';
+import { CloudContext, createClient } from '@aven-cloud/cloud-core';
 import createBrowserNetworkSource from './createBrowserNetworkSource';
-import CloudContext from '../cloud-core/CloudContext';
 
 export default function NetworkCloudProvider({
   authority,
@@ -12,11 +11,14 @@ export default function NetworkCloudProvider({
   onSession,
 }) {
   const cloud = useMemo(() => {
+    if (!authority || !domain) {
+      return null;
+    }
     const source = createBrowserNetworkSource({
       authority,
       useSSL,
     });
-    const cloud = createCloudClient({
+    const cloud = createClient({
       source,
       domain,
       initialSession: session,

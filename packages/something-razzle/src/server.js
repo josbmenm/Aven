@@ -1,49 +1,45 @@
 import App from './App';
-import React from 'react';
-import express from 'express';
-import { renderToString } from 'react-dom/server';
+import attachWebServer from '../aven-web/WebServer';
+import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
+import startFSStorageSource from '../cloud-fs/startFSStorageSource';
+import createCloudClient from '../cloud-core/createCloudClient';
+import CloudContext from '../cloud-core/CloudContext';
 
-// Enable source map support for errors
-import 'source-map-support/register';
+export default async function startAvenServer(httpServer) {
+  console.log('☁️ Starting Cloud 💨');
 
-const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
+  // const source = await startFSStorageSource({
+  //   domain: 'example.aven.cloud',
+  //   dataDir: process.cwd() + '/db',
+  // });
 
-const server = express();
-server
-  .disable('x-powered-by')
-  .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
-  .get('/*', (req, res) => {
-    const context = {};
-    const markup = renderToString(<App />);
-
-    if (context.url) {
-      res.redirect(context.url);
-    } else {
-      res.status(200).send(
-        `<!doctype html>
-    <html lang="">
-    <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta charset="utf-8" />
-        <title>Welcome to Razzle</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        ${
-          assets.client.css
-            ? `<link rel="stylesheet" href="${assets.client.css}">`
-            : ''
-        }
-        ${
-          process.env.NODE_ENV === 'production'
-            ? `<script src="${assets.client.js}" defer></script>`
-            : `<script src="${assets.client.js}" defer crossorigin></script>`
-        }
-    </head>
-    <body>
-        <div id="root">${markup}</div>
-    </body>
-</html>`,
-      );
-    }
+  const source = await createMemoryStorageSource({
+    domain: 'example.aven.cloud',
   });
 
-export default server;
+  const cloud = createCloudClient({
+    source,
+    domain: 'example.aven.cloud',
+  });
+
+  const getEnv = c => process.env[c];
+  const serverListenLocation = getEnv('PORT');
+  const context = new Map();
+  context.set(CloudContext, cloud);
+  const webService = await attachWebServer({
+    httpServer,
+    App,
+    context,
+    source,
+    serverListenLocation,
+    assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
+  });
+  console.log('☁️️ Web Ready 🕸');
+
+  return {
+    close: async () => {
+      await webService.close();
+      await source.close();
+    },
+  };
+}

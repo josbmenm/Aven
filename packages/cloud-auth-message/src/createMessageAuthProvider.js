@@ -1,4 +1,4 @@
-import { checksum, genAuthCode } from '../cloud-utils/Crypto';
+import { checksum, genAuthCode } from '@aven-cloud/cloud-utils';
 
 export default function createMessageAuthProvider({
   authProviderName,

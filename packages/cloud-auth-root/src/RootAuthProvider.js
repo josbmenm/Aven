@@ -1,4 +1,4 @@
-import { compareSecureString } from '../cloud-utils/Crypto';
+import { compareSecureString } from '@aven-cloud/cloud-utils';
 
 export default function RootAuthProvider({ rootPasswordHash }) {
   function canVerify(verificationInfo, accountId) {

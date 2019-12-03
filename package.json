@@ -17,6 +17,7 @@
     "test-sql": "cd cloud-postgres; ./test.sh startPostgresStorageSource",
     "carriage": "node carriage/carriage.js",
     "mobile": "yarn workspace @aven-cloud/something-mobile",
+    "web": "yarn workspace @aven-cloud/something-web",
     "reset": "yarn rimraf node_modules yarn.lock packages/*/node_modules"
   },
   "workspaces": {
