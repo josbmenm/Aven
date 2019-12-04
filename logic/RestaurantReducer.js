@@ -463,7 +463,7 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'WillPassToBlender': {
-      if (!state.fill) {
+      if (!state.fill || state.fill === 'ready') {
         return defaultReturn();
       }
       return {

@@ -345,27 +345,8 @@ export function connectMachine({
         const isCommandReceived = startedCommandId === resolver.commandId;
         const isCommandComplete =
           noFaults && endedCommandId === resolver.commandId;
-        const hasHadAChance = resolver.startTime + 400 < Date.now();
         if (isCommandReceived || isCommandComplete) {
           clearTimeout(resolver.commandReceivedTimeout);
-        }
-        if (!isCommandReceived && hasHadAChance) {
-          error('MachineError', {
-            ..._kitchenState,
-            code: 'CommandNotReceived',
-            subsystem,
-            noFaults,
-            startedCommandId,
-            endedCommandId,
-            commandId: resolver.commandId,
-            command: resolver.command,
-            isCommandReceived,
-            isCommandComplete,
-          });
-          resolver.reject(
-            new Error(`System "${subsystem}" did not receive this command id.`),
-          );
-          return;
         }
         if (
           isCommandReceived &&
@@ -413,7 +394,8 @@ export function connectMachine({
         }
       });
 
-      await delay(64); // give js ~64ms to respond to this change.
+      // await delay(64); // give js ~64ms to respond to this change.
+      await delay(1); // give js ~64ms to respond to this change.
     };
     const updateTagsForever = () => {
       if (hasClosed) {
@@ -589,6 +571,7 @@ export function connectMachine({
           });
           reject(err);
         },
+        commandStartTimeMS,
         commandId,
         commandReceivedTimeout,
         command,

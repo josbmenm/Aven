@@ -327,6 +327,7 @@ export default function CustomTasker() {
               tasks: [
                 {
                   id: cuid(),
+                  customTask: true,
                   name: savedTask.orderName, // lame
                   blendName: savedTask.blendName, // name
                   ...savedTask,

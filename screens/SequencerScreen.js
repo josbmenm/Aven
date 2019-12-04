@@ -188,7 +188,7 @@ function BlendRow({ restaurantState, dispatch }) {
   );
 }
 
-function DeliverySystemRow({ restaurantState }) {
+function DeliverySystemRow({ restaurantState, dispatch }) {
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flexDirection: 'row' }}>
@@ -242,7 +242,10 @@ function RestaurantStateList({ restaurantState, dispatch }) {
       )}
       {restaurantState.delivery && (
         <Row title="delivery arm">
-          <DeliverySystemRow restaurantState={restaurantState} />
+          <DeliverySystemRow
+            restaurantState={restaurantState}
+            dispatch={dispatch}
+          />
         </Row>
       )}
       <DeliveryBayRow restaurantState={restaurantState} dispatch={dispatch} />
