@@ -18,9 +18,6 @@ function startLogSave() {
   clearTimeout(savingTimeoutSlow);
   clearTimeout(savingTimeoutFast);
 
-  // todo remove me: this breaks it all
-  return;
-
   if (savingPromise) {
     savingPromise.then(() => {
       scheduleLogSave();
@@ -98,6 +95,11 @@ async function saveLogs(logValues) {
   }
 }
 
+const MESSAGES_ALLOWED = new Set([
+  //asdf
+  'CustomerFeedbackDidSubmit',
+]);
+
 export function logElastic(message, fields, level) {
   const logValue = {
     ...fields,
@@ -109,6 +111,8 @@ export function logElastic(message, fields, level) {
   };
   const logLine = JSON.stringify(logValue);
   console.log(logLine);
-  pendingLogs.push(logValue);
-  scheduleLogSave();
+  if (MESSAGES_ALLOWED.has(message)) {
+    pendingLogs.push(logValue);
+    scheduleLogSave();
+  }
 }
