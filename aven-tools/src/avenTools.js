@@ -206,7 +206,6 @@ const globeEnvs = {
   dom: require('./dom'),
   expo: require('./expo'),
   razzle: require('./razzle'),
-  reactnative: require('./reactnative'),
 };
 
 const getAppPackage = async appName => {
