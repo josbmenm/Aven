@@ -6,7 +6,7 @@ import BodyText from '../dashboard/BodyText';
 import { useCloud } from '../cloud-core/KiteReact';
 import EmailExamples from '../emails/EmailExamples';
 
-import { ColumnToRow, ColumnToRowChild } from '../maui-web/Responsive';
+import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
 import BlockFormInput from '../components/BlockFormInput';
 
 const EmailExampleList = Object.entries(EmailExamples);
@@ -38,7 +38,7 @@ export default function EmailsPlayground() {
             }}
             title={exName}
             type={exampleName === exName ? 'solid' : 'outline'}
-            style={{marginBottom: 24}}
+            style={{ marginBottom: 24 }}
           />
         ))}
         {!!exampleName && (
@@ -57,7 +57,7 @@ export default function EmailsPlayground() {
                     }}
                     title={paramOptionName}
                     type={exParams === params ? 'solid' : 'outline'}
-                    style={{marginBottom: 24}}
+                    style={{ marginBottom: 24 }}
                   />
                 );
               },
@@ -66,7 +66,7 @@ export default function EmailsPlayground() {
               <React.Fragment>
                 <BodyText style={{ marginTop: 50 }}>
                   Review the results on the right, or send the example email to
-Body                  yourself:
+                  Body yourself:
                 </BodyText>
                 <View style={{ flexDirection: 'row', marginBottom: 24 }}>
                   <BlockFormInput
@@ -107,7 +107,8 @@ Body                  yourself:
             <Heading>{results.subject}</Heading>
             <BodyText>{results.bodyText}</BodyText>
             <hr />
-            Body<ScrollView>
+            Body
+            <ScrollView>
               <div dangerouslySetInnerHTML={{ __html: results.bodyHTML }} />
             </ScrollView>
           </React.Fragment>
