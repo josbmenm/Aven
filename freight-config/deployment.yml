@@ -6,7 +6,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nginx
+      app: freight-test
   strategy:
     rollingUpdate:
       maxSurge: 1
