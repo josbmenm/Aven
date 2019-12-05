@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freight-app-staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: freight-app-staging
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: freight-app-staging
+    spec:
+      containers:
+        - name: freight
+          image: <IMAGE>
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              cpu: 100m
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: freight-service-staging
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: 'staging.aven.link'
+    service.beta.kubernetes.io/do-loadbalancer-protocol: 'https'
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: '34ad896a-7d2d-4abf-b876-f014eae4f47d'
+    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: 'true'
+spec:
+  type: LoadBalancer
+  ports:
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 5000
+  selector:
+    app: freight-app-staging

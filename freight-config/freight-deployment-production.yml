@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: freight-test
+  name: freight-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: freight-test
+      app: freight-app
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       labels:
-        app: freight-test
+        app: freight-app
     spec:
       containers:
         - name: freight
@@ -33,11 +33,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: freight-test-service
+  name: freight-service
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: 'dev.aven.link'
+    external-dns.alpha.kubernetes.io/hostname: 'release.aven.link'
     service.beta.kubernetes.io/do-loadbalancer-protocol: 'https'
-    service.beta.kubernetes.io/do-loadbalancer-certificate-id: '08183e43-2d59-4568-acc6-7d10c9076b57'
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: '6fcb95c1-6227-4b07-9999-86e46f9d64cb'
     service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: 'true'
 spec:
   type: LoadBalancer
@@ -47,4 +47,4 @@ spec:
       port: 443
       targetPort: 5000
   selector:
-    app: freight-test
+    app: freight-app

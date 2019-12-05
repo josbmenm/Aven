@@ -1,11 +1,13 @@
+name: 'Freight: Production Deploy'
+
 on:
   push:
     branches:
-      - master
+      - release
 
 jobs:
   freight-kubernetes:
-    name: Ship Freight via Kubernetes
+    name: Ship Kubernetes Deployment
     runs-on: ubuntu-latest
     steps:
       - name: Checkout master
@@ -23,11 +25,16 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: docker login docker.pkg.github.com -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
-      - name: Push image to Docker Hub
+      - name: Push image to Github Docker Registry
         run: docker push docker.pkg.github.com/$GITHUB_REPOSITORY/freight
 
-      - name: Update deployment file
+      - name: Update deployment file with container version
         run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|'docker.pkg.github.com/${GITHUB_REPOSITORY}/freight':'${TAG}'|' $GITHUB_WORKSPACE/freight-config/deployment.yml
+
+      - name: Update deployment file with "release.aven.link" host and ssl
+        run: |
+          sed -i 's|<HOSTNAME>|release.aven.link|' $GITHUB_WORKSPACE/freight-config/deployment.yml
+          sed -i 's|<HTTPSCERTID>|6fcb95c1-6227-4b07-9999-86e46f9d64cb|' $GITHUB_WORKSPACE/freight-config/deployment.yml
 
       - name: Save DigitalOcean kubeconfig
         uses: digitalocean/action-doctl@master
