@@ -29,12 +29,7 @@ jobs:
         run: docker push docker.pkg.github.com/$GITHUB_REPOSITORY/freight
 
       - name: Update deployment file
-        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|'docker.pkg.github.com/${GITHUB_REPOSITORY}/freight':'${TAG}'|' $GITHUB_WORKSPACE/freight-config/deployment.yml
-
-      - name: Update deployment file with "staging.aven.link" host and ssl
-        run: |
-          sed -i 's|<HOSTNAME>|staging.aven.link|' $GITHUB_WORKSPACE/freight-config/deployment.yml
-          sed -i 's|<HTTPSCERTID>|34ad896a-7d2d-4abf-b876-f014eae4f47d|' $GITHUB_WORKSPACE/freight-config/deployment.yml
+        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|'docker.pkg.github.com/${GITHUB_REPOSITORY}/freight':'${TAG}'|' $GITHUB_WORKSPACE/freight-config/freight-deployment-staging.yml
 
       - name: Save DigitalOcean kubeconfig
         uses: digitalocean/action-doctl@master
@@ -47,9 +42,9 @@ jobs:
       - name: Deploy to DigitalOcean Kubernetes
         uses: docker://lachlanevenson/k8s-kubectl
         with:
-          args: --kubeconfig=/github/workspace/.kubeconfig apply -f /github/workspace/freight-config/deployment.yml
+          args: --kubeconfig=/github/workspace/.kubeconfig apply -f /github/workspace/freight-config/freight-deployment-staging.yml
 
       - name: Verify deployment
         uses: docker://lachlanevenson/k8s-kubectl
         with:
-          args: --kubeconfig=/github/workspace/.kubeconfig rollout status deployment/freight-test
+          args: --kubeconfig=/github/workspace/.kubeconfig rollout status deployment/freight-app-staging
