@@ -15,7 +15,7 @@ jobs:
         run: echo $GITHUB_SHA > $GITHUB_WORKSPACE/freight/public/_meta
 
       - name: Build container image
-        run: docker build -t $GITHUB_REPOSITORY/freight:$(echo $GITHUB_SHA | head -c7) freight
+        run: docker build -t docker.pkg.github.com/$GITHUB_REPOSITORY/freight:$(echo $GITHUB_SHA | head -c7) freight
 
       - name: Docker Login
         env:
