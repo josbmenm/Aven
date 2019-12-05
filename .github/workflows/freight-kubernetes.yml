@@ -15,7 +15,7 @@ jobs:
         run: echo $GITHUB_SHA > $GITHUB_WORKSPACE/freight/public/_meta
 
       - name: Build container image
-        run: docker build -t onofoodco/freight:$(echo $GITHUB_SHA | head -c7) freight
+        run: docker build -t $GITHUB_REPOSITORY:$(echo $GITHUB_SHA | head -c7) freight
 
       - name: Docker Login
         env:
@@ -24,10 +24,10 @@ jobs:
         run: docker login docker.pkg.github.com -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
       - name: Push image to Docker Hub
-        run: docker push onofoodco/freight
+        run: docker push $GITHUB_REPOSITORY
 
       - name: Update deployment file
-        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|onofoodco/freight:'${TAG}'|' $GITHUB_WORKSPACE/freight-config/deployment.yml
+        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|'${GITHUB_REPOSITORY}':'${TAG}'|' $GITHUB_WORKSPACE/freight-config/deployment.yml
 
       - name: Save DigitalOcean kubeconfig
         uses: digitalocean/action-doctl@master
