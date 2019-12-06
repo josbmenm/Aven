@@ -36,12 +36,17 @@ metadata:
   name: freight-service-staging
   annotations:
     external-dns.alpha.kubernetes.io/hostname: 'staging.aven.link'
-    service.beta.kubernetes.io/do-loadbalancer-protocol: 'https'
+    service.beta.kubernetes.io/do-loadbalancer-protocol: 'http'
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: '443'
     service.beta.kubernetes.io/do-loadbalancer-certificate-id: '34ad896a-7d2d-4abf-b876-f014eae4f47d'
     service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: 'true'
 spec:
   type: LoadBalancer
   ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
     - name: https
       protocol: TCP
       port: 443
