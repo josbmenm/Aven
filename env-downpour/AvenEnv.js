@@ -91,17 +91,17 @@ module.exports = {
       'icon_60pt@2x.png': 120,
       'icon_83.5@2x.png': 167,
     };
-    await Promise.all(
-      Object.entries(IMAGE_TARGETS).map(async ([iconName, size]) => {
-        const iconDest = `${location}/ios/downpour/Images.xcassets/AppIcon.appiconset/${iconName}`;
-        await spawn('convert', [
-          '-resize',
-          `${size}X${size}`,
-          appIconPath,
-          iconDest,
-        ]);
-      }),
-    );
+    // await Promise.all(
+    //   Object.entries(IMAGE_TARGETS).map(async ([iconName, size]) => {
+    //     const iconDest = `${location}/ios/downpour/Images.xcassets/AppIcon.appiconset/${iconName}`;
+    //     await spawn('convert', [
+    //       '-resize',
+    //       `${size}X${size}`,
+    //       appIconPath,
+    //       iconDest,
+    //     ]);
+    //   }),
+    // );
     console.log(
       `Did resize app icons and install to ${location}/ios/downpour/Images.xcassets/AppIcon.appiconset`,
     );

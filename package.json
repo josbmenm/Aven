@@ -23,7 +23,8 @@
   "devDependencies": {
     "@babel/core": "^7.3.3",
     "@babel/preset-env": "^7.3.1",
-    "babel-jest": "^24.1.0"
+    "babel-jest": "^24.1.0",
+    "plist": "^3.0.1"
   },
   "dependencies": {
     "@aven-cloud/aven": "https://github.com/AvenCloud/Aven.git#master",
