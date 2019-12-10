@@ -187,7 +187,7 @@ const KioskAppContainer = React.memo(createAppContainer(KioskAppNavigator));
 
 function RetryButton({ onRetry }) {
   return (
-    <Button title="try again.." onPress={onRetry} style={{ alignSelf: 'ce' }} />
+    <Button title="try again.." onPress={onRetry} style={{ alignSelf: 'center' }} />
   );
 }
 

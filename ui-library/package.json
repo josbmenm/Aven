@@ -1,13 +1,10 @@
 {
-  "name": "playground",
+  "name": "ui-library",
   "aven": {
     "env": "razzle",
-    "publicAssetDir": "public",
     "envOptions": {
       "deployEnv": "Heroku",
-      "herokuAppName": "ono-playground",
-      "mainServer": "PlaygroundServer.js",
-      "mainClient": "PlaygroundClient.js"
+      "herokuAppName": "ono-playground"
     },
     "srcDependencies": [
       "logic",
@@ -30,9 +27,9 @@
       "components",
       "react-utils",
       "navigation-web",
-      "dashboard",
+      "dash",
       "maui-web",
-      "ui-library"
+      "views"
     ],
     "moduleDependencies": [
       "mjml",

@@ -1,12 +1,11 @@
 import React from 'react';
 import { createSwitchNavigator } from '../navigation-core';
 import MauiWebApp from '../maui-web/MauiWebApp';
-import UILibrary from './UILibraryScreen';
+import UILibrary from '../ui-library/UILibraryPage';
 import EmailsPlayground from './EmailsPlayground';
 // import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
 import { ThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
-import Inputs from './Inputs';
 
 const App = createSwitchNavigator(
   {
@@ -14,7 +13,7 @@ const App = createSwitchNavigator(
       path: 'maui-preview',
       screen: MauiWebApp,
     },
-    Tokens: {
+    UILibrary: {
       path: 'ui-library',
       screen: UILibrary,
     },
