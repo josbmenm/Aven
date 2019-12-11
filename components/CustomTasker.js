@@ -16,7 +16,9 @@ import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import AirtableImage from './AirtableImage';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import { primaryFontFace } from './Styles';
-import useAsyncStorage, { isStateUnloaded } from '../screens/useAsyncStorage';
+import useAsyncStorage, {
+  isStateUnloaded,
+} from '../components/useAsyncStorage';
 import useKeyboardPopover from './useKeyboardPopover';
 
 function useSlotsWithIngredients() {

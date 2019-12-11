@@ -18,7 +18,6 @@ import BitRow from '../components/BitRow';
 import { rowStyle, rowTitleStyle } from '../components/Styles';
 import SimplePage from '../components/SimplePage';
 import MultiSelect from '../components/MultiSelect';
-import useAsyncStorage from './useAsyncStorage';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import LinkRow from '../components/LinkRow';
