@@ -651,7 +651,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/downpour.app/downpour";
@@ -674,7 +674,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/downpour.app/downpour";
@@ -699,7 +699,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = downpour;
 				PROVISIONING_PROFILE_SPECIFIER = "Blitz Distribution";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -724,7 +724,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = downpour;
 				PROVISIONING_PROFILE_SPECIFIER = "Blitz Distribution";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -752,7 +752,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -780,7 +780,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -807,7 +807,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/downpour-tvOS.app/downpour-tvOS";
@@ -834,7 +834,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.blitz;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/downpour-tvOS.app/downpour-tvOS";

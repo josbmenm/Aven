@@ -170,7 +170,7 @@ function ServicingView() {
   const isHomed = kitchenState.FillSystem_Homed_READ;
   const isInServiceMode = kitchenState.FillSystem_InServiceMode_READ;
   return (
-    <Row title="Service Mode">
+    <Row title="Service Mode - For end-of-day shutdown">
       <View>
         {isInServiceMode ? (
           <Tag
@@ -185,11 +185,14 @@ function ServicingView() {
       </View>
       <ButtonStack
         buttons={[
-          <KitchenCommandButton commandType="Home" title="home system" />,
-          <KitchenCommandButton
-            commandType="EnterServiceMode"
-            title="enter service mode"
-          />,
+          kitchenState.FillSystem_InServiceMode_READ ? (
+            <KitchenCommandButton commandType="Home" title="home system" />
+          ) : (
+            <KitchenCommandButton
+              commandType="EnterServiceMode"
+              title="enter service mode"
+            />
+          ),
         ]}
       />
     </Row>
@@ -398,63 +401,11 @@ function StatusView() {
 }
 
 function TanksView() {
-  const kitchenState = useKitchenState();
-  let waterTagColor = Tag.positiveColor;
-  let waterTagTitle = 'Water: Not Full or Low';
-
-  if (kitchenState && kitchenState.System_FreshWaterFull_READ) {
-    waterTagColor = Tag.positiveColor;
-    waterTagTitle = 'Water: Filled';
-  }
-  if (kitchenState && !kitchenState.System_FreshWaterAboveLow_READ) {
-    waterTagColor = Tag.negativeColor;
-    waterTagTitle = 'Water: Low';
-  }
-  let wasteTagColor = Tag.positiveColor;
-  let wasteTagTitle = 'Waste: Not Full';
-  if (kitchenState && kitchenState.System_WasteWaterFull_READ) {
-    wasteTagColor = Tag.negativeColor;
-    wasteTagTitle = 'Waste: Full';
-  }
   return (
     <Row title="Tanks">
-      <ButtonStack
-        buttons={[
-          <Tag title={waterTagTitle} color={waterTagColor} />,
-          <KitchenCommandButton
-            commandType="FillWaterTank"
-            title="fill tank for 30sec"
-          />,
-        ]}
-      />
-      <ButtonStack
-        buttons={[<Tag title={wasteTagTitle} color={wasteTagColor} />]}
-      />
-    </Row>
-  );
-}
-
-function BlenderView() {
-  const kitchenState = useKitchenState();
-  const hasCup = kitchenState && kitchenState.BlendSystem_HasCup_READ;
-  return (
-    <Row title="Blender">
-      {/* <Tag title={hasCup ? 'Has Cup' : 'No Cup'} color={Tag.positiveColor} /> */}
-      <ButtonStack
-        buttons={[
-          <KitchenCommandButton commandType="RetractArm" />,
-          <KitchenCommandButton commandType="ExtendArm" />,
-          <KitchenCommandButton commandType="LowerBlenderElevator" />,
-          <KitchenCommandButton commandType="LiftBlenderElevator" />,
-        ]}
-      />
-      <ButtonStack
-        buttons={[
-          <KitchenCommandButton commandType="FlipCupPlate" />,
-          <KitchenCommandButton commandType="ReturnCupPlate" />,
-          <KitchenCommandButton commandType="FlipBlade" />,
-          <KitchenCommandButton commandType="ReturnBlade" />,
-        ]}
+      <KitchenCommandButton
+        commandType="FillWaterTank"
+        title="fill tank for 30sec"
       />
     </Row>
   );
@@ -464,13 +415,12 @@ export default function RestaurantStatusScreen(props) {
   return (
     <SimplePage {...props} hideBackButton footer={<StatusBar />}>
       <RootAuthenticationSection>
-        <TemperatureView />
         <SafetyView />
         <ServicingView />
         <StatusView />
         <VanView />
+        <TemperatureView />
         <TanksView />
-        <BlenderView />
       </RootAuthenticationSection>
     </SimplePage>
   );

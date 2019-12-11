@@ -5,7 +5,7 @@ import StripeTerminal, {
   useStripeTerminalConnectionManager,
 } from './StripeTerminal/StripeTerminal';
 import { BehaviorSubject } from 'rxjs';
-import { get } from '../screens/useAsyncStorage';
+import { get } from '../components/useAsyncStorage';
 
 const USE_SIMULATOR = false;
 

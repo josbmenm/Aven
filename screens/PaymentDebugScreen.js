@@ -25,7 +25,7 @@ import BitRow from '../components/BitRow';
 import { rowStyle, rowTitleStyle } from '../components/Styles';
 import SimplePage from '../components/SimplePage';
 import MultiSelect from '../components/MultiSelect';
-import useAsyncStorage from './useAsyncStorage';
+import useAsyncStorage from '../components/useAsyncStorage';
 
 function ObservableBitRow({ value, title }) {
   // const currentValue = useObservable(value);

@@ -46,8 +46,7 @@ import { titleStyle, proseFontFace, monsterra } from '../components/Styles';
 import { AppEnvContext } from '../components/useBlitzDebugPopover';
 import { ThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
-import cuid from 'cuid';
-import useAsyncStorage, { isStateUnloaded } from '../screens/useAsyncStorage';
+import { isStateLoaded, useDeviceId } from '../components/useAsyncStorage';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
 import * as Sentry from '@sentry/react-native';
 
@@ -309,18 +308,12 @@ function WaitingPage({ title, name }) {
 
 function SelectModeApp() {
   const cloud = useCloud();
-  const [deviceId, setDeviceId] = useAsyncStorage('BlitzDeviceId', null);
-  React.useEffect(() => {
-    if (!isStateUnloaded(deviceId) && !deviceId) {
-      setDeviceId(cuid());
-    }
-  }, [deviceId]);
-  const dispatch = useCloud().get('DeviceActions').putTransactionValue;
+  const deviceId = useDeviceId();
+  const dispatch = cloud.get('DeviceActions').putTransactionValue;
   const devicesState = useCloudValue('DevicesState');
   const devices = (devicesState && devicesState.devices) || [];
   React.useEffect(() => {
-    const isDeviceIdReady = !!deviceId && !isStateUnloaded(deviceId);
-    if (isDeviceIdReady) {
+    if (isStateLoaded(deviceId)) {
       dispatch({ type: 'DeviceOnline', deviceId });
     }
   }, [deviceId]);

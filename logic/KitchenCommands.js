@@ -6,6 +6,13 @@ const KitchenCommands = {
       return kitchenState.FillSystem_PrgStep_READ === 0;
     },
   },
+  HomeBlend: {
+    subsystem: 'BlendSystem',
+    pulse: ['Home'],
+    checkReady: kitchenState => {
+      return kitchenState.BlendSystem_PrgStep_READ === 0;
+    },
+  },
   GetCup: {
     subsystem: 'FillSystem',
     pulse: ['PickUpNewCup'],

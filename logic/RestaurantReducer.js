@@ -682,6 +682,9 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'Attach': {
+      if (state.manualMode) {
+        return defaultReturn();
+      }
       return {
         ...defaultReturn(),
         isAttached: true,
@@ -699,14 +702,17 @@ function RestaurantReducerFn(state = {}, action) {
       return {
         ...defaultReturn(),
         isAttached: false,
-        manualMode: true,
+        manualMode: action.lockId,
       };
     }
     case 'DisableManualMode': {
-      return {
-        ...defaultReturn(),
-        manualMode: false,
-      };
+      if (action.force || action.lockId === state.manualMode) {
+        return {
+          ...defaultReturn(),
+          manualMode: false,
+        };
+      }
+      return defaultReturn();
     }
     case 'SetMaintenanceMode': {
       return {

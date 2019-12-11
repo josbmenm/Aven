@@ -385,12 +385,21 @@ function DryRunMode() {
 function ClearMapButton() {
   const [_, dispatch] = useRestaurantState();
   return (
-    <Row title="wipe entire restaurant state (danger - long press)">
+    <Row title="danger zone - long press">
       <Button
-        title="Wipe State"
+        title="wipe state"
         onLongPress={() => {
           dispatch({
             type: 'WipeState',
+          });
+        }}
+      />
+      <Button
+        title="force disable manual mode - danger"
+        onLongPress={() => {
+          dispatch({
+            type: 'DisableManualMode',
+            force: true,
           });
         }}
       />
