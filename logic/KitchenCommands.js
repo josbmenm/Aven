@@ -213,11 +213,11 @@ const KitchenCommands = {
       return kitchenState.BlendSystem_FlipBladeReady_READ;
     },
   },
-  ReturnBladePlate: {
+  ReturnBlade: {
     subsystem: 'BlendSystem',
-    pulse: ['ReturnBladePlate'],
+    pulse: ['ReturnBlade'],
     checkReady: kitchenState => {
-      return kitchenState.BlendSystem_ReturnBladePlateReady_READ;
+      return kitchenState.BlendSystem_ReturnBladeReady_READ;
     },
   },
   BeveragePurgeAll: {

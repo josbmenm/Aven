@@ -144,6 +144,59 @@ function RestaurantReducerFn(state = {}, action) {
       }
       return defaultReturn();
     }
+    case 'ReserveBlenderClean': {
+      if (
+        state.reservedBlenderClean &&
+        state.reservedBlenderClean.lockId !== action.lockId
+      ) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        reservedBlenderClean: {
+          reserveTime: action.dispatchTime,
+          lockId: action.lockId,
+          mode: action.mode,
+          didFlipBlade: false,
+          didRetractArm: false,
+        },
+      };
+    }
+    case 'ClearBlenderClean': {
+      if (action.force || state.reservedBlenderClean.lockId === action.lockId) {
+        return {
+          ...defaultReturn(),
+          reservedBlenderClean: null,
+        };
+      }
+      return defaultReturn();
+    }
+    case 'DidFlipBlade': {
+      const { reservedBlenderClean } = state;
+      if (!reservedBlenderClean || reservedBlenderClean.didFlipBlade) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        reservedBlenderClean: {
+          ...reservedBlenderClean,
+          didFlipBlade: true,
+        },
+      };
+    }
+    case 'DidRetractArm': {
+      const { reservedBlenderClean } = state;
+      if (!reservedBlenderClean || reservedBlenderClean.didRetractArm) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        reservedBlenderClean: {
+          ...reservedBlenderClean,
+          didRetractArm: true,
+        },
+      };
+    }
     case 'CancelTask': {
       return {
         ...defaultReturn(),

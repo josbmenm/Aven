@@ -403,6 +403,33 @@ function ClearMapButton() {
           });
         }}
       />
+      <Button
+        title="force disable manual mode - danger"
+        onLongPress={() => {
+          dispatch({
+            type: 'DisableManualMode',
+            force: true,
+          });
+        }}
+      />
+      <Button
+        title="force clear fill gripper clean mode - danger"
+        onLongPress={() => {
+          dispatch({
+            type: 'ClearFillGripperClean',
+            force: true,
+          });
+        }}
+      />
+      <Button
+        title="force clear blender clean mode - danger"
+        onLongPress={() => {
+          dispatch({
+            type: 'ClearBlenderClean',
+            force: true,
+          });
+        }}
+      />
     </Row>
   );
 }

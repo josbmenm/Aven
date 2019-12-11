@@ -250,6 +250,72 @@ function CleaningView() {
   );
 }
 
+function BlenderCleaningView() {
+  const [restaurantState, dispatch] = useRestaurantState();
+  const deviceId = useDeviceId();
+  const kitchenState = useKitchenState();
+  if (!kitchenState || !deviceId || !restaurantState) {
+    return null;
+  }
+  const canClear =
+    restaurantState.reservedBlenderClean &&
+    restaurantState.reservedBlenderClean.lockId === deviceId;
+  const canReserve = !restaurantState.reservedBlenderClean;
+  return (
+    <Row title="Blender Cleaning">
+      <View>
+        {restaurantState.reservedBlenderClean && (
+          <Tag title="Paused for Blender Cleaning" color={Tag.warningColor} />
+        )}
+      </View>
+      <ButtonStack
+        buttons={[
+          canClear ? (
+            <Button
+              onPress={() => {
+                dispatch({
+                  type: 'ClearBlenderClean',
+                  lockId: deviceId,
+                });
+              }}
+              title="Done Cleaning Blender"
+            />
+          ) : canReserve ? (
+            <Button
+              onPress={() => {
+                dispatch({
+                  type: 'ReserveBlenderClean',
+                  lockId: deviceId,
+                  mode: null,
+                });
+              }}
+              title="Clean Blender"
+            />
+          ) : null,
+        ]}
+      />
+      {canClear && (
+        <MultiSelect
+          value={restaurantState.reservedBlenderClean.mode || null}
+          onValue={mode => {
+            dispatch({
+              type: 'ReserveBlenderClean',
+              lockId: deviceId,
+              mode,
+            });
+          }}
+          options={[
+            { value: null, name: 'Ready' },
+            { value: 'lifter', name: 'Lifter Up' },
+            { value: 'blender', name: 'Blender Up' },
+            { value: 'arm', name: 'Arm Back' },
+          ]}
+        />
+      )}
+    </Row>
+  );
+}
+
 function OpenRestaurantForm({ onClose }) {
   const [_, dispatch] = useRestaurantState();
   const [sessionName, setSessionName] = React.useState('');
@@ -468,6 +534,7 @@ export default function RestaurantStatusScreen(props) {
       <RootAuthenticationSection>
         {/* <SafetyView /> */}
         <CleaningView />
+        <BlenderCleaningView />
         <ServicingView />
         <StatusView />
         <VanView />

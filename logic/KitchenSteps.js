@@ -6,20 +6,12 @@ const KitchenSteps = [
     getDescription: intent => 'Pickup Cup',
     getStateIntent: restaurantState => {
       const task = restaurantState.queue && restaurantState.queue[0];
-      // console.log(
-      //   'checking for inventory',
-      //   task,
-
-      //   restaurantState.slotInventory,
-      // );
-
       if (restaurantState.reservedFillGripperClean) {
         return null;
       }
       if (
         restaurantState.queue &&
         restaurantState.queue.length &&
-        // hasEstimatedInventoryForTask(restaurantState, task),
         (!restaurantState.fill || restaurantState.fill === 'ready')
       ) {
         return {
@@ -311,6 +303,7 @@ const KitchenSteps = [
     getStateIntent: restaurantState => {
       if (
         !!restaurantState.blend ||
+        restaurantState.reservedBlenderClean ||
         restaurantState.blend === 'dirty' ||
         !restaurantState.fill ||
         (restaurantState.fill.fillsRemaining &&
@@ -500,6 +493,128 @@ const KitchenSteps = [
     }),
     getSuccessRestaurantAction: intent => ({
       type: 'DidFillGoToCup',
+    }),
+  },
+
+  {
+    getDescription: intent => 'Lower Elevator',
+    getStateIntent: (restaurantState, kitchenState) => {
+      if (
+        restaurantState.reservedBlenderClean &&
+        restaurantState.reservedBlenderClean.mode === 'lifter'
+      ) {
+        return null;
+      }
+      if (
+        kitchenState &&
+        kitchenState.BlendSystem_LowerBlenderElevatorReady_READ
+      ) {
+        return {};
+      }
+      return null;
+    },
+    getKitchenCommand: intent => ({
+      commandType: 'LowerBlenderElevator',
+      ...intent,
+    }),
+  },
+
+  {
+    getDescription: intent => 'Extend Arm',
+    getStateIntent: (restaurantState, kitchenState) => {
+      if (
+        restaurantState.reservedBlenderClean &&
+        restaurantState.reservedBlenderClean.mode === 'arm'
+      ) {
+        return null;
+      }
+      if (kitchenState && kitchenState.BlendSystem_ExtendArmReady_READ) {
+        return {};
+      }
+      return null;
+    },
+    getKitchenCommand: intent => ({
+      commandType: 'ExtendArm',
+      ...intent,
+    }),
+  },
+
+  {
+    getDescription: intent => 'Return Blade',
+    getStateIntent: (restaurantState, kitchenState) => {
+      if (
+        restaurantState.reservedBlenderClean &&
+        restaurantState.reservedBlenderClean.mode === 'blender'
+      ) {
+        return null;
+      }
+      if (kitchenState && kitchenState.BlendSystem_ReturnBladeReady_READ) {
+        return {};
+      }
+      return null;
+    },
+    getKitchenCommand: intent => ({
+      commandType: 'ReturnBlade',
+      ...intent,
+    }),
+  },
+
+  {
+    getDescription: intent => 'Flip Blade',
+    getStateIntent: (restaurantState, kitchenState) => {
+      if (
+        restaurantState.reservedBlenderClean &&
+        restaurantState.reservedBlenderClean.mode === 'blender' &&
+        !restaurantState.reservedBlenderClean.didFlipBlade
+      ) {
+        return {};
+      }
+      return null;
+    },
+    getKitchenCommand: intent => ({
+      commandType: 'FlipBlade',
+      ...intent,
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidFlipBlade',
+    }),
+  },
+
+  {
+    getDescription: intent => 'Lift Elevator',
+    getStateIntent: (restaurantState, kitchenState) => {
+      if (
+        restaurantState.reservedBlenderClean &&
+        restaurantState.reservedBlenderClean.mode === 'lifter'
+      ) {
+        return {};
+      }
+      return null;
+    },
+    getKitchenCommand: intent => ({
+      commandType: 'LiftBlenderElevator',
+      ...intent,
+    }),
+  },
+
+  {
+    getDescription: intent => 'Retract Arm',
+    getStateIntent: (restaurantState, kitchenState) => {
+      if (
+        restaurantState.reservedBlenderClean &&
+        restaurantState.reservedBlenderClean.mode === 'arm' &&
+        !restaurantState.reservedBlenderClean.didRetractArm
+      ) {
+        return {};
+      }
+      return null;
+    },
+    getKitchenCommand: intent => ({
+      commandType: 'RetractArm',
+      ...intent,
+    }),
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidRetractArm',
     }),
   },
 ];
