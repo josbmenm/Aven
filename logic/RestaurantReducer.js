@@ -120,6 +120,30 @@ function RestaurantReducerFn(state = {}, action) {
         queue: [...PRIMING_TASKS, ...(state.queue || [])],
       };
     }
+    case 'ReserveFillGripperClean': {
+      if (state.reservedFillGripperClean) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        reservedFillGripperClean: {
+          reserveTime: action.dispatchTime,
+          lockId: action.lockId,
+        },
+      };
+    }
+    case 'ClearFillGripperClean': {
+      if (
+        action.force ||
+        state.reservedFillGripperClean.lockId === action.lockId
+      ) {
+        return {
+          ...defaultReturn(),
+          reservedFillGripperClean: null,
+        };
+      }
+      return defaultReturn();
+    }
     case 'CancelTask': {
       return {
         ...defaultReturn(),

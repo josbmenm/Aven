@@ -15,6 +15,7 @@ import RowSection from '../components/RowSection';
 import BlockFormInput from '../components/BlockFormInput';
 import SpinnerButton from '../components/SpinnerButton';
 import AsyncButton from '../components/AsyncButton';
+import { useDeviceId, isStateLoaded } from '../components/useAsyncStorage';
 import ButtonStack from '../components/ButtonStack';
 import MultiSelect from '../components/MultiSelect';
 import TemperatureView from '../components/TemperatureView';
@@ -193,6 +194,56 @@ function ServicingView() {
               title="enter service mode"
             />
           ),
+        ]}
+      />
+    </Row>
+  );
+}
+
+function CleaningView() {
+  const [restaurantState, dispatch] = useRestaurantState();
+  const deviceId = useDeviceId();
+  const kitchenState = useKitchenState();
+  if (!kitchenState || !deviceId || !restaurantState) {
+    return null;
+  }
+  const canClear =
+    restaurantState.reservedFillGripperClean &&
+    restaurantState.reservedFillGripperClean.lockId === deviceId;
+  const canReserve = !restaurantState.reservedFillGripperClean;
+  return (
+    <Row title="Fill Gripper Cleaning">
+      <View>
+        {restaurantState.reservedFillGripperClean && (
+          <Tag
+            title="Paused for Fill Positioner Cleaning"
+            color={Tag.warningColor}
+          />
+        )}
+      </View>
+      <ButtonStack
+        buttons={[
+          canClear ? (
+            <Button
+              onPress={() => {
+                dispatch({
+                  type: 'ClearFillGripperClean',
+                  lockId: deviceId,
+                });
+              }}
+              title="Done Cleaning Fill Gripper"
+            />
+          ) : canReserve ? (
+            <Button
+              onPress={() => {
+                dispatch({
+                  type: 'ReserveFillGripperClean',
+                  lockId: deviceId,
+                });
+              }}
+              title="Clean Fill Gripper"
+            />
+          ) : null,
         ]}
       />
     </Row>
@@ -415,7 +466,8 @@ export default function RestaurantStatusScreen(props) {
   return (
     <SimplePage {...props} hideBackButton footer={<StatusBar />}>
       <RootAuthenticationSection>
-        <SafetyView />
+        {/* <SafetyView /> */}
+        <CleaningView />
         <ServicingView />
         <StatusView />
         <VanView />

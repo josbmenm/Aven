@@ -3,6 +3,7 @@ import RootAuthenticationSection from './RootAuthenticationSection';
 import { Text, View, ScrollView } from 'react-native';
 import GenericPage from '../components/GenericPage';
 import Tag from '../components/Tag';
+import Spinner from '../components/Spinner';
 import Button from '../components/Button';
 import AsyncButton from '../components/AsyncButton';
 import useFocus from '../navigation-hooks/useFocus';
@@ -17,6 +18,8 @@ import ButtonStack from '../components/ButtonStack';
 import { TempCell, formatTemp } from '../components/TemperatureView';
 import KitchenCommandButton from '../components/KitchenCommandButton';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
+import { useCloud } from '../cloud-core/KiteReact';
+import usePendantManualMode from '../components/usePendantManualMode';
 
 function PopoverTitle({ children }) {
   return (
@@ -173,7 +176,47 @@ function RemainderTag({ estimatedRemaining }) {
   );
 }
 
-function InventorySlot({ slot, systemName, dispatch, restaurantState }) {
+function FrozenMovingSpinner({ slot }) {
+  const kitchenState = useKitchenState();
+  return (
+    <Spinner
+      isSpinning={
+        kitchenState && kitchenState[`FrozenFood_Slot${slot}Moving_READ`]
+      }
+    />
+  );
+}
+function HopperToggle({ index }) {
+  const kitchenState = useKitchenState();
+  const cloud = useCloud();
+  return (
+    <MultiSelect
+      options={[
+        { name: 'enable hopper', value: true },
+        { name: 'disable hopper', value: false },
+      ]}
+      onValue={isEnabled => {
+        cloud.dispatch({
+          type: 'KitchenWriteMachineValues',
+          subsystem: 'FrozenFood',
+          pulse: [],
+          values: {
+            [`Slot${index}EnableHopper`]: isEnabled,
+          },
+        });
+      }}
+      value={kitchenState[`FrozenFood_Slot${index}EnableHopper_VALUE`]}
+    />
+  );
+}
+function InventorySlot({
+  slot,
+  systemName,
+  dispatch,
+  restaurantState,
+  isManualMode,
+}) {
+  const cloud = useCloud();
   const { onPopover: onFillPopover } = useKeyboardPopover(({ onClose }) => (
     <SetFillForm onClose={onClose} slot={slot} />
   ));
@@ -309,26 +352,72 @@ function InventorySlot({ slot, systemName, dispatch, restaurantState }) {
         </React.Fragment>
       )}
 
-      <SubTitle>Test Dispensing</SubTitle>
+      {isManualMode && (
+        <React.Fragment>
+          <SubTitle>Test Dispensing</SubTitle>
 
-      <View style={{ flexDirection: 'row', marginBottom: 8 }}>
-        {systemName === 'Beverage' && (
-          <AsyncButton
-            title="purge small"
-            onPress={slot.onPurgeSmall}
-            style={{ marginRight: 8 }}
-          />
-        )}
-        {systemName === 'Beverage' && (
-          <AsyncButton title="purge large" onPress={slot.onPurgeLarge} />
-        )}
-      </View>
+          <View style={{ flexDirection: 'row', marginBottom: 8 }}>
+            {systemName === 'Beverage' && (
+              <AsyncButton
+                title="purge small"
+                onPress={slot.onPurgeSmall}
+                style={{ marginRight: 8 }}
+              />
+            )}
+            {systemName === 'Beverage' && (
+              <AsyncButton title="purge large" onPress={slot.onPurgeLarge} />
+            )}
+          </View>
+        </React.Fragment>
+      )}
 
       <AsyncButton
         title="test dispense.."
         type="outline"
         onPress={onDispensePopover}
       />
+      {systemName === 'FrozenFood' && (
+        <React.Fragment>
+          <SubTitle>Frozen Dispenser</SubTitle>
+          <View
+            style={{
+              position: 'absolute',
+              transform: [{ scale: 0.5 }],
+              right: 0,
+              top: 80,
+            }}
+          >
+            <FrozenMovingSpinner slot={slot.Slot} />
+          </View>
+          <View style={{ marginBottom: 8 }}>
+            <HopperToggle index={slot.Slot} />
+            <AsyncButton
+              title="vibrate chute"
+              onPress={async () => {
+                await cloud.dispatch({
+                  type: 'KitchenWriteMachineValues',
+                  subsystem: 'FrozenFood',
+                  pulse: [],
+                  values: {
+                    [`VibrateSlot${slot.Slot}`]: true,
+                  },
+                });
+                await new Promise(resolve => {
+                  setTimeout(resolve, 10000);
+                });
+                await cloud.dispatch({
+                  type: 'KitchenWriteMachineValues',
+                  subsystem: 'FrozenFood',
+                  pulse: [],
+                  values: {
+                    [`VibrateSlot${slot.Slot}`]: false,
+                  },
+                });
+              }}
+            />
+          </View>
+        </React.Fragment>
+      )}
 
       <SubTitle>Menu Settings</SubTitle>
       <View style={{ flexDirection: 'row', marginBottom: 8 }}>
@@ -368,6 +457,7 @@ function InventorySlot({ slot, systemName, dispatch, restaurantState }) {
 }
 
 function FrozenFoodSubsystem() {
+  const cloud = useCloud();
   const [restaurantState, dispatch] = useRestaurantState();
   const isEnabled = !restaurantState.disableFrozenHoppers;
   return (
@@ -375,30 +465,48 @@ function FrozenFoodSubsystem() {
       <TempGauge title="Freezer Temperature" tag="System_FreezerTemp_READ" />
       <KitchenCommandButton commandType="FrozenPurgeAll" title="purge all" />
       <SubTitle>Un-jamming</SubTitle>
-      <KitchenCommandButton
-        commandType="FrozenVibrateAll"
+      <AsyncButton
+        onPress={async () => {
+          await cloud.dispatch({
+            type: 'KitchenCommand',
+            commandType: 'FrozenVibrateAll',
+            params: {},
+          });
+          await new Promise(resolve => {
+            setTimeout(resolve, 10000);
+          });
+          await cloud.dispatch({
+            type: 'KitchenCommand',
+            commandType: 'FrozenStopVibrateAll',
+            params: {},
+          });
+        }}
         title="vibrate all"
       />
       <KitchenCommandButton
-        commandType="FrozenStopVibrateAll"
-        title="stop vibrating all"
+        commandType="HomeFrozen"
+        title="home frozen system"
       />
-      <SubTitle>Food Hoppers</SubTitle>
-      <View style={{ marginBottom: 12, flexDirection: 'row' }}>
-        <MultiSelect
-          options={[
-            { name: 'Enabled', value: true },
-            { name: 'Disabled', value: false },
-          ]}
-          onValue={isEnabled => {
-            dispatch({
-              type: 'SetFrozenHoppersEnabled',
-              isEnabled,
-            });
-          }}
-          value={isEnabled}
-        />
-      </View>
+      {restaurantState.isAttached && (
+        <React.Fragment>
+          <SubTitle>Food Hoppers</SubTitle>
+          <View style={{ marginBottom: 12, flexDirection: 'row' }}>
+            <MultiSelect
+              options={[
+                { name: 'Enabled', value: true },
+                { name: 'Disabled', value: false },
+              ]}
+              onValue={isEnabled => {
+                dispatch({
+                  type: 'SetFrozenHoppersEnabled',
+                  isEnabled,
+                });
+              }}
+              value={isEnabled}
+            />
+          </View>
+        </React.Fragment>
+      )}
     </React.Fragment>
   );
 }
@@ -471,7 +579,7 @@ const SubsystemSections = {
   Piston: PistonSubsystem,
 };
 
-function InventorySystem({ system, dispatch, restaurantState }) {
+function InventorySystem({ system, dispatch, restaurantState, isManualMode }) {
   const SubsystemSection = SubsystemSections[system.id];
   return (
     <React.Fragment>
@@ -496,6 +604,7 @@ function InventorySystem({ system, dispatch, restaurantState }) {
               systemName={system.name}
               dispatch={dispatch}
               restaurantState={restaurantState}
+              isManualMode={isManualMode}
             />
           );
         })}
@@ -505,6 +614,7 @@ function InventorySystem({ system, dispatch, restaurantState }) {
 
 function Inventory() {
   const [inventoryState, dispatch, restaurantState] = useInventoryState();
+  const isManualMode = usePendantManualMode();
   if (!inventoryState) {
     return null;
   }
@@ -517,6 +627,7 @@ function Inventory() {
             system={system}
             key={system.id}
             dispatch={dispatch}
+            isManualMode={isManualMode}
             restaurantState={restaurantState}
           />
         );

@@ -13,6 +13,13 @@ const KitchenCommands = {
       return kitchenState.BlendSystem_PrgStep_READ === 0;
     },
   },
+  HomeFrozen: {
+    subsystem: 'FrozenFood',
+    pulse: ['Home'],
+    checkReady: kitchenState => {
+      return kitchenState.FrozenFood_PrgStep_READ === 0;
+    },
+  },
   GetCup: {
     subsystem: 'FillSystem',
     pulse: ['PickUpNewCup'],
@@ -237,6 +244,9 @@ const KitchenCommands = {
   FrozenVibrateAll: {
     subsystem: 'FrozenFood',
     pulse: ['VibrateAll'],
+    params: {
+      AmountToDispense: 9,
+    },
     checkReady: kitchenState => {
       return kitchenState.FrozenFood_VibrateAllReady_READ;
     },

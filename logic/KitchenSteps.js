@@ -12,6 +12,10 @@ const KitchenSteps = [
 
       //   restaurantState.slotInventory,
       // );
+
+      if (restaurantState.reservedFillGripperClean) {
+        return null;
+      }
       if (
         restaurantState.queue &&
         restaurantState.queue.length &&
@@ -483,11 +487,6 @@ const KitchenSteps = [
     // prepare pickup cup
     getDescription: intent => 'Go to cup position',
     getStateIntent: (restaurantState, kitchenState) => {
-      if (restaurantState.queue && restaurantState.queue.length) {
-        // here we say that we don't want to go to the cup position when we have a queued blend and we have cups in stock. This is to avoid a race condition with GetCup, which happens on the fill system instead of the positioner. Because they are on different systems, a race condition is likely
-        const { isEmpty } = getCupsInventoryState(kitchenState);
-        if (!isEmpty) return null;
-      }
       if (restaurantState.fill == null) {
         return {
           position: kitchenState.FillSystem_Cup_Pos_READ,
