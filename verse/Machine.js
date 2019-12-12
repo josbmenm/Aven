@@ -299,13 +299,8 @@ export function connectMachine({
 
   async function connectKitchenClient() {
     log('ConnectingKitchenClient');
-    let lastConfig = undefined;
     configStream.addListener({
       next: config => {
-        // log('MachineConfigured', {
-        //   hadConfig: !!lastConfig,
-        //   hasConfig: !!config,
-        // });
         currentMachineSchema = createSchema(config);
         lastConfig = config;
       },
@@ -345,51 +340,66 @@ export function connectMachine({
         const isCommandReceived = startedCommandId === resolver.commandId;
         const isCommandComplete =
           noFaults && endedCommandId === resolver.commandId;
+        const resolverIsOldEnough =
+          resolver.commandStartTimeMS + 1000 < Date.now();
+
         if (isCommandReceived || isCommandComplete) {
           clearTimeout(resolver.commandReceivedTimeout);
         }
-        if (
-          isCommandReceived &&
-          (isCommandComplete ||
-            (isSystemIdle && resolver.startTime + 500 < Date.now()))
-        ) {
-          if (isCommandComplete) {
-            resolver.resolve();
-          } else {
-            if (noFaults) {
-              error('MachineError', {
-                ..._kitchenState,
-                code: 'SoftError',
-                subsystem,
-                noFaults,
-                startedCommandId,
-                endedCommandId,
-                commandId: resolver.commandId,
-                command: resolver.command,
-                isCommandReceived,
-                isCommandComplete,
-              });
 
-              resolver.reject(
-                new Error(
-                  `System "${subsystem}" has experienced a soft error. No faults, but the command did not succeed.`,
-                ),
-              );
-            } else {
-              error('MachineError', {
-                ..._kitchenState,
-                code: 'Fault',
-                subsystem,
-                noFaults,
-                isCommandReceived,
-                isCommandComplete,
-              });
-              resolver.reject(
-                new Err(`"${subsystem}" system faulted!`, 'SystemFault', {
-                  subsystem,
-                }),
-              );
-            }
+        if (!noFaults) {
+          error('MachineError', {
+            ..._kitchenState,
+            code: 'Fault',
+            subsystem,
+            noFaults,
+            isCommandReceived,
+            isCommandComplete,
+          });
+          resolver.reject(
+            new Err(`"${subsystem}" system faulted!`, 'SystemFault', {
+              subsystem,
+            }),
+          );
+          return;
+        }
+
+        if (isCommandReceived && isCommandComplete) {
+          resolver.resolve();
+          return;
+        }
+
+        if (isCommandReceived && isSystemIdle) {
+          if (resolverIsOldEnough) {
+            // the resolverIsOldEnough delay handles edge case in the PLC or tag syncronization code when we observe an idle system and a started action id, but the action has not actually been started yet
+            // this is why we wait at least one second until rejecting the command
+            error('MachineError', {
+              ..._kitchenState,
+              code: 'SoftError',
+              subsystem,
+              noFaults,
+              startedCommandId,
+              endedCommandId,
+              commandId: resolver.commandId,
+              command: resolver.command,
+              isCommandReceived,
+              isCommandComplete,
+            });
+
+            resolver.reject(
+              new Err(
+                `Soft error on "${subsystem}". No faults, but the command did not succeed.`,
+                'SoftError',
+                { subsystem, command: resolver.command },
+              ),
+            );
+          } else {
+            // The command has "failed" but it has been less than 1 second since we sent it (according to resolverIsOldEnough)
+            error('SequencerEdgeCase', {
+              ugh: true,
+              subsystem,
+              command: resolver.command,
+            });
           }
         }
       });
