@@ -10,6 +10,7 @@ import Inputs from './Inputs';
 
 import Heading from '../dashboard/Heading';
 import View from '../views/View';
+import { Layout } from './Layout';
 
 const customHTMLHeaders = `
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -17,9 +18,9 @@ const customHTMLHeaders = `
 
 function Home() {
   return (
-    <View>
+    <Layout>
       <Heading>UI Library Home test</Heading>
-    </View>
+    </Layout>
   );
 }
 
