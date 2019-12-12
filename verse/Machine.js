@@ -302,7 +302,6 @@ export function connectMachine({
     configStream.addListener({
       next: config => {
         currentMachineSchema = createSchema(config);
-        lastConfig = config;
       },
     });
 
