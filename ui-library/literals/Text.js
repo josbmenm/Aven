@@ -1,24 +1,25 @@
 import React from 'react';
-import { Text as BaseText } from 'react-native';
-import { useTheme, ThemeDebugger } from '../Theme';
+import { Text } from 'react-native';
+import { useTheme } from '../Theme';
 
-export default function Text({ children, fontFamily, fontWeight, ...rest }) {
-  const theme = useTheme();
-  const font = fontFamily || theme.fonts.regular;
-  console.log('TCL: Text -> font', font);
+export default function LiteralText({
+  children,
+  theme: themeProp = {},
+  ...rest
+}) {
+  const theme = useTheme(themeProp);
   return (
-    <BaseText
+    <Text
       style={{
-        fontSize: theme.fontSize,
-        lineHeight: theme.lineHeight,
-        color: theme.colors.foreground,
-        fontFamily: font,
-        fontWeight,
+        fontSize: theme.textFontSize,
+        lineHeight: theme.textLineHeight,
+        color: theme.textColor,
+        fontFamily: theme.textFont,
+        fontWeight: theme.textFontWeight,
       }}
       {...rest}
     >
-      <ThemeDebugger label="Text" />
       {children}
-    </BaseText>
+    </Text>
   );
 }

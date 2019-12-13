@@ -1,5 +1,5 @@
 import React from 'react';
-import View from '../views/View';
+// import View from '../views/View';
 import Heading from '../dashboard/Heading';
 import { Layout, Container } from './Layout';
 import BlockFormInput from '../components/BlockFormInput';

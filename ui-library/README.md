@@ -1,21 +1,71 @@
 # Ono food component library
 
 - This UI Library is a set of cross-platform components capable of render on iOS, Android and web almost with the identical API.
-- there are 3 type of components: `Primitives` or `literal`, `Layout` or `position` and `Context`.
+- there are 5 type of components: `Primitives`, `literal`, `Composite`, `Layout` & `Context`.
 
-- Primitives:
-  _ basic components anyone can use (text, headings, buttons…)
-  _ this are the typo of components that an end user would use quite often.
+## Primitives
 
-- Layout:
-  _ responsable of layout and spacing of the primitive components
-  _ very tied to what and what’s not possible to apply
+- React Native (web) components.
+- this are the components that we use to apply any styles.
+- Not exported, used internally ONLY.
+- the only type of component that CAN accept the `style` prop
 
-- Context:
-  _ components in charge of modifying and changing theme context with the new values passed to override.
-  _ this components can be composable and uses component composition to share the new theme passed to its children.
+## Literals
 
-- MUST: accessibility to all the components, specially the ones that needs to follow a certain value on our themes.
+- basic components anyone can use (text, button, input, …)
+- this are the type of components that an end user would use quite often.
+- this is the base component that users will need to create custom components
+- this components accept a special `theme` prop. This prop allows the literal component to _override_ theme values consumed by itself.
+- this components can have special values in the theme, for example (buttonColor, buttonBackground, textColor). That way it would be easier to component comsumers to override certain values on their custom components
+
+### Literal components Examples
+
+- Button
+- Input
+- Link
+- Text
+- Image
+- Input
+- Label
+- ...
+
+## Composite Components
+
+### Composite components examples
+
+- Row
+- Section
+- Column
+- Heading
+- ...
+
+## Layout
+
+- responsable of layout and spacing of the literal or composite components
+- very tied to what and what’s not possible to apply
+
+### Layout component Examples
+
+- Spacing
+- Stack (horizontal prop)
+- ...
+
+---
+
+## Context
+
+- Components that change theme values to all the underlying components (all children).
+
+### Context components Examples
+
+- Context (default)
+- ColorInvert
+- Scale
+- ...
+
+---
+
+---
 
 ## Theme
 
@@ -35,12 +85,15 @@ other values we can/need to define on our theme:
 - fontFamilies?
 - breakpoints? (devices?)
 
+## Considerations
+
+- MUST: accessibility to all the components, specially the ones that needs to follow a certain value on our themes.
+
 ## Questions
 
-- What if we add types to components and depending on the `type`, it will get the appropriate styles (the text inside button use case: color white but default text is black”)
-- how granular should the context classes should be?
-- what if those context classes are tied to a specific components?
-- component sizing usually is tied to the combination of different components around it, how do we handle this with a context component?
+- how can I add something extra to my custom component with the theme API?. Examples:
+  - CodeBlock borders; how do I apply the border to my Literal View component?
+  - Button: how do I capitalize the text of my custom button?
 
 ## First impressions
 
@@ -48,54 +101,12 @@ other values we can/need to define on our theme:
 - it feels a lot as global styles and specificity, dunno if its good or bad (seems to be bad tho)
 - having all the "values" tied to a same variable (maybe a base number where other values will rely on) it's a really interesting idea. it's preety close to what `em` and `rem` does on the web maybe?
 
-## Component Examples
+## Feedback
 
-### Primitives
-
-- Button
-- Input
-- Heading
-- ButtonLink
-- Text
-- Image
-- Link
-- Input
-- ...
-
-### Layout
-
-- Spacing
-- HorizontalStack
-- VerticalStack
-- Row
-- Section
-- Column
-- ...
-
-### Context
-
-- Context (default)
-- ColorInvert
-- Scale
-- ...
-
----
-
-## Components
-
-### Button
-
-#### usage
-
-```javascript
-
-// Default button
-<Button title=“default button” onPress={() => {}} />
-
-// Outline Button
-<Button type=“outline” title=“outline button” onPress={() => {}} />
-
-// ButtonText
-// <ButtonText title=“button text” onPress={() => {}} />
-
-```
+- ~~theme should be one level~~
+- ~~literal components should not compose each other~~
+- ~~no context or literal comps should overlap~~
+- ~~outline prop as boolean~~
+- ~~to override or create a specific component, we need to accept on all literal comps a `theme` prop. this theme prop will be merge with the original theme on the `useTheme` hook~~
+- new type of component: `composite components`: examples of components that override the theme using the comp prop, so people can learn how to create their own components (example: Title)
+- make lineHeight calculation on Text

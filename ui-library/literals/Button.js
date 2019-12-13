@@ -1,33 +1,46 @@
 import React from 'react';
-import Text from './Text';
+import { TouchableOpacity, Text } from 'react-native';
 import View from '../../views/View';
-import { useTheme, Color } from '../Theme';
+import { useTheme } from '../Theme';
 
-export default function Button({ title }) {
-  const theme = useTheme();
+export default function Button({
+  title,
+  outline = false,
+  onPress,
+  theme: themeProp = {},
+  disabled = false,
+}) {
+  const theme = useTheme(themeProp);
 
+  const buttonStyles = {
+    borderRadius: 3,
+    borderWidth: 3,
+    backgroundColor: outline ? 'transparent' : theme.colorPrimary,
+    borderColor: outline ? theme.colorPrimary : 'transparent',
+    paddingVertical: theme.paddingVertical,
+    paddingHorizontal: theme.paddingHorizontal,
+    alignItems: 'center',
+    opacity: disabled ? 0.5 : 1,
+  };
   return (
-    <Color
-      values={{
-        foreground: 'white',
-        background: theme.colors.primary,
-      }}
+    <TouchableOpacity
+      onPress={onPress}
+      accessible={true}
+      accessibilityRole="button"
     >
-      <View
-        accessibilityRole="button"
-        style={{
-          backgroundColor: theme.colors.primary,
-          paddingVertical: theme.paddingVertical,
-          paddingHorizontal: theme.paddingHorizontal,
-          alignItems: 'center',
-          borderRadius: 3,
-          color: theme.colors.foreground,
-        }}
-      >
-        <Text fontFamily={theme.fonts.bold} fontWeight="bold">
+      <View style={buttonStyles}>
+        <Text
+          style={{
+            fontSize: theme.fontSize,
+            lineHeight: theme.lineHeight,
+            color: outline ? theme.colorPrimary : 'white',
+            fontFamily: theme.fontBold,
+            fontWeight: 'bold',
+          }}
+        >
           {title}
         </Text>
       </View>
-    </Color>
+    </TouchableOpacity>
   );
 }

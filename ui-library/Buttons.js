@@ -1,81 +1,16 @@
 import React from 'react';
-import View from '../views/View';
-import Text from '../views/Text';
-import Button from './literals/Button';
-import Heading from '../dashboard/Heading';
+import Heading from './composite/Heading';
+import { CodeBlock, CodeBlockExample, CodeBlockTitle } from './CodeBlock';
 import { Layout, Container } from './Layout';
-import { ScaleUpTheme } from './Theme';
+import { ScaleUpTheme, Spacing } from './Theme';
+import Horizontal from './layout/Horizontal';
 
-function CodeBlock({ children }) {
-  return (
-    <View
-      style={{
-        backgroundColor: '#fefefe',
-        borderRadius: 4,
-        borderColor: '#dadada',
-        borderWidth: 1,
-      }}
-    >
-      {children}
-    </View>
-  );
-}
-
-function CodeBlockTitle({ title = 'default title' }) {
-  return (
-    <View
-      style={{
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderBottomColor: '#dadada',
-        borderBottomWidth: 1,
-      }}
-    >
-      <Text style={{ fontSize: 14, color: '#666666' }}>{title}</Text>
-    </View>
-  );
-}
-
-function CodeBlockExample({ children }) {
-  return (
-    <View
-      style={{
-        padding: 16,
-        borderBottomColor: '#dadada',
-        borderBottomWidth: 1,
-      }}
-    >
-      {children}
-    </View>
-  );
-}
-
-function CodeBlockBody({ children }) {
-  return (
-    <View
-      style={{
-        padding: 16,
-        borderBottomColor: '#dadada',
-        borderBottomWidth: 1,
-      }}
-    >
-      <Text>{children}</Text>
-    </View>
-  );
-}
-
-function CodeBlockProps({ component }) {
-  return (
-    <View style={{ padding: 16 }}>
-      <Text>Props here...</Text>
-    </View>
-  );
-}
+import Button from './literals/Button';
 
 function Buttons() {
   return (
     <Layout>
-      <Heading>Buttons</Heading>
+      <Heading title="Buttons" />
       <Container>
         <CodeBlock>
           <CodeBlockTitle title="Default Button" />
@@ -84,32 +19,58 @@ function Buttons() {
               title="default Button"
               onPress={() => console.log('button pressed')}
             />
-          </CodeBlockExample>
-          <CodeBlockBody>
-            {`- props that handle visual aspects (buttonStyle..)
-- props that handle layout or position (style (bad API))
-- limit the amount of props available
-`}
-          </CodeBlockBody>
-          <CodeBlockProps component={Button} />
-        </CodeBlock>
-        <CodeBlock>
-          <CodeBlockTitle title="Big Button (scale 1)" />
-          <CodeBlockExample>
             <ScaleUpTheme>
-              <Button
-                title="Big Button"
-                onPress={() => console.log('button pressed')}
-              />
+              <Spacing top={16}>
+                <Button
+                  title="Big Button"
+                  onPress={() => console.log('big button pressed')}
+                />
+              </Spacing>
             </ScaleUpTheme>
           </CodeBlockExample>
-          <CodeBlockBody>
-            {`- props that handle visual aspects (buttonStyle..)
-- props that handle layout or position (style (bad API))
-- limit the amount of props available
-`}
-          </CodeBlockBody>
-          <CodeBlockProps component={Button} />
+        </CodeBlock>
+
+        <CodeBlock>
+          <CodeBlockTitle title="Outline Button" />
+          <CodeBlockExample>
+            <Spacing top={16}>
+              <Button
+                outline
+                title="outline button"
+                onPress={() => console.log('outline button pressed')}
+              />
+            </Spacing>
+
+            <ScaleUpTheme>
+              <Spacing top={16}>
+                <Button
+                  title="Big outline Button"
+                  outline
+                  onPress={() => console.log('big button pressed')}
+                />
+              </Spacing>
+            </ScaleUpTheme>
+          </CodeBlockExample>
+        </CodeBlock>
+
+        <CodeBlock>
+          <CodeBlockTitle title="Horizontal buttons" />
+          <CodeBlockExample>
+            <Horizontal>
+              <Spacing horizontal={8}>
+                <Button
+                  title="left Button"
+                  onPress={() => console.log('left button pressed')}
+                />
+              </Spacing>
+              <Spacing horizontal={8}>
+                <Button
+                  title="right Button"
+                  onPress={() => console.log('right button pressed')}
+                />
+              </Spacing>
+            </Horizontal>
+          </CodeBlockExample>
         </CodeBlock>
       </Container>
     </Layout>
