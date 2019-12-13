@@ -1,6 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
-import View from '../../views/View';
+import { TouchableOpacity, Text, View } from 'react-native';
 import { useTheme } from '../Theme';
 
 export default function Button({
