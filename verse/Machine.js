@@ -340,7 +340,7 @@ export function connectMachine({
         const isCommandComplete =
           noFaults && endedCommandId === resolver.commandId;
         const resolverIsOldEnough =
-          resolver.commandStartTimeMS + 5000 < Date.now();
+          resolver.commandStartTimeMS + 10000 < Date.now();
 
         if (isCommandReceived || isCommandComplete) {
           clearTimeout(resolver.commandReceivedTimeout);
