@@ -1,22 +1,15 @@
 import React from 'react';
+import { Text } from 'react-native';
 // import View from '../views/View';
 import Heading from '../dashboard/Heading';
-import { Layout, Container } from './Layout';
+import { Layout, Container, ComponentBlock } from './Layout';
 import BlockFormInput from '../components/BlockFormInput';
 
-function Inputs() {
+export default function Inputs() {
   return (
-    <Layout>
-      <Heading>Inputs</Heading>
-      <Container>
-        <BlockFormInput value="hello world" />
-      </Container>
-    </Layout>
+    <ComponentBlock title="Input">
+      <Text>WIP.</Text>
+      <BlockFormInput value="hello world" />
+    </ComponentBlock>
   );
 }
-
-Inputs.navigationOptions = {
-  title: 'Inputs',
-};
-
-export default Inputs;

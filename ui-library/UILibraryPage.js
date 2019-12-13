@@ -1,60 +1,42 @@
 import React from 'react';
-import createFullscreenSwitchNavigator from '../navigation-web/createFullscreenSwitchNavigator';
-
-import OnoTheme from '../logic/OnoTheme';
-import { ThemeProvider } from '../dashboard/Theme';
-import { CloudContext } from '../cloud-core/KiteReact';
+import { Text } from 'react-native';
+import { ThemeProvider, Spacing } from './Theme';
 
 import Buttons from './Buttons';
 import Inputs from './Inputs';
+import Links from './Links';
+import Stack from './layout/Stack';
+import { Layout, Sidebar, Content, Container } from './Layout';
+import Heading from './composite/Heading';
 
-import Heading from '../dashboard/Heading';
-import View from '../views/View';
-import { Layout } from './Layout';
-
-const customHTMLHeaders = `
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-`;
-
-function Home() {
+function UILibraryPage() {
   return (
-    <Layout>
-      <Heading>UI Library Home test</Heading>
-    </Layout>
-  );
-}
-
-export const LibraryRoutes = {
-  Home: {
-    path: '',
-    screen: Home,
-  },
-  Buttons: {
-    path: 'buttons',
-    screen: Buttons,
-  },
-  Inputs: {
-    path: 'inputs',
-    screen: Inputs,
-  },
-};
-
-const LibraryNavigator = createFullscreenSwitchNavigator(LibraryRoutes, {
-  defaultNavigationOptions: {
-    customHTMLHeaders,
-  },
-});
-
-function UILibraryPage(props) {
-  const cloud = React.useContext(CloudContext);
-  return (
-    <ThemeProvider value={OnoTheme}>
-      <LibraryNavigator {...props} screenProps={{ cloud }} />
+    <ThemeProvider>
+      <Layout>
+        <Sidebar>
+          <Stack>
+            <Heading title="UI Library" />
+            <Stack>
+              <Text>Button</Text>
+              <Text>Link</Text>
+              <Text>Input</Text>
+            </Stack>
+          </Stack>
+        </Sidebar>
+        <Content>
+          <Container>
+            <Buttons />
+            <Links />
+            <Inputs />
+          </Container>
+        </Content>
+      </Layout>
     </ThemeProvider>
   );
 }
 
-UILibraryPage.router = LibraryNavigator.router;
-UILibraryPage.navigationOptions = LibraryNavigator.navigationOptions;
+UILibraryPage.navigationOptions = {
+  title: 'UI Library',
+};
 
 export default UILibraryPage;

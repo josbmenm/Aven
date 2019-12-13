@@ -20,23 +20,28 @@
 
 ### Literal components Examples
 
-- Button
-- Input
-- Link
-- Text
-- Image
-- Input
-- Label
+- [x] Button
+- [x] ButtonLink
+- [x] Link
+- [ ] Input
+- [ ] Text
+- [ ] Image
+- [ ] Input
+- [ ] Label
+- [ ] Spinner
+- [ ] Switch
+
 - ...
 
 ## Composite Components
 
 ### Composite components examples
 
-- Row
-- Section
-- Column
-- Heading
+- [ ] Row
+- [ ] Section
+- [ ] Column
+- [ ] Heading
+- [ ] Multi-select
 - ...
 
 ## Layout
@@ -47,7 +52,7 @@
 ### Layout component Examples
 
 - Spacing
-- Stack (horizontal prop)
+- Stack (horizontal prop) controls the spacing between the children components
 - ...
 
 ---

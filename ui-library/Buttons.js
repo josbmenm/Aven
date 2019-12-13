@@ -1,85 +1,103 @@
 import React from 'react';
+import { View } from 'react-native';
 import Heading from './composite/Heading';
 import { CodeBlock, CodeBlockExample, CodeBlockTitle } from './CodeBlock';
-import { Layout, Container } from './Layout';
-import { ScaleUpTheme, Spacing } from './Theme';
-import Horizontal from './layout/Horizontal';
+import { Large, Spacing } from './Theme';
+import Stack from './layout/Stack';
 
 import Button from './literals/Button';
+import ButtonLink from './literals/ButtonLink';
+import { ComponentBlock } from './Layout';
 
 function Buttons() {
   return (
-    <Layout>
-      <Heading title="Buttons" />
-      <Container>
-        <CodeBlock>
-          <CodeBlockTitle title="Default Button" />
-          <CodeBlockExample>
+    <ComponentBlock title="Button">
+      <CodeBlock>
+        <CodeBlockTitle title="Default Button" />
+        <CodeBlockExample>
+          <Stack>
             <Button
               title="default Button"
               onPress={() => console.log('button pressed')}
             />
-            <ScaleUpTheme>
-              <Spacing top={16}>
-                <Button
-                  title="Big Button"
-                  onPress={() => console.log('big button pressed')}
-                />
-              </Spacing>
-            </ScaleUpTheme>
-          </CodeBlockExample>
-        </CodeBlock>
-
-        <CodeBlock>
-          <CodeBlockTitle title="Outline Button" />
-          <CodeBlockExample>
-            <Spacing top={16}>
+            <Large>
               <Button
-                outline
-                title="outline button"
-                onPress={() => console.log('outline button pressed')}
+                title="Big Button"
+                onPress={() => console.log('big button pressed')}
               />
-            </Spacing>
+            </Large>
+          </Stack>
+        </CodeBlockExample>
+      </CodeBlock>
 
-            <ScaleUpTheme>
-              <Spacing top={16}>
-                <Button
-                  title="Big outline Button"
-                  outline
-                  onPress={() => console.log('big button pressed')}
-                />
-              </Spacing>
-            </ScaleUpTheme>
-          </CodeBlockExample>
-        </CodeBlock>
+      <CodeBlock>
+        <CodeBlockTitle title="Outline Button" />
+        <CodeBlockExample>
+          <Stack>
+            <Button
+              outline
+              title="outline button"
+              onPress={() => console.log('outline button pressed')}
+            />
 
-        <CodeBlock>
-          <CodeBlockTitle title="Horizontal buttons" />
-          <CodeBlockExample>
-            <Horizontal>
-              <Spacing horizontal={8}>
-                <Button
-                  title="left Button"
-                  onPress={() => console.log('left button pressed')}
-                />
-              </Spacing>
-              <Spacing horizontal={8}>
-                <Button
-                  title="right Button"
-                  onPress={() => console.log('right button pressed')}
-                />
-              </Spacing>
-            </Horizontal>
-          </CodeBlockExample>
-        </CodeBlock>
-      </Container>
-    </Layout>
+            <Large>
+              <Button
+                title="Big outline Button"
+                outline
+                onPress={() => console.log('big button pressed')}
+              />
+            </Large>
+          </Stack>
+        </CodeBlockExample>
+      </CodeBlock>
+
+      <CodeBlock>
+        <CodeBlockTitle title="Horizontal buttons" />
+        <CodeBlockExample>
+          <Stack horizontal>
+            <Button
+              title="left Button"
+              onPress={() => console.log('left button pressed')}
+            />
+
+            <Button
+              title="right Button"
+              onPress={() => console.log('right button pressed')}
+            />
+          </Stack>
+        </CodeBlockExample>
+      </CodeBlock>
+
+      <CodeBlock>
+        <CodeBlockTitle title="ButtonLink" />
+        <CodeBlockExample>
+          <Stack>
+            <ButtonLink title="Button Link" to="/home" />
+            <Large>
+              <ButtonLink title="Big Button Link" to="/about" />
+            </Large>
+          </Stack>
+          <Stack horizontal flex={false}>
+            <ButtonLink title="Button Link" to="/home" />
+            <ButtonLink title="Button Link Active" to="/about" active />
+          </Stack>
+        </CodeBlockExample>
+      </CodeBlock>
+
+      <CodeBlock>
+        <CodeBlockTitle title="ButtonLink Active" />
+        <CodeBlockExample>
+          <Large>
+            <Stack horizontal flex={false}>
+              <ButtonLink title="Button Link" to="/home" active />
+              <ButtonLink title="Button Link Active" to="/about" active />
+            </Stack>
+          </Large>
+        </CodeBlockExample>
+      </CodeBlock>
+    </ComponentBlock>
   );
 }
-
-Buttons.navigationOptions = {
-  title: 'Buttons',
-};
 
 export default Buttons;
 

@@ -1,38 +1,27 @@
 import React from 'react';
 import View from '../views/View';
 
-const FONT_SIZE = 16;
-const LINE_HEIGHT = 24;
-
-const FONT_REGULAR = 'Maax';
-const FONT_BOLD = 'Maax-Bold';
-
-const COLOR_FOREGROUND = '#333';
-const COLOR_BACKGROUND = 'rgba(248,248,248,1.00)';
-const COLOR_PRIMARY = 'rgba(0,82,82,0.80)';
-const COLOR_WHITE = 'white';
-
 const baseTheme = {
-  fontSize: FONT_SIZE,
-  lineHeight: LINE_HEIGHT,
-  colorForeground: COLOR_FOREGROUND,
-  colorBackground: COLOR_BACKGROUND,
-  colorPrimary: COLOR_PRIMARY,
+  fontSize: 16,
+  lineHeight: 24,
+  colorForeground: '#333',
+  colorBackground: 'rgba(248,248,248,1.00)',
+  colorPrimary: 'rgba(0,82,82,0.80)',
   paddingVertical: 8,
   paddingHorizontal: 16,
-  fontRegular: FONT_REGULAR,
-  fontBold: FONT_BOLD,
+  spacing: 8,
+  fontRegular: 'Maax',
+  fontBold: 'Maax-Bold',
 
   // Text
-  textFont: FONT_REGULAR,
-  textColor: COLOR_FOREGROUND,
-  textLineHeight: LINE_HEIGHT,
+  textFont: 'Maax',
+  textColor: '#333',
+  textLineHeight: 24,
   textFontWeight: '400',
-  textFontSize: FONT_SIZE,
+  textFontSize: 16,
 
   // Button
-  buttonFgColor: COLOR_WHITE,
-  buttonBgColor: COLOR_PRIMARY,
+  buttonBackgroundgColor: 'rgba(0,82,82,0.80)',
 };
 
 const ThemeContext = React.createContext();
@@ -65,11 +54,12 @@ export function ThemeDebugger({ label }) {
 
 // Context components
 
-export function ScaleUpTheme({ children }) {
+export function Large({ children }) {
+  // better if we add a fixed values instead of multiplying
   const scaleTheme = useTheme(theme => ({
-    fontSize: theme.fontSize * 1.2,
-    paddingHorizontal: theme.paddingHorizontal * 2,
-    paddingVertical: theme.paddingVertical * 2,
+    fontSize: theme.fontSize + 8,
+    paddingHorizontal: theme.paddingHorizontal + 8,
+    paddingVertical: theme.paddingVertical + 8,
   }));
 
   return (
@@ -93,11 +83,12 @@ export function Spacing({
   bottom,
   left,
   children,
+  flex = true,
 }) {
   return (
     <View
       style={[
-        { flex: 1 },
+        flex && { flex: 1 },
         value && { padding: value },
         vertical && { paddingVertical: vertical },
         horizontal && { paddingHorizontal: horizontal },

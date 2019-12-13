@@ -3,6 +3,7 @@ import { useTheme } from '../Theme';
 import Text from '../literals/Text';
 
 export default function Heading({ title, theme: themeProp = {} }) {
+  //
   return (
     <Text
       theme={{
