@@ -496,7 +496,7 @@ export default async function startVerseServer(httpServer) {
           restaurantConfigStream,
           action,
         );
-      case 'RestartDevice':
+      case 'RestartDevice': {
         await fetch(
           `https://${getEnv('HEXNODE_HOST')}/api/v1/actions/reboot/`,
           {
@@ -508,8 +508,13 @@ export default async function startVerseServer(httpServer) {
             body: JSON.stringify({ devices: [action.mdmId] }),
           },
         );
-        log('DeviceRestarted', { mdmId: action.mdmId });
+        log('DeviceRestarted', {
+          mdmId: action.mdmId,
+          host: getEnv('HEXNODE_HOST'),
+          hasToken: !!getEnv('HEXNODE_TOKEN'),
+        });
         return;
+      }
       default: {
         return await cloud.dispatch(action);
       }

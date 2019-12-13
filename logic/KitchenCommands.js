@@ -237,6 +237,9 @@ const KitchenCommands = {
   FrozenPurgeAll: {
     subsystem: 'FrozenFood',
     pulse: ['PurgeAll'],
+    params: {
+      AmountToDispense: 9,
+    },
     checkReady: kitchenState => {
       return kitchenState.FrozenFood_PurgeAllReady_READ;
     },
