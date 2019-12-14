@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const pathJoin = require('path').join;
 const spawn = require('@expo/spawn-async');
 const yaml = require('js-yaml');
-const Migrator = require('knex/lib/migrate/Migrator').default;
+const Migrator = require('knex/lib/migrate/Migrator').Migrator;
 const Knex = require('knex');
 const pg = require('pg');
 
