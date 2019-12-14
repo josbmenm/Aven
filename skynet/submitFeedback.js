@@ -67,14 +67,14 @@ export default async function submitFeedback(
     context: {
       type: 'ThanksToken',
       tag: 'FeedbackKiosk',
-      id: result.id,
+      result,
     },
   });
   log('CustomerFeedbackDidSubmit', {
     email,
     feedback,
     promoCode,
-    resultId: result.id,
+    result,
   });
 
   return {};

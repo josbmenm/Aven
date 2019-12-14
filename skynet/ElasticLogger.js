@@ -96,7 +96,7 @@ async function saveLogs(logValues) {
 }
 
 const MESSAGES_ALLOWED = new Set([
-  //asdf
+  'CustomerFeedbackWillSubmit',
   'CustomerFeedbackDidSubmit',
 ]);
 
