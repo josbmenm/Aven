@@ -1,9 +1,10 @@
 import App from './App';
-import attachWebServer from '../aven-web/WebServer';
-import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
-import startFSStorageSource from '../cloud-fs/startFSStorageSource';
-import createCloudClient from '../cloud-core/createCloudClient';
-import CloudContext from '../cloud-core/CloudContext';
+import { attachWebServer } from '@aven-cloud/aven-web-server';
+import {
+  createClient,
+  CloudContext,
+  createMemoryStorageSource,
+} from '@aven-cloud/cloud-core';
 
 export default async function startAvenServer(httpServer) {
   console.log('☁️ Starting Cloud 💨');
@@ -17,7 +18,7 @@ export default async function startAvenServer(httpServer) {
     domain: 'example.aven.cloud',
   });
 
-  const cloud = createCloudClient({
+  const cloud = createClient({
     source,
     domain: 'example.aven.cloud',
   });

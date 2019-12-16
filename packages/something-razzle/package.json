@@ -1,5 +1,5 @@
 {
-  "name": "@aven-cloud/something-web",
+  "name": "@aven-cloud/something-razzle",
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
@@ -9,16 +9,17 @@
     "start:prod": "NODE_ENV=production node build/server.js"
   },
   "devDependencies": {
-    "razzle": "^3.0.0"
+    "razzle": "^3.0.0",
+    "babel-plugin-react-native-web": "^0.11.7"
   },
   "dependencies": {
-    "@aven-cloud/web": "^0.0.x",
-    "@aven-cloud/cloud-core": "^0.0.x",
-    "@aven-cloud/cloud-browser": "^0.0.x",
-    "@aven-cloud/cloud-server": "^0.0.x",
-    "@aven-cloud/dash": "^0.0.x",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
+    "@aven-cloud/aven-web-server": "*",
+    "@aven-cloud/cloud-core": "*",
+    "@aven-cloud/cloud-browser": "*",
+    "@aven-cloud/cloud-server": "*",
+    "@aven-cloud/dash": "*",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
     "react-native-web": "^0.11.7"
   }
 }

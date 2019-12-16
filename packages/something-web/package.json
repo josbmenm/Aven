@@ -1,0 +1,22 @@
+{
+  "name": "@aven-cloud/something-web",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@aven-cloud/dash": "*",
+    "react-dom": "^16.12.0",
+    "react": "^16.12.0",
+    "next": "^9.1.5",
+    "react-native-web": "^0.11.7"
+  },
+  "devDependencies": {
+    "@zeit/next-typescript": "^1.1.1",
+    "babel-plugin-react-native-web": "^0.11.7",
+    "next-plugin-custom-babel-config": "^1.0.2",
+    "next-transpile-modules": "^2.3.1"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "@aven-cloud/aven-web",
+  "name": "@aven-cloud/aven-web-server",
   "version": "1.8.0",
   "main": "lib/commonjs/index.js",
   "react-native": "src/index.js",

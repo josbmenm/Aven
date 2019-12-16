@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function AppHeader() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>asdf</Text>
+      <Text style={styles.text}>changes</Text>
     </View>
   );
 }

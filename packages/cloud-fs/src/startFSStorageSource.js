@@ -1,8 +1,7 @@
 import { BehaviorSubject } from 'rxjs-compat';
-import createGenericDataSource from '../cloud-core/createGenericDataSource';
-import {Err} from '@aven-cloud/utils';
-import {getIdOfValue} from '@aven-cloud/cloud-utils';
-import {streamOf} from '@aven-cloud/cloud-core';
+import { createGenericDataSource, streamOf } from '@aven-cloud/cloud-core';
+import { Err } from '@aven-cloud/utils';
+import { getIdOfValue } from '@aven-cloud/cloud-utils';
 
 const fs = require('fs-extra');
 const pathJoin = require('path').join;
