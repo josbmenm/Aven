@@ -263,7 +263,11 @@ export default async function startSkynetServer(httpServer) {
         const { Enabled, Address, DaysOfWeek, Name } = scheduleRow;
         if (!Enabled) return;
         DAYS.forEach(dayId => {
-          days[dayId] = { key: dayId, name: DAY_NAMES[dayId], stops: [] };
+          days[dayId] = days[dayId] || {
+            key: dayId,
+            name: DAY_NAMES[dayId],
+            stops: [],
+          };
         });
         DaysOfWeek.forEach(dayId => {
           const start = new Date(scheduleRow['Start Time']);
