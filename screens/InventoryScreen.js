@@ -17,6 +17,7 @@ import ButtonStack from '../components/ButtonStack';
 import { TempCell, formatTemp } from '../components/TemperatureView';
 import KitchenCommandButton from '../components/KitchenCommandButton';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
+import { Spacing } from '../ui-library/Theme';
 
 function PopoverTitle({ children }) {
   return (
@@ -158,18 +159,19 @@ function RemainderTag({ estimatedRemaining }) {
     return null;
   }
   return (
-    <Tag
-      size="small"
-      color={
-        typeof estimatedRemaining === 'string' || estimatedRemaining > 10
-          ? Tag.neutralColor
-          : estimatedRemaining <= 0
-          ? Tag.negativeColor
-          : Tag.warningColor
-      }
-      title={`${estimatedRemaining} remaining`}
-      style={{ marginRight: 8, marginBottom: 8 }}
-    />
+    <Spacing right={8} bottom={8}>
+      <Tag
+        size="small"
+        status={
+          typeof estimatedRemaining === 'string' || estimatedRemaining > 10
+            ? 'neutral'
+            : estimatedRemaining <= 0
+            ? 'negative'
+            : 'warning'
+        }
+        title={`${estimatedRemaining} remaining`}
+      />
+    </Spacing>
   );
 }
 
@@ -240,52 +242,48 @@ function InventorySlot({ slot, systemName, dispatch, restaurantState }) {
       >
         <RemainderTag estimatedRemaining={estimatedRemaining} />
         {slot.settings && slot.settings.disabledMode === true && (
-          <Tag
-            size="small"
-            color={Tag.negativeColor}
-            title="Disabled"
-            style={{ marginRight: 8, marginBottom: 8 }}
-          />
+          <Spacing right={8} bottom={8}>
+            <Tag size="small" status="negative" title="Disabled" />
+          </Spacing>
         )}
         {slot.settings && slot.settings.optional && (
-          <Tag
-            size="small"
-            color={Tag.warningColor}
-            title="Optional"
-            style={{ marginRight: 8, marginBottom: 8 }}
-          />
+          <Spacing right={8} bottom={8}>
+            <Tag
+              size="small"
+              status="warning"
+              title="Optional"
+              style={{ marginRight: 8, marginBottom: 8 }}
+            />
+          </Spacing>
         )}
         {!!slot.isErrored && (
-          <Tag
-            size="small"
-            color={Tag.negativeColor}
-            title={`Errored`}
-            style={{ marginRight: 8, marginBottom: 8 }}
-          />
+          <Spacing right={8} bottom={8}>
+            <Tag size="small" status="negative" title="Errored" />
+          </Spacing>
         )}
         {slot.hopperDisabled && (
-          <Tag
-            size="small"
-            color={Tag.negativeColor}
-            title={`Hopper Off`}
-            style={{ marginRight: 8, marginBottom: 8 }}
-          />
+          <Spacing right={8} bottom={8}>
+            <Tag
+              size="small"
+              status="negative"
+              title={`Hopper Off`}
+              style={{ marginRight: 8, marginBottom: 8 }}
+            />
+          </Spacing>
         )}
         {slot.pumpDisabled && (
-          <Tag
-            size="small"
-            color={Tag.negativeColor}
-            title={`Pump Off`}
-            style={{ marginRight: 8, marginBottom: 8 }}
-          />
+          <Spacing right={8} bottom={8}>
+            <Tag size="small" status="negative" title={`Pump Off`} />
+          </Spacing>
         )}
         {!!slot.dispensedSinceLow && (
-          <Tag
-            size="small"
-            color={Tag.warningColor}
-            title={`${slot.dispensedSinceLow} since low`}
-            style={{ marginRight: 8, marginBottom: 8 }}
-          />
+          <Spacing right={8} bottom={8}>
+            <Tag
+              size="small"
+              status="warning"
+              title={`${slot.dispensedSinceLow} since low`}
+            />
+          </Spacing>
         )}
       </View>
 

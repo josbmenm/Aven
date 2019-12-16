@@ -106,6 +106,15 @@ other values we can/need to define on our theme:
 - it feels a lot as global styles and specificity, dunno if its good or bad (seems to be bad tho)
 - having all the "values" tied to a same variable (maybe a base number where other values will rely on) it's a really interesting idea. it's preety close to what `em` and `rem` does on the web maybe?
 
+## TODO
+
+- colors: positive, negative, warning
+- Tag component (the green label one)
+- heading & TextInput
+- REMOVE TAG FROM:
+  - MenuCard.js
+  - FeedbackHomePage.js
+
 ## Feedback
 
 - ~~theme should be one level~~

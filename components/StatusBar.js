@@ -73,7 +73,7 @@ function FaultButton({ fault, isWarningColor, onReset }) {
   return (
     <TagButton
       title={fault.title}
-      color={isWarningColor ? TagButton.warningColor : TagButton.negativeColor}
+      status={isWarningColor ? 'warning' : 'negative'}
       onPress={onPopover}
       style={{ marginHorizontal: 5 }}
     />

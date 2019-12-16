@@ -19,7 +19,10 @@ const BitRow = ({ title, value }) => (
     >
       {title}
     </Text>
-    <Tag color={value ? '#282' : '#822'} title={value ? 'True' : 'False'} />
+    <Tag
+      status={value ? 'positive' : 'negative'}
+      title={value ? 'True' : 'False'}
+    />
   </View>
 );
 

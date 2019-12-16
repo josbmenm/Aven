@@ -3,12 +3,12 @@ import { useTheme } from '../Theme';
 import Text from '../literals/Text';
 
 export default function Heading({ title, theme: themeProp = {} }) {
-  //
+  const theme = useTheme(themeProp);
   return (
     <Text
       theme={{
-        textFontSize: 44,
-        textLineHeight: 60,
+        textFontSize: theme.headingFontSize,
+        textLineHeight: theme.headingLineHeight,
         textFontWeight: 'bold',
       }}
     >

@@ -33,7 +33,7 @@ function FridgeView() {
     <Row title="main refridgeration">
       <Tag
         title={fridgeEnabled ? 'Enabled' : 'Disabled'}
-        color={fridgeEnabled ? Tag.positiveColor : Tag.negativeColor}
+        status={fridgeEnabled ? 'positive' : 'negative'}
       />
       <MultiSelect
         options={[
@@ -69,7 +69,7 @@ function VanInTruckOverride() {
     <Row title="override machine in van">
       <Tag
         title={machineInVan ? 'In Van' : 'Out of Van'}
-        color={machineInVan ? Tag.positiveColor : Tag.negativeColor}
+        status={machineInVan ? 'positive' : 'negative'}
       />
       <MultiSelect
         options={[
@@ -104,7 +104,7 @@ function CompressorView() {
     <Row title="air compressor">
       <Tag
         title={fridgeEnabled ? 'Enabled' : 'Disabled'}
-        color={fridgeEnabled ? Tag.positiveColor : Tag.negativeColor}
+        status={fridgeEnabled ? 'positive' : 'negative'}
       />
       <MultiSelect
         options={[
@@ -184,7 +184,7 @@ function CateringMode() {
     <Row title="catering mode">
       <Tag
         title={isCateringMode ? 'Free Blends' : 'Regular Mode'}
-        color={isCateringMode ? Tag.warningColor : Tag.positiveColor}
+        status={isCateringMode ? 'warning' : 'positive'}
       />
       <MultiSelect
         options={[
@@ -225,6 +225,7 @@ function AlarmMode() {
             <View
               key={faultName}
               style={{
+                flex: 1,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 marginBottom: 8,
@@ -232,7 +233,7 @@ function AlarmMode() {
             >
               <Tag
                 title={faultLabel}
-                color={isMuteAlarms ? Tag.warningColor : Tag.positiveColor}
+                status={isMuteAlarms ? 'warning' : 'positive'}
               />
               <MultiSelect
                 options={[
@@ -353,11 +354,11 @@ function DryRunMode() {
       <Row title="dry run machine">
         <Tag
           title={isFillEnabled ? 'Filling Enabled' : 'Filling Disabled'}
-          color={isFillEnabled ? Tag.positiveColor : Tag.negativeColor}
+          status={isFillEnabled ? 'positive' : 'negative'}
         />
         <Tag
           title={isBlendEnabled ? 'Blending Enabled' : 'Blending Disabled'}
-          color={isBlendEnabled ? Tag.positiveColor : Tag.negativeColor}
+          status={isBlendEnabled ? 'positive' : 'negative'}
         />
       </Row>
       <View style={{ alignSelf: 'center' }}>
@@ -432,6 +433,7 @@ function CardReaderRow() {
 export default function KioskSettingsScreen({ navigation, ...props }) {
   return (
     <SimplePage
+      title="Settings"
       {...props}
       navigation={navigation}
       hideBackButton

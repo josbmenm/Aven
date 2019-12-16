@@ -115,6 +115,7 @@ function TagsGroup({ children }) {
   );
 }
 
+// TODO: REMOVE THIS TAG
 function Tag({ title, isSelected, onPress, message }) {
   return (
     <TouchableOpacity
@@ -147,6 +148,7 @@ function Tag({ title, isSelected, onPress, message }) {
     </TouchableOpacity>
   );
 }
+
 function RatingStars({ rating, onRating }) {
   return (
     <View

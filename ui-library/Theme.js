@@ -7,21 +7,24 @@ const baseTheme = {
   colorForeground: '#333',
   colorBackground: 'rgba(248,248,248,1.00)',
   colorPrimary: 'rgba(0,82,82,0.80)',
+  colorNeutral: '#444',
+  colorNegative: '#722',
+  colorPositive: '#272',
+  colorWarning: '#997200',
   paddingVertical: 8,
   paddingHorizontal: 16,
   spacing: 8,
   fontRegular: 'Maax',
   fontBold: 'Maax-Bold',
+  borderRadius: 4,
 
-  // Text
   textFont: 'Maax',
   textColor: '#333',
   textLineHeight: 24,
   textFontWeight: '400',
   textFontSize: 16,
-
-  // Button
-  buttonBackgroundgColor: 'rgba(0,82,82,0.80)',
+  headingFontSize: 64,
+  headingLineHeight: 80,
 };
 
 const ThemeContext = React.createContext();

@@ -2,10 +2,10 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import Tag from './Tag';
 
-export default function TagButton({ title, color, onPress, style }) {
+export default function TagButton({ title, status, onPress, style }) {
   return (
     <TouchableOpacity onPress={onPress}>
-      <Tag color={color} title={title} style={style} />
+      <Tag status={status} title={title} />
     </TouchableOpacity>
   );
 }

@@ -31,7 +31,8 @@
       "components",
       "card-reader",
       "navigation-transitioner",
-      "navigation-hooks"
+      "navigation-hooks",
+      "ui-library"
     ],
     "moduleDependencies": [
       "cuid",

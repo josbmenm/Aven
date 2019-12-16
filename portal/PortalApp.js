@@ -53,11 +53,12 @@ import { PortalOrderSidebarPage } from '../components/OrderSidebarPage';
 import TabsScreen from '../components/TabsScreen';
 import { PopoverContainer } from '../views/Popover';
 import { registerDispatcher } from '../card-reader/CardReader';
-import { ThemeProvider } from '../dashboard/Theme';
+import { ThemeProvider as OldThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
 import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
+import { ThemeProvider } from '../ui-library/Theme';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -287,29 +288,31 @@ function FullApp() {
     return null;
   }
   return (
-    <ThemeProvider value={OnoTheme}>
-      <HostContextContainer {...HOST_CONFIG}>
-        <CloudContext.Provider value={cloud}>
-          <PopoverContainer>
-            <ErrorContainer
-              renderError={renderAppError}
-              onCatch={async (e, info, onRetry) => {
-                if (e.type === 'SessionInvalid') {
-                  cloud.destroySession({ ignoreRemoteError: true });
-                  onRetry();
-                }
+    <OldThemeProvider value={OnoTheme}>
+      <ThemeProvider>
+        <HostContextContainer {...HOST_CONFIG}>
+          <CloudContext.Provider value={cloud}>
+            <PopoverContainer>
+              <ErrorContainer
+                renderError={renderAppError}
+                onCatch={async (e, info, onRetry) => {
+                  if (e.type === 'SessionInvalid') {
+                    cloud.destroySession({ ignoreRemoteError: true });
+                    onRetry();
+                  }
 
-                await AsyncStorage.removeItem(NAV_STORAGE_KEY);
-              }}
-            >
-              <PopoverContainer>
-                <AppContainer persistenceKey={NAV_STORAGE_KEY} />
-              </PopoverContainer>
-            </ErrorContainer>
-          </PopoverContainer>
-        </CloudContext.Provider>
-      </HostContextContainer>
-    </ThemeProvider>
+                  await AsyncStorage.removeItem(NAV_STORAGE_KEY);
+                }}
+              >
+                <PopoverContainer>
+                  <AppContainer persistenceKey={NAV_STORAGE_KEY} />
+                </PopoverContainer>
+              </ErrorContainer>
+            </PopoverContainer>
+          </CloudContext.Provider>
+        </HostContextContainer>
+      </ThemeProvider>
+    </OldThemeProvider>
   );
 }
 

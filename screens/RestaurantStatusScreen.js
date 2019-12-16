@@ -91,11 +91,10 @@ function SafetyView() {
   const bypassKey = kitchenState.System_SafetyBypassKey_READ;
   return (
     <Row title="Safety">
-      {bypassKey ? (
-        <Tag title="SAFETY BYPASSED" color={Tag.negativeColor} />
-      ) : (
-        <Tag title="Safety Enabled" color={Tag.positiveColor} />
-      )}
+      <Tag
+        title={bypassKey ? 'SAFETY BYPASSED' : 'Safety Enabled'}
+        status={bypassKey ? 'negative' : 'positive'}
+      />
     </Row>
   );
 }
@@ -175,12 +174,13 @@ function ServicingView() {
         {isInServiceMode ? (
           <Tag
             title={`Service Mode (${isHomed ? 'homed' : 'not homed'})`}
-            color={Tag.warningColor}
+            status="warning"
           />
-        ) : isHomed ? (
-          <Tag title="Active Mode, Homed" color={Tag.positiveColor} />
         ) : (
-          <Tag title="Not Homed" color={Tag.negativeColor} />
+          <Tag
+            title={isHomed ? 'Active Mode, Homed' : 'Not Homed'}
+            status={isHomed ? 'positive' : 'negative'}
+          />
         )}
       </View>
       <ButtonStack
@@ -284,7 +284,7 @@ function StatusView() {
   const isMaintenanceMode = restaurantState && restaurantState.maintenanceMode;
   const timeSeconds = useTimeSeconds();
   let tagText = 'restaurant open';
-  let tagColor = Tag.positiveColor;
+  let TagStatus = Tag.positiveColor;
   if (closingSoon) {
     const totalSecRemaining = Math.floor(
       closingSoon.scheduledCloseTime / 1000 - timeSeconds,
@@ -296,15 +296,15 @@ function StatusView() {
     ).padStart(2, '0')}`;
   }
   if (!isOpen) {
-    tagColor = Tag.warningColor;
+    TagStatus = 'warning';
     tagText = 'restaurant closed';
   }
   if (isTraveling) {
-    tagColor = Tag.positiveColor;
+    TagStatus = 'positive';
     tagText = 'traveling';
   }
   if (isMaintenanceMode) {
-    tagColor = Tag.negativeColor;
+    TagStatus = 'negative';
     tagText = 'Maintenance Mode';
   }
   const { onPopover: onMaintenancePopover } = useKeyboardPopover(
@@ -385,7 +385,7 @@ function StatusView() {
   return (
     <Row title="Restaurant Opening">
       <View>
-        <Tag title={tagText} color={tagColor} />
+        <Tag title={tagText} status={TagStatus} />
         {restaurantState && !!restaurantState.sessionName && (
           <Text style={{ ...primaryFontFace, fontSize: 20 }}>
             {restaurantState.sessionName}
@@ -399,28 +399,28 @@ function StatusView() {
 
 function TanksView() {
   const kitchenState = useKitchenState();
-  let waterTagColor = Tag.positiveColor;
+  let waterTagStatus = 'positive';
   let waterTagTitle = 'Water: Not Full or Low';
 
   if (kitchenState && kitchenState.System_FreshWaterFull_READ) {
-    waterTagColor = Tag.positiveColor;
+    waterTagStatus = 'positive';
     waterTagTitle = 'Water: Filled';
   }
   if (kitchenState && !kitchenState.System_FreshWaterAboveLow_READ) {
-    waterTagColor = Tag.negativeColor;
+    waterTagStatus = 'negative';
     waterTagTitle = 'Water: Low';
   }
-  let wasteTagColor = Tag.positiveColor;
+  let wasteTagStatus = 'positive';
   let wasteTagTitle = 'Waste: Not Full';
   if (kitchenState && kitchenState.System_WasteWaterFull_READ) {
-    wasteTagColor = Tag.negativeColor;
+    wasteTagStatus = 'negative';
     wasteTagTitle = 'Waste: Full';
   }
   return (
     <Row title="Tanks">
       <ButtonStack
         buttons={[
-          <Tag title={waterTagTitle} color={waterTagColor} />,
+          <Tag title={waterTagTitle} status={waterTagStatus} />,
           <KitchenCommandButton
             commandType="FillWaterTank"
             title="fill tank for 30sec"
@@ -428,7 +428,7 @@ function TanksView() {
         ]}
       />
       <ButtonStack
-        buttons={[<Tag title={wasteTagTitle} color={wasteTagColor} />]}
+        buttons={[<Tag title={wasteTagTitle} status={wasteTagStatus} />]}
       />
     </Row>
   );
@@ -439,7 +439,7 @@ function BlenderView() {
   const hasCup = kitchenState && kitchenState.BlendSystem_HasCup_READ;
   return (
     <Row title="Blender">
-      {/* <Tag title={hasCup ? 'Has Cup' : 'No Cup'} color={Tag.positiveColor} /> */}
+      {/* <Tag title={hasCup ? 'Has Cup' : 'No Cup'} status="positive" /> */}
       <ButtonStack
         buttons={[
           <KitchenCommandButton commandType="RetractArm" />,

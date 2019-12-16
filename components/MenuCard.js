@@ -19,6 +19,7 @@ import {
 import AirtableImage from './AirtableImage';
 import formatCurrency from '../utils/formatCurrency';
 import Animated from 'react-native-reanimated';
+import { useTheme } from '../ui-library/Theme';
 
 const { interpolate, multiply, add } = Animated;
 
@@ -32,14 +33,17 @@ const cardsScrollWidth = cardSmallWidth + carouselPaddingSmall;
 const cardBorderRadius = 8;
 const cardShadowRadius = prettyShadowRespectedRadius;
 
-export function Tag({ tag }) {
+// TODO: REMOVE THIS TAG
+export function Tag({ tag, theme: themeProp = {} }) {
+  const theme = useTheme(themeProp);
+
   if (!tag) {
     return null;
   }
   return (
     <View
       style={{
-        backgroundColor: monsterra70,
+        backgroundColor: theme.colorPrimary,
         borderRadius: 4,
         paddingVertical: 4,
         paddingHorizontal: 16,

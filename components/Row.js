@@ -10,7 +10,7 @@ const Row = ({ children, title, containerStyle }) => {
         style={{
           flexDirection: 'row',
           flexWrap: 'wrap',
-          justifyContent: 'space-evenly',
+          justifyContent: 'space-between',
           ...containerStyle,
         }}
       >
