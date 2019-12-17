@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text } from 'react-native-web';
 
 export default function Button() {
   return <Text>I am a button</Text>;

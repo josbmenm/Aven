@@ -4,7 +4,6 @@
   "private": true,
   "main": "lib/commonjs/index.js",
   "react-native": "src/index.tsx",
-  "src": "src/index.tsx",
   "module": "lib/module/index.js",
   "types": "lib/typescript/index.d.ts",
   "scripts": {
