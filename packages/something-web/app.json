@@ -1,4 +1,13 @@
 {
-  "name": "with-react-native-web",
-  "displayName": "with-react-native-web"
+  "expo": {
+    "name": "with-nextjs",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    }
+  }
 }

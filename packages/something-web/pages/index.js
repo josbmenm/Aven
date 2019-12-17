@@ -4,7 +4,7 @@ import { View } from 'react-native';
 function Home() {
   return (
     <div>
-      <View style={{ flex: 1, backgroundColor: 'blue' }}>
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
         <Button />
         <h1>Welcome to Next.js!</h1>
       </View>
