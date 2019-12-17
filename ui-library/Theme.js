@@ -28,6 +28,9 @@ const baseTheme = {
   headingFontSize: 64,
   headingLineHeight: 80,
   headingFontWeight: 'bold',
+
+  inputPaddingTop: 16,
+  inputFontSize: 24,
 };
 
 const ThemeContext = React.createContext();

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Animated, Easing } from 'react-native';
 import { monsterra60 } from './Styles';
-import { useTheme } from '../dashboard/Theme';
+import { useTheme } from '../ui-library/Theme';
 import { Responsive } from '../dashboard/Responsive';
 
 function BlockFormInputWithRef(
@@ -17,11 +17,12 @@ function BlockFormInputWithRef(
     name,
     required,
     maxLength,
+    theme: themeProp,
   },
   ref,
   ...rest
 ) {
-  const theme = useTheme();
+  const theme = useTheme(themeProp);
   const desiredPlaceholderOpen = value ? 0 : 1;
   const [placeholderOpenProgress] = useState(
     new Animated.Value(desiredPlaceholderOpen),
@@ -135,9 +136,9 @@ function BlockFormInputWithRef(
           <Responsive style={{}}>
             <Animated.Text
               style={{
-                fontFamily: theme.fonts.regular,
+                fontFamily: theme.fontRegular,
                 position: 'absolute',
-                color: theme.colors.monsterras[1],
+                color: theme.colorPrimary,
                 top: '25%',
                 left: 20,
                 right: 20,
@@ -194,11 +195,11 @@ function BlockFormInputWithRef(
               name={name}
               required={required}
               style={{
-                paddingLeft: 20,
+                // paddingLeft: 20,
                 flex: 1,
                 outline: 'none',
-                color: theme.colors.monsterra,
-                // ...textInputStyle,
+                color: theme.colorPrimary,
+                ...textInputStyle,
               }}
             />
           </Responsive>

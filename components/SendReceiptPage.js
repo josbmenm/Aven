@@ -57,18 +57,17 @@ export default function SendReceiptPage({
         <BlockFormMessage message="We just need to know..." />
         {error && <BlockFormTitle title="Uh oh! Try again please." />}
         <BlockFormTitle title={title} />
-        <Spacing top={16} flex={false}>
-          <Stack>{inputs}</Stack>
-          <Button
-            theme={{ fontSize: 24 }}
-            title={isProgressing ? '' : 'send receipt'}
-            onPress={handleSubmit}
-          >
-            {isProgressing && (
-              <Spinner color="white" style={{ alignSelf: 'center', top: 4 }} />
-            )}
-          </Button>
-        </Spacing>
+
+        <Stack horizontal>{inputs}</Stack>
+        <Button
+          theme={{ fontSize: 24 }}
+          title={isProgressing ? '' : 'send receipt'}
+          onPress={handleSubmit}
+        >
+          {isProgressing && (
+            <Spinner color="white" style={{ alignSelf: 'center', top: 4 }} />
+          )}
+        </Button>
       </BlockForm>
     </ShortBlockFormPage>
   );

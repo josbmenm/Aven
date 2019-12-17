@@ -3,6 +3,7 @@ import { View, TextInput, Text } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
 import Animated, { Easing } from 'react-native-reanimated';
+import { useTheme } from '../ui-library/Theme';
 
 const textInputFontSize = 26;
 
@@ -17,9 +18,11 @@ function BlockFormInputWithRef(
     onBlur,
     maxLength,
     upperCase,
+    theme: themeProp,
   },
   ref,
 ) {
+  const theme = useTheme(themeProp);
   const desiredPlaceholderOpen = value ? 0 : 1;
   const [placeholderOpenProgress] = useState(
     new Animated.Value(desiredPlaceholderOpen),
@@ -73,30 +76,35 @@ function BlockFormInputWithRef(
     <View
       style={{
         flex: 1,
-        marginHorizontal: 10,
+        marginHorizontal: theme.paddingHorizontal,
         borderWidth: 1,
+        paddingLeft: theme.spacing,
         borderRadius: 4,
-        paddingTop: 15,
-        borderColor: monsterra60,
+        paddingTop: theme.inputPaddingTop,
+        borderColor: theme.colorPrimary,
         borderWidth: 3,
-        minHeight: 44,
       }}
     >
       <Animated.Text
         style={{
-          ...textInputLabelStyle,
+          fontFamily: theme.fontRegular,
           position: 'absolute',
+          color: theme.primaryColor,
           left: 0,
           right: 0,
+          opacity: 0.7,
           fontSize: Animated.interpolate(placeholderOpenProgress, {
             inputRange: [0, 1],
-            outputRange: [13, 28],
+            outputRange: [12, 24],
           }),
           transform: [
             {
+              translateX: 8,
+            },
+            {
               translateY: Animated.interpolate(placeholderOpenProgress, {
                 inputRange: [0, 1],
-                outputRange: [7, 24],
+                outputRange: [4, 12],
               }),
             },
           ],
@@ -121,8 +129,11 @@ function BlockFormInputWithRef(
         type={inputType}
         onSubmitEditing={onSubmit}
         style={{
-          fontSize: textInputFontSize,
-          ...textInputStyle,
+          fontSize: theme.inputFontSize,
+          color: theme.primaryColor,
+          position: 'relative',
+          minHeight: 36,
+          flex: 1,
           ...(mode === 'description' ? { height: 120 } : {}),
         }}
       />

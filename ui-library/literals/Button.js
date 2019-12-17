@@ -4,7 +4,7 @@ import { useTheme } from '../Theme';
 
 export default function Button({
   title,
-
+  children,
   outline = false,
   onPress,
   theme: themeProp = {},
@@ -30,17 +30,20 @@ export default function Button({
           opacity: disabled ? 0.5 : 1,
         }}
       >
-        <Text
-          style={{
-            fontSize: theme.fontSize,
-            lineHeight: theme.lineHeight,
-            color: outline ? theme.colorPrimary : 'white',
-            fontFamily: theme.fontBold,
-            fontWeight: 'bold',
-          }}
-        >
-          {title}
-        </Text>
+        {children}
+        {title && (
+          <Text
+            style={{
+              fontSize: theme.fontSize,
+              lineHeight: theme.lineHeight,
+              color: outline ? theme.colorPrimary : 'white',
+              fontFamily: theme.fontBold,
+              fontWeight: 'bold',
+            }}
+          >
+            {title}
+          </Text>
+        )}
       </View>
     </TouchableOpacity>
   );
