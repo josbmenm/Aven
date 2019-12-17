@@ -4,13 +4,14 @@ import { useTheme } from '../Theme';
 
 export default function Button({
   title,
+
   outline = false,
   onPress,
   theme: themeProp = {},
   disabled = false,
 }) {
   const theme = useTheme(themeProp);
-
+  console.log('TCL: title', title);
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -22,7 +23,7 @@ export default function Button({
           borderRadius: 3,
           borderWidth: 3,
           backgroundColor: outline ? 'transparent' : theme.colorPrimary,
-          borderColor: outline ? theme.colorPrimary : 'transparent',
+          borderColor: theme.colorPrimary,
           paddingVertical: theme.paddingVertical,
           paddingHorizontal: theme.paddingHorizontal,
           alignItems: 'center',

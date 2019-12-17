@@ -1,5 +1,5 @@
 import React from 'react';
-import View from '../views/View';
+import { View } from 'react-native';
 
 const baseTheme = {
   spacing: 8,
@@ -7,7 +7,7 @@ const baseTheme = {
   lineHeight: 24,
   colorForeground: '#333',
   colorBackground: 'rgba(248,248,248,1.00)',
-  colorPrimary: 'rgba(0,82,82,0.80)',
+  colorPrimary: 'hsl(180, 100%, 16%)',
   colorNeutral: '#444',
   colorNegative: '#722',
   colorPositive: '#272',
@@ -95,13 +95,13 @@ export function Spacing({
     <View
       style={[
         flex && { flex: 1 },
-        value && { padding: value },
-        vertical && { paddingVertical: vertical },
-        horizontal && { paddingHorizontal: horizontal },
-        top && { paddingTop: top },
-        right && { paddingRight: right },
-        bottom && { paddingBottom: bottom },
-        left && { paddingLeft: left },
+        value && { margin: value },
+        vertical && { marginVertical: vertical },
+        horizontal && { marginHorizontal: horizontal },
+        top && { marginTop: top },
+        right && { marginRight: right },
+        bottom && { marginBottom: bottom },
+        left && { marginLeft: left },
       ]}
     >
       {children}

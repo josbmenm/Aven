@@ -16,7 +16,7 @@ function UILibraryPage() {
         <Sidebar>
           <Stack>
             <Heading title="UI Library" />
-            <Stack>
+            <Stack inline>
               <Text>Button</Text>
               <Text>Link</Text>
               <Text>Input</Text>

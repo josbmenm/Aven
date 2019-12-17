@@ -22,7 +22,6 @@ export function Sidebar({ children }) {
     <View
       style={{
         width: 300,
-        flex: 'none',
         borderRightWidth: 1,
         borderRightColor: '#dadada',
         padding: 24,

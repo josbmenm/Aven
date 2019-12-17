@@ -15,7 +15,7 @@ function Links() {
       <CodeBlock>
         <CodeBlockTitle title="Links" />
         <CodeBlockExample>
-          <Stack>
+          <Stack inline>
             <Link to="/home">a link</Link>
             <Large>
               <Link to="/home">a bigger link</Link>

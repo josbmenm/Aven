@@ -79,6 +79,7 @@ function BlockFormInputWithRef(
         paddingTop: 15,
         borderColor: monsterra60,
         borderWidth: 3,
+        minHeight: 44,
       }}
     >
       <Animated.Text

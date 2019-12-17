@@ -1,4 +1,5 @@
 import React from 'react';
+import { View } from 'react-native';
 import ShortBlockFormPage from '../components/ShortBlockFormPage';
 import BlockForm from '../components/BlockForm';
 import BlockFormTitle from '../components/BlockFormTitle';
@@ -21,10 +22,10 @@ export default function ReceiptPage({
   return (
     <ShortBlockFormPage hideBackButton={hideBackButton} {...props}>
       <BlockForm style={{ flex: 1, justifyContent: 'center' }}>
-        <Stack theme={{ spacing: 0 }}>
-          <BlockFormMessage message="You're almost ready to go..." />
-          <BlockFormTitle title="would you like a receipt?" />
-          <Stack horizontal flex>
+        <BlockFormMessage message="You're almost ready to go..." />
+        <BlockFormTitle title="would you like a receipt?" />
+        <Spacing top={16} flex={false}>
+          <Stack horizontal>
             <Button theme={{ fontSize: 24 }} title="via sms" onPress={onSms} />
             <Button
               theme={{ fontSize: 24 }}
@@ -32,11 +33,13 @@ export default function ReceiptPage({
               onPress={onEmail}
             />
           </Stack>
-        </Stack>
-        <Spacing flex={false} top={16}>
-          <Stack flex horizontal>
-            <BlockFormButton title="no, thanks" onPress={onNoReceipt} />
-          </Stack>
+        </Spacing>
+        <Spacing top={16} horizontal={8} flex={false}>
+          <Button
+            theme={{ fontSize: 24 }}
+            title="no, thanks"
+            onPress={onNoReceipt}
+          />
         </Spacing>
       </BlockForm>
       <CountdownDoneButton onPress={onComplete} duration={20} />

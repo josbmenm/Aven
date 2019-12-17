@@ -1,8 +1,11 @@
 import React from 'react';
-import { View } from 'react-native';
+import Stack from '../ui-library/layout/Stack';
+import { Spacing } from '../ui-library/Theme';
 
-export default function BlockFormRow({ children }) {
+export default function BlockFormRow({ children, inline = false }) {
   return (
-    <View style={{ marginVertical: 10, flexDirection: 'row' }}>{children}</View>
+    <Stack horizontal inline={inline}>
+      {children}
+    </Stack>
   );
 }

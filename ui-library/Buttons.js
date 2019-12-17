@@ -77,7 +77,7 @@ function Buttons() {
               <ButtonLink title="Big Button Link" to="/about" />
             </Large>
           </Stack>
-          <Stack horizontal flex={false}>
+          <Stack horizontal inline>
             <ButtonLink title="Button Link" to="/home" />
             <ButtonLink title="Button Link Active" to="/about" active />
           </Stack>
@@ -88,7 +88,7 @@ function Buttons() {
         <CodeBlockTitle title="ButtonLink Active" />
         <CodeBlockExample>
           <Large>
-            <Stack horizontal flex={false}>
+            <Stack horizontal inline>
               <ButtonLink title="Button Link" to="/home" active />
               <ButtonLink title="Button Link Active" to="/about" active />
             </Stack>

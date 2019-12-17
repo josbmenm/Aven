@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { View } from 'react-native';
 import BlockForm from './BlockForm';
 import BlockFormMessage from './BlockFormMessage';
 import BlockFormTitle from './BlockFormTitle';
@@ -8,6 +9,9 @@ import BlockFormInput from './BlockFormInput';
 import BlockFormButton from './BlockFormButton';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import useFocus from '../navigation-hooks/useFocus';
+import Stack from '../ui-library/layout/Stack';
+import { Spacing } from '../ui-library/Theme';
+import Button from '../ui-library/literals/Button';
 
 export default function SendReceiptPage({
   onSubmit,
@@ -53,17 +57,18 @@ export default function SendReceiptPage({
         <BlockFormMessage message="We just need to know..." />
         {error && <BlockFormTitle title="Uh oh! Try again please." />}
         <BlockFormTitle title={title} />
-        <BlockFormRow>{inputs}</BlockFormRow>
-        <BlockFormRow>
-          <BlockFormButton
+        <Spacing top={16} flex={false}>
+          <Stack>{inputs}</Stack>
+          <Button
+            theme={{ fontSize: 24 }}
             title={isProgressing ? '' : 'send receipt'}
             onPress={handleSubmit}
           >
             {isProgressing && (
               <Spinner color="white" style={{ alignSelf: 'center', top: 4 }} />
             )}
-          </BlockFormButton>
-        </BlockFormRow>
+          </Button>
+        </Spacing>
       </BlockForm>
     </ShortBlockFormPage>
   );
