@@ -1,18 +1,19 @@
 import React from 'react';
-import { Text } from 'react-native';
-import Heading from '../ui-library/composite/Heading'
-import { blockFormMessageTextStyle } from './Styles';
-import { Spacing } from '../ui-library/Theme';
+import Heading from '../ui-library/composite/Heading';
+import { Spacing, useTheme } from '../ui-library/Theme';
 
 export default function BlockFormMessage({ message }) {
+  const theme = useTheme();
   return (
-    <Spacing horizontal={8}>
-      <Heading theme={{
-        headingFontSize:
+    <Heading
+      title={message}
+      theme={{
+        textColor: theme.colorPrimary,
+        headingFontSize: 26,
+        headingLineHeight: 34,
+        headingFont: theme.fontProse,
+        headingFontWeight: '400',
       }}
-    <Text style={{ marginHorizontal: 10, ...blockFormMessageTextStyle }}>
-      {message}
-    </Text>
-    </Spacing>
+    />
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import SpinnerButton from './SpinnerButton';
+import Button from '../ui-library/literals/Button';
 
 export default function BlockFormButton({
   buttonStyle,
@@ -15,7 +16,7 @@ export default function BlockFormButton({
       size="large"
       style={{
         flex: 1,
-        marginHorizontal: 10,
+
         marginVertical: 0,
         ...style,
       }}

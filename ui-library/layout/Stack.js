@@ -5,7 +5,7 @@ import { Spacing, useTheme } from '../Theme';
 export default function Stack({
   children,
   horizontal = false,
-  flex = true,
+  flex = false,
   theme: themeProp,
 }) {
   const theme = useTheme(themeProp);

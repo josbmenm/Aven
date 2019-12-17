@@ -2,6 +2,7 @@ import React from 'react';
 import View from '../views/View';
 
 const baseTheme = {
+  spacing: 8,
   fontSize: 16,
   lineHeight: 24,
   colorForeground: '#333',
@@ -13,9 +14,9 @@ const baseTheme = {
   colorWarning: '#997200',
   paddingVertical: 8,
   paddingHorizontal: 16,
-  spacing: 8,
   fontRegular: 'Maax',
   fontBold: 'Maax-Bold',
+  fontProse: 'Lora',
   borderRadius: 4,
 
   textFont: 'Maax',
@@ -23,8 +24,10 @@ const baseTheme = {
   textLineHeight: 24,
   textFontWeight: '400',
   textFontSize: 16,
+  headingFont: 'Maax-Bold',
   headingFontSize: 64,
   headingLineHeight: 80,
+  headingFontWeight: 'bold',
 };
 
 const ThemeContext = React.createContext();

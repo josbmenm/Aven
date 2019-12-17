@@ -239,8 +239,8 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				EC809EEBF46B1F955B7D988B /* [CP] Embed Pods Frameworks */,
 				0BB310E697E94B3FB23AA1E4 /* Upload Debug Symbols to Sentry */,
+				3206B3ADE558D5638B43035E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -443,6 +443,26 @@
 			shellPath = /bin/sh;
 			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
+		3206B3ADE558D5638B43035E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-downpour/Pods-downpour-frameworks.sh",
+				"${PODS_ROOT}/StripeTerminal/Carthage/Build/iOS/StripeTerminal.framework",
+				"${PODS_ROOT}/StripeTerminal/Carthage/Build/iOS/StripeTerminal.framework.dSYM",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StripeTerminal.framework",
+				"${DWARF_DSYM_FOLDER_PATH}/StripeTerminal.framework.dSYM",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-downpour/Pods-downpour-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		D80AF13B04D57F8B287A128D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -463,26 +483,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EC809EEBF46B1F955B7D988B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-downpour/Pods-downpour-frameworks.sh",
-				"${PODS_ROOT}/StripeTerminal/Carthage/Build/iOS/StripeTerminal.framework",
-				"${PODS_ROOT}/StripeTerminal/Carthage/Build/iOS/StripeTerminal.framework.dSYM",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StripeTerminal.framework",
-				"${DWARF_DSYM_FOLDER_PATH}/StripeTerminal.framework.dSYM",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-downpour/Pods-downpour-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		ECA1BA38CC5DF51C5EF42BAB /* [CP] Check Pods Manifest.lock */ = {
@@ -701,7 +701,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal2;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = downpour;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 2;
@@ -726,7 +726,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal2;
+				PRODUCT_BUNDLE_IDENTIFIER = co.onofood.portal;
 				PRODUCT_NAME = downpour;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 2;

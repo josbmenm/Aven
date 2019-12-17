@@ -23,6 +23,7 @@ export default function Tag({
         };
   const theme = useTheme({
     ...sizeTheme,
+    // this could be a function
     ...themeProp,
   });
 

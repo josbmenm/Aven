@@ -7,9 +7,11 @@ export default function Heading({ title, theme: themeProp = {} }) {
   return (
     <Text
       theme={{
+        textColor: theme.colorPrimary,
         textFontSize: theme.headingFontSize,
         textLineHeight: theme.headingLineHeight,
-        textFontWeight: 'bold',
+        textFontWeight: theme.headingFontWeight,
+        textFont: theme.headingFont,
       }}
     >
       {title}
