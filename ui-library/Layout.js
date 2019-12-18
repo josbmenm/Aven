@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
-import Heading from './composite/Heading';
-import { Spacing } from './Theme';
+import Heading from '../dash-ui/Heading';
+import { Spacing } from '../dash-ui/Theme';
 
 export function Layout({ children, ...rest }) {
   return (

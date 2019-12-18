@@ -1,12 +1,10 @@
 import React from 'react';
-import { View } from 'react-native';
-import Heading from './composite/Heading';
 import { CodeBlock, CodeBlockExample, CodeBlockTitle } from './CodeBlock';
-import Text from './literals/Text';
-import { Large, Spacing } from './Theme';
-import Stack from './layout/Stack';
+import Text from '../dash-ui/Text';
+import { Large } from '../dash-ui/Theme';
+import Stack from '../dash-ui/Stack';
 
-import Link from './literals/Link';
+import Link from '../dash-ui/Link';
 import { ComponentBlock } from './Layout';
 
 function Links() {

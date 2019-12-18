@@ -91,7 +91,6 @@ function getBodyHTML({ promoCode }) {
   );
 
   if (errors.length) {
-    console.log('TCL: sendReceiptEmail -> errors', errors);
     console.error(errors);
     throw new Error('Cannot construct email!', errors);
   }

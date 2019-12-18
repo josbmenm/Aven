@@ -19,7 +19,7 @@ import {
 import AirtableImage from './AirtableImage';
 import formatCurrency from '../utils/formatCurrency';
 import Animated from 'react-native-reanimated';
-import { useTheme } from '../ui-library/Theme';
+import { useTheme } from '../dash-ui/Theme';
 
 const { interpolate, multiply, add } = Animated;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
-import { useTheme } from '../Theme';
+import { useTheme } from './Theme';
 
 export default function Button({
   title,
@@ -11,7 +11,6 @@ export default function Button({
   disabled = false,
 }) {
   const theme = useTheme(themeProp);
-  console.log('TCL: title', title);
   return (
     <TouchableOpacity
       onPress={onPress}

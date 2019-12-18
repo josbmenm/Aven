@@ -177,7 +177,7 @@ function BookUsWizard() {
         alert('oh no');
         setLoading(false);
       });
-    // console.log('TCL: onSubmit -> ', formState);
+
     // setTimeout(() => {
     //   setLoading(false);
     //   setIsDone(true);

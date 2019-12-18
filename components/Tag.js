@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import { boldPrimaryFontFace } from './Styles';
-import { useTheme, Large } from '../ui-library/Theme';
+import { useTheme, Large } from '../dash-ui/Theme';
 
 export default function Tag({
   title,

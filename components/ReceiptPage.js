@@ -7,9 +7,9 @@ import BlockFormMessage from '../components/BlockFormMessage';
 import BlockFormRow from '../components/BlockFormRow';
 import BlockFormButton from '../components/BlockFormButton';
 import CountdownDoneButton from './CountdownDoneButton';
-import { Spacing } from '../ui-library/Theme';
-import Stack from '../ui-library/layout/Stack';
-import Button from '../ui-library/literals/Button';
+import { Spacing } from '../dash-ui/Theme';
+import Stack from '../dash-ui/Stack';
+import Button from '../dash-ui/Button';
 
 export default function ReceiptPage({
   onSms,

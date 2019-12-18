@@ -3,7 +3,7 @@ import { View, TextInput, Text } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
 import Animated, { Easing } from 'react-native-reanimated';
-import { useTheme } from '../ui-library/Theme';
+import { useTheme } from '../dash-ui/Theme';
 
 const textInputFontSize = 26;
 
@@ -83,6 +83,8 @@ function BlockFormInputWithRef(
         paddingTop: theme.inputPaddingTop,
         borderColor: theme.colorPrimary,
         borderWidth: 3,
+        backgroundColor: 'red',
+        height: 80,
       }}
     >
       <Animated.Text
@@ -132,6 +134,7 @@ function BlockFormInputWithRef(
           fontSize: theme.inputFontSize,
           color: theme.primaryColor,
           position: 'relative',
+          backgroundColor: 'blue',
           minHeight: 36,
           flex: 1,
           ...(mode === 'description' ? { height: 120 } : {}),

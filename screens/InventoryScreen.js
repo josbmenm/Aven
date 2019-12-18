@@ -17,7 +17,7 @@ import ButtonStack from '../components/ButtonStack';
 import { TempCell, formatTemp } from '../components/TemperatureView';
 import KitchenCommandButton from '../components/KitchenCommandButton';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
-import { Spacing } from '../ui-library/Theme';
+import { Spacing } from '../dash-ui/Theme';
 
 function PopoverTitle({ children }) {
   return (

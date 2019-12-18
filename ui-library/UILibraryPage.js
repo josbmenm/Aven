@@ -1,13 +1,13 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { ThemeProvider, Spacing } from './Theme';
+import { ThemeProvider, Spacing } from '../dash-ui/Theme';
 
 import Buttons from './Buttons';
 import Inputs from './Inputs';
 import Links from './Links';
-import Stack from './layout/Stack';
+import Stack from '../dash-ui/Stack';
 import { Layout, Sidebar, Content, Container } from './Layout';
-import Heading from './composite/Heading';
+import Heading from '../dash-ui/Heading';
 
 function UILibraryPage() {
   return (

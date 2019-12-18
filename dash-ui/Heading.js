@@ -1,6 +1,6 @@
 import React from 'react';
-import { useTheme } from '../Theme';
-import Text from '../literals/Text';
+import { useTheme } from './Theme';
+import Text from './Text';
 
 export default function Heading({ title, theme: themeProp = {} }) {
   const theme = useTheme(themeProp);

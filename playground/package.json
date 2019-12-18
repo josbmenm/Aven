@@ -32,7 +32,8 @@
       "navigation-web",
       "dashboard",
       "maui-web",
-      "ui-library"
+      "ui-library",
+      "dash-ui"
     ],
     "moduleDependencies": [
       "mjml",

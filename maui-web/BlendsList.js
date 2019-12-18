@@ -179,10 +179,9 @@ export function BlendsCarousel({ activeBlendSlug }) {
   const [visibleIndex, setVisibleIndex] = React.useState(-1);
 
   function handleScroll({ nativeEvent }) {
-    // console.log("TCL: handleScroll -> nativeEvent", nativeEvent)
     const { layoutMeasurement, contentOffset } = nativeEvent;
     const scrollValue = contentOffset.x + layoutMeasurement.width / 2;
-    // console.log('TCL: handleScroll -> scrollValue', scrollValue);
+
     setVisibleIndex(Math.round(scrollValue / 200) - 1);
   }
 

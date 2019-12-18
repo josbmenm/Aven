@@ -58,7 +58,7 @@ import OnoTheme from '../logic/OnoTheme';
 import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
-import { ThemeProvider } from '../ui-library/Theme';
+import { ThemeProvider } from '../dash-ui/Theme';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -278,7 +278,7 @@ function renderAppError({ error, errorInfo, onRetry }) {
   );
 }
 
-const NAV_STORAGE_KEY = 'NavigationState-N3e2u1232asdfas12o';
+const NAV_STORAGE_KEY = 'NavigationState-N3e2u1232asdfas12osh';
 function FullApp() {
   const cloud = useCloudProvider({
     source: cloudSource,

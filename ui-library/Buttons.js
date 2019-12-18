@@ -1,13 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
-import Heading from './composite/Heading';
+import Heading from '../dash-ui/Heading';
 import { CodeBlock, CodeBlockExample, CodeBlockTitle } from './CodeBlock';
-import { Large, Spacing } from './Theme';
-import Stack from './layout/Stack';
-
-import Button from './literals/Button';
-import ButtonLink from './literals/ButtonLink';
 import { ComponentBlock } from './Layout';
+import { Large, Spacing } from '../dash-ui/Theme';
+import Stack from '../dash-ui/Stack';
+import Button from '../dash-ui/Button';
+import ButtonLink from '../dash-ui/ButtonLink';
 
 function Buttons() {
   return (

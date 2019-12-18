@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Animated, Easing } from 'react-native';
 import { monsterra60 } from './Styles';
-import { useTheme } from '../ui-library/Theme';
+import { useTheme } from '../dash-ui';
 import { Responsive } from '../dashboard/Responsive';
 
 function BlockFormInputWithRef(
@@ -129,7 +129,6 @@ function BlockFormInputWithRef(
             borderRadius: 4,
             borderColor: monsterra60,
             borderWidth: 3,
-            backgroundColor: 'white',
           }}
           {...rest}
         >
@@ -199,7 +198,6 @@ function BlockFormInputWithRef(
                 flex: 1,
                 outline: 'none',
                 color: theme.colorPrimary,
-                ...textInputStyle,
               }}
             />
           </Responsive>

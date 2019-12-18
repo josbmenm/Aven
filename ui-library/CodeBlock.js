@@ -1,6 +1,5 @@
 import React from 'react';
-import View from '../views/View';
-import Text from '../views/Text';
+import { View, Text } from 'react-native';
 
 export function CodeBlock({ children }) {
   return (

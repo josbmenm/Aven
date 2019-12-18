@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
-import { useTheme } from '../Theme';
+import { useTheme } from './Theme';
 
 export default function ButtonLink({
   title,

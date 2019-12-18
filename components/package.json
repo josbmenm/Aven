@@ -6,7 +6,8 @@
     "srcDependencies": [
       "views",
       "dashboard",
-      "cloud-core"
+      "cloud-core",
+      "dash-ui"
     ]
   }
 }

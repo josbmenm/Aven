@@ -1,7 +1,5 @@
 import React from 'react';
 import { Text } from 'react-native';
-// import View from '../views/View';
-import Heading from '../dashboard/Heading';
 import { Layout, Container, ComponentBlock } from './Layout';
 import BlockFormInput from '../components/BlockFormInput';
 

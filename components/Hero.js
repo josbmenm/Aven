@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { heroViewStyle, heroIconStyle, heroSubtitleStyle } from './Styles';
 import SharedIcon from './SharedIcon';
-import Heading from '../ui-library/composite/Heading';
+import Heading from '../dash-ui/Heading';
 
 export default function Hero({ icon, title, subtitle }) {
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
-import Heading from '../ui-library/composite/Heading';
-import { Spacing, useTheme } from '../ui-library/Theme';
+import Heading from '../dash-ui/Heading';
+import { Spacing, useTheme } from '../dash-ui/Theme';
 
 export default function BlockFormMessage({ message }) {
   const theme = useTheme();

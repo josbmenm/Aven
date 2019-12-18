@@ -27,9 +27,9 @@
       "components",
       "react-utils",
       "navigation-web",
-      "dash",
       "maui-web",
-      "views"
+      "views",
+      "dash-ui"
     ],
     "moduleDependencies": [
       "mjml",

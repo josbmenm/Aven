@@ -1,5 +1,5 @@
 import React from 'react';
-import Heading from '../ui-library/composite/Heading';
+import Heading from '../dash-ui/Heading';
 
 export default function BlockFormTitle({ title }) {
   return (

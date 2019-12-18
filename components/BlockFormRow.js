@@ -1,6 +1,6 @@
 import React from 'react';
-import Stack from '../ui-library/layout/Stack';
-import { Spacing } from '../ui-library/Theme';
+import Stack from '../dash-ui/Stack';
+import { Spacing } from '../dash-ui/Theme';
 
 export default function BlockFormRow({ children, inline = false }) {
   return (

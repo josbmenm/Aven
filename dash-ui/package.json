@@ -1,5 +1,5 @@
 {
-  "name": "@aven-cloud/dash",
+  "name": "dash-ui",
   "version": "1.0.0",
   "aven": {
     "moduleDependencies": [

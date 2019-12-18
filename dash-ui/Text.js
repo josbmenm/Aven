@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { useTheme } from '../Theme';
+import { useTheme } from './Theme';
 
 export default function LiteralText({
   children,

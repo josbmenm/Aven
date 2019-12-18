@@ -32,7 +32,7 @@
       "card-reader",
       "navigation-transitioner",
       "navigation-hooks",
-      "ui-library"
+      "dash-ui"
     ],
     "moduleDependencies": [
       "cuid",
