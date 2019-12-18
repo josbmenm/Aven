@@ -52,7 +52,7 @@ ${String(new Date(feedback.time))},${feedback.rating},${feedback.tags.join(
           let ratingSums = { ...day.sums };
           delete ratingSums.rating;
           return (
-            <View>
+            <View key={dayString}>
               <Text
                 style={{
                   fontWeight: 'bold',
@@ -71,7 +71,7 @@ ${String(new Date(feedback.time))},${feedback.rating},${feedback.tags.join(
                 {day.sums.rating / day.dayCount}
               </Text>
               {Object.entries(ratingSums).map(([ratingName, sum]) => (
-                <Text style={{ fontSize: 18, color: '#333' }}>
+                <Text style={{ fontSize: 18, color: '#333' }} key={ratingName}>
                   {ratingName}: {sum}
                 </Text>
               ))}
