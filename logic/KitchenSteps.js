@@ -61,26 +61,6 @@ const KitchenSteps = [
     }),
   },
   {
-    // ditch unknown cup (fill system)
-    getDescription: intent => 'Ditch Unknown Cup',
-    getStateIntent: restaurantState => {
-      if (restaurantState.fill == null || restaurantState.fill === 'ready') {
-        return {};
-      }
-      return null;
-    },
-    getMachineReady: kitchenState => {
-      return kitchenState.FillPositioner_CupPresent_READ;
-    },
-    getKitchenCommand: intent => ({
-      commandType: 'DitchCup',
-    }),
-    getSuccessRestaurantAction: intent => ({
-      type: 'DidLooseFillCup',
-      didCompleteTask: false,
-    }),
-  },
-  {
     // ditch requested cup (fill system)
     getDescription: intent => 'Ditch Cup',
     getStateIntent: restaurantState => {
