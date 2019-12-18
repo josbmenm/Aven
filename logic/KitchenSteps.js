@@ -278,26 +278,25 @@ const KitchenSteps = [
     // deliver cup to blender
 
     getDescription: () => {
-      return 'Pass filled cup to blender';
+      return 'Pass cup to blender';
     },
     getStateIntent: restaurantState => {
       if (
-        !!restaurantState.blend ||
-        restaurantState.reservedBlenderClean ||
-        restaurantState.blend === 'dirty' ||
-        !restaurantState.fill ||
-        (restaurantState.fill.fillsRemaining &&
-          restaurantState.fill.fillsRemaining.length !== 0) ||
-        restaurantState.fill.requestedDropTime ||
-        (restaurantState.fill.task &&
-          restaurantState.fill.task.skipBlend &&
-          restaurantState.fill.task.deliveryMode !== 'deliver')
+        restaurantState.fill &&
+        restaurantState.fill !== 'ready' &&
+        !restaurantState.blend &&
+        !restaurantState.reservedBlenderClean &&
+        (restaurantState.fill.fillsRemaining
+          ? restaurantState.fill.fillsRemaining.length === 0
+          : true) &&
+        !restaurantState.fill.task.skipBlend &&
+        restaurantState.fill.task.deliveryMode === 'deliver'
       ) {
-        return null;
+        return {
+          taskId: restaurantState.fill.task && restaurantState.fill.task.id,
+        };
       }
-      return {
-        taskId: restaurantState.fill.task && restaurantState.fill.task.id,
-      };
+      return null;
     },
     getKitchenCommand: intent => ({
       commandType: 'PassToBlender',

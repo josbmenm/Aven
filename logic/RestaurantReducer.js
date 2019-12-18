@@ -773,6 +773,7 @@ function RestaurantReducerFn(state = {}, action) {
       return {
         ...defaultReturn(),
         isAttached: false,
+        isAutoRunning: false,
       };
     }
     case 'EnableManualMode': {

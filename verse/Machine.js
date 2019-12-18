@@ -340,7 +340,7 @@ export function connectMachine({
         const isCommandComplete =
           noFaults && endedCommandId === resolver.commandId;
         const resolverIsOldEnough =
-          resolver.commandStartTimeMS + 10000 < Date.now();
+          resolver.commandStartTimeMS + 15000 < Date.now();
 
         if (isCommandReceived || isCommandComplete) {
           clearTimeout(resolver.commandReceivedTimeout);
@@ -372,8 +372,7 @@ export function connectMachine({
           if (resolverIsOldEnough) {
             // the resolverIsOldEnough delay handles edge case in the PLC or tag syncronization code when we observe an idle system and a started action id, but the action has not actually been started yet
             // this is why we wait at least one second until rejecting the command
-            error('MachineError', {
-              ..._kitchenState,
+            const errorDetails = {
               code: 'SoftError',
               subsystem,
               noFaults,
@@ -383,7 +382,19 @@ export function connectMachine({
               command: resolver.command,
               isCommandReceived,
               isCommandComplete,
-            });
+            }
+            const tagNames = [
+              `${subsystem}_PrgStep_READ`,
+              `${subsystem}_NoFaults_READ`,
+              `${subsystem}_ActionIdIn_VALUE`,
+              `${subsystem}_ActionIdStarted_READ`,
+              `${subsystem}_ActionIdEnded_READ`,
+            ]
+            tagNames.forEach(tagName => {
+              errorDetails[tagName] = _kitchenState[tagName]
+            })
+            
+            error('MachineError', errorDetails);
 
             resolver.reject(
               new Err(
@@ -535,7 +546,6 @@ export function connectMachine({
         clearTimeout(commandReceivedTimeout);
         const commandErrorTimeMS = Date.now();
         const errorDetails = {
-          ..._kitchenState,
           code: 'CommandNotAcceptedChirp',
           command,
           commandId,
@@ -546,6 +556,16 @@ export function connectMachine({
           commandErrorTimeMS,
           commandDurationMS: commandErrorTimeMS - commandStartTimeMS,
         };
+        const tagNames = [
+          `${subsystem}_PrgStep_READ`,
+          `${subsystem}_NoFaults_READ`,
+          `${subsystem}_ActionIdIn_VALUE`,
+          `${subsystem}_ActionIdStarted_READ`,
+          `${subsystem}_ActionIdEnded_READ`,
+        ];
+        tagNames.forEach(tagName => {
+          errorDetails[tagName] = _kitchenState[tagName]
+        })
         error('MachineCommandFailed', errorDetails);
 
         reject(
@@ -565,8 +585,7 @@ export function connectMachine({
           clearTimeout(watchKittyTimeout);
           clearTimeout(commandReceivedTimeout);
           const commandErrorTimeMS = Date.now();
-          error('MachineCommandFailed', {
-            ..._kitchenState,
+          const errorDetails = {
             code: err.message,
             details: err.details,
             command,
@@ -577,7 +596,18 @@ export function connectMachine({
             commandStartTimeMS,
             commandErrorTimeMS,
             commandDurationMS: commandErrorTimeMS - commandStartTimeMS,
-          });
+          }
+          const tagNames = [
+            `${subsystem}_PrgStep_READ`,
+            `${subsystem}_NoFaults_READ`,
+            `${subsystem}_ActionIdIn_VALUE`,
+            `${subsystem}_ActionIdStarted_READ`,
+            `${subsystem}_ActionIdEnded_READ`,
+          ]
+          tagNames.forEach(tagName => {
+            errorDetails[tagName] = _kitchenState[tagName]
+          })
+          error('MachineCommandFailed', errorDetails);
           reject(err);
         },
         commandStartTimeMS,
