@@ -90,6 +90,9 @@ export function combineStreams(inputs) {
       inputEntries.forEach(([inputName, inputStream]) => {
         const listener = {
           next: v => {
+            if (lastValues[inputName] === v) {
+              return;
+            }
             waitingForInputNames.delete(inputName);
             lastValues[inputName] = v;
             if (waitingForInputNames.size === 0) {
