@@ -58,9 +58,11 @@ export default function SendReceiptPage({
         {error && <BlockFormTitle title="Uh oh! Try again please." />}
         <BlockFormTitle title={title} />
 
-        <Stack horizontal>{inputs}</Stack>
+        {/* <Stack debug> */}
+        {inputs}
+        {/* </Stack> */}
+
         {/* <Button
-          theme={{ fontSize: 24 }}
           title={isProgressing ? '' : 'send receipt'}
           onPress={handleSubmit}
         >

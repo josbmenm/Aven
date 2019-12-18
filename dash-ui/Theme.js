@@ -12,6 +12,8 @@ const baseTheme = {
   colorNegative: '#722',
   colorPositive: '#272',
   colorWarning: '#997200',
+  colorHighlight: 'hsl(180, 100%, 16%)',
+
   paddingVertical: 8,
   paddingHorizontal: 16,
   fontRegular: 'Maax',
@@ -31,13 +33,23 @@ const baseTheme = {
 
   inputPaddingTop: 16,
   inputFontSize: 24,
+
+  buttonFontSize: 16,
+  buttonLineHeight: 24,
 };
+
+export function createTheme(custonTheme) {
+  return {
+    ...baseTheme,
+    ...custonTheme,
+  };
+}
 
 const ThemeContext = React.createContext();
 
-export function ThemeProvider({ children }) {
+export function ThemeProvider({ children, theme = baseTheme }) {
   return (
-    <ThemeContext.Provider value={baseTheme}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
   );
 }
 
@@ -93,6 +105,7 @@ export function Spacing({
   left,
   children,
   flex = true,
+  debug = false,
 }) {
   return (
     <View
@@ -105,6 +118,7 @@ export function Spacing({
         right && { marginRight: right },
         bottom && { marginBottom: bottom },
         left && { marginLeft: left },
+        debug && { backgroundColor: 'red' },
       ]}
     >
       {children}

@@ -26,20 +26,12 @@ export default function ReceiptPage({
         <BlockFormTitle title="would you like a receipt?" />
         <Spacing top={16} flex={false}>
           <Stack horizontal>
-            <Button theme={{ fontSize: 24 }} title="via sms" onPress={onSms} />
-            <Button
-              theme={{ fontSize: 24 }}
-              title="via email"
-              onPress={onEmail}
-            />
+            <Button title="via sms" onPress={onSms} />
+            <Button title="via email" onPress={onEmail} />
           </Stack>
         </Spacing>
         <Spacing top={16} horizontal={8} flex={false}>
-          <Button
-            theme={{ fontSize: 24 }}
-            title="no, thanks"
-            onPress={onNoReceipt}
-          />
+          <Button title="no, thanks" onPress={onNoReceipt} />
         </Spacing>
       </BlockForm>
       <CountdownDoneButton onPress={onComplete} duration={20} />

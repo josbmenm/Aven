@@ -75,16 +75,14 @@ function BlockFormInputWithRef(
   return (
     <View
       style={{
-        flex: 1,
-        marginHorizontal: theme.paddingHorizontal,
         borderWidth: 1,
         paddingLeft: theme.spacing,
         borderRadius: 4,
         paddingTop: theme.inputPaddingTop,
         borderColor: theme.colorPrimary,
         borderWidth: 3,
-        backgroundColor: 'red',
-        height: 80,
+        minHeight: 44,
+        width: '100%',
       }}
     >
       <Animated.Text
@@ -106,7 +104,7 @@ function BlockFormInputWithRef(
             {
               translateY: Animated.interpolate(placeholderOpenProgress, {
                 inputRange: [0, 1],
-                outputRange: [4, 12],
+                outputRange: [8, 20],
               }),
             },
           ],
@@ -133,10 +131,7 @@ function BlockFormInputWithRef(
         style={{
           fontSize: theme.inputFontSize,
           color: theme.primaryColor,
-          position: 'relative',
-          backgroundColor: 'blue',
-          minHeight: 36,
-          flex: 1,
+          minHeight: 44,
           ...(mode === 'description' ? { height: 120 } : {}),
         }}
       />

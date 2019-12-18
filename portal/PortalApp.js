@@ -58,7 +58,7 @@ import OnoTheme from '../logic/OnoTheme';
 import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
-import { ThemeProvider } from '../dash-ui/Theme';
+import { ThemeProvider, createTheme } from '../dash-ui/Theme';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -264,6 +264,16 @@ const App = createStackTransitionNavigator({
 
 const AppContainer = createAppContainer(App);
 
+const theme = createTheme({
+  colorPrimary: 'hsl(180, 100%, 16%)',
+  colorNeutral: '#444',
+  colorNegative: '#722',
+  colorPositive: '#272',
+  colorWarning: '#997200',
+  buttonFontSize: 24,
+  buttonLineHeight: 28,
+});
+
 function RetryButton({ onRetry }) {
   return <Button title="Try again.." onPress={onRetry} />;
 }
@@ -289,7 +299,7 @@ function FullApp() {
   }
   return (
     <OldThemeProvider value={OnoTheme}>
-      <ThemeProvider>
+      <ThemeProvider theme={theme}>
         <HostContextContainer {...HOST_CONFIG}>
           <CloudContext.Provider value={cloud}>
             <PopoverContainer>

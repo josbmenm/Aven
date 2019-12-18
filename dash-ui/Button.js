@@ -33,8 +33,8 @@ export default function Button({
         {title && (
           <Text
             style={{
-              fontSize: theme.fontSize,
-              lineHeight: theme.lineHeight,
+              fontSize: theme.buttonFontSize,
+              lineHeight: theme.buttonLineHeight,
               color: outline ? theme.colorPrimary : 'white',
               fontFamily: theme.fontBold,
               fontWeight: 'bold',

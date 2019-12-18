@@ -12,7 +12,7 @@ import Row from '../components/Row';
 import Tag from '../components/Tag';
 import useAsyncErrorPopover from '../components/useAsyncErrorPopover';
 import AsyncButton from '../components/AsyncButton';
-import MultiSelect from '../components/MultiSelect';
+import MultiSelect from '../dash-ui/MultiSelect';
 import BlockFormInput from '../components/BlockFormInput';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
