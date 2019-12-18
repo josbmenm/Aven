@@ -5,8 +5,10 @@ import getIdOfValue from '../cloud-utils/getIdOfValue';
 import { getMaxListDocs } from '../cloud-core/maxListDocs';
 import bindCommitDeepBlock from '../cloud-core/bindCommitDeepBlock';
 import Err from '../utils/Err';
-import xs from 'xstream';
-import { createStreamValue } from '../cloud-core/StreamValue';
+import {
+  streamOf,
+  createProducerStream,
+} from '../cloud-core/createMemoryStream';
 
 const pgFormat = require('pg-format');
 
@@ -28,25 +30,9 @@ export default async function startPostgresStorageSource({
   }
   const id = `postgres-${cuid()}`;
 
-  const TOP_PARENT_ID = 0; // hacky approach to handle top-level parents and still enforce uniqueness properly on the docs table.
+  const [isConnected, setIsConnected] = streamOf(false);
 
-  let isCurrentlyConnected = false;
-  const defaultConnectionUpdater = isConn => {
-    isCurrentlyConnected = isConn;
-  };
-  let updateIsConnected = defaultConnectionUpdater;
-  const isConnectedStream = xs.createWithMemory({
-    start: listener => {
-      listener.next(isCurrentlyConnected);
-      updateIsConnected = isConn => {
-        listener.next(isConn);
-        defaultConnectionUpdater(isConn);
-      };
-    },
-    stop: () => {
-      updateIsConnected = defaultConnectionUpdater;
-    },
-  });
+  const TOP_PARENT_ID = 0; // hacky approach to handle top-level parents and still enforce uniqueness properly on the docs table.
 
   const docStreamChannels = {};
 
@@ -98,7 +84,7 @@ export default async function startPostgresStorageSource({
           INSERT INTO docs ("docId") VALUES (${TOP_PARENT_ID}) ON CONFLICT ("docId") DO NOTHING;
         `);
 
-          updateIsConnected(true);
+          setIsConnected(true);
           done(null, connection);
         } catch (e) {
           console.error('Error on DB setup:', e);
@@ -295,7 +281,9 @@ export default async function startPostgresStorageSource({
 
     if (id && putResult.id !== id) {
       throw new Err(
-        `Invalid ID provided for this value. Provided "${id}" but computed id "${putResult.id}"`,
+        `Invalid ID provided for this value. Provided "${id}" but computed id "${
+          putResult.id
+        }"`,
         'InvalidValueId',
         { id, value },
       );
@@ -819,7 +807,7 @@ export default async function startPostgresStorageSource({
   }
 
   async function close() {
-    updateIsConnected(false);
+    setIsConnected(false);
     await knex.destroy();
     handleClose();
   }
@@ -883,7 +871,7 @@ export default async function startPostgresStorageSource({
   }
 
   return {
-    connected: createStreamValue(isConnectedStream, () => `PostgresConnected`),
+    isConnected,
     close,
     getDocStream,
     dispatch: createDispatcher({

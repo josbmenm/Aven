@@ -80,7 +80,6 @@ export default function createGenericDataSource({
   commitDocDestroy,
   commitDocMove,
   isConnected,
-  connectedStream,
   docState,
   domain: sourceDomain,
   id,
@@ -171,7 +170,9 @@ export default function createGenericDataSource({
 
     if (id && putResult.id !== id) {
       throw new Err(
-        `Invalid ID provided for this value. Provided "${id}" but expected "${putResult.id}"`,
+        `Invalid ID provided for this value. Provided "${id}" but expected "${
+          putResult.id
+        }"`,
         'InvalidValueId',
         { id, value },
       );
@@ -489,7 +490,6 @@ export default function createGenericDataSource({
     observeDocChildren,
     getDocStream,
     getDocChildrenEventStream,
-    connected: connectedStream,
     dispatch: createDispatcher({
       PutDoc,
       PutBlock,

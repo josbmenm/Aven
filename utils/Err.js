@@ -16,5 +16,4 @@ export default class Err extends Error {
     };
   }
 
-  suppressInDevTools = true;
 }
