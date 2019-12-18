@@ -159,33 +159,38 @@ function BlendProfileForm({ onClose, onBlendProfile, blendProfileId }) {
   const allProfiles = (config && config.baseTables.BlendProfiles) || {};
   return (
     <ScrollView style={{ height: 650 }}>
-      {Object.values(allProfiles).map(profile => (
-        <TouchableOpacity
-          onPress={() => {
-            onBlendProfile(profile);
-            onClose();
-          }}
-          style={{ flexDirection: 'row', alignItems: 'center' }}
-        >
-          <Text
-            style={{
-              padding: 16,
-              flex: 1,
-              ...primaryFontFace,
-              color: blendProfileId === profile.id ? '#111' : '#444',
-              fontSize: 22,
+      {Object.values(allProfiles).map(profile => {
+        if (!profile.Name) {
+          return null;
+        }
+        return (
+          <TouchableOpacity
+            onPress={() => {
+              onBlendProfile(profile);
+              onClose();
             }}
+            style={{ flexDirection: 'row', alignItems: 'center' }}
           >
-            {profile.Name} (
-            {(profile.Timer1 +
-              profile.Timer2 +
-              profile.Timer3 +
-              profile.Timer4) /
-              1000}{' '}
-            sec)
-          </Text>
-        </TouchableOpacity>
-      ))}
+            <Text
+              style={{
+                padding: 16,
+                flex: 1,
+                ...primaryFontFace,
+                color: blendProfileId === profile.id ? '#111' : '#444',
+                fontSize: 22,
+              }}
+            >
+              {profile.Name} (
+              {((profile.Timer1 || 0) +
+                (profile.Timer2 || 0) +
+                (profile.Timer3 || 0) +
+                (profile.Timer4 || 0)) /
+                1000}{' '}
+              sec)
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
     </ScrollView>
   );
 }

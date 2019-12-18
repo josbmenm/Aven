@@ -508,7 +508,7 @@ function StatusView() {
         <Tag title={tagText} color={tagColor} />
         {restaurantState && !!restaurantState.sessionName && (
           <Text style={{ ...primaryFontFace, fontSize: 20 }}>
-            {restaurantState.sessionName}
+            {isOpen && restaurantState.sessionName}
           </Text>
         )}
       </View>

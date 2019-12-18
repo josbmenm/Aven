@@ -397,16 +397,16 @@ export default async function startVerseServer(httpServer) {
   restaurantConfigStream.stream.addListener(restConfigListener);
 
   setInterval(() => {
-    trace('RestaurantStateMonitor', lastRestaurantState);
+    // trace('RestaurantStateMonitor', lastRestaurantState);
   }, 59000);
 
   if (kitchen) {
     setInterval(() => {
       const kitchenState = kitchenStateDoc.value.get();
-      kitchenState &&
-        trace('KitchenMonitor', {
-          ...kitchenState,
-        });
+      // kitchenState &&
+      // trace('KitchenMonitor', {
+      //   ...kitchenState,
+      // });
     }, 59000);
   }
 
@@ -451,9 +451,9 @@ export default async function startVerseServer(httpServer) {
             return [ingredient.Name, slotLog];
           }),
         );
-        trace('InventoryMonitor', {
-          ...inventoryResults,
-        });
+        // trace('InventoryMonitor', {
+        //   ...inventoryResults,
+        // });
       });
     }, 59000);
   }
