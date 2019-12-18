@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { boldPrimaryFontFace } from './Styles';
 import { useTheme, Large } from '../dash-ui/Theme';
+import { opacify } from '../dash-ui/utils';
 
 export default function Tag({
   title,
@@ -48,7 +49,7 @@ export default function Tag({
     <View
       style={{
         borderRadius: theme.borderRadius,
-        backgroundColor,
+        backgroundColor: opacify(backgroundColor, 0.8),
         paddingVertical: theme.paddingVertical,
         paddingHorizontal: theme.paddingHorizontal,
         minWidth: size === 'small' ? null : 150,
@@ -68,8 +69,3 @@ export default function Tag({
     </View>
   );
 }
-
-// Tag.neutralColor = '#444';
-// Tag.negativeColor = '#722';
-// Tag.positiveColor = '#272';
-// Tag.warningColor = '#997200';

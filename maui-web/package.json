@@ -22,7 +22,8 @@
       "components",
       "react-utils",
       "navigation-web",
-      "dashboard"
+      "dashboard",
+      "dash-ui"
     ],
     "moduleDependencies": [
       "react-calendar",

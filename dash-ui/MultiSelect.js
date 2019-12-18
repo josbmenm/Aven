@@ -9,6 +9,8 @@ export default function MultiSelect({
   theme: themeProp,
 }) {
   const theme = useTheme(themeProp);
+  const idxValue = options.findIndex(item => item.value === value);
+
   return (
     <View
       style={{
@@ -22,7 +24,6 @@ export default function MultiSelect({
       {options.map((opt, idx) => {
         const isActive = value === opt.value;
         const isLast = idx === options.length - 1;
-        console.log('TCL: isLast', isLast);
         return (
           <React.Fragment>
             <TouchableOpacity
@@ -48,11 +49,10 @@ export default function MultiSelect({
                 {opt.name}
               </Text>
             </TouchableOpacity>
-            {!isActive && !isLast && (
+            {!isLast && !isActive && options[idx + 1].value !== value && (
               <View
                 style={{
                   width: 1,
-                  // height: '100%',
                   opacity: 0.5,
                   backgroundColor: theme.colorPrimary,
                 }}
