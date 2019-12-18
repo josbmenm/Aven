@@ -1,3 +1,5 @@
+import Err from '../utils/Err';
+
 export function streamOf(initialValue, crumb) {
   const subscribers = new Set();
   let lastValue = initialValue;
@@ -347,22 +349,31 @@ function mapStream(stream, mapper, mapDescriptor) {
   });
 }
 
-export function createProducerStream(producer) {
+function augmentStream(stream) {
+  stream.compose = composeFn => composeFn(stream);
+  stream.map = (mapper, mapDescriptor) =>
+    mapStream(stream, mapper, mapDescriptor);
+  stream.filter = (filterFn, filterDescriptor) =>
+    filterStream(stream, filterFn, filterDescriptor);
+  stream.dropRepeats = (repeatComparator, dropRepeatsDescriptor) =>
+    dropRepeatsStream(stream, repeatComparator, dropRepeatsDescriptor);
+  stream.flatten = () => flattenStream(stream);
+  stream.cacheFirst = () => cacheFirstStream(stream);
+  stream.spy = spier => spyStream(stream, spier);
+}
+
+// just like createProducerStream, except it does not cache the last value and producer.get is called for sync gets
+export function createEventStream(producer) {
   const subscribers = new Set();
   let isListening = false;
-  let hasEmitted = false;
-  let lastValue = undefined;
   const crumb = producer.crumb;
 
   function addListener(sub) {
-    if (hasEmitted) sub.next(lastValue);
     subscribers.add(sub);
-    if (!isListening && !hasEmitted) {
+    if (!isListening) {
       isListening = true;
       producer.start({
         next: value => {
-          hasEmitted = true;
-          lastValue = value;
           subscribers.forEach(subscriber => {
             subscriber.next && subscriber.next(value);
           });
@@ -372,9 +383,75 @@ export function createProducerStream(producer) {
         },
         error: err => {
           subscribers.forEach(subscriber => {
-            subscriber.error && subscriber.error(err);
+            const error = new Err(err.message, 'StreamError', {
+              error: err.toJSON(),
+              crumb,
+            });
+            subscriber.error && subscriber.error(error);
           });
           subscribers.clear();
+          isListening = false;
+        },
+      });
+    }
+  }
+
+  let removeListenerTimeout = null;
+  function removeListener(sub) {
+    subscribers.delete(sub);
+    clearTimeout(removeListenerTimeout);
+    removeListenerTimeout = setTimeout(() => {
+      if (subscribers.size === 0 && isListening) {
+        isListening = false;
+        producer.stop();
+      }
+    }, 1);
+  }
+
+  const stream = {
+    type: 'Stream',
+    crumb,
+    addListener,
+    removeListener,
+    get: producer.get,
+  };
+  augmentStream(stream);
+  return stream;
+}
+
+export function createProducerStream(producer) {
+  const subscribers = new Set();
+  let isListening = false;
+  let hasEmitted = false;
+  let lastValue = undefined;
+  const crumb = producer.crumb;
+  function addListener(sub) {
+    if (hasEmitted) sub.next(lastValue);
+    subscribers.add(sub);
+    if (!isListening && !hasEmitted) {
+      isListening = true;
+      producer.start({
+        next: value => {
+          lastValue = value;
+          hasEmitted = true;
+          subscribers.forEach(subscriber => {
+            subscriber.next && subscriber.next(value);
+          });
+        },
+        complete: () => {
+          isListening = false;
+        },
+        error: err => {
+          if (subscribers.size > 0) {
+            subscribers.forEach(subscriber => {
+              const error = new Err(err.message, 'StreamError', {
+                error: err.toJSON ? err.toJSON() : err,
+                crumb,
+              });
+              subscriber.error && subscriber.error(error);
+            });
+            subscribers.clear();
+          }
           isListening = false;
           hasEmitted = false;
         },
@@ -403,15 +480,7 @@ export function createProducerStream(producer) {
     addListener,
     removeListener,
     get: () => lastValue,
-    compose: composeFn => composeFn(stream),
-    map: (mapper, mapDescriptor) => mapStream(stream, mapper, mapDescriptor),
-    filter: (filterFn, filterDescriptor) =>
-      filterStream(stream, filterFn, filterDescriptor),
-    dropRepeats: (repeatComparator, dropRepeatsDescriptor) =>
-      dropRepeatsStream(stream, repeatComparator, dropRepeatsDescriptor),
-    flatten: () => flattenStream(stream),
-    cacheFirst: () => cacheFirstStream(stream),
-    spy: spier => spyStream(stream, spier),
   };
+  augmentStream(stream);
   return stream;
 }
