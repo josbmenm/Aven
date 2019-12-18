@@ -8,8 +8,9 @@ import { MauiWebRoutes } from '../maui-web/MauiWebApp';
 import { monsterra } from '../components/Styles';
 import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
 import { CloudContext } from '../cloud-core/KiteReact';
-import { ThemeProvider } from '../dashboard/Theme';
+import { ThemeProvider as OLDThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
+import { ThemeProvider } from '../dash-ui/Theme';
 
 const NotFoundPage = () => (
   <View
@@ -170,9 +171,11 @@ const AppNavigator = createFullscreenSwitchNavigator(
 function App(props) {
   const cloud = React.useContext(CloudContext);
   return (
-    <ThemeProvider value={OnoTheme}>
-      <AppNavigator {...props} screenProps={{ cloud }} />
-    </ThemeProvider>
+    <OLDThemeProvider value={OnoTheme}>
+      <ThemeProvider>
+        <AppNavigator {...props} screenProps={{ cloud }} />
+      </ThemeProvider>
+    </OLDThemeProvider>
   );
 }
 
