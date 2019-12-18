@@ -120,6 +120,83 @@ function RestaurantReducerFn(state = {}, action) {
         queue: [...PRIMING_TASKS, ...(state.queue || [])],
       };
     }
+    case 'ReserveFillGripperClean': {
+      if (state.reservedFillGripperClean) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        reservedFillGripperClean: {
+          reserveTime: action.dispatchTime,
+          lockId: action.lockId,
+        },
+      };
+    }
+    case 'ClearFillGripperClean': {
+      if (
+        action.force ||
+        state.reservedFillGripperClean.lockId === action.lockId
+      ) {
+        return {
+          ...defaultReturn(),
+          reservedFillGripperClean: null,
+        };
+      }
+      return defaultReturn();
+    }
+    case 'ReserveBlenderClean': {
+      if (
+        state.reservedBlenderClean &&
+        state.reservedBlenderClean.lockId !== action.lockId
+      ) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        reservedBlenderClean: {
+          reserveTime: action.dispatchTime,
+          lockId: action.lockId,
+          mode: action.mode,
+          didFlipBlade: false,
+          didRetractArm: false,
+        },
+      };
+    }
+    case 'ClearBlenderClean': {
+      if (action.force || state.reservedBlenderClean.lockId === action.lockId) {
+        return {
+          ...defaultReturn(),
+          reservedBlenderClean: null,
+        };
+      }
+      return defaultReturn();
+    }
+    case 'DidFlipBlade': {
+      const { reservedBlenderClean } = state;
+      if (!reservedBlenderClean || reservedBlenderClean.didFlipBlade) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        reservedBlenderClean: {
+          ...reservedBlenderClean,
+          didFlipBlade: true,
+        },
+      };
+    }
+    case 'DidRetractArm': {
+      const { reservedBlenderClean } = state;
+      if (!reservedBlenderClean || reservedBlenderClean.didRetractArm) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        reservedBlenderClean: {
+          ...reservedBlenderClean,
+          didRetractArm: true,
+        },
+      };
+    }
     case 'CancelTask': {
       return {
         ...defaultReturn(),
@@ -682,6 +759,9 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'Attach': {
+      if (state.manualMode) {
+        return defaultReturn();
+      }
       return {
         ...defaultReturn(),
         isAttached: true,
@@ -693,20 +773,24 @@ function RestaurantReducerFn(state = {}, action) {
       return {
         ...defaultReturn(),
         isAttached: false,
+        isAutoRunning: false,
       };
     }
     case 'EnableManualMode': {
       return {
         ...defaultReturn(),
         isAttached: false,
-        manualMode: true,
+        manualMode: action.lockId,
       };
     }
     case 'DisableManualMode': {
-      return {
-        ...defaultReturn(),
-        manualMode: false,
-      };
+      if (action.force || action.lockId === state.manualMode) {
+        return {
+          ...defaultReturn(),
+          manualMode: false,
+        };
+      }
+      return defaultReturn();
     }
     case 'SetMaintenanceMode': {
       return {

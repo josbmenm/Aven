@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { AsyncStorage } from 'react-native';
 import useAsyncError from '../react-utils/useAsyncError';
+import cuid from 'cuid';
 
 const UNLOADED_STATE = {};
+
+export function isStateLoaded(s) {
+  return s !== UNLOADED_STATE;
+}
 
 export function isStateUnloaded(s) {
   return s === UNLOADED_STATE;
@@ -49,6 +54,16 @@ export default function useAsyncStorage(storageKey, defaultValue) {
   }
 
   return [storageState, setStorageState];
+}
+
+export function useDeviceId() {
+  const [deviceId, setDeviceId] = useAsyncStorage('DeviceId', null);
+  useEffect(() => {
+    if (isStateLoaded(deviceId) && !deviceId) {
+      setDeviceId(cuid());
+    }
+  }, [deviceId]);
+  return deviceId;
 }
 
 export function useStorageMemo(storageKey, onGetInitial) {

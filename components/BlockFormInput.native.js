@@ -116,7 +116,7 @@ function BlockFormInputWithRef(
       </Animated.Text>
       <Input
         enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
-        keyboardAppearance="dark"
+        keyboardAppearance="light"
         keyboardType={keyboardType}
         autoCorrect={autoCorrect}
         secureTextEntry={secureTextEntry}

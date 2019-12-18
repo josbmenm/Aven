@@ -6,6 +6,20 @@ const KitchenCommands = {
       return kitchenState.FillSystem_PrgStep_READ === 0;
     },
   },
+  HomeBlend: {
+    subsystem: 'BlendSystem',
+    pulse: ['Home'],
+    checkReady: kitchenState => {
+      return kitchenState.BlendSystem_PrgStep_READ === 0;
+    },
+  },
+  HomeFrozen: {
+    subsystem: 'FrozenFood',
+    pulse: ['Home'],
+    checkReady: kitchenState => {
+      return kitchenState.FrozenFood_PrgStep_READ === 0;
+    },
+  },
   GetCup: {
     subsystem: 'FillSystem',
     pulse: ['PickUpNewCup'],
@@ -199,11 +213,11 @@ const KitchenCommands = {
       return kitchenState.BlendSystem_FlipBladeReady_READ;
     },
   },
-  ReturnBladePlate: {
+  ReturnBlade: {
     subsystem: 'BlendSystem',
-    pulse: ['ReturnBladePlate'],
+    pulse: ['ReturnBlade'],
     checkReady: kitchenState => {
-      return kitchenState.BlendSystem_ReturnBladePlateReady_READ;
+      return kitchenState.BlendSystem_ReturnBladeReady_READ;
     },
   },
   BeveragePurgeAll: {
@@ -223,6 +237,9 @@ const KitchenCommands = {
   FrozenPurgeAll: {
     subsystem: 'FrozenFood',
     pulse: ['PurgeAll'],
+    params: {
+      AmountToDispense: 9,
+    },
     checkReady: kitchenState => {
       return kitchenState.FrozenFood_PurgeAllReady_READ;
     },
@@ -230,6 +247,9 @@ const KitchenCommands = {
   FrozenVibrateAll: {
     subsystem: 'FrozenFood',
     pulse: ['VibrateAll'],
+    params: {
+      AmountToDispense: 9,
+    },
     checkReady: kitchenState => {
       return kitchenState.FrozenFood_VibrateAllReady_READ;
     },

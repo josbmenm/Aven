@@ -3,7 +3,9 @@ import TwoPanePage from '../components/TwoPanePage';
 import { View, Text } from 'react-native';
 import Button from '../components/Button';
 import { useSubsystemOverview } from '../ono-cloud/OnoKitchen';
-
+import usePendantManualMode from '../components/usePendantManualMode';
+import KitchenCommandButton from '../components/KitchenCommandButton';
+import ButtonStack from '../components/ButtonStack';
 import RowSection from '../components/RowSection';
 import Subtitle from '../components/Subtitle';
 import Row from '../components/Row';
@@ -208,17 +210,6 @@ function DeliverySystemRow({ restaurantState, dispatch }) {
     </View>
   );
 
-  {
-    !restaurantState.isAttached && (
-      <Button
-        type="outline"
-        title="wipe material map state"
-        onPress={() => {
-          dispatch({ type: 'WipeMaterialState' });
-        }}
-      />
-    );
-  }
   return <TaskInfoText state={restaurantState.delivery} />;
 }
 
@@ -228,7 +219,7 @@ function RestaurantStateList({ restaurantState, dispatch }) {
   }
   const count = restaurantState.queue ? restaurantState.queue.length : 0;
   return (
-    <RowSection title="material map" style={{ marginTop: 42 }}>
+    <RowSection title="material map">
       <Row title={`${count} task${count === 1 ? '' : 's'} in queue`} />
       {restaurantState.fill && restaurantState.fill !== 'ready' && (
         <Row title="filling">
@@ -273,7 +264,29 @@ function ModeView({ restaurantState, dispatch }) {
   );
 }
 
+function HomingRow() {
+  return (
+    <Row title="Reset">
+      <ButtonStack
+        buttons={[
+          <KitchenCommandButton commandType="Home" title="home system" />,
+        ]}
+      />
+      <ButtonStack
+        buttons={[
+          <KitchenCommandButton
+            commandType="HomeBlend"
+            title="home blend+delivery"
+          />,
+        ]}
+      />
+    </Row>
+  );
+}
+
 export default function SequencerScreen(props) {
+  const isManualMode = usePendantManualMode();
+
   const [restaurantState, dispatch] = useRestaurantState();
   return (
     <TwoPanePage
@@ -285,17 +298,20 @@ export default function SequencerScreen(props) {
         />
       }
       side={
-        restaurantState && restaurantState.manualMode ? (
-          <ManualControl
-            restaurantState={restaurantState}
-            dispatch={dispatch}
-          />
-        ) : (
-          <RestaurantStateList
-            restaurantState={restaurantState}
-            dispatch={dispatch}
-          />
-        )
+        <View style={{ padding: 54 }}>
+          <HomingRow />
+          {isManualMode ? (
+            <ManualControl
+              restaurantState={restaurantState}
+              dispatch={dispatch}
+            />
+          ) : (
+            <RestaurantStateList
+              restaurantState={restaurantState}
+              dispatch={dispatch}
+            />
+          )}
+        </View>
       }
     >
       <ModeView restaurantState={restaurantState} dispatch={dispatch} />

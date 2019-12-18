@@ -263,7 +263,11 @@ export default async function startSkynetServer(httpServer) {
         const { Enabled, Address, DaysOfWeek, Name } = scheduleRow;
         if (!Enabled) return;
         DAYS.forEach(dayId => {
-          days[dayId] = { key: dayId, name: DAY_NAMES[dayId], stops: [] };
+          days[dayId] = days[dayId] || {
+            key: dayId,
+            name: DAY_NAMES[dayId],
+            stops: [],
+          };
         });
         DaysOfWeek.forEach(dayId => {
           const start = new Date(scheduleRow['Start Time']);
@@ -344,11 +348,14 @@ export default async function startSkynetServer(httpServer) {
   cloud.setReducer('FeedbackSummary', {
     actionsDoc: companyActivity,
     reducer: defineCloudReducer(
-      'FeedbackSummary_04',
+      'FeedbackSummary_a03',
       (prevState = {}, action) => {
         const lastCount = prevState.feedbackCount || 0;
         const allFeedback = { ...prevState.allFeedback } || {};
         if (action.type === 'CustomerFeedback') {
+          if (action.email.match(/\@onofood.co$/)) {
+            return prevState;
+          }
           const t = new Date(action.time);
           const { year, month, date } = timeIntToPSTDate(action.time);
           const dayString = `${year}-${month}-${date}`;
@@ -382,7 +389,7 @@ export default async function startSkynetServer(httpServer) {
       {},
     ),
     snapshotInterval: 10,
-    snapshotsDoc: cloud.get('FeedbackSummarySnapshot'),
+    snapshotsDoc: cloud.get('FeedbackSummarySnapshot-a02'),
   });
 
   const kitchenConfig = cloud.docs.setOverrideValueStream(
@@ -414,28 +421,28 @@ export default async function startSkynetServer(httpServer) {
   //   ),
   // );
 
-  const protectedSource = createProtectedSource({
-    source: cloud,
-    staticPermissions: {
-      'onofood.co': {
-        CompanyConfig: { defaultRule: { canRead: true } },
-        KitchenConfig: { defaultRule: { canRead: true } },
-        DeviceActions: { defaultRule: { canWrite: true } },
-        Menu: { defaultRule: { canRead: true } },
-        PendingOrders: {
-          defaultRule: {
-            canPost: true,
-            canWrite: true, // todo, disable write, very dangerous. posted docs are owned by original poster and should allow writes
-          },
-        },
-        Airtable: { defaultRule: { canRead: true } },
-        ConfirmedOrders: { defaultRule: { canRead: true } },
-        RequestedLocations: { defaultRule: { canWrite: true } }, // todo, refactor to canTransact!!
-        CustomerFeedback: { defaultRule: { canPost: true } },
-      },
-    },
-    providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
-  });
+  // const protectedSource = createProtectedSource({
+  //   source: cloud,
+  //   staticPermissions: {
+  //     'onofood.co': {
+  //       CompanyConfig: { defaultRule: { canRead: true } },
+  //       KitchenConfig: { defaultRule: { canRead: true } },
+  //       DeviceActions: { defaultRule: { canWrite: true } },
+  //       Menu: { defaultRule: { canRead: true } },
+  //       PendingOrders: {
+  //         defaultRule: {
+  //           canPost: true,
+  //           canWrite: true, // todo, disable write, very dangerous. posted docs are owned by original poster and should allow writes
+  //         },
+  //       },
+  //       Airtable: { defaultRule: { canRead: true } },
+  //       ConfirmedOrders: { defaultRule: { canRead: true } },
+  //       RequestedLocations: { defaultRule: { canWrite: true } }, // todo, refactor to canTransact!!
+  //       CustomerFeedback: { defaultRule: { canPost: true } },
+  //     },
+  //   },
+  //   providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
+  // });
 
   const fsClient = createFSClient({ client: cloud });
 
@@ -610,7 +617,7 @@ Debug: ${JSON.stringify(action)}
   return {
     ...webService,
     close: async () => {
-      await protectedSource.close();
+      // await protectedSource.close();
       await cloud.close();
       await webService.close();
     },

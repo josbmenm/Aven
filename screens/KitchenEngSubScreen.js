@@ -13,6 +13,7 @@ import DisconnectedPage from '../components/DisconnectedPage';
 import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import { getSubsystem } from '../ono-cloud/OnoKitchen';
 import { genericText } from '../components/Styles';
+import usePendantManualMode from '../components/usePendantManualMode';
 import useFocus from '../navigation-hooks/useFocus';
 import { SystemFaultsAndAlarms } from '../components/FaultsAndAlarms';
 import BlockFormInput from '../components/BlockFormInput';
@@ -42,7 +43,6 @@ function SystemActionForm({
 }) {
   const initialValues = {};
   pulse.params.forEach(paramName => {
-    console.log('trol', paramName, system.valueCommands[paramName].value);
     const v = system.valueCommands[paramName].value;
     initialValues[paramName] = v === null ? null : v.toString();
   });
@@ -54,7 +54,7 @@ function SystemActionForm({
   }, initialValues);
 
   function handleSubmit() {
-    debugger;
+    onClose();
   }
 
   const inputRenderers = pulse.params.map(paramName => inputProps => {
@@ -227,7 +227,7 @@ function ReadsAndFaults({ system }) {
     </React.Fragment>
   );
 }
-function SystemView({ system, systemId, kitchenCommand }) {
+function SystemView({ system, systemId, kitchenCommand, writeMode }) {
   if (!system) {
     return null;
   }
@@ -236,7 +236,8 @@ function SystemView({ system, systemId, kitchenCommand }) {
   return (
     <React.Fragment>
       <RowSection>
-        {pulseCommands.length > 0 &&
+        {writeMode &&
+          pulseCommands.length > 0 &&
           pulseCommands.map(pulseCommandName => {
             const pulse = system.pulseCommands[pulseCommandName];
             return (
@@ -300,14 +301,16 @@ function SystemView({ system, systemId, kitchenCommand }) {
                       >
                         {val.value ? 'True' : 'False'}
                       </Text>
-                      <Button
-                        title={val.value ? 'set OFF' : 'set ON'}
-                        onPress={() => {
-                          kitchenCommand(systemId, [], {
-                            [valueCommand]: !val.value,
-                          });
-                        }}
-                      />
+                      {writeMode && (
+                        <Button
+                          title={val.value ? 'set OFF' : 'set ON'}
+                          onPress={() => {
+                            kitchenCommand(systemId, [], {
+                              [valueCommand]: !val.value,
+                            });
+                          }}
+                        />
+                      )}
                     </View>
                   );
                 }
@@ -338,12 +341,14 @@ function SystemView({ system, systemId, kitchenCommand }) {
                     >
                       {val.value}
                     </Text>
-                    <SetValueButton
-                      system={system}
-                      systemId={systemId}
-                      val={val}
-                      kitchenCommand={kitchenCommand}
-                    />
+                    {writeMode && (
+                      <SetValueButton
+                        system={system}
+                        systemId={systemId}
+                        val={val}
+                        kitchenCommand={kitchenCommand}
+                      />
+                    )}
                   </View>
                 );
               })}
@@ -370,7 +375,7 @@ export default function Subsystem({ ...props }) {
   }
   const system = getSubsystem(systemId, kitchenConfig, kitchenState);
   const isConnected = useValue(cloud.connected);
-
+  const isManualMode = usePendantManualMode();
   return (
     <TwoPanePage
       {...props}
@@ -379,6 +384,7 @@ export default function Subsystem({ ...props }) {
     >
       {isConnected ? (
         <SystemView
+          writeMode={isManualMode}
           system={system}
           systemId={systemId}
           kitchenCommand={kitchenCommand}

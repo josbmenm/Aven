@@ -50,6 +50,9 @@ export function computeNextSteps(
       };
 
       const commandType = command && machineCommands[command.commandType];
+      if (!commandType) {
+        console.log(rawKitchenCommand);
+      }
       const isSystemIdle =
         kitchenState && commandType
           ? kitchenState[`${commandType.subsystem}_PrgStep_READ`] === 0

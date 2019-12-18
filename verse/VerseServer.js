@@ -397,16 +397,16 @@ export default async function startVerseServer(httpServer) {
   restaurantConfigStream.stream.addListener(restConfigListener);
 
   setInterval(() => {
-    trace('RestaurantStateMonitor', lastRestaurantState);
+    // trace('RestaurantStateMonitor', lastRestaurantState);
   }, 59000);
 
   if (kitchen) {
     setInterval(() => {
       const kitchenState = kitchenStateDoc.value.get();
-      kitchenState &&
-        trace('KitchenMonitor', {
-          ...kitchenState,
-        });
+      // kitchenState &&
+      // trace('KitchenMonitor', {
+      //   ...kitchenState,
+      // });
     }, 59000);
   }
 
@@ -451,9 +451,9 @@ export default async function startVerseServer(httpServer) {
             return [ingredient.Name, slotLog];
           }),
         );
-        trace('InventoryMonitor', {
-          ...inventoryResults,
-        });
+        // trace('InventoryMonitor', {
+        //   ...inventoryResults,
+        // });
       });
     }, 59000);
   }
@@ -496,7 +496,7 @@ export default async function startVerseServer(httpServer) {
           restaurantConfigStream,
           action,
         );
-      case 'RestartDevice':
+      case 'RestartDevice': {
         await fetch(
           `https://${getEnv('HEXNODE_HOST')}/api/v1/actions/reboot/`,
           {
@@ -508,8 +508,13 @@ export default async function startVerseServer(httpServer) {
             body: JSON.stringify({ devices: [action.mdmId] }),
           },
         );
-        log('DeviceRestarted', { mdmId: action.mdmId });
+        log('DeviceRestarted', {
+          mdmId: action.mdmId,
+          host: getEnv('HEXNODE_HOST'),
+          hasToken: !!getEnv('HEXNODE_TOKEN'),
+        });
         return;
+      }
       default: {
         return await cloud.dispatch(action);
       }

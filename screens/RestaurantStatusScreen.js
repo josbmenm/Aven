@@ -15,6 +15,7 @@ import RowSection from '../components/RowSection';
 import BlockFormInput from '../components/BlockFormInput';
 import SpinnerButton from '../components/SpinnerButton';
 import AsyncButton from '../components/AsyncButton';
+import { useDeviceId, isStateLoaded } from '../components/useAsyncStorage';
 import ButtonStack from '../components/ButtonStack';
 import MultiSelect from '../components/MultiSelect';
 import TemperatureView from '../components/TemperatureView';
@@ -169,7 +170,7 @@ function ServicingView() {
   const isHomed = kitchenState.FillSystem_Homed_READ;
   const isInServiceMode = kitchenState.FillSystem_InServiceMode_READ;
   return (
-    <Row title="Service Mode">
+    <Row title="Service Mode - For end-of-day shutdown">
       <View>
         {isInServiceMode ? (
           <Tag
@@ -185,13 +186,132 @@ function ServicingView() {
       </View>
       <ButtonStack
         buttons={[
-          <KitchenCommandButton commandType="Home" title="home system" />,
-          <KitchenCommandButton
-            commandType="EnterServiceMode"
-            title="enter service mode"
-          />,
+          kitchenState.FillSystem_InServiceMode_READ ? (
+            <KitchenCommandButton commandType="Home" title="home system" />
+          ) : (
+            <KitchenCommandButton
+              commandType="EnterServiceMode"
+              title="enter service mode"
+            />
+          ),
         ]}
       />
+    </Row>
+  );
+}
+
+function CleaningView() {
+  const [restaurantState, dispatch] = useRestaurantState();
+  const deviceId = useDeviceId();
+  const kitchenState = useKitchenState();
+  if (!kitchenState || !deviceId || !restaurantState) {
+    return null;
+  }
+  const canClear =
+    restaurantState.reservedFillGripperClean &&
+    restaurantState.reservedFillGripperClean.lockId === deviceId;
+  const canReserve = !restaurantState.reservedFillGripperClean;
+  return (
+    <Row title="Fill Gripper Cleaning">
+      <View>
+        {restaurantState.reservedFillGripperClean && (
+          <Tag
+            title="Paused for Fill Positioner Cleaning"
+            color={Tag.warningColor}
+          />
+        )}
+      </View>
+      <ButtonStack
+        buttons={[
+          canClear ? (
+            <Button
+              onPress={() => {
+                dispatch({
+                  type: 'ClearFillGripperClean',
+                  lockId: deviceId,
+                });
+              }}
+              title="Done Cleaning Fill Gripper"
+            />
+          ) : canReserve ? (
+            <Button
+              onPress={() => {
+                dispatch({
+                  type: 'ReserveFillGripperClean',
+                  lockId: deviceId,
+                });
+              }}
+              title="Clean Fill Gripper"
+            />
+          ) : null,
+        ]}
+      />
+    </Row>
+  );
+}
+
+function BlenderCleaningView() {
+  const [restaurantState, dispatch] = useRestaurantState();
+  const deviceId = useDeviceId();
+  const kitchenState = useKitchenState();
+  if (!kitchenState || !deviceId || !restaurantState) {
+    return null;
+  }
+  const canClear =
+    restaurantState.reservedBlenderClean &&
+    restaurantState.reservedBlenderClean.lockId === deviceId;
+  const canReserve = !restaurantState.reservedBlenderClean;
+  return (
+    <Row title="Blender Cleaning">
+      <View>
+        {restaurantState.reservedBlenderClean && (
+          <Tag title="Paused for Blender Cleaning" color={Tag.warningColor} />
+        )}
+      </View>
+      <ButtonStack
+        buttons={[
+          canClear ? (
+            <Button
+              onPress={() => {
+                dispatch({
+                  type: 'ClearBlenderClean',
+                  lockId: deviceId,
+                });
+              }}
+              title="Done Cleaning Blender"
+            />
+          ) : canReserve ? (
+            <Button
+              onPress={() => {
+                dispatch({
+                  type: 'ReserveBlenderClean',
+                  lockId: deviceId,
+                  mode: null,
+                });
+              }}
+              title="Clean Blender"
+            />
+          ) : null,
+        ]}
+      />
+      {canClear && (
+        <MultiSelect
+          value={restaurantState.reservedBlenderClean.mode || null}
+          onValue={mode => {
+            dispatch({
+              type: 'ReserveBlenderClean',
+              lockId: deviceId,
+              mode,
+            });
+          }}
+          options={[
+            { value: null, name: 'Ready' },
+            { value: 'lifter', name: 'Lifter Up' },
+            { value: 'blender', name: 'Blender Up' },
+            { value: 'arm', name: 'Arm Back' },
+          ]}
+        />
+      )}
     </Row>
   );
 }
@@ -388,7 +508,7 @@ function StatusView() {
         <Tag title={tagText} status={TagStatus} />
         {restaurantState && !!restaurantState.sessionName && (
           <Text style={{ ...primaryFontFace, fontSize: 20 }}>
-            {restaurantState.sessionName}
+            {isOpen && restaurantState.sessionName}
           </Text>
         )}
       </View>
@@ -464,13 +584,14 @@ export default function RestaurantStatusScreen(props) {
   return (
     <SimplePage {...props} hideBackButton footer={<StatusBar />}>
       <RootAuthenticationSection>
-        <TemperatureView />
-        <SafetyView />
+        {/* <SafetyView /> */}
+        <CleaningView />
+        <BlenderCleaningView />
         <ServicingView />
         <StatusView />
         <VanView />
+        <TemperatureView />
         <TanksView />
-        <BlenderView />
       </RootAuthenticationSection>
     </SimplePage>
   );

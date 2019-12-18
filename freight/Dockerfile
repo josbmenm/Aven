@@ -1,7 +1,15 @@
-  
-FROM nginx:alpine
+FROM node:12
 
-COPY config/nginx.conf /etc/nginx/conf.d/default.conf
+WORKDIR /usr/src/app
 
-WORKDIR /usr/share/nginx/html
-COPY public .
+
+COPY package.json ./
+COPY yarn.lock ./
+
+RUN yarn
+
+COPY . .
+
+EXPOSE 5000
+
+CMD [ "yarn", "start" ]

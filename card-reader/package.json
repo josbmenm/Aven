@@ -4,6 +4,8 @@
       "rxjs",
       "rxjs-compat"
     ],
-    "srcDependencies": []
+    "srcDependencies": [
+      "components"
+    ]
   }
 }

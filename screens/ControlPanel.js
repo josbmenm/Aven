@@ -18,6 +18,7 @@ import KitchenSteps from '../logic/KitchenSteps';
 import useAsyncError from '../react-utils/useAsyncError';
 import Spinner from '../components/Spinner';
 import KitchenCommands from '../logic/KitchenCommands';
+import { isStateLoaded, useDeviceId } from '../components/useAsyncStorage';
 import useKitchenStatus from '../components/useKitchenStatus';
 
 function StatusPuck({ status, isRunning }) {
@@ -56,6 +57,33 @@ function StatusPuck({ status, isRunning }) {
     >
       {(status === 'disconnected' || isRunning) && <Spinner color="white" />}
     </View>
+  );
+}
+
+function ManualModeButton({ restaurantState, restaurantDispatch }) {
+  const deviceId = useDeviceId();
+  if (!restaurantState || !isStateLoaded(deviceId)) {
+    return null;
+  }
+  let title = 'manual locked';
+  let handler = null;
+  if (restaurantState.manualMode === deviceId) {
+    title = 'disable manual mode';
+    handler = () =>
+      restaurantDispatch({
+        type: 'DisableManualMode',
+        lockId: deviceId,
+      });
+  } else if (!restaurantState.manualMode) {
+    title = 'enable manual mode';
+    handler = () =>
+      restaurantDispatch({
+        type: 'EnableManualMode',
+        lockId: deviceId,
+      });
+  }
+  return (
+    <ControlPanelButton disabled={!handler} title={title} onPress={handler} />
   );
 }
 
@@ -284,38 +312,13 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
             </View>
           )}
 
-          {status === 'fault' && (
-            <ControlPanelButton
-              title="home system"
-              disabled={kitchenState.FillSystem_PrgStep_READ !== 0}
-              onPress={() => {
-                handleKitchenCommand({ commandType: 'Home' });
-              }}
-            />
-          )}
-
+          <ManualModeButton
+            restaurantState={restaurantState}
+            restaurantDispatch={restaurantDispatch}
+          />
           {restaurantState && (
             <ControlPanelButton
-              title={
-                restaurantState.manualMode
-                  ? 'disable manual mode'
-                  : 'enable manual mode'
-              }
-              onPress={() => {
-                if (restaurantState.manualMode) {
-                  restaurantDispatch({
-                    type: 'DisableManualMode',
-                  });
-                } else {
-                  restaurantDispatch({
-                    type: 'EnableManualMode',
-                  });
-                }
-              }}
-            />
-          )}
-          {restaurantState && (
-            <ControlPanelButton
+              disabled={!!restaurantState.manualMode}
               title={
                 restaurantState.isAttached
                   ? 'disable sequencer'

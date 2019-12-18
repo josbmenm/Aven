@@ -184,6 +184,7 @@ AppRegistry.registerComponent('downpour', () => App);
         infoPlistLocation,
         '--output-dir',
         './codepush-build',
+        '--disable-telemetry',
       ],
       {
         cwd: location,
@@ -230,6 +231,8 @@ AppRegistry.registerComponent('downpour', () => App);
         bundleId,
         '--version-name',
         nativeVersion,
+        '--log-level',
+        'debug',
       ],
       {
         cwd: location,

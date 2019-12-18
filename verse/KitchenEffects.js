@@ -74,27 +74,27 @@ export default function computeSideEffects(kitchenState, restaurantState) {
   if (restaurantState.delivery1 && !kitchenState.Delivery_Bay1CupPresent_READ) {
     sideEffects.push({ type: 'ClearDeliveryBay', bayId: 'delivery1' });
   }
-  const willPassToBlender =
-    restaurantState.fill && restaurantState.fill.willPassToBlender;
-  const mayBePassingToBlender =
-    !!willPassToBlender && Date.now() < willPassToBlender + 60000;
-  if (
-    (restaurantState.blend == null || restaurantState.blend === 'dirty') &&
-    kitchenState.BlendSystem_HasCup_READ &&
-    !mayBePassingToBlender
-  ) {
-    sideEffects.push({ type: 'ObserveUnknownBlenderCup' });
-  }
-  const willPassToDelivery =
-    restaurantState.blend && restaurantState.blend.willPassToDelivery;
-  const mayBePassingToDelivery =
-    !!willPassToDelivery && Date.now() < willPassToDelivery + 60000;
-  if (
-    restaurantState.delivery == null &&
-    kitchenState.Delivery_ArmHasCup_READ &&
-    !mayBePassingToDelivery
-  ) {
-    sideEffects.push({ type: 'ObserveUnknownDeliveryCup' });
-  }
+  // const willPassToBlender =
+  //   restaurantState.fill && restaurantState.fill.willPassToBlender;
+  // const mayBePassingToBlender =
+  //   !!willPassToBlender && Date.now() < willPassToBlender + 60000;
+  // if (
+  //   (restaurantState.blend == null || restaurantState.blend === 'dirty') &&
+  //   kitchenState.BlendSystem_HasCup_READ &&
+  //   !mayBePassingToBlender
+  // ) {
+  //   sideEffects.push({ type: 'ObserveUnknownBlenderCup' });
+  // }
+  // const willPassToDelivery =
+  //   restaurantState.blend && restaurantState.blend.willPassToDelivery;
+  // const mayBePassingToDelivery =
+  //   !!willPassToDelivery && Date.now() < willPassToDelivery + 60000;
+  // if (
+  //   restaurantState.delivery == null &&
+  //   kitchenState.Delivery_ArmHasCup_READ &&
+  //   !mayBePassingToDelivery
+  // ) {
+  //   sideEffects.push({ type: 'ObserveUnknownDeliveryCup' });
+  // }
   return sideEffects;
 }
