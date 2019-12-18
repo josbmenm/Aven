@@ -131,6 +131,7 @@ function BlockFormInputWithRef(
         style={{
           fontSize: theme.inputFontSize,
           color: theme.primaryColor,
+          fontFamily: theme.fontRegular,
           minHeight: 44,
           ...(mode === 'description' ? { height: 120 } : {}),
         }}

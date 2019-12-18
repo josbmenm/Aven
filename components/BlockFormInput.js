@@ -139,8 +139,8 @@ function BlockFormInputWithRef(
                 position: 'absolute',
                 color: theme.colorPrimary,
                 top: '25%',
-                left: 20,
-                right: 20,
+                left: 16,
+                right: 16,
                 zIndex: -1,
                 fontSize: placeholderOpenProgress.interpolate({
                   inputRange: [0, 1],
@@ -194,10 +194,12 @@ function BlockFormInputWithRef(
               name={name}
               required={required}
               style={{
-                // paddingLeft: 20,
                 flex: 1,
                 outline: 'none',
                 color: theme.colorPrimary,
+                fontFamily: theme.fontRegular,
+                minHeight: 44,
+                paddingLeft: 16,
               }}
             />
           </Responsive>
