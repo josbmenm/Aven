@@ -819,6 +819,8 @@ export default async function startPostgresStorageSource({
     return `doc-children-${domain}-${parentId}`;
   }
 
+  const internalStreams = {};
+
   function getDocStream(domain, name) {
     if (!name) {
       throw new Err('Invalid doc name for "observeDoc"', 'InvalidDocName', {
@@ -831,33 +833,36 @@ export default async function startPostgresStorageSource({
         domain,
       });
     }
+    const streamInternalName = `${domain}_${name}`;
+    if (internalStreams[streamInternalName]) {
+      return internalStreams[streamInternalName];
+    }
 
     let cleanup = () => {};
 
-    const outputStream = xs.createWithMemory({
+    const outputStream = createProducerStream({
+      crumb: { type: 'DocStateStream', domain, name },
       start: notify => {
         (async () => {
           const ctx = await getDocDBContext(domain, name, false);
           const channelId = getDocChannel(domain, ctx.parentId, ctx.localName);
-          if (docStreamChannels[channelId]) {
-            docStreamChannels[channelId].stream.addListener(notify);
-            cleanup = () => {
-              docStreamChannels[channelId].stream.removeListener(notify);
-            };
-          } else {
-            const channel = { notify };
-            docStreamChannels[channelId] = channel;
-            channel.stream = outputStream;
-            await pgClient.query(`LISTEN "${channelId}"`);
-            cleanup = () => {
-              channel.notify = null;
-              pgClient.query(`UNLISTEN "${channelId}"`).catch(console.error);
-            };
 
-            const docState = await GetDocValue({ name, domain });
-            channel.notify &&
-              channel.notify.next({ id: docState.id, value: docState.value });
-          }
+          const channel = { notify };
+          docStreamChannels[channelId] = channel;
+          channel.stream = outputStream;
+          await pgClient.query(`LISTEN "${channelId}"`);
+          cleanup = () => {
+            channel.notify = null;
+            pgClient.query(`UNLISTEN "${channelId}"`).catch(console.error);
+          };
+
+          const docState = await GetDocValue({ name, domain });
+          const id = docState.id || null; // null id supported here because storage sources are responsible for knowing the id or reporting null if it is empty, which is this case
+          channel.notify &&
+            channel.notify.next({
+              id,
+              value: docState.value,
+            });
         })().catch(err => {
           notify.error(err);
         });
@@ -866,6 +871,8 @@ export default async function startPostgresStorageSource({
         cleanup();
       },
     });
+
+    internalStreams[streamInternalName] = outputStream;
 
     return outputStream;
   }
