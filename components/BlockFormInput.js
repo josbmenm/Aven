@@ -138,13 +138,16 @@ function BlockFormInputWithRef(
                 fontFamily: theme.fontRegular,
                 position: 'absolute',
                 color: theme.colorPrimary,
-                top: '25%',
+                pointerEvents: 'none',
+                opacity: 0.5,
+                zIndex: 10,
+                top: '30%',
                 left: 16,
                 right: 16,
-                zIndex: -1,
+                // zIndex: -1,
                 fontSize: placeholderOpenProgress.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [12, 16],
+                  outputRange: [10, 16],
                 }),
                 transform: [
                   {
@@ -166,7 +169,7 @@ function BlockFormInputWithRef(
             style={{
               fontSize: [15, 18],
               lineHeight: [20, 28],
-              paddingBottom: [6, 6],
+              // paddingBottom: [6, 6],
               paddingTop: [8, 8],
               ...(mode === 'description' ? { minHeight: [120, 120] } : {}),
               ...(mode === 'textarea' ? { minHeight: [200, 200] } : {}),
@@ -198,6 +201,7 @@ function BlockFormInputWithRef(
                 outline: 'none',
                 color: theme.colorPrimary,
                 fontFamily: theme.fontRegular,
+                backgroundColor: 'white',
                 minHeight: 44,
                 paddingLeft: 16,
               }}
