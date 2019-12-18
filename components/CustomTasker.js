@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Button from './Button';
-import MultiSelect from './MultiSelect';
+import MultiSelect from '../dash-ui/MultiSelect';
 import { Easing } from 'react-native-reanimated';
 import { useCloud } from '../cloud-core/KiteReact';
 import Row from './Row';

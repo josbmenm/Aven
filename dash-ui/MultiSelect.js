@@ -13,40 +13,52 @@ export default function MultiSelect({
     <View
       style={{
         flexDirection: 'row',
-        borderRadius: 4,
+        borderRadius: 3,
         borderWidth: 2,
         flexWrap: 'wrap',
-        borderColor: theme.colorHighlight,
+        borderColor: theme.colorPrimary,
       }}
     >
-      {options.map(opt => {
+      {options.map((opt, idx) => {
         const isActive = value === opt.value;
+        const isLast = idx === options.length - 1;
+        console.log('TCL: isLast', isLast);
         return (
-          <TouchableOpacity
-            key={opt.name}
-            onPress={() => {
-              onValue(opt.value);
-            }}
-            style={{
-              backgroundColor: isActive ? theme.colorHighlight : null,
-              alignSelf: 'stretch',
-              padding: theme.spacing,
-              paddingHorizontal: theme.paddingHorizontal,
-              height: '100%',
-            }}
-          >
-            <Text
+          <React.Fragment>
+            <TouchableOpacity
+              key={opt.name}
+              onPress={() => {
+                onValue(opt.value);
+              }}
               style={{
-                fontFamily: theme.fontBold,
-
-                color: isActive ? 'white' : theme.colorHighlight,
-                textAlign: 'center',
-                fontSize: theme.buttonFontSize,
+                backgroundColor: isActive ? theme.colorPrimary : null,
+                alignSelf: 'stretch',
+                paddingVertical: theme.paddingVertical,
+                paddingHorizontal: theme.paddingHorizontal,
               }}
             >
-              {opt.name}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  fontFamily: theme.fontBold,
+                  color: isActive ? 'white' : theme.colorPrimary,
+                  textAlign: 'center',
+                  fontSize: 16,
+                }}
+              >
+                {opt.name}
+              </Text>
+            </TouchableOpacity>
+            {!isActive && !isLast && (
+              <View
+                style={{
+                  width: 1,
+                  // height: '100%',
+                  opacity: 0.5,
+                  backgroundColor: theme.colorPrimary,
+                }}
+              />
+            )}
+          </React.Fragment>
         );
       })}
     </View>

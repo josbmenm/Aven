@@ -17,7 +17,7 @@ import SpinnerButton from '../components/SpinnerButton';
 import AsyncButton from '../components/AsyncButton';
 import { useDeviceId, isStateLoaded } from '../components/useAsyncStorage';
 import ButtonStack from '../components/ButtonStack';
-import MultiSelect from '../components/MultiSelect';
+import MultiSelect from '../dash-ui/MultiSelect';
 import TemperatureView from '../components/TemperatureView';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import KitchenCommands from '../logic/KitchenCommands';

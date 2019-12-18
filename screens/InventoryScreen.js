@@ -11,7 +11,7 @@ import useKeyboardPopover from '../components/useKeyboardPopover';
 import { titleStyle, prettyShadowSmall, monsterra } from '../components/Styles';
 import AirtableImage from '../components/AirtableImage';
 import { useInventoryState, useKitchenState } from '../ono-cloud/OnoKitchen';
-import MultiSelect from '../components/MultiSelect';
+import MultiSelect from '../dash-ui/MultiSelect';
 import BlockFormInput from '../components/BlockFormInput';
 import StatusBar from '../components/StatusBar';
 import ButtonStack from '../components/ButtonStack';

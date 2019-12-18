@@ -186,6 +186,7 @@ function CateringMode() {
         title={isCateringMode ? 'Free Blends' : 'Regular Mode'}
         status={isCateringMode ? 'warning' : 'positive'}
       />
+
       <MultiSelect
         options={[
           { name: 'Catering', value: true },
@@ -229,12 +230,14 @@ function AlarmMode() {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 marginBottom: 8,
+                alignItems: 'center',
               }}
             >
               <Tag
                 title={faultLabel}
                 status={isMuteAlarms ? 'warning' : 'positive'}
               />
+
               <MultiSelect
                 options={[
                   { name: 'Disable', value: true },
@@ -361,7 +364,7 @@ function DryRunMode() {
           status={isBlendEnabled ? 'positive' : 'negative'}
         />
       </Row>
-      <View style={{ alignSelf: 'center' }}>
+      <View style={{ alignSelf: 'center', paddingBottom: 24 }}>
         <MultiSelect
           options={[
             { name: 'Dry run', value: true },
@@ -469,7 +472,6 @@ function CardReaderRow() {
 export default function KioskSettingsScreen({ navigation, ...props }) {
   return (
     <SimplePage
-      title="Settings"
       {...props}
       navigation={navigation}
       hideBackButton

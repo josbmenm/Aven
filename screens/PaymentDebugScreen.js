@@ -24,7 +24,7 @@ import Row from '../components/Row';
 import BitRow from '../components/BitRow';
 import { rowStyle, rowTitleStyle } from '../components/Styles';
 import SimplePage from '../components/SimplePage';
-import MultiSelect from '../components/MultiSelect';
+import MultiSelect from '../dash-ui/MultiSelect';
 import useAsyncStorage from '../components/useAsyncStorage';
 
 function ObservableBitRow({ value, title }) {

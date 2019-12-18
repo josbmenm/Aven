@@ -82,7 +82,8 @@ function BlockFormInputWithRef(
         borderColor: theme.colorPrimary,
         borderWidth: 3,
         minHeight: 44,
-        width: '100%',
+        // flex: 1,
+        height: 64,
       }}
     >
       <Animated.Text
