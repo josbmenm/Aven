@@ -192,6 +192,8 @@ export default async function startVerseServer(httpServer) {
   cloud.get('RestaurantActions').setLocalOnly();
   cloud.get('RestaurantStateSnapshot').setLocalOnly();
   cloud.get('RecentCompletedTasksSnapshot').setLocalOnly();
+  // remove this when reducer is re-eanblaed:
+  cloud.get('RecentCompletedTasks').setLocalOnly();
 
   cloud.setReducer('RestaurantState', {
     actionsDoc: restaurantActions,
@@ -200,12 +202,12 @@ export default async function startVerseServer(httpServer) {
     snapshotsDoc: cloud.get('RestaurantStateSnapshot'),
   });
   const restaurantActivity = cloud.get('RestaurantActivity');
-  cloud.setReducer('RecentCompletedTasks', {
-    actionsDoc: restaurantActivity,
-    reducer: RecentCompletedTasksReducer,
-    snapshotInterval: 10,
-    snapshotsDoc: cloud.get('RecentCompletedTasksSnapshot'),
-  });
+  // cloud.setReducer('RecentCompletedTasks', {
+  //   actionsDoc: restaurantActivity,
+  //   reducer: RecentCompletedTasksReducer,
+  //   snapshotInterval: 10,
+  //   snapshotsDoc: cloud.get('RecentCompletedTasksSnapshot'),
+  // });
 
   const protectedSource = createProtectedSource({
     source: cloud,
