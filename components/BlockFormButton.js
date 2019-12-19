@@ -1,6 +1,5 @@
 import React from 'react';
 import SpinnerButton from './SpinnerButton';
-import Button from '../dash-ui/Button';
 
 export default function BlockFormButton({
   buttonStyle,
