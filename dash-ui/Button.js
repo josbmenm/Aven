@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 import { useTheme } from './Theme';
+import { opacify } from './utils';
 
 export default function Button({
   title,
@@ -11,6 +12,7 @@ export default function Button({
   disabled = false,
 }) {
   const theme = useTheme(themeProp);
+  const color = opacify(theme.colorPrimary, 0.8);
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -21,8 +23,8 @@ export default function Button({
         style={{
           borderRadius: 3,
           borderWidth: 3,
-          backgroundColor: outline ? 'transparent' : theme.colorPrimary,
-          borderColor: theme.colorPrimary,
+          backgroundColor: outline ? 'transparent' : color,
+          borderColor: outline ? color : 'transparent',
           paddingVertical: theme.paddingVertical,
           paddingHorizontal: theme.paddingHorizontal,
           alignItems: 'center',
@@ -35,7 +37,7 @@ export default function Button({
             style={{
               fontSize: theme.buttonFontSize,
               lineHeight: theme.buttonLineHeight,
-              color: outline ? theme.colorPrimary : 'white',
+              color: outline ? color : 'white',
               fontFamily: theme.fontBold,
               fontWeight: 'bold',
             }}

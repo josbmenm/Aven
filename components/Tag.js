@@ -15,12 +15,12 @@ export default function Tag({
   const sizeTheme =
     size === 'small'
       ? {
-          fontSize: 14,
+          fontSize: 16,
           paddingVertical: 4,
           paddingHorizontal: 8,
         }
       : {
-          fontSize: 22,
+          fontSize: 20,
         };
   const theme = useTheme({
     ...sizeTheme,

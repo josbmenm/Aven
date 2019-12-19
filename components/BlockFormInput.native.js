@@ -4,6 +4,7 @@ import { TextInputMask } from 'react-native-masked-text';
 import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
 import Animated, { Easing } from 'react-native-reanimated';
 import { useTheme } from '../dash-ui/Theme';
+import { opacify } from '../dash-ui/utils';
 
 const textInputFontSize = 26;
 
@@ -24,6 +25,7 @@ function BlockFormInputWithRef(
 ) {
   const theme = useTheme(themeProp);
   const desiredPlaceholderOpen = value ? 0 : 1;
+  const color = opacify(theme.colorPrimary, 0.8);
   const [placeholderOpenProgress] = useState(
     new Animated.Value(desiredPlaceholderOpen),
   );
@@ -79,21 +81,20 @@ function BlockFormInputWithRef(
         paddingLeft: theme.spacing,
         borderRadius: 4,
         paddingTop: theme.inputPaddingTop,
-        borderColor: theme.colorPrimary,
+        borderColor: color,
         borderWidth: 3,
         minHeight: 44,
-        // flex: 1,
         height: 64,
+        minWidth: 300,
       }}
     >
       <Animated.Text
         style={{
           fontFamily: theme.fontRegular,
           position: 'absolute',
-          color: theme.primaryColor,
+          color: opacify(theme.colorPrimary, 0.5),
           left: 0,
           right: 0,
-          opacity: 0.7,
           fontSize: Animated.interpolate(placeholderOpenProgress, {
             inputRange: [0, 1],
             outputRange: [12, 24],
@@ -131,7 +132,7 @@ function BlockFormInputWithRef(
         onSubmitEditing={onSubmit}
         style={{
           fontSize: theme.inputFontSize,
-          color: theme.primaryColor,
+          color: color,
           fontFamily: theme.fontRegular,
           minHeight: 44,
           ...(mode === 'description' ? { height: 120 } : {}),

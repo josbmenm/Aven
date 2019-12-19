@@ -54,11 +54,12 @@ import TabsScreen from '../components/TabsScreen';
 import { PopoverContainer } from '../views/Popover';
 import { registerDispatcher } from '../card-reader/CardReader';
 import { ThemeProvider as OldThemeProvider } from '../dashboard/Theme';
-import OnoTheme from '../logic/OnoTheme';
+import OLDOnoTheme from '../logic/OnoTheme';
 import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
-import { ThemeProvider, createTheme } from '../dash-ui/Theme';
+import { ThemeProvider } from '../dash-ui/Theme';
+import OnoTheme from '../components/Onotheme';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -264,16 +265,6 @@ const App = createStackTransitionNavigator({
 
 const AppContainer = createAppContainer(App);
 
-const theme = createTheme({
-  colorPrimary: 'hsl(180, 100%, 16%)',
-  colorNeutral: '#444',
-  colorNegative: '#722',
-  colorPositive: '#272',
-  colorWarning: '#997200',
-  buttonFontSize: 24,
-  buttonLineHeight: 28,
-});
-
 function RetryButton({ onRetry }) {
   return <Button title="Try again.." onPress={onRetry} />;
 }
@@ -298,8 +289,8 @@ function FullApp() {
     return null;
   }
   return (
-    <OldThemeProvider value={OnoTheme}>
-      <ThemeProvider theme={theme}>
+    <OldThemeProvider value={OLDOnoTheme}>
+      <ThemeProvider theme={OnoTheme}>
         <HostContextContainer {...HOST_CONFIG}>
           <CloudContext.Provider value={cloud}>
             <PopoverContainer>

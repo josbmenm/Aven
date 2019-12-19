@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useTheme } from './Theme';
+import { opacify } from './utils';
 
 export default function MultiSelect({
   options,
@@ -10,7 +11,7 @@ export default function MultiSelect({
 }) {
   const theme = useTheme(themeProp);
   const idxValue = options.findIndex(item => item.value === value);
-
+  const color = opacify(theme.colorPrimary, 0.8);
   return (
     <View
       style={{
@@ -18,7 +19,7 @@ export default function MultiSelect({
         borderRadius: 3,
         borderWidth: 2,
         flexWrap: 'wrap',
-        borderColor: theme.colorPrimary,
+        borderColor: color,
       }}
     >
       {options.map((opt, idx) => {
@@ -32,7 +33,7 @@ export default function MultiSelect({
                 onValue(opt.value);
               }}
               style={{
-                backgroundColor: isActive ? theme.colorPrimary : null,
+                backgroundColor: isActive ? color : null,
                 alignSelf: 'stretch',
                 paddingVertical: theme.paddingVertical,
                 paddingHorizontal: theme.paddingHorizontal,
@@ -41,7 +42,7 @@ export default function MultiSelect({
               <Text
                 style={{
                   fontFamily: theme.fontBold,
-                  color: isActive ? 'white' : theme.colorPrimary,
+                  color: isActive ? 'white' : color,
                   textAlign: 'center',
                   fontSize: 16,
                 }}
@@ -53,8 +54,7 @@ export default function MultiSelect({
               <View
                 style={{
                   width: 1,
-                  opacity: 0.5,
-                  backgroundColor: theme.colorPrimary,
+                  backgroundColor: opacify(theme.colorPrimary, 0.2),
                 }}
               />
             )}

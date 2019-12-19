@@ -5,8 +5,9 @@ import UILibrary from '../ui-library/UILibraryPage';
 import EmailsPlayground from './EmailsPlayground';
 // import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
 import { ThemeProvider as OLDThemeProvider } from '../dashboard/Theme';
-import OnoTheme from '../logic/OnoTheme';
+import OLD_OnoTheme from '../logic/OnoTheme';
 import { ThemeProvider } from '../dash-ui/Theme';
+import OnoTheme from '../components/Onotheme';
 
 const App = createSwitchNavigator(
   {
@@ -30,8 +31,8 @@ const App = createSwitchNavigator(
 
 function Root(props) {
   return (
-    <OLDThemeProvider value={OnoTheme}>
-      <ThemeProvider>
+    <OLDThemeProvider value={OLD_OnoTheme}>
+      <ThemeProvider theme={OnoTheme}>
         <App {...props} />
       </ThemeProvider>
     </OLDThemeProvider>

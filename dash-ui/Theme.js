@@ -37,10 +37,10 @@ const baseTheme = {
   buttonLineHeight: 24,
 };
 
-export function createTheme(custonTheme) {
+export function customizeTheme(customTheme) {
   return {
     ...baseTheme,
-    ...custonTheme,
+    ...customTheme,
   };
 }
 

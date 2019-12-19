@@ -9,8 +9,9 @@ import { monsterra } from '../components/Styles';
 import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
 import { CloudContext } from '../cloud-core/KiteReact';
 import { ThemeProvider as OLDThemeProvider } from '../dashboard/Theme';
-import OnoTheme from '../logic/OnoTheme';
+import OLD_OnoTheme from '../logic/OnoTheme';
 import { ThemeProvider } from '../dash-ui/Theme';
+import OnoTheme from '../components/Onotheme';
 
 const NotFoundPage = () => (
   <View
@@ -171,8 +172,8 @@ const AppNavigator = createFullscreenSwitchNavigator(
 function App(props) {
   const cloud = React.useContext(CloudContext);
   return (
-    <OLDThemeProvider value={OnoTheme}>
-      <ThemeProvider>
+    <OLDThemeProvider value={OLD_OnoTheme}>
+      <ThemeProvider theme={OnoTheme}>
         <AppNavigator {...props} screenProps={{ cloud }} />
       </ThemeProvider>
     </OLDThemeProvider>

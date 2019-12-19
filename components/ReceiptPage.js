@@ -30,7 +30,7 @@ export default function ReceiptPage({
             <Button title="via email" onPress={onEmail} />
           </Stack>
         </Spacing>
-        <Spacing top={16} horizontal={8} flex={false}>
+        <Spacing top={8} horizontal={8} flex={false}>
           <Button title="no, thanks" onPress={onNoReceipt} />
         </Spacing>
       </BlockForm>
