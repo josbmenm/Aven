@@ -145,7 +145,7 @@ export default function BlendTasker() {
             </Text>
             <ButtonStack buttons={buttons} />
           </View>
-          <View style={{ flex: 3, paddingLeft: 20 }}>
+          <View style={{ flex: 3 }}>
             {fills && (
               <FillList
                 fills={fills}

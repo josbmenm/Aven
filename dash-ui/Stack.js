@@ -20,8 +20,10 @@ export default function Stack({
           flexWrap: 'wrap',
           alignItems: 'flex-start',
           width: '100%',
+          flex: 1,
         },
         debug && { backgroundColor: 'lightblue' },
+        // horizontal && { height: '100%' },
       ]}
     >
       {/* TODO: WTF is happening here? if I render twice the `item` it renders properly but this does not :( */}

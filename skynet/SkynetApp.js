@@ -10,8 +10,7 @@ import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveC
 import { CloudContext } from '../cloud-core/KiteReact';
 import { ThemeProvider as OLDThemeProvider } from '../dashboard/Theme';
 import OLD_OnoTheme from '../logic/OnoTheme';
-import { ThemeProvider } from '../dash-ui/Theme';
-import OnoTheme from '../components/Onotheme';
+import OnoThemeProvider from '../components/Onotheme';
 
 const NotFoundPage = () => (
   <View
@@ -173,9 +172,9 @@ function App(props) {
   const cloud = React.useContext(CloudContext);
   return (
     <OLDThemeProvider value={OLD_OnoTheme}>
-      <ThemeProvider theme={OnoTheme}>
+      <OnoThemeProvider>
         <AppNavigator {...props} screenProps={{ cloud }} />
-      </ThemeProvider>
+      </OnoThemeProvider>
     </OLDThemeProvider>
   );
 }

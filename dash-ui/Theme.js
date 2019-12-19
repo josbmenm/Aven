@@ -5,6 +5,8 @@ const baseTheme = {
   spacing: 8,
   fontSize: 16,
   lineHeight: 24,
+
+  colorTint: '#005252',
   colorForeground: '#333',
   colorBackground: '#f7f7f7',
   colorPrimary: '#005252',
@@ -78,6 +80,10 @@ export function Large({ children }) {
   // better if we add a fixed values instead of multiplying
   const scaleTheme = useTheme(theme => ({
     fontSize: theme.fontSize + 8,
+    buttonFontSize: theme.buttonFontSize + 8,
+    textFontSize: theme.textFontSize + 8,
+    inputFontSize: theme.inputFontSize + 8,
+    headingFontSize: theme.headingFontSize + 8,
     paddingHorizontal: theme.paddingHorizontal + 8,
     paddingVertical: theme.paddingVertical + 8,
   }));
@@ -103,13 +109,13 @@ export function Spacing({
   bottom,
   left,
   children,
-  flex = true,
+  inline = true,
   debug = false,
 }) {
   return (
     <View
       style={[
-        flex && { flex: 1 },
+        !inline && { flex: 1 },
         value && { margin: value },
         vertical && { marginVertical: vertical },
         horizontal && { marginHorizontal: horizontal },

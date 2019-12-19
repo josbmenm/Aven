@@ -47,8 +47,8 @@
     "react-is": "^16.5.2",
     "react-lifecycles-compat": "^3.0.4",
     "reconnecting-websocket": "^4.0.0-rc5",
-    "bcrypt": "3.0.6",
-    "xstream": "^11.10.0"
+    "xstream": "^11.10.0",
+    "bcrypt": "3.0.6"
   },
   "devDependencies": {
     "appcenter-cli": "^2.3.3",

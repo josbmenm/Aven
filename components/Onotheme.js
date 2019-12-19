@@ -1,6 +1,7 @@
-import { customizeTheme } from '../dash-ui/Theme';
+import React from 'react';
+import { customizeTheme, ThemeProvider } from '../dash-ui/Theme';
 
-export default customizeTheme({
+export const theme = customizeTheme({
   colorForeground: '#333',
   colorBackground: '#f7f7f7',
   colorPrimary: '#005252',
@@ -19,3 +20,7 @@ export default customizeTheme({
   buttonFontSize: 20,
   buttonLineHeight: 24,
 });
+
+export default function OnoThemeProvider({ children }) {
+  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+}

@@ -1,11 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
-import Button from './Button';
+import Button from '../dash-ui/Button';
 import { Easing } from 'react-native-reanimated';
 import BlockFormInput from './BlockFormInput';
 import { usePopover } from '../views/Popover';
 import KeyboardPopover from './KeyboardPopover';
 import useFocus from '../navigation-hooks/useFocus';
+import { Spacing } from '../dash-ui/Theme';
 
 function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
   const [orderName, setOrderName] = React.useState(initialInfo.orderName);
@@ -20,7 +21,7 @@ function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
     onSubmit: handleSubmit,
     inputRenderers: [
       inputProps => (
-        <View style={{ flexDirection: 'row', marginVertical: 10 }}>
+        <View>
           <BlockFormInput
             {...inputProps}
             label="Order Name"
@@ -32,14 +33,14 @@ function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
       hideBlendName
         ? null
         : inputProps => (
-            <View style={{ flexDirection: 'row', marginVertical: 10 }}>
+            <Spacing top={8}>
               <BlockFormInput
                 {...inputProps}
                 label="Blend Name"
                 onValue={setBlendName}
                 value={blendName}
               />
-            </View>
+            </Spacing>
           ),
     ],
   });
@@ -47,7 +48,9 @@ function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
   return (
     <React.Fragment>
       {inputs}
-      <Button onPress={handleSubmit} title="save" />
+      <Spacing top={8}>
+        <Button onPress={handleSubmit} title="save" />
+      </Spacing>
     </React.Fragment>
   );
 }

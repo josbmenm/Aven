@@ -3,6 +3,7 @@ import { ScrollView, View, Image } from 'react-native';
 import { pageBackgroundColor } from './Styles';
 import BackButton from './BackButton';
 import GenericPage from './GenericPage';
+import Stack from '../dash-ui/Stack';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import Hero from './Hero';
 
@@ -28,7 +29,7 @@ export default function TwoPanePage({
       }
     >
       {(title || icon) && <Hero title={title} icon={icon} />}
-      <View style={{ flex: 1, flexDirection: 'row' }}>
+      <Stack horizontal inline={false}>
         <View style={{ flex: 1 }}>
           <ScrollView
             style={{ flex: 1 }}
@@ -45,14 +46,13 @@ export default function TwoPanePage({
           ) : (
             <ScrollView
               style={{ flex: 1 }}
-              contentContainerStyle={{}}
               showsVerticalScrollIndicator={false}
             >
               {children}
             </ScrollView>
           )}
         </View>
-      </View>
+      </Stack>
       {footer}
       {!hideBackButton && (
         <BackButton

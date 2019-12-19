@@ -58,8 +58,7 @@ import OLD_OnoTheme from '../logic/OnoTheme';
 import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
-import { ThemeProvider } from '../dash-ui/Theme';
-import OnoTheme from '../components/Onotheme';
+import OnoThemeProvider from '../components/Onotheme';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -290,7 +289,7 @@ function FullApp() {
   }
   return (
     <OldThemeProvider value={OLD_OnoTheme}>
-      <ThemeProvider theme={OnoTheme}>
+      <OnoThemeProvider>
         <HostContextContainer {...HOST_CONFIG}>
           <CloudContext.Provider value={cloud}>
             <PopoverContainer>
@@ -312,7 +311,7 @@ function FullApp() {
             </PopoverContainer>
           </CloudContext.Provider>
         </HostContextContainer>
-      </ThemeProvider>
+      </OnoThemeProvider>
     </OldThemeProvider>
   );
 }

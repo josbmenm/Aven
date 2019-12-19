@@ -15,27 +15,36 @@ export default function MultiSelect({
     <View
       style={{
         flexDirection: 'row',
-        borderRadius: theme.borderRadius,
-        borderWidth: 2,
-        // flexWrap: 'wrap',
-        borderColor: color,
+        flexWrap: 'wrap',
+        justifyContent: 'center',
       }}
     >
       {options.map((opt, idx) => {
         const isActive = value === opt.value;
         const isLast = idx === options.length - 1;
+        const isFirst = idx === 0;
         return (
-          <React.Fragment>
-            <TouchableOpacity
-              key={opt.name}
-              onPress={() => {
-                onValue(opt.value);
-              }}
+          <TouchableOpacity
+            key={opt.name}
+            onPress={() => {
+              onValue(opt.value);
+            }}
+          >
+            <View
               style={{
                 backgroundColor: isActive ? color : null,
                 alignSelf: 'stretch',
                 paddingVertical: theme.paddingVertical,
                 paddingHorizontal: theme.paddingHorizontal,
+                borderTopLeftRadius: isFirst ? theme.borderRadius : 0,
+                borderBottomLeftRadius: isFirst ? theme.borderRadius : 0,
+                borderTopRightRadius: isLast ? theme.borderRadius : 0,
+                borderBottomRightRadius: isLast ? theme.borderRadius : 0,
+                borderTopWidth: 2,
+                borderColor: color,
+                borderBottomWidth: 2,
+                borderLeftWidth: isFirst ? 2 : 0,
+                borderRightWidth: isLast ? 2 : 0,
               }}
             >
               <Text
@@ -48,16 +57,19 @@ export default function MultiSelect({
               >
                 {opt.name}
               </Text>
-            </TouchableOpacity>
+            </View>
             {!isLast && !isActive && options[idx + 1].value !== value && (
               <View
                 style={{
                   width: 1,
-                  backgroundColor: opacify(theme.colorPrimary, 0.2),
+                  backgroundColor: opacify(theme.colorTint, 0.2),
+                  height: '100%',
+                  position: 'absolute',
+                  right: 0,
                 }}
               />
             )}
-          </React.Fragment>
+          </TouchableOpacity>
         );
       })}
     </View>

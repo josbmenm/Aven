@@ -13,7 +13,7 @@ export default function SimplePage({
   return (
     <GenericPage {...props} afterScrollView={footer}>
       <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-        <View style={{ flex: 1, maxWidth: 600 }}>
+        <View style={{ flex: 1, maxWidth: 768 }}>
           {(title || icon) && <Hero title={title} icon={icon} />}
           {children}
         </View>

@@ -22,7 +22,8 @@ import useFocus from '../navigation-hooks/useFocus';
 import StatusBar from '../components/StatusBar';
 import CardReaderConnectionManager from '../components/CardReaderConnectionManager';
 import { Audio } from 'expo-av';
-import Stack from '../dash-ui/Stack';
+// import Stack from '../dash-ui/Stack';
+import { Spacing } from '../dash-ui/Theme';
 
 function FridgeView() {
   const kitchenState = useKitchenState();
@@ -32,30 +33,38 @@ function FridgeView() {
   const handleError = useAsyncErrorPopover();
   return (
     <Row title="main refridgeration">
-      <Tag
-        title={fridgeEnabled ? 'Enabled' : 'Disabled'}
-        status={fridgeEnabled ? 'positive' : 'negative'}
-      />
-      <MultiSelect
-        options={[
-          { name: 'Enable', value: true },
-          { name: 'Disable', value: false },
-        ]}
-        value={fridgeEnabled}
-        onValue={value => {
-          handleError(
-            cloud.dispatch({
-              type: 'KitchenWriteMachineValues',
-              subsystem: 'System',
-              pulse: [],
-              values: {
-                EnableRefrigerationSystem: value,
-              },
-            }),
-          );
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
         }}
-      />
-      <SetFridgeTemp />
+      >
+        <Tag
+          title={fridgeEnabled ? 'Enabled' : 'Disabled'}
+          status={fridgeEnabled ? 'positive' : 'negative'}
+        />
+        <MultiSelect
+          options={[
+            { name: 'Enable', value: true },
+            { name: 'Disable', value: false },
+          ]}
+          value={fridgeEnabled}
+          onValue={value => {
+            handleError(
+              cloud.dispatch({
+                type: 'KitchenWriteMachineValues',
+                subsystem: 'System',
+                pulse: [],
+                values: {
+                  EnableRefrigerationSystem: value,
+                },
+              }),
+            );
+          }}
+        />
+        <SetFridgeTemp />
+      </View>
     </Row>
   );
 }
@@ -68,29 +77,37 @@ function VanInTruckOverride() {
   const handleError = useAsyncErrorPopover();
   return (
     <Row title="override machine in van">
-      <Tag
-        title={machineInVan ? 'In Van' : 'Out of Van'}
-        status={machineInVan ? 'positive' : 'negative'}
-      />
-      <MultiSelect
-        options={[
-          { name: 'Enable', value: true },
-          { name: 'Disable', value: false },
-        ]}
-        value={machineInVan}
-        onValue={value => {
-          handleError(
-            cloud.dispatch({
-              type: 'KitchenWriteMachineValues',
-              subsystem: 'System',
-              pulse: [],
-              values: {
-                MachineInVanBypass: value,
-              },
-            }),
-          );
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
         }}
-      />
+      >
+        <Tag
+          title={machineInVan ? 'In Van' : 'Out of Van'}
+          status={machineInVan ? 'positive' : 'negative'}
+        />
+        <MultiSelect
+          options={[
+            { name: 'Enable', value: true },
+            { name: 'Disable', value: false },
+          ]}
+          value={machineInVan}
+          onValue={value => {
+            handleError(
+              cloud.dispatch({
+                type: 'KitchenWriteMachineValues',
+                subsystem: 'System',
+                pulse: [],
+                values: {
+                  MachineInVanBypass: value,
+                },
+              }),
+            );
+          }}
+        />
+      </View>
     </Row>
   );
 }
@@ -103,29 +120,37 @@ function CompressorView() {
   const handleError = useAsyncErrorPopover();
   return (
     <Row title="air compressor">
-      <Tag
-        title={fridgeEnabled ? 'Enabled' : 'Disabled'}
-        status={fridgeEnabled ? 'positive' : 'negative'}
-      />
-      <MultiSelect
-        options={[
-          { name: 'Enable', value: true },
-          { name: 'Disable', value: false },
-        ]}
-        value={fridgeEnabled}
-        onValue={value => {
-          handleError(
-            cloud.dispatch({
-              type: 'KitchenWriteMachineValues',
-              subsystem: 'System',
-              pulse: [],
-              values: {
-                EnableAirSystem: value,
-              },
-            }),
-          );
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
         }}
-      />
+      >
+        <Tag
+          title={fridgeEnabled ? 'Enabled' : 'Disabled'}
+          status={fridgeEnabled ? 'positive' : 'negative'}
+        />
+        <MultiSelect
+          options={[
+            { name: 'Enable', value: true },
+            { name: 'Disable', value: false },
+          ]}
+          value={fridgeEnabled}
+          onValue={value => {
+            handleError(
+              cloud.dispatch({
+                type: 'KitchenWriteMachineValues',
+                subsystem: 'System',
+                pulse: [],
+                values: {
+                  EnableAirSystem: value,
+                },
+              }),
+            );
+          }}
+        />
+      </View>
     </Row>
   );
 }
@@ -183,26 +208,34 @@ function CateringMode() {
   const handleError = useAsyncErrorPopover();
   return (
     <Row title="catering mode">
-      <Tag
-        title={isCateringMode ? 'Free Blends' : 'Regular Mode'}
-        status={isCateringMode ? 'warning' : 'positive'}
-      />
-
-      <MultiSelect
-        options={[
-          { name: 'Catering', value: true },
-          { name: 'Regular', value: false },
-        ]}
-        value={isCateringMode}
-        onValue={value => {
-          handleError(
-            cloud.get('RestaurantConfig').transact(config => ({
-              ...config,
-              mode: value ? 'catering' : 'regular',
-            })),
-          );
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
         }}
-      />
+      >
+        <Tag
+          title={isCateringMode ? 'Free Blends' : 'Regular Mode'}
+          status={isCateringMode ? 'warning' : 'positive'}
+        />
+
+        <MultiSelect
+          options={[
+            { name: 'Catering', value: true },
+            { name: 'Regular', value: false },
+          ]}
+          value={isCateringMode}
+          onValue={value => {
+            handleError(
+              cloud.get('RestaurantConfig').transact(config => ({
+                ...config,
+                mode: value ? 'catering' : 'regular',
+              })),
+            );
+          }}
+        />
+      </View>
     </Row>
   );
 }
@@ -391,50 +424,68 @@ function ClearMapButton() {
   const [_, dispatch] = useRestaurantState();
   return (
     <Row title="danger zone - long press">
-      <Button
-        title="wipe state"
-        onLongPress={() => {
-          dispatch({
-            type: 'WipeState',
-          });
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          backgroundColor: 'lightGray',
         }}
-      />
-      <Button
-        title="force disable manual mode - danger"
-        onLongPress={() => {
-          dispatch({
-            type: 'DisableManualMode',
-            force: true,
-          });
-        }}
-      />
-      <Button
-        title="force disable manual mode - danger"
-        onLongPress={() => {
-          dispatch({
-            type: 'DisableManualMode',
-            force: true,
-          });
-        }}
-      />
-      <Button
-        title="force clear fill gripper clean mode - danger"
-        onLongPress={() => {
-          dispatch({
-            type: 'ClearFillGripperClean',
-            force: true,
-          });
-        }}
-      />
-      <Button
-        title="force clear blender clean mode - danger"
-        onLongPress={() => {
-          dispatch({
-            type: 'ClearBlenderClean',
-            force: true,
-          });
-        }}
-      />
+      >
+        <Spacing value={8}>
+          <Button
+            title="wipe state"
+            onLongPress={() => {
+              dispatch({
+                type: 'WipeState',
+              });
+            }}
+          />
+        </Spacing>
+        <Spacing value={8}>
+          <Button
+            title="force disable manual mode - danger"
+            onLongPress={() => {
+              dispatch({
+                type: 'DisableManualMode',
+                force: true,
+              });
+            }}
+          />
+        </Spacing>
+        <Spacing value={8}>
+          <Button
+            title="force disable manual mode - danger"
+            onLongPress={() => {
+              dispatch({
+                type: 'DisableManualMode',
+                force: true,
+              });
+            }}
+          />
+        </Spacing>
+        <Spacing value={8}>
+          <Button
+            title="force clear fill gripper clean mode - danger"
+            onLongPress={() => {
+              dispatch({
+                type: 'ClearFillGripperClean',
+                force: true,
+              });
+            }}
+          />
+        </Spacing>
+        <Spacing value={8}>
+          <Button
+            title="force clear blender clean mode - danger"
+            onLongPress={() => {
+              dispatch({
+                type: 'ClearBlenderClean',
+                force: true,
+              });
+            }}
+          />
+        </Spacing>
+      </View>
     </Row>
   );
 }
