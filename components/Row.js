@@ -1,11 +1,16 @@
 import React from 'react';
-import { TouchableHighlight, View, Text } from 'react-native';
+import { View, Text } from 'react-native';
+import { Spacing } from '../dash-ui/Theme';
 import { rowStyle, rowTitleStyle } from './Styles';
 
 const Row = ({ children, title, containerStyle }) => {
   return (
-    <View style={{ ...rowStyle }}>
-      {title && <Text style={rowTitleStyle}>{title}</Text>}
+    <View>
+      {title && (
+        <Spacing horizontal={8}>
+          <Text style={rowTitleStyle}>{title}</Text>
+        </Spacing>
+      )}
       <View
         style={{
           flexDirection: 'row',

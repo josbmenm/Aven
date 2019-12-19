@@ -1,6 +1,6 @@
 import React from 'react';
 import TwoPanePage from '../components/TwoPanePage';
-import Button from '../components/Button';
+import Button from '../dash-ui/Button';
 import Row from '../components/Row';
 import Spinner from '../components/Spinner';
 import StatusBar from '../components/StatusBar';

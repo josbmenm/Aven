@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import SimplePage from '../components/SimplePage';
 import RowSection from '../components/RowSection';
 import LinkRow from '../components/LinkRow';
-import Button from '../components/Button';
+import Button from '../dash-ui/Button';
 import AppInfoText from '../components/AppInfoText';
 import { useCloud } from '../cloud-core/KiteReact';
 import codePush from 'react-native-code-push';
@@ -22,6 +22,7 @@ import useFocus from '../navigation-hooks/useFocus';
 import StatusBar from '../components/StatusBar';
 import CardReaderConnectionManager from '../components/CardReaderConnectionManager';
 import { Audio } from 'expo-av';
+import Stack from '../dash-ui/Stack';
 
 function FridgeView() {
   const kitchenState = useKitchenState();

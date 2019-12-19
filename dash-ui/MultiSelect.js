@@ -10,15 +10,14 @@ export default function MultiSelect({
   theme: themeProp,
 }) {
   const theme = useTheme(themeProp);
-  const idxValue = options.findIndex(item => item.value === value);
   const color = opacify(theme.colorPrimary, 0.8);
   return (
     <View
       style={{
         flexDirection: 'row',
-        borderRadius: 3,
+        borderRadius: theme.borderRadius,
         borderWidth: 2,
-        flexWrap: 'wrap',
+        // flexWrap: 'wrap',
         borderColor: color,
       }}
     >
@@ -44,7 +43,7 @@ export default function MultiSelect({
                   fontFamily: theme.fontBold,
                   color: isActive ? 'white' : color,
                   textAlign: 'center',
-                  fontSize: 16,
+                  fontSize: theme.buttonFontSize,
                 }}
               >
                 {opt.name}

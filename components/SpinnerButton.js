@@ -1,10 +1,10 @@
-import Button from './Button';
+import Button from '../dash-ui/Button';
 import Spinner from './Spinner';
 import React from 'react';
 import { useTheme } from '../dashboard/Theme';
 
 export default function SpinnerButton({
-  isLoading,
+  isLoading = false,
   children,
   title,
   disabled,
@@ -12,12 +12,7 @@ export default function SpinnerButton({
 }) {
   const { colors } = useTheme();
   return (
-    <Button
-      {...props}
-      title={title}
-      titleStyle={{ opacity: isLoading ? 0.2 : 1 }}
-      disabled={disabled || isLoading}
-    >
+    <Button {...props} title={title} disabled={disabled || isLoading}>
       {isLoading && (
         <Spinner
           color={colors.invertedText}

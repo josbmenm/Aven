@@ -8,6 +8,7 @@ export default function Button({
   children,
   outline = false,
   onPress,
+  onLongPress,
   theme: themeProp = {},
   disabled = false,
 }) {
@@ -16,7 +17,9 @@ export default function Button({
   return (
     <TouchableOpacity
       onPress={onPress}
+      onLongPress={onLongPress}
       accessible={true}
+      disabled={disabled}
       accessibilityRole="button"
     >
       <View

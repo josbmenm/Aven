@@ -1,10 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import {
-  rowSectionStyle,
-  rowSectionInnerStyle,
-  boldPrimaryFontFace,
-} from './Styles';
+import { rowSectionStyle, boldPrimaryFontFace } from './Styles';
 
 const RowSection = ({ children, title, style }) => {
   return (
@@ -22,7 +18,7 @@ const RowSection = ({ children, title, style }) => {
         </Text>
       )}
       <View style={{ ...rowSectionStyle }}>
-        <View style={{ ...rowSectionInnerStyle }}>{children}</View>
+        <View>{children}</View>
       </View>
     </View>
   );

@@ -6,7 +6,7 @@ import useKeyboardPopover from './useKeyboardPopover';
 import { primaryFontFace } from './Styles';
 import Tag from './Tag';
 
-export default function AsyncButton({ onPress, ...props }) {
+export default function AsyncButton({ onPress, title, ...props }) {
   const [isLoading, setIsLoading] = React.useState(false);
   // const { onPopover } = useKeyboardPopover(({ onClose, openArguments }) => (
   //   <View
@@ -35,6 +35,11 @@ export default function AsyncButton({ onPress, ...props }) {
   }
 
   return (
-    <SpinnerButton onPress={handlePress} isLoading={isLoading} {...props} />
+    <SpinnerButton
+      onPress={handlePress}
+      isLoading={isLoading}
+      title={title}
+      {...props}
+    />
   );
 }

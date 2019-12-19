@@ -1,5 +1,4 @@
 export function opacify(H, opacity) {
-  console.log('TCL: opacify -> H', H);
   // Convert hex to RGB first
   let r = 0,
     g = 0,
@@ -13,9 +12,6 @@ export function opacify(H, opacity) {
     g = '0x' + H[3] + H[4];
     b = '0x' + H[5] + H[6];
   }
-  console.log('TCL: opacify -> r', r);
-  console.log('TCL: opacify -> g', g);
-  console.log('TCL: opacify -> b', b);
 
   // Then to HSL
   r /= 255;

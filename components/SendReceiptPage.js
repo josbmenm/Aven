@@ -59,7 +59,7 @@ export default function SendReceiptPage({
         <BlockFormTitle title={title} />
 
         {inputs}
-        <Spacing top={16} flex={false}>
+        <Spacing top={16} inline>
           <Button
             title={isProgressing ? '' : 'send receipt'}
             onPress={handleSubmit}

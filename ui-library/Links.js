@@ -7,7 +7,7 @@ import Stack from '../dash-ui/Stack';
 import Link from '../dash-ui/Link';
 import { ComponentBlock } from './Layout';
 
-function Links() {
+export default function Links() {
   return (
     <ComponentBlock title="Link">
       <CodeBlock>
@@ -29,9 +29,3 @@ function Links() {
     </ComponentBlock>
   );
 }
-
-Links.navigationOptions = {
-  title: 'Links',
-};
-
-export default Links;

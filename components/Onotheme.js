@@ -16,6 +16,6 @@ export default customizeTheme({
   textFont: 'Maax',
   headingFont: 'Maax-Bold',
 
-  buttonFontSize: 24,
-  buttonLineHeight: 28,
+  buttonFontSize: 20,
+  buttonLineHeight: 24,
 });

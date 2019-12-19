@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import Button from './Button';
+import Button from '../dash-ui/Button';
 import useOrderInfoPopover from './useOrderInfoPopover';
 import useBlendPickPopover from './useBlendPickPopover';
 import { useCloud } from '../cloud-core/KiteReact';
@@ -20,6 +20,8 @@ import useAsyncStorage, {
 } from '../components/useAsyncStorage';
 import ButtonStack from './ButtonStack';
 import { primaryFontFace } from './Styles';
+import { Spacing } from '../dash-ui/Theme';
+import Stack from '../dash-ui/Stack';
 
 function usePutTransactionValue(docName) {
   const cloud = useCloud();
@@ -42,22 +44,22 @@ function CustomizePopover({
         setCustomization={setCustomization}
       />
       <View style={{ flexDirection: 'row', paddingHorizontal: 8 }}>
-        <Button
-          onPress={() => {
-            onClose();
-          }}
-          style={{ marginVertical: 16, marginHorizontal: 8, flex: 1 }}
-          type="outline"
-          title="cancel"
-        />
-        <Button
-          onPress={() => {
-            saveCustomization(customizationState);
-            onClose();
-          }}
-          style={{ marginVertical: 16, marginHorizontal: 8, flex: 1 }}
-          title="save"
-        />
+        <Stack>
+          <Button
+            onPress={() => {
+              onClose();
+            }}
+            outline
+            title="cancel"
+          />
+          <Button
+            onPress={() => {
+              saveCustomization(customizationState);
+              onClose();
+            }}
+            title="save"
+          />
+        </Stack>
       </View>
     </View>
   );
@@ -78,7 +80,7 @@ function CustomizeButton({ menuItem, setCustomization, customization }) {
     { easing: Easing.inOut(Easing.poly(5)), duration: 500 },
   );
 
-  return <Button title="customize" onPress={onPopover} type="outline" />;
+  return <Button title="customize" onPress={onPopover} outline />;
 }
 
 export default function BlendTasker() {
@@ -112,7 +114,7 @@ export default function BlendTasker() {
       ? `custom ${blendName}`
       : blendName;
   const buttons = [
-    <Button title="set order info" type="outline" onPress={openOrderInfo} />,
+    <Button title="set order info" outline onPress={openOrderInfo} />,
   ];
   blendId &&
     buttons.push(
@@ -125,7 +127,7 @@ export default function BlendTasker() {
       />,
     );
   buttons.push(
-    <Button title="choose blend" type="outline" onPress={openBlendChooser} />,
+    <Button title="choose blend" outline onPress={openBlendChooser} />,
   );
   const allProfiles = companyConfig && companyConfig.baseTables.BlendProfiles;
   const profileId =
@@ -153,35 +155,35 @@ export default function BlendTasker() {
             )}
             {/* <Button
               title="customize"
-              type="outline"
+              outline
               onPress={openBlendChooser}
             /> */}
           </View>
         </View>
-
-        <Button
-          title="queue task"
-          style={{ marginVertical: 8 }}
-          disabled={blendId === null || !fills}
-          onPress={() => {
-            restaurantDispatch({
-              type: 'QueueTasks',
-              tasks: [
-                getNewBlendTask(
-                  menuItem,
-                  fills,
-                  orderName,
-                  {
-                    blendName,
-                  },
-                  companyConfig,
-                ),
-              ],
-            })
-              .then(() => {})
-              .catch(console.error);
-          }}
-        />
+        <Spacing vertical={8}>
+          <Button
+            title="queue task"
+            disabled={blendId === null || !fills}
+            onPress={() => {
+              restaurantDispatch({
+                type: 'QueueTasks',
+                tasks: [
+                  getNewBlendTask(
+                    menuItem,
+                    fills,
+                    orderName,
+                    {
+                      blendName,
+                    },
+                    companyConfig,
+                  ),
+                ],
+              })
+                .then(() => {})
+                .catch(console.error);
+            }}
+          />
+        </Spacing>
       </View>
     </Row>
   );

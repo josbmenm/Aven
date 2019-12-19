@@ -156,13 +156,6 @@ export const rowSectionStyle = {
   ...prettyShadow,
 };
 
-export const rowSectionInnerStyle = {
-  // borderTopWidth: rowBorderWidth,
-  // borderLeftWidth: rowBorderWidth,
-  // borderRightWidth: rowBorderWidth,
-  // borderColor: hairlineColor,
-};
-
 export const buttonTitleStyle = {
   ...fontMedium,
   textAlign: 'center',

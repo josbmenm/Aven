@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import Button from './Button';
+import Button from '../dash-ui/Button';
 import MultiSelect from '../dash-ui/MultiSelect';
 import { Easing } from 'react-native-reanimated';
 import { useCloud } from '../cloud-core/KiteReact';
@@ -20,6 +20,8 @@ import useAsyncStorage, {
   isStateUnloaded,
 } from '../components/useAsyncStorage';
 import useKeyboardPopover from './useKeyboardPopover';
+import { Spacing } from '../dash-ui/Theme';
+import Stack from '../dash-ui/Stack';
 
 function useSlotsWithIngredients() {
   const config = useCompanyConfig();
@@ -254,21 +256,18 @@ export default function CustomTasker() {
 
   return (
     <Row title="custom blend task">
-      <View style={{ flex: 1 }}>
+      <Spacing>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View style={{ flex: 1, margin: 8 }}>
             <TaskInfo task={{ name: orderName, blendName: blendName }} />
-            <Button
-              title="set order info"
-              type="outline"
-              onPress={openOrderInfo}
-            />
-            <Button
-              style={{ marginTop: 8 }}
-              title={`blend profile: ${savedTask.blendProfileName || 'None'}`}
-              type="outline"
-              onPress={onBlendProfile}
-            />
+            <Button title="set order info" outline onPress={openOrderInfo} />
+            <Spacing top={8}>
+              <Button
+                title={`blend profile: ${savedTask.blendProfileName || 'None'}`}
+                outline
+                onPress={onBlendProfile}
+              />
+            </Spacing>
           </View>
           <View style={{ flex: 1, margin: 8 }}>
             <View style={{ flex: 1, padding: 0 }}>
@@ -281,14 +280,7 @@ export default function CustomTasker() {
             <Button title="add fill" secondary onPress={openAddFill} />
           </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-            flexWrap: 'wrap',
-            marginVertical: 8,
-          }}
-        >
+        <Stack inline>
           <MultiSelect
             value={deliveryMode}
             onValue={deliveryMode =>
@@ -324,28 +316,29 @@ export default function CustomTasker() {
               { name: 'skip blend', value: true },
             ]}
           />
-        </View>
-        <Button
-          title="queue task"
-          style={{ marginVertical: 8 }}
-          onPress={() => {
-            restaurantDispatch({
-              type: 'QueueTasks',
-              tasks: [
-                {
-                  id: cuid(),
-                  customTask: true,
-                  name: savedTask.orderName, // lame
-                  blendName: savedTask.blendName, // name
-                  ...savedTask,
-                },
-              ],
-            })
-              .then(() => {})
-              .catch(console.error);
-          }}
-        />
-      </View>
+        </Stack>
+        <Spacing vertical={8}>
+          <Button
+            title="queue task"
+            onPress={() => {
+              restaurantDispatch({
+                type: 'QueueTasks',
+                tasks: [
+                  {
+                    id: cuid(),
+                    customTask: true,
+                    name: savedTask.orderName, // lame
+                    blendName: savedTask.blendName, // name
+                    ...savedTask,
+                  },
+                ],
+              })
+                .then(() => {})
+                .catch(console.error);
+            }}
+          />
+        </Spacing>
+      </Spacing>
     </Row>
   );
 }

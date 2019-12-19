@@ -17,6 +17,9 @@ export default function Stack({
       style={[
         {
           flexDirection: horizontal ? 'row' : 'column',
+          flexWrap: 'wrap',
+          alignItems: 'flex-start',
+          width: '100%',
         },
         debug && { backgroundColor: 'lightblue' },
       ]}
@@ -24,7 +27,7 @@ export default function Stack({
       {/* TODO: WTF is happening here? if I render twice the `item` it renders properly but this does not :( */}
       {React.Children.map(children, item => {
         return (
-          <Spacing value={theme.spacing} flex={!inline}>
+          <Spacing value={theme.spacing} inline={inline}>
             {item}
           </Spacing>
         );

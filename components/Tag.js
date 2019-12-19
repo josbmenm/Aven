@@ -20,7 +20,7 @@ export default function Tag({
           paddingHorizontal: 8,
         }
       : {
-          fontSize: 20,
+          fontSize: 22,
         };
   const theme = useTheme({
     ...sizeTheme,

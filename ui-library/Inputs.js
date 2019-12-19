@@ -1,13 +1,17 @@
 import React from 'react';
-import { Text } from 'react-native';
-import { Layout, Container, ComponentBlock } from './Layout';
+import { CodeBlock, CodeBlockExample, CodeBlockTitle } from './CodeBlock';
+import { ComponentBlock } from './Layout';
 import BlockFormInput from '../components/BlockFormInput';
 
-export default function Inputs() {
+export default function MultiSelects() {
   return (
     <ComponentBlock title="Input">
-      <Text>WIP.</Text>
-      <BlockFormInput value="hello world" />
+      <CodeBlock>
+        <CodeBlockTitle title="Default" />
+        <CodeBlockExample>
+          <BlockFormInput value="default input" />
+        </CodeBlockExample>
+      </CodeBlock>
     </ComponentBlock>
   );
 }

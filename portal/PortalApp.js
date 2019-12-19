@@ -54,7 +54,7 @@ import TabsScreen from '../components/TabsScreen';
 import { PopoverContainer } from '../views/Popover';
 import { registerDispatcher } from '../card-reader/CardReader';
 import { ThemeProvider as OldThemeProvider } from '../dashboard/Theme';
-import OLDOnoTheme from '../logic/OnoTheme';
+import OLD_OnoTheme from '../logic/OnoTheme';
 import { HostContextContainer } from '../components/AirtableImage';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
@@ -279,7 +279,7 @@ function renderAppError({ error, errorInfo, onRetry }) {
   );
 }
 
-const NAV_STORAGE_KEY = 'NavigationState-N3e2u1232asdfas12osh';
+const NAV_STORAGE_KEY = 'NavigationState-N3e2u1232asdfas1';
 function FullApp() {
   const cloud = useCloudProvider({
     source: cloudSource,
@@ -289,7 +289,7 @@ function FullApp() {
     return null;
   }
   return (
-    <OldThemeProvider value={OLDOnoTheme}>
+    <OldThemeProvider value={OLD_OnoTheme}>
       <ThemeProvider theme={OnoTheme}>
         <HostContextContainer {...HOST_CONFIG}>
           <CloudContext.Provider value={cloud}>

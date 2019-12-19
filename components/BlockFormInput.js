@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Animated, Easing } from 'react-native';
 import { monsterra60 } from './Styles';
-import { useTheme } from '../dash-ui';
+import { useTheme } from '../dash-ui/Theme';
 import { Responsive } from '../dashboard/Responsive';
 
 function BlockFormInputWithRef(

@@ -24,7 +24,7 @@ export default function ReceiptPage({
       <BlockForm style={{ flex: 1, justifyContent: 'center' }}>
         <BlockFormMessage message="You're almost ready to go..." />
         <BlockFormTitle title="would you like a receipt?" />
-        <Spacing top={16} flex={false}>
+        <Spacing top={16} inline={false}>
           <Stack horizontal>
             <Button title="via sms" onPress={onSms} />
             <Button title="via email" onPress={onEmail} />
