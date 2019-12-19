@@ -288,9 +288,7 @@ const KitchenSteps = [
         !restaurantState.reservedBlenderClean &&
         (restaurantState.fill.fillsRemaining
           ? restaurantState.fill.fillsRemaining.length === 0
-          : true) &&
-        !restaurantState.fill.task.skipBlend &&
-        restaurantState.fill.task.deliveryMode === 'deliver'
+          : true)
       ) {
         return {
           taskId: restaurantState.fill.task && restaurantState.fill.task.id,
