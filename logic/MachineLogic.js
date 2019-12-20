@@ -104,7 +104,6 @@ export function computeNextSteps(
             }
             successRestaurantAction &&
               (await restaurantStateDispatch(successRestaurantAction));
-            await delay(30);
           } catch (e) {
             log('MachineCommandFailure', {
               intent,
