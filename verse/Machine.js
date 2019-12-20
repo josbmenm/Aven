@@ -50,10 +50,12 @@ function mapObject(inObj, mapper) {
 const createSchema = config => {
   const tags = {};
   const allTagsGroup = new TagGroup();
-  Object.keys(config.tags).forEach(tagAlias => {
-    tags[tagAlias] = getTagOfSchema(config.tags[tagAlias]);
-    allTagsGroup.add(tags[tagAlias]);
-  });
+  if (config && config.tags) {
+    Object.keys(config.tags).forEach(tagAlias => {
+      tags[tagAlias] = getTagOfSchema(config.tags[tagAlias]);
+      allTagsGroup.add(tags[tagAlias]);
+    });
+  }
   return { config, tags, allTagsGroup };
 };
 
@@ -125,6 +127,7 @@ export function connectMachine({
   let hasClosed = false;
 
   let _kitchenState = null;
+  let lastKitchenUpdateTime = null;
 
   async function updateKitchenState(state) {
     _kitchenState = state;
@@ -317,17 +320,24 @@ export function connectMachine({
       if (currentMachineSchema) {
         const readings = await doReadTags(currentMachineSchema, {});
         isPLCConnected = true;
+        lastKitchenUpdateTime= Date.now();
         currentState = getTagValues(readings);
       }
-      if (shallowEqual(lastState, currentState)) {
-        // the state doesn't appear to be changing. cool off and wait a bit
-        await delay(50);
-        return;
-      }
+      // if (shallowEqual(lastState, currentState)) {
+      //   // the state doesn't appear to be changing. cool off and wait a bit
+      //   await delay(50);
+      //   return;
+      // }
       await updateKitchenState({
         ...currentState,
         isPLCConnected,
-      });
+      })
+        .then(() => {
+          // kitchen write compelted
+        })
+        .catch(err => {
+          error('KitchenStateWriteError', {err});
+        });
 
       Object.entries(subsystemResolvers).forEach(([subsystem, resolver]) => {
         if (!resolver) return;
@@ -340,7 +350,7 @@ export function connectMachine({
         const isCommandComplete =
           noFaults && endedCommandId === resolver.commandId;
         const resolverIsOldEnough =
-          resolver.commandStartTimeMS + 15000 < Date.now();
+          resolver.commandStartTimeMS + 25000 < Date.now();
 
         if (isCommandReceived || isCommandComplete) {
           clearTimeout(resolver.commandReceivedTimeout);
@@ -380,20 +390,21 @@ export function connectMachine({
               endedCommandId,
               commandId: resolver.commandId,
               command: resolver.command,
+              lastKitchenUpdateTime,
               isCommandReceived,
               isCommandComplete,
-            }
+            };
             const tagNames = [
               `${subsystem}_PrgStep_READ`,
               `${subsystem}_NoFaults_READ`,
               `${subsystem}_ActionIdIn_VALUE`,
               `${subsystem}_ActionIdStarted_READ`,
               `${subsystem}_ActionIdEnded_READ`,
-            ]
+            ];
             tagNames.forEach(tagName => {
-              errorDetails[tagName] = _kitchenState[tagName]
-            })
-            
+              errorDetails[tagName] = _kitchenState[tagName];
+            });
+
             error('MachineError', errorDetails);
 
             resolver.reject(
@@ -564,8 +575,8 @@ export function connectMachine({
           `${subsystem}_ActionIdEnded_READ`,
         ];
         tagNames.forEach(tagName => {
-          errorDetails[tagName] = _kitchenState[tagName]
-        })
+          errorDetails[tagName] = _kitchenState[tagName];
+        });
         error('MachineCommandFailed', errorDetails);
 
         reject(
@@ -596,17 +607,17 @@ export function connectMachine({
             commandStartTimeMS,
             commandErrorTimeMS,
             commandDurationMS: commandErrorTimeMS - commandStartTimeMS,
-          }
+          };
           const tagNames = [
             `${subsystem}_PrgStep_READ`,
             `${subsystem}_NoFaults_READ`,
             `${subsystem}_ActionIdIn_VALUE`,
             `${subsystem}_ActionIdStarted_READ`,
             `${subsystem}_ActionIdEnded_READ`,
-          ]
+          ];
           tagNames.forEach(tagName => {
-            errorDetails[tagName] = _kitchenState[tagName]
-          })
+            errorDetails[tagName] = _kitchenState[tagName];
+          });
           error('MachineCommandFailed', errorDetails);
           reject(err);
         },
@@ -683,7 +694,7 @@ export function connectMachine({
 
   function applyDerivedState(restaurantState) {
     if (!deriveAppliedMachineState) return;
-    if (!restaurantState.isAttached) return;
+    if (!restaurantState || !restaurantState.isAttached) return;
     const machineState = deriveAppliedMachineState(restaurantState);
     const newMachineState = {};
     let needsMachineWrite = false;

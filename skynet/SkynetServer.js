@@ -202,6 +202,9 @@ export default async function startSkynetServer(httpServer) {
         atData: block.value.stream,
         directory: directoryBlock.value.stream,
       }).map(({ atData, directory }) => {
+        if (!atData || !directory) {
+          return null
+        }
         // below, we inject block refs for our Airtable images, by referring to the files directory
         const baseTables = Object.fromEntries(
           Object.entries(atData.baseTables).map(([tableName, table]) => {
