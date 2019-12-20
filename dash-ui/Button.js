@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 import { useTheme } from './Theme';
-import { opacify } from './utils';
+import { opacify, useStatusColor } from './utils';
 
 export default function Button({
   title,
@@ -11,9 +11,12 @@ export default function Button({
   onLongPress,
   theme: themeProp = {},
   disabled = false,
+  status = 'primary',
 }) {
   const theme = useTheme(themeProp);
-  const color = opacify(theme.colorPrimary, 0.8);
+  const statusColor = useStatusColor({ status, theme });
+  console.log('TCL: statusColor', statusColor);
+  const color = opacify(statusColor, 0.8);
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -24,7 +27,7 @@ export default function Button({
     >
       <View
         style={{
-          borderRadius: 3,
+          borderRadius: theme.borderRadius,
           borderWidth: 3,
           backgroundColor: outline ? 'transparent' : color,
           borderColor: outline ? color : 'transparent',
@@ -43,6 +46,7 @@ export default function Button({
               color: outline ? color : 'white',
               fontFamily: theme.fontBold,
               fontWeight: 'bold',
+              textAlign: 'center',
             }}
           >
             {title}

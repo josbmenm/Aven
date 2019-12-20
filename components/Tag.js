@@ -2,12 +2,11 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { boldPrimaryFontFace } from './Styles';
 import { useTheme, Large } from '../dash-ui/Theme';
-import { opacify } from '../dash-ui/utils';
+import { opacify, useStatusColor } from '../dash-ui/utils';
 
 export default function Tag({
   title,
   color,
-  style,
   size = 'regular',
   status = 'neutral', // positive | negative | warning
   theme: themeProp = {},
@@ -28,28 +27,13 @@ export default function Tag({
     ...themeProp,
   });
 
-  let backgroundColor = theme.colorPrimary;
-
-  switch (status) {
-    case 'positive':
-      backgroundColor = theme.colorPositive;
-      break;
-    case 'negative':
-      backgroundColor = theme.colorNegative;
-      break;
-    case 'warning':
-      backgroundColor = theme.colorWarning;
-      break;
-    case 'positive':
-      backgroundColor = theme.colorPrimary;
-      break;
-  }
+  const color = useStatusColor(status);
 
   return (
     <View
       style={{
         borderRadius: theme.borderRadius,
-        backgroundColor: opacify(backgroundColor, 0.8),
+        backgroundColor: opacify(color, 0.8),
         paddingVertical: theme.paddingVertical,
         paddingHorizontal: theme.paddingHorizontal,
         minWidth: size === 'small' ? null : 150,

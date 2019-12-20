@@ -15,6 +15,8 @@ const baseTheme = {
   colorPositive: '#272',
   colorWarning: '#997200',
 
+  darkMode: false,
+
   paddingVertical: 8,
   paddingHorizontal: 16,
   fontRegular: 'Maax',
@@ -97,6 +99,25 @@ export function Color({ values, children }) {
   const colorTheme = useTheme(values);
   return (
     <ThemeContext.Provider value={colorTheme}>{children}</ThemeContext.Provider>
+  );
+}
+
+export function DarkMode({ theme, children }) {
+  // get the base theme from context
+  const baseTheme = React.useContext(ThemeContext);
+
+  // get the override values. can be a object or a mapper function
+  const overrides = typeof theme === 'function' ? theme(baseTheme) : theme;
+
+  // merge both themes
+  const darkTheme = {
+    ...baseTheme,
+    ...overrides,
+    darkMode: true,
+  };
+
+  return (
+    <ThemeContext.Provider value={darkTheme}>{children}</ThemeContext.Provider>
   );
 }
 

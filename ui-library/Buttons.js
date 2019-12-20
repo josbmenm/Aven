@@ -4,6 +4,7 @@ import Heading from '../dash-ui/Heading';
 import { CodeBlock, CodeBlockExample, CodeBlockTitle } from './CodeBlock';
 import { ComponentBlock } from './Layout';
 import { Large, Spacing } from '../dash-ui/Theme';
+import Spinner from '../dashboard/Spinner';
 import Stack from '../dash-ui/Stack';
 import Button from '../dash-ui/Button';
 import ButtonLink from '../dash-ui/ButtonLink';
@@ -14,38 +15,86 @@ function Buttons() {
       <CodeBlock>
         <CodeBlockTitle title="Default Button" />
         <CodeBlockExample>
-          <Stack>
+          <Stack horizontal>
             <Button
-              title="default Button"
+              title="primary Button"
               onPress={() => console.log('button pressed')}
             />
-            <Large>
+            <Button
+              status="positive"
+              title="positive Button"
+              onPress={() => console.log('big button pressed')}
+            />
+            <Button
+              status="negative"
+              title="negative Button"
+              onPress={() => console.log('big button pressed')}
+            />
+            <Button
+              status="warning"
+              title="warning Button"
+              onPress={() => console.log('big button pressed')}
+            />
+          </Stack>
+        </CodeBlockExample>
+      </CodeBlock>
+
+      <CodeBlock>
+        <CodeBlockTitle title="Large Button" />
+        <CodeBlockExample>
+          <Large>
+            <Stack horizontal>
               <Button
-                title="Big Button"
+                title="primary Button"
+                onPress={() => console.log('button pressed')}
+              />
+              <Button
+                status="positive"
+                title="positive Button"
                 onPress={() => console.log('big button pressed')}
               />
-            </Large>
-          </Stack>
+              <Button
+                status="negative"
+                title="negative Button"
+                onPress={() => console.log('big button pressed')}
+              />
+              <Button
+                status="warning"
+                title="warning Button"
+                onPress={() => console.log('big button pressed')}
+              />
+            </Stack>
+          </Large>
         </CodeBlockExample>
       </CodeBlock>
 
       <CodeBlock>
         <CodeBlockTitle title="Outline Button" />
         <CodeBlockExample>
-          <Stack>
+          <Stack horizontal>
             <Button
+              title="primary Button"
               outline
-              title="outline button"
-              onPress={() => console.log('outline button pressed')}
+              onPress={() => console.log('button pressed')}
             />
-
-            <Large>
-              <Button
-                title="Big outline Button"
-                outline
-                onPress={() => console.log('big button pressed')}
-              />
-            </Large>
+            <Button
+              status="positive"
+              outline
+              title="positive Button"
+              onPress={() => console.log('big button pressed')}
+            />
+            <Button
+              status="negative"
+              outline
+              title="negative Button"
+              onPress={() => console.log('big button pressed')}
+            />
+            <Button
+              status="warning"
+              outline
+              title="warning Button"
+              onPress={() => console.log('big button pressed')}
+            />
           </Stack>
         </CodeBlockExample>
       </CodeBlock>
@@ -63,6 +112,41 @@ function Buttons() {
               title="right Button"
               onPress={() => console.log('right button pressed')}
             />
+          </Stack>
+        </CodeBlockExample>
+      </CodeBlock>
+
+      <CodeBlock>
+        <CodeBlockTitle title="Async button (loading spinner)" />
+        <CodeBlockExample>
+          <Stack horizontal>
+            <Button
+              title="submit"
+              onPress={() => console.log('left button pressed')}
+            >
+              <Spinner style={{ position: 'absolute', alignSelf: 'center' }} />
+            </Button>
+
+            <Button
+              title="right Button"
+              onPress={() => console.log('right button pressed')}
+            />
+          </Stack>
+        </CodeBlockExample>
+      </CodeBlock>
+
+      <CodeBlock>
+        <CodeBlockTitle title="ButtonLink" />
+        <CodeBlockExample>
+          <Stack horizontal>
+            <ButtonLink title="Button Link" to="/home" />
+            <ButtonLink status="positive" title="Positive" to="/home" />
+            <ButtonLink status="negative" title="Negative" to="/home" />
+            <ButtonLink status="warning" title="Warning" to="/home" />
+          </Stack>
+          <Stack horizontal inline>
+            <ButtonLink title="Button Link" to="/home" />
+            <ButtonLink title="Button Link Active" to="/about" active />
           </Stack>
         </CodeBlockExample>
       </CodeBlock>

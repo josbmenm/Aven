@@ -124,7 +124,9 @@ function BlockFormInputWithRef(
         }
       >
         <View
+          pointerEvents="none"
           style={{
+            pointerEvents: 'none',
             flex: 1,
             borderRadius: 4,
             borderColor: monsterra60,
@@ -134,11 +136,12 @@ function BlockFormInputWithRef(
         >
           <Responsive style={{}}>
             <Animated.Text
+              pointerEvents="none"
               style={{
+                pointerEvents: 'none',
                 fontFamily: theme.fontRegular,
                 position: 'absolute',
                 color: theme.colorPrimary,
-                pointerEvents: 'none',
                 opacity: 0.5,
                 zIndex: 10,
                 top: '30%',

@@ -8,7 +8,7 @@ export function Layout({ children, ...rest }) {
     <View
       style={{
         flexDirection: 'row',
-        justifyContent: 'stretch',
+        // justifyContent: 'stretch',
         height: '100%',
       }}
     >

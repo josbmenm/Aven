@@ -1,3 +1,6 @@
+import React, { useEffect } from 'react';
+import { useTheme } from './Theme';
+
 export function opacify(H, opacity) {
   // Convert hex to RGB first
   let r = 0,
@@ -39,4 +42,37 @@ export function opacify(H, opacity) {
   l = +(l * 100).toFixed(1);
 
   return `hsla(${h}, ${s}%, ${l}%, ${opacity})`;
+}
+
+export function useStatusColor({ status, theme: currentTheme }) {
+  if (status === undefined) {
+    throw new Error('status must be provided to useStatusColor hook');
+  }
+
+  const theme = currentTheme || useTheme();
+  const [color, setColor] = React.useState(theme.colorTint);
+
+  useEffect(() => {
+    let statusColor;
+
+    switch (status) {
+      case 'positive':
+        statusColor = theme.colorPositive;
+        break;
+      case 'negative':
+        statusColor = theme.colorNegative;
+        break;
+      case 'warning':
+        statusColor = theme.colorWarning;
+        break;
+      default:
+        statusColor = theme.colorPrimary;
+        break;
+    }
+
+    setColor(statusColor);
+  }, [status]);
+
+  console.log('TCL: useStatusColor -> color', color);
+  return color;
 }
