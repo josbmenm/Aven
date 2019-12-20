@@ -68,7 +68,6 @@ export function streamOfValue(staticValue, crumb) {
 export function combineStreams(inputs) {
   const inputEntries = Object.entries(inputs);
   const stoppers = new Set();
-  const waitingForInputNames = new Set(Object.keys(inputs));
   const lastValues = {};
   const entries = Object.fromEntries(
     inputEntries.map(([key, inputStream]) => {
@@ -95,11 +94,8 @@ export function combineStreams(inputs) {
             if (lastValues[inputName] === v) {
               return;
             }
-            waitingForInputNames.delete(inputName);
             lastValues[inputName] = v;
-            if (waitingForInputNames.size === 0) {
-              scheduleNotifyValues();
-            }
+            scheduleNotifyValues();
           },
           complete: () => {},
           error: e => {

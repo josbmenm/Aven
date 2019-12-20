@@ -6,6 +6,7 @@ import cuid from 'cuid';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import bindCommitDeepBlock from './bindCommitDeepBlock';
 import { createStreamValue } from './StreamValue';
+import { error } from '../logger/logger'
 import {
   createProducerStream,
   streamOf,
@@ -644,6 +645,9 @@ export function createDoc({
   }
 
   async function putBlock(block) {
+    if (block.id === undefined) {
+      throw new Error('Cannot put block without id')
+    }
     onReport &&
       onReport('PutDoc', {
         id: block.id,
@@ -693,8 +697,41 @@ export function createDoc({
     'StaticEmptyIdValue',
   );
 
+  async function locallyPutTransactionValue(value) {
+    const dispatchTime = Date.now();
+    const dispatchId = cuid();
+    const fullLocalValue =
+      typeof value === 'object'
+        ? { ...value, dispatchTime, dispatchId }
+        : value;
+    let prevId = docState.id;
+    if (prevId === undefined) {
+      const { id } = await docIdAndValue.load();
+      prevId = id;
+    }
+    const on = prevId ? { id: prevId, type: 'BlockReference' } : null;
+    const localTransactionValue = {
+      type: 'TransactionValue',
+      on,
+      value: fullLocalValue,
+    };
+    const localBlock = getBlockOfValue(localTransactionValue);
+    setDocState({
+      id: localBlock.id,
+    });
+    performReport('PutDocValue', {
+      id: localBlock.id,
+      value: localTransactionValue,
+      isRemoteOnly: docState.isRemoteOnly,
+    });
+    return { id: localBlock.id, prevId, dispatchTime, dispatchId };
+  }
+
   async function finallyPutTransactionValue(value) {
-    if (docState.id === undefined && !docState.isLocalOnly) {
+    if (docState.isLocalOnly) {
+      return locallyPutTransactionValue(value)
+    }
+    if (docState.id === undefined) {
       return _remotePutTransactionValue(value);
     }
     const dispatchTime = Date.now();
@@ -712,17 +749,6 @@ export function createDoc({
     };
     const localBlock = getBlockOfValue(localTransactionValue);
 
-    if (docState.isLocalOnly) {
-      setDocState({
-        id: localBlock.id,
-      });
-      performReport('PutDocValue', {
-        id: localBlock.id,
-        value: localTransactionValue,
-        isRemoteOnly: docState.isRemoteOnly,
-      });
-      return { id: localBlock.id, prevId, dispatchTime, dispatchId };
-    }
     setDocState({
       id: localBlock.id,
       puttingFromId: prevId,
@@ -788,7 +814,7 @@ export function createDoc({
 
   let transactionPutPromise = Promise.resolve();
   function putTransactionValue(value) {
-    transactionPutPromise = transactionPutPromise.finally(() =>
+    transactionPutPromise = transactionPutPromise.then(() =>
       finallyPutTransactionValue(value),
     );
     return transactionPutPromise;
@@ -1350,7 +1376,7 @@ export function createReducerStream(
 ) {
   const docStateStreams = new Map();
 
-  function getDocStateStream(id) {
+  function getDocStateStream(id, depth = 0) {
     if (id === undefined) {
       return streamNever('UndefinedId');
     }
@@ -1377,7 +1403,7 @@ export function createReducerStream(
           id: getIdOfValue(initialState).id,
         });
         if (actionDocValue.on && actionDocValue.on.type === 'BlockReference') {
-          prevStateStream = getDocStateStream(actionDocValue.on.id);
+          prevStateStream = getDocStateStream(actionDocValue.on.id, depth + 1);
         }
         return prevStateStream.map(lastState => {
           const newState = reducerFn(lastState.value, actionValue);
@@ -1529,7 +1555,7 @@ export function createLocalSessionClient({
   ...clientOpts
 }) {
   function handleAsyncStorageFailure(err, ctx) {
-    console.error('Failed to save locally.', err, ctx);
+    error('LocalStorageError', {err, ctx});
   }
 
   function clientReport(reportName, report) {
@@ -1545,7 +1571,6 @@ export function createLocalSessionClient({
           name,
           id,
           value,
-          force: true,
         })
         .catch(err => handleAsyncStorageFailure(err, { reportName, report }));
     } else if (reportName === 'PutDoc') {
@@ -1559,7 +1584,6 @@ export function createLocalSessionClient({
               id,
             })
             .then(blockData => {
-              console.log('iz re hydrating block!', domain, name, id);
             })
             .catch(err => {
               handleAsyncStorageFailure(err, { reportName, report });
