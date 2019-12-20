@@ -378,18 +378,18 @@ const KitchenSteps = [
         Pulse4: 0,
       };
       if (intent.blendProfile) {
-        params.Timer1 = intent.blendProfile.Timer1;
-        params.Speed1 = intent.blendProfile.Speed1;
-        params.Pulse1 = intent.blendProfile.Pulse1;
-        params.Timer2 = intent.blendProfile.Timer2;
-        params.Speed2 = intent.blendProfile.Speed2;
-        params.Pulse2 = intent.blendProfile.Pulse2;
-        params.Timer3 = intent.blendProfile.Timer3;
-        params.Speed3 = intent.blendProfile.Speed3;
-        params.Pulse3 = intent.blendProfile.Pulse3;
-        params.Timer4 = intent.blendProfile.Timer4;
-        params.Speed4 = intent.blendProfile.Speed4;
-        params.Pulse4 = intent.blendProfile.Pulse4;
+        params.Timer1 = intent.blendProfile.Timer1 || 0;
+        params.Speed1 = intent.blendProfile.Speed1 || 0;
+        params.Pulse1 = intent.blendProfile.Pulse1 || 0;
+        params.Timer2 = intent.blendProfile.Timer2 || 0;
+        params.Speed2 = intent.blendProfile.Speed2 || 0;
+        params.Pulse2 = intent.blendProfile.Pulse2 || 0;
+        params.Timer3 = intent.blendProfile.Timer3 || 0;
+        params.Speed3 = intent.blendProfile.Speed3 || 0;
+        params.Pulse3 = intent.blendProfile.Pulse3 || 0;
+        params.Timer4 = intent.blendProfile.Timer4 || 0;
+        params.Speed4 = intent.blendProfile.Speed4 || 0;
+        params.Pulse4 = intent.blendProfile.Pulse4 || 0;
       }
       return {
         commandType: 'Blend',
