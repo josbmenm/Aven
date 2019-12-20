@@ -13,7 +13,7 @@ export default function LiteralText({
       style={{
         fontSize: theme.textFontSize,
         lineHeight: theme.textLineHeight,
-        color: theme.textColor,
+        color: theme.colorForeground,
         fontFamily: theme.textFont,
         fontWeight: theme.textFontWeight,
       }}

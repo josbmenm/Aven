@@ -73,6 +73,5 @@ export function useStatusColor({ status, theme: currentTheme }) {
     setColor(statusColor);
   }, [status]);
 
-  console.log('TCL: useStatusColor -> color', color);
   return color;
 }

@@ -22,10 +22,9 @@ const baseTheme = {
   fontRegular: 'Maax',
   fontBold: 'Maax-Bold',
   fontProse: 'Lora',
-  borderRadius: 4,
+  borderRadius: 3,
 
   textFont: 'Maax',
-  textColor: '#333',
   textLineHeight: 24,
   textFontWeight: '400',
   textFontSize: 16,
@@ -102,22 +101,34 @@ export function Color({ values, children }) {
   );
 }
 
-export function DarkMode({ theme, children }) {
+const darkTheme = {
+  colorTint: '#005252',
+  colorBackground: '#333333',
+  colorForeground: '#f7f7f7',
+  colorPrimary: '#005252',
+  colorNeutral: '#524952',
+  colorNegative: '#8F3222',
+  colorPositive: '#228F41',
+  colorWarning: '#B07509',
+};
+
+export function DarkMode({ theme = darkTheme, children }) {
   // get the base theme from context
   const baseTheme = React.useContext(ThemeContext);
 
   // get the override values. can be a object or a mapper function
   const overrides = typeof theme === 'function' ? theme(baseTheme) : theme;
-
   // merge both themes
-  const darkTheme = {
+  const composedTheme = {
     ...baseTheme,
     ...overrides,
     darkMode: true,
   };
 
   return (
-    <ThemeContext.Provider value={darkTheme}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={composedTheme}>
+      {children}
+    </ThemeContext.Provider>
   );
 }
 
@@ -133,6 +144,8 @@ export function Spacing({
   inline = true,
   debug = false,
 }) {
+  const theme = useTheme();
+
   return (
     <View
       style={[
@@ -144,7 +157,7 @@ export function Spacing({
         right && { marginRight: right },
         bottom && { marginBottom: bottom },
         left && { marginLeft: left },
-        debug && { backgroundColor: 'red' },
+        debug && { backgroundColor: 'indianred' },
       ]}
     >
       {children}

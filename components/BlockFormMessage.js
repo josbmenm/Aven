@@ -8,7 +8,7 @@ export default function BlockFormMessage({ message }) {
     <Heading
       title={message}
       theme={{
-        textColor: theme.colorPrimary,
+        colorForeground: theme.colorPrimary,
         headingFontSize: 26,
         headingLineHeight: 34,
         headingFont: theme.fontProse,

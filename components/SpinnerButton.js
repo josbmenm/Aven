@@ -4,18 +4,25 @@ import React from 'react';
 import { useTheme } from '../dashboard/Theme';
 
 export default function SpinnerButton({
+  onPress,
   isLoading = false,
   children,
   title,
   disabled,
+  theme: themeProp,
   ...props
 }) {
-  const { colors } = useTheme();
+  const theme = useTheme(themeProp);
   return (
-    <Button {...props} title={title} disabled={disabled || isLoading}>
+    <Button
+      onPress={onPress}
+      title={title}
+      disabled={disabled || isLoading}
+      {...props}
+    >
       {isLoading && (
         <Spinner
-          color={colors.invertedText}
+          color={theme.colorForeground}
           style={{ alignSelf: 'center', position: 'absolute' }}
         />
       )}

@@ -6,7 +6,6 @@ import { opacify, useStatusColor } from '../dash-ui/utils';
 
 export default function Tag({
   title,
-  color,
   size = 'regular',
   status = 'neutral', // positive | negative | warning
   theme: themeProp = {},
@@ -27,7 +26,7 @@ export default function Tag({
     ...themeProp,
   });
 
-  const color = useStatusColor(status);
+  const color = useStatusColor({ status });
 
   return (
     <View

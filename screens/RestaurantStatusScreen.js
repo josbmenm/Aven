@@ -115,9 +115,9 @@ function VanView() {
   return (
     <Row title="Van System Power">
       {/* {isSkidLocked ? (
-        <Tag title="Machine Locked" color={Tag.positiveColor} />
+        <Tag title="Machine Locked"  />
       ) : (
-        <Tag title="Machine Unlocked" color={Tag.warningColor} />
+        <Tag title="Machine Unlocked" />
       )} */}
 
       {/* <MultiSelect

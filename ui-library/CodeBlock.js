@@ -1,13 +1,18 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { useTheme } from '../dash-ui/Theme';
+import { opacify } from '../dash-ui/utils';
 
 export function CodeBlock({ children }) {
+  const theme = useTheme();
+  // const borderColor = opacify(theme.backgroundColor, 0.5);
+  const borderColor = theme.backgroundColor;
   return (
     <View
       style={{
-        backgroundColor: '#fefefe',
+        backgroundColor: theme.colorBackground,
         borderRadius: 4,
-        borderColor: '#dadada',
+        borderColor: borderColor,
         borderWidth: 1,
         marginVertical: 16,
       }}
@@ -18,24 +23,32 @@ export function CodeBlock({ children }) {
 }
 
 export function CodeBlockTitle({ title = 'default title' }) {
+  const theme = useTheme();
   return (
     <View
       style={{
         paddingVertical: 8,
         paddingHorizontal: 16,
+        backgroundColor: theme.colorBackground,
       }}
     >
-      <Text style={{ fontSize: 14, color: '#666666' }}>{title}</Text>
+      <Text style={{ fontSize: 14, color: theme.colorForeground }}>
+        {title}
+      </Text>
     </View>
   );
 }
 
 export function CodeBlockExample({ children }) {
+  const theme = useTheme();
+  // const borderColor = opacify(theme.backgroundColor, 0.5);
+  const borderColor = theme.backgroundColor;
   return (
     <View
       style={{
         padding: 16,
-        borderTopColor: '#dadada',
+        borderTopColor: borderColor,
+        backgroundColor: theme.colorBackground,
         borderTopWidth: 1,
       }}
     >
@@ -45,11 +58,14 @@ export function CodeBlockExample({ children }) {
 }
 
 export function CodeBlockBody({ children }) {
+  const theme = useTheme();
+  // const borderColor = opacify(theme.backgroundColor, 0.5);
+  const borderColor = theme.backgroundColor;
   return (
     <View
       style={{
         padding: 16,
-        borderTopColor: '#dadada',
+        borderTopColor: borderColor,
         borderTopWidth: 1,
       }}
     >

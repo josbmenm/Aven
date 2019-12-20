@@ -37,21 +37,22 @@ export default function Button({
           opacity: disabled ? 0.5 : 1,
         }}
       >
-        {children}
-        {title && (
-          <Text
-            style={{
-              fontSize: theme.buttonFontSize,
-              lineHeight: theme.buttonLineHeight,
-              color: outline ? color : 'white',
-              fontFamily: theme.fontBold,
-              fontWeight: 'bold',
-              textAlign: 'center',
-            }}
-          >
-            {title}
-          </Text>
-        )}
+        {children
+          ? children
+          : title && (
+              <Text
+                style={{
+                  fontSize: theme.buttonFontSize,
+                  lineHeight: theme.buttonLineHeight,
+                  color: outline ? color : 'white',
+                  fontFamily: theme.fontBold,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                }}
+              >
+                {title}
+              </Text>
+            )}
       </View>
     </TouchableOpacity>
   );

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import Heading from '../dash-ui/Heading';
 import { CodeBlock, CodeBlockExample, CodeBlockTitle } from './CodeBlock';
 import { ComponentBlock } from './Layout';
-import { Large, Spacing } from '../dash-ui/Theme';
+import { Large, Spacing, DarkMode } from '../dash-ui/Theme';
 import Spinner from '../dashboard/Spinner';
 import Stack from '../dash-ui/Stack';
 import Button from '../dash-ui/Button';
@@ -23,17 +23,17 @@ function Buttons() {
             <Button
               status="positive"
               title="positive Button"
-              onPress={() => console.log('big button pressed')}
+              onPress={() => console.log('button pressed')}
             />
             <Button
               status="negative"
               title="negative Button"
-              onPress={() => console.log('big button pressed')}
+              onPress={() => console.log('button pressed')}
             />
             <Button
               status="warning"
               title="warning Button"
-              onPress={() => console.log('big button pressed')}
+              onPress={() => console.log('button pressed')}
             />
           </Stack>
         </CodeBlockExample>
@@ -45,23 +45,23 @@ function Buttons() {
           <Large>
             <Stack horizontal>
               <Button
-                title="primary Button"
+                title="Button"
                 onPress={() => console.log('button pressed')}
               />
               <Button
                 status="positive"
-                title="positive Button"
-                onPress={() => console.log('big button pressed')}
+                title="Button"
+                onPress={() => console.log('button pressed')}
               />
               <Button
                 status="negative"
-                title="negative Button"
-                onPress={() => console.log('big button pressed')}
+                title="Button"
+                onPress={() => console.log('button pressed')}
               />
               <Button
                 status="warning"
-                title="warning Button"
-                onPress={() => console.log('big button pressed')}
+                title="Button"
+                onPress={() => console.log('button pressed')}
               />
             </Stack>
           </Large>
@@ -81,19 +81,19 @@ function Buttons() {
               status="positive"
               outline
               title="positive Button"
-              onPress={() => console.log('big button pressed')}
+              onPress={() => console.log('button pressed')}
             />
             <Button
               status="negative"
               outline
               title="negative Button"
-              onPress={() => console.log('big button pressed')}
+              onPress={() => console.log('button pressed')}
             />
             <Button
               status="warning"
               outline
               title="warning Button"
-              onPress={() => console.log('big button pressed')}
+              onPress={() => console.log('button pressed')}
             />
           </Stack>
         </CodeBlockExample>
@@ -157,7 +157,7 @@ function Buttons() {
           <Stack>
             <ButtonLink title="Button Link" to="/home" />
             <Large>
-              <ButtonLink title="Big Button Link" to="/about" />
+              <ButtonLink title="Button Link" to="/about" />
             </Large>
           </Stack>
           <Stack horizontal inline>
@@ -178,6 +178,34 @@ function Buttons() {
           </Large>
         </CodeBlockExample>
       </CodeBlock>
+      <DarkMode>
+        <CodeBlock>
+          <CodeBlockTitle title="DarkMode" />
+          <CodeBlockExample>
+            <Stack horizontal>
+              <Button
+                title="primary Button"
+                onPress={() => console.log('button pressed')}
+              />
+              <Button
+                status="positive"
+                title="positive Button"
+                onPress={() => console.log('button pressed')}
+              />
+              <Button
+                status="negative"
+                title="negative Button"
+                onPress={() => console.log('button pressed')}
+              />
+              <Button
+                status="warning"
+                title="warning Button"
+                onPress={() => console.log('button pressed')}
+              />
+            </Stack>
+          </CodeBlockExample>
+        </CodeBlock>
+      </DarkMode>
     </ComponentBlock>
   );
 }

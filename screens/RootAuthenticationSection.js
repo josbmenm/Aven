@@ -2,12 +2,12 @@ import React from 'react';
 import { View } from 'react-native';
 import useObservable from '../cloud-core/useObservable';
 import { useCloud } from '../cloud-core/KiteReact';
-import Title from '../components/Title';
 import BlockFormButton from '../components/BlockFormButton';
 import BlockFormRow from '../components/BlockFormRow';
 import BlockFormMessage from '../components/BlockFormMessage';
 import BlockFormInput from '../components/BlockFormInput';
 import useAsyncError from '../react-utils/useAsyncError';
+import Heading from '../dash-ui/Heading';
 
 function GenericContainer({ children }) {
   return (
@@ -24,7 +24,7 @@ function RootLoginForm() {
   const handleErrors = useAsyncError();
   return (
     <GenericContainer>
-      <Title>Log In</Title>
+      <Heading title="Log in" />
       <BlockFormRow>
         <BlockFormInput
           value={pw}
