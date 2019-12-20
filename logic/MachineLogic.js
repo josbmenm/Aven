@@ -115,6 +115,8 @@ export function computeNextSteps(
               (await restaurantStateDispatch(failureRestaurantAction));
             throw e;
           }
+          await delay(30); // make sure the results of one action is reflected before the next step is chosen. without this delay we are prone tou double-blending and double-dispensing
+
           return resp;
         },
         performFake: async restaurantStateDispatch => {
