@@ -1,22 +1,32 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import { heroViewStyle, heroIconStyle, heroSubtitleStyle } from './Styles';
+import { View } from 'react-native';
 import SharedIcon from './SharedIcon';
-import Heading from '../dash-ui/Heading';
+import { Stack, Heading, useTheme, Spacing } from '../dash-ui';
 
-export default function Hero({ icon, title, subtitle }) {
+export default function Hero({ icon, title, subtitle, theme: themeProp }) {
+  const theme = useTheme(themeProp);
   return (
-    <View style={heroViewStyle}>
-      <SharedIcon icon={icon} style={heroIconStyle} />
-      <View style={{ paddingLeft: 25 }}>
-        <Heading title={title} />
+    <Spacing horizontal={32} top={80} bottom={40}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Spacing right={16}>
+          <SharedIcon
+            icon={icon}
+            theme={{
+              fontSize: theme.headingFontSize,
+              lineHeight: theme.headingLineHeight,
+            }}
+          />
+        </Spacing>
+        <Stack debug>
+          <Heading title={title} />
+          {subtitle && (
+            <Heading
+              title={subtitle}
+              theme={{ headingFontSize: 32, headingLineHeight: 40 }}
+            />
+          )}
+        </Stack>
       </View>
-      {subtitle && (
-        <Heading
-          title={subtitle}
-          theme={{ headingFontSize: 48, headingLineHeight: 56 }}
-        />
-      )}
-    </View>
+    </Spacing>
   );
 }

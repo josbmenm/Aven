@@ -25,12 +25,10 @@ const baseTheme = {
   borderRadius: 3,
 
   textFont: 'Maax',
-  textLineHeight: 24,
-  textFontWeight: '400',
-  textFontSize: 16,
+  fontWeight: '400',
   headingFont: 'Maax-Bold',
   headingFontSize: 64,
-  headingLineHeight: 80,
+  headingLineHeight: 72,
   headingFontWeight: 'bold',
 
   inputPaddingTop: 16,

@@ -1,17 +1,19 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { Text, useTheme } from '../dash-ui';
 import { rowSectionStyle, boldPrimaryFontFace } from './Styles';
 
 const RowSection = ({ children, title, style }) => {
+  const theme = useTheme();
   return (
     <View style={{ ...style }}>
       {title && (
         <Text
-          style={{
-            ...boldPrimaryFontFace,
+          theme={{
+            fontFamily: theme.fontBold,
             color: '#282828',
-            padding: 25,
-            fontSize: 22,
+            fontSize: 24,
+            lineHeight: 32,
           }}
         >
           {title}

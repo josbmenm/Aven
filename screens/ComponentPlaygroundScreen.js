@@ -13,6 +13,7 @@ import ProductHomePage from '../components/ProductHomePage';
 import CartSidebar from '../components/CartSidebar';
 import CustomizePage from '../components/CustomizePage';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
+import Hero from '../components/Hero';
 
 const menuItem = require('./exampleMenuItem.json');
 const orderSummary = require('./exampleOrderSummary.json');
@@ -124,6 +125,7 @@ function ComponentPlaygroundScreenMemo({ navigation, ...props }) {
       title="Components"
       icon="🍹"
     >
+      <Hero title="Hero title" subtitle="subtitle test" />
       <RowSection>
         {Object.keys(Components).map(componentName => {
           const { icon } = Components[componentName];

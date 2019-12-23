@@ -1,17 +1,17 @@
 import React from 'react';
 import { View } from 'react-native';
-import { highlightPrimaryColor } from './Styles';
+import { Spacing } from '../dash-ui';
 
 export default function BlockFormHorizontalRule() {
   return (
-    <View
-      style={{
-        alignSelf: 'stretch',
-        height: 1,
-        backgroundColor: '#00000014',
-        marginVertical: 15,
-        marginHorizontal: 10,
-      }}
-    />
+    <Spacing vertical={8} horizontal={16}>
+      <View
+        style={{
+          alignSelf: 'stretch',
+          height: 1,
+          backgroundColor: '#00000014',
+        }}
+      />
+    </Spacing>
   );
 }

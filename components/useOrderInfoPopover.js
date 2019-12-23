@@ -1,12 +1,11 @@
 import React from 'react';
 import { View } from 'react-native';
-import Button from '../dash-ui/Button';
 import { Easing } from 'react-native-reanimated';
 import BlockFormInput from './BlockFormInput';
 import { usePopover } from '../views/Popover';
 import KeyboardPopover from './KeyboardPopover';
 import useFocus from '../navigation-hooks/useFocus';
-import { Spacing } from '../dash-ui/Theme';
+import { Spacing, Button } from '../dash-ui';
 
 function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
   const [orderName, setOrderName] = React.useState(initialInfo.orderName);

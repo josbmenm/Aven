@@ -48,6 +48,7 @@ import { ThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
 import { isStateLoaded, useDeviceId } from '../components/useAsyncStorage';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
+import { Spacing, Heading } from '../dash-ui';
 import * as Sentry from '@sentry/react-native';
 
 const appPackage = require('../app.json');
@@ -186,7 +187,11 @@ const KioskAppContainer = React.memo(createAppContainer(KioskAppNavigator));
 
 function RetryButton({ onRetry }) {
   return (
-    <Button title="try again.." onPress={onRetry} style={{ alignSelf: 'center' }} />
+    <Button
+      title="try again.."
+      onPress={onRetry}
+      style={{ alignSelf: 'center' }}
+    />
   );
 }
 
@@ -197,16 +202,9 @@ function renderAppError({ error, errorInfo, onRetry }) {
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Text
-          style={{
-            ...titleStyle,
-            fontSize: 48,
-            marginTop: 100,
-            textAlign: 'center',
-          }}
-        >
-          uh oh!
-        </Text>
+        <Spacing top={100}>
+          <Heading theme={{ headingFontSize: 48 }} title="uh oh!" />
+        </Spacing>
         <Text
           style={{
             ...proseFontFace,

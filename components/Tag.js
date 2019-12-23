@@ -1,14 +1,13 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { boldPrimaryFontFace } from './Styles';
-import { useTheme, Large } from '../dash-ui/Theme';
+import { useTheme } from '../dash-ui';
 import { opacify, useStatusColor } from '../dash-ui/utils';
 
 export default function Tag({
   title,
   size = 'regular',
   status = 'neutral', // positive | negative | warning
-  theme: themeProp = {},
+  theme: themeProp,
 }) {
   const sizeTheme =
     size === 'small'

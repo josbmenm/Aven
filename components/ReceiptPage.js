@@ -22,8 +22,10 @@ export default function ReceiptPage({
   return (
     <ShortBlockFormPage hideBackButton={hideBackButton} {...props}>
       <BlockForm style={{ flex: 1, justifyContent: 'center' }}>
-        <BlockFormMessage message="You're almost ready to go..." />
-        <BlockFormTitle title="would you like a receipt?" />
+        <Spacing horizontal={8}>
+          <BlockFormMessage message="You're almost ready to go..." />
+          <BlockFormTitle title="would you like a receipt?" />
+        </Spacing>
         <Spacing top={16}>
           <View style={{ flexDirection: 'row' }}>
             <Spacing value={8} inline={false}>
@@ -34,9 +36,7 @@ export default function ReceiptPage({
             </Spacing>
           </View>
         </Spacing>
-        <Spacing top={8} horizontal={8}>
-          <Button title="no, thanks" onPress={onNoReceipt} />
-        </Spacing>
+        <Spacing top={8} horizontal={8}></Spacing>
       </BlockForm>
       <CountdownDoneButton onPress={onComplete} duration={20} />
     </ShortBlockFormPage>

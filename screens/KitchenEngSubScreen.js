@@ -12,13 +12,14 @@ import { Easing } from 'react-native-reanimated';
 import DisconnectedPage from '../components/DisconnectedPage';
 import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
 import { getSubsystem } from '../ono-cloud/OnoKitchen';
-import { genericText } from '../components/Styles';
+import { genericText, prettyShadowSmall } from '../components/Styles';
 import usePendantManualMode from '../components/usePendantManualMode';
 import useFocus from '../navigation-hooks/useFocus';
 import { SystemFaultsAndAlarms } from '../components/FaultsAndAlarms';
 import BlockFormInput from '../components/BlockFormInput';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import TwoPanePage from '../components/TwoPanePage';
+import { Heading, Spacing } from '../dash-ui';
 
 const HiddenReads = new Set([
   'NoFaults',
@@ -241,26 +242,39 @@ function SystemView({ system, systemId, kitchenCommand, writeMode }) {
           pulseCommands.map(pulseCommandName => {
             const pulse = system.pulseCommands[pulseCommandName];
             return (
-              <ButtonRow
-                title={`${pulseCommandName} Action`}
-                key={pulseCommandName}
-              >
-                <SetParamsButton
-                  pulse={pulse}
-                  kitchenCommand={kitchenCommand}
-                  system={system}
-                  systemId={systemId}
-                />
-                <Button
+              <Spacing horizontal={16} vertical={8}>
+                <View
                   key={pulseCommandName}
-                  title={`do ${pulseCommandName}`}
-                  onPress={() => {
-                    kitchenCommand(systemId, [pulseCommandName], {}).catch(
-                      console.error,
-                    );
+                  style={{
+                    justifyContent: 'flex-end',
+                    flexWrap: 'wrap',
+                    overflow: 'hidden',
+                    ...prettyShadowSmall,
                   }}
-                />
-              </ButtonRow>
+                >
+                  <Spacing bottom={8}>
+                    <Heading
+                      theme={{ headingFontSize: 28, headingLineHeight: 32 }}
+                      title={`${pulseCommandName} Action`}
+                    />
+                  </Spacing>
+                  <SetParamsButton
+                    pulse={pulse}
+                    kitchenCommand={kitchenCommand}
+                    system={system}
+                    systemId={systemId}
+                  />
+                  <Button
+                    key={pulseCommandName}
+                    title={`do ${pulseCommandName}`}
+                    onPress={() => {
+                      kitchenCommand(systemId, [pulseCommandName], {}).catch(
+                        console.error,
+                      );
+                    }}
+                  />
+                </View>
+              </Spacing>
             );
           })}
       </RowSection>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, TouchableOpacity, Image } from 'react-native';
+import { TouchableOpacity, Image } from 'react-native';
+import Text from '../dash-ui/Text';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import {
   highlightPrimaryColor,
@@ -7,15 +8,16 @@ import {
   fontSmall,
   monsterra40,
 } from './Styles';
+import { Spacing, useTheme } from '../dash-ui/Theme';
 
 export default function BackButton({ style, onLongPress, backBehavior }) {
   const { goBack } = useNavigation();
-
+  const theme = useTheme();
   return (
     <TouchableOpacity
       style={{
-        width: 84,
-        height: 36,
+        width: 88,
+        height: 40,
         position: 'absolute',
         top: 26,
         left: 32,
@@ -32,22 +34,20 @@ export default function BackButton({ style, onLongPress, backBehavior }) {
       onLongPress={onLongPress}
     >
       <Image
-        style={{ width: 12, height: 20, tintColor: monsterra40 }}
+        style={{ width: 12, height: 20, tintColor: theme.colorPrimary }}
         source={require('./assets/BackChevron.png')}
       />
-      <Text
-        style={{
-          ...fontSmall,
-          color: highlightPrimaryColor,
-          ...boldPrimaryFontFace,
-          lineHeight: 19,
-          textAlign: 'center',
-          marginLeft: 12,
-          marginTop: 2,
-        }}
-      >
-        back
-      </Text>
+      <Spacing left={16}>
+        <Text
+          theme={{
+            fontSize: 22,
+            fontWeight: 'bold',
+            lineHeight: 22,
+          }}
+        >
+          back
+        </Text>
+      </Spacing>
     </TouchableOpacity>
   );
 }

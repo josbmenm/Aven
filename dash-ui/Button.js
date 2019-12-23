@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, View } from 'react-native';
+import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
 import { useTheme } from './Theme';
 import { opacify, useStatusColor } from './utils';
 
@@ -9,14 +9,14 @@ export default function Button({
   outline = false,
   onPress,
   onLongPress,
-  theme: themeProp = {},
+  theme: themeProp,
   disabled = false,
   status = 'primary',
 }) {
   const theme = useTheme(themeProp);
   const statusColor = useStatusColor({ status, theme });
-  console.log('TCL: statusColor', statusColor);
   const color = opacify(statusColor, 0.8);
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -37,22 +37,29 @@ export default function Button({
           opacity: disabled ? 0.5 : 1,
         }}
       >
-        {children
-          ? children
-          : title && (
-              <Text
-                style={{
-                  fontSize: theme.buttonFontSize,
-                  lineHeight: theme.buttonLineHeight,
-                  color: outline ? color : 'white',
-                  fontFamily: theme.fontBold,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                }}
-              >
-                {title}
-              </Text>
-            )}
+        {title && (
+          <Text
+            style={{
+              fontSize: theme.buttonFontSize,
+              lineHeight: theme.buttonLineHeight,
+              color: outline ? color : 'white',
+              fontFamily: theme.fontBold,
+              fontWeight: 'bold',
+              textAlign: 'center',
+            }}
+          >
+            {title}
+          </Text>
+        )}
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            ...StyleSheet.absoluteFill,
+          }}
+        >
+          {children}
+        </View>
       </View>
     </TouchableOpacity>
   );

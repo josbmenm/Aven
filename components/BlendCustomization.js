@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import AirtableImage from './AirtableImage';
 import {
   prettyShadow,
@@ -21,6 +21,7 @@ import TabSectionScrollView from './TabSectionScrollView';
 import ListAnimation from './ListAnimation';
 import { EnhancementDetail } from './Enhancements';
 import { ENHANCEMENT_PRICE } from '../logic/configLogic';
+import ButtonLink from '../dash-ui/ButtonLink';
 
 const tagSize = {
   width: 100,
@@ -859,13 +860,14 @@ function CustomizationSidebar({
           );
         })}
       </View>
-      <TextButton
-        style={{ position: 'absolute', right: 20, top: 21 }}
-        onPress={() => {
-          setCustomization({});
-        }}
-        title="reset"
-      />
+      <View style={{ position: 'absolute', right: 20, top: 21 }}>
+        <ButtonLink
+          onPress={() => {
+            setCustomization({});
+          }}
+          title="reset"
+        />
+      </View>
     </View>
   );
 }

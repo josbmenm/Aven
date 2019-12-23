@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
 import BlockForm from './BlockForm';
 import BlockFormMessage from './BlockFormMessage';
 import BlockFormTitle from './BlockFormTitle';
@@ -9,9 +8,7 @@ import BlockFormInput from './BlockFormInput';
 import BlockFormButton from './BlockFormButton';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import useFocus from '../navigation-hooks/useFocus';
-import Stack from '../dash-ui/Stack';
-import { Spacing } from '../dash-ui/Theme';
-import Button from '../dash-ui/Button';
+import { Spacing, Button } from '../dash-ui';
 
 export default function SendReceiptPage({
   onSubmit,
@@ -57,7 +54,6 @@ export default function SendReceiptPage({
         <BlockFormMessage message="We just need to know..." />
         {error && <BlockFormTitle title="Uh oh! Try again please." />}
         <BlockFormTitle title={title} />
-
         {inputs}
         <Spacing top={16} inline>
           <Button

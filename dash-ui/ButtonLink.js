@@ -7,19 +7,27 @@ export default function ButtonLink({
   title,
   active = false,
   to,
-  theme: themeProp = {},
+  theme: themeProp,
   disabled = false,
   status = 'primary',
+  onPress,
+  onLongPress,
   target,
 }) {
   const theme = useTheme(themeProp);
   const color = opacify(useStatusColor({ status, theme }), 0.8);
+
   function handlePress() {
     console.log(`Link clicked => go to: ${to}`);
+    onPress();
   }
 
   return (
-    <TouchableOpacity onPress={handlePress} accessible={true}>
+    <TouchableOpacity
+      onPress={handlePress}
+      onLongPress={onLongPress}
+      accessible={true}
+    >
       <View
         style={{
           borderWidth: 0,

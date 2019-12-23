@@ -6,6 +6,7 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 import codePush from 'react-native-code-push';
 import CardReaderConnectionManager from './CardReaderConnectionManager';
 import useKeyboardPopover from './useKeyboardPopover';
+import { Spacing, Stack } from '../dash-ui';
 
 export const AppEnvContext = React.createContext();
 
@@ -80,66 +81,68 @@ Device id: ${deviceId}
       <Text style={{ ...titleStyle, fontSize: 22, marginBottom: 16 }}>
         oh {name}.. you found the secret buttons!
       </Text>
-      <ButtonRow>
-        <HiddenButton
-          label="Coconut"
-          onPress={() => {
-            sendResetValue('a');
-          }}
-        />
-        <HiddenButton
-          label="Ginger"
-          onPress={() => {
-            sendResetValue('b');
-          }}
-        />
-        <HiddenButton
-          label="Coffee"
-          onPress={() => {
-            sendResetValue('c');
-          }}
-        />
-      </ButtonRow>
-      <ButtonRow>
-        <HiddenButton
-          label="Papaya"
-          onPress={() => {
-            sendValue('0');
-          }}
-        />
-        <HiddenButton
-          label="Greens"
-          onPress={() => {
-            sendValue('1');
-          }}
-        />
-        <HiddenButton
-          label="Mango"
-          onPress={() => {
-            sendValue('2');
-          }}
-        />
-      </ButtonRow>
-      <ButtonRow>
-        <HiddenButton
-          label="Chia"
-          onPress={() => {
-            sendValue('3');
-          }}
-        />
-        <HiddenButton
-          label="Banana"
-          onPress={() => {
-            sendValue('4');
-          }}
-        />
-        <HiddenButton
-          label="Cashew"
-          onPress={() => {
-            sendValue('5');
-          }}
-        />
-      </ButtonRow>
+      <Spacing vertical={8} horizontal={16}>
+        <Stack horizontal>
+          <HiddenButton
+            label="Coconut"
+            onPress={() => {
+              sendResetValue('a');
+            }}
+          />
+          <HiddenButton
+            label="Ginger"
+            onPress={() => {
+              sendResetValue('b');
+            }}
+          />
+          <HiddenButton
+            label="Coffee"
+            onPress={() => {
+              sendResetValue('c');
+            }}
+          />
+        </Stack>
+        <Stack>
+          <HiddenButton
+            label="Papaya"
+            onPress={() => {
+              sendValue('0');
+            }}
+          />
+          <HiddenButton
+            label="Greens"
+            onPress={() => {
+              sendValue('1');
+            }}
+          />
+          <HiddenButton
+            label="Mango"
+            onPress={() => {
+              sendValue('2');
+            }}
+          />
+        </Stack>
+        <Stack>
+          <HiddenButton
+            label="Chia"
+            onPress={() => {
+              sendValue('3');
+            }}
+          />
+          <HiddenButton
+            label="Banana"
+            onPress={() => {
+              sendValue('4');
+            }}
+          />
+          <HiddenButton
+            label="Cashew"
+            onPress={() => {
+              sendValue('5');
+            }}
+          />
+        </Stack>
+      </Spacing>
     </View>
   );
 }

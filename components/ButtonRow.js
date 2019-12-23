@@ -8,11 +8,16 @@ const ButtonRow = ({ children, title }) => {
       style={{
         ...rowStyle,
         justifyContent: 'flex-end',
+        // backgroundColor: 'red',
         flexWrap: 'wrap',
       }}
     >
-      <View style={{ flex: 1 }}>
-        {title && <Text style={rowTitleStyle}>{title}</Text>}
+      <View style={{ flex: 1, height: '100%' }}>
+        {title && (
+          <Text style={[rowTitleStyle, { backgroundColor: 'red', height: 80 }]}>
+            {title}
+          </Text>
+        )}
       </View>
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
         {children}

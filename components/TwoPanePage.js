@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Image } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { pageBackgroundColor } from './Styles';
 import BackButton from './BackButton';
-import GenericPage from './GenericPage';
 import Stack from '../dash-ui/Stack';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import Hero from './Hero';
