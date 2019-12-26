@@ -125,7 +125,6 @@ function ComponentPlaygroundScreenMemo({ navigation, ...props }) {
       title="Components"
       icon="🍹"
     >
-      <Hero title="Hero title" subtitle="subtitle test" />
       <RowSection>
         {Object.keys(Components).map(componentName => {
           const { icon } = Components[componentName];

@@ -17,7 +17,7 @@ export default function Hero({ icon, title, subtitle, theme: themeProp }) {
             }}
           />
         </Spacing>
-        <Stack debug>
+        <Stack>
           <Heading title={title} />
           {subtitle && (
             <Heading
