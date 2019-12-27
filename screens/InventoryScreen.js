@@ -21,6 +21,7 @@ import { useRestaurantState } from '../ono-cloud/Kitchen';
 import { Spacing } from '../dash-ui/Theme';
 import { useCloud } from '../cloud-core/KiteReact';
 import usePendantManualMode from '../components/usePendantManualMode';
+import { colorNeutral } from '../components/Onotheme';
 
 function PopoverTitle({ children }) {
   return (
@@ -45,7 +46,7 @@ function SubTitle({ children }) {
         marginTop: 24,
         marginBottom: 4,
         fontSize: 18,
-        color: Tag.neutralColor,
+        color: colorNeutral,
       }}
     >
       {children}
@@ -195,7 +196,7 @@ function HopperToggle({ index }) {
     <MultiSelect
       options={[
         { name: 'enable hopper', value: true },
-        { name: 'disable hopper', value: false },
+        { name: 'disable', value: false },
       ]}
       onValue={isEnabled => {
         cloud.dispatch({
@@ -291,12 +292,7 @@ function InventorySlot({
         )}
         {slot.settings && slot.settings.optional && (
           <Spacing right={8} bottom={8}>
-            <Tag
-              size="small"
-              status="warning"
-              title="Optional"
-              style={{ marginRight: 8, marginBottom: 8 }}
-            />
+            <Tag size="small" status="warning" title="Optional" />
           </Spacing>
         )}
         {!!slot.isErrored && (
@@ -306,12 +302,7 @@ function InventorySlot({
         )}
         {slot.hopperDisabled && (
           <Spacing right={8} bottom={8}>
-            <Tag
-              size="small"
-              status="negative"
-              title={`Hopper Off`}
-              style={{ marginRight: 8, marginBottom: 8 }}
-            />
+            <Tag size="small" status="negative" title={`Hopper Off`} />
           </Spacing>
         )}
         {slot.pumpDisabled && (

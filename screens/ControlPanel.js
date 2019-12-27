@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Button from '../components/Button';
 import AsyncButton from '../components/AsyncButton';
 import { useCloud } from '../cloud-core/KiteReact';
-import Tag from '../components/Tag';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import {
   prettyShadow,
@@ -14,27 +13,31 @@ import {
 } from '../components/Styles';
 import { computeNextSteps } from '../logic/MachineLogic';
 import KitchenSteps from '../logic/KitchenSteps';
-
 import useAsyncError from '../react-utils/useAsyncError';
 import Spinner from '../components/Spinner';
 import KitchenCommands from '../logic/KitchenCommands';
 import { isStateLoaded, useDeviceId } from '../components/useAsyncStorage';
 import useKitchenStatus from '../components/useKitchenStatus';
+import {
+  colorNegative,
+  colorWarning,
+  colorPositive,
+} from '../components/Onotheme';
 
 function StatusPuck({ status, isRunning }) {
   let statusColor = null;
   switch (status) {
     case 'fault': {
-      statusColor = Tag.negativeColor;
+      statusColor = colorNegative;
       break;
     }
     case 'paused':
     case 'alarm': {
-      statusColor = Tag.warningColor;
+      statusColor = colorWarning;
       break;
     }
     case 'ready': {
-      statusColor = Tag.positiveColor;
+      statusColor = colorPositive;
       break;
     }
     case 'disconnected':
@@ -99,9 +102,7 @@ function FaultCell({ fault }) {
         style={{
           marginHorizontal: 8,
           backgroundColor: 'white',
-          // borderWidth: 3,
           borderRadius: 4,
-          // borderColor: Tag.negativeColor,
           padding: 8,
           paddingHorizontal: 12,
         }}
@@ -109,7 +110,7 @@ function FaultCell({ fault }) {
         <Text
           style={{
             ...titleStyle,
-            color: Tag.negativeColor,
+            color: colorNegative,
             fontSize: 22,
           }}
         >
@@ -222,8 +223,8 @@ export default function ControlPanel({ restaurantState, restaurantDispatch }) {
               style={{
                 ...titleStyle,
                 color: restaurantState.isAttached
-                  ? Tag.positiveColor
-                  : Tag.negativeColor,
+                  ? colorPositive
+                  : colorNegative,
                 margin: 10,
                 marginTop: 16,
                 fontSize: 18,

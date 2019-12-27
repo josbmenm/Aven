@@ -19,7 +19,11 @@ import ManualControl from './ManualControl';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import LinkRow from '../components/LinkRow';
-import Tag from '../components/Tag';
+import {
+  colorNegative,
+  colorPositive,
+  colorNeutral,
+} from '../components/Onotheme';
 
 function Subsystems() {
   const subsystems = useSubsystemOverview();
@@ -121,7 +125,7 @@ export function FillsDisplay({ state }) {
     <View style={{}}>
       {state.fillsFailed &&
         state.fillsFailed.map((fill, i) => (
-          <Text key={i} style={{ color: Tag.negativeColor }}>
+          <Text key={i} style={{ color: colorNegative }}>
             {fill.systemName} {fill.slot} - {fill.ingredientName} (
             {fill.isDisabled ? 'disabled' : fill.isEmpty ? 'empty' : 'errored'})
           </Text>
@@ -129,13 +133,13 @@ export function FillsDisplay({ state }) {
 
       {state.fillsCompleted &&
         state.fillsCompleted.map((fill, i) => (
-          <Text key={i} style={{ color: Tag.positiveColor }}>
+          <Text key={i} style={{ color: colorPositive }}>
             {fill.systemName} {fill.slot} - {fill.ingredientName} (done)
           </Text>
         ))}
       {state.fillsRemaining &&
         state.fillsRemaining.map((fill, i) => (
-          <Text key={i} style={{ color: Tag.neutralColor }}>
+          <Text key={i} style={{ color: colorNeutral }}>
             {fill.systemName} {fill.slot} - {fill.ingredientName}
           </Text>
         ))}

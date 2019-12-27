@@ -14,13 +14,13 @@ import { usePopover } from '../views/Popover';
 import KeyboardPopover from './KeyboardPopover';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import useKitchenStatus from '../components/useKitchenStatus';
-import Tag from './Tag';
 import Spinner from './Spinner';
 import AsyncButton from './AsyncButton';
 import { useCloud } from '../cloud-core/KiteReact';
 import { getCupsInventoryState } from '../logic/KitchenState';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '../navigation-hooks/Hooks';
+import { colorWarning, colorNegative, colorPositive } from './Onotheme';
 
 function FaultButton({ fault, isWarningColor, onReset }) {
   const { onPopover } = usePopover(
@@ -136,10 +136,10 @@ export default function StatusBar() {
               paddingLeft: 7,
               backgroundColor:
                 status === 'ready'
-                  ? Tag.positiveColor
+                  ? colorPositive
                   : status === 'paused'
-                  ? Tag.warningColor
-                  : Tag.negativeColor,
+                  ? colorWarning
+                  : colorNegative,
             }}
           >
             {isRunning && <Spinner color="white" />}

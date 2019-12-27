@@ -1,9 +1,9 @@
 import React from 'react';
 import useKeyboardPopover from './useKeyboardPopover';
 import Button from './Button';
-import Tag from './Tag';
 import { View, Text } from 'react-native';
 import { primaryFontFace, boldPrimaryFontFace } from './Styles';
+import { colorNeutral, colorNegative } from './Onotheme';
 
 export default function useAsyncErrorPopover(onError) {
   const { onPopover } = useKeyboardPopover(({ onClose, openArguments }) => {
@@ -17,7 +17,7 @@ export default function useAsyncErrorPopover(onError) {
       >
         <Text
           style={{
-            color: Tag.negativeColor,
+            color: colorNegative,
             ...boldPrimaryFontFace,
             fontSize: 20,
           }}
@@ -26,7 +26,7 @@ export default function useAsyncErrorPopover(onError) {
         </Text>
         <Text
           style={{
-            color: Tag.neutralColor,
+            color: colorNeutral,
             ...primaryFontFace,
             marginBottom: 24,
             fontSize: 18,

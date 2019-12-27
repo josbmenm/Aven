@@ -42,7 +42,6 @@ export default function Tag({
           fontFamily: theme.fontBold,
           color: 'white',
           fontSize: theme.fontSize,
-          // fontWeight: 'bold',
           textAlign: 'center',
         }}
       >

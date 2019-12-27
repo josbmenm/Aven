@@ -9,7 +9,3 @@ export default function TagButton({ title, status, onPress, style }) {
     </TouchableOpacity>
   );
 }
-
-TagButton.negativeColor = Tag.negativeColor;
-TagButton.positiveColor = Tag.positiveColor;
-TagButton.warningColor = Tag.warningColor;

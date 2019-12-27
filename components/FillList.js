@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import Button from './Button';
 import { primaryFontFace } from './Styles';
 import AirtableImage from './AirtableImage';
@@ -11,7 +11,7 @@ import Subtitle from './Subtitle';
 import useFocus from '../navigation-hooks/useFocus';
 import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
-import Tag from './Tag';
+import { colorNegative, colorPositive } from './Onotheme';
 
 function useSlotsWithIngredients() {
   const config = useCompanyConfig();
@@ -155,12 +155,12 @@ export default function FillList({ fills, inventoryIngredients, onFills }) {
     fills.map((fill, fillIndex) => {
       const inv =
         inventoryIngredients && inventoryIngredients[fill.ingredientId];
-      let fillTextColor = Tag.positiveColor;
+      let fillTextColor = colorPositive;
       if (!inv || !inv.settings) {
       } else if (inv.settings.disabledMode) {
-        fillTextColor = Tag.negativeColor;
+        fillTextColor = colorNegative;
       } else if (inv.estimatedRemaining < fill.amount) {
-        fillTextColor = Tag.negativeColor;
+        fillTextColor = colorNegative;
       }
       return (
         <View

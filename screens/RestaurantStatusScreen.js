@@ -11,16 +11,13 @@ import useFocus from '../navigation-hooks/useFocus';
 import { titleStyle, primaryFontFace } from '../components/Styles';
 import useTimeSeconds from '../utils/useTimeSeconds';
 import StatusBar from '../components/StatusBar';
-import RowSection from '../components/RowSection';
 import BlockFormInput from '../components/BlockFormInput';
-import SpinnerButton from '../components/SpinnerButton';
 import AsyncButton from '../components/AsyncButton';
-import { useDeviceId, isStateLoaded } from '../components/useAsyncStorage';
-import ButtonStack from '../components/ButtonStack';
+import { useDeviceId } from '../components/useAsyncStorage';
+import Stack from '../dash-ui/Stack';
 import MultiSelect from '../dash-ui/MultiSelect';
 import TemperatureView from '../components/TemperatureView';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
-import KitchenCommands from '../logic/KitchenCommands';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import KitchenCommandButton from '../components/KitchenCommandButton';
@@ -46,40 +43,38 @@ function CloseRestaurantButtons({ onClose }) {
   return (
     <View style={{ padding: 10 }}>
       <PopoverTitle>close restaurant..</PopoverTitle>
-      <ButtonStack
-        buttons={[
-          <Button
-            title="gracefully, in 10 minutes"
-            onPress={() => {
-              dispatch({
-                type: 'ScheduleRestaurantClose',
-                scheduledCloseTime: Date.now() + 1000 * 60 * 10,
-              });
-              onClose();
-            }}
-          />,
-          <Button
-            title="now. leave orders queued"
-            onPress={() => {
-              dispatch({
-                type: 'CloseRestaurant',
-                immediate: false,
-              });
-              onClose();
-            }}
-          />,
-          <Button
-            title="immediately. cancel queued orders"
-            onPress={() => {
-              dispatch({
-                type: 'CloseRestaurant',
-                immediate: true,
-              });
-              onClose();
-            }}
-          />,
-        ]}
-      />
+      <Stack>
+        <Button
+          title="gracefully, in 10 minutes"
+          onPress={() => {
+            dispatch({
+              type: 'ScheduleRestaurantClose',
+              scheduledCloseTime: Date.now() + 1000 * 60 * 10,
+            });
+            onClose();
+          }}
+        />
+        <Button
+          title="now. leave orders queued"
+          onPress={() => {
+            dispatch({
+              type: 'CloseRestaurant',
+              immediate: false,
+            });
+            onClose();
+          }}
+        />
+        <Button
+          title="immediately. cancel queued orders"
+          onPress={() => {
+            dispatch({
+              type: 'CloseRestaurant',
+              immediate: true,
+            });
+            onClose();
+          }}
+        />
+      </Stack>
     </View>
   );
 }
@@ -184,18 +179,16 @@ function ServicingView() {
           />
         )}
       </View>
-      <ButtonStack
-        buttons={[
-          kitchenState.FillSystem_InServiceMode_READ ? (
-            <KitchenCommandButton commandType="Home" title="home system" />
-          ) : (
-            <KitchenCommandButton
-              commandType="EnterServiceMode"
-              title="enter service mode"
-            />
-          ),
-        ]}
-      />
+      <Stack>
+        {kitchenState.FillSystem_InServiceMode_READ ? (
+          <KitchenCommandButton commandType="Home" title="home system" />
+        ) : (
+          <KitchenCommandButton
+            commandType="EnterServiceMode"
+            title="enter service mode"
+          />
+        )}
+      </Stack>
     </Row>
   );
 }
@@ -215,37 +208,32 @@ function CleaningView() {
     <Row title="Fill Gripper Cleaning">
       <View>
         {restaurantState.reservedFillGripperClean && (
-          <Tag
-            title="Paused for Fill Positioner Cleaning"
-            color={Tag.warningColor}
-          />
+          <Tag title="Paused for Fill Positioner Cleaning" status="warning" />
         )}
       </View>
-      <ButtonStack
-        buttons={[
-          canClear ? (
-            <Button
-              onPress={() => {
-                dispatch({
-                  type: 'ClearFillGripperClean',
-                  lockId: deviceId,
-                });
-              }}
-              title="Done Cleaning Fill Gripper"
-            />
-          ) : canReserve ? (
-            <Button
-              onPress={() => {
-                dispatch({
-                  type: 'ReserveFillGripperClean',
-                  lockId: deviceId,
-                });
-              }}
-              title="Clean Fill Gripper"
-            />
-          ) : null,
-        ]}
-      />
+      <Stack>
+        {canClear ? (
+          <Button
+            onPress={() => {
+              dispatch({
+                type: 'ClearFillGripperClean',
+                lockId: deviceId,
+              });
+            }}
+            title="Done Cleaning Fill Gripper"
+          />
+        ) : canReserve ? (
+          <Button
+            onPress={() => {
+              dispatch({
+                type: 'ReserveFillGripperClean',
+                lockId: deviceId,
+              });
+            }}
+            title="Clean Fill Gripper"
+          />
+        ) : null}
+      </Stack>
     </Row>
   );
 }
@@ -265,12 +253,10 @@ function BlenderCleaningView() {
     <Row title="Blender Cleaning">
       <View>
         {restaurantState.reservedBlenderClean && (
-          <Tag title="Paused for Blender Cleaning" color={Tag.warningColor} />
+          <Tag title="Paused for Blender Cleaning" status="warning" />
         )}
-      </View>
-      <ButtonStack
-        buttons={[
-          canClear ? (
+        <Stack>
+          {canClear ? (
             <Button
               onPress={() => {
                 dispatch({
@@ -291,27 +277,27 @@ function BlenderCleaningView() {
               }}
               title="Clean Blender"
             />
-          ) : null,
-        ]}
-      />
-      {canClear && (
-        <MultiSelect
-          value={restaurantState.reservedBlenderClean.mode || null}
-          onValue={mode => {
-            dispatch({
-              type: 'ReserveBlenderClean',
-              lockId: deviceId,
-              mode,
-            });
-          }}
-          options={[
-            { value: null, name: 'Ready' },
-            { value: 'lifter', name: 'Lifter Up' },
-            { value: 'blender', name: 'Blender Up' },
-            { value: 'arm', name: 'Arm Back' },
-          ]}
-        />
-      )}
+          ) : null}
+        </Stack>
+        {canClear && (
+          <MultiSelect
+            value={restaurantState.reservedBlenderClean.mode || null}
+            onValue={mode => {
+              dispatch({
+                type: 'ReserveBlenderClean',
+                lockId: deviceId,
+                mode,
+              });
+            }}
+            options={[
+              { value: null, name: 'Ready' },
+              { value: 'lifter', name: 'Lifter Up' },
+              { value: 'blender', name: 'Blender Up' },
+              { value: 'arm', name: 'Arm Back' },
+            ]}
+          />
+        )}
+      </View>
     </Row>
   );
 }
@@ -404,7 +390,7 @@ function StatusView() {
   const isMaintenanceMode = restaurantState && restaurantState.maintenanceMode;
   const timeSeconds = useTimeSeconds();
   let tagText = 'restaurant open';
-  let TagStatus = Tag.positiveColor;
+  let tagStatus = null;
   if (closingSoon) {
     const totalSecRemaining = Math.floor(
       closingSoon.scheduledCloseTime / 1000 - timeSeconds,
@@ -416,15 +402,15 @@ function StatusView() {
     ).padStart(2, '0')}`;
   }
   if (!isOpen) {
-    TagStatus = 'warning';
+    tagStatus = 'warning';
     tagText = 'restaurant closed';
   }
   if (isTraveling) {
-    TagStatus = 'positive';
+    tagStatus = 'positive';
     tagText = 'traveling';
   }
   if (isMaintenanceMode) {
-    TagStatus = 'negative';
+    tagStatus = 'negative';
     tagText = 'Maintenance Mode';
   }
   const { onPopover: onMaintenancePopover } = useKeyboardPopover(
@@ -505,14 +491,14 @@ function StatusView() {
   return (
     <Row title="Restaurant Opening">
       <View>
-        <Tag title={tagText} status={TagStatus} />
+        <Tag title={tagText} status={tagStatus} />
         {restaurantState && !!restaurantState.sessionName && (
           <Text style={{ ...primaryFontFace, fontSize: 20 }}>
             {isOpen && restaurantState.sessionName}
           </Text>
         )}
       </View>
-      <ButtonStack buttons={buttons} />
+      <Stack>{buttons}</Stack>
     </Row>
   );
 }
@@ -538,44 +524,14 @@ function TanksView() {
   }
   return (
     <Row title="Tanks">
-      <ButtonStack
-        buttons={[
-          <Tag title={waterTagTitle} status={waterTagStatus} />,
-          <KitchenCommandButton
-            commandType="FillWaterTank"
-            title="fill tank for 30sec"
-          />,
-        ]}
-      />
-      <ButtonStack
-        buttons={[<Tag title={wasteTagTitle} status={wasteTagStatus} />]}
-      />
-    </Row>
-  );
-}
-
-function BlenderView() {
-  const kitchenState = useKitchenState();
-  const hasCup = kitchenState && kitchenState.BlendSystem_HasCup_READ;
-  return (
-    <Row title="Blender">
-      {/* <Tag title={hasCup ? 'Has Cup' : 'No Cup'} status="positive" /> */}
-      <ButtonStack
-        buttons={[
-          <KitchenCommandButton commandType="RetractArm" />,
-          <KitchenCommandButton commandType="ExtendArm" />,
-          <KitchenCommandButton commandType="LowerBlenderElevator" />,
-          <KitchenCommandButton commandType="LiftBlenderElevator" />,
-        ]}
-      />
-      <ButtonStack
-        buttons={[
-          <KitchenCommandButton commandType="FlipCupPlate" />,
-          <KitchenCommandButton commandType="ReturnCupPlate" />,
-          <KitchenCommandButton commandType="FlipBlade" />,
-          <KitchenCommandButton commandType="ReturnBlade" />,
-        ]}
-      />
+      <Stack>
+        <Tag title={waterTagTitle} status={waterTagStatus} />
+        <KitchenCommandButton
+          commandType="FillWaterTank"
+          title="fill tank for 30sec"
+        />
+        <Tag title={wasteTagTitle} status={wasteTagStatus} />
+      </Stack>
     </Row>
   );
 }

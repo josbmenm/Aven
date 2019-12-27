@@ -1,7 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Text, useTheme } from '../dash-ui';
-import { rowSectionStyle, boldPrimaryFontFace } from './Styles';
 
 const RowSection = ({ children, title, style }) => {
   const theme = useTheme();
@@ -19,9 +18,7 @@ const RowSection = ({ children, title, style }) => {
           {title}
         </Text>
       )}
-      <View style={{ ...rowSectionStyle }}>
-        <View>{children}</View>
-      </View>
+      <View>{children}</View>
     </View>
   );
 };

@@ -1,14 +1,19 @@
 import React from 'react';
 import { customizeTheme, ThemeProvider, DarkMode } from '../dash-ui/Theme';
 
+export const colorNegative = '#722';
+export const colorNeutral = '#444';
+export const colorPositive = '#272';
+export const colorWarning = '#997200';
+
 export const theme = customizeTheme({
   colorForeground: '#333',
   colorBackground: '#f7f7f7',
   colorPrimary: '#005252',
-  colorNeutral: '#444',
-  colorNegative: '#722',
-  colorPositive: '#272',
-  colorWarning: '#997200',
+  colorNeutral,
+  colorNegative,
+  colorPositive,
+  colorWarning,
 
   fontRegular: 'Maax',
   fontBold: 'Maax-Bold',

@@ -1,5 +1,4 @@
 import React from 'react';
-import Tag from '../components/Tag';
 import RowSection from '../components/RowSection';
 import { View, Text } from 'react-native';
 import {
@@ -7,6 +6,7 @@ import {
   getSubsystemAlarms,
 } from '../ono-cloud/OnoKitchen';
 import { prettyShadow, boldPrimaryFontFace } from '../components/Styles';
+import { colorNegative, colorWarning } from './Onotheme';
 
 function ErrorsSection({ errors, color }) {
   return (
@@ -42,8 +42,8 @@ export function SystemFaultsAndAlarms({ system }) {
   const alarms = getSubsystemAlarms(system);
   return (
     <View>
-      {faults && <ErrorsSection errors={faults} color={Tag.negativeColor} />}
-      {alarms && <ErrorsSection errors={alarms} color={Tag.warningColor} />}
+      {faults && <ErrorsSection errors={faults} color={colorNegative} />}
+      {alarms && <ErrorsSection errors={alarms} color={colorWarning} />}
     </View>
   );
 }
