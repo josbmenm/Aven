@@ -33,7 +33,7 @@
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
-  NSURL *wot = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"packages/something/index" fallbackResource:nil];
+  NSURL *wot = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"packages/something-mobile/index" fallbackResource:nil];
   return wot;
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
