@@ -14,8 +14,7 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 
 function HomePage() {
   const { getParam } = useNavigation();
-  // const seeLaunchSchedule = getParam('preview') === 'launch-schedule';
-  const seeLaunchSchedule = true;
+  const seeLaunchSchedule = getParam('preview') === 'launch-schedule';
   return (
     <GenericPage>
       <HomeHeader seeLaunchSchedule={seeLaunchSchedule} />
