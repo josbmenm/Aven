@@ -379,7 +379,7 @@ function InventorySlot({
             <FrozenMovingSpinner slot={slot.Slot} />
           </View>
           <View style={{ marginBottom: 8 }}>
-            <HopperToggle index={slot.Slot} />
+            {/* <HopperToggle index={slot.Slot} /> */}
             <AsyncButton
               title="vibrate chute"
               onPress={async () => {
