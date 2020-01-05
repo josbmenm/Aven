@@ -1,7 +1,7 @@
 // @generated: @expo/next-adapter@2.0.0-beta.9
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Button } from '@aven-cloud/dash';
+import { Button } from '@aven/dash';
 
 export default function App() {
   return (

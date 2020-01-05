@@ -1,5 +1,5 @@
 {
-  "name": "@aven-cloud/something-web",
+  "name": "@aven/something-web",
   "version": "0.0.0",
   "scripts": {
     "dev": "next",
@@ -7,7 +7,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@aven-cloud/dash": "*",
+    "@aven/dash": "*",
     "@expo/next-adapter": "^2.0.0-beta.9",
     "expo": "^36.0.1",
     "next": "^9.1.5",

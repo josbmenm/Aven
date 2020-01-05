@@ -1,5 +1,5 @@
 {
-  "name": "@aven-cloud/dash",
+  "name": "@aven/dash",
   "version": "0.0.1",
   "private": true,
   "main": "lib/commonjs/index.js",

@@ -1,18 +1,20 @@
 {
-  "name": "@aven-cloud/aven-repository",
+  "name": "@aven/aven-repository",
   "version": "0.0.0",
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
-    "something-web": "yarn workspace @aven-cloud/something-web",
-    "something-mobile": "yarn workspace @aven-cloud/something-mobile",
-    "dash": "yarn workspace @aven-cloud/dash"
+    "something-web": "yarn workspace @aven/something-web",
+    "something-mobile": "yarn workspace @aven/something-mobile",
+    "dash": "yarn workspace @aven/dash"
   },
   "workspaces": {
     "packages": [
       "packages/*"
     ]
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@babel/preset-react": "^7.7.4"
+  },
   "dependencies": {}
 }
