@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { bitRowStyle, genericText } from './Styles';
-import Tag from './Tag';
+import { Tag } from '../dash-ui';
 
 const BitRow = ({ title, value }) => (
   <View

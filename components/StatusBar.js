@@ -6,7 +6,6 @@ import {
   standardTextColor,
   primaryFontFace,
 } from './Styles';
-import TagButton from './TagButton';
 import Button from './Button';
 import { useInStockInventoryMenu } from '../ono-cloud/OnoKitchen';
 import { Easing } from 'react-native-reanimated';
@@ -14,7 +13,7 @@ import { usePopover } from '../views/Popover';
 import KeyboardPopover from './KeyboardPopover';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import useKitchenStatus from '../components/useKitchenStatus';
-import { Spinner } from '../dash-ui';
+import { Spinner, TagButton } from '../dash-ui';
 import AsyncButton from './AsyncButton';
 import { useCloud } from '../cloud-core/KiteReact';
 import { getCupsInventoryState } from '../logic/KitchenState';
