@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import SimplePage from '../components/SimplePage';
 import RowSection from '../components/RowSection';
 import LinkRow from '../components/LinkRow';
-import Button from '../dash-ui/Button';
 import AppInfoText from '../components/AppInfoText';
 import { useCloud } from '../cloud-core/KiteReact';
 import codePush from 'react-native-code-push';
@@ -12,18 +11,15 @@ import Row from '../components/Row';
 import Tag from '../components/Tag';
 import useAsyncErrorPopover from '../components/useAsyncErrorPopover';
 import AsyncButton from '../components/AsyncButton';
-import MultiSelect from '../dash-ui/MultiSelect';
 import BlockFormInput from '../components/BlockFormInput';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import useKeyboardPopover from '../components/useKeyboardPopover';
-import ButtonStack from '../components/ButtonStack';
 import useFocus from '../navigation-hooks/useFocus';
 import StatusBar from '../components/StatusBar';
 import CardReaderConnectionManager from '../components/CardReaderConnectionManager';
 import { Audio } from 'expo-av';
-// import Stack from '../dash-ui/Stack';
-import { Spacing } from '../dash-ui/Theme';
+import { Button, Spacing, Stack, MultiSelect } from '../dash-ui';
 
 function FridgeView() {
   const kitchenState = useKitchenState();
@@ -33,13 +29,7 @@ function FridgeView() {
   const handleError = useAsyncErrorPopover();
   return (
     <Row title="main refridgeration">
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
+      <Stack horizontal inline>
         <Tag
           title={fridgeEnabled ? 'Enabled' : 'Disabled'}
           status={fridgeEnabled ? 'positive' : 'negative'}
@@ -64,7 +54,7 @@ function FridgeView() {
           }}
         />
         <SetFridgeTemp />
-      </View>
+      </Stack>
     </Row>
   );
 }
@@ -77,13 +67,7 @@ function VanInTruckOverride() {
   const handleError = useAsyncErrorPopover();
   return (
     <Row title="override machine in van">
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
+      <Stack horizontal inline>
         <Tag
           title={machineInVan ? 'In Van' : 'Out of Van'}
           status={machineInVan ? 'positive' : 'negative'}
@@ -107,7 +91,7 @@ function VanInTruckOverride() {
             );
           }}
         />
-      </View>
+      </Stack>
     </Row>
   );
 }
@@ -120,13 +104,7 @@ function CompressorView() {
   const handleError = useAsyncErrorPopover();
   return (
     <Row title="air compressor">
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
+      <Stack inline horizontal>
         <Tag
           title={fridgeEnabled ? 'Enabled' : 'Disabled'}
           status={fridgeEnabled ? 'positive' : 'negative'}
@@ -150,7 +128,7 @@ function CompressorView() {
             );
           }}
         />
-      </View>
+      </Stack>
     </Row>
   );
 }

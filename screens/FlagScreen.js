@@ -3,9 +3,9 @@ import BlockForm from './BlockForm';
 import BlockFormMessage from './BlockFormMessage';
 import BlockFormRow from './BlockFormRow';
 import BlockFormInput from './BlockFormInput';
-import BlockFormButton from './BlockFormButton';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import useFocus from '../navigation-hooks/useFocus';
+import { SpinnerButton } from '../dash-ui';
 
 function FlagPage({ backBehavior, ...props }) {
   const [inputA, setInputA] = React.useState('');
@@ -59,11 +59,7 @@ function FlagPage({ backBehavior, ...props }) {
         <BlockFormMessage message="What's up?" />
         {inputs}
         <BlockFormRow>
-          <BlockFormButton
-            size="large"
-            title={'submit'}
-            onPress={handleSubmit}
-          />
+          <SpinnerButton title={'submit'} onPress={handleSubmit} />
         </BlockFormRow>
       </BlockForm>
     </ShortBlockFormPage>

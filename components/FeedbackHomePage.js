@@ -9,7 +9,7 @@ import {
   monsterra80,
 } from '../components/Styles';
 import FadeTransition from '../components/FadeTransition';
-import BlockFormButton from '../components/BlockFormButton';
+import SpinnerButton from '../components/SpinnerButton';
 import Animated, {
   Transitioning,
   Transition,
@@ -92,11 +92,7 @@ function SubmitButton({ onPress }) {
         marginVertical: 30,
       }}
     >
-      <BlockFormButton
-        style={{ flex: null }}
-        onPress={onPress}
-        title="submit"
-      />
+      <SpinnerButton style={{ flex: null }} onPress={onPress} title="submit" />
     </View>
   );
 }

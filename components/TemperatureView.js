@@ -2,12 +2,11 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import { titleStyle, proseFontFace, monsterra } from '../components/Styles';
-import Tag from './Tag';
 import { colorNeutral } from './Onotheme';
 
 export function TempCell({ title, value, button }) {
   return (
-    <View style={{ flex: 1, paddingHorizontal: 16 }}>
+    <View>
       <Text style={{ ...titleStyle, color: colorNeutral, fontSize: 20 }}>
         {title}
       </Text>

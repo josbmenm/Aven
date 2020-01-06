@@ -1,11 +1,11 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Text, useTheme } from '../dash-ui';
+import { Text, useTheme, Spacing } from '../dash-ui';
 
 const RowSection = ({ children, title, style }) => {
   const theme = useTheme();
   return (
-    <View style={{ ...style }}>
+    <Spacing top={16}>
       {title && (
         <Text
           theme={{
@@ -19,7 +19,7 @@ const RowSection = ({ children, title, style }) => {
         </Text>
       )}
       <View>{children}</View>
-    </View>
+    </Spacing>
   );
 };
 

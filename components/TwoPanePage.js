@@ -28,7 +28,7 @@ export default function TwoPanePage({
       }
     >
       {(title || icon) && <Hero title={title} icon={icon} />}
-      <Stack horizontal inline={false}>
+      <Stack horizontal stretch theme={{ spacing: 0 }}>
         <View style={{ flex: 1 }}>
           <ScrollView
             style={{ flex: 1 }}

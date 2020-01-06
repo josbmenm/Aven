@@ -1,11 +1,9 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import Button from './Button';
 import AsyncButton from './AsyncButton';
 import { titleStyle } from './Styles';
 import { useCardReaderConnectionManager } from '../card-reader/CardReader';
-import Spinner from './Spinner';
-import Permissions from 'expo-permissions';
+import { Spinner, Button } from '../dash-ui';
 
 export const AppEnvContext = React.createContext();
 
@@ -75,7 +73,6 @@ export default function CardReaderConnectionManager({ onClose }) {
         />
       )}
       <Button
-        style={{ marginTop: 32 }}
         title="force restart app"
         onPress={() => {
           throw new Error('requested crash');
@@ -91,12 +88,7 @@ export default function CardReaderConnectionManager({ onClose }) {
           alert(JSON.stringify({ status, permissions }));
         }}
       /> */}
-      <Button
-        title="done"
-        style={{ marginTop: 32 }}
-        onPress={onClose}
-        type="outline"
-      />
+      <Button title="done" onPress={onClose} />
     </View>
   );
 }

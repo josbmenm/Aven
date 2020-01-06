@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
-import SpinnerButton from './SpinnerButton';
+import SpinnerButton from '../dash-ui/SpinnerButton';
 import Receipt from './Receipt';
 import { BlurView } from 'react-native-blur';
 import Animated, { Easing } from 'react-native-reanimated';

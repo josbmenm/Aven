@@ -107,6 +107,7 @@ export function useOrderItem(orderItemId) {
     const orderState = order && order.idAndValue.get();
 
     const orderItem =
+      orderState &&
       orderState.value &&
       orderState.value.items &&
       orderState.value.items.find(i => i.id === orderItemId);

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { useTheme } from './Theme';
-import { opacify } from './utils';
 
 export default function LiteralText({
   children,
@@ -18,7 +17,7 @@ export default function LiteralText({
         {
           fontSize: theme.fontSize,
           lineHeight: theme.lineHeight,
-          color: opacify(theme.colorForeground, 0.8),
+          color: theme.colorForeground,
           fontFamily: theme.textFont,
           fontWeight: theme.fontWeight,
         },

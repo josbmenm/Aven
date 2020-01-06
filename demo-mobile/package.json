@@ -1,0 +1,40 @@
+{
+  "main": "BlitzApp",
+  "aven": {
+    "env": "env-downpour",
+    "envOptions": {
+      "bundleId": "co.onofood.blitz",
+      "displayName": "Blitz",
+      "appcenterSecret": "fcbff580-2407-4baf-9c56-1f3a49d8d828",
+      "codePushKey": "VtoT-iEfykogiriAIOlvE55G6r0eBJvTELwT7",
+      "codePushApp": "OnoFoodCo/Blitz",
+      "codePushChannel": "Production",
+      "appIcon": "assets/BlitzIcon.png",
+      "sentryPropertiesFile": "assets/sentry.properties"
+    },
+    "appDistPackage": {
+      "sentryDSN": "https://1f887b6b7bea4917ab613649619df483@sentry.io/1722572"
+    },
+    "srcDependencies": [
+      "views",
+      "logic",
+      "screens",
+      "debug-views",
+      "ono-cloud",
+      "cloud-react",
+      "cloud-native",
+      "react-utils",
+      "components",
+      "card-reader",
+      "navigation-core",
+      "navigation-native",
+      "navigation-stack",
+      "navigation-transitioner",
+      "navigation-hooks"
+    ],
+    "moduleDependencies": [
+      "cuid",
+      "path"
+    ]
+  }
+}

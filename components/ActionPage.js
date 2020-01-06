@@ -83,21 +83,24 @@ class ActionPageWithNavigation extends React.Component {
             }}
           >
             {actions.map((action, i) => (
-              <Button
-                key={action.title}
-                secondary={action.secondary}
-                title={action.title}
-                onPress={action.onPress}
-                onLongPress={action.onLongPress}
+              <View
                 style={{
                   flex: 1,
                   marginHorizontal: 10,
                   marginVertical: 12,
                   maxWidth: 488,
                 }}
-                buttonStyle={{ height: buttonHeight }}
-                titleStyle={{ fontSize: 24 }}
-              />
+              >
+                <Button
+                  key={action.title}
+                  secondary={action.secondary}
+                  title={action.title}
+                  onPress={action.onPress}
+                  onLongPress={action.onLongPress}
+                  buttonStyle={{ height: buttonHeight }}
+                  titleStyle={{ fontSize: 24 }}
+                />
+              </View>
             ))}
           </Animated.View>
         </View>

@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import Button from '../dash-ui/Button';
+import Button from './Button';
 import Spinner from './Spinner';
 import { useTheme } from '../dashboard/Theme';
 
@@ -21,7 +20,7 @@ export default function SpinnerButton({
       disabled={disabled || isLoading}
       {...props}
     >
-      {isLoading ? <Spinner color={theme.colorForeground} /> : null}
+      {isLoading ? <Spinner color={theme.colorBackground} /> : null}
     </Button>
   );
 }

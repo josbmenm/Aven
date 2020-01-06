@@ -1,31 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { View, Text, TouchableWithoutFeedback } from 'react-native';
 import {
-  menuItemNameText,
-  menuItemDescriptionText,
   boldPrimaryFontFace,
-  primaryFontFace,
   highlightPrimaryColor,
   mutedPrimaryColor,
   prettyShadow,
-  prettyExtraShadow,
   largeHorizontalPadding,
   prettyShadowRespectedRadius,
-  titleStyle,
   cardLargeWidth,
   monsterra,
-  monsterra70,
 } from './Styles';
 import AirtableImage from './AirtableImage';
+import OMenuTag from './OMenuTag';
 import formatCurrency from '../utils/formatCurrency';
 import Animated from 'react-native-reanimated';
-import { useTheme } from '../dash-ui/Theme';
 
-const { interpolate, multiply, add } = Animated;
+const { interpolate } = Animated;
 
 const cardSmallWidth = 240;
 const cardHeightRatio = 25 / 17;
-const cardHeaderMargin = 100;
 const carouselPaddingLarge = largeHorizontalPadding;
 const carouselPaddingSmall = 32;
 
@@ -33,35 +26,35 @@ const cardsScrollWidth = cardSmallWidth + carouselPaddingSmall;
 const cardBorderRadius = 8;
 const cardShadowRadius = prettyShadowRespectedRadius;
 
-// TODO: REMOVE THIS TAG
-export function Tag({ tag, theme: themeProp = {} }) {
-  const theme = useTheme(themeProp);
+// // TODO: REMOVE THIS TAG
+// export function Tag({ tag, theme: themeProp = {} }) {
+//   const theme = useTheme(themeProp);
 
-  if (!tag) {
-    return null;
-  }
-  return (
-    <View
-      style={{
-        backgroundColor: theme.colorPrimary,
-        borderRadius: 4,
-        paddingVertical: 4,
-        paddingHorizontal: 16,
-      }}
-    >
-      <Text
-        style={{
-          color: 'white',
-          ...boldPrimaryFontFace,
-          letterSpacing: 2,
-          fontSize: 12,
-        }}
-      >
-        {tag.toUpperCase()}
-      </Text>
-    </View>
-  );
-}
+//   if (!tag) {
+//     return null;
+//   }
+//   return (
+//     <View
+//       style={{
+//         backgroundColor: opacify(theme.colorPrimary, 0.8),
+//         borderRadius: 4,
+//         paddingVertical: 4,
+//         paddingHorizontal: 16,
+//       }}
+//     >
+//       <Text
+//         style={{
+//           color: 'white',
+//           ...boldPrimaryFontFace,
+//           letterSpacing: 2,
+//           fontSize: 12,
+//         }}
+//       >
+//         {tag.toUpperCase()}
+//       </Text>
+//     </View>
+//   );
+// }
 
 function CardContainer({ children, style, onPress }) {
   return (
@@ -130,7 +123,7 @@ function CardHeader({ title, price, style, benefits, tag }) {
       )}
       {tag && (
         <View style={{ marginTop: 5 }}>
-          <Tag tag={tag} />
+          <OMenuTag title={tag} />
         </View>
       )}
       {benefits && (

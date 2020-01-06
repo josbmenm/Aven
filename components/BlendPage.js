@@ -3,15 +3,13 @@ import { View, Text } from 'react-native';
 import ActionPage from './ActionPage';
 import AirtableImage from './AirtableImage';
 import { boldPrimaryFontFace, monsterra, titleStyle } from './Styles';
-import { Tag } from '../components/MenuCard';
+import OMenuTag from './OMenuTag';
 import { MenuHLayout } from '../components/MenuZone';
 import formatCurrency from '../utils/formatCurrency';
 import { dietaryInfosOfMenuItem } from '../logic/configLogic';
 import {
   displayNameOfOrderItem,
-  addMenuItemToCartItem,
   getSellPriceOfItem,
-  useSelectedIngredients,
 } from '../ono-cloud/OnoKitchen';
 import SmallTitle from './SmallTitle';
 import DetailsSection from './DetailsSection';
@@ -137,9 +135,7 @@ function BlendPageContentPure({ menuItem, item, restaurantConfig }) {
     .filter(Boolean);
   const detailText =
     menuItem &&
-    `${menuItem.Recipe['DisplayCalories']} Calories | ${
-      menuItem.Recipe['Nutrition Detail']
-    }`;
+    `${menuItem.Recipe['DisplayCalories']} Calories | ${menuItem.Recipe['Nutrition Detail']}`;
 
   const dietaryInfos = dietaryInfosOfMenuItem(menuItem, selectedIngredientIds);
 
@@ -156,7 +152,7 @@ function BlendPageContentPure({ menuItem, item, restaurantConfig }) {
       <MenuHLayout side={null}>
         <DetailsSection>
           <View style={{ alignSelf: 'flex-start', marginBottom: 5 }}>
-            <Tag tag={menuItem.DefaultBenefitName} />
+            <OMenuTag title={menuItem.DefaultBenefitName} />
           </View>
           <MainTitle
             subtitle={

@@ -1,15 +1,11 @@
 import React from 'react';
-import { View } from 'react-native';
 import ShortBlockFormPage from '../components/ShortBlockFormPage';
 import BlockForm from '../components/BlockForm';
 import BlockFormInput from '../components/BlockFormInput';
 import BlockFormTitle from '../components/BlockFormTitle';
 import BlockFormMessage from '../components/BlockFormMessage';
-import BlockFormRow from '../components/BlockFormRow';
-import BlockFormButton from '../components/BlockFormButton';
-import Spinner from '../components/Spinner';
 import useFocus from '../navigation-hooks/useFocus';
-import { Spacing } from '../dash-ui/Theme';
+import { Spacing, SpinnerButton } from '../dash-ui';
 
 export default function FeedbackReceiptPage({
   onSubmit,
@@ -50,15 +46,13 @@ export default function FeedbackReceiptPage({
       <BlockForm style={{ flex: 1, justifyContent: 'center' }}>
         <BlockFormMessage message="we promise not to spam you, but what's" />
         <BlockFormTitle title="your email for the free blend?" />
-
         {inputs}
         <Spacing top={16}>
-          <BlockFormButton
+          <SpinnerButton
             title={isLoading ? '' : 'send my free blend code'}
             onPress={handleSubmit}
-          >
-            {isLoading && <Spinner />}
-          </BlockFormButton>
+            isLoading={isLoading}
+          />
         </Spacing>
       </BlockForm>
     </ShortBlockFormPage>

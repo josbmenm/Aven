@@ -36,7 +36,9 @@ export default function ReceiptPage({
             </Spacing>
           </View>
         </Spacing>
-        <Spacing top={8} horizontal={8}></Spacing>
+        <Spacing value={8}>
+          <Button title="no, thanks" onPress={onNoReceipt} />
+        </Spacing>
       </BlockForm>
       <CountdownDoneButton onPress={onComplete} duration={20} />
     </ShortBlockFormPage>

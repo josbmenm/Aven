@@ -17,15 +17,7 @@ export default function Hero({ icon, title, subtitle, theme: themeProp }) {
             }}
           />
         </Spacing>
-        <Stack>
-          <Heading title={title} />
-          {subtitle && (
-            <Heading
-              title={subtitle}
-              theme={{ headingFontSize: 32, headingLineHeight: 40 }}
-            />
-          )}
-        </Stack>
+        <Heading title={title} />
       </View>
     </Spacing>
   );

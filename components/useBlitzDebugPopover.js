@@ -10,13 +10,9 @@ import { Spacing, Stack } from '../dash-ui';
 
 export const AppEnvContext = React.createContext();
 
-function ButtonRow({ children }) {
-  return <View style={{ flexDirection: 'row' }}>{children}</View>;
-}
-
 function HiddenButton({ label, onPress }) {
   return (
-    <TouchableOpacity style={{ flex: 1, padding: 8 }} onPress={onPress}>
+    <TouchableOpacity style={{ padding: 8 }} onPress={onPress}>
       <Text
         style={{
           ...primaryFontFace,
@@ -79,10 +75,10 @@ Device id: ${deviceId}
   return (
     <View style={{ padding: 30 }}>
       <Text style={{ ...titleStyle, fontSize: 22, marginBottom: 16 }}>
-        oh {name}.. you found the secret buttons!
+        hi, you found the secret buttons!
       </Text>
       <Spacing vertical={8} horizontal={16}>
-        <Stack horizontal>
+        <Stack horizontal block>
           <HiddenButton
             label="Coconut"
             onPress={() => {
@@ -102,7 +98,7 @@ Device id: ${deviceId}
             }}
           />
         </Stack>
-        <Stack>
+        <Stack horizontal block>
           <HiddenButton
             label="Papaya"
             onPress={() => {
@@ -122,7 +118,7 @@ Device id: ${deviceId}
             }}
           />
         </Stack>
-        <Stack>
+        <Stack horizontal block>
           <HiddenButton
             label="Chia"
             onPress={() => {

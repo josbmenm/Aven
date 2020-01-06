@@ -82,6 +82,7 @@ function SidebarPage({ children, isPortal, ...props }) {
           width: rightSidebarWidth,
           flexDirection: 'row',
           justifyContent: 'flex-end',
+          paddingTop: 8,
         }}
         pointerEvents="box-none"
       >

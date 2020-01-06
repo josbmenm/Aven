@@ -390,7 +390,7 @@ function StatusView() {
   const isMaintenanceMode = restaurantState && restaurantState.maintenanceMode;
   const timeSeconds = useTimeSeconds();
   let tagText = 'restaurant open';
-  let tagStatus = null;
+  let tagStatus = 'positive';
   if (closingSoon) {
     const totalSecRemaining = Math.floor(
       closingSoon.scheduledCloseTime / 1000 - timeSeconds,
@@ -490,15 +490,17 @@ function StatusView() {
   }
   return (
     <Row title="Restaurant Opening">
-      <View>
-        <Tag title={tagText} status={tagStatus} />
-        {restaurantState && !!restaurantState.sessionName && (
-          <Text style={{ ...primaryFontFace, fontSize: 20 }}>
-            {isOpen && restaurantState.sessionName}
-          </Text>
-        )}
-      </View>
-      <Stack>{buttons}</Stack>
+      <Stack horizontal>
+        <Stack>
+          <Tag title={tagText} status={tagStatus} />
+          {restaurantState && !!restaurantState.sessionName && (
+            <Text style={{ ...primaryFontFace, fontSize: 20 }}>
+              {isOpen && restaurantState.sessionName}
+            </Text>
+          )}
+        </Stack>
+        <Stack stretch>{buttons}</Stack>
+      </Stack>
     </Row>
   );
 }
@@ -524,12 +526,15 @@ function TanksView() {
   }
   return (
     <Row title="Tanks">
-      <Stack>
-        <Tag title={waterTagTitle} status={waterTagStatus} />
-        <KitchenCommandButton
-          commandType="FillWaterTank"
-          title="fill tank for 30sec"
-        />
+      <Stack horizontal>
+        <Stack>
+          <Tag title={waterTagTitle} status={waterTagStatus} />
+
+          <KitchenCommandButton
+            commandType="FillWaterTank"
+            title="fill tank for 30sec"
+          />
+        </Stack>
         <Tag title={wasteTagTitle} status={wasteTagStatus} />
       </Stack>
     </Row>

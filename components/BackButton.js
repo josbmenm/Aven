@@ -43,6 +43,7 @@ export default function BackButton({ style, onLongPress, backBehavior }) {
             fontSize: 22,
             fontWeight: 'bold',
             lineHeight: 22,
+            colorForeground: theme.colorPrimary,
           }}
         >
           back

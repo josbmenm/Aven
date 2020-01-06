@@ -1,21 +1,19 @@
 import React from 'react';
 import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
 import { useTheme } from './Theme';
-import { opacify, useStatusColor } from './utils';
+import { opacify } from './utils';
 
 export default function Button({
-  title,
+  title = null,
   children,
   outline = false,
   onPress,
   onLongPress,
   theme: themeProp,
   disabled = false,
-  status = 'primary',
 }) {
   const theme = useTheme(themeProp);
-  const statusColor = useStatusColor({ status, theme });
-  const color = opacify(statusColor, 0.8);
+  const color = opacify(theme.buttonColor || theme.colorPrimary, 0.8);
 
   return (
     <TouchableOpacity
@@ -28,7 +26,7 @@ export default function Button({
       <View
         style={{
           borderRadius: theme.borderRadius,
-          borderWidth: 3,
+          borderWidth: theme.borderWidth,
           backgroundColor: outline ? 'transparent' : color,
           borderColor: outline ? color : 'transparent',
           paddingVertical: theme.paddingVertical,

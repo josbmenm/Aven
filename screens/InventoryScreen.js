@@ -2,8 +2,6 @@ import React from 'react';
 import RootAuthenticationSection from './RootAuthenticationSection';
 import { Text, View, ScrollView } from 'react-native';
 import GenericPage from '../components/GenericPage';
-import Tag from '../components/Tag';
-import Spinner from '../components/Spinner';
 import Button from '../components/Button';
 import AsyncButton from '../components/AsyncButton';
 import useFocus from '../navigation-hooks/useFocus';
@@ -11,14 +9,13 @@ import useKeyboardPopover from '../components/useKeyboardPopover';
 import { titleStyle, prettyShadowSmall, monsterra } from '../components/Styles';
 import AirtableImage from '../components/AirtableImage';
 import { useInventoryState, useKitchenState } from '../ono-cloud/OnoKitchen';
-import MultiSelect from '../dash-ui/MultiSelect';
 import BlockFormInput from '../components/BlockFormInput';
 import StatusBar from '../components/StatusBar';
 import ButtonStack from '../components/ButtonStack';
 import { TempCell, formatTemp } from '../components/TemperatureView';
 import KitchenCommandButton from '../components/KitchenCommandButton';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
-import { Spacing } from '../dash-ui/Theme';
+import { Spacing, SmallTag, MultiSelect, Spinner } from '../dash-ui';
 import { useCloud } from '../cloud-core/KiteReact';
 import usePendantManualMode from '../components/usePendantManualMode';
 import { colorNeutral } from '../components/Onotheme';
@@ -164,8 +161,7 @@ function RemainderTag({ estimatedRemaining }) {
   }
   return (
     <Spacing right={8} bottom={8}>
-      <Tag
-        size="small"
+      <SmallTag
         status={
           typeof estimatedRemaining === 'string' || estimatedRemaining > 10
             ? 'neutral'
@@ -251,12 +247,12 @@ function InventorySlot({
       }}
     >
       {slot.Slot != null && (
-        <Text style={{ ...titleStyle, fontSize: 20, marginHorizontal: 8 }}>
+        <Text style={{ ...titleStyle, fontSize: 20 }}>
           {slot.ingredientName}
         </Text>
       )}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text style={{ ...titleStyle, fontSize: 18, marginHorizontal: 8 }}>
+        <Text style={{ ...titleStyle, fontSize: 18, color: '#555' }}>
           {slot.name}
         </Text>
 
@@ -287,33 +283,32 @@ function InventorySlot({
         <RemainderTag estimatedRemaining={estimatedRemaining} />
         {slot.settings && slot.settings.disabledMode === true && (
           <Spacing right={8} bottom={8}>
-            <Tag size="small" status="negative" title="Disabled" />
+            <SmallTag status="negative" title="Disabled" />
           </Spacing>
         )}
         {slot.settings && slot.settings.optional && (
           <Spacing right={8} bottom={8}>
-            <Tag size="small" status="warning" title="Optional" />
+            <SmallTag status="warning" title="Optional" />
           </Spacing>
         )}
         {!!slot.isErrored && (
           <Spacing right={8} bottom={8}>
-            <Tag size="small" status="negative" title="Errored" />
+            <SmallTag status="negative" title="Errored" />
           </Spacing>
         )}
         {slot.hopperDisabled && (
           <Spacing right={8} bottom={8}>
-            <Tag size="small" status="negative" title={`Hopper Off`} />
+            <SmallTag status="negative" title={`Hopper Off`} />
           </Spacing>
         )}
         {slot.pumpDisabled && (
           <Spacing right={8} bottom={8}>
-            <Tag size="small" status="negative" title={`Pump Off`} />
+            <SmallTag status="negative" title={`Pump Off`} />
           </Spacing>
         )}
         {!!slot.dispensedSinceLow && (
           <Spacing right={8} bottom={8}>
-            <Tag
-              size="small"
+            <SmallTag
               status="warning"
               title={`${slot.dispensedSinceLow} since low`}
             />
@@ -359,12 +354,13 @@ function InventorySlot({
           </View>
         </React.Fragment>
       )}
-
-      <AsyncButton
-        title="test dispense.."
-        type="outline"
-        onPress={onDispensePopover}
-      />
+      <Spacing top={24}>
+        <AsyncButton
+          title="test dispense.."
+          type="outline"
+          onPress={onDispensePopover}
+        />
+      </Spacing>
       {systemName === 'FrozenFood' && (
         <React.Fragment>
           <SubTitle>Frozen Dispenser</SubTitle>
@@ -572,10 +568,16 @@ function InventorySystem({ system, dispatch, restaurantState, isManualMode }) {
   const SubsystemSection = SubsystemSections[system.id];
   return (
     <React.Fragment>
-      <ScrollView style={{ width: 330, padding: 12 }}>
-        <Text style={{ ...titleStyle, fontSize: 24, marginHorizontal: 8 }}>
-          {system.name}
-        </Text>
+      <ScrollView
+        style={{
+          width: 330,
+          padding: 12,
+          borderLeftWidth: 1,
+          borderLeftColor: '#888',
+          marginLeft: 16,
+        }}
+      >
+        <Text style={{ ...titleStyle, fontSize: 28 }}>{system.name}</Text>
         {SubsystemSection && (
           <SubsystemSection
             systemState={system}

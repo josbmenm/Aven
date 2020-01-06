@@ -4,15 +4,15 @@ import BlockFormMessage from './BlockFormMessage';
 import BlockFormTitle from './BlockFormTitle';
 import BlockFormRow from './BlockFormRow';
 import BlockFormInput from './BlockFormInput';
-import BlockFormButton from './BlockFormButton';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import useFocus from '../navigation-hooks/useFocus';
+import { SpinnerButton } from '../dash-ui';
 
 export default function CollectNamePage({
   onSubmit,
-  onChangeName,
+  onChangeName = () => {},
   backBehavior,
-  initialName,
+  initialName = {},
   isCateringMode,
   ...props
 }) {
@@ -58,12 +58,14 @@ export default function CollectNamePage({
   });
   return (
     <ShortBlockFormPage backBehavior={backBehavior} {...props}>
-      <BlockForm style={{ flex: 1, justifyContent: 'center' }}>
+      <BlockForm
+        style={{ flex: 1, justifyContent: 'center', backgroundColor: 'red' }}
+      >
         <BlockFormMessage message="You're almost ready to go..." />
         <BlockFormTitle title="what's the name for the order?" />
         <BlockFormRow>{inputs}</BlockFormRow>
         <BlockFormRow>
-          <BlockFormButton
+          <SpinnerButton
             size="large"
             title={isCateringMode ? 'confirm order' : 'pay now'}
             disabled={firstName === '' || lastName === ''}

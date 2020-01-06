@@ -23,7 +23,7 @@ export default function TabsScreen({ tabs, navigation, children }) {
       <View
         style={{ height: 80, flexDirection: 'row', ...prettyShadow, zIndex: 5 }}
       >
-        {tabs.map((tab, tabIndex) => {
+        {tabs.map(tab => {
           const isActive = tab.routeName === activeRoute.routeName;
           return (
             <View

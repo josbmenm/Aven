@@ -14,7 +14,7 @@ export default async function refundOrder({
     .get(`OrderState/${action.orderId}`)
     .idAndValue.load();
 
-  if (!orderState.value) {
+  if (!orderState || !orderState.value) {
     throw new Error('Cannot find this order ' + action.orderId);
   }
   if (orderState.value.refund) {

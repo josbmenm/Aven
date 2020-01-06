@@ -1,35 +1,39 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 
-const baseTheme = {
+const defaultFont = Platform.select({
+  ios: 'San Francisco',
+  android: 'sans-serif',
+  default: 'sans-serif',
+});
+
+export const baseTheme = {
   spacing: 8,
   fontSize: 16,
   lineHeight: 24,
 
-  colorTint: '#005252',
   colorForeground: '#333',
   colorBackground: '#f7f7f7',
   colorPrimary: '#005252',
-  colorNeutral: '#444',
-  colorNegative: '#722',
-  colorPositive: '#272',
-  colorWarning: '#997200',
 
   darkMode: false,
 
-  paddingVertical: 8,
-  paddingHorizontal: 16,
-  fontRegular: 'Maax',
-  fontBold: 'Maax-Bold',
-  fontProse: 'Lora',
+  paddingVertical: 6,
+  paddingHorizontal: 12,
+  fontRegular: defaultFont,
+  fontBold: defaultFont,
   borderRadius: 3,
+  borderWidth: 2,
 
-  textFont: 'Maax',
+  textFont: defaultFont,
   fontWeight: '400',
-  headingFont: 'Maax-Bold',
-  headingFontSize: 64,
-  headingLineHeight: 72,
+  headingFont: defaultFont,
+  headingFontSize: 56,
+  headingLineHeight: 64,
   headingFontWeight: 'bold',
+
+  // buttonColor:
+  // tagMaxWidth
 
   inputPaddingTop: 16,
   inputFontSize: 24,
@@ -38,14 +42,7 @@ const baseTheme = {
   buttonLineHeight: 24,
 };
 
-export function customizeTheme(customTheme) {
-  return {
-    ...baseTheme,
-    ...customTheme,
-  };
-}
-
-const ThemeContext = React.createContext();
+const ThemeContext = React.createContext(baseTheme);
 
 export function ThemeProvider({ children, theme = baseTheme }) {
   return (
@@ -55,22 +52,16 @@ export function ThemeProvider({ children, theme = baseTheme }) {
 
 export function useTheme(theme) {
   // get the base theme from context
-  const baseTheme = React.useContext(ThemeContext);
+  const contextTheme = React.useContext(ThemeContext);
 
   // get the override values. can be a object or a mapper function
-  const overrides = typeof theme === 'function' ? theme(baseTheme) : theme;
+  const overrides = typeof theme === 'function' ? theme(contextTheme) : theme;
 
   // merge both themes
   return {
-    ...baseTheme,
+    ...contextTheme,
     ...overrides,
   };
-}
-
-export function ThemeDebugger({ label }) {
-  const theme = useTheme();
-  console.log(`ThemeDebugger -> ${label} -> theme`, theme);
-  return null;
 }
 
 // Context components
@@ -92,22 +83,10 @@ export function Large({ children }) {
   );
 }
 
-export function Color({ values, children }) {
-  const colorTheme = useTheme(values);
-  return (
-    <ThemeContext.Provider value={colorTheme}>{children}</ThemeContext.Provider>
-  );
-}
-
 const darkTheme = {
-  colorTint: '#005252',
   colorBackground: '#333333',
   colorForeground: '#f7f7f7',
   colorPrimary: '#005252',
-  colorNeutral: '#524952',
-  colorNegative: '#8F3222',
-  colorPositive: '#228F41',
-  colorWarning: '#B07509',
 };
 
 export function DarkMode({ theme = darkTheme, children }) {
@@ -139,16 +118,29 @@ export function Spacing({
   bottom,
   left,
   children,
+  theme: themeProp,
   inline = true,
   debug = false,
 }) {
-  const theme = useTheme();
-
+  const theme = useTheme(themeProp);
+  let allMargin = value;
+  if (
+    !value &&
+    !vertical &&
+    !horizontal &&
+    !top &&
+    !right &&
+    !bottom &&
+    !left
+  ) {
+    // a handy behavior: when using spacing without any props, it will inherit the default
+    allMargin = theme.spacing;
+  }
   return (
     <View
       style={[
         !inline && { flex: 1 },
-        value && { margin: value },
+        allMargin && { margin: allMargin },
         vertical && { marginVertical: vertical },
         horizontal && { marginHorizontal: horizontal },
         top && { marginTop: top },

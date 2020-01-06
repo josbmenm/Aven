@@ -21,10 +21,9 @@ import {
   monsterra80,
   monsterra5,
   monsterraLight,
-  buttonHeight,
 } from './Styles';
 import formatCurrency from '../utils/formatCurrency';
-import Button from './Button';
+import Button from '../dash-ui/Button';
 import { useOrder, useOrderItem } from '../ono-cloud/OrderContext';
 import {
   displayNameOfOrderItem,
@@ -34,6 +33,7 @@ import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import ListAnimation from './ListAnimation';
 import usePromoPopover from './usePromoPopover';
+import { Spacing } from '../dash-ui';
 
 const summaryRowLabelStyle = {
   color: highlightPrimaryColor,
@@ -379,7 +379,7 @@ export default function Cart({ summary }) {
       style={{ marginTop: headerHeight, maxWidth: rightSidebarWidth }}
       contentContainerStyle={{ paddingVertical: 20 }}
     >
-      <View style={{ backgroundColor: 'white', paddingLeft: 20 }}>
+      <Spacing top={20} left={20}>
         <ListAnimation
           list={summary.items}
           renderItem={item => (
@@ -403,25 +403,18 @@ export default function Cart({ summary }) {
             />
           </View>
         )}
-      </View>
-      <Button
-        title={shouldHideMoney ? 'place order' : 'checkout'}
-        style={{
-          flex: 1,
-          marginHorizontal: 10,
-          marginVertical: 12,
-          maxWidth: 488,
-          margin: 20,
-        }}
-        buttonStyle={{ height: buttonHeight }}
-        titleStyle={{ fontSize: 24 }}
-        onPress={() => {
-          navigate('CollectName');
-        }}
-        onLongPress={() => {
-          navigate('CollectName', { freePendantOrder: true });
-        }}
-      />
+        <Spacing right={16} top={12}>
+          <Button
+            title={shouldHideMoney ? 'place order' : 'checkout'}
+            onPress={() => {
+              navigate('CollectName');
+            }}
+            onLongPress={() => {
+              navigate('CollectName', { freePendantOrder: true });
+            }}
+          />
+        </Spacing>
+      </Spacing>
     </ScrollView>
   );
 }

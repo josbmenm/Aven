@@ -7,8 +7,7 @@ import KeyboardPopover from './KeyboardPopover';
 import BlockFormTitle from './BlockFormTitle';
 import BlockFormMessage from './BlockFormMessage';
 import BlockFormInput from './BlockFormInput';
-import BlockFormButton from './BlockFormButton';
-import BlockFormRow from './BlockFormRow';
+import { Stack, SpinnerButton, Spacing } from '../dash-ui';
 import { useCloud } from '../cloud-core/KiteReact';
 import { Easing } from 'react-native-reanimated';
 import useFocus from '../navigation-hooks/useFocus';
@@ -73,20 +72,23 @@ function PromoCodeForm({ onClose, orderDispatch, cloud }) {
     inputRenderers,
   });
   return (
-    <View style={{ padding: 80 }}>
-      <BlockFormMessage message="You’ve got a code? Lucky you!" />
-      <BlockFormTitle title="whats your promo code?" />
-      <BlockFormRow>{inputs}</BlockFormRow>
-      <BlockFormErrorRow error={error} />
-      <BlockFormRow>
-        <BlockFormButton title="cancel" type="outline" onPress={onClose} />
-        <BlockFormButton
+    <Spacing value={60}>
+      <Spacing>
+        <BlockFormMessage message="You’ve got a code? Lucky you!" />
+        <BlockFormTitle title="whats your promo code?" />
+        {inputs}
+        <BlockFormErrorRow error={error} />
+      </Spacing>
+      <Stack horizontal inline>
+        <SpinnerButton title="cancel" outline onPress={onClose} />
+        <SpinnerButton
+          size="large"
           title="add code"
           isLoading={isLoading}
           onPress={handleSubmit}
         />
-      </BlockFormRow>
-    </View>
+      </Stack>
+    </Spacing>
   );
 }
 

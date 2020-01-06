@@ -6,7 +6,7 @@ import { rowStyle, rowTitleStyle } from './Styles';
 
 const Row = ({ children, title, containerStyle }) => {
   return (
-    <Spacing bottom={24}>
+    <Spacing bottom={18} top={8}>
       {title && (
         <Spacing horizontal={8}>
           <Text style={rowTitleStyle}>{title}</Text>

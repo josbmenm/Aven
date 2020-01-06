@@ -1,6 +1,6 @@
 import Animated, { Easing } from 'react-native-reanimated';
 import React from 'react';
-import { useTheme } from '../dash-ui/Theme';
+import { useTheme } from './Theme';
 
 export default function Spinner({ color, isSpinning = true, style }) {
   const theme = useTheme();
@@ -19,7 +19,7 @@ export default function Spinner({ color, isSpinning = true, style }) {
   React.useEffect(() => {
     Animated.timing(spinPosition, {
       toValue: 1,
-      duration: 9000000,
+      duration: 900000000,
       easing: Easing.linear,
     }).start();
   }, []);
@@ -31,12 +31,12 @@ export default function Spinner({ color, isSpinning = true, style }) {
         height: '80%',
         maxWidth: 36,
         maxHeight: 36,
-        tintColor: color || theme.colorTint,
+        tintColor: color || theme.colorPrimary,
         transform: [
           {
             rotateZ: Animated.interpolate(spinPosition, {
               inputRange: [0, 1],
-              outputRange: [0, 36000],
+              outputRange: [0, 3600000],
             }),
           },
         ],

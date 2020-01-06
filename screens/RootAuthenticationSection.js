@@ -2,12 +2,11 @@ import React from 'react';
 import { View } from 'react-native';
 import useObservable from '../cloud-core/useObservable';
 import { useCloud } from '../cloud-core/KiteReact';
-import BlockFormButton from '../components/BlockFormButton';
 import BlockFormRow from '../components/BlockFormRow';
 import BlockFormMessage from '../components/BlockFormMessage';
 import BlockFormInput from '../components/BlockFormInput';
 import useAsyncError from '../react-utils/useAsyncError';
-import Heading from '../dash-ui/Heading';
+import { SpinnerButton, Heading } from '../dash-ui';
 
 function GenericContainer({ children }) {
   return (
@@ -36,7 +35,7 @@ function RootLoginForm() {
         />
       </BlockFormRow>
       <BlockFormRow>
-        <BlockFormButton
+        <SpinnerButton
           title="Log In"
           onPress={() => {
             handleErrors(
@@ -67,7 +66,7 @@ function RootAuthLogin() {
         <BlockFormMessage>
           Please log out and log back in as root.
         </BlockFormMessage>
-        <BlockFormButton
+        <SpinnerButton
           onPress={() => {
             cloud.destroySession({ ignoreRemoteError: true });
           }}

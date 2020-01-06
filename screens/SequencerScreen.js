@@ -223,7 +223,7 @@ function RestaurantStateList({ restaurantState, dispatch }) {
   }
   const count = restaurantState.queue ? restaurantState.queue.length : 0;
   return (
-    <RowSection title="material map">
+    <>
       <Row title={`${count} task${count === 1 ? '' : 's'} in queue`} />
       {restaurantState.fill && restaurantState.fill !== 'ready' && (
         <Row title="filling">
@@ -253,7 +253,7 @@ function RestaurantStateList({ restaurantState, dispatch }) {
           }}
         />
       )}
-    </RowSection>
+    </>
   );
 }
 

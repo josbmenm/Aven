@@ -8,6 +8,7 @@ export default function Stack({
   horizontal = false,
   inline = false,
   debug = false,
+  stretch = false,
   // TODO: what is the most common, inline or block?? what is the best name?
   theme: themeProp,
 }) {
@@ -20,7 +21,7 @@ export default function Stack({
           flexWrap: 'wrap',
           alignItems: 'flex-start',
           width: '100%',
-          flex: 1,
+          flex: stretch ? 1 : null,
         },
         debug && { backgroundColor: 'lightblue' },
         // horizontal && { height: '100%' },
@@ -29,7 +30,7 @@ export default function Stack({
       {/* TODO: WTF is happening here? if I render twice the `item` it renders properly but this does not :( */}
       {React.Children.map(children, item => {
         return (
-          <Spacing value={theme.spacing} inline={inline}>
+          <Spacing inline={inline} theme={theme}>
             {item}
           </Spacing>
         );

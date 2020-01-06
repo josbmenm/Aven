@@ -1,0 +1,43 @@
+{
+  "name": "demo-web",
+  "aven": {
+    "env": "razzle",
+    "publicAssetDir": "public",
+    "envOptions": {
+      "mainServer": "DemoServer.js",
+      "mainClient": "DemoClient.js"
+    },
+    "srcDependencies": [
+      "emails",
+      "utils",
+      "stripe-server",
+      "aven-web",
+      "ono-cloud",
+      "cloud-auth",
+      "cloud-auth-email",
+      "cloud-auth-sms",
+      "cloud-auth-root",
+      "cloud-utils",
+      "email-agent-sendgrid",
+      "sms-agent-twilio",
+      "admin",
+      "cloud-core",
+      "cloud-server",
+      "cloud-postgres",
+      "components",
+      "maui-web",
+      "react-utils"
+    ],
+    "moduleDependencies": [
+      "geoip-lite",
+      "xstream",
+      "mjml",
+      "mjml-react",
+      "@google-cloud/storage",
+      "airtable",
+      "wget-improved",
+      "square-connect",
+      "fs-extra"
+    ]
+  }
+}

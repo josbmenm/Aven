@@ -3,12 +3,11 @@ import BlockForm from './BlockForm';
 import BlockFormMessage from './BlockFormMessage';
 import BlockFormTitle from './BlockFormTitle';
 import BlockFormRow from './BlockFormRow';
-import Spinner from './Spinner';
 import BlockFormInput from './BlockFormInput';
 import BlockFormButton from './BlockFormButton';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import useFocus from '../navigation-hooks/useFocus';
-import { Spacing, Button } from '../dash-ui';
+import { Spacing, Button, Spinner } from '../dash-ui';
 
 export default function SendReceiptPage({
   onSubmit,
