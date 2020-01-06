@@ -8,7 +8,7 @@ import { HostContextContainer } from '../components/AirtableImage';
 import { View, Text } from 'react-native';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import JSONView from '../components/JSONView';
-import Button from '../components/Button';
+import { Button } from '../dash-ui';
 import { ThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
 

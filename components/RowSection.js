@@ -7,16 +7,18 @@ const RowSection = ({ children, title, style }) => {
   return (
     <Spacing top={16}>
       {title && (
-        <Text
-          theme={{
-            fontFamily: theme.fontBold,
-            color: '#282828',
-            fontSize: 24,
-            lineHeight: 32,
-          }}
-        >
-          {title}
-        </Text>
+        <Spacing left={16}>
+          <Text
+            theme={{
+              fontFamily: theme.fontBold,
+              color: '#282828',
+              fontSize: 24,
+              lineHeight: 32,
+            }}
+          >
+            {title}
+          </Text>
+        </Spacing>
       )}
       <View>{children}</View>
     </Spacing>

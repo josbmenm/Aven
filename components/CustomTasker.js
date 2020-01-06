@@ -1,7 +1,5 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import Button from '../dash-ui/Button';
-import MultiSelect from '../dash-ui/MultiSelect';
 import { Easing } from 'react-native-reanimated';
 import { useCloud } from '../cloud-core/KiteReact';
 import Row from './Row';
@@ -20,8 +18,7 @@ import useAsyncStorage, {
   isStateUnloaded,
 } from '../components/useAsyncStorage';
 import useKeyboardPopover from './useKeyboardPopover';
-import { Spacing } from '../dash-ui/Theme';
-import Stack from '../dash-ui/Stack';
+import { Spacing, Button, Stack, MultiSelect } from '../dash-ui';
 
 function useSlotsWithIngredients() {
   const config = useCompanyConfig();
@@ -317,7 +314,7 @@ export default function CustomTasker() {
             ]}
           />
         </Stack>
-        <Spacing vertical={8}>
+        <Spacing value={8}>
           <Button
             title="queue task"
             onPress={() => {

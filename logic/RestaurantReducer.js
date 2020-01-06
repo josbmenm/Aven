@@ -109,6 +109,9 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'QueueTasks': {
+      if (state.fill && state.fill.id) {
+        // somehow there is already a filling cup..
+      }
       return {
         ...defaultReturn(),
         queue: [...(state.queue || []), ...action.tasks],
@@ -231,19 +234,6 @@ function RestaurantReducerFn(state = {}, action) {
             ...slotSettings,
           },
         },
-      };
-    }
-    case 'InvalidateQueuedTask': {
-      const invalidTask = (state.queue || []).find(
-        task => task.id === action.taskId,
-      );
-      if (!invalidTask) {
-        return defaultReturn();
-      }
-      return {
-        ...defaultReturn(),
-        queue: (state.queue || []).filter(t => t !== invalidTask),
-        invalidTasks: [invalidTask, ...(state.invalidTasks || [])],
       };
     }
     case 'DidStartCup': {

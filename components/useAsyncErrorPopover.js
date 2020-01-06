@@ -1,6 +1,6 @@
 import React from 'react';
 import useKeyboardPopover from './useKeyboardPopover';
-import Button from './Button';
+import { Button } from '../dash-ui';
 import { View, Text } from 'react-native';
 import { primaryFontFace, boldPrimaryFontFace } from './Styles';
 import { colorNeutral, colorNegative } from './Onotheme';

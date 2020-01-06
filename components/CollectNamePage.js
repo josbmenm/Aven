@@ -58,9 +58,7 @@ export default function CollectNamePage({
   });
   return (
     <ShortBlockFormPage backBehavior={backBehavior} {...props}>
-      <BlockForm
-        style={{ flex: 1, justifyContent: 'center', backgroundColor: 'red' }}
-      >
+      <BlockForm style={{ flex: 1, justifyContent: 'center' }}>
         <BlockFormMessage message="You're almost ready to go..." />
         <BlockFormTitle title="what's the name for the order?" />
         <BlockFormRow>{inputs}</BlockFormRow>

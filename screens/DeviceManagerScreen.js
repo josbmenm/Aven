@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, AlertIOS } from 'react-native';
 import { Easing } from 'react-native-reanimated';
-import Button from '../components/Button';
+import { Button } from '../dash-ui';
 import RootAuthenticationSection from './RootAuthenticationSection';
 import RowSection from '../components/RowSection';
 import TextRow from '../components/TextRow';

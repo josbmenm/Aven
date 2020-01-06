@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import { useCloudValue } from '../cloud-core/KiteReact';
+import { Stack } from '../dash-ui';
 import { titleStyle, proseFontFace, monsterra } from '../components/Styles';
 import { colorNeutral } from './Onotheme';
 
@@ -30,7 +31,7 @@ export default function TemperatureView() {
   }
   return (
     <React.Fragment>
-      <View style={{ flexDirection: 'row' }}>
+      <Stack horizontal>
         {kitchenState.System_FreezerTemp_READ != null && (
           <TempCell
             title="Frozen Food"
@@ -45,8 +46,8 @@ export default function TemperatureView() {
             button={null}
           />
         )}
-      </View>
-      <View style={{ flexDirection: 'row' }}>
+      </Stack>
+      <Stack horizontal>
         {kitchenState.System_BevTemp_READ != null && (
           <TempCell
             title="Beverage Fridge"
@@ -67,10 +68,7 @@ export default function TemperatureView() {
             value={formatTemp(kitchenState.System_PsuTemp_READ)}
           />
         )}
-        {/* <Svg width="200" height="200">
-          <Path d="M 40 60 A 10 10 0 0 0 60 60" stroke="black" />
-        </Svg> */}
-      </View>
+      </Stack>
     </React.Fragment>
   );
 }

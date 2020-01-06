@@ -88,8 +88,12 @@
 - [RowSection](../components/RowSection.js) (this one is using a normal view too (flex issue))
 - [SendReceiptPage](../components/SendReceiptPage.js)
 - [SharedIcon](../components/SharedIcon.js)
-- [SpinnerButton](../components/SpinnerButton.js)
-- [Tag](../components/Tag.js) (Still using react-native components.)
 - [TextButton](../components/TextButton.js)
+
+## Moved to dash-ui
+
+- Tag
+- Spinner
+- SpinnerButton
 
 There are other components that are now using theme values from the new one (Spinner, ActionPage...), but still using old components and accepting `style` prop.

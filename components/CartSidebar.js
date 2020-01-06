@@ -23,7 +23,6 @@ import {
   monsterraLight,
 } from './Styles';
 import formatCurrency from '../utils/formatCurrency';
-import Button from '../dash-ui/Button';
 import { useOrder, useOrderItem } from '../ono-cloud/OrderContext';
 import {
   displayNameOfOrderItem,
@@ -33,7 +32,7 @@ import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import ListAnimation from './ListAnimation';
 import usePromoPopover from './usePromoPopover';
-import { Spacing } from '../dash-ui';
+import { Spacing, Button } from '../dash-ui';
 
 const summaryRowLabelStyle = {
   color: highlightPrimaryColor,

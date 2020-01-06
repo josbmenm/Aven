@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import Button from './Button';
+import { Button } from '../dash-ui';
 import { primaryFontFace } from './Styles';
 import AirtableImage from './AirtableImage';
 import { Easing } from 'react-native-reanimated';
@@ -72,7 +72,7 @@ function EditFillForm({ onClose, onSubmit, initialAmount, ingredientName }) {
       {inputs}
       <Button
         title="remove fill"
-        type="outline"
+        outline
         onPress={() => {
           onSubmit(0);
           onClose();
@@ -138,7 +138,7 @@ function SetFillButton({ fill, fills, onFills }) {
   const onFillPopover = useSetFillPopover({ fill, fills, onFills });
   return (
     <Button
-      type="outline"
+      outline
       title={`${fill.amount}`}
       disabled={!onFills}
       onPress={onFillPopover}

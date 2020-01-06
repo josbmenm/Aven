@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import TwoPanePage from '../components/TwoPanePage';
-import Button from '../components/Button';
+import { Button } from '../dash-ui';
 import BlendTasker from '../components/BlendTasker';
 import CustomTasker from '../components/CustomTasker';
 import StatusBar from '../components/StatusBar';
@@ -22,7 +22,7 @@ function TaskRow({ onCancel, isDropping, onDoNext, taskState, onRemake }) {
     <Button
       onPress={onCancel}
       title="cancel"
-      type="outline"
+      outline
       style={{ marginLeft: 8 }}
     />
   );
@@ -56,7 +56,7 @@ function TaskRow({ onCancel, isDropping, onDoNext, taskState, onRemake }) {
               <Button
                 onPress={onDoNext}
                 title="do next"
-                type="outline"
+                outline
                 style={{ marginLeft: 8 }}
               />
             )}
@@ -65,7 +65,7 @@ function TaskRow({ onCancel, isDropping, onDoNext, taskState, onRemake }) {
               <Button
                 onPress={onRemake}
                 title="re-make"
-                type="outline"
+                outline
                 style={{ marginLeft: 8 }}
               />
             )}

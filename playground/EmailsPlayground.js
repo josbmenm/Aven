@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, View } from 'react-native';
 import Heading from '../dashboard/Heading';
-import Button from '../dashboard/Button';
+import { Button } from '../dash-ui';
 import BodyText from '../dashboard/BodyText';
 import { useCloud } from '../cloud-core/KiteReact';
 import EmailExamples from '../emails/EmailExamples';

@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 import SimplePage from '../components/SimplePage';
 import { useCloud } from '../cloud-core/KiteReact';
 import Row from '../components/Row';
-import Button from '../components/Button';
+import { Button } from '../dash-ui';
 import useAsyncError from '../react-utils/useAsyncError';
 import useFocus from '../navigation-hooks/useFocus';
 import { titleStyle, primaryFontFace } from '../components/Styles';
@@ -217,12 +217,7 @@ function CleaningView() {
   const canReserve = !restaurantState.reservedFillGripperClean;
   return (
     <Row title="Fill Gripper Cleaning">
-      <View>
-        {restaurantState.reservedFillGripperClean && (
-          <Tag title="Paused for Fill Positioner Cleaning" status="warning" />
-        )}
-      </View>
-      <Stack>
+      <Stack horizontal inline>
         {canClear ? (
           <Button
             onPress={() => {
@@ -244,6 +239,9 @@ function CleaningView() {
             title="Clean Fill Gripper"
           />
         ) : null}
+        {restaurantState.reservedFillGripperClean && (
+          <Tag title="Paused for Fill Positioner Cleaning" status="warning" />
+        )}
       </Stack>
     </Row>
   );
@@ -263,10 +261,7 @@ function BlenderCleaningView() {
   return (
     <Row title="Blender Cleaning">
       <View>
-        {restaurantState.reservedBlenderClean && (
-          <Tag title="Paused for Blender Cleaning" status="warning" />
-        )}
-        <Stack>
+        <Stack horizontal inline>
           {canClear ? (
             <Button
               onPress={() => {
@@ -289,6 +284,9 @@ function BlenderCleaningView() {
               title="Clean Blender"
             />
           ) : null}
+          {restaurantState.reservedBlenderClean && (
+            <Tag title="Paused for Blender Cleaning" status="warning" />
+          )}
         </Stack>
         {canClear && (
           <MultiSelect
@@ -501,7 +499,7 @@ function StatusView() {
       <Button
         key="clearClose"
         title="clear close schedule"
-        type="outline"
+        outline
         onPress={() => {
           dispatch({
             type: 'ScheduleRestaurantClose',

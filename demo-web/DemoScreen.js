@@ -1,8 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import Text from '../dash-ui/Text';
-import Button from '../dash-ui/Button';
-import Stack from '../dash-ui/Stack';
+import { Button, Stack } from '../dash-ui';
 import useCloudState from '../cloud-core/useCloudState';
 import { createReducerStream } from '../cloud-core/Kite';
 import {

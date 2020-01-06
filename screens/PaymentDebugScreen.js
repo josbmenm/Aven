@@ -8,7 +8,7 @@ import {
   AlertIOS,
 } from 'react-native';
 import JSONView from '../components/JSONView';
-import Button from '../components/Button';
+import { Button } from '../dash-ui';
 import {
   CardReaderLog,
   useCardReader,

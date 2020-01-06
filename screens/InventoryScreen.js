@@ -2,7 +2,6 @@ import React from 'react';
 import RootAuthenticationSection from './RootAuthenticationSection';
 import { Text, View, ScrollView } from 'react-native';
 import GenericPage from '../components/GenericPage';
-import Button from '../components/Button';
 import AsyncButton from '../components/AsyncButton';
 import useFocus from '../navigation-hooks/useFocus';
 import useKeyboardPopover from '../components/useKeyboardPopover';
@@ -11,11 +10,17 @@ import AirtableImage from '../components/AirtableImage';
 import { useInventoryState, useKitchenState } from '../ono-cloud/OnoKitchen';
 import BlockFormInput from '../components/BlockFormInput';
 import StatusBar from '../components/StatusBar';
-import ButtonStack from '../components/ButtonStack';
 import { TempCell, formatTemp } from '../components/TemperatureView';
 import KitchenCommandButton from '../components/KitchenCommandButton';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
-import { Spacing, SmallTag, MultiSelect, Spinner } from '../dash-ui';
+import {
+  Button,
+  Spacing,
+  SmallTag,
+  MultiSelect,
+  Stack,
+  Spinner,
+} from '../dash-ui';
 import { useCloud } from '../cloud-core/KiteReact';
 import usePendantManualMode from '../components/usePendantManualMode';
 import { colorNeutral } from '../components/Onotheme';
@@ -150,7 +155,7 @@ function DispenseForm({ slot, onClose, onDispense, onPositionAndDispense }) {
     <View>
       <PopoverTitle>Dispense {slot.name}</PopoverTitle>
       <View style={{ flexDirection: 'row' }}>{inputs}</View>
-      <ButtonStack style={{ margin: 10 }} buttons={buttons} />
+      <Stack>{buttons}</Stack>
     </View>
   );
 }
@@ -322,7 +327,7 @@ function InventorySlot({
           <View style={{ flexDirection: 'row' }}>
             <Button
               title="fill.."
-              type="outline"
+              outline
               onPress={onFillPopover}
               style={{ marginRight: 8 }}
             />
@@ -357,7 +362,7 @@ function InventorySlot({
       <Spacing top={24}>
         <AsyncButton
           title="test dispense.."
-          type="outline"
+          outline
           onPress={onDispensePopover}
         />
       </Spacing>

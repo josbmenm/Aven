@@ -29,6 +29,9 @@ export default function Stack({
     >
       {/* TODO: WTF is happening here? if I render twice the `item` it renders properly but this does not :( */}
       {React.Children.map(children, (item, index) => {
+        if (!item) {
+          return null;
+        }
         return (
           <Spacing key={index} inline={inline} theme={theme}>
             {item}

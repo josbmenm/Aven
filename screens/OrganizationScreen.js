@@ -8,7 +8,6 @@ import {
   AlertIOS,
 } from 'react-native';
 import JSONView from '../components/JSONView';
-import Button from '../components/Button';
 import { useCloud, useStream } from '../cloud-core/KiteReact';
 import useObservable from '../cloud-core/useObservable';
 import RowSection from '../components/RowSection';
@@ -17,7 +16,7 @@ import Row from '../components/Row';
 import BitRow from '../components/BitRow';
 import { rowStyle, rowTitleStyle } from '../components/Styles';
 import SimplePage from '../components/SimplePage';
-import MultiSelect from '../dash-ui/MultiSelect';
+import { Button, MultiSelect } from '../dash-ui/MultiSelect';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import LinkRow from '../components/LinkRow';

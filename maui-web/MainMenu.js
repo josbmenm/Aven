@@ -71,7 +71,7 @@ function MenuLink({
       renderContent={active => (
         <VisualButton
           title={title}
-          type="outline"
+          outline
           buttonStyle={{
             paddingHorizontal: 0,
             paddingVertical: 12,
@@ -137,7 +137,7 @@ export function DesktopMenu() {
             /> */}
             <MenuLink routeName="OurStory" title="our story" />
             <ButtonLink
-              type="outline"
+              outline
               title="book with us"
               routeName="BookUs"
               buttonStyle={{ marginLeft: 32 }}

@@ -32,7 +32,7 @@ import TasksScreen from '../screens/TasksScreen';
 import useCloudProvider from '../components/useCloudProvider';
 import { FeedbackAppNavigator } from '../components/FeedbackApp';
 import SequencerScreen from '../screens/SequencerScreen';
-import Button from '../components/Button';
+import { Button } from '../dash-ui';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
 import InternalOrderScreen from '../screens/InternalOrderScreen';
 import DeviceManagerScreen from '../screens/DeviceManagerScreen';

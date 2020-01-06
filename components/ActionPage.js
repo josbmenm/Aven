@@ -6,7 +6,7 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
-import Button from '../dash-ui/Button';
+import { Button } from '../dash-ui';
 import {
   prettyShadow,
   buttonHeight,

@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import GenericPage from '../maui-web/GenericPage';
 import Container from '../dashboard/Container';
-import Button from '../dashboard/Button';
+import { Button } from '../dash-ui';
 
 function openCSVdata(dataStr, name) {
   let csvContent = 'data:text/csv;charset=utf-8,' + dataStr;

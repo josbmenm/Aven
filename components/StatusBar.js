@@ -6,7 +6,7 @@ import {
   standardTextColor,
   primaryFontFace,
 } from './Styles';
-import Button from './Button';
+import { Button } from '../dash-ui';
 import { useInStockInventoryMenu } from '../ono-cloud/OnoKitchen';
 import { Easing } from 'react-native-reanimated';
 import { usePopover } from '../views/Popover';
@@ -57,7 +57,7 @@ function FaultButton({ fault, isWarningColor, onReset }) {
           )}
           <View style={{ padding: 10 }}>
             <Button
-              type="outline"
+              outline
               onPress={() => {
                 onClose();
               }}

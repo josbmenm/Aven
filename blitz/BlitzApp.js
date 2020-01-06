@@ -24,7 +24,7 @@ import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
 import FoodScreen from '../screens/FoodScreen';
 import PaymentDebugScreen from '../screens/PaymentDebugScreen';
 import ErrorContainer from '../cloud-react/ErrorContainer';
-import Button from '../components/Button';
+import { Button } from '../dash-ui';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
 import OrderCompleteScreen from '../screens/OrderCompleteScreen';
 import CollectNameScreen from '../screens/CollectNameScreen';
@@ -48,6 +48,7 @@ import OnoTheme from '../logic/OnoTheme';
 import { isStateLoaded, useDeviceId } from '../components/useAsyncStorage';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
 import { Spacing, Spinner, Heading } from '../dash-ui';
+import OnoThemeProvider from '../components/Onotheme';
 import * as Sentry from '@sentry/react-native';
 
 const appPackage = require('../app.json');
@@ -346,18 +347,20 @@ function FullApp() {
     return null;
   }
   return (
-    <ThemeProvider value={OnoTheme}>
-      <ErrorContainer
-        renderError={renderAppError}
-        onCatch={async () => {
-          await AsyncStorage.removeItem(NAV_STORAGE_KEY);
-        }}
-      >
-        <CloudContext.Provider value={cloud}>
-          <SelectModeApp />
-        </CloudContext.Provider>
-      </ErrorContainer>
-    </ThemeProvider>
+    <OnoThemeProvider>
+      <ThemeProvider value={OnoTheme}>
+        <ErrorContainer
+          renderError={renderAppError}
+          onCatch={async () => {
+            await AsyncStorage.removeItem(NAV_STORAGE_KEY);
+          }}
+        >
+          <CloudContext.Provider value={cloud}>
+            <SelectModeApp />
+          </CloudContext.Provider>
+        </ErrorContainer>
+      </ThemeProvider>
+    </OnoThemeProvider>
   );
 }
 

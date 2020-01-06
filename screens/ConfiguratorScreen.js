@@ -6,7 +6,7 @@ import useEmptyOrderEscape from './useEmptyOrderEscape';
 import { error } from '../logger/logger';
 import { Alert, Text, View } from 'react-native';
 import GenericPage from '../components/GenericPage';
-import Button from '../components/Button';
+import { Button } from '../dash-ui';
 import BlockFormInput from '../components/BlockFormInput';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import { TouchableOpacity } from 'react-native-gesture-handler';

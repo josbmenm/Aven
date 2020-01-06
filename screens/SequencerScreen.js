@@ -1,7 +1,7 @@
 import React from 'react';
 import TwoPanePage from '../components/TwoPanePage';
 import { View, Text } from 'react-native';
-import Button from '../components/Button';
+import { Button } from '../dash-ui';
 import { useSubsystemOverview } from '../ono-cloud/OnoKitchen';
 import usePendantManualMode from '../components/usePendantManualMode';
 import KitchenCommandButton from '../components/KitchenCommandButton';
@@ -158,7 +158,7 @@ function FillRow({ restaurantState, dispatch }) {
         </View>
         {!restaurantState.isAttached && (
           <Button
-            type="outline"
+            outline
             title="wipe filling state"
             onPress={() => {
               dispatch({ type: 'WipeFillState' });
@@ -182,7 +182,7 @@ function BlendRow({ restaurantState, dispatch }) {
         </View>
         {!restaurantState.isAttached && (
           <Button
-            type="outline"
+            outline
             title="wipe blender state"
             onPress={() => {
               dispatch({ type: 'WipeBlendState' });
@@ -203,7 +203,7 @@ function DeliverySystemRow({ restaurantState, dispatch }) {
         </View>
         {!restaurantState.isAttached && (
           <Button
-            type="outline"
+            outline
             title="wipe delivery state"
             onPress={() => {
               dispatch({ type: 'WipeDeliveryState' });
@@ -246,7 +246,7 @@ function RestaurantStateList({ restaurantState, dispatch }) {
       <DeliveryBayRow restaurantState={restaurantState} dispatch={dispatch} />
       {!restaurantState.isAttached && (
         <Button
-          type="outline"
+          outline
           title="wipe material map state"
           onPress={() => {
             dispatch({ type: 'WipeMaterialState' });

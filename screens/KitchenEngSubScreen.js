@@ -2,8 +2,6 @@ import React from 'react';
 import BitRow from '../components/BitRow';
 import IntRow from '../components/IntRow';
 import Row from '../components/Row';
-import ButtonRow from '../components/ButtonRow';
-import Button from '../components/Button';
 import RowSection from '../components/RowSection';
 import KeyboardPopover from '../components/KeyboardPopover';
 import { usePopover } from '../views/Popover';
@@ -19,7 +17,7 @@ import { SystemFaultsAndAlarms } from '../components/FaultsAndAlarms';
 import BlockFormInput from '../components/BlockFormInput';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import TwoPanePage from '../components/TwoPanePage';
-import { Heading, Spacing } from '../dash-ui';
+import { Button, Heading, Spacing } from '../dash-ui';
 
 const HiddenReads = new Set([
   'NoFaults',

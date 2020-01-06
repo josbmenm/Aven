@@ -5,10 +5,9 @@ import Heading from '../dashboard/Heading';
 import BaseText from '../dashboard/BaseText';
 import BlockForm from '../components/BlockForm';
 import FormInput from '../components/BlockFormInput';
-import Button from '../dashboard/Button';
 import { useTheme } from '../dashboard/Theme';
 import { useCloud } from '../cloud-core/KiteReact';
-import { LocationInput } from './LocationInput';
+import { Button, Stack } from '../dash-ui';
 import FormRow from './FormRow';
 import BodyText from '../dashboard/BodyText';
 import Spinner from '../dashboard/Spinner';
@@ -383,24 +382,24 @@ function BookUsWizard() {
               <ProgressBar step={stepsState.current} />
             </FormRow>
           )}
-
-          <FormRow direction="row-reverse">
+          <Stack horizontal>
             {stepsState.current === 0 && (
               <Button
-                style={{ flex: 1 }}
-                buttonStyle={{ paddingVertical: 15 }}
                 title="start booking"
                 onPress={() => stepsDispatch({ type: 'GO_NEXT' })}
               />
             )}
+            {stepsState.current !== 0 && (
+              <Button
+                tabIndex="-1"
+                outline
+                title="back"
+                disabled={false}
+                onPress={() => stepsDispatch({ type: 'GO_BACK' })}
+              />
+            )}
             {stepsState.hasPrev && stepsState.hasNext && (
               <Button
-                style={{
-                  flex: 2,
-                  marginBottom: 16,
-                  marginHorizontal: 8,
-                }}
-                buttonStyle={{ paddingVertical: 15 }}
                 disabled={stepValidation[stepsState.current].disabled}
                 title="next"
                 onPress={() => stepsDispatch({ type: 'GO_NEXT' })}
@@ -408,34 +407,12 @@ function BookUsWizard() {
             )}
             {stepsState.current === TOTAL_STEPS && (
               <SubmitButton
-                buttonStyle={{ paddingVertical: 15 }}
                 disabled={loading}
                 onPress={onSubmit}
                 loading={loading}
               />
             )}
-            {stepsState.current !== 0 && (
-              <Button
-                style={{
-                  flex: 1,
-                  marginBottom: 16,
-                  marginHorizontal: 8,
-                }}
-                tabIndex="-1"
-                buttonStyle={{ paddingVertical: 15 }}
-                type="outline"
-                title="back"
-                disabled={false}
-                onPress={() => stepsDispatch({ type: 'GO_BACK' })}
-              />
-            )}
-          </FormRow>
-          {/* { ? (
-
-          ) : null} */}
-          {/* { ? (
-          ) : null} */}
-
+          </Stack>
           <FormRow style={{ height: 24, marginHorizontal: 8 }}>
             {error ? (
               <BaseText style={{ fontFamily: 'Maax-Bold' }}>
@@ -453,7 +430,6 @@ function SubmitButton({ onPress, disabled = false, loading, buttonStyle }) {
   const theme = useTheme();
   return (
     <Button
-      style={{ flex: 2, marginBottom: 16, marginHorizontal: 8 }}
       disabled={disabled || loading}
       onPress={onPress}
       buttonStyle={buttonStyle}

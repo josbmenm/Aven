@@ -6,7 +6,6 @@ import { Responsive } from '../dashboard/Responsive';
 import Container from '../dashboard/Container';
 import Heading from '../dashboard/Heading';
 import BodyText from '../dashboard/BodyText';
-import RequestCityForm from './RequestCityForm';
 
 const breakpoints = [1024, 1400];
 
@@ -50,7 +49,6 @@ export default function RequestCity({ style }) {
             Ono Blends is always looking to grow. Request your city and we’ll
             try to make it happen.
           </BodyText>
-          <RequestCityForm breakpoints={breakpoints} />
         </ColumnToRowChild>
       </ColumnToRow>
     </Container>

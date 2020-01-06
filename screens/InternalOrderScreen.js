@@ -10,7 +10,7 @@ import {
   boldPrimaryFontFace,
 } from '../components/Styles';
 import formatCurrency from '../utils/formatCurrency';
-import Button from '../components/Button';
+import { Button } from '../dash-ui';
 import AsyncButton from '../components/AsyncButton';
 import Row from '../components/Row';
 import { Spinner } from '../dash-ui';
@@ -121,13 +121,13 @@ function ReceiptSection({ order }) {
           <Button
             title="send phone receipt"
             onPress={onSMSPopover}
-            type="outline"
+            outline
             style={{ marginHorizontal: 8 }}
           />
           <Button
             title="send email receipt"
             onPress={onEmailPopover}
-            type="outline"
+            outline
             style={{ marginHorizontal: 8 }}
           />
         </View>

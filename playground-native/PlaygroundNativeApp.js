@@ -15,7 +15,7 @@ import { createAppContainer } from '../navigation-native';
 import codePush from 'react-native-code-push';
 import ComponentPlaygroundScreen from '../screens/ComponentPlaygroundScreen';
 import useCloudProvider from '../components/useCloudProvider';
-import Button from '../components/Button';
+import { Button } from '../dash-ui';
 import createStackTransitionNavigator from '../navigation-transitioner/createStackTransitionNavigator';
 import LinearGradient from 'react-native-linear-gradient';
 import { CloudContext } from '../cloud-core/KiteReact';

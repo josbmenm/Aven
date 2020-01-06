@@ -22,7 +22,7 @@ function Link({
       target={target}
       renderContent={active => (
         <VisualButton
-          type="outline"
+          outline
           active={active}
           title={title}
           buttonStyle={{

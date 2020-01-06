@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import Button from '../dash-ui/Button';
 import useOrderInfoPopover from './useOrderInfoPopover';
 import useBlendPickPopover from './useBlendPickPopover';
 import { useCloud } from '../cloud-core/KiteReact';
@@ -20,8 +19,7 @@ import useAsyncStorage, {
 } from '../components/useAsyncStorage';
 import ButtonStack from './ButtonStack';
 import { primaryFontFace } from './Styles';
-import { Spacing } from '../dash-ui/Theme';
-import Stack from '../dash-ui/Stack';
+import { Button, Spacing, Stack } from '../dash-ui';
 
 function usePutTransactionValue(docName) {
   const cloud = useCloud();
@@ -147,20 +145,17 @@ export default function BlendTasker() {
           </View>
           <View style={{ flex: 3 }}>
             {fills && (
-              <FillList
-                fills={fills}
-                inventoryIngredients={inventoryIngredients}
-                onFillsChange={null}
-              />
+              <Spacing right={8}>
+                <FillList
+                  fills={fills}
+                  inventoryIngredients={inventoryIngredients}
+                  onFillsChange={null}
+                />
+              </Spacing>
             )}
-            {/* <Button
-              title="customize"
-              outline
-              onPress={openBlendChooser}
-            /> */}
           </View>
         </View>
-        <Spacing vertical={8}>
+        <Spacing value={8}>
           <Button
             title="queue task"
             disabled={blendId === null || !fills}
