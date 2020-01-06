@@ -5,7 +5,7 @@ import {
   keyboardAppearance,
   textInputLargeStyle,
 } from './Styles';
-import Title from './Title';
+import { Heading } from '../dash-ui';
 import GenericPage from './GenericPage';
 
 export default class InputPage extends React.Component {
@@ -16,7 +16,7 @@ export default class InputPage extends React.Component {
   render() {
     return (
       <GenericPage style={{ flex: 1, ...inputPageStyle }}>
-        <Title>{this.props.title}</Title>
+        <Heading title={this.props.title} />
         <TextInput
           ref="ti"
           autoCorrect={false}
