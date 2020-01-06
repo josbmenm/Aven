@@ -1,15 +1,13 @@
 import React from 'react';
 import TwoPanePage from '../components/TwoPanePage';
-import Button from '../dash-ui/Button';
 import Row from '../components/Row';
-import Spinner from '../components/Spinner';
+import { Spinner, Button } from '../dash-ui';
 import StatusBar from '../components/StatusBar';
 import RowSection from '../components/RowSection';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import { View, Text, TouchableOpacity } from 'react-native';
-import formatCurrency from '../utils/formatCurrency';
 import {
   proseFontFace,
   primaryFontFace,

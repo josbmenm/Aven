@@ -14,7 +14,7 @@ import {
 import { computeNextSteps } from '../logic/MachineLogic';
 import KitchenSteps from '../logic/KitchenSteps';
 import useAsyncError from '../react-utils/useAsyncError';
-import Spinner from '../components/Spinner';
+import { Spinner } from '../dash-ui';
 import KitchenCommands from '../logic/KitchenCommands';
 import { isStateLoaded, useDeviceId } from '../components/useAsyncStorage';
 import useKitchenStatus from '../components/useKitchenStatus';

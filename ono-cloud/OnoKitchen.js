@@ -507,7 +507,7 @@ export function useInventoryMenu() {
   const companyConfig = useCompanyConfig();
   const menu = companyConfigToMenu(companyConfig);
   const inventoryIngredients = useInventoryIngredients();
-  if (!inventoryIngredients) {
+  if (!inventoryIngredients || !menu) {
     return menu;
   }
   return {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { blockFormTitleTextStyle } from './Styles';
-import Spinner from '../components/Spinner';
+import { Spinner } from '../dash-ui';
 import Animated, { Easing } from '../views/Animated';
 
 function PageTitle({ title }) {

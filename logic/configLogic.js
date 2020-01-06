@@ -279,6 +279,7 @@ export function getSellPriceOfItem(item, menuItem) {
 
 export function getOrderItemMapper(menu) {
   return item => {
+    if (!menu) return null;
     const menuItem = menu.blends.find(i => i.id === item.menuItemId);
     const recipeBasePrice = sellPriceOfMenuItem(menuItem);
     const sellPrice = getSellPriceOfItem(item, menuItem);

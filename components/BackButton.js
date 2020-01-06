@@ -2,12 +2,6 @@ import React from 'react';
 import { TouchableOpacity, Image } from 'react-native';
 import Text from '../dash-ui/Text';
 import { useNavigation } from '../navigation-hooks/Hooks';
-import {
-  highlightPrimaryColor,
-  boldPrimaryFontFace,
-  fontSmall,
-  monsterra40,
-} from './Styles';
 import { Spacing, useTheme } from '../dash-ui/Theme';
 
 export default function BackButton({ style, onLongPress, backBehavior }) {

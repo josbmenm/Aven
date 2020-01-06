@@ -13,7 +13,7 @@ import formatCurrency from '../utils/formatCurrency';
 import Button from '../components/Button';
 import AsyncButton from '../components/AsyncButton';
 import Row from '../components/Row';
-import Spinner from '../components/Spinner';
+import { Spinner } from '../dash-ui';
 import BlockFormInput from '../components/BlockFormInput';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import useFocus from '../navigation-hooks/useFocus';

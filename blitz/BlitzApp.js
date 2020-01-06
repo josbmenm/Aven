@@ -23,7 +23,6 @@ import BlendScreen from '../screens/BlendScreen';
 import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
 import FoodScreen from '../screens/FoodScreen';
 import PaymentDebugScreen from '../screens/PaymentDebugScreen';
-import Spinner from '../components/Spinner';
 import ErrorContainer from '../cloud-react/ErrorContainer';
 import Button from '../components/Button';
 import OrderConfirmScreen from '../screens/OrderConfirmScreen';
@@ -48,7 +47,7 @@ import { ThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
 import { isStateLoaded, useDeviceId } from '../components/useAsyncStorage';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
-import { Spacing, Heading } from '../dash-ui';
+import { Spacing, Spinner, Heading } from '../dash-ui';
 import * as Sentry from '@sentry/react-native';
 
 const appPackage = require('../app.json');

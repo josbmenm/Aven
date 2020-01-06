@@ -9,7 +9,7 @@ import {
   monsterra80,
 } from '../components/Styles';
 import FadeTransition from '../components/FadeTransition';
-import SpinnerButton from '../components/SpinnerButton';
+import { SpinnerButton } from '../dash-ui';
 import Animated, {
   Transitioning,
   Transition,
