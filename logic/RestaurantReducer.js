@@ -135,7 +135,8 @@ function RestaurantReducerFn(state = {}, action) {
     case 'ClearFillGripperClean': {
       if (
         action.force ||
-        state.reservedFillGripperClean.lockId === action.lockId
+        (state.reservedFillGripperClean &&
+          state.reservedFillGripperClean.lockId === action.lockId)
       ) {
         return {
           ...defaultReturn(),
@@ -163,7 +164,11 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'ClearBlenderClean': {
-      if (action.force || state.reservedBlenderClean.lockId === action.lockId) {
+      if (
+        action.force ||
+        (state.reservedBlenderClean &&
+          state.reservedBlenderClean.lockId === action.lockId)
+      ) {
         return {
           ...defaultReturn(),
           reservedBlenderClean: null,
