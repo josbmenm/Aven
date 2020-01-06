@@ -8,7 +8,6 @@ import { useCloud } from '../cloud-core/KiteReact';
 import codePush from 'react-native-code-push';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import Row from '../components/Row';
-import Tag from '../components/Tag';
 import useAsyncErrorPopover from '../components/useAsyncErrorPopover';
 import AsyncButton from '../components/AsyncButton';
 import BlockFormInput from '../components/BlockFormInput';
@@ -19,7 +18,7 @@ import useFocus from '../navigation-hooks/useFocus';
 import StatusBar from '../components/StatusBar';
 import CardReaderConnectionManager from '../components/CardReaderConnectionManager';
 import { Audio } from 'expo-av';
-import { Button, Spacing, Stack, MultiSelect } from '../dash-ui';
+import { Tag, Button, Spacing, Stack, MultiSelect } from '../dash-ui';
 
 function FridgeView() {
   const kitchenState = useKitchenState();
