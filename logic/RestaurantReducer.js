@@ -109,12 +109,23 @@ function RestaurantReducerFn(state = {}, action) {
       };
     }
     case 'QueueTasks': {
-      if (state.fill && state.fill.id) {
-        // somehow there is already a filling cup..
+      let tasksToQueue = action.tasks.slice();
+      let fillState = state.fill;
+      if (fillState && fillState !== 'ready' && !fillState.id) {
+        // somehow there is already a filling cup object. this is our opportunity to use an empty cup!
+        const taskToStart = tasksToQueue.shift();
+        fillState = {
+          id: taskToStart.id,
+          task: taskToStart,
+          taskStartTime: action.dispatchTime,
+          fillsRemaining: taskToStart.fills,
+          fillsCompleted: [],
+        };
       }
       return {
         ...defaultReturn(),
-        queue: [...(state.queue || []), ...action.tasks],
+        fill: fillState,
+        queue: [...(state.queue || []), ...tasksToQueue],
       };
     }
     case 'PrimeDispensers': {
@@ -240,7 +251,7 @@ function RestaurantReducerFn(state = {}, action) {
       if (!state.queue || !state.queue.length) {
         return {
           ...defaultReturn(),
-          fill: null,
+          fill: {}, // explicitly place a filling cup in state, without an id
         };
       }
       const topTask = state.queue[0];

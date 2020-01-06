@@ -284,6 +284,7 @@ const KitchenSteps = [
       if (
         restaurantState.fill &&
         restaurantState.fill !== 'ready' &&
+        !!restaurantState.fill.id &&
         !restaurantState.blend &&
         !restaurantState.reservedBlenderClean &&
         (restaurantState.fill.fillsRemaining
