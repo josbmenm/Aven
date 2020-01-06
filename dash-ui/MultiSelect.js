@@ -25,6 +25,7 @@ export default function MultiSelect({
         const isFirst = idx === 0;
         return (
           <View
+            key={idx}
             style={{
               borderTopLeftRadius: isFirst ? theme.borderRadius : 0,
               borderBottomLeftRadius: isFirst ? theme.borderRadius : 0,

@@ -66,7 +66,7 @@ const appPackage = require('../app.json');
 
 let IS_DEV = process.env.NODE_ENV !== 'production';
 
-// IS_DEV = false;
+IS_DEV = false;
 // IS_DEV = true;
 // ^^ ALWAYS COMMENT THIS OUT BEFORE COMMIT AND DEPLOY! ^^
 

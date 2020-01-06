@@ -23,7 +23,7 @@ export default function Tag({
       <Text
         style={{
           fontFamily: theme.fontBold,
-          fontLetterSpacing: theme.fontLetterSpacing,
+          letterSpacing: theme.fontLetterSpacing,
           color: 'white',
           fontSize: theme.fontSize,
           textAlign: 'center',

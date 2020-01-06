@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Platform } from 'react-native';
 
 const defaultFont = Platform.select({
-  ios: 'San Francisco',
-  android: 'sans-serif',
+  ios: 'System',
+  android: 'System',
   default: 'sans-serif',
 });
 

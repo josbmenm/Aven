@@ -28,9 +28,9 @@ export default function Stack({
       ]}
     >
       {/* TODO: WTF is happening here? if I render twice the `item` it renders properly but this does not :( */}
-      {React.Children.map(children, item => {
+      {React.Children.map(children, (item, index) => {
         return (
-          <Spacing inline={inline} theme={theme}>
+          <Spacing key={index} inline={inline} theme={theme}>
             {item}
           </Spacing>
         );

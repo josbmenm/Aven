@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from './Button';
 import Spinner from './Spinner';
-import { useTheme } from '../dashboard/Theme';
+import { useTheme } from './Theme';
 
 export default function SpinnerButton({
   onPress,

@@ -163,12 +163,24 @@ function ServicingView() {
   }
   const isHomed = kitchenState.FillSystem_Homed_READ;
   const isInServiceMode = kitchenState.FillSystem_InServiceMode_READ;
+  const blenderHasCup = kitchenState.BlendSystem_HasCup_READ;
+  const deliveryHasCup = kitchenState.Delivery_ArmHasCup_READ;
+  const waitingForCup = blenderHasCup || deliveryHasCup;
   return (
     <Row title="Service Mode - For end-of-day shutdown">
       <View>
         {isInServiceMode ? (
           <Tag
             title={`Service Mode (${isHomed ? 'homed' : 'not homed'})`}
+            status="warning"
+          />
+        ) : waitingForCup ? (
+          <Tag
+            title={
+              deliveryHasCup
+                ? 'Clear Cup from Delivery'
+                : 'Clear Cup from Blender'
+            }
             status="warning"
           />
         ) : (
@@ -427,10 +439,15 @@ function StatusView() {
   const buttons = [];
   if (isOpen) {
     buttons.push(
-      <Button title="close restaurant" onPress={onCloseRestaurantPopover} />,
+      <Button
+        key="close"
+        title="close restaurant"
+        onPress={onCloseRestaurantPopover}
+      />,
     );
     buttons.push(
       <AsyncButton
+        key="maint"
         title={
           isMaintenanceMode ? 'exit maintenance mode' : 'enter maintenance mode'
         }
@@ -451,6 +468,7 @@ function StatusView() {
     buttons.push(
       <Button
         title="park restaurant"
+        key="park"
         onPress={() => {
           dispatch({
             type: 'ParkRestaurant',
@@ -462,6 +480,7 @@ function StatusView() {
     buttons.push(
       <Button
         title="travel restaurant"
+        key="travel"
         onPress={() => {
           dispatch({
             type: 'TravelRestaurant',
@@ -470,12 +489,17 @@ function StatusView() {
       />,
     );
     buttons.push(
-      <Button title="open restaurant" onPress={onOpenRestaurantPopover} />,
+      <Button
+        key="open"
+        title="open restaurant"
+        onPress={onOpenRestaurantPopover}
+      />,
     );
   }
   if (closingSoon) {
     buttons.push(
       <Button
+        key="clearClose"
         title="clear close schedule"
         type="outline"
         onPress={() => {

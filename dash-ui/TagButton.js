@@ -1,6 +1,8 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Tag, getStatusColor, useTheme } from '../dash-ui';
+import Tag from './Tag';
+import { useTheme } from './Theme';
+import { getStatusColor } from './utils';
 
 export default function TagButton({
   title,

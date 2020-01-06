@@ -3,6 +3,7 @@ export { default as ButtonLink } from './ButtonLink';
 export { default as Heading } from './Heading';
 export { default as Link } from './Link';
 export { default as Tag } from './Tag';
+export { default as TagButton } from './TagButton';
 export { default as MultiSelect } from './MultiSelect';
 export { default as Stack } from './Stack';
 export { default as SmallTag } from './SmallTag';
