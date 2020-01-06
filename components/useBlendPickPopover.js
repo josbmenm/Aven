@@ -6,7 +6,7 @@ import AirtableImage from './AirtableImage';
 import KeyboardPopover from './KeyboardPopover';
 import { useMenu } from '../ono-cloud/OnoKitchen';
 import { titleStyle, monsterra } from './Styles';
-import Spinner from './Spinner';
+import { Spinner } from '../dash-ui';
 
 function BlendsPicker({ menu, blendId, onBlendPick, onClose }) {
   if (!menu) {
