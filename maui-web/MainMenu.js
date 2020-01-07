@@ -137,7 +137,7 @@ export function DesktopMenu() {
             /> */}
             <MenuLink routeName="OurStory" title="our story" />
             <ButtonLink
-              outline
+              type="outline"
               title="book with us"
               routeName="BookUs"
               buttonStyle={{ marginLeft: 32 }}
