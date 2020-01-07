@@ -71,7 +71,7 @@ function MenuLink({
       renderContent={active => (
         <VisualButton
           title={title}
-          outline
+          type="outline"
           buttonStyle={{
             paddingHorizontal: 0,
             paddingVertical: 12,
