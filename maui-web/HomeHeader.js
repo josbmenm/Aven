@@ -122,15 +122,6 @@ function HomeHeader({ seeLaunchSchedule }) {
                       </React.Fragment>
                     ) : (
                       <React.Fragment>
-                        <BodyText
-                          responsiveStyle={{
-                            marginBottom: [15, 25],
-                            flex: [1, 1],
-                          }}
-                          bold
-                        >
-                          See you soon, Los Angeles.
-                        </BodyText>
                         <UnholyHackSubscriptionForm />
                       </React.Fragment>
                     )}
