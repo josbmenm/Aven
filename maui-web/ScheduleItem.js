@@ -33,7 +33,6 @@ function ScheduleItem({ item, style, today, ...rest }) {
     >
       <BaseText
         style={{
-          marginBottom: 0,
           fontSize: 20,
           lineHeight: 24,
           marginBottom: 12,

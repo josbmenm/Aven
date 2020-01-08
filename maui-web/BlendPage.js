@@ -11,35 +11,16 @@ import BodyText from '../dashboard/BodyText';
 import Tag from '../dashboard/Tag';
 import { useTheme } from '../dashboard/Theme';
 import { aspectRatio169 } from '../components/Styles';
-import { useMenuItemSlug, useCompanyConfig } from '../ono-cloud/OnoKitchen';
+import { useCloudValue } from '../cloud-core/KiteReact';
 import AirtableImage from '../components/AirtableImage';
-import {
-  dietaryInfosOfMenuItem,
-  getMenuItemSlug,
-  companyConfigToBlendMenu,
-} from '../logic/configLogic';
-import {
-  displayNameOfMenuItem,
-  getSelectedIngredients,
-} from '../logic/configLogic';
 import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
 import { Responsive } from '../dashboard/Responsive';
 import { BlendsCarousel } from './BlendsList';
 import BenefitDetails from './BenefitDetails';
 
-function BlendContent({ displayName, blend, recipe }) {
+function BlendContent({ menuItem }) {
   const theme = useTheme();
-  const navigation = useNavigation();
-  const dietaryInfos = dietaryInfosOfMenuItem(
-    blend,
-    recipe.ingredients.map(i => i.id),
-  );
-  // const dietaryMessages = [
-  //   `${blend.Recipe.DisplayCalories} Calories`,
-  //   blend.Recipe['Nutrition Detail'],
-  // ];
-  const dietaryMessages = null;
-  const isTropical = navigation.getParam('tropical') !== undefined;
+  const dietaryMessages = [`${menuItem.calories} Calories`, menuItem.nutrition];
   return (
     <React.Fragment>
       <Responsive
@@ -86,11 +67,7 @@ function BlendContent({ displayName, blend, recipe }) {
                       }}
                     >
                       <AirtableImage
-                        image={
-                          isTropical
-                            ? blend.Recipe.StandaloneImage
-                            : blend.Recipe.DecorationImage
-                        }
+                        image={menuItem.decorImage}
                         resizeMode="contain"
                         responsiveStyle={{
                           maxWidth: ['100%', 1024],
@@ -157,7 +134,7 @@ function BlendContent({ displayName, blend, recipe }) {
                   >
                     <Tag
                       style={{ marginBottom: 8 }}
-                      title={blend.DefaultBenefitName}
+                      title={menuItem.benefit.name}
                     />
                   </Responsive>
                   <Heading
@@ -166,7 +143,7 @@ function BlendContent({ displayName, blend, recipe }) {
                       marginBottom: [16, 8],
                     }}
                   >
-                    {displayName}
+                    {menuItem.name}
                   </Heading>
                   <Responsive
                     style={{
@@ -179,7 +156,7 @@ function BlendContent({ displayName, blend, recipe }) {
                         flexDirection: 'row',
                       }}
                     >
-                      {blend.Benefits.map(benefit => (
+                      {menuItem.allBenefits.map(benefit => (
                         <View
                           key={benefit.id}
                           style={{
@@ -188,7 +165,7 @@ function BlendContent({ displayName, blend, recipe }) {
                           }}
                         >
                           <AirtableImage
-                            image={benefit.Icon}
+                            image={benefit.icon}
                             tintColor={theme.colors.primaryBg}
                             resizeMode="contain"
                             style={{ width: 60, height: 60 }}
@@ -202,7 +179,7 @@ function BlendContent({ displayName, blend, recipe }) {
                               textTransform: 'uppercase',
                             }}
                           >
-                            {benefit.Name}
+                            {benefit.name}
                           </BaseText>
                         </View>
                       ))}
@@ -215,7 +192,7 @@ function BlendContent({ displayName, blend, recipe }) {
                       marginBottom: [32, 48],
                     }}
                   >
-                    {blend['Display Description']}
+                    {menuItem.description}
                   </BodyText>
                   {dietaryMessages && (
                     <Responsive
@@ -264,7 +241,7 @@ function BlendContent({ displayName, blend, recipe }) {
                       marginBottom: 20,
                     }}
                   >
-                    {dietaryInfos.map(d => (
+                    {menuItem.dietaryInfos.map(d => (
                       <View
                         key={d.id}
                         style={{
@@ -319,7 +296,7 @@ function BlendContent({ displayName, blend, recipe }) {
           </Container>
         </View>
       </Responsive>
-      <BenefitDetails benefit={blend.DefaultBenefit} />
+      <BenefitDetails benefit={menuItem.benefit} />
       <View>
         <Container
           style={{
@@ -359,7 +336,7 @@ function BlendContent({ displayName, blend, recipe }) {
               justifyContent: 'center',
             }}
           >
-            {recipe.ingredients.map((ing, index) => (
+            {menuItem.ingredients.map((ing, index) => (
               <View
                 key={index}
                 style={{
@@ -406,7 +383,7 @@ function BlendContent({ displayName, blend, recipe }) {
           }}
         >
           <AirtableImage
-            image={blend.Recipe.StandaloneImage}
+            image={menuItem.aloneImage}
             resizeMode="cover"
             style={{ ...aspectRatio169 }}
           />
@@ -418,28 +395,16 @@ function BlendContent({ displayName, blend, recipe }) {
 
 function BlendPage() {
   const { getParam } = useNavigation();
-  const companyConfig = useCompanyConfig();
+  const menu = useCloudValue('WebMenu');
   const blendSlug = getParam('slug');
-  const blend = useMenuItemSlug(blendSlug);
-  const itemRecipe = React.useMemo(() => {
-    const result = getSelectedIngredients(
-      blend,
-      { customization: null },
-      companyConfig,
-    );
-    return result;
-  }, [blend, companyConfig]);
+  const menuItem = React.useMemo(() => {
+    if (!menu) return null;
+    return menu.blends.find(menuItem => menuItem.slug === blendSlug);
+  }, [menu, blendSlug]);
 
-  const displayName = displayNameOfMenuItem(blend);
   return (
     <GenericPage>
-      {blend && (
-        <BlendContent
-          blend={blend}
-          displayName={displayName}
-          recipe={itemRecipe}
-        />
-      )}
+      {menuItem && <BlendContent menuItem={menuItem} />}
       <View>
         <Container>
           <Heading
@@ -466,30 +431,30 @@ function BlendPage() {
 
 BlendPage.navigationOptions = ({ navigation, screenProps }) => {
   const cloud = screenProps.cloud;
+  const menuDoc = cloud && cloud.get('WebMenu');
   const slug = navigation.getParam('slug');
-  const companyConfigDoc = cloud && cloud.get('CompanyConfig');
-  const companyConfigState =
-    companyConfigDoc &&
-    companyConfigDoc.idAndValue &&
-    companyConfigDoc.idAndValue.get();
-  const companyConfig = companyConfigState && companyConfigState.value;
-  const blends = companyConfigState && companyConfigToBlendMenu(companyConfig);
-  const blend = blends && blends.find(blend => getMenuItemSlug(blend) === slug);
-  const blendName = blend && blend['Display Name'];
-  const metaDescription = blend && blend['Display Description'];
-  const primaryImage = blend && blend.Recipe['StandaloneImage'][0];
-  const imageURI =
-    primaryImage &&
-    `https://storage.googleapis.com/onofoodco/${primaryImage.ref.id}`;
+  const blendName = '';
+  const menuState = menuDoc && menuDoc.idAndValue && menuDoc.idAndValue.get();
+  // const blend =
+  //   menuState &&
+  //   menuState.value &&
+  //   menuState.value.blends &&
+  //   menuState.value.blends.find(blend => blend.slug === slug);
+  // const blendName = blend && blend.name;
+  // const metaDescription = blend && blend.description;
+  // const primaryImage = blend && blend.aloneImage && blend.aloneImage[0];
+  // const imageURI =
+  //   primaryImage &&
+  //   `https://storage.googleapis.com/onofoodco/${primaryImage.ref.id}`;
   return {
     title: blendName
       ? `${blendName} - Organic smoothies from Ono Blends`
       : 'Organic smoothies from Ono Blends',
-    metaDescription,
-    metaImage: imageURI,
+    // metaDescription,
+    // metaImage: imageURI,
     loadData: async () => {
       if (cloud) {
-        return [await companyConfigDoc.export()];
+        return [await menuDoc.export()];
       }
     },
   };

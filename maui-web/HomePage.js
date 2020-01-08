@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Text } from 'react-native';
+import { Image } from 'react-native';
 import View from '../views/View';
 import GenericPage from './GenericPage';
 import HomeHeader from './HomeHeader';
@@ -22,6 +22,7 @@ function HomePage() {
         <Container>
           <div style={{ position: 'relative', paddingTop: '56.25%' }}>
             <iframe
+              title="Ono blends teaser video"
               style={{
                 position: 'absolute',
                 top: 0,

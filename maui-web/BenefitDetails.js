@@ -119,6 +119,7 @@ function BenefitDescription({ name }) {
 
 export default function BenefitDetails({ benefit }) {
   const theme = useTheme();
+  if (!benefit) return null;
   return (
     <View>
       <Container
@@ -151,7 +152,7 @@ export default function BenefitDetails({ benefit }) {
             }}
           >
             <AirtableImage
-              image={benefit.Icon}
+              image={benefit.icon}
               style={{ alignSelf: 'center', width: 120, height: 120 }}
               tintColor={theme.colors.primaryBg}
             />
@@ -172,9 +173,9 @@ export default function BenefitDetails({ benefit }) {
                   textTransform: 'uppercase',
                 }}
               >
-                {benefit.Name.toLowerCase()}
+                {benefit.name.toLowerCase()}
               </Heading>
-              <BenefitDescription name={benefit.Name} />
+              <BenefitDescription name={benefit.name} />
             </ColumnToRowChild>
           </Responsive>
         </ColumnToRow>

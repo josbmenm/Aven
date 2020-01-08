@@ -22,14 +22,8 @@ const AirtableImage = ({
   resizeMode,
   tintColor,
 }) => {
-  // const { authority, useSSL } = React.useContext(HostContext);
   const primaryImage = image[0];
   const imageURI = `https://storage.googleapis.com/onofoodco/${primaryImage.ref.id}`;
-  // const imageURI =
-  //   ext &&
-  //   `${
-  //     useSSL ? 'https' : 'http'
-  //   }://${authority}/_/onofood.co/Airtable/files/...`;
   return (
     <Responsive
       style={{

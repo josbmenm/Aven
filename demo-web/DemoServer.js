@@ -75,7 +75,7 @@ export default async function startDemoServer(httpServer) {
 
   const oddThings = cloud.docs.setOverrideValueStream(
     'OddThings',
-    cloud.get('Things').value.stream.map(state => {
+    cloud.get('Things').value.map(state => {
       return state.things && state.things.filter((_, i) => !i % 2);
     }),
   );

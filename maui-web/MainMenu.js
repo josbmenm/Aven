@@ -1,7 +1,6 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import View from '../views/View';
-import Text from '../views/Text';
 import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme';
 import VisualButton from '../dashboard/VisualButton';

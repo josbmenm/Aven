@@ -6,7 +6,6 @@ import InternalBlendMenu from './InternalBlendMenu';
 import FeedbackDashboard from './FeedbackDashboard';
 import { MauiWebRoutes } from '../maui-web/MauiWebApp';
 import { monsterra } from '../components/Styles';
-import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
 import { CloudContext } from '../cloud-core/KiteReact';
 import { ThemeProvider as OLDThemeProvider } from '../dashboard/Theme';
 import OLD_OnoTheme from '../logic/OnoTheme';

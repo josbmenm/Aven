@@ -23,6 +23,7 @@ function usePromiseState(onResult) {
       })
       .catch(err => {
         setResult(undefined);
+        debugger;
         setError(err);
         setIsProgressing(false);
       });

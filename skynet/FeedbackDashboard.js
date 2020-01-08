@@ -17,7 +17,7 @@ function openCSVdata(dataStr, name) {
   link.click();
 }
 
-export default function FeedbackDashboard({}) {
+export default function FeedbackDashboard() {
   const summary = useCloudValue('FeedbackSummary');
   function downloadCSV() {
     const allFeedbacks = [];

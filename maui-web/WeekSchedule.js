@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, Image } from 'react-native';
+import { ScrollView } from 'react-native';
 import View from '../views/View';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import Container from '../dashboard/Container';

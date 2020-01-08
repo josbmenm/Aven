@@ -7,9 +7,8 @@ import { Responsive } from '../dashboard/Responsive';
 import Tag from '../dashboard/Tag';
 import FunctionalLink from '../navigation-web/Link';
 import { useTheme } from '../dashboard/Theme';
-import { useMenu } from '../ono-cloud/OnoKitchen';
+import { useCloudValue } from '../cloud-core/KiteReact';
 import AirtableImage from '../components/AirtableImage';
-import { getMenuItemSlug } from '../logic/configLogic';
 import BodyText from '../dashboard/BodyText';
 
 function BlendsListItem({ blend, style }) {
@@ -34,12 +33,12 @@ function BlendsListItem({ blend, style }) {
     >
       <FunctionalLink
         routeName="Blend"
-        routeKey={`Blend-${getMenuItemSlug(blend)}`}
-        params={{ slug: getMenuItemSlug(blend) }}
+        routeKey={`Blend-${blend.slug}`}
+        params={{ slug: blend.slug }}
         overrideATagCSS={{ display: 'flex', flexDirection: 'column' }}
       >
         <AirtableImage
-          image={blend.Recipe['Recipe Image']}
+          image={blend.image}
           style={{
             width: '100%',
             height: '100%',
@@ -67,19 +66,16 @@ function BlendsListItem({ blend, style }) {
             marginBottom: [8, 12],
           }}
         >
-          {blend['Display Name']}
+          {blend.name}
         </Heading>
-        <Tag
-          title={blend.DefaultBenefitName}
-          style={{ alignSelf: 'flex-end' }}
-        />
+        <Tag title={blend.benefit.name} style={{ alignSelf: 'flex-end' }} />
       </FunctionalLink>
     </View>
   );
 }
 
 export function BlendsList() {
-  const menu = useMenu();
+  const menu = useCloudValue('WebMenu');
   return (
     <Responsive
       style={{
@@ -112,7 +108,6 @@ export function BlendsList() {
 
 function BlendsCarouselItem({ blend, active }) {
   const theme = useTheme();
-  const slug = getMenuItemSlug(blend);
   return (
     <View
       key={blend.id}
@@ -131,12 +126,12 @@ function BlendsCarouselItem({ blend, active }) {
     >
       <FunctionalLink
         routeName="Blend"
-        params={{ slug }}
-        routeKey={`blend-${slug}`}
+        params={{ slug: blend.slug }}
+        routeKey={`blend-${blend.slug}`}
         overrideATagCSS={{ display: 'flex', flexDirection: 'column' }}
       >
         <AirtableImage
-          image={blend.Recipe['Recipe Image']}
+          image={blend.image}
           style={{
             width: '100%',
             height: '100%',
@@ -146,11 +141,7 @@ function BlendsCarouselItem({ blend, active }) {
             bottom: 0,
             left: 0,
             zIndex: -1,
-            transform: [
-              //   { translateX: -36 },
-              { translateY: 40 },
-              //   { scale: 1.1 },
-            ],
+            transform: [{ translateY: 40 }],
           }}
           resizeMode="cover"
         />
@@ -162,19 +153,15 @@ function BlendsCarouselItem({ blend, active }) {
             textTransform: 'uppercase',
           }}
         >
-          {blend['Display Name']}
+          {blend.name}
         </Heading>
-        {/* <Tag
-          title={blend.DefaultBenefitName}
-          style={{ alignSelf: 'flex-end' }}
-        /> */}
       </FunctionalLink>
     </View>
   );
 }
 
 export function BlendsCarousel({ activeBlendSlug }) {
-  const menu = useMenu();
+  const menu = useCloudValue('WebMenu');
   const theme = useTheme();
   const [visibleIndex, setVisibleIndex] = React.useState(-1);
 
@@ -200,7 +187,7 @@ export function BlendsCarousel({ activeBlendSlug }) {
         >
           {menu.blends.map((item, i) => (
             <BlendsCarouselItem
-              active={activeBlendSlug === getMenuItemSlug(item)}
+              active={activeBlendSlug === item.slug}
               key={i}
               blend={item}
             />

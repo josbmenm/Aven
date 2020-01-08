@@ -136,7 +136,7 @@ function useNewTypeAction() {
 }
 
 function TypeRow({ type }) {
-  const typeValue = useStream(type.value.stream);
+  const typeValue = useStream(type.value);
   return (
     <Text>
       {type.getLocalName()}: {JSON.stringify(typeValue)}

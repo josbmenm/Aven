@@ -13,11 +13,17 @@ import GenericImageHeader from './GenericImageHeader';
 import PageFooter from './PageFooter';
 
 function Receipt({ orderValue, orderId }) {
-  if (!orderValue) {
+  if (orderValue === null) {
+    return <Text>Order not found.</Text>;
+  }
+  if (orderValue === undefined) {
     return <Text>Loading..</Text>;
   }
   const theme = useTheme();
-  console.log();
+  if (!orderValue.orderName) {
+    // this should never happen
+    return null;
+  }
   return (
     <Container>
       <Heading>
@@ -53,7 +59,7 @@ function Receipt({ orderValue, orderId }) {
       )}
       {orderValue.items.map(item => {
         return (
-          <BaseText>
+          <BaseText key={item.id}>
             {item.displayName} - {item.quantity} x{' '}
             {formatCurrency(item.sellPrice)}
           </BaseText>
@@ -84,6 +90,16 @@ export default function ReceiptPage() {
 }
 
 ReceiptPage.path = 'receipt/:orderId';
-ReceiptPage.navigationOptions = {
-  title: 'Receipt',
+ReceiptPage.navigationOptions = ({ navigation, screenProps }) => {
+  const cloud = screenProps.cloud;
+  const orderId = navigation.getParam('orderId');
+  const orderDoc = cloud.get(`OrderState/${orderId}`);
+  return {
+    title: 'Receipt',
+    loadData: async () => {
+      if (cloud) {
+        return [await orderDoc.export()];
+      }
+    },
+  };
 };

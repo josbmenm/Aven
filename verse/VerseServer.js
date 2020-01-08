@@ -63,7 +63,7 @@ export default async function startVerseServer(httpServer) {
   };
 
   let USE_DEV_SERVER = process.env.NODE_ENV !== 'production';
-  USE_DEV_SERVER = false;
+  // USE_DEV_SERVER = false;
 
   const remoteNetworkConfig = USE_DEV_SERVER
     ? {
@@ -223,19 +223,19 @@ export default async function startVerseServer(httpServer) {
     },
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
-  const kitchenConfigStream = cloud.get('KitchenConfig').value.stream;
+  const kitchenConfigStream = cloud.get('KitchenConfig').value;
   const companyConfigStream = cloud.get('CompanyConfig').idAndValue;
   const restaurantConfigStream = cloud.get('RestaurantConfig').idAndValue;
 
   const kitchenStateDoc = cloud.get('KitchenState');
-  const restaurantStateStream = cloud.get('RestaurantState').value.stream;
+  const restaurantStateStream = cloud.get('RestaurantState').value;
 
   const restaurantStateDispatch = cloud.get('RestaurantActions')
     .putTransactionValue;
 
   cloud.docs.setOverrideValueStream(
     'Ingredients',
-    companyConfigStream.stream.map(config => {
+    companyConfigStream.map(config => {
       const ing =
         config &&
         config.value &&
@@ -383,7 +383,7 @@ export default async function startVerseServer(httpServer) {
       process.exit(1);
     },
   };
-  companyConfigStream.stream.addListener(configListener);
+  companyConfigStream.addListener(configListener);
 
   const restConfigListener = {
     next: state => {
@@ -396,7 +396,7 @@ export default async function startVerseServer(httpServer) {
       process.exit(1);
     },
   };
-  restaurantConfigStream.stream.addListener(restConfigListener);
+  restaurantConfigStream.addListener(restConfigListener);
 
   setInterval(() => {
     trace('RestaurantStateMonitor', lastRestaurantState);

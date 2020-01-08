@@ -80,7 +80,7 @@ export default function OrganizationScreen(props) {
   let doc = null;
   if (path) {
     doc = cloud.get(path);
-    valueStream = doc.idAndValue.stream;
+    valueStream = doc.idAndValue;
     childrenStream = doc.children.all;
   }
   const docValue = useStream(valueStream);

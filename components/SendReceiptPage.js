@@ -7,7 +7,7 @@ import BlockFormInput from './BlockFormInput';
 import BlockFormButton from './BlockFormButton';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import useFocus from '../navigation-hooks/useFocus';
-import { Spacing, Button, Spinner } from '../dash-ui';
+import { Spacing, Button, SpinnerButton } from '../dash-ui';
 
 export default function SendReceiptPage({
   onSubmit,
@@ -55,14 +55,11 @@ export default function SendReceiptPage({
         <BlockFormTitle title={title} />
         {inputs}
         <Spacing top={16} inline>
-          <Button
-            title={isProgressing ? '' : 'send receipt'}
+          <SpinnerButton
+            isLoading={isProgressing}
+            title={'send receipt'}
             onPress={handleSubmit}
-          >
-            {isProgressing && (
-              <Spinner color="white" style={{ alignSelf: 'center', top: 4 }} />
-            )}
-          </Button>
+          />
         </Spacing>
       </BlockForm>
     </ShortBlockFormPage>

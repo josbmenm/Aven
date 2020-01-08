@@ -72,9 +72,11 @@ export default async function startSkynetServer(httpServer) {
   const domain = 'onofood.co';
 
   const pgConfig = {
-    ssl: {
-      rejectUnauthorized: false,
-    },
+    ssl: getEnv('VERSE_SQL_USE_SSL')
+      ? {
+          rejectUnauthorized: false,
+        }
+      : false,
     user: getEnv('SQL_USER'),
     password: getEnv('SQL_PASSWORD'),
     database: getEnv('SQL_DATABASE'),
@@ -189,7 +191,7 @@ export default async function startSkynetServer(httpServer) {
   );
 
   const airtableFolder = cloud.docs.get('Airtable');
-  const companyConfigStream = airtableFolder.value.stream
+  const companyConfigStream = airtableFolder.value
     .map(folder => {
       if (!folder) {
         return streamOfValue(null);
@@ -199,11 +201,11 @@ export default async function startSkynetServer(httpServer) {
       const block = airtableFolder.getBlock(blockId);
       const directoryBlock = airtableFolder.getBlock(directoryBlockId);
       return combineStreams({
-        atData: block.value.stream,
-        directory: directoryBlock.value.stream,
+        atData: block.value,
+        directory: directoryBlock.value,
       }).map(({ atData, directory }) => {
         if (!atData || !directory) {
-          return null
+          return null;
         }
         // below, we inject block refs for our Airtable images, by referring to the files directory
         const baseTables = Object.fromEntries(
@@ -402,9 +404,116 @@ export default async function startSkynetServer(httpServer) {
     }),
   );
 
+  function unique(arr) {
+    const out = [];
+    arr.forEach(item => {
+      if (out.indexOf(item) === -1) out.push(item);
+    });
+    return out;
+  }
   const menu = cloud.docs.setOverrideValueStream(
-    'Menu',
-    companyConfigStream.map(companyConfigToMenu),
+    'WebMenu',
+    companyConfigStream.map(companyConfig => {
+      if (!companyConfig) return null;
+      const { baseTables, baseFiles } = companyConfig;
+      function prepareImage(img) {
+        if (!img) return null;
+        const { ref } = img[0];
+        return [{ ref }];
+      }
+      const blends = Object.entries(baseTables.KioskBlendMenu)
+        .filter(([_, menuItem]) => {
+          return !!menuItem['Available on Website'];
+        })
+        .map(([_, menuItem]) => {
+          const baseRecipe = baseTables.Recipes[menuItem.Recipe[0]];
+          function prepareBenefit(bId) {
+            if (!bId) return null;
+            const baseBenefit = baseTables.Benefits[bId];
+            const benefit = {
+              id: baseBenefit.id,
+              name: baseBenefit.Name,
+              description: baseBenefit.Description,
+              icon: prepareImage(baseBenefit.Icon),
+            };
+            return benefit;
+          }
+          const defaultBenefitId =
+            baseRecipe.DefaultBenefit && baseRecipe.DefaultBenefit[0];
+          const defaultBenefit =
+            defaultBenefitId && baseTables.Benefits[defaultBenefitId];
+          const defaultBenefitIngredientId =
+            defaultBenefit &&
+            defaultBenefit['Benefit Ingredient'] &&
+            defaultBenefit['Benefit Ingredient'][0];
+          const allBenefits = defaultBenefitId ? [defaultBenefitId] : [];
+          const ingredientIds = unique([
+            defaultBenefitIngredientId,
+            ...baseRecipe.Ingredients.map(recIngId => {
+              const recipeIng = baseTables.RecipeIngredients[recIngId];
+              const ingredientId =
+                recipeIng.Ingredient && recipeIng.Ingredient[0];
+              return ingredientId;
+            }).filter(Boolean),
+            baseRecipe.LiquidBaseIngredient[0],
+          ]);
+          const ingredients = ingredientIds.map(ingredientId => {
+            const ing = baseTables.Ingredients[ingredientId];
+            ing['Benefits'] &&
+              ing['Benefits'].forEach(benefitId => {
+                if (allBenefits.indexOf(benefitId) === -1) {
+                  allBenefits.push(benefitId);
+                }
+              });
+            const { Name, Image } = ing;
+            return { Name, Image: prepareImage(Image) };
+          });
+          const dietaryInfos = Object.entries(baseTables.Dietary)
+            .filter(([dietId, diet]) => {
+              if (diet['Applies To All Ingredients']) {
+                return true;
+              }
+              if (!diet.Ingredients) {
+                return false;
+              }
+              if (
+                ingredientIds.find(
+                  ingId => diet.Ingredients.indexOf(ingId) === -1,
+                )
+              ) {
+                return false;
+              }
+              return true;
+            })
+            .map(([dietId, diet]) => {
+              return {
+                id: diet.id,
+                Icon: prepareImage(diet.Icon),
+                Name: diet.Name,
+              };
+            });
+
+          return {
+            name: menuItem['Display Name'],
+            description: menuItem['Display Description'],
+            slug: menuItem.Slug,
+            id: menuItem.id,
+            nutrition: baseRecipe['Nutrition Detail'],
+            calories: baseRecipe['DisplayCalories'],
+            color: baseRecipe['Color'],
+            image: prepareImage(baseRecipe['Recipe Image']),
+            decorImage: prepareImage(baseRecipe['DecorationImage']),
+            aloneImage: prepareImage(baseRecipe['StandaloneImage']),
+            benefit: prepareBenefit(defaultBenefitId),
+            allBenefits: allBenefits.map(prepareBenefit),
+            ingredients,
+            dietaryInfos,
+          };
+        });
+      return {
+        blends,
+      };
+    }),
   );
 
   cloud.setReducer('DevicesState', {
@@ -424,28 +533,18 @@ export default async function startSkynetServer(httpServer) {
   //   ),
   // );
 
-  // const protectedSource = createProtectedSource({
-  //   source: cloud,
-  //   staticPermissions: {
-  //     'onofood.co': {
-  //       CompanyConfig: { defaultRule: { canRead: true } },
-  //       KitchenConfig: { defaultRule: { canRead: true } },
-  //       DeviceActions: { defaultRule: { canWrite: true } },
-  //       Menu: { defaultRule: { canRead: true } },
-  //       PendingOrders: {
-  //         defaultRule: {
-  //           canPost: true,
-  //           canWrite: true, // todo, disable write, very dangerous. posted docs are owned by original poster and should allow writes
-  //         },
-  //       },
-  //       Airtable: { defaultRule: { canRead: true } },
-  //       ConfirmedOrders: { defaultRule: { canRead: true } },
-  //       RequestedLocations: { defaultRule: { canWrite: true } }, // todo, refactor to canTransact!!
-  //       CustomerFeedback: { defaultRule: { canPost: true } },
-  //     },
-  //   },
-  //   providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
-  // });
+  const protectedSource = createProtectedSource({
+    source: cloud,
+    staticPermissions: {
+      'onofood.co': {
+        WebMenu: { defaultRule: { canRead: true } },
+        OrderState: {
+          children: { defaultRule: { canRead: true } },
+        },
+      },
+    },
+    providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
+  });
 
   const fsClient = createFSClient({ client: cloud });
 
@@ -503,7 +602,7 @@ export default async function startSkynetServer(httpServer) {
       comments,
     } = action.request;
     await emailAgent.actions.SendEmail({
-      to: 'aloha@onofood.co',
+      to: 'eric@onofood.co',
       subject: 'New booking request on onoblends.co',
       message: `
 Name: ${firstName} ${lastName}
@@ -565,8 +664,8 @@ Debug: ${JSON.stringify(action)}
         return {};
       }
       default:
-        return await cloud.dispatch(action);
-      // return await protectedSource.dispatch(action);
+        // return await cloud.dispatch(action);
+        return await protectedSource.dispatch(action);
     }
   }
 
@@ -592,8 +691,8 @@ Debug: ${JSON.stringify(action)}
     mainDomain: domain,
     App,
     source: {
-      // ...protectedSource,
-      ...cloud,
+      ...protectedSource,
+      // ...cloud,
       dispatch,
     },
     expressRouting: app => {
@@ -620,7 +719,7 @@ Debug: ${JSON.stringify(action)}
   return {
     ...webService,
     close: async () => {
-      // await protectedSource.close();
+      await protectedSource.close();
       await cloud.close();
       await webService.close();
     },

@@ -184,8 +184,8 @@ function FullApp(props) {
         wasConnected = isConnected;
       },
     };
-    cloud.connected.stream.addListener(listener);
-    return () => cloud.connected.stream.removeListener(listener);
+    cloud.connected.addListener(listener);
+    return () => cloud.connected.removeListener(listener);
   }, [cloud]);
   return (
     <ThemeProvider value={OnoTheme}>

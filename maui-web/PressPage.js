@@ -3,13 +3,10 @@ import Heading from '../dashboard/Heading';
 import { Image } from 'react-native';
 import BodyText from '../dashboard/BodyText';
 import GenericPage from './GenericPage';
-import GenericImageHeader from './GenericImageHeader';
 import PageFooter from './PageFooter';
 import View from '../views/View';
-import Link from './Link';
 import Container from '../dashboard/Container';
 import ButtonLink from '../dashboard/ButtonLink';
-import { proseFontFace } from '../components/Styles';
 import { absoluteElement } from '../components/Styles';
 import {
   ColumnToRow,
@@ -50,8 +47,9 @@ function PressLink({ image, url, imageIsGreyscale }) {
         setIsActive(false);
       }}
       target="_blank"
+      rel="noopener noreferrer"
     >
-      <img src={image} style={style} />
+      <img src={image} style={style} alt="Current press link" />
     </a>
   );
 }
