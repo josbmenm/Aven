@@ -155,7 +155,7 @@ function DispenseForm({ slot, onClose, onDispense, onPositionAndDispense }) {
     <View>
       <PopoverTitle>Dispense {slot.name}</PopoverTitle>
       <View style={{ flexDirection: 'row' }}>{inputs}</View>
-      <Stack>{buttons}</Stack>
+      {buttons}
     </View>
   );
 }

@@ -42,38 +42,36 @@ function CloseRestaurantButtons({ onClose }) {
   return (
     <View style={{ padding: 10 }}>
       <PopoverTitle>close restaurant..</PopoverTitle>
-      <Stack>
-        <Button
-          title="gracefully, in 10 minutes"
-          onPress={() => {
-            dispatch({
-              type: 'ScheduleRestaurantClose',
-              scheduledCloseTime: Date.now() + 1000 * 60 * 10,
-            });
-            onClose();
-          }}
-        />
-        <Button
-          title="now. leave orders queued"
-          onPress={() => {
-            dispatch({
-              type: 'CloseRestaurant',
-              immediate: false,
-            });
-            onClose();
-          }}
-        />
-        <Button
-          title="immediately. cancel queued orders"
-          onPress={() => {
-            dispatch({
-              type: 'CloseRestaurant',
-              immediate: true,
-            });
-            onClose();
-          }}
-        />
-      </Stack>
+      <Button
+        title="gracefully, in 10 minutes"
+        onPress={() => {
+          dispatch({
+            type: 'ScheduleRestaurantClose',
+            scheduledCloseTime: Date.now() + 1000 * 60 * 10,
+          });
+          onClose();
+        }}
+      />
+      <Button
+        title="now. leave orders queued"
+        onPress={() => {
+          dispatch({
+            type: 'CloseRestaurant',
+            immediate: false,
+          });
+          onClose();
+        }}
+      />
+      <Button
+        title="immediately. cancel queued orders"
+        onPress={() => {
+          dispatch({
+            type: 'CloseRestaurant',
+            immediate: true,
+          });
+          onClose();
+        }}
+      />
     </View>
   );
 }
