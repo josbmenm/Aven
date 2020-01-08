@@ -6,7 +6,7 @@ import cuid from 'cuid';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import bindCommitDeepBlock from './bindCommitDeepBlock';
 import { createStreamValue } from './StreamValue';
-import { error } from '../logger/logger'
+import { error } from '../logger/logger';
 import {
   createProducerStream,
   streamOf,
@@ -270,7 +270,9 @@ export function createBlock({
     });
     if (resp.id !== blockId) {
       throw new Error(
-        `Attempted to put "${name}" block "${blockId}" but the server claims the ID is "${resp.id}"`,
+        `Attempted to put "${name}" block "${blockId}" but the server claims the ID is "${
+          resp.id
+        }"`,
       );
     }
     shamefullySetPutTime();
@@ -436,7 +438,7 @@ export function createDoc({
           }
           if (v.value !== undefined) {
             const block = getBlock(v.id);
-            block.shamefullySetFetchedValue(v.value);
+            block && block.shamefullySetFetchedValue(v.value);
           }
           setDocState({
             lastFetchTime: getNow(),
@@ -484,6 +486,9 @@ export function createDoc({
   }
 
   function getBlock(id) {
+    if (id === null) {
+      return null;
+    }
     if (docBlocks[id]) {
       return docBlocks[id];
     }
@@ -646,7 +651,7 @@ export function createDoc({
 
   async function putBlock(block) {
     if (block.id === undefined) {
-      throw new Error('Cannot put block without id')
+      throw new Error('Cannot put block without id');
     }
     onReport &&
       onReport('PutDoc', {
@@ -692,7 +697,7 @@ export function createDoc({
   const emptyIdValueStream = streamOfValue(
     {
       id: null,
-      value: undefined,
+      value: null,
     },
     'StaticEmptyIdValue',
   );
@@ -729,7 +734,7 @@ export function createDoc({
 
   async function finallyPutTransactionValue(value) {
     if (docState.isLocalOnly) {
-      return locallyPutTransactionValue(value)
+      return locallyPutTransactionValue(value);
     }
     if (docState.id === undefined) {
       return _remotePutTransactionValue(value);
@@ -1382,7 +1387,7 @@ export function createReducerStream(
     }
     if (id === null) {
       const [stream] = streamOf(
-        { value: initialState, id: getIdOfValue(initialState).id },
+        { value: null, id: null },
         'NoActionStateStream',
       );
       return stream;
@@ -1555,7 +1560,11 @@ export function createLocalSessionClient({
   ...clientOpts
 }) {
   function handleAsyncStorageFailure(err, ctx) {
-    error('LocalStorageError', {err, ctx});
+    error('LocalStorageError', {
+      err,
+      // errorString: null,
+      ctx,
+    });
   }
 
   function clientReport(reportName, report) {
@@ -1583,8 +1592,7 @@ export function createLocalSessionClient({
               name,
               id,
             })
-            .then(blockData => {
-            })
+            .then(blockData => {})
             .catch(err => {
               handleAsyncStorageFailure(err, { reportName, report });
             });
