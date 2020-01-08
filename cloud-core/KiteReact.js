@@ -1,6 +1,5 @@
 import React from 'react';
 import { streamGet } from './StreamValue';
-import { createReducerStream } from './Kite';
 
 export const CloudContext = React.createContext(null);
 

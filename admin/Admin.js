@@ -32,7 +32,7 @@ import {
   useCloudValue,
   useStream,
 } from '../cloud-core/KiteReact';
-import { createClient, createSessionClient } from '../cloud-core/Kite';
+import { createSessionClient } from '../cloud-core/Kite';
 import useObservable from '../cloud-core/useObservable';
 import ErrorContainer from '../cloud-react/ErrorContainer';
 import Animated from '../views/Animated';
