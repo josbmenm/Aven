@@ -101,7 +101,7 @@ describe('kite block', () => {
           streamedValue = v;
         },
       };
-      block.stream.addListener(streamListener);
+      block.addListener(streamListener);
       expect(streamedValue.value).toEqual(undefined);
       expect(streamedValue.lastFetchTime).toEqual(null);
       await justASec();
@@ -110,7 +110,7 @@ describe('kite block', () => {
       expect(typeof streamedValue.lastFetchTime).toEqual('number');
       expect(streamedValue.id).toEqual(obj1.id);
 
-      block.stream.removeListener(streamListener);
+      block.removeListener(streamListener);
     });
 
     it('can subscribe and unsubscribe to block values', async () => {
@@ -137,13 +137,13 @@ describe('kite block', () => {
           streamedValue = v;
         },
       };
-      block.value.stream.addListener(streamListener);
+      block.value.addListener(streamListener);
       expect(streamedValue).toEqual(undefined);
       await justASec();
 
       expect(streamedValue.foo).toEqual('bar');
 
-      block.value.stream.removeListener(streamListener);
+      block.value.removeListener(streamListener);
       await justASec();
       expect(block.get().id).toBe(obj1.id);
       expect(block.get().value.foo).toBe('bar');
@@ -265,7 +265,7 @@ describe('kite doc', () => {
   });
 
   describe('stream behavior', () => {
-    it('can load via doc.value.stream', async () => {
+    it('can load via doc.value', async () => {
       const m = createMemoryStorageSource({ domain: 'test' });
       const obj1 = await m.dispatch({
         type: 'PutDocValue',
@@ -284,7 +284,7 @@ describe('kite doc', () => {
           lastValue = v;
         },
       };
-      doc.value.stream.addListener(listener);
+      doc.value.addListener(listener);
       expect(lastValue).toEqual(undefined);
       await justASec();
       expect(lastValue.foo).toEqual('bar');
@@ -296,7 +296,7 @@ describe('kite doc', () => {
       });
       await justASec();
       expect(lastValue.foo).toEqual('a');
-      doc.value.stream.removeListener(listener);
+      doc.value.removeListener(listener);
       await justASec();
       const obj3 = await m.dispatch({
         type: 'PutDocValue',
@@ -330,7 +330,7 @@ describe('kite doc', () => {
           lastValue = v;
         },
       };
-      listenDoc.value.stream.addListener(listener);
+      listenDoc.value.addListener(listener);
       expect(lastValue).toEqual(undefined);
       await justASec();
       expect(lastValue.foo).toEqual('bar');
@@ -338,7 +338,7 @@ describe('kite doc', () => {
 
       await justASec();
       expect(lastValue.foo).toEqual('a');
-      listenDoc.value.stream.removeListener(listener);
+      listenDoc.value.removeListener(listener);
       await justASec();
       await doc.putValue({ foo: 'b' });
 
@@ -398,7 +398,7 @@ describe('kite doc set', () => {
     expect(await foo.value.load()).toMatchObject({ foo: 'bar' });
     docSet.setOverrideStream(
       'foobar',
-      foo.value.stream.map(v => {
+      foo.value.map(v => {
         return v.foo;
       }),
     );

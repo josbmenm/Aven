@@ -345,6 +345,39 @@ function mapStream(stream, mapper, mapDescriptor) {
   });
 }
 
+function loadStream(stream) {
+  return new Promise((resolve, reject) => {
+    let loadTimeout = setTimeout(() => {
+      wrapUp();
+      reject(new Error(`Timed out loading "${stream.crumb}".`));
+    }, 300000);
+
+    let loadListener = null;
+
+    function wrapUp() {
+      clearTimeout(loadTimeout);
+      if (loadListener) {
+        stream.removeListener(loadListener);
+        loadListener = null;
+      }
+    }
+    loadListener = {
+      next: value => {
+        resolve(value);
+        wrapUp();
+      },
+      error: e => {
+        reject(e);
+        wrapUp();
+      },
+      complete: () => {
+        // should be covereed by next and erorr?
+      },
+    };
+    stream.addListener(loadListener);
+  });
+}
+
 function augmentStream(stream) {
   stream.compose = composeFn => composeFn(stream);
   stream.map = (mapper, mapDescriptor) =>
@@ -356,6 +389,7 @@ function augmentStream(stream) {
   stream.flatten = () => flattenStream(stream);
   stream.cacheFirst = () => cacheFirstStream(stream);
   stream.spy = spier => spyStream(stream, spier);
+  stream.load = () => loadStream(stream);
 }
 
 // just like createProducerStream, except it does not cache the last value and producer.get is called for sync gets

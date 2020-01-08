@@ -66,7 +66,7 @@ export function useStream(stream) {
   return value;
 }
 export function useValue(value) {
-  return useStream(value && value.stream);
+  return useStream(value);
 }
 export function useCloudValue(cloudValueInput) {
   let cloudVal = cloudValueInput;
@@ -75,12 +75,11 @@ export function useCloudValue(cloudValueInput) {
     const doc = cloud.get(cloudValueInput);
     cloudVal = doc.value;
   }
-  if (!cloudVal.stream) {
+  if (!cloudVal) {
     throw new Error('Cloud value must have a stream');
   }
-  return useStream(cloudVal.stream);
+  return useStream(cloudVal);
 }
-
 
 export function defineCloudFunction(name, fn, versionId) {
   return {

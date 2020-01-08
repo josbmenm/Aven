@@ -176,7 +176,7 @@ describe('kite reducer', () => {
         lastObserved = v;
       },
     };
-    fooReduced.idAndValue.stream.addListener(listener);
+    fooReduced.idAndValue.addListener(listener);
     await justASec();
     expect(lastObserved.value).toMatchObject({ items: ['a'] });
     await foo.putTransactionValue({ add: 'b' });

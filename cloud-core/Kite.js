@@ -831,7 +831,7 @@ export function createDoc({
           return emptyIdValueStream;
         }
         const block = getBlock(state.id);
-        return block.value.stream.map(val => {
+        return block.value.map(val => {
           return {
             value: val,
             id: state.id,
@@ -847,7 +847,7 @@ export function createDoc({
   );
 
   const docValue = createStreamValue(
-    docIdAndValue.stream.map(idAndValue => {
+    docIdAndValue.map(idAndValue => {
       return idAndValue.value;
     }, 'DocValueStream'),
     () => `Doc(${getName()}).value`,
@@ -1212,7 +1212,7 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
       return source.getDocStream(subsDomain, name, auth);
     }
     const doc = rootDocSet.get(name);
-    return doc.idAndValue.stream;
+    return doc.idAndValue;
   }
 
   function getDocChildrenEventStream() {}
@@ -1392,7 +1392,7 @@ export function createReducerStream(
     }
     const actionBlock = actionsDoc.getBlock(id);
 
-    const docStateStream = actionBlock.idAndValue.stream
+    const docStateStream = actionBlock.idAndValue
       .map(actionDocState => {
         const actionDocId = actionDocState.id;
         const actionDocValue = actionDocState.value;
@@ -1431,7 +1431,7 @@ export function createReducerStream(
     return docStateStream;
   }
   if (!snapshotsDoc) {
-    return actionsDoc.stream
+    return actionsDoc
       .dropRepeats((a, b) => {
         return a.id === b.id;
       }, 'DropRepeatedIdActions')
@@ -1444,8 +1444,8 @@ export function createReducerStream(
       }, 'DropRepeatedIdValues');
   }
   return combineStreams({
-    sourceDoc: actionsDoc.stream,
-    snapshotValue: snapshotsDoc.value.stream,
+    sourceDoc: actionsDoc,
+    snapshotValue: snapshotsDoc.value,
   })
     .map(({ snapshotValue, sourceDoc }) => {
       if (

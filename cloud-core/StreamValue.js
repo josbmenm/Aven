@@ -48,10 +48,11 @@ export function createStreamValue(stream, onGetContext) {
   // const stream = inputStream.remember().debug(v => {
   //   // console.log(`See the stream value ${onGetContext()}..`, !!v);
   // });
-  return {
-    type: 'StreamValue-DEPRECATE-ME',
-    get: () => streamGet(stream),
-    load: () => streamLoad(stream, onGetContext),
-    stream,
-  };
+  return stream;
+  // return {
+  //   type: 'StreamValue-DEPRECATE-ME',
+  //   get: () => streamGet(stream),
+  //   load: () => streamLoad(stream, onGetContext),
+  //   stream,
+  // };
 }
