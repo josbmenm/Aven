@@ -2,7 +2,7 @@ let logLevel = process.env.AVEN_LOG_LEVEL || 'trace';
 
 function logDebug(message, fields, level) {
   if (LOG_LEVEL_PRIORITY.indexOf(logLevel) <= LOG_LEVEL_PRIORITY.indexOf(level))
-    console.log(`(${level}) - ${message}`, fields);
+    console.log(`(${level}) - ${message}`, JSON.stringify(fields, null, 2));
 }
 
 export const LOG_LEVELS = {
