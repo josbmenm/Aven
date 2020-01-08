@@ -5,7 +5,6 @@ import Err from '../utils/Err';
 import cuid from 'cuid';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import bindCommitDeepBlock from './bindCommitDeepBlock';
-import { createStreamValue } from './StreamValue';
 import { error } from '../logger/logger';
 import {
   createProducerStream,
@@ -29,13 +28,11 @@ export function valueMap(idAndValue) {
   return idAndValue.map(valuePluck, 'GetValue');
 }
 export function createStreamDoc(idAndValueStream, domain, onGetName) {
-  const streamIdAndValue = createStreamValue(idAndValueStream, onGetName);
-  const value = createStreamValue(valueMap(idAndValueStream), onGetName);
-
+  const value = idAndValueStream.map(valuePluck);
   return {
     type: 'StreamDoc',
     value,
-    idAndValue: streamIdAndValue,
+    idAndValue: idAndValueStream,
     getReference: () => ({
       type: 'StreamDoc',
       name: onGetName(),
@@ -44,7 +41,7 @@ export function createStreamDoc(idAndValueStream, domain, onGetName) {
       throw new Error('Cannot PutValue of a stream doc');
     },
     export: async () => {
-      const idAndValue = await streamIdAndValue.load();
+      const idAndValue = await idAndValueStream.load();
       if (!idAndValue) {
         return {
           type: 'Doc',
@@ -201,10 +198,6 @@ export function createBlock({
       onStop = null;
     },
   });
-  const blockStateValue = createStreamValue(
-    blockStream,
-    () => `Block(${onGetName()}#${blockId})`,
-  );
 
   const blockValueStream = blockStream
     .map(blockState => {
@@ -214,19 +207,9 @@ export function createBlock({
       return val !== undefined;
     }, 'FilterUndefined');
 
-  const blockValue = createStreamValue(
-    blockValueStream,
-    () => `Block(${onGetName()}#${blockId}).value`,
-  );
-
   const blockIdAndValueStream = blockValueStream.map(value => {
     return { value, id: blockId };
   }, 'ExpandBlockIdAndValue-' + blockId);
-
-  const blockIdAndValue = createStreamValue(
-    blockIdAndValueStream,
-    () => `Block(${onGetName()}#${blockId}).idAndValue`,
-  );
 
   async function getReference() {
     // why is this async? good question. Eventually, we should make block checksumming lazy, so unlike the current implementation, the id may not be ready yet
@@ -283,16 +266,16 @@ export function createBlock({
   }
 
   const cloudBlock = {
-    ...blockStateValue,
+    ...blockStream,
     type: 'Block',
     id: blockId,
     getId,
     getReference,
-    value: blockValue,
-    idAndValue: blockIdAndValue,
+    value: blockValueStream,
+    idAndValue: blockIdAndValueStream,
     export: async () => {
       const name = onGetName();
-      const idAndValue = await blockIdAndValue.load();
+      const idAndValue = await blockIdAndValueStream.load();
       if (!idAndValue) {
         return {
           type: 'Block',
@@ -463,8 +446,6 @@ export function createDoc({
     },
   };
   const docStream = createProducerStream(docProducer);
-
-  const docStateValue = createStreamValue(docStream, () => `Doc(${getName()})`);
 
   const docBlocks = {};
 
@@ -825,38 +806,32 @@ export function createDoc({
     return transactionPutPromise;
   }
 
-  const docIdAndValue = createStreamValue(
-    docStream
-      .dropRepeats((a, b) => a.id === b.id, 'DropRepeatedIds')
-      .map(state => {
-        if (state.id === undefined) {
-          return streamNever('UndefinedId');
-        }
-        if (state.id === null) {
-          return emptyIdValueStream;
-        }
-        const block = getBlock(state.id);
-        return block.value.map(val => {
-          return {
-            value: val,
-            id: state.id,
-            context: state.context,
-          };
-        });
-      })
-      .flatten()
-      .dropRepeats((a, b) => {
-        return a.id === b.id;
-      }, 'DropRepeatedIdValues'),
-    () => `Doc(${getName()}).idValue`,
-  );
+  const docIdAndValue = docStream
+    .dropRepeats((a, b) => a.id === b.id, 'DropRepeatedIds')
+    .map(state => {
+      if (state.id === undefined) {
+        return streamNever('UndefinedId');
+      }
+      if (state.id === null) {
+        return emptyIdValueStream;
+      }
+      const block = getBlock(state.id);
+      return block.value.map(val => {
+        return {
+          value: val,
+          id: state.id,
+          context: state.context,
+        };
+      });
+    })
+    .flatten()
+    .dropRepeats((a, b) => {
+      return a.id === b.id;
+    }, 'DropRepeatedIdValues');
 
-  const docValue = createStreamValue(
-    docIdAndValue.map(idAndValue => {
-      return idAndValue.value;
-    }, 'DocValueStream'),
-    () => `Doc(${getName()}).value`,
-  );
+  const docValue = docIdAndValue.map(idAndValue => {
+    return idAndValue.value;
+  }, 'DocValueStream');
 
   const children = createDocSet({
     domain,
@@ -925,7 +900,7 @@ export function createDoc({
   }
 
   const cloudDoc = {
-    ...docStateValue,
+    ...docStream,
     type: 'Doc',
     transact,
     getId,
@@ -1704,20 +1679,18 @@ export function createClient({ domain, source, onReport }) {
     performStateNotification && performStateNotification();
   }
 
-  const clientStateStream = createStreamValue(
-    createProducerStream({
-      crumb: 'ClientState',
-      start: listen => {
-        performStateNotification = () => {
-          listen.next(clientState);
-        };
-        performStateNotification();
-      },
-      stop: () => {
-        performStateNotification = null;
-      },
-    }),
-  );
+  const clientStateStream = createProducerStream({
+    crumb: 'ClientState',
+    start: listen => {
+      performStateNotification = () => {
+        listen.next(clientState);
+      };
+      performStateNotification();
+    },
+    stop: () => {
+      performStateNotification = null;
+    },
+  });
 
   async function establishAnonymousSession() {
     if (clientState.session) {

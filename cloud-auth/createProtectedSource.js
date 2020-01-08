@@ -464,7 +464,6 @@ export default function createProtectedSource({
         }
       });
     }
-    console.log('considering....', name, permissionBlocks);
     let inheritedPermissions = null;
     permissionBlocks.forEach(permissions => {
       if (permissions && permissions.owner) {

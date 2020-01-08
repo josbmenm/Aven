@@ -1,6 +1,5 @@
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import Err from '../utils/Err';
-import { createStreamValue } from '../cloud-core/StreamValue';
 import {
   streamOf,
   createProducerStream,
@@ -196,7 +195,7 @@ export default function createNetworkSource(opts) {
 
     getDocStream,
     getDocChildrenEventStream,
-    connected: createStreamValue(isConnectedStream, () => `NetworkConnected`),
+    connected: isConnectedStream,
 
     close: () => {
       ws && ws.close();
