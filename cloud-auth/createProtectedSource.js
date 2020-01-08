@@ -29,6 +29,20 @@ export default function createProtectedSource({
     });
     return r && r.value;
   }
+  async function getOptionalDocValue(source, domain, name) {
+    try {
+      const r = await source.dispatch({
+        domain,
+        type: 'GetDocValue',
+        name,
+        auth: parentAuth,
+      });
+      return r && r.value;
+    } catch (e) {
+      // its optional, baby!
+      return null;
+    }
+  }
 
   async function VerifyAuth({ auth, domain }) {
     if (!auth) {
@@ -432,7 +446,7 @@ export default function createProtectedSource({
           return staticPermissions;
         }
         const authDocName = nameToAuthDocName(docName);
-        return await getDocValue(source, domain, authDocName);
+        return await getOptionalDocValue(source, domain, authDocName);
       }),
     );
 
@@ -442,6 +456,7 @@ export default function createProtectedSource({
     const interpretedRule = {};
 
     function applyRule(permissionRule) {
+      if (permissionRule == null) return;
       PermissionNames.forEach(permissionName => {
         const p = permissionRule[permissionName];
         if (interpretedRule[permissionName] == null) {
@@ -449,17 +464,24 @@ export default function createProtectedSource({
         }
       });
     }
+    console.log('considering....', name, permissionBlocks);
+    let inheritedPermissions = null;
     permissionBlocks.forEach(permissions => {
-      if (!permissions) return;
-      if (permissions.owner) {
+      if (permissions && permissions.owner) {
         owner = permissions.owner;
         if (validatedAuth && permissions.owner === validatedAuth.accountId) {
           userDoesOwn = true;
         }
       }
-      permissions.defaultRule && applyRule(permissions.defaultRule);
-
-      permissions.accountRules &&
+      permissions &&
+        permissions.defaultRule &&
+        applyRule(permissions.defaultRule);
+      inheritedPermissions &&
+        inheritedPermissions.defaultRule &&
+        applyRule(inheritedPermissions.defaultRule);
+      inheritedPermissions = permissions ? permissions.children : null;
+      permissions &&
+        permissions.accountRules &&
         validatedAuth &&
         permissions.accountRules[validatedAuth.accountId] &&
         applyRule(permissions.accountRules[validatedAuth.accountId]);
@@ -488,7 +510,6 @@ export default function createProtectedSource({
       canPost: interpretedRule.canPost || interpretedRule.canAdmin || false,
       canAdmin: interpretedRule.canAdmin || false,
     };
-
     if (finalPermissions.canRead || finalPermissions.canPost) {
       return finalPermissions;
     } else {
@@ -592,17 +613,14 @@ export default function createProtectedSource({
     return lastPermissions;
   }
 
-  const guardedActions = {};
-
-  const readActions = ['GetBlock', 'GetDoc', 'GetDocValue', 'ListDocs'];
-  const postActions = ['PostDoc'];
-  const writeActions = ['PutDoc', 'PutDocValue'];
-  const adminActions = ['DestroyDoc'];
-
   function guardAction(dispatch, actionType, permissionLevel) {
     return async action => {
       if (action.type !== actionType) {
-        return await dispatch(action);
+        throw new Error(
+          `Unexpected type "${
+            action.type
+          }" when guarding action "${actionType}"`,
+        );
       }
       let docName = action.name;
       let realPermissionLevelRequired = null;
@@ -616,13 +634,15 @@ export default function createProtectedSource({
         name: docName,
         domain: action.domain,
       });
+      console.log('heyoo', docName, realPermissionLevelRequired, p);
       if (
         !p[permissionLevel] ||
         (realPermissionLevelRequired && !p[realPermissionLevelRequired])
       ) {
         throw new Err(
-          `Insufficient permissions for "${actionType}" on ${action.name}. Requires "${permissionLevel}"`,
+          `Insufficient permissions for "${actionType}" on doc "${docName}". Requires "${permissionLevel}"`,
           'NoPermission',
+          { actionType, docName, permissionLevel, domain: action.domain },
         );
       }
       const result = await dispatch({
@@ -639,6 +659,14 @@ export default function createProtectedSource({
     };
   }
 
+  const guardedActions = {};
+
+  const readActions = ['GetBlock', 'GetDoc', 'GetDocValue', 'ListDocs'];
+  const postActions = ['PostDoc'];
+  const writeActions = ['PutDoc', 'PutDocValue'];
+  const transactActions = ['PutTransactionValue', 'PutBlock'];
+  const adminActions = ['DestroyDoc'];
+
   readActions.forEach(aName => {
     guardedActions[aName] = guardAction(source.dispatch, aName, 'canRead');
   });
@@ -650,6 +678,9 @@ export default function createProtectedSource({
   });
   adminActions.forEach(aName => {
     guardedActions[aName] = guardAction(source.dispatch, aName, 'canAdmin');
+  });
+  transactActions.forEach(aName => {
+    guardedActions[aName] = guardAction(source.dispatch, aName, 'canTransact');
   });
 
   const actions = {
