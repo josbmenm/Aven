@@ -176,19 +176,19 @@ export default async function startSkynetServer(httpServer) {
     auth: null,
   });
 
-  cloud.docs.setOverride(
-    'OrderState',
-    createSyntheticDoc({
-      onCreateChild: orderId => {
-        return createReducedDoc({
-          actions: cloudOrders.children.get(orderId),
-          reducer: OrderReducer,
-          onGetName: () => `OrderState/${orderId}`,
-          domain: 'onofood.co',
-        });
-      },
-    }),
-  );
+  // cloud.docs.setOverride(
+  //   'OrderState',
+  //   createSyntheticDoc({
+  //     onCreateChild: orderId => {
+  //       return createReducedDoc({
+  //         actions: cloudOrders.children.get(orderId),
+  //         reducer: OrderReducer,
+  //         onGetName: () => `OrderState/${orderId}`,
+  //         domain: 'onofood.co',
+  //       });
+  //     },
+  //   }),
+  // );
 
   const airtableFolder = cloud.docs.get('Airtable');
   const companyConfigStream = airtableFolder.value
@@ -332,12 +332,12 @@ export default async function startSkynetServer(httpServer) {
     }
   });
 
-  cloud.setReducer('RecentOrders', {
-    actionsDoc: companyActivity,
-    reducer: RecentOrders,
-    snapshotInterval: 10,
-    snapshotsDoc: cloud.get('RecentOrdersSnapshot'),
-  });
+  // cloud.setReducer('RecentOrders', {
+  //   actionsDoc: companyActivity,
+  //   reducer: RecentOrders,
+  //   snapshotInterval: 10,
+  //   snapshotsDoc: cloud.get('RecentOrdersSnapshot'),
+  // });
 
   function timeIntToPSTDate(timeInt) {
     const tDefault = new Date(timeInt);
@@ -350,52 +350,52 @@ export default async function startSkynetServer(httpServer) {
     };
   }
 
-  cloud.setReducer('FeedbackSummary', {
-    actionsDoc: companyActivity,
-    reducer: defineCloudReducer(
-      'FeedbackSummary_a03',
-      (prevState = {}, action) => {
-        const lastCount = prevState.feedbackCount || 0;
-        const allFeedback = { ...prevState.allFeedback } || {};
-        if (action.type === 'CustomerFeedback') {
-          if (action.email.match(/\@onofood.co$/)) {
-            return prevState;
-          }
-          const t = new Date(action.time);
-          const { year, month, date } = timeIntToPSTDate(action.time);
-          const dayString = `${year}-${month}-${date}`;
-          const day = allFeedback[dayString] || {
-            year,
-            month,
-            date,
-          };
-          const sums = day.sums ? { ...day.sums } : {};
-          Object.entries(action.feedback).map(([feedbackTagName, value]) => {
-            if (feedbackTagName === 'tags') return;
-            if (sums[feedbackTagName]) {
-              sums[feedbackTagName] += value;
-            } else {
-              sums[feedbackTagName] = value;
-            }
-          });
-          allFeedback[dayString] = {
-            ...day,
-            sums,
-            dayCount: 1 + (day.dayCount || 0),
-            feedbacks: [
-              ...(day.feedbacks || []),
-              { ...action.feedback, email: action.email, time: action.time },
-            ],
-          };
-          return { ...prevState, feedbackCount: lastCount + 1, allFeedback };
-        }
-        return prevState;
-      },
-      {},
-    ),
-    snapshotInterval: 10,
-    snapshotsDoc: cloud.get('FeedbackSummarySnapshot-a02'),
-  });
+  // cloud.setReducer('FeedbackSummary', {
+  //   actionsDoc: companyActivity,
+  //   reducer: defineCloudReducer(
+  //     'FeedbackSummary_a03',
+  //     (prevState = {}, action) => {
+  //       const lastCount = prevState.feedbackCount || 0;
+  //       const allFeedback = { ...prevState.allFeedback } || {};
+  //       if (action.type === 'CustomerFeedback') {
+  //         if (action.email.match(/\@onofood.co$/)) {
+  //           return prevState;
+  //         }
+  //         const t = new Date(action.time);
+  //         const { year, month, date } = timeIntToPSTDate(action.time);
+  //         const dayString = `${year}-${month}-${date}`;
+  //         const day = allFeedback[dayString] || {
+  //           year,
+  //           month,
+  //           date,
+  //         };
+  //         const sums = day.sums ? { ...day.sums } : {};
+  //         Object.entries(action.feedback).map(([feedbackTagName, value]) => {
+  //           if (feedbackTagName === 'tags') return;
+  //           if (sums[feedbackTagName]) {
+  //             sums[feedbackTagName] += value;
+  //           } else {
+  //             sums[feedbackTagName] = value;
+  //           }
+  //         });
+  //         allFeedback[dayString] = {
+  //           ...day,
+  //           sums,
+  //           dayCount: 1 + (day.dayCount || 0),
+  //           feedbacks: [
+  //             ...(day.feedbacks || []),
+  //             { ...action.feedback, email: action.email, time: action.time },
+  //           ],
+  //         };
+  //         return { ...prevState, feedbackCount: lastCount + 1, allFeedback };
+  //       }
+  //       return prevState;
+  //     },
+  //     {},
+  //   ),
+  //   snapshotInterval: 10,
+  //   snapshotsDoc: cloud.get('FeedbackSummarySnapshot-a02'),
+  // });
 
   const kitchenConfig = cloud.docs.setOverrideValueStream(
     'KitchenConfig',
@@ -516,12 +516,12 @@ export default async function startSkynetServer(httpServer) {
     }),
   );
 
-  cloud.setReducer('DevicesState', {
-    actionsDoc: cloud.get('DeviceActions'),
-    reducer: DevicesReducer,
-    snapshotInterval: 10,
-    snapshotsDoc: cloud.get('DevicesStateSnapshot'),
-  });
+  // cloud.setReducer('DevicesState', {
+  //   actionsDoc: cloud.get('DeviceActions'),
+  //   reducer: DevicesReducer,
+  //   snapshotInterval: 10,
+  //   snapshotsDoc: cloud.get('DevicesStateSnapshot'),
+  // });
 
   // const deviceActions = cloud.get('DeviceActions');
   // const devicesState = cloud.docs.setOverrideStream(
