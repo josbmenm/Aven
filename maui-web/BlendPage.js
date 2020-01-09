@@ -433,25 +433,24 @@ BlendPage.navigationOptions = ({ navigation, screenProps }) => {
   const cloud = screenProps.cloud;
   const menuDoc = cloud && cloud.get('WebMenu');
   const slug = navigation.getParam('slug');
-  const blendName = '';
   const menuState = menuDoc && menuDoc.idAndValue && menuDoc.idAndValue.get();
-  // const blend =
-  //   menuState &&
-  //   menuState.value &&
-  //   menuState.value.blends &&
-  //   menuState.value.blends.find(blend => blend.slug === slug);
-  // const blendName = blend && blend.name;
-  // const metaDescription = blend && blend.description;
-  // const primaryImage = blend && blend.aloneImage && blend.aloneImage[0];
-  // const imageURI =
-  //   primaryImage &&
-  //   `https://storage.googleapis.com/onofoodco/${primaryImage.ref.id}`;
+  const blend =
+    menuState &&
+    menuState.value &&
+    menuState.value.blends &&
+    menuState.value.blends.find(blend => blend.slug === slug);
+  const blendName = blend && blend.name;
+  const metaDescription = blend && blend.description;
+  const primaryImage = blend && blend.aloneImage && blend.aloneImage[0];
+  const imageURI =
+    primaryImage &&
+    `https://storage.googleapis.com/onofoodco/${primaryImage.ref.id}`;
   return {
     title: blendName
       ? `${blendName} - Organic smoothies from Ono Blends`
       : 'Organic smoothies from Ono Blends',
-    // metaDescription,
-    // metaImage: imageURI,
+    metaDescription,
+    metaImage: imageURI,
     loadData: async () => {
       if (cloud) {
         return [await menuDoc.export()];

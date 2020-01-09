@@ -538,6 +538,8 @@ export default async function startSkynetServer(httpServer) {
     staticPermissions: {
       'onofood.co': {
         WebMenu: { defaultRule: { canRead: true } },
+        DevicesState: { defaultRule: { canRead: true } },
+        DeviceActions: { defaultRule: { canTransact: true } },
         OrderState: {
           children: { defaultRule: { canRead: true } },
         },
