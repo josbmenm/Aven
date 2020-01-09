@@ -1,5 +1,4 @@
 import React from 'react';
-import { streamGet } from './StreamValue';
 
 export const CloudContext = React.createContext(null);
 
@@ -19,7 +18,7 @@ export function useStream(stream) {
   const isStream = !!stream && !!stream.addListener;
 
   const [value, setValue] = React.useState(
-    isStream ? streamGet(stream) : stream,
+    isStream ? stream.get && stream.get() : stream,
   );
 
   const [error, setError] = React.useState(null);
