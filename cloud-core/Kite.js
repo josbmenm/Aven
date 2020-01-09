@@ -514,12 +514,15 @@ export function createDoc({
 
   function isBlockPublished(block) {
     const blockState = block.get();
-    return blockState.lastFetchTime != null || blockState.lastPutTime != null;
+    return (
+      !!blockState &&
+      (blockState.lastFetchTime != null || blockState.lastPutTime != null)
+    );
   }
 
   function isBlockValueLoaded(block) {
     const blockState = block.get();
-    return blockState.value !== undefined;
+    return !!blockState && blockState.value !== undefined;
   }
 
   async function quietlyPutBlock(block) {
@@ -1483,6 +1486,7 @@ export function createSessionClient({
         const { context, id, value } = update.next;
         const lastSnapshot = await snapshotsDoc.value.load();
         if (
+          lastSnapshot === null ||
           lastSnapshot === undefined ||
           lastSnapshot.context === undefined ||
           lastSnapshot.context === null ||
