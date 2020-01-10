@@ -176,19 +176,19 @@ export default async function startSkynetServer(httpServer) {
     auth: null,
   });
 
-  // cloud.docs.setOverride(
-  //   'OrderState',
-  //   createSyntheticDoc({
-  //     onCreateChild: orderId => {
-  //       return createReducedDoc({
-  //         actions: cloudOrders.children.get(orderId),
-  //         reducer: OrderReducer,
-  //         onGetName: () => `OrderState/${orderId}`,
-  //         domain: 'onofood.co',
-  //       });
-  //     },
-  //   }),
-  // );
+  cloud.docs.setOverride(
+    'OrderState',
+    createSyntheticDoc({
+      onCreateChild: orderId => {
+        return createReducedDoc({
+          actions: cloudOrders.children.get(orderId),
+          reducer: OrderReducer,
+          onGetName: () => `OrderState/${orderId}`,
+          domain: 'onofood.co',
+        });
+      },
+    }),
+  );
 
   const airtableFolder = cloud.docs.get('Airtable');
   const companyConfigStream = airtableFolder.value
