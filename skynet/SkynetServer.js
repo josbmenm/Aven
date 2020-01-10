@@ -332,12 +332,12 @@ export default async function startSkynetServer(httpServer) {
     }
   });
 
-  // cloud.setReducer('RecentOrders', {
-  //   actionsDoc: companyActivity,
-  //   reducer: RecentOrders,
-  //   snapshotInterval: 10,
-  //   snapshotsDoc: cloud.get('RecentOrdersSnapshot'),
-  // });
+  cloud.setReducer('RecentOrders', {
+    actionsDoc: companyActivity,
+    reducer: RecentOrders,
+    snapshotInterval: 10,
+    snapshotsDoc: cloud.get('RecentOrdersSnapshot'),
+  });
 
   function timeIntToPSTDate(timeInt) {
     const tDefault = new Date(timeInt);
@@ -522,16 +522,6 @@ export default async function startSkynetServer(httpServer) {
     snapshotInterval: 10,
     snapshotsDoc: cloud.get('DevicesStateSnapshot'),
   });
-
-  // const deviceActions = cloud.get('DeviceActions');
-  // const devicesState = cloud.docs.setOverrideStream(
-  //   'DevicesState',
-  //   createReducerStream(
-  //     deviceActions,
-  //     DevicesReducer.reducerFn,
-  //     DevicesReducer.initialState,
-  //   ),
-  // );
 
   const protectedSource = createProtectedSource({
     source: cloud,
