@@ -516,12 +516,12 @@ export default async function startSkynetServer(httpServer) {
     }),
   );
 
-  // cloud.setReducer('DevicesState', {
-  //   actionsDoc: cloud.get('DeviceActions'),
-  //   reducer: DevicesReducer,
-  //   snapshotInterval: 10,
-  //   snapshotsDoc: cloud.get('DevicesStateSnapshot'),
-  // });
+  cloud.setReducer('DevicesState', {
+    actionsDoc: cloud.get('DeviceActions'),
+    reducer: DevicesReducer,
+    snapshotInterval: 10,
+    snapshotsDoc: cloud.get('DevicesStateSnapshot'),
+  });
 
   // const deviceActions = cloud.get('DeviceActions');
   // const devicesState = cloud.docs.setOverrideStream(
