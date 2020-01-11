@@ -633,7 +633,6 @@ export default function createProtectedSource({
         name: docName,
         domain: action.domain,
       });
-      console.log('heyoo', docName, realPermissionLevelRequired, p);
       if (
         !p[permissionLevel] ||
         (realPermissionLevelRequired && !p[realPermissionLevelRequired])

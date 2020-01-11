@@ -1541,14 +1541,14 @@ export function createLocalSessionClient({
   function handleAsyncStorageFailure(err, ctx) {
     error('LocalStorageError', {
       err,
-      // errorString: null,
+      errorString: String(err),
       ctx,
     });
   }
 
   function clientReport(reportName, report) {
     const { id, name, domain, value, isRemoteOnly } = report;
-    if (isRemoteOnly) {
+    if (isRemoteOnly || !localSource) {
       return;
     }
     if (reportName === 'PutDocValue') {
@@ -1591,6 +1591,7 @@ export function createLocalSessionClient({
     ...clientOpts,
     onReport: clientReport,
     onInitialLoad: async (blockOrDoc, domain, name, blockId) => {
+      if (!localSource) return;
       if (
         rehydrateIgnoreList &&
         rehydrateIgnoreList[domain] &&
