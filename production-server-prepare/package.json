@@ -10,8 +10,5 @@
   "dependencies": {
     "@zeit/ncc": "^0.21.0",
     "typescript": "^3.7.4"
-  },
-  "devDependencies": {
-    "@types/split2": "^2.1.6"
   }
 }
