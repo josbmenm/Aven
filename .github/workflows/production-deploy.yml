@@ -1,0 +1,62 @@
+name: Ono Production Deploy Skynet
+
+on:
+  push:
+    branches:
+      - cameron/*
+
+# Expected Secrets
+#
+# - targethost
+# - target credentials
+# - 
+
+jobs:
+  prepare-server:
+    name: Prepare Server that we will run on
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@master
+
+      - name: Configure Npm
+        run: |
+          echo "color = always" >> .npmrc
+          echo "loglevel = silent" >> .npmrc
+
+      - name: Install Dependencies
+        working-directory: production-server-prepare
+        run: npm i --production
+
+      - name: |
+          scp -C dist/index.sh root@167.172.131.166:index.sh
+          ssh root@167.172.131.166 bash index.sh
+
+  deploy-skynet:
+    needs: [prepare-server] # Make sure production server is setup before we deploy to it
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@master
+
+      - name: Configure Yarn
+        run: | # I think yarn loads these
+          echo "color = always" >> .npmrc
+          echo "loglevel = silent" >> .npmrc
+
+      - name: Install Dependencies
+        run: yarn build skynet
+
+        # TODO: Get build directory
+
+        # TODO: Stop Service
+
+        # TODO: Send built files to remote
+
+        # TODO: Migrate DB
+
+        # TODO: Start Service
+      
