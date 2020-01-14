@@ -43,7 +43,7 @@ jobs:
         env:
           KEY: ${{ secrets.SKYNET_DEPLOY_KEY }}
         run: |
-          echo $KEY > deploy.key
+          echo "$KEY" > deploy.key
           chmod go-rwx deploy.key
           echo "::set-output name=filename::$(pwd)/deploy.key"
 
@@ -96,7 +96,7 @@ jobs:
         env:
           KEY: ${{ secrets.SKYNET_DEPLOY_KEY }}
         run: |
-          echo $KEY > deploy.key
+          echo "$KEY" > deploy.key
           chmod go-rwx deploy.key
           echo "::set-output name=filename::$(pwd)/deploy.key"
 
