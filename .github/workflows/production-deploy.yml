@@ -32,7 +32,6 @@ jobs:
       - name: Configure Npm
         run: |
           echo "color = always" >> .npmrc
-          echo "loglevel = silent" >> .npmrc
 
       - name: Install Dependencies
         working-directory: production-server-prepare
@@ -82,7 +81,6 @@ jobs:
       - name: Configure Yarn
         run: | # I think yarn loads these
           echo "color = always" >> .npmrc
-          echo "loglevel = silent" >> .npmrc
 
       - name: Install Dependencies
         run: yarn
