@@ -37,6 +37,10 @@ jobs:
         working-directory: production-server-prepare
         run: npm i --production
 
+      - name: Build Script
+        working-directory: production-server-prepare
+        run: npm run build
+
       - name: Install key file
         id: key
         env:
