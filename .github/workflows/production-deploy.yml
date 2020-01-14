@@ -10,7 +10,7 @@ on:
 
 # Expected Secrets
 #
-# - target credentials (SKYNET_DEPLOY_KEY) 
+# - target credentials (SKYNET_DEPLOY_KEY)
 #   $ (mkfifo key key.pub && cat key key.pub &) && echo "y" | ssh-keygen -t rsa -b 4096 -C "GitHub Action $(date +%Y-%m-%d)" -N '' -q -f key 2>&1 > /dev/null ; rm key key.pub
 # - journalbeat credentials (SKYNET_JOURNALBEAT_API__KEY)
 # - Any other secrets to send to remote (See "Build Secrets File" step)
@@ -40,20 +40,36 @@ jobs:
 
       - name: Install key file
         id: key
-        working-directory: production-server-prepare
         env:
           KEY: ${{ secrets.SKYNET_DEPLOY_KEY }}
         run: |
           ls -l
           echo $KEY > deploy.key
           ls -l
-          echo "::set-output name=filename::deploy.key"
+          echo "::set-output name=filename::$(pwd)/deploy.key"
+
+      - name: Add Know Host Key for skynet server
+        run: echo |1|oaCJoUC9NwyF57pNeWT38bNcnuw=|A47nfKc12xPvIsWHU4tI9A0ADk0= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY= >> ~/.ssh/known_hosts
+
+      - name: Add ssh config
+        run: |
+          echo Host deploy > ~/.ssh/config
+          echo HostName skynet.onoblends.co >> ~/.ssh/config
+          echo Port 22 >>  ~/.ssh/config
+          echo User root >> ~/.ssh/config
+          echo IdentityFile ${{ steps.key.outputs.filename }} >> ~/.ssh/config
 
       - name: Run Prepare Script on Remote
         working-directory: production-server-prepare
         run: |
-          scp -i ${{ steps.key.outputs.filename }} -C dist/index.sh root@skynet.onoblends.co:index.sh
-          ssh -i ${{ steps.key.outputs.filename }} root@skynet.onoblends.co bash index.sh
+          scp -C dist/index.sh deploy-server:index.sh
+          ssh deploy-server bash index.sh
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm ${{ steps.key.outputs.filename }}
+          ssh deploy-server rm index.sh
 
   deploy-skynet:
     needs: [prepare-server] # Make sure production server is setup before we deploy to it
@@ -91,13 +107,24 @@ jobs:
           echo "Environment=FIRST=${SECRET_FIRST}"
           echo "Environment=SECOND=${SECRET_SECOND}"
 
-      - name: Deploy on Remote (Key)
+      - name: Add Know Host Key for skynet server
+        run: echo |1|oaCJoUC9NwyF57pNeWT38bNcnuw=|A47nfKc12xPvIsWHU4tI9A0ADk0= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY= >> ~/.ssh/known_hosts
+
+      - name: Add ssh config
         run: |
-          scp -i ${{ steps.key.outputs.filename }} -Cr ${{ steps.build.outputs.path }} root@skynet.onoblends.co:/home/prod/production
-          scp -i ${{ steps.key.outputs.filename }} secrets.conf root@skynet.onoblends.co:/etc/systemd/system/ono.runway.d/
-          ssh -i ${{ steps.key.outputs.filename }} root@skynet.onoblends.co systemctl stop ono.runway
-          ssh -i ${{ steps.key.outputs.filename }} root@skynet.onoblends.co echo TODO: Database Migration 
-          ssh -i ${{ steps.key.outputs.filename }} root@skynet.onoblends.co systemctl start ono.runway
+          echo Host deploy > ~/.ssh/config
+          echo HostName skynet.onoblends.co >> ~/.ssh/config
+          echo Port 22 >>  ~/.ssh/config
+          echo User root >> ~/.ssh/config
+          echo IdentityFile ${{ steps.key.outputs.filename }} >> ~/.ssh/config
+
+      - name: Deploy on Remote
+        run: |
+          scp -Cr ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
+          scp secrets.conf deploy-server:/etc/systemd/system/ono.runway.d/
+          ssh deploy-server systemctl stop ono.runway
+          ssh deploy-server echo TODO: Database Migration 
+          ssh deploy-server systemctl start ono.runway
 
       - name: Cleanup
         if: always()
