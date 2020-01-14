@@ -43,9 +43,7 @@ jobs:
         env:
           KEY: ${{ secrets.SKYNET_DEPLOY_KEY }}
         run: |
-          ls -l
           echo $KEY > deploy.key
-          ls -l
           echo "::set-output name=filename::$(pwd)/deploy.key"
 
       - name: Add Know Host Key for skynet server
