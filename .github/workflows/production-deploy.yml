@@ -44,6 +44,7 @@ jobs:
           KEY: ${{ secrets.SKYNET_DEPLOY_KEY }}
         run: |
           echo $KEY > deploy.key
+          chmod go-rwx deploy.key
           echo "::set-output name=filename::$(pwd)/deploy.key"
 
       - name: Add SSH configs
@@ -96,6 +97,7 @@ jobs:
           KEY: ${{ secrets.SKYNET_DEPLOY_KEY }}
         run: |
           echo $KEY > deploy.key
+          chmod go-rwx deploy.key
           echo "::set-output name=filename::$(pwd)/deploy.key"
 
       - name: Build Secrets File
