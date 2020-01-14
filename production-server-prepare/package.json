@@ -8,6 +8,7 @@
     "build": "ncc build --minify && cat src/prefix.sh dist/index.js src/postfix.sh > dist/index.sh && rm dist/index.js"
   },
   "dependencies": {
+    "@types/node": "^13.1.6",
     "@zeit/ncc": "^0.21.0",
     "typescript": "^3.7.4"
   }
