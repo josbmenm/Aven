@@ -47,7 +47,7 @@ jobs:
           echo "::set-output name=filename::$(pwd)/deploy.key"
 
       - name: Add Know Host Key for skynet server
-        run: echo |1|oaCJoUC9NwyF57pNeWT38bNcnuw=|A47nfKc12xPvIsWHU4tI9A0ADk0= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY= >> ~/.ssh/known_hosts
+        run: echo "|1|oaCJoUC9NwyF57pNeWT38bNcnuw=|A47nfKc12xPvIsWHU4tI9A0ADk0= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
 
       - name: Add ssh config
         run: |
@@ -108,7 +108,7 @@ jobs:
           echo "Environment=SECOND=${SECRET_SECOND}"
 
       - name: Add Know Host Key for skynet server
-        run: echo |1|oaCJoUC9NwyF57pNeWT38bNcnuw=|A47nfKc12xPvIsWHU4tI9A0ADk0= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY= >> ~/.ssh/known_hosts
+        run: echo "|1|oaCJoUC9NwyF57pNeWT38bNcnuw=|A47nfKc12xPvIsWHU4tI9A0ADk0= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
 
       - name: Add ssh config
         run: |
