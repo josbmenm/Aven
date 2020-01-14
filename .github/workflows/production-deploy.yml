@@ -92,9 +92,11 @@ jobs:
 
       - name: Install key file
         id: key
+        env:
+          KEY: ${{ secrets.SKYNET_DEPLOY_KEY }}
         run: |
-          echo ${{ secrets.SKYNET_DEPLOY_KEY }} > deploy.key
-          echo "::set-output name=filename::deploy.key"
+          echo $KEY > deploy.key
+          echo "::set-output name=filename::$(pwd)/deploy.key"
 
       - name: Build Secrets File
         env:
