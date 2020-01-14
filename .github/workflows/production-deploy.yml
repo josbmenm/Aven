@@ -88,7 +88,7 @@ jobs:
       - name: Build Skynet
         id: build
         # Has output: steps.build.outputs.path
-        run: yarn build skynet
+        run: yarn deploy skynet
 
       - name: Install key file
         id: key
