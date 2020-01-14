@@ -62,12 +62,12 @@ jobs:
         run: |
           scp -C dist/index.sh deploy-server:index.sh
           ssh deploy-server bash index.sh
+          # ssh deploy-server rm index.sh
 
       - name: Cleanup
         if: always()
         run: |
           rm ${{ steps.key.outputs.filename }}
-          ssh deploy-server rm index.sh
 
   deploy-skynet:
     needs: [prepare-server] # Make sure production server is setup before we deploy to it
