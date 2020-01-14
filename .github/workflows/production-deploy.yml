@@ -5,11 +5,15 @@ on:
     branches:
       - cameron/*
 
+# Expected pre-setup
+# hostname -> IP in DNS
+
 # Expected Secrets
 #
-# - targethost
-# - target credentials
-# - 
+# - target credentials (SKYNET_DEPLOY_KEY) 
+#   $ (mkfifo key key.pub && cat key key.pub &) && echo "y" | ssh-keygen -t rsa -b 4096 -C "GitHub Action $(date +%Y-%m-%d)" -N '' -q -f key 2>&1 > /dev/null ; rm key key.pub
+# - journalbeat credentials (SKYNET_JOURNALBEAT_API__KEY)
+# - Any other secrets to send to remote (See "Build Secrets File" step)
 
 jobs:
   prepare-server:
@@ -17,6 +21,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Test for needed Secret
+        if: '! secrets.SKYNET_DEPLOY_KEY'
+        # make sure we error/fail early
+        run: |
+          echo "SECRET MISSING!"
+          false
+
       - name: Checkout master
         uses: actions/checkout@master
 
@@ -29,9 +40,18 @@ jobs:
         working-directory: production-server-prepare
         run: npm i --production
 
-      - name: |
-          scp -C dist/index.sh root@167.172.131.166:index.sh
-          ssh root@167.172.131.166 bash index.sh
+      - name: Install key file
+        id: key
+        working-directory: production-server-prepare
+        run: |
+          echo ${{ secrets.SKYNET_DEPLOY_KEY }} > deploy.key
+          echo "::set-output name=filename::deploy.key"
+
+      - name: Run Prepare Script on Remote (Key)
+        working-directory: production-server-prepare
+        run: |
+          scp -i ${{ steps.key.outputs.filename }} -C dist/index.sh root@skynet.onoblends.co:index.sh
+          ssh -i ${{ steps.key.outputs.filename }} root@skynet.onoblends.co bash index.sh
 
   deploy-skynet:
     needs: [prepare-server] # Make sure production server is setup before we deploy to it
@@ -48,15 +68,35 @@ jobs:
           echo "loglevel = silent" >> .npmrc
 
       - name: Install Dependencies
+        run: yarn
+
+      - name: Build Skynet
+        id: build
         run: yarn build skynet
 
-        # TODO: Get build directory
+      - name: Install key file
+        id: key
+        run: |
+          echo ${{ secrets.SKYNET_DEPLOY_KEY }} > deploy.key
+          echo "::set-output name=filename::deploy.key"
 
-        # TODO: Stop Service
+      - name: Build Secrets File
+        env:
+          SECRET_FIRST: ${{ toJson(secrets.FIRST) }}
+          SECRET_SECOND: ${{ toJson(secrets.SECOND) }}
+        run: |
+          echo "[Service]" > secrets.conf
+          echo "Environment=FIRST=${SECRET_FIRST}"
+          echo "Environment=SECOND=${SECRET_SECOND}"
 
-        # TODO: Send built files to remote
+      - name: Deploy on Remote (Key)
+        run: |
+          scp -i ${{ steps.key.outputs.filename }} -Cr ${{ steps.build.outputs.path }} root@skynet.onoblends.co:/home/prod/production
+          scp -i ${{ steps.key.outputs.filename }} secrets.conf root@skynet.onoblends.co:/etc/systemd/system/ono.runway.d/
+          ssh -i ${{ steps.key.outputs.filename }} root@skynet.onoblends.co systemctl stop ono.runway
+          ssh -i ${{ steps.key.outputs.filename }} root@skynet.onoblends.co echo TODO: Database Migration 
+          ssh -i ${{ steps.key.outputs.filename }} root@skynet.onoblends.co systemctl start ono.runway
 
-        # TODO: Migrate DB
-
-        # TODO: Start Service
-      
+      - name: Cleanup
+        if: always()
+        run: rm secrets.conf ${{ steps.key.outputs.filename }}

@@ -6,6 +6,9 @@ import { spawn, exec } from './utils/spawn';
 import { request } from './utils/request';
 import { configureUser, ensureKeys, fixKnownHosts } from './utils/User';
 
+import { promises } from 'fs';
+const { mkdir } = promises;
+
 import sources from './constants/Dev.authorized_keys.Source.json';
 
 const setupDomains = ['skynet.onoblends.co'];
@@ -73,13 +76,37 @@ async function setupNginx() {
   // TODO: reload nginx
 }
 
-async function setupSystemd() {
+async function setupMainServiceFiles() {
+  const dir = mkdir(`/etc/systemd/system/${serviceName}.d`).catch(() => {});
+
   await ensureFileIs(
     `/etc/systemd/system/${serviceName}.service`,
     serviceFileContents,
   );
 
-  // TODO: Enable Service
+  await exec(`systemctl enable ${serviceName}.service`);
+
+  return dir;
+}
+
+const journalbeatDeb =
+  'https://artifacts.elastic.co/downloads/beats/journalbeat/journalbeat-7.5.1-amd64.deb';
+
+async function setupJournalbeat() {
+  await spawn('dpkg', '-i', journalbeatDeb);
+
+  // TODO: Finish setup
+  // https://www.elastic.co/guide/en/beats/journalbeat/current/journalbeat-configuration.html
+}
+
+async function setupFailureNotificationService() {
+  // TODO: Fill out
+
+  // Ruby Service
+  // https://github.com/joonty/systemd_mon
+
+  // Manually with Systemd
+  // https://serverfault.com/questions/694818/get-notification-when-systemd-monitored-service-enters-failed-state
 }
 
 const screenConfig =
@@ -130,11 +157,15 @@ async function setup() {
 
   const parallelJobs: Promise<unknown>[] = [];
 
+  parallelJobs.push(setupJournalbeat());
+
+  parallelJobs.push(setupFailureNotificationService());
+
   parallelJobs.push(setupDevTools());
 
   parallelJobs.push(setupNginx());
 
-  parallelJobs.push(setupSystemd());
+  parallelJobs.push(setupMainServiceFiles());
 
   await Promise.all(parallelJobs);
 
