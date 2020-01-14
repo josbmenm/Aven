@@ -51,7 +51,7 @@ jobs:
 
       - name: Add ssh config
         run: |
-          echo Host deploy > ~/.ssh/config
+          echo Host deploy-server > ~/.ssh/config
           echo HostName skynet.onoblends.co >> ~/.ssh/config
           echo Port 22 >>  ~/.ssh/config
           echo User root >> ~/.ssh/config
@@ -112,7 +112,7 @@ jobs:
 
       - name: Add ssh config
         run: |
-          echo Host deploy > ~/.ssh/config
+          echo Host deploy-server > ~/.ssh/config
           echo HostName skynet.onoblends.co >> ~/.ssh/config
           echo Port 22 >>  ~/.ssh/config
           echo User root >> ~/.ssh/config
