@@ -6,4 +6,5 @@ pwd
 
 ls -l
 
+# Provide current path in the format that GitHub Actions likes
 echo "::set-output name=path::$(pwd)"
