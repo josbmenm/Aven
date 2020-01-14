@@ -22,11 +22,9 @@ jobs:
 
     steps:
       - name: Test for needed Secret
-        if: '! secrets.SKYNET_DEPLOY_KEY'
-        # make sure we error/fail early
-        run: |
-          echo "SECRET MISSING!"
-          false
+        env:
+          KEY: ${{ secrets.SKYNET_DEPLOY_KEY }}
+        run: '[ "$KEY" != "" ]'
 
       - name: Checkout master
         uses: actions/checkout@master
