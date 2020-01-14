@@ -4,10 +4,10 @@
     "env": "razzle",
     "publicAssetDir": "public",
     "envOptions": {
-      "deployEnv": "Heroku",
-      "herokuAppName": "ono-skynet",
       "mainServer": "SkynetServer.js",
-      "mainClient": "MainClient.js"
+      "mainClient": "MainClient.js",
+      "deployEnv": "Script",
+      "deployScript": "deploy.sh"
     },
     "srcDependencies": [
       "emails",
