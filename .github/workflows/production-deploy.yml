@@ -49,7 +49,8 @@ jobs:
       - name: Add SSH configs
         run: |
           mkdir -p ~/.ssh
-          echo "|1|oaCJoUC9NwyF57pNeWT38bNcnuw=|A47nfKc12xPvIsWHU4tI9A0ADk0= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
+          echo "|1|+GLmK0zxMCkQSsHROcxuv+jJ1J0=|7ld/F4iIX0xEmqN6m80CWt2kSBM= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
+          echo "|1|N6gyZTrMy/PWPEND6pszromnx7A=|lmVSxfmCBC/6UGWltQcDsrUekqY= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
           echo Host deploy-server > ~/.ssh/config
           echo HostName skynet.onoblends.co >> ~/.ssh/config
           echo Port 22 >>  ~/.ssh/config
@@ -109,7 +110,8 @@ jobs:
       - name: Add SSH configs
         run: |
           mkdir -p ~/.ssh
-          echo "|1|oaCJoUC9NwyF57pNeWT38bNcnuw=|A47nfKc12xPvIsWHU4tI9A0ADk0= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
+          echo "|1|+GLmK0zxMCkQSsHROcxuv+jJ1J0=|7ld/F4iIX0xEmqN6m80CWt2kSBM= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
+          echo "|1|N6gyZTrMy/PWPEND6pszromnx7A=|lmVSxfmCBC/6UGWltQcDsrUekqY= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
           echo Host deploy-server > ~/.ssh/config
           echo HostName skynet.onoblends.co >> ~/.ssh/config
           echo Port 22 >>  ~/.ssh/config
