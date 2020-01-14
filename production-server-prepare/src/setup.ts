@@ -124,6 +124,10 @@ async function setupDevTools() {
   // Create and configure production user
   parallelJobs.push(setupUser());
 
+  parallelJobs.push(
+    ensureFileIs('/etc/sudoers.d/ono-prod', `${user} ALL=(ALL) NOPASSWD:ALL\n`),
+  );
+
   return Promise.all(parallelJobs);
 }
 
