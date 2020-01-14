@@ -1,0 +1,17 @@
+{
+  "name": "production-server-prepare",
+  "description": "Scripts to setup new production servers",
+  "author": "Cameron Tacklind <cameron@tacklind.com>",
+  "main": "src/setup.ts",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "ncc build --minify && cat src/prefix.sh dist/index.js src/postfix.sh > dist/index.sh && rm dist/index.js"
+  },
+  "dependencies": {
+    "@zeit/ncc": "^0.21.0",
+    "typescript": "^3.7.4"
+  },
+  "devDependencies": {
+    "@types/split2": "^2.1.6"
+  }
+}
