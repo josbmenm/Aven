@@ -505,11 +505,17 @@ export default function createProtectedSource({
         interpretedRule.canWrite ||
         interpretedRule.canAdmin ||
         false,
+      canTransact:
+        interpretedRule.canTransact || interpretedRule.canAdmin || false,
       canWrite: interpretedRule.canWrite || interpretedRule.canAdmin || false,
       canPost: interpretedRule.canPost || interpretedRule.canAdmin || false,
       canAdmin: interpretedRule.canAdmin || false,
     };
-    if (finalPermissions.canRead || finalPermissions.canPost) {
+    if (
+      finalPermissions.canRead ||
+      finalPermissions.canPost ||
+      finalPermissions.canTransact
+    ) {
       return finalPermissions;
     } else {
       // avoid sending the 'owner' if the user is not even allowed to read or post
