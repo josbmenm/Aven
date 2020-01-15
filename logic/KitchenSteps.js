@@ -222,7 +222,9 @@ const KitchenSteps = [
         restaurantState.slotSettings && restaurantState.slotSettings[slotId];
       const disabledMode = (settings && settings.disabledMode) || false;
       const isDisabled = disabledMode === true;
-      const isFillInvalid = isDisabled;
+      const isFillInvalid =
+        isDisabled &&
+        (!restaurantState.fill.task || !restaurantState.fill.task.customTask); // custom tasks never have invalid fills
       const isFillOptional = (settings && settings.optional) || false;
       const intent = {
         ...nextFill,
