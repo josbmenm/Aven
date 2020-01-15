@@ -107,12 +107,53 @@ jobs:
 
       - name: Build Secrets File
         env:
-          SECRET_FIRST: ${{ toJson(secrets.FIRST) }}
-          SECRET_SECOND: ${{ toJson(secrets.SECOND) }}
+          AIRTABLE_API_KEY: ${{ toJson(secrets.AIRTABLE_API_KEY) }}
+          AIRTABLE_BASE_ID: ${{ toJson(secrets.AIRTABLE_BASE_ID) }}
+          ELASTIC_SECRET: ${{ toJson(secrets.ELASTIC_SECRET) }}
+          ELASTIC_USERNAME: ${{ toJson(secrets.ELASTIC_USERNAME) }}
+          GCS_BUCKET: ${{ toJson(secrets.GCS_BUCKET) }}
+          GCS_TOKEN: ${{ toJson(secrets.GCS_TOKEN) }}
+          ONO_ROOT_PASSWORD: ${{ toJson(secrets.ONO_ROOT_PASSWORD) }}
+          SENDGRID_API_KEY: ${{ toJson(secrets.SENDGRID_API_KEY) }}
+          SQL_PASSWORD: ${{ toJson(secrets.SQL_PASSWORD) }}
+          SQL_USER: ${{ toJson(secrets.SQL_USER) }}
+          STRIPE_LIVE_TOKEN: ${{ toJson(secrets.STRIPE_LIVE_TOKEN) }}
+          STRIPE_TOKEN: ${{ toJson(secrets.STRIPE_TOKEN) }}
+          TWILIO_ACCOUNT_SID: ${{ toJson(secrets.TWILIO_ACCOUNT_SID) }}
+          TWILIO_AUTH_TOKEN: ${{ toJson(secrets.TWILIO_AUTH_TOKEN) }}
         run: |
           echo "[Service]" > secrets.conf
-          echo "Environment=FIRST=${SECRET_FIRST}" >> secrets.conf
-          echo "Environment=SECOND=${SECRET_SECOND}" >> secrets.conf
+          echo Environment=AIRTABLE_API_KEY="${AIRTABLE_API_KEY}" >> secrets.conf
+          echo Environment=AIRTABLE_BASE_ID="${AIRTABLE_BASE_ID}" >> secrets.conf
+          echo Environment=ELASTIC_SECRET="${ELASTIC_SECRET}" >> secrets.conf
+          echo Environment=ELASTIC_USERNAME="${ELASTIC_USERNAME}" >> secrets.conf
+          echo Environment=GCS_BUCKET="${GCS_BUCKET}" >> secrets.conf
+          echo Environment=GCS_TOKEN="${GCS_TOKEN}" >> secrets.conf
+          echo Environment=ONO_ROOT_PASSWORD="${ONO_ROOT_PASSWORD}" >> secrets.conf
+          echo Environment=SENDGRID_API_KEY="${SENDGRID_API_KEY}" >> secrets.conf
+          echo Environment=SQL_PASSWORD="${SQL_PASSWORD}" >> secrets.conf
+          echo Environment=SQL_USER="${SQL_USER}" >> secrets.conf
+          echo Environment=STRIPE_LIVE_TOKEN="${STRIPE_LIVE_TOKEN}" >> secrets.conf
+          echo Environment=STRIPE_TOKEN="${STRIPE_TOKEN}" >> secrets.conf
+          echo Environment=TWILIO_ACCOUNT_SID="${TWILIO_ACCOUNT_SID}" >> secrets.conf
+          echo Environment=TWILIO_AUTH_TOKEN="${TWILIO_AUTH_TOKEN}" >> secrets.conf
+
+      - name: Build Configs File
+        env:
+          DATABASE_URL: ${{ toJson(secrets.DATABASE_URL) }}
+          ELASTIC_HOST: ${{ toJson(secrets.ELASTIC_HOST) }}
+          SQL_DATABASE: ${{ toJson(secrets.SQL_DATABASE) }}
+          SQL_HOST: ${{ toJson(secrets.SQL_HOST) }}
+          SQL_USE_SSL: ${{ toJson(secrets.SQL_USE_SSL) }}
+          TWILIO_FROM_NUMBER: ${{ toJson(secrets.TWILIO_FROM_NUMBER) }}
+        run: |
+          echo "[Service]" > configs.conf
+          echo Environment=DATABASE_URL="${DATABASE_URL}" >> configs.conf
+          echo Environment=ELASTIC_HOST="${ELASTIC_HOST}" >> configs.conf
+          echo Environment=SQL_DATABASE="${SQL_DATABASE}" >> configs.conf
+          echo Environment=SQL_HOST="${SQL_HOST}" >> configs.conf
+          echo Environment=SQL_USE_SSL="${SQL_USE_SSL}" >> configs.conf
+          echo Environment=TWILIO_FROM_NUMBER="${TWILIO_FROM_NUMBER}" >> configs.conf
 
       - name: Add SSH configs
         run: |
@@ -128,7 +169,7 @@ jobs:
       - name: Deploy on Remote
         run: |
           scp -Cr ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
-          scp secrets.conf deploy-server:/etc/systemd/system/ono.runway.d/
+          scp secrets.conf configs.conf deploy-server:/etc/systemd/system/ono.runway.d/
           ssh deploy-server systemctl daemon-reload
           ssh deploy-server systemctl stop ono.runway
           ssh deploy-server echo TODO: Database Migration 
