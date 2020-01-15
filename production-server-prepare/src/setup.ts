@@ -78,7 +78,7 @@ async function setupNginx() {
 
   // TODO: Update nginx config
 
-  // TODO: reload nginx
+  await exec(`systemctl reload nginx.service`);
 }
 
 async function setupMainServiceFiles() {
