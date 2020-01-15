@@ -85,6 +85,8 @@ async function setupMainServiceFiles() {
     serviceFileContents,
   );
 
+  await exec(`systemctl daemon-reload`);
+
   await exec(`systemctl enable ${serviceName}.service`);
 
   return dir;
