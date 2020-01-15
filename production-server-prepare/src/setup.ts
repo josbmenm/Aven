@@ -116,20 +116,18 @@ const screenConfig =
   "\ncaption always '%{= dg} %H %{G}| %{B}%l %{G}|%=%?%{d}%-w%?%{r}(%{d}%n %t%? {%u} %?%{r})%{d}%?%+w%?%=%{G}| %{B}%M %d %c:%s '\n";
 
 async function setupDevTools() {
-  const parallelJobs: Promise<void>[] = [];
+  const parallelJobs: Promise<void>[] = [
+    // Handy screen config (multiple tabs)
+    ensureFileContains('/etc/screenrc', screenConfig),
 
-  // Handy screen config (multiple tabs)
-  parallelJobs.push(ensureFileContains('/etc/screenrc', screenConfig));
+    // Make it easy for root user to clone from github
+    fixKnownHosts(`/root`),
 
-  // Make it easy for root user to clone from github
-  parallelJobs.push(fixKnownHosts(`/root`));
+    // Create and configure production user
+    setupUser(),
 
-  // Create and configure production user
-  parallelJobs.push(setupUser());
-
-  parallelJobs.push(
     ensureFileIs('/etc/sudoers.d/ono-prod', `${user} ALL=(ALL) NOPASSWD:ALL\n`),
-  );
+  ];
 
   return Promise.all(parallelJobs);
 }
