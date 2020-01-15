@@ -508,6 +508,7 @@ export function createDoc({
       value,
       id: block.id,
       isRemoteOnly: docState.isRemoteOnly,
+      isEphemeral: docState.isEphemeral,
     });
     await quietlyPutBlock(block);
   }
@@ -674,6 +675,7 @@ export function createDoc({
     performReport('PutDoc', {
       id: result.id,
       isRemoteOnly: docState.isRemoteOnly,
+      isEphemeral: docState.isEphemeral,
     });
     return result;
   }
@@ -712,6 +714,7 @@ export function createDoc({
       id: localBlock.id,
       value: localTransactionValue,
       isRemoteOnly: docState.isRemoteOnly,
+      isEphemeral: docState.isEphemeral,
     });
     return { id: localBlock.id, prevId, dispatchTime, dispatchId };
   }
@@ -876,6 +879,17 @@ export function createDoc({
     });
   }
 
+  function setEphemeral() {
+    if (docState.isEphemeral) {
+      return;
+    }
+    setDocState({
+      isLocalOnly: true,
+      isRemoteOnly: false,
+      isEphemeral: true,
+    });
+  }
+
   function setRemoteOnly(isRemoteOnly = true) {
     if (!docState.isLocalOnly && docState.isRemoteOnly === isRemoteOnly) {
       return;
@@ -917,6 +931,7 @@ export function createDoc({
     getBlockOfValue,
     publishValue,
     setLocalOnly,
+    setEphemeral,
     setRemoteOnly,
     handleReports,
     destroy,
@@ -1547,8 +1562,8 @@ export function createLocalSessionClient({
   }
 
   function clientReport(reportName, report) {
-    const { id, name, domain, value, isRemoteOnly } = report;
-    if (isRemoteOnly || !localSource) {
+    const { id, name, domain, value, isRemoteOnly, isEphemeral } = report;
+    if (isRemoteOnly || !localSource || isEphemeral) {
       return;
     }
     if (reportName === 'PutDocValue') {
