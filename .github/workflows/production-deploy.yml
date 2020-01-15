@@ -5,6 +5,12 @@ on:
     branches:
       - cameron/*
 
+# Copy this file for a new deploy
+# Changes:
+#  - hostname: `skynet.onoblends.co` -> new domain
+#  - secret names: `SKYNET_*` -> NEW_NAME_*
+#  - host keys: `skynet.onoblends.co ecdsa-sha2-ni...` -> `ssh-keyscan skynet.onoblends.co 2>/dev/null`
+
 # Expected pre-setup
 # hostname -> IP in DNS
 
@@ -49,12 +55,12 @@ jobs:
       - name: Add SSH configs
         run: |
           mkdir -p ~/.ssh
-          echo "|1|+GLmK0zxMCkQSsHROcxuv+jJ1J0=|7ld/F4iIX0xEmqN6m80CWt2kSBM= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
-          echo "|1|N6gyZTrMy/PWPEND6pszromnx7A=|lmVSxfmCBC/6UGWltQcDsrUekqY= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
+          echo "skynet.onoblends.co ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
           echo Host deploy-server > ~/.ssh/config
           echo HostName skynet.onoblends.co >> ~/.ssh/config
           echo Port 22 >>  ~/.ssh/config
           echo User root >> ~/.ssh/config
+          echo CheckHostIP no >> ~/.ssh/config
           echo IdentityFile ${{ steps.key.outputs.filename }} >> ~/.ssh/config
 
       - name: Run Prepare Script on Remote
@@ -111,12 +117,12 @@ jobs:
       - name: Add SSH configs
         run: |
           mkdir -p ~/.ssh
-          echo "|1|+GLmK0zxMCkQSsHROcxuv+jJ1J0=|7ld/F4iIX0xEmqN6m80CWt2kSBM= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
-          echo "|1|N6gyZTrMy/PWPEND6pszromnx7A=|lmVSxfmCBC/6UGWltQcDsrUekqY= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
+          echo "skynet.onoblends.co ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHPfzupCfPSZak6Ql1wy8Co2nP/5zWGxkjACX+1sHsZsYpJ2hi/+g7AyXC5ebcuKLwpeJMsdVBRCvwsa7RySFYY=" >> ~/.ssh/known_hosts
           echo Host deploy-server > ~/.ssh/config
           echo HostName skynet.onoblends.co >> ~/.ssh/config
           echo Port 22 >>  ~/.ssh/config
           echo User root >> ~/.ssh/config
+          echo CheckHostIP no >> ~/.ssh/config
           echo IdentityFile ${{ steps.key.outputs.filename }} >> ~/.ssh/config
 
       - name: Deploy on Remote
