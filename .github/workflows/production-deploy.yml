@@ -105,8 +105,8 @@ jobs:
           SECRET_SECOND: ${{ toJson(secrets.SECOND) }}
         run: |
           echo "[Service]" > secrets.conf
-          echo "Environment=FIRST=${SECRET_FIRST}"
-          echo "Environment=SECOND=${SECRET_SECOND}"
+          echo "Environment=FIRST=${SECRET_FIRST}" >> secrets.conf
+          echo "Environment=SECOND=${SECRET_SECOND}" >> secrets.conf
 
       - name: Add SSH configs
         run: |
