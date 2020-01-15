@@ -134,7 +134,7 @@ async function setupDevTools() {
   return Promise.all(parallelJobs);
 }
 
-async function setup() {
+export async function setup() {
   const release = await exec('cat /etc/lsb-release');
 
   // Hacky get OS version
