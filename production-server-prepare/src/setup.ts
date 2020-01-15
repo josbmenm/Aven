@@ -43,6 +43,7 @@ deps.push('certbot', 'python-certbot-nginx');
 async function setupUser() {
   await configureUser(user);
 
+  // TODO: remove old keys
   for (const url of sources) {
     ensureKeys(user, await request(url));
   }
