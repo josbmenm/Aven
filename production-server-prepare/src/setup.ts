@@ -53,6 +53,7 @@ async function setupUser() {
 }
 
 async function setupNginx() {
+  // Setup certbot
   await spawn(
     'certbot',
     // Use nginx plugin (python-certbot-nginx)
