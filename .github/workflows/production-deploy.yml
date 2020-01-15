@@ -123,6 +123,7 @@ jobs:
         run: |
           scp -Cr ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
           scp secrets.conf deploy-server:/etc/systemd/system/ono.runway.d/
+          ssh deploy-server systemctl daemon-reload
           ssh deploy-server systemctl stop ono.runway
           ssh deploy-server echo TODO: Database Migration 
           ssh deploy-server systemctl start ono.runway
