@@ -193,6 +193,10 @@ export async function setup() {
 
   await spawn('apt-get', 'autoremove', '-y');
 
+  // TODO: timezone, hostname, /etc/hosts
+
+  // TODO: disable sshd password?
+
   const parallelJobs: Promise<unknown>[] = [];
 
   parallelJobs.push(setupMonitoringTools());
