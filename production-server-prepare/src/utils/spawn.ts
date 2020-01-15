@@ -2,6 +2,7 @@ import {
   spawn as nodeSpawn,
   exec as nodeExec,
   SpawnOptions,
+  ChildProcess,
 } from 'child_process';
 
 import { promisify } from 'util';
@@ -18,7 +19,7 @@ import { promisify } from 'util';
 /**
  * Run a command and send stdout/err to parent's.
  *
- * - Command + args
+ * - Shell
  * - Stream to stdout/stderr
  * - Promised completion
  *
@@ -30,13 +31,13 @@ export function spawn(
   command: string,
   shell: true,
   ...args: string[]
-): Promise<void>;
+): Promise<void> & { child: ChildProcess };
 
 /**
  * Run a command and send stdout/err to parent's.
  *
- * - Command + args
- * - Stream to stdout/stderr
+ * - Shell OR Command + args
+ * - Stream to stdout/stderr (by default)
  * - Promised completion
  *
  * @param command Command to run
@@ -47,7 +48,7 @@ export function spawn(
   command: string,
   options: SpawnOptions,
   ...args: string[]
-): Promise<void>;
+): Promise<void> & { child: ChildProcess };
 
 /**
  * Run a command and send stdout/err to parent's.
@@ -64,20 +65,20 @@ export function spawn(
   command: string,
   first: string | SpawnOptions | true,
   ...args: string[]
-): Promise<void> {
+): Promise<void> & { child: ChildProcess } {
   // console.log('Spawning:', command, ...args);
   const defOpts: SpawnOptions = { stdio: 'inherit' };
 
-  return new Promise((resolve, reject) => {
-    const proc =
-      typeof first === 'string'
-        ? nodeSpawn(command, [first, ...args], defOpts)
-        : nodeSpawn(
-            command,
-            args,
-            first === true ? { ...defOpts, shell: true } : first,
-          );
+  const proc =
+    typeof first === 'string'
+      ? nodeSpawn(command, [first, ...args], defOpts)
+      : nodeSpawn(
+          command,
+          args,
+          first === true ? { ...defOpts, shell: true } : first,
+        );
 
+  const ret = new Promise((resolve, reject) => {
     proc.on('exit', exitCode => {
       if (exitCode) {
         reject(new Error(`Exit code: ${exitCode}`));
@@ -85,7 +86,11 @@ export function spawn(
         resolve();
       }
     });
-  });
+  }) as Promise<void> & { child: ChildProcess };
+
+  ret.child = proc;
+
+  return ret;
 }
 
 /**
