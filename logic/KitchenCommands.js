@@ -262,6 +262,16 @@ const KitchenCommands = {
       // return kitchenState.FrozenFood_StopVibrateAllReady_READ;
     },
   },
+  FrozenJogHopper: {
+    subsystem: 'FrozenFood',
+    pulse: ['JogHopper'],
+    valueParamNames: {
+      SlotToDispense: 'slot',
+    },
+    checkReady: kitchenState => {
+      return kitchenState.FrozenFood_JogHopperReady_READ;
+    },
+  },
   PositionAndDispenseAmount: {
     subsystem: 'FillSystem',
     pulse: ['PositionAndDispenseAmount'],

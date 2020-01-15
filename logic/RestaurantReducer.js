@@ -49,8 +49,11 @@ function handleDisabledFills(state) {
   if (!state.fill) {
     return state;
   }
-  const { fillsCompleted, fillsRemaining, fillsFailed } = state.fill;
+  const { fillsRemaining, fillsFailed, task } = state.fill;
   if (!fillsRemaining) {
+    return state;
+  }
+  if (task && task.customTask) {
     return state;
   }
   const nextFill = fillsRemaining[0];

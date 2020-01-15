@@ -295,6 +295,10 @@ export function useInventoryState() {
       slot.KitchenSystem.Name === 'FrozenFood' &&
       kitchenState &&
       !kitchenState[`FrozenFood_Slot${slot.Slot}EnableHopper_VALUE`];
+    const foodChuteEmpty =
+      slot.KitchenSystem.Name === 'FrozenFood' &&
+      kitchenState &&
+      !kitchenState[`FrozenFood_Slot${slot.Slot}FillChuteIsEmpty_READ`];
     const pumpDisabled =
       slot.KitchenSystem.Name === 'Beverage' &&
       kitchenState &&
@@ -346,6 +350,7 @@ export function useInventoryState() {
       isLowSensed,
       isErrored,
       hopperDisabled,
+      foodChuteEmpty,
       pumpDisabled,
       isEmpty: estimatedRemaining <= 0,
       dispensedSinceLow,

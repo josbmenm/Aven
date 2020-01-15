@@ -205,7 +205,10 @@ function BlendPageContentPure({ menuItem, item, restaurantConfig }) {
           >
             {dietaryInfos &&
               dietaryInfos.map(d => (
-                <View style={{ alignItems: 'center', marginRight: 16 }}>
+                <View
+                  style={{ alignItems: 'center', marginRight: 16 }}
+                  key={d.id}
+                >
                   <AirtableImage
                     key={d.id}
                     image={d.Icon}
