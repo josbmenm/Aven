@@ -40,6 +40,9 @@ deps.push('screen', 'git', 'yarn');
 // SSL Certs
 deps.push('certbot', 'python-certbot-nginx');
 
+// Monitor
+deps.push('cockpit');
+
 async function setupUser() {
   await configureUser(user);
 
@@ -102,6 +105,24 @@ async function setupJournalbeat() {
   // https://www.elastic.co/guide/en/beats/journalbeat/current/journalbeat-configuration.html
 }
 
+async function setupNetdata() {
+  // Nightly is recommended by Netdata https://docs.netdata.cloud/packaging/installer/#nightly-vs-stable-releases
+  // await spawn('bash <(curl -Ss https://my-netdata.io/kickstart.sh) --dont-wait'),
+
+  // Stable
+  await spawn(
+    'bash <(curl -Ss https://my-netdata.io/kickstart-static64.sh) --dont-wait',
+  );
+
+  // TODO: configure to work with nginx?
+}
+
+async function setupCockpit() {
+  // TODO: Setup user password
+
+  // TODO: configure to work with nginx?
+}
+
 async function setupFailureNotificationService() {
   // TODO: Fill out
 
@@ -110,6 +131,17 @@ async function setupFailureNotificationService() {
 
   // Manually with Systemd
   // https://serverfault.com/questions/694818/get-notification-when-systemd-monitored-service-enters-failed-state
+}
+
+async function setupMonitoringTools() {
+  const parallelJobs = [
+    setupJournalbeat(),
+    setupNetdata(),
+    setupCockpit(),
+    setupFailureNotificationService(),
+  ];
+
+  return Promise.all(parallelJobs);
 }
 
 const screenConfig =
@@ -162,9 +194,7 @@ export async function setup() {
 
   const parallelJobs: Promise<unknown>[] = [];
 
-  parallelJobs.push(setupJournalbeat());
-
-  parallelJobs.push(setupFailureNotificationService());
+  parallelJobs.push(setupMonitoringTools());
 
   parallelJobs.push(setupDevTools());
 
