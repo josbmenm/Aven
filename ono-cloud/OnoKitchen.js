@@ -298,7 +298,7 @@ export function useInventoryState() {
     const foodChuteEmpty =
       slot.KitchenSystem.Name === 'FrozenFood' &&
       kitchenState &&
-      !kitchenState[`FrozenFood_Slot${slot.Slot}FillChuteIsEmpty_READ`];
+      kitchenState[`FrozenFood_Slot${slot.Slot}FillChuteIsEmpty_READ`];
     const pumpDisabled =
       slot.KitchenSystem.Name === 'Beverage' &&
       kitchenState &&
