@@ -535,6 +535,19 @@ function RestaurantReducerFn(state = {}, action) {
         },
       });
     }
+    case 'BlendExtra': {
+      if (!state.blend) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        blend: {
+          ...state.blend,
+          extraBlends: (state.blend.extraBlends || 0) + 1,
+          extraBlendsRemaining: (state.blend.extraBlendsRemaining || 0) + 1,
+        },
+      };
+    }
     case 'DidFillSlot': {
       const slotInventory = state.slotInventory || {};
       return {
@@ -580,6 +593,22 @@ function RestaurantReducerFn(state = {}, action) {
         blend: {
           ...state.blend,
           blendCompleteTime: action.dispatchTime,
+        },
+      };
+    }
+    case 'DidBlendExtra': {
+      if (!state.blend) {
+        return defaultReturn();
+      }
+      const extraBlendsRemaining = state.blend.extraBlendsRemaining || 0;
+      if (extraBlendsRemaining <= 0) {
+        return defaultReturn();
+      }
+      return {
+        ...defaultReturn(),
+        blend: {
+          ...state.blend,
+          extraBlendsRemaining: extraBlendsRemaining - 1,
         },
       };
     }

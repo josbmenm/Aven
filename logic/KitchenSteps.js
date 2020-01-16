@@ -404,6 +404,51 @@ const KitchenSteps = [
     }),
   },
   {
+    // blend extra
+
+    getDescription: () => {
+      return 'Blend Extra';
+    },
+    getStateIntent: restaurantState => {
+      if (
+        restaurantState.isDryRunning === true ||
+        !restaurantState.blend ||
+        restaurantState.blend === 'dirty' ||
+        !restaurantState.blend.task ||
+        restaurantState.blend.task.skipBlend ||
+        !restaurantState.blend.blendCompleteTime ||
+        !restaurantState.blend.extraBlendsRemaining
+      ) {
+        return null;
+      }
+      return {
+        taskId: restaurantState.blend.task.id,
+      };
+    },
+    getKitchenCommand: intent => {
+      return {
+        commandType: 'Blend',
+        params: {
+          Timer1: 10000,
+          Speed1: 8500,
+          Pulse1: 2000,
+          Timer2: 5000,
+          Speed2: 9000,
+          Pulse2: 0,
+          Timer3: 0,
+          Speed3: 0,
+          Pulse3: 0,
+          Timer4: 0,
+          Speed4: 0,
+          Pulse4: 0,
+        },
+      };
+    },
+    getSuccessRestaurantAction: intent => ({
+      type: 'DidBlendExtra',
+    }),
+  },
+  {
     // pass cup to delivery
 
     getDescription: () => {
@@ -411,6 +456,9 @@ const KitchenSteps = [
     },
     getStateIntent: restaurantState => {
       if (!restaurantState.blend || restaurantState.blend === 'dirty') {
+        return null;
+      }
+      if (restaurantState.blend.extraBlendsRemaining) {
         return null;
       }
       if (
