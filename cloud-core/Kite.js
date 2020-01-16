@@ -5,7 +5,7 @@ import Err from '../utils/Err';
 import cuid from 'cuid';
 import createDispatcher from '../cloud-utils/createDispatcher';
 import bindCommitDeepBlock from './bindCommitDeepBlock';
-import { error } from '../logger/logger';
+import { error, trace } from '../logger/logger';
 import {
   createProducerStream,
   streamOf,
@@ -22,17 +22,56 @@ function hasDepth(name) {
   return name.match(/\//);
 }
 function valuePluck(o) {
+  if (o === undefined) return undefined;
   return o.value;
 }
 export function valueMap(idAndValue) {
   return idAndValue.map(valuePluck, 'GetValue');
 }
-export function createStreamDoc(idAndValueStream, domain, onGetName) {
+
+function createChildrenCache(onCreateChild) {
+  const children = new Map();
+  function getChild(name) {
+    const nameMatch = name.match(/^([^\/.]*)/);
+    const firstName = nameMatch && nameMatch[0];
+    if (!firstName) {
+      return null;
+    }
+    const restOfName =
+      name.length > firstName.length ? name.slice(firstName.length + 1) : null;
+    if (!nameMatch) {
+      return null;
+    }
+    let childDoc = null;
+    if (children.has(firstName)) {
+      childDoc = children.get(firstName);
+    } else {
+      childDoc = onCreateChild(firstName);
+      children.set(firstName, childDoc);
+    }
+    if (restOfName) {
+      return childDoc.children.get(restOfName);
+    } else {
+      return childDoc;
+    }
+  }
+  return {
+    get: getChild,
+  };
+}
+
+export function createStreamDoc(
+  idAndValueStream,
+  domain,
+  onGetName,
+  onCreateChild,
+) {
   const value = idAndValueStream.map(valuePluck);
   return {
     type: 'StreamDoc',
     value,
     idAndValue: idAndValueStream,
+    children: createChildrenCache(onCreateChild),
     getReference: () => ({
       type: 'StreamDoc',
       name: onGetName(),
@@ -580,11 +619,9 @@ export function createDoc({
       return;
     }
 
-    if (
-      block === null ||
-      isBlockPublished(block) ||
-      !isBlockValueLoaded(block)
-    ) {
+    const isPublished = isBlockPublished(block);
+    const isValueLoaded = isBlockValueLoaded(block);
+    if (block === null || isPublished || !isValueLoaded) {
       const putId = block === null ? null : block.id;
       setDocState({
         puttingFromId: lastId,
@@ -838,6 +875,7 @@ export function createDoc({
     }, 'DropRepeatedIdValues');
 
   const docValue = docIdAndValue.map(idAndValue => {
+    if (idAndValue === undefined) return undefined;
     return idAndValue.value;
   }, 'DocValueStream');
 
@@ -1374,8 +1412,189 @@ export function createReducerStream(
   reducerName,
   { snapshotsDoc } = { snapshotsDoc: null },
 ) {
-  const docStateStreams = new Map();
+  let phase = 'init';
+  let headId = null;
+  let walkBackId = null;
+  let walkForwardBreadcrumbs = [];
+  let rootId = undefined;
+  let currentStepPromise = null;
+  let isReducerExecuting = false;
+  const idRefs = {};
+  const valueMap = new WeakMap();
+  const actionMap = new WeakMap();
+  const primaryStream = combineStreams({
+    sourceDoc: actionsDoc.idAndValue,
+    snapshotValue: snapshotsDoc ? snapshotsDoc.value : streamOfValue(null),
+  }).filter(s => {
+    // this is used to ensure the .load call of a reducer stream will wait for both values to be loaded. By default, combineStreams will eagerly provide a value as soon as any stream is ready
+    return s.sourceDoc !== undefined && s.snapshotValue !== undefined;
+  });
+  let notifier = null;
+  function getId(id) {
+    if (idRefs[id]) {
+      return idRefs[id];
+    }
+    return (idRefs[id] = {});
+  }
+  function getLatestState() {
+    const idRef = getId(headId);
+    const value = valueMap.get(idRef);
+    if (phase === 'ready') {
+      return value;
+    }
+    return {
+      ...(value || {}),
+      unloadedProgress: {
+        phase,
+      },
+    };
+  }
+  function scheduleReducerStep() {
+    isReducerExecuting = true;
+    if (currentStepPromise) return;
+    currentStepPromise = performReducerStep()
+      .catch(e => {
+        console.error('Bad Step: ', e);
+      })
+      .finally(() => {
+        currentStepPromise = null;
+        if (isReducerExecuting) {
+          scheduleReducerStep();
+        }
+      });
+  }
+  function pauseReducerExecution() {
+    isReducerExecuting = false;
+  }
+  async function performReducerStep() {
+    if (!isReducerExecuting) {
+      return;
+    }
+    if (headId != null && !valueMap.has(getId(headId))) {
+      phase = 'research';
+    }
+    if (phase !== 'research') {
+      pauseReducerExecution();
+      return;
+    }
+    if (rootId === undefined) {
+      // the rootId is not yet determined, so we walk back..
+      const researchIdString = walkBackId || headId;
+      const researchId = getId(researchIdString);
+      if (valueMap.has(researchId)) {
+        rootId = researchIdString;
+      } else {
+        let actionValue = actionMap.get(researchId);
+        if (!actionValue) {
+          const researchBlock = actionsDoc.getBlock(researchIdString);
+          actionValue = await researchBlock.value.load();
+          actionMap.set(researchId, actionValue);
+        }
+        if (researchIdString) {
+          walkForwardBreadcrumbs.push(researchIdString);
+        }
+        if (actionValue === null || actionValue.on === null) {
+          rootId = researchIdString;
+        } else if (actionValue.on && actionValue.on.id) {
+          walkBackId = actionValue.on.id;
+        }
+      }
+    } else if (walkForwardBreadcrumbs.length === 0) {
+      if (valueMap.has(getId(headId))) {
+        phase = 'ready';
+      } else {
+        // we are effectively stuck/stumped. restart the process by clearing rootId and walkBackId
+        rootId = undefined;
+        walkBackId = undefined;
+      }
+    } else {
+      // the rootId is known! We are now executing forward..
+      const walkIdString = walkForwardBreadcrumbs.pop();
+      const walkId = getId(walkIdString);
+      const actionValue = actionMap.get(walkId);
+      if (!valueMap.has(walkId)) {
+        // if the value has already been calculated.. great!
+        const prevState =
+          actionValue && actionValue.on
+            ? valueMap.get(getId(actionValue.on.id))
+            : { value: initialState, context: { gen: 0 } };
+        const newState = reducerFn(prevState.value, actionValue.value);
+        const newId = getIdOfValue(newState).id;
+        valueMap.set(walkId, {
+          value: newState,
+          id: newId,
+          context: {
+            type: 'ReducedStream',
+            reducerName,
+            docName: actionsDoc.getName(),
+            rootDocId: rootId,
+            docId: walkIdString,
+            gen: prevState.context.gen + 1,
+          },
+        });
+      }
+      if (walkIdString === headId) {
+        phase = 'ready';
+        walkBackId = null;
+      }
+    }
+    notifier && notifier.next(getLatestState());
+  }
+  const listener = {
+    next: ({ sourceDoc, snapshotValue }) => {
+      if (sourceDoc.value && sourceDoc.id) {
+        actionMap.set(getId(sourceDoc.id), sourceDoc.value);
+      }
+      if (
+        snapshotValue &&
+        snapshotValue.context &&
+        snapshotValue.context.reducerName === reducerName
+      ) {
+        const { docId } = snapshotValue.context;
+        const idRef = getId(docId);
+        if (!valueMap.has(idRef)) {
+          valueMap.set(idRef, snapshotValue);
+        }
+      }
+      if (sourceDoc.id !== headId) {
+        headId = sourceDoc.id;
+        // rootId = null;
+      }
+      if (headId && phase === 'init') {
+        phase = 'research';
+      }
+      if (headId && phase === 'research' && valueMap.has(getId(headId))) {
+        phase = 'ready';
+      }
+      scheduleReducerStep();
+      notifier && notifier.next(getLatestState());
+    },
+    error: err => {
+      notifier && notifier.error(err); // todo, wrap err properly.
+    },
+  };
+  return createProducerStream({
+    crumb: `reduced:${reducerName}`,
+    start: notify => {
+      notifier = notify;
+      primaryStream.addListener(listener);
+    },
+    stop: () => {
+      primaryStream.removeListener(listener);
+      pauseReducerExecution();
+    },
+  });
+}
 
+export function createStackReducerStream(
+  // export function createReducerStream(
+  actionsDoc,
+  reducerFn,
+  initialState,
+  reducerName,
+  { snapshotsDoc } = { snapshotsDoc: null },
+) {
+  const docStateStreams = new Map();
   function getDocStateStream(id, depth = 0) {
     if (id === undefined) {
       return streamNever('UndefinedId');
@@ -1498,23 +1717,46 @@ export function createSessionClient({
       {
         snapshotsDoc,
       },
-    ).spy(async update => {
-      if (update.next && snapshotsDoc) {
-        const { context, id, value } = update.next;
-        const lastSnapshot = await snapshotsDoc.value.load();
-        if (
-          lastSnapshot === null ||
-          lastSnapshot === undefined ||
-          lastSnapshot.context === undefined ||
-          lastSnapshot.context === null ||
-          (context &&
-            lastSnapshot.context.gen <= context.gen - snapshotInterval) ||
-          lastSnapshot.context.rootDocId !== context.rootDocId
-        ) {
-          await snapshotsDoc.putValue({ context, id, value });
-        }
-      }
-    });
+    )
+      .filter(streamState => {
+        return !!streamState && !streamState.unloadedProgress;
+      })
+      .spy(update => {
+        (async () => {
+          if (update.next && snapshotsDoc) {
+            const lastSnapshot = await snapshotsDoc.value.load();
+            if (
+              lastSnapshot === null ||
+              lastSnapshot === undefined ||
+              lastSnapshot.context === undefined ||
+              lastSnapshot.context === null ||
+              (update.next.context &&
+                lastSnapshot.context.gen <=
+                  update.next.gen - snapshotInterval) ||
+              (update.next.context &&
+                lastSnapshot.context.rootDocId !==
+                  update.next.context.rootDocId)
+            ) {
+              const { context, id, value } = update.next;
+              await snapshotsDoc.putValue({ context, id, value });
+              return { id, value, context };
+            }
+          }
+          return false;
+        })()
+          .then(hasWritten => {
+            hasWritten &&
+              trace('SnapshotStored', {
+                ...hasWritten.context,
+              });
+          })
+          .catch(e => {
+            error('SnapshotWriteError', {
+              error: e,
+              name: snapshotsDoc.getName(),
+            });
+          });
+      });
     docs.setOverrideStream(resultStateDocName, stream);
     return docs.get(resultStateDocName);
   }
@@ -1643,24 +1885,19 @@ export function createLocalSessionClient({
 }
 
 export function createSyntheticDoc({ onCreateChild }) {
-  const children = new Map();
-  function getChild(name) {
-    if (children.has(name)) {
-      return children.get(name);
-    }
-    const child = onCreateChild(name);
-    children.set(name, child);
-    return child;
-  }
-
   return {
-    children: {
-      get: getChild,
-    },
+    type: 'SyntheticDoc',
+    children: createChildrenCache(onCreateChild),
   };
 }
 
-export function createReducedDoc({ actions, reducer, domain, onGetName }) {
+export function createReducedDoc({
+  actions,
+  reducer,
+  domain,
+  onGetName,
+  onCreateChild,
+}) {
   const reducerStream = createReducerStream(
     actions,
     reducer.reducerFn,
@@ -1668,7 +1905,12 @@ export function createReducedDoc({ actions, reducer, domain, onGetName }) {
     reducer.reducerName,
     {},
   );
-  const streamDoc = createStreamDoc(reducerStream, domain, onGetName);
+  const streamDoc = createStreamDoc(
+    reducerStream,
+    domain,
+    onGetName,
+    onCreateChild,
+  );
   return streamDoc;
 }
 
