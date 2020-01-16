@@ -197,6 +197,7 @@ export function createBlock({
       notifyStateChange = null;
       onStop = null;
     },
+    getDetachedValue: () => blockState,
   });
 
   const blockValueStream = blockStream
@@ -444,6 +445,7 @@ export function createDoc({
       doStop && doStop();
       doStop = null;
     },
+    getDetachedValue: () => docState,
   };
   const docStream = createProducerStream(docProducer);
 

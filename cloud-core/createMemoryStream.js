@@ -71,7 +71,7 @@ export function combineStreams(inputs) {
   const lastValues = {};
   const entries = Object.fromEntries(
     inputEntries.map(([key, inputStream]) => {
-      return [key, inputStream.crumb];
+      return [key, inputStream && inputStream.crumb];
     }),
   );
 
@@ -89,6 +89,7 @@ export function combineStreams(inputs) {
         }, 1);
       }
       inputEntries.forEach(([inputName, inputStream]) => {
+        if (!inputStream) return;
         const listener = {
           next: v => {
             if (lastValues[inputName] === v) {
@@ -342,6 +343,9 @@ function mapStream(stream, mapper, mapDescriptor) {
         listener = null;
       }
     },
+    getDetachedValue: () => {
+      return mapper(stream.get());
+    },
   });
 }
 
@@ -363,6 +367,9 @@ function loadStream(stream) {
     }
     loadListener = {
       next: value => {
+        if (value && value.unloadedProgress) {
+          return;
+        }
         resolve(value);
         wrapUp();
       },
@@ -509,7 +516,12 @@ export function createProducerStream(producer) {
     crumb,
     addListener,
     removeListener,
-    get: () => lastValue,
+    get: () => {
+      if (lastValue !== undefined) return lastValue;
+      if (!isListening && producer.getDetachedValue)
+        return producer.getDetachedValue();
+      return undefined;
+    },
   };
   augmentStream(stream);
   return stream;
