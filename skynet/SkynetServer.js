@@ -185,6 +185,9 @@ export default async function startSkynetServer(httpServer) {
           reducer: OrderReducer,
           onGetName: () => `OrderState/${orderId}`,
           domain: 'onofood.co',
+          onCreateChild: childName => {
+            return null;
+          },
         });
       },
     }),
