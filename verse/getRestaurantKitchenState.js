@@ -30,6 +30,5 @@ export default function getRestaurantKitchenState(
     Beverage_Slot3EnablePump_VALUE:
       !restaurantState.disableBeveragePumps && pumpIngredientEnabled(3),
   };
-  console.log('hello', writeKitchenValues);
   return writeKitchenValues;
 }
