@@ -35,11 +35,15 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@master
 
-      - name: Cache node_modules
+      - name: Npm Cache
         uses: actions/cache@v1
         with:
-          path: node_modules
-          key: prepare-server-${{ runner.os }}-node_modules
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: npm-${{ runner.os }}-node-${{ hashFiles('production-server-prepare/**/package-lock.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-build-${{ env.cache-name }}-
+            npm-${{ runner.os }}-build-
+            npm-${{ runner.os }}-
 
       - name: Configure Npm
         run: |
@@ -96,10 +100,12 @@ jobs:
       - name: Cache node_modules
         uses: actions/cache@v1
         with:
-          path: node_modules
-          key: deploy-skynet-${{ runner.os }}-node_modules
-
-      
+          path: ~/.config/yarn/global
+          key: yarn-${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-${{ runner.os }}-build-${{ env.cache-name }}-
+            yarn-${{ runner.os }}-build-
+            yarn-${{ runner.os }}-
 
       - name: Configure Yarn
         run: | # I think yarn loads these
