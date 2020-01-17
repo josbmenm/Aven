@@ -199,7 +199,7 @@ jobs:
         run: ':'
 
       - name: Rsync build
-        run: rsync --recursive --links --delete ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
+        run: rsync --recursive --links --delete ${{ steps.build.outputs.path }}/ deploy-server:/home/prod/production
 
       - name: Copy Secrets and Configs
         run: scp secrets.conf configs.conf deploy-server:/etc/systemd/system/ono.runway.service.d/
