@@ -10,8 +10,7 @@ import { promises } from 'fs';
 const { mkdir } = promises;
 
 import sources from './constants/Dev.authorized_keys.Source.json';
-
-const setupDomains = ['skynet.onoblends.co'];
+import { setupNginx } from './setupNginx';
 
 const user = 'prod';
 
@@ -38,7 +37,7 @@ deps.push('nginx');
 deps.push('screen', 'git', 'yarn');
 
 // SSL Certs
-deps.push('certbot', 'python-certbot-nginx');
+deps.push('certbot');
 
 // Monitor
 deps.push('cockpit');
@@ -50,35 +49,6 @@ async function setupUser() {
   for (const url of sources) {
     ensureKeys(user, await request(url));
   }
-}
-
-async function setupNginx() {
-  // Setup certbot
-  await spawn(
-    'certbot',
-    // Use nginx plugin (python-certbot-nginx)
-    '--nginx',
-
-    // Prevent interactivity
-    '--noninteractive',
-
-    // Always agree
-    '--agree-tos',
-
-    // Registered e-mail
-    '-m',
-    'admin@onofood.co',
-
-    // Add a "-d" before each domain
-    ...setupDomains.reduce<string[]>(
-      (res, current) => res.concat('-d', current),
-      [],
-    ),
-  );
-
-  // TODO: Update nginx config
-
-  await exec(`systemctl reload nginx.service`);
 }
 
 async function setupMainServiceFiles() {
