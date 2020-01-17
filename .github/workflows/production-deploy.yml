@@ -112,7 +112,7 @@ jobs:
         run: |
           echo "::set-output name=dir::$(yarn cache dir)"
           ls -l $(yarn cache dir) || :
-          du -h $(yarn cache dir) || :
+          du -hs $(yarn cache dir) || :
 
       - name: Cache Yarn
         uses: actions/cache@v1
@@ -144,7 +144,7 @@ jobs:
       - name: debug
         run: |
           ls -l $(yarn cache dir) || :
-          du -h $(yarn cache dir) || :
+          du -hs $(yarn cache dir) || :
 
       - name: --------- Build Skynet ----------------------------------------------------------------------------------
         run: ':'
