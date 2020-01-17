@@ -84,6 +84,8 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@master
 
+      - name: --------- Setup Environment ---------
+
       - name: Configure Yarn
         run: | # I think yarn loads these
           echo "color = always" >> .npmrc
@@ -91,19 +93,12 @@ jobs:
       - name: Install Dependencies
         run: yarn
 
+      - name: --------- Build ---------
+
       - name: Build Skynet
         id: build
         # Has output: steps.build.outputs.path
         run: yarn deploy skynet
-
-      - name: Install key file
-        id: key
-        env:
-          KEY: ${{ secrets.SKYNET_DEPLOY_KEY }}
-        run: |
-          echo "$KEY" > deploy.key
-          chmod go-rwx deploy.key
-          echo "::set-output name=filename::$(pwd)/deploy.key"
 
       - name: Build Secrets File
         env:
@@ -155,6 +150,17 @@ jobs:
           echo Environment=SQL_USE_SSL="${SQL_USE_SSL}" >> configs.conf
           echo Environment=TWILIO_FROM_NUMBER="${TWILIO_FROM_NUMBER}" >> configs.conf
 
+      - name: --------- Setup Deploy Credentials ---------
+
+      - name: Install key file
+        id: key
+        env:
+          KEY: ${{ secrets.SKYNET_DEPLOY_KEY }}
+        run: |
+          echo "$KEY" > deploy.key
+          chmod go-rwx deploy.key
+          echo "::set-output name=filename::$(pwd)/deploy.key"
+
       - name: Add SSH configs
         run: |
           mkdir -p ~/.ssh
@@ -166,23 +172,26 @@ jobs:
           echo CheckHostIP no >> ~/.ssh/config
           echo IdentityFile ${{ steps.key.outputs.filename }} >> ~/.ssh/config
 
-      - name: Deploy on Remote
-        run: |
-          rsync -a --delete ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
-      - run: |
-          scp -Cr ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
-      - run: |
-          scp -r ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
-      - run: |
-          scp secrets.conf configs.conf deploy-server:/etc/systemd/system/ono.runway.service.d/
-      - run: |
-          ssh deploy-server systemctl daemon-reload
-      - run: |
-          ssh deploy-server systemctl stop ono.runway
-      - run: |
-          ssh deploy-server echo TODO: Database Migration 
-      - run: |
-          ssh deploy-server systemctl start ono.runway
+      - name: --------- Connect To Remote ---------
+
+      - name: Rsync build
+        run: rsync -r --delete ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
+
+      - name: Copy Secrets and Configs
+        run: scp secrets.conf configs.conf deploy-server:/etc/systemd/system/ono.runway.service.d/
+
+      - name: Reload Systemd Configs
+        run: ssh deploy-server systemctl daemon-reload
+
+      - name: Stop Production Server
+        run: ssh deploy-server systemctl stop ono.runway
+
+      - name: Database Migration
+        continue-on-error: true # or maybe we shouldn't
+        run: 'ssh deploy-server echo TODO: Database Migration'
+
+      - run: Restart Production Server
+        run: ssh deploy-server systemctl start ono.runway
 
       - name: Cleanup
         if: always()
