@@ -168,7 +168,11 @@ jobs:
 
       - name: Deploy on Remote
         run: |
+          rsync -a --delete ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
+        run: |
           scp -Cr ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
+        run: |
+          scp -r ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
       - run: |
           scp secrets.conf configs.conf deploy-server:/etc/systemd/system/ono.runway.service.d/
       - run: |
