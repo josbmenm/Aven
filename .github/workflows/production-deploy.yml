@@ -97,7 +97,7 @@ jobs:
       - name: --------- Setup Environment -----------------------------------------------------------------------------
         run: ':'
 
-      - name: Cache node_modules
+      - name: Cache Yarn
         uses: actions/cache@v1
         with:
           path: ~/.config/yarn/global
