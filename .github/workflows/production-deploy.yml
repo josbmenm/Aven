@@ -139,7 +139,7 @@ jobs:
           echo "color = always" >> .npmrc
 
       - name: Install Dependencies
-        run: yarn
+        run: yarn install --frozen-lockfile
 
       - name: debug
         run: |
