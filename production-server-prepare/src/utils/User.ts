@@ -45,7 +45,7 @@ export async function configureUser(name: string) {
     // TODO: `usermod` to make sure user options are consistent (in case they change)
   });
 
-  await mkdir(`/home/${name}/.ssh`).catch(() => {});
+  await mkdir(`/home/${name}/.ssh`, { recursive: true });
   await fixKnownHosts(`/home/${name}`);
 }
 
@@ -54,7 +54,7 @@ export async function ensureKeys(user: string, keys: string) {
 }
 
 export async function fixKnownHosts(userDir: string) {
-  await mkdir(join(userDir, '.ssh')).catch(() => {});
+  await mkdir(join(userDir, '.ssh'), { recursive: true });
 
   return ensureFileContains(
     join(userDir, '.ssh', 'known_hosts'),
