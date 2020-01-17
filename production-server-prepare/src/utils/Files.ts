@@ -23,3 +23,14 @@ export async function ensureFileIs(
 
   return writeFile(filename, contents);
 }
+
+export async function ensureFilesAre(
+  list: {
+    filename: string;
+    contents: string;
+  }[],
+): Promise<void> {
+  await Promise.all(
+    list.map(({ filename, contents }) => ensureFileIs(filename, contents)),
+  );
+}
