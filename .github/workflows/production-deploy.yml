@@ -107,6 +107,16 @@ jobs:
             yarn-${{ runner.os }}-build-
             yarn-${{ runner.os }}-
 
+      - name: Cache node_modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: deploy-skynet-modules-${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            deploy-skynet-modules-${{ runner.os }}-build-${{ env.cache-name }}-
+            deploy-skynet-modules-${{ runner.os }}-build-
+            deploy-skynet-modules-${{ runner.os }}-
+
       - name: Configure Yarn
         run: | # I think yarn loads these
           echo "color = always" >> .npmrc
