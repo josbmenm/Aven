@@ -82,7 +82,7 @@ async function setupNginx() {
 }
 
 async function setupMainServiceFiles() {
-  const dir = mkdir(`/etc/systemd/system/${serviceName}.d`).catch(() => {});
+  const dir = mkdir(`/etc/systemd/system/${serviceName}.service.d`).catch(() => {});
 
   await ensureFileIs(
     `/etc/systemd/system/${serviceName}.service`,
