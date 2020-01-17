@@ -169,7 +169,7 @@ jobs:
       - name: Deploy on Remote
         run: |
           scp -Cr ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
-          scp secrets.conf configs.conf deploy-server:/etc/systemd/system/ono.runway.d/
+          scp secrets.conf configs.conf deploy-server:/etc/systemd/system/ono.runway.service.d/
           ssh deploy-server systemctl daemon-reload
           ssh deploy-server systemctl stop ono.runway
           ssh deploy-server echo TODO: Database Migration 
