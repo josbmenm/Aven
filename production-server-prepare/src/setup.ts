@@ -23,7 +23,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/node /home/${user}/production
+ExecStart=/usr/bin/node /home/${user}/production/build/server
 User=${user}
 
 [Install]
