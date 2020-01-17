@@ -124,6 +124,10 @@ jobs:
       - name: Install Dependencies
         run: yarn
 
+      - name: debug
+        run: ls -l ~/.config/yarn/global
+        continue-on-error: true
+
       - name: --------- Build Skynet ----------------------------------------------------------------------------------
         run: ':'
 
