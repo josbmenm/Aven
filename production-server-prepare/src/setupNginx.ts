@@ -197,7 +197,7 @@ async function setupNginxSnips() {
 }
 
 async function setupNginxConfs() {
-  const dir = '/etc/nginx/snips';
+  const dir = '/etc/nginx/conf.d';
 
   await mkdir(dir, { recursive: true });
 
