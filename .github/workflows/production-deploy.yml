@@ -39,7 +39,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: npm-${{ runner.os }}-node-${{ hashFiles('production-server-prepare/**/package-lock.json') }}
+          key: npm-${{ runner.os }}-node-${{ hashFiles('production-server-prepare/package-lock.json') }}
           restore-keys: |
             npm-${{ runner.os }}-build-${{ env.cache-name }}-
             npm-${{ runner.os }}-build-
