@@ -190,7 +190,7 @@ jobs:
         continue-on-error: true # or maybe we shouldn't
         run: 'ssh deploy-server echo TODO: Database Migration'
 
-      - run: Restart Production Server
+      - name: Restart Production Server
         run: ssh deploy-server systemctl start ono.runway
 
       - name: Cleanup
