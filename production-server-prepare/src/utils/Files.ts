@@ -17,6 +17,7 @@ export async function ensureFileIs(
   filename: string,
   contents: string,
 ): Promise<void> {
+  // We could just skip the read part of this but this preserves modification times
   const current = (await readFile(filename).catch(() => '')).toString();
 
   if (current == contents) return;
