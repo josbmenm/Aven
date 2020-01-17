@@ -84,7 +84,7 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@master
 
-      - name: --------- Setup Environment ---------
+      - run: ': --------- Setup Environment --------- :'
 
       - name: Configure Yarn
         run: | # I think yarn loads these
@@ -93,7 +93,7 @@ jobs:
       - name: Install Dependencies
         run: yarn
 
-      - name: --------- Build ---------
+      - run: ': --------- Build --------- :'
 
       - name: Build Skynet
         id: build
@@ -150,7 +150,7 @@ jobs:
           echo Environment=SQL_USE_SSL="${SQL_USE_SSL}" >> configs.conf
           echo Environment=TWILIO_FROM_NUMBER="${TWILIO_FROM_NUMBER}" >> configs.conf
 
-      - name: --------- Setup Deploy Credentials ---------
+      - run: ': --------- Setup Deploy Credentials --------- :'
 
       - name: Install key file
         id: key
@@ -172,7 +172,7 @@ jobs:
           echo CheckHostIP no >> ~/.ssh/config
           echo IdentityFile ${{ steps.key.outputs.filename }} >> ~/.ssh/config
 
-      - name: --------- Connect To Remote ---------
+      - run: ': --------- Connect To Remote --------- :'
 
       - name: Rsync build
         run: rsync -r --delete ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
