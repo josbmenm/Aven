@@ -23,7 +23,7 @@ on:
 
 jobs:
   prepare-server:
-    name: Prepare Server that we will run on
+    name: Prepare Production Server
     runs-on: ubuntu-latest
 
     steps:
@@ -169,10 +169,15 @@ jobs:
       - name: Deploy on Remote
         run: |
           scp -Cr ${{ steps.build.outputs.path }} deploy-server:/home/prod/production
+      - run: |
           scp secrets.conf configs.conf deploy-server:/etc/systemd/system/ono.runway.service.d/
+      - run: |
           ssh deploy-server systemctl daemon-reload
+      - run: |
           ssh deploy-server systemctl stop ono.runway
+      - run: |
           ssh deploy-server echo TODO: Database Migration 
+      - run: |
           ssh deploy-server systemctl start ono.runway
 
       - name: Cleanup
