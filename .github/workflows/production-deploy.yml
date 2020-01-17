@@ -35,6 +35,12 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@master
 
+      - name: Cache node_modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: prepare-server-${{ runner.os }}-node_modules
+
       - name: Configure Npm
         run: |
           echo "color = always" >> .npmrc
@@ -83,6 +89,12 @@ jobs:
     steps:
       - name: Checkout master
         uses: actions/checkout@master
+
+      - name: Cache node_modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: deploy-skynet-${{ runner.os }}-node_modules
 
       - run: ': --------- Setup Environment --------- :'
 
