@@ -192,7 +192,14 @@ export async function setup() {
 
   await spawn('apt-get', 'upgrade', '-y');
 
-  await spawn('apt-get', 'install', '-y', ...deps);
+  await spawn(
+    'apt-get',
+    // Avoid all interactive prompts https://serverfault.com/questions/227190
+    { stdio: 'inherit', env: { DEBIAN_FRONTEND: 'noninteractive' } },
+    'install',
+    '-yq',
+    ...deps,
+  );
 
   await spawn('apt-get', 'autoremove', '-y');
 
