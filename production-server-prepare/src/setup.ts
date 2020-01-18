@@ -22,6 +22,7 @@ After=network.target
 
 [Service]
 Type=simple
+Environment=PORT="8840"
 WorkingDirectory=/home/${user}/production
 ExecStart=/usr/bin/node /home/${user}/production/build/server
 User=${user}
@@ -94,16 +95,13 @@ async function setupNetdata() {
 
 async function setupCockpit() {
   // TODO: Setup user password
-
   // TODO: configure to work with nginx?
 }
 
 async function setupFailureNotificationService() {
   // TODO: Fill out
-
   // Ruby Service
   // https://github.com/joonty/systemd_mon
-
   // Manually with Systemd
   // https://serverfault.com/questions/694818/get-notification-when-systemd-monitored-service-enters-failed-state
 }
