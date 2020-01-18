@@ -22,6 +22,7 @@ After=network.target
 
 [Service]
 Type=simple
+WorkingDirectory=/home/${user}/production
 ExecStart=/usr/bin/node /home/${user}/production/build/server
 User=${user}
 
