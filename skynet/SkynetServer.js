@@ -675,7 +675,6 @@ Debug: ${JSON.stringify(action)}
     }
   }
 
-  const serverListenLocation = getEnv('PORT');
   const webService = await attachWebServer({
     httpServer,
     context,
@@ -703,7 +702,10 @@ Debug: ${JSON.stringify(action)}
         geoip: geoip.lookup(ip),
       };
     },
-    serverListenLocation,
+    serverListenLocation: {
+      host: getEnv('LISTEN_HOST'),
+      port: getEnv('PORT'),
+    },
     assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
   });
   console.log('☁️️ Web Ready 🕸');

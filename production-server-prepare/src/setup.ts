@@ -23,6 +23,7 @@ After=network.target
 [Service]
 Type=simple
 Environment=PORT="8840"
+Environment=LISTEN_HOST="0.0.0.0"
 WorkingDirectory=/home/${user}/production
 ExecStart=/usr/bin/node /home/${user}/production/build/server
 User=${user}
