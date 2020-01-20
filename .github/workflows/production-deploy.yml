@@ -59,9 +59,13 @@ jobs:
         run: |
           echo "color = always" >> .npmrc
 
-      - name: Install Dependencies & Build
+      - name: Install Dependencies
         working-directory: production-server-prepare
-        run: npm install
+        run: npm ci
+
+      - name: Build Script for remote server setup
+        working-directory: production-server-prepare
+        run: npm build
 
       - name: Install key file
         id: key
