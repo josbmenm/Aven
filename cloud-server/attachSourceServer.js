@@ -74,7 +74,6 @@ export default async function attachSourceServer({
     await startServer(freshHttpServer, listenLocation);
 
     log('ServerStarted', { listenLocation, host: process.env.HOST });
-    IS_DEV && console.log(`http://localhost:${listenLocation}`);
   }
 
   const wss = new WebSocket.Server({ server: outputServer });
