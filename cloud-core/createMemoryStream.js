@@ -146,6 +146,11 @@ function filterStream(stream, filterFn, filterDescriptor) {
         listener = null;
       }
     },
+    getDetachedValue: () => {
+      const gotten = stream.get();
+      if (filterFn(gotten)) return gotten;
+      return undefined;
+    },
   });
 }
 
