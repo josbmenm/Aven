@@ -27,7 +27,16 @@ export default function EmailAuthProvider({ agent, getMessage }) {
     });
   }
 
+  function getSuggestedNameOfInfo(verificationInfo) {
+    const match = verificationInfo.email.match(/([^@].*)@/);
+    if (match) {
+      return match[1];
+    }
+    return null;
+  }
+
   return createMessageAuthProvider({
+    getSuggestedNameOfInfo,
     authProviderName,
     sendVerification,
     identifyInfo,

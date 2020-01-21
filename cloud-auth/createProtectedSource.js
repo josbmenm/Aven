@@ -59,7 +59,6 @@ export default function createProtectedSource({
         accountId: auth.accountId,
         verificationResponse: auth.verificationResponse,
       });
-
       if (
         !v ||
         !v.accountId ||
@@ -101,6 +100,7 @@ export default function createProtectedSource({
     providerId,
     domain,
     accountId,
+    onGetSuggestedId,
   }) {
     const providerAccountLookupName = `auth/provider/${providerId}`;
     const accountLookup = await getDocValue(
@@ -120,12 +120,21 @@ export default function createProtectedSource({
     }
     let newAuthProviderAccountId = accountId;
     if (!newAuthProviderAccountId) {
-      newAuthProviderAccountId = await CreateAnonymousAccount({ domain });
+      newAuthProviderAccountId = await CreateAnonymousAccount({
+        domain,
+        onGetSuggestedId,
+      });
     }
-    await writeDocValue(source, domain, providerAccountLookupName, {
+    const providerState = {
       accountId: newAuthProviderAccountId,
       creationTime: Date.now(),
-    });
+    };
+    await writeDocValue(
+      source,
+      domain,
+      providerAccountLookupName,
+      providerState,
+    );
     return newAuthProviderAccountId;
   }
 
@@ -150,6 +159,14 @@ export default function createProtectedSource({
           providerId,
           accountId,
           domain,
+          onGetSuggestedId: () => {
+            if (providerToValidate.getSuggestedNameOfInfo) {
+              return providerToValidate.getSuggestedNameOfInfo(
+                verificationInfo,
+              );
+            }
+            return null;
+          },
         });
 
         const providerStateDocName = `auth/account/${authenticatingAccountId}/provider/${providerId}`;
@@ -315,6 +332,7 @@ export default function createProtectedSource({
       providerId: verification.verifiedProviderId,
       token,
       provider: verification.verifiedProviderName,
+      verificationInfo,
     };
     await writeDocValue(
       source,
@@ -327,8 +345,16 @@ export default function createProtectedSource({
     };
   }
 
-  async function CreateAnonymousAccount({ domain }) {
-    const accountId = uuid();
+  async function CreateAnonymousAccount({ domain, onGetSuggestedId }) {
+    let accountId = onGetSuggestedId();
+    const prevAccount = await getDocValue(
+      source,
+      domain,
+      `auth/account/${accountId}`,
+    );
+    if (prevAccount) {
+      accountId = uuid();
+    }
     const account = {
       timeCreated: Date.now(),
     };
@@ -426,6 +452,28 @@ export default function createProtectedSource({
     return docName;
   }
 
+  function matchSelector(selector, validatedAuth) {
+    switch (selector.type) {
+      case 'EmailRegex': {
+        const matcher = new RegExp(selector.emailRegexMatch);
+        if (
+          !validatedAuth ||
+          validatedAuth.provider !== 'email' ||
+          !validatedAuth.verificationInfo ||
+          !validatedAuth.verificationInfo.email
+        ) {
+          return false;
+        }
+        if (validatedAuth.verificationInfo.email.match(matcher)) {
+          return true;
+        }
+        return false;
+      }
+      default:
+        return false;
+    }
+  }
+
   async function GetPermissions({ auth, name, domain }) {
     const validatedAuth = await VerifyAuth({ auth, domain });
 
@@ -484,6 +532,11 @@ export default function createProtectedSource({
         validatedAuth &&
         permissions.accountRules[validatedAuth.accountId] &&
         applyRule(permissions.accountRules[validatedAuth.accountId]);
+      if (permissions && permissions.selector) {
+        if (matchSelector(permissions.selector, validatedAuth)) {
+          applyRule(permissions.selector.rule);
+        }
+      }
     });
 
     if (isRootAccount || userDoesOwn) {

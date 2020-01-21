@@ -1,9 +1,11 @@
-import { checksum, genAuthCode } from '../cloud-utils/Crypto';
+import { checksum, genAuthCode, genKey } from '../cloud-utils/Crypto';
 
 export default function createMessageAuthProvider({
   authProviderName,
   sendVerification,
   identifyInfo,
+  getSuggestedNameOfInfo,
+  verificationExpirationHours = 2,
 }) {
   function canVerify(verificationInfo) {
     if (identifyInfo(verificationInfo) === null) {
@@ -28,12 +30,17 @@ export default function createMessageAuthProvider({
     // todo, check recent verification send time and avoid sending again
     await sendVerification(verificationInfo, verificationKey, accountId);
 
+    const token = await genKey();
+
     return {
       ...providerState,
       verificationKey,
       verificationSendTime: Date.now(),
+      challengeToken: token,
       verificationChallenge: {
         ...verificationInfo,
+        token,
+        hoursRemaining: verificationExpirationHours,
       },
       verificationInfo,
     };
@@ -44,7 +51,14 @@ export default function createMessageAuthProvider({
       throw new Error('Invalid auth verification');
     }
     // todo check expiry time
-
+    const sendTime = providerState.verificationSendTime;
+    const now = Date.now();
+    if (sendTime + verificationExpirationHours * 60 * 60 * 1000 < now) {
+      throw new Error('Auth verification expired');
+    }
+    if (verificationResponse.token !== providerState.challengeToken) {
+      throw new Error('Invalid auth verification');
+    }
     if (verificationResponse.key !== providerState.verificationKey) {
       throw new Error('Invalid auth verification');
     }
@@ -62,5 +76,6 @@ export default function createMessageAuthProvider({
     requestVerification,
     performVerification,
     getProviderId,
+    getSuggestedNameOfInfo,
   };
 }

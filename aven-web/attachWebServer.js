@@ -3,11 +3,13 @@ import ReactDOMServer from 'react-dom/server';
 import { AppRegistry } from 'react-native-web';
 import React from 'react';
 import attachSourceServer from '../cloud-server/attachSourceServer';
+import { CloudContext } from '../cloud-core/KiteReact';
 
 import NavigationContext from '../navigation-core/views/NavigationContext';
 import handleServerRequest from '../navigation-web/handleServerRequest';
 import Buffer from '../utils/Buffer';
 import { trace, error } from '../logger/logger';
+import { createClient } from '../cloud-core/Kite';
 const yes = require('yes-https');
 const helmet = require('helmet');
 const path = require('path');
@@ -110,6 +112,7 @@ export default async function attachWebServer({
   expressRouting = undefined,
   fallbackExpressRouting = undefined,
   assets,
+  sourceDomain,
   domainAppOverrides,
   augmentRequestDispatchAction,
   screenProps,
@@ -129,6 +132,13 @@ export default async function attachWebServer({
             {el}
           </NavigationContext.Provider>
         );
+        if (props.cloudClient) {
+          el = (
+            <CloudContext.Provider value={props.cloudClient}>
+              {el}
+            </CloudContext.Provider>
+          );
+        }
         return el;
       }
       return AppWithContext;
@@ -207,15 +217,33 @@ export default async function attachWebServer({
     app.get('/*', (req, res) => {
       const { path, query, headers } = req;
       const domain = headers.host;
+      let avenClientState = {};
+      headers.cookie &&
+        headers.cookie.split(';').find(cookieStr => {
+          const match = cookieStr.match(/AvenClient=([^;]*)/);
+          if (match) {
+            avenClientState = JSON.parse(decodeURIComponent(match[1]));
+          }
+        });
+      const cloudClient = createClient({
+        source,
+        domain: sourceDomain,
+        initialClientState: avenClientState,
+        onClientState: state => {
+          res.cookie('AvenClient', encodeURIComponent(JSON.stringify(state)));
+        },
+      });
       const domainApp = appsByDomain[domain] || defaultApp;
       const router = domainApp.AppComponent.router;
-      handleServerRequest(router, path, query, screenProps)
+      const requestScreenProps = { ...screenProps, cloud: cloudClient };
+      handleServerRequest(router, path, query, requestScreenProps)
         .then(({ navigation, title, options, dataPayload }) => {
           const { element, getStyleElement } = AppRegistry.getApplication(
             domainApp.appId,
             {
               initialProps: {
                 navigation,
+                cloudClient,
                 env: 'server',
               },
             },
@@ -255,7 +283,9 @@ export default async function attachWebServer({
             ${
               isProd
                 ? `<script src="${assets.client.js}" defer></script>`
-                : `<script src="${assets.client.js}" defer crossorigin></script>`
+                : `<script src="${
+                    assets.client.js
+                  }" defer crossorigin></script>`
             }
             ${
               dataPayload
