@@ -246,13 +246,27 @@ jobs:
         continue-on-error: true # or maybe we shouldn't
         run: 'ssh deploy-server echo TODO: Database Migration'
 
-      - name: Restart Production Server
-        # If a package update requires a reboot, do it now. Otherwise just start the daemon.
-        run: ssh deploy-server \[ -e /var/run/reboot-required \] \&\& reboot \|\| systemctl start ono.runway
-
       - name: --------- Done Deploying --------------------------------------------------------------------------------
         run: ':'
 
-      - name: Cleanup
+      - name: Test if server needs a restart
+        id: reboot
+        shell: bash {0}
+        run: |
+          ssh deploy-server \[ -e /var/run/reboot-required \]
+          echo "::set-output name=required::$?"
+
+      - name: Reboot Entire Server
+        if: steps.reboot.outputs.required == 0
+        run: ssh deploy-server reboot
+
+      - name: Restart Production Daemon
+        if: steps.reboot.outputs.required == 1
+        run: ssh deploy-server systemctl start ono.runway
+
+      - name: --------- Server Started --------------------------------------------------------------------------------
+        run: ':'
+
+      - name: Cleanup Secrets
         if: always()
         run: rm secrets.conf ${{ steps.key.outputs.filename }}
