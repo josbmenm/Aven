@@ -16,8 +16,10 @@ export const setupDomains = ['skynet.onoblends.co'];
 // This cannot contain a dot `.`
 export const upstreamUniqueName = 'skynet';
 
-// Pick one
-export const upstreamHost = `unix:/tmp/${runtimeDir}` || 'localhost:9001';
+
+export const socketFilename = 'sock';
+
+export const upstreamHost = `unix:/run/${runtimeDir}/${socketFilename}`;
 
 export const letsencryptLive = '/etc/letsencrypt/live';
 

@@ -12,7 +12,13 @@ const { mkdir } = promises;
 import sources from './constants/Dev.authorized_keys.Source.json';
 import { setupNginx } from './setupNginx';
 
-import { timezone, user, serviceName, runtimeDir } from './config';
+import {
+  timezone,
+  user,
+  serviceName,
+  runtimeDir,
+  socketFilename,
+} from './config';
 
 const serviceFileContents = `[Unit]
 Description=Ono Production Daemon Server
@@ -20,7 +26,7 @@ After=network.target
 
 [Service]
 Type=simple
-Environment=LISTEN_PATH="sock"
+Environment=LISTEN_PATH="${socketFilename}"
 RuntimeDirectory=${runtimeDir}
 #RuntimeDirectoryMode=
 WorkingDirectory=/run/${runtimeDir}
