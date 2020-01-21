@@ -226,6 +226,16 @@ const serverConfigDefault = `server {
 }
 `;
 
+const extraConfigForRedirect = !rootPath
+  ? ''
+  : `{
+  root ${rootPath};
+  # If files exist in root, serve them. Otherwise fallback to proxy.
+  try_files $uri $uri/index.html @proxyHandler;
+}
+
+location @proxyHandler `;
+
 const serverConfigOno = `server {
     server_name ${setupDomains.join(' ')};
     listen 80 default_server;
@@ -243,20 +253,9 @@ server {
     ssl_certificate     ${letsencryptLive}/${setupDomains[0]}/fullchain.pem;
     ssl_certificate_key ${letsencryptLive}/${setupDomains[0]}/privkey.pem;
 
-    include snips/trust-cloudflare-ip.conf;${
-      !rootPath
-        ? ''
-        : `
+    include snips/trust-cloudflare-ip.conf;
 
-    root ${rootPath};`
-    }
-
-    location / {
-        # If files exist in root, serve them. Otherwise fallback to proxy.
-        try_files ${rootPath ? '$uri $uri/index.html ' : ''}@proxyHandler;
-    }
-
-    location @proxyHandler {
+    location / ${extraConfigForRedirect}{
         include snips/websockets-proxy-headers.conf;
         include snips/proxy-headers.conf;
         proxy_pass http://${upstreamUniqueName};
