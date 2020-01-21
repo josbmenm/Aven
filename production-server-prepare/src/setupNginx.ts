@@ -7,7 +7,7 @@ const { mkdir, chmod } = promises;
 const certbotWebrootPath = '/var/lib/letsencrypt/webroot';
 
 // Some path to serve static files from
-const rootPath = '/tmp/some/place/to/server/static/files/from';
+const rootPath = '' && '/tmp/some/place/to/server/static/files/from';
 
 // Domains that point to one host
 const setupDomains = ['skynet.onoblends.co'];
@@ -17,6 +17,8 @@ const upstreamUniqueName = 'skynet';
 
 // Pick one
 const upstreamHost = 'unix:/tmp/backend3' || 'localhost:9001';
+
+const letsencryptLive = '/etc/letsencrypt/live';
 
 const nginxConf = `user www-data;
 worker_processes auto;
@@ -54,10 +56,12 @@ location = /.well-known/acme-challenge/ {
 }
 `;
 
+// Simplified proxy headers
 snips['proxy-forwarded-headers'] = `proxy_set_header Host $host;
 proxy_set_header Forwarded $proxy_add_forwarded;
 `;
 
+// Popular forwarded headers
 snips['proxy-headers'] = `proxy_set_header Host $host;
 #proxy_set_header Port $server_port;
 #proxy_set_header X-Forwarded-Port $server_port;
@@ -68,6 +72,7 @@ proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 #proxy_set_header X-Frame-Options SAMEORIGIN;
 `;
 
+// Trust Cloudflare to set some headers for us
 snips['trust-cloudflare-ip'] = `set_real_ip_from 103.21.244.0/22;
 set_real_ip_from 103.22.200.0/22;
 set_real_ip_from 103.31.4.0/22;
@@ -95,6 +100,7 @@ real_ip_header CF-Connecting-IP;
 #real_ip_header X-Forwarded-For;
 `;
 
+// Headers needed to enable Web Sockets
 snips['websockets-proxy-headers'] = `proxy_http_version 1.1;
 proxy_set_header Upgrade $http_upgrade;
 proxy_set_header Connection $connection_upgrade;
@@ -127,12 +133,14 @@ gzip_disable "msie6";
 # gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
 `;
 
+// Allow upgrading http connections. Required for Websockets.
 conf['http-upgrade'] = `map $http_upgrade $connection_upgrade {
     default upgrade;
     ''      close;
 }
 `;
 
+// Where should we log to
 conf.logging = `access_log /var/log/nginx/access.log;
 error_log /var/log/nginx/error.log;
 `;
@@ -140,39 +148,39 @@ error_log /var/log/nginx/error.log;
 const validForwardedHeaderPattern =
   '"~^(,[ \\\\t]*)*([!#$%&\'*+.^_`|~0-9A-Za-z-]+=([!#$%&\'*+.^_`|~0-9A-Za-z-]+|\\"([\\\\t \\\\x21\\\\x23-\\\\x5B\\\\x5D-\\\\x7E\\\\x80-\\\\xFF]|\\\\\\\\[\\\\t \\\\x21-\\\\x7E\\\\x80-\\\\xFF])*\\"))?(;([!#$%&\'*+.^_`|~0-9A-Za-z-]+=([!#$%&\'*+.^_`|~0-9A-Za-z-]+|\\"([\\\\t \\\\x21\\\\x23-\\\\x5B\\\\x5D-\\\\x7E\\\\x80-\\\\xFF]|\\\\\\\\[\\\\t \\\\x21-\\\\x7E\\\\x80-\\\\xFF])*\\"))?)*([ \\\\t]*,([ \\\\t]*([!#$%&\'*+.^_`|~0-9A-Za-z-]+=([!#$%&\'*+.^_`|~0-9A-Za-z-]+|\\"([\\\\t \\\\x21\\\\x23-\\\\x5B\\\\x5D-\\\\x7E\\\\x80-\\\\xFF]|\\\\\\\\[\\\\t \\\\x21-\\\\x7E\\\\x80-\\\\xFF])*\\"))?(;([!#$%&\'*+.^_`|~0-9A-Za-z-]+=([!#$%&\'*+.^_`|~0-9A-Za-z-]+|\\"([\\\\t \\\\x21\\\\x23-\\\\x5B\\\\x5D-\\\\x7E\\\\x80-\\\\xFF]|\\\\\\\\[\\\\t \\\\x21-\\\\x7E\\\\x80-\\\\xFF])*\\"))?)*)?)*$"\n';
 
+//
 conf['proxy-add-forwarded'] = `map $remote_addr $proxy_forwarded_elem {
-# IPv4 addresses can be sent as-is
-~^[0-9.]+$          "for=$remote_addr";
+    # IPv4 addresses can be sent as-is
+    ~^[0-9.]+$          "for=$remote_addr";
 
-# IPv6 addresses need to be bracketed and quoted
-~^[0-9A-Fa-f:.]+$   "for=\\"[$remote_addr]\\"";
+    # IPv6 addresses need to be bracketed and quoted
+    ~^[0-9A-Fa-f:.]+$   "for=\\"[$remote_addr]\\"";
 
-# Unix domain socket names cannot be represented in RFC 7239 syntax
-default             "for=unknown";
+    # Unix domain socket names cannot be represented in RFC 7239 syntax
+    default             "for=unknown";
 }
 
 map $http_forwarded $proxy_add_forwarded {
-# If the incoming Forwarded header is syntactically valid, append to it
-${validForwardedHeaderPattern} "$http_forwarded, $proxy_forwarded_elem";
+    # If the incoming Forwarded header is syntactically valid, append to it
+    ${validForwardedHeaderPattern} "$http_forwarded, $proxy_forwarded_elem";
 
-# Otherwise, replace it
-default "$proxy_forwarded_elem";
+    # Otherwise, replace it
+    default "$proxy_forwarded_elem";
 }
 `;
 
-conf['rate-limit'] = `limit_rate 1000m;
-`;
-
+// List of nginx server blocks (in files)
 conf.servers = `include servers/*.conf;
 `;
 
+// Default SSL configurations.
 conf.ssl = `##
 # SSL Settings
 ##
 
 # Default keys. Overridden in server configs.
-ssl_certificate     /etc/letsencrypt/live/${setupDomains[0]}/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/${setupDomains[0]}/privkey.pem;
+ssl_certificate     ${letsencryptLive}/${setupDomains[0]}/fullchain.pem;
+ssl_certificate_key ${letsencryptLive}/${setupDomains[0]}/privkey.pem;
 
 
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
@@ -185,6 +193,7 @@ async function setupNginxSnips() {
   await mkdir(dir, { recursive: true });
 
   await Promise.all([
+    // let Ubuntu manage this
     exec(`ln -snf ../snippets/fastcgi-php.conf ${dir}/fastcgi-php.conf`),
 
     ensureFilesAre(
@@ -218,10 +227,8 @@ const serverConfigDefault = `server {
     include snips/letsencrypt.conf;
 
     location / {
-      proxy_pass http://127.0.0.1:8840;
-      proxy_set_header Host $host;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        default_type text/plain;
+        return 200 'Nothing to see here...';
     }
 }
 `;
@@ -240,18 +247,20 @@ server {
     listen 443 ssl default_server;
     listen [::]:443 ssl default_server;
 
-    ssl_certificate       /etc/letsencrypt/live/${
-      setupDomains[0]
-    }/fullchain.pem;
-    ssl_certificate_key   /etc/letsencrypt/live/${setupDomains[0]}/privkey.pem;
+    ssl_certificate     ${letsencryptLive}/${setupDomains[0]}/fullchain.pem;
+    ssl_certificate_key ${letsencryptLive}/${setupDomains[0]}/privkey.pem;
 
-    include snips/trust-cloudflare-ip.conf;
+    include snips/trust-cloudflare-ip.conf;${
+      !rootPath
+        ? ''
+        : `
 
-    root ${rootPath};
+    root ${rootPath};`
+    }
 
     location / {
-        # Look for the files 
-        try_files $uri $uri/index.html @proxyHandler;
+        # If files exist in root, serve them. Otherwise fallback to proxy.
+        try_files ${rootPath ? '$uri $uri/index.html ' : ''}@proxyHandler;
     }
 
     location @proxyHandler {
@@ -265,7 +274,6 @@ server {
 upstream ${upstreamUniqueName} {
     server ${upstreamHost} fail_timeout=0;
 }
-
 `;
 
 async function setupNginxBasicServers() {
@@ -277,7 +285,7 @@ async function setupNginxBasicServers() {
 }
 
 async function setupNginxServersFull() {
-  await mkdir(rootPath, { recursive: true });
+  if (rootPath) await mkdir(rootPath, { recursive: true });
 
   let onoServer = serverConfigOno;
 
@@ -305,13 +313,17 @@ const certbotPostRenewNginx = `#!/bin/bash
 systemctl reload nginx
 `;
 
+/**
+ * Use this for other services that depend on generated keys but require them combined. Like ZNC.
+ */
+const outputFile = '/var/lib/znc/znc.pem';
 const certbotPostRenewExampleFullChain = `#!/bin/bash
-YOURDOMAIN="example.com"
+YOURDOMAIN="${setupDomains[0]}"
 
-[[ $RENEWED_LINEAGE != "/etc/letsencrypt/live/$YOURDOMAIN" ]] && exit 0
+[[ $RENEWED_LINEAGE != "${letsencryptLive}/$YOURDOMAIN" ]] && exit 0
 
 # Combine certs into single file for some applications that don't support separation
-cat /etc/letsencrypt/live/$YOURDOMAIN/{privkey,fullchain}.pem > /var/lib/znc/znc.pem
+cat ${letsencryptLive}/$YOURDOMAIN/{privkey,fullchain}.pem > ${outputFile}
 `;
 
 async function setupCertbot() {
@@ -319,6 +331,8 @@ async function setupCertbot() {
     ensureFileIs('/etc/letsencrypt/cli.ini', certbotCliConfig),
     mkdir(certbotWebrootPath),
   ]);
+
+  // TODO: Support multiple independent domains that serve different websites.
 
   // Run once for each nginx server. Generates one key pair. Must include all domains that share server.
   await spawn(
