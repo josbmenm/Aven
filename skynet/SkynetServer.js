@@ -675,11 +675,11 @@ Debug: ${JSON.stringify(action)}
     }
   }
 
-  const serverListenLocation = getEnv('LISTEN_SOCK') ? {
-    socket: getEnv('LISTEN_SOCK'),
+  const serverListenLocation = getEnv('LISTEN_PATH') ? {
+    path: getEnv('LISTEN_PATH'),
   } : {
     host: getEnv('LISTEN_HOST'),
-    port: getEnv('LISTEN_PORT') ?? getEnv('PORT'),
+    port: getEnv('LISTEN_PORT') || getEnv('PORT'),
   }
 
   const webService = await attachWebServer({

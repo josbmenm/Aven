@@ -20,7 +20,7 @@ After=network.target
 
 [Service]
 Type=simple
-Environment=LISTEN_SOCK="sock"
+Environment=LISTEN_PATH="sock"
 RuntimeDirectory=${runtimeDir}
 #RuntimeDirectoryMode=
 WorkingDirectory=/run/${runtimeDir}
