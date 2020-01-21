@@ -75,7 +75,7 @@ export function spawn(
       : nodeSpawn(
           command,
           args,
-          first === true ? { ...defOpts, shell: true } : first,
+          first === true ? { ...defOpts, shell: '/bin/bash' } : first,
         );
 
   const ret = new Promise((resolve, reject) => {
