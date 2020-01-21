@@ -7,6 +7,8 @@ import {
 
 import { promisify } from 'util';
 
+const defaultShell = '/bin/bash';
+
 /**
  * These are functions that run some other program.
  * Each is some combination of these running modes.
@@ -75,7 +77,7 @@ export function spawn(
       : nodeSpawn(
           command,
           args,
-          first === true ? { ...defOpts, shell: '/bin/bash' } : first,
+          first === true ? { ...defOpts, shell: defaultShell } : first,
         );
 
   const ret = new Promise((resolve, reject) => {
@@ -93,6 +95,8 @@ export function spawn(
   return ret;
 }
 
+const execP = promisify(nodeExec);
+
 /**
  * Run a command and capture output.
  *
@@ -102,4 +106,12 @@ export function spawn(
  * - Captured & Buffered output
  * - Promised result
  */
-export const exec = promisify(nodeExec);
+export function exec(command: string, shell: true | null | string = true) {
+  if (shell === null) {
+    return execP(command);
+  }
+
+  if (shell === true) shell = defaultShell;
+
+  return execP(command, { shell });
+}
