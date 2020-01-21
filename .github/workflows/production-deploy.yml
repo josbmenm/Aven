@@ -90,6 +90,7 @@ jobs:
       - name: Run Prepare Script on Remote
         working-directory: production-server-prepare
         run: |
+          chmod +x dist/index.sh
           rsync dist/ deploy-server:
           ssh deploy-server bash index.sh
 
