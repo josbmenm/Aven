@@ -178,8 +178,9 @@ export async function setup() {
   await exec(
     'curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -',
   );
-  await exec(
-    'echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list',
+  await ensureFileIs(
+    '/etc/apt/sources.list.d/yarn.list',
+    'deb https://dl.yarnpkg.com/debian/ stable main',
   );
 
   await spawn('apt-get', 'update');
