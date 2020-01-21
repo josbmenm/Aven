@@ -230,7 +230,7 @@ jobs:
 
       - name: Rsync build
         run: |
-          [ ! -z "${{ steps.build.outputs.path }}" ]
+          [ ! -z "${{ steps.build.outputs.path }}" ] # Smoke check
           rsync --recursive --links --delete --executability ${{ steps.build.outputs.path }}/ deploy-server:/home/prod/production
 
       - name: Copy Secrets and Configs
@@ -243,7 +243,7 @@ jobs:
         run: ssh deploy-server systemctl stop ono.runway
 
       - name: Database Migration
-        continue-on-error: true # or maybe we shouldn't
+        continue-on-error: true # TODO: maybe we shouldn't
         run: 'ssh deploy-server echo TODO: Database Migration'
 
       - name: --------- Done Deploying --------------------------------------------------------------------------------
