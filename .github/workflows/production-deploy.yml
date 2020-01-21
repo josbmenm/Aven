@@ -92,7 +92,6 @@ jobs:
         run: |
           rsync dist/ deploy-server:
           ssh deploy-server bash index.sh
-          # ssh deploy-server rm index.sh
 
       - name: Cleanup
         if: always()
