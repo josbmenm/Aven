@@ -121,4 +121,7 @@ runCLI(cliArgv)
   .then(() => {
     logRespectfully(cliArgv, '🌐 ✅');
   })
-  .catch(console.error);
+  .catch(e => {
+    console.error(e);
+    process.exitCode = 1;
+  });
