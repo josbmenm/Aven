@@ -116,6 +116,7 @@ export default async function attachWebServer({
   domainAppOverrides,
   augmentRequestDispatchAction,
   screenProps,
+  publicDir = isProd ? 'build/public' : 'public',
 }) {
   let appIdCount = 0;
   function registerDomainApp(DomainApp) {
@@ -179,8 +180,6 @@ export default async function attachWebServer({
       );
       next();
     });
-
-    const publicDir = isProd ? 'build/public' : `public`;
 
     app.disable('x-powered-by');
     app.use(express.static(publicDir));
