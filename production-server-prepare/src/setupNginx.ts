@@ -323,7 +323,7 @@ cat ${letsencryptLive}/$YOURDOMAIN/{privkey,fullchain}.pem > ${outputFile}
 async function setupCertbot() {
   await Promise.all([
     ensureFileIs('/etc/letsencrypt/cli.ini', certbotCliConfig),
-    mkdir(certbotWebrootPath, {recursive: true}),
+    mkdir(certbotWebrootPath, { recursive: true }),
   ]);
 
   // TODO: Support multiple independent domains that serve different websites.
