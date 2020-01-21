@@ -93,7 +93,7 @@ jobs:
         run: |
           chmod +x dist/index.sh
           rsync --recursive --links --delete --executability dist/ deploy-server:setup
-          ssh deploy-server bash setup/index.sh
+          ssh deploy-server setup/index.sh
 
       - name: Cleanup
         if: always()
