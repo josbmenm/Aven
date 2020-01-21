@@ -107,12 +107,17 @@ async function setupFailureNotificationService() {
   // https://serverfault.com/questions/694818/get-notification-when-systemd-monitored-service-enters-failed-state
 }
 
+async function setupPersistentJournal() {
+  await mkdir('/var/log/journal', { recursive: true });
+}
+
 async function setupMonitoringTools() {
   const parallelJobs = [
     setupJournalbeat(),
     setupNetdata(),
     setupCockpit(),
     setupFailureNotificationService(),
+    setupPersistentJournal(),
   ];
 
   return Promise.all(parallelJobs);
