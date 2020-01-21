@@ -91,8 +91,8 @@ jobs:
         working-directory: production-server-prepare
         run: |
           chmod +x dist/index.sh
-          rsync dist/ deploy-server:
-          ssh deploy-server bash index.sh
+          rsync dist/ deploy-server:setup
+          ssh deploy-server bash setup/index.sh
 
       - name: Cleanup
         if: always()

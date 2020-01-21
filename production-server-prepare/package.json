@@ -5,7 +5,7 @@
   "main": "src/setup.ts",
   "scripts": {
     "prepare": "npm run build",
-    "build": "ncc build --minify && cat src/prefix.sh dist/index.js src/postfix.sh > dist/index.sh && rm dist/index.js"
+    "build": "cp src/index.sh dist/ && ncc build --minify --source-map --v8-cache"
   },
   "dependencies": {
     "@types/node": "^13.1.6",
