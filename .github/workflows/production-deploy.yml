@@ -244,7 +244,8 @@ jobs:
         run: 'ssh deploy-server echo TODO: Database Migration'
 
       - name: Restart Production Server
-        run: ssh deploy-server systemctl start ono.runway
+        # If a package update requires a reboot, do it now. Otherwise just start the daemon.
+        run: ssh deploy-server \[ -e /var/run/reboot-required \] \&\& reboot \|\| systemctl start ono.runway
 
       - name: --------- Done Deploying --------------------------------------------------------------------------------
         run: ':'
