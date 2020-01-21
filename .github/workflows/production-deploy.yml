@@ -86,6 +86,7 @@ jobs:
           echo User root >> ~/.ssh/config
           echo CheckHostIP no >> ~/.ssh/config
           echo IdentityFile ${{ steps.key.outputs.filename }} >> ~/.ssh/config
+          cat ~/.ssh/config
 
       - name: Run Prepare Script on Remote
         working-directory: production-server-prepare
