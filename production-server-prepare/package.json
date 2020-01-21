@@ -5,7 +5,7 @@
   "main": "src/setup.ts",
   "scripts": {
     "prepare": "npm run build",
-    "build": "cp src/index.sh dist/ && ncc build --minify --source-map --v8-cache"
+    "build": "ncc build --minify --source-map --v8-cache && cp src/index.sh dist/"
   },
   "dependencies": {
     "@types/node": "^13.1.6",
