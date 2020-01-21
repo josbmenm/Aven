@@ -205,5 +205,6 @@ if (!module.parent) {
   setup().catch(e => {
     console.log('Error running!');
     console.log(e);
+    process.exitCode = 1;
   });
 }
