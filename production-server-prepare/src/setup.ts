@@ -122,7 +122,7 @@ async function setupPersistentJournal() {
 async function setupMonitoringTools() {
   const parallelJobs = [
     setupJournalbeat(),
-    setupNetdata(),
+    // setupNetdata(),
     setupCockpit(),
     setupFailureNotificationService(),
     setupPersistentJournal(),
