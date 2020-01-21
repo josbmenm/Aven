@@ -259,6 +259,7 @@ jobs:
       - name: Reboot Entire Server
         if: steps.reboot.outputs.required == 0
         run: ssh deploy-server reboot
+        continue-on-error: true # reboot makes connection drop
 
       - name: Restart Production Daemon
         if: steps.reboot.outputs.required == 1
