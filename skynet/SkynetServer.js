@@ -53,7 +53,7 @@ const geoip = require('geoip-lite');
 const fs = require('fs');
 const getEnv = c => process.env[c];
 
-const gTokenPath = pathJoin(__dirname, 'gToken.json');
+const gTokenPath = pathJoin('gToken.json');
 fs.writeFileSync(gTokenPath, Buffer.from(getEnv('GCS_TOKEN'), 'base64'));
 
 const gcsStorage = new Storage({
