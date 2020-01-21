@@ -331,7 +331,7 @@ async function setupCertbot() {
   await spawn(
     'certbot',
 
-    '--webroot',
+    'certonly',
 
     '--noninteractive',
 
