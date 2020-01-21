@@ -16,7 +16,7 @@ const user = 'prod';
 
 const serviceName = 'ono.runway';
 
-const runtimeDir = 'onoProduction'
+const runtimeDir = 'onoProduction';
 
 const serviceFileContents = `[Unit]
 Description=Ono Production Daemon Server
