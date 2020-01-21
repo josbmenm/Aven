@@ -75,11 +75,19 @@ async function setupMainServiceFiles() {
   return dir;
 }
 
-const journalbeatDeb =
-  'https://artifacts.elastic.co/downloads/beats/journalbeat/journalbeat-7.5.1-amd64.deb';
-
 async function setupJournalbeat() {
-  await spawn('dpkg', '-i', journalbeatDeb);
+  await exec(
+    'wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -',
+  );
+
+  // Replace list every time
+  await ensureFileIs(
+    '/etc/apt/sources.list.d/elastic-7.x.list',
+    'deb https://artifacts.elastic.co/packages/7.x/apt stable main\n',
+  );
+
+  await exec('apt-get update');
+  await exec('apt-get install -y journalbeat');
 
   // TODO: Finish setup
   // https://www.elastic.co/guide/en/beats/journalbeat/current/journalbeat-configuration.html
