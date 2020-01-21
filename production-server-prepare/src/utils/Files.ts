@@ -1,6 +1,6 @@
 import { promises } from 'fs';
 
-const { readFile, writeFile } = promises;
+const { readFile, writeFile, symlink, readlink, unlink } = promises;
 
 export async function ensureFileContains(
   filename: string,
@@ -34,4 +34,17 @@ export async function ensureFilesAre(
   await Promise.all(
     list.map(({ filename, contents }) => ensureFileIs(filename, contents)),
   );
+}
+
+export async function ensureLinkIs(target: string, path: string) {
+  const current = await readlink(path).catch(e => {
+    if (e.code === 'ENOENT') return undefined;
+    throw e;
+  });
+
+  if (target === current) return;
+
+  if (current !== undefined) await unlink(path);
+
+  await symlink(target, path);
 }
