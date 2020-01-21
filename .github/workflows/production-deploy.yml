@@ -231,7 +231,7 @@ jobs:
       - name: Rsync build
         run: |
           [ ! -z "${{ steps.build.outputs.path }}" ] # Smoke check
-          rsync --recursive --links --delete --executability ${{ steps.build.outputs.path }}/ deploy-server:/home/prod/production
+          rsync --recursive --links --delete --executability ${{ steps.build.outputs.path }}/ deploy-server:/opt/production
 
       - name: Copy Secrets and Configs
         run: scp secrets.conf configs.conf deploy-server:/etc/systemd/system/ono.runway.service.d/

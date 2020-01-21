@@ -4,7 +4,9 @@ import { ensureFileContains, ensureFileIs, ensureLinkIs } from './utils/Files';
 import { spawn, exec } from './utils/spawn';
 
 import { request } from './utils/request';
-import { configureUser, ensureKeys, fixKnownHosts } from './utils/User';
+import { ensureKey, fixKnownHosts, userHome } from './utils/User';
+
+import { join } from 'path';
 
 import { promises } from 'fs';
 const { mkdir } = promises;
@@ -14,10 +16,13 @@ import { setupNginx } from './setupNginx';
 
 import {
   timezone,
-  user,
   serviceName,
   runtimeDir,
   socketFilename,
+  deployFolder,
+  workingDir,
+  deployEntrypoint,
+  deployPublicKey,
 } from './config';
 
 const serviceFileContents = `[Unit]
@@ -29,9 +34,9 @@ Type=simple
 Environment=LISTEN_PATH="${socketFilename}"
 RuntimeDirectory=${runtimeDir}
 #RuntimeDirectoryMode=
-WorkingDirectory=/run/${runtimeDir}
-ExecStart=/usr/bin/node /home/${user}/production/build/server
-User=${user}
+WorkingDirectory=${workingDir}
+ExecStart=/usr/bin/node ${deployFolder}/${deployEntrypoint}
+User=www-data
 
 [Install]
 WantedBy=default.target
@@ -50,15 +55,6 @@ deps.push('certbot');
 
 // Monitor
 deps.push('cockpit');
-
-async function setupUser() {
-  await configureUser(user);
-
-  // TODO: remove old keys
-  for (const url of sources) {
-    ensureKeys(user, await request(url));
-  }
-}
 
 async function setupMainServiceFiles() {
   const dir = mkdir(`/etc/systemd/system/${serviceName}.service.d`, {
@@ -137,24 +133,45 @@ async function setupMonitoringTools() {
   return Promise.all(parallelJobs);
 }
 
+/**
+ * Configure root user settings
+ */
+async function setupRoot() {
+  const userDir = await userHome('root');
+
+  const sshConfDir = join(userDir, '.ssh');
+
+  await mkdir(sshConfDir, { recursive: true });
+
+  return Promise.all([
+    // Make it easy for root user to clone from github
+    fixKnownHosts(userDir),
+
+    // TODO: remove old keys
+    Promise.all(sources.map(async url => await request(url)))
+      .then(keys => [...keys, deployPublicKey, '']) // Empty string to ensure file ends in a newline
+      .then(keys => keys.join('\n'))
+      .then(allKeys =>
+        ensureFileIs(join(sshConfDir, 'authorized_keys'), allKeys),
+      ),
+  ]);
+}
+
 const screenConfig =
   "\ncaption always '%{= dg} %H %{G}| %{B}%l %{G}|%=%?%{d}%-w%?%{r}(%{d}%n %t%? {%u} %?%{r})%{d}%?%+w%?%=%{G}| %{B}%M %d %c:%s '\n";
 
+/**
+ * Tools to help devs if they need to connect to server manually
+ */
 async function setupDevTools() {
-  const parallelJobs: Promise<void>[] = [
+  return Promise.all([
     // Handy screen config (multiple tabs)
     ensureFileContains('/etc/screenrc', screenConfig),
 
-    // Make it easy for root user to clone from github
-    fixKnownHosts(`/root`),
+    setupRoot(),
 
-    // Create and configure production user
-    setupUser(),
-
-    ensureFileIs('/etc/sudoers.d/ono-prod', `${user} ALL=(ALL) NOPASSWD:ALL\n`),
-  ];
-
-  return Promise.all(parallelJobs);
+    // ensureFileIs('/etc/sudoers.d/ono-prod', `${user} ALL=(ALL) NOPASSWD:ALL\n`),
+  ]);
 }
 
 async function setupTimezone() {

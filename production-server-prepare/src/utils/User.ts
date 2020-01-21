@@ -12,12 +12,17 @@ const userGroups = ['sudo', 'adm', 'systemd-journal'];
 
 const UsernameInUseUserAddExitValue = 9;
 
+export async function userHome(name: string): Promise<string> {
+  // TODO: Read from os
+  return name == 'root' ? '/root' : `/home/${name}`;
+}
+
 /**
  *
  * @param name Username to make
  * @param authorizedKeys Keys to add to use
  */
-export async function configureUser(name: string) {
+export async function createAndConfigureUser(name: string) {
   const command = [];
 
   command.push('useradd');
@@ -45,17 +50,17 @@ export async function configureUser(name: string) {
     // TODO: `usermod` to make sure user options are consistent (in case they change)
   });
 
-  await mkdir(`/home/${name}/.ssh`, { recursive: true });
-  await fixKnownHosts(`/home/${name}`);
+  const home = await userHome(name);
+
+  await mkdir(`${home}/.ssh`, { recursive: true });
+  await fixKnownHosts(home);
 }
 
-export async function ensureKeys(user: string, keys: string) {
-  await ensureFileContains(`/home/${user}/.ssh/authorized_keys`, keys);
+export async function ensureKey(user: string, key: string) {
+  await ensureFileContains(`${await userHome(user)}/.ssh/authorized_keys`, key);
 }
 
 export async function fixKnownHosts(userDir: string) {
-  await mkdir(join(userDir, '.ssh'), { recursive: true });
-
   return ensureFileContains(
     join(userDir, '.ssh', 'known_hosts'),
     GitHubKnownHosts.join('\n'),
