@@ -90,7 +90,7 @@ jobs:
       - name: Run Prepare Script on Remote
         working-directory: production-server-prepare
         run: |
-          scp -C dist/index.sh deploy-server:index.sh
+          rsync dist/ deploy-server:
           ssh deploy-server bash index.sh
           # ssh deploy-server rm index.sh
 
