@@ -285,9 +285,11 @@ async function setupNginxServersFull() {
   await ensureFileIs(`/etc/nginx/servers/ono.conf`, onoServer);
 }
 
+const nginxConfigFile = '/etc/nginx/nginx.conf';
+
 async function setupNginxBasic() {
   await Promise.all([
-    ensureFileIs(`/etc/nginx/nginx.conf`, nginxConf),
+    ensureFileIs(nginxConfigFile, nginxConf),
     setupNginxSnips(),
     setupNginxConfs(),
     setupNginxBasicServers(),
@@ -355,9 +357,16 @@ async function setupCertbot() {
   await chmod(hook, 0o755);
 }
 
+async function checkNginxConfig() {
+  await spawn('nginx', '-tc', nginxConfigFile);
+}
+
 export async function setupNginx() {
   // Ensure Let's Encrypt configuration is setup
   await setupNginxBasic();
+
+  await checkNginxConfig();
+
   await exec(`systemctl reload nginx.service`);
 
   // Before trying to get possibly new keys
@@ -365,6 +374,8 @@ export async function setupNginx() {
 
   // Only then do we make sure the rest of the server files are setup
   await setupNginxServersFull();
+
+  await checkNginxConfig();
 
   await exec(`systemctl reload nginx.service`);
 }
