@@ -1,6 +1,6 @@
 #!./setup.sh
 
-import { ensureFileContains, ensureFileIs } from './utils/Files';
+import { ensureFileContains, ensureFileIs, ensureLinkIs } from './utils/Files';
 import { spawn, exec } from './utils/spawn';
 
 import { request } from './utils/request';
@@ -155,6 +155,13 @@ async function setupDevTools() {
   return Promise.all(parallelJobs);
 }
 
+async function setupTimezone() {
+  const path = '/etc/localtime';
+  const next = `/etc/share/zoneinfo/${timezone}`;
+
+  ensureLinkIs(next, path);
+}
+
 export async function setup() {
   const release = await exec('cat /etc/lsb-release');
 
@@ -190,21 +197,21 @@ export async function setup() {
 
   await spawn('apt-get', 'autoremove', '-y');
 
-  // TODO: timezone, hostname, /etc/hosts
+  // TODO: hostname, /etc/hosts
 
   // TODO: disable sshd password?
 
-  const parallelJobs: Promise<unknown>[] = [];
+  await Promise.all([
+    setupTimezone(),
 
-  parallelJobs.push(setupMonitoringTools());
+    setupMonitoringTools(),
 
-  parallelJobs.push(setupDevTools());
+    setupDevTools(),
 
-  parallelJobs.push(setupNginx());
+    setupNginx(),
 
-  parallelJobs.push(setupMainServiceFiles());
-
-  await Promise.all(parallelJobs);
+    setupMainServiceFiles(),
+  ]);
 
   console.log('Server configured!');
 }
