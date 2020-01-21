@@ -20,7 +20,7 @@ export async function ensureFileIs(
   // We could just skip the read part of this but this preserves modification times
   const current = (await readFile(filename).catch(() => '')).toString();
 
-  if (current == contents) return;
+  if (current === contents) return;
 
   return writeFile(filename, contents);
 }
