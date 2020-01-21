@@ -8,12 +8,12 @@ import {
 import { promisify } from 'util';
 
 /**
- * Functions that run some other program.
+ * These are functions that run some other program.
  * Each is some combination of these running modes.
  *
- * - Shell vs Command + args
- * - Captured & Buffered output vs Stream to stdout/stderr
- * - Promised result/completion vs Return Streams
+ * - Shell                       vs  Command + args
+ * - Captured & Buffered output  vs  Stream to stdout/stderr
+ * - Promised result/completion  vs  Return Streams
  */
 
 /**
@@ -21,7 +21,7 @@ import { promisify } from 'util';
  *
  * - Shell
  * - Stream to stdout/stderr
- * - Promised completion
+ * - Promised completion (but streams are available on returned object/promise)
  *
  * @param command Command to run
  * @param shell Should we spawn a shell
