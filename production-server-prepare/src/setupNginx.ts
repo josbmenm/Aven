@@ -4,21 +4,14 @@ import { promises } from 'fs';
 
 const { mkdir, chmod } = promises;
 
-const certbotWebrootPath = '/var/lib/letsencrypt/webroot';
-
-// Some path to serve static files from
-const rootPath = '' && '/tmp/some/place/to/server/static/files/from';
-
-// Domains that point to one host
-const setupDomains = ['skynet.onoblends.co'];
-
-// This cannot contain a dot `.`
-const upstreamUniqueName = 'skynet';
-
-// Pick one
-const upstreamHost = 'unix:/tmp/backend3' || 'localhost:9001';
-
-const letsencryptLive = '/etc/letsencrypt/live';
+import {
+  rootPath,
+  setupDomains,
+  upstreamUniqueName,
+  upstreamHost,
+  letsencryptLive,
+  certbotWebrootPath,
+} from './config';
 
 const nginxConf = `user www-data;
 worker_processes auto;

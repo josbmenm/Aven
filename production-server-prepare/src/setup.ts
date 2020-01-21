@@ -12,11 +12,7 @@ const { mkdir } = promises;
 import sources from './constants/Dev.authorized_keys.Source.json';
 import { setupNginx } from './setupNginx';
 
-const user = 'prod';
-
-const serviceName = 'ono.runway';
-
-const runtimeDir = 'onoProduction';
+import { timezone, user, serviceName, runtimeDir } from './config';
 
 const serviceFileContents = `[Unit]
 Description=Ono Production Daemon Server
