@@ -87,6 +87,8 @@ async function setupJournalbeat() {
   await exec('apt-get update');
   await exec('apt-get install -y journalbeat');
 
+  await exec('systemctl enable journalbeat');
+
   // TODO: Finish setup
   // https://www.elastic.co/guide/en/beats/journalbeat/current/journalbeat-configuration.html
 }
