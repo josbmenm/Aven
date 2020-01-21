@@ -1,4 +1,4 @@
-import { ensureFileIs, ensureFilesAre } from './utils/Files';
+import { ensureFileIs, ensureFilesAre, ensureLinkIs } from './utils/Files';
 import { spawn, exec } from './utils/spawn';
 import { promises } from 'fs';
 
@@ -193,8 +193,8 @@ async function setupNginxSnips() {
   await mkdir(dir, { recursive: true });
 
   await Promise.all([
-    // let Ubuntu manage this
-    exec(`ln -snf ../snippets/fastcgi-php.conf ${dir}/fastcgi-php.conf`),
+    // let Ubuntu manage this one
+    ensureLinkIs('../snippets/fastcgi-php.conf', `${dir}/fastcgi-php.conf`),
 
     ensureFilesAre(
       Object.entries(snips).map(([config, contents]) => ({
