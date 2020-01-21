@@ -16,15 +16,18 @@ const user = 'prod';
 
 const serviceName = 'ono.runway';
 
+const runtimeDir = 'onoProduction'
+
 const serviceFileContents = `[Unit]
 Description=Ono Production Daemon Server
 After=network.target
 
 [Service]
 Type=simple
-Environment=PORT="8840"
-Environment=LISTEN_HOST="0.0.0.0"
-WorkingDirectory=/home/${user}/production
+Environment=LISTEN_SOCK="sock"
+RuntimeDirectory=${runtimeDir}
+#RuntimeDirectoryMode=
+WorkingDirectory=/run/${runtimeDir}
 ExecStart=/usr/bin/node /home/${user}/production/build/server
 User=${user}
 
