@@ -17,4 +17,4 @@ fi
 echo "Running Node..."
 
 # If this is the last command, bash will use its exit status
-/usr/bin/node index.js
+/usr/bin/node setup/index.js
