@@ -29,7 +29,8 @@ ExecStart=/usr/bin/node /home/${user}/production/build/server
 User=${user}
 
 [Install]
-WantedBy=default.target`;
+WantedBy=default.target
+`;
 
 const deps: string[] = [];
 
