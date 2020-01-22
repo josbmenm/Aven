@@ -713,7 +713,7 @@ Debug: ${JSON.stringify(action)}
     },
     serverListenLocation,
     assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
-    publicDir: `${__dirname}/build/public`,
+    publicDir: `${__dirname}/public`,
   });
   console.log('☁️️ Web Ready 🕸');
 
