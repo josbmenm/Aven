@@ -348,9 +348,9 @@ async function setupCertbot() {
     '-m',
     'admin@onofood.co',
 
-    // Add a "-d" before each domain
+    // Add a "--domain" before each domain
     ...setupDomains.reduce<string[]>(
-      (res, current) => res.concat('-d', current),
+      (res, current) => res.concat('--domain', current),
       [],
     ),
   );
