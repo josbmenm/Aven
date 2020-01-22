@@ -24,6 +24,7 @@ RuntimeDirectory=${runtimeDir}
 WorkingDirectory=${workingDir}
 ExecStart=/usr/bin/node ${deployFolder}/${deployEntrypoint}
 User=www-data
+Restart=always
 
 [Install]
 WantedBy=default.target
