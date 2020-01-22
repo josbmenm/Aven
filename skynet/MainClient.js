@@ -2,7 +2,7 @@ import App from './SkynetApp';
 
 import startWebClient from '../aven-web/WebClient';
 import { CloudContext } from '../cloud-core/KiteReact';
-import { createClient } from '../cloud-core/Kite';
+import { createBrowserClient } from '../cloud-browser';
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
 import { HostContext } from '../components/AirtableImage';
 
@@ -13,10 +13,9 @@ const hostConfig = {
 
 const networkSource = createBrowserNetworkSource(hostConfig);
 
-const cloud = createClient({
+const cloud = createBrowserClient({
   source: networkSource,
   domain: 'onofood.co',
-  // functions: [RestaurantReducer],
 });
 
 const context = new Map();

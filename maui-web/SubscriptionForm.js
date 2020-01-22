@@ -1,6 +1,6 @@
 import React from 'react';
 import View from '../views/View';
-import FormInput from '../components/BlockFormInput';
+import TextInput from '../dash-ui/TextInput';
 import { Responsive } from '../dashboard/Responsive';
 import { monsterra80 } from '../components/Styles';
 
@@ -15,7 +15,7 @@ function SubscriptionForm() {
       style={{ display: 'contents' }}
     >
       <View style={{ flexDirection: 'row', alignSelf: 'stretch' }}>
-        <FormInput
+        <TextInput
           type="email"
           label="your email"
           required

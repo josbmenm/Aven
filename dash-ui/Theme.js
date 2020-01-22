@@ -119,6 +119,8 @@ export function Spacing({
   left,
   children,
   theme: themeProp,
+  maxWidth,
+  maxHeight,
   inline = true,
   debug = false,
 }) {
@@ -148,6 +150,8 @@ export function Spacing({
         bottom && { marginBottom: bottom },
         left && { marginLeft: left },
         debug && { backgroundColor: 'indianred' },
+        maxWidth && { maxWidth: maxWidth },
+        maxHeight && { maxHeight: maxHeight },
       ]}
     >
       {children}

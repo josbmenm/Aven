@@ -170,16 +170,17 @@ export default async function startSkynetServer(httpServer) {
     rootPasswordHash: await hashSecureString(ONO_ROOT_PASSWORD),
   });
 
-  const cloud = createSessionClient({
+  const internalCloud = createSessionClient({
     source: storageSource,
     domain: 'onofood.co',
     auth: null,
   });
 
-  cloud.docs.setOverride(
+  internalCloud.docs.setOverride(
     'OrderState',
     createSyntheticDoc({
       onCreateChild: orderId => {
+        console.log('Creating child', orderId);
         return createReducedDoc({
           actions: cloudOrders.children.get(orderId),
           reducer: OrderReducer,
@@ -193,7 +194,7 @@ export default async function startSkynetServer(httpServer) {
     }),
   );
 
-  const airtableFolder = cloud.docs.get('Airtable');
+  const airtableFolder = internalCloud.docs.get('Airtable');
   const companyConfigStream = airtableFolder.value
     .map(folder => {
       if (!folder) {
@@ -243,7 +244,7 @@ export default async function startSkynetServer(httpServer) {
       });
     })
     .flatten();
-  const companyConfig = cloud.docs.setOverrideValueStream(
+  const companyConfig = internalCloud.docs.setOverrideValueStream(
     'CompanyConfig',
     companyConfigStream,
   );
@@ -258,7 +259,7 @@ export default async function startSkynetServer(httpServer) {
     Fri: 'Friday',
     Sat: 'Saturday',
   };
-  cloud.docs.setOverrideValueStream(
+  internalCloud.docs.setOverrideValueStream(
     'RestaurantSchedule',
     companyConfigStream.map(config => {
       const schedule =
@@ -301,9 +302,9 @@ export default async function startSkynetServer(httpServer) {
     }),
   );
 
-  const companyActivity = cloud.docs.get('CompanyActivity');
+  const companyActivity = internalCloud.docs.get('CompanyActivity');
 
-  const cloudOrders = cloud.get('Orders');
+  const cloudOrders = internalCloud.get('Orders');
 
   cloudOrders.handleReports((reportType, report) => {
     trace('OrdersDataReport', reportType, report);
@@ -335,11 +336,11 @@ export default async function startSkynetServer(httpServer) {
     }
   });
 
-  cloud.setReducer('RecentOrders', {
+  internalCloud.setReducer('RecentOrders', {
     actionsDoc: companyActivity,
     reducer: RecentOrders,
     snapshotInterval: 10,
-    snapshotsDoc: cloud.get('RecentOrdersSnapshot'),
+    snapshotsDoc: internalCloud.get('RecentOrdersSnapshot'),
   });
 
   function timeIntToPSTDate(timeInt) {
@@ -353,54 +354,54 @@ export default async function startSkynetServer(httpServer) {
     };
   }
 
-  // cloud.setReducer('FeedbackSummary', {
-  //   actionsDoc: companyActivity,
-  //   reducer: defineCloudReducer(
-  //     'FeedbackSummary_a03',
-  //     (prevState = {}, action) => {
-  //       const lastCount = prevState.feedbackCount || 0;
-  //       const allFeedback = { ...prevState.allFeedback } || {};
-  //       if (action.type === 'CustomerFeedback') {
-  //         if (action.email.match(/\@onofood.co$/)) {
-  //           return prevState;
-  //         }
-  //         const t = new Date(action.time);
-  //         const { year, month, date } = timeIntToPSTDate(action.time);
-  //         const dayString = `${year}-${month}-${date}`;
-  //         const day = allFeedback[dayString] || {
-  //           year,
-  //           month,
-  //           date,
-  //         };
-  //         const sums = day.sums ? { ...day.sums } : {};
-  //         Object.entries(action.feedback).map(([feedbackTagName, value]) => {
-  //           if (feedbackTagName === 'tags') return;
-  //           if (sums[feedbackTagName]) {
-  //             sums[feedbackTagName] += value;
-  //           } else {
-  //             sums[feedbackTagName] = value;
-  //           }
-  //         });
-  //         allFeedback[dayString] = {
-  //           ...day,
-  //           sums,
-  //           dayCount: 1 + (day.dayCount || 0),
-  //           feedbacks: [
-  //             ...(day.feedbacks || []),
-  //             { ...action.feedback, email: action.email, time: action.time },
-  //           ],
-  //         };
-  //         return { ...prevState, feedbackCount: lastCount + 1, allFeedback };
-  //       }
-  //       return prevState;
-  //     },
-  //     {},
-  //   ),
-  //   snapshotInterval: 10,
-  //   snapshotsDoc: cloud.get('FeedbackSummarySnapshot-a02'),
-  // });
+  internalCloud.setReducer('FeedbackSummary', {
+    actionsDoc: companyActivity,
+    reducer: defineCloudReducer(
+      'FeedbackSummary_a03',
+      (prevState = {}, action) => {
+        const lastCount = prevState.feedbackCount || 0;
+        const allFeedback = { ...prevState.allFeedback } || {};
+        if (action.type === 'CustomerFeedback') {
+          if (action.email.match(/\@onofood.co$/)) {
+            return prevState;
+          }
+          const t = new Date(action.time);
+          const { year, month, date } = timeIntToPSTDate(action.time);
+          const dayString = `${year}-${month}-${date}`;
+          const day = allFeedback[dayString] || {
+            year,
+            month,
+            date,
+          };
+          const sums = day.sums ? { ...day.sums } : {};
+          Object.entries(action.feedback).map(([feedbackTagName, value]) => {
+            if (feedbackTagName === 'tags') return;
+            if (sums[feedbackTagName]) {
+              sums[feedbackTagName] += value;
+            } else {
+              sums[feedbackTagName] = value;
+            }
+          });
+          allFeedback[dayString] = {
+            ...day,
+            sums,
+            dayCount: 1 + (day.dayCount || 0),
+            feedbacks: [
+              ...(day.feedbacks || []),
+              { ...action.feedback, email: action.email, time: action.time },
+            ],
+          };
+          return { ...prevState, feedbackCount: lastCount + 1, allFeedback };
+        }
+        return prevState;
+      },
+      {},
+    ),
+    snapshotInterval: 10,
+    snapshotsDoc: internalCloud.get('FeedbackSummarySnapshot-a02'),
+  });
 
-  const kitchenConfig = cloud.docs.setOverrideValueStream(
+  const kitchenConfig = internalCloud.docs.setOverrideValueStream(
     'KitchenConfig',
     companyConfigStream.map(companyConfig => {
       return companyConfigToKitchenConfig(companyConfig);
@@ -414,7 +415,7 @@ export default async function startSkynetServer(httpServer) {
     });
     return out;
   }
-  const menu = cloud.docs.setOverrideValueStream(
+  const menu = internalCloud.docs.setOverrideValueStream(
     'WebMenu',
     companyConfigStream.map(companyConfig => {
       if (!companyConfig) return null;
@@ -519,32 +520,48 @@ export default async function startSkynetServer(httpServer) {
     }),
   );
 
-  cloud.setReducer('DevicesState', {
-    actionsDoc: cloud.get('DeviceActions'),
+  internalCloud.setReducer('DevicesState', {
+    actionsDoc: internalCloud.get('DeviceActions'),
     reducer: DevicesReducer,
     snapshotInterval: 10,
-    snapshotsDoc: cloud.get('DevicesStateSnapshot'),
+    snapshotsDoc: internalCloud.get('DevicesStateSnapshot'),
   });
 
   const protectedSource = createProtectedSource({
-    source: cloud,
+    source: internalCloud,
+    // staticOrgs: {
+    //   onoEmployees: {
+    //     users: {
+    //       withEmailRegex: ,
+    //       // withEmailRegex: ['.*@onofood\.co$'],
+    //       // withId: ['user1', 'user2'],
+    //     }
+    //   }
+    // },
     staticPermissions: {
       'onofood.co': {
         WebMenu: { defaultRule: { canRead: true } },
         DevicesState: { defaultRule: { canRead: true } },
         DeviceActions: { defaultRule: { canTransact: true } },
+        // KitchenConfig: { ono: { canRead: true } },
         OrderState: {
           children: { defaultRule: { canRead: true } },
+        },
+        FeedbackSummary: {
+          selector: {
+            type: 'EmailRegex',
+            rule: { canRead: true },
+            emailRegexMatch: '.*@onofood.co$',
+          },
         },
       },
     },
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
   });
 
-  const fsClient = createFSClient({ client: cloud });
+  const fsClient = createFSClient({ client: internalCloud });
 
   const context = new Map();
-  context.set(CloudContext, cloud); // bad idea, must have independent client for authentication!!!
   context.set(HostContext, { authority: 'onoblends.co', useSSL: !IS_DEV });
 
   async function placeOrder({ orderId }) {
@@ -584,7 +601,7 @@ export default async function startSkynetServer(httpServer) {
     10 * 60 * 1000, // 10 minutes
   );
 
-  const bookingRequests = cloud.get('BookingRequests');
+  const bookingRequests = internalCloud.get('BookingRequests');
   async function requestBooking(action) {
     await bookingRequests.putTransactionValue(action);
     const {
@@ -659,7 +676,6 @@ Debug: ${JSON.stringify(action)}
         return {};
       }
       default:
-        // return await cloud.dispatch(action);
         return await protectedSource.dispatch(action);
     }
   }
@@ -690,14 +706,13 @@ Debug: ${JSON.stringify(action)}
   const webService = await attachWebServer({
     httpServer,
     context,
-    screenProps: { cloud },
     mainDomain: domain,
     App,
     source: {
       ...protectedSource,
-      // ...cloud,
       dispatch,
     },
+    sourceDomain: 'onofood.co',
     expressRouting: app => {
       app.use((req, res, next) => {
         if (req.headers.host === 'onofood.co') {
@@ -724,7 +739,7 @@ Debug: ${JSON.stringify(action)}
     ...webService,
     close: async () => {
       await protectedSource.close();
-      await cloud.close();
+      await internalCloud.close();
       await webService.close();
     },
   };

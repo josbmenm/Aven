@@ -1,6 +1,6 @@
 import React from 'react';
-import SpinnerButton from '../dash-ui/SpinnerButton';
-import useAsyncErrorPopover from '../components/useAsyncErrorPopover';
+import SpinnerButton from './SpinnerButton';
+import useAsyncErrorPopover from './useAsyncErrorPopover';
 
 export default function AsyncButton({
   onPress,

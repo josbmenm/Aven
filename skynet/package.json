@@ -20,6 +20,7 @@
       "cloud-auth-sms",
       "cloud-auth-root",
       "cloud-utils",
+      "dash-ui",
       "email-agent-sendgrid",
       "sms-agent-twilio",
       "admin",

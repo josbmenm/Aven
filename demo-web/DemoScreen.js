@@ -31,45 +31,6 @@ function BaseScreen({ children }) {
   );
 }
 
-// export default function DemoScreen() {
-//   // const [string, setString] = React.useState();
-//   const [string, setString] = useCloudState('SimpleString');
-//   return (
-//     <BaseScreen>
-//       <Stack>
-//         <Text>{string || 'please click:'}</Text>
-//         <Stack horizontal>
-//           <Button
-//             title="set hello"
-//             onPress={() => {
-//               setString('HELLO');
-//             }}
-//           />
-//           <Button
-//             title="set world"
-//             onPress={() => {
-//               setString('WORLD');
-//             }}
-//           />
-//         </Stack>
-//       </Stack>
-//     </BaseScreen>
-//   );
-// }
-
-// export default function DemoScreen() {
-//   const cloud = useCloud();
-//   const testDoc = cloud.get('SimpleString');
-//   const value = useValue(testDoc);
-//   return (
-//     <BaseScreen>
-//       <Stack>
-//         <Text>{value}</Text>
-//       </Stack>
-//     </BaseScreen>
-//   );
-// }
-
 const todosReducer = (prevState = {}, action) => {
   const prevThings = prevState.things || [];
   switch (action.type) {

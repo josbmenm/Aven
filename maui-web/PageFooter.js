@@ -68,8 +68,8 @@ export default function PageFooter() {
               </ColumnToRowChild>
               <ColumnToRowChild
                 style={{
-                  alignItems: 'center',
-                  flexDirection: 'row',
+                  alignItems: 'flex-start',
+                  // flexDirection: 'row',
                   flex: 2,
                   alignSelf: 'stretch',
                   justifyContent: 'flex-start',
@@ -88,6 +88,12 @@ export default function PageFooter() {
                   © Copyright {new Date().getFullYear()} Ono Food Co. All Rights
                   Reserved
                 </SmallText>
+                <Link
+                  routeName="Login"
+                  title="employee log in"
+                  titleStyle={{ fontSize: 11, fontWeight: 'normal' }}
+                  buttonStyle={{ paddingHorizontal: 0 }}
+                />
               </ColumnToRowChild>
             </ColumnToRow>
           </ColumnToRowChild>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import createFullscreenSwitchNavigator from '../navigation-web/createFullscreenSwitchNavigator';
-import Admin from '../admin/Admin';
+import LoginScreen from './LoginScreen';
 import InternalBlendMenu from './InternalBlendMenu';
 import FeedbackDashboard from './FeedbackDashboard';
 import { MauiWebRoutes } from '../maui-web/MauiWebApp';
@@ -72,25 +72,12 @@ const GoogleAnalyticsTag = `
 </script>
 `;
 
-let authority = '';
-let useSSL = true;
-if (global.window) {
-  authority = global.window.location.host;
-  useSSL = global.window.location.protocol.indexOf('s') !== -1;
-}
-function SkynetAdmin(props) {
-  return (
-    <Admin
-      defaultSession={{
-        authority,
-        useSSL,
-        domain: 'onofood.co',
-      }}
-      {...props}
-    />
-  );
-}
-SkynetAdmin.router = Admin.router;
+// let authority = '';
+// let useSSL = true;
+// if (global.window) {
+//   authority = global.window.location.host;
+//   useSSL = global.window.location.protocol.indexOf('s') !== -1;
+// }
 
 const defaultMetaImage = 'https://onofood.co/img/OnoLanding2.png';
 const defaultMetaDescription =
@@ -151,15 +138,15 @@ const AppNavigator = createFullscreenSwitchNavigator(
         return [routeName, { ...routeConfig, navigationOptions }];
       }),
     ),
-    Admin: {
-      screen: SkynetAdmin,
-      path: 'admin',
+    Login: {
+      screen: LoginScreen,
+      path: 'login',
     },
     InternalBlendMenu2: {
       screen: InternalBlendMenu,
       path: 'secrets/blendmenu',
     },
-    FeedbackData: {
+    FeedbackDashboard: {
       screen: FeedbackDashboard,
       path: 'secrets/maui-feedback',
     },

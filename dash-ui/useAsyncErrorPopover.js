@@ -1,9 +1,9 @@
 import React from 'react';
 import useKeyboardPopover from './useKeyboardPopover';
-import { Button } from '../dash-ui';
+import { Button } from '.';
 import { View, Text } from 'react-native';
-import { primaryFontFace, boldPrimaryFontFace } from './Styles';
-import { colorNeutral, colorNegative } from './Onotheme';
+import { primaryFontFace, boldPrimaryFontFace } from '../components/Styles';
+import { colorNeutral, colorNegative } from '../components/Onotheme';
 
 export default function useAsyncErrorPopover(onError) {
   const { onPopover } = useKeyboardPopover(({ onClose, openArguments }) => {

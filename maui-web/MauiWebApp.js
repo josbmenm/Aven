@@ -7,6 +7,8 @@ import OurStory from './OurStoryPage';
 import Privacy from './PrivacyPage';
 import Terms from './TermsPage';
 import BookUs from './BookUsPage';
+import InternalAccount from './InternalAccountPage';
+import InternalDashboard from './InternalDashboardPage';
 // import Schedule from './SchedulePage';
 import RequestLocation from './RequestLocationPage';
 import Press from './PressPage';
@@ -77,6 +79,14 @@ export const MauiWebRoutes = {
   Receipt: {
     path: 'receipt/:orderId',
     screen: Receipt,
+  },
+  InternalAccount: {
+    path: 'internal/account',
+    screen: InternalAccount,
+  },
+  InternalDashboard: {
+    path: 'internal/dashboard',
+    screen: InternalDashboard,
   },
 };
 

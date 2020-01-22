@@ -8,7 +8,7 @@ import { usePopover } from '../views/Popover';
 import { View, Text } from 'react-native';
 import { Easing } from 'react-native-reanimated';
 import DisconnectedPage from '../components/DisconnectedPage';
-import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
+import { useCloud, useCloudValue, useStream } from '../cloud-core/KiteReact';
 import { getSubsystem } from '../ono-cloud/OnoKitchen';
 import { genericText, prettyShadowSmall } from '../components/Styles';
 import usePendantManualMode from '../components/usePendantManualMode';
@@ -386,7 +386,7 @@ export default function Subsystem({ ...props }) {
     });
   }
   const system = getSubsystem(systemId, kitchenConfig, kitchenState);
-  const isConnected = useValue(cloud.connected);
+  const isConnected = useStream(cloud.connected);
   const isManualMode = usePendantManualMode();
   return (
     <TwoPanePage

@@ -1,9 +1,9 @@
-import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
+import { useCloud, useCloudValue, useStream } from '../cloud-core/KiteReact';
 import { getSubsystem, getSubsystemFaults } from '../ono-cloud/OnoKitchen';
 
 export default function useKitchenStatus(restaurantState) {
   const cloud = useCloud();
-  const isConnected = useValue(cloud.connected); // uh....
+  const isConnected = useStream(cloud.connected); // uh....
   const kitchenState = useCloudValue('KitchenState');
   const kitchenConfig = useCloudValue('KitchenConfig');
 

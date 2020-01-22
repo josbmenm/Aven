@@ -1,12 +1,12 @@
 import React from 'react';
 import {
   View,
-  Animated,
   StyleSheet,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
 } from 'react-native';
 import { prettyShadow } from './Styles';
+import Animated from 'react-native-reanimated';
 
 export default function KeyboardPopover({ children, onClose, openValue }) {
   return (
@@ -32,13 +32,13 @@ export default function KeyboardPopover({ children, onClose, openValue }) {
             flex: 1,
             // width: 400,
             justifyContent: 'center',
-            opacity: openValue.interpolate({
+            opacity: Animated.interpolate(openValue, {
               inputRange: [0, 0.5],
               outputRange: [0, 1],
             }),
             transform: [
               {
-                translateY: openValue.interpolate({
+                translateY: Animated.interpolate(openValue, {
                   inputRange: [0, 1],
                   outputRange: [100, 0],
                 }),

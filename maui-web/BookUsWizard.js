@@ -4,7 +4,7 @@ import View from '../views/View';
 import Heading from '../dashboard/Heading';
 import BaseText from '../dashboard/BaseText';
 import BlockForm from '../components/BlockForm';
-import FormInput from '../components/BlockFormInput';
+import TextInput from '../dash-ui/TextInput';
 import { useTheme } from '../dashboard/Theme';
 import { useCloud } from '../cloud-core/KiteReact';
 import { Button, Stack } from '../dash-ui';
@@ -15,7 +15,7 @@ import useKeyPress from './useKeyPress';
 
 const TOTAL_STEPS = 6;
 
-const formInputStyle = {
+const inputStyle = {
   marginHorizontal: 8,
   marginBottom: 16,
 };
@@ -237,7 +237,7 @@ function BookUsWizard() {
           </StepHeader>
 
           <FormRow direction="row">
-            <FormInput
+            <TextInput
               label="first name"
               mode="name"
               ref={firstNameRef}
@@ -249,9 +249,9 @@ function BookUsWizard() {
                   value,
                 })
               }
-              style={formInputStyle}
+              style={inputStyle}
             />
-            <FormInput
+            <TextInput
               label="last name"
               mode="name"
               ref={lastNameRef}
@@ -263,7 +263,7 @@ function BookUsWizard() {
                   value,
                 })
               }
-              style={formInputStyle}
+              style={inputStyle}
             />
           </FormRow>
         </Step>
@@ -274,7 +274,7 @@ function BookUsWizard() {
             </Heading>
           </StepHeader>
           <FormRow>
-            <FormInput
+            <TextInput
               mode="email"
               label="email"
               ref={emailRef}
@@ -286,7 +286,7 @@ function BookUsWizard() {
                   value,
                 })
               }
-              style={formInputStyle}
+              style={inputStyle}
             />
           </FormRow>
         </Step>
@@ -296,7 +296,7 @@ function BookUsWizard() {
             <BodyText>Let us know so we can cater to your demands.</BodyText>
           </StepHeader>
           <FormRow>
-            <FormInput
+            <TextInput
               mode="name"
               label="describe your event"
               ref={eventTypeRef}
@@ -308,7 +308,7 @@ function BookUsWizard() {
                   value,
                 })
               }
-              style={formInputStyle}
+              style={inputStyle}
             />
           </FormRow>
         </Step>
@@ -318,7 +318,7 @@ function BookUsWizard() {
             <BodyText>Tell us your preferred dates.</BodyText>
           </StepHeader>
           <FormRow>
-            <FormInput
+            <TextInput
               mode="name"
               label="event day(s)"
               ref={dateRef}
@@ -330,7 +330,7 @@ function BookUsWizard() {
                   value,
                 })
               }
-              style={formInputStyle}
+              style={inputStyle}
             />
           </FormRow>
         </Step>
@@ -340,7 +340,7 @@ function BookUsWizard() {
             <BodyText>What is your address?</BodyText>
           </StepHeader>
           <FormRow>
-            <FormInput
+            <TextInput
               mode="name"
               label="event address"
               ref={addressRef}
@@ -352,7 +352,7 @@ function BookUsWizard() {
                   value,
                 })
               }
-              style={formInputStyle}
+              style={inputStyle}
             />
           </FormRow>
         </Step>
@@ -364,7 +364,7 @@ function BookUsWizard() {
             </BodyText>
           </StepHeader>
           <FormRow>
-            <FormInput
+            <TextInput
               value={formState.fields.comments}
               label="any additional comments?"
               mode="textarea"
@@ -372,7 +372,7 @@ function BookUsWizard() {
               onValue={value =>
                 formDispatch({ type: 'UPDATE_FIELD', key: 'comments', value })
               }
-              style={formInputStyle}
+              style={inputStyle}
             />
           </FormRow>
         </Step>

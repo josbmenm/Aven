@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useMemo } from 'react';
-import { useCloud, useValue } from '../cloud-core/KiteReact';
+import { useCloud, useStream } from '../cloud-core/KiteReact';
 import { getOrderItemMapper, getOrderSummary } from '../logic/configLogic';
 import { useMenu, getLocalName, useCompanyConfig } from './OnoKitchen';
 import { getIsLiveMode } from '../card-reader/CardReader';
@@ -90,7 +90,7 @@ export function useOrder() {
 
 export function useOrderState() {
   let { order, ...orderStuff } = useContext(OrderContext);
-  const orderState = useValue(order ? order.value : null);
+  const orderState = useStream(order ? order.value : null);
   return {
     ...orderStuff,
     orderState,

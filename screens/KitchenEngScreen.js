@@ -4,7 +4,7 @@ import LinkRow from '../components/LinkRow';
 import { useSubsystemOverview } from '../ono-cloud/OnoKitchen';
 import SimplePage from '../components/SimplePage';
 import { useNavigation } from '../navigation-hooks/Hooks';
-import { useValue, useCloud } from '../cloud-core/KiteReact';
+import { useStream, useCloud } from '../cloud-core/KiteReact';
 import DisconnectedPage from '../components/DisconnectedPage';
 
 function Subsystems() {
@@ -34,7 +34,7 @@ function Subsystems() {
 
 export default function KitchenEngScreen({ ...props }) {
   const cloud = useCloud();
-  const isConnected = useValue(cloud.connected);
+  const isConnected = useStream(cloud.connected);
   return (
     <SimplePage
       {...props}

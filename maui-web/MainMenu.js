@@ -6,6 +6,7 @@ import { useTheme } from '../dashboard/Theme';
 import VisualButton from '../dashboard/VisualButton';
 import Link from './Link';
 import ButtonLink from '../dashboard/ButtonLink';
+import OnoHomeLink from './OnoHomeLink';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import FunctionalLink from '../navigation-web/Link';
 import {
@@ -107,14 +108,7 @@ export function DesktopMenu() {
           }}
         >
           {/* Logo */}
-          <FunctionalLink
-            routeName="Home"
-            accesible="true"
-            accessibilityRole="button"
-            accessibilityLabel="Logo"
-            renderContent={() => <OnoBlendsLogo />}
-          />
-
+          <OnoHomeLink />
           {/* Menu Items */}
           <View
             style={{

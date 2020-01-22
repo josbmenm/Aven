@@ -1,0 +1,26 @@
+import React from 'react';
+import { ScrollView, View } from 'react-native';
+
+export default function Page({ children }) {
+  return (
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          alignItems: 'stretch',
+          justifyContent: 'center',
+          flexDirection: 'row',
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            maxWidth: 1200,
+          }}
+        >
+          {children}
+        </View>
+      </ScrollView>
+    </View>
+  );
+}

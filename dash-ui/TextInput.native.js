@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
-import { textInputLabelStyle, textInputStyle, monsterra60 } from './Styles';
+import {
+  textInputLabelStyle,
+  textInputStyle,
+  monsterra60,
+} from '../components/Styles';
 import Animated, { Easing } from 'react-native-reanimated';
-import { useTheme } from '../dash-ui/Theme';
-import { opacify } from '../dash-ui/utils';
+import { useTheme } from './Theme';
+import { opacify } from './utils';
 
 const textInputFontSize = 26;
 

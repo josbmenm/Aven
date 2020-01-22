@@ -3,10 +3,9 @@ import BlockForm from './BlockForm';
 import BlockFormMessage from './BlockFormMessage';
 import BlockFormTitle from './BlockFormTitle';
 import BlockFormRow from './BlockFormRow';
-import BlockFormInput from './BlockFormInput';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import useFocus from '../navigation-hooks/useFocus';
-import { SpinnerButton } from '../dash-ui';
+import { SpinnerButton, TextInput } from '../dash-ui';
 
 export default function CollectNamePage({
   onSubmit,
@@ -32,7 +31,7 @@ export default function CollectNamePage({
 
   const inputRenderers = [
     inputProps => (
-      <BlockFormInput
+      <TextInput
         label="first name"
         mode="name"
         maxLength={24}
@@ -42,7 +41,7 @@ export default function CollectNamePage({
       />
     ),
     inputProps => (
-      <BlockFormInput
+      <TextInput
         label="last initial"
         mode="name"
         maxLength={1}
