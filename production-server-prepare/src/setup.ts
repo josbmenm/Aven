@@ -2,23 +2,16 @@ import { setupNginx } from './setup/Nginx';
 import { setupMainServiceFiles } from './setup/MainServiceFiles';
 import { setupMonitoringTools } from './setup/MonitoringTools';
 import { setupDevTools } from './setup/DeveloperTools';
-import { setupTimezone } from './setup/Timezone';
-import { setupAptDependencies } from './setup/aptDependencies';
+import { basicServerSetup } from './setup/basicServer';
 import { printOSInfo } from './utils/printOSInfo';
 
 export async function setup() {
   // Initial smoke test
   await printOSInfo();
 
-  await setupAptDependencies();
-
-  // TODO: hostname, /etc/hosts
-
-  // TODO: disable sshd password?
+  await basicServerSetup();
 
   await Promise.all([
-    setupTimezone(),
-
     setupMonitoringTools(),
 
     setupDevTools(),

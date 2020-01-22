@@ -1,0 +1,13 @@
+import { ensureFileContains } from '../utils/Files';
+import { exec } from '../utils/spawn';
+
+export async function setupSecurity() {
+  const changed = await ensureFileContains(
+    '/etc/ssh/sshd_config',
+    '\nPasswordAuthentication no\n',
+  );
+
+  if (changed) {
+    await exec('systemctl reload sshd');
+  }
+}
