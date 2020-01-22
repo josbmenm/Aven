@@ -338,6 +338,8 @@ async function setupCertbot() {
 
     'certonly',
 
+    '--expand',
+
     '--noninteractive',
 
     '--agree-tos',
