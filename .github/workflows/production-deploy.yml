@@ -45,16 +45,6 @@ jobs:
             npm-${{ runner.os }}-build-
             npm-${{ runner.os }}-
 
-      - name: Cache node_modules
-        uses: actions/cache@v1
-        with:
-          path: production-server-prepare/node_modules
-          key: deploy-skynet-modules-${{ runner.os }}-node-${{ hashFiles('production-server-prepare/package-lock.json') }}
-          restore-keys: |
-            prepare-server-modules-${{ runner.os }}-build-${{ env.cache-name }}-
-            prepare-server-modules-${{ runner.os }}-build-
-            prepare-server-modules-${{ runner.os }}-
-
       - name: Configure Npm
         run: |
           echo "color = always" >> .npmrc
