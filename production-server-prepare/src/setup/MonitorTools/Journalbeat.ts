@@ -75,9 +75,12 @@ export async function setupJournalbeat() {
 
   await exec('systemctl enable journalbeat');
 
-  await ensureFileIs('/etc/journalbeat/journalbeat.yml', journalbeatConfig);
+  const change = await ensureFileIs(
+    '/etc/journalbeat/journalbeat.yml',
+    journalbeatConfig,
+  );
 
-  await exec('systemctl start journalbeat');
+  await exec(`systemctl ${change ? 'restart' : 'start'} journalbeat`);
 
   // TODO: Finish setup
   // https://www.elastic.co/guide/en/beats/journalbeat/current/journalbeat-configuration.html
