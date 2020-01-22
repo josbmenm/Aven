@@ -81,7 +81,4 @@ export async function setupJournalbeat() {
   );
 
   await exec(`systemctl ${change ? 'restart' : 'start'} journalbeat`);
-
-  // TODO: Finish setup
-  // https://www.elastic.co/guide/en/beats/journalbeat/current/journalbeat-configuration.html
 }
