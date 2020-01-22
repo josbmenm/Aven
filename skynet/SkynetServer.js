@@ -641,14 +641,14 @@ Debug: ${JSON.stringify(action)}
     switch (action.type) {
       case 'SendReceipt':
         return await sendReceipt({
-          cloud: cloud,
+          cloud: internalCloud,
           smsAgent,
           emailAgent,
           action,
         });
       case 'RefundOrder': // todo check for root/employee auth. right now this is top secret!
         return await refundOrder({
-          cloud: cloud,
+          cloud: internalCloud,
           smsAgent,
           emailAgent,
           action,
@@ -662,9 +662,9 @@ Debug: ${JSON.stringify(action)}
       case 'StripeCapturePayment':
         return capturePayment(action);
       case 'ValidatePromoCode':
-        return validatePromoCode(cloud, action);
+        return validatePromoCode(internalCloud, action);
       case 'SubmitFeedback':
-        return submitFeedback(cloud, emailAgent, action);
+        return submitFeedback(internalCloud, emailAgent, action);
       case 'UpdateAirtable': {
         scrapeAirTable(fsClient)
           .then(() => {
