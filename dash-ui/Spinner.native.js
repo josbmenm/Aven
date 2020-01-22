@@ -25,6 +25,7 @@ export default function Spinner({ color, isSpinning = true, style }) {
   }, []);
   return (
     <Animated.Image
+      resizeMode="contain"
       style={{
         opacity,
         width: '80%',

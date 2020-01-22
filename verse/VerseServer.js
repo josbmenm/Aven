@@ -155,7 +155,7 @@ export default async function startVerseServer(httpServer) {
     domain: 'onofood.co',
   });
 
-  cloud.get('KitchenState').setLocalOnly();
+  cloud.get('KitchenState').setEphemeral();
   const cloudOrders = cloud.get('Orders');
   const restaurantActions = cloud.get('RestaurantActions');
 

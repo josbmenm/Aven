@@ -237,6 +237,7 @@ export function companyConfigToKitchenConfig(companyConfig) {
     return null;
   }
   const {
+    KitchenSlots,
     KitchenSystems,
     KitchenSystemTags,
     KitchenSystemFaults,
@@ -251,6 +252,17 @@ export function companyConfigToKitchenConfig(companyConfig) {
   };
   Object.keys(KitchenSystems).forEach(kitchenSystemId => {
     const kitchenSystem = KitchenSystems[kitchenSystemId];
+    const slots = [];
+    Object.values(KitchenSlots)
+      .filter(slot => {
+        return slot.KitchenSystem[0] === kitchenSystemId;
+      })
+      .forEach(slot => {
+        slots[slot.Slot] = {
+          id: slot.id,
+          name: slot.Name,
+        };
+      });
     const tags = Object.values(KitchenSystemTags).filter(tag => {
       return tag.System[0] === kitchenSystemId;
     });
@@ -352,6 +364,7 @@ export function companyConfigToKitchenConfig(companyConfig) {
       pulseCommands,
       faults,
       alarms,
+      slots,
       hasSequencer: kitchenSystem.HasSequencer,
       name: kitchenSystem.Name,
     };

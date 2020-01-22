@@ -14,30 +14,91 @@ import { useRestaurantState } from '../ono-cloud/Kitchen';
 import cuid from 'cuid';
 import { primaryFontFace, standardTextColor } from '../components/Styles';
 
-function TaskRow({ onCancel, isDropping, onDoNext, taskState, onRemake }) {
+function TaskRow({
+  onCancel,
+  isDropping,
+  onDoNext,
+  taskState,
+  onRemake,
+  onBlendExtra,
+  messageText,
+}) {
   if (!taskState) {
     return null;
   }
-  let cancelButton = onCancel && (
-    <Button
-      onPress={onCancel}
-      title="cancel"
-      outline
-      style={{ marginLeft: 8 }}
-    />
-  );
+  const buttonsEtc = [];
+  if (onDoNext) {
+    buttonsEtc.push(
+      <Button
+        onPress={onDoNext}
+        title="do next"
+        key="doNext"
+        outline
+        style={{ marginLeft: 8 }}
+      />,
+    );
+  }
+  if (onCancel) {
+    buttonsEtc.push(
+      <Button
+        onPress={onCancel}
+        title="cancel"
+        key="cancel"
+        outline
+        style={{ marginLeft: 8 }}
+      />,
+    );
+  }
   if (isDropping) {
-    cancelButton = (
+    buttonsEtc.push(
       <Text
         style={{
           ...primaryFontFace,
-          color: standardTextColor,
+          color: '#555',
           fontSize: 18,
           marginTop: 16,
         }}
+        key="dropping"
       >
         Dropping..
-      </Text>
+      </Text>,
+    );
+  }
+  if (messageText) {
+    buttonsEtc.push(
+      <Text
+        style={{
+          ...primaryFontFace,
+          color: '#555',
+          fontSize: 18,
+          marginTop: 16,
+          marginHorizontal: 6,
+        }}
+        key="message"
+      >
+        {messageText}
+      </Text>,
+    );
+  }
+  if (onRemake) {
+    buttonsEtc.push(
+      <Button
+        onPress={onRemake}
+        title="re-make"
+        outline
+        key="remake"
+        style={{ marginLeft: 8 }}
+      />,
+    );
+  }
+  if (onBlendExtra) {
+    buttonsEtc.push(
+      <Button
+        onPress={onBlendExtra}
+        outline
+        title="blend extra"
+        style={{ marginLeft: 8 }}
+      />,
     );
   }
   return (
@@ -50,27 +111,7 @@ function TaskRow({ onCancel, isDropping, onDoNext, taskState, onRemake }) {
     >
       <TaskInfo
         task={taskState}
-        buttons={
-          <View style={{ flexDirection: 'row' }}>
-            {onDoNext && (
-              <Button
-                onPress={onDoNext}
-                title="do next"
-                outline
-                style={{ marginLeft: 8 }}
-              />
-            )}
-            {cancelButton}
-            {onRemake && (
-              <Button
-                onPress={onRemake}
-                title="re-make"
-                outline
-                style={{ marginLeft: 8 }}
-              />
-            )}
-          </View>
-        }
+        buttons={<View style={{ flexDirection: 'row' }}>{buttonsEtc}</View>}
       />
     </View>
   );
@@ -146,6 +187,18 @@ function TaskQueue({ restaurantState, dispatch }) {
           <TaskRow
             key={restaurantState.blend.id}
             taskState={restaurantState.blend.task}
+            onBlendExtra={() => {
+              dispatch({ type: 'BlendExtra' });
+            }}
+            messageText={
+              restaurantState.blend.extraBlends
+                ? `Blending Extra${
+                    restaurantState.blend.extraBlends === 1
+                      ? ''
+                      : ` x${restaurantState.blend.extraBlends}`
+                  }`
+                : null
+            }
           />
         </RowSection>
       )}

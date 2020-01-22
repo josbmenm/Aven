@@ -84,6 +84,7 @@ class ActionPageWithNavigation extends React.Component {
           >
             {actions.map((action, i) => (
               <View
+                key={i}
                 style={{
                   flex: 1,
                   marginHorizontal: 10,

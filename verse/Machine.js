@@ -320,7 +320,7 @@ export function connectMachine({
       if (currentMachineSchema) {
         const readings = await doReadTags(currentMachineSchema, {});
         isPLCConnected = true;
-        lastKitchenUpdateTime= Date.now();
+        lastKitchenUpdateTime = Date.now();
         currentState = getTagValues(readings);
       }
       // if (shallowEqual(lastState, currentState)) {
@@ -336,7 +336,7 @@ export function connectMachine({
           // kitchen write compelted
         })
         .catch(err => {
-          error('KitchenStateWriteError', {err});
+          error('KitchenStateWriteError', { err });
         });
 
       Object.entries(subsystemResolvers).forEach(([subsystem, resolver]) => {
@@ -692,10 +692,13 @@ export function connectMachine({
 
   let lastAppliedMachineState = {};
 
-  function applyDerivedState(restaurantState) {
+  function applyDerivedState(restaurantState, kitchenConfig) {
     if (!deriveAppliedMachineState) return;
     if (!restaurantState || !restaurantState.isAttached) return;
-    const machineState = deriveAppliedMachineState(restaurantState);
+    const machineState = deriveAppliedMachineState(
+      restaurantState,
+      kitchenConfig,
+    );
     const newMachineState = {};
     let needsMachineWrite = false;
     Object.entries(machineState).forEach(([k, v]) => {
@@ -732,7 +735,7 @@ export function connectMachine({
     if (kitchenConfig !== undefined) _kitchenConfig = kitchenConfig;
     observeSideEffects();
     scheduleSequencerStep();
-    applyDerivedState(restaurantState);
+    applyDerivedState(restaurantState, kitchenConfig);
   }
 
   let scheduledSequencerStep = null;

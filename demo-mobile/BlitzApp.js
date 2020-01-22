@@ -243,21 +243,16 @@ const PRELOAD_IMAGES = [
 ];
 
 function KioskApp({ mode }) {
-  // const isTestKiosk = mode === 'testKiosk';
-  const isTestKiosk = false;
-  const [isSkynet, setIsSkynet] = React.useState(isTestKiosk);
-  const hostConfig = isSkynet ? SKYNET_HOST_CONFIG : VERSE_HOST_CONFIG;
   const cloud = useCloudProvider({
-    source: isSkynet ? skynetSource : verseSource,
+    source: verseSource,
     domain: 'onofood.co',
-    establishAnonymousSession: true,
   });
   if (!cloud) {
     return <Spinner />;
   }
 
   return (
-    <HostContextContainer {...hostConfig}>
+    <HostContextContainer {...VERSE_HOST_CONFIG}>
       <CloudContext.Provider value={cloud}>
         <PopoverContainer>
           <ClosableKioskContainer>

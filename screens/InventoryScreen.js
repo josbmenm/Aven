@@ -306,6 +306,11 @@ function InventorySlot({
             <SmallTag status="negative" title={`Hopper Off`} />
           </Spacing>
         )}
+        {slot.foodChuteEmpty && (
+          <Spacing right={8} bottom={8}>
+            <SmallTag status="warning" title={`Chute Empty`} />
+          </Spacing>
+        )}
         {slot.pumpDisabled && (
           <Spacing right={8} bottom={8}>
             <SmallTag status="negative" title={`Pump Off`} />
@@ -379,8 +384,12 @@ function InventorySlot({
           >
             <FrozenMovingSpinner slot={slot.Slot} />
           </View>
-          <View style={{ marginBottom: 8 }}>
-            {/* <HopperToggle index={slot.Slot} /> */}
+          <Stack horizontal>
+            <KitchenCommandButton
+              commandType="FrozenJogHopper"
+              params={{ slot: slot.Slot }}
+              title="jog hopper"
+            />
             <AsyncButton
               title="vibrate chute"
               onPress={async () => {
@@ -405,7 +414,7 @@ function InventorySlot({
                 });
               }}
             />
-          </View>
+          </Stack>
         </React.Fragment>
       )}
 
