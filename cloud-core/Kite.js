@@ -81,6 +81,7 @@ export function createStreamDoc(
     },
     export: async () => {
       const idAndValue = await idAndValueStream.load();
+
       if (!idAndValue) {
         return {
           type: 'Doc',
@@ -1413,7 +1414,7 @@ export function createReducerStream(
   { snapshotsDoc } = { snapshotsDoc: null },
 ) {
   let phase = 'init';
-  let headId = null;
+  let headId = undefined;
   let walkBackId = null;
   let walkForwardBreadcrumbs = [];
   let rootId = undefined;
@@ -1437,6 +1438,9 @@ export function createReducerStream(
     return (idRefs[id] = {});
   }
   function getLatestState() {
+    if (headId === null) {
+      return { id: null, value: undefined };
+    }
     const idRef = getId(headId);
     const value = valueMap.get(idRef);
     if (phase === 'ready') {
@@ -1472,6 +1476,9 @@ export function createReducerStream(
     }
     if (headId != null && !valueMap.has(getId(headId))) {
       phase = 'research';
+    } else if (headId === null) {
+      rootId = null;
+      phase = 'ready';
     }
     if (phase !== 'research') {
       pauseReducerExecution();
@@ -1576,6 +1583,7 @@ export function createReducerStream(
   return createProducerStream({
     crumb: `reduced:${reducerName}`,
     start: notify => {
+      notify.next(getLatestState());
       notifier = notify;
       primaryStream.addListener(listener);
     },
