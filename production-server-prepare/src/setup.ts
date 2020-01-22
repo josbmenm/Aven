@@ -1,5 +1,3 @@
-#!./setup.sh
-
 import { setupNginx } from './setup/Nginx';
 import { setupMainServiceFiles } from './setup/MainServiceFiles';
 import { setupMonitoringTools } from './setup/MonitoringTools';
