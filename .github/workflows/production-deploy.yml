@@ -3,7 +3,7 @@ name: Ono Production Deploy Skynet
 on:
   push:
     branches:
-      - cameron/*
+      - master
 
 # Copy this file for a new deploy
 # Changes:

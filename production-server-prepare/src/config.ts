@@ -14,12 +14,16 @@ export const runtimeDir = 'onoProduction';
 export const rootPath = '';
 
 // Domains that point to one daemon
-export const setupDomains = ['skynet.onoblends.co'];
+export const setupDomains = [
+  'skynet.onoblends.co',
+  'onoblends.co',
+  'onofood.co',
+];
 
 // This cannot contain a dot `.`
 export const upstreamUniqueName = setupDomains[0].replace('.', '_');
 
-// Name of the socket file used for communications with 
+// Name of the socket file used for communications with
 export const socketFilename = 'sock';
 
 // Directory the daemon runs in
