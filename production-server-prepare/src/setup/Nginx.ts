@@ -1,5 +1,5 @@
-import { ensureFileIs, ensureFilesAre, ensureLinkIs } from './utils/Files';
-import { spawn, exec } from './utils/spawn';
+import { ensureFileIs, ensureFilesAre, ensureLinkIs } from '../utils/Files';
+import { spawn, exec } from '../utils/spawn';
 import { promises } from 'fs';
 
 const { mkdir, chmod } = promises;
@@ -11,7 +11,11 @@ import {
   upstreamHost,
   letsencryptLive,
   certbotWebrootPath,
-} from './config';
+} from '../config';
+
+import { addAptDependencies } from './aptDependencies';
+
+addAptDependencies('nginx', 'certbot');
 
 const nginxConf = `user www-data;
 worker_processes auto;
