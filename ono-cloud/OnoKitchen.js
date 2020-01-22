@@ -1,6 +1,6 @@
 import mapObject from 'fbjs/lib/mapObject';
 import React, { useMemo } from 'react';
-import { useCloud, useCloudValue, useValue } from '../cloud-core/KiteReact';
+import { useCloud, useCloudValue, useStream } from '../cloud-core/KiteReact';
 import { useRestaurantState } from './Kitchen';
 import {
   sortByField as getSortedByField,
@@ -538,7 +538,7 @@ export function useInStockInventoryMenu() {
 export function useOrderIdSummary(orderId) {
   const cloud = useCloud();
   const order = useMemo(() => cloud.get(`PendingOrders/${orderId}`), [orderId]);
-  const orderState = useValue(order ? order.value : null);
+  const orderState = useStream(order ? order.value : null);
   const companyConfig = useCompanyConfig();
   return getOrderSummary(orderState, companyConfig);
 }
