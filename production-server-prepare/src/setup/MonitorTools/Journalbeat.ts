@@ -44,10 +44,10 @@ processors:
   - add_host_metadata: ~
   - add_cloud_metadata: ~  
   - decode_json_fields:
-    fields: ["message"]
-    process_array: true
-    max_depth: 8
-    target: ""
+      fields: ["message"]
+      process_array: true
+      max_depth: 8
+      target: ""
 
 #logging.level: debug
 #logging.selectors: ["*"]
