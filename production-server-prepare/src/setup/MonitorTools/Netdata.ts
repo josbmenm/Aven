@@ -1,4 +1,4 @@
-import { exec } from '../utils/spawn';
+import { exec } from '../../utils/spawn';
 
 export async function setupNetdata() {
   // Nightly is recommended by Netdata https://docs.netdata.cloud/packaging/installer/#nightly-vs-stable-releases

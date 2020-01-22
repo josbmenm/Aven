@@ -1,4 +1,4 @@
-import { addAptDependencies } from './aptDependencies';
+import { addAptDependencies } from '../aptDependencies';
 
 addAptDependencies('cockpit');
 

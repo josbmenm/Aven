@@ -1,5 +1,5 @@
-import { ensureFileIs } from '../utils/Files';
-import { exec } from '../utils/spawn';
+import { ensureFileIs } from '../../utils/Files';
+import { exec } from '../../utils/spawn';
 
 export async function setupJournalbeat() {
   await exec(

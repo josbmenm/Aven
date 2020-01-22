@@ -5,7 +5,6 @@ import { promises } from 'fs';
 const { mkdir } = promises;
 
 import {
-  timezone,
   runtimeDir,
   socketFilename,
   deployFolder,
