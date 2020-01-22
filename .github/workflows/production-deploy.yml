@@ -280,3 +280,4 @@ jobs:
     steps:
       - name: Smoke Test
         run: wget --spider -r -nd -H -l2 https://skynet.onoblends.co
+        continue-on-error: true
