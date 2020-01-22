@@ -5,12 +5,14 @@ const { readFile, writeFile, symlink, readlink, unlink } = promises;
 export async function ensureFileContains(
   filename: string,
   contents: string,
-): Promise<void> {
+): Promise<boolean> {
   const current = (await readFile(filename).catch(() => '')).toString();
 
-  if (current.includes(contents)) return;
+  if (current.includes(contents)) return false;
 
-  return writeFile(filename, current + contents);
+  await writeFile(filename, current + contents);
+
+  return true;
 }
 
 export async function ensureFileIs(
