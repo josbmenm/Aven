@@ -698,7 +698,7 @@ Debug: ${JSON.stringify(action)}
     expressRouting: app => {
       app.use((req, res, next) => {
         if (req.headers.host === 'onofood.co') {
-          res.redirect(`https://onoblends.co/${req.originalUrl}`);
+          res.redirect(`https://onoblends.co${req.originalUrl}`);
           return;
         }
         next();
