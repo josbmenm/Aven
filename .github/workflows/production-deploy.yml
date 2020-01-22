@@ -279,5 +279,4 @@ jobs:
 
     steps:
       - name: Smoke Test
-        run: wget --spider -r -nd -H -l2 https://skynet.onoblends.co
-        continue-on-error: true
+        run: wget --spider --recursive --no-directories --no-verbose --reject-regex "&quot;data:image/png;base64" --execute robots=off --level=0 --span-hosts -D "*.onoblends.co" -D "*.onofood.co" -D onoblends.co -D onofood.co https://skynet.onoblends.co
