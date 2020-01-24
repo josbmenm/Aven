@@ -31,7 +31,6 @@ const hash = input =>
     .digest('hex');
 
 export default async function scrapeAirTable(fsClient) {
-  console.log('scraping airtable...');
   const apiKey = getSecretConfig('AIRTABLE_API_KEY');
   const baseId = getSecretConfig('AIRTABLE_BASE_ID');
 
@@ -155,13 +154,11 @@ export default async function scrapeAirTable(fsClient) {
       }
     }),
   );
-  console.log('scraped. uploading to cloud..', destPath);
   const folder = await fsClient.putFolder({
     folderPath: destPath,
     name: 'Airtable',
     domain: 'onofood.co',
   });
-  // await fs.remove(destPath);
-  console.log('scrape done.');
+  await fs.remove(destPath);
   return folder;
 }

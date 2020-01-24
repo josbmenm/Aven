@@ -5,8 +5,7 @@ import { titleStyle, primaryFontFace } from './Styles';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import codePush from 'react-native-code-push';
 import CardReaderConnectionManager from './CardReaderConnectionManager';
-import useKeyboardPopover from './useKeyboardPopover';
-import { Spacing, Stack } from '../dash-ui';
+import { Spacing, Stack, useKeyboardPopover } from '../dash-ui';
 
 export const AppEnvContext = React.createContext();
 

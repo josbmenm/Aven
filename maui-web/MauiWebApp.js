@@ -9,6 +9,8 @@ import Terms from './TermsPage';
 import BookUs from './BookUsPage';
 import InternalAccount from './InternalAccountPage';
 import InternalDashboard from './InternalDashboardPage';
+import InternalMenu from './InternalMenuPage';
+import InternalRestaurant from './InternalRestaurantPage';
 // import Schedule from './SchedulePage';
 import RequestLocation from './RequestLocationPage';
 import Press from './PressPage';
@@ -87,6 +89,14 @@ export const MauiWebRoutes = {
   InternalDashboard: {
     path: 'internal/dashboard',
     screen: InternalDashboard,
+  },
+  InternalMenu: {
+    path: 'internal/menu',
+    screen: InternalMenu,
+  },
+  InternalRestaurant: {
+    path: 'internal/restaurant',
+    screen: InternalRestaurant,
   },
 };
 

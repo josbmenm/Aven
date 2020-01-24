@@ -1,17 +1,9 @@
 import React from 'react';
 import useFocus from '../navigation-hooks/useFocus';
 import { View } from 'react-native';
-import {
-  TextInput,
-  Stack,
-  Button,
-  AsyncButton,
-  Text,
-  Heading,
-} from '../dash-ui';
+import { TextInput, Stack, AsyncButton, Text, Heading } from '../dash-ui';
 import { useCloudClient, useStream } from '../cloud-core/KiteReact';
 import InternalPage from '../maui-web/InternalPage';
-import Link from '../maui-web/Link';
 
 function TokenCollector({ onToken, onCancel, verification }) {
   const [token, setToken] = React.useState('');
@@ -47,7 +39,7 @@ function TokenCollector({ onToken, onCancel, verification }) {
 }
 
 function EmailCollector({ onEmail }) {
-  const [email, setEmail] = React.useState('eric@onofood.co');
+  const [email, setEmail] = React.useState('');
   function handleSubmit() {
     return onEmail(email);
   }

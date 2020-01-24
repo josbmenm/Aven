@@ -53,6 +53,9 @@ const geoip = require('geoip-lite');
 const fs = require('fs');
 const getEnv = c => process.env[c];
 
+function getMemoryConsumptionMB() {
+  return (process.memoryUsage().heapUsed / 1000000).toFixed(2);
+}
 const gTokenPath = pathJoin('gToken.json');
 fs.writeFileSync(gTokenPath, Buffer.from(getEnv('GCS_TOKEN'), 'base64'));
 
@@ -157,6 +160,7 @@ export default async function startSkynetServer(httpServer) {
 
   const emailAuthProvider = EmailAuthProvider({
     agent: emailAgent,
+    acceptableEmailRegex: /.*@onofood.co$/,
     getMessage: async (authCode, verifyInfo, accountId) => {
       const subject = 'Welcome to Ono Blends';
 
@@ -180,7 +184,6 @@ export default async function startSkynetServer(httpServer) {
     'OrderState',
     createSyntheticDoc({
       onCreateChild: orderId => {
-        console.log('Creating child', orderId);
         return createReducedDoc({
           actions: cloudOrders.children.get(orderId),
           reducer: OrderReducer,
@@ -572,27 +575,21 @@ export default async function startSkynetServer(httpServer) {
   // shouldUploadImmediately = true;
 
   const startAirtableScrape = () => {
-    console.log('Updating Airtable..');
-    console.log(
-      (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
-        'MB Memory Consumption',
-    );
+    log('WillUpdateAirtable', {
+      serviceHeapSizeMB: getMemoryConsumptionMB(),
+    });
     scrapeAirTable(fsClient)
       .then(() => {
-        console.log('Airtable Update complete!');
-        console.log(
-          (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
-            'MB Memory Consumption',
-        );
+        log('DidUpdateAirtable', {
+          serviceHeapSizeMB: getMemoryConsumptionMB(),
+        });
       })
       .catch(e => {
-        console.error('Error Updating Airtable!');
-        console.log(
-          (process.memoryUsage().heapUsed / 1000000).toFixed(2) +
-            'MB Memory Consumption',
-        );
-
         console.error(e);
+        error('AirtableUpdateError', {
+          serviceHeapSizeMB: getMemoryConsumptionMB(),
+          error: e,
+        });
       });
   };
   shouldUploadImmediately && startAirtableScrape();
@@ -667,11 +664,13 @@ Debug: ${JSON.stringify(action)}
         return submitFeedback(internalCloud, emailAgent, action);
       case 'UpdateAirtable': {
         scrapeAirTable(fsClient)
-          .then(() => {
-            console.log('Done with user-requested Airtable update');
-          })
+          .then(() => {})
           .catch(e => {
-            console.error('Error updating Airtable!', e);
+            console.error(e);
+            error('AirtableUpdateError', {
+              serviceHeapSizeMB: getMemoryConsumptionMB(),
+              error: e,
+            });
           });
         return {};
       }
@@ -733,7 +732,7 @@ Debug: ${JSON.stringify(action)}
     assets: require(process.env.RAZZLE_ASSETS_MANIFEST),
     publicDir: `${__dirname}/public`,
   });
-  console.log('☁️️ Web Ready 🕸');
+  log('WebServerReady', { serverListenLocation });
 
   return {
     ...webService,

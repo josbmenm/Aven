@@ -109,6 +109,19 @@ export function DarkMode({ theme = darkTheme, children }) {
   );
 }
 
+export function Center({ children }) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+      }}
+    >
+      {children}
+    </View>
+  );
+}
+
 export function Spacing({
   value,
   vertical,

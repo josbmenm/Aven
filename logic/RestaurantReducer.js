@@ -273,6 +273,7 @@ function RestaurantReducerFn(state = {}, action) {
     case 'WipeMaterialState': {
       const doneTasks = [];
       state.fill &&
+        state.fill !== 'ready' &&
         doneTasks.push({
           ...state.fill,
           deliveryType: 'wiped-state:fill',

@@ -470,10 +470,157 @@ function FullScreenBackground({ children, style }) {
   );
 }
 
-function PresentationSection({ closingSoon }) {
-  let content = (
-    <Image source={require('./assets/StatusStatic.png')} style={{ flex: 1 }} />
+const assetsByMenuId = {
+  recRIJfGYpkG4F3yZ: require('./assets/header/strawberry + dragonfruit.mp4'),
+  rec2oXmg1V5vEvkbj: require('./assets/header/mango + tumeric.mp4'),
+  rec7dMFSmW04yIjbs: require('./assets/header/ginger + greens.mp4'),
+  recycxrrbO5aFTnYg: require('./assets/header/avocado + matcha.mp4'),
+  rec3XPx4e4JgMim9Q: require('./assets/header/mint chip greens + protein.mp4'),
+  recTSymrVawOgiy0h: require('./assets/header/cold brew + cacao.mp4'),
+};
+
+const fullScreenAssetRotation = [
+  require('./assets/full/Bumper-4.mp4'), // blends with benefits
+  // require('./assets/full/Digestion.mp4'), // papaya pineapple
+  require('./assets/full/Fitness.mp4'), // mint chip greens protein
+  require('./assets/full/Focus.mp4'), // cold brew cacao
+  // require('./assets/full/Immunity-1.mp4'), // mango tumeric
+  require('./assets/full/Immunity-2.mp4'), //strawberry dragonfruit
+  // require('./assets/full/Skin&Body-1.mp4'), // ginger greens
+  // require('./assets/full/Skin&Body-2.mp4'), // avo matcha
+];
+
+function AutoFader({ changeKey, children }) {
+  const [currentChildren, setCurrentChildren] = React.useState(children);
+  const [currentKey, setCurrentKey] = React.useState(changeKey);
+  const [fadingOut, setFadingOut] = React.useState(null);
+  // const [fadingOutKey, setFadingOutKey] = React.useState(null)
+  React.useEffect(() => {
+    if (changeKey !== currentKey) {
+      setFadingOut({
+        key: currentKey,
+        children: currentChildren,
+        fadeOutProgress: new Animated.Value(0),
+      });
+      setCurrentKey(changeKey);
+      setCurrentChildren(children);
+    }
+  }, [changeKey]);
+  React.useEffect(() => {
+    if (fadingOut) {
+      Animated.timing(fadingOut.fadeOutProgress, {
+        toValue: 1,
+        duration: 500,
+        easing: Easing.linear,
+      }).start(() => {
+        setFadingOut(null);
+      });
+    }
+  }, [fadingOut]);
+  const outputs = [
+    <Animated.View
+      style={
+        {
+          // position: 'absolute'
+        }
+      }
+      key={currentKey}
+    >
+      {currentChildren}
+    </Animated.View>,
+  ];
+  if (fadingOut) {
+    outputs.push(
+      <Animated.View
+        style={{
+          position: 'absolute',
+          opacity: fadingOut.fadeOutProgress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [1, 0],
+          }),
+        }}
+        key={fadingOut.key}
+      >
+        {fadingOut.children}
+      </Animated.View>,
+    );
+  }
+  return outputs;
+}
+
+function BlendSlideshowMemo() {
+  const [isStatic, setIsStatic] = React.useState(true);
+  const activeItems = Object.keys(assetsByMenuId);
+  const [currentItem, setActiveItem] = React.useState(activeItems[0]);
+  React.useEffect(() => {
+    setTimeout(() => {
+      setIsStatic(false);
+    }, 5000);
+  }, []);
+  return (
+    <AutoFader changeKey={isStatic ? 'static' : currentItem}>
+      {isStatic ? (
+        <Image
+          source={require('./assets/StatusStatic.png')}
+          style={{ height: 840, width: 1080 }}
+        />
+      ) : (
+        <video
+          type="video/mp4"
+          src={assetsByMenuId[currentItem]}
+          height={840}
+          width={1080}
+          muted
+          autoPlay
+          onEnded={() => {
+            const lastIndex = activeItems.indexOf(currentItem);
+            let nextIndex = lastIndex + 1;
+            if (nextIndex === activeItems.length) {
+              nextIndex = activeItems[0];
+            }
+            setIsStatic(true);
+            setTimeout(() => {
+              setIsStatic(false);
+            }, 15000);
+            setActiveItem(activeItems[nextIndex]);
+          }}
+        />
+      )}
+    </AutoFader>
   );
+}
+
+const BlendSlideshow = React.memo(BlendSlideshowMemo);
+
+function FullScreenPresentationMemo() {
+  const [currentItem, setActiveItem] = React.useState(
+    fullScreenAssetRotation[0],
+  );
+  return (
+    <AutoFader changeKey={currentItem}>
+      <video
+        type="video/mp4"
+        src={currentItem}
+        height={1920}
+        width={1080}
+        muted
+        autoPlay
+        onEnded={() => {
+          const lastIndex = fullScreenAssetRotation.indexOf(currentItem);
+          let nextIndex = lastIndex + 1;
+          if (nextIndex === fullScreenAssetRotation.length) {
+            nextIndex = 0;
+          }
+          setActiveItem(fullScreenAssetRotation[nextIndex]);
+        }}
+      />
+    </AutoFader>
+  );
+}
+const FullScreenPresentation = React.memo(FullScreenPresentationMemo);
+
+function PresentationSection({ closingSoon }) {
+  let content = <BlendSlideshow />;
   const scheduledClose = closingSoon && closingSoon.scheduledCloseTime;
   const timeSeconds = useTimeSeconds();
   if (scheduledClose) {
@@ -546,9 +693,10 @@ function QueueSection({ queue = [], fill, blend, delivery, ingredients }) {
   if (blend) {
     processingRowCount += 1;
   }
+  const publicTaskQueue = queue.filter(t => !t.customTask);
   // let totalRowCount = queue.length + processingRowCount
   const queueCountToDisplay = 6 - processingRowCount;
-  const displayedQueue = queue.slice(0, queueCountToDisplay);
+  const displayedQueue = publicTaskQueue.slice(0, queueCountToDisplay);
   const renderQueue = [
     ...displayedQueue.map(
       (task, taskIndex) =>
@@ -564,6 +712,7 @@ function QueueSection({ queue = [], fill, blend, delivery, ingredients }) {
   ].reverse();
   fill &&
     fill.task &&
+    !fill.task.customTask &&
     renderQueue.push(
       <TaskRow
         key={fill.task.id}
@@ -575,6 +724,7 @@ function QueueSection({ queue = [], fill, blend, delivery, ingredients }) {
     );
   blend &&
     blend.task &&
+    !blend.task.customTask &&
     renderQueue.push(
       <TaskRow
         key={blend.task && blend.task.id}
@@ -584,6 +734,7 @@ function QueueSection({ queue = [], fill, blend, delivery, ingredients }) {
     );
   delivery &&
     delivery.task &&
+    !delivery.task.customTask &&
     renderQueue.push(
       <TaskRow
         key={delivery.task.id}
@@ -826,6 +977,20 @@ function StatusDisplay({ state }) {
         <StoreSign title="closed" subtitle="find us again soon!" />
       </FullScreenBackground>
     );
+  }
+  if (
+    restaurantState.queue.filter(t => !t.customTask).length === 0 &&
+    (!restaurantState.fill ||
+      restaurantState.fill === 'ready' ||
+      restaurantState.fill.task.customTask) &&
+    (!restaurantState.blend ||
+      restaurantState.blend === 'dirty' ||
+      restaurantState.blend.task.customTask) &&
+    (!restaurantState.delivery || restaurantState.delivery.task.customTask) &&
+    (!restaurantState.delivery0 || restaurantState.delivery0.task.customTask) &&
+    (!restaurantState.delivery1 || restaurantState.delivery1.task.customTask)
+  ) {
+    return <FullScreenPresentation />;
   }
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>

@@ -1,35 +1,22 @@
 import React from 'react';
-import { View, Text } from 'react-native';
 import createFullscreenSwitchNavigator from '../navigation-web/createFullscreenSwitchNavigator';
 import LoginScreen from './LoginScreen';
 import InternalBlendMenu from './InternalBlendMenu';
 import FeedbackDashboard from './FeedbackDashboard';
 import { MauiWebRoutes } from '../maui-web/MauiWebApp';
-import { monsterra } from '../components/Styles';
 import { CloudContext } from '../cloud-core/KiteReact';
 import { ThemeProvider as OLDThemeProvider } from '../dashboard/Theme';
 import OLD_OnoTheme from '../logic/OnoTheme';
 import OnoThemeProvider from '../components/Onotheme';
+import { Center, Text, Spacing } from '../dash-ui';
+import { PopoverContainer } from '../views/Popover';
 
 const NotFoundPage = () => (
-  <View
-    style={{
-      flex: 1,
-      overflow: 'hidden',
-      justifyContent: 'center',
-      flexDirection: 'row',
-    }}
-  >
-    <Text
-      style={{
-        fontSize: 24,
-        color: monsterra,
-        fontFamily: 'Maax',
-      }}
-    >
-      not found
-    </Text>
-  </View>
+  <Center>
+    <Spacing top={50}>
+      <Text theme={{ fontSize: 24 }}>sorry, we could not find this!</Text>
+    </Spacing>
+  </Center>
 );
 
 const fontsCSS = `
@@ -157,11 +144,13 @@ const AppNavigator = createFullscreenSwitchNavigator(
 function App(props) {
   const cloud = React.useContext(CloudContext);
   return (
-    <OLDThemeProvider value={OLD_OnoTheme}>
-      <OnoThemeProvider>
-        <AppNavigator {...props} screenProps={{ cloud }} />
-      </OnoThemeProvider>
-    </OLDThemeProvider>
+    <PopoverContainer>
+      <OLDThemeProvider value={OLD_OnoTheme}>
+        <OnoThemeProvider>
+          <AppNavigator {...props} screenProps={{ cloud }} />
+        </OnoThemeProvider>
+      </OLDThemeProvider>
+    </PopoverContainer>
   );
 }
 

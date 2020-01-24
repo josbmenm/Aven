@@ -346,23 +346,13 @@ function InventorySlot({
         </React.Fragment>
       )}
 
-      {isManualMode && (
-        <React.Fragment>
-          <SubTitle>Test Dispensing</SubTitle>
-
-          <View style={{ flexDirection: 'row', marginBottom: 8 }}>
-            {systemName === 'Beverage' && (
-              <AsyncButton
-                title="purge small"
-                onPress={slot.onPurgeSmall}
-                style={{ marginRight: 8 }}
-              />
-            )}
-            {systemName === 'Beverage' && (
-              <AsyncButton title="purge large" onPress={slot.onPurgeLarge} />
-            )}
-          </View>
-        </React.Fragment>
+      {systemName === 'Beverage' && (
+        <View style={{ flexDirection: 'row', marginBottom: 8 }}>
+          <Stack horizontal>
+            <AsyncButton title="purge small" onPress={slot.onPurgeSmall} />
+            <AsyncButton title="purge large" onPress={slot.onPurgeLarge} />
+          </Stack>
+        </View>
       )}
       <Spacing top={24}>
         <AsyncButton
