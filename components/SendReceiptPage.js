@@ -2,12 +2,9 @@ import React, { useState } from 'react';
 import BlockForm from './BlockForm';
 import BlockFormMessage from './BlockFormMessage';
 import BlockFormTitle from './BlockFormTitle';
-import BlockFormRow from './BlockFormRow';
-import BlockFormInput from './BlockFormInput';
-import BlockFormButton from './BlockFormButton';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import useFocus from '../navigation-hooks/useFocus';
-import { Spacing, Button, SpinnerButton } from '../dash-ui';
+import { Spacing, TextInput, SpinnerButton } from '../dash-ui';
 
 export default function SendReceiptPage({
   onSubmit,
@@ -29,7 +26,7 @@ export default function SendReceiptPage({
 
   const inputRenderers = [
     inputProps => (
-      <BlockFormInput
+      <TextInput
         label={type === 'sms' ? 'phone number' : 'email address'}
         mode={type === 'sms' ? 'phone' : 'email'}
         onValue={setValue}

@@ -2,10 +2,9 @@ import React from 'react';
 import BlockForm from './BlockForm';
 import BlockFormMessage from './BlockFormMessage';
 import BlockFormRow from './BlockFormRow';
-import BlockFormInput from './BlockFormInput';
 import ShortBlockFormPage from './ShortBlockFormPage';
 import useFocus from '../navigation-hooks/useFocus';
-import { SpinnerButton } from '../dash-ui';
+import { SpinnerButton, TextInput } from '../dash-ui';
 
 function FlagPage({ backBehavior, ...props }) {
   const [inputA, setInputA] = React.useState('');
@@ -26,7 +25,7 @@ function FlagPage({ backBehavior, ...props }) {
   const inputRenderers = [
     inputProps => (
       <BlockFormRow>
-        <BlockFormInput
+        <TextInput
           label="what happened?"
           mode="description"
           maxLength={24}
@@ -38,7 +37,7 @@ function FlagPage({ backBehavior, ...props }) {
     ),
     inputProps => (
       <BlockFormRow>
-        <BlockFormInput
+        <TextInput
           label="any details?"
           mode="description"
           maxLength={1}

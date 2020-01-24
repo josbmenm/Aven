@@ -4,7 +4,7 @@ import { useTheme } from '../dashboard/Theme';
 import BaseText from '../dashboard/BaseText';
 
 import BodyText from '../dashboard/BodyText';
-import FormInput from '../components/BlockFormInput';
+import { TextInput } from '../dash-ui';
 import { Responsive } from '../dashboard/Responsive';
 
 //
@@ -66,7 +66,7 @@ export function LocationInputWithRef(
       }}
     >
       <View style={style} accessibilityRole="combobox">
-        <FormInput
+        <TextInput
           onValue={handleTextInput}
           value={inputText}
           label="enter your city"

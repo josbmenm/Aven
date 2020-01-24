@@ -6,8 +6,7 @@ import { usePopover } from '../views/Popover';
 import KeyboardPopover from './KeyboardPopover';
 import BlockFormTitle from './BlockFormTitle';
 import BlockFormMessage from './BlockFormMessage';
-import BlockFormInput from './BlockFormInput';
-import { Stack, SpinnerButton, Spacing } from '../dash-ui';
+import { Stack, SpinnerButton, Spacing, TextInput } from '../dash-ui';
 import { useCloud } from '../cloud-core/KiteReact';
 import { Easing } from 'react-native-reanimated';
 import useFocus from '../navigation-hooks/useFocus';
@@ -30,7 +29,7 @@ function PromoCodeForm({ onClose, orderDispatch, cloud }) {
   const [promoCode, setPromoCode] = React.useState('');
   const inputRenderers = [
     inputProps => (
-      <BlockFormInput
+      <TextInput
         label="promo code"
         mode="code"
         onValue={setPromoCode}

@@ -5,10 +5,9 @@ import { Button } from '../dash-ui';
 import RootAuthenticationSection from './RootAuthenticationSection';
 import RowSection from '../components/RowSection';
 import TextRow from '../components/TextRow';
-import BlockFormInput from '../components/BlockFormInput';
 import SimplePage from '../components/SimplePage';
 import Row from '../components/Row';
-import { Spinner } from '../dash-ui';
+import { Spinner, TextInput } from '../dash-ui';
 import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import useAsyncError from '../react-utils/useAsyncError';
@@ -32,12 +31,7 @@ function RenameForm({ onClose, device, dispatch }) {
     onSubmit: handleSubmit,
     inputRenderers: [
       props => (
-        <BlockFormInput
-          {...props}
-          label="name"
-          value={name}
-          onValue={setName}
-        />
+        <TextInput {...props} label="name" value={name} onValue={setName} />
       ),
     ],
   });
@@ -68,12 +62,7 @@ function SetMDMIdForm({ onClose, device, dispatch }) {
     onSubmit: handleSubmit,
     inputRenderers: [
       props => (
-        <BlockFormInput
-          {...props}
-          label="mdm id"
-          value={mdmId}
-          onValue={setMdmId}
-        />
+        <TextInput {...props} label="mdm id" value={mdmId} onValue={setMdmId} />
       ),
     ],
   });

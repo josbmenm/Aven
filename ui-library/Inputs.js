@@ -1,7 +1,7 @@
 import React from 'react';
 import { CodeBlock, CodeBlockExample, CodeBlockTitle } from './CodeBlock';
 import { ComponentBlock } from './Layout';
-import BlockFormInput from '../components/BlockFormInput';
+import TextInput from '../dash-ui/TextInput';
 
 export default function MultiSelects() {
   return (
@@ -9,7 +9,7 @@ export default function MultiSelects() {
       <CodeBlock>
         <CodeBlockTitle title="Default" />
         <CodeBlockExample>
-          <BlockFormInput value="default input" />
+          <TextInput value="default input" />
         </CodeBlockExample>
       </CodeBlock>
     </ComponentBlock>

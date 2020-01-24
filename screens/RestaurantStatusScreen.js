@@ -10,10 +10,9 @@ import useFocus from '../navigation-hooks/useFocus';
 import { titleStyle, primaryFontFace } from '../components/Styles';
 import useTimeSeconds from '../utils/useTimeSeconds';
 import StatusBar from '../components/StatusBar';
-import BlockFormInput from '../components/BlockFormInput';
 import AsyncButton from '../components/AsyncButton';
 import { useDeviceId } from '../components/useAsyncStorage';
-import { Stack, Tag } from '../dash-ui';
+import { Stack, Tag, TextInput } from '../dash-ui';
 import MultiSelect from '../dash-ui/MultiSelect';
 import TemperatureView from '../components/TemperatureView';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
@@ -324,7 +323,7 @@ function OpenRestaurantForm({ onClose }) {
     inputRenderers: [
       inputProps => (
         <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
-          <BlockFormInput
+          <TextInput
             {...inputProps}
             label="Session Name"
             onValue={setSessionName}
@@ -361,7 +360,7 @@ function MaintenanceModeForm({ onClose }) {
     inputRenderers: [
       inputProps => (
         <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
-          <BlockFormInput
+          <TextInput
             {...inputProps}
             label="what is wrong"
             onValue={setReason}

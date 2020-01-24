@@ -4,7 +4,7 @@ import { monsterra60 } from '../components/Styles';
 import { useTheme } from './Theme';
 import { Responsive } from '../dashboard/Responsive';
 
-function BlockFormInputWithRef(
+function FormInputWithRef(
   {
     value,
     onValue,
@@ -213,6 +213,6 @@ function BlockFormInputWithRef(
   );
 }
 
-const BlockFormInput = React.forwardRef(BlockFormInputWithRef);
+const FormInput = React.forwardRef(FormInputWithRef);
 
-export default BlockFormInput;
+export default FormInput;

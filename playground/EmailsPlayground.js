@@ -1,13 +1,12 @@
 import React from 'react';
 import { ScrollView, View } from 'react-native';
 import Heading from '../dashboard/Heading';
-import { Button } from '../dash-ui';
+import { Button, TextInput } from '../dash-ui';
 import BodyText from '../dashboard/BodyText';
 import { useCloud } from '../cloud-core/KiteReact';
 import EmailExamples from '../emails/EmailExamples';
 
 import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
-import BlockFormInput from '../components/BlockFormInput';
 
 const EmailExampleList = Object.entries(EmailExamples);
 
@@ -69,7 +68,7 @@ export default function EmailsPlayground() {
                   Body yourself:
                 </BodyText>
                 <View style={{ flexDirection: 'row', marginBottom: 24 }}>
-                  <BlockFormInput
+                  <TextInput
                     mode="email"
                     value={recipientEmail}
                     onValue={setRecipientEmail}

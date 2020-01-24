@@ -1,12 +1,11 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Button } from '../dash-ui';
+import { Button, TextInput } from '../dash-ui';
 import { primaryFontFace } from './Styles';
 import AirtableImage from './AirtableImage';
 import { Easing } from 'react-native-reanimated';
 import { usePopover } from '../views/Popover';
 import KeyboardPopover from './KeyboardPopover';
-import BlockFormInput from './BlockFormInput';
 import Subtitle from './Subtitle';
 import useFocus from '../navigation-hooks/useFocus';
 import { useCompanyConfig } from '../ono-cloud/OnoKitchen';
@@ -56,7 +55,7 @@ function EditFillForm({ onClose, onSubmit, initialAmount, ingredientName }) {
     inputRenderers: [
       inputProps => (
         <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
-          <BlockFormInput
+          <TextInput
             {...inputProps}
             label="Dispense Quantity"
             onValue={setAmount}

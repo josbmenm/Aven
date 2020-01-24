@@ -10,7 +10,6 @@ import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import Row from '../components/Row';
 import useAsyncErrorPopover from '../components/useAsyncErrorPopover';
 import AsyncButton from '../components/AsyncButton';
-import BlockFormInput from '../components/BlockFormInput';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import useKeyboardPopover from '../components/useKeyboardPopover';
@@ -18,7 +17,14 @@ import useFocus from '../navigation-hooks/useFocus';
 import StatusBar from '../components/StatusBar';
 import CardReaderConnectionManager from '../components/CardReaderConnectionManager';
 import { Audio } from 'expo-av';
-import { Tag, Button, Spacing, Stack, MultiSelect } from '../dash-ui';
+import {
+  Tag,
+  Button,
+  Spacing,
+  Stack,
+  MultiSelect,
+  TextInput,
+} from '../dash-ui';
 
 function FridgeView() {
   const kitchenState = useKitchenState();
@@ -285,7 +291,7 @@ function SetFridgeTempForm({ onClose, onValues, initialValues }) {
     inputRenderers: [
       inputProps => (
         <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
-          <BlockFormInput
+          <TextInput
             {...inputProps}
             label="Fridge Temp Low"
             onValue={setLow}
@@ -295,7 +301,7 @@ function SetFridgeTempForm({ onClose, onValues, initialValues }) {
       ),
       inputProps => (
         <View style={{ flexDirection: 'row', marginVertical: 10 }} key="qty">
-          <BlockFormInput
+          <TextInput
             {...inputProps}
             label="Fridge Temp High"
             onValue={setHigh}

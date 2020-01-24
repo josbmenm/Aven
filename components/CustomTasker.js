@@ -55,47 +55,6 @@ function AddFillForm({ onSubmit, onClose }) {
     return null;
   }
 
-  // const { inputs } = useFocus({
-  //   onSubmit: handleSubmit,
-  //   inputRenderers: [
-  //     inputProps => (
-  //       <View style={{ marginVertical: 10 }}>
-  //         <MultiSelect
-  //           value={system}
-  //           onValue={setSystem}
-  //           options={[
-  //             { name: 'Granules', value: 0 },
-  //             { name: 'Piston', value: 1 },
-  //             { name: 'Frozen', value: 2 },
-  //             { name: 'Powder', value: 3 },
-  //             { name: 'Beverage', value: 4 },
-  //           ]}
-  //         />
-  //       </View>
-  //     ),
-  //     inputProps => (
-  //       <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-  //         <BlockFormInput
-  //           {...inputProps}
-  //           label="Dispense Quantity"
-  //           onValue={setAmount}
-  //           value={amount}
-  //         />
-  //       </View>
-  //     ),
-  //     inputProps => (
-  //       <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-  //         <BlockFormInput
-  //           {...inputProps}
-  //           label="Dispense Slot"
-  //           onValue={setSlot}
-  //           value={slot}
-  //         />
-  //       </View>
-  //     ),
-  //   ],
-  // });
-
   return (
     <ScrollView style={{ height: 650 }}>
       {slots.map(slot => (

@@ -12,7 +12,7 @@ import { opacify } from './utils';
 
 const textInputFontSize = 26;
 
-function BlockFormInputWithRef(
+function FormInputWithRef(
   {
     value,
     onValue,
@@ -146,6 +146,6 @@ function BlockFormInputWithRef(
   );
 }
 
-const BlockFormInput = React.forwardRef(BlockFormInputWithRef);
+const FormInput = React.forwardRef(FormInputWithRef);
 
-export default BlockFormInput;
+export default FormInput;

@@ -1,11 +1,10 @@
 import React from 'react';
 import ShortBlockFormPage from '../components/ShortBlockFormPage';
 import BlockForm from '../components/BlockForm';
-import BlockFormInput from '../components/BlockFormInput';
 import BlockFormTitle from '../components/BlockFormTitle';
 import BlockFormMessage from '../components/BlockFormMessage';
 import useFocus from '../navigation-hooks/useFocus';
-import { Spacing, SpinnerButton } from '../dash-ui';
+import { Spacing, SpinnerButton, TextInput } from '../dash-ui';
 
 export default function FeedbackReceiptPage({
   onSubmit,
@@ -28,7 +27,7 @@ export default function FeedbackReceiptPage({
   }
   const inputRenderers = [
     inputProps => (
-      <BlockFormInput
+      <TextInput
         label={'email'}
         mode="email"
         onValue={setEmail}

@@ -6,8 +6,7 @@ import useEmptyOrderEscape from './useEmptyOrderEscape';
 import { error } from '../logger/logger';
 import { Alert, Text, View } from 'react-native';
 import GenericPage from '../components/GenericPage';
-import { Button } from '../dash-ui';
-import BlockFormInput from '../components/BlockFormInput';
+import { Button, TextInput } from '../dash-ui';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import useFocus from '../navigation-hooks/useFocus';
@@ -44,7 +43,7 @@ function TypeNameForm({ onTypeName }) {
     inputRenderers: [
       inputProps => (
         <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-          <BlockFormInput
+          <TextInput
             {...inputProps}
             label="Type Name"
             onValue={setTypeName}

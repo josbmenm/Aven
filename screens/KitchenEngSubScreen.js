@@ -14,10 +14,9 @@ import { genericText, prettyShadowSmall } from '../components/Styles';
 import usePendantManualMode from '../components/usePendantManualMode';
 import useFocus from '../navigation-hooks/useFocus';
 import { SystemFaultsAndAlarms } from '../components/FaultsAndAlarms';
-import BlockFormInput from '../components/BlockFormInput';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import TwoPanePage from '../components/TwoPanePage';
-import { Button, Heading, Spacing } from '../dash-ui';
+import { Button, Heading, Spacing, TextInput } from '../dash-ui';
 
 const HiddenReads = new Set([
   'NoFaults',
@@ -59,7 +58,7 @@ function SystemActionForm({
   const inputRenderers = pulse.params.map(paramName => inputProps => {
     return (
       <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-        <BlockFormInput
+        <TextInput
           {...inputProps}
           label={paramName}
           mode="number"
@@ -137,7 +136,7 @@ function SetValueForm({ val, system, kitchenCommand, systemId, onClose }) {
   const inputRenderers = [
     inputProps => (
       <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-        <BlockFormInput
+        <TextInput
           {...inputProps}
           label={val.name}
           mode="number"

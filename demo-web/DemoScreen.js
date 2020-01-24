@@ -1,16 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
 import Text from '../dash-ui/Text';
-import { Button, Stack } from '../dash-ui';
-import useCloudState from '../cloud-core/useCloudState';
+import { Button, Stack, TextInput } from '../dash-ui';
 import { createReducerStream } from '../cloud-core/Kite';
-import {
-  useCloud,
-  useValue,
-  useStream,
-  useCloudValue,
-} from '../cloud-core/KiteReact';
-import Input from '../components/BlockFormInput';
+import { useCloud, useStream } from '../cloud-core/KiteReact';
 
 function BaseScreen({ children }) {
   return (
@@ -84,7 +77,7 @@ function TodoInput({ onSubmit }) {
   const [val, setVal] = React.useState('');
   return (
     <Stack horizontal>
-      <Input value={val} onValue={setVal} />
+      <TextInput value={val} onValue={setVal} />
       <Button
         title="add"
         onPress={() => {

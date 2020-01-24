@@ -1,11 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Easing } from 'react-native-reanimated';
-import BlockFormInput from './BlockFormInput';
 import { usePopover } from '../views/Popover';
 import KeyboardPopover from './KeyboardPopover';
 import useFocus from '../navigation-hooks/useFocus';
-import { Spacing, Button } from '../dash-ui';
+import { Spacing, Button, TextInput } from '../dash-ui';
 
 function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
   const [orderName, setOrderName] = React.useState(initialInfo.orderName);
@@ -21,7 +20,7 @@ function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
     inputRenderers: [
       inputProps => (
         <View>
-          <BlockFormInput
+          <TextInput
             {...inputProps}
             label="Order Name"
             onValue={setOrderName}
@@ -33,7 +32,7 @@ function SetInfoForm({ onClose, initialInfo, onSubmit, hideBlendName }) {
         ? null
         : inputProps => (
             <Spacing top={8}>
-              <BlockFormInput
+              <TextInput
                 {...inputProps}
                 label="Blend Name"
                 onValue={setBlendName}

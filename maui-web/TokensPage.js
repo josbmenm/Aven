@@ -7,7 +7,7 @@ import ButtonLink from '../dashboard/ButtonLink';
 import GenericPage from './GenericPage';
 import Container from '../dashboard/Container';
 import { useTheme } from '../dashboard/Theme';
-import Input from '../components/BlockFormInput';
+import { TextInput } from '../dash-ui';
 
 function TokenSection({ title, children }) {
   const theme = useTheme();
@@ -31,7 +31,7 @@ function Forms() {
   const [input, setInput] = React.useState('');
   return (
     <React.Fragment>
-      <Input value={input} onValue={setInput} label="First Name" />
+      <TextInput value={input} onValue={setInput} label="First Name" />
     </React.Fragment>
   );
 }

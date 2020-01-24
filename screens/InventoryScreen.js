@@ -8,7 +8,6 @@ import useKeyboardPopover from '../components/useKeyboardPopover';
 import { titleStyle, prettyShadowSmall, monsterra } from '../components/Styles';
 import AirtableImage from '../components/AirtableImage';
 import { useInventoryState, useKitchenState } from '../ono-cloud/OnoKitchen';
-import BlockFormInput from '../components/BlockFormInput';
 import StatusBar from '../components/StatusBar';
 import { TempCell, formatTemp } from '../components/TemperatureView';
 import KitchenCommandButton from '../components/KitchenCommandButton';
@@ -20,6 +19,7 @@ import {
   MultiSelect,
   Stack,
   Spinner,
+  TextInput,
 } from '../dash-ui';
 import { useCloud } from '../cloud-core/KiteReact';
 import usePendantManualMode from '../components/usePendantManualMode';
@@ -86,7 +86,7 @@ function SetFillForm({ slot, onClose }) {
     onSubmit: handleSubmit,
     inputRenderers: [
       props => (
-        <BlockFormInput
+        <TextInput
           {...props}
           label="amount"
           value={amount}
@@ -116,7 +116,7 @@ function DispenseForm({ slot, onClose, onDispense, onPositionAndDispense }) {
     onSubmit: handleSubmit,
     inputRenderers: [
       props => (
-        <BlockFormInput
+        <TextInput
           {...props}
           label="amount"
           value={amount}

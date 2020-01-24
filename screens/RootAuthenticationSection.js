@@ -4,9 +4,8 @@ import useObservable from '../cloud-core/useObservable';
 import { useCloud } from '../cloud-core/KiteReact';
 import BlockFormRow from '../components/BlockFormRow';
 import BlockFormMessage from '../components/BlockFormMessage';
-import BlockFormInput from '../components/BlockFormInput';
 import useAsyncError from '../react-utils/useAsyncError';
-import { SpinnerButton, Heading } from '../dash-ui';
+import { SpinnerButton, Heading, TextInput } from '../dash-ui';
 
 function GenericContainer({ children }) {
   return (
@@ -25,7 +24,7 @@ function RootLoginForm() {
     <GenericContainer>
       <Heading title="Log in" />
       <BlockFormRow>
-        <BlockFormInput
+        <TextInput
           value={pw}
           label="root password"
           mode="password"
