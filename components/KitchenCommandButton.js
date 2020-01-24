@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCloud } from '../cloud-core/KiteReact';
-import AsyncButton from '../components/AsyncButton';
+import { AsyncButton } from '../dash-ui';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import KitchenCommands from '../logic/KitchenCommands';
 

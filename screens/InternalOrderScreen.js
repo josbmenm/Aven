@@ -11,9 +11,8 @@ import {
 } from '../components/Styles';
 import formatCurrency from '../utils/formatCurrency';
 import { Button, TextInput } from '../dash-ui';
-import AsyncButton from '../components/AsyncButton';
 import Row from '../components/Row';
-import { Spinner } from '../dash-ui';
+import { Spinner, AsyncButton } from '../dash-ui';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import useFocus from '../navigation-hooks/useFocus';
 import { error } from '../logger/logger';

@@ -9,7 +9,6 @@ import codePush from 'react-native-code-push';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import Row from '../components/Row';
 import useAsyncErrorPopover from '../components/useAsyncErrorPopover';
-import AsyncButton from '../components/AsyncButton';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
 import useKeyboardPopover from '../components/useKeyboardPopover';
@@ -24,6 +23,7 @@ import {
   Stack,
   MultiSelect,
   TextInput,
+  AsyncButton,
 } from '../dash-ui';
 
 function FridgeView() {

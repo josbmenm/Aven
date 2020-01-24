@@ -2,7 +2,6 @@ import React from 'react';
 import RootAuthenticationSection from './RootAuthenticationSection';
 import { Text, View, ScrollView } from 'react-native';
 import GenericPage from '../components/GenericPage';
-import AsyncButton from '../components/AsyncButton';
 import useFocus from '../navigation-hooks/useFocus';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import { titleStyle, prettyShadowSmall, monsterra } from '../components/Styles';
@@ -20,6 +19,7 @@ import {
   Stack,
   Spinner,
   TextInput,
+  AsyncButton,
 } from '../dash-ui';
 import { useCloud } from '../cloud-core/KiteReact';
 import usePendantManualMode from '../components/usePendantManualMode';
