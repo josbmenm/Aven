@@ -7,11 +7,20 @@ function defaultGetMessage(verifyCode) {
   };
 }
 
-export default function EmailAuthProvider({ agent, getMessage }) {
+export default function EmailAuthProvider({
+  agent,
+  getMessage,
+  acceptableEmailRegex,
+}) {
   const authProviderName = 'email';
   function identifyInfo(verificationInfo) {
     if (!verificationInfo || !verificationInfo.email) {
       return null;
+    }
+    if (acceptableEmailRegex) {
+      if (!verificationInfo.email.match(acceptableEmailRegex)) {
+        return null;
+      }
     }
     return String(verificationInfo.email);
   }
