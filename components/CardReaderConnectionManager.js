@@ -1,9 +1,8 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import AsyncButton from './AsyncButton';
 import { titleStyle } from './Styles';
 import { useCardReaderConnectionManager } from '../card-reader/CardReader';
-import { Spinner, Button } from '../dash-ui';
+import { Spinner, Button, AsyncButton } from '../dash-ui';
 
 export const AppEnvContext = React.createContext();
 
