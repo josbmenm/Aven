@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import NavigationContext from '../navigation-core/views/NavigationContext';
+import cuid from 'cuid';
 
 const PopoverContext = React.createContext(null);
 
@@ -63,30 +64,45 @@ const defaultTiming = {
 
 export function PopoverContainer({ children }) {
   let timingConfig = useRef(defaultTiming);
-  let [openValue] = useState(new Animated.Value(0));
-  let [popover, setPopover] = useState(null);
-  let [containerLayout, setContainerLayout] = useState(null);
-  function closePopover() {
+  let [popovers, dispatch] = React.useReducer((prevState = [], action) => {
+    if (action.type === 'open') {
+      const { content, id, openValue } = action;
+      return [...prevState, { content, id, openValue }];
+    }
+    if (action.type === 'close') {
+      return prevState.filter(s => s.id !== action.id);
+    }
+    return prevState;
+  });
+  function handleClose(id, openValue) {
     Animated.timing(openValue, {
       toValue: 0,
       ...(timingConfig.current || defaultTiming),
     }).start(() => {
-      setPopover(null);
+      dispatch({ type: 'close', id });
     });
   }
+  let [containerLayout, setContainerLayout] = useState(null);
   function openPopover(renderPopover, location, timing, navigation, args) {
     timingConfig.current = timing;
-    setPopover(
-      <NavigationContext.Provider value={navigation}>
-        {renderPopover({
-          onClose: closePopover,
-          location,
-          containerLayout,
-          openValue,
-          openArguments: args,
-        })}
-      </NavigationContext.Provider>,
-    );
+    const id = cuid();
+    const openValue = new Animated.Value(0);
+    dispatch({
+      type: 'open',
+      id,
+      openValue,
+      content: (
+        <NavigationContext.Provider value={navigation}>
+          {renderPopover({
+            onClose: () => handleClose(id, openValue),
+            location,
+            containerLayout,
+            openValue,
+            openArguments: args,
+          })}
+        </NavigationContext.Provider>
+      ),
+    });
     Animated.timing(openValue, {
       toValue: 1,
       ...(timingConfig.current || defaultTiming),
@@ -102,21 +118,26 @@ export function PopoverContainer({ children }) {
     >
       <PopoverContext.Provider value={{ openPopover }}>
         {children}
+        {popovers &&
+          popovers.map(popover => (
+            <React.Fragment>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  handleClose(popover.id, popover.openValue);
+                }}
+              >
+                <Animated.View
+                  style={{
+                    backgroundColor: '#fff4',
+                    opacity: popover.openValue,
+                    ...StyleSheet.absoluteFillObject,
+                  }}
+                />
+              </TouchableWithoutFeedback>
+              {popover.content}
+            </React.Fragment>
+          ))}
       </PopoverContext.Provider>
-      {popover && (
-        <React.Fragment>
-          <TouchableWithoutFeedback onPress={closePopover}>
-            <Animated.View
-              style={{
-                backgroundColor: '#fff4',
-                opacity: openValue,
-                ...StyleSheet.absoluteFillObject,
-              }}
-            />
-          </TouchableWithoutFeedback>
-          {popover}
-        </React.Fragment>
-      )}
     </View>
   );
 }
