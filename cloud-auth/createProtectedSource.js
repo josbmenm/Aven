@@ -624,7 +624,23 @@ export default function createProtectedSource({
 
   async function DestroyAccount({ auth, domain }) {
     const validated = await VerifySession({ auth, domain });
-
+    const docList = await source.dispatch({
+      type: 'ListDocs',
+      domain,
+      parentName: `auth/account/${auth.accountId}/provider`,
+      auth: parentAuth,
+    });
+    await Promise.all(
+      docList.docs.map(async providerId => {
+        const providerDocName = `auth/provider/${providerId}`;
+        await source.dispatch({
+          type: 'DestroyDoc',
+          domain,
+          name: providerDocName,
+          auth: parentAuth,
+        });
+      }),
+    );
     if (!validated.accountId || validated.accountId !== auth.accountId) {
       return false;
     }
@@ -756,7 +772,7 @@ export default function createProtectedSource({
     CreateAnonymousSession,
     DestroySession,
     // DestroyAllSessions, // implemented but not tested or used yet
-    // DestroyAccount, // implemented but not tested or used yet
+    DestroyAccount,
     VerifySession,
     VerifyAuth,
     SetAccountName,

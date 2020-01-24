@@ -2012,6 +2012,24 @@ export function createClient({
     });
   }
 
+  async function destroyAccount() {
+    const state = clientState.get();
+    if (state.session) {
+      await source.dispatch({
+        type: 'DestroyAccount',
+        domain,
+        auth: state.session,
+      });
+      setClientState({
+        ...clientState.get(),
+        session: null,
+        verification: null,
+        verificationInfo: null,
+        verificationAccountId: null,
+      });
+    }
+  }
+
   async function verifyLogin({ code }) {
     const state = clientState.get();
     const verificationResponse = {
@@ -2046,6 +2064,7 @@ export function createClient({
     hydrate: (...args) => sessionClient.hydrate(...args),
     login,
     logout,
+    destroyAccount,
     verifyLogin,
     clientState,
     get: docName => sessionClient.get(docName),
