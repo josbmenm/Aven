@@ -23,7 +23,7 @@ export default function useFocus({ inputRenderers, onSubmit }) {
   useNavigationDidFocusEffect(focusEventHandler);
 
   function handleSubmit(index) {
-    if (index === refs.length - 1) {
+    if (index === refs.current.length - 1) {
       const activeInputRef = refs.current[index];
       activeInputRef && activeInputRef.current.blur();
       onSubmit();
