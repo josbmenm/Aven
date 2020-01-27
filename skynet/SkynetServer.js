@@ -714,7 +714,10 @@ Debug: ${JSON.stringify(action)}
     sourceDomain: 'onofood.co',
     expressRouting: app => {
       app.use((req, res, next) => {
-        if (req.headers.host === 'onofood.co') {
+        if (
+          req.headers.host === 'onofood.co' ||
+          req.headers.host === 'skynet.onoblends.co'
+        ) {
           res.redirect(`https://onoblends.co${req.originalUrl}`);
           return;
         }
