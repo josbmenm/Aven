@@ -280,6 +280,17 @@ export function getSellPriceOfItem(item, menuItem) {
 export function getOrderItemMapper(menu) {
   return item => {
     if (!menu) return null;
+    if (item.type === 'food') {
+      const menuItem = menu.food.find(i => i.id === item.foodItemId);
+      const sellPrice = menuItem['Sell Price'] * 100;
+      return {
+        ...item,
+        state: item,
+        itemPrice: item.quantity * sellPrice,
+        sellPrice,
+        menuItem,
+      };
+    }
     const menuItem = menu.blends.find(i => i.id === item.menuItemId);
     const recipeBasePrice = sellPriceOfMenuItem(menuItem);
     const sellPrice = getSellPriceOfItem(item, menuItem);
@@ -463,7 +474,10 @@ export function getOrderSummary(orderState, companyConfig) {
   let discountTotal = 0;
   if (promo && promo.type === 'FreeBlends') {
     const blendTotals = items
-      .map(item => Array(item.quantity).fill(item.sellPrice))
+      .map(item => {
+        if (item.type === 'food') return [];
+        return Array(item.quantity).fill(item.sellPrice);
+      })
       .flat();
     const freeBlendTotals = blendTotals.sort().slice(-promo.count);
     const freeBlendsDiscount = freeBlendTotals.reduce((acc, t) => acc + t, 0);

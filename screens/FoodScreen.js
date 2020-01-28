@@ -2,7 +2,7 @@ import React from 'react';
 import { useFoodItem, useMenu } from '../ono-cloud/OnoKitchen';
 import { useOrderItem } from '../ono-cloud/OrderContext';
 import FoodPage from '../components/FoodPage';
-import useObservable from '../cloud-core/useObservable';
+// import { useStream } from '../cloud-core/KiteReact';
 import { useNavigation } from '../navigation-hooks/Hooks';
 
 export default function FoodScreen({ ...props }) {
@@ -11,18 +11,17 @@ export default function FoodScreen({ ...props }) {
   let orderItemId = `food-${foodItemId}`;
   const menu = useMenu();
 
-  let { order, setItemState, orderItem } = useOrderItem(orderItemId);
+  let { orderDispatch, orderItem } = useOrderItem(orderItemId);
 
   let menuItem = useFoodItem(foodItemId);
-  let item = orderItem && useObservable(orderItem.observeValue);
 
   return (
     <FoodPage
       {...props}
-      orderItem={item}
+      orderItem={orderItem}
       orderItemId={orderItemId}
+      orderDispatch={orderDispatch}
       menuItem={menuItem}
-      setItemState={setItemState}
       blendsMenu={menu && menu.blends}
     />
   );

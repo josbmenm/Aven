@@ -35,6 +35,7 @@ function FoodDetails({ orderItem, menuItem }) {
             color: monsterra,
             fontSize: 16,
             alignSelf: 'center',
+            flex: 1,
           }}
         >
           {menuItem['Brand Description']}
@@ -49,12 +50,22 @@ export default function FoodPage({
   orderItemId,
   menuItem,
   blendsMenu,
+  orderDispatch,
+
   ...props
 }) {
   let actions = [
     {
       title: 'add to cart',
-      onPress: () => {},
+      onPress: () => {
+        orderDispatch({
+          type: 'AddItem',
+          foodItemId: menuItem.id,
+          orderItemId,
+        })
+          .then(() => {})
+          .catch(console.error);
+      },
     },
   ];
   return (

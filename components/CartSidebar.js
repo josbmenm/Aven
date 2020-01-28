@@ -142,6 +142,7 @@ function StepperButton({ onPress, disabled, isDown }) {
 function CartRow({ itemId, item, hideMoney }) {
   let { navigate } = useNavigation();
   let { orderDispatch } = useOrderItem(itemId);
+  console.log('sooooo', item, itemId);
   if (!item || !item.menuItem) {
     return null;
   }
@@ -160,7 +161,7 @@ function CartRow({ itemId, item, hideMoney }) {
       navigate({
         routeName: 'Food',
         params: {
-          id: item.menuItem.id,
+          id: item.foodItemId,
         },
         key: `food-item-${item.menuItem.id}`,
       });
@@ -373,6 +374,7 @@ export default function Cart({ summary }) {
   }
   const shouldHideMoney =
     restaurantConfig && restaurantConfig.mode === 'catering';
+  console.log('whey buddy', summary.items);
   return (
     <ScrollView
       style={{ marginTop: headerHeight, maxWidth: rightSidebarWidth }}

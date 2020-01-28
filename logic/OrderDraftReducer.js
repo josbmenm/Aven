@@ -40,12 +40,27 @@ function OrderDraftReducerFn(state = {}, action) {
           }),
         };
       }
+      if (action.foodItemId) {
+        return {
+          ...state,
+          items: [
+            ...(state.items || []),
+            {
+              id: action.orderItemId || action.dispatchId,
+              type: 'food',
+              foodItemId: action.foodItemId,
+              quantity: 1,
+            },
+          ],
+        };
+      }
       return {
         ...state,
         items: [
           ...(state.items || []),
           {
-            id: action.orderItemId || cuid(),
+            id: action.orderItemId || action.dispatchId,
+            type: 'blend',
             menuItemId: action.menuItemId,
             quantity: 1,
           },

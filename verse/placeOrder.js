@@ -8,6 +8,7 @@ import {
   getFillsOfOrderItem,
   getNewBlendTask,
 } from '../logic/configLogic';
+import fetch from 'node-fetch';
 import cuid from 'cuid';
 
 export default async function placeOrder(
@@ -119,28 +120,30 @@ export default async function placeOrder(
       throw new Error('PromoCodeVerification');
     }
   }
-  const allTasks = summary.items.map(item => {
-    const { menuItemId } = item;
-    const menuItem = blends.find(b => b.id === menuItemId);
-    const fills = getFillsOfOrderItem(menuItem, item, companyConfig);
-    const orderName =
-      order.orderName.firstName + ' ' + order.orderName.lastName;
-    const blendName = displayNameOfOrderItem(item, item.menuItem);
-    return [...Array(item.quantity)].map((_, quantityIndex) =>
-      getNewBlendTask(
-        item.menuItem,
-        fills,
-        orderName,
-        {
-          quantityIndex,
-          blendName,
-          orderItemId: item.id,
-          orderId,
-        },
-        companyConfig,
-      ),
-    );
-  });
+  const orderName = order.orderName.firstName + ' ' + order.orderName.lastName;
+  const allTasks = summary.items
+    .filter(i => i.type === 'blend')
+    .map(item => {
+      const { menuItemId } = item;
+      const menuItem = blends.find(b => b.id === menuItemId);
+      const fills = getFillsOfOrderItem(menuItem, item, companyConfig);
+
+      const blendName = displayNameOfOrderItem(item, item.menuItem);
+      return [...Array(item.quantity)].map((_, quantityIndex) =>
+        getNewBlendTask(
+          item.menuItem,
+          fills,
+          orderName,
+          {
+            quantityIndex,
+            blendName,
+            orderItemId: item.id,
+            orderId,
+          },
+          companyConfig,
+        ),
+      );
+    });
   const orderTasks = allTasks.flat(1);
 
   const itemsRollup = summary.items.map(i => {
@@ -216,6 +219,32 @@ export default async function placeOrder(
   orderTasks.forEach(task => log('OrderTask', { task, orderId }));
   log('OrderTasksPlaced', { orderId, taskCount: orderTasks.length });
   log('OrderPlacedSuccess', confirmedOrder);
+
+  const foodItems = summary.items.filter(i => i.type === 'food');
+  if (foodItems.length) {
+    console.log('wip', foodItems);
+    let message = `Food has been ordered by ${orderName}: \n`;
+    foodItems.forEach(item => {
+      message += ` - ${item.quantity}x ${item.menuItem.Name} \n`;
+    });
+    message += `(order id: ${orderId})`;
+    fetch(
+      'https://hooks.slack.com/services/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',
+      {
+        method: 'post',
+        body: JSON.stringify({ text: message }),
+        headers: {
+          encoding: 'application/json',
+        },
+      },
+    )
+      .then(() => {
+        console.log('food notified successfully');
+      })
+      .catch(err => {
+        console.log('food err ', err);
+      });
+  }
 
   return {
     orderId,

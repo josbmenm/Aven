@@ -159,6 +159,6 @@ export default async function scrapeAirTable(fsClient) {
     name: 'Airtable',
     domain: 'onofood.co',
   });
-  await fs.remove(destPath);
+  // await fs.remove(destPath);
   return folder;
 }

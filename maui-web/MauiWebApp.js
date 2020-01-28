@@ -11,6 +11,7 @@ import InternalAccount from './InternalAccountPage';
 import InternalDashboard from './InternalDashboardPage';
 import InternalMenu from './InternalMenuPage';
 import InternalRestaurant from './InternalRestaurantPage';
+import InternalUIPlayground from './InternalUIPlayground';
 // import Schedule from './SchedulePage';
 import RequestLocation from './RequestLocationPage';
 import Press from './PressPage';
@@ -81,6 +82,10 @@ export const MauiWebRoutes = {
   Receipt: {
     path: 'receipt/:orderId',
     screen: Receipt,
+  },
+  InternalUIPlayground: {
+    path: 'internal/ui',
+    screen: InternalUIPlayground,
   },
   InternalAccount: {
     path: 'internal/account',
