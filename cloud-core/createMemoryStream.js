@@ -118,6 +118,64 @@ export function combineStreams(inputs) {
   });
 }
 
+export function combineLoadedStreams(inputs) {
+  const inputEntries = Object.entries(inputs);
+  const stoppers = new Set();
+  const lastValues = {};
+  const entries = Object.fromEntries(
+    inputEntries.map(([key, inputStream]) => {
+      return [key, inputStream && inputStream.crumb];
+    }),
+  );
+  const waitingForValues = new Set(Object.keys(inputs));
+  return createProducerStream({
+    crumb: {
+      type: 'CombinedStream',
+      entries,
+    },
+    start: notifier => {
+      let scheduledUpdate = null;
+      function scheduleNotifyValues() {
+        clearTimeout(scheduledUpdate);
+        scheduledUpdate = setTimeout(() => {
+          if (waitingForValues.size === 0) {
+            notifier.next(lastValues);
+          }
+        }, 1);
+      }
+      inputEntries.forEach(([inputName, inputStream]) => {
+        if (!inputStream) return;
+        const listener = {
+          next: v => {
+            if (v !== undefined && !v.unloadedProgress) {
+              waitingForValues.delete(inputName);
+            }
+            if (lastValues[inputName] === v) {
+              return;
+            }
+            lastValues[inputName] = v;
+            scheduleNotifyValues();
+          },
+          complete: () => {},
+          error: e => {
+            // todo.. one error should stop all other combined streams.. correct? otherwise the combined stream may fire again when a non-error input stream has a next
+            console.error('Error within combined stream', inputStream.crumb);
+            notifier.error(e); // todo, pass crumb and inputStream.crumb into error
+          },
+        };
+        inputStream.addListener(listener);
+        stoppers.add(() => {
+          inputStream.removeListener(listener);
+        });
+      });
+    },
+    stop: () => {
+      stoppers.forEach(stop => stop());
+      stoppers.clear();
+    },
+  });
+}
+
 function filterStream(stream, filterFn, filterDescriptor) {
   let listener = null;
   return createProducerStream({
