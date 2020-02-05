@@ -70,6 +70,9 @@ export function useCloudValue(cloudValueInput) {
     const doc = cloud.get(cloudValueInput);
     cloudVal = doc.value;
   }
+  if (cloudVal === null) {
+    return null;
+  }
   if (!cloudVal) {
     throw new Error('Cloud value must have a stream');
   }
