@@ -66,7 +66,9 @@ export function createStreamDoc(
   onGetName,
   onCreateChild,
 ) {
-  const value = idAndValueStream.map(valuePluck);
+  const value = idAndValueStream
+    .map(valuePluck)
+    .filter(v => v !== undefined, 'StreamDocValueFilterUndefined');
   return {
     type: 'StreamDoc',
     value,
@@ -875,10 +877,12 @@ export function createDoc({
       return a.id === b.id;
     }, 'DropRepeatedIdValues');
 
-  const docValue = docIdAndValue.map(idAndValue => {
-    if (idAndValue === undefined) return undefined;
-    return idAndValue.value;
-  }, 'DocValueStream');
+  const docValue = docIdAndValue
+    .map(idAndValue => {
+      if (idAndValue === undefined) return undefined;
+      return idAndValue.value;
+    }, 'DocValueStream')
+    .filter(value => value !== undefined, 'DocUndefinedValueFilter');
 
   const children = createDocSet({
     domain,
@@ -1251,6 +1255,9 @@ function sourceFromRootDocSet(rootDocSet, domain, source, auth) {
       return source.getDocStream(subsDomain, name, auth);
     }
     const doc = rootDocSet.get(name);
+    if (!doc) {
+      return streamOfValue(null);
+    }
     return doc.idAndValue;
   }
 
