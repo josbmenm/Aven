@@ -1739,6 +1739,9 @@ export function createSessionClient({
               lastSnapshot.context === undefined ||
               lastSnapshot.context === null ||
               (update.next.context &&
+                lastSnapshot.context.reducerName !==
+                  update.next.context.reducerName) ||
+              (update.next.context &&
                 lastSnapshot.context.gen <=
                   update.next.gen - snapshotInterval) ||
               (update.next.context &&
