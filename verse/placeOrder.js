@@ -222,7 +222,6 @@ export default async function placeOrder(
 
   const foodItems = summary.items.filter(i => i.type === 'food');
   if (foodItems.length) {
-    console.log('wip', foodItems);
     let message = `Food has been ordered by ${orderName}: \n`;
     foodItems.forEach(item => {
       message += ` - ${item.quantity}x ${item.menuItem.Name} \n`;

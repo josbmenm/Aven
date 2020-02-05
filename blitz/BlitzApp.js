@@ -319,7 +319,10 @@ function SelectModeApp() {
   const mode = controlState && controlState.mode;
   const name = controlState && controlState.name;
 
-  // let content = <KioskApp mode={'kiosk'} />;
+  const devContent = <KioskApp mode={'kiosk'} />;
+  if (__DEV__) {
+    return devContent;
+  }
   let content = <WaitingPage name={name} title="hang tight..." />;
   if (mode === 'kiosk' || mode === 'testKiosk') {
     content = <KioskApp mode={mode} name={name} />;

@@ -55,6 +55,7 @@
     "rxjs-compat": "^6.3.3",
     "square-connect": "^2.20180918.0",
     "stripe": "^6.19.0",
+    "victory": "^34.0.1",
     "wget-improved": "^3.0.1",
     "ws": "^6.0.0",
     "xstream": "^11.11.0",

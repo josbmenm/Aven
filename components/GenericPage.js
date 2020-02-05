@@ -12,6 +12,7 @@ export default function GenericPage({
   background,
   hideBackButton,
   disableScrollView,
+  contentContainerStyle,
   ...props
 }) {
   const { goBack, dangerouslyGetParent } = useNavigation();
@@ -42,8 +43,8 @@ export default function GenericPage({
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{
-            // alignItems: 'center',
             justifyContent: 'center',
+            ...contentContainerStyle,
           }}
           showsVerticalScrollIndicator={false}
         >

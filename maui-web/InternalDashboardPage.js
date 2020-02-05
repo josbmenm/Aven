@@ -1,28 +1,46 @@
 import React from 'react';
 import InternalPage from './InternalPage';
-import { Heading, Text, Center, Spacing, useTheme } from '../dash-ui';
+import {
+  Heading,
+  Text,
+  Center,
+  Spacing,
+  Button,
+  AsyncButton,
+  Stack,
+  useTheme,
+  useKeyboardPopover,
+} from '../dash-ui';
+import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
 import {
   TouchableOpacity,
   View,
   Animated,
   Easing,
-  Text as RText,
+  ScrollView,
 } from 'react-native';
 import AuthenticatedRedirectWrapper from './AuthenticatedRedirectWrapper';
 import { useTargetPopover } from '../views/Popover';
 import { prettyShadow } from '../components/Styles';
+import formatCurrency from '../utils/formatCurrency';
+import formatTime from '../utils/formatTime';
+import { useNavigation } from '../navigation-hooks/Hooks';
+import {
+  VictoryChart,
+  VictoryLine,
+  VictoryAxis,
+  VictoryBar,
+  VictoryLabel,
+  VictoryVoronoiContainer,
+  VictoryTooltip,
+  VictoryTheme,
+} from 'victory';
+import onoVictoryTheme from './onoVictoryTheme';
 
-function MonthButton({ value, name, when, year, onWhen }) {
-  const strMonth = String(value).padStart(2, '0');
-  const monthWhen = `${year}-${strMonth}`;
-  const isActive = when === monthWhen;
+function HalfPillButton({ isActive, name, onPress }) {
   const theme = useTheme();
   return (
-    <TouchableOpacity
-      onPress={() => {
-        onWhen(monthWhen);
-      }}
-    >
+    <TouchableOpacity onPress={onPress}>
       <View
         style={{
           margin: 4,
@@ -37,6 +55,21 @@ function MonthButton({ value, name, when, year, onWhen }) {
         </Text>
       </View>
     </TouchableOpacity>
+  );
+}
+
+function MonthButton({ value, name, when, year, onWhen }) {
+  const strMonth = String(value).padStart(2, '0');
+  const monthWhen = `${year}-${strMonth}`;
+  const isActive = when === monthWhen;
+  return (
+    <HalfPillButton
+      onPress={() => {
+        onWhen(monthWhen);
+      }}
+      name={name}
+      isActive={isActive}
+    />
   );
 }
 
@@ -130,21 +163,105 @@ function extractDate(whenString) {
   return matchedDate[1];
 }
 function getDefaultYear() {
-  return new Date().getFullYear();
+  const y = new Date().getFullYear();
+  return String(y);
 }
 function getDefaultMonth() {
-  return new Date().getMonth() + 1;
+  const m = new Date().getMonth() + 1;
+  return String(m).padStart(2, '0');
 }
 function getDefaultDate() {
-  return new Date().getDate();
+  const d = new Date().getDate();
+  return String(d).padStart(2, '0');
 }
 
+function isRealDate(year, month, day) {
+  return !Number.isNaN(new Date(`${year} ${month} ${day}`).getTime());
+}
+
+const DAY_HEADINGS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
 function DayPicker({ when, onWhen }) {
-  const initYear = extractYear(when) || getDefaultYear();
-  const initMonth = extractMonth(when) || getDefaultMonth();
+  const activeYear = extractYear(when);
+  const activeMonth = extractMonth(when);
+  const activeDay = extractDate(when);
+  const initYear = activeYear || getDefaultYear();
+  const initMonth = activeMonth || getDefaultMonth();
   const [viewYear, setViewYear] = React.useState(initYear);
   const [viewMonth, setViewMonth] = React.useState(initMonth);
   const theme = useTheme();
+  const weeks = [];
+  let dayOfWeekOffset = new Date(`${viewYear} ${viewMonth} 1`).getDay();
+  let renderDay = 1;
+  const dayCountViewMonth = new Date(viewYear, viewMonth, 0).getDate();
+  let viewPrevYear = Number(viewYear);
+  let viewPrevMonth = Number(viewMonth) - 1;
+  if (viewPrevMonth === 0) {
+    viewPrevYear -= 1;
+    viewPrevMonth = 12;
+  }
+  const dayCountPrevViewMonth = new Date(
+    viewPrevYear,
+    viewPrevMonth,
+    0,
+  ).getDate();
+  while (isRealDate(viewYear, viewMonth, renderDay)) {
+    weeks.push(
+      <View style={{ flexDirection: 'row' }}>
+        {DAY_HEADINGS.map((heading, dayIndex) => {
+          let dayNumber = renderDay + dayIndex - dayOfWeekOffset;
+          let isThisMonth = true;
+          const isActive =
+            isThisMonth &&
+            Number(viewYear) === Number(activeYear) &&
+            Number(viewMonth) === Number(activeMonth) &&
+            Number(activeDay) === dayNumber;
+          if (dayNumber < 1) {
+            isThisMonth = false;
+            dayNumber = dayNumber + dayCountPrevViewMonth;
+          } else if (dayNumber > dayCountViewMonth) {
+            dayNumber -= dayCountViewMonth;
+            isThisMonth = false;
+          }
+          return (
+            <TouchableOpacity
+              onPress={
+                isThisMonth
+                  ? () => {
+                      onWhen(
+                        `${viewYear}-${String(viewMonth).padStart(
+                          2,
+                          '0',
+                        )}-${String(dayNumber).padStart(2, '0')}`,
+                      );
+                    }
+                  : null
+              }
+              style={{
+                width: 54,
+                backgroundColor: isActive ? theme.colorPrimary : null,
+              }}
+            >
+              <Text
+                theme={{
+                  fontSize: 20,
+                  colorForeground: isActive
+                    ? theme.colorBackground
+                    : isThisMonth
+                    ? '#222'
+                    : '#aaa',
+                }}
+                center
+              >
+                {dayNumber}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>,
+    );
+    renderDay += 7;
+  }
   return (
     <View>
       <View
@@ -172,16 +289,16 @@ function DayPicker({ when, onWhen }) {
         </TouchableOpacity>
         <View style={{ flex: 1, paddingTop: 10, alignItems: 'center' }}>
           <Text bold theme={{ fontSize: 20 }}>
-            {viewMonth} {viewYear}
+            {MONTH_NAMES[viewMonth - 1]} {viewYear}
           </Text>
         </View>
         <TouchableOpacity
           onPress={() => {
             if (Number(viewMonth) === 12) {
-              setViewYear(viewYear + 1);
+              setViewYear(Number(viewYear) + 1);
               setViewMonth(1);
             } else {
-              setViewMonth(viewMonth + 1);
+              setViewMonth(Number(viewMonth) + 1);
             }
           }}
         >
@@ -192,18 +309,18 @@ function DayPicker({ when, onWhen }) {
           </View>
         </TouchableOpacity>
       </View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-        {MONTH_NAMES.map((name, monthIndex) => (
-          <MonthButton
-            key={name}
-            value={monthIndex + 1}
-            name={name}
-            when={when}
-            year={viewYear}
-            onWhen={onWhen}
-          />
-        ))}
+      <View style={{ flexDirection: 'row' }}>
+        {DAY_HEADINGS.map(heading => {
+          return (
+            <View style={{ width: 54 }}>
+              <Text theme={{ fontSize: 24 }} center bold>
+                {heading}
+              </Text>
+            </View>
+          );
+        })}
       </View>
+      {weeks}
     </View>
   );
 }
@@ -217,23 +334,162 @@ function DayPicker({ when, onWhen }) {
 // };
 
 function getMode(when) {
-  console.log('inside getMode', when);
   if (when === 'today') return 'today';
   if (when === 'this-week') return 'this-week';
   if (when === 'this-month') return 'this-month';
   if (when === 'this-year') return 'this-year';
   if (when.match(/^\d\d\d\d$/)) return 'yearly';
-  if (when.match(/^\d\d\d\d-Q\d$/)) return 'quarterly';
-  if (when.match(/^\d\d\d\d-\d\d$/)) return 'monthly';
-  if (when.match(/^\d\d\d\d-\d\d-\d\d$/)) return 'daily';
+  if (when.match(/^\d\d\d\d-Q\d$/)) return 'quarters';
+  if (when.match(/^\d\d\d\d-\d\d?$/)) return 'monthly';
+  if (when.match(/^\d\d\d\d-\d\d?-\d\d?$/)) return 'daily';
   if (when.match(/^\d\d\d\d-W\d\d$/)) return 'weekly';
-  return 'today';
+  return 'monthly';
 }
 
-function WhenPicker({ mode, when, onWhen }) {
-  if (mode === 'daily') return <DayPicker when={when} onWhen={onWhen} />;
-  // if (mode === 'monthly')
-  return <MonthPicker when={when} onWhen={onWhen} />;
+function WeekPicker({ when, onWhen }) {
+  // start by copying day picker.. or refactor the gross parts of it
+  return null;
+}
+function QuarterPicker({ when, onWhen }) {
+  const matchedYear = when.match(/^\d\d\d\d/);
+  const matchedQ = when.match(/^\d\d\d\d-Q(\d)$/);
+
+  const activeYear = matchedYear ? matchedYear[0] : new Date().getFullYear();
+  const [viewYear, setViewYear] = React.useState(activeYear);
+  let activeQ = null;
+  if (viewYear === activeYear && matchedQ) {
+    activeQ = Number(matchedQ[1]);
+  }
+  activeQ;
+  const theme = useTheme();
+  return (
+    <View>
+      <View
+        style={{
+          flexDirection: 'row',
+          borderBottomWidth: 1,
+          borderColor: '#ccc',
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            setViewYear(Number(viewYear) - 1);
+          }}
+        >
+          <View style={{ width: 40, height: 40 }}>
+            <svg width={40} height={40} style={{}}>
+              <polygon points="10,20 24,12 24,28" fill={theme.colorPrimary} />
+            </svg>
+          </View>
+        </TouchableOpacity>
+        <View style={{ flex: 1, paddingTop: 10, alignItems: 'center' }}>
+          <Text bold theme={{ fontSize: 20 }}>
+            {viewYear}
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            setViewYear(Number(viewYear) + 1);
+          }}
+        >
+          <View style={{ width: 40, height: 40 }}>
+            <svg width={40} height={40} style={{}}>
+              <polygon points="24,20 10,12 10,28" fill={theme.colorPrimary} />
+            </svg>
+          </View>
+        </TouchableOpacity>
+      </View>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+        {[1, 2, 3, 4].map(q => (
+          <HalfPillButton
+            onPress={() => {
+              onWhen(`${viewYear}-Q${q}`);
+            }}
+            name={`Q${q}`}
+            isActive={activeQ === q}
+          />
+        ))}
+      </View>
+    </View>
+  );
+}
+function YearPicker({ when, onWhen }) {
+  const matchedYear = when.match(/^\d\d\d\d/);
+  const year = matchedYear ? matchedYear[0] : new Date().getFullYear();
+  const theme = useTheme();
+  return (
+    <View>
+      <View
+        style={{
+          flexDirection: 'row',
+          borderBottomWidth: 1,
+          borderColor: '#ccc',
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            onWhen(String(Number(year) - 1));
+          }}
+        >
+          <View style={{ width: 40, height: 40 }}>
+            <svg width={40} height={40} style={{}}>
+              <polygon points="10,20 24,12 24,28" fill={theme.colorPrimary} />
+            </svg>
+          </View>
+        </TouchableOpacity>
+        <View style={{ flex: 1, paddingTop: 10, alignItems: 'center' }}>
+          <Text bold theme={{ fontSize: 20 }}>
+            {year}
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            onWhen(String(Number(year) + 1));
+          }}
+        >
+          <View style={{ width: 40, height: 40 }}>
+            <svg width={40} height={40} style={{}}>
+              <polygon points="24,20 10,12 10,28" fill={theme.colorPrimary} />
+            </svg>
+          </View>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+function WhenPicker({ initialWhen, onWhen, onComplete }) {
+  const [when, setWhen] = React.useState(initialWhen);
+  const mode = getMode(when);
+  function handleWhen(w) {
+    onWhen(w);
+    setWhen(w);
+    onComplete();
+  }
+  // if (mode === 'monthly') ...
+  let Picker = MonthPicker;
+  if (mode === 'daily') {
+    Picker = DayPicker;
+  } else if (mode === 'weekly') {
+    Picker = WeekPicker;
+  } else if (mode === 'quarters') {
+    Picker = QuarterPicker;
+  } else if (mode === 'yearly') {
+    Picker = YearPicker;
+  }
+  return (
+    <React.Fragment>
+      <WhenModeChanger
+        mode={mode}
+        when={when}
+        onWhen={w => {
+          setWhen(w);
+          onWhen(w);
+        }}
+      />
+      <Picker when={when} onWhen={handleWhen} />
+    </React.Fragment>
+  );
 }
 
 function PillButton({ title, isActive, onPress }) {
@@ -274,19 +530,88 @@ const MODES = [
         month = defaultMonth;
       }
       if (!date) {
+        if (year === defaultYear && month === defaultMonth) {
+          date = defaultDate;
+        } else {
+          date = 1;
+        }
+      }
+      return `${year}-${month}-${date}`;
+    },
+  },
+  {
+    id: 'weekly',
+    name: 'Weekly',
+    onConvert: from => {
+      let year = extractYear(from);
+      let month = extractMonth(from);
+      let date = extractDate(from);
+      const defaultMonth = getDefaultMonth();
+      const defaultYear = getDefaultYear();
+      const defaultDate = getDefaultDate();
+      if (!year) {
+        year = defaultYear;
+      }
+      if (!month) {
+        month = defaultMonth;
+      }
+      if (!date) {
         if (year == defaultYear && month == defaultMonth) {
           date = defaultDate;
         } else {
           date = 1;
         }
       }
-      return `${year}-${month}-${String(date).padStart(2, '0')}`;
+      return `${year}-W00`;
     },
   },
-  { id: 'weekly', name: 'Weekly', onConvert: prev => prev },
-  { id: 'monthly', name: 'Monthly', onConvert: prev => prev },
-  { id: 'quarters', name: 'By Quarter', onConvert: prev => prev },
-  { id: 'yearly', name: 'Yearly', onConvert: prev => prev },
+  {
+    id: 'monthly',
+    name: 'Monthly',
+    onConvert: from => {
+      let year = extractYear(from);
+      let month = extractMonth(from);
+      const defaultMonth = getDefaultMonth();
+      const defaultYear = getDefaultYear();
+      if (!year) {
+        year = defaultYear;
+      }
+      if (!month) {
+        month = defaultMonth;
+      }
+      return `${year}-${month}`;
+    },
+  },
+  {
+    id: 'quarters',
+    name: 'By Quarter',
+    onConvert: from => {
+      let year = extractYear(from);
+      let month = extractMonth(from);
+      const defaultMonth = getDefaultMonth();
+      const defaultYear = getDefaultYear();
+      if (!year) {
+        year = defaultYear;
+      }
+      if (!month) {
+        month = defaultMonth;
+      }
+      const q = 1 + Math.floor(month / 4);
+      return `${year}-Q${q}`;
+    },
+  },
+  {
+    id: 'yearly',
+    name: 'Yearly',
+    onConvert: from => {
+      let year = extractYear(from);
+      const defaultYear = getDefaultYear();
+      if (!year) {
+        year = defaultYear;
+      }
+      return `${year}`;
+    },
+  },
 ];
 function WhenModePicker({ mode, onMode }) {
   return (
@@ -382,7 +707,6 @@ function WhenModeChanger({ mode, when, onWhen }) {
 
 function WhenSelector({ when, onWhen }) {
   const mode = getMode(when);
-  console.log('whenselector', when, mode);
   const { onPopover, targetRef } = useTargetPopover(
     ({ onClose, location, openValue }) => {
       return (
@@ -418,14 +742,11 @@ function WhenSelector({ when, onWhen }) {
               backgroundColor: 'white',
             }}
           >
-            <WhenModeChanger mode={mode} when={when} onWhen={onWhen} />
             <WhenPicker
               mode={mode}
-              when={when}
-              onWhen={w => {
-                onClose();
-                onWhen(w);
-              }}
+              initialWhen={when}
+              onWhen={onWhen}
+              onComplete={onClose}
             />
           </Animated.View>
         </Animated.View>
@@ -454,21 +775,23 @@ function WhenSelector({ when, onWhen }) {
 const WHATS = [
   { id: 'revenue', name: 'Revenue' },
   { id: 'orders', name: 'Orders' },
-  { id: 'uptime', name: 'Uptime' },
+  // { id: 'uptime', name: 'Uptime' },
 ];
 
-function WhatSelecor() {
+function WhatSelecor({ what, onWhat }) {
   const { onPopover, targetRef } = useDropdownView(({ onClose }) => {
     return WHATS.map(w => (
       <PillButton
         title={w.name}
-        isActive={false}
+        isActive={w.id === what}
         onPress={() => {
+          onWhat(w.id);
           onClose();
         }}
       />
     ));
   });
+  const activeWhat = WHATS.find(w => w.id === what);
   return (
     <View
       style={{
@@ -479,7 +802,7 @@ function WhatSelecor() {
     >
       <TouchableOpacity onPress={onPopover} style={{ flex: 1, width: 400 }}>
         <Spacing horizontal={32} right={60} top={26}>
-          <Text theme={{ fontSize: 24 }}>Revenue</Text>
+          <Text theme={{ fontSize: 24 }}>{activeWhat.name}</Text>
         </Spacing>
         <svg
           width={40}
@@ -497,8 +820,274 @@ function isServer() {
   return !!process.env['NODE'];
 }
 
+function CustomLabel(props) {
+  const { revenue } = props.datum;
+  return (
+    <VictoryLabel
+      {...props}
+      text={`$${Math.floor(revenue / 100)}.${String(revenue % 100).padStart(
+        2,
+        '0',
+      )}`}
+    />
+  );
+}
+function CustomTooltip(props) {
+  return (
+    <g>
+      <VictoryTooltip
+        {...props}
+        labelComponent={<CustomLabel />}
+        flyoutStyle={{
+          fill: '#fff',
+          // boxShadow: '0px 0px 22px 10px #00000008',
+          pointerEvents: 'none',
+          strokeWidth: 1,
+          strokeOpacity: 0.3,
+        }}
+      />
+    </g>
+  );
+}
+CustomTooltip.defaultEvents = VictoryTooltip.defaultEvents;
+
+function OrderPopover({ orderId, onClose }) {
+  const orderValue = useCloudValue(`OrderState/${orderId}`);
+  const cloud = useCloud();
+  if (!orderValue) return null;
+  console.log(orderValue);
+
+  return (
+    <View style={{ maxWidth: 600 }}>
+      <Heading
+        title={`Order for ${orderValue.orderName.firstName} ${orderValue.orderName.lastName}`}
+      />
+      <Text>Order #{orderId}</Text>
+      <Text>{formatTime(orderValue.confirmedTime)}</Text>
+      {orderValue.refundTime ? (
+        <Text>
+          This order was refunded at {formatTime(orderValue.refundTime)}
+        </Text>
+      ) : (
+        <AsyncButton
+          title="Refund Order"
+          onPress={async () => {
+            await cloud.dispatch({ type: 'RefundOrder', orderId });
+          }}
+        />
+      )}
+    </View>
+  );
+}
+
+function downloadCSVData(dataStr, name) {
+  let csvContent = 'data:text/csv;charset=utf-8,' + dataStr;
+
+  var encodedUri = encodeURI(csvContent);
+  var link = window.document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', name + '.csv');
+  window.document.body.appendChild(link); // Required for FF
+
+  link.click();
+}
+
+function downloadJSONData(data, name) {
+  const dataStr = JSON.stringify(data);
+  let content = 'data:application/json;charset=utf-8,' + dataStr;
+
+  var encodedUri = encodeURI(content);
+  var link = window.document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', name + '.json');
+  window.document.body.appendChild(link); // Required for FF
+
+  link.click();
+}
+
+function useOrderPopover(orderId) {
+  const { onPopover } = useKeyboardPopover(({ onClose }) => (
+    <OrderPopover orderId={orderId} onClose={onClose} />
+  ));
+  return { onOpenOrder: onPopover };
+}
+
+function DashboardContentContainer({
+  children,
+  onInnerLayout,
+  scroll = false,
+  rawData,
+  onCSVData,
+  title,
+}) {
+  const OuterView = scroll ? ScrollView : View;
+  return (
+    <React.Fragment>
+      <OuterView style={{ flex: 1, backgroundColor: lightBgColor }}>
+        <View onLayout={onInnerLayout} style={{ flex: 1, margin: 50 }}>
+          {children}
+        </View>
+      </OuterView>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingBottom: 14,
+          paddingHorizontal: 50,
+          borderTopWidth: 1,
+          borderColor: '#ccc',
+          backgroundColor: lightBgColor,
+        }}
+      >
+        <View>
+          <Stack horizontal inline>
+            {rawData && (
+              <Button
+                title="download raw JSON"
+                onPress={() => {
+                  downloadJSONData(rawData, title);
+                }}
+              />
+            )}
+            {onCSVData && (
+              <Button
+                title="download CSV"
+                onPress={() => {
+                  downloadCSVData(onCSVData(), title);
+                }}
+              />
+            )}
+          </Stack>
+        </View>
+        <View>
+          <Text>Total: zomg total</Text>
+        </View>
+      </View>
+    </React.Fragment>
+  );
+}
+
+function DataView({ what, when }) {
+  if (what === 'revenue') {
+    return <RevenueView when={when} />;
+  } else if (what === 'orders') {
+    return <OrdersView when={when} />;
+  }
+  return <Heading title="Coming Soon" />;
+}
+function formatFullTime(timeNumber) {
+  const d = new Date(timeNumber);
+  return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+}
+function OrderView({ order }) {
+  const { onOpenOrder } = useOrderPopover(order.orderId);
+  return (
+    <TouchableOpacity
+      style={{
+        flexDirection: 'row',
+        flexAlign: 'space-between',
+        alignSelf: 'stretch',
+      }}
+      onPress={onOpenOrder}
+    >
+      <Text>{order.name}</Text>
+      <Stack horizontal inline>
+        <Text>{formatCurrency(order.total)}</Text>
+        <Text>{formatFullTime(order.time)}</Text>
+      </Stack>
+    </TouchableOpacity>
+  );
+}
+
+const lightBgColor = '#f5f8fe';
+function extractCSVFields(dataList, fieldNames) {
+  return [];
+}
+function OrdersView({ when }) {
+  const data = useCloudValue(`OrdersWhen/${when}`);
+  if (!data) {
+    return <Heading>Loading..</Heading>;
+  }
+  return (
+    <DashboardContentContainer
+      scroll
+      rawData={data}
+      onCSVData={() => {
+        return extractCSVFields(data, ['orderId', 'time']);
+      }}
+      title={`orders-${when}`}
+    >
+      <Heading title={`${data.orders.length} orders`} />
+      {data.orders.map(order => (
+        <OrderView order={order} />
+      ))}
+    </DashboardContentContainer>
+  );
+}
+
+function RevenueView({ when }) {
+  const data = useCloudValue(`RevenueWhen/${when}`);
+  const [layout, setLayout] = React.useState(null);
+  console.log('ok ok', data);
+  if (!data) {
+    return <Heading>Loading..</Heading>;
+  }
+  return (
+    <DashboardContentContainer
+      rawData={data}
+      onInnerLayout={e => {
+        setLayout(e.nativeEvent.layout);
+      }}
+      style={{ flex: 1, margin: 50 }}
+      title={`revenue-${when}`}
+    >
+      <VictoryChart
+        theme={onoVictoryTheme}
+        // theme={VictoryTheme.grayscale}
+        containerComponent={<VictoryVoronoiContainer theme={onoVictoryTheme} />}
+        width={layout && layout.width}
+        height={layout && layout.height}
+      >
+        <VictoryLine
+          interpolation="monotoneX"
+          style={{
+            // data: { stroke: '#c43a31' },
+            parent: { border: '1px solid #ccc' },
+          }}
+          labelComponent={<CustomTooltip />}
+          labels={({ datum }) => {
+            return { y: datum.revenue };
+          }}
+          data={data.intervals.map(interval => {
+            return {
+              x: interval.time,
+              y: interval.revenue / 100 || 0,
+              ...interval,
+            };
+          })}
+        />
+        <VictoryAxis label="$" dependentAxis />
+        <VictoryAxis label="Day" />
+      </VictoryChart>
+    </DashboardContentContainer>
+  );
+}
+
 function InternalDashboardPage() {
-  const [when, setWhen] = React.useState('2020-01');
+  const { getParam, setParams } = useNavigation();
+  const d = new Date();
+  const defaultWhen = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+    2,
+    '0',
+  )}`;
+  const when = getParam('when') || defaultWhen;
+  const what = getParam('what') || 'revenue';
+  function setWhen(w) {
+    setParams({ when: w });
+  }
+  function setWhat(w) {
+    setParams({ what: w });
+  }
   if (isServer()) {
     return null;
   }
@@ -525,16 +1114,10 @@ function InternalDashboardPage() {
               justifyContent: 'space-between',
             }}
           >
-            <WhatSelecor />
+            <WhatSelecor what={what} onWhat={setWhat} />
             <WhenSelector when={when} onWhen={setWhen} />
           </View>
-          <View style={{ backgroundColor: '#f0f6ff', flex: 1 }}>
-            <Center>
-              <Spacing top={120}>
-                <Heading title="Dashboard Coming Soon" />
-              </Spacing>
-            </Center>
-          </View>
+          <DataView what={what} when={when} />
         </View>
       </AuthenticatedRedirectWrapper>
     </React.Fragment>

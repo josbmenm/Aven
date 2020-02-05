@@ -26,6 +26,7 @@
       "dash-ui"
     ],
     "moduleDependencies": [
+      "victory",
       "react-calendar",
       "mjml",
       "mjml-react",

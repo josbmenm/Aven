@@ -170,6 +170,7 @@ export default async function startVerseServer(httpServer) {
             const { order } = orderDocState.value.value;
             return {
               type: 'QueueTasks',
+
               tasks: order.orderTasks,
             };
           }

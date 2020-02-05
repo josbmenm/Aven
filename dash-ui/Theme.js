@@ -10,7 +10,7 @@ const defaultFont = Platform.select({
 export const baseTheme = {
   spacing: 8,
   fontSize: 16,
-  lineHeight: 24,
+  // lineHeight: 24,
 
   colorForeground: '#333',
   colorBackground: '#f7f7f7',

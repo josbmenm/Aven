@@ -12,6 +12,7 @@ export default function TextButton({ onPress, title, onLongPress }) {
             bold
             theme={{
               colorForeground: colorPrimary,
+              lineHeight: 28,
             }}
           >
             {title}

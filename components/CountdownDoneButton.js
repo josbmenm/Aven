@@ -46,7 +46,7 @@ export default function CountdownDoneButton({
         flexDirection: 'row',
         justifyContent: 'flex-end',
         opacity,
-        paddingTop: 8,
+        paddingTop: 5,
       }}
       pointerEvents="box-none"
     >

@@ -29,6 +29,7 @@ import CustomizeBlendScreen from '../screens/CustomizeBlendScreen';
 import FoodScreen from '../screens/FoodScreen';
 import OrdersScreen from '../screens/OrdersScreen';
 import TasksScreen from '../screens/TasksScreen';
+import WorkflowScreen from '../screens/WorkflowScreen';
 import useCloudProvider from '../components/useCloudProvider';
 import { FeedbackAppNavigator } from '../components/FeedbackApp';
 import SequencerScreen from '../screens/SequencerScreen';
@@ -81,6 +82,9 @@ const RESTAURANT_DEV = {
 
   // prod server (connect to maui wifi first..)
   // authority: '10.10.1.200:8830',
+
+  // prod server remote (danger!!)
+  // authority: 'restaurant0.maui.onofood.co',
 
   // prod server from ono wifi
   // authority: '192.168.1.106:8830',
@@ -259,6 +263,7 @@ const App = createStackTransitionNavigator({
   Sequencer: { screen: SequencerScreen },
   FeedbackApp: FeedbackAppNavigator,
   OrderConfirmTest: OrderConfirmTestScreen,
+  Workflow: WorkflowScreen,
   Organization: OrganizationScreen,
 });
 

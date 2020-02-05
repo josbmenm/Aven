@@ -14,6 +14,7 @@ import { useDeviceId } from '../components/useAsyncStorage';
 import { Stack, Tag, TextInput, MultiSelect, AsyncButton } from '../dash-ui';
 import TemperatureView from '../components/TemperatureView';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
+import { useNavigation } from '../navigation-hooks/Hooks';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import KitchenCommandButton from '../components/KitchenCommandButton';
@@ -557,6 +558,28 @@ function TanksView() {
   );
 }
 
+function ProcedureStarting() {
+  const { navigate } = useNavigation();
+  return (
+    <Row title="Workflows">
+      <Stack>
+        <Button
+          onPress={() => {
+            navigate('Workflow', { key: 'Loading' });
+          }}
+          title="Load Machine into Van"
+        />
+        <Button
+          onPress={() => {
+            navigate('Workflow', { key: 'Unloading' });
+          }}
+          title="Unload Machine from Van"
+        />
+      </Stack>
+    </Row>
+  );
+}
+
 export default function RestaurantStatusScreen(props) {
   return (
     <SimplePage {...props} hideBackButton footer={<StatusBar />}>
@@ -569,6 +592,7 @@ export default function RestaurantStatusScreen(props) {
         <VanView />
         <TemperatureView />
         <TanksView />
+        <ProcedureStarting />
       </RootAuthenticationSection>
     </SimplePage>
   );

@@ -2,7 +2,11 @@ import React from 'react';
 import { useTheme } from './Theme';
 import Text from './Text';
 
-export default function Heading({ title, theme: themeProp = {} }) {
+export default function Heading({
+  title,
+  center = false,
+  theme: themeProp = {},
+}) {
   const theme = useTheme(themeProp);
   return (
     <Text
@@ -13,6 +17,7 @@ export default function Heading({ title, theme: themeProp = {} }) {
         fontWeight: theme.headingFontWeight,
         textFont: theme.headingFont,
       }}
+      center={center}
     >
       {title}
     </Text>

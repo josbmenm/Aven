@@ -8,6 +8,7 @@ import {
   createSessionClient,
   createReducerStream,
   createReducedDoc,
+  createStreamDoc,
   createSyntheticDoc,
 } from '../cloud-core/Kite';
 import { CloudContext } from '../cloud-core/KiteReact';
@@ -16,6 +17,7 @@ import createFSClient from '../cloud-server/createFSClient';
 import { getConnectionToken, capturePayment } from '../stripe-server/Stripe';
 import OrderReducer from '../logic/OrderReducer';
 import DevicesReducer from '../logic/DevicesReducer';
+import getIdOfValue from '../cloud-utils/getIdOfValue';
 
 import sendReceipt from './sendReceipt';
 import refundOrder from './refundOrder';
@@ -31,11 +33,14 @@ import validatePromoCode from './validatePromoCode';
 import { HostContext } from '../components/AirtableImage';
 import { companyConfigToKitchenConfig } from '../logic/MachineLogic';
 import RecentOrders from '../logic/RecentOrders';
+import HistoricalTransactions from '../logic/HistoricalTransactions';
 import { defineCloudReducer } from '../cloud-core/KiteReact';
 import { companyConfigToMenu } from '../logic/configLogic';
 import {
   streamOfValue,
+  createProducerStream,
   combineStreams,
+  combineLoadedStreams,
 } from '../cloud-core/createMemoryStream';
 import { Storage } from '@google-cloud/storage';
 import { log, trace, error, setLogger } from '../logger/logger';
@@ -339,6 +344,285 @@ export default async function startSkynetServer(httpServer) {
     }
   });
 
+  const historicalCompanyActivity = internalCloud.setReducer(
+    'CompanyActivityHistorical',
+    {
+      actionsDoc: companyActivity,
+      reducer: HistoricalTransactions,
+      snapshotInterval: 10,
+      snapshotsDoc: internalCloud.get('CompanyActivityHistorical-Snapshot'),
+    },
+  );
+
+  internalCloud.docs.setOverride(
+    'CompanyActivityDays',
+    createSyntheticDoc({
+      onCreateChild: dateStr => {
+        const matchedDate = dateStr.match(/^(\d\d\d\d)-(\d\d)-(\d\d)$/);
+        if (!matchedDate) {
+          return null;
+        }
+        const year = matchedDate[1];
+        const month = matchedDate[2];
+        const day = matchedDate[3];
+        return createStreamDoc(
+          historicalCompanyActivity.idAndValue.map(histState => {
+            const y = histState.value && histState.value[year];
+            const m = y && y[month];
+            const d = m && m[day];
+            return d;
+          }),
+          'onofood.co',
+          () => `CompanyActivityDays/${dateStr}`,
+          () => null,
+        );
+      },
+    }),
+  );
+
+  internalCloud.docs.setOverride(
+    'OrderDays',
+    createSyntheticDoc({
+      onCreateChild: dateStr => {
+        const matchedDate = dateStr.match(/^(\d\d\d\d)-(\d\d)-(\d\d)$/);
+        if (!matchedDate) {
+          return null;
+        }
+        const dayActivities = internalCloud.docs.get(
+          `CompanyActivityDays/${dateStr}`,
+        );
+        return createStreamDoc(
+          dayActivities.idAndValue
+            .map(dayEvents => {
+              const valueStreams = {};
+              let i = 0;
+              if (!dayEvents) return streamOfValue({ id: null, value: null });
+              dayEvents.forEach(evt => {
+                valueStreams[i] = companyActivity.getBlock(evt.actionDoc.id);
+                i += 1;
+              });
+              return combineLoadedStreams(valueStreams).map(results => {
+                return { id: getIdOfValue(results).id, value: results };
+              });
+            })
+            .flatten(),
+          'onofood.co',
+          () => `OrderDays/${dateStr}`,
+          () => null,
+        );
+      },
+    }),
+  );
+
+  function accumulateOrderRevenue(action, bucket) {
+    if (action.type !== 'KioskOrder') {
+      return;
+    }
+    const total = action.confirmedOrder.total;
+
+    bucket.count = bucket.count ? bucket.count + 1 : 1;
+    bucket.revenue = bucket.revenue ? bucket.revenue + total : total;
+  }
+  function createMagicWhenDoc({ name, from, aggregate, extract, domain }) {
+    const resultWhenDoc = createSyntheticDoc({
+      onCreateChild: dateStr => {
+        const matchedDate = dateStr.match(/^(\d\d\d\d)-(\d\d)-(\d\d)$/);
+        if (matchedDate) {
+          return createDayStreamDoc(dateStr);
+        }
+        const matchedMonth = dateStr.match(/^(\d\d\d\d)-(\d\d)$/);
+        if (matchedMonth) {
+          return createMonthStreamDoc(matchedMonth[1], matchedMonth[2]);
+        }
+        const matchedYear = dateStr.match(/^(\d\d\d\d)$/);
+        if (matchedYear) {
+          return createYearStreamDoc(matchedYear[1]);
+        }
+        return null;
+      },
+    });
+
+    function createDayStreamDoc(dateStr) {
+      const dailyResults = from.children.get(dateStr);
+      return createStreamDoc(
+        dailyResults.idAndValue.map(activities => {
+          const results = { dateStr };
+          activities.value &&
+            Object.values(activities.value).forEach(actionDocValue => {
+              const action = actionDocValue.value;
+              if (!action) return; // todo, figure out these empty values
+              extract(results, action.value, action.id, dateStr);
+            });
+          return { id: getIdOfValue(results).id, value: results };
+        }),
+        domain,
+        () => `${name}/${dateStr}`,
+        () => null,
+      );
+    }
+    function createMonthStreamDoc(yearStr, monthStr) {
+      let date = 1;
+      const dayStreams = {};
+      while (
+        !Number.isNaN(
+          new Date(
+            `${yearStr}-${monthStr}-${String(date).padStart(2, '0')}`,
+          ).getMonth(),
+        )
+      ) {
+        dayStreams[date] = resultWhenDoc.children.get(
+          `${yearStr}-${monthStr}-${String(date).padStart(2, '0')}`,
+        ).idAndValue;
+        date += 1;
+      }
+      const values = combineLoadedStreams(dayStreams);
+      const streamIdAndValue = values.map(streamResults => {
+        const results = {};
+        Object.values(streamResults).forEach(dayIdAndValue => {
+          aggregate(results, dayIdAndValue.value, dayIdAndValue.id, 'month');
+        });
+        return {
+          value: results,
+          id: getIdOfValue(results).id,
+        };
+      });
+      return createStreamDoc(streamIdAndValue);
+    }
+
+    function createYearStreamDoc(yearStr) {
+      let month = 1;
+      const monthStreams = {};
+      while (month <= 12) {
+        monthStreams[month] = resultWhenDoc.children.get(
+          `${yearStr}-${String(month).padStart(2, '0')}`,
+        ).idAndValue;
+        month += 1;
+      }
+      const values = combineLoadedStreams(monthStreams);
+      const streamIdAndValue = values.map(streamResults => {
+        const results = {};
+        Object.values(streamResults).forEach(monthIdAndValue => {
+          aggregate(results, monthIdAndValue.value, monthIdAndValue.id, 'year');
+        });
+        return {
+          value: results,
+          id: getIdOfValue(results).id,
+        };
+      });
+      return createStreamDoc(streamIdAndValue);
+    }
+
+    return resultWhenDoc;
+  }
+
+  internalCloud.docs.setOverride(
+    'OrdersWhen',
+    createMagicWhenDoc({
+      name: 'OrdersWhen',
+      from: internalCloud.docs.get('OrderDays'),
+      domain: 'onofood.co',
+      aggregate: (results, event, _actionId) => {
+        if (!results.orders) {
+          results.orders = [];
+        }
+        event.orders &&
+          event.orders.forEach(o => {
+            results.orders.push(o);
+          });
+      },
+      extract: (results, action, _actionId) => {
+        if (action.type !== 'KioskOrder') return;
+        const orderId = action.confirmedOrderDocName;
+        const { total, totalBeforeDiscount } = action.confirmedOrder;
+        const promoCode =
+          action.confirmedOrder.promo && action.confirmedOrder.promo.promoCode;
+        const { firstName, lastName } = action.confirmedOrder.orderName;
+        const cardFingerprint =
+          action.confirmedOrder.stripeIntent &&
+          action.confirmedOrder.stripeIntent.cardFingerprint;
+        const items = action.confirmedOrder.items.map(i => ({
+          name: i.displayName,
+          type: i.type,
+          menuItemId: i.menuItemId,
+          quantity: i.quantity,
+          itemPrice: i.itemPrice,
+        }));
+        if (!results.orders) {
+          results.orders = [];
+        }
+        results.orders.push({
+          time: action.dispatchTime,
+          orderId,
+          items,
+          totalBeforeDiscount,
+          total,
+          promoCode,
+          cardFingerprint,
+          name: `${firstName} ${lastName}`,
+        });
+      },
+    }),
+  );
+
+  const dayDuration = 24 * 60 * 60 * 1000;
+  const hourDuration = 60 * 60 * 1000;
+  internalCloud.docs.setOverride(
+    'RevenueWhen',
+    createMagicWhenDoc({
+      name: 'RevenueWhen',
+      from: internalCloud.docs.get('OrderDays'),
+      domain: 'onofood.co',
+      aggregate: (results, event, _actionId, whenView) => {
+        if (!results.totals) {
+          results.totals = {};
+        }
+      },
+      extract: (results, action, _actionId, dateStr) => {
+        if (!results.totals) {
+          results.totals = {};
+        }
+        accumulateOrderRevenue(action, results.totals);
+        const dayStart = new Date(dateStr).getTime();
+        if (!results.time) {
+          results.time = dayStart;
+        }
+        results.whenView = 'day';
+        if (!results.intervals) {
+          results.intervals = [];
+          let walkTimeInterval = dayStart;
+          while (walkTimeInterval < dayStart + dayDuration) {
+            results.intervals.push({
+              whenName: 'hour',
+              time: walkTimeInterval,
+            });
+            walkTimeInterval += hourDuration;
+          }
+        }
+        const time = new Date(action.dispatchTime);
+        if (
+          time.getTime() > dayDuration + dayStart ||
+          time.getTime() < dayStart
+        ) {
+          error('Event is in wrong day');
+          return;
+        }
+
+        const timeOfDay = time.getTime() - dayStart;
+        const intervalIndex = Math.floor(timeOfDay / hourDuration);
+        const interval = results.intervals[intervalIndex];
+        if (!interval) {
+          error('Unknown interval', intervalIndex, time.getTime(), {
+            dayStart,
+            hourDuration,
+            time: time.getTime(),
+          });
+          return;
+        }
+        accumulateOrderRevenue(action, interval);
+      },
+    }),
+  );
+
   internalCloud.setReducer('RecentOrders', {
     actionsDoc: companyActivity,
     reducer: RecentOrders,
@@ -530,19 +814,39 @@ export default async function startSkynetServer(httpServer) {
     snapshotsDoc: internalCloud.get('DevicesStateSnapshot'),
   });
 
+  const onoEmployeeSelector = {
+    type: 'EmailRegex',
+    rule: { canRead: true },
+    emailRegexMatch: '.*@onofood.co$',
+  };
+
   const protectedSource = createProtectedSource({
     source: internalCloud,
-    // staticOrgs: {
-    //   onoEmployees: {
-    //     users: {
-    //       withEmailRegex: ,
-    //       // withEmailRegex: ['.*@onofood\.co$'],
-    //       // withId: ['user1', 'user2'],
-    //     }
-    //   }
-    // },
     staticPermissions: {
       'onofood.co': {
+        CompanyActivityHistorical: {
+          selector: onoEmployeeSelector,
+        },
+        CompanyActivityDays: {
+          children: {
+            selector: onoEmployeeSelector,
+          },
+        },
+        OrdersWhen: {
+          children: {
+            selector: onoEmployeeSelector,
+          },
+        },
+        RevenueWhen: {
+          children: {
+            selector: onoEmployeeSelector,
+          },
+        },
+        OrderDays: {
+          children: {
+            selector: onoEmployeeSelector,
+          },
+        },
         WebMenu: { defaultRule: { canRead: true } },
         DevicesState: { defaultRule: { canRead: true } },
         DeviceActions: { defaultRule: { canTransact: true } },
@@ -552,11 +856,13 @@ export default async function startSkynetServer(httpServer) {
         },
         FeedbackSummary: {
           selector: {
-            type: 'EmailRegex',
-            rule: { canRead: true },
-            emailRegexMatch: '.*@onofood.co$',
+            ...onoEmployeeSelector,
+            rule: {
+              canAdmin: true,
+            },
           },
         },
+        HistoricalOrders: {},
       },
     },
     providers: [smsAuthProvider, emailAuthProvider, rootAuthProvider],
