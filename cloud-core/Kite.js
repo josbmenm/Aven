@@ -1532,7 +1532,11 @@ export function createReducerStream(
           actionValue && actionValue.on
             ? valueMap.get(getId(actionValue.on.id))
             : { value: initialState, context: { gen: 0 } };
-        const newState = reducerFn(prevState.value, actionValue.value);
+        const newState = reducerFn(
+          prevState.value,
+          actionValue.value,
+          walkIdString,
+        );
         const newId = getIdOfValue(newState).id;
         valueMap.set(walkId, {
           value: newState,
