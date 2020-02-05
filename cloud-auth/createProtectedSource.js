@@ -537,6 +537,11 @@ export default function createProtectedSource({
           applyRule(permissions.selector.rule);
         }
       }
+      if (inheritedPermissions && inheritedPermissions.selector) {
+        if (matchSelector(inheritedPermissions.selector, validatedAuth)) {
+          applyRule(inheritedPermissions.selector.rule);
+        }
+      }
     });
 
     if (isRootAccount || userDoesOwn) {
@@ -544,6 +549,7 @@ export default function createProtectedSource({
     }
 
     if (
+      // users can always read their own docs at /@username
       validatedAuth &&
       validatedAuth.accountId &&
       name.match(new RegExp(`^@${validatedAuth.accountId}\/`))
