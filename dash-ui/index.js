@@ -12,6 +12,7 @@ export { default as SpinnerButton } from './SpinnerButton';
 export { default as AsyncButton } from './AsyncButton';
 export { default as Text } from './Text';
 export { default as useKeyboardPopover } from './useKeyboardPopover';
+export { default as useAsyncErrorPopover } from './useAsyncErrorPopover';
 export { default as TextInput } from './TextInput';
 export { default as Page } from './Page';
 export * from './Theme';
