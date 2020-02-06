@@ -21,7 +21,7 @@ function FoodDetails({ orderItem, menuItem }) {
       <DescriptionText>{menuItem['Display Description']}</DescriptionText>
 
       <DetailText>{menuItem['Nutrition Info']}</DetailText>
-      <SmallTitle>brought to you by:</SmallTitle>
+      {/* <SmallTitle>brought to you by:</SmallTitle>
       <View style={{ flexDirection: 'row' }}>
         <AirtableImage
           image={menuItem['Brand Photo']}
@@ -40,7 +40,7 @@ function FoodDetails({ orderItem, menuItem }) {
         >
           {menuItem['Brand Description']}
         </Text>
-      </View>
+      </View> */}
     </DetailsSection>
   );
 }
