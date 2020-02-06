@@ -38,7 +38,15 @@ export default function GenericPage({
       }
     >
       {disableScrollView ? (
-        children
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            ...contentContainerStyle,
+          }}
+        >
+          {children}
+        </View>
       ) : (
         <ScrollView
           style={{ flex: 1 }}

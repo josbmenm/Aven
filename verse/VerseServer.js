@@ -518,6 +518,10 @@ export default async function startVerseServer(httpServer) {
         });
         return;
       }
+      case 'WorkflowReport': {
+        log('WorkflowReport', action.report);
+        return;
+      }
       default: {
         return await cloud.dispatch(action);
       }

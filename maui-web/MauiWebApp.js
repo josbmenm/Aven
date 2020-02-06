@@ -14,10 +14,14 @@ import InternalRestaurant from './InternalRestaurantPage';
 import InternalUIPlayground from './InternalUIPlayground';
 // import Schedule from './SchedulePage';
 import RequestLocation from './RequestLocationPage';
+import Careers from './CareersPage';
+import CareerApply from './CareerApplyPage';
+import CareerListing from './CareerListingPage';
 import Press from './PressPage';
 import Subscribe from './SubscribePage';
 import SubscribeConfirm from './SubscribeConfirmPage';
 import OnoTheme from '../logic/OnoTheme';
+import OnoThemeProvider from '../components/Onotheme';
 import { ThemeProvider } from '../dashboard/Theme';
 import Receipt from './ReceiptPage';
 import { CloudContext } from '../cloud-core/KiteReact';
@@ -49,6 +53,18 @@ export const MauiWebRoutes = {
   Terms: {
     path: 'legal/terms',
     screen: Terms,
+  },
+  Careers: {
+    path: 'careers',
+    screen: Careers,
+  },
+  CareerListing: {
+    path: 'careers/role/:roleId',
+    screen: CareerListing,
+  },
+  CareerApply: {
+    path: 'careers/role/:roleId/apply',
+    screen: CareerApply,
   },
   BookUs: {
     path: 'book-us',
@@ -114,9 +130,11 @@ const AppNavigator = createFullscreenSwitchNavigator(MauiWebRoutes, {
 function App(props) {
   const cloud = React.useContext(CloudContext);
   return (
-    <ThemeProvider value={OnoTheme}>
-      <AppNavigator {...props} screenProps={{ cloud }} />
-    </ThemeProvider>
+    <OnoThemeProvider>
+      <ThemeProvider value={OnoTheme}>
+        <AppNavigator {...props} screenProps={{ cloud }} />
+      </ThemeProvider>
+    </OnoThemeProvider>
   );
 }
 

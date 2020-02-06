@@ -18,6 +18,7 @@ import { useNavigation } from '../navigation-hooks/Hooks';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
 import useKeyboardPopover from '../components/useKeyboardPopover';
 import KitchenCommandButton from '../components/KitchenCommandButton';
+import HomeOrServiceModeButton from '../components/HomeOrServiceModeButton';
 
 function PopoverTitle({ children }) {
   return (
@@ -90,6 +91,37 @@ function SafetyView() {
   );
 }
 
+export function VanPowerToggle() {
+  const cloud = useCloud();
+  const kitchenState = useKitchenState();
+  const handleError = useAsyncError();
+  if (!kitchenState) {
+    return null;
+  }
+  const vanPowerEnable = kitchenState.System_VanPowerEnable_VALUE;
+  return (
+    <MultiSelect
+      value={vanPowerEnable}
+      onValue={value => {
+        handleError(
+          cloud.dispatch({
+            type: 'KitchenWriteMachineValues',
+            subsystem: 'System',
+            pulse: [],
+            values: {
+              VanPowerEnable: value,
+            },
+          }),
+        );
+      }}
+      options={[
+        { value: true, name: 'Enable Van Power' },
+        { value: false, name: 'Disable Van Power' },
+      ]}
+    />
+  );
+}
+
 function VanView() {
   const cloud = useCloud();
   const kitchenState = useKitchenState();
@@ -129,25 +161,7 @@ function VanView() {
           { value: false, name: 'Unlock Skid' },
         ]}
       /> */}
-      <MultiSelect
-        value={vanPowerEnable}
-        onValue={value => {
-          handleError(
-            cloud.dispatch({
-              type: 'KitchenWriteMachineValues',
-              subsystem: 'System',
-              pulse: [],
-              values: {
-                VanPowerEnable: value,
-              },
-            }),
-          );
-        }}
-        options={[
-          { value: true, name: 'Enable Van Power' },
-          { value: false, name: 'Disable Van Power' },
-        ]}
-      />
+      <VanPowerToggle />
     </Row>
   );
 }
@@ -187,14 +201,7 @@ function ServicingView() {
         )}
       </View>
       <Stack>
-        {kitchenState.FillSystem_InServiceMode_READ ? (
-          <KitchenCommandButton commandType="Home" title="home system" />
-        ) : (
-          <KitchenCommandButton
-            commandType="EnterServiceMode"
-            title="enter service mode"
-          />
-        )}
+        <HomeOrServiceModeButton />
       </Stack>
     </Row>
   );

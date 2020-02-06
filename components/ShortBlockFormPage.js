@@ -7,6 +7,7 @@ import FadeTransition from './FadeTransition';
 
 export default function ShortBlockFormPage({
   children,
+  background = true,
   hideBackButton,
   ...props
 }) {
@@ -15,16 +16,18 @@ export default function ShortBlockFormPage({
     <FadeTransition
       backgroundColor={pageBackgroundColor}
       background={
-        <Image
-          source={require('./assets/BgGeneric.png')}
-          style={{
-            flex: 1,
-            width: null,
-            height: null,
-            resizeMode: 'contain',
-            ...StyleSheet.absoluteFillObject,
-          }}
-        />
+        background && (
+          <Image
+            source={require('./assets/BgGeneric.png')}
+            style={{
+              flex: 1,
+              width: null,
+              height: null,
+              resizeMode: 'contain',
+              ...StyleSheet.absoluteFillObject,
+            }}
+          />
+        )
       }
       {...props}
     >

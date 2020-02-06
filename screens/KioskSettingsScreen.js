@@ -26,40 +26,46 @@ import {
   AsyncButton,
 } from '../dash-ui';
 
-function FridgeView() {
+export function RefrigerationControl({ temperatureControllable = false }) {
   const kitchenState = useKitchenState();
   const fridgeEnabled =
     !!kitchenState && !!kitchenState.System_EnableRefrigerationSystem_VALUE;
   const cloud = useCloud();
   const handleError = useAsyncErrorPopover();
   return (
+    <Stack horizontal inline>
+      <Tag
+        title={fridgeEnabled ? 'Enabled' : 'Disabled'}
+        status={fridgeEnabled ? 'positive' : 'negative'}
+      />
+      <MultiSelect
+        options={[
+          { name: 'Enable', value: true },
+          { name: 'Disable', value: false },
+        ]}
+        value={fridgeEnabled}
+        onValue={value => {
+          handleError(
+            cloud.dispatch({
+              type: 'KitchenWriteMachineValues',
+              subsystem: 'System',
+              pulse: [],
+              values: {
+                EnableRefrigerationSystem: value,
+              },
+            }),
+          );
+        }}
+      />
+      {temperatureControllable && <SetFridgeTemp />}
+    </Stack>
+  );
+}
+
+function FridgeView() {
+  return (
     <Row title="main refridgeration">
-      <Stack horizontal inline>
-        <Tag
-          title={fridgeEnabled ? 'Enabled' : 'Disabled'}
-          status={fridgeEnabled ? 'positive' : 'negative'}
-        />
-        <MultiSelect
-          options={[
-            { name: 'Enable', value: true },
-            { name: 'Disable', value: false },
-          ]}
-          value={fridgeEnabled}
-          onValue={value => {
-            handleError(
-              cloud.dispatch({
-                type: 'KitchenWriteMachineValues',
-                subsystem: 'System',
-                pulse: [],
-                values: {
-                  EnableRefrigerationSystem: value,
-                },
-              }),
-            );
-          }}
-        />
-        <SetFridgeTemp />
-      </Stack>
+      <RefrigerationControl temperatureControllable />
     </Row>
   );
 }

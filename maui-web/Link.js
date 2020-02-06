@@ -9,6 +9,7 @@ function Link({
   title = 'link',
   size = 'small',
   routeName,
+  params,
   target,
   url,
   noActive = false,
@@ -18,6 +19,7 @@ function Link({
   return (
     <FunctionalLink
       routeName={routeName}
+      params={params}
       url={url}
       target={target}
       renderContent={active => (
