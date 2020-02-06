@@ -17,8 +17,13 @@ import { primaryFontFace } from './Styles';
 import useAsyncStorage, {
   isStateUnloaded,
 } from '../components/useAsyncStorage';
-import useKeyboardPopover from './useKeyboardPopover';
-import { Spacing, Button, Stack, MultiSelect } from '../dash-ui';
+import {
+  Spacing,
+  Button,
+  Stack,
+  MultiSelect,
+  useKeyboardPopover,
+} from '../dash-ui';
 
 function useSlotsWithIngredients() {
   const config = useCompanyConfig();

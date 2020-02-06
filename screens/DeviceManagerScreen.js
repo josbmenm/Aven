@@ -7,9 +7,8 @@ import RowSection from '../components/RowSection';
 import TextRow from '../components/TextRow';
 import SimplePage from '../components/SimplePage';
 import Row from '../components/Row';
-import { Spinner, TextInput } from '../dash-ui';
+import { Spinner, TextInput, useKeyboardPopover } from '../dash-ui';
 import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
-import useKeyboardPopover from '../components/useKeyboardPopover';
 import useAsyncError from '../react-utils/useAsyncError';
 import useFocus from '../navigation-hooks/useFocus';
 

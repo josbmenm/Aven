@@ -16,8 +16,7 @@ import Row from '../components/Row';
 import BitRow from '../components/BitRow';
 import { rowStyle, rowTitleStyle } from '../components/Styles';
 import SimplePage from '../components/SimplePage';
-import { Button, MultiSelect } from '../dash-ui/MultiSelect';
-import useKeyboardPopover from '../components/useKeyboardPopover';
+import { Button, MultiSelect, useKeyboardPopover } from '../dash-ui';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import LinkRow from '../components/LinkRow';
 

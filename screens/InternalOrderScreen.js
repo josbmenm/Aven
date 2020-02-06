@@ -12,8 +12,7 @@ import {
 import formatCurrency from '../utils/formatCurrency';
 import { Button, TextInput } from '../dash-ui';
 import Row from '../components/Row';
-import { Spinner, AsyncButton } from '../dash-ui';
-import useKeyboardPopover from '../components/useKeyboardPopover';
+import { Spinner, AsyncButton, useKeyboardPopover } from '../dash-ui';
 import useFocus from '../navigation-hooks/useFocus';
 import { error } from '../logger/logger';
 import useAsyncError from '../react-utils/useAsyncError';

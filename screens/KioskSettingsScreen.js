@@ -11,7 +11,7 @@ import Row from '../components/Row';
 import useAsyncErrorPopover from '../components/useAsyncErrorPopover';
 import { useRestaurantConfig } from '../logic/RestaurantConfig';
 import { useRestaurantState } from '../ono-cloud/Kitchen';
-import useKeyboardPopover from '../components/useKeyboardPopover';
+import { useKeyboardPopover } from '../dash-ui';
 import useFocus from '../navigation-hooks/useFocus';
 import StatusBar from '../components/StatusBar';
 import CardReaderConnectionManager from '../components/CardReaderConnectionManager';

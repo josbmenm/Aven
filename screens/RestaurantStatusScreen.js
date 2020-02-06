@@ -11,12 +11,18 @@ import { titleStyle, primaryFontFace } from '../components/Styles';
 import useTimeSeconds from '../utils/useTimeSeconds';
 import StatusBar from '../components/StatusBar';
 import { useDeviceId } from '../components/useAsyncStorage';
-import { Stack, Tag, TextInput, MultiSelect, AsyncButton } from '../dash-ui';
+import {
+  Stack,
+  Tag,
+  TextInput,
+  MultiSelect,
+  AsyncButton,
+  useKeyboardPopover,
+} from '../dash-ui';
 import TemperatureView from '../components/TemperatureView';
 import { useKitchenState } from '../ono-cloud/OnoKitchen';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';
-import useKeyboardPopover from '../components/useKeyboardPopover';
 import KitchenCommandButton from '../components/KitchenCommandButton';
 import HomeOrServiceModeButton from '../components/HomeOrServiceModeButton';
 
