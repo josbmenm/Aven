@@ -82,7 +82,7 @@ export default function FoodPage({
                 price={sellPriceOfMenuItem(menuItem)}
                 photo={menuItem['Photo']}
                 onPress={null}
-                style={{ marginBottom: 116 }}
+                style={{ marginBottom: 0 }}
               />
             )
           }
