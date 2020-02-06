@@ -42,7 +42,7 @@ function CustomizePopover({
         setCustomization={setCustomization}
       />
       <View style={{ flexDirection: 'row', paddingHorizontal: 8 }}>
-        <Stack>
+        <Stack horizontal>
           <Button
             onPress={() => {
               onClose();
