@@ -34,6 +34,9 @@ export default function useFocus({ inputRenderers, onSubmit }) {
   }
   return {
     inputs: inputRenderers.filter(Boolean).map((renderInput, index) => {
+      if (React.isValidElement(renderInput)) {
+        return renderInput;
+      }
       const ref = refs.current[index];
       return renderInput({
         key: index,
