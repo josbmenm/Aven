@@ -296,9 +296,7 @@ export function createBlock({
     });
     if (resp.id !== blockId) {
       throw new Error(
-        `Attempted to put "${name}" block "${blockId}" but the server claims the ID is "${
-          resp.id
-        }"`,
+        `Attempted to put "${name}" block "${blockId}" but the server claims the ID is "${resp.id}"`,
       );
     }
     shamefullySetPutTime();
@@ -1801,6 +1799,8 @@ export function createSessionClient({
   const cloudSessionClient = {
     type: 'SesionClient',
     docs,
+    auth,
+    domain,
     connected: source.connected,
     get: docs.get,
     hydrate: values => {
