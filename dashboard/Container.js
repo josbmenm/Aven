@@ -34,4 +34,35 @@ function Container({
   );
 }
 
+export function NarrowContainer({
+  children,
+  responsiveStyle,
+  fullWidth,
+  nativeID,
+  style = {},
+}) {
+  const theme = useTheme();
+  return (
+    <Responsive
+      style={{
+        ...responsiveStyle,
+      }}
+    >
+      <View
+        testID={fullWidth ? 'FullWidthContainer' : 'Container'}
+        style={{
+          width: fullWidth ? '100%' : '90%',
+          maxWidth: theme.layouts.small,
+          alignItems: 'stretch',
+          alignSelf: 'center',
+          ...style,
+        }}
+        nativeID={nativeID}
+      >
+        {children}
+      </View>
+    </Responsive>
+  );
+}
+
 export default Container;
