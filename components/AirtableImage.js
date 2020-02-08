@@ -1,19 +1,10 @@
 import React from 'react';
 import Image, { loadImages } from './Image';
 import { Responsive } from '../dashboard/Responsive';
+import { HostContext } from '../cloud-core/HostContext';
 
 const md5 = require('crypto-js/md5');
 const path = require('path');
-
-export const HostContext = React.createContext();
-
-export function HostContextContainer({ authority, useSSL, children }) {
-  return (
-    <HostContext.Provider value={{ authority, useSSL }}>
-      {children}
-    </HostContext.Provider>
-  );
-}
 
 const AirtableImage = ({
   image,

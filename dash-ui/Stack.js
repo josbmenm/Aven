@@ -9,6 +9,7 @@ export default function Stack({
   inline = false,
   debug = false,
   stretch = false,
+  stretchInside = false,
   // TODO: what is the most common, inline or block?? what is the best name?
   theme: themeProp,
 }) {
@@ -19,7 +20,7 @@ export default function Stack({
         {
           flexDirection: horizontal ? 'row' : 'column',
           flexWrap: 'wrap',
-          alignItems: 'flex-start',
+          alignItems: stretchInside ? 'stretch' : 'flex-start',
           width: '100%',
           flex: stretch ? 1 : null,
         },

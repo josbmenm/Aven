@@ -23,7 +23,8 @@
       "react-utils",
       "navigation-web",
       "dashboard",
-      "dash-ui"
+      "dash-ui",
+      "aven-file-upload"
     ],
     "moduleDependencies": [
       "victory",

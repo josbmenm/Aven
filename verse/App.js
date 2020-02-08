@@ -3,7 +3,7 @@ import { useCloud } from '../cloud-core/KiteReact';
 import Admin from '../admin/Admin';
 import StatusDisplay from '../shoneys/StatusDisplay';
 import { createSwitchNavigator } from '../navigation-core';
-import { HostContextContainer } from '../components/AirtableImage';
+import { HostContextContainer } from '../cloud-core/HostContext';
 
 import { View, Text } from 'react-native';
 import { useCloudValue } from '../cloud-core/KiteReact';

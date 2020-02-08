@@ -4,7 +4,7 @@ import startWebClient from '../aven-web/WebClient';
 import { CloudContext } from '../cloud-core/KiteReact';
 import { createBrowserClient } from '../cloud-browser';
 import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
-import { HostContext } from '../components/AirtableImage';
+import { HostContext } from '../cloud-core/HostContext';
 
 const hostConfig = {
   authority: window.location.host,

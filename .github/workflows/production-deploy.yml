@@ -158,6 +158,9 @@ jobs:
           STRIPE_TOKEN: ${{ toJson(secrets.STRIPE_TOKEN) }}
           TWILIO_ACCOUNT_SID: ${{ toJson(secrets.TWILIO_ACCOUNT_SID) }}
           TWILIO_AUTH_TOKEN: ${{ toJson(secrets.TWILIO_AUTH_TOKEN) }}
+          S3_ENDPOINT: ${{ toJson(secrets.S3_ENDPOINT) }}
+          S3_KEY_ID: ${{ toJson(secrets.S3_KEY_ID) }}
+          S3_ACCESS_KEY: ${{ toJson(secrets.S3_ACCESS_KEY) }}
         run: |
           echo "[Service]" > secrets.conf
           echo Environment=AIRTABLE_API_KEY="${AIRTABLE_API_KEY}" >> secrets.conf
@@ -174,6 +177,9 @@ jobs:
           echo Environment=STRIPE_TOKEN="${STRIPE_TOKEN}" >> secrets.conf
           echo Environment=TWILIO_ACCOUNT_SID="${TWILIO_ACCOUNT_SID}" >> secrets.conf
           echo Environment=TWILIO_AUTH_TOKEN="${TWILIO_AUTH_TOKEN}" >> secrets.conf
+          echo Environment=S3_ENDPOINT="${S3_ENDPOINT}" >> secrets.conf
+          echo Environment=S3_KEY_ID="${S3_KEY_ID}" >> secrets.conf
+          echo Environment=S3_ACCESS_KEY="${S3_ACCESS_KEY}" >> secrets.conf
 
       - name: Build Configs File
         env:

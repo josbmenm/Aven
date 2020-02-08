@@ -30,7 +30,7 @@ import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
 import createProtectedSource from '../cloud-auth/createProtectedSource';
 import submitFeedback from './submitFeedback';
 import validatePromoCode from './validatePromoCode';
-import { HostContext } from '../components/AirtableImage';
+import { HostContext } from '../cloud-core/HostContext';
 import { companyConfigToKitchenConfig } from '../logic/MachineLogic';
 import RecentOrders from '../logic/RecentOrders';
 import HistoricalTransactions from '../logic/HistoricalTransactions';
@@ -50,6 +50,14 @@ if (process.env.NODE_ENV === 'production') {
   setLogger(logElastic);
 }
 
+const NOTIF_EMAIL =
+  process.env.NODE_ENV === 'production'
+    ? 'aloha@onofood.co'
+    : 'eric@onofood.co';
+const EXTERN_HOST =
+  process.env.NODE_ENV === 'production'
+    ? 'https://onoblends.co'
+    : 'http://localhost:8840';
 const path = require('path');
 const pathJoin = require('path').join;
 const md5 = require('crypto-js/md5');
@@ -572,7 +580,7 @@ export default async function startSkynetServer(httpServer) {
       name: 'RevenueWhen',
       from: internalCloud.docs.get('OrderDays'),
       domain: 'onofood.co',
-      aggregate: (results, event, _actionId, whenView) => {
+      aggregate: (results, event, _actionId, whenName) => {
         if (!results.totals) {
           results.totals = {};
         }
@@ -586,7 +594,7 @@ export default async function startSkynetServer(httpServer) {
         if (!results.time) {
           results.time = dayStart;
         }
-        results.whenView = 'day';
+        results.whenName = 'day';
         if (!results.intervals) {
           results.intervals = [];
           let walkTimeInterval = dayStart;
@@ -640,6 +648,64 @@ export default async function startSkynetServer(httpServer) {
       date: pstTime.getDate(),
     };
   }
+
+  const jobApplications = internalCloud.docs.get('JobApplications');
+  jobApplications.handleReports((reportType, report) => {
+    console.log('Job App Report..', reportType, report);
+    if (reportType === 'PutDoc') {
+      jobApplications
+        .getBlock(report.id)
+        .value.load()
+        .then(blockValue => {
+          const action = blockValue.value;
+
+          console.log('job action', JSON.stringify(action));
+
+          // `${EXTERN_HOST}/_/onofood.co/JobApplications:${}`
+
+          emailAgent.actions.SendEmail({
+            to: NOTIF_EMAIL,
+            subject: `Job application for ${action.role.roleName}`,
+            messageHTML: `
+<p>Name: ${action.name}</p>
+<p>Email: ${action.email}</p>
+<p>Phone: ${action.phone}</p>
+<hr />
+<p>Resume: </p>
+${action.files
+  .map(
+    file => `
+<p><a clicktracking=off href="${EXTERN_HOST}/_/onofood.co/JobApplications:${file.fileData.id}">${file.fileName}</a></p>
+`,
+  )
+  .join('')}
+<hr />
+<p>GitHub URL: <a clicktracking=off href="${action.github}">${
+              action.github
+            }</a></p>
+<p>LinkedIn URL: <a clicktracking=off href="${action.linkedin}">${
+              action.linkedin
+            }</a></p>
+<p>Portfolio URL: <a clicktracking=off href="${action.portfolio}">${
+              action.portfolio
+            }</a></p>
+<hr />
+<p>Comments:</p>
+<p>${action.comments}</p>
+<hr />
+Debug: ${JSON.stringify(blockValue)}
+      `,
+          });
+        })
+        .then(() => {
+          console.log('email sent!');
+        })
+        .catch(err => {
+          console.error('bad job app email send');
+          console.error(err);
+        });
+    }
+  });
 
   internalCloud.setReducer('FeedbackSummary', {
     actionsDoc: companyActivity,
@@ -847,6 +913,7 @@ export default async function startSkynetServer(httpServer) {
             selector: onoEmployeeSelector,
           },
         },
+        JobApplications: { defaultRule: { canRead: true, canTransact: true } },
         WebMenu: { defaultRule: { canRead: true } },
         DevicesState: { defaultRule: { canRead: true } },
         DeviceActions: { defaultRule: { canTransact: true } },
@@ -917,7 +984,7 @@ export default async function startSkynetServer(httpServer) {
       comments,
     } = action.request;
     await emailAgent.actions.SendEmail({
-      to: 'eric@onofood.co',
+      to: NOTIF_EMAIL,
       subject: 'New booking request on onoblends.co',
       message: `
 Name: ${firstName} ${lastName}

@@ -6,7 +6,7 @@ import { createClient } from '../cloud-core/Kite';
 import { CloudContext } from '../cloud-core/KiteReact';
 import createNodeNetworkSource from '../cloud-server/createNodeNetworkSource';
 
-import { HostContext } from '../components/AirtableImage';
+import { HostContext } from '../cloud-core/HostContext';
 import { sendEmailDO_NOT_USE_ME } from '../emails/Emails';
 import EmailAgent from '../email-agent-sendgrid/EmailAgent';
 

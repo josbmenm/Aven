@@ -37,7 +37,7 @@ import { OrderContextProvider } from '../ono-cloud/OrderContext';
 import OrderSidebarPage from '../components/OrderSidebarPage';
 import { PopoverContainer } from '../views/Popover';
 import { registerDispatcher } from '../card-reader/CardReader';
-import { HostContextContainer } from '../components/AirtableImage';
+import { HostContextContainer } from '../cloud-core/HostContext';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import useCloudProvider from '../components/useCloudProvider';
 import FadeTransition from '../components/FadeTransition';

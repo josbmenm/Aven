@@ -56,7 +56,7 @@ import { PopoverContainer } from '../views/Popover';
 import { registerDispatcher } from '../card-reader/CardReader';
 import { ThemeProvider as OldThemeProvider } from '../dashboard/Theme';
 import OLD_OnoTheme from '../logic/OnoTheme';
-import { HostContextContainer } from '../components/AirtableImage';
+import { HostContextContainer } from '../cloud-core/HostContext';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import RootAuthenticationSection from '../screens/RootAuthenticationSection';
 import OnoThemeProvider from '../components/Onotheme';

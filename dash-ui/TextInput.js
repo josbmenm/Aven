@@ -71,17 +71,7 @@ function FormInputWithRef(
   let inputRef = ref;
   let valueHandler = onValue;
   let multiline = false;
-  // let valueHandler = onValue;
   if (mode === 'phone') {
-    Input = TextInput;
-    inputType = 'custom';
-    inputOptions = {
-      mask: '(999) 999-9999',
-    };
-    inputRef = i => {
-      ref.current = i && i.getElement();
-    };
-    valueHandler = onValue;
     keyboardType = 'phone-pad';
   } else if (mode === 'password') {
     secureTextEntry = true;

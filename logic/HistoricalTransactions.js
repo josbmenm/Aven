@@ -6,7 +6,6 @@ function HistoricalOrdersFn(state = {}, action, actionId) {
   const year = String(time.getFullYear());
   const month = String(time.getMonth() + 1).padStart(2, '0');
   const day = String(time.getDate()).padStart(2, '0');
-  console.log('really', { year, month, day, actionId, type });
   const yearData = state[year] || {};
   const monthData = yearData[month] || {};
   const dayData = monthData[day] || [];

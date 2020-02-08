@@ -21,7 +21,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { CloudContext } from '../cloud-core/KiteReact';
 import ErrorContainer from '../cloud-react/ErrorContainer';
 import { PopoverContainer } from '../views/Popover';
-import { HostContextContainer } from '../components/AirtableImage';
+import { HostContextContainer } from '../cloud-core/HostContext';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
 import { ThemeProvider } from '../dashboard/Theme';
 import OnoTheme from '../logic/OnoTheme';
