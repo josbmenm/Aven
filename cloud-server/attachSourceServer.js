@@ -4,9 +4,38 @@ import attachSourceSocketServer from './attachSourceSocketServer';
 import { log, trace, error } from '../logger/logger';
 const http = require('http');
 const bodyParser = require('body-parser');
+const fileUpload = require('express-fileupload');
 const WebSocket = require('ws');
 
 const IS_DEV = process.env.NODE_ENV !== 'production';
+
+async function uploadFile(source, file, meta) {
+  const result = await source.dispatch({
+    type: 'PutBlock',
+    domain: meta.domain,
+    auth: meta.auth,
+    name: meta.docName,
+    value: {
+      contentType: file.mimetype,
+      type: 'BinaryFileHex',
+      data: file.data.toString('hex'),
+    },
+  });
+  return {
+    fileName: file.name,
+    fileData: {
+      type: 'BlockReference',
+      ...result,
+    },
+  };
+}
+
+async function uploadFiles(source, files, meta) {
+  const results = await Promise.all(
+    Object.values(files).map(file => uploadFile(source, file, meta)),
+  );
+  return results;
+}
 
 export default async function attachSourceServer({
   httpServer,
@@ -21,6 +50,24 @@ export default async function attachSourceServer({
 
   expressRouting && expressRouting(expressApp);
 
+  expressApp.post(
+    '/upload',
+    fileUpload({
+      limits: { fileSize: 1 * 1024 * 1024 },
+    }),
+    (req, res, next) => {
+      const meta = JSON.parse(req.body.metadata);
+      uploadFiles(source, req.files, meta)
+        .then(results => {
+          res.send(JSON.stringify(results));
+        })
+        .catch(err => {
+          console.error(err);
+          error('FileUploadError', { error: err });
+          res.status(500).send(JSON.stringify({ error: String(err) }));
+        });
+    },
+  );
   expressApp.post(
     '/dispatch',
     (req, res, next) => {

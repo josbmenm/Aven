@@ -13,6 +13,7 @@
       "ws",
       "node-fetch",
       "express",
+      "express-fileupload",
       "body-parser",
       "cuid"
     ]

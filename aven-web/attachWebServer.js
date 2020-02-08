@@ -46,10 +46,10 @@ async function blockResponse({
         res.send(block.value);
       };
     }
-    const mimeType = mime.getType(path.extname(blockName));
     return res => {
-      res.header('Content-Type', mimeType);
-      res.send(Buffer.from(block.value.data, 'hex'));
+      const resultBinary = Buffer.from(block.value.data, 'hex');
+      res.type(block.value.contentType);
+      res.send(resultBinary);
     };
   }
   if (!block.value || !block.value.files) {
@@ -72,21 +72,31 @@ async function blockResponse({
   return sendNotFound;
 }
 
-async function webDataInterface({ domain, docName, dispatch, docPath }) {
-  const doc = await dispatch({
-    type: 'GetDoc',
-    domain,
-    name: docName,
-  });
-  if (!doc || !doc.id) {
-    return sendNotFound;
+async function webDataInterface({ domain, address, dispatch, docPath }) {
+  let blockId = null;
+  let docName = null;
+  const blockIdMatch = address.match(/^(.*):(.*)$/);
+  if (blockIdMatch) {
+    docName = blockIdMatch[1];
+    blockId = blockIdMatch[2];
+  } else {
+    docName = address;
+    const doc = await dispatch({
+      type: 'GetDoc',
+      domain,
+      name: docName,
+    });
+    if (!doc || !doc.id) {
+      return sendNotFound;
+    }
+    blockId = doc.id;
   }
   return await blockResponse({
     domain,
     docName,
     dispatch,
     blockName: docName,
-    blockId: doc.id,
+    blockId,
     docPath,
   });
 }
@@ -187,14 +197,14 @@ export default async function attachWebServer({
   function doFallbackExpressRouting(app) {
     fallbackExpressRouting && fallbackExpressRouting(app);
 
-    app.get('/_/:domain/:docName*', (req, res) => {
-      const docName = req.params.docName;
+    app.get('/_/:domain/:address*', (req, res) => {
+      const address = req.params.address;
       const domain = req.params.domain;
       const docPath = req.params['0'];
 
       webDataInterface({
         domain,
-        docName,
+        address,
         docPath,
         dispatch: source.dispatch,
       })
@@ -205,7 +215,7 @@ export default async function attachWebServer({
           res.status(500);
           error('WebDataInterfaceError', {
             domain,
-            docName,
+            address,
             docPath,
             error: e,
           });
@@ -282,9 +292,7 @@ export default async function attachWebServer({
             ${
               isProd
                 ? `<script src="${assets.client.js}" defer></script>`
-                : `<script src="${
-                    assets.client.js
-                  }" defer crossorigin></script>`
+                : `<script src="${assets.client.js}" defer crossorigin></script>`
             }
             ${
               dataPayload

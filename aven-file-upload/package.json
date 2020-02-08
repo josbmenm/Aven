@@ -1,0 +1,14 @@
+{
+  "name": "@aven-cloud/file-upload",
+  "version": "0.0.0",
+  "aven": {
+    "srcDependencies": [
+      "utils",
+      "logger",
+      "cloud-core"
+    ],
+    "moduleDependencies": [
+      "react-dropzone"
+    ]
+  }
+}
