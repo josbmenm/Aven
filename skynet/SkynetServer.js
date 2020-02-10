@@ -581,9 +581,15 @@ export default async function startSkynetServer(httpServer) {
       from: internalCloud.docs.get('OrderDays'),
       domain: 'onofood.co',
       aggregate: (results, event, _actionId, whenName) => {
-        if (!results.totals) {
-          results.totals = {};
-        }
+        const intervals = results.intervals || (results.intervals = []);
+        intervals.push({
+          ...event.totals,
+          time: event.time,
+          whenName: event.whenName,
+        });
+        // if (!results.totals) {
+        //   results.totals = {};
+        // }
       },
       extract: (results, action, _actionId, dateStr) => {
         if (!results.totals) {
