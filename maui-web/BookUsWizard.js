@@ -13,7 +13,7 @@ import BodyText from '../dashboard/BodyText';
 import Spinner from '../dashboard/Spinner';
 import useKeyPress from './useKeyPress';
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 
 const inputStyle = {
   marginHorizontal: 8,
@@ -99,9 +99,10 @@ function BookUsWizard() {
   const firstNameRef = React.useRef(null);
   const lastNameRef = React.useRef(null);
   const emailRef = React.useRef(null);
-  const eventTypeRef = React.useRef(null);
+  const attendanceRef = React.useRef(null);
   const dateRef = React.useRef(null);
   const addressRef = React.createRef(null);
+  const durationRef = React.useRef(null);
   const commentsRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -113,15 +114,18 @@ function BookUsWizard() {
         emailRef.current.focus();
         break;
       case 3:
-        eventTypeRef.current.focus();
+        attendanceRef.current.focus();
         break;
       case 4:
         dateRef.current.focus();
         break;
       case 5:
-        addressRef.current.focus();
+        durationRef.current.focus();
         break;
       case 6:
+        addressRef.current.focus();
+        break;
+      case 7:
         commentsRef.current.focus();
         break;
       default:
@@ -134,8 +138,9 @@ function BookUsWizard() {
       firstName: '',
       lastName: '',
       email: '',
-      eventType: '',
+      attendance: '',
       date: '',
+      duration: '',
       address: '',
       comments: '',
     },
@@ -151,13 +156,16 @@ function BookUsWizard() {
       disabled: formState.fields.email === '',
     },
     {
-      disabled: formState.fields.eventType === '',
+      disabled: formState.fields.attendance === '',
     },
     {
       disabled: formState.fields.date === '',
     },
     {
-      disabled: formState.fields.address.place_name_en === '',
+      disabled: formState.fields.duration === '',
+    },
+    {
+      disabled: formState.fields.address === '',
     },
     {
       disabled: false,
@@ -292,19 +300,19 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 3}>
           <StepHeader>
-            <Heading size="large">What sort of event is this?</Heading>
+            <Heading size="large">How many attendees?</Heading>
             <BodyText>Let us know so we can cater to your demands.</BodyText>
           </StepHeader>
           <FormRow>
             <TextInput
               mode="name"
-              label="describe your event"
-              ref={eventTypeRef}
-              value={formState.fields.eventType}
+              label="approximate attendance"
+              ref={attendanceRef}
+              value={formState.fields.attendance}
               onValue={value =>
                 formDispatch({
                   type: 'UPDATE_FIELD',
-                  key: 'eventType',
+                  key: 'attendance',
                   value,
                 })
               }
@@ -336,6 +344,30 @@ function BookUsWizard() {
         </Step>
         <Step active={stepsState.current === 5}>
           <StepHeader>
+            <Heading size="large">And how long will this event be?</Heading>
+            <BodyText>
+              A time frame or estimated number of hours works just fine.
+            </BodyText>
+          </StepHeader>
+          <FormRow>
+            <TextInput
+              mode="name"
+              label="time frame, hours"
+              ref={durationRef}
+              value={formState.fields.duration}
+              onValue={value =>
+                formDispatch({
+                  type: 'UPDATE_FIELD',
+                  key: 'duration',
+                  value,
+                })
+              }
+              style={inputStyle}
+            />
+          </FormRow>
+        </Step>
+        <Step active={stepsState.current === 6}>
+          <StepHeader>
             <Heading size="large">Almost done…</Heading>
             <BodyText>What is your address?</BodyText>
           </StepHeader>
@@ -356,7 +388,7 @@ function BookUsWizard() {
             />
           </FormRow>
         </Step>
-        <Step active={stepsState.current === 6}>
+        <Step active={stepsState.current === 7}>
           <StepHeader>
             <Heading size="large">Additional Comments</Heading>
             <BodyText>

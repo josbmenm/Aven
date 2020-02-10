@@ -882,51 +882,67 @@ Debug: ${JSON.stringify(blockValue)}
 
   const onoEmployeeSelector = {
     type: 'EmailRegex',
-    rule: { canRead: true },
     emailRegexMatch: '.*@onofood.co$',
   };
-
+  const canReadRule = { canRead: true };
+  const canAdminRule = { canAdmin: true };
+  const onoEmployeeCanReadSelector = {
+    ...onoEmployeeSelector,
+    rule: canReadRule,
+  };
   const protectedSource = createProtectedSource({
     source: internalCloud,
     staticPermissions: {
       'onofood.co': {
         CompanyActivityHistorical: {
-          selector: onoEmployeeSelector,
+          selector: onoEmployeeCanReadSelector,
+        },
+        CompanyConfig: {
+          selector: onoEmployeeCanReadSelector,
+        },
+        Menu: {
+          selector: {
+            ...onoEmployeeSelector,
+            rule: { canWrite: true, canRead: true },
+          },
         },
         CompanyActivityDays: {
           children: {
-            selector: onoEmployeeSelector,
+            selector: onoEmployeeCanReadSelector,
           },
         },
         OrdersWhen: {
           children: {
-            selector: onoEmployeeSelector,
+            selector: onoEmployeeCanReadSelector,
           },
         },
         RevenueWhen: {
           children: {
-            selector: onoEmployeeSelector,
+            selector: onoEmployeeCanReadSelector,
           },
         },
         OrderDays: {
           children: {
-            selector: onoEmployeeSelector,
+            selector: onoEmployeeCanReadSelector,
           },
         },
         JobApplications: { defaultRule: { canRead: true, canTransact: true } },
-        WebMenu: { defaultRule: { canRead: true } },
-        DevicesState: { defaultRule: { canRead: true } },
+        WebMenu: { defaultRule: canReadRule },
+        DevicesState: { defaultRule: canReadRule },
+        Devices: {
+          children: {
+            defaultRule: canReadRule,
+          },
+        },
         DeviceActions: { defaultRule: { canTransact: true } },
         // KitchenConfig: { ono: { canRead: true } },
         OrderState: {
-          children: { defaultRule: { canRead: true } },
+          children: { defaultRule: canReadRule },
         },
         FeedbackSummary: {
           selector: {
             ...onoEmployeeSelector,
-            rule: {
-              canAdmin: true,
-            },
+            rule: canAdminRule,
           },
         },
         HistoricalOrders: {},
@@ -978,10 +994,11 @@ Debug: ${JSON.stringify(blockValue)}
       firstName,
       lastName,
       email,
-      eventType,
+      attendance,
       date,
       address,
       comments,
+      duration,
     } = action.request;
     await emailAgent.actions.SendEmail({
       to: NOTIF_EMAIL,
@@ -991,9 +1008,11 @@ Name: ${firstName} ${lastName}
 
 Email: ${email}
 
-Event Type: ${eventType}
+Attendance: ${attendance}
 
 Date: ${date}
+
+Duration: ${duration}
 
 Place: ${address}
 

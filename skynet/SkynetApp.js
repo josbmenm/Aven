@@ -129,10 +129,6 @@ const AppNavigator = createFullscreenSwitchNavigator(
       screen: LoginScreen,
       path: 'login',
     },
-    InternalBlendMenu2: {
-      screen: InternalBlendMenu,
-      path: 'secrets/blendmenu',
-    },
     FeedbackDashboard: {
       screen: FeedbackDashboard,
       path: 'secrets/maui-feedback',
