@@ -693,16 +693,21 @@ export default function createProtectedSource({
     return lastPermissions;
   }
 
+  function getDocNameForAction(actionType, action) {
+    if (actionType === 'ListDocs') {
+      return action.parentName;
+    }
+    return action.name;
+  }
+
   function guardAction(dispatch, actionType, permissionLevel) {
     return async action => {
       if (action.type !== actionType) {
         throw new Error(
-          `Unexpected type "${
-            action.type
-          }" when guarding action "${actionType}"`,
+          `Unexpected type "${action.type}" when guarding action "${actionType}"`,
         );
       }
-      let docName = action.name;
+      let docName = getDocNameForAction(actionType, action);
       let realPermissionLevelRequired = null;
       const authDocName = getAuthDocName(action.name);
       if (typeof authDocName === 'string') {
@@ -832,7 +837,8 @@ export default function createProtectedSource({
             }
             const stream = source.getDocStream(domain, name, auth);
             if (!stream) {
-              throw new Error('no stream to listen to!?');
+              notify.error(new Err('NoSuchStream', { domain, name }));
+              return;
             }
             stream.addListener(notify);
             upstreamRelease = () => stream.removeListener(notify);
