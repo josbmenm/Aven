@@ -33,6 +33,7 @@ import validatePromoCode from './validatePromoCode';
 import { HostContext } from '../cloud-core/HostContext';
 import { companyConfigToKitchenConfig } from '../logic/MachineLogic';
 import RecentOrders from '../logic/RecentOrders';
+import DropScheduler from '../logic/DropScheduler';
 import HistoricalTransactions from '../logic/HistoricalTransactions';
 import { defineCloudReducer } from '../cloud-core/KiteReact';
 import { companyConfigToMenu } from '../logic/configLogic';
@@ -644,6 +645,44 @@ export default async function startSkynetServer(httpServer) {
     snapshotsDoc: internalCloud.get('RecentOrdersSnapshot'),
   });
 
+  const dropScheduleActions = internalCloud.get('Drops/ScheduleActions');
+
+  function idAndValueStream(valueStream) {
+    return valueStream.map(value => ({
+      id: getIdOfValue(value).id,
+      value,
+    }));
+  }
+
+  const dropScheduleDoc = internalCloud.setReducer('DropSchedule', {
+    actionsDoc: dropScheduleActions,
+    reducer: DropScheduler,
+    snapshotInterval: 10,
+    snapshotsDoc: internalCloud.get('DropScheduleSnapshot'),
+  });
+
+  internalCloud.docs.setOverride(
+    'DropSpotSchedule',
+    createSyntheticDoc({
+      onCreateChild: spotId => {
+        if (spotId === '_auth') return null;
+        return createStreamDoc(
+          idAndValueStream(
+            dropScheduleDoc.value.map(dropSchedule => {
+              return {
+                scheduled: dropSchedule.scheduled.filter(
+                  drop => drop.spotId === spotId,
+                ),
+              };
+            }),
+          ),
+          'onofood.co',
+          () => `DropSpotSchedule/${spotId}`,
+        );
+      },
+    }),
+  );
+
   function timeIntToPSTDate(timeInt) {
     const tDefault = new Date(timeInt);
     const pstMinuteOffset = 480 - tDefault.getTimezoneOffset();
@@ -657,18 +696,12 @@ export default async function startSkynetServer(httpServer) {
 
   const jobApplications = internalCloud.docs.get('JobApplications');
   jobApplications.handleReports((reportType, report) => {
-    console.log('Job App Report..', reportType, report);
     if (reportType === 'PutDoc') {
       jobApplications
         .getBlock(report.id)
         .value.load()
         .then(blockValue => {
           const action = blockValue.value;
-
-          console.log('job action', JSON.stringify(action));
-
-          // `${EXTERN_HOST}/_/onofood.co/JobApplications:${}`
-
           emailAgent.actions.SendEmail({
             to: NOTIF_EMAIL,
             subject: `Job application for ${action.role.roleName}`,
@@ -704,10 +737,10 @@ Debug: ${JSON.stringify(blockValue)}
           });
         })
         .then(() => {
-          console.log('email sent!');
+          log('JobAppSent');
         })
         .catch(err => {
-          console.error('bad job app email send');
+          error('JobAppSendFailed', { action });
           console.error(err);
         });
     }
@@ -910,6 +943,26 @@ Debug: ${JSON.stringify(blockValue)}
           selector: {
             ...onoEmployeeSelector,
             rule: { canWrite: true, canRead: true },
+          },
+        },
+        Drops: {
+          selector: {
+            ...onoEmployeeSelector,
+            rule: { canAdmin: true },
+          },
+        },
+        DropSchedule: {
+          selector: onoEmployeeCanReadSelector,
+        },
+        DropSpotSchedule: {
+          children: {
+            selector: onoEmployeeCanReadSelector,
+          },
+        },
+        DropSpots: {
+          selector: {
+            ...onoEmployeeSelector,
+            rule: { canAdmin: true },
           },
         },
         CompanyActivityDays: {

@@ -9,7 +9,9 @@ import {
   AsyncButton,
   Stack,
   useTheme,
+  DatePicker,
   useKeyboardPopover,
+  useDropdownView,
 } from '../dash-ui';
 import { useCloud, useCloudValue } from '../cloud-core/KiteReact';
 import {
@@ -175,156 +177,6 @@ function getDefaultDate() {
   return String(d).padStart(2, '0');
 }
 
-function isRealDate(year, month, day) {
-  return !Number.isNaN(new Date(`${year} ${month} ${day}`).getTime());
-}
-
-const DAY_HEADINGS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
-function DayPicker({ when, onWhen }) {
-  const activeYear = extractYear(when);
-  const activeMonth = extractMonth(when);
-  const activeDay = extractDate(when);
-  const initYear = activeYear || getDefaultYear();
-  const initMonth = activeMonth || getDefaultMonth();
-  const [viewYear, setViewYear] = React.useState(initYear);
-  const [viewMonth, setViewMonth] = React.useState(initMonth);
-  const theme = useTheme();
-  const weeks = [];
-  let dayOfWeekOffset = new Date(`${viewYear} ${viewMonth} 1`).getDay();
-  let renderDay = 1;
-  const dayCountViewMonth = new Date(viewYear, viewMonth, 0).getDate();
-  let viewPrevYear = Number(viewYear);
-  let viewPrevMonth = Number(viewMonth) - 1;
-  if (viewPrevMonth === 0) {
-    viewPrevYear -= 1;
-    viewPrevMonth = 12;
-  }
-  const dayCountPrevViewMonth = new Date(
-    viewPrevYear,
-    viewPrevMonth,
-    0,
-  ).getDate();
-  while (isRealDate(viewYear, viewMonth, renderDay)) {
-    weeks.push(
-      <View style={{ flexDirection: 'row' }}>
-        {DAY_HEADINGS.map((heading, dayIndex) => {
-          let dayNumber = renderDay + dayIndex - dayOfWeekOffset;
-          let isThisMonth = true;
-          const isActive =
-            isThisMonth &&
-            Number(viewYear) === Number(activeYear) &&
-            Number(viewMonth) === Number(activeMonth) &&
-            Number(activeDay) === dayNumber;
-          if (dayNumber < 1) {
-            isThisMonth = false;
-            dayNumber = dayNumber + dayCountPrevViewMonth;
-          } else if (dayNumber > dayCountViewMonth) {
-            dayNumber -= dayCountViewMonth;
-            isThisMonth = false;
-          }
-          return (
-            <TouchableOpacity
-              onPress={
-                isThisMonth
-                  ? () => {
-                      onWhen(
-                        `${viewYear}-${String(viewMonth).padStart(
-                          2,
-                          '0',
-                        )}-${String(dayNumber).padStart(2, '0')}`,
-                      );
-                    }
-                  : null
-              }
-              style={{
-                width: 54,
-                backgroundColor: isActive ? theme.colorPrimary : null,
-              }}
-            >
-              <Text
-                theme={{
-                  fontSize: 20,
-                  colorForeground: isActive
-                    ? theme.colorBackground
-                    : isThisMonth
-                    ? '#222'
-                    : '#aaa',
-                }}
-                center
-              >
-                {dayNumber}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>,
-    );
-    renderDay += 7;
-  }
-  return (
-    <View>
-      <View
-        style={{
-          flexDirection: 'row',
-          borderBottomWidth: 1,
-          borderColor: '#ccc',
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            if (Number(viewMonth) === 1) {
-              setViewYear(viewYear - 1);
-              setViewMonth(12);
-            } else {
-              setViewMonth(viewMonth - 1);
-            }
-          }}
-        >
-          <View style={{ width: 40, height: 40 }}>
-            <svg width={40} height={40} style={{}}>
-              <polygon points="10,20 24,12 24,28" fill={theme.colorPrimary} />
-            </svg>
-          </View>
-        </TouchableOpacity>
-        <View style={{ flex: 1, paddingTop: 10, alignItems: 'center' }}>
-          <Text bold theme={{ fontSize: 20 }}>
-            {MONTH_NAMES[viewMonth - 1]} {viewYear}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => {
-            if (Number(viewMonth) === 12) {
-              setViewYear(Number(viewYear) + 1);
-              setViewMonth(1);
-            } else {
-              setViewMonth(Number(viewMonth) + 1);
-            }
-          }}
-        >
-          <View style={{ width: 40, height: 40 }}>
-            <svg width={40} height={40} style={{}}>
-              <polygon points="24,20 10,12 10,28" fill={theme.colorPrimary} />
-            </svg>
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={{ flexDirection: 'row' }}>
-        {DAY_HEADINGS.map(heading => {
-          return (
-            <View style={{ width: 54 }}>
-              <Text theme={{ fontSize: 24 }} center bold>
-                {heading}
-              </Text>
-            </View>
-          );
-        })}
-      </View>
-      {weeks}
-    </View>
-  );
-}
-
 // Date.prototype.getWeekNumber = function(){
 //   var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
 //   var dayNum = d.getUTCDay() || 7;
@@ -469,7 +321,7 @@ function WhenPicker({ initialWhen, onWhen, onComplete }) {
   // if (mode === 'monthly') ...
   let Picker = MonthPicker;
   if (mode === 'daily') {
-    Picker = DayPicker;
+    Picker = DatePicker;
   } else if (mode === 'weekly') {
     Picker = WeekPicker;
   } else if (mode === 'quarters') {
@@ -627,53 +479,6 @@ function WhenModePicker({ mode, onMode }) {
       ))}
     </React.Fragment>
   );
-}
-
-function useDropdownView(renderPopoverContent) {
-  const { onPopover, targetRef } = useTargetPopover(
-    ({ onClose, location, openValue }) => {
-      return (
-        <Animated.View
-          style={{
-            position: 'absolute',
-            ...prettyShadow,
-            left: location.pageX,
-            top: location.pageY + location.height,
-            width: location.width,
-            transform: [
-              {
-                scaleY: openValue.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, 1],
-                }),
-              },
-              {
-                translateY: openValue.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [-120, 0],
-                }),
-              },
-            ],
-          }}
-        >
-          <Animated.View
-            style={{
-              opacity: openValue.interpolate({
-                inputRange: [0.5, 1],
-                outputRange: [0, 1],
-              }),
-              backgroundColor: 'white',
-              minHeight: 100,
-            }}
-          >
-            {renderPopoverContent({ onClose })}
-          </Animated.View>
-        </Animated.View>
-      );
-    },
-    { easing: Easing.inOut(Easing.poly(5)), duration: 500 },
-  );
-  return { onPopover, targetRef };
 }
 
 function WhenModeChanger({ mode, when, onWhen }) {
@@ -919,6 +724,7 @@ function DashboardContentContainer({
   rawData,
   onCSVData,
   title,
+  totals,
 }) {
   const OuterView = scroll ? ScrollView : View;
   return (
@@ -959,9 +765,7 @@ function DashboardContentContainer({
             )}
           </Stack>
         </View>
-        <View>
-          <Text>Total: zomg total</Text>
-        </View>
+        <View>{totals && <Text>{JSON.stringify(totals)}</Text>}</View>
       </View>
     </React.Fragment>
   );
@@ -1016,6 +820,7 @@ function OrdersView({ when }) {
         return extractCSVFields(data, ['orderId', 'time']);
       }}
       title={`orders-${when}`}
+      totals={data.totals}
     >
       <Heading title={`${data.orders.length} orders`} />
       {data.orders.map(order => (
@@ -1028,7 +833,6 @@ function OrdersView({ when }) {
 function RevenueView({ when }) {
   const data = useCloudValue(`RevenueWhen/${when}`);
   const [layout, setLayout] = React.useState(null);
-  console.log('ok ok', data);
   if (!data) {
     return <Heading>Loading..</Heading>;
   }
@@ -1040,6 +844,7 @@ function RevenueView({ when }) {
       }}
       style={{ flex: 1, margin: 50 }}
       title={`revenue-${when}`}
+      totals={data.totals}
     >
       <VictoryChart
         theme={onoVictoryTheme}

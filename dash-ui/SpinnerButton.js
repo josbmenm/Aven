@@ -18,6 +18,7 @@ export default function SpinnerButton({
       onPress={onPress}
       title={title}
       disabled={disabled || isLoading}
+      theme={theme}
       {...props}
     >
       {isLoading ? <Spinner color={theme.colorBackground} /> : null}

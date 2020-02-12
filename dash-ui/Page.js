@@ -10,6 +10,7 @@ export default function Page({ children }) {
           alignItems: 'stretch',
           justifyContent: 'center',
           flexDirection: 'row',
+          flex: 1,
         }}
       >
         <View
