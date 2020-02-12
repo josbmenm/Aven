@@ -77,6 +77,7 @@ export function createStreamDoc(
     getReference: () => ({
       type: 'StreamDoc',
       name: onGetName(),
+      crumb: idAndValueStream.crumb,
     }),
     putValue: () => {
       throw new Error('Cannot PutValue of a stream doc');
@@ -1179,6 +1180,7 @@ export function createDocSet({
         domain,
         from: fromName,
         to: toName,
+        auth,
       });
     } catch (e) {
       mover(fromName);
@@ -1210,6 +1212,7 @@ export function createDocSet({
         .dispatch({
           type: 'ListDocs',
           domain,
+          auth,
           parentName: onGetName(),
         })
         .then(resp => {
@@ -1907,8 +1910,13 @@ export function createLocalSessionClient({
 }
 
 export function createSyntheticDoc({ onCreateChild }) {
+  const value = streamOfValue(undefined);
+  const idAndValue = streamOfValue({ id: null, value: undefined });
   return {
     type: 'SyntheticDoc',
+    value,
+    idAndValue,
+    getReference: () => ({ type: 'SyntheticDoc' }),
     children: createChildrenCache(onCreateChild),
   };
 }
