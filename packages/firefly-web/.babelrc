@@ -1,0 +1,42 @@
+{
+  "presets": ["babel-preset-expo"],
+  // "plugins": [
+  //   [
+  //     "module-resolver",
+  //     {
+  //       "alias": {
+  //         "^@aven/dash$": "../dash/src"
+  //       }
+  //     }
+  //   ]
+  // ],
+  "env": {
+    // "development": {
+    //   "plugins": ["transform-react-jsx-source"]
+    // },
+    "server": {
+      "plugins": [
+        [
+          "module-resolver",
+          {
+            "alias": {
+              "^react-native$": "react-native-web"
+            }
+          }
+        ]
+      ]
+    },
+    "client": {
+      "plugins": [
+        [
+          "module-resolver",
+          {
+            "alias": {
+              "^react-native$": "react-native-web"
+            }
+          }
+        ]
+      ]
+    }
+  }
+}

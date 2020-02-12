@@ -4,9 +4,18 @@
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
+    "firefly-mobile": "yarn workspace @aven/firefly-mobile",
+    "firefly-web": "yarn workspace @aven/firefly-web",
     "something-web": "yarn workspace @aven/something-web",
     "something-mobile": "yarn workspace @aven/something-mobile",
-    "dash": "yarn workspace @aven/dash"
+    "dash": "yarn workspace @aven/dash",
+    "dev": "parcel packages/firefly-web/browser/index.html",
+    "dev:server": "nodemon -e js,jsx,html --ignore dist --ignore browser/imported.js --exec 'npm run build && npm run start'",
+    "start": "node packages/firefly-web/dist/server/server",
+    "build": "rimraf packages/firefly-web/dist && npm run create-bundles",
+    "create-bundles": "concurrently \"npm run create-bundle:client\" \"npm run create-bundle:server\"",
+    "create-bundle:client": "cross-env BABEL_ENV=client parcel build packages/firefly-web/browser/index.html -d packages/firefly-web/dist/client --public-url /",
+    "create-bundle:server": "cross-env BABEL_ENV=server parcel build packages/firefly-web/server.js -d packages/firefly-web/dist/server --public-url /dist --target=node"
   },
   "workspaces": {
     "packages": [
@@ -14,7 +23,13 @@
     ]
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.7.4"
+    "@babel/preset-react": "^7.7.4",
+    "parcel-bundler": "^1.12.4"
   },
-  "dependencies": {}
+  "alias": {
+    "@aven/dash": "packages/dash"
+  },
+  "dependencies": {
+    "@babel/node": "^7.8.4"
+  }
 }

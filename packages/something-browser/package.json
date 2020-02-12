@@ -1,0 +1,7 @@
+{
+  "name": "@aven/something-browser",
+  "version": "0.0.0",
+  "dependencies": {
+    "@aven/something-app": "^0.0.x"
+  }
+}

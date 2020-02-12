@@ -38,5 +38,9 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "alias": {
+    "@aven/something-app": "./packages/something-app",
+    "@aven/dash": "./packages/dash"
   }
 }

@@ -1,0 +1,7 @@
+{
+  "name": "@aven/something-app",
+  "version": "0.0.0",
+  "dependencies": {
+    "@aven/dash": "^0.0.x"
+  }
+}

@@ -1,16 +1,18 @@
-console.log('Starting Caboose!!');
+console.log('Starting Neo ENV!!');
 const runInThisContext = require('vm').runInThisContext;
 const spawn = require('child_process').spawn;
 const execFile = require('child_process').execFile;
 
-const metroProcess = spawn('yarn', ['react-native', 'start']);
+const metroProcess = spawn('yarn', ['react-native', 'start', '--reset-cache']);
 
 let server = null;
 async function startNode() {
+  return;
   const bundle = execFile(
     'curl',
     [
-      'http://localhost:8081/packages/something-caboose/Server.js.bundle?platform=server',
+      '-q',
+      'http://localhost:8081/packages/something-server/Server.js.bundle?platform=server&babel_env=server&env=server&BABEL_ENV=server',
     ],
     {},
   );
@@ -63,6 +65,6 @@ metroProcess.on('close', code => {
   console.log(`Metro process exited with code ${code}`);
 });
 
-// http://localhost:8081/packages/something-caboose/Server.js.bundle
+// http://localhost:8081/packages/something-browser/Server.js.bundle
 
 // yarn react-native start

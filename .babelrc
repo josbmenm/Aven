@@ -1,0 +1,17 @@
+{
+  "presets": ["babel-preset-expo"],
+  "plugins": [
+    "./transform-server-require",
+    [
+      "module-resolver",
+      {
+        "root": ["."],
+        "alias": {
+          "react-native": "react-native-web",
+          "@aven/something-app": "./packages/something-app",
+          "@aven/dash": "./packages/dash"
+        }
+      }
+    ]
+  ]
+}

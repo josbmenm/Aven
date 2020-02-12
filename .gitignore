@@ -1,5 +1,7 @@
 build
 
+.cache
+
 # NodeJS
 npm-debug.log
 node_modules

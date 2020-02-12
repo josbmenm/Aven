@@ -1,0 +1,36 @@
+// {
+//   "presets": ["babel-preset-expo"],
+//   "plugins": ["./transform-server-require"],
+//   "env": {
+//     // "development": {
+//     //   "plugins": ["transform-react-jsx-source"]
+//     // },
+//     "server": {
+//       "plugins": [
+//         // ["./transform-server-require", {}],
+//         [
+//           "module-resolver",
+//           {
+//             "alias": {
+//               "^react-native$": "react-native-web"
+//             }
+//           }
+//         ]
+//       ]
+//     },
+//     "client": {
+//       "plugins": [
+//         // ["./transform-server-require", {}],
+//         [
+//           "module-resolver",
+//           {
+//             "alias": {
+//               "^react-native$": "react-native-web"
+//             }
+//           }
+//         ]
+//       ]
+//     }
+//   }
+// }
+{}

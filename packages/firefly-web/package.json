@@ -1,0 +1,31 @@
+{
+  "name": "@aven/firefly-web",
+  "version": "0.0.0",
+  "scripts": {
+    "BAD-dev": "parcel browser/index.html",
+    "BAD-dev:server": "nodemon -e js,jsx,html --ignore dist --ignore browser/imported.js --exec 'npm run build && npm run start'",
+    "start": "node dist/server/server",
+    "build": "rimraf dist && npm run create-bundles",
+    "create-bundles": "concurrently \"npm run create-bundle:client\" \"npm run create-bundle:server\"",
+    "create-bundle:client": "cross-env BABEL_ENV=client parcel build browser/index.html -d dist/client --public-url /",
+    "create-bundle:server": "cross-env BABEL_ENV=server parcel build server.js -d dist/server --public-url /dist --target=node"
+  },
+  "dependencies": {
+    "@aven/dash": "0.0.x",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "react-native-web": "0.12.0",
+    "express": "4.17.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "concurrently": "^5.1.0",
+    "cross-env": "^7.0.0",
+    "nodemon": "^2.0.2",
+    "parcel-bundler": "^1.12.4",
+    "rimraf": "^3.0.0"
+  },
+  "alias": {
+    "react-native": "react-native-web"
+  }
+}

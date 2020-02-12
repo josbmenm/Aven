@@ -18,8 +18,10 @@ module.exports = {
     // babelTransformerPath: require.resolve(
     //   'metro-react-native-babel-transformer',
     // ),
+    // babelTransformerPath: require.resolve('../../transform-server-require'),
     getTransformOptions: async () => ({
       transform: {
+        // envName: 'tezst',
         experimentalImportSupport: false,
         inlineRequires: false,
       },
