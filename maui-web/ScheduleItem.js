@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useTheme } from '../dashboard/Theme';
-import BaseText from '../dashboard/BaseText';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
+import BaseText from '../dashboard-ui-deprecated/BaseText';
 import FunctionalLink from '../navigation-web/Link';
 
 function ScheduleItem({ item, style, today, ...rest }) {

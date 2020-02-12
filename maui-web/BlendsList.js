@@ -1,15 +1,15 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
 import View from '../views/View';
-import Container from '../dashboard/Container';
-import Heading from '../dashboard/Heading';
-import { Responsive } from '../dashboard/Responsive';
-import Tag from '../dashboard/Tag';
+import Container from '../dashboard-ui-deprecated/Container';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
+import Tag from '../dashboard-ui-deprecated/Tag';
 import FunctionalLink from '../navigation-web/Link';
-import { useTheme } from '../dashboard/Theme';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import AirtableImage from '../components/AirtableImage';
-import BodyText from '../dashboard/BodyText';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
 
 function BlendsListItem({ blend, style }) {
   const theme = useTheme();

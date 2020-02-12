@@ -1,6 +1,6 @@
 import React from 'react';
 import Image, { loadImages } from './Image';
-import { Responsive } from '../dashboard/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 import { HostContext } from '../cloud-core/HostContext';
 
 const md5 = require('crypto-js/md5');

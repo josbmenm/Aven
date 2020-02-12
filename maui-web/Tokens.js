@@ -1,14 +1,17 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useTheme } from '../dashboard/Theme'
-import BodyText from '../dashboard/BodyText';
-import Heading from '../dashboard/Heading';
-
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
+import Heading from '../dashboard-ui-deprecated/Heading';
 
 export function SubSection({ title, children }) {
   return (
     <View style={{ marginVertical: 40 }}>
-      {title ? <Heading size="small" style={{ marginBottom: 24 }}>{title}</Heading> : null}
+      {title ? (
+        <Heading size="small" style={{ marginBottom: 24 }}>
+          {title}
+        </Heading>
+      ) : null}
       {children}
     </View>
   );

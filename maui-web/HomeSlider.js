@@ -1,9 +1,9 @@
 import React from 'react';
 import { Image, ScrollView, StyleSheet } from 'react-native';
 import View from '../views/View';
-import { useTheme } from '../dashboard/Theme';
-import { Responsive } from '../dashboard/Responsive';
-import Container from '../dashboard/Container';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
+import Container from '../dashboard-ui-deprecated/Container';
 
 function Slide({ source, width, height }) {
   return (

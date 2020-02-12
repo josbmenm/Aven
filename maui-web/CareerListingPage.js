@@ -1,7 +1,7 @@
 import React from 'react';
 import GenericPage from './GenericPage';
 import PageFooter from './PageFooter';
-import { useTheme } from '../dashboard/Theme';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 import CareerRoles from './CareerRoles';
 import { Text, Heading, ButtonLink } from '../dash-ui';
 import { useNavigation } from '../navigation-hooks/Hooks';

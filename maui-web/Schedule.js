@@ -1,9 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
-import BaseText from '../dashboard/BaseText';
+import BaseText from '../dashboard-ui-deprecated/BaseText';
 import ScheduleItem from './ScheduleItem';
-import { useTheme } from '../dashboard/Theme';
-import { Responsive } from '../dashboard/Responsive';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 
 function useSchedule() {
   const [schedule, setSchedule] = React.useState(null);
@@ -44,7 +44,7 @@ function Schedule({ withFloatingLabel = false, ...rest }) {
             position: 'absolute',
             top: 24,
             left: -120,
-            fontFamily: theme.fonts.bold
+            fontFamily: theme.fonts.bold,
           }}
         >
           we're here!

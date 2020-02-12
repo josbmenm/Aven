@@ -22,7 +22,7 @@
       "components",
       "react-utils",
       "navigation-web",
-      "dashboard",
+      "dashboard-ui-deprecated",
       "dash-ui",
       "aven-file-upload"
     ],

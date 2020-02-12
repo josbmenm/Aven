@@ -4,7 +4,7 @@ import { Heading, Button } from '../dash-ui';
 import { View } from 'react-native';
 import AuthenticatedRedirectWrapper from './AuthenticatedRedirectWrapper';
 import { useTheme } from '../dash-ui';
-import VisualButton from '../dashboard/VisualButton';
+import VisualButton from '../dashboard-ui-deprecated/VisualButton';
 import FunctionalLink from '../navigation-web/Link';
 
 function MenuLink({

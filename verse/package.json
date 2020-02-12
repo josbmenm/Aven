@@ -15,7 +15,7 @@
     "srcDependencies": [
       "shoneys",
       "logic",
-      "dashboard",
+      "dashboard-ui-deprecated",
       "aven-web",
       "stripe-server",
       "admin",

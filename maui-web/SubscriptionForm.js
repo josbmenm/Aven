@@ -1,7 +1,7 @@
 import React from 'react';
 import View from '../views/View';
 import TextInput from '../dash-ui/TextInput';
-import { Responsive } from '../dashboard/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 import { monsterra80 } from '../components/Styles';
 
 function SubscriptionForm() {

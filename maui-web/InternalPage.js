@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme, Stack, Page, Spacing } from '../dash-ui';
 import { View } from 'react-native';
 import OnoHomeLink from './OnoHomeLink';
-import VisualButton from '../dashboard/VisualButton';
+import VisualButton from '../dashboard-ui-deprecated/VisualButton';
 import FunctionalLink from '../navigation-web/Link';
 import { useCloudClient, useStream } from '../cloud-core/KiteReact';
 

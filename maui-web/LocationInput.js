@@ -1,11 +1,11 @@
 import { View, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { useTheme } from '../dashboard/Theme';
-import BaseText from '../dashboard/BaseText';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
+import BaseText from '../dashboard-ui-deprecated/BaseText';
 
-import BodyText from '../dashboard/BodyText';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
 import { TextInput } from '../dash-ui';
-import { Responsive } from '../dashboard/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 
 //
 export function LocationInputWithRef(

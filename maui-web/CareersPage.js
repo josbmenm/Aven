@@ -1,12 +1,12 @@
 import React from 'react';
 import { Heading, Text } from '../dash-ui';
 import { Image } from 'react-native';
-import BodyText from '../dashboard/BodyText';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
 import GenericPage from './GenericPage';
 import PageFooter from './PageFooter';
 import View from '../views/View';
-import Container from '../dashboard/Container';
-import ButtonLink from '../dashboard/ButtonLink';
+import Container from '../dashboard-ui-deprecated/Container';
+import ButtonLink from '../dashboard-ui-deprecated/ButtonLink';
 import Link from './Link';
 import CareerRoles from './CareerRoles';
 import { absoluteElement } from '../components/Styles';
@@ -14,9 +14,9 @@ import {
   ColumnToRow,
   ColumnToRowChild,
   NoFlexToFlex,
-} from '../dashboard/Responsive';
-import { Responsive } from '../dashboard/Responsive';
-import { useTheme } from '../dashboard/Theme';
+} from '../dashboard-ui-deprecated/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 
 const breakpoints = [1024, 1400];
 

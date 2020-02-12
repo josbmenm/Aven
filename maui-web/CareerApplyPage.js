@@ -14,7 +14,7 @@ import {
   Button,
 } from '../dash-ui';
 import { useNavigation } from '../navigation-hooks/Hooks';
-import { NarrowContainer } from '../dashboard/Container';
+import { NarrowContainer } from '../dashboard-ui-deprecated/Container';
 import { useCloud } from '../cloud-core/KiteReact';
 import useFocus from '../navigation-hooks/useFocus';
 import FileInput from '../aven-file-upload/FileInput';

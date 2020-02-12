@@ -54,7 +54,7 @@ import { PortalOrderSidebarPage } from '../components/OrderSidebarPage';
 import TabsScreen from '../components/TabsScreen';
 import { PopoverContainer } from '../views/Popover';
 import { registerDispatcher } from '../card-reader/CardReader';
-import { ThemeProvider as OldThemeProvider } from '../dashboard/Theme';
+import { ThemeProvider as OldThemeProvider } from '../dashboard-ui-deprecated/Theme';
 import OLD_OnoTheme from '../logic/OnoTheme';
 import { HostContextContainer } from '../cloud-core/HostContext';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';

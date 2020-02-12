@@ -1,6 +1,6 @@
 import React from 'react';
-import Container from '../dashboard/Container';
-import { useTheme } from '../dashboard/Theme';
+import Container from '../dashboard-ui-deprecated/Container';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 
 export default function BlockForm({ style, responsiveStyles, children }) {
   const theme = useTheme();

@@ -43,7 +43,7 @@ import useCloudProvider from '../components/useCloudProvider';
 import FadeTransition from '../components/FadeTransition';
 import { titleStyle, proseFontFace, monsterra } from '../components/Styles';
 import { AppEnvContext } from '../components/useBlitzDebugPopover';
-import { ThemeProvider } from '../dashboard/Theme';
+import { ThemeProvider } from '../dashboard-ui-deprecated/Theme';
 import OnoTheme from '../logic/OnoTheme';
 import { isStateLoaded, useDeviceId } from '../components/useAsyncStorage';
 import { useIsRestaurantOpen, useRestaurantState } from '../ono-cloud/Kitchen';

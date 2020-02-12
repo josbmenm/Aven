@@ -1,15 +1,18 @@
 import React from 'react';
 import { Image, StyleSheet } from 'react-native';
 import View from '../views/View';
-import SmallText from '../dashboard/SmallText';
-import BodyText from '../dashboard/BodyText';
-import Container from '../dashboard/Container';
-import { useTheme } from '../dashboard/Theme';
+import SmallText from '../dashboard-ui-deprecated/SmallText';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
+import Container from '../dashboard-ui-deprecated/Container';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import OnoFoodLogo from './OnoFoodLogo';
 import Link from './Link';
 import FunctionalLink from '../navigation-web/Link';
-import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
+import {
+  ColumnToRow,
+  ColumnToRowChild,
+} from '../dashboard-ui-deprecated/Responsive';
 
 function SocialText(props) {
   const theme = useTheme();

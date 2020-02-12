@@ -22,7 +22,7 @@ import Subscribe from './SubscribePage';
 import SubscribeConfirm from './SubscribeConfirmPage';
 import OnoTheme from '../logic/OnoTheme';
 import OnoThemeProvider from '../components/Onotheme';
-import { ThemeProvider } from '../dashboard/Theme';
+import { ThemeProvider } from '../dashboard-ui-deprecated/Theme';
 import Receipt from './ReceiptPage';
 import { CloudContext } from '../cloud-core/KiteReact';
 

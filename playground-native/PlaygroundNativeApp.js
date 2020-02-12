@@ -23,7 +23,7 @@ import ErrorContainer from '../cloud-react/ErrorContainer';
 import { PopoverContainer } from '../views/Popover';
 import { HostContextContainer } from '../cloud-core/HostContext';
 import createNativeNetworkSource from '../cloud-native/createNativeNetworkSource';
-import { ThemeProvider } from '../dashboard/Theme';
+import { ThemeProvider } from '../dashboard-ui-deprecated/Theme';
 import OnoTheme from '../logic/OnoTheme';
 
 let IS_DEV = process.env.NODE_ENV !== 'production';

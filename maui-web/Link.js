@@ -1,7 +1,7 @@
 import React from 'react';
 import FunctionalLink from '../navigation-web/Link';
-import VisualButton from '../dashboard/VisualButton';
-import { useTheme } from '../dashboard/Theme';
+import VisualButton from '../dashboard-ui-deprecated/VisualButton';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 
 function Link({
   buttonStyle,

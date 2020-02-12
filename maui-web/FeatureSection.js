@@ -1,7 +1,10 @@
 import React from 'react';
-import Heading from '../dashboard/Heading';
-import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
-import { Responsive } from '../dashboard/Responsive';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import {
+  ColumnToRow,
+  ColumnToRowChild,
+} from '../dashboard-ui-deprecated/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 
 function FeatureSection({
   title,

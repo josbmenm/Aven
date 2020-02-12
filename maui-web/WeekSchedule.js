@@ -2,10 +2,10 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import View from '../views/View';
 import { useCloudValue } from '../cloud-core/KiteReact';
-import Container from '../dashboard/Container';
-import Heading from '../dashboard/Heading';
-import BaseText from '../dashboard/BaseText';
-import { useTheme } from '../dashboard/Theme';
+import Container from '../dashboard-ui-deprecated/Container';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import BaseText from '../dashboard-ui-deprecated/BaseText';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 import ScheduleItem from './ScheduleItem';
 
 function WeekSchedule() {

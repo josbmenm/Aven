@@ -1,11 +1,14 @@
 import React from 'react';
 import View from '../views/View';
-import Container from '../dashboard/Container';
-import Heading from '../dashboard/Heading';
-import BaseText from '../dashboard/BaseText';
-import ButtonLink from '../dashboard/ButtonLink';
-import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
-import { Responsive } from '../dashboard/Responsive';
+import Container from '../dashboard-ui-deprecated/Container';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import BaseText from '../dashboard-ui-deprecated/BaseText';
+import ButtonLink from '../dashboard-ui-deprecated/ButtonLink';
+import {
+  ColumnToRow,
+  ColumnToRowChild,
+} from '../dashboard-ui-deprecated/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 import Schedule from './Schedule';
 
 function HomeSchedule() {
@@ -21,7 +24,7 @@ function HomeSchedule() {
                   // paddingRight: [0, 40],
                   marginBottom: [80, 0],
                   maxWidth: ['100%', 416],
-                  paddingRight: [0, 40]
+                  paddingRight: [0, 40],
                 }}
               >
                 <View
@@ -29,7 +32,10 @@ function HomeSchedule() {
                     flexDirection: 'column',
                   }}
                 >
-                  <Heading size="small" responsiveStyle={{ marginBottom: [12, 16] }}>
+                  <Heading
+                    size="small"
+                    responsiveStyle={{ marginBottom: [12, 16] }}
+                  >
                     Where are we today?
                   </Heading>
                   <BaseText
@@ -58,7 +64,9 @@ function HomeSchedule() {
                 justifyContent: 'flex-start',
               }}
             >
-              <Heading size="small" style={{ marginBottom: 28 }}>Today's Schedule</Heading>
+              <Heading size="small" style={{ marginBottom: 28 }}>
+                Today's Schedule
+              </Heading>
               <View
                 style={{
                   // backgroundColor: theme.colors.lightGrey,

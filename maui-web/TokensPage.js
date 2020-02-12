@@ -1,12 +1,12 @@
 import React from 'react';
 import View from '../views/View';
-import Heading from '../dashboard/Heading';
-import BaseText from '../dashboard/BaseText';
-import BodyText from '../dashboard/BodyText';
-import ButtonLink from '../dashboard/ButtonLink';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import BaseText from '../dashboard-ui-deprecated/BaseText';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
+import ButtonLink from '../dashboard-ui-deprecated/ButtonLink';
 import GenericPage from './GenericPage';
-import Container from '../dashboard/Container';
-import { useTheme } from '../dashboard/Theme';
+import Container from '../dashboard-ui-deprecated/Container';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 import { TextInput } from '../dash-ui';
 
 function TokenSection({ title, children }) {

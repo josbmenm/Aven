@@ -4,7 +4,7 @@ import Heading from '../dash-ui/Heading';
 import { CodeBlock, CodeBlockExample, CodeBlockTitle } from './CodeBlock';
 import { ComponentBlock } from './Layout';
 import { Large, Spacing, DarkMode } from '../dash-ui/Theme';
-import Spinner from '../dashboard/Spinner';
+import Spinner from '../dashboard-ui-deprecated/Spinner';
 import Stack from '../dash-ui/Stack';
 import Button from '../dash-ui/Button';
 import ButtonLink from '../dash-ui/ButtonLink';

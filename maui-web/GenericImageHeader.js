@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image } from 'react-native';
-import Container from '../dashboard/Container';
+import Container from '../dashboard-ui-deprecated/Container';
 
 export default function GenericImageHeader() {
   return (

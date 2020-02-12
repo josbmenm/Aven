@@ -30,7 +30,7 @@
       "components",
       "react-utils",
       "navigation-web",
-      "dashboard",
+      "dashboard-ui-deprecated",
       "maui-web",
       "ui-library",
       "dash-ui"

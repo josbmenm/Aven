@@ -1,11 +1,11 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import View from '../views/View';
-import Container from '../dashboard/Container';
-import { useTheme } from '../dashboard/Theme';
-import VisualButton from '../dashboard/VisualButton';
+import Container from '../dashboard-ui-deprecated/Container';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
+import VisualButton from '../dashboard-ui-deprecated/VisualButton';
 import Link from './Link';
-import ButtonLink from '../dashboard/ButtonLink';
+import ButtonLink from '../dashboard-ui-deprecated/ButtonLink';
 import OnoHomeLink from './OnoHomeLink';
 import OnoBlendsLogo from './OnoBlendsLogo';
 import FunctionalLink from '../navigation-web/Link';
@@ -13,7 +13,7 @@ import {
   ResponsiveDisplay,
   HideDesktopView,
   HideMobileView,
-} from '../dashboard/Responsive';
+} from '../dashboard-ui-deprecated/Responsive';
 
 function SidebarMenuIcon({ color, ...rest }) {
   const theme = useTheme();

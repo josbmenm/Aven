@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import VisualButton from '../dashboard/VisualButton';
+import VisualButton from '../dashboard-ui-deprecated/VisualButton';
 
 const Button = ({
   onPress,

@@ -1,10 +1,10 @@
 import React from 'react';
 import GenericPage from './GenericPage';
 import { SubSection, List, ListItem } from './Tokens';
-import BodyText from '../dashboard/BodyText';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
 import GenericHeroHeader from './GenericHeroHeader';
-import { useTheme } from '../dashboard/Theme';
-import Container from '../dashboard/Container';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
+import Container from '../dashboard-ui-deprecated/Container';
 import PageFooter from './PageFooter';
 import LegalLinks from './LegalLinks';
 

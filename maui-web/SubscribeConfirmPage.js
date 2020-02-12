@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import GenericPage from './GenericPage';
 import GenericHeroHeader from './GenericHeroHeader';
 import PageFooter from './PageFooter';
-import { useTheme } from '../dashboard/Theme';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 import GenericImageHeader from './GenericImageHeader';
 
 function SubscribeConfirmPage() {

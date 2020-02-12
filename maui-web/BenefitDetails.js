@@ -2,12 +2,15 @@ import React from 'react';
 import View from '../views/View';
 import Link from '../navigation-web/Link';
 import AirtableImage from '../components/AirtableImage';
-import { useTheme } from '../dashboard/Theme';
-import Heading from '../dashboard/Heading';
-import Container from '../dashboard/Container';
-import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
-import BodyText from '../dashboard/BodyText';
-import { Responsive } from '../dashboard/Responsive';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import Container from '../dashboard-ui-deprecated/Container';
+import {
+  ColumnToRow,
+  ColumnToRowChild,
+} from '../dashboard-ui-deprecated/Responsive';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 
 function BodyLink({ children, url }) {
   return (

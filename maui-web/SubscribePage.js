@@ -1,8 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
-import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
-import Container from '../dashboard/Container';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
+import Container from '../dashboard-ui-deprecated/Container';
 import GenericPage from './GenericPage';
 import GenericImageHeader from './GenericImageHeader';
 import SubscriptionForm from './SubscriptionForm';

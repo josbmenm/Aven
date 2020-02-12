@@ -4,17 +4,20 @@ import View from '../views/View';
 import GenericPage from './GenericPage';
 import { useNavigation } from '../navigation-hooks/Hooks';
 import PageFooter from './PageFooter';
-import Container from '../dashboard/Container';
-import Heading from '../dashboard/Heading';
-import BaseText from '../dashboard/BaseText';
-import BodyText from '../dashboard/BodyText';
-import Tag from '../dashboard/Tag';
-import { useTheme } from '../dashboard/Theme';
+import Container from '../dashboard-ui-deprecated/Container';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import BaseText from '../dashboard-ui-deprecated/BaseText';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
+import Tag from '../dashboard-ui-deprecated/Tag';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 import { aspectRatio169 } from '../components/Styles';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import AirtableImage from '../components/AirtableImage';
-import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
-import { Responsive } from '../dashboard/Responsive';
+import {
+  ColumnToRow,
+  ColumnToRowChild,
+} from '../dashboard-ui-deprecated/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 import { BlendsCarousel } from './BlendsList';
 import BenefitDetails from './BenefitDetails';
 

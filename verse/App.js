@@ -9,7 +9,7 @@ import { View, Text } from 'react-native';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import JSONView from '../components/JSONView';
 import { Button } from '../dash-ui';
-import { ThemeProvider } from '../dashboard/Theme';
+import { ThemeProvider } from '../dashboard-ui-deprecated/Theme';
 import OnoTheme from '../logic/OnoTheme';
 
 let HOST_CONFIG = {};

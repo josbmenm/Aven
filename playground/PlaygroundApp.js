@@ -4,7 +4,7 @@ import MauiWebApp from '../maui-web/MauiWebApp';
 import UILibrary from '../ui-library/UILibraryPage';
 import EmailsPlayground from './EmailsPlayground';
 // import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
-import { ThemeProvider as OLDThemeProvider } from '../dashboard/Theme';
+import { ThemeProvider as OLDThemeProvider } from '../dashboard-ui-deprecated/Theme';
 import OLD_OnoTheme from '../logic/OnoTheme';
 import OnoThemeProvider from '../components/Onotheme';
 

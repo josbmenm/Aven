@@ -1,11 +1,11 @@
 import React from 'react';
 import { Image } from 'react-native';
 import View from '../views/View';
-import Container from '../dashboard/Container';
-import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import Container from '../dashboard-ui-deprecated/Container';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
 import FunctionalLink from '../navigation-web/Link';
-import { Responsive } from '../dashboard/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 import FeatureSection from './FeatureSection';
 import { absoluteElement } from '../components/Styles';
 

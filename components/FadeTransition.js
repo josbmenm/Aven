@@ -1,6 +1,6 @@
 import React from 'react';
 import Animated, { Easing } from 'react-native-reanimated';
-import { ThemeProvider } from '../dashboard/Theme';
+import { ThemeProvider } from '../dashboard-ui-deprecated/Theme';
 
 import { StyleSheet } from 'react-native';
 const { Value, timing, interpolate, View } = Animated;

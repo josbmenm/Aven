@@ -1,11 +1,14 @@
 import React from 'react';
 import { Image } from 'react-native';
 import { aspectRatio43 } from '../components/Styles';
-import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
-import { Responsive } from '../dashboard/Responsive';
-import Container from '../dashboard/Container';
-import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import {
+  ColumnToRow,
+  ColumnToRowChild,
+} from '../dashboard-ui-deprecated/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
+import Container from '../dashboard-ui-deprecated/Container';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
 
 const breakpoints = [1024, 1400];
 

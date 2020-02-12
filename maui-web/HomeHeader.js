@@ -1,19 +1,19 @@
 import React from 'react';
 import { Image } from 'react-native';
 import View from '../views/View';
-import Container from '../dashboard/Container';
-import Heading from '../dashboard/Heading';
-import BodyText from '../dashboard/BodyText';
+import Container from '../dashboard-ui-deprecated/Container';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
 import {
   ColumnToRow,
   ColumnToRowChild,
   NoFlexToFlex,
-} from '../dashboard/Responsive';
-import { Responsive } from '../dashboard/Responsive';
+} from '../dashboard-ui-deprecated/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 import { absoluteElement } from '../components/Styles';
 import UnholyHackSubscriptionForm from './UnholyHackSubscriptionForm';
-import { useTheme } from '../dashboard/Theme';
-import ButtonLink from '../dashboard/ButtonLink';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
+import ButtonLink from '../dashboard-ui-deprecated/ButtonLink';
 
 const breakpoints = [1024, 1400];
 

@@ -4,7 +4,7 @@ import LoginScreen from './LoginScreen';
 import FeedbackDashboard from './FeedbackDashboard';
 import { MauiWebRoutes } from '../maui-web/MauiWebApp';
 import { CloudContext } from '../cloud-core/KiteReact';
-import { ThemeProvider as OLDThemeProvider } from '../dashboard/Theme';
+import { ThemeProvider as OLDThemeProvider } from '../dashboard-ui-deprecated/Theme';
 import OLD_OnoTheme from '../logic/OnoTheme';
 import OnoThemeProvider from '../components/Onotheme';
 import { Center, Text, Spacing } from '../dash-ui';

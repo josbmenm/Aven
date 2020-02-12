@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Responsive } from '../dashboard/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 
 function FormRow({ children, style, direction = 'column', ...rest }) {
   return (

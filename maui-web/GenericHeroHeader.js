@@ -1,9 +1,9 @@
 import React from 'react';
 import View from '../views/View';
-import Container from '../dashboard/Container';
-import Heading from '../dashboard/Heading';
-import { Responsive } from '../dashboard/Responsive';
-import BodyText from '../dashboard/BodyText';
+import Container from '../dashboard-ui-deprecated/Container';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
 
 export default function GenericHeroHeader({
   title,

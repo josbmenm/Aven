@@ -1,16 +1,16 @@
 import React from 'react';
 import { Image } from 'react-native';
 import View from '../views/View';
-import Heading from '../dashboard/Heading';
-import BaseText from '../dashboard/BaseText';
+import Heading from '../dashboard-ui-deprecated/Heading';
+import BaseText from '../dashboard-ui-deprecated/BaseText';
 import BlockForm from '../components/BlockForm';
 import TextInput from '../dash-ui/TextInput';
-import { useTheme } from '../dashboard/Theme';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 import { useCloud } from '../cloud-core/KiteReact';
 import { Button, Stack } from '../dash-ui';
 import FormRow from './FormRow';
-import BodyText from '../dashboard/BodyText';
-import Spinner from '../dashboard/Spinner';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
+import Spinner from '../dashboard-ui-deprecated/Spinner';
 import useKeyPress from './useKeyPress';
 
 const TOTAL_STEPS = 7;

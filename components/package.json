@@ -5,7 +5,7 @@
     ],
     "srcDependencies": [
       "views",
-      "dashboard",
+      "dashboard-ui-deprecated",
       "cloud-core",
       "dash-ui"
     ]

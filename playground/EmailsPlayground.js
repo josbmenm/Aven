@@ -1,12 +1,15 @@
 import React from 'react';
 import { ScrollView, View } from 'react-native';
-import Heading from '../dashboard/Heading';
+import Heading from '../dashboard-ui-deprecated/Heading';
 import { Button, TextInput } from '../dash-ui';
-import BodyText from '../dashboard/BodyText';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
 import { useCloud } from '../cloud-core/KiteReact';
 import EmailExamples from '../emails/EmailExamples';
 
-import { ColumnToRow, ColumnToRowChild } from '../dashboard/Responsive';
+import {
+  ColumnToRow,
+  ColumnToRowChild,
+} from '../dashboard-ui-deprecated/Responsive';
 
 const EmailExampleList = Object.entries(EmailExamples);
 

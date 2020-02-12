@@ -2,9 +2,9 @@ import React from 'react';
 import GenericPage from './GenericPage';
 import GenericHeroHeader from './GenericHeroHeader';
 import { SubSection } from './Tokens';
-import BodyText from '../dashboard/BodyText';
-import Container from '../dashboard/Container';
-import { useTheme } from '../dashboard/Theme';
+import BodyText from '../dashboard-ui-deprecated/BodyText';
+import Container from '../dashboard-ui-deprecated/Container';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
 import PageFooter from './PageFooter';
 import LegalLinks from './LegalLinks';
 

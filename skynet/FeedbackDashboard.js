@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { useCloudValue } from '../cloud-core/KiteReact';
 import GenericPage from '../maui-web/GenericPage';
-import Container from '../dashboard/Container';
+import Container from '../dashboard-ui-deprecated/Container';
 import { Button } from '../dash-ui';
 
 function openCSVdata(dataStr, name) {

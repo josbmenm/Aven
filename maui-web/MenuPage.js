@@ -5,8 +5,8 @@ import GenericPage from './GenericPage';
 import GenericHeroHeader from './GenericHeroHeader';
 import { BlendsList } from './BlendsList';
 import PageFooter from './PageFooter';
-import { useTheme } from '../dashboard/Theme';
-import { Responsive } from '../dashboard/Responsive';
+import { useTheme } from '../dashboard-ui-deprecated/Theme';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 
 function Menu() {
   const theme = useTheme();

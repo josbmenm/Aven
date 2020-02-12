@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, Animated, Easing } from 'react-native';
 import { monsterra60 } from '../components/Styles';
 import { useTheme } from './Theme';
-import { Responsive } from '../dashboard/Responsive';
+import { Responsive } from '../dashboard-ui-deprecated/Responsive';
 
 function FormInputWithRef(
   {

@@ -16,7 +16,7 @@
       "sentryDSN": "https://66da2c808e6f4bb792bd380527cfb1ba@sentry.io/1722567"
     },
     "srcDependencies": [
-      "dashboard",
+      "dashboard-ui-deprecated",
       "navigation-core",
       "navigation-native",
       "navigation-stack",
