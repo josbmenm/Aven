@@ -557,6 +557,18 @@ function BlendSlideshowMemo() {
       setIsStatic(false);
     }, 5000);
   }, []);
+  function continueSlideshow() {
+    const lastIndex = activeItems.indexOf(currentItem);
+    let nextIndex = lastIndex + 1;
+    if (nextIndex === activeItems.length) {
+      nextIndex = activeItems[0];
+    }
+    setIsStatic(true);
+    setTimeout(() => {
+      setIsStatic(false);
+    }, 15000);
+    setActiveItem(activeItems[nextIndex]);
+  }
   return (
     <AutoFader changeKey={isStatic ? 'static' : currentItem}>
       {isStatic ? (
@@ -572,17 +584,13 @@ function BlendSlideshowMemo() {
           width={1080}
           muted
           autoPlay
+          onError={err => {
+            console.error('Video playback Error!');
+            console.error(err);
+            continueSlideshow();
+          }}
           onEnded={() => {
-            const lastIndex = activeItems.indexOf(currentItem);
-            let nextIndex = lastIndex + 1;
-            if (nextIndex === activeItems.length) {
-              nextIndex = activeItems[0];
-            }
-            setIsStatic(true);
-            setTimeout(() => {
-              setIsStatic(false);
-            }, 15000);
-            setActiveItem(activeItems[nextIndex]);
+            continueSlideshow();
           }}
         />
       )}
