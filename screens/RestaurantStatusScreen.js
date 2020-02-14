@@ -588,6 +588,18 @@ function ProcedureStarting() {
           }}
           title="Unload Machine from Van"
         />
+        <Button
+          onPress={() => {
+            navigate('Workflow', { key: 'Open' });
+          }}
+          title="Open Restaurant"
+        />
+        <Button
+          onPress={() => {
+            navigate('Workflow', { key: 'Close' });
+          }}
+          title="Close Restaurant"
+        />
       </Stack>
     </Row>
   );
