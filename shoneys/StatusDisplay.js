@@ -561,7 +561,7 @@ function BlendSlideshowMemo() {
     const lastIndex = activeItems.indexOf(currentItem);
     let nextIndex = lastIndex + 1;
     if (nextIndex === activeItems.length) {
-      nextIndex = activeItems[0];
+      nextIndex = 0;
     }
     setIsStatic(true);
     setTimeout(() => {
