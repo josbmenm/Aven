@@ -29,7 +29,6 @@
     "moduleDependencies": [
       "mjml-react",
       "mjml",
-      "fbjs",
       "ws",
       "rxjs-compat",
       "ethernet-ip",

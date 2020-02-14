@@ -6,11 +6,11 @@ export const TAX_RATE = 0.095;
 export const MAX_CUP_VOLUME = 530;
 
 function mapObject(inObj, mapper) {
-  const out = {};
-  Object.keys(inObj).forEach(k => {
-    out[k] = mapper(inObj[k]);
-  });
-  return out;
+  return Object.fromEntries(
+    Object.entries(inObj).map(([k, v]) => {
+      return [k, mapper(v)];
+    }),
+  );
 }
 function applyTax(amount) {
   return Math.floor(amount * TAX_RATE);

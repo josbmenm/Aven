@@ -1,4 +1,3 @@
-import mapObject from 'fbjs/lib/mapObject';
 import React, { useMemo } from 'react';
 import { useCloud, useCloudValue, useStream } from '../cloud-core/KiteReact';
 import { useRestaurantState } from './Kitchen';
@@ -18,6 +17,7 @@ import {
   getFillsOfOrderItem,
 } from '../logic/configLogic';
 import { getCupsInventoryState } from '../logic/KitchenState';
+import { getSubsystemOverview } from '../logic/MachineLogic';
 
 export function getLocalName(name) {
   const locals = name.split('/');
@@ -32,106 +32,6 @@ export const displayNameOfOrderItem = getDisplayNameOfOrderItem;
 export const sellPriceOfMenuItem = getSellPriceOfMenuItem;
 export const getItemCustomizationSummary = doGetItemCustomizationSummary;
 export const getSellPriceOfItem = doGetSellPriceOfItem;
-
-export function getSubsystemAlarms(system) {
-  // copy-pasted from getSubsystemFaults!!
-  let alarms = null;
-
-  if (system.reads.NoAlarms && system.reads.NoAlarms.value !== true) {
-    // system has alarming behavior
-    alarms = [];
-    let alarmsUnreadable;
-    const alarmed = Array(4)
-      .fill(0)
-      .map((_, alarmIntIndex) => {
-        if (!system.reads[`Alarm${alarmIntIndex}`]) {
-          return Array(16).fill(0);
-        }
-        try {
-          return system.reads[`Alarm${alarmIntIndex}`].value
-            .toString(2)
-            .split('')
-            .reverse()
-            .map(v => v === '1');
-        } catch (e) {
-          alarmsUnreadable = true;
-          return false;
-        }
-      });
-
-    alarmsUnreadable && alarms.push(`Unable to read alarms of ${system.name}`);
-    if (alarmed[0][0]) {
-      alarms.push(
-        'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
-      );
-    }
-    system.alarms &&
-      system.alarms.forEach(f => {
-        const faultDintArray = alarmed[f.intIndex];
-        const isAlarmed = faultDintArray && faultDintArray[f.bitIndex];
-        if (isAlarmed) {
-          alarms.push(f.description);
-        }
-      });
-  }
-  if (alarms && !alarms.length) {
-    alarms.push('Unknown Alarm');
-  }
-  return alarms;
-}
-
-export function getSubsystemFaults(system) {
-  let faults = null;
-
-  if (system.reads.NoFaults && system.reads.NoFaults.value !== true) {
-    // system has faulting behavior
-    faults = [];
-    let faultsUnreadable;
-    const faulted = Array(4)
-      .fill(0)
-      .map((_, faultIntIndex) => {
-        if (!system.reads[`Fault${faultIntIndex}`]) {
-          return Array(16).fill(0);
-        }
-        try {
-          return system.reads[`Fault${faultIntIndex}`].value
-            .toString(2)
-            .split('')
-            .reverse()
-            .map(v => v === '1');
-        } catch (e) {
-          faultsUnreadable = true;
-          return false;
-        }
-      });
-
-    faultsUnreadable && faults.push(`Unable to read faults of ${system.name}`);
-    if (faulted[0][0]) {
-      faults.push(
-        'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
-      );
-    }
-    system.faults &&
-      system.faults.forEach(f => {
-        const faultDintArray = faulted[f.intIndex];
-        const isFaulted = faultDintArray && faultDintArray[f.bitIndex];
-        if (isFaulted) {
-          faults.push(f.description);
-        }
-      });
-  }
-  if (system.reads.Homed && system.reads.Homed.value === false) {
-    if (!faults) {
-      faults = ['Not Homed'];
-    } else if (!faults.length) {
-      faults.push('Not Homed');
-    }
-  }
-  if (faults && !faults.length) {
-    faults.push('Unknown Fault');
-  }
-  return faults;
-}
 
 export function useCompanyConfig() {
   return useCloudValue('CompanyConfig');
@@ -547,48 +447,3 @@ export function useOrderIdSummary(orderId) {
   const companyConfig = useCompanyConfig();
   return getOrderSummary(orderState, companyConfig);
 }
-
-export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {
-  if (!kitchenConfig || !kitchenState) {
-    return null;
-  }
-  const ss = kitchenConfig.subsystems[subsystemName];
-  if (!ss) {
-    return null;
-  }
-  const reads = mapObject(ss.readTags, (tag, tagName) => {
-    const internalTagName = `${subsystemName}_${tagName}_READ`;
-    const value = kitchenState[internalTagName];
-    const read = { ...tag, value, name: tagName };
-    return read;
-  });
-  const valueCommands = mapObject(
-    ss.valueCommands,
-    (commandedValues, tagName) => {
-      const internalTagName = `${subsystemName}_${tagName}_VALUE`;
-      const value = kitchenState[internalTagName];
-      const outCmd = { ...commandedValues, value, name: tagName };
-      return outCmd;
-    },
-  );
-  const noFaults = reads.NoFaults ? reads.NoFaults.value : null;
-  return {
-    icon: ss.icon,
-    valueCommands,
-    pulseCommands: ss.pulseCommands,
-    name: subsystemName,
-    noFaults,
-    reads,
-    faults: ss.faults,
-    alarms: ss.alarms,
-  };
-};
-
-export const getSubsystemOverview = (kitchenConfig, kitchenState) => {
-  if (!kitchenConfig || !kitchenState) {
-    return [];
-  }
-  return Object.keys(kitchenConfig.subsystems).map(subsystemName => {
-    return getSubsystem(subsystemName, kitchenConfig, kitchenState);
-  });
-};

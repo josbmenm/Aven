@@ -188,13 +188,13 @@ function SetValueButton({ val, system, kitchenCommand, systemId }) {
   return <Button title="set" secondary onPress={onPopover} />;
 }
 
-function ReadsAndFaults({ system }) {
+function ReadsAndFaults({ system, kitchenState }) {
   if (!system) {
     return null;
   }
   return (
     <React.Fragment>
-      <SystemFaultsAndAlarms system={system} />
+      <SystemFaultsAndAlarms system={system} kitchenState={kitchenState} />
       <RowSection>
         {Object.keys(system.reads).map(readName => {
           if (HiddenReads.has(readName)) {
@@ -391,7 +391,11 @@ export default function Subsystem({ ...props }) {
     <TwoPanePage
       {...props}
       title={system ? `${system.icon} ${system.name}` : null}
-      side={isConnected ? <ReadsAndFaults system={system} /> : null}
+      side={
+        isConnected ? (
+          <ReadsAndFaults system={system} kitchenState={kitchenState} />
+        ) : null
+      }
     >
       {isConnected ? (
         <SystemView

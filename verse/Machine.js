@@ -1,11 +1,14 @@
 import { combineStreams } from '../cloud-core/createMemoryStream';
-import { computeNextSteps } from '../logic/MachineLogic';
+import {
+  computeNextSteps,
+  getSubsystem,
+  getSubsystemFaults,
+} from '../logic/MachineLogic';
 import { log, error, fatal } from '../logger/logger';
 import Err from '../utils/Err';
 
 const { Controller, Tag, EthernetIP, TagGroup } = require('ethernet-ip');
 const { INT, BOOL } = EthernetIP.CIP.DataTypes.Types;
-const shallowEqual = require('fbjs/lib/shallowEqual');
 
 const getTypeOfSchema = typeName => {
   switch (typeName) {
@@ -40,11 +43,11 @@ export const getTagOfSchema = tagSchema => {
 };
 
 function mapObject(inObj, mapper) {
-  const out = {};
-  Object.keys(inObj).forEach(k => {
-    out[k] = mapper(inObj[k]);
-  });
-  return out;
+  return Object.fromEntries(
+    Object.entries(inObj).map(([k, v]) => {
+      return [k, mapper(v)];
+    }),
+  );
 }
 
 const createSchema = config => {
@@ -339,91 +342,115 @@ export function connectMachine({
           error('KitchenStateWriteError', { err });
         });
 
-      Object.entries(subsystemResolvers).forEach(([subsystem, resolver]) => {
-        if (!resolver) return;
-        const noFaults = currentState[`${subsystem}_NoFaults_READ`];
-        const startedCommandId =
-          currentState[`${subsystem}_ActionIdStarted_READ`];
-        const endedCommandId = currentState[`${subsystem}_ActionIdEnded_READ`];
-        const isSystemIdle = currentState[`${subsystem}_PrgStep_READ`] === 0;
-        const isCommandReceived = startedCommandId === resolver.commandId;
-        const isCommandComplete =
-          noFaults && endedCommandId === resolver.commandId;
-        const resolverIsOldEnough =
-          resolver.commandStartTimeMS + 25000 < Date.now();
+      Object.entries(subsystemResolvers).forEach(
+        ([subsystemName, resolver]) => {
+          if (!resolver) return;
+          const noFaults = currentState[`${subsystemName}_NoFaults_READ`];
+          const startedCommandId =
+            currentState[`${subsystemName}_ActionIdStarted_READ`];
+          const endedCommandId =
+            currentState[`${subsystemName}_ActionIdEnded_READ`];
+          const isSystemIdle =
+            currentState[`${subsystemName}_PrgStep_READ`] === 0;
+          const isCommandReceived = startedCommandId === resolver.commandId;
+          const isCommandComplete =
+            noFaults && endedCommandId === resolver.commandId;
+          const resolverIsOldEnough =
+            resolver.commandStartTimeMS + 25000 < Date.now();
 
-        if (isCommandReceived || isCommandComplete) {
-          clearTimeout(resolver.commandReceivedTimeout);
-        }
+          if (isCommandReceived || isCommandComplete) {
+            clearTimeout(resolver.commandReceivedTimeout);
+          }
 
-        if (!noFaults) {
-          error('MachineError', {
-            ..._kitchenState,
-            code: 'Fault',
-            subsystem,
-            noFaults,
-            isCommandReceived,
-            isCommandComplete,
-          });
-          resolver.reject(
-            new Err(`"${subsystem}" system faulted!`, 'SystemFault', {
-              subsystem,
-            }),
-          );
-          return;
-        }
+          if (!noFaults) {
+            const subsystem = getSubsystem(
+              subsystemName,
+              _kitchenConfig,
+              currentState,
+            );
+            console.log('hihooo', {
+              subsystemName,
+              _kitchenConfig,
+              currentState,
+            });
+            const faults = getSubsystemFaults(subsystem, currentState);
 
-        if (isCommandReceived && isCommandComplete) {
-          resolver.resolve();
-          return;
-        }
-
-        if (isCommandReceived && isSystemIdle) {
-          if (resolverIsOldEnough) {
-            // the resolverIsOldEnough delay handles edge case in the PLC or tag syncronization code when we observe an idle system and a started action id, but the action has not actually been started yet
-            // this is why we wait at least one second until rejecting the command
-            const errorDetails = {
-              code: 'SoftError',
-              subsystem,
+            error('MachineError', {
+              ...currentState,
+              code: 'Fault',
+              subsystem: subsystemName,
               noFaults,
-              startedCommandId,
-              endedCommandId,
-              commandId: resolver.commandId,
-              command: resolver.command,
-              lastKitchenUpdateTime,
               isCommandReceived,
               isCommandComplete,
-            };
-            const tagNames = [
-              `${subsystem}_PrgStep_READ`,
-              `${subsystem}_NoFaults_READ`,
-              `${subsystem}_ActionIdIn_VALUE`,
-              `${subsystem}_ActionIdStarted_READ`,
-              `${subsystem}_ActionIdEnded_READ`,
-            ];
-            tagNames.forEach(tagName => {
-              errorDetails[tagName] = _kitchenState[tagName];
+              faults,
             });
-
-            error('MachineError', errorDetails);
-
-            resolver.reject(
-              new Err(
-                `Soft error on "${subsystem}". No faults, but the command did not succeed.`,
-                'SoftError',
-                { subsystem, command: resolver.command },
-              ),
+            faults.forEach(fault =>
+              error('MachineFault', {
+                fault,
+                subsystem: subsystemName,
+              }),
             );
-          } else {
-            // The command has "failed" but it has been less than 1 second since we sent it (according to resolverIsOldEnough)
-            error('SequencerEdgeCase', {
-              ugh: true,
-              subsystem,
-              command: resolver.command,
-            });
+            currentState;
+            resolver.reject(
+              new Err(`"${subsystemName}" system faulted!`, 'SystemFault', {
+                subsystem: subsystemName,
+              }),
+            );
+            return;
           }
-        }
-      });
+
+          if (isCommandReceived && isCommandComplete) {
+            resolver.resolve();
+            return;
+          }
+
+          if (isCommandReceived && isSystemIdle) {
+            if (resolverIsOldEnough) {
+              // the resolverIsOldEnough delay handles edge case in the PLC or tag syncronization code when we observe an idle system and a started action id, but the action has not actually been started yet
+              // this is why we wait at least one second until rejecting the command
+              const errorDetails = {
+                code: 'SoftError',
+                subsystem: subsystemName,
+                noFaults,
+                startedCommandId,
+                endedCommandId,
+                commandId: resolver.commandId,
+                command: resolver.command,
+                lastKitchenUpdateTime,
+                isCommandReceived,
+                isCommandComplete,
+              };
+              const tagNames = [
+                `${subsystemName}_PrgStep_READ`,
+                `${subsystemName}_NoFaults_READ`,
+                `${subsystemName}_ActionIdIn_VALUE`,
+                `${subsystemName}_ActionIdStarted_READ`,
+                `${subsystemName}_ActionIdEnded_READ`,
+              ];
+              tagNames.forEach(tagName => {
+                errorDetails[tagName] = _kitchenState[tagName];
+              });
+
+              error('MachineError', errorDetails);
+
+              resolver.reject(
+                new Err(
+                  `Soft error on "${subsystemName}". No faults, but the command did not succeed.`,
+                  'SoftError',
+                  { subsystem: subsystemName, command: resolver.command },
+                ),
+              );
+            } else {
+              // The command has "failed" but it has been less than 1 second since we sent it (according to resolverIsOldEnough)
+              error('SequencerEdgeCase', {
+                ugh: true,
+                subsystem: subsystemName,
+                command: resolver.command,
+              });
+            }
+          }
+        },
+      );
 
       // await delay(64); // give js ~64ms to respond to this change.
       await delay(1); // give js ~64ms to respond to this change.
@@ -436,6 +463,7 @@ export function connectMachine({
         .then(() => {})
         .catch(async e => {
           // error is presumably logged elsewhere, but to be safe..
+          console.error(e);
           error('MachineError', { code: 'TagUpdateError', error: e });
 
           await updateKitchenState({

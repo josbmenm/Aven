@@ -25,7 +25,6 @@
       "mjml-react",
       "mjml",
       "stripe",
-      "fbjs",
       "ws",
       "rxjs-compat",
       "ethernet-ip",

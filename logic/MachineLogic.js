@@ -270,6 +270,7 @@ export function companyConfigToKitchenConfig(companyConfig) {
       f => f.System[0] === kitchenSystemId,
     );
     const faults = systemFaults.map(faultRow => ({
+      id: faultRow.id,
       description: faultRow.Name,
       bitIndex: faultRow['Fault Bit'],
       intIndex: faultRow['Fault Integer'],
@@ -278,6 +279,7 @@ export function companyConfigToKitchenConfig(companyConfig) {
       a => a.System[0] === kitchenSystemId,
     );
     const alarms = systemAlarms.map(row => ({
+      id: row.id,
       description: row.Name,
       bitIndex: row['Alarm Bit'],
       intIndex: row['Alarm Integer'],
@@ -410,3 +412,167 @@ export function companyConfigToKitchenConfig(companyConfig) {
 
   return { subsystems, tags };
 }
+
+function mapObject(inObj, mapper) {
+  return Object.fromEntries(
+    Object.entries(inObj).map(([k, v]) => {
+      return [k, mapper(v)];
+    }),
+  );
+}
+
+export function getSubsystemAlarms(system) {
+  // copy-pasted from getSubsystemFaults!!
+  let alarms = null;
+
+  if (system.reads.NoAlarms && system.reads.NoAlarms.value !== true) {
+    // system has alarming behavior
+    alarms = [];
+    let alarmsUnreadable;
+    const alarmed = Array(4)
+      .fill(0)
+      .map((_, alarmIntIndex) => {
+        if (!system.reads[`Alarm${alarmIntIndex}`]) {
+          return Array(16).fill(0);
+        }
+        try {
+          return system.reads[`Alarm${alarmIntIndex}`].value
+            .toString(2)
+            .split('')
+            .reverse()
+            .map(v => v === '1');
+        } catch (e) {
+          alarmsUnreadable = true;
+          return false;
+        }
+      });
+
+    alarmsUnreadable && alarms.push(`Unable to read alarms of ${system.name}`);
+    if (alarmed[0][0]) {
+      alarms.push(
+        'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
+      );
+    }
+    system.alarms &&
+      system.alarms.forEach(f => {
+        const faultDintArray = alarmed[f.intIndex];
+        const isAlarmed = faultDintArray && faultDintArray[f.bitIndex];
+        if (isAlarmed) {
+          alarms.push(f.description);
+        }
+      });
+  }
+  if (alarms && !alarms.length) {
+    alarms.push('Unknown Alarm');
+  }
+  return alarms;
+}
+
+export function getSubsystemFaults(system, kitchenState) {
+  let faults = null;
+
+  if (kitchenState[`${system.name}_NoFaults_READ`] === false) {
+    // system has faulting behavior
+    faults = [];
+    let faultsUnreadable;
+    const faulted = Array(4)
+      .fill(0)
+      .map((_, faultIntIndex) => {
+        if (!kitchenState[`${system.name}_Fault${faultIntIndex}_READ`]) {
+          return Array(16).fill(0);
+        }
+        try {
+          console.log('zomg really', kitchenState[`${system.name}_Fault${faultIntIndex}_READ`], {
+            faultIntIndex,
+            reads: kitchenState,
+          });
+          return kitchenState[`${system.name}_Fault${faultIntIndex}_READ`]
+            .toString(2)
+            .split('')
+            .reverse()
+            .map(v => v === '1');
+        } catch (e) {
+          faultsUnreadable = true;
+          return false;
+        }
+      });
+
+    faultsUnreadable && faults.push(`Unable to read faults of ${system.name}`);
+    if (faulted[0][0]) {
+      faults.push(
+        'Watchdog timout on step ' + kitchenState[`${system.name}_WatchDogFrozeAt_READ`],
+      );
+    }
+    system.faults &&
+      system.faults.forEach(f => {
+        const faultDintArray = faulted[f.intIndex];
+        const isFaulted = faultDintArray && faultDintArray[f.bitIndex];
+        if (isFaulted) {
+          faults.push({
+            description: f.description,
+            airtableId: f.id,
+            bitIndex: f.bitIndex,
+            intIndex: f.intIndex,
+          });
+        }
+      });
+  }
+  if (kitchenState[`${system.name}_Homed_READ`] === false) {
+    if (!faults) {
+      faults = [{ description: 'Not Homed' }];
+    } else if (!faults.length) {
+      faults.push({ description: 'Not Homed' });
+    }
+  }
+  if (faults && !faults.length) {
+    faults.push({
+      description: 'Unknown Fault',
+    });
+  }
+  return faults;
+}
+
+export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {
+  if (!kitchenConfig || !kitchenState) {
+    return null;
+  }
+  const ss = kitchenConfig.subsystems[subsystemName];
+  if (!ss) {
+    return null;
+  }
+  const reads = mapObject(ss.readTags, (tag, tagName) => {
+    const internalTagName = `${subsystemName}_${tagName}_READ`;
+    const value = kitchenState[internalTagName];
+    const read = { ...tag, value, name: tagName };
+    return read;
+  });
+  const valueCommands = mapObject(
+    ss.valueCommands,
+    (commandedValues, tagName) => {
+      const internalTagName = `${subsystemName}_${tagName}_VALUE`;
+      const value = kitchenState[internalTagName];
+      const outCmd = { ...commandedValues, value, name: tagName };
+      return outCmd;
+    },
+  );
+  const noFaults = reads.NoFaults ? reads.NoFaults.value : null;
+  return {
+    icon: ss.icon,
+    valueCommands,
+    pulseCommands: ss.pulseCommands,
+    name: subsystemName,
+    noFaults,
+    reads,
+    faults: ss.faults,
+    alarms: ss.alarms,
+  };
+};
+
+export const getSubsystemOverview = (kitchenConfig, kitchenState) => {
+  if (!kitchenConfig || !kitchenState) {
+    return [];
+  }
+  return Object.keys(kitchenConfig.subsystems).map(subsystemName => {
+    return getSubsystem(subsystemName, kitchenConfig, kitchenState);
+  });
+};

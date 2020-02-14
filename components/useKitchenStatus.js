@@ -46,7 +46,7 @@ export default function useKitchenStatus(restaurantState) {
       sequencerNames &&
         sequencerNames.forEach(systemName => {
           const system = getSubsystem(systemName, kitchenConfig, kitchenState);
-          const faults = getSubsystemFaults(system);
+          const faults = getSubsystemFaults(system, kitchenState);
           if (faults) {
             if (systemName === 'FillSystem') {
               mainFaultMessage = faults.join(', ');

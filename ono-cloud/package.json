@@ -6,8 +6,7 @@
     ],
     "moduleDependencies": [
       "@nozbe/with-observables",
-      "rxjs",
-      "fbjs"
+      "rxjs"
     ]
   }
 }

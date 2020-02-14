@@ -37,9 +37,9 @@ function ErrorsSection({ errors, color }) {
   );
 }
 
-export function SystemFaultsAndAlarms({ system }) {
-  const faults = getSubsystemFaults(system);
-  const alarms = getSubsystemAlarms(system);
+export function SystemFaultsAndAlarms({ system, kitchenState }) {
+  const faults = getSubsystemFaults(system, kitchenState);
+  const alarms = getSubsystemAlarms(system, kitchenState);
   return (
     <View>
       {faults && <ErrorsSection errors={faults} color={colorNegative} />}
