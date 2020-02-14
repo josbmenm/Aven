@@ -67,7 +67,8 @@ export default function OrderConfirmScreen({
     <OrderConfirmPage
       summary={summary}
       paymentState={state}
-      onPromoCode={summary && summary.total === 0 ? null : onPromoCode}
+      // onPromoCode={summary && summary.total === 0 ? null : onPromoCode}
+      onPromoCode={null}
       paymentSuccessful={paymentSuccessful}
       paymentCompleted={paymentCompleted}
       paymentErrorMessage={paymentErrorMessage}
