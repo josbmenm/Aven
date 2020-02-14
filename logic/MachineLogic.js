@@ -478,14 +478,6 @@ export function getSubsystemFaults(system, kitchenState) {
           return Array(16).fill(0);
         }
         try {
-          console.log(
-            'zomg really',
-            kitchenState[`${system.name}_Fault${faultIntIndex}_READ`],
-            {
-              faultIntIndex,
-              reads: kitchenState,
-            },
-          );
           return kitchenState[`${system.name}_Fault${faultIntIndex}_READ`]
             .toString(2)
             .split('')
@@ -541,9 +533,7 @@ export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {
   if (!ss) {
     return null;
   }
-  console.log('ss', ss);
   const reads = mapObject(ss.readTags, (tag, tagName) => {
-    console.log('wot1', { tagName, subsystemName, kitchenState });
     const internalTagName = `${subsystemName}_${tagName}_READ`;
     const value = kitchenState[internalTagName];
     const read = { ...tag, value, name: tagName };
