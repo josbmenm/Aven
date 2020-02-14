@@ -45,7 +45,7 @@ export const getTagOfSchema = tagSchema => {
 function mapObject(inObj, mapper) {
   return Object.fromEntries(
     Object.entries(inObj).map(([k, v]) => {
-      return [k, mapper(v)];
+      return [k, mapper(v, k)];
     }),
   );
 }

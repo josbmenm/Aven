@@ -78,10 +78,10 @@ const IS_DEVELOPING_CONFIGURATOR = false;
 const RESTAURANT_DEV = {
   quiet: true,
   useSSL: false,
-  authority: 'localhost:8830',
+  // authority: 'localhost:8830',
 
   // prod server (connect to maui wifi first..)
-  // authority: '10.10.1.200:8830',
+  authority: '10.10.1.200:8830',
 
   // prod server remote (danger!!)
   // authority: 'restaurant0.maui.onofood.co',

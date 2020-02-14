@@ -416,27 +416,27 @@ export function companyConfigToKitchenConfig(companyConfig) {
 function mapObject(inObj, mapper) {
   return Object.fromEntries(
     Object.entries(inObj).map(([k, v]) => {
-      return [k, mapper(v)];
+      return [k, mapper(v, k)];
     }),
   );
 }
 
-export function getSubsystemAlarms(system) {
+export function getSubsystemAlarms(system, kitchenState) {
   // copy-pasted from getSubsystemFaults!!
   let alarms = null;
 
-  if (system.reads.NoAlarms && system.reads.NoAlarms.value !== true) {
+  if (kitchenState[`${system.name}_NoAlarms_READ`] === false) {
     // system has alarming behavior
     alarms = [];
     let alarmsUnreadable;
     const alarmed = Array(4)
       .fill(0)
       .map((_, alarmIntIndex) => {
-        if (!system.reads[`Alarm${alarmIntIndex}`]) {
+        if (!kitchenState[`${system.name}_Alarm${alarmIntIndex}_READ`]) {
           return Array(16).fill(0);
         }
         try {
-          return system.reads[`Alarm${alarmIntIndex}`].value
+          return kitchenState[`${system.name}_Alarm${alarmIntIndex}_READ`]
             .toString(2)
             .split('')
             .reverse()
@@ -448,11 +448,7 @@ export function getSubsystemAlarms(system) {
       });
 
     alarmsUnreadable && alarms.push(`Unable to read alarms of ${system.name}`);
-    if (alarmed[0][0]) {
-      alarms.push(
-        'Watchdog timout on step ' + system.reads.WatchDogFrozeAt.value,
-      );
-    }
+
     system.alarms &&
       system.alarms.forEach(f => {
         const faultDintArray = alarmed[f.intIndex];
@@ -482,10 +478,14 @@ export function getSubsystemFaults(system, kitchenState) {
           return Array(16).fill(0);
         }
         try {
-          console.log('zomg really', kitchenState[`${system.name}_Fault${faultIntIndex}_READ`], {
-            faultIntIndex,
-            reads: kitchenState,
-          });
+          console.log(
+            'zomg really',
+            kitchenState[`${system.name}_Fault${faultIntIndex}_READ`],
+            {
+              faultIntIndex,
+              reads: kitchenState,
+            },
+          );
           return kitchenState[`${system.name}_Fault${faultIntIndex}_READ`]
             .toString(2)
             .split('')
@@ -500,7 +500,8 @@ export function getSubsystemFaults(system, kitchenState) {
     faultsUnreadable && faults.push(`Unable to read faults of ${system.name}`);
     if (faulted[0][0]) {
       faults.push(
-        'Watchdog timout on step ' + kitchenState[`${system.name}_WatchDogFrozeAt_READ`],
+        'Watchdog timout on step ' +
+          kitchenState[`${system.name}_WatchDogFrozeAt_READ`],
       );
     }
     system.faults &&
@@ -540,7 +541,9 @@ export const getSubsystem = (subsystemName, kitchenConfig, kitchenState) => {
   if (!ss) {
     return null;
   }
+  console.log('ss', ss);
   const reads = mapObject(ss.readTags, (tag, tagName) => {
+    console.log('wot1', { tagName, subsystemName, kitchenState });
     const internalTagName = `${subsystemName}_${tagName}_READ`;
     const value = kitchenState[internalTagName];
     const read = { ...tag, value, name: tagName };

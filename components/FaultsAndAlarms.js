@@ -1,10 +1,7 @@
 import React from 'react';
 import RowSection from '../components/RowSection';
 import { View, Text } from 'react-native';
-import {
-  getSubsystemFaults,
-  getSubsystemAlarms,
-} from '../ono-cloud/OnoKitchen';
+import { getSubsystemFaults, getSubsystemAlarms } from '../logic/MachineLogic';
 import { prettyShadow, boldPrimaryFontFace } from '../components/Styles';
 import { colorNegative, colorWarning } from './Onotheme';
 
@@ -42,7 +39,12 @@ export function SystemFaultsAndAlarms({ system, kitchenState }) {
   const alarms = getSubsystemAlarms(system, kitchenState);
   return (
     <View>
-      {faults && <ErrorsSection errors={faults} color={colorNegative} />}
+      {faults && (
+        <ErrorsSection
+          errors={faults.map(f => f.description)}
+          color={colorNegative}
+        />
+      )}
       {alarms && <ErrorsSection errors={alarms} color={colorWarning} />}
     </View>
   );

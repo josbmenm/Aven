@@ -1,5 +1,5 @@
 import { useCloud, useCloudValue, useStream } from '../cloud-core/KiteReact';
-import { getSubsystem, getSubsystemFaults } from '../ono-cloud/OnoKitchen';
+import { getSubsystem, getSubsystemFaults } from '../logic/MachineLogic';
 
 export default function useKitchenStatus(restaurantState) {
   const cloud = useCloud();
@@ -49,13 +49,13 @@ export default function useKitchenStatus(restaurantState) {
           const faults = getSubsystemFaults(system, kitchenState);
           if (faults) {
             if (systemName === 'FillSystem') {
-              mainFaultMessage = faults.join(', ');
+              mainFaultMessage = faults.map(f => f.description).join(', ');
             }
             allFaults = [
               ...allFaults,
-              ...faults.map(description => ({
-                description,
-                isFaulted: description !== 'Not Homed',
+              ...faults.map(f => ({
+                ...f,
+                isFaulted: f.description !== 'Not Homed',
                 systemName,
               })),
             ];

@@ -9,7 +9,7 @@ import { View, Text } from 'react-native';
 import { Easing } from 'react-native-reanimated';
 import DisconnectedPage from '../components/DisconnectedPage';
 import { useCloud, useCloudValue, useStream } from '../cloud-core/KiteReact';
-import { getSubsystem } from '../ono-cloud/OnoKitchen';
+import { getSubsystem } from '../logic/MachineLogic';
 import { genericText, prettyShadowSmall } from '../components/Styles';
 import usePendantManualMode from '../components/usePendantManualMode';
 import useFocus from '../navigation-hooks/useFocus';
@@ -206,7 +206,7 @@ function ReadsAndFaults({ system, kitchenState }) {
               <IntRow
                 key={readName}
                 title={readName}
-                value={system.reads[readName].value}
+                value={kitchenState[`${system.name}_${readName}_READ`]}
               />
             );
           } else if (r.type === 'boolean') {
@@ -214,7 +214,7 @@ function ReadsAndFaults({ system, kitchenState }) {
               <BitRow
                 key={readName}
                 title={readName}
-                value={system.reads[readName].value}
+                value={kitchenState[`${system.name}_${readName}_READ`]}
               />
             );
           } else {
