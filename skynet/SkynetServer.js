@@ -745,6 +745,77 @@ Debug: ${JSON.stringify(blockValue)}
         });
     }
   });
+  // function getBrokenPromoStream() {
+  //   let runningNotifier = null;
+  //   let workTimeout = null;
+  //   let currentJob = null;
+  //   let currentActivity = null;
+  //   const jobs = [];
+  //   const badOrders = [];
+  //   function scheduleOrderLookup(orderTx) {
+  //     if (orderTx.on && orderTx.on.id) {
+  //       scheduleWork({ type: 'lookup', id: orderTx.on.id });
+  //     } else {
+  //       console.log('DONE!!');
+  //     }
+  //     const order = orderTx.value.confirmedOrder;
+  //     const { total, stripeIntent } = order;
+  //     if (!stripeIntent) return;
+  //     const charge = stripeIntent.charges.data[0];
+  //     if (charge.amount === total) {
+  //       // console.log('---- ' + order.id);
+  //     } else {
+  //       badOrders.push(order);
+  //       console.log('!!!! ' + order.id + ' ' + stripeIntent.id);
+  //     }
+  //   }
+  //   async function doWorkStep(job) {
+  //     if (job.type === 'start') {
+  //       currentActivity = await companyActivity.value.load();
+  //       scheduleOrderLookup(currentActivity);
+  //     } else if (job.type === 'lookup') {
+  //       const activityBlock = await companyActivity
+  //         .getBlock(job.id)
+  //         .value.load();
+  //       scheduleOrderLookup(activityBlock);
+  //     }
+  //     const update = {
+  //       badOrders,
+  //     };
+  //     runningNotifier && runningNotifier.next(update);
+  //   }
+  //   function doWork() {
+  //     if (!runningNotifier) return;
+  //     const job = jobs.shift();
+  //     if (!job) return;
+  //     currentJob = doWorkStep(job);
+  //     currentJob.then(() => {
+  //       clearTimeout(workTimeout);
+  //       workTimeout = setTimeout(doWork, 0);
+  //     });
+  //   }
+  //   function scheduleWork(job) {
+  //     if (!runningNotifier) return;
+  //     jobs.push(job);
+  //     clearTimeout(workTimeout);
+  //     workTimeout = setTimeout(doWork, 0);
+  //   }
+  //   const brokenPromoStream = createProducerStream({
+  //     crumb: 'brokeomoso',
+  //     start: notify => {
+  //       runningNotifier = notify;
+  //       scheduleWork({ type: 'start' });
+  //     },
+  //     stop: () => {
+  //       // runningNotifier = null;
+  //     },
+  //   });
+  //   return brokenPromoStream;
+  // }
+  // internalCloud.docs.setOverrideValueStream(
+  //   'BrokenPromos',
+  //   getBrokenPromoStream(),
+  // );
 
   internalCloud.setReducer('FeedbackSummary', {
     actionsDoc: companyActivity,
