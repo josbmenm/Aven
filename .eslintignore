@@ -2,5 +2,3 @@ node_modules/
 dist/
 jest-setup.js
 coverage/
-
-aven-tools/
