@@ -1,7 +1,0 @@
-{
-  "aven": {
-    "moduleDependencies": [
-      "react-navigation-stack"
-    ]
-  }
-}

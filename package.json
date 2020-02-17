@@ -1,42 +1,37 @@
 {
-  "name": "@aven-cloud/aven",
   "version": "0.0.0",
-  "private": true,
   "scripts": {
-    "start": "node ./aven-tools/cli.js start",
-    "build": "node ./aven-tools/cli.js build",
-    "deploy": "node ./aven-tools/cli.js deploy",
-    "publish": "node ./aven-tools/cli.js publish",
-    "lint": "eslint .",
-    "tlint": "tslint --project tsconfig.json",
-    "format": "eslint . --fix",
-    "clean": "node ./aven-tools/cli.js clean",
-    "import-vendor": "node ./aven-tools/importVendorCode.js",
-    "test": "jest",
-    "pg": "cd cloud-postgres; docker-compose up",
-    "test-sql": "cd cloud-postgres; ./test.sh startPostgresStorageSource",
-    "carriage": "node carriage/carriage.js",
-    "dev": "yarn workspace something start"
-  },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
+    "wing:dev": "concurrently \"npm run wing:dev-server\" \"npm run wing:dev-mobile\"",
+    "wing:dev-server": "cross-env BABEL_ENV=web-development NODE_ENV=development yarn babel-node src/aven/wing-web/WingWebServer.js",
+    "wing:dev-mobile": "./node_modules/@react-native-community/cli/build/bin.js start",
+    "wing:xcode": "open wing-mobile/ios/wing.xcworkspace",
+    "wing:run-ios": "yarn react-native run-ios --project-path wing-mobile/ios",
+    "wing:pods": "cd wing-mobile/ios && pod install && cd -",
+    "wing:build": "rimraf dist && npm run wing:create-bundles",
+    "wing:start": "cross-env NODE_ENV=production node dist/wing/server/aven/wing-web/WingWebServer.js",
+    "wing:create-bundles": "concurrently \"npm run wing:bundle-client\" \"npm run wing:bundle-server\" \"npm run wing:create-asset-manifest\"",
+    "wing:bundle-server": "cross-env NODE_ENV=web-production yarn babel -d dist/wing/server src",
+    "wing:bundle-client": "mkdir -p dist/wing/client && ./node_modules/@react-native-community/cli/build/bin.js bundle --entry-file src/aven/wing-web/WingWebClient.js --dev false --platform web --reset-cache --bundle-output dist/wing/client/main.js --assets-dest dist/wing/client",
+    "wing:create-asset-manifest": "node scripts/bundleAssets.js wing aven/wing-web/WingWebClient.js"
   },
   "devDependencies": {
-    "babel-jest": "^24.8.0",
-    "babel-preset-react-native": "^4.0.1",
-    "eslint": "^5.16.0",
-    "eslint-config-satya164": "^2.4.1",
-    "eslint-plugin-react-native-globals": "^0.1.2",
-    "jest": "^24.8.0",
-    "jest-cli": "^24.8.0",
-    "metro-react-native-babel-preset": "^0.54.0",
-    "pn": "^1.1.0",
-    "prettier": "^1.17.0",
-    "react-native": "0.61.2",
-    "react-test-renderer": "^16.6.3",
-    "typescript": "^3.2.2"
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.6.2",
+    "@babel/node": "^7.8.4",
+    "@babel/runtime": "^7.6.2",
+    "@react-native-community/cli": "git://github.com/AvenCloud/react-native-cli.git#master",
+    "@react-native-community/eslint-config": "^0.0.5",
+    "babel-jest": "^24.9.0",
+    "babel-plugin-file-loader": "^2.0.0",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "babel-preset-expo": "^8.0.0",
+    "concurrently": "^5.1.0",
+    "cross-env": "^7.0.0",
+    "eslint": "^6.5.1",
+    "jest": "^24.9.0",
+    "react-native": "^0.61.5",
+    "react-test-renderer": "16.9.0",
+    "rimraf": "^3.0.0"
   },
   "dependencies": {
     "@expo/spawn-async": "^1.3.0",
@@ -44,15 +39,14 @@
     "@sendgrid/mail": "^6.3.1",
     "@types/jest": "^23.3.10",
     "ajv": "^6.6.2",
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-react": "^6.24.1",
     "bcrypt": "3.0.6",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
+    "buffer": "^5.4.3",
     "create-react-context": "^0.2.3",
     "crypto-js": "^3.1.9-1",
     "cuid": "^2.1.6",
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "express-fileupload": "1.1.6",
     "fs-extra": "^7.0.1",
     "helmet": "^3.13.0",
@@ -66,6 +60,7 @@
     "konva": "^3.2.1",
     "mime": "^2.4.4",
     "minimist": "^1.2.0",
+    "module-alias": "^2.2.2",
     "node-fetch": "^2.3.0",
     "path": "^0.12.7",
     "path-to-regexp": "^1.7.0",
@@ -73,74 +68,24 @@
     "pg-format": "^1.0.4",
     "prism-react-renderer": "^0.1.5",
     "query-string": "^6.2.0",
-    "react": "16.7.0-alpha.2",
+    "react": "16.9.0",
     "react-art": "^16.8.2",
-    "react-dom": "^16.7.0-alpha.2",
+    "react-dom": "16.9.0",
     "react-dropzone": "^10.2.1",
     "react-is": "^16.5.2",
     "react-konva": "^16.8.4",
     "react-lifecycles-compat": "^3.0.4",
-    "react-native-gesture-handler": "^1.1.0",
-    "react-native-reanimated": "^1.0.0",
-    "react-native-safe-area-view": "^0.11.0",
-    "react-native-screens": "^1.0.0-alpha.17",
-    "react-native-web": "^0.10.0",
+    "react-native": "0.61.5",
+    "react-native-web": "^0.12.1",
     "reconnecting-websocket": "^4.0.0-rc5",
     "rxjs": "^6.3.3",
     "rxjs-compat": "^6.3.3",
     "sane": "^3.0.0",
     "semver": "^5.6.0",
-    "ts-jest": "^23.10.5",
-    "tslint": "^5.11.0",
-    "tslint-config-airbnb": "^5.11.1",
-    "tslint-config-prettier": "^1.17.0",
-    "tslint-react": "^3.6.0",
     "twilio": "^3.24.0",
     "websocket": "^1.0.28",
     "ws": "^6.0.0",
     "xstream": "^11.10.0",
     "yes-https": "^0.0.4"
-  },
-  "jest": {
-    "preset": "react-native",
-    "testRegex": "/__tests__/[^/]+-test\\.(js|tsx)?$",
-    "setupFiles": [
-      "<rootDir>/jest-setup.js"
-    ],
-    "coveragePathIgnorePatterns": [
-      "jest-setup.js"
-    ],
-    "testPathIgnorePatterns": [
-      "cloud-postgres/"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element)"
-    ],
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest",
-      "^.+\\.js$": "babel-jest"
-    },
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/",
-      "<rootDir>/aven-tools/proto/"
-    ],
-    "globals": {
-      "__DEV__": true,
-      "ts-jest": {
-        "tsConfig": "./tsconfig.test.json",
-        "diagnostics": {
-          "ignoreCodes": [
-            151001
-          ]
-        }
-      }
-    }
-  },
-  "optionalDependencies": {
-    "win-node-env": "^0.4.0"
   }
 }
