@@ -740,7 +740,6 @@ Debug: ${JSON.stringify(blockValue)}
           log('JobAppSent');
         })
         .catch(err => {
-          error('JobAppSendFailed', { action });
           console.error(err);
         });
     }
