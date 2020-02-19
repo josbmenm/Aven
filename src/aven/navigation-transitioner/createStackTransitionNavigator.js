@@ -1,4 +1,4 @@
-import { createNavigator, StackRouter } from '../navigation-core';
+import { createNavigator, StackRouter } from '@aven/navigation-core';
 import Transitioner from './Transitioner';
 
 export default function createStackTransitionNavigator(

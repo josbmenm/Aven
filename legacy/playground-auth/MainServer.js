@@ -1,13 +1,13 @@
-import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
-import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
-import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
-import createProtectedSource from '../cloud-auth/createProtectedSource';
-import { hashSecureString } from '../cloud-utils/Crypto';
-import CloudContext from '../cloud-core/CloudContext';
-import createCloudClient from '../cloud-core/createCloudClient';
-import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
-import EmailAgent from '../email-agent-sendgrid/EmailAgent';
-import SMSAgent from '../sms-agent-twilio/SMSAgent';
+import { EmailAuthProvider } from '@aven/cloud-auth-email';
+import { RootAuthProvider } from '@aven/cloud-auth-root';
+import { SMSAuthProvider } from '@aven/cloud-auth-sms';
+import { createProtectedSource } from '@aven/cloud-auth';
+import { hashSecureString } from '@aven/cloud-utils';
+import { CloudContext } from '@aven/cloud-core';
+import { createCloudClient } from '@aven/cloud-core';
+import { createMemoryStorageSource } from '@aven/cloud-core';
+import { EmailAgent } from '@aven/email-agent-sendgrid';
+import { SMSAgent } from '@aven/sms-agent-twilio';
 import WebServer from '../aven-web/WebServer';
 
 import App from './App';

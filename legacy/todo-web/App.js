@@ -1,6 +1,6 @@
 import React from 'react';
 import Admin from '../admin/Admin';
-import createSwitchNavigator from '../navigation-core/navigators/createSwitchNavigator';
+import { createSwitchNavigator } from '@aven/navigation-core';
 import AppRoutes from '../todo-app/AppRoutes';
 
 let authority = '';

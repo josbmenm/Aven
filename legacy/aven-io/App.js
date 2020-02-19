@@ -1,11 +1,11 @@
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView } from '@rn';
 import React from 'react';
 
 import SwitchRouter from '../navigation-core/routers/SwitchRouter';
 import SceneView from '../navigation-core/views/SceneView';
 import getActiveChildNavigationOptions from '../navigation-core/utils/getActiveChildNavigationOptions';
 import createNavigator from '../navigation-core/navigators/createNavigator';
-import Link from '../navigation-web/Link';
+import { Link } from '@aven/navigation-web';
 import {
   mainShade,
   mainShadeLight,

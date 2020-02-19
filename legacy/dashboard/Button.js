@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from '@rn';
 import VisualButton from './VisualButton';
 
 function Button({

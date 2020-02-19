@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import renderer from 'react-test-renderer';
-import { createSwitchNavigator } from '../../navigation-core';
+import { createSwitchNavigator } from '@aven/navigation-core';
 import createBrowserApp from '../createBrowserApp';
 
 class HomeScreen extends Component {

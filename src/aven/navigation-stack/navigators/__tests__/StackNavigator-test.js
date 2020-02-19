@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { StyleSheet, View } from '@rn';
 import renderer from 'react-test-renderer';
-import { withNavigation } from '../../../navigation-core';
+import { withNavigation } from '@aven/navigation-core';
 
 import createStackNavigator from '../createStackNavigator';
 
 import createAppContainer, {
   _TESTING_ONLY_reset_container_count,
-} from '../../../navigation-native/createAppContainer';
+} from '@aven/navigation-native/createAppContainer';
 const NavigationTestUtils = {
   resetInternalState: _TESTING_ONLY_reset_container_count,
 };

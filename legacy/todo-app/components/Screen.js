@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView } from '@rn';
 
 export default function Screen({ children }) {
   return (

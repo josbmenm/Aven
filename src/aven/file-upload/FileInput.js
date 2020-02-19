@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useCloud } from '../cloud-core/KiteReact';
-import { HostContext } from '../cloud-core/HostContext';
-import { Text, Button, useTheme, Stack, opacify } from '../dash-ui';
+import { useCloud } from '@aven/cloud-core';
+import { HostContext } from '@aven/cloud-core';
+import { Text, Button, useTheme, Stack, opacify } from '@onofoodco/dash-ui';
 import { View } from '@rn';
 
 export default function FileInput({

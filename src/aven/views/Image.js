@@ -10,20 +10,23 @@ getAssetManifest().then(assets => {
 });
 // this is the SERVER implementation of Image
 export default function WebImage({ source, ...props }) {
-  const sourceMatch = source.match(/\/([^\/.]*)\.(.*)/);
-  if (!sourceMatch) {
+  let uri = null;
+  if (source && source.uri) {
+    uri = source.uri;
+  }
+  if (!uri) {
+    const sourceMatch = source.match(/\/([^\/.]*)\.(.*)/);
+    if (sourceMatch) {
+      const hash = sourceMatch[1];
+      const asset = assetHashLookup[hash];
+      if (asset) {
+        const { httpServerLocation, name, type } = asset;
+        uri = `${httpServerLocation}/${name}.${type}`;
+      }
+    }
+  }
+  if (!uri) {
     return null;
   }
-  const hash = sourceMatch[1];
-  const asset = assetHashLookup[hash];
-  if (!asset) {
-    return null;
-  }
-  const { httpServerLocation, name, type } = asset;
-  return (
-    <Image
-      source={{ uri: `${httpServerLocation}/${name}.${type}` }}
-      {...props}
-    />
-  );
+  return <Image source={{ uri }} {...props} />;
 }

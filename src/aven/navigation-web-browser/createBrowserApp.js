@@ -6,7 +6,7 @@ import {
   NavigationActions,
   getNavigation,
   NavigationProvider,
-} from '../navigation-core';
+} from '@aven/navigation-core';
 
 const queryString = require('query-string');
 

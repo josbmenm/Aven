@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View } from '@rn';
 import useCloud from '../cloud-core/useCloud';
 import useObservable from '../cloud-core/useObservable';
 

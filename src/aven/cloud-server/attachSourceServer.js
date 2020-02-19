@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const WebSocket = require('ws');
 
-const IS_DEV = process.env.NODE_ENV !== 'production';
+global.__DEV__ = process.env.NODE_ENV !== 'production';
 
 async function uploadFile(source, file, meta) {
   const result = await source.dispatch({

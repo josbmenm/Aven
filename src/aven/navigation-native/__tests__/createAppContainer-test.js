@@ -12,7 +12,7 @@ import {
   createNavigator,
   StackRouter,
   SwitchView,
-} from '../../navigation-core';
+} from '@aven/navigation-core';
 
 function createStackNavigator(routeConfigMap, stackConfig = {}) {
   const router = StackRouter(routeConfigMap, stackConfig);

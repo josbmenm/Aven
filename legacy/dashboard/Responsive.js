@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTheme } from './Theme';
-import View from '../views/View';
+import { View } from '@aven/views';
 import CSSProperties from './CSSProperties';
 
 function validateNumberValue(value) {
@@ -97,7 +97,6 @@ export function ColumnToRow({
   resetFlexBasis,
   ...rest
 }) {
-
   const elemID = useComponentID();
   const theme = useTheme();
   const bp = breakpoints || theme.breakpoints;

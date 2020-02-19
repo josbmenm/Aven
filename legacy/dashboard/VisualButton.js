@@ -1,6 +1,6 @@
 import React from 'react';
-import View from '../views/View';
-import Text from '../views/Text';
+import { View } from '@aven/views';
+import { Text } from '@aven/views';
 import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 

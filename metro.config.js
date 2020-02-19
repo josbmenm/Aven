@@ -1,20 +1,14 @@
-/**
- * Metro configuration for React Native
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 module.exports = {
   resolver: {
-    platforms: ["web", "ios", "android"]
+    platforms: ['web', 'ios', 'android'],
+    assetExts: ['png', 'jpg', 'jpeg', 'gif', 'svg', 'mp4', 'mp3'], // keep in sync with bablrc
   },
   transformer: {
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: false,
-        inlineRequires: false
-      }
-    })
-  }
+        inlineRequires: false,
+      },
+    }),
+  },
 };

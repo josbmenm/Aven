@@ -5,8 +5,8 @@ const appDistName = process.argv[2];
 const clientMainFile = process.argv[3];
 
 const child = spawn(
-  './node_modules/@react-native-community/cli/build/bin.js',
-  ['start'],
+  'node',
+  ['./node_modules/@react-native-community/cli/build/bin.js', 'start'],
   {
     env: process.env,
   },
@@ -20,18 +20,29 @@ child.stdout.on('data', data => {
       .then(resp => {
         return resp.json();
       })
-      .then(assets => {
-        return fs.writeFile(
-          `dist/${appDistName}/server/AssetManifest.json`,
-          JSON.stringify(assets),
+      .then(async assets => {
+        const assetManifestPath = `dist/${appDistName}/server/AssetManifest.json`;
+        await fs.mkdirp(`dist/${appDistName}/public/static`);
+        await Promise.all(
+          assets.map(async asset => {
+            await fs.copy(
+              asset.files[0],
+              `dist/${appDistName}/public/static/${asset.hash}.${asset.type}`,
+            );
+          }),
         );
+        await fs.writeFile(assetManifestPath, JSON.stringify(assets));
       })
       .catch(e => {
         console.error(e);
       })
       .finally(() => {
-        process.exit(0);
+        setTimeout(() => {
+          process.exit(0);
+        }, 5000);
       });
   }
 });
-child.stderr.on('data', data => {});
+child.stderr.on('data', data => {
+  console.error('! ' + data);
+});

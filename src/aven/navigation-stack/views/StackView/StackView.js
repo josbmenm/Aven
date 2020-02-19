@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { StackActions } from '../../../navigation-core';
+import { StackActions } from '@aven/navigation-core';
 import StackViewLayout from './StackViewLayout';
 import Transitioner from '../Transitioner';
 import TransitionConfigs from './StackViewTransitionConfigs';

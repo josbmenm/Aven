@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { View, TouchableWithoutFeedback, StyleSheet } from '@rn';
-import { useNavigation } from '../navigation-hooks/Hooks';
-import NavigationContext from '../navigation-core/views/NavigationContext';
+import { useNavigation } from '@aven/navigation-hooks';
+import { NavigationContext } from '@aven/navigation-core';
 import Animated, { Easing } from 'react-native-reanimated';
 
 import {

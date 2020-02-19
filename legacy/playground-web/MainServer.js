@@ -1,7 +1,7 @@
-import CloudContext from '../cloud-core/CloudContext';
-import { createClient } from '../cloud-core/Kite';
-import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
-import attachWebServer from '../aven-web/attachWebServer';
+import { CloudContext } from '@aven/cloud-core';
+import { createClient } from '@aven/cloud-core';
+import { createMemoryStorageSource } from '@aven/cloud-core';
+import { attachWebServer } from '@aven/web-server';
 
 import App from './App';
 

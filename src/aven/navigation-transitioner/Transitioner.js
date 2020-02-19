@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from '@rn';
 import Animated from 'react-native-reanimated';
-import { NavigationProvider, StackActions } from '../navigation-core';
+import { NavigationProvider, StackActions } from '@aven/navigation-core';
 import PerformanceDebugging from './PerformanceDebugging';
 
 export const TransitionContext = React.createContext(null);

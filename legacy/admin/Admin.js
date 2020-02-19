@@ -2,7 +2,8 @@ import {
   createNavigator,
   NavigationContext,
   SwitchRouter,
-} from '../navigation-core';
+} from '@aven/navigation-core';
+import { Image } from '@aven/views';
 import React, {
   useEffect,
   useMemo,
@@ -11,7 +12,6 @@ import React, {
   useContext,
 } from 'react';
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Switch,
@@ -22,26 +22,22 @@ import {
   Easing,
   TouchableHighlight,
   View,
-} from 'react-native';
-import { useNavigation, useNavigationState } from '../navigation-hooks/Hooks';
+} from '@rn';
+import { useNavigation, useNavigationState } from '@aven/navigation-hooks';
 
-import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
+import { createBrowserNetworkSource } from '@aven/cloud-browser';
 import {
   CloudContext,
   useCloud,
   useCloudValue,
   useStream,
-} from '../cloud-core/KiteReact';
-import { createSessionClient } from '../cloud-core/Kite';
+} from '@aven/cloud-core';
+import { createSessionClient } from '@aven/cloud-core';
 import useObservable from '../cloud-core/useObservable';
-import ErrorContainer from '../cloud-react/ErrorContainer';
-import Animated from '../views/Animated';
+import { ErrorContainer } from '@aven/cloud-react';
+import { Animated } from '@aven/views';
 import useAsyncStorage, { isStateUnloaded } from '../utils/useAsyncStorage';
-import {
-  usePopover,
-  PopoverContainer,
-  useTargetPopover,
-} from '../views/Popover';
+import { usePopover, PopoverContainer, useTargetPopover } from '@aven/views';
 
 const prettyShadow = {
   shadowOffset: { width: 0, height: 0 },

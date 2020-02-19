@@ -1,7 +1,7 @@
 import React from 'react';
 import AuthenticatedNetworkCloudProvider from '../cloud-native/AuthenticatedNetworkCloudProvider';
 import App from './App';
-import { YellowBox } from 'react-native';
+import { YellowBox } from '@rn';
 
 YellowBox.ignoreWarnings(['Async Storage has been']);
 

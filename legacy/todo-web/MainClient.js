@@ -1,9 +1,9 @@
 import App from './App';
 
-import startWebClient from '../aven-web/WebClient';
-import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
-import { createSessionClient } from '../cloud-core/Kite';
-import { CloudContext } from '../cloud-core/KiteReact';
+import { startWebClient } from '@aven/web-browser';
+import { createBrowserNetworkSource } from '@aven/cloud-browser';
+import { createSessionClient } from '@aven/cloud-core';
+import { CloudContext } from '@aven/cloud-core';
 
 const networkSource = createBrowserNetworkSource({
   authority: null, // this means to inherit from the server
