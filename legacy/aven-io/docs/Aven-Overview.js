@@ -1,6 +1,6 @@
 import React from 'react';
 import { Title, Body, Page } from '../DocViews';
-import { useNavigation } from '../../navigation-hooks/Hooks';
+import { useNavigation } from '@aven/navigation-hooks';
 
 function DocPage() {
   const { getParam } = useNavigation();

@@ -10,7 +10,7 @@ import {
   MaskedViewIOS,
 } from '@rn';
 
-import { withOrientation, SafeAreaView } from '../../../navigation-native';
+import { withOrientation, SafeAreaView } from '@aven/navigation-native';
 
 import HeaderTitle from './HeaderTitle';
 import HeaderBackButton from './HeaderBackButton';

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text } from '@rn';
 import cuid from 'cuid';
 
-import { useCloud, defineCloudReducer } from '../cloud-core/KiteReact';
+import { useCloud, defineCloudReducer } from '@aven/cloud-core';
 
 import Screen from './components/Screen';
 import TextInput from './components/TextInput';

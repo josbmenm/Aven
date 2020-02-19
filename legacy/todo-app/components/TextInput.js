@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput } from 'react-native';
+import { TextInput } from '@rn';
 
 export default function TodoTextInput({ ...props }) {
   return (

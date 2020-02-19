@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text, View, ScrollView } from 'react-native';
+import { Text, View, ScrollView } from '@rn';
 import Highlight, { defaultProps } from 'prism-react-renderer';
 import theme from 'prism-react-renderer/themes/duotoneLight';
 
-import InnerLink from '../navigation-web/Link';
+import { Link as InnerLink } from '@aven/navigation-web';
 
 const baseFontSize = 16;
 

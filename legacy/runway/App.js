@@ -1,5 +1,5 @@
 import React, { useState, useReducer } from 'react';
-import { View, Text, Animated, Button, TextInput } from 'react-native';
+import { View, Text, Animated, Button, TextInput } from '@rn';
 
 export default function App() {
   return (

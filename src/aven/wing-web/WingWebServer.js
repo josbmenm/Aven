@@ -15,20 +15,7 @@ import { RootAuthProvider } from '@aven/cloud-auth-root';
 import { hashSecureString } from '@aven/cloud-utils';
 // import { TaskReducer } from '../todo-app/FullHome';
 
-const clientBundleSrc =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8081/src/aven/wing-web/WingWebClient.js.bundle?platform=web'
-    : `/main.js`;
-
-const assetBundleSrc =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:8081/src/aven/wing-web/WingWebClient.js.assets?platform=web'
-    : null;
-
 const path = require('path');
-const clientPath = path.join(__dirname, '../../../client');
-
-console.log('running', clientPath);
 
 const getEnv = c => process.env[c];
 
@@ -144,13 +131,16 @@ const runServer = async () => {
     context,
     source,
     serverListenLocation: '8080',
-    publicDir: clientPath,
+    publicDir: path.join(__dirname, '../../../client'),
     assets: {
       client: {
-        js: clientBundleSrc,
-        // assets: assetBundleSrc,
+        js:
+          process.env.NODE_ENV === 'development'
+            ? 'http://localhost:8081/src/aven/wing-web/WingWebClient.js.bundle?platform=web'
+            : `/main.js`,
       },
     },
+    publicDir: [!__DEV__ && path.join(__dirname, '../../../public')],
   });
 
   console.log('☁️️ Web Ready 🕸');

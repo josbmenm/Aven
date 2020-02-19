@@ -1,5 +1,5 @@
-import React from 'react'
-import { Animated } from 'react-native';
+import React from 'react';
+import { Animated } from '@rn';
 
 function spinIndefinitely(position) {
   Animated.timing(position, {
@@ -55,4 +55,4 @@ function Spinner() {
   );
 }
 
-export default Spinner
+export default Spinner;

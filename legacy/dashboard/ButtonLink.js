@@ -1,5 +1,5 @@
 import React from 'react';
-import FunctionalLink from '../navigation-web/Link';
+import { Link as FunctionalLink } from '@aven/navigation-web';
 import VisualButton from './VisualButton';
 
 function ButtonLink({

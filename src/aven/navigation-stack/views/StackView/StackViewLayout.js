@@ -13,8 +13,8 @@ import {
   StackActions,
   NavigationActions,
   NavigationProvider,
-} from '../../../navigation-core';
-import { withOrientation } from '../../../navigation-native';
+} from '@aven/navigation-core';
+import { withOrientation } from '@aven/navigation-native';
 import { ScreenContainer } from 'react-native-screens';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 

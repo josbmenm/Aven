@@ -1,6 +1,6 @@
-import CloudContext from '../cloud-core/CloudContext';
-import createCloudClient from '../cloud-core/createCloudClient';
-import createMemoryStorageSource from '../cloud-core/createMemoryStorageSource';
+import { CloudContext } from '@aven/cloud-core';
+import { createCloudClient } from '@aven/cloud-core';
+import { createMemoryStorageSource } from '@aven/cloud-core';
 import WebServer from '../aven-web/WebServer';
 
 import App from './App';

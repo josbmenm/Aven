@@ -1,4 +1,4 @@
-import { NavigationActions, getNavigation } from '../navigation-core';
+import { NavigationActions, getNavigation } from '@aven/navigation-core';
 
 export default async function handleServerRequest(
   Router,

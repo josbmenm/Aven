@@ -10,11 +10,13 @@ const staticManifest =
         fs.readFileSync(path.join(__dirname, '../../AssetManifest.json')),
       );
 
-const assetManifestURL =
-  'http://localhost:8081/src/aven/wing-web/WingWebClient.js.assets?platform=web';
+const assetManifestURL = `http://localhost:8081/src/${process.env.CLIENT_SRC}.assets?platform=web`;
 
 async function fetchManifest() {
+  console.log('fetching manifest..');
   const result = await fetch(assetManifestURL).then(res => res.json());
+  console.log('manifest retrieved.');
+
   return result;
 }
 

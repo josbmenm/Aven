@@ -1,7 +1,7 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View } from '@rn';
 import useCloudValue from '../cloud-core/useCloudValue';
-import { useNavigation } from '../navigation-hooks/Hooks';
+import { useNavigation } from '@aven/navigation-hooks';
 
 export default function Task() {
   const { getParam } = useNavigation();

@@ -1,5 +1,5 @@
 import React from 'react';
-import Text from '../views/Text';
+import { Text } from '@aven/views';
 import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import Text from '../views/Text';
+import { Text } from '@aven/views';
 import { useTheme } from './Theme';
 import { Responsive } from './Responsive';
 
@@ -26,8 +26,8 @@ function Heading({
       <Text
         style={{
           color: color,
-          WebkitFontSmoothing: "antialiased",
-          MozOsxFontSmoothing: "grayscale",
+          WebkitFontSmoothing: 'antialiased',
+          MozOsxFontSmoothing: 'grayscale',
           fontFamily: theme.fonts.bold,
           ...style,
         }}

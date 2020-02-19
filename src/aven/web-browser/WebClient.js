@@ -1,8 +1,5 @@
 import React from 'react';
-
-// this will actually resolve to react-native-web... *eyeroll*
 import { AppRegistry } from '@rn';
-
 import { createBrowserApp } from '@aven/navigation-web-browser';
 
 const emptyMap = new Map();

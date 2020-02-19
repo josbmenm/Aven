@@ -1,8 +1,5 @@
-import _ from './Setup';
-
-import App from './WingWebApp';
-
 import { startWebClient } from '@aven/web-browser';
+import App from './WingWebApp';
 import { createBrowserNetworkSource } from '@aven/cloud-browser';
 import { createSessionClient, CloudContext } from '@aven/cloud-core';
 

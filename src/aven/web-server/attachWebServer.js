@@ -192,7 +192,13 @@ export default async function attachWebServer({
     });
 
     app.disable('x-powered-by');
-    app.use(express.static(publicDir));
+    if (Array.isArray(publicDir)) {
+      publicDir.forEach(iPublicDir => {
+        iPublicDir && app.use(express.static(iPublicDir));
+      });
+    } else if (publicDir !== null) {
+      app.use(express.static(publicDir));
+    }
   }
   function doFallbackExpressRouting(app) {
     fallbackExpressRouting && fallbackExpressRouting(app);
@@ -313,6 +319,7 @@ export default async function attachWebServer({
           );
         })
         .catch(err => {
+          console.error(err);
           res.status(500).send(err.message);
         });
     });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from '@rn';
 
 export default function TaskRow({ task, onRemove }) {
   return (

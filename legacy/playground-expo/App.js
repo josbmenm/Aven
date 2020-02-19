@@ -1,8 +1,8 @@
-import { View, Text } from 'react-native';
+import { View, Text } from '@rn';
 import React, { useState } from 'react';
 
 import createAppContainer from '../navigation-native/createAppContainer';
-import createSwitchNavigator from '../navigation-core/navigators/createSwitchNavigator';
+import { createSwitchNavigator } from '@aven/navigation-core';
 import NetworkCloudProvider from '../cloud-native/createNativeNetworkSource';
 import useCloud from '../cloud-core/useCloud';
 import useCloudValue from '../cloud-core/useCloudValue';

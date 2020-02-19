@@ -66,7 +66,7 @@ module.exports = {
     //     await fs.writeFile(
     //       pathJoin(location, 'index.js'),
     //       `
-    // import {AppRegistry} from 'react-native';
+    // import {AppRegistry} from '@rn';
     // import App from './src-sync/${appName}/${appPkg.main}';
 
     // AppRegistry.registerComponent('kiosk', () => App);

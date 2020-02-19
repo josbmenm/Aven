@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text } from '@rn';
 import uuid from 'uuid/v4';
 
 import useCloud from '../cloud-core/useCloud';

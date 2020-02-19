@@ -1,9 +1,9 @@
 import App from './App';
 
-import startWebClient from '../aven-web/WebClient';
-import CloudContext from '../cloud-core/CloudContext';
-import createCloudClient from '../cloud-core/createCloudClient';
-import createBrowserNetworkSource from '../cloud-browser/createBrowserNetworkSource';
+import { startWebClient } from '@aven/web-browser';
+import { CloudContext } from '@aven/cloud-core';
+import { createCloudClient } from '@aven/cloud-core';
+import { createBrowserNetworkSource } from '@aven/cloud-browser';
 
 const networkSource = createBrowserNetworkSource({
   authority: 'localhost:3000',

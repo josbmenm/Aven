@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { NavigationContext } from '../navigation-core';
+import { NavigationContext } from '@aven/navigation-core';
 
 export function useNavigation() {
   return useContext(NavigationContext);

@@ -1,5 +1,5 @@
-import { StackRouter, createNavigator } from '../../navigation-core';
-import { createKeyboardAwareNavigator } from '../../navigation-native';
+import { StackRouter, createNavigator } from '@aven/navigation-core';
+import { createKeyboardAwareNavigator } from '@aven/navigation-native';
 import StackView from '../views/StackView/StackView';
 
 function createStackNavigator(routeConfigMap, stackConfig = {}) {

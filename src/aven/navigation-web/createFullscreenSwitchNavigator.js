@@ -1,5 +1,5 @@
 import React from 'react';
-import createSwitchNavigator from '../navigation-core/navigators/createSwitchNavigator';
+import { createSwitchNavigator } from '@aven/navigation-core';
 
 export default function createFullscreenSwitchNavigator(routeConfig, options) {
   const SwitchNavigator = createSwitchNavigator(routeConfig, options);

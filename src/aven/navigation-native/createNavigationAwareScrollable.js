@@ -1,6 +1,6 @@
 import React from 'react';
 import hoistStatics from 'hoist-non-react-statics';
-import { withNavigation } from '../navigation-core';
+import { withNavigation } from '@aven/navigation-core';
 
 export default function createNavigationAwareScrollable(Component: any) {
   const ComponentWithNavigationScrolling = withNavigation(

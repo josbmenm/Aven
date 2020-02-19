@@ -7,7 +7,7 @@ import {
   pathUtils,
   getNavigation,
   NavigationProvider,
-} from '../navigation-core';
+} from '@aven/navigation-core';
 import invariant from './utils/invariant';
 import docsUrl from './utils/docsUrl';
 

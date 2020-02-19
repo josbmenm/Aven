@@ -1,14 +1,14 @@
-import { createSessionClient } from '../cloud-core/Kite';
-import { CloudContext } from '../cloud-core/KiteReact';
-import createProtectedSource from '../cloud-auth/createProtectedSource';
-import startFSStorageSource from '../cloud-fs/startFSStorageSource';
-import attachWebServer from '../aven-web/attachWebServer';
-import SMSAgent from '../sms-agent-twilio/SMSAgent';
-import EmailAgent from '../email-agent-sendgrid/EmailAgent';
-import SMSAuthProvider from '../cloud-auth-sms/SMSAuthProvider';
-import EmailAuthProvider from '../cloud-auth-email/EmailAuthProvider';
-import RootAuthProvider from '../cloud-auth-root/RootAuthProvider';
-import { hashSecureString } from '../cloud-utils/Crypto';
+import { createSessionClient } from '@aven/cloud-core';
+import { CloudContext } from '@aven/cloud-core';
+import { createProtectedSource } from '@aven/cloud-auth';
+import { startFSStorageSource } from '@aven/cloud-fs';
+import { attachWebServer } from '@aven/web-server';
+import { SMSAgent } from '@aven/sms-agent-twilio';
+import { EmailAgent } from '@aven/email-agent-sendgrid';
+import { SMSAuthProvider } from '@aven/cloud-auth-sms';
+import { EmailAuthProvider } from '@aven/cloud-auth-email';
+import { RootAuthProvider } from '@aven/cloud-auth-root';
+import { hashSecureString } from '@aven/cloud-utils';
 import { TaskReducer } from '../todo-app/FullHome';
 
 import App from './App';
