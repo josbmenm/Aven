@@ -3,7 +3,7 @@
   "scripts": {
     "wing:dev": "concurrently \"npm run wing:dev-server\" \"npm run wing:dev-mobile\"",
     "wing:dev-server": "cross-env BABEL_ENV=web-development NODE_ENV=development yarn babel-node src/aven/wing-web/WingWebServer.js",
-    "wing:dev-mobile": "./node_modules/@react-native-community/cli/build/bin.js start",
+    "wing:dev-mobile": "react-native start",
     "wing:xcode": "open wing-mobile/ios/wing.xcworkspace",
     "wing:run-ios": "yarn react-native run-ios --project-path wing-mobile/ios",
     "wing:pods": "cd wing-mobile/ios && pod install && cd -",
@@ -11,7 +11,7 @@
     "wing:start": "cross-env NODE_ENV=production node dist/wing/server/aven/wing-web/WingWebServer.js",
     "wing:create-bundles": "concurrently \"npm run wing:bundle-client\" \"npm run wing:bundle-server\" \"npm run wing:create-asset-manifest\"",
     "wing:bundle-server": "cross-env NODE_ENV=web-production yarn babel -d dist/wing/server src",
-    "wing:bundle-client": "mkdir -p dist/wing/client && ./node_modules/@react-native-community/cli/build/bin.js bundle --entry-file src/aven/wing-web/WingWebClient.js --dev false --platform web --reset-cache --bundle-output dist/wing/client/main.js --assets-dest dist/wing/client",
+    "wing:bundle-client": "mkdir -p dist/wing/client && react-native bundle --entry-file src/aven/wing-web/WingWebClient.js --dev false --platform web --reset-cache --bundle-output dist/wing/client/main.js --assets-dest dist/wing/client",
     "wing:create-asset-manifest": "node scripts/bundleAssets.js wing aven/wing-web/WingWebClient.js"
   },
   "devDependencies": {
