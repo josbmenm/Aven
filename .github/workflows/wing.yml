@@ -1,0 +1,27 @@
+name: Wing
+
+on:
+  push:
+    branches:
+      - 'flight'
+
+jobs:
+  production:
+    name: Production Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Latest
+        uses: AvenCloud/actions/checkout@v1
+
+      - name: Build Application
+        # https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers#the-technical-details
+        run: |
+          sudo sysctl fs.inotify.max_user_watches=524288
+          sudo sysctl -p
+
+          yarn wing:build
+
+      - name: Deploy to Runtime Server
+        uses: AvenCloud/actions/deploy@v1
+        with:
+          deploy-directory: dist/wing
