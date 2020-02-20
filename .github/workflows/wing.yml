@@ -3,7 +3,7 @@ name: Wing
 on:
   push:
     branches:
-      - 'flight'
+      - 'flight*'
 
 jobs:
   production:
