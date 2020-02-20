@@ -25,3 +25,4 @@ jobs:
         uses: AvenCloud/actions/deploy@v1
         with:
           deploy-directory: dist/wing
+          verbosity: 2
