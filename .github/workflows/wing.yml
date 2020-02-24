@@ -24,4 +24,4 @@ jobs:
       - name: Deploy to Runtime Server
         uses: AvenCloud/actions/deploy@v1
         with:
-          deploy-directory: dist/wing
+          deploy-key: ${{ secrets.DEPLOY_KEY }}
