@@ -25,3 +25,12 @@ jobs:
         uses: AvenCloud/actions/deploy@v1
         with:
           deploy-key: ${{ secrets.DEPLOY_KEY }}
+
+  test-live:
+    needs: [production]
+    name: Test Live Server for errors
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Smoke Test
+        run: wget --spider --recursive --no-directories --no-verbose --reject-regex "&quot;data:image/png;base64" --execute robots=off --level=0 --span-hosts -D "*.aven.io" -D aven.io https://wing.aven.io
