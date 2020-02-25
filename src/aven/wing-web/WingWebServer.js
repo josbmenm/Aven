@@ -16,7 +16,7 @@ import { hashSecureString } from '@aven/cloud-utils';
 // import { TaskReducer } from '../todo-app/FullHome';
 
 const path = require('path');
-
+const HOME = require('os').homedir();
 const getEnv = c => process.env[c];
 
 const runServer = async () => {
@@ -24,7 +24,7 @@ const runServer = async () => {
 
   const storageSource = await startFSStorageSource({
     domain: 'todo.aven.io',
-    dataDir: './db',
+    dataDir: HOME + '/db',
   });
 
   const source = createSessionClient({

@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "wing:dev": "concurrently \"npm run wing:dev-server\" \"npm run wing:dev-mobile\"",
-    "wing:dev-server": "cross-env BABEL_ENV=web-development NODE_ENV=development yarn babel-node src/aven/wing-web/WingWebServer.js",
-    "wing:dev-mobile": "react-native start",
+    "wing:dev-server": "cross-env CLIENT_SRC=aven/wing-web/WingWebClient.js BABEL_ENV=web-development NODE_ENV=development yarn babel-node src/aven/wing-web/WingWebServer.js",
+    "wing:dev-mobile": "node_modules/@react-native-community/cli/build/bin.js start",
     "wing:xcode": "open wing-mobile/ios/wing.xcworkspace",
     "wing:run-ios": "yarn react-native run-ios --project-path wing-mobile/ios",
     "wing:pods": "cd wing-mobile/ios && pod install && cd -",
