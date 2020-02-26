@@ -130,7 +130,7 @@ const runServer = async () => {
     App,
     context,
     source,
-    serverListenLocation: '8080',
+    serverListenLocation: process.env.LISTEN_PATH || '8080',
     publicDir: path.join(__dirname, '../../../client'),
     assets: {
       client: {
