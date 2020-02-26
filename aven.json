@@ -1,6 +1,0 @@
-{
-  "domains": ["wing.aven.io"],
-  "serviceName": "aven",
-  "startServerCommand": "/usr/bin/yarn wing:start",
-  "timezone": "America/Los_Angeles"
-}

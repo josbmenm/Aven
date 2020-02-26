@@ -24,6 +24,9 @@ jobs:
       - name: Deploy to Runtime Server
         uses: AvenCloud/actions/deploy@v1
         with:
+          domains: wing.aven.io
+          start-server-command: /usr/bin/yarn wing:start
+          timezone: America/Los_Angeles
           deploy-key: ${{ secrets.DEPLOY_KEY }}
 
   test-live:
