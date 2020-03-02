@@ -2,7 +2,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@aven/plane": ["./src/plane"]
+      "@aven/plane": ["./src/aven/plane"],
+      "@aven/cloud-core": ["./src/aven/cloud-core"],
+      "@aven/utils": ["./src/aven/utils"]
     }
   }
 }

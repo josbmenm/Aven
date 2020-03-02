@@ -9,7 +9,7 @@ getAssetManifest().then(assets => {
   });
 });
 // this is the SERVER implementation of Image
-export default function WebImage({ source, ...props }) {
+export default function WebImage({ source, style, tintColor, ...props }) {
   let uri = null;
   if (source && source.uri) {
     uri = source.uri;
@@ -28,5 +28,9 @@ export default function WebImage({ source, ...props }) {
   if (!uri) {
     return null;
   }
-  return <Image source={{ uri }} {...props} />;
+  return <Image source={{ uri }} style={[{ tintColor }, style]} {...props} />;
+}
+
+export async function loadImages() {
+  // nope
 }

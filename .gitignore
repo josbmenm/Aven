@@ -19,3 +19,8 @@ db
 coverage
 
 testdb.sqlite
+
+codepush-build
+
+public
+public2

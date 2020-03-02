@@ -2,13 +2,13 @@ import React from 'react';
 
 import {
   Animated,
-  Image,
   Platform,
   StyleSheet,
   View,
   I18nManager,
   MaskedViewIOS,
 } from '@rn';
+import { Image } from '@aven/views';
 
 import { withOrientation, SafeAreaView } from '@aven/navigation-native';
 

@@ -35,6 +35,7 @@ child.stdout.on('data', data => {
       })
       .catch(e => {
         console.error(e);
+        process.exitCode = 2;
       })
       .finally(() => {
         setTimeout(() => {
@@ -45,4 +46,5 @@ child.stdout.on('data', data => {
 });
 child.stderr.on('data', data => {
   console.error('! ' + data);
+  process.exitCode = 1;
 });

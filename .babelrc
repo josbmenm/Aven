@@ -41,11 +41,7 @@
           "@aven/utils": "./src/aven/utils",
           "@aven/views": "./src/aven/views",
           "@aven/web-browser": "./src/aven/web-browser",
-          "@aven/web-server": "./src/aven/web-server",
-
-          "@onofoodco/logic": "./src/onofoodco/logic",
-          "@onofoodco/dash-ui": "./src/onofoodco/dash-ui",
-          "@onofoodco/stripe-server": "./src/onofoodco/stripe-server"
+          "@aven/web-server": "./src/aven/web-server"
         }
       }
     ]
@@ -105,11 +101,7 @@
               "@aven/utils": "./src/aven/utils",
               "@aven/views": "./src/aven/views",
               "@aven/web-browser": "./src/aven/web-browser",
-              "@aven/web-server": "./src/aven/web-server",
-
-              "@onofoodco/logic": "./src/onofoodco/logic",
-              "@onofoodco/dash-ui": "./src/onofoodco/dash-ui",
-              "@onofoodco/stripe-server": "./src/onofoodco/stripe-server"
+              "@aven/web-server": "./src/aven/web-server"
             }
           }
         ]
@@ -169,11 +161,7 @@
               "@aven/utils": "./src/aven/utils",
               "@aven/views": "./src/aven/views",
               "@aven/web-browser": "./src/aven/web-browser",
-              "@aven/web-server": "./src/aven/web-server",
-
-              "@onofoodco/logic": "./src/onofoodco/logic",
-              "@onofoodco/dash-ui": "./src/onofoodco/dash-ui",
-              "@onofoodco/stripe-server": "./src/onofoodco/stripe-server"
+              "@aven/web-server": "./src/aven/web-server"
             }
           }
         ]

@@ -65,10 +65,9 @@ export function streamOfValue(staticValue, crumb) {
   return stream;
 }
 
-export function combineStreams(inputs) {
-  const inputEntries = Object.entries(inputs);
+export function combineStreamEntries(inputEntries, initialValue = {}) {
   const stoppers = new Set();
-  const lastValues = {};
+  const lastValues = initialValue;
   const entries = Object.fromEntries(
     inputEntries.map(([key, inputStream]) => {
       return [key, inputStream && inputStream.crumb];
@@ -88,14 +87,14 @@ export function combineStreams(inputs) {
           notifier.next(lastValues);
         }, 1);
       }
-      inputEntries.forEach(([inputName, inputStream]) => {
+      inputEntries.forEach(([inputKey, inputStream]) => {
         if (!inputStream) return;
         const listener = {
           next: v => {
-            if (lastValues[inputName] === v) {
+            if (lastValues[inputKey] === v) {
               return;
             }
-            lastValues[inputName] = v;
+            lastValues[inputKey] = v;
             scheduleNotifyValues();
           },
           complete: () => {},
@@ -116,6 +115,18 @@ export function combineStreams(inputs) {
       stoppers.clear();
     },
   });
+}
+export function combineStreamArray(inputs) {
+  return combineStreamEntries(
+    inputs.map((stream, index) => [index, stream]),
+    [],
+  );
+}
+export function combineStreams(inputs) {
+  if (Array.isArray(inputs)) {
+    return combineStreamArray(inputs);
+  }
+  return combineStreamEntries(Object.entries(inputs));
 }
 
 export function combineLoadedStreams(inputs) {
@@ -386,6 +397,25 @@ function spyStream(stream, spier) {
   });
 }
 
+export function intervalStream(timeMs = 1000, outputSpec = t => t) {
+  let intervalId = null;
+  return createProducerStream({
+    start(notifier) {
+      setInterval(() => {
+        if (typeof outputSpec === 'function') {
+          notifier.next(outputSpec(Date.now()));
+        } else {
+          notifier.next(outputSpec);
+        }
+      }, timeMs);
+    },
+    stop() {
+      clearInterval(intervalId);
+    },
+    crumb: `interval-${timeMs}`,
+  });
+}
+
 function mapStream(stream, mapper, mapDescriptor) {
   let listener = null;
   return createProducerStream({
@@ -416,7 +446,7 @@ function loadStream(stream) {
   return new Promise((resolve, reject) => {
     let loadTimeout = setTimeout(() => {
       wrapUp();
-      reject(new Error(`Timed out loading "${stream.crumb}".`));
+      reject(new Error(`Timed out loading "${JSON.stringify(stream.crumb)}".`));
     }, 300000);
 
     let loadListener = null;

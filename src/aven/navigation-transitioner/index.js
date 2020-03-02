@@ -16,4 +16,8 @@ module.exports = {
   get Transitioner() {
     return require('./Transitioner').default;
   },
+
+  get PerformanceDebugging() {
+    return require('./PerformanceDebugging').default;
+  },
 };

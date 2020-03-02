@@ -439,7 +439,7 @@ export default async function startPostgresStorageSource({
         );
       }
       throw new Error(
-        `Failed to transact on ${name}, probably because of multiple simultaneous transactions. Please retry`,
+        `Failed to transact on ${name}, probably because of multiple simultaneous transactions. Please retry. ${internalParentId}`,
       );
     }
     await notifyDocWrite(

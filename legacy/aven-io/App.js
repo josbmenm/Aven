@@ -1,5 +1,6 @@
-import { View, Text, Image, StyleSheet, ScrollView } from '@rn';
+import { View, Text, StyleSheet, ScrollView } from '@rn';
 import React from 'react';
+import { Image } from '@aven/views';
 
 import SwitchRouter from '../navigation-core/routers/SwitchRouter';
 import SceneView from '../navigation-core/views/SceneView';

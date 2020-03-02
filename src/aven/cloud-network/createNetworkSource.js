@@ -122,13 +122,17 @@ export default function createNetworkSource(opts) {
     ws.onopen = () => {
       // actually we're going to wait for the server to say hello with ClientId
     };
-    ws.onclose = () => {
+    ws.onclose = e => {
       updateIsConnected(false);
       !quiet && log('Socket closed.');
     };
     ws.onerror = e => {
       updateIsConnected(false);
-      !quiet && log('Socket errored: ', e);
+      !quiet &&
+        log('Socket errored: ', {
+          message: e.message,
+          ...e,
+        });
     };
     ws.onmessage = msg => {
       const evt = JSON.parse(msg.data);

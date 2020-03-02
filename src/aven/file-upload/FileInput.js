@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useCloud } from '@aven/cloud-core';
 import { HostContext } from '@aven/cloud-core';
-import { Text, Button, useTheme, Stack, opacify } from '@onofoodco/dash-ui';
+import { Text, Button, useTheme, Stack, opacify } from '@aven/plane';
 import { View } from '@rn';
 
 export default function FileInput({

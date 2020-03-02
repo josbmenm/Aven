@@ -451,6 +451,9 @@ export function createDoc({
       }
 
       if (docState.isLocalOnly) {
+        setDocState({
+          id: null,
+        });
         return;
       }
       const upStream = source.getDocStream(domain, docName, auth);
@@ -1189,9 +1192,11 @@ export function createDocSet({
   function setOverrideValueStream(name, stream, context) {
     return setOverrideStream(
       name,
-      stream.map(value => {
-        return { value, id: getIdOfValue(value).id };
-      }),
+      stream
+        .map(value => {
+          return { value, id: getIdOfValue(value).id };
+        })
+        .dropRepeats((a, b) => a.id === b.id, 'DropRepeatedIds'),
       context,
     );
   }
@@ -1601,7 +1606,7 @@ export function createReducerStream(
       primaryStream.removeListener(listener);
       pauseReducerExecution();
     },
-  });
+  }).dropRepeats((a, b) => a.id === b.id, 'DropRepeatedIds');
 }
 
 export function createStackReducerStream(
